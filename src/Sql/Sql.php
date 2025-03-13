@@ -17,17 +17,15 @@ class Sql
     protected Platform\Platform $sqlPlatform;
 
     /**
-     * @param null|Platform\AbstractPlatform    $sqlPlatform @deprecated since version 3.0
+     * @param null|Platform\AbstractPlatform $sqlPlatform @deprecated since version 3.0
      */
     public function __construct(
         AdapterInterface $adapter,
         array|string|TableIdentifier|null $table = null,
         ?Platform\AbstractPlatform $sqlPlatform = null
     ) {
-        $this->adapter = $adapter;
-        if ($table) {
-            $this->setTable($table);
-        }
+        $this->adapter     = $adapter;
+        $this->table       = $table;
         $this->sqlPlatform = $sqlPlatform ?: new Platform\Platform($adapter);
     }
 
@@ -48,6 +46,7 @@ class Sql
     public function setTable(array|string|TableIdentifier $table): self
     {
         $this->table = $table;
+
         return $this;
     }
 
@@ -69,6 +68,7 @@ class Sql
                 $this->table
             ));
         }
+
         return new Select($table ?: $this->table);
     }
 
@@ -80,6 +80,7 @@ class Sql
                 $this->table
             ));
         }
+
         return new Insert($table ?: $this->table);
     }
 
@@ -91,6 +92,7 @@ class Sql
                 $this->table
             ));
         }
+
         return new Update($table ?: $this->table);
     }
 
@@ -102,6 +104,7 @@ class Sql
                 $this->table
             ));
         }
+
         return new Delete($table ?: $this->table);
     }
 

@@ -121,6 +121,7 @@ class ResultSetIntegrationTest extends TestCase
     public function testInvalidDataSourceRaisesException($dataSource)
     {
         if (is_array($dataSource)) {
+            $this->expectNotToPerformAssertions();
             // this is valid
             return;
         }

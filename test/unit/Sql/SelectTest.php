@@ -717,6 +717,8 @@ class SelectTest extends TestCase
 
         if ($expectedParameters) {
             self::assertEquals($expectedParameters, $parameterContainer->getNamedArray());
+        } else {
+            $this->expectNotToPerformAssertions();
         }
     }
 
@@ -797,6 +799,7 @@ class SelectTest extends TestCase
     public function testProcessMethods(Select $select, $unused, $unused2, $unused3, array $internalTests)
     {
         if (! $internalTests) {
+            $this->expectNotToPerformAssertions();
             return;
         }
 

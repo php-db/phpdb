@@ -45,6 +45,7 @@ class StatementIntegrationTest extends TestCase
 
     public function testStatementExecuteWillConvertPhpBoolToPdoBoolWhenBinding()
     {
+        $this->expectNotToPerformAssertions();
         $this->pdoStatementMock->expects($this->any())->method('bindParam')->with(
             $this->equalTo(':foo'),
             $this->equalTo(false),
@@ -55,6 +56,7 @@ class StatementIntegrationTest extends TestCase
 
     public function testStatementExecuteWillUsePdoStrByDefaultWhenBinding()
     {
+        $this->expectNotToPerformAssertions();
         $this->pdoStatementMock->expects($this->any())->method('bindParam')->with(
             $this->equalTo(':foo'),
             $this->equalTo('bar'),
@@ -65,6 +67,7 @@ class StatementIntegrationTest extends TestCase
 
     public function testStatementExecuteWillUsePdoStrForStringIntegerWhenBinding()
     {
+        $this->expectNotToPerformAssertions();
         $this->pdoStatementMock->expects($this->any())->method('bindParam')->with(
             $this->equalTo(':foo'),
             $this->equalTo('123'),
@@ -75,6 +78,7 @@ class StatementIntegrationTest extends TestCase
 
     public function testStatementExecuteWillUsePdoIntForIntWhenBinding()
     {
+        $this->expectNotToPerformAssertions();
         $this->pdoStatementMock->expects($this->any())->method('bindParam')->with(
             $this->equalTo(':foo'),
             $this->equalTo(123),

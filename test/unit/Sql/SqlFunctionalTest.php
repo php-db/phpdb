@@ -621,7 +621,7 @@ class SqlFunctionalTest extends TestCase
 
         $expectedString = is_string($expected) ? $expected : ($expected['string'] ?? null);
         if ($expectedString) {
-            $actual = $sql->getSqlStringForSqlObject($sqlObject);
+            $actual = $sql->buildSqlString($sqlObject);
             self::assertEquals($expectedString, $actual, "getSqlString()");
         }
         if (is_array($expected) && isset($expected['prepare'])) {

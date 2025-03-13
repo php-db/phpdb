@@ -2,7 +2,6 @@
 
 namespace LaminasIntegrationTest\Db\Adapter\Driver\Pdo\Mysql;
 
-use Laminas\Db\Adapter\Adapter;
 use Laminas\Db\Sql\TableIdentifier;
 use Laminas\Db\TableGateway\Feature\MetadataFeature;
 use Laminas\Db\TableGateway\TableGateway;
@@ -14,8 +13,6 @@ class TableGatewayTest extends TestCase
 {
     use AdapterTrait;
 
-    /** @var Adapter */
-    protected $adapter;
     /**
      * @covers \Laminas\Db\TableGateway\TableGateway::__construct
      */
@@ -68,7 +65,6 @@ class TableGatewayTest extends TestCase
     /**
      * @see https://github.com/zendframework/zend-db/issues/35
      * @see https://github.com/zendframework/zend-db/pull/178
-     *
      * @return mixed
      */
     public function testInsertWithExtendedCharsetFieldName()
@@ -80,6 +76,7 @@ class TableGatewayTest extends TestCase
             'field_' => 'test_value2',
         ]);
         $this->assertEquals(1, $affectedRows);
+
         return $tableGateway->getLastInsertValue();
     }
 

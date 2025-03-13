@@ -13,8 +13,6 @@ class QueryTest extends TestCase
 {
     use AdapterTrait;
 
-    /** @var Adapter */
-    protected $adapter;
     /**
      * @psalm-return array<array-key, array{
      *     0: string,
@@ -76,6 +74,8 @@ class QueryTest extends TestCase
      */
     public function testNamedParameters()
     {
+        $this->expectNotToPerformAssertions();
+
         $sql = new Sql($this->adapter);
 
         $insert = $sql->update('test');
@@ -87,16 +87,16 @@ class QueryTest extends TestCase
 
         //positional parameters
         $stmt->execute([
-            1,
             'foo',
             'bar',
+            1,
         ]);
 
         //"mapped" named parameters
         $stmt->execute([
-            'c_0'    => 1,
-            'c_1'    => 'foo',
-            'where1' => 'bar',
+            'c_0'    => 'foo',
+            'c_1'    => 'bar',
+            'where1' => 1,
         ]);
 
         //real named parameters
