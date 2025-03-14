@@ -51,14 +51,6 @@ class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
     protected $resource;
 
     /**
-     * @internal
-     * @deprecated
-     *
-     * @var bool
-     */
-    public $parametersBound;
-
-    /**
      * Is prepared
      *
      * @var bool
@@ -323,7 +315,6 @@ class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
     public function __clone()
     {
         $this->isPrepared      = false;
-        $this->parametersBound = false;
         $this->resource        = null;
         if ($this->parameterContainer) {
             $this->parameterContainer = clone $this->parameterContainer;

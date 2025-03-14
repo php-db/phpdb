@@ -2,7 +2,9 @@
 
 namespace Laminas\Db\Adapter;
 
-use InvalidArgumentException;
+use Laminas\Db\Adapter\Driver\DriverInterface;
+use Laminas\Db\Adapter\Driver\ResultInterface;
+use Laminas\Db\Adapter\Profiler\ProfilerInterface;
 use Laminas\Db\ResultSet;
 
 use function func_get_args;
@@ -10,11 +12,11 @@ use function in_array;
 use function is_array;
 use function is_bool;
 use function is_string;
-use function strpos;
+use function str_starts_with;
 use function strtolower;
 
 /**
- * @property Driver\DriverInterface $driver
+ * @property DriverInterface $driver
  * @property Platform\PlatformInterface $platform
  */
 class Adapter implements AdapterInterface, Profiler\ProfilerAwareInterface
@@ -37,30 +39,21 @@ class Adapter implements AdapterInterface, Profiler\ProfilerAwareInterface
 
     public const VALUE_QUOTE_SEPARATOR = 'quoteSeparator';
 
-    /** @var Driver\DriverInterface */
+    /** @var DriverInterface */
     protected $driver;
 
     /** @var Platform\PlatformInterface */
     protected $platform;
 
-    /** @var Profiler\ProfilerInterface */
-    protected $profiler;
+    protected Profiler\ProfilerInterface $profiler;
 
-    /** @var ResultSet\ResultSetInterface */
-    protected $queryResultSetPrototype;
+    protected ResultSet\ResultSetInterface $queryResultSetPrototype;
 
     /**
-     * @deprecated
-     *
-     * @var Driver\StatementInterface
-     */
-    protected $lastPreparedStatement;
-    /**
-     * @param Driver\DriverInterface|array $driver
      * @throws Exception\InvalidArgumentException
      */
     public function __construct(
-        $driver,
+        Driver\DriverInterface|array $driver,
         ?Platform\PlatformInterface $platform = null,
         ?ResultSet\ResultSetInterface $queryResultPrototype = null,
         ?Profiler\ProfilerInterface $profiler = null
@@ -76,7 +69,7 @@ class Adapter implements AdapterInterface, Profiler\ProfilerAwareInterface
             $driver = $this->createDriver($parameters);
         } elseif (! $driver instanceof Driver\DriverInterface) {
             throw new Exception\InvalidArgumentException(
-                'The supplied or instantiated driver object does not implement ' . Driver\DriverInterface::class
+                'The supplied or instantiated driver object does not implement ' . DriverInterface::class
             );
         }
 
@@ -98,7 +91,7 @@ class Adapter implements AdapterInterface, Profiler\ProfilerAwareInterface
     /**
      * @return $this Provides a fluent interface
      */
-    public function setProfiler(Profiler\ProfilerInterface $profiler)
+    public function setProfiler(ProfilerInterface $profiler): self
     {
         $this->profiler = $profiler;
         if ($this->driver instanceof Profiler\ProfilerAwareInterface) {
@@ -107,21 +100,15 @@ class Adapter implements AdapterInterface, Profiler\ProfilerAwareInterface
         return $this;
     }
 
-    /**
-     * @return null|Profiler\ProfilerInterface
-     */
-    public function getProfiler()
+    public function getProfiler(): ?ProfilerInterface
     {
         return $this->profiler;
     }
 
     /**
-     * getDriver()
-     *
      * @throws Exception\RuntimeException
-     * @return Driver\DriverInterface
      */
-    public function getDriver()
+    public function getDriver(): Driver\DriverInterface|array
     {
         if ($this->driver === null) {
             throw new Exception\RuntimeException('Driver has not been set or configured for this adapter.');
@@ -129,24 +116,17 @@ class Adapter implements AdapterInterface, Profiler\ProfilerAwareInterface
         return $this->driver;
     }
 
-    /**
-     * @return Platform\PlatformInterface
-     */
-    public function getPlatform()
+    public function getPlatform(): ?Platform\PlatformInterface
     {
         return $this->platform;
     }
 
-    /**
-     * @return ResultSet\ResultSetInterface
-     */
-    public function getQueryResultSetPrototype()
+    public function getQueryResultSetPrototype(): ResultSet\ResultSetInterface
     {
         return $this->queryResultSetPrototype;
     }
 
-    /** @return string */
-    public function getCurrentSchema()
+    public function getCurrentSchema(): string
     {
         return $this->driver->getConnection()->getCurrentSchema();
     }
@@ -154,16 +134,13 @@ class Adapter implements AdapterInterface, Profiler\ProfilerAwareInterface
     /**
      * query() is a convenience function
      *
-     * @param string $sql
-     * @param string|array|ParameterContainer $parametersOrQueryMode
      * @throws Exception\InvalidArgumentException
-     * @return Driver\StatementInterface|ResultSet\ResultSet
      */
     public function query(
-        $sql,
-        $parametersOrQueryMode = self::QUERY_MODE_PREPARE,
+        string $sql,
+        ParameterContainer|array|string $parametersOrQueryMode = self::QUERY_MODE_PREPARE,
         ?ResultSet\ResultSetInterface $resultPrototype = null
-    ) {
+    ): Driver\StatementInterface|ResultSet\ResultSet|ResultInterface {
         if (
             is_string($parametersOrQueryMode)
             && in_array($parametersOrQueryMode, [self::QUERY_MODE_PREPARE, self::QUERY_MODE_EXECUTE])
@@ -210,13 +187,11 @@ class Adapter implements AdapterInterface, Profiler\ProfilerAwareInterface
 
     /**
      * Create statement
-     *
-     * @param  string $initialSql
-     * @param  null|ParameterContainer|array $initialParameters
-     * @return Driver\StatementInterface
      */
-    public function createStatement($initialSql = null, $initialParameters = null)
-    {
+    public function createStatement(
+        ?string $initialSql = null,
+        ParameterContainer|array|null $initialParameters = null
+    ): Driver\StatementInterface {
         $statement = $this->driver->createStatement($initialSql);
         if (
             $initialParameters === null
@@ -250,29 +225,19 @@ class Adapter implements AdapterInterface, Profiler\ProfilerAwareInterface
     }
 
     /**
-     * @param string $name
      * @throws Exception\InvalidArgumentException
-     * @return Driver\DriverInterface|Platform\PlatformInterface
+     * @return DriverInterface|Platform\PlatformInterface
      */
-    public function __get($name)
+    public function __get(string $name)
     {
-        switch (strtolower($name)) {
-            case 'driver':
-                return $this->driver;
-            case 'platform':
-                return $this->platform;
-            default:
-                throw new Exception\InvalidArgumentException('Invalid magic property on adapter');
-        }
+        return match (strtolower($name)) {
+            'driver' => $this->driver,
+            'platform' => $this->platform,
+            default => throw new Exception\InvalidArgumentException('Invalid magic property on adapter'),
+        };
     }
 
-    /**
-     * @param array $parameters
-     * @return Driver\DriverInterface
-     * @throws InvalidArgumentException
-     * @throws Exception\InvalidArgumentException
-     */
-    protected function createDriver($parameters)
+    protected function createDriver(array $parameters): DriverInterface
     {
         if (! isset($parameters['driver'])) {
             throw new Exception\InvalidArgumentException(
@@ -315,7 +280,7 @@ class Adapter implements AdapterInterface, Profiler\ProfilerAwareInterface
                 break;
             case 'pdo':
             default:
-                if ($driverName === 'pdo' || strpos($driverName, 'pdo') === 0) {
+                if ($driverName === 'pdo' || str_starts_with($driverName, 'pdo')) {
                     $driver = new Driver\Pdo\Pdo($parameters);
                 }
         }
@@ -327,16 +292,12 @@ class Adapter implements AdapterInterface, Profiler\ProfilerAwareInterface
         return $driver;
     }
 
-    /**
-     * @param array $parameters
-     * @return Platform\PlatformInterface
-     */
-    protected function createPlatform(array $parameters)
+    protected function createPlatform(array $parameters): Platform\PlatformInterface
     {
         if (isset($parameters['platform'])) {
             $platformName = $parameters['platform'];
         } elseif ($this->driver instanceof Driver\DriverInterface) {
-            $platformName = $this->driver->getDatabasePlatformName(Driver\DriverInterface::NAME_FORMAT_CAMELCASE);
+            $platformName = $this->driver->getDatabasePlatformName();
         } else {
             throw new Exception\InvalidArgumentException(
                 'A platform could not be determined from the provided configuration'
@@ -387,12 +348,7 @@ class Adapter implements AdapterInterface, Profiler\ProfilerAwareInterface
         }
     }
 
-    /**
-     * @param array $parameters
-     * @return Profiler\ProfilerInterface
-     * @throws Exception\InvalidArgumentException
-     */
-    protected function createProfiler($parameters)
+    protected function createProfiler(array $parameters): ?ProfilerInterface
     {
         if ($parameters['profiler'] instanceof Profiler\ProfilerInterface) {
             return $parameters['profiler'];
@@ -405,28 +361,5 @@ class Adapter implements AdapterInterface, Profiler\ProfilerAwareInterface
         throw new Exception\InvalidArgumentException(
             '"profiler" parameter must be an instance of ProfilerInterface or a boolean'
         );
-    }
-
-    /**
-     * @deprecated
-     *
-     * @param array $parameters
-     * @return Driver\DriverInterface
-     * @throws InvalidArgumentException
-     * @throws Exception\InvalidArgumentException
-     */
-    protected function createDriverFromParameters(array $parameters)
-    {
-        return $this->createDriver($parameters);
-    }
-
-    /**
-     * @deprecated
-     *
-     * @return Platform\PlatformInterface
-     */
-    protected function createPlatformFromDriver(Driver\DriverInterface $driver)
-    {
-        return $this->createPlatform($driver);
     }
 }

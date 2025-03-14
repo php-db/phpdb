@@ -171,6 +171,7 @@ class SqlServerTest extends TestCase
      */
     public function testSetDriver()
     {
+        $this->expectNotToPerformAssertions();
         $driver = new Pdo(['pdodriver' => 'sqlsrv']);
         $this->platform->setDriver($driver);
     }

@@ -51,7 +51,7 @@ class AbstractSqlTest extends TestCase
      */
     public function testProcessExpressionWithoutParameterContainer()
     {
-        $expression   = new Expression('? > ? AND y < ?', ['x', 5, 10], [Expression::TYPE_IDENTIFIER]);
+        $expression   = new Expression('? > ? AND y < ?', [['x' => ExpressionInterface::TYPE_IDENTIFIER], 5, 10]);
         $sqlAndParams = $this->invokeProcessExpressionMethod($expression);
 
         self::assertEquals("\"x\" > '5' AND y < '10'", $sqlAndParams);
@@ -63,7 +63,7 @@ class AbstractSqlTest extends TestCase
     public function testProcessExpressionWithParameterContainerAndParameterizationTypeNamed()
     {
         $parameterContainer = new ParameterContainer();
-        $expression         = new Expression('? > ? AND y < ?', ['x', 5, 10], [Expression::TYPE_IDENTIFIER]);
+        $expression         = new Expression('? > ? AND y < ?', [['x' => ExpressionInterface::TYPE_IDENTIFIER], 5, 10]);
         $sqlAndParams       = $this->invokeProcessExpressionMethod($expression, $parameterContainer);
 
         $parameters = $parameterContainer->getNamedArray();

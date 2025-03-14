@@ -10,6 +10,5 @@ class AdapterTest extends AbstractAdapterTest
     use AdapterTrait;
 
     /** @var Adapter */
-    protected $adapter;
     public const DB_SERVER_PORT = 3306;
 }

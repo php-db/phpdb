@@ -6,6 +6,7 @@ use Laminas\Db\Sql\Exception\InvalidArgumentException;
 use Laminas\Db\Sql\TableIdentifier;
 use PHPUnit\Framework\TestCase;
 use stdClass;
+use TypeError;
 
 use function array_merge;
 
@@ -43,7 +44,7 @@ class TableIdentifierTest extends TestCase
 
         $table->expects($this->once())->method('__toString')->will($this->returnValue('castResult'));
 
-        $tableIdentifier = new TableIdentifier($table);
+        $tableIdentifier = new TableIdentifier((string) $table);
 
         self::assertSame('castResult', $tableIdentifier->getTable());
         self::assertSame('castResult', $tableIdentifier->getTable());
@@ -55,7 +56,7 @@ class TableIdentifierTest extends TestCase
 
         $schema->expects($this->once())->method('__toString')->will($this->returnValue('castResult'));
 
-        $tableIdentifier = new TableIdentifier('foo', $schema);
+        $tableIdentifier = new TableIdentifier('foo', (string) $schema);
 
         self::assertSame('castResult', $tableIdentifier->getSchema());
         self::assertSame('castResult', $tableIdentifier->getSchema());
@@ -67,7 +68,7 @@ class TableIdentifierTest extends TestCase
      */
     public function testRejectsInvalidTable($invalidTable)
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException($invalidTable === '' ? InvalidArgumentException::class : TypeError::class);
 
         new TableIdentifier($invalidTable);
     }
@@ -78,7 +79,7 @@ class TableIdentifierTest extends TestCase
      */
     public function testRejectsInvalidSchema($invalidSchema)
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException($invalidSchema === '' ? InvalidArgumentException::class : TypeError::class);
 
         new TableIdentifier('foo', $invalidSchema);
     }
