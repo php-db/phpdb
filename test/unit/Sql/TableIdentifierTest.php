@@ -44,7 +44,7 @@ class TableIdentifierTest extends TestCase
 
         $table->expects($this->once())->method('__toString')->will($this->returnValue('castResult'));
 
-        $tableIdentifier = new TableIdentifier($table);
+        $tableIdentifier = new TableIdentifier((string) $table);
 
         self::assertSame('castResult', $tableIdentifier->getTable());
         self::assertSame('castResult', $tableIdentifier->getTable());
@@ -56,7 +56,7 @@ class TableIdentifierTest extends TestCase
 
         $schema->expects($this->once())->method('__toString')->will($this->returnValue('castResult'));
 
-        $tableIdentifier = new TableIdentifier('foo', $schema);
+        $tableIdentifier = new TableIdentifier('foo', (string) $schema);
 
         self::assertSame('castResult', $tableIdentifier->getSchema());
         self::assertSame('castResult', $tableIdentifier->getSchema());

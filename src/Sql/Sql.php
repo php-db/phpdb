@@ -16,17 +16,13 @@ class Sql
 
     protected Platform\Platform $sqlPlatform;
 
-    /**
-     * @param null|Platform\AbstractPlatform $sqlPlatform @deprecated since version 3.0
-     */
     public function __construct(
         AdapterInterface $adapter,
-        array|string|TableIdentifier|null $table = null,
-        ?Platform\AbstractPlatform $sqlPlatform = null
+        array|string|TableIdentifier|null $table = null
     ) {
         $this->adapter     = $adapter;
         $this->table       = $table;
-        $this->sqlPlatform = $sqlPlatform ?: new Platform\Platform($adapter);
+        $this->sqlPlatform = new Platform\Platform($adapter);
     }
 
     public function getAdapter(): ?AdapterInterface
