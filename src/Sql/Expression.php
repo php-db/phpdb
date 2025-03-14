@@ -6,7 +6,6 @@ use function array_unique;
 use function count;
 use function is_array;
 use function is_scalar;
-use function is_string;
 use function preg_match_all;
 use function str_ireplace;
 use function str_replace;
@@ -18,38 +17,17 @@ class Expression extends AbstractExpression
      */
     public const PLACEHOLDER = '?';
 
-    /** @var string */
-    protected $expression = '';
+    protected string $expression = '';
 
-    /** @var array */
-    protected $parameters = [];
-
-    /** @var array */
-    protected $types = [];
+    protected float|array|int|string|bool $parameters = [];
 
     /**
-     * @param string $expression
-     * @param string|array $parameters
-     * @param array $types @deprecated will be dropped in version 3.0.0
+     * @todo Update documentation to show how parameters can be specifically typed
      */
-    public function __construct($expression = '', $parameters = null, array $types = [])
+    public function __construct(string $expression = '', float|array|int|string|bool|null $parameters = null)
     {
         if ($expression !== '') {
             $this->setExpression($expression);
-        }
-
-        if ($types) { // should be deprecated and removed version 3.0.0
-            if (is_array($parameters)) {
-                foreach ($parameters as $i => $parameter) {
-                    $parameters[$i] = [
-                        $parameter => $types[$i] ?? self::TYPE_VALUE,
-                    ];
-                }
-            } elseif (is_scalar($parameters)) {
-                $parameters = [
-                    $parameters => $types[0],
-                ];
-            }
         }
 
         if ($parameters !== null) {
@@ -58,33 +36,26 @@ class Expression extends AbstractExpression
     }
 
     /**
-     * @param string $expression
-     * @return $this Provides a fluent interface
      * @throws Exception\InvalidArgumentException
      */
-    public function setExpression($expression)
+    public function setExpression(string $expression): self
     {
-        if (! is_string($expression) || $expression === '') {
-            throw new Exception\InvalidArgumentException('Supplied expression must be a string.');
+        if ($expression === '') {
+            throw new Exception\InvalidArgumentException('Supplied expression must not be an empty string.');
         }
         $this->expression = $expression;
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getExpression()
+    public function getExpression(): string
     {
         return $this->expression;
     }
 
     /**
-     * @param scalar|array $parameters
-     * @return $this Provides a fluent interface
      * @throws Exception\InvalidArgumentException
      */
-    public function setParameters($parameters)
+    public function setParameters(float|array|int|string|bool $parameters): self
     {
         if (! is_scalar($parameters) && ! is_array($parameters)) {
             throw new Exception\InvalidArgumentException('Expression parameters must be a scalar or array.');
@@ -93,41 +64,16 @@ class Expression extends AbstractExpression
         return $this;
     }
 
-    /**
-     * @return array
-     */
-    public function getParameters()
+    public function getParameters(): float|array|int|string|bool
     {
         return $this->parameters;
-    }
-
-    /**
-     * @deprecated
-     *
-     * @param array $types
-     * @return $this Provides a fluent interface
-     */
-    public function setTypes(array $types)
-    {
-        $this->types = $types;
-        return $this;
-    }
-
-    /**
-     * @deprecated
-     *
-     * @return array
-     */
-    public function getTypes()
-    {
-        return $this->types;
     }
 
     /**
      * @return array
      * @throws Exception\RuntimeException
      */
-    public function getExpressionData()
+    public function getExpressionData(): array
     {
         $parameters      = is_scalar($this->parameters) ? [$this->parameters] : $this->parameters;
         $parametersCount = count($parameters);
@@ -145,7 +91,7 @@ class Expression extends AbstractExpression
         // test number of replacements without considering same variable begin used many times first, which is
         // faster, if the test fails then resort to regex which are slow and used rarely
         if ($count !== $parametersCount) {
-            preg_match_all('/\:\w*/', $expression, $matches);
+            preg_match_all('/:\w*/', $expression, $matches);
             if ($parametersCount !== count(array_unique($matches[0]))) {
                 throw new Exception\RuntimeException(
                     'The number of replacements in the expression does not match the number of parameters'
@@ -154,7 +100,7 @@ class Expression extends AbstractExpression
         }
 
         foreach ($parameters as $parameter) {
-            [$values[], $types[]] = $this->normalizeArgument($parameter, self::TYPE_VALUE);
+            [$values[], $types[]] = $this->normalizeArgument($parameter);
         }
         return [
             [

@@ -917,8 +917,11 @@ class SelectTest extends TestCase
             [
                 new Expression(
                     '(COUNT(?) + ?) AS ?',
-                    ['some_column', 5, 'bar'],
-                    [Expression::TYPE_IDENTIFIER, Expression::TYPE_VALUE, Expression::TYPE_IDENTIFIER]
+                    [
+                        ['some_column' => ExpressionInterface::TYPE_IDENTIFIER],
+                        [5 => ExpressionInterface::TYPE_VALUE],
+                        ['bar' => ExpressionInterface::TYPE_IDENTIFIER],
+                    ],
                 ),
             ]
         );
@@ -1020,7 +1023,7 @@ class SelectTest extends TestCase
         ];
 
         $select19 = new Select();
-        $select19->from('foo')->group(new Expression('DAY(?)', ['col1'], [Expression::TYPE_IDENTIFIER]));
+        $select19->from('foo')->group(new Expression('DAY(?)', [['col1' => ExpressionInterface::TYPE_IDENTIFIER]]));
         $sqlPrep19       = // same
         $sqlStr19        = 'SELECT "foo".* FROM "foo" GROUP BY DAY("col1")';
         $internalTests19 = [
@@ -1175,7 +1178,7 @@ class SelectTest extends TestCase
         // @author Demian Katz
         $select34 = new Select();
         $select34->from('table')->order([
-            new Expression('isnull(?) DESC', ['name'], [Expression::TYPE_IDENTIFIER]),
+            new Expression('isnull(?) DESC', [['name' => ExpressionInterface::TYPE_IDENTIFIER]]),
             'name',
         ]);
         $sqlPrep34       = 'SELECT "table".* FROM "table" ORDER BY isnull("name") DESC, "name" ASC';

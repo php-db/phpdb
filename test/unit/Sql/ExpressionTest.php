@@ -5,6 +5,7 @@ namespace LaminasTest\Db\Sql;
 use Laminas\Db\Sql\Exception\InvalidArgumentException;
 use Laminas\Db\Sql\Expression;
 use PHPUnit\Framework\TestCase;
+use TypeError;
 
 /**
  * This is a unit testing test case.
@@ -32,9 +33,13 @@ class ExpressionTest extends TestCase
     public function testSetExpressionException()
     {
         $expression = new Expression();
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Supplied expression must be a string.');
+        $this->expectException(TypeError::class);
         $expression->setExpression(null);
+
+        $expression = new Expression();
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Supplied expression must not be an empty string.');
+        $expression->setExpression('');
     }
 
     /**
@@ -64,8 +69,7 @@ class ExpressionTest extends TestCase
     {
         $expression = new Expression('', 'foo');
 
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Expression parameters must be a scalar or array.');
+        $this->expectException(TypeError::class);
         $expression->setParameters(null);
     }
 
@@ -79,53 +83,10 @@ class ExpressionTest extends TestCase
     }
 
     /**
-     * @covers \Laminas\Db\Sql\Expression::setTypes
-     */
-    public function testSetTypes(): Expression
-    {
-        $expression = new Expression();
-        $return     = $expression->setTypes([
-            Expression::TYPE_IDENTIFIER,
-            Expression::TYPE_VALUE,
-            Expression::TYPE_LITERAL,
-        ]);
-        self::assertSame($expression, $return);
-        return $expression;
-    }
-
-    /**
-     * @covers \Laminas\Db\Sql\Expression::getTypes
-     * @depends testSetTypes
-     */
-    public function testGetTypes(Expression $expression)
-    {
-        self::assertEquals(
-            [Expression::TYPE_IDENTIFIER, Expression::TYPE_VALUE, Expression::TYPE_LITERAL],
-            $expression->getTypes()
-        );
-    }
-
-    /**
      * @covers \Laminas\Db\Sql\Expression::getExpressionData
      */
     public function testGetExpressionData()
     {
-        $expression = new Expression(
-            'X SAME AS ? AND Y = ? BUT LITERALLY ?',
-            ['foo', 5, 'FUNC(FF%X)'],
-            [Expression::TYPE_IDENTIFIER, Expression::TYPE_VALUE, Expression::TYPE_LITERAL]
-        );
-
-        self::assertEquals(
-            [
-                [
-                    'X SAME AS %s AND Y = %s BUT LITERALLY %s',
-                    ['foo', 5, 'FUNC(FF%X)'],
-                    [Expression::TYPE_IDENTIFIER, Expression::TYPE_VALUE, Expression::TYPE_LITERAL],
-                ],
-            ],
-            $expression->getExpressionData()
-        );
         $expression = new Expression(
             'X SAME AS ? AND Y = ? BUT LITERALLY ?',
             [
@@ -200,8 +161,7 @@ class ExpressionTest extends TestCase
 
     public function testConstructorWithInvalidParameter()
     {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Expression parameters must be a scalar or array.');
+        $this->expectException(TypeError::class);
         new Expression('?', (object) []);
     }
 
