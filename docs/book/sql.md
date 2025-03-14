@@ -251,11 +251,11 @@ $select->from('foo')->where(['x = 5', 'y = z']);
 If you provide an associative array with string keys, any value with a string
 key will be cast as follows:
 
-PHP value | Predicate type
---------- | --------------
-`null`    | `Predicate\IsNull`
-`array`   | `Predicate\In`
-`string`  | `Predicate\Operator`, where the key is the identifier.
+| PHP value | Predicate type                                         |
+|-----------|--------------------------------------------------------|
+| `null`    | `Predicate\IsNull`                                     |
+| `array`   | `Predicate\In`                                         |
+| `string`  | `Predicate\Operator`, where the key is the identifier. |
 
 As an example:
 
