@@ -642,6 +642,25 @@ class Expression implements ExpressionInterface, PredicateInterface
 }
 ```
 
+Expression parameters can be supplied either as a single scalar, an array of values, or as an array of value/types for more granular escaping.
+
+```php
+$select
+    ->from('foo')
+    ->columns([
+        new Expression(
+            '(COUNT(?) + ?) AS ?',
+            [
+                ['some_column' => ExpressionInterface::TYPE_IDENTIFIER],
+                [5 => ExpressionInterface::TYPE_VALUE],
+                ['bar' => ExpressionInterface::TYPE_IDENTIFIER],
+            ],
+        ),
+    ]);
+
+// Produces SELECT (COUNT("some_column") + '5') AS "bar" FROM "foo"
+```
+
 ### isNull($identifier)
 
 ```php
