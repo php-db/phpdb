@@ -6,6 +6,7 @@ use Laminas\Db\Sql\Exception\InvalidArgumentException;
 use Laminas\Db\Sql\TableIdentifier;
 use PHPUnit\Framework\TestCase;
 use stdClass;
+use TypeError;
 
 use function array_merge;
 
@@ -67,7 +68,7 @@ class TableIdentifierTest extends TestCase
      */
     public function testRejectsInvalidTable($invalidTable)
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException($invalidTable === '' ? InvalidArgumentException::class : TypeError::class);
 
         new TableIdentifier($invalidTable);
     }
@@ -78,7 +79,7 @@ class TableIdentifierTest extends TestCase
      */
     public function testRejectsInvalidSchema($invalidSchema)
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException($invalidSchema === '' ? InvalidArgumentException::class : TypeError::class);
 
         new TableIdentifier('foo', $invalidSchema);
     }
