@@ -14,11 +14,11 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
     protected $subject;
 
     /**
-     * @param Select $select
+     * @param Select $subject
      */
-    public function setSubject($select)
+    public function setSubject($subject)
     {
-        $this->subject = $select;
+        $this->subject = $subject;
     }
 
     protected function localizeVariables()
@@ -34,7 +34,7 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
         PlatformInterface $platform,
         ?DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null
-    ) {
+    ): ?array {
         if ($this->limit === null && $this->offset !== null) {
             return [''];
         }
@@ -54,9 +54,9 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
         PlatformInterface $platform,
         ?DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null
-    ) {
+    ): ?array {
         if ($this->offset === null) {
-            return;
+            return null;
         }
         if ($parameterContainer) {
             $paramPrefix = $this->processInfo['paramPrefix'];

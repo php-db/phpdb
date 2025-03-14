@@ -50,12 +50,6 @@ class Adapter implements AdapterInterface, Profiler\ProfilerAwareInterface
     protected $queryResultSetPrototype;
 
     /**
-     * @deprecated
-     *
-     * @var Driver\StatementInterface
-     */
-    protected $lastPreparedStatement;
-    /**
      * @param Driver\DriverInterface|array $driver
      * @throws Exception\InvalidArgumentException
      */
@@ -418,15 +412,5 @@ class Adapter implements AdapterInterface, Profiler\ProfilerAwareInterface
     protected function createDriverFromParameters(array $parameters)
     {
         return $this->createDriver($parameters);
-    }
-
-    /**
-     * @deprecated
-     *
-     * @return Platform\PlatformInterface
-     */
-    protected function createPlatformFromDriver(Driver\DriverInterface $driver)
-    {
-        return $this->createPlatform($driver);
     }
 }
