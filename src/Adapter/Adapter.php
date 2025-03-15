@@ -3,8 +3,6 @@
 namespace Laminas\Db\Adapter;
 
 use Exception as PhpException;
-use Laminas\Db\Adapter\Driver\ResultInterface;
-use Laminas\Db\Adapter\Profiler\ProfilerInterface;
 use Laminas\Db\ResultSet;
 
 use function func_get_args;
@@ -91,7 +89,7 @@ class Adapter implements AdapterInterface, Profiler\ProfilerAwareInterface
     /**
      * @return $this Provides a fluent interface
      */
-    public function setProfiler(ProfilerInterface $profiler): self
+    public function setProfiler(Profiler\ProfilerInterface $profiler): self
     {
         $this->profiler = $profiler;
         if ($this->driver instanceof Profiler\ProfilerAwareInterface) {
@@ -100,7 +98,7 @@ class Adapter implements AdapterInterface, Profiler\ProfilerAwareInterface
         return $this;
     }
 
-    public function getProfiler(): ?ProfilerInterface
+    public function getProfiler(): ?Profiler\ProfilerInterface
     {
         return $this->profiler;
     }
@@ -141,7 +139,7 @@ class Adapter implements AdapterInterface, Profiler\ProfilerAwareInterface
         string $sql,
         ParameterContainer|array|string $parametersOrQueryMode = self::QUERY_MODE_PREPARE,
         ?ResultSet\ResultSetInterface $resultPrototype = null
-    ): Driver\StatementInterface|ResultSet\ResultSet|ResultInterface {
+    ): Driver\StatementInterface|ResultSet\ResultSet|Driver\ResultInterface {
         if (
             is_string($parametersOrQueryMode)
             && in_array($parametersOrQueryMode, [self::QUERY_MODE_PREPARE, self::QUERY_MODE_EXECUTE])
@@ -349,7 +347,7 @@ class Adapter implements AdapterInterface, Profiler\ProfilerAwareInterface
         }
     }
 
-    protected function createProfiler(array $parameters): ?ProfilerInterface
+    protected function createProfiler(array $parameters): ?Profiler\ProfilerInterface
     {
         if ($parameters['profiler'] instanceof Profiler\ProfilerInterface) {
             return $parameters['profiler'];
