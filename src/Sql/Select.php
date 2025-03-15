@@ -752,16 +752,12 @@ class Select extends AbstractPreparableSql
      */
     public function __get($name)
     {
-        switch (strtolower($name)) {
-            case 'where':
-                return $this->where;
-            case 'having':
-                return $this->having;
-            case 'joins':
-                return $this->joins;
-            default:
-                throw new Exception\InvalidArgumentException('Not a valid magic property for this object');
-        }
+        return match (strtolower($name)) {
+            'where' => $this->where,
+            'having' => $this->having,
+            'joins' => $this->joins,
+            default => throw new Exception\InvalidArgumentException('Not a valid magic property for this object'),
+        };
     }
 
     /**
