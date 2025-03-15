@@ -2,7 +2,7 @@
 
 namespace Laminas\Db\Adapter;
 
-use Laminas\Db\Adapter\Driver\DriverInterface;
+use Exception as PhpException;
 use Laminas\Db\Adapter\Driver\ResultInterface;
 use Laminas\Db\Adapter\Profiler\ProfilerInterface;
 use Laminas\Db\ResultSet;
@@ -16,7 +16,7 @@ use function str_starts_with;
 use function strtolower;
 
 /**
- * @property DriverInterface $driver
+ * @property Driver\DriverInterface $driver
  * @property Platform\PlatformInterface $platform
  */
 class Adapter implements AdapterInterface, Profiler\ProfilerAwareInterface
@@ -39,7 +39,7 @@ class Adapter implements AdapterInterface, Profiler\ProfilerAwareInterface
 
     public const VALUE_QUOTE_SEPARATOR = 'quoteSeparator';
 
-    /** @var DriverInterface */
+    /** @var Driver\DriverInterface */
     protected $driver;
 
     /** @var Platform\PlatformInterface */
@@ -69,7 +69,7 @@ class Adapter implements AdapterInterface, Profiler\ProfilerAwareInterface
             $driver = $this->createDriver($parameters);
         } elseif (! $driver instanceof Driver\DriverInterface) {
             throw new Exception\InvalidArgumentException(
-                'The supplied or instantiated driver object does not implement ' . DriverInterface::class
+                'The supplied or instantiated driver object does not implement ' . Driver\DriverInterface::class
             );
         }
 
@@ -135,6 +135,7 @@ class Adapter implements AdapterInterface, Profiler\ProfilerAwareInterface
      * query() is a convenience function
      *
      * @throws Exception\InvalidArgumentException
+     * @throws PhpException
      */
     public function query(
         string $sql,
@@ -226,7 +227,7 @@ class Adapter implements AdapterInterface, Profiler\ProfilerAwareInterface
 
     /**
      * @throws Exception\InvalidArgumentException
-     * @return DriverInterface|Platform\PlatformInterface
+     * @return Driver\DriverInterface|Platform\PlatformInterface
      */
     public function __get(string $name)
     {
@@ -237,7 +238,7 @@ class Adapter implements AdapterInterface, Profiler\ProfilerAwareInterface
         };
     }
 
-    protected function createDriver(array $parameters): DriverInterface
+    protected function createDriver(array $parameters): Driver\DriverInterface
     {
         if (! isset($parameters['driver'])) {
             throw new Exception\InvalidArgumentException(
