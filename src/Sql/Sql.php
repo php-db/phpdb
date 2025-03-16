@@ -4,87 +4,59 @@ namespace Laminas\Db\Sql;
 
 use Laminas\Db\Adapter\AdapterInterface;
 use Laminas\Db\Adapter\Driver\StatementInterface;
-use Laminas\Db\Adapter\Platform\PlatformInterface;
+use Laminas\Db\Adapter\StatementContainerInterface;
 
-use function is_array;
-use function is_string;
 use function sprintf;
 
 class Sql
 {
-    /** @var AdapterInterface */
-    protected $adapter;
+    protected AdapterInterface $adapter;
 
-    /** @var string|array|TableIdentifier */
-    protected $table;
+    protected TableIdentifier|string|array|null $table;
 
-    /** @var Platform\Platform */
-    protected $sqlPlatform;
+    protected Platform\Platform $sqlPlatform;
 
-    /**
-     * @param null|string|array|TableIdentifier $table
-     * @param null|Platform\AbstractPlatform    $sqlPlatform @deprecated since version 3.0
-     */
     public function __construct(
         AdapterInterface $adapter,
-        $table = null,
-        ?Platform\AbstractPlatform $sqlPlatform = null
+        array|string|TableIdentifier|null $table = null
     ) {
-        $this->adapter = $adapter;
-        if ($table) {
-            $this->setTable($table);
-        }
-        $this->sqlPlatform = $sqlPlatform ?: new Platform\Platform($adapter);
+        $this->adapter     = $adapter;
+        $this->table       = $table;
+        $this->sqlPlatform = new Platform\Platform($adapter);
     }
 
-    /**
-     * @return null|AdapterInterface
-     */
-    public function getAdapter()
+    public function getAdapter(): ?AdapterInterface
     {
         return $this->adapter;
     }
 
-    /** @return bool */
-    public function hasTable()
+    public function hasTable(): bool
     {
         return $this->table !== null;
     }
 
     /**
-     * @param string|array|TableIdentifier $table
-     * @return $this Provides a fluent interface
      * @throws Exception\InvalidArgumentException
+     * @return $this Provides a fluent interface
      */
-    public function setTable($table)
+    public function setTable(array|string|TableIdentifier $table): self
     {
-        if (is_string($table) || is_array($table) || $table instanceof TableIdentifier) {
-            $this->table = $table;
-        } else {
-            throw new Exception\InvalidArgumentException(
-                'Table must be a string, array or instance of TableIdentifier.'
-            );
-        }
+        $this->table = $table;
+
         return $this;
     }
 
-    /** @return string|array|TableIdentifier */
-    public function getTable()
+    public function getTable(): array|string|TableIdentifier
     {
         return $this->table;
     }
 
-    /** @return Platform\Platform */
-    public function getSqlPlatform()
+    public function getSqlPlatform(): ?Platform\Platform
     {
         return $this->sqlPlatform;
     }
 
-    /**
-     * @param null|string|TableIdentifier $table
-     * @return Select
-     */
-    public function select($table = null)
+    public function select(string|TableIdentifier|null $table = null): Select
     {
         if ($this->table !== null && $table !== null) {
             throw new Exception\InvalidArgumentException(sprintf(
@@ -92,14 +64,11 @@ class Sql
                 $this->table
             ));
         }
+
         return new Select($table ?: $this->table);
     }
 
-    /**
-     * @param null|string|TableIdentifier $table
-     * @return Insert
-     */
-    public function insert($table = null)
+    public function insert(string|null|TableIdentifier $table = null): Insert
     {
         if ($this->table !== null && $table !== null) {
             throw new Exception\InvalidArgumentException(sprintf(
@@ -107,14 +76,11 @@ class Sql
                 $this->table
             ));
         }
+
         return new Insert($table ?: $this->table);
     }
 
-    /**
-     * @param null|string|TableIdentifier $table
-     * @return Update
-     */
-    public function update($table = null)
+    public function update(null|string|TableIdentifier $table = null): Update
     {
         if ($this->table !== null && $table !== null) {
             throw new Exception\InvalidArgumentException(sprintf(
@@ -122,14 +88,11 @@ class Sql
                 $this->table
             ));
         }
+
         return new Update($table ?: $this->table);
     }
 
-    /**
-     * @param null|string|TableIdentifier $table
-     * @return Delete
-     */
-    public function delete($table = null)
+    public function delete(null|string|TableIdentifier $table = null): Delete
     {
         if ($this->table !== null && $table !== null) {
             throw new Exception\InvalidArgumentException(sprintf(
@@ -137,17 +100,15 @@ class Sql
                 $this->table
             ));
         }
+
         return new Delete($table ?: $this->table);
     }
 
-    /**
-     * @return StatementInterface
-     */
     public function prepareStatementForSqlObject(
         PreparableSqlInterface $sqlObject,
         ?StatementInterface $statement = null,
         ?AdapterInterface $adapter = null
-    ) {
+    ): ?StatementContainerInterface {
         $adapter   = $adapter ?: $this->adapter;
         $statement = $statement ?: $adapter->getDriver()->createStatement();
 
@@ -155,23 +116,9 @@ class Sql
     }
 
     /**
-     * Get sql string using platform or sql object
-     *
-     * @deprecated Deprecated in 2.4. Use buildSqlString() instead
-     *
-     * @return string
-     */
-    public function getSqlStringForSqlObject(SqlInterface $sqlObject, ?PlatformInterface $platform = null)
-    {
-        $platform = $platform ?: $this->adapter->getPlatform();
-        return $this->sqlPlatform->setSubject($sqlObject)->getSqlString($platform);
-    }
-
-    /**
-     * @return string
      * @throws Exception\InvalidArgumentException
      */
-    public function buildSqlString(SqlInterface $sqlObject, ?AdapterInterface $adapter = null)
+    public function buildSqlString(SqlInterface $sqlObject, ?AdapterInterface $adapter = null): string
     {
         return $this
             ->sqlPlatform

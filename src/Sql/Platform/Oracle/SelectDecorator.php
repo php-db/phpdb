@@ -16,30 +16,28 @@ use function strpos;
 
 class SelectDecorator extends Select implements PlatformDecoratorInterface
 {
-    /** @var Select */
-    protected $subject;
+    protected Select $subject;
 
     /**
-     * @param Select $select
+     * @param Select $subject
      */
-    public function setSubject($select)
+    public function setSubject($subject): void
     {
-        $this->subject = $select;
+        $this->subject = $subject;
     }
 
     /**
-     * @see \Laminas\Db\Sql\Select::renderTable
+     * @see Select::renderTable
      *
      * @param string $table
      * @param null|string $alias
-     * @return string
      */
-    protected function renderTable($table, $alias = null)
+    protected function renderTable($table, $alias = null): string
     {
         return $table . ($alias ? ' ' . $alias : '');
     }
 
-    protected function localizeVariables()
+    protected function localizeVariables(): void
     {
         parent::localizeVariables();
         unset($this->specifications[self::LIMIT]);
@@ -48,18 +46,13 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
         $this->specifications['LIMITOFFSET'] = null;
     }
 
-    /**
-     * @param array $sqls
-     * @param array $parameters
-     * @return null
-     */
     protected function processLimitOffset(
         PlatformInterface $platform,
         ?DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null,
-        &$sqls = [],
-        &$parameters = []
-    ) {
+        array &$sqls = [],
+        array &$parameters = []
+    ): void {
         if ($this->limit === null && $this->offset === null) {
             return;
         }
@@ -93,13 +86,10 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
         ], $selectParameters));
 
         if ($parameterContainer) {
-            $number = $this->processInfo['subselectCount'] ? $this->processInfo['subselectCount'] : '';
+            $number = $this->processInfo['subselectCount'] ?: '';
 
             if ($this->limit === null) {
-                array_push(
-                    $sqls,
-                    ') b ) WHERE b_rownum > (:offset' . $number . ')'
-                );
+                $sqls[] = ') b ) WHERE b_rownum > (:offset' . $number . ')';
                 $parameterContainer->offsetSet(
                     'offset' . $number,
                     $this->offset,
@@ -107,21 +97,20 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
                 );
             } else {
                 // create bottom part of query, with offset and limit using row_number
-                array_push(
-                    $sqls,
-                    ') b WHERE rownum <= (:offset'
+                $sqls[] = ') b WHERE rownum <= (:offset'
                     . $number
                     . '+:limit'
                     . $number
                     . ')) WHERE b_rownum >= (:offset'
                     . $number
-                    . ' + 1)'
-                );
+                    . ' + 1)';
+
                 $parameterContainer->offsetSet(
                     'offset' . $number,
                     $this->offset,
                     $parameterContainer::TYPE_INTEGER
                 );
+
                 $parameterContainer->offsetSet(
                     'limit' . $number,
                     $this->limit,

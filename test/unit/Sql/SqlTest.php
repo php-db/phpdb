@@ -16,6 +16,7 @@ use Laminas\Db\Sql\Update;
 use LaminasTest\Db\TestAsset;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use TypeError;
 
 class SqlTest extends TestCase
 {
@@ -64,8 +65,7 @@ class SqlTest extends TestCase
         $sql->setTable('foo');
         self::assertSame('foo', $sql->getTable());
 
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Table must be a string, array or instance of TableIdentifier.');
+        $this->expectException(TypeError::class);
         $sql->setTable(null);
     }
 

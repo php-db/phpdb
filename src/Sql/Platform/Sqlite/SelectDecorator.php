@@ -10,18 +10,17 @@ use Laminas\Db\Sql\Select;
 
 class SelectDecorator extends Select implements PlatformDecoratorInterface
 {
-    /** @var Select */
-    protected $subject;
+    protected Select $subject;
 
     /**
      * Set Subject
      *
-     * @param Select $select
+     * @param Select $subject
      * @return $this Provides a fluent interface
      */
-    public function setSubject($select)
+    public function setSubject($subject): self
     {
-        $this->subject = $select;
+        $this->subject = $subject;
 
         return $this;
     }
@@ -29,7 +28,7 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
     /**
      * {@inheritDoc}
      */
-    protected function localizeVariables()
+    protected function localizeVariables(): void
     {
         parent::localizeVariables();
         $this->specifications[self::COMBINE] = '%1$s %2$s';
@@ -42,21 +41,20 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
         PlatformInterface $platform,
         ?DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null
-    ) {
+    ): string {
         return '';
     }
 
-    /** @return string[] */
     protected function processLimit(
         PlatformInterface $platform,
         ?DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null
-    ) {
+    ): ?array {
         if ($this->limit === null && $this->offset !== null) {
             return [''];
         }
         if ($this->limit === null) {
-            return;
+            return null;
         }
         if ($parameterContainer) {
             $paramPrefix = $this->processInfo['paramPrefix'];
@@ -71,9 +69,9 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
         PlatformInterface $platform,
         ?DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null
-    ) {
+    ): ?array {
         if ($this->offset === null) {
-            return;
+            return null;
         }
         if ($parameterContainer) {
             $paramPrefix = $this->processInfo['paramPrefix'];
@@ -91,7 +89,7 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
         PlatformInterface $platform,
         ?DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null
-    ) {
+    ): string {
         return '';
     }
 }

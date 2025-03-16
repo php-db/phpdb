@@ -9,6 +9,8 @@ use function getenv;
 trait AdapterTrait
 {
     /** @var $adapter */
+    protected ?Adapter $adapter;
+
     protected function setUp(): void
     {
         if (! getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_MYSQL')) {

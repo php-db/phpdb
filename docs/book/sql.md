@@ -251,11 +251,11 @@ $select->from('foo')->where(['x = 5', 'y = z']);
 If you provide an associative array with string keys, any value with a string
 key will be cast as follows:
 
-PHP value | Predicate type
---------- | --------------
-`null`    | `Predicate\IsNull`
-`array`   | `Predicate\In`
-`string`  | `Predicate\Operator`, where the key is the identifier.
+| PHP value | Predicate type                                         |
+|-----------|--------------------------------------------------------|
+| `null`    | `Predicate\IsNull`                                     |
+| `array`   | `Predicate\In`                                         |
+| `string`  | `Predicate\Operator`, where the key is the identifier. |
 
 As an example:
 
@@ -640,6 +640,25 @@ class Expression implements ExpressionInterface, PredicateInterface
     public function setParameters(int|float|bool|string|array $parameters) : self;
     public function getParameters() : array;
 }
+```
+
+Expression parameters can be supplied either as a single scalar, an array of values, or as an array of value/types for more granular escaping.
+
+```php
+$select
+    ->from('foo')
+    ->columns([
+        new Expression(
+            '(COUNT(?) + ?) AS ?',
+            [
+                ['some_column' => ExpressionInterface::TYPE_IDENTIFIER],
+                [5 => ExpressionInterface::TYPE_VALUE],
+                ['bar' => ExpressionInterface::TYPE_IDENTIFIER],
+            ],
+        ),
+    ]);
+
+// Produces SELECT (COUNT("some_column") + '5') AS "bar" FROM "foo"
 ```
 
 ### isNull($identifier)
