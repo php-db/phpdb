@@ -2,9 +2,9 @@
 
 namespace Laminas\Db\Adapter;
 
-use Interop\Container\ContainerInterface;
-use Laminas\ServiceManager\AbstractFactoryInterface;
-use Laminas\ServiceManager\ServiceLocatorInterface;
+use Laminas\Db\ResultSet;
+use Laminas\ServiceManager\Factory\AbstractFactoryInterface;
+use Psr\Container\ContainerInterface;
 
 use function is_array;
 
@@ -37,18 +37,6 @@ class AdapterAbstractServiceFactory implements AbstractFactoryInterface
     }
 
     /**
-     * Determine if we can create a service with name (SM v2 compatibility)
-     *
-     * @param string $name
-     * @param string $requestedName
-     * @return bool
-     */
-    public function canCreateServiceWithName(ServiceLocatorInterface $serviceLocator, $name, $requestedName)
-    {
-        return $this->canCreate($serviceLocator, $requestedName);
-    }
-
-    /**
      * Create a DB adapter
      *
      * @param  string $requestedName
@@ -58,19 +46,14 @@ class AdapterAbstractServiceFactory implements AbstractFactoryInterface
     public function __invoke(ContainerInterface $container, $requestedName, ?array $options = null)
     {
         $config = $this->getConfig($container);
-        return new Adapter($config[$requestedName]);
-    }
 
-    /**
-     * Create service with name
-     *
-     * @param string $name
-     * @param string $requestedName
-     * @return Adapter
-     */
-    public function createServiceWithName(ServiceLocatorInterface $serviceLocator, $name, $requestedName)
-    {
-        return $this($serviceLocator, $requestedName);
+        return new Adapter(
+            $config[$requestedName],
+            $container->get(Driver\DriverInterface::class),
+            $container->get(Platform\PlatformInterface::class),
+            $container->has(ResultSet\ResultSetInterface::class) ? $container->get(ResultSet\ResultSetInterface::class) : new ResultSet\ResultSet(),
+            $container->has(Profiler\ProfilerInterface::class) ? $container->get(Profiler\ProfilerInterface::class) : null
+        );
     }
 
     /**

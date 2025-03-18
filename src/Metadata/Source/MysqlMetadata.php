@@ -3,7 +3,7 @@
 namespace Laminas\Db\Metadata\Source;
 
 use DateTime;
-use Laminas\Db\Adapter\Adapter;
+use Laminas\Db\Adapter\AdapterInterface;
 
 use function array_change_key_case;
 use function array_walk;
@@ -32,7 +32,7 @@ class MysqlMetadata extends AbstractSource
              . ' WHERE ' . $p->quoteIdentifier('SCHEMA_NAME')
              . ' != \'INFORMATION_SCHEMA\'';
 
-        $results = $this->adapter->query($sql, Adapter::QUERY_MODE_EXECUTE);
+        $results = $this->adapter->query($sql, AdapterInterface::QUERY_MODE_EXECUTE);
 
         $schemas = [];
         foreach ($results->toArray() as $row) {
@@ -87,7 +87,7 @@ class MysqlMetadata extends AbstractSource
                   . ' != \'INFORMATION_SCHEMA\'';
         }
 
-        $results = $this->adapter->query($sql, Adapter::QUERY_MODE_EXECUTE);
+        $results = $this->adapter->query($sql, AdapterInterface::QUERY_MODE_EXECUTE);
 
         $tables = [];
         foreach ($results->toArray() as $row) {
@@ -152,7 +152,7 @@ class MysqlMetadata extends AbstractSource
                   . ' != \'INFORMATION_SCHEMA\'';
         }
 
-        $results = $this->adapter->query($sql, Adapter::QUERY_MODE_EXECUTE);
+        $results = $this->adapter->query($sql, AdapterInterface::QUERY_MODE_EXECUTE);
         $columns = [];
         foreach ($results->toArray() as $row) {
             $erratas = [];
@@ -268,7 +268,7 @@ class MysqlMetadata extends AbstractSource
               . ', ' . $p->quoteIdentifierChain(['TC', 'CONSTRAINT_NAME'])
               . ', ' . $p->quoteIdentifierChain(['KCU', 'ORDINAL_POSITION']);
 
-        $results = $this->adapter->query($sql, Adapter::QUERY_MODE_EXECUTE);
+        $results = $this->adapter->query($sql, AdapterInterface::QUERY_MODE_EXECUTE);
 
         $realName    = null;
         $constraints = [];
@@ -403,7 +403,7 @@ class MysqlMetadata extends AbstractSource
             . ' != \'INFORMATION_SCHEMA\'';
         }
 
-        $results = $this->adapter->query($sql, Adapter::QUERY_MODE_EXECUTE);
+        $results = $this->adapter->query($sql, AdapterInterface::QUERY_MODE_EXECUTE);
 
         $data = [];
         foreach ($results->toArray() as $row) {
@@ -466,7 +466,7 @@ class MysqlMetadata extends AbstractSource
             . ' != \'INFORMATION_SCHEMA\'';
         }
 
-        $results = $this->adapter->query($sql, Adapter::QUERY_MODE_EXECUTE);
+        $results = $this->adapter->query($sql, AdapterInterface::QUERY_MODE_EXECUTE);
 
         $data = [];
         foreach ($results->toArray() as $row) {
@@ -526,7 +526,7 @@ class MysqlMetadata extends AbstractSource
             . ' != \'INFORMATION_SCHEMA\'';
         }
 
-        $results = $this->adapter->query($sql, Adapter::QUERY_MODE_EXECUTE);
+        $results = $this->adapter->query($sql, AdapterInterface::QUERY_MODE_EXECUTE);
 
         $data = [];
         foreach ($results->toArray() as $row) {

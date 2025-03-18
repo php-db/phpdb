@@ -1,19 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Laminas\Db;
 
 class Module
 {
-    /**
-     * Retrieve default laminas-db configuration for laminas-mvc context.
-     *
-     * @return array
-     */
-    public function getConfig()
+    public function getConfig(): array
     {
-        $provider = new ConfigProvider();
         return [
-            'service_manager' => $provider->getDependencyConfig(),
+            'service_manager' => (new ConfigProvider())->getDependencyConfig(),
         ];
     }
 }

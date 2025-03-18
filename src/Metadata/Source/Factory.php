@@ -2,7 +2,7 @@
 
 namespace Laminas\Db\Metadata\Source;
 
-use Laminas\Db\Adapter\Adapter;
+use Laminas\Db\Adapter\AdapterInterface;
 use Laminas\Db\Exception\InvalidArgumentException;
 use Laminas\Db\Metadata\MetadataInterface;
 
@@ -17,7 +17,7 @@ class Factory
      * @return MetadataInterface
      * @throws InvalidArgumentException If adapter platform name not recognized.
      */
-    public static function createSourceFromAdapter(Adapter $adapter)
+    public static function createSourceFromAdapter(AdapterInterface $adapter)
     {
         $platformName = $adapter->getPlatform()->getName();
 
