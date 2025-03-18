@@ -17,7 +17,7 @@ use function strtolower;
  * @property Driver\DriverInterface $driver
  * @property Platform\PlatformInterface $platform
  */
-class Adapter implements AdapterInterface, Profiler\ProfilerAwareInterface
+abstract class Adapter implements AdapterInterface, Profiler\ProfilerAwareInterface
 {
     /**
      * Query Mode Constants
