@@ -5,6 +5,8 @@ services:
       dockerfile: docker/php/Dockerfile
       args:
         - PHP_VERSION=${PHP_VERSION:-8.3.19}
+    volumes:
+      - ./:/var/www/html
     depends_on:
       - mysql
       - postgresql
@@ -15,11 +17,19 @@ services:
       dockerfile: docker/databases/mysql/Dockerfile
       args:
         - VERSION=${MYSQL_VERSION:-8.0.41}
+    ports:
+      - "3306:3306"
     environment:
       - MYSQL_DATABASE=${MYSQL_DATABASE:-laminasdb_test}
       - MYSQL_USER=${MYSQL_USER:-user}
       - MYSQL_PASSWORD=${MYSQL_PASSWORD:-password}
       - MYSQL_RANDOM_ROOT_PASSWORD=${MYSQL_RANDOM_ROOT_PASSWORD:-yes}
+    volumes:
+      - ./test/integration/TestFixtures/mysql.sql:/docker-entrypoint-initdb.d/mysql.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
 
   postgresql:
     build:
@@ -28,7 +38,17 @@ services:
       args:
         - VERSION=${VERSION:-17.4}
         - ALPINE_VERSION=${ALPINE_VERSION:-3.21}
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./test/integration/TestFixtures/pgsql.sql:/docker-entrypoint-initdb.d/pgsql.sql
     environment:
       - POSTGRES_DB=${POSTGRES_DB:-laminasdb_test}
       - POSTGRES_USER=${POSTGRES_USER:-postgres}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-postgres}
+    healthcheck:
+      test: ["CMD-SHELL", "sh -c 'pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-laminasdb_test}'"]
+      interval: 30s
+      timeout: 60s
+      retries: 5
+      start_period: 80s
