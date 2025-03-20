@@ -1,5 +1,5 @@
 {
-    "name": "axleus/laminas-db",
+    "name": "laminas/laminas-db",
     "description": "Database abstraction layer, SQL abstraction, result set abstraction, and RowDataGateway and TableDataGateway implementations",
     "license": "BSD-3-Clause",
     "keywords": [
@@ -73,7 +73,6 @@
         "upload-coverage": "coveralls -v"
     },
     "conflict": {
-        "zendframework/zend-db": "*",
-        "laminas/laminas-db": "*"
+        "zendframework/zend-db": "*"
     }
 }
