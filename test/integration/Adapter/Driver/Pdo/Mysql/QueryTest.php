@@ -20,7 +20,7 @@ class QueryTest extends TestCase
      *     2: array<string, mixed>
      * }>
      */
-    public function getQueriesWithRowResult(): array
+    public static function getQueriesWithRowResult(): array
     {
         return [
             ['SELECT * FROM test WHERE id = ?', [1], ['id' => 1, 'name' => 'foo', 'value' => 'bar']],

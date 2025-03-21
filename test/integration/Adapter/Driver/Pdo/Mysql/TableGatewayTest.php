@@ -116,7 +116,7 @@ class TableGatewayTest extends TestCase
     }
 
     /** @psalm-return array<string, array{0: mixed}> */
-    public function tableProvider(): array
+    public static function tableProvider(): array
     {
         return [
             'string'                  => ['test'],
