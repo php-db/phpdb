@@ -57,7 +57,6 @@ class FeatureSet
     }
 
     /**
-     * @param array $features
      * @return $this Provides a fluent interface
      */
     public function addFeatures(array $features)

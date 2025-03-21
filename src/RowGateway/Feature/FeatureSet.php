@@ -20,9 +20,6 @@ class FeatureSet
     /** @var array */
     protected $magicSpecifications = [];
 
-    /**
-     * @param array $features
-     */
     public function __construct(array $features = [])
     {
         if ($features) {
@@ -59,7 +56,6 @@ class FeatureSet
     }
 
     /**
-     * @param array $features
      * @return $this Provides a fluent interface
      */
     public function addFeatures(array $features)

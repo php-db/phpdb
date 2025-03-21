@@ -74,7 +74,6 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
     /**
      * Populate Data
      *
-     * @param  array $rowData
      * @param  bool  $rowExistsInDatabase
      * @return $this Provides a fluent interface
      */

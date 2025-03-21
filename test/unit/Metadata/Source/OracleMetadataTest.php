@@ -40,7 +40,6 @@ class OracleMetadataTest extends AbstractIntegrationTest
 
     /**
      * @dataProvider constraintDataProvider
-     * @param array $constraintData
      */
     public function testGetConstraints(array $constraintData)
     {

@@ -65,6 +65,7 @@ class TableGatewayTest extends TestCase
     /**
      * @see https://github.com/zendframework/zend-db/issues/35
      * @see https://github.com/zendframework/zend-db/pull/178
+     *
      * @return mixed
      */
     public function testInsertWithExtendedCharsetFieldName()

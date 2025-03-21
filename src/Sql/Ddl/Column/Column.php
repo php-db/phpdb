@@ -98,7 +98,6 @@ class Column implements ColumnInterface
     }
 
     /**
-     * @param  array $options
      * @return $this Provides a fluent interface
      */
     public function setOptions(array $options)

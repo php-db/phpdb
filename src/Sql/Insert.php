@@ -75,7 +75,6 @@ class Insert extends AbstractPreparableSql
     /**
      * Specify columns
      *
-     * @param  array $columns
      * @return $this Provides a fluent interface
      */
     public function columns(array $columns)
@@ -134,7 +133,6 @@ class Insert extends AbstractPreparableSql
      *
      * @link http://stackoverflow.com/questions/173400/how-to-check-if-php-array-is-associative-or-sequential
      *
-     * @param array $array
      * @return bool
      */
     private function isAssocativeArray(array $array)
