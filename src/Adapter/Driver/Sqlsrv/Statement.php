@@ -169,7 +169,6 @@ class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
 
     /**
      * @param string $sql
-     * @param array $options
      * @return $this Provides a fluent interface
      * @throws Exception\RuntimeException
      */
@@ -270,17 +269,11 @@ class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
         }
     }
 
-    /**
-     * @param array $prepareParams
-     */
     public function setPrepareParams(array $prepareParams)
     {
         $this->prepareParams = $prepareParams;
     }
 
-    /**
-     * @param array $prepareOptions
-     */
     public function setPrepareOptions(array $prepareOptions)
     {
         $this->prepareOptions = $prepareOptions;

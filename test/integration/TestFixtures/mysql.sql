@@ -1,5 +1,5 @@
 DROP TABLE IF EXISTS test;
-CREATE TABLE test (
+CREATE TABLE IF NOT EXISTS test (
     id INT NOT NULL AUTO_INCREMENT,
     name VARCHAR(255) NOT NULL,
     value VARCHAR(255) NOT NULL,
@@ -13,7 +13,7 @@ INSERT INTO test (name, value) VALUES
 ('123', 'bar');
 
 DROP TABLE IF EXISTS test_charset;
-CREATE TABLE test_charset (
+CREATE TABLE IF NOT EXISTS test_charset (
     id INT NOT NULL AUTO_INCREMENT,
     field$ VARCHAR(255) NOT NULL,
     field_ VARCHAR(255) NOT NULL,
@@ -25,7 +25,7 @@ INSERT INTO test_charset (field$, field_) VALUES
 ('bar', 'baz');
 
 DROP TABLE IF EXISTS test_audit_trail;
-CREATE TABLE test_audit_trail (
+CREATE TABLE IF NOT EXISTS test_audit_trail (
     id INT NOT NULL AUTO_INCREMENT,
     test_id INT NOT NULL,
     test_value_old VARCHAR(255) NOT NULL,

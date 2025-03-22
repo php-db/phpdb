@@ -308,7 +308,6 @@ class ColumnObject
     }
 
     /**
-     * @param array $erratas
      * @return $this Provides a fluent interface
      */
     public function setErratas(array $erratas)

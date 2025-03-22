@@ -2,7 +2,6 @@
 
 namespace LaminasIntegrationTest\Db\Adapter\Driver\Pdo\Mysql;
 
-use Laminas\Db\Adapter\Adapter;
 use Laminas\Db\Adapter\Driver\Pdo\Result as PdoResult;
 use Laminas\Db\Adapter\Exception\RuntimeException;
 use Laminas\Db\ResultSet\ResultSet;
@@ -20,7 +19,7 @@ class QueryTest extends TestCase
      *     2: array<string, mixed>
      * }>
      */
-    public function getQueriesWithRowResult(): array
+    public static function getQueriesWithRowResult(): array
     {
         return [
             ['SELECT * FROM test WHERE id = ?', [1], ['id' => 1, 'name' => 'foo', 'value' => 'bar']],

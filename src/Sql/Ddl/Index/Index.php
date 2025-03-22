@@ -18,7 +18,6 @@ class Index extends AbstractIndex
     /**
      * @param  string|array|null $columns
      * @param  null|string $name
-     * @param array $lengths
      */
     public function __construct($columns, $name = null, array $lengths = [])
     {

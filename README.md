@@ -40,35 +40,53 @@ $ ./vendor/bin/phpunit --testsuite "integration test" # integration tests only
 
 Unit tests do not require additional functionality beyond having the appropriate database extensions present and loaded in your PHP binary.
 
-### Integration tests
+#### Integration tests
 
 To run the integration tests, you need databases.
-The repository includes a `Vagrantfile` which allows you to fire up a [vagrant box](https://app.vagrantup.com) with several of our target databases, including:
+So, the repository includes a [Docker Compose][docker-compose] configuration which allows you to start a test environment that provides several of our target databases, including _MySQL_ and _PostgreSQL_, and SQLite.
 
-- MySQL
-- PostgreSQL
-- SQL Server
-
-To start up vagrant:
+To start up the configuration, run the following command:
 
 ```bash
-$ vagrant up
+$ docker compose up -d
 ```
 
-Copy `phpunit.xml.dist` to `phpunit.xml`, and change the following ENV var declaration values to "true":
+To test that the environment is up and running, run the following command:
+
+```bash
+$ docker compose ps
+```
+
+You should see output similar to the following:
+
+```bash
+docker compose ps
+NAME                      IMAGE                                            COMMAND                SERVICE      CREATED       STATUS       PORTS
+laminas-db-mysql-1        docker.io/library/laminas-db-mysql:latest        "mysqld"               mysql        7 hours ago   Up 7 hours   
+laminas-db-php-1          docker.io/library/laminas-db-php:latest          "apache2-foreground"   php          7 hours ago   Up 7 hours   
+laminas-db-postgresql-1   docker.io/library/laminas-db-postgresql:latest   "postgres"             postgresql   7 hours ago   Up 7 hours
+```
+
+If you see three containers listed, then they're all running, and you are ready to run the test suite.
+So, copy `phpunit.xml.dist` to `phpunit.xml`, and change the following environment variable to "true" to enable the three databases:
 
 - TESTS_LAMINAS_DB_ADAPTER_DRIVER_MYSQL
-- TESTS_LAMINAS_DB_ADAPTER_DRIVER_SQLSRV
 - TESTS_LAMINAS_DB_ADAPTER_DRIVER_PGSQL
 - TESTS_LAMINAS_DB_ADAPTER_DRIVER_SQLITE_MEMORY
 
-From there, you can run the integration tests:
+From there, you can run the integration tests by running the following command:
 
 ```bash
-$ ./vendor/bin/phpunit --testsuite "integration test"
+$ docker compose exec php composer test-integration
 ```
+
+> [!TIP]
+> If you want to grow your Docker Compose knowledge, grab a (free) copy of [Deploy with Docker Compose][deploy-with-docker-compose].
 
 -----
 
 - File issues at https://github.com/laminas/laminas-db/issues
 - Documentation is at https://docs.laminas.dev/laminas-db/
+
+[docker-compose]: https://docs.docker.com/compose/intro/features-uses/
+[deploy-with-docker-compose]: https://deploywithdockercompose.com

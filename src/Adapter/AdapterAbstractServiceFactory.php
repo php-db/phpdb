@@ -40,7 +40,6 @@ class AdapterAbstractServiceFactory implements AbstractFactoryInterface
      * Create a DB adapter
      *
      * @param  string $requestedName
-     * @param  array $options
      * @return Adapter
      */
     public function __invoke(ContainerInterface $container, $requestedName, ?array $options = null)
