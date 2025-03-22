@@ -35,7 +35,6 @@ class Mysqli implements DriverInterface, Profiler\ProfilerAwareInterface
      * Constructor
      *
      * @param array|Connection|\mysqli $connection
-     * @param array $options
      */
     public function __construct(
         $connection,

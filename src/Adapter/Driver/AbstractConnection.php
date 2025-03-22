@@ -94,7 +94,6 @@ abstract class AbstractConnection implements ConnectionInterface, ProfilerAwareI
     }
 
     /**
-     * @param  array $connectionParameters
      * @return $this Provides a fluent interface
      */
     public function setConnectionParameters(array $connectionParameters)
