@@ -1,29 +1,25 @@
 <?php
 
-namespace LaminasIntegrationTest\Db;
+namespace LaminasIntegrationTest\Db\Extension;
 
 use LaminasIntegrationTest\Db\Platform\FixtureLoader;
 use LaminasIntegrationTest\Db\Platform\MysqlFixtureLoader;
 use LaminasIntegrationTest\Db\Platform\PgsqlFixtureLoader;
 use LaminasIntegrationTest\Db\Platform\SqlServerFixtureLoader;
-use PHPUnit\Framework\TestListener;
-use PHPUnit\Framework\TestListenerDefaultImplementation;
-use PHPUnit\Framework\TestSuite;
-use PHPUnit\Runner\TestHook;
+use PHPUnit\Event\TestSuite\Started;
+use PHPUnit\Event\TestSuite\StartedSubscriber;
 
 use function getenv;
 use function printf;
 
-class IntegrationTestListener implements TestHook, TestListener
+final class IntegrationTestStartedListener implements StartedSubscriber
 {
-    use TestListenerDefaultImplementation;
-
     /** @var FixtureLoader[] */
     private $fixtureLoaders = [];
 
-    public function startTestSuite(TestSuite $suite): void
+    public function notify(Started $event): void
     {
-        if ($suite->getName() !== 'integration test') {
+        if ($event->testSuite()->name() !== 'integration test') {
             return;
         }
 
@@ -47,22 +43,6 @@ class IntegrationTestListener implements TestHook, TestListener
 
         foreach ($this->fixtureLoaders as $fixtureLoader) {
             $fixtureLoader->createDatabase();
-        }
-    }
-
-    public function endTestSuite(TestSuite $suite): void
-    {
-        if (
-            $suite->getName() !== 'integration test'
-            || empty($this->fixtureLoaders)
-        ) {
-            return;
-        }
-
-        printf("\nIntegration test ended.\n");
-
-        foreach ($this->fixtureLoaders as $fixtureLoader) {
-            $fixtureLoader->dropDatabase();
         }
     }
 }
