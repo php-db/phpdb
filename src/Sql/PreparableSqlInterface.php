@@ -3,12 +3,12 @@
 namespace Laminas\Db\Sql;
 
 use Laminas\Db\Adapter\AdapterInterface;
-use Laminas\Db\Adapter\StatementContainerInterface;
+use Laminas\Db\Adapter\Driver\StatementInterface;
 
 interface PreparableSqlInterface
 {
     /**
-     * @return void
+     * @return StatementInterface
      */
-    public function prepareStatement(AdapterInterface $adapter, StatementContainerInterface $statementContainer);
+    public function prepareStatement(AdapterInterface $adapter, StatementInterface $statementContainer): StatementInterface;
 }

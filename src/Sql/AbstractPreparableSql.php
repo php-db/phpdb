@@ -4,29 +4,29 @@ namespace Laminas\Db\Sql;
 
 use Laminas\Db\Adapter\AdapterInterface;
 use Laminas\Db\Adapter\ParameterContainer;
-use Laminas\Db\Adapter\StatementContainerInterface;
+use Laminas\Db\Adapter\Driver\StatementInterface;
 
 abstract class AbstractPreparableSql extends AbstractSql implements PreparableSqlInterface
 {
     /**
      * {@inheritDoc}
      *
-     * @return StatementContainerInterface
+     * @return StatementInterface
      */
-    public function prepareStatement(AdapterInterface $adapter, StatementContainerInterface $statementContainer)
+    public function prepareStatement(AdapterInterface $adapter, StatementInterface $statementInterface): StatementInterface
     {
-        $parameterContainer = $statementContainer->getParameterContainer();
+        $parameterContainer = $statementInterface->getParameterContainer();
 
         if (! $parameterContainer instanceof ParameterContainer) {
             $parameterContainer = new ParameterContainer();
 
-            $statementContainer->setParameterContainer($parameterContainer);
+            $statementInterface->setParameterContainer($parameterContainer);
         }
 
-        $statementContainer->setSql(
+        $statementInterface->setSql(
             $this->buildSqlString($adapter->getPlatform(), $adapter->getDriver(), $parameterContainer)
         );
 
-        return $statementContainer;
+        return $statementInterface;
     }
 }

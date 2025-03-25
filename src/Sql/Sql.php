@@ -108,7 +108,7 @@ class Sql
         PreparableSqlInterface $sqlObject,
         ?StatementInterface $statement = null,
         ?AdapterInterface $adapter = null
-    ): ?StatementContainerInterface {
+    ): StatementInterface {
         $adapter   = $adapter ?: $this->adapter;
         $statement = $statement ?: $adapter->getDriver()->createStatement();
 

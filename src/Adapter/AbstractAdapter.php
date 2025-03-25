@@ -89,7 +89,7 @@ abstract class AbstractAdapter implements AdapterInterface, Profiler\ProfilerAwa
     /**
      * @throws Exception\RuntimeException
      */
-    public function getDriver(): Driver\DriverInterface|array
+    public function getDriver(): Driver\DriverInterface
     {
         if ($this->driver === null) {
             throw new Exception\RuntimeException('Driver has not been set or configured for this adapter.');
@@ -97,7 +97,7 @@ abstract class AbstractAdapter implements AdapterInterface, Profiler\ProfilerAwa
         return $this->driver;
     }
 
-    public function getPlatform(): ?Platform\PlatformInterface
+    public function getPlatform(): Platform\PlatformInterface
     {
         return $this->platform;
     }

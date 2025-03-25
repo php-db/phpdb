@@ -4,7 +4,7 @@ namespace Laminas\Db\Sql\Platform;
 
 use Laminas\Db\Adapter\AdapterInterface;
 use Laminas\Db\Adapter\Platform\PlatformInterface;
-use Laminas\Db\Adapter\StatementContainerInterface;
+use Laminas\Db\Adapter\Driver\StatementInterface;
 use Laminas\Db\Sql\Exception;
 use Laminas\Db\Sql\PreparableSqlInterface;
 use Laminas\Db\Sql\SqlInterface;
@@ -66,7 +66,7 @@ class AbstractPlatform implements PlatformDecoratorInterface, PreparableSqlInter
      *
      * @throws Exception\RuntimeException
      */
-    public function prepareStatement(AdapterInterface $adapter, StatementContainerInterface $statementContainer)
+    public function prepareStatement(AdapterInterface $adapter, StatementInterface $statementInterface): StatementInterface
     {
         if (! $this->subject instanceof PreparableSqlInterface) {
             throw new Exception\RuntimeException(
@@ -75,9 +75,9 @@ class AbstractPlatform implements PlatformDecoratorInterface, PreparableSqlInter
             );
         }
 
-        $this->getTypeDecorator($this->subject)->prepareStatement($adapter, $statementContainer);
+        $this->getTypeDecorator($this->subject)->prepareStatement($adapter, $statementInterface);
 
-        return $statementContainer;
+        return $statementInterface;
     }
 
     /**
