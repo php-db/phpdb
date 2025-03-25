@@ -4,10 +4,12 @@ namespace Laminas\Db\Sql\Platform;
 
 use Laminas\Db\Adapter\AdapterInterface;
 use Laminas\Db\Adapter\Platform\PlatformInterface;
+use Laminas\Db\Adapter\Driver\StatementInterface;
 use Laminas\Db\Adapter\StatementContainerInterface;
 use Laminas\Db\Sql\Exception;
 use Laminas\Db\Sql\PreparableSqlInterface;
 use Laminas\Db\Sql\SqlInterface;
+use Override;
 
 use function is_a;
 use function sprintf;
@@ -84,7 +86,8 @@ class Platform extends AbstractPlatform
      *
      * @throws Exception\RuntimeException
      */
-    public function prepareStatement(AdapterInterface $adapter, StatementContainerInterface $statementContainer)
+    #[Override]
+    public function prepareStatement(AdapterInterface $adapter, StatementInterface $statementInterface): StatementInterface
     {
         if (! $this->subject instanceof PreparableSqlInterface) {
             throw new Exception\RuntimeException(
@@ -93,9 +96,9 @@ class Platform extends AbstractPlatform
             );
         }
 
-        $this->getTypeDecorator($this->subject, $adapter)->prepareStatement($adapter, $statementContainer);
+        $this->getTypeDecorator($this->subject, $adapter)->prepareStatement($adapter, $statementInterface);
 
-        return $statementContainer;
+        return $statementInterface;
     }
 
     /**
