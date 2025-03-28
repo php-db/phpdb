@@ -120,7 +120,6 @@ class Select extends AbstractPreparableSql
     /** @var null|string|Expression */
     protected $quantifier;
 
-    /** @var array */
     protected array $columns = [self::SQL_STAR];
 
     /** @var Join[] */
@@ -226,7 +225,6 @@ class Select extends AbstractPreparableSql
      *     key string will be use as alias,
      *     value can be string or Expression objects
      *
-     * @param  array $columns
      * @param  bool  $prefixColumnsWithTable
      * @return $this Provides a fluent interface
      */
