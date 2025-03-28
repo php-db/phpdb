@@ -3,9 +3,9 @@
 namespace LaminasIntegrationTest\Db\Adapter\Driver\Pdo\Mysql;
 
 use Laminas\Db\Adapter\Adapter;
-use LaminasIntegrationTest\Db\Adapter\Driver\Pdo\AbstractAdapterTest;
+use LaminasIntegrationTest\Db\Adapter\Driver\Pdo\AbstractAdapterTestCase;
 
-class AdapterTest extends AbstractAdapterTest
+class AdapterTest extends AbstractAdapterTestCase
 {
     use AdapterTrait;
 

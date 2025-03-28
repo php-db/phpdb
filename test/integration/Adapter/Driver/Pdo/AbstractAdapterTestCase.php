@@ -11,7 +11,7 @@ use function shell_exec;
 /**
  * @property Adapter $adapter
  */
-abstract class AbstractAdapterTest extends TestCase
+abstract class AbstractAdapterTestCase extends TestCase
 {
     public const DB_SERVER_PORT = null;
 
