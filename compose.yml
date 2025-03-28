@@ -16,7 +16,7 @@ services:
       context: ./
       dockerfile: docker/databases/mysql/Dockerfile
       args:
-        - VERSION=${MYSQL_VERSION:-8.0.41}
+        - VERSION=${MYSQL_VERSION:-oraclelinux9}
     ports:
       - "3306:3306"
     environment:

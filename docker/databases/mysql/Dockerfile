@@ -1,3 +1,3 @@
-ARG VERSION=8.4.5
+ARG VERSION=oraclelinux9
 
-FROM mysql:${VERSION}-bookworm AS base
+FROM mysql:${VERSION} AS base
