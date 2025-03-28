@@ -13,7 +13,7 @@ use function shell_exec;
  * @property Adapter $adapter
  */
 #[CoversMethod(Adapter::class, '__construct()')]
-abstract class AbstractAdapterTest extends TestCase
+abstract class AbstractAdapterTestCase extends TestCase
 {
     public const DB_SERVER_PORT = null;
 
