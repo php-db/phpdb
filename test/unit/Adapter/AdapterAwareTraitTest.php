@@ -9,13 +9,14 @@ use Laminas\Db\Adapter\Platform\PlatformInterface;
 use LaminasTest\Db\DeprecatedAssertionsTrait;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
+use ReflectionException;
 
 class AdapterAwareTraitTest extends TestCase
 {
     use DeprecatedAssertionsTrait;
 
     /**
-     * @throws \ReflectionException
+     * @throws ReflectionException
      * @throws Exception
      */
     public function testSetDbAdapter()

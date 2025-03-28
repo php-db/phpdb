@@ -25,6 +25,7 @@ use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\TestDox;
 use PHPUnit\Framework\TestCase;
+use ReflectionException;
 
 #[CoversMethod(Update::class, 'table')]
 #[CoversMethod(Update::class, '__construct')]
@@ -40,7 +41,6 @@ class UpdateTest extends TestCase
 {
     use DeprecatedAssertionsTrait;
 
-    /** @var Update */
     protected Update $update;
 
     /**
@@ -61,7 +61,7 @@ class UpdateTest extends TestCase
     }
 
     /**
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function testTable()
     {
@@ -74,7 +74,7 @@ class UpdateTest extends TestCase
     }
 
     /**
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function testConstruct()
     {
@@ -107,7 +107,7 @@ class UpdateTest extends TestCase
     }
 
     /**
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function testWhere()
     {

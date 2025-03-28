@@ -19,7 +19,6 @@ use const MYSQLI_CLIENT_SSL_DONT_VERIFY_SERVER_CERT;
 #[CoversMethod(Connection::class, 'getConnectionParameters')]
 class ConnectionTest extends TestCase
 {
-    /** @var Connection */
     protected Connection $connection;
 
     /**
@@ -127,7 +126,6 @@ class ConnectionTest extends TestCase
      * Create a mock mysqli
      *
      * @param int $flags Expected flags to real_connect
-     * @return MockObject
      */
     protected function createMockMysqli(int $flags): MockObject
     {
@@ -179,7 +177,6 @@ class ConnectionTest extends TestCase
      *
      * @param MockObject $mysqli Mock mysqli object
      * @param array      $params Connection params
-     * @return MockObject
      */
     protected function createMockConnection(MockObject $mysqli, array $params): MockObject
     {

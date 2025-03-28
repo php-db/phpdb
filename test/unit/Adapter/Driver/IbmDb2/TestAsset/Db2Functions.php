@@ -12,9 +12,6 @@ use const E_USER_WARNING;
  * Return false if $sql is "invalid sql", otherwise return true
  *
  * @param  resource $connection
- * @param string    $sql
- * @param  array    $options
- * @return bool
  */
 function db2_prepare($connection, string $sql, array $options = []): bool
 {
@@ -30,9 +27,6 @@ function db2_prepare($connection, string $sql, array $options = []): bool
 /**
  * Mock db2_stmt_errormsg
  * If you pass a string to $stmt, it will be returned to you
- *
- * @param mixed|null $stmt
- * @return string
  */
 function db2_stmt_errormsg(mixed $stmt = null): string
 {
@@ -46,9 +40,6 @@ function db2_stmt_errormsg(mixed $stmt = null): string
 /**
  * Mock db2_stmt_error
  * If you pass a string to $stmt, it will be returned to you
- *
- * @param mixed|null $stmt
- * @return string
  */
 function db2_stmt_error(mixed $stmt = null): string
 {

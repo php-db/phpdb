@@ -8,7 +8,6 @@ class TrustingMysqlPlatform extends Mysql
 {
     /**
      * @param string $value
-     * @return string
      */
     public function quoteValue($value): string
     {

@@ -17,7 +17,6 @@ class DeleteIgnore extends Delete
         self::SPECIFICATION_WHERE  => 'WHERE %1$s',
     ];
 
-    /** @return string */
     protected function processdeleteIgnore(
         PlatformInterface $platform,
         ?DriverInterface $driver = null,

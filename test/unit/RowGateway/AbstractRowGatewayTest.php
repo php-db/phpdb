@@ -16,6 +16,7 @@ use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use ReflectionException;
 use ReflectionObject;
 
 #[CoversMethod(RowGateway::class, 'offsetSet')]
@@ -45,7 +46,7 @@ class AbstractRowGatewayTest extends TestCase
     protected ResultInterface|MockObject $mockResult;
 
     /**
-     * @throws \ReflectionException
+     * @throws ReflectionException
      * @throws Exception
      */
     protected function setUp(): void
@@ -164,7 +165,7 @@ class AbstractRowGatewayTest extends TestCase
     }
 
     /**
-     * @throws \ReflectionException
+     * @throws ReflectionException
      * @throws Exception
      */
     public function testSaveInsertMultiKey()
@@ -285,7 +286,7 @@ class AbstractRowGatewayTest extends TestCase
     }
 
     /**
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     protected function setRowGatewayState(array $properties): void
     {

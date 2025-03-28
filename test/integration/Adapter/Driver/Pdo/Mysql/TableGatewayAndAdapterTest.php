@@ -2,6 +2,7 @@
 
 namespace LaminasIntegrationTest\Db\Adapter\Driver\Pdo\Mysql;
 
+use Exception;
 use Laminas\Db\TableGateway\TableGateway;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
@@ -19,7 +20,7 @@ class TableGatewayAndAdapterTest extends TestCase
     use AdapterTrait;
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     #[DataProvider('connections')]
     public function testGetOutOfConnections(): void

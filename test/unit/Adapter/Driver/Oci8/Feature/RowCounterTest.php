@@ -18,7 +18,6 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(RowCounter::class, 'getRowCountClosure')]
 class RowCounterTest extends TestCase
 {
-    /** @var RowCounter */
     protected RowCounter $rowCounter;
 
     protected function setUp(): void
@@ -57,11 +56,6 @@ class RowCounterTest extends TestCase
         self::assertEquals(5, $closure());
     }
 
-    /**
-     * @param string $sql
-     * @param mixed  $returnValue
-     * @return Statement&MockObject
-     */
     protected function getMockStatement(string $sql, mixed $returnValue): MockObject&Statement
     {
         $statement = $this->getMockBuilder(Statement::class)
@@ -84,10 +78,6 @@ class RowCounterTest extends TestCase
         return $statement;
     }
 
-    /**
-     * @param mixed $returnValue
-     * @return Oci8&MockObject
-     */
     protected function getMockDriver(mixed $returnValue): Oci8&MockObject
     {
         $oci8Statement = $this->getMockBuilder(Result::class)

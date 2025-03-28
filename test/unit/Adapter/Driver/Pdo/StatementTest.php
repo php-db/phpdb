@@ -21,7 +21,6 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(Statement::class, 'execute')]
 class StatementTest extends TestCase
 {
-    /** @var Statement */
     protected Statement $statement;
 
     /**

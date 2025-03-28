@@ -147,7 +147,6 @@ class TableGatewayTest extends TestCase
 
     /**
      * @param array<string, string|TableIdentifier> $tableValue
-     * @param string|TableIdentifier                $expected
      */
     #[DataProvider('aliasedTables')]
     #[Group('7311')]
@@ -210,7 +209,6 @@ class TableGatewayTest extends TestCase
 
     /**
      * @param array<string, string|TableIdentifier> $tableValue
-     * @param string|TableIdentifier                $expected
      */
     #[DataProvider('aliasedTables')]
     public function testUpdateShouldResetTableToUnaliasedTable(array $tableValue, string|TableIdentifier $expected)
@@ -274,7 +272,6 @@ class TableGatewayTest extends TestCase
 
     /**
      * @param array<string, string|TableIdentifier> $tableValue
-     * @param string|TableIdentifier                $expected
      */
     #[DataProvider('aliasedTables')]
     public function testDeleteShouldResetTableToUnaliasedTable(array $tableValue, string|TableIdentifier $expected)

@@ -10,7 +10,6 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(NotBetween::class, 'getExpressionData')]
 class NotBetweenTest extends TestCase
 {
-    /** @var NotBetween */
     protected NotBetween $notBetween;
 
     protected function setUp(): void

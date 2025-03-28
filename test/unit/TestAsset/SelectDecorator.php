@@ -6,7 +6,6 @@ use Laminas\Db\Sql;
 
 class SelectDecorator extends Sql\Select implements Sql\Platform\PlatformDecoratorInterface
 {
-    /** @var null|object */
     protected ?object $subject;
 
     /**

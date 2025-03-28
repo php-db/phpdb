@@ -28,7 +28,6 @@ use function extension_loaded;
 #[CoversMethod(Pgsql::class, 'getResultPrototype')]
 class PgsqlTest extends TestCase
 {
-    /** @var Pgsql */
     protected Pgsql $pgsql;
 
     /**

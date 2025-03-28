@@ -11,13 +11,14 @@ use LaminasTest\Db\TestAsset;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use ReflectionException;
 use ReflectionMethod;
 use ReflectionProperty;
 
 class PlatformTest extends TestCase
 {
     /**
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function testResolveDefaultPlatform()
     {
@@ -33,7 +34,7 @@ class PlatformTest extends TestCase
     }
 
     /**
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function testResolvePlatformName()
     {
@@ -54,7 +55,7 @@ class PlatformTest extends TestCase
     }
 
     /**
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     #[Group('6890')]
     public function testAbstractPlatformCrashesGracefullyOnMissingDefaultPlatform()
@@ -77,7 +78,7 @@ class PlatformTest extends TestCase
     }
 
     /**
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     #[Group('6890')]
     public function testAbstractPlatformCrashesGracefullyOnMissingDefaultPlatformWithGetDecorators()
@@ -99,10 +100,6 @@ class PlatformTest extends TestCase
         $platform->getDecorators();
     }
 
-    /**
-     * @param string $platformName
-     * @return Adapter
-     */
     protected function resolveAdapter(string $platformName): Adapter
     {
         $platform = null;

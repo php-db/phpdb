@@ -21,10 +21,8 @@ class MasterSlaveFeatureTest extends TestCase
     /** @var AdapterInterface&MockObject */
     protected AdapterInterface|MockObject $mockSlaveAdapter;
 
-    /** @var MasterSlaveFeature */
     protected MasterSlaveFeature $feature;
 
-    /** @var TableGateway&MockObject */
     protected TableGateway&MockObject $table;
 
     protected function setUp(): void

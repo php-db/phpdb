@@ -28,7 +28,6 @@ class DeleteTest extends TestCase
 {
     use DeprecatedAssertionsTrait;
 
-    /** @var Delete */
     protected Delete $delete;
 
     /**

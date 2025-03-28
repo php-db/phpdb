@@ -4,16 +4,16 @@ namespace LaminasTest\Db\Adapter\Driver\Pdo;
 
 use Laminas\Db\Adapter\Driver\Pdo\Statement;
 use PDO;
+use PDOStatement;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class StatementIntegrationTest extends TestCase
 {
-    /** @var Statement */
     protected Statement $statement;
 
     /** @var MockObject */
-    protected \PDOStatement|MockObject $pdoStatementMock;
+    protected PDOStatement|MockObject $pdoStatementMock;
 
     /**
      * Sets up the fixture, for example, opens a network connection.

@@ -25,7 +25,6 @@ use PHPUnit\Framework\TestCase;
 #[Group('integrationOracle')]
 class StatementTest extends TestCase
 {
-    /** @var Statement */
     protected Statement $statement;
 
     /**

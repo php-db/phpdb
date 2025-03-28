@@ -21,10 +21,8 @@ use function class_exists;
 #[CoversMethod(HydratingResultSet::class, 'toArray')]
 class HydratingResultSetTest extends TestCase
 {
-    /** @var string */
     private string $arraySerializableHydratorClass;
 
-    /** @var string */
     private string $classMethodsHydratorClass;
 
     protected function setUp(): void

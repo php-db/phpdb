@@ -15,7 +15,6 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(Profiler::class, 'getProfiles')]
 class ProfilerTest extends TestCase
 {
-    /** @var Profiler */
     protected Profiler $profiler;
 
     /**

@@ -24,9 +24,7 @@ include __DIR__ . '/TestAsset/Db2Functions.php';
 #[CoversMethod(Statement::class, 'execute')]
 class StatementTest extends TestCase
 {
-    /** @var Statement */
     protected Statement $statement;
-    /** @var int */
     protected int $currentErrorReporting;
 
     /**

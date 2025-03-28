@@ -12,7 +12,6 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(AbstractResultSet::class, 'current')]
 class AbstractResultSetIntegrationTest extends TestCase
 {
-    /** @var AbstractResultSet|MockObject */
     protected AbstractResultSet|MockObject $resultSet;
 
     /**

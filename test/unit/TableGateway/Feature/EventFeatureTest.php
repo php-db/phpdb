@@ -13,21 +13,19 @@ use Laminas\Db\TableGateway\Feature\EventFeature;
 use Laminas\Db\TableGateway\TableGateway;
 use Laminas\EventManager\EventManager;
 use PHPUnit\Framework\MockObject\Exception;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class EventFeatureTest extends TestCase
 {
-    /** @var EventManager */
     protected EventManager $eventManager;
 
-    /** @var EventFeature */
     protected EventFeature $feature;
 
-    /** @var EventFeature\TableGatewayEvent */
     protected EventFeature\TableGatewayEvent $event;
 
     /** @var TableGateway */
-    protected TableGateway|\PHPUnit\Framework\MockObject\MockObject $tableGateway;
+    protected TableGateway|MockObject $tableGateway;
 
     /**
      * @throws Exception

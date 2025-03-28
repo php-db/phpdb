@@ -12,13 +12,10 @@ use function sprintf;
 
 class PgsqlFixtureLoader implements FixtureLoader
 {
-    /** @var string */
     private string $fixtureFile = __DIR__ . '/../TestFixtures/pgsql.sql';
 
-    /** @var PDO */
     private PDO $pdo;
 
-    /** @var bool */
     private bool $initialRun = true;
 
     /**

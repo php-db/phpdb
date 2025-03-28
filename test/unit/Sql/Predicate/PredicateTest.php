@@ -2,6 +2,7 @@
 
 namespace LaminasTest\Db\Sql\Predicate;
 
+use ErrorException;
 use Laminas\Db\Adapter\Platform\Sql92;
 use Laminas\Db\Sql\Expression;
 use Laminas\Db\Sql\Predicate\Predicate;
@@ -314,7 +315,7 @@ class PredicateTest extends TestCase
     }
 
     /**
-     * @throws \ErrorException
+     * @throws ErrorException
      */
     private function makeSqlString(Predicate $where): string
     {

@@ -25,7 +25,6 @@ use function var_export;
 #[CoversMethod(AbstractResultSet::class, 'buffer')]
 class ResultSetIntegrationTest extends TestCase
 {
-    /** @var ResultSet */
     protected ResultSet $resultSet;
 
     /**
@@ -75,9 +74,6 @@ class ResultSetIntegrationTest extends TestCase
         ];
     }
 
-    /**
-     * @param mixed $type
-     */
     #[DataProvider('invalidReturnTypes')]
     public function testSettingInvalidReturnTypeRaisesException(mixed $type)
     {
@@ -124,9 +120,6 @@ class ResultSetIntegrationTest extends TestCase
         self::assertSame($iteratorAggregate->getIterator(), $this->resultSet->getDataSource());
     }
 
-    /**
-     * @param mixed $dataSource
-     */
     #[DataProvider('invalidReturnTypes')]
     public function testInvalidDataSourceRaisesException(mixed $dataSource)
     {

@@ -23,7 +23,6 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(Oci8::class, 'getLastGeneratedValue')]
 class Oci8Test extends TestCase
 {
-    /** @var Oci8 */
     protected Oci8 $oci8;
 
     /**

@@ -22,7 +22,6 @@ class SelectDecoratorTest extends TestCase
 {
     /**
      * @param array<string, mixed> $expectedParams
-     * @param mixed $notUsed
      */
     #[DataProvider('dataProvider')]
     #[TestDox('integration test: Testing SelectDecorator will use Select an internal state to prepare
@@ -61,10 +60,6 @@ class SelectDecoratorTest extends TestCase
         self::assertEquals($expectedParams, $parameterContainer->getNamedArray());
     }
 
-    /**
-     * @param mixed $ignored
-     * @param mixed $alsoIgnored
-     */
     #[DataProvider('dataProvider')]
     #[TestDox('integration test: Testing SelectDecorator will use Select an internal state to prepare
                            a proper limit/offset sql statement')]

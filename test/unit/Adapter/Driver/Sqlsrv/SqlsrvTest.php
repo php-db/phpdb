@@ -24,7 +24,6 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(Sqlsrv::class, 'getResultPrototype')]
 class SqlsrvTest extends TestCase
 {
-    /** @var Sqlsrv */
     protected Sqlsrv $sqlsrv;
 
     /**

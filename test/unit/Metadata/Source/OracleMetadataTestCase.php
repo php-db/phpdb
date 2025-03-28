@@ -17,10 +17,8 @@ use function extension_loaded;
 #[RequiresPhpExtension('oci8')]
 class OracleMetadataTestCase extends AbstractIntegrationTestCase
 {
-    /** @var OracleMetadata */
     protected OracleMetadata $metadata;
 
-    /** @var Adapter */
     protected Adapter $adapter;
 
     /**
@@ -67,9 +65,6 @@ class OracleMetadataTestCase extends AbstractIntegrationTestCase
         );
     }
 
-    /**
-     * @return array
-     */
     public static function constraintDataProvider(): array
     {
         return [

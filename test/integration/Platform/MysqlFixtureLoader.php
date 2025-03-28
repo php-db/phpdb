@@ -12,10 +12,8 @@ use function sprintf;
 
 class MysqlFixtureLoader implements FixtureLoader
 {
-    /** @var string */
     private string $fixtureFile = __DIR__ . '/../TestFixtures/mysql.sql';
 
-    /** @var PDO */
     private PDO $pdo;
 
     /**

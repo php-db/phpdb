@@ -18,7 +18,6 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(Sql92::class, 'quoteIdentifierInFragment')]
 class Sql92Test extends TestCase
 {
-    /** @var Sql92 */
     protected Sql92 $platform;
 
     /**

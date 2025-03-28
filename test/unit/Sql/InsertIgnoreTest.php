@@ -17,12 +17,12 @@ use LaminasTest\Db\TestAsset\Replace;
 use LaminasTest\Db\TestAsset\TrustingSql92Platform;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
+use ReflectionException;
 
 class InsertIgnoreTest extends TestCase
 {
     use DeprecatedAssertionsTrait;
 
-    /** @var InsertIgnore */
     protected InsertIgnore $insert;
 
     /**
@@ -97,7 +97,7 @@ class InsertIgnoreTest extends TestCase
     }
 
     /**
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     #[Group('Laminas-4926')]
     public function testEmptyArrayValues()

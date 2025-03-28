@@ -8,7 +8,6 @@ class TrustingSqlServerPlatform extends SqlServer
 {
     /**
      * @param string $value
-     * @return string
      */
     public function quoteValue($value): string
     {

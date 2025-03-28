@@ -9,6 +9,7 @@ use LaminasTest\Db\DeprecatedAssertionsTrait;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\TestDox;
 use PHPUnit\Framework\TestCase;
+use ReflectionException;
 
 #[CoversMethod(Join::class, 'join')]
 #[CoversMethod(Join::class, 'count')]
@@ -18,7 +19,7 @@ class JoinTest extends TestCase
     use DeprecatedAssertionsTrait;
 
     /**
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function testInitialPositionIsZero()
     {
@@ -28,7 +29,7 @@ class JoinTest extends TestCase
     }
 
     /**
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function testNextIncrementsThePosition()
     {
@@ -40,7 +41,7 @@ class JoinTest extends TestCase
     }
 
     /**
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function testRewindResetsPositionToZero()
     {

@@ -14,7 +14,6 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(Pdo::class, 'getResultPrototype')]
 class PdoTest extends TestCase
 {
-    /** @var Pdo */
     protected Pdo $pdo;
 
     /**
@@ -52,9 +51,6 @@ class PdoTest extends TestCase
         ];
     }
 
-    /**
-     * @param int|string $name
-     */
     #[DataProvider('getParamsAndType')]
     public function testFormatParameterName(int|string $name, ?string $type, string $expected)
     {

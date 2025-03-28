@@ -33,8 +33,6 @@ class SqlTest extends TestCase
 
     /**
      * Sql object
-     *
-     * @var Sql
      */
     protected Sql $sql;
 
@@ -196,9 +194,6 @@ class SqlTest extends TestCase
 
     /**
      * Data provider
-     *
-     * @param string $platform
-     * @return Adapter
      */
     protected function getAdapterForPlatform(string $platform): Adapter
     {

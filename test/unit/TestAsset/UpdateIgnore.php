@@ -18,7 +18,6 @@ class UpdateIgnore extends Update
         self::SPECIFICATION_WHERE  => 'WHERE %1$s',
     ];
 
-    /** @return string */
     protected function processupdateIgnore(
         PlatformInterface $platform,
         ?DriverInterface $driver = null,

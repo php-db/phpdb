@@ -58,9 +58,6 @@ class TableIdentifierTest extends TestCase
         self::assertSame('castResult', $tableIdentifier->getSchema());
     }
 
-    /**
-     * @param mixed $invalidTable
-     */
     #[DataProvider('invalidTableProvider')]
     public function testRejectsInvalidTable(mixed $invalidTable)
     {
@@ -69,9 +66,6 @@ class TableIdentifierTest extends TestCase
         new TableIdentifier($invalidTable);
     }
 
-    /**
-     * @param mixed $invalidSchema
-     */
     #[DataProvider('invalidSchemaProvider')]
     public function testRejectsInvalidSchema(mixed $invalidSchema)
     {

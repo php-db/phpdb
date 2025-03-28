@@ -636,7 +636,6 @@ class SqlFunctionalTest extends TestCase
     }
 
     /**
-     * @param array|Sql\Platform\PlatformDecoratorInterface $decorator
      * @return null|PlatformDecoratorInterface
      * @psalm-return null|PlatformDecoratorInterface&MockObject
      */

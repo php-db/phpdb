@@ -23,7 +23,6 @@ use function set_error_handler;
 #[CoversMethod(SqlServer::class, 'setDriver')]
 class SqlServerTest extends TestCase
 {
-    /** @var SqlServer */
     protected SqlServer $platform;
 
     /**

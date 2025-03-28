@@ -12,7 +12,6 @@ use function sprintf;
 
 class SqliteMemoryPdo extends PDO
 {
-    /** @var PDOStatement&MockObject */
     protected MockObject&PDOStatement $mockStatement;
 
     /**

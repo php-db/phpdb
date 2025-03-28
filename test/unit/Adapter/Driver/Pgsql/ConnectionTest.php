@@ -23,7 +23,6 @@ class ConnectionTest extends TestCase
 {
     use DeprecatedAssertionsTrait;
 
-    /** @var Connection */
     protected Connection $connection;
 
     /**

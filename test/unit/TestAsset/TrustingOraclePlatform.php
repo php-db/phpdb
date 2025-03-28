@@ -8,7 +8,6 @@ class TrustingOraclePlatform extends Oracle
 {
     /**
      * @param string $value
-     * @return string
      */
     public function quoteValue($value): string
     {

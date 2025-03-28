@@ -6,7 +6,6 @@ use Laminas\Db\Sql;
 
 class InsertDecorator extends Sql\Insert implements Sql\Platform\PlatformDecoratorInterface
 {
-    /** @var null|object */
     protected ?object $subject;
 
     /**

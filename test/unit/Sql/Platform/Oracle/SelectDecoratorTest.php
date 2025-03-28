@@ -19,9 +19,6 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(SelectDecorator::class, 'getSqlString')]
 class SelectDecoratorTest extends TestCase
 {
-    /**
-     * @param mixed $notUsed
-     */
     #[DataProvider('dataProvider')]
     #[TestDox('integration test: Testing SelectDecorator will use Select to produce properly Oracle
                            dialect prepared sql')]
@@ -61,10 +58,6 @@ class SelectDecoratorTest extends TestCase
         self::assertEquals($expectedParams, $parameterContainer->getNamedArray());
     }
 
-    /**
-     * @param mixed $ignored
-     * @param mixed $alsoIgnored
-     */
     #[DataProvider('dataProvider')]
     #[TestDox('integration test: Testing SelectDecorator will use Select to produce properly Oracle
                            dialect sql statements')]

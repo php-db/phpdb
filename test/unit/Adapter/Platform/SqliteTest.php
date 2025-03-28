@@ -24,7 +24,6 @@ use function unlink;
 #[CoversMethod(Sqlite::class, 'quoteIdentifierInFragment')]
 class SqliteTest extends TestCase
 {
-    /** @var Sqlite */
     protected Sqlite $platform;
 
     /**

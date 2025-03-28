@@ -54,10 +54,6 @@ statement')]
         self::assertEquals($expectedParams, $parameterContainer->getNamedArray());
     }
 
-    /**
-     * @param mixed $ignore
-     * @param mixed $alsoIgnore
-     */
     #[DataProvider('dataProviderUnionSyntaxFromCombine')]
     #[TestDox('integration test: Testing SelectDecorator will use Select an internal state to prepare a proper combine
 statement')]

@@ -24,7 +24,6 @@ use PHPUnit\Framework\TestCase;
 #[Group('integration-oracle')]
 class ResultIntegrationTest extends TestCase
 {
-    /** @var Result */
     protected Result $object;
 
     /**

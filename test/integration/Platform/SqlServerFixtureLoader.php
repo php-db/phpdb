@@ -14,7 +14,6 @@ use function sqlsrv_query;
 
 class SqlServerFixtureLoader implements FixtureLoader
 {
-    /** @var string */
     private string $fixtureFilePrefix = __DIR__ . '/../TestFixtures/sqlsrv';
 
     /** @var resource */

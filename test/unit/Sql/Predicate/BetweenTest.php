@@ -18,7 +18,6 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(Between::class, 'getExpressionData')]
 class BetweenTest extends TestCase
 {
-    /** @var Between */
     protected Between $between;
 
     protected function setUp(): void

@@ -9,7 +9,6 @@ use ReflectionProperty;
 trait DeprecatedAssertionsTrait
 {
     /**
-     * @param mixed  $expected
      * @throws ReflectionException
      */
     public static function assertAttributeEquals(
@@ -26,7 +25,6 @@ trait DeprecatedAssertionsTrait
 
     /**
      * @throws ReflectionException
-     * @return mixed
      */
     public function readAttribute(object $instance, string $attribute): mixed
     {

@@ -23,7 +23,6 @@ trait AdapterTrait
         ]);
     }
 
-    /** @return null|string */
     protected function getHostname(): ?string
     {
         return getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_PGSQL_HOSTNAME');

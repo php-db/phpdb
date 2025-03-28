@@ -42,9 +42,6 @@ class AdapterAbstractServiceFactoryTest extends TestCase
         ]);
     }
 
-    /**
-     * @return array
-     */
     public static function providerValidService(): array
     {
         return [
@@ -53,9 +50,6 @@ class AdapterAbstractServiceFactoryTest extends TestCase
         ];
     }
 
-    /**
-     * @return array
-     */
     public static function providerInvalidService(): array
     {
         return [
@@ -64,7 +58,6 @@ class AdapterAbstractServiceFactoryTest extends TestCase
     }
 
     /**
-     * @param string $service
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      */
@@ -77,7 +70,6 @@ class AdapterAbstractServiceFactoryTest extends TestCase
     }
 
     /**
-     * @param string $service
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      */

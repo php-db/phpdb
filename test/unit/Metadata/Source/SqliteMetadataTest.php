@@ -2,6 +2,7 @@
 
 namespace LaminasTest\Db\Metadata\Source;
 
+use Exception;
 use Laminas\Db\Adapter\Adapter;
 use Laminas\Db\Metadata\Object\ConstraintKeyObject;
 use Laminas\Db\Metadata\Object\ConstraintObject;
@@ -16,10 +17,8 @@ use function extension_loaded;
 #[RequiresPhpExtension('pdo_sqlite')]
 class SqliteMetadataTest extends TestCase
 {
-    /** @var SqliteMetadata */
     protected SqliteMetadata $metadata;
 
-    /** @var Adapter */
     protected Adapter $adapter;
 
     /**
@@ -52,7 +51,7 @@ class SqliteMetadataTest extends TestCase
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function testGetColumnNames()
     {

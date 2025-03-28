@@ -17,7 +17,6 @@ class Replace extends Insert
         self::SPECIFICATION_SELECT => 'REPLACE INTO %1$s %2$s %3$s',
     ];
 
-    /** @return null|string */
     protected function processreplace(
         PlatformInterface $platform,
         ?DriverInterface $driver = null,

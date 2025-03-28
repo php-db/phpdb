@@ -18,7 +18,6 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(Mysql::class, 'quoteIdentifierInFragment')]
 class MysqlTest extends TestCase
 {
-    /** @var Mysql */
     protected Mysql $platform;
 
     /**

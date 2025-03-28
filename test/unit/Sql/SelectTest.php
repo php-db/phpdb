@@ -607,10 +607,6 @@ class SelectTest extends TestCase
         self::assertEmpty($select->getRawState(Select::ORDER));
     }
 
-    /**
-     * @param mixed $unused1
-     * @param mixed $unused2
-     */
     #[DataProvider('providerData')]
     #[TestDox('unit test: Test prepareStatement() will produce expected sql and parameters based on
                     a variety of provided arguments [uses data provider]')]
@@ -656,10 +652,6 @@ class SelectTest extends TestCase
         );
     }
 
-    /**
-     * @param mixed $unused
-     * @param mixed $unused2
-     */
     #[DataProvider('providerData')]
     #[TestDox('unit test: Test getSqlString() will produce expected sql and parameters based on
                     a variety of provided arguments [uses data provider]')]
@@ -692,9 +684,6 @@ class SelectTest extends TestCase
     }
 
     /**
-     * @param mixed  $unused
-     * @param mixed  $unused2
-     * @param mixed  $unused3
      * @throws ReflectionException
      */
     #[DataProvider('providerData')]

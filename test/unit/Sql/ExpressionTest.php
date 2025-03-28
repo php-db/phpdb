@@ -137,9 +137,6 @@ class ExpressionTest extends TestCase
         );
     }
 
-    /**
-     * @param mixed $falsyParameter
-     */
     #[DataProvider('falsyExpressionParametersProvider')]
     public function testConstructorWithFalsyValidParameters(mixed $falsyParameter)
     {

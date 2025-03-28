@@ -21,9 +21,6 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(SelectDecorator::class, 'getSqlString')]
 class SelectDecoratorTest extends TestCase
 {
-    /**
-     * @param mixed $notUsed
-     */
     #[DataProvider('dataProvider')]
     #[TestDox('integration test: Testing SelectDecorator will use Select to produce properly IBM Db2
                            dialect prepared sql')]
@@ -66,10 +63,6 @@ class SelectDecoratorTest extends TestCase
         self::assertEquals($expectedParams, $parameterContainer->getNamedArray());
     }
 
-    /**
-     * @param mixed $ignored0
-     * @param mixed $ignored1
-     */
     #[DataProvider('dataProvider')]
     #[TestDox('integration test: Testing SelectDecorator will use Select to produce properly Ibm DB2
                            dialect sql statements')]
@@ -96,8 +89,6 @@ class SelectDecoratorTest extends TestCase
 
     /**
      * Data provider for testGetSqlString
-     *
-     * @return array
      */
     public static function dataProvider(): array
     {

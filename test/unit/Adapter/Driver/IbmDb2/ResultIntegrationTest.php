@@ -24,7 +24,6 @@ use PHPUnit\Framework\TestCase;
 #[Group('integration-ibm_db2')]
 class ResultIntegrationTest extends TestCase
 {
-    /** @var Result */
     protected Result $object;
 
     /**

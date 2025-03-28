@@ -17,7 +17,6 @@ class RowGatewayTest extends TestCase
     /** @var Adapter&MockObject */
     protected Adapter|MockObject $mockAdapter;
 
-    /** @var RowGateway */
     protected RowGateway $rowGateway;
 
     /** @var ResultInterface&MockObject */

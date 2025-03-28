@@ -6,7 +6,6 @@ use Laminas\Db\Sql;
 
 class UpdateDecorator extends Sql\Update implements Sql\Platform\PlatformDecoratorInterface
 {
-    /** @var null|object $subject */
     protected ?object $subject;
 
     /**

@@ -24,7 +24,6 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(Oracle::class, 'quoteIdentifierInFragment')]
 class OracleTest extends TestCase
 {
-    /** @var Oracle */
     protected Oracle $platform;
 
     /**

@@ -31,7 +31,6 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(ParameterContainer::class, 'rewind')]
 class ParameterContainerTest extends TestCase
 {
-    /** @var ParameterContainer */
     protected ParameterContainer $parameterContainer;
 
     /**

@@ -7,6 +7,7 @@ use Laminas\Db\Metadata\Source\AbstractSource;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use ReflectionException;
 use ReflectionProperty;
 
 class AbstractSourceTest extends TestCase
@@ -28,7 +29,7 @@ class AbstractSourceTest extends TestCase
     }
 
     /**
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function testGetConstraintKeys()
     {

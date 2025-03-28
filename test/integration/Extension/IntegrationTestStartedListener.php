@@ -2,6 +2,7 @@
 
 namespace LaminasIntegrationTest\Db\Extension;
 
+use Exception;
 use LaminasIntegrationTest\Db\Platform\FixtureLoader;
 use LaminasIntegrationTest\Db\Platform\MysqlFixtureLoader;
 use LaminasIntegrationTest\Db\Platform\PgsqlFixtureLoader;
@@ -18,7 +19,7 @@ final class IntegrationTestStartedListener implements StartedSubscriber
     private array $fixtureLoaders = [];
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function notify(Started $event): void
     {

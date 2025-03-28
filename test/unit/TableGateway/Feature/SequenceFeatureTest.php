@@ -14,10 +14,8 @@ use PHPUnit\Framework\TestCase;
 
 class SequenceFeatureTest extends TestCase
 {
-    /** @var SequenceFeature */
     protected SequenceFeature $feature;
 
-    /** @var TableGateway */
     protected TableGateway $tableGateway;
 
     /**  @var string primary key name */

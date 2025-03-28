@@ -19,6 +19,7 @@ use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
+use ReflectionException;
 
 #[CoversMethod(Insert::class, 'into')]
 #[CoversMethod(Insert::class, 'columns')]
@@ -33,7 +34,6 @@ class InsertTest extends TestCase
 {
     use DeprecatedAssertionsTrait;
 
-    /** @var Insert */
     protected Insert $insert;
 
     /**
@@ -108,7 +108,7 @@ class InsertTest extends TestCase
     }
 
     /**
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     #[Group('Laminas-4926')]
     public function testEmptyArrayValues()

@@ -17,7 +17,6 @@ class PdoStubDriver extends PDO
     }
 
     /**
-     * @param string $dsn
      * @param string $user
      * @param string $password
      */

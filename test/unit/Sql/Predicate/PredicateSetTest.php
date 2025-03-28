@@ -13,6 +13,7 @@ use Laminas\Db\Sql\Predicate\PredicateSet;
 use LaminasTest\Db\DeprecatedAssertionsTrait;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
+use ReflectionException;
 
 use function var_export;
 
@@ -92,7 +93,7 @@ class PredicateSetTest extends TestCase
     }
 
     /**
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function testAddPredicates()
     {

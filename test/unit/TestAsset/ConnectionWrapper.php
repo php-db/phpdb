@@ -14,7 +14,6 @@ class ConnectionWrapper extends Connection
         $this->resource = new PdoStubDriver('foo', 'bar', 'baz');
     }
 
-    /** @return int */
     public function getNestedTransactionsCount(): int
     {
         return $this->nestedTransactionsCount;

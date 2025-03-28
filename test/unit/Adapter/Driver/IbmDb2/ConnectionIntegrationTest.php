@@ -138,8 +138,6 @@ class ConnectionIntegrationTest extends AbstractIntegrationTestCase
 
     /**
      * Return true if the transaction is enabled for DB2
-     *
-     * @return bool
      */
     protected function isTransactionEnabled(): bool
     {

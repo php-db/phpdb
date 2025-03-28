@@ -17,7 +17,6 @@ use PHPUnit\Framework\TestCase;
 
 class CombineTest extends TestCase
 {
-    /** @var Combine */
     protected Combine $combine;
 
     /**
@@ -174,9 +173,6 @@ class CombineTest extends TestCase
         );
     }
 
-    /**
-     * @return MockObject|Adapter
-     */
     protected function getMockAdapter(): Adapter|MockObject
     {
         $parameterContainer = new ParameterContainer();

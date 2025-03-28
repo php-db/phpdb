@@ -27,10 +27,8 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(SelectDecorator::class, 'getSqlString')]
 class SelectDecoratorTest extends TestCase
 {
-    /** @var Adapter&MockObject */
     protected Adapter&MockObject $mockAdapter;
 
-    /** @var Sql */
     protected Sql $sql;
     #[DataProvider('dataProvider')]
     #[TestDox('integration test: Testing SelectDecorator will use Select an internal state to prepare
@@ -63,10 +61,6 @@ class SelectDecoratorTest extends TestCase
         self::assertEquals($expectedParams, $parameterContainer->getNamedArray());
     }
 
-    /**
-     * @param mixed  $ignore
-     * @param mixed  $alsoIgnore
-     */
     #[DataProvider('dataProvider')]
     #[TestDox('integration test: Testing SelectDecorator will use Select an internal state to prepare
                            a proper limit/offset sql statement')]
@@ -96,10 +90,6 @@ class SelectDecoratorTest extends TestCase
         self::assertEquals($expectedPdoSql, $statement->getSql());
     }
 
-    /**
-     * @param mixed $ignore
-     * @param mixed $alsoIgnore
-     */
     #[DataProvider('dataProvider')]
     #[TestDox('integration test: Testing SelectDecorator will use Select an internal state to prepare
                            a proper limit/offset sql statement')]

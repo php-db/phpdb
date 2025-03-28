@@ -12,7 +12,6 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(Connection::class, 'getConnectionParameters')]
 class ConnectionTest extends TestCase
 {
-    /** @var Connection */
     protected Connection $connection;
 
     /**
