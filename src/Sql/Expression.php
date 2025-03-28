@@ -70,7 +70,6 @@ class Expression extends AbstractExpression
     }
 
     /**
-     * @return array
      * @throws Exception\RuntimeException
      */
     public function getExpressionData(): array

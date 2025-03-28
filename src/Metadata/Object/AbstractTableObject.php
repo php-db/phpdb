@@ -35,8 +35,6 @@ abstract class AbstractTableObject
 
     /**
      * Set columns
-     *
-     * @param array $columns
      */
     public function setColumns(array $columns)
     {

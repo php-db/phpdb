@@ -314,8 +314,8 @@ class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
      */
     public function __clone()
     {
-        $this->isPrepared      = false;
-        $this->resource        = null;
+        $this->isPrepared = false;
+        $this->resource   = null;
         if ($this->parameterContainer) {
             $this->parameterContainer = clone $this->parameterContainer;
         }

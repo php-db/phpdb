@@ -61,8 +61,6 @@ class ParameterContainer implements Iterator, ArrayAccess, Countable
 
     /**
      * Constructor
-     *
-     * @param array $data
      */
     public function __construct(array $data = [])
     {
@@ -194,7 +192,6 @@ class ParameterContainer implements Iterator, ArrayAccess, Countable
     /**
      * Set from array
      *
-     * @param  array $data
      * @return $this Provides a fluent interface
      */
     public function setFromArray(array $data)
