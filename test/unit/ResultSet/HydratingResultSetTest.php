@@ -7,11 +7,18 @@ use Laminas\Hydrator\ArraySerializable;
 use Laminas\Hydrator\ArraySerializableHydrator;
 use Laminas\Hydrator\ClassMethods;
 use Laminas\Hydrator\ClassMethodsHydrator;
+use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
 use function class_exists;
 
+#[CoversMethod(HydratingResultSet::class, 'setObjectPrototype')]
+#[CoversMethod(HydratingResultSet::class, 'getObjectPrototype')]
+#[CoversMethod(HydratingResultSet::class, 'setHydrator')]
+#[CoversMethod(HydratingResultSet::class, 'getHydrator')]
+#[CoversMethod(HydratingResultSet::class, 'current')]
+#[CoversMethod(HydratingResultSet::class, 'toArray')]
 class HydratingResultSetTest extends TestCase
 {
     /** @var string */
@@ -31,9 +38,6 @@ class HydratingResultSetTest extends TestCase
             : ClassMethods::class;
     }
 
-    /**
-     * @covers \Laminas\Db\ResultSet\HydratingResultSet::setObjectPrototype
-     */
     public function testSetObjectPrototype()
     {
         $prototype   = new stdClass();
@@ -41,18 +45,12 @@ class HydratingResultSetTest extends TestCase
         self::assertSame($hydratingRs, $hydratingRs->setObjectPrototype($prototype));
     }
 
-    /**
-     * @covers \Laminas\Db\ResultSet\HydratingResultSet::getObjectPrototype
-     */
     public function testGetObjectPrototype()
     {
         $hydratingRs = new HydratingResultSet();
         self::assertInstanceOf('ArrayObject', $hydratingRs->getObjectPrototype());
     }
 
-    /**
-     * @covers \Laminas\Db\ResultSet\HydratingResultSet::setHydrator
-     */
     public function testSetHydrator()
     {
         $hydratingRs   = new HydratingResultSet();
@@ -60,18 +58,12 @@ class HydratingResultSetTest extends TestCase
         self::assertSame($hydratingRs, $hydratingRs->setHydrator(new $hydratorClass()));
     }
 
-    /**
-     * @covers \Laminas\Db\ResultSet\HydratingResultSet::getHydrator
-     */
     public function testGetHydrator()
     {
         $hydratingRs = new HydratingResultSet();
         self::assertInstanceOf($this->arraySerializableHydratorClass, $hydratingRs->getHydrator());
     }
 
-    /**
-     * @covers \Laminas\Db\ResultSet\HydratingResultSet::current
-     */
     public function testCurrentHasData()
     {
         $hydratingRs = new HydratingResultSet();
@@ -82,9 +74,6 @@ class HydratingResultSetTest extends TestCase
         self::assertInstanceOf('ArrayObject', $obj);
     }
 
-    /**
-     * @covers \Laminas\Db\ResultSet\HydratingResultSet::current
-     */
     public function testCurrentDoesnotHasData()
     {
         $hydratingRs = new HydratingResultSet();
@@ -94,7 +83,6 @@ class HydratingResultSetTest extends TestCase
     }
 
     /**
-     * @covers \Laminas\Db\ResultSet\HydratingResultSet::toArray
      * @todo   Implement testToArray().
      */
     public function testToArray()

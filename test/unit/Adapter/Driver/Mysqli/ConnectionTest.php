@@ -5,6 +5,7 @@ namespace LaminasTest\Db\Adapter\Driver\Mysqli;
 use Laminas\Db\Adapter\Driver\Mysqli\Connection;
 use Laminas\Db\Adapter\Driver\Mysqli\Mysqli;
 use Laminas\Db\Adapter\Exception\RuntimeException;
+use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -13,6 +14,9 @@ use function getenv;
 use const MYSQLI_CLIENT_SSL;
 use const MYSQLI_CLIENT_SSL_DONT_VERIFY_SERVER_CERT;
 
+#[CoversMethod(Connection::class, 'setDriver')]
+#[CoversMethod(Connection::class, 'setConnectionParameters')]
+#[CoversMethod(Connection::class, 'getConnectionParameters')]
 class ConnectionTest extends TestCase
 {
     /** @var Connection */
@@ -38,25 +42,16 @@ class ConnectionTest extends TestCase
     {
     }
 
-    /**
-     * @covers \Laminas\Db\Adapter\Driver\Mysqli\Connection::setDriver
-     */
     public function testSetDriver()
     {
         self::assertEquals($this->connection, $this->connection->setDriver(new Mysqli([])));
     }
 
-    /**
-     * @covers \Laminas\Db\Adapter\Driver\Mysqli\Connection::setConnectionParameters
-     */
     public function testSetConnectionParameters()
     {
         self::assertEquals($this->connection, $this->connection->setConnectionParameters([]));
     }
 
-    /**
-     * @covers \Laminas\Db\Adapter\Driver\Mysqli\Connection::getConnectionParameters
-     */
     public function testGetConnectionParameters()
     {
         $this->connection->setConnectionParameters(['foo' => 'bar']);
@@ -189,7 +184,7 @@ class ConnectionTest extends TestCase
     protected function createMockConnection($mysqli, $params)
     {
         $connection = $this->getMockBuilder(Connection::class)
-            ->setMethods(['createResource'])
+            ->onlyMethods(['createResource'])
             ->setConstructorArgs([$params])
             ->getMock();
         $connection->expects($this->once())

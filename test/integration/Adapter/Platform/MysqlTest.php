@@ -5,15 +5,14 @@ namespace LaminasIntegrationTest\Db\Adapter\Platform;
 use Laminas\Db\Adapter\Driver\Mysqli;
 use Laminas\Db\Adapter\Driver\Pdo;
 use Laminas\Db\Adapter\Platform\Mysql;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 
 use function extension_loaded;
 use function getenv;
 
-/**
- * @group integration
- * @group integration-mysql
- */
+#[Group('integration')]
+#[Group('integration-mysql')]
 class MysqlTest extends TestCase
 {
     /** @var array<string, resource|\PDO> */

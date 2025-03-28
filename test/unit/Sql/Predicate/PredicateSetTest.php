@@ -11,10 +11,12 @@ use Laminas\Db\Sql\Predicate\Literal;
 use Laminas\Db\Sql\Predicate\Operator;
 use Laminas\Db\Sql\Predicate\PredicateSet;
 use LaminasTest\Db\DeprecatedAssertionsTrait;
+use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 
 use function var_export;
 
+#[CoversMethod(PredicateSet::class, 'addPredicates')]
 class PredicateSetTest extends TestCase
 {
     use DeprecatedAssertionsTrait;
@@ -89,9 +91,6 @@ class PredicateSetTest extends TestCase
         self::assertStringContainsString('AND', $parts[5]);
     }
 
-    /**
-     * @covers \Laminas\Db\Sql\Predicate\PredicateSet::addPredicates
-     */
     public function testAddPredicates()
     {
         $predicateSet = new PredicateSet();

@@ -4,8 +4,12 @@ namespace LaminasTest\Db\Adapter\Driver\Oci8;
 
 use Laminas\Db\Adapter\Driver\Oci8\Connection;
 use Laminas\Db\Adapter\Driver\Oci8\Oci8;
+use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 
+#[CoversMethod(Connection::class, 'setDriver')]
+#[CoversMethod(Connection::class, 'setConnectionParameters')]
+#[CoversMethod(Connection::class, 'getConnectionParameters')]
 class ConnectionTest extends TestCase
 {
     /** @var Connection */
@@ -28,25 +32,16 @@ class ConnectionTest extends TestCase
     {
     }
 
-    /**
-     * @covers \Laminas\Db\Adapter\Driver\Oci8\Connection::setDriver
-     */
     public function testSetDriver()
     {
         self::assertEquals($this->connection, $this->connection->setDriver(new Oci8([])));
     }
 
-    /**
-     * @covers \Laminas\Db\Adapter\Driver\Oci8\Connection::setConnectionParameters
-     */
     public function testSetConnectionParameters()
     {
         self::assertEquals($this->connection, $this->connection->setConnectionParameters([]));
     }
 
-    /**
-     * @covers \Laminas\Db\Adapter\Driver\Oci8\Connection::getConnectionParameters
-     */
     public function testGetConnectionParameters()
     {
         $this->connection->setConnectionParameters(['foo' => 'bar']);

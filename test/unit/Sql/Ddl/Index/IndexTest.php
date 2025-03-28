@@ -3,13 +3,12 @@
 namespace LaminasTest\Db\Sql\Ddl\Index;
 
 use Laminas\Db\Sql\Ddl\Index\Index;
+use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 
+#[CoversMethod(Index::class, 'getExpressionData')]
 class IndexTest extends TestCase
 {
-    /**
-     * @covers \Laminas\Db\Sql\Ddl\Index\Index::getExpressionData
-     */
     public function testGetExpressionData()
     {
         $uk = new Index('foo', 'my_uk');
@@ -25,9 +24,6 @@ class IndexTest extends TestCase
         );
     }
 
-    /**
-     * @covers \Laminas\Db\Sql\Ddl\Index\Index::getExpressionData
-     */
     public function testGetExpressionDataWithLength()
     {
         $key = new Index(['foo', 'bar'], 'my_uk', [10, 5]);
@@ -43,9 +39,6 @@ class IndexTest extends TestCase
         );
     }
 
-    /**
-     * @covers \Laminas\Db\Sql\Ddl\Index\Index::getExpressionData
-     */
     public function testGetExpressionDataWithLengthUnmatched()
     {
         $key = new Index(['foo', 'bar'], 'my_uk', [10]);

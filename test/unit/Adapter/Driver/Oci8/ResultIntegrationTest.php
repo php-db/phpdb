@@ -3,12 +3,25 @@
 namespace LaminasTest\Db\Adapter\Driver\Oci8;
 
 use Laminas\Db\Adapter\Driver\Oci8\Result;
+use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @group integration
- * @group integration-oracle
- */
+#[CoversMethod(Result::class, 'initialize')]
+#[CoversMethod(Result::class, 'buffer')]
+#[CoversMethod(Result::class, 'getResource')]
+#[CoversMethod(Result::class, 'current')]
+#[CoversMethod(Result::class, 'next')]
+#[CoversMethod(Result::class, 'key')]
+#[CoversMethod(Result::class, 'rewind')]
+#[CoversMethod(Result::class, 'valid')]
+#[CoversMethod(Result::class, 'count')]
+#[CoversMethod(Result::class, 'getFieldCount')]
+#[CoversMethod(Result::class, 'isQueryResult')]
+#[CoversMethod(Result::class, 'getAffectedRows')]
+#[CoversMethod(Result::class, 'getGeneratedValue')]
+#[Group('integration')]
+#[Group('integration-oracle')]
 class ResultIntegrationTest extends TestCase
 {
     /** @var Result */
@@ -32,10 +45,9 @@ class ResultIntegrationTest extends TestCase
     }
 
     /**
-     * @covers \Laminas\Db\Adapter\Driver\Oci8\Result::initialize
      * @todo   Implement testInitialize().
      */
-    public function testInitialize()
+    public function testInitialize(): never
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
@@ -44,10 +56,9 @@ class ResultIntegrationTest extends TestCase
     }
 
     /**
-     * @covers \Laminas\Db\Adapter\Driver\Oci8\Result::buffer
      * @todo   Implement testBuffer().
      */
-    public function testBuffer()
+    public function testBuffer(): never
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
@@ -56,10 +67,9 @@ class ResultIntegrationTest extends TestCase
     }
 
     /**
-     * @covers \Laminas\Db\Adapter\Driver\Oci8\Result::getResource
      * @todo   Implement testGetResource().
      */
-    public function testGetResource()
+    public function testGetResource(): never
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
@@ -68,10 +78,9 @@ class ResultIntegrationTest extends TestCase
     }
 
     /**
-     * @covers \Laminas\Db\Adapter\Driver\Oci8\Result::current
      * @todo   Implement testCurrent().
      */
-    public function testCurrent()
+    public function testCurrent(): never
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
@@ -80,10 +89,9 @@ class ResultIntegrationTest extends TestCase
     }
 
     /**
-     * @covers \Laminas\Db\Adapter\Driver\Oci8\Result::next
      * @todo   Implement testNext().
      */
-    public function testNext()
+    public function testNext(): never
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
@@ -92,10 +100,9 @@ class ResultIntegrationTest extends TestCase
     }
 
     /**
-     * @covers \Laminas\Db\Adapter\Driver\Oci8\Result::key
      * @todo   Implement testKey().
      */
-    public function testKey()
+    public function testKey(): never
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
@@ -104,10 +111,9 @@ class ResultIntegrationTest extends TestCase
     }
 
     /**
-     * @covers \Laminas\Db\Adapter\Driver\Oci8\Result::rewind
      * @todo   Implement testRewind().
      */
-    public function testRewind()
+    public function testRewind(): never
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
@@ -116,10 +122,9 @@ class ResultIntegrationTest extends TestCase
     }
 
     /**
-     * @covers \Laminas\Db\Adapter\Driver\Oci8\Result::valid
      * @todo   Implement testValid().
      */
-    public function testValid()
+    public function testValid(): never
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
@@ -128,10 +133,9 @@ class ResultIntegrationTest extends TestCase
     }
 
     /**
-     * @covers \Laminas\Db\Adapter\Driver\Oci8\Result::count
      * @todo   Implement testCount().
      */
-    public function testCount()
+    public function testCount(): never
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
@@ -140,10 +144,9 @@ class ResultIntegrationTest extends TestCase
     }
 
     /**
-     * @covers \Laminas\Db\Adapter\Driver\Oci8\Result::getFieldCount
      * @todo   Implement testGetFieldCount().
      */
-    public function testGetFieldCount()
+    public function testGetFieldCount(): never
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
@@ -152,10 +155,9 @@ class ResultIntegrationTest extends TestCase
     }
 
     /**
-     * @covers \Laminas\Db\Adapter\Driver\Oci8\Result::isQueryResult
      * @todo   Implement testIsQueryResult().
      */
-    public function testIsQueryResult()
+    public function testIsQueryResult(): never
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
@@ -164,10 +166,9 @@ class ResultIntegrationTest extends TestCase
     }
 
     /**
-     * @covers \Laminas\Db\Adapter\Driver\Oci8\Result::getAffectedRows
      * @todo   Implement testGetAffectedRows().
      */
-    public function testGetAffectedRows()
+    public function testGetAffectedRows(): never
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
@@ -176,10 +177,9 @@ class ResultIntegrationTest extends TestCase
     }
 
     /**
-     * @covers \Laminas\Db\Adapter\Driver\Oci8\Result::getGeneratedValue
      * @todo   Implement testGetGeneratedValue().
      */
-    public function testGetGeneratedValue()
+    public function testGetGeneratedValue(): never
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(

@@ -6,12 +6,22 @@ use Laminas\Db\Adapter\Driver\IbmDb2\IbmDb2;
 use Laminas\Db\Adapter\Driver\IbmDb2\Statement;
 use Laminas\Db\Adapter\Exception\RuntimeException;
 use Laminas\Db\Adapter\ParameterContainer;
+use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 
 use function error_reporting;
 
 include __DIR__ . '/TestAsset/Db2Functions.php';
 
+#[CoversMethod(Statement::class, 'setDriver')]
+#[CoversMethod(Statement::class, 'setParameterContainer')]
+#[CoversMethod(Statement::class, 'getParameterContainer')]
+#[CoversMethod(Statement::class, 'getResource')]
+#[CoversMethod(Statement::class, 'setSql')]
+#[CoversMethod(Statement::class, 'getSql')]
+#[CoversMethod(Statement::class, 'prepare')]
+#[CoversMethod(Statement::class, 'isPrepared')]
+#[CoversMethod(Statement::class, 'execute')]
 class StatementTest extends TestCase
 {
     /** @var Statement */
@@ -41,24 +51,17 @@ class StatementTest extends TestCase
         error_reporting($this->currentErrorReporting);
     }
 
-    /**
-     * @covers \Laminas\Db\Adapter\Driver\IbmDb2\Statement::setDriver
-     */
     public function testSetDriver()
     {
         self::assertEquals($this->statement, $this->statement->setDriver(new IbmDb2([])));
     }
 
-    /**
-     * @covers \Laminas\Db\Adapter\Driver\IbmDb2\Statement::setParameterContainer
-     */
     public function testSetParameterContainer()
     {
         self::assertSame($this->statement, $this->statement->setParameterContainer(new ParameterContainer()));
     }
 
     /**
-     * @covers \Laminas\Db\Adapter\Driver\IbmDb2\Statement::getParameterContainer
      * @todo   Implement testGetParameterContainer().
      */
     public function testGetParameterContainer()
@@ -69,10 +72,9 @@ class StatementTest extends TestCase
     }
 
     /**
-     * @covers \Laminas\Db\Adapter\Driver\IbmDb2\Statement::getResource
      * @todo   Implement testGetResource().
      */
-    public function testGetResource()
+    public function testGetResource(): never
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
@@ -81,10 +83,9 @@ class StatementTest extends TestCase
     }
 
     /**
-     * @covers \Laminas\Db\Adapter\Driver\IbmDb2\Statement::setSql
      * @todo   Implement testSetSql().
      */
-    public function testSetSql()
+    public function testSetSql(): never
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
@@ -93,10 +94,9 @@ class StatementTest extends TestCase
     }
 
     /**
-     * @covers \Laminas\Db\Adapter\Driver\IbmDb2\Statement::getSql
      * @todo   Implement testGetSql().
      */
-    public function testGetSql()
+    public function testGetSql(): never
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
@@ -104,10 +104,6 @@ class StatementTest extends TestCase
         );
     }
 
-    /**
-     * @covers \Laminas\Db\Adapter\Driver\IbmDb2\Statement::prepare
-     * @covers \Laminas\Db\Adapter\Driver\IbmDb2\Statement::isPrepared
-     */
     public function testPrepare()
     {
         $sql = "SELECT 'foo' FROM SYSIBM.SYSDUMMY1";
@@ -115,10 +111,6 @@ class StatementTest extends TestCase
         $this->assertTrue($this->statement->isPrepared());
     }
 
-    /**
-     * @covers \Laminas\Db\Adapter\Driver\IbmDb2\Statement::prepare
-     * @covers \Laminas\Db\Adapter\Driver\IbmDb2\Statement::isPrepared
-     */
     public function testPreparingTwiceErrors()
     {
         $sql = "SELECT 'foo' FROM SYSIBM.SYSDUMMY1";
@@ -126,24 +118,18 @@ class StatementTest extends TestCase
         $this->assertTrue($this->statement->isPrepared());
 
         $this->expectException(
-            RuntimeException::class,
-            'This statement has been prepared already'
+            RuntimeException::class
         );
         $this->statement->prepare($sql);
     }
 
-    /**
-     * @covers \Laminas\Db\Adapter\Driver\IbmDb2\Statement::prepare
-     * @covers \Laminas\Db\Adapter\Driver\IbmDb2\Statement::setSql
-     */
     public function testPrepareThrowsRuntimeExceptionOnInvalidSql()
     {
         $sql = "INVALID SQL";
         $this->statement->setSql($sql);
 
         $this->expectException(
-            RuntimeException::class,
-            'SQL is invalid. Error message'
+            RuntimeException::class
         );
         $this->statement->prepare();
     }
@@ -152,9 +138,6 @@ class StatementTest extends TestCase
      * If error_reporting() is turned off, then the error handler will not
      * be called, but a RuntimeException will still be generated as the
      * resource is false
-     *
-     * @covers \Laminas\Db\Adapter\Driver\IbmDb2\Statement::prepare
-     * @covers \Laminas\Db\Adapter\Driver\IbmDb2\Statement::setSql
      */
     public function testPrepareThrowsRuntimeExceptionOnInvalidSqlWithErrorReportingDisabled()
     {
@@ -163,17 +146,15 @@ class StatementTest extends TestCase
         $this->statement->setSql($sql);
 
         $this->expectException(
-            RuntimeException::class,
-            'Error message'
+            RuntimeException::class
         );
         $this->statement->prepare();
     }
 
     /**
-     * @covers \Laminas\Db\Adapter\Driver\IbmDb2\Statement::execute
      * @todo   Implement testExecute().
      */
-    public function testExecute()
+    public function testExecute(): never
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(

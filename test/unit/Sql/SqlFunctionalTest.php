@@ -13,8 +13,10 @@ use Laminas\Db\Sql\Expression;
 use Laminas\Db\Sql\Insert;
 use Laminas\Db\Sql\Platform\PlatformDecoratorInterface;
 use Laminas\Db\Sql\Select;
+use Laminas\Db\Sql\TableIdentifier;
 use Laminas\Db\Sql\Update;
 use LaminasTest\Db\TestAsset;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 use function array_merge;
@@ -58,12 +60,12 @@ class SqlFunctionalTest extends TestCase
      *     }
      * }>
      */
-    protected function dataProviderCommonProcessMethods(): array
+    protected static function dataProviderCommonProcessMethods(): array
     {
         // phpcs:disable Generic.Files.LineLength.TooLong
         return [
             'Select::processOffset()'      => [
-                'sqlObject' => $this->select('foo')->offset(10),
+                'sqlObject' => self::select('foo')->offset(10),
                 'expected'  => [
                     'sql92'     => [
                         'string'     => 'SELECT "foo".* FROM "foo" OFFSET \'10\'',
@@ -88,7 +90,7 @@ class SqlFunctionalTest extends TestCase
                 ],
             ],
             'Select::processLimit()'       => [
-                'sqlObject' => $this->select('foo')->limit(10),
+                'sqlObject' => self::select('foo')->limit(10),
                 'expected'  => [
                     'sql92'     => [
                         'string'     => 'SELECT "foo".* FROM "foo" LIMIT \'10\'',
@@ -113,7 +115,7 @@ class SqlFunctionalTest extends TestCase
                 ],
             ],
             'Select::processLimitOffset()' => [
-                'sqlObject' => $this->select('foo')->limit(10)->offset(5),
+                'sqlObject' => self::select('foo')->limit(10)->offset(5),
                 'expected'  => [
                     'sql92'     => [
                         'string'     => 'SELECT "foo".* FROM "foo" LIMIT \'10\' OFFSET \'5\'',
@@ -139,7 +141,7 @@ class SqlFunctionalTest extends TestCase
             ],
             // Github issue https://github.com/zendframework/zend-db/issues/98
             'Select::processJoinNoJoinedColumns()' => [
-                'sqlObject' => $this->select('my_table')
+                'sqlObject' => self::select('my_table')
                                     ->join(
                                         'joined_table2',
                                         'my_table.id = joined_table2.id',
@@ -170,8 +172,8 @@ class SqlFunctionalTest extends TestCase
                 ],
             ],
             'Select::processJoin()'                => [
-                'sqlObject' => $this->select('a')
-                                    ->join(['b' => $this->select('c')->where(['cc' => 10])], 'd=e')->where(['x' => 20]),
+                'sqlObject' => self::select('a')
+                                    ->join(['b' => self::select('c')->where(['cc' => 10])], 'd=e')->where(['x' => 20]),
                 'expected'  => [
                     'sql92'     => [
                         'string'     => 'SELECT "a".*, "b".* FROM "a" INNER JOIN (SELECT "c".* FROM "c" WHERE "cc" = \'10\') AS "b" ON "d"="e" WHERE "x" = \'20\'',
@@ -196,11 +198,11 @@ class SqlFunctionalTest extends TestCase
                 ],
             ],
             'Ddl::CreateTable::processColumns()'   => [
-                'sqlObject' => $this->createTable('foo')
-                                    ->addColumn($this->createColumn('col1')
+                'sqlObject' => self::createTable('foo')
+                                    ->addColumn(self::createColumn('col1')
                                         ->setOption('identity', true)
                                         ->setOption('comment', 'Comment1'))
-                                    ->addColumn($this->createColumn('col2')
+                                    ->addColumn(self::createColumn('col2')
                                         ->setOption('identity', true)
                                         ->setOption('comment', 'Comment2')),
                 'expected'  => [
@@ -211,7 +213,7 @@ class SqlFunctionalTest extends TestCase
                 ],
             ],
             'Ddl::CreateTable::processTable()'     => [
-                'sqlObject' => $this->createTable('foo')->setTemporary(true),
+                'sqlObject' => self::createTable('foo')->setTemporary(true),
                 'expected'  => [
                     'sql92'     => "CREATE TEMPORARY TABLE \"foo\" ( \n)",
                     'MySql'     => "CREATE TEMPORARY TABLE `foo` ( \n)",
@@ -220,14 +222,12 @@ class SqlFunctionalTest extends TestCase
                 ],
             ],
             'Select::processSubSelect()'           => [
-                'sqlObject' => $this
-                    ->select([
-                        'a' => $this
-                            ->select([
-                                'b' => $this->select('c')->where(['cc' => 'CC']),
-                            ])
-                            ->where(['bb' => 'BB']),
+                'sqlObject' => self::select([
+                    'a' => self::select([
+                        'b' => self::select('c')->where(['cc' => 'CC']),
                     ])
+                            ->where(['bb' => 'BB']),
+                ])
                     ->where(['aa' => 'AA']),
                 'expected'  => [
                     'sql92'     => [
@@ -253,7 +253,7 @@ class SqlFunctionalTest extends TestCase
                 ],
             ],
             'Delete::processSubSelect()'           => [
-                'sqlObject' => $this->delete('foo')->where(['x' => $this->select('foo')->where(['x' => 'y'])]),
+                'sqlObject' => self::delete('foo')->where(['x' => self::select('foo')->where(['x' => 'y'])]),
                 'expected'  => [
                     'sql92'     => [
                         'string'     => 'DELETE FROM "foo" WHERE "x" = (SELECT "foo".* FROM "foo" WHERE "x" = \'y\')',
@@ -278,7 +278,7 @@ class SqlFunctionalTest extends TestCase
                 ],
             ],
             'Update::processSubSelect()'           => [
-                'sqlObject' => $this->update('foo')->set(['x' => $this->select('foo')]),
+                'sqlObject' => self::update('foo')->set(['x' => self::select('foo')]),
                 'expected'  => [
                     'sql92'     => 'UPDATE "foo" SET "x" = (SELECT "foo".* FROM "foo")',
                     'MySql'     => 'UPDATE `foo` SET `x` = (SELECT `foo`.* FROM `foo`)',
@@ -287,7 +287,7 @@ class SqlFunctionalTest extends TestCase
                 ],
             ],
             'Insert::processSubSelect()'           => [
-                'sqlObject' => $this->insert('foo')->select($this->select('foo')->where(['x' => 'y'])),
+                'sqlObject' => self::insert('foo')->select(self::select('foo')->where(['x' => 'y'])),
                 'expected'  => [
                     'sql92'     => [
                         'string'     => 'INSERT INTO "foo"  SELECT "foo".* FROM "foo" WHERE "x" = \'y\'',
@@ -312,8 +312,8 @@ class SqlFunctionalTest extends TestCase
                 ],
             ],
             'Update::processExpression()'          => [
-                'sqlObject' => $this->update('foo')->set(
-                    ['x' => new Sql\Expression('?', [$this->select('foo')->where(['x' => 'y'])])]
+                'sqlObject' => self::update('foo')->set(
+                    ['x' => new Sql\Expression('?', [self::select('foo')->where(['x' => 'y'])])]
                 ),
                 'expected'  => [
                     'sql92'     => [
@@ -339,7 +339,7 @@ class SqlFunctionalTest extends TestCase
                 ],
             ],
             'Update::processJoins()'               => [
-                'sqlObject' => $this->update('foo')->set(['x' => 'y'])->where(['xx' => 'yy'])->join(
+                'sqlObject' => self::update('foo')->set(['x' => 'y'])->where(['xx' => 'yy'])->join(
                     'bar',
                     'bar.barId = foo.barId'
                 ),
@@ -385,11 +385,11 @@ class SqlFunctionalTest extends TestCase
      *     }
      * }>
      */
-    protected function dataProviderDecorators(): array
+    protected static function dataProviderDecorators(): array
     {
         return [
             'RootDecorators::Select' => [
-                'sqlObject' => $this->select('foo')->where(['x' => $this->select('bar')]),
+                'sqlObject' => self::select('foo')->where(['x' => self::select('bar')]),
                 'expected'  => [
                     'sql92'     => [
                         'decorators' => [
@@ -420,7 +420,7 @@ class SqlFunctionalTest extends TestCase
             // phpcs:disable Generic.Files.LineLength.TooLong
             /* TODO - should be implemented
             'RootDecorators::Insert' => array(
-                'sqlObject' => $this->insert('foo')->select($this->select()),
+                'sqlObject' => self::insert('foo')->select(self::select()),
                 'expected'  => array(
                     'sql92'     => array(
                         'decorators' => array(
@@ -453,7 +453,7 @@ class SqlFunctionalTest extends TestCase
                 ),
             ),
             'RootDecorators::Delete' => array(
-                'sqlObject' => $this->delete('foo')->where(array('x'=>$this->select('foo'))),
+                'sqlObject' => self::delete('foo')->where(array('x'=>self::select('foo'))),
                 'expected'  => array(
                     'sql92'     => array(
                         'decorators' => array(
@@ -486,7 +486,7 @@ class SqlFunctionalTest extends TestCase
                 ),
             ),
             'RootDecorators::Update' => array(
-                'sqlObject' => $this->update('foo')->where(array('x'=>$this->select('foo'))),
+                'sqlObject' => self::update('foo')->where(array('x'=>self::select('foo'))),
                 'expected'  => array(
                     'sql92'     => array(
                         'decorators' => array(
@@ -519,7 +519,7 @@ class SqlFunctionalTest extends TestCase
                 ),
             ),
             'DecorableExpression()' => array(
-                'sqlObject' => $this->update('foo')->where(array('x'=>new Sql\Expression('?', array($this->select('foo'))))),
+                'sqlObject' => self::update('foo')->where(array('x'=>new Sql\Expression('?', array(self::select('foo'))))),
                 'expected'  => array(
                     'sql92'     => array(
                         'decorators' => array(
@@ -583,11 +583,11 @@ class SqlFunctionalTest extends TestCase
      *     }
      * }>
      */
-    public function dataProvider(): array
+    public static function dataProvider(): array
     {
         $data = array_merge(
-            $this->dataProviderCommonProcessMethods(),
-            $this->dataProviderDecorators()
+            self::dataProviderCommonProcessMethods(),
+            self::dataProviderDecorators()
         );
 
         $res = [];
@@ -607,8 +607,8 @@ class SqlFunctionalTest extends TestCase
      * @param type $sqlObject
      * @param type $platform
      * @param type $expected
-     * @dataProvider dataProvider
      */
+    #[DataProvider('dataProvider')]
     public function test($sqlObject, $platform, $expected)
     {
         $sql = new Sql\Sql($this->resolveAdapter($platform));
@@ -644,10 +644,10 @@ class SqlFunctionalTest extends TestCase
     {
         if (is_array($decorator)) {
             $decoratorMock = $this->getMockBuilder($decorator[0])
-                ->setMethods(['buildSqlString'])
+                ->onlyMethods(['buildSqlString'])
                 ->setConstructorArgs([null])
                 ->getMock();
-            $decoratorMock->expects($this->any())->method('buildSqlString')->will($this->returnValue($decorator[1]));
+            $decoratorMock->expects($this->any())->method('buildSqlString')->willReturn($decorator[1]);
             return $decoratorMock;
         }
 
@@ -660,53 +660,48 @@ class SqlFunctionalTest extends TestCase
 
     protected function resolveAdapter(string $platform): Adapter\Adapter
     {
-        switch ($platform) {
-            case 'sql92':
-                $platform = new TestAsset\TrustingSql92Platform();
-                break;
-            case 'MySql':
-                $platform = new TestAsset\TrustingMysqlPlatform();
-                break;
-            case 'Oracle':
-                $platform = new TestAsset\TrustingOraclePlatform();
-                break;
-            case 'SqlServer':
-                $platform = new TestAsset\TrustingSqlServerPlatform();
-                break;
-            default:
-                $platform = null;
-        }
+        $platform = match ($platform) {
+            'sql92' => new TestAsset\TrustingSql92Platform(),
+            'MySql' => new TestAsset\TrustingMysqlPlatform(),
+            'Oracle' => new TestAsset\TrustingOraclePlatform(),
+            'SqlServer' => new TestAsset\TrustingSqlServerPlatform(),
+            default => null,
+        };
 
         $mockDriver = $this->getMockBuilder(DriverInterface::class)->getMock();
-        $mockDriver->expects($this->any())->method('formatParameterName')->will($this->returnValue('?'));
-        $mockDriver->expects($this->any())->method('createStatement')->will($this->returnCallback(function () {
-            return new Adapter\StatementContainer();
-        }));
+        $mockDriver->expects($this->any())->method('formatParameterName')->willReturn('?');
+        $mockDriver->expects($this->any())->method('createStatement')->willReturnCallback(fn() => new Adapter\StatementContainer());
 
         return new Adapter\Adapter($mockDriver, $platform);
     }
 
-    /**
-     * @param string $name
-     * @param array $arguments
-     * @return AbstractSql
-     */
-    public function __call($name, $arguments)
+    protected static function select(string|array|null $sqlString): Select
     {
-        $arg0 = $arguments[0] ?? null;
-        switch ($name) {
-            case 'select':
-                return new Sql\Select($arg0);
-            case 'delete':
-                return new Sql\Delete($arg0);
-            case 'update':
-                return new Sql\Update($arg0);
-            case 'insert':
-                return new Sql\Insert($arg0);
-            case 'createTable':
-                return new Sql\Ddl\CreateTable($arg0);
-            case 'createColumn':
-                return new Sql\Ddl\Column\Column($arg0);
-        }
+        return new Sql\Select($sqlString);
+    }
+
+    protected static function delete(string|TableIdentifier|null $sqlString): Delete
+    {
+        return new Sql\Delete($sqlString);
+    }
+
+    protected static function update(string|TableIdentifier|null $sqlString): Update
+    {
+        return new Sql\Update($sqlString);
+    }
+
+    protected static function insert(string|TableIdentifier|null $sqlString): Insert
+    {
+        return new Sql\Insert($sqlString);
+    }
+
+    protected static function createTable(string|TableIdentifier $sqlString): CreateTable
+    {
+        return new Sql\Ddl\CreateTable($sqlString);
+    }
+
+    protected static function createColumn(?string $sqlString): Column
+    {
+        return new Sql\Ddl\Column\Column($sqlString);
     }
 }

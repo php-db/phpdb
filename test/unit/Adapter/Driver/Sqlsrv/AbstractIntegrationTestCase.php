@@ -8,7 +8,7 @@ use function extension_loaded;
 use function getenv;
 use function sqlsrv_connect;
 
-abstract class AbstractIntegrationTest extends TestCase
+abstract class AbstractIntegrationTestCase extends TestCase
 {
     /** @var array<string, string> */
     protected $variables = [

@@ -30,9 +30,7 @@ final class AdapterServiceDelegatorTest extends TestCase
             ->with(AdapterInterface::class)
             ->willReturn($this->createMock(Adapter::class));
 
-        $callback = static function (): ConcreteAdapterAwareObject {
-            return new ConcreteAdapterAwareObject();
-        };
+        $callback = static fn(): ConcreteAdapterAwareObject => new ConcreteAdapterAwareObject();
 
         /** @var ConcreteAdapterAwareObject $result */
         $result = (new AdapterServiceDelegator())(
@@ -63,9 +61,7 @@ final class AdapterServiceDelegatorTest extends TestCase
             ->with(AdapterInterface::class)
             ->willReturn($this->createMock(AdapterInterface::class));
 
-        $callback = static function (): ConcreteAdapterAwareObject {
-            return new ConcreteAdapterAwareObject();
-        };
+        $callback = static fn(): ConcreteAdapterAwareObject => new ConcreteAdapterAwareObject();
 
         /** @var ConcreteAdapterAwareObject $result */
         $result = (new AdapterServiceDelegator())(
@@ -89,9 +85,7 @@ final class AdapterServiceDelegatorTest extends TestCase
             ->expects(self::never())
             ->method('get');
 
-        $callback = static function (): ConcreteAdapterAwareObject {
-            return new ConcreteAdapterAwareObject();
-        };
+        $callback = static fn(): ConcreteAdapterAwareObject => new ConcreteAdapterAwareObject();
 
         /** @var ConcreteAdapterAwareObject $result */
         $result = (new AdapterServiceDelegator())(
@@ -110,9 +104,7 @@ final class AdapterServiceDelegatorTest extends TestCase
             ->expects(self::never())
             ->method('has');
 
-        $callback = static function (): stdClass {
-            return new stdClass();
-        };
+        $callback = static fn(): stdClass => new stdClass();
 
         $result = (new AdapterServiceDelegator())(
             $container,
@@ -132,11 +124,7 @@ final class AdapterServiceDelegatorTest extends TestCase
                 ConcreteAdapterAwareObject::class => ConcreteAdapterAwareObject::class,
             ],
             'factories'  => [
-                AdapterInterface::class => static function () use (
-                    $databaseAdapter
-                ) {
-                    return $databaseAdapter;
-                },
+                AdapterInterface::class => static fn() => $databaseAdapter,
             ],
             'delegators' => [
                 ConcreteAdapterAwareObject::class => [
@@ -163,11 +151,7 @@ final class AdapterServiceDelegatorTest extends TestCase
                 ConcreteAdapterAwareObject::class => ConcreteAdapterAwareObject::class,
             ],
             'factories'  => [
-                'alternate-database-adapter' => static function () use (
-                    $databaseAdapter
-                ) {
-                    return $databaseAdapter;
-                },
+                'alternate-database-adapter' => static fn() => $databaseAdapter,
             ],
             'delegators' => [
                 ConcreteAdapterAwareObject::class => [
@@ -191,11 +175,7 @@ final class AdapterServiceDelegatorTest extends TestCase
 
         $container           = new ServiceManager([
             'factories' => [
-                AdapterInterface::class => static function () use (
-                    $databaseAdapter
-                ) {
-                    return $databaseAdapter;
-                },
+                AdapterInterface::class => static fn() => $databaseAdapter,
             ],
         ]);
         $pluginManagerConfig = [

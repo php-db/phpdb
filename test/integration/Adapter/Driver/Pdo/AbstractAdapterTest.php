@@ -3,6 +3,7 @@
 namespace LaminasIntegrationTest\Db\Adapter\Driver\Pdo;
 
 use Laminas\Db\Adapter\Adapter;
+use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 
 use function getmypid;
@@ -11,13 +12,11 @@ use function shell_exec;
 /**
  * @property Adapter $adapter
  */
+#[CoversMethod(Adapter::class, '__construct()')]
 abstract class AbstractAdapterTest extends TestCase
 {
     public const DB_SERVER_PORT = null;
 
-    /**
-     * @covers \Laminas\Db\Adapter\Adapter::__construct()
-     */
     public function testConnection()
     {
         $this->assertInstanceOf(Adapter::class, $this->adapter);

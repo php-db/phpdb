@@ -3,13 +3,12 @@
 namespace LaminasTest\Db\Sql\Ddl\Column;
 
 use Laminas\Db\Sql\Ddl\Column\Timestamp;
+use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 
+#[CoversMethod(Timestamp::class, 'getExpressionData')]
 class TimestampTest extends TestCase
 {
-    /**
-     * @covers \Laminas\Db\Sql\Ddl\Column\Timestamp::getExpressionData
-     */
     public function testGetExpressionData()
     {
         $column = new Timestamp('foo');

@@ -11,6 +11,8 @@ use Laminas\Db\Sql\ExpressionInterface;
 use Laminas\Db\Sql\Predicate;
 use Laminas\Db\Sql\Select;
 use LaminasTest\Db\TestAsset\TrustingSql92Platform;
+use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use ReflectionMethod;
@@ -21,6 +23,7 @@ use function next;
 use function preg_match;
 use function uniqid;
 
+#[CoversMethod(AbstractSql::class, 'processExpression')]
 class AbstractSqlTest extends TestCase
 {
     /** @var AbstractSql&MockObject */
@@ -37,18 +40,13 @@ class AbstractSqlTest extends TestCase
         $this->mockDriver
             ->expects($this->any())
             ->method('getPrepareType')
-            ->will($this->returnValue(DriverInterface::PARAMETERIZATION_NAMED));
+            ->willReturn(DriverInterface::PARAMETERIZATION_NAMED);
         $this->mockDriver
             ->expects($this->any())
             ->method('formatParameterName')
-            ->will($this->returnCallback(function ($x) {
-                return ':' . $x;
-            }));
+            ->willReturnCallback(fn($x) => ':' . $x);
     }
 
-    /**
-     * @covers \Laminas\Db\Sql\AbstractSql::processExpression
-     */
     public function testProcessExpressionWithoutParameterContainer()
     {
         $expression   = new Expression('? > ? AND y < ?', [['x' => ExpressionInterface::TYPE_IDENTIFIER], 5, 10]);
@@ -57,9 +55,6 @@ class AbstractSqlTest extends TestCase
         self::assertEquals("\"x\" > '5' AND y < '10'", $sqlAndParams);
     }
 
-    /**
-     * @covers \Laminas\Db\Sql\AbstractSql::processExpression
-     */
     public function testProcessExpressionWithParameterContainerAndParameterizationTypeNamed()
     {
         $parameterContainer = new ParameterContainer();
@@ -92,9 +87,6 @@ class AbstractSqlTest extends TestCase
         self::assertEquals(1, (int) $expressionNumberNext - (int) $expressionNumber);
     }
 
-    /**
-     * @covers \Laminas\Db\Sql\AbstractSql::processExpression
-     */
     public function testProcessExpressionWorksWithExpressionContainingStringParts()
     {
         $expression = new Predicate\Expression('x = ?', 5);
@@ -105,9 +97,6 @@ class AbstractSqlTest extends TestCase
         self::assertEquals("(x = '5')", $sqlAndParams);
     }
 
-    /**
-     * @covers \Laminas\Db\Sql\AbstractSql::processExpression
-     */
     public function testProcessExpressionWorksWithExpressionContainingSelectObject()
     {
         $select = new Select();
@@ -132,9 +121,7 @@ class AbstractSqlTest extends TestCase
         self::assertEquals('"release_date" = FROM_UNIXTIME(\'100000000\')', $sqlAndParams);
     }
 
-    /**
-     * @group 7407
-     */
+    #[Group('7407')]
     public function testProcessExpressionWorksWithExpressionObjectWithPercentageSigns()
     {
         $expressionString = 'FROM_UNIXTIME(date, "%Y-%m")';

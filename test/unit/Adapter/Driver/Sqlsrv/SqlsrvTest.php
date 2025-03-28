@@ -6,8 +6,21 @@ use Laminas\Db\Adapter\Driver\Sqlsrv\Connection;
 use Laminas\Db\Adapter\Driver\Sqlsrv\Result;
 use Laminas\Db\Adapter\Driver\Sqlsrv\Sqlsrv;
 use Laminas\Db\Adapter\Driver\Sqlsrv\Statement;
+use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\Depends;
 use PHPUnit\Framework\TestCase;
 
+#[CoversMethod(Sqlsrv::class, 'registerConnection')]
+#[CoversMethod(Sqlsrv::class, 'registerStatementPrototype')]
+#[CoversMethod(Sqlsrv::class, 'registerResultPrototype')]
+#[CoversMethod(Sqlsrv::class, 'getDatabasePlatformName')]
+#[CoversMethod(Sqlsrv::class, 'getConnection')]
+#[CoversMethod(Sqlsrv::class, 'createStatement')]
+#[CoversMethod(Sqlsrv::class, 'createResult')]
+#[CoversMethod(Sqlsrv::class, 'getPrepareType')]
+#[CoversMethod(Sqlsrv::class, 'formatParameterName')]
+#[CoversMethod(Sqlsrv::class, 'getLastGeneratedValue')]
+#[CoversMethod(Sqlsrv::class, 'getResultPrototype')]
 class SqlsrvTest extends TestCase
 {
     /** @var Sqlsrv */
@@ -22,9 +35,6 @@ class SqlsrvTest extends TestCase
         $this->sqlsrv = new Sqlsrv([]);
     }
 
-    /**
-     * @covers \Laminas\Db\Adapter\Driver\Sqlsrv\Sqlsrv::registerConnection
-     */
     public function testRegisterConnection()
     {
         $mockConnection = $this->getMockForAbstractClass(
@@ -40,9 +50,6 @@ class SqlsrvTest extends TestCase
         self::assertSame($this->sqlsrv, $this->sqlsrv->registerConnection($mockConnection));
     }
 
-    /**
-     * @covers \Laminas\Db\Adapter\Driver\Sqlsrv\Sqlsrv::registerStatementPrototype
-     */
     public function testRegisterStatementPrototype()
     {
         $this->sqlsrv  = new Sqlsrv([]);
@@ -59,9 +66,6 @@ class SqlsrvTest extends TestCase
         self::assertSame($this->sqlsrv, $this->sqlsrv->registerStatementPrototype($mockStatement));
     }
 
-    /**
-     * @covers \Laminas\Db\Adapter\Driver\Sqlsrv\Sqlsrv::registerResultPrototype
-     */
     public function testRegisterResultPrototype()
     {
         $this->sqlsrv  = new Sqlsrv([]);
@@ -77,9 +81,6 @@ class SqlsrvTest extends TestCase
         self::assertSame($this->sqlsrv, $this->sqlsrv->registerResultPrototype($mockStatement));
     }
 
-    /**
-     * @covers \Laminas\Db\Adapter\Driver\Sqlsrv\Sqlsrv::getDatabasePlatformName
-     */
     public function testGetDatabasePlatformName()
     {
         $this->sqlsrv = new Sqlsrv([]);
@@ -87,10 +88,7 @@ class SqlsrvTest extends TestCase
         self::assertEquals('SQLServer', $this->sqlsrv->getDatabasePlatformName(Sqlsrv::NAME_FORMAT_NATURAL));
     }
 
-    /**
-     * @depends testRegisterConnection
-     * @covers \Laminas\Db\Adapter\Driver\Sqlsrv\Sqlsrv::getConnection
-     */
+    #[Depends('testRegisterConnection')]
     public function testGetConnection()
     {
         $conn = new Connection([]);
@@ -99,10 +97,9 @@ class SqlsrvTest extends TestCase
     }
 
     /**
-     * @covers \Laminas\Db\Adapter\Driver\Sqlsrv\Sqlsrv::createStatement
      * @todo   Implement testGetPrepareType().
      */
-    public function testCreateStatement()
+    public function testCreateStatement(): never
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
@@ -111,10 +108,9 @@ class SqlsrvTest extends TestCase
     }
 
     /**
-     * @covers \Laminas\Db\Adapter\Driver\Sqlsrv\Sqlsrv::createResult
      * @todo   Implement testGetPrepareType().
      */
-    public function testCreateResult()
+    public function testCreateResult(): never
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
@@ -123,10 +119,9 @@ class SqlsrvTest extends TestCase
     }
 
     /**
-     * @covers \Laminas\Db\Adapter\Driver\Sqlsrv\Sqlsrv::getPrepareType
      * @todo   Implement testGetPrepareType().
      */
-    public function testGetPrepareType()
+    public function testGetPrepareType(): never
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
@@ -135,10 +130,9 @@ class SqlsrvTest extends TestCase
     }
 
     /**
-     * @covers \Laminas\Db\Adapter\Driver\Sqlsrv\Sqlsrv::formatParameterName
      * @todo   Implement testFormatParameterName().
      */
-    public function testFormatParameterName()
+    public function testFormatParameterName(): never
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
@@ -147,10 +141,9 @@ class SqlsrvTest extends TestCase
     }
 
     /**
-     * @covers \Laminas\Db\Adapter\Driver\Sqlsrv\Sqlsrv::getLastGeneratedValue
      * @todo   Implement testGetLastGeneratedValue().
      */
-    public function testGetLastGeneratedValue()
+    public function testGetLastGeneratedValue(): never
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
@@ -158,9 +151,6 @@ class SqlsrvTest extends TestCase
         );
     }
 
-    /**
-     * @covers \Laminas\Db\Adapter\Driver\Sqlsrv\Sqlsrv::getResultPrototype
-     */
     public function testGetResultPrototype()
     {
         $resultPrototype = $this->sqlsrv->getResultPrototype();

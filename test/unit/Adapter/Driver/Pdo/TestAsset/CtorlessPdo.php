@@ -11,18 +11,15 @@ use ReturnTypeWillChange;
 class CtorlessPdo extends PDO
 {
     /**
-     * @var PDOStatement
-     * @psalm-var PDOStatement&MockObject
-     */
-    protected $mockStatement;
-
-    /**
      * @param PDOStatement $mockStatement
      * @psalm-param PDOStatement&MockObject $mockStatement
      */
-    public function __construct($mockStatement)
-    {
-        $this->mockStatement = $mockStatement;
+    public function __construct(
+        /**
+         * @psalm-var PDOStatement&MockObject
+         */
+        protected $mockStatement
+    ) {
     }
 
     /**

@@ -5,13 +5,12 @@ namespace LaminasTest\Db\Sql\Platform\SqlServer\Ddl;
 use Laminas\Db\Sql\Ddl\Column\Column;
 use Laminas\Db\Sql\Ddl\CreateTable;
 use Laminas\Db\Sql\Platform\SqlServer\Ddl\CreateTableDecorator;
+use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 
+#[CoversMethod(CreateTableDecorator::class, 'getSqlString')]
 class CreateTableDecoratorTest extends TestCase
 {
-    /**
-     * @covers \Laminas\Db\Sql\Platform\SqlServer\Ddl\CreateTableDecorator::getSqlString
-     */
     public function testGetSqlString()
     {
         $ctd = new CreateTableDecorator();

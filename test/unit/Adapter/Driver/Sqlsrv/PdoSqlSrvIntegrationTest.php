@@ -3,12 +3,11 @@
 namespace LaminasTest\Db\Adapter\Driver\Sqlsrv;
 
 use Laminas\Db\Adapter\Driver\Pdo\Pdo;
+use PHPUnit\Framework\Attributes\Group;
 
-/**
- * @group integration
- * @group integration-sqlserver
- */
-class PdoSqlSrvIntegrationTest extends AbstractIntegrationTest
+#[Group('integration')]
+#[Group('integration-sqlserver')]
+class PdoSqlSrvIntegrationTest extends AbstractIntegrationTestCase
 {
     public function testParameterizedQuery()
     {

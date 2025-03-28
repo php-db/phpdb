@@ -5,17 +5,22 @@ namespace LaminasTest\Db\ResultSet;
 use ArrayIterator;
 use ArrayObject;
 use Laminas\Db\Adapter\Driver\ResultInterface;
+use Laminas\Db\ResultSet\AbstractResultSet;
 use Laminas\Db\ResultSet\Exception\InvalidArgumentException;
 use Laminas\Db\ResultSet\Exception\RuntimeException;
 use Laminas\Db\ResultSet\ResultSet;
+use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use SplStack;
 use stdClass;
 
 use function is_array;
-use function rand;
+use function random_int;
 use function var_export;
 
+#[CoversMethod(AbstractResultSet::class, 'current')]
+#[CoversMethod(AbstractResultSet::class, 'buffer')]
 class ResultSetIntegrationTest extends TestCase
 {
     /** @var ResultSet */
@@ -56,7 +61,7 @@ class ResultSetIntegrationTest extends TestCase
     }
 
     /** @psalm-return array<array-key, array{0: mixed}> */
-    public function invalidReturnTypes(): array
+    public static function invalidReturnTypes(): array
     {
         return [
             [1],
@@ -69,9 +74,9 @@ class ResultSetIntegrationTest extends TestCase
     }
 
     /**
-     * @dataProvider invalidReturnTypes
      * @param mixed $type
      */
+    #[DataProvider('invalidReturnTypes')]
     public function testSettingInvalidReturnTypeRaisesException($type)
     {
         $this->expectException(InvalidArgumentException::class);
@@ -107,17 +112,17 @@ class ResultSetIntegrationTest extends TestCase
     public function testCanProvideIteratorAggregateAsDataSource()
     {
         $iteratorAggregate = $this->getMockBuilder('IteratorAggregate')
-            ->setMethods(['getIterator'])
+            ->onlyMethods(['getIterator'])
             ->getMock();
-        $iteratorAggregate->expects($this->any())->method('getIterator')->will($this->returnValue($iteratorAggregate));
+        $iteratorAggregate->expects($this->any())->method('getIterator')->willReturn($iteratorAggregate);
         $this->resultSet->initialize($iteratorAggregate);
         self::assertSame($iteratorAggregate->getIterator(), $this->resultSet->getDataSource());
     }
 
     /**
-     * @dataProvider invalidReturnTypes
      * @param mixed $dataSource
      */
+    #[DataProvider('invalidReturnTypes')]
     public function testInvalidDataSourceRaisesException($dataSource)
     {
         if (is_array($dataSource)) {
@@ -176,7 +181,7 @@ class ResultSetIntegrationTest extends TestCase
 
     public function testCountReturnsCountOfRows()
     {
-        $count      = rand(3, 75);
+        $count      = random_int(3, 75);
         $dataSource = $this->getArrayDataSource($count);
         $this->resultSet->initialize($dataSource);
         self::assertEquals($count, $this->resultSet->count());
@@ -184,7 +189,7 @@ class ResultSetIntegrationTest extends TestCase
 
     public function testToArrayRaisesExceptionForRowsThatAreNotArraysOrArrayCastable()
     {
-        $count      = rand(3, 75);
+        $count      = random_int(3, 75);
         $dataSource = $this->getArrayDataSource($count);
         foreach ($dataSource as $index => $row) {
             $dataSource[$index] = (object) $row;
@@ -196,21 +201,17 @@ class ResultSetIntegrationTest extends TestCase
 
     public function testToArrayCreatesArrayOfArraysRepresentingRows()
     {
-        $count      = rand(3, 75);
+        $count      = random_int(3, 75);
         $dataSource = $this->getArrayDataSource($count);
         $this->resultSet->initialize($dataSource);
         $test = $this->resultSet->toArray();
         self::assertEquals($dataSource->getArrayCopy(), $test, var_export($test, 1));
     }
 
-    /**
-     * @covers \Laminas\Db\ResultSet\AbstractResultSet::current
-     * @covers \Laminas\Db\ResultSet\AbstractResultSet::buffer
-     */
     public function testCurrentWithBufferingCallsDataSourceCurrentOnce()
     {
         $mockResult = $this->getMockBuilder(ResultInterface::class)->getMock();
-        $mockResult->expects($this->once())->method('current')->will($this->returnValue(['foo' => 'bar']));
+        $mockResult->expects($this->once())->method('current')->willReturn(['foo' => 'bar']);
 
         $this->resultSet->initialize($mockResult);
         $this->resultSet->buffer();
@@ -220,10 +221,6 @@ class ResultSetIntegrationTest extends TestCase
         $this->resultSet->current();
     }
 
-    /**
-     * @covers \Laminas\Db\ResultSet\AbstractResultSet::current
-     * @covers \Laminas\Db\ResultSet\AbstractResultSet::buffer
-     */
     public function testBufferCalledAfterIterationThrowsException()
     {
         $this->resultSet->initialize($this->createMock(ResultInterface::class));
@@ -234,13 +231,10 @@ class ResultSetIntegrationTest extends TestCase
         $this->resultSet->buffer();
     }
 
-    /**
-     * @covers \Laminas\Db\ResultSet\AbstractResultSet::current
-     */
     public function testCurrentReturnsNullForNonExistingValues()
     {
         $mockResult = $this->createMock(ResultInterface::class);
-        $mockResult->expects($this->once())->method('current')->will($this->returnValue("Not an Array"));
+        $mockResult->expects($this->once())->method('current')->willReturn("Not an Array");
 
         $this->resultSet->initialize($mockResult);
         $this->resultSet->buffer();

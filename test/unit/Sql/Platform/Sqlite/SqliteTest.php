@@ -5,17 +5,17 @@ namespace LaminasTest\Db\Sql\Platform\Sqlite;
 use Laminas\Db\Sql\Platform\Sqlite\SelectDecorator;
 use Laminas\Db\Sql\Platform\Sqlite\Sqlite;
 use Laminas\Db\Sql\Select;
+use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\TestDox;
 use PHPUnit\Framework\TestCase;
 
 use function current;
 use function key;
 
+#[CoversMethod(Sqlite::class, '__construct')]
 class SqliteTest extends TestCase
 {
-    /**
-     * @testdox unit test / object test: Test Sqlite constructor will register the decorator
-     * @covers \Laminas\Db\Sql\Platform\Sqlite\Sqlite::__construct
-     */
+    #[TestDox('unit test / object test: Test Sqlite constructor will register the decorator')]
     public function testConstructorRegistersSqliteDecorator()
     {
         $mysql      = new Sqlite();

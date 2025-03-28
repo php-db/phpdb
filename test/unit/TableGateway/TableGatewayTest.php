@@ -17,6 +17,8 @@ use Laminas\Db\TableGateway\Exception\InvalidArgumentException;
 use Laminas\Db\TableGateway\Feature;
 use Laminas\Db\TableGateway\Feature\FeatureSet;
 use Laminas\Db\TableGateway\TableGateway;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -30,15 +32,15 @@ class TableGatewayTest extends TestCase
         // mock the adapter, driver, and parts
         $mockResult    = $this->getMockBuilder(ResultInterface::class)->getMock();
         $mockStatement = $this->getMockBuilder(StatementInterface::class)->getMock();
-        $mockStatement->expects($this->any())->method('execute')->will($this->returnValue($mockResult));
+        $mockStatement->expects($this->any())->method('execute')->willReturn($mockResult);
         $mockConnection = $this->getMockBuilder(ConnectionInterface::class)->getMock();
         $mockDriver     = $this->getMockBuilder(DriverInterface::class)->getMock();
-        $mockDriver->expects($this->any())->method('createStatement')->will($this->returnValue($mockStatement));
-        $mockDriver->expects($this->any())->method('getConnection')->will($this->returnValue($mockConnection));
+        $mockDriver->expects($this->any())->method('createStatement')->willReturn($mockStatement);
+        $mockDriver->expects($this->any())->method('getConnection')->willReturn($mockConnection);
 
         // setup mock adapter
         $this->mockAdapter = $this->getMockBuilder(Adapter::class)
-            ->setMethods()
+            ->onlyMethods([])
             ->setConstructorArgs([$mockDriver])
             ->getMock();
     }
@@ -84,10 +86,8 @@ class TableGatewayTest extends TestCase
         );
     }
 
-    /**
-     * @group 6726
-     * @group 6740
-     */
+    #[Group('6726')]
+    #[Group('6740')]
     public function testTableAsString()
     {
         $ti = 'fooTable.barSchema';
@@ -100,10 +100,8 @@ class TableGatewayTest extends TestCase
         self::assertEquals($ti, $table->getTable());
     }
 
-    /**
-     * @group 6726
-     * @group 6740
-     */
+    #[Group('6726')]
+    #[Group('6740')]
     public function testTableAsTableIdentifierObject()
     {
         $ti = new TableIdentifier('fooTable', 'barSchema');
@@ -116,10 +114,8 @@ class TableGatewayTest extends TestCase
         self::assertEquals($ti, $table->getTable());
     }
 
-    /**
-     * @group 6726
-     * @group 6740
-     */
+    #[Group('6726')]
+    #[Group('6740')]
     public function testTableAsAliasedTableIdentifierObject()
     {
         // phpcs:disable WebimpressCodingStandard.NamingConventions.ValidVariableName.NotCamelCaps
@@ -140,7 +136,7 @@ class TableGatewayTest extends TestCase
      *     1: string|TableIdentifier
      * }>
      */
-    public function aliasedTables(): array
+    public static function aliasedTables(): array
     {
         $identifier = new TableIdentifier('Users');
         return [
@@ -150,11 +146,11 @@ class TableGatewayTest extends TestCase
     }
 
     /**
-     * @group 7311
-     * @dataProvider aliasedTables
      * @param array<string, string|TableIdentifier> $tableValue
      * @param string|TableIdentifier $expected
      */
+    #[DataProvider('aliasedTables')]
+    #[Group('7311')]
     public function testInsertShouldResetTableToUnaliasedTable(array $tableValue, $expected)
     {
         $insert = new Insert();
@@ -164,13 +160,13 @@ class TableGatewayTest extends TestCase
             ->getMock();
         $result->expects($this->once())
             ->method('getAffectedRows')
-            ->will($this->returnValue(1));
+            ->willReturn(1);
 
         $statement = $this->getMockBuilder(StatementInterface::class)
             ->getMock();
         $statement->expects($this->once())
             ->method('execute')
-            ->will($this->returnValue($result));
+            ->willReturn($result);
 
         $statementExpectation = function ($insert) use ($expected, $statement) {
             $state = $insert->getRawState();
@@ -183,14 +179,14 @@ class TableGatewayTest extends TestCase
             ->getMock();
         $sql->expects($this->atLeastOnce())
             ->method('getTable')
-            ->will($this->returnValue($tableValue));
+            ->willReturn($tableValue);
         $sql->expects($this->once())
             ->method('insert')
-            ->will($this->returnValue($insert));
+            ->willReturn($insert);
         $sql->expects($this->once())
             ->method('prepareStatementForSqlObject')
             ->with($this->equalTo($insert))
-            ->will($this->returnCallback($statementExpectation));
+            ->willReturnCallback($statementExpectation);
 
         $table = new TableGateway(
             $tableValue,
@@ -213,10 +209,10 @@ class TableGatewayTest extends TestCase
     }
 
     /**
-     * @dataProvider aliasedTables
      * @param array<string, string|TableIdentifier> $tableValue
      * @param string|TableIdentifier $expected
      */
+    #[DataProvider('aliasedTables')]
     public function testUpdateShouldResetTableToUnaliasedTable(array $tableValue, $expected)
     {
         $update = new Update();
@@ -226,13 +222,13 @@ class TableGatewayTest extends TestCase
             ->getMock();
         $result->expects($this->once())
             ->method('getAffectedRows')
-            ->will($this->returnValue(1));
+            ->willReturn(1);
 
         $statement = $this->getMockBuilder(StatementInterface::class)
             ->getMock();
         $statement->expects($this->once())
             ->method('execute')
-            ->will($this->returnValue($result));
+            ->willReturn($result);
 
         $statementExpectation = function ($update) use ($expected, $statement) {
             $state = $update->getRawState();
@@ -245,14 +241,14 @@ class TableGatewayTest extends TestCase
             ->getMock();
         $sql->expects($this->atLeastOnce())
             ->method('getTable')
-            ->will($this->returnValue($tableValue));
+            ->willReturn($tableValue);
         $sql->expects($this->once())
             ->method('update')
-            ->will($this->returnValue($update));
+            ->willReturn($update);
         $sql->expects($this->once())
             ->method('prepareStatementForSqlObject')
             ->with($this->equalTo($update))
-            ->will($this->returnCallback($statementExpectation));
+            ->willReturnCallback($statementExpectation);
 
         $table = new TableGateway(
             $tableValue,
@@ -277,10 +273,10 @@ class TableGatewayTest extends TestCase
     }
 
     /**
-     * @dataProvider aliasedTables
      * @param array<string, string|TableIdentifier> $tableValue
      * @param string|TableIdentifier $expected
      */
+    #[DataProvider('aliasedTables')]
     public function testDeleteShouldResetTableToUnaliasedTable(array $tableValue, $expected)
     {
         $delete = new Delete();
@@ -290,13 +286,13 @@ class TableGatewayTest extends TestCase
             ->getMock();
         $result->expects($this->once())
             ->method('getAffectedRows')
-            ->will($this->returnValue(1));
+            ->willReturn(1);
 
         $statement = $this->getMockBuilder(StatementInterface::class)
             ->getMock();
         $statement->expects($this->once())
             ->method('execute')
-            ->will($this->returnValue($result));
+            ->willReturn($result);
 
         $statementExpectation = function ($delete) use ($expected, $statement) {
             $state = $delete->getRawState();
@@ -309,14 +305,14 @@ class TableGatewayTest extends TestCase
             ->getMock();
         $sql->expects($this->atLeastOnce())
             ->method('getTable')
-            ->will($this->returnValue($tableValue));
+            ->willReturn($tableValue);
         $sql->expects($this->once())
             ->method('delete')
-            ->will($this->returnValue($delete));
+            ->willReturn($delete);
         $sql->expects($this->once())
             ->method('prepareStatementForSqlObject')
             ->with($this->equalTo($delete))
-            ->will($this->returnCallback($statementExpectation));
+            ->willReturnCallback($statementExpectation);
 
         $table = new TableGateway(
             $tableValue,

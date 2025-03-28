@@ -5,8 +5,18 @@ namespace LaminasTest\Db\Adapter\Driver\Sqlsrv;
 use Laminas\Db\Adapter\Driver\Sqlsrv\Sqlsrv;
 use Laminas\Db\Adapter\Driver\Sqlsrv\Statement;
 use Laminas\Db\Adapter\ParameterContainer;
+use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 
+#[CoversMethod(Statement::class, 'setDriver')]
+#[CoversMethod(Statement::class, 'setParameterContainer')]
+#[CoversMethod(Statement::class, 'getParameterContainer')]
+#[CoversMethod(Statement::class, 'getResource')]
+#[CoversMethod(Statement::class, 'setSql')]
+#[CoversMethod(Statement::class, 'getSql')]
+#[CoversMethod(Statement::class, 'prepare')]
+#[CoversMethod(Statement::class, 'isPrepared')]
+#[CoversMethod(Statement::class, 'execute')]
 class StatementTest extends TestCase
 {
     /** @var Statement */
@@ -29,25 +39,16 @@ class StatementTest extends TestCase
     {
     }
 
-    /**
-     * @covers \Laminas\Db\Adapter\Driver\Sqlsrv\Statement::setDriver
-     */
     public function testSetDriver()
     {
         self::assertEquals($this->statement, $this->statement->setDriver(new Sqlsrv([])));
     }
 
-    /**
-     * @covers \Laminas\Db\Adapter\Driver\Sqlsrv\Statement::setParameterContainer
-     */
     public function testSetParameterContainer()
     {
         self::assertSame($this->statement, $this->statement->setParameterContainer(new ParameterContainer()));
     }
 
-    /**
-     * @covers \Laminas\Db\Adapter\Driver\Sqlsrv\Statement::getParameterContainer
-     */
     public function testGetParameterContainer()
     {
         $container = new ParameterContainer();
@@ -56,10 +57,9 @@ class StatementTest extends TestCase
     }
 
     /**
-     * @covers \Laminas\Db\Adapter\Driver\Sqlsrv\Statement::getResource
      * @todo   Implement testGetResource().
      */
-    public function testGetResource()
+    public function testGetResource(): never
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
@@ -68,10 +68,9 @@ class StatementTest extends TestCase
     }
 
     /**
-     * @covers \Laminas\Db\Adapter\Driver\Sqlsrv\Statement::setSql
      * @todo   Implement testSetSql().
      */
-    public function testSetSql()
+    public function testSetSql(): never
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
@@ -80,10 +79,9 @@ class StatementTest extends TestCase
     }
 
     /**
-     * @covers \Laminas\Db\Adapter\Driver\Sqlsrv\Statement::getSql
      * @todo   Implement testGetSql().
      */
-    public function testGetSql()
+    public function testGetSql(): never
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
@@ -92,10 +90,9 @@ class StatementTest extends TestCase
     }
 
     /**
-     * @covers \Laminas\Db\Adapter\Driver\Sqlsrv\Statement::prepare
      * @todo   Implement testPrepare().
      */
-    public function testPrepare()
+    public function testPrepare(): never
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
@@ -104,10 +101,9 @@ class StatementTest extends TestCase
     }
 
     /**
-     * @covers \Laminas\Db\Adapter\Driver\Sqlsrv\Statement::isPrepared
      * @todo   Implement testIsPrepared().
      */
-    public function testIsPrepared()
+    public function testIsPrepared(): never
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
@@ -116,10 +112,9 @@ class StatementTest extends TestCase
     }
 
     /**
-     * @covers \Laminas\Db\Adapter\Driver\Sqlsrv\Statement::execute
      * @todo   Implement testExecute().
      */
-    public function testExecute()
+    public function testExecute(): never
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(

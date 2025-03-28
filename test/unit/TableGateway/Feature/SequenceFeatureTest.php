@@ -8,6 +8,7 @@ use Laminas\Db\Adapter\Driver\StatementInterface;
 use Laminas\Db\Adapter\Platform\PlatformInterface;
 use Laminas\Db\TableGateway\Feature\SequenceFeature;
 use Laminas\Db\TableGateway\TableGateway;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class SequenceFeatureTest extends TestCase
@@ -22,46 +23,44 @@ class SequenceFeatureTest extends TestCase
     protected $primaryKeyField = 'id';
 
     /** @var string  sequence name */
-    protected $sequenceName = 'table_sequence';
+    protected static $sequenceName = 'table_sequence';
 
     protected function setUp(): void
     {
-        $this->feature = new SequenceFeature($this->primaryKeyField, $this->sequenceName);
+        $this->feature = new SequenceFeature($this->primaryKeyField, self::$sequenceName);
     }
 
-    /**
-     * @dataProvider nextSequenceIdProvider
-     */
+    #[DataProvider('nextSequenceIdProvider')]
     public function testNextSequenceId(string $platformName, string $statementSql)
     {
         $platform = $this->createMock(PlatformInterface::class);
         $platform->expects($this->any())
             ->method('getName')
-            ->will($this->returnValue($platformName));
+            ->willReturn($platformName);
         $platform->expects($this->any())
             ->method('quoteIdentifier')
-            ->will($this->returnValue($this->sequenceName));
+            ->willReturn(self::$sequenceName);
         $adapter = $this->getMockBuilder(Adapter::class)
-            ->setMethods(['getPlatform', 'createStatement'])
+            ->onlyMethods(['getPlatform', 'createStatement'])
             ->disableOriginalConstructor()
             ->getMock();
         $adapter->expects($this->any())
             ->method('getPlatform')
-            ->will($this->returnValue($platform));
+            ->willReturn($platform);
         $result = $this->createMock(ResultInterface::class);
         $result->expects($this->any())
             ->method('current')
-            ->will($this->returnValue(['nextval' => 2]));
+            ->willReturn(['nextval' => 2]);
         $statement = $this->createMock(StatementInterface::class);
         $statement->expects($this->any())
             ->method('execute')
-            ->will($this->returnValue($result));
+            ->willReturn($result);
         $statement->expects($this->any())
             ->method('prepare')
             ->with($statementSql);
         $adapter->expects($this->once())
             ->method('createStatement')
-            ->will($this->returnValue($statement));
+            ->willReturn($statement);
         $this->tableGateway = $this->getMockForAbstractClass(
             TableGateway::class,
             ['table', $adapter],
@@ -73,11 +72,11 @@ class SequenceFeatureTest extends TestCase
     }
 
     /** @psalm-return array<array-key, array{0: string, 1: string}> */
-    public function nextSequenceIdProvider(): array
+    public static function nextSequenceIdProvider(): array
     {
         return [
-            ['PostgreSQL', 'SELECT NEXTVAL(\'"' . $this->sequenceName . '"\')'],
-            ['Oracle', 'SELECT ' . $this->sequenceName . '.NEXTVAL as "nextval" FROM dual'],
+            ['PostgreSQL', 'SELECT NEXTVAL(\'"' . self::$sequenceName . '"\')'],
+            ['Oracle', 'SELECT ' . self::$sequenceName . '.NEXTVAL as "nextval" FROM dual'],
         ];
     }
 }

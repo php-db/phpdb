@@ -6,6 +6,7 @@ use Laminas\Db\Adapter\Driver\Pdo;
 use Laminas\Db\Adapter\Driver\Pgsql;
 use Laminas\Db\Adapter\Platform\Postgresql;
 use PgSql\Connection as PgSqlConnection;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 
 use function extension_loaded;
@@ -13,10 +14,8 @@ use function getenv;
 use function is_resource;
 use function pg_connect;
 
-/**
- * @group integration
- * @group integration-postgres
- */
+#[Group('integration')]
+#[Group('integration-postgres')]
 class PostgresqlTest extends TestCase
 {
     /** @var array<string, resource> */

@@ -6,8 +6,21 @@ use Laminas\Db\Adapter\Driver\IbmDb2\Connection;
 use Laminas\Db\Adapter\Driver\IbmDb2\IbmDb2;
 use Laminas\Db\Adapter\Driver\IbmDb2\Result;
 use Laminas\Db\Adapter\Driver\IbmDb2\Statement;
+use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\Depends;
 use PHPUnit\Framework\TestCase;
 
+#[CoversMethod(IbmDb2::class, 'registerConnection')]
+#[CoversMethod(IbmDb2::class, 'registerStatementPrototype')]
+#[CoversMethod(IbmDb2::class, 'registerResultPrototype')]
+#[CoversMethod(IbmDb2::class, 'getDatabasePlatformName')]
+#[CoversMethod(IbmDb2::class, 'getConnection')]
+#[CoversMethod(IbmDb2::class, 'createStatement')]
+#[CoversMethod(IbmDb2::class, 'createResult')]
+#[CoversMethod(IbmDb2::class, 'getPrepareType')]
+#[CoversMethod(IbmDb2::class, 'formatParameterName')]
+#[CoversMethod(IbmDb2::class, 'getLastGeneratedValue')]
+#[CoversMethod(IbmDb2::class, 'getResultPrototype')]
 class IbmDb2Test extends TestCase
 {
     /** @var IbmDb2 */
@@ -22,9 +35,6 @@ class IbmDb2Test extends TestCase
         $this->ibmdb2 = new IbmDb2([]);
     }
 
-    /**
-     * @covers \Laminas\Db\Adapter\Driver\IbmDb2\IbmDb2::registerConnection
-     */
     public function testRegisterConnection()
     {
         $mockConnection = $this->getMockForAbstractClass(
@@ -40,9 +50,6 @@ class IbmDb2Test extends TestCase
         self::assertSame($this->ibmdb2, $this->ibmdb2->registerConnection($mockConnection));
     }
 
-    /**
-     * @covers \Laminas\Db\Adapter\Driver\IbmDb2\IbmDb2::registerStatementPrototype
-     */
     public function testRegisterStatementPrototype()
     {
         $this->ibmdb2  = new IbmDb2([]);
@@ -59,9 +66,6 @@ class IbmDb2Test extends TestCase
         self::assertSame($this->ibmdb2, $this->ibmdb2->registerStatementPrototype($mockStatement));
     }
 
-    /**
-     * @covers \Laminas\Db\Adapter\Driver\IbmDb2\IbmDb2::registerResultPrototype
-     */
     public function testRegisterResultPrototype()
     {
         $this->ibmdb2  = new IbmDb2([]);
@@ -77,9 +81,6 @@ class IbmDb2Test extends TestCase
         self::assertSame($this->ibmdb2, $this->ibmdb2->registerResultPrototype($mockStatement));
     }
 
-    /**
-     * @covers \Laminas\Db\Adapter\Driver\IbmDb2\IbmDb2::getDatabasePlatformName
-     */
     public function testGetDatabasePlatformName()
     {
         $this->ibmdb2 = new IbmDb2([]);
@@ -87,10 +88,7 @@ class IbmDb2Test extends TestCase
         self::assertEquals('IBM DB2', $this->ibmdb2->getDatabasePlatformName(IbmDb2::NAME_FORMAT_NATURAL));
     }
 
-    /**
-     * @depends testRegisterConnection
-     * @covers \Laminas\Db\Adapter\Driver\IbmDb2\IbmDb2::getConnection
-     */
+    #[Depends('testRegisterConnection')]
     public function testGetConnection()
     {
         $conn = new Connection([]);
@@ -99,10 +97,9 @@ class IbmDb2Test extends TestCase
     }
 
     /**
-     * @covers \Laminas\Db\Adapter\Driver\IbmDb2\IbmDb2::createStatement
      * @todo   Implement testGetPrepareType().
      */
-    public function testCreateStatement()
+    public function testCreateStatement(): never
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
@@ -111,10 +108,9 @@ class IbmDb2Test extends TestCase
     }
 
     /**
-     * @covers \Laminas\Db\Adapter\Driver\IbmDb2\IbmDb2::createResult
      * @todo   Implement testGetPrepareType().
      */
-    public function testCreateResult()
+    public function testCreateResult(): never
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
@@ -123,10 +119,9 @@ class IbmDb2Test extends TestCase
     }
 
     /**
-     * @covers \Laminas\Db\Adapter\Driver\IbmDb2\IbmDb2::getPrepareType
      * @todo   Implement testGetPrepareType().
      */
-    public function testGetPrepareType()
+    public function testGetPrepareType(): never
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
@@ -135,10 +130,9 @@ class IbmDb2Test extends TestCase
     }
 
     /**
-     * @covers \Laminas\Db\Adapter\Driver\IbmDb2\IbmDb2::formatParameterName
      * @todo   Implement testFormatParameterName().
      */
-    public function testFormatParameterName()
+    public function testFormatParameterName(): never
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
@@ -147,10 +141,9 @@ class IbmDb2Test extends TestCase
     }
 
     /**
-     * @covers \Laminas\Db\Adapter\Driver\IbmDb2\IbmDb2::getLastGeneratedValue
      * @todo   Implement testGetLastGeneratedValue().
      */
-    public function testGetLastGeneratedValue()
+    public function testGetLastGeneratedValue(): never
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
@@ -158,9 +151,6 @@ class IbmDb2Test extends TestCase
         );
     }
 
-    /**
-     * @covers \Laminas\Db\Adapter\Driver\IbmDb2\IbmDb2::getResultPrototype
-     */
     public function testGetResultPrototype()
     {
         $resultPrototype = $this->ibmdb2->getResultPrototype();

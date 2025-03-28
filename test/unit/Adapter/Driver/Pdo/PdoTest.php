@@ -6,8 +6,12 @@ use Laminas\Db\Adapter\Driver\DriverInterface;
 use Laminas\Db\Adapter\Driver\Pdo\Pdo;
 use Laminas\Db\Adapter\Driver\Pdo\Result;
 use Laminas\Db\Exception\RuntimeException;
+use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
+#[CoversMethod(Pdo::class, 'getDatabasePlatformName')]
+#[CoversMethod(Pdo::class, 'getResultPrototype')]
 class PdoTest extends TestCase
 {
     /** @var Pdo */
@@ -22,9 +26,6 @@ class PdoTest extends TestCase
         $this->pdo = new Pdo([]);
     }
 
-    /**
-     * @covers \Laminas\Db\Adapter\Driver\Pdo\Pdo::getDatabasePlatformName
-     */
     public function testGetDatabasePlatformName()
     {
         // Test platform name for SqlServer
@@ -34,7 +35,7 @@ class PdoTest extends TestCase
     }
 
     /** @psalm-return array<array-key, array{0: int|string, 1: null|string, 2: string}> */
-    public function getParamsAndType(): array
+    public static function getParamsAndType(): array
     {
         return [
             ['foo', null, ':foo'],
@@ -52,9 +53,9 @@ class PdoTest extends TestCase
     }
 
     /**
-     * @dataProvider getParamsAndType
      * @param int|string $name
      */
+    #[DataProvider('getParamsAndType')]
     public function testFormatParameterName($name, ?string $type, string $expected)
     {
         $result = $this->pdo->formatParameterName($name, $type);
@@ -62,7 +63,7 @@ class PdoTest extends TestCase
     }
 
     /** @psalm-return array<array-key, array{0: string}> */
-    public function getInvalidParamName(): array
+    public static function getInvalidParamName(): array
     {
         return [
             ['foo%'],
@@ -72,18 +73,13 @@ class PdoTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider getInvalidParamName
-     */
+    #[DataProvider('getInvalidParamName')]
     public function testFormatParameterNameWithInvalidCharacters(string $name)
     {
         $this->expectException(RuntimeException::class);
         $this->pdo->formatParameterName($name);
     }
 
-    /**
-     * @covers \Laminas\Db\Adapter\Driver\Pdo\Pdo::getResultPrototype
-     */
     public function testGetResultPrototype()
     {
         $resultPrototype = $this->pdo->getResultPrototype();

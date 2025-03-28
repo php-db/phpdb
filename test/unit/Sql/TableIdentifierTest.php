@@ -4,6 +4,9 @@ namespace LaminasTest\Db\Sql;
 
 use Laminas\Db\Sql\Exception\InvalidArgumentException;
 use Laminas\Db\Sql\TableIdentifier;
+use LaminasTest\Db\TestAsset\ObjectToString;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 use TypeError;
@@ -11,10 +14,9 @@ use TypeError;
 use function array_merge;
 
 /**
- * Tests for {@see \Laminas\Db\Sql\TableIdentifier}
- *
- * @covers \Laminas\Db\Sql\TableIdentifier
+ * Tests for {@see TableIdentifier}
  */
+#[CoversClass(TableIdentifier::class)]
 class TableIdentifierTest extends TestCase
 {
     public function testGetTable()
@@ -40,10 +42,7 @@ class TableIdentifierTest extends TestCase
 
     public function testGetTableFromObjectStringCast()
     {
-        $table = $this->getMockBuilder('stdClass')->setMethods(['__toString'])->getMock();
-
-        $table->expects($this->once())->method('__toString')->will($this->returnValue('castResult'));
-
+        $table           = new ObjectToString('castResult');
         $tableIdentifier = new TableIdentifier((string) $table);
 
         self::assertSame('castResult', $tableIdentifier->getTable());
@@ -52,10 +51,7 @@ class TableIdentifierTest extends TestCase
 
     public function testGetSchemaFromObjectStringCast()
     {
-        $schema = $this->getMockBuilder('stdClass')->setMethods(['__toString'])->getMock();
-
-        $schema->expects($this->once())->method('__toString')->will($this->returnValue('castResult'));
-
+        $schema          = new ObjectToString('castResult');
         $tableIdentifier = new TableIdentifier('foo', (string) $schema);
 
         self::assertSame('castResult', $tableIdentifier->getSchema());
@@ -63,9 +59,9 @@ class TableIdentifierTest extends TestCase
     }
 
     /**
-     * @dataProvider invalidTableProvider
      * @param mixed $invalidTable
      */
+    #[DataProvider('invalidTableProvider')]
     public function testRejectsInvalidTable($invalidTable)
     {
         $this->expectException($invalidTable === '' ? InvalidArgumentException::class : TypeError::class);
@@ -74,9 +70,9 @@ class TableIdentifierTest extends TestCase
     }
 
     /**
-     * @dataProvider invalidSchemaProvider
      * @param mixed $invalidSchema
      */
+    #[DataProvider('invalidSchemaProvider')]
     public function testRejectsInvalidSchema($invalidSchema)
     {
         $this->expectException($invalidSchema === '' ? InvalidArgumentException::class : TypeError::class);
@@ -89,11 +85,11 @@ class TableIdentifierTest extends TestCase
      *
      * @return mixed[][]
      */
-    public function invalidTableProvider()
+    public static function invalidTableProvider(): array
     {
         return array_merge(
             [[null]],
-            $this->invalidSchemaProvider()
+            self::invalidSchemaProvider()
         );
     }
 
@@ -102,7 +98,7 @@ class TableIdentifierTest extends TestCase
      *
      * @return mixed[][]
      */
-    public function invalidSchemaProvider()
+    public static function invalidSchemaProvider(): array
     {
         return [
             [''],

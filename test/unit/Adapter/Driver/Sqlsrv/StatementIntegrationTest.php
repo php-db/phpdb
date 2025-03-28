@@ -5,19 +5,21 @@ namespace LaminasTest\Db\Adapter\Driver\Sqlsrv;
 use Laminas\Db\Adapter\Driver\Sqlsrv\Result;
 use Laminas\Db\Adapter\Driver\Sqlsrv\Sqlsrv;
 use Laminas\Db\Adapter\Driver\Sqlsrv\Statement;
+use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\Group;
 
 use function get_resource_type;
 use function sqlsrv_connect;
 
-/**
- * @group integration
- * @group integration-sqlserver
- */
-class StatementIntegrationTest extends AbstractIntegrationTest
+#[CoversMethod(Statement::class, 'initialize')]
+#[CoversMethod(Statement::class, 'getResource')]
+#[CoversMethod(Statement::class, 'prepare')]
+#[CoversMethod(Statement::class, 'isPrepared')]
+#[CoversMethod(Statement::class, 'execute')]
+#[Group('integration')]
+#[Group('integration-sqlserver')]
+class StatementIntegrationTest extends AbstractIntegrationTestCase
 {
-    /**
-     * @covers \Laminas\Db\Adapter\Driver\Sqlsrv\Statement::initialize
-     */
     public function testInitialize()
     {
         $sqlsrvResource = sqlsrv_connect(
@@ -34,9 +36,6 @@ class StatementIntegrationTest extends AbstractIntegrationTest
         unset($stmtResource, $sqlsrvResource);
     }
 
-    /**
-     * @covers \Laminas\Db\Adapter\Driver\Sqlsrv\Statement::getResource
-     */
     public function testGetResource()
     {
         $sqlsrvResource = sqlsrv_connect(
@@ -56,10 +55,6 @@ class StatementIntegrationTest extends AbstractIntegrationTest
         unset($resource, $sqlsrvResource);
     }
 
-    /**
-     * @covers \Laminas\Db\Adapter\Driver\Sqlsrv\Statement::prepare
-     * @covers \Laminas\Db\Adapter\Driver\Sqlsrv\Statement::isPrepared
-     */
     public function testPrepare()
     {
         $sqlsrvResource = sqlsrv_connect(
@@ -79,9 +74,6 @@ class StatementIntegrationTest extends AbstractIntegrationTest
         unset($resource, $sqlsrvResource);
     }
 
-    /**
-     * @covers \Laminas\Db\Adapter\Driver\Sqlsrv\Statement::execute
-     */
     public function testExecute()
     {
         $sqlsrv    = new Sqlsrv($this->variables);

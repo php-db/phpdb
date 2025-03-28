@@ -32,25 +32,17 @@ class MasterSlaveFeatureTest extends TestCase
 
         $mockStatement = $this->getMockBuilder(StatementInterface::class)->getMock();
         $mockDriver    = $this->getMockBuilder(DriverInterface::class)->getMock();
-        $mockDriver->expects($this->any())->method('createStatement')->will($this->returnValue(
-            $mockStatement
-        ));
-        $this->mockMasterAdapter->expects($this->any())->method('getDriver')->will($this->returnValue($mockDriver));
-        $this->mockMasterAdapter->expects($this->any())->method('getPlatform')->will($this->returnValue(
-            new Sql92()
-        ));
+        $mockDriver->expects($this->any())->method('createStatement')->willReturn($mockStatement);
+        $this->mockMasterAdapter->expects($this->any())->method('getDriver')->willReturn($mockDriver);
+        $this->mockMasterAdapter->expects($this->any())->method('getPlatform')->willReturn(new Sql92());
 
         $this->mockSlaveAdapter = $this->getMockBuilder(AdapterInterface::class)->getMock();
 
         $mockStatement = $this->getMockBuilder(StatementInterface::class)->getMock();
         $mockDriver    = $this->getMockBuilder(DriverInterface::class)->getMock();
-        $mockDriver->expects($this->any())->method('createStatement')->will($this->returnValue(
-            $mockStatement
-        ));
-        $this->mockSlaveAdapter->expects($this->any())->method('getDriver')->will($this->returnValue($mockDriver));
-        $this->mockSlaveAdapter->expects($this->any())->method('getPlatform')->will($this->returnValue(
-            new Sql92()
-        ));
+        $mockDriver->expects($this->any())->method('createStatement')->willReturn($mockStatement);
+        $this->mockSlaveAdapter->expects($this->any())->method('getDriver')->willReturn($mockDriver);
+        $this->mockSlaveAdapter->expects($this->any())->method('getPlatform')->willReturn(new Sql92());
 
         $this->feature = new MasterSlaveFeature($this->mockSlaveAdapter);
     }
@@ -73,9 +65,7 @@ class MasterSlaveFeatureTest extends TestCase
         );
 
         $this->mockSlaveAdapter->getDriver()->createStatement()
-            ->expects($this->once())->method('execute')->will($this->returnValue(
-                $this->getMockBuilder(ResultSet::class)->getMock()
-            ));
+            ->expects($this->once())->method('execute')->willReturn($this->getMockBuilder(ResultSet::class)->getMock());
         $table->select('foo = bar');
     }
 
@@ -86,9 +76,7 @@ class MasterSlaveFeatureTest extends TestCase
             ['foo', $this->mockMasterAdapter, $this->feature]
         );
         $this->mockSlaveAdapter->getDriver()->createStatement()
-            ->expects($this->once())->method('execute')->will($this->returnValue(
-                $this->getMockBuilder(ResultSet::class)->getMock()
-            ));
+            ->expects($this->once())->method('execute')->willReturn($this->getMockBuilder(ResultSet::class)->getMock());
 
         $masterSql = $table->getSql();
         $table->select('foo = bar');

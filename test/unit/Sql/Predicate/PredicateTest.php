@@ -7,6 +7,7 @@ use Laminas\Db\Sql\Expression;
 use Laminas\Db\Sql\Predicate\Predicate;
 use Laminas\Db\Sql\Select;
 use Laminas\Stdlib\ErrorHandler;
+use PHPUnit\Framework\Attributes\TestDox;
 use PHPUnit\Framework\TestCase;
 
 use const E_USER_NOTICE;
@@ -219,9 +220,7 @@ class PredicateTest extends TestCase
         self::assertEquals(')', $parts[6]);
     }
 
-    /**
-     * @testdox Unit test: Test expression() is chainable and returns proper values
-     */
+    #[TestDox('Unit test: Test expression() is chainable and returns proper values')]
     public function testExpression()
     {
         $predicate = new Predicate();
@@ -235,9 +234,7 @@ class PredicateTest extends TestCase
         );
     }
 
-    /**
-     * @testdox Unit test: Test expression() allows null $parameters
-     */
+    #[TestDox('Unit test: Test expression() allows null $parameters')]
     public function testExpressionNullParameters()
     {
         $predicate = new Predicate();
@@ -248,9 +245,7 @@ class PredicateTest extends TestCase
         self::assertEquals([], $expression->getParameters());
     }
 
-    /**
-     * @testdox Unit test: Test literal() is chainable, returns proper values, and is backwards compatible with 2.0.*
-     */
+    #[TestDox('Unit test: Test literal() is chainable, returns proper values, and is backwards compatible with 2.0.*')]
     public function testLiteral()
     {
         $predicate = new Predicate();

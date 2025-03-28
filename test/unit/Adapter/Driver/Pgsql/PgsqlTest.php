@@ -7,10 +7,24 @@ use Laminas\Db\Adapter\Driver\Pgsql\Pgsql;
 use Laminas\Db\Adapter\Driver\Pgsql\Result;
 use Laminas\Db\Adapter\Driver\Pgsql\Statement;
 use Laminas\Db\Adapter\Exception\RuntimeException;
+use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\Depends;
 use PHPUnit\Framework\TestCase;
 
 use function extension_loaded;
 
+#[CoversMethod(Pgsql::class, 'checkEnvironment')]
+#[CoversMethod(Pgsql::class, 'registerConnection')]
+#[CoversMethod(Pgsql::class, 'registerStatementPrototype')]
+#[CoversMethod(Pgsql::class, 'registerResultPrototype')]
+#[CoversMethod(Pgsql::class, 'getDatabasePlatformName')]
+#[CoversMethod(Pgsql::class, 'getConnection')]
+#[CoversMethod(Pgsql::class, 'createStatement')]
+#[CoversMethod(Pgsql::class, 'createResult')]
+#[CoversMethod(Pgsql::class, 'getPrepareType')]
+#[CoversMethod(Pgsql::class, 'formatParameterName')]
+#[CoversMethod(Pgsql::class, 'getLastGeneratedValue')]
+#[CoversMethod(Pgsql::class, 'getResultPrototype')]
 class PgsqlTest extends TestCase
 {
     /** @var Pgsql */
@@ -25,9 +39,6 @@ class PgsqlTest extends TestCase
         $this->pgsql = new Pgsql([]);
     }
 
-    /**
-     * @covers \Laminas\Db\Adapter\Driver\Pgsql\Pgsql::checkEnvironment
-     */
     public function testCheckEnvironment()
     {
         if (! extension_loaded('pgsql')) {
@@ -37,9 +48,6 @@ class PgsqlTest extends TestCase
         self::assertTrue(true, 'No exception was thrown');
     }
 
-    /**
-     * @covers \Laminas\Db\Adapter\Driver\Pgsql\Pgsql::registerConnection
-     */
     public function testRegisterConnection()
     {
         $mockConnection = $this->getMockForAbstractClass(
@@ -55,9 +63,6 @@ class PgsqlTest extends TestCase
         self::assertSame($this->pgsql, $this->pgsql->registerConnection($mockConnection));
     }
 
-    /**
-     * @covers \Laminas\Db\Adapter\Driver\Pgsql\Pgsql::registerStatementPrototype
-     */
     public function testRegisterStatementPrototype()
     {
         $this->pgsql   = new Pgsql([]);
@@ -74,9 +79,6 @@ class PgsqlTest extends TestCase
         self::assertSame($this->pgsql, $this->pgsql->registerStatementPrototype($mockStatement));
     }
 
-    /**
-     * @covers \Laminas\Db\Adapter\Driver\Pgsql\Pgsql::registerResultPrototype
-     */
     public function testRegisterResultPrototype()
     {
         $this->pgsql   = new Pgsql([]);
@@ -92,9 +94,6 @@ class PgsqlTest extends TestCase
         self::assertSame($this->pgsql, $this->pgsql->registerResultPrototype($mockStatement));
     }
 
-    /**
-     * @covers \Laminas\Db\Adapter\Driver\Pgsql\Pgsql::getDatabasePlatformName
-     */
     public function testGetDatabasePlatformName()
     {
         $this->pgsql = new Pgsql([]);
@@ -102,10 +101,7 @@ class PgsqlTest extends TestCase
         self::assertEquals('PostgreSQL', $this->pgsql->getDatabasePlatformName(Pgsql::NAME_FORMAT_NATURAL));
     }
 
-    /**
-     * @depends testRegisterConnection
-     * @covers \Laminas\Db\Adapter\Driver\Pgsql\Pgsql::getConnection
-     */
+    #[Depends('testRegisterConnection')]
     public function testGetConnection()
     {
         $conn = new Connection([]);
@@ -114,10 +110,9 @@ class PgsqlTest extends TestCase
     }
 
     /**
-     * @covers \Laminas\Db\Adapter\Driver\Pgsql\Pgsql::createStatement
      * @todo   Implement testGetPrepareType().
      */
-    public function testCreateStatement()
+    public function testCreateStatement(): never
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
@@ -126,10 +121,9 @@ class PgsqlTest extends TestCase
     }
 
     /**
-     * @covers \Laminas\Db\Adapter\Driver\Pgsql\Pgsql::createResult
      * @todo   Implement testGetPrepareType().
      */
-    public function testCreateResult()
+    public function testCreateResult(): never
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
@@ -138,10 +132,9 @@ class PgsqlTest extends TestCase
     }
 
     /**
-     * @covers \Laminas\Db\Adapter\Driver\Pgsql\Pgsql::getPrepareType
      * @todo   Implement testGetPrepareType().
      */
-    public function testGetPrepareType()
+    public function testGetPrepareType(): never
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
@@ -150,10 +143,9 @@ class PgsqlTest extends TestCase
     }
 
     /**
-     * @covers \Laminas\Db\Adapter\Driver\Pgsql\Pgsql::formatParameterName
      * @todo   Implement testFormatParameterName().
      */
-    public function testFormatParameterName()
+    public function testFormatParameterName(): never
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
@@ -162,10 +154,9 @@ class PgsqlTest extends TestCase
     }
 
     /**
-     * @covers \Laminas\Db\Adapter\Driver\Pgsql\Pgsql::getLastGeneratedValue
      * @todo   Implement testGetLastGeneratedValue().
      */
-    public function testGetLastGeneratedValue()
+    public function testGetLastGeneratedValue(): never
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
@@ -173,9 +164,6 @@ class PgsqlTest extends TestCase
         );
     }
 
-    /**
-     * @covers \Laminas\Db\Adapter\Driver\Pgsql\Pgsql::getResultPrototype
-     */
     public function testGetResultPrototype()
     {
         $resultPrototype = $this->pgsql->getResultPrototype();

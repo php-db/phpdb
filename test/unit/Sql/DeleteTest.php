@@ -16,8 +16,14 @@ use Laminas\Db\Sql\TableIdentifier;
 use Laminas\Db\Sql\Where;
 use LaminasTest\Db\DeprecatedAssertionsTrait;
 use LaminasTest\Db\TestAsset\DeleteIgnore;
+use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
+#[CoversMethod(Delete::class, 'from')]
+#[CoversMethod(Delete::class, 'where')]
+#[CoversMethod(Delete::class, 'prepareStatement')]
+#[CoversMethod(Delete::class, 'getSqlString')]
 class DeleteTest extends TestCase
 {
     use DeprecatedAssertionsTrait;
@@ -42,12 +48,9 @@ class DeleteTest extends TestCase
     {
     }
 
-    /**
-     * @covers \Laminas\Db\Sql\Delete::from
-     */
     public function testFrom()
     {
-        $this->delete->from('foo', 'bar');
+        $this->delete->from('foo');
         self::assertEquals('foo', $this->readAttribute($this->delete, 'table'));
 
         $tableIdentifier = new TableIdentifier('foo', 'bar');
@@ -56,7 +59,6 @@ class DeleteTest extends TestCase
     }
 
     /**
-     * @covers \Laminas\Db\Sql\Delete::where
      * @todo REMOVE THIS IN 3.x
      */
     public function testWhere()
@@ -108,19 +110,16 @@ class DeleteTest extends TestCase
         });
     }
 
-    /**
-     * @covers \Laminas\Db\Sql\Delete::prepareStatement
-     */
     public function testPrepareStatement()
     {
         $mockDriver  = $this->getMockBuilder(DriverInterface::class)->getMock();
         $mockAdapter = $this->getMockBuilder(Adapter::class)
-            ->setMethods()
+            ->onlyMethods([])
             ->setConstructorArgs([$mockDriver])
             ->getMock();
 
         $mockStatement = $this->getMockBuilder(StatementInterface::class)->getMock();
-        $mockStatement->expects($this->at(2))
+        $mockStatement->expects($this->once())
             ->method('setSql')
             ->with($this->equalTo('DELETE FROM "foo" WHERE x = y'));
 
@@ -133,12 +132,12 @@ class DeleteTest extends TestCase
         $this->delete = new Delete();
         $mockDriver   = $this->getMockBuilder(DriverInterface::class)->getMock();
         $mockAdapter  = $this->getMockBuilder(Adapter::class)
-            ->setMethods()
+            ->onlyMethods([])
             ->setConstructorArgs([$mockDriver])
             ->getMock();
 
         $mockStatement = $this->getMockBuilder(StatementInterface::class)->getMock();
-        $mockStatement->expects($this->at(2))
+        $mockStatement->expects($this->once())
             ->method('setSql')
             ->with($this->equalTo('DELETE FROM "sch"."foo" WHERE x = y'));
 
@@ -148,9 +147,6 @@ class DeleteTest extends TestCase
         $this->delete->prepareStatement($mockAdapter, $mockStatement);
     }
 
-    /**
-     * @covers \Laminas\Db\Sql\Delete::getSqlString
-     */
     public function testGetSqlString()
     {
         $this->delete->from('foo')
@@ -164,21 +160,19 @@ class DeleteTest extends TestCase
         self::assertEquals('DELETE FROM "sch"."foo" WHERE x = y', $this->delete->getSqlString());
     }
 
-    /**
-     * @coversNothing
-     */
+    #[CoversNothing]
     public function testSpecificationconstantsCouldBeOverridedByExtensionInPrepareStatement()
     {
         $deleteIgnore = new DeleteIgnore();
 
         $mockDriver  = $this->getMockBuilder(DriverInterface::class)->getMock();
         $mockAdapter = $this->getMockBuilder(Adapter::class)
-            ->setMethods()
+            ->onlyMethods([])
             ->setConstructorArgs([$mockDriver])
             ->getMock();
 
         $mockStatement = $this->getMockBuilder(StatementInterface::class)->getMock();
-        $mockStatement->expects($this->at(2))
+        $mockStatement->expects($this->once())
             ->method('setSql')
             ->with($this->equalTo('DELETE IGNORE FROM "foo" WHERE x = y'));
 
@@ -192,12 +186,12 @@ class DeleteTest extends TestCase
 
         $mockDriver  = $this->getMockBuilder(DriverInterface::class)->getMock();
         $mockAdapter = $this->getMockBuilder(Adapter::class)
-            ->setMethods()
+            ->onlyMethods([])
             ->setConstructorArgs([$mockDriver])
             ->getMock();
 
         $mockStatement = $this->getMockBuilder(StatementInterface::class)->getMock();
-        $mockStatement->expects($this->at(2))
+        $mockStatement->expects($this->once())
             ->method('setSql')
             ->with($this->equalTo('DELETE IGNORE FROM "sch"."foo" WHERE x = y'));
 
@@ -207,9 +201,7 @@ class DeleteTest extends TestCase
         $deleteIgnore->prepareStatement($mockAdapter, $mockStatement);
     }
 
-    /**
-     * @coversNothing
-     */
+    #[CoversNothing]
     public function testSpecificationconstantsCouldBeOverridedByExtensionInGetSqlString()
     {
         $deleteIgnore = new DeleteIgnore();

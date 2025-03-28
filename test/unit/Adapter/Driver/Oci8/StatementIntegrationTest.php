@@ -5,16 +5,21 @@ namespace LaminasTest\Db\Adapter\Driver\Oci8;
 use Laminas\Db\Adapter\Driver\Oci8\Oci8;
 use Laminas\Db\Adapter\Driver\Oci8\Result;
 use Laminas\Db\Adapter\Driver\Oci8\Statement;
+use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 
 use function extension_loaded;
 use function get_resource_type;
 use function getenv;
 
-/**
- * @group integration
- * @group integration-oracle
- */
+#[CoversMethod(Statement::class, 'initialize')]
+#[CoversMethod(Statement::class, 'getResource')]
+#[CoversMethod(Statement::class, 'prepare')]
+#[CoversMethod(Statement::class, 'isPrepared')]
+#[CoversMethod(Statement::class, 'execute')]
+#[Group('integration')]
+#[Group('integration-oracle')]
 class StatementIntegrationTest extends TestCase
 {
     /** @var array<string, string> */
@@ -44,9 +49,6 @@ class StatementIntegrationTest extends TestCase
         }
     }
 
-    /**
-     * @covers \Laminas\Db\Adapter\Driver\Oci8\Statement::initialize
-     */
     public function testInitialize()
     {
         $ociResource = oci_connect(
@@ -60,9 +62,6 @@ class StatementIntegrationTest extends TestCase
         unset($stmtResource, $ociResource);
     }
 
-    /**
-     * @covers \Laminas\Db\Adapter\Driver\Oci8\Statement::getResource
-     */
     public function testGetResource()
     {
         $ociResource = oci_connect(
@@ -79,10 +78,6 @@ class StatementIntegrationTest extends TestCase
         unset($resource, $ociResource);
     }
 
-    /**
-     * @covers \Laminas\Db\Adapter\Driver\Oci8\Statement::prepare
-     * @covers \Laminas\Db\Adapter\Driver\Oci8\Statement::isPrepared
-     */
     public function testPrepare()
     {
         $ociResource = oci_connect(
@@ -99,9 +94,6 @@ class StatementIntegrationTest extends TestCase
         unset($resource, $ociResource);
     }
 
-    /**
-     * @covers \Laminas\Db\Adapter\Driver\Oci8\Statement::execute
-     */
     public function testExecute()
     {
         $oci8      = new Oci8($this->variables);

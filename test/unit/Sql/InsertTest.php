@@ -15,8 +15,20 @@ use Laminas\Db\Sql\TableIdentifier;
 use LaminasTest\Db\DeprecatedAssertionsTrait;
 use LaminasTest\Db\TestAsset\Replace;
 use LaminasTest\Db\TestAsset\TrustingSql92Platform;
+use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\CoversNothing;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 
+#[CoversMethod(Insert::class, 'into')]
+#[CoversMethod(Insert::class, 'columns')]
+#[CoversMethod(Insert::class, 'values')]
+#[CoversMethod(Insert::class, 'prepareStatement')]
+#[CoversMethod(Insert::class, 'getSqlString')]
+#[CoversMethod(Insert::class, '__set')]
+#[CoversMethod(Insert::class, '__unset')]
+#[CoversMethod(Insert::class, '__isset')]
+#[CoversMethod(Insert::class, '__get')]
 class InsertTest extends TestCase
 {
     use DeprecatedAssertionsTrait;
@@ -33,12 +45,9 @@ class InsertTest extends TestCase
         $this->insert = new Insert();
     }
 
-    /**
-     * @covers \Laminas\Db\Sql\Insert::into
-     */
     public function testInto()
     {
-        $this->insert->into('table', 'schema');
+        $this->insert->into('table');
         self::assertEquals('table', $this->insert->getRawState('table'));
 
         $tableIdentifier = new TableIdentifier('table', 'schema');
@@ -46,9 +55,6 @@ class InsertTest extends TestCase
         self::assertEquals($tableIdentifier, $this->insert->getRawState('table'));
     }
 
-    /**
-     * @covers \Laminas\Db\Sql\Insert::columns
-     */
     public function testColumns()
     {
         $columns = ['foo', 'bar'];
@@ -56,9 +62,6 @@ class InsertTest extends TestCase
         self::assertEquals($columns, $this->insert->getRawState('columns'));
     }
 
-    /**
-     * @covers \Laminas\Db\Sql\Insert::values
-     */
     public function testValues()
     {
         $this->insert->values(['foo' => 'bar']);
@@ -76,9 +79,6 @@ class InsertTest extends TestCase
         self::assertEquals(['bax'], $this->insert->getRawState('values'));
     }
 
-    /**
-     * @covers \Laminas\Db\Sql\Insert::values
-     */
     public function testValuesThrowsExceptionWhenNotArrayOrSelect()
     {
         $this->expectException(InvalidArgumentException::class);
@@ -86,9 +86,6 @@ class InsertTest extends TestCase
         $this->insert->values(5);
     }
 
-    /**
-     * @covers \Laminas\Db\Sql\Insert::values
-     */
     public function testValuesThrowsExceptionWhenSelectMergeOverArray()
     {
         $this->insert->values(['foo' => 'bar']);
@@ -98,9 +95,6 @@ class InsertTest extends TestCase
         $this->insert->values(new Select(), Insert::VALUES_MERGE);
     }
 
-    /**
-     * @covers \Laminas\Db\Sql\Insert::values
-     */
     public function testValuesThrowsExceptionWhenArrayMergeOverSelect()
     {
         $this->insert->values(new Select());
@@ -113,33 +107,27 @@ class InsertTest extends TestCase
         $this->insert->values(['foo' => 'bar'], Insert::VALUES_MERGE);
     }
 
-    /**
-     * @covers \Laminas\Db\Sql\Insert::values
-     * @group Laminas-4926
-     */
+    #[Group('Laminas-4926')]
     public function testEmptyArrayValues()
     {
         $this->insert->values([]);
         self::assertEquals([], $this->readAttribute($this->insert, 'columns'));
     }
 
-    /**
-     * @covers \Laminas\Db\Sql\Insert::prepareStatement
-     */
     public function testPrepareStatement()
     {
         $mockDriver = $this->getMockBuilder(DriverInterface::class)->getMock();
-        $mockDriver->expects($this->any())->method('getPrepareType')->will($this->returnValue('positional'));
-        $mockDriver->expects($this->any())->method('formatParameterName')->will($this->returnValue('?'));
+        $mockDriver->expects($this->any())->method('getPrepareType')->willReturn('positional');
+        $mockDriver->expects($this->any())->method('formatParameterName')->willReturn('?');
         $mockAdapter = $this->getMockBuilder(Adapter::class)
-            ->setMethods()
+            ->onlyMethods([])
             ->setConstructorArgs([$mockDriver])
             ->getMock();
 
         $mockStatement = $this->getMockBuilder(StatementInterface::class)->getMock();
         $pContainer    = new ParameterContainer([]);
-        $mockStatement->expects($this->any())->method('getParameterContainer')->will($this->returnValue($pContainer));
-        $mockStatement->expects($this->at(1))
+        $mockStatement->expects($this->any())->method('getParameterContainer')->willReturn($pContainer);
+        $mockStatement->expects($this->once())
             ->method('setSql')
             ->with($this->equalTo('INSERT INTO "foo" ("bar", "boo") VALUES (?, NOW())'));
 
@@ -151,17 +139,17 @@ class InsertTest extends TestCase
         // with TableIdentifier
         $this->insert = new Insert();
         $mockDriver   = $this->getMockBuilder(DriverInterface::class)->getMock();
-        $mockDriver->expects($this->any())->method('getPrepareType')->will($this->returnValue('positional'));
-        $mockDriver->expects($this->any())->method('formatParameterName')->will($this->returnValue('?'));
+        $mockDriver->expects($this->any())->method('getPrepareType')->willReturn('positional');
+        $mockDriver->expects($this->any())->method('formatParameterName')->willReturn('?');
         $mockAdapter = $this->getMockBuilder(Adapter::class)
-            ->setMethods()
+            ->onlyMethods([])
             ->setConstructorArgs([$mockDriver])
             ->getMock();
 
         $mockStatement = $this->getMockBuilder(StatementInterface::class)->getMock();
         $pContainer    = new ParameterContainer([]);
-        $mockStatement->expects($this->any())->method('getParameterContainer')->will($this->returnValue($pContainer));
-        $mockStatement->expects($this->at(1))
+        $mockStatement->expects($this->any())->method('getParameterContainer')->willReturn($pContainer);
+        $mockStatement->expects($this->once())
             ->method('setSql')
             ->with($this->equalTo('INSERT INTO "sch"."foo" ("bar", "boo") VALUES (?, NOW())'));
 
@@ -171,16 +159,13 @@ class InsertTest extends TestCase
         $this->insert->prepareStatement($mockAdapter, $mockStatement);
     }
 
-    /**
-     * @covers \Laminas\Db\Sql\Insert::prepareStatement
-     */
     public function testPrepareStatementWithSelect()
     {
         $mockDriver = $this->getMockBuilder(DriverInterface::class)->getMock();
-        $mockDriver->expects($this->any())->method('getPrepareType')->will($this->returnValue('positional'));
-        $mockDriver->expects($this->any())->method('formatParameterName')->will($this->returnValue('?'));
+        $mockDriver->expects($this->any())->method('getPrepareType')->willReturn('positional');
+        $mockDriver->expects($this->any())->method('formatParameterName')->willReturn('?');
         $mockAdapter = $this->getMockBuilder(Adapter::class)
-            ->setMethods()
+            ->onlyMethods([])
             ->setConstructorArgs([$mockDriver])
             ->getMock();
 
@@ -201,9 +186,6 @@ class InsertTest extends TestCase
         self::assertSame(['subselect1where1' => 5], $parameters);
     }
 
-    /**
-     * @covers \Laminas\Db\Sql\Insert::getSqlString
-     */
     public function testGetSqlString()
     {
         $this->insert->into('foo')
@@ -255,9 +237,6 @@ class InsertTest extends TestCase
         );
     }
 
-    /**
-     * @covers \Laminas\Db\Sql\Insert::__set
-     */
     // @codingStandardsIgnoreStart
     public function test__set()
     {
@@ -267,9 +246,6 @@ class InsertTest extends TestCase
         self::assertEquals(['bar'], $this->insert->getRawState('values'));
     }
 
-    /**
-     * @covers \Laminas\Db\Sql\Insert::__unset
-     */
     // @codingStandardsIgnoreStart
     public function test__unset()
     {
@@ -290,9 +266,6 @@ class InsertTest extends TestCase
         self::assertEquals([], $this->insert->getRawState('values'));
     }
 
-    /**
-     * @covers \Laminas\Db\Sql\Insert::__isset
-     */
     // @codingStandardsIgnoreStart
     public function test__isset()
     {
@@ -304,9 +277,6 @@ class InsertTest extends TestCase
         self::assertTrue(isset($this->insert->foo));
     }
 
-    /**
-     * @covers \Laminas\Db\Sql\Insert::__get
-     */
     // @codingStandardsIgnoreStart
     public function test__get()
     {
@@ -318,9 +288,7 @@ class InsertTest extends TestCase
         self::assertNull($this->insert->foo);
     }
 
-    /**
-     * @group Laminas-536
-     */
+    #[Group('Laminas-536')]
     public function testValuesMerge()
     {
         $this->insert->into('foo')
@@ -334,25 +302,23 @@ class InsertTest extends TestCase
         );
     }
 
-    /**
-     * @coversNothing
-     */
+    #[CoversNothing]
     public function testSpecificationconstantsCouldBeOverridedByExtensionInPrepareStatement()
     {
         $replace = new Replace();
 
         $mockDriver = $this->getMockBuilder(DriverInterface::class)->getMock();
-        $mockDriver->expects($this->any())->method('getPrepareType')->will($this->returnValue('positional'));
-        $mockDriver->expects($this->any())->method('formatParameterName')->will($this->returnValue('?'));
+        $mockDriver->expects($this->any())->method('getPrepareType')->willReturn('positional');
+        $mockDriver->expects($this->any())->method('formatParameterName')->willReturn('?');
         $mockAdapter = $this->getMockBuilder(Adapter::class)
-            ->setMethods()
+            ->onlyMethods([])
             ->setConstructorArgs([$mockDriver])
             ->getMock();
 
         $mockStatement = $this->getMockBuilder(StatementInterface::class)->getMock();
         $pContainer    = new ParameterContainer([]);
-        $mockStatement->expects($this->any())->method('getParameterContainer')->will($this->returnValue($pContainer));
-        $mockStatement->expects($this->at(1))
+        $mockStatement->expects($this->any())->method('getParameterContainer')->willReturn($pContainer);
+        $mockStatement->expects($this->once())
             ->method('setSql')
             ->with($this->equalTo('REPLACE INTO "foo" ("bar", "boo") VALUES (?, NOW())'));
 
@@ -365,17 +331,17 @@ class InsertTest extends TestCase
         $replace = new Replace();
 
         $mockDriver = $this->getMockBuilder(DriverInterface::class)->getMock();
-        $mockDriver->expects($this->any())->method('getPrepareType')->will($this->returnValue('positional'));
-        $mockDriver->expects($this->any())->method('formatParameterName')->will($this->returnValue('?'));
+        $mockDriver->expects($this->any())->method('getPrepareType')->willReturn('positional');
+        $mockDriver->expects($this->any())->method('formatParameterName')->willReturn('?');
         $mockAdapter = $this->getMockBuilder(Adapter::class)
-            ->setMethods()
+            ->onlyMethods([])
             ->setConstructorArgs([$mockDriver])
             ->getMock();
 
         $mockStatement = $this->getMockBuilder(StatementInterface::class)->getMock();
         $pContainer    = new ParameterContainer([]);
-        $mockStatement->expects($this->any())->method('getParameterContainer')->will($this->returnValue($pContainer));
-        $mockStatement->expects($this->at(1))
+        $mockStatement->expects($this->any())->method('getParameterContainer')->willReturn($pContainer);
+        $mockStatement->expects($this->once())
             ->method('setSql')
             ->with($this->equalTo('REPLACE INTO "sch"."foo" ("bar", "boo") VALUES (?, NOW())'));
 
@@ -385,9 +351,7 @@ class InsertTest extends TestCase
         $replace->prepareStatement($mockAdapter, $mockStatement);
     }
 
-    /**
-     * @coversNothing
-     */
+    #[CoversNothing]
     public function testSpecificationconstantsCouldBeOverridedByExtensionInGetSqlString()
     {
         $replace = new Replace();

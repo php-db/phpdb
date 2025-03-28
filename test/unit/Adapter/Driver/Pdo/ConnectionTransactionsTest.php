@@ -2,17 +2,23 @@
 
 namespace LaminasTest\Db\Adapter\Driver\Pdo;
 
+use Laminas\Db\Adapter\Driver\AbstractConnection;
 use Laminas\Db\Adapter\Driver\Pdo\Connection;
 use Laminas\Db\Adapter\Exception\RuntimeException;
 use LaminasTest\Db\TestAsset\ConnectionWrapper;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 
 /**
  * Tests for {@see \Laminas\Db\Adapter\Driver\Pdo\Connection} transaction support
- *
- * @covers \Laminas\Db\Adapter\Driver\Pdo\Connection
- * @covers \Laminas\Db\Adapter\Driver\AbstractConnection
  */
+#[CoversClass(Connection::class)]
+#[CoversClass(AbstractConnection::class)]
+#[CoversMethod(Connection::class, 'beginTransaction()')]
+#[CoversMethod(Connection::class, 'inTransaction()')]
+#[CoversMethod(Connection::class, 'commit()')]
+#[CoversMethod(Connection::class, 'rollback()')]
 class ConnectionTransactionsTest extends TestCase
 {
     /** @var Wrapper */
@@ -26,37 +32,23 @@ class ConnectionTransactionsTest extends TestCase
         $this->wrapper = new ConnectionWrapper();
     }
 
-    /**
-     * @covers \Laminas\Db\Adapter\Driver\Pdo\Connection::beginTransaction()
-     */
     public function testBeginTransactionReturnsInstanceOfConnection()
     {
         self::assertInstanceOf(Connection::class, $this->wrapper->beginTransaction());
     }
 
-    /**
-     * @covers \Laminas\Db\Adapter\Driver\Pdo\Connection::beginTransaction()
-     * @covers \Laminas\Db\Adapter\Driver\Pdo\Connection::inTransaction()
-     */
     public function testBeginTransactionSetsInTransactionAtTrue()
     {
         $this->wrapper->beginTransaction();
         self::assertTrue($this->wrapper->inTransaction());
     }
 
-    /**
-     * @covers \Laminas\Db\Adapter\Driver\Pdo\Connection::commit()
-     */
     public function testCommitReturnsInstanceOfConnection()
     {
         $this->wrapper->beginTransaction();
         self::assertInstanceOf(Connection::class, $this->wrapper->commit());
     }
 
-    /**
-     * @covers \Laminas\Db\Adapter\Driver\Pdo\Connection::commit()
-     * @covers \Laminas\Db\Adapter\Driver\Pdo\Connection::inTransaction()
-     */
     public function testCommitSetsInTransactionAtFalse()
     {
         $this->wrapper->beginTransaction();
@@ -66,19 +58,12 @@ class ConnectionTransactionsTest extends TestCase
 
     /**
      * Standalone commit after a SET autocommit=0;
-     *
-     * @covers \Laminas\Db\Adapter\Driver\Pdo\Connection::commit()
      */
     public function testCommitWithoutBeginReturnsInstanceOfConnection()
     {
         self::assertInstanceOf(Connection::class, $this->wrapper->commit());
     }
 
-    /**
-     * @covers \Laminas\Db\Adapter\Driver\Pdo\Connection::inTransaction()
-     * @covers \Laminas\Db\Adapter\Driver\Pdo\Connection::beginTransaction()
-     * @covers \Laminas\Db\Adapter\Driver\Pdo\Connection::commit()
-     */
     public function testNestedTransactionsCommit()
     {
         $nested = 0;
@@ -106,11 +91,6 @@ class ConnectionTransactionsTest extends TestCase
         self::assertSame(--$nested, $this->wrapper->getNestedTransactionsCount());
     }
 
-    /**
-     * @covers \Laminas\Db\Adapter\Driver\Pdo\Connection::inTransaction()
-     * @covers \Laminas\Db\Adapter\Driver\Pdo\Connection::beginTransaction()
-     * @covers \Laminas\Db\Adapter\Driver\Pdo\Connection::rollback()
-     */
     public function testNestedTransactionsRollback()
     {
         $nested = 0;
@@ -133,9 +113,6 @@ class ConnectionTransactionsTest extends TestCase
         self::assertSame(0, $this->wrapper->getNestedTransactionsCount());
     }
 
-    /**
-     * @covers \Laminas\Db\Adapter\Driver\Pdo\Connection::rollback()
-     */
     public function testRollbackDisconnectedThrowsException()
     {
         $this->wrapper->disconnect();
@@ -145,19 +122,12 @@ class ConnectionTransactionsTest extends TestCase
         $this->wrapper->rollback();
     }
 
-    /**
-     * @covers \Laminas\Db\Adapter\Driver\Pdo\Connection::rollback()
-     */
     public function testRollbackReturnsInstanceOfConnection()
     {
         $this->wrapper->beginTransaction();
         self::assertInstanceOf(Connection::class, $this->wrapper->rollback());
     }
 
-    /**
-     * @covers \Laminas\Db\Adapter\Driver\Pdo\Connection::rollback()
-     * @covers \Laminas\Db\Adapter\Driver\Pdo\Connection::inTransaction()
-     */
     public function testRollbackSetsInTransactionAtFalse()
     {
         $this->wrapper->beginTransaction();
@@ -165,9 +135,6 @@ class ConnectionTransactionsTest extends TestCase
         self::assertFalse($this->wrapper->inTransaction());
     }
 
-    /**
-     * @covers \Laminas\Db\Adapter\Driver\Pdo\Connection::rollback()
-     */
     public function testRollbackWithoutBeginThrowsException()
     {
         $this->expectException(RuntimeException::class);
@@ -177,9 +144,6 @@ class ConnectionTransactionsTest extends TestCase
 
     /**
      * Standalone commit after a SET autocommit=0;
-     *
-     * @covers \Laminas\Db\Adapter\Driver\Pdo\Connection::inTransaction()
-     * @covers \Laminas\Db\Adapter\Driver\Pdo\Connection::commit()
      */
     public function testStandaloneCommit()
     {

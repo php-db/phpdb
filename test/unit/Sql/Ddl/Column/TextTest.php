@@ -3,13 +3,12 @@
 namespace LaminasTest\Db\Sql\Ddl\Column;
 
 use Laminas\Db\Sql\Ddl\Column\Text;
+use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 
+#[CoversMethod(Text::class, 'getExpressionData')]
 class TextTest extends TestCase
 {
-    /**
-     * @covers \Laminas\Db\Sql\Ddl\Column\Text::getExpressionData
-     */
     public function testGetExpressionData()
     {
         $column = new Text('foo');

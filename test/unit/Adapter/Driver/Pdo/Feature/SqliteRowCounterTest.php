@@ -8,9 +8,16 @@ use Laminas\Db\Adapter\Driver\Pdo\Feature\SqliteRowCounter;
 use Laminas\Db\Adapter\Driver\Pdo\Pdo;
 use Laminas\Db\Adapter\Driver\Pdo\Statement;
 use Laminas\Db\Adapter\Driver\ResultInterface;
+use PDO as PDOConnection;
+use PDOStatement;
+use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
+#[CoversMethod(SqliteRowCounter::class, 'getName')]
+#[CoversMethod(SqliteRowCounter::class, 'getCountForStatement')]
+#[CoversMethod(SqliteRowCounter::class, 'getCountForSql')]
+#[CoversMethod(SqliteRowCounter::class, 'getRowCountClosure')]
 class SqliteRowCounterTest extends TestCase
 {
     /** @var SqliteRowCounter */
@@ -21,17 +28,11 @@ class SqliteRowCounterTest extends TestCase
         $this->rowCounter = new SqliteRowCounter();
     }
 
-    /**
-     * @covers \Laminas\Db\Adapter\Driver\Pdo\Feature\SqliteRowCounter::getName
-     */
     public function testGetName()
     {
         self::assertEquals('SqliteRowCounter', $this->rowCounter->getName());
     }
 
-    /**
-     * @covers \Laminas\Db\Adapter\Driver\Pdo\Feature\SqliteRowCounter::getCountForStatement
-     */
     public function testGetCountForStatement()
     {
         $statement = $this->getMockStatement('SELECT XXX', 5);
@@ -42,9 +43,6 @@ class SqliteRowCounterTest extends TestCase
         self::assertEquals(5, $count);
     }
 
-    /**
-     * @covers \Laminas\Db\Adapter\Driver\Pdo\Feature\SqliteRowCounter::getCountForSql
-     */
     public function testGetCountForSql()
     {
         $this->rowCounter->setDriver($this->getMockDriver(5));
@@ -52,9 +50,6 @@ class SqliteRowCounterTest extends TestCase
         self::assertEquals(5, $count);
     }
 
-    /**
-     * @covers \Laminas\Db\Adapter\Driver\Pdo\Feature\SqliteRowCounter::getRowCountClosure
-     */
     public function testGetRowCountClosure()
     {
         $stmt = $this->getMockStatement('SELECT XXX', 5);
@@ -74,28 +69,28 @@ class SqliteRowCounterTest extends TestCase
     {
         /** @var Statement|MockObject $statement */
         $statement = $this->getMockBuilder(Statement::class)
-            ->setMethods(['prepare', 'execute'])
+            ->onlyMethods(['prepare', 'execute'])
             ->disableOriginalConstructor()
             ->getMock();
 
         // mock PDOStatement with stdClass
-        $resource = $this->getMockBuilder('stdClass')
-            ->setMethods(['fetch'])
+        $resource = $this->getMockBuilder(PDOStatement::class)
+            ->onlyMethods(['fetch'])
             ->getMock();
         $resource->expects($this->once())
             ->method('fetch')
-            ->will($this->returnValue(['count' => $returnValue]));
+            ->willReturn(['count' => $returnValue]);
 
         // mock the result
         $result = $this->getMockBuilder(ResultInterface::class)->getMock();
         $result->expects($this->once())
             ->method('getResource')
-            ->will($this->returnValue($resource));
+            ->willReturn($resource);
 
         $statement->setSql($sql);
         $statement->expects($this->once())
             ->method('execute')
-            ->will($this->returnValue($result));
+            ->willReturn($result);
 
         return $statement;
     }
@@ -106,33 +101,34 @@ class SqliteRowCounterTest extends TestCase
      */
     protected function getMockDriver($returnValue)
     {
-        $pdoStatement = $this->getMockBuilder('stdClass')
-            ->setMethods(['fetch'])
+        $pdoStatement = $this->getMockBuilder(PDOStatement::class)
+            ->onlyMethods(['fetch'])
             ->disableOriginalConstructor()
             ->getMock(); // stdClass can be used here
         $pdoStatement->expects($this->once())
             ->method('fetch')
-            ->will($this->returnValue(['count' => $returnValue]));
+            ->willReturn(['count' => $returnValue]);
 
-        $pdoConnection = $this->getMockBuilder('stdClass')
-            ->setMethods(['query'])
+        $pdoConnection = $this->getMockBuilder(PDOConnection::class)
+            ->onlyMethods(['query'])
+            ->disableOriginalConstructor()
             ->getMock();
         $pdoConnection->expects($this->once())
             ->method('query')
-            ->will($this->returnValue($pdoStatement));
+            ->willReturn($pdoStatement);
 
         $connection = $this->getMockBuilder(ConnectionInterface::class)->getMock();
         $connection->expects($this->once())
             ->method('getResource')
-            ->will($this->returnValue($pdoConnection));
+            ->willReturn($pdoConnection);
 
         $driver = $this->getMockBuilder(Pdo::class)
-            ->setMethods(['getConnection'])
+            ->onlyMethods(['getConnection'])
             ->disableOriginalConstructor()
             ->getMock();
         $driver->expects($this->once())
             ->method('getConnection')
-            ->will($this->returnValue($connection));
+            ->willReturn($connection);
 
         return $driver;
     }

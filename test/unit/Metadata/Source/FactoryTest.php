@@ -11,28 +11,23 @@ use Laminas\Db\Metadata\Source\OracleMetadata;
 use Laminas\Db\Metadata\Source\PostgresqlMetadata;
 use Laminas\Db\Metadata\Source\SqliteMetadata;
 use Laminas\Db\Metadata\Source\SqlServerMetadata;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class FactoryTest extends TestCase
 {
     /**
-     * @dataProvider validAdapterProvider
-     * @param string $expectedReturnClass
+     * @param class-string $expectedReturnClass
      */
-    public function testCreateSourceFromAdapter(Adapter $adapter, $expectedReturnClass)
+    #[DataProvider('validAdapterProvider')]
+    public function testCreateSourceFromAdapter(string $adapterName, string $expectedReturnClass): void
     {
-        $source = Factory::createSourceFromAdapter($adapter);
-
-        self::assertInstanceOf(MetadataInterface::class, $source);
-        self::assertInstanceOf($expectedReturnClass, $source);
-    }
-
-    /** @psalm-return array<string, array{0: Adapter&MockObject, 1: MetadataInterface}> */
-    public function validAdapterProvider(): array
-    {
-        /** @return Adapter&MockObject */
-        $createAdapterForPlatform = function (string $platformName) {
+        /**
+         * @param string $platformName
+         * @return Adapter&MockObject
+         */
+        $createAdapterForPlatform = function (string $platformName): Adapter&MockObject {
             $platform = $this->getMockBuilder(PlatformInterface::class)->getMock();
             $platform
                 ->expects($this->any())
@@ -51,13 +46,22 @@ class FactoryTest extends TestCase
             return $adapter;
         };
 
+        $adapter = $createAdapterForPlatform($adapterName);
+        $source  = Factory::createSourceFromAdapter($adapter);
+
+        self::assertInstanceOf(MetadataInterface::class, $source);
+        self::assertInstanceOf($expectedReturnClass, $source);
+    }
+
+    public static function validAdapterProvider(): array
+    {
         return [
-            // Description => [adapter, expected return class]
-            'MySQL'      => [$createAdapterForPlatform('MySQL'), MysqlMetadata::class],
-            'SQLServer'  => [$createAdapterForPlatform('SQLServer'), SqlServerMetadata::class],
-            'SQLite'     => [$createAdapterForPlatform('SQLite'), SqliteMetadata::class],
-            'PostgreSQL' => [$createAdapterForPlatform('PostgreSQL'), PostgresqlMetadata::class],
-            'Oracle'     => [$createAdapterForPlatform('Oracle'), OracleMetadata::class],
+            // Description => [adapterName, expected return class]
+            'MySQL'      => ['MySQL', MysqlMetadata::class],
+            'SQLServer'  => ['SQLServer', SqlServerMetadata::class],
+            'SQLite'     => ['SQLite', SqliteMetadata::class],
+            'PostgreSQL' => ['PostgreSQL', PostgresqlMetadata::class],
+            'Oracle'     => ['Oracle', OracleMetadata::class],
         ];
     }
 }

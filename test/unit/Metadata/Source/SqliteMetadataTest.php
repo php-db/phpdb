@@ -7,13 +7,13 @@ use Laminas\Db\Metadata\Object\ConstraintKeyObject;
 use Laminas\Db\Metadata\Object\ConstraintObject;
 use Laminas\Db\Metadata\Object\TriggerObject;
 use Laminas\Db\Metadata\Source\SqliteMetadata;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\RequiresPhpExtension;
 use PHPUnit\Framework\TestCase;
 
 use function extension_loaded;
 
-/**
- * @requires extension pdo_sqlite
- */
+#[RequiresPhpExtension('pdo_sqlite')]
 class SqliteMetadataTest extends TestCase
 {
     /** @var SqliteMetadata */
@@ -67,9 +67,7 @@ class SqliteMetadataTest extends TestCase
         );
     }
 
-    /**
-     * @group Laminas-3719
-     */
+    #[Group('Laminas-3719')]
     public function testGetConstraintKeys()
     {
         $keys = $this->metadata->getConstraintKeys(
