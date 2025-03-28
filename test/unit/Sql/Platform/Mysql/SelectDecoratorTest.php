@@ -28,10 +28,10 @@ use PHPUnit\Framework\TestCase;
 class SelectDecoratorTest extends TestCase
 {
     /** @var Adapter&MockObject */
-    protected $mockAdapter;
+    protected Adapter&MockObject $mockAdapter;
 
     /** @var Sql */
-    protected $sql;
+    protected Sql $sql;
     #[DataProvider('dataProvider')]
     #[TestDox('integration test: Testing SelectDecorator will use Select an internal state to prepare
                            a proper limit/offset sql statement')]
@@ -64,18 +64,17 @@ class SelectDecoratorTest extends TestCase
     }
 
     /**
-     * @param mixed $ignore
-     * @param array<string, mixed> $params
-     * @param mixed $alsoIgnore
+     * @param mixed  $ignore
+     * @param mixed  $alsoIgnore
      */
     #[DataProvider('dataProvider')]
     #[TestDox('integration test: Testing SelectDecorator will use Select an internal state to prepare
                            a proper limit/offset sql statement')]
     public function testPrepareStatementForSqlObject(
         Select $select,
-        $ignore,
+        mixed $ignore,
         array $expectedParams,
-        $alsoIgnore,
+        mixed $alsoIgnore,
         string $expectedPdoSql
     ) {
         // mock the adapter, driver, and parts
@@ -104,7 +103,7 @@ class SelectDecoratorTest extends TestCase
     #[DataProvider('dataProvider')]
     #[TestDox('integration test: Testing SelectDecorator will use Select an internal state to prepare
                            a proper limit/offset sql statement')]
-    public function testGetSqlString(Select $select, $ignore, $alsoIgnore, string $expectedSql)
+    public function testGetSqlString(Select $select, mixed $ignore, mixed $alsoIgnore, string $expectedSql)
     {
         $parameterContainer = new ParameterContainer();
         $statement          = $this->getMockBuilder(StatementInterface::class)->getMock();

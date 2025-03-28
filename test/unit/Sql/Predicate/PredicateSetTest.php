@@ -91,6 +91,9 @@ class PredicateSetTest extends TestCase
         self::assertStringContainsString('AND', $parts[5]);
     }
 
+    /**
+     * @throws \ReflectionException
+     */
     public function testAddPredicates()
     {
         $predicateSet = new PredicateSet();

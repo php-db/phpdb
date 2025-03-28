@@ -24,7 +24,7 @@ use function set_error_handler;
 class SqlServerTest extends TestCase
 {
     /** @var SqlServer */
-    protected $platform;
+    protected SqlServer $platform;
 
     /**
      * Sets up the fixture, for example, opens a network connection.

@@ -22,7 +22,7 @@ use PHPUnit\Framework\TestCase;
 class StatementTest extends TestCase
 {
     /** @var Statement */
-    protected $statement;
+    protected Statement $statement;
 
     /**
      * Sets up the fixture, for example, opens a network connection.

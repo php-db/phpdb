@@ -18,6 +18,7 @@ use Laminas\Db\TableGateway\Feature\MetadataFeature;
 use Laminas\Db\TableGateway\Feature\SequenceFeature;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 
@@ -27,6 +28,7 @@ class FeatureSetTest extends TestCase
 {
     /**
      * @cover FeatureSet::addFeature
+     * @throws Exception
      */
     #[Group('Laminas-4993')]
     public function testAddFeatureThatFeatureDoesNotHaveTableGatewayButFeatureSetHas()
@@ -60,6 +62,7 @@ class FeatureSetTest extends TestCase
 
     /**
      * @cover FeatureSet::addFeature
+     * @throws Exception
      */
     #[Group('Laminas-4993')]
     public function testAddFeatureThatFeatureHasTableGatewayButFeatureSetDoesNotHave()
@@ -150,6 +153,7 @@ class FeatureSetTest extends TestCase
 
         $reflectionClass    = new ReflectionClass(AbstractTableGateway::class);
         $reflectionProperty = $reflectionClass->getProperty('adapter');
+        /** @psalm-suppress UnusedMethodCall */
         $reflectionProperty->setAccessible(true);
         $reflectionProperty->setValue($tableGatewayMock, $adapterMock);
 

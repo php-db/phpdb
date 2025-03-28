@@ -11,7 +11,7 @@ use PHPUnit\Framework\TestCase;
 class NotBetweenTest extends TestCase
 {
     /** @var NotBetween */
-    protected $notBetween;
+    protected NotBetween $notBetween;
 
     protected function setUp(): void
     {

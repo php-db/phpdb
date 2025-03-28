@@ -13,12 +13,15 @@ use function sprintf;
 class MysqlFixtureLoader implements FixtureLoader
 {
     /** @var string */
-    private $fixtureFile = __DIR__ . '/../TestFixtures/mysql.sql';
+    private string $fixtureFile = __DIR__ . '/../TestFixtures/mysql.sql';
 
     /** @var PDO */
-    private $pdo;
+    private PDO $pdo;
 
-    public function createDatabase()
+    /**
+     * @throws Exception
+     */
+    public function createDatabase(): void
     {
         $this->connect();
 
@@ -49,7 +52,7 @@ class MysqlFixtureLoader implements FixtureLoader
         $this->disconnect();
     }
 
-    public function dropDatabase()
+    public function dropDatabase(): void
     {
         $this->connect();
 
@@ -61,7 +64,7 @@ class MysqlFixtureLoader implements FixtureLoader
         $this->disconnect();
     }
 
-    protected function connect()
+    protected function connect(): void
     {
         $dsn = 'mysql:host=' . getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_MYSQL_HOSTNAME');
         if (getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_MYSQL_PORT')) {
@@ -75,7 +78,7 @@ class MysqlFixtureLoader implements FixtureLoader
         );
     }
 
-    protected function disconnect()
+    protected function disconnect(): void
     {
         $this->pdo = null;
     }

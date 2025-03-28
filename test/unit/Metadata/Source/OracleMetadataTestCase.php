@@ -18,10 +18,10 @@ use function extension_loaded;
 class OracleMetadataTestCase extends AbstractIntegrationTestCase
 {
     /** @var OracleMetadata */
-    protected $metadata;
+    protected OracleMetadata $metadata;
 
     /** @var Adapter */
-    protected $adapter;
+    protected Adapter $adapter;
 
     /**
      * Sets up the fixture, for example, opens a network connection.
@@ -70,7 +70,7 @@ class OracleMetadataTestCase extends AbstractIntegrationTestCase
     /**
      * @return array
      */
-    public static function constraintDataProvider()
+    public static function constraintDataProvider(): array
     {
         return [
             [

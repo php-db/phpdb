@@ -17,10 +17,10 @@ use function extension_loaded;
 class SqliteMetadataTest extends TestCase
 {
     /** @var SqliteMetadata */
-    protected $metadata;
+    protected SqliteMetadata $metadata;
 
     /** @var Adapter */
-    protected $adapter;
+    protected Adapter $adapter;
 
     /**
      * Sets up the fixture, for example, opens a network connection.
@@ -51,6 +51,9 @@ class SqliteMetadataTest extends TestCase
         self::assertCount(0, $tables);
     }
 
+    /**
+     * @throws \Exception
+     */
     public function testGetColumnNames()
     {
         $columns = $this->metadata->getColumnNames(null, 'main');

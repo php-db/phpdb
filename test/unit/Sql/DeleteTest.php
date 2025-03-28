@@ -29,7 +29,7 @@ class DeleteTest extends TestCase
     use DeprecatedAssertionsTrait;
 
     /** @var Delete */
-    protected $delete;
+    protected Delete $delete;
 
     /**
      * Sets up the fixture, for example, opens a network connection.

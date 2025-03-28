@@ -22,7 +22,7 @@ use PHPUnit\Framework\TestCase;
 class ConnectionTransactionsTest extends TestCase
 {
     /** @var Wrapper */
-    protected $wrapper;
+    protected Wrapper|ConnectionWrapper $wrapper;
 
     /**
      * {@inheritDoc}

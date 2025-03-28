@@ -18,7 +18,7 @@ use function var_dump;
 class SqlServerTest extends TestCase
 {
     /** @var array<string, resource> */
-    public $adapters = [];
+    public array|PDO $adapters = [];
 
     protected function setUp(): void
     {

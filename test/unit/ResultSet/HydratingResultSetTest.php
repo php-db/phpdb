@@ -22,10 +22,10 @@ use function class_exists;
 class HydratingResultSetTest extends TestCase
 {
     /** @var string */
-    private $arraySerializableHydratorClass;
+    private string $arraySerializableHydratorClass;
 
     /** @var string */
-    private $classMethodsHydratorClass;
+    private string $classMethodsHydratorClass;
 
     protected function setUp(): void
     {

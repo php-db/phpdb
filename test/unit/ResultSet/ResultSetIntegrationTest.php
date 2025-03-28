@@ -11,7 +11,9 @@ use Laminas\Db\ResultSet\Exception\RuntimeException;
 use Laminas\Db\ResultSet\ResultSet;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
+use Random\RandomException;
 use SplStack;
 use stdClass;
 
@@ -24,7 +26,7 @@ use function var_export;
 class ResultSetIntegrationTest extends TestCase
 {
     /** @var ResultSet */
-    protected $resultSet;
+    protected ResultSet $resultSet;
 
     /**
      * Sets up the fixture, for example, opens a network connection.
@@ -77,7 +79,7 @@ class ResultSetIntegrationTest extends TestCase
      * @param mixed $type
      */
     #[DataProvider('invalidReturnTypes')]
-    public function testSettingInvalidReturnTypeRaisesException($type)
+    public function testSettingInvalidReturnTypeRaisesException(mixed $type)
     {
         $this->expectException(InvalidArgumentException::class);
         new ResultSet(ResultSet::TYPE_ARRAYOBJECT, $type);
@@ -109,6 +111,9 @@ class ResultSetIntegrationTest extends TestCase
         $this->assertContains($dataSource[0], $this->resultSet);
     }
 
+    /**
+     * @throws \Exception
+     */
     public function testCanProvideIteratorAggregateAsDataSource()
     {
         $iteratorAggregate = $this->getMockBuilder('IteratorAggregate')
@@ -123,7 +128,7 @@ class ResultSetIntegrationTest extends TestCase
      * @param mixed $dataSource
      */
     #[DataProvider('invalidReturnTypes')]
-    public function testInvalidDataSourceRaisesException($dataSource)
+    public function testInvalidDataSourceRaisesException(mixed $dataSource)
     {
         if (is_array($dataSource)) {
             $this->expectNotToPerformAssertions();
@@ -179,6 +184,9 @@ class ResultSetIntegrationTest extends TestCase
         }
     }
 
+    /**
+     * @throws RandomException
+     */
     public function testCountReturnsCountOfRows()
     {
         $count      = random_int(3, 75);
@@ -187,6 +195,9 @@ class ResultSetIntegrationTest extends TestCase
         self::assertEquals($count, $this->resultSet->count());
     }
 
+    /**
+     * @throws RandomException
+     */
     public function testToArrayRaisesExceptionForRowsThatAreNotArraysOrArrayCastable()
     {
         $count      = random_int(3, 75);
@@ -199,6 +210,9 @@ class ResultSetIntegrationTest extends TestCase
         $this->resultSet->toArray();
     }
 
+    /**
+     * @throws RandomException
+     */
     public function testToArrayCreatesArrayOfArraysRepresentingRows()
     {
         $count      = random_int(3, 75);
@@ -221,6 +235,9 @@ class ResultSetIntegrationTest extends TestCase
         $this->resultSet->current();
     }
 
+    /**
+     * @throws Exception
+     */
     public function testBufferCalledAfterIterationThrowsException()
     {
         $this->resultSet->initialize($this->createMock(ResultInterface::class));
@@ -231,6 +248,9 @@ class ResultSetIntegrationTest extends TestCase
         $this->resultSet->buffer();
     }
 
+    /**
+     * @throws Exception
+     */
     public function testCurrentReturnsNullForNonExistingValues()
     {
         $mockResult = $this->createMock(ResultInterface::class);

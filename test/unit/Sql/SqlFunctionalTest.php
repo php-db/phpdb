@@ -17,6 +17,7 @@ use Laminas\Db\Sql\TableIdentifier;
 use Laminas\Db\Sql\Update;
 use LaminasTest\Db\TestAsset;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 use function array_merge;
@@ -604,9 +605,9 @@ class SqlFunctionalTest extends TestCase
     }
 
     /**
-     * @param type $sqlObject
-     * @param type $platform
-     * @param type $expected
+     * @param $sqlObject
+     * @param $platform
+     * @param $expected
      */
     #[DataProvider('dataProvider')]
     public function test($sqlObject, $platform, $expected)
@@ -636,12 +637,12 @@ class SqlFunctionalTest extends TestCase
 
     /**
      * @param array|Sql\Platform\PlatformDecoratorInterface $decorator
-     * @psalm-param array{0: class-string, 1: * string}|Sql\Platform\PlatformDecoratorInterface $decorator
      * @return null|PlatformDecoratorInterface
-     * @psalm-return null|PlatformDecoratorInterface|PlatformDecoratorInterface&MockObject
+     * @psalm-return null|PlatformDecoratorInterface&MockObject
      */
-    protected function resolveDecorator($decorator)
-    {
+    protected function resolveDecorator(
+        PlatformDecoratorInterface|array $decorator
+    ): PlatformDecoratorInterface|MockObject|null {
         if (is_array($decorator)) {
             $decoratorMock = $this->getMockBuilder($decorator[0])
                 ->onlyMethods(['buildSqlString'])
@@ -675,32 +676,32 @@ class SqlFunctionalTest extends TestCase
         return new Adapter\Adapter($mockDriver, $platform);
     }
 
-    protected static function select(string|array|null $sqlString): Select
+    protected static function select(string|array|null $sqlString): Sql\Select
     {
         return new Sql\Select($sqlString);
     }
 
-    protected static function delete(string|TableIdentifier|null $sqlString): Delete
+    protected static function delete(string|TableIdentifier|null $sqlString): Sql\Delete
     {
         return new Sql\Delete($sqlString);
     }
 
-    protected static function update(string|TableIdentifier|null $sqlString): Update
+    protected static function update(string|TableIdentifier|null $sqlString): Sql\Update
     {
         return new Sql\Update($sqlString);
     }
 
-    protected static function insert(string|TableIdentifier|null $sqlString): Insert
+    protected static function insert(string|TableIdentifier|null $sqlString): Sql\Insert
     {
         return new Sql\Insert($sqlString);
     }
 
-    protected static function createTable(string|TableIdentifier $sqlString): CreateTable
+    protected static function createTable(string|TableIdentifier $sqlString): Sql\Ddl\CreateTable
     {
         return new Sql\Ddl\CreateTable($sqlString);
     }
 
-    protected static function createColumn(?string $sqlString): Column
+    protected static function createColumn(?string $sqlString): Sql\Ddl\Column\Column
     {
         return new Sql\Ddl\Column\Column($sqlString);
     }

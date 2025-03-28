@@ -1,5 +1,7 @@
 <?php
 
+/** @noinspection PhpComposerExtensionStubsInspection */
+
 namespace LaminasTest\Db\Adapter\Driver\Sqlsrv;
 
 use PHPUnit\Framework\TestCase;
@@ -11,7 +13,7 @@ use function sqlsrv_connect;
 abstract class AbstractIntegrationTestCase extends TestCase
 {
     /** @var array<string, string> */
-    protected $variables = [
+    protected array $variables = [
         'hostname' => 'TESTS_LAMINAS_DB_ADAPTER_DRIVER_SQLSRV_HOSTNAME',
         'username' => 'TESTS_LAMINAS_DB_ADAPTER_DRIVER_SQLSRV_USERNAME',
         'password' => 'TESTS_LAMINAS_DB_ADAPTER_DRIVER_SQLSRV_PASSWORD',

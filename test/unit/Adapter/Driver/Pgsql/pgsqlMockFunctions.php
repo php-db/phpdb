@@ -10,7 +10,7 @@ namespace Laminas\Db\Adapter\Driver\Pgsql;
  * @param resource $connection
  * @return bool
  */
-function pg_close($connection = null)
+function pg_close($connection = null): bool
 {
     return true;
 }

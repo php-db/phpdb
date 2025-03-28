@@ -25,7 +25,7 @@ use function unlink;
 class SqliteTest extends TestCase
 {
     /** @var Sqlite */
-    protected $platform;
+    protected Sqlite $platform;
 
     /**
      * Sets up the fixture, for example, opens a network connection.

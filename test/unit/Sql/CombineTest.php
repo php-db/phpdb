@@ -18,7 +18,7 @@ use PHPUnit\Framework\TestCase;
 class CombineTest extends TestCase
 {
     /** @var Combine */
-    protected $combine;
+    protected Combine $combine;
 
     /**
      * Sets up the fixture, for example, opens a network connection.
@@ -177,7 +177,7 @@ class CombineTest extends TestCase
     /**
      * @return MockObject|Adapter
      */
-    protected function getMockAdapter()
+    protected function getMockAdapter(): Adapter|MockObject
     {
         $parameterContainer = new ParameterContainer();
 

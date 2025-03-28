@@ -313,6 +313,9 @@ class PredicateTest extends TestCase
         );
     }
 
+    /**
+     * @throws \ErrorException
+     */
     private function makeSqlString(Predicate $where): string
     {
         $select = new Select('a_table');

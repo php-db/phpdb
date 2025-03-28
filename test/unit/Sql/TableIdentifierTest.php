@@ -62,7 +62,7 @@ class TableIdentifierTest extends TestCase
      * @param mixed $invalidTable
      */
     #[DataProvider('invalidTableProvider')]
-    public function testRejectsInvalidTable($invalidTable)
+    public function testRejectsInvalidTable(mixed $invalidTable)
     {
         $this->expectException($invalidTable === '' ? InvalidArgumentException::class : TypeError::class);
 
@@ -73,7 +73,7 @@ class TableIdentifierTest extends TestCase
      * @param mixed $invalidSchema
      */
     #[DataProvider('invalidSchemaProvider')]
-    public function testRejectsInvalidSchema($invalidSchema)
+    public function testRejectsInvalidSchema(mixed $invalidSchema)
     {
         $this->expectException($invalidSchema === '' ? InvalidArgumentException::class : TypeError::class);
 

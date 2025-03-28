@@ -16,6 +16,9 @@ use ReflectionProperty;
 
 class PlatformTest extends TestCase
 {
+    /**
+     * @throws \ReflectionException
+     */
     public function testResolveDefaultPlatform()
     {
         $adapter  = $this->resolveAdapter('sql92');
@@ -23,17 +26,22 @@ class PlatformTest extends TestCase
 
         $reflectionMethod = new ReflectionMethod($platform, 'resolvePlatform');
 
+        /** @psalm-suppress UnusedMethodCall */
         $reflectionMethod->setAccessible(true);
 
         self::assertEquals($adapter->getPlatform(), $reflectionMethod->invoke($platform, null));
     }
 
+    /**
+     * @throws \ReflectionException
+     */
     public function testResolvePlatformName()
     {
         $platform = new Platform($this->resolveAdapter('sql92'));
 
         $reflectionMethod = new ReflectionMethod($platform, 'resolvePlatformName');
 
+        /** @psalm-suppress UnusedMethodCall */
         $reflectionMethod->setAccessible(true);
 
         self::assertEquals('mysql', $reflectionMethod->invoke($platform, new TestAsset\TrustingMysqlPlatform()));
@@ -45,17 +53,21 @@ class PlatformTest extends TestCase
         self::assertEquals('sql92', $reflectionMethod->invoke($platform, new TestAsset\TrustingSql92Platform()));
     }
 
+    /**
+     * @throws \ReflectionException
+     */
     #[Group('6890')]
     public function testAbstractPlatformCrashesGracefullyOnMissingDefaultPlatform()
     {
         $adapter            = $this->resolveAdapter('sql92');
         $reflectionProperty = new ReflectionProperty($adapter, 'platform');
+        /** @psalm-suppress UnusedMethodCall */
         $reflectionProperty->setAccessible(true);
         $reflectionProperty->setValue($adapter, null);
 
         $platform         = new Platform($adapter);
         $reflectionMethod = new ReflectionMethod($platform, 'resolvePlatform');
-
+        /** @psalm-suppress UnusedMethodCall */
         $reflectionMethod->setAccessible(true);
 
         $this->expectException(RuntimeException::class);
@@ -64,17 +76,21 @@ class PlatformTest extends TestCase
         $reflectionMethod->invoke($platform, null);
     }
 
+    /**
+     * @throws \ReflectionException
+     */
     #[Group('6890')]
     public function testAbstractPlatformCrashesGracefullyOnMissingDefaultPlatformWithGetDecorators()
     {
         $adapter            = $this->resolveAdapter('sql92');
         $reflectionProperty = new ReflectionProperty($adapter, 'platform');
+        /** @psalm-suppress UnusedMethodCall */
         $reflectionProperty->setAccessible(true);
         $reflectionProperty->setValue($adapter, null);
 
         $platform         = new Platform($adapter);
         $reflectionMethod = new ReflectionMethod($platform, 'resolvePlatform');
-
+        /** @psalm-suppress UnusedMethodCall */
         $reflectionMethod->setAccessible(true);
 
         $this->expectException(RuntimeException::class);
@@ -87,7 +103,7 @@ class PlatformTest extends TestCase
      * @param string $platformName
      * @return Adapter
      */
-    protected function resolveAdapter($platformName)
+    protected function resolveAdapter(string $platformName): Adapter
     {
         $platform = null;
 

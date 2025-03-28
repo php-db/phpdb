@@ -19,7 +19,7 @@ use PHPUnit\Framework\TestCase;
 class MysqlTest extends TestCase
 {
     /** @var Mysql */
-    protected $platform;
+    protected Mysql $platform;
 
     /**
      * Sets up the fixture, for example, opens a network connection.

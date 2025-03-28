@@ -141,7 +141,7 @@ class ExpressionTest extends TestCase
      * @param mixed $falsyParameter
      */
     #[DataProvider('falsyExpressionParametersProvider')]
-    public function testConstructorWithFalsyValidParameters($falsyParameter)
+    public function testConstructorWithFalsyValidParameters(mixed $falsyParameter)
     {
         $expression = new Expression('?', $falsyParameter);
         self::assertSame($falsyParameter, $expression->getParameters());

@@ -32,7 +32,7 @@ use PHPUnit\Framework\TestCase;
 class ParameterContainerTest extends TestCase
 {
     /** @var ParameterContainer */
-    protected $parameterContainer;
+    protected ParameterContainer $parameterContainer;
 
     /**
      * Sets up the fixture, for example, opens a network connection.

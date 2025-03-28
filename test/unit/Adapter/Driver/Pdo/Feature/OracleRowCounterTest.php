@@ -2,9 +2,7 @@
 
 namespace LaminasTest\Db\Adapter\Driver\Pdo\Feature;
 
-use Closure;
 use Laminas\Db\Adapter\Driver\ConnectionInterface;
-use Laminas\Db\Adapter\Driver\Pdo\Connection;
 use Laminas\Db\Adapter\Driver\Pdo\Feature\OracleRowCounter;
 use Laminas\Db\Adapter\Driver\Pdo\Pdo;
 use Laminas\Db\Adapter\Driver\Pdo\Statement;
@@ -21,8 +19,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(OracleRowCounter::class, 'getRowCountClosure')]
 class OracleRowCounterTest extends TestCase
 {
-    /** @var OracleRowCounter */
-    protected $rowCounter;
+    protected OracleRowCounter $rowCounter;
 
     protected function setUp(): void
     {
@@ -55,17 +52,12 @@ class OracleRowCounterTest extends TestCase
     {
         $stmt = $this->getMockStatement('SELECT XXX', 5);
 
-        /** @var Closure $closure */
         $closure = $this->rowCounter->getRowCountClosure($stmt);
         self::assertInstanceOf('Closure', $closure);
         self::assertEquals(5, $closure());
     }
 
-    /**
-     * @param mixed $returnValue
-     * @return Statement&MockObject
-     */
-    protected function getMockStatement(string $sql, $returnValue)
+    protected function getMockStatement(string $sql, mixed $returnValue): MockObject&Statement
     {
         /** @var Statement|MockObject $statement */
         $statement = $this->getMockBuilder(Statement::class)
@@ -95,11 +87,7 @@ class OracleRowCounterTest extends TestCase
         return $statement;
     }
 
-    /**
-     * @param mixed $returnValue
-     * @return Pdo&MockObject
-     */
-    protected function getMockDriver($returnValue)
+    protected function getMockDriver(mixed $returnValue): MockObject&Pdo
     {
         $pdoStatement = $this->getMockBuilder(PDOStatement::class)
             ->onlyMethods(['fetch'])

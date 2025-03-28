@@ -24,7 +24,7 @@ class ConnectionTest extends TestCase
     use DeprecatedAssertionsTrait;
 
     /** @var Connection */
-    protected $connection;
+    protected Connection $connection;
 
     /**
      * Sets up the fixture, for example, opens a network connection.
@@ -106,6 +106,7 @@ class ConnectionTest extends TestCase
             'getConnectionString'
         );
 
+        /** @psalm-suppress UnusedMethodCall */
         $getConnectionString->setAccessible(true);
 
         self::assertEquals(

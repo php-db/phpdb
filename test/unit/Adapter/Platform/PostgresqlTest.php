@@ -19,7 +19,7 @@ use PHPUnit\Framework\TestCase;
 class PostgresqlTest extends TestCase
 {
     /** @var Postgresql */
-    protected $platform;
+    protected Postgresql $platform;
 
     /**
      * Sets up the fixture, for example, opens a network connection.

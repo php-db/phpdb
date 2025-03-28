@@ -8,6 +8,7 @@ use Laminas\Db\Adapter\Driver\IbmDb2\Result;
 use Laminas\Db\Adapter\Driver\IbmDb2\Statement;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Depends;
+use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
 
 #[CoversMethod(IbmDb2::class, 'registerConnection')]
@@ -24,7 +25,7 @@ use PHPUnit\Framework\TestCase;
 class IbmDb2Test extends TestCase
 {
     /** @var IbmDb2 */
-    protected $ibmdb2;
+    protected IbmDb2 $ibmdb2;
 
     /**
      * Sets up the fixture, for example, opens a network connection.
@@ -35,6 +36,9 @@ class IbmDb2Test extends TestCase
         $this->ibmdb2 = new IbmDb2([]);
     }
 
+    /**
+     * @throws Exception
+     */
     public function testRegisterConnection()
     {
         $mockConnection = $this->getMockForAbstractClass(
@@ -50,6 +54,9 @@ class IbmDb2Test extends TestCase
         self::assertSame($this->ibmdb2, $this->ibmdb2->registerConnection($mockConnection));
     }
 
+    /**
+     * @throws Exception
+     */
     public function testRegisterStatementPrototype()
     {
         $this->ibmdb2  = new IbmDb2([]);
@@ -66,6 +73,9 @@ class IbmDb2Test extends TestCase
         self::assertSame($this->ibmdb2, $this->ibmdb2->registerStatementPrototype($mockStatement));
     }
 
+    /**
+     * @throws Exception
+     */
     public function testRegisterResultPrototype()
     {
         $this->ibmdb2  = new IbmDb2([]);

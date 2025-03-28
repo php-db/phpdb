@@ -15,7 +15,7 @@ use stdClass;
 class SqlSrvIntegrationTest extends AbstractIntegrationTestCase
 {
     /** @var Laminas\Db\Adapter\Driver\Sqlsrv\Sqlsrv */
-    private $driver;
+    private Laminas\Db\Adapter\Driver\Sqlsrv\Sqlsrv|Sqlsrv $driver;
 
     /** @var resource SQL Server Connection */
     private $resource;

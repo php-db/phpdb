@@ -6,8 +6,6 @@ use Laminas\Db\Adapter\Platform\IbmDb2;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 
-use function function_exists;
-
 #[CoversMethod(IbmDb2::class, 'getName')]
 #[CoversMethod(IbmDb2::class, 'getQuoteIdentifierSymbol')]
 #[CoversMethod(IbmDb2::class, 'quoteIdentifier')]
@@ -21,7 +19,7 @@ use function function_exists;
 class IbmDb2Test extends TestCase
 {
     /** @var IbmDb2 */
-    protected $platform;
+    protected IbmDb2 $platform;
 
     /**
      * Sets up the fixture, for example, opens a network connection.

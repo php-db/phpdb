@@ -7,12 +7,17 @@ use Laminas\Db\Adapter\AdapterAwareTrait;
 use Laminas\Db\Adapter\Driver\DriverInterface;
 use Laminas\Db\Adapter\Platform\PlatformInterface;
 use LaminasTest\Db\DeprecatedAssertionsTrait;
+use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
 
 class AdapterAwareTraitTest extends TestCase
 {
     use DeprecatedAssertionsTrait;
 
+    /**
+     * @throws \ReflectionException
+     * @throws Exception
+     */
     public function testSetDbAdapter()
     {
         $object = $this->getObjectForTrait(AdapterAwareTrait::class);

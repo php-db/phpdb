@@ -16,7 +16,7 @@ use function getenv;
 class MysqlTest extends TestCase
 {
     /** @var array<string, resource|\PDO> */
-    public $adapters = [];
+    public array|\PDO $adapters = [];
 
     protected function setUp(): void
     {

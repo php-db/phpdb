@@ -11,7 +11,7 @@ use Zend\Db\Adapter\AdapterInterface;
 class ConfigProviderTest extends TestCase
 {
     /** @var array<string, array<array-key, string>> */
-    private $config = [
+    private array $config = [
         'abstract_factories' => [
             Adapter\AdapterAbstractServiceFactory::class,
         ],

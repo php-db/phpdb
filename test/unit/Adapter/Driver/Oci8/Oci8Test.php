@@ -8,6 +8,7 @@ use Laminas\Db\Adapter\Driver\Oci8\Result;
 use Laminas\Db\Adapter\Driver\Oci8\Statement;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Depends;
+use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
 
 #[CoversMethod(Oci8::class, 'registerConnection')]
@@ -23,7 +24,7 @@ use PHPUnit\Framework\TestCase;
 class Oci8Test extends TestCase
 {
     /** @var Oci8 */
-    protected $oci8;
+    protected Oci8 $oci8;
 
     /**
      * Sets up the fixture, for example, opens a network connection.
@@ -34,6 +35,9 @@ class Oci8Test extends TestCase
         $this->oci8 = new Oci8([]);
     }
 
+    /**
+     * @throws Exception
+     */
     public function testRegisterConnection()
     {
         $mockConnection = $this->getMockForAbstractClass(
@@ -49,6 +53,9 @@ class Oci8Test extends TestCase
         self::assertSame($this->oci8, $this->oci8->registerConnection($mockConnection));
     }
 
+    /**
+     * @throws Exception
+     */
     public function testRegisterStatementPrototype()
     {
         $this->oci8    = new Oci8([]);
@@ -65,6 +72,9 @@ class Oci8Test extends TestCase
         self::assertSame($this->oci8, $this->oci8->registerStatementPrototype($mockStatement));
     }
 
+    /**
+     * @throws Exception
+     */
     public function testRegisterResultPrototype()
     {
         $this->oci8    = new Oci8([]);

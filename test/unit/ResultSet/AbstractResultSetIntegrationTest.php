@@ -5,6 +5,7 @@ namespace LaminasTest\Db\ResultSet;
 use Laminas\Db\Adapter\Driver\ResultInterface;
 use Laminas\Db\ResultSet\AbstractResultSet;
 use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -12,11 +13,13 @@ use PHPUnit\Framework\TestCase;
 class AbstractResultSetIntegrationTest extends TestCase
 {
     /** @var AbstractResultSet|MockObject */
-    protected $resultSet;
+    protected AbstractResultSet|MockObject $resultSet;
 
     /**
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
+     *
+     * @throws Exception
      */
     protected function setUp(): void
     {

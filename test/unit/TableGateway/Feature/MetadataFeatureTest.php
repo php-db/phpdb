@@ -9,11 +9,15 @@ use Laminas\Db\Metadata\Object\ViewObject;
 use Laminas\Db\TableGateway\AbstractTableGateway;
 use Laminas\Db\TableGateway\Feature\MetadataFeature;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
 
 class MetadataFeatureTest extends TestCase
 {
+    /**
+     * @throws Exception
+     */
     #[Group('integration-test')]
     public function testPostInitialize()
     {
@@ -34,6 +38,9 @@ class MetadataFeatureTest extends TestCase
         self::assertEquals(['id', 'name'], $tableGatewayMock->getColumns());
     }
 
+    /**
+     * @throws Exception
+     */
     public function testPostInitializeRecordsPrimaryKeyColumnToSharedMetadata()
     {
         /** @var AbstractTableGateway $tableGatewayMock */
@@ -55,6 +62,7 @@ class MetadataFeatureTest extends TestCase
         $feature->postInitialize();
 
         $r = new ReflectionProperty(MetadataFeature::class, 'sharedData');
+        /** @psalm-suppress UnusedMethodCall */
         $r->setAccessible(true);
         $sharedData = $r->getValue($feature);
 
@@ -65,6 +73,9 @@ class MetadataFeatureTest extends TestCase
         self::assertSame($sharedData['metadata']['primaryKey'], 'id');
     }
 
+    /**
+     * @throws Exception
+     */
     public function testPostInitializeRecordsListOfColumnsInPrimaryKeyToSharedMetadata()
     {
         /** @var AbstractTableGateway $tableGatewayMock */
@@ -86,6 +97,7 @@ class MetadataFeatureTest extends TestCase
         $feature->postInitialize();
 
         $r = new ReflectionProperty(MetadataFeature::class, 'sharedData');
+        /** @psalm-suppress UnusedMethodCall */
         $r->setAccessible(true);
         $sharedData = $r->getValue($feature);
 
@@ -96,6 +108,9 @@ class MetadataFeatureTest extends TestCase
         self::assertEquals(['composite', 'id'], $sharedData['metadata']['primaryKey']);
     }
 
+    /**
+     * @throws Exception
+     */
     public function testPostInitializeSkipsPrimaryKeyCheckIfNotTable()
     {
         /** @var AbstractTableGateway $tableGatewayMock */

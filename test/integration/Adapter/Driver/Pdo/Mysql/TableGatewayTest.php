@@ -61,8 +61,7 @@ class TableGatewayTest extends TestCase
     /**
      * @see https://github.com/zendframework/zend-db/issues/35
      * @see https://github.com/zendframework/zend-db/pull/178
-     *
-     * @return mixed
+     * @return int
      */
     public function testInsertWithExtendedCharsetFieldName()
     {
@@ -81,7 +80,7 @@ class TableGatewayTest extends TestCase
      * @param mixed $id
      */
     #[Depends('testInsertWithExtendedCharsetFieldName')]
-    public function testUpdateWithExtendedCharsetFieldName($id)
+    public function testUpdateWithExtendedCharsetFieldName(mixed $id)
     {
         $tableGateway = new TableGateway('test_charset', $this->adapter);
 
@@ -101,10 +100,10 @@ class TableGatewayTest extends TestCase
     }
 
     /**
-     * @param string|TableIdentifier|array $table
+     * @param array|string|TableIdentifier $table
      */
     #[DataProvider('tableProvider')]
-    public function testTableGatewayWithMetadataFeature($table)
+    public function testTableGatewayWithMetadataFeature(array|string|TableIdentifier $table)
     {
         $tableGateway = new TableGateway($table, $this->adapter, new MetadataFeature());
 

@@ -15,7 +15,7 @@ use function getenv;
 class SqliteTest extends TestCase
 {
     /** @var array<string, resource|\PDO> */
-    public $adapters = [];
+    public array|\PDO $adapters = [];
 
     protected function setUp(): void
     {

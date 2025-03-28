@@ -5,6 +5,7 @@ namespace LaminasTest\Db\Adapter;
 use Laminas\Db\Adapter\Adapter;
 use Laminas\Db\Adapter\AdapterServiceFactory;
 use Laminas\ServiceManager\ServiceLocatorInterface;
+use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -12,12 +13,13 @@ use function extension_loaded;
 
 class AdapterServiceFactoryTest extends TestCase
 {
-    /** @var ServiceLocatorInterface&MockObject */
-    private $services;
+    private ServiceLocatorInterface&MockObject $services;
 
-    /** @var AdapterServiceFactory */
-    private $factory;
+    private AdapterServiceFactory $factory;
 
+    /**
+     * @throws Exception
+     */
     protected function setUp(): void
     {
         if (! extension_loaded('pdo_sqlite')) {

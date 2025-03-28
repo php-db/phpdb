@@ -23,7 +23,7 @@ class InsertIgnoreTest extends TestCase
     use DeprecatedAssertionsTrait;
 
     /** @var InsertIgnore */
-    protected $insert;
+    protected InsertIgnore $insert;
 
     /**
      * Sets up the fixture, for example, opens a network connection.
@@ -96,6 +96,9 @@ class InsertIgnoreTest extends TestCase
         $this->insert->values(['foo' => 'bar'], InsertIgnore::VALUES_MERGE);
     }
 
+    /**
+     * @throws \ReflectionException
+     */
     #[Group('Laminas-4926')]
     public function testEmptyArrayValues()
     {

@@ -19,7 +19,7 @@ use PHPUnit\Framework\TestCase;
 class BetweenTest extends TestCase
 {
     /** @var Between */
-    protected $between;
+    protected Between $between;
 
     protected function setUp(): void
     {

@@ -25,7 +25,7 @@ use PHPUnit\Framework\TestCase;
 class TableGatewayTest extends TestCase
 {
     /** @var Adapter&MockObject */
-    protected $mockAdapter;
+    protected Adapter|MockObject $mockAdapter;
 
     protected function setUp(): void
     {
@@ -147,11 +147,11 @@ class TableGatewayTest extends TestCase
 
     /**
      * @param array<string, string|TableIdentifier> $tableValue
-     * @param string|TableIdentifier $expected
+     * @param string|TableIdentifier                $expected
      */
     #[DataProvider('aliasedTables')]
     #[Group('7311')]
-    public function testInsertShouldResetTableToUnaliasedTable(array $tableValue, $expected)
+    public function testInsertShouldResetTableToUnaliasedTable(array $tableValue, string|TableIdentifier $expected)
     {
         $insert = new Insert();
         $insert->into($tableValue);
@@ -210,10 +210,10 @@ class TableGatewayTest extends TestCase
 
     /**
      * @param array<string, string|TableIdentifier> $tableValue
-     * @param string|TableIdentifier $expected
+     * @param string|TableIdentifier                $expected
      */
     #[DataProvider('aliasedTables')]
-    public function testUpdateShouldResetTableToUnaliasedTable(array $tableValue, $expected)
+    public function testUpdateShouldResetTableToUnaliasedTable(array $tableValue, string|TableIdentifier $expected)
     {
         $update = new Update();
         $update->table($tableValue);
@@ -274,10 +274,10 @@ class TableGatewayTest extends TestCase
 
     /**
      * @param array<string, string|TableIdentifier> $tableValue
-     * @param string|TableIdentifier $expected
+     * @param string|TableIdentifier                $expected
      */
     #[DataProvider('aliasedTables')]
-    public function testDeleteShouldResetTableToUnaliasedTable(array $tableValue, $expected)
+    public function testDeleteShouldResetTableToUnaliasedTable(array $tableValue, string|TableIdentifier $expected)
     {
         $delete = new Delete();
         $delete->from($tableValue);

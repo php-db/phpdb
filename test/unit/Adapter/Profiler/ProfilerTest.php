@@ -16,7 +16,7 @@ use PHPUnit\Framework\TestCase;
 class ProfilerTest extends TestCase
 {
     /** @var Profiler */
-    protected $profiler;
+    protected Profiler $profiler;
 
     /**
      * Sets up the fixture, for example, opens a network connection.

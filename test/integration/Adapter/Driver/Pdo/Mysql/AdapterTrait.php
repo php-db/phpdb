@@ -8,7 +8,7 @@ use function getenv;
 
 trait AdapterTrait
 {
-    /** @var $adapter */
+    /** @var Adapter|null $adapter */
     protected ?Adapter $adapter;
 
     protected function setUp(): void
@@ -27,7 +27,7 @@ trait AdapterTrait
     }
 
     /** @return null|string */
-    protected function getHostname()
+    protected function getHostname(): ?string
     {
         return getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_MYSQL_HOSTNAME');
     }

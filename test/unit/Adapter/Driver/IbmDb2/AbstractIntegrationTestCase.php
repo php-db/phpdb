@@ -10,7 +10,7 @@ use function getenv;
 abstract class AbstractIntegrationTestCase extends TestCase
 {
     /** @var array */
-    protected $variables = [
+    protected string|array|false $variables = [
         'database' => 'TESTS_LAMINAS_DB_ADAPTER_DRIVER_IBMDB2_DATABASE',
         'username' => 'TESTS_LAMINAS_DB_ADAPTER_DRIVER_IBMDB2_USERNAME',
         'password' => 'TESTS_LAMINAS_DB_ADAPTER_DRIVER_IBMDB2_PASSWORD',

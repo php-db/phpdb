@@ -18,6 +18,9 @@ class TableGatewayAndAdapterTest extends TestCase
 {
     use AdapterTrait;
 
+    /**
+     * @throws \Exception
+     */
     #[DataProvider('connections')]
     public function testGetOutOfConnections(): void
     {

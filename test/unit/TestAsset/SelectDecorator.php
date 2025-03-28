@@ -7,13 +7,13 @@ use Laminas\Db\Sql;
 class SelectDecorator extends Sql\Select implements Sql\Platform\PlatformDecoratorInterface
 {
     /** @var null|object */
-    protected $subject;
+    protected ?object $subject;
 
     /**
      * @param null|object $subject
      * @return $this Provides a fluent interface
      */
-    public function setSubject($subject)
+    public function setSubject($subject): static
     {
         $this->subject = $subject;
         return $this;

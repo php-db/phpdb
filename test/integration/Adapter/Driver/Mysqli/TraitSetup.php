@@ -10,7 +10,7 @@ use function sprintf;
 trait TraitSetup
 {
     /** @var array<string, string> */
-    protected $variables = [
+    protected array $variables = [
         'hostname' => 'TESTS_LAMINAS_DB_ADAPTER_DRIVER_MYSQL_HOSTNAME',
         'username' => 'TESTS_LAMINAS_DB_ADAPTER_DRIVER_MYSQL_USERNAME',
         'password' => 'TESTS_LAMINAS_DB_ADAPTER_DRIVER_MYSQL_PASSWORD',
@@ -18,7 +18,7 @@ trait TraitSetup
     ];
 
     /** @var array<string, string> */
-    protected $optional = [
+    protected array $optional = [
         'port' => 'TESTS_LAMINAS_DB_ADAPTER_DRIVER_MYSQL_PORT',
     ];
 

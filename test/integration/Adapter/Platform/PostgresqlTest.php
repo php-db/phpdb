@@ -19,7 +19,7 @@ use function pg_connect;
 class PostgresqlTest extends TestCase
 {
     /** @var array<string, resource> */
-    public $adapters = [];
+    public array|\PDO $adapters = [];
 
     protected function setUp(): void
     {

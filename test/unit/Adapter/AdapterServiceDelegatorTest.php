@@ -10,12 +10,18 @@ use Laminas\Db\Adapter\Driver\DriverInterface;
 use Laminas\ServiceManager\AbstractPluginManager;
 use Laminas\ServiceManager\ServiceManager;
 use LaminasTest\Db\Adapter\TestAsset\ConcreteAdapterAwareObject;
+use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use stdClass;
 
 final class AdapterServiceDelegatorTest extends TestCase
 {
+    /**
+     * @throws Exception
+     */
     public function testSetAdapterShouldBeCalledForExistingAdapter(): void
     {
         $container = $this->createMock(ContainerInterface::class);
@@ -45,6 +51,9 @@ final class AdapterServiceDelegatorTest extends TestCase
         );
     }
 
+    /**
+     * @throws Exception
+     */
     public function testSetAdapterShouldBeCalledForOnlyConcreteAdapter(): void
     {
         $container = $this
@@ -73,6 +82,9 @@ final class AdapterServiceDelegatorTest extends TestCase
         $this->assertNull($result->getAdapter());
     }
 
+    /**
+     * @throws Exception
+     */
     public function testSetAdapterShouldNotBeCalledForMissingAdapter(): void
     {
         $container = $this->createMock(ContainerInterface::class);
@@ -97,6 +109,9 @@ final class AdapterServiceDelegatorTest extends TestCase
         $this->assertNull($result->getAdapter());
     }
 
+    /**
+     * @throws Exception
+     */
     public function testSetAdapterShouldNotBeCalledForWrongClassInstance(): void
     {
         $container = $this->createMock(ContainerInterface::class);
@@ -115,6 +130,11 @@ final class AdapterServiceDelegatorTest extends TestCase
         $this->assertNotInstanceOf(AdapterAwareInterface::class, $result);
     }
 
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     * @throws Exception
+     */
     public function testDelegatorWithServiceManager(): void
     {
         $databaseAdapter = new Adapter($this->createMock(DriverInterface::class));
@@ -142,6 +162,11 @@ final class AdapterServiceDelegatorTest extends TestCase
         );
     }
 
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     * @throws Exception
+     */
     public function testDelegatorWithServiceManagerAndCustomAdapterName()
     {
         $databaseAdapter = new Adapter($this->createMock(DriverInterface::class));
@@ -169,6 +194,9 @@ final class AdapterServiceDelegatorTest extends TestCase
         );
     }
 
+    /**
+     * @throws Exception
+     */
     public function testDelegatorWithPluginManager()
     {
         $databaseAdapter = new Adapter($this->createMock(DriverInterface::class));

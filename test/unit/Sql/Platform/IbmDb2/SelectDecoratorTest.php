@@ -31,7 +31,7 @@ class SelectDecoratorTest extends TestCase
         Select $select,
         string $expectedPrepareSql,
         array $expectedParams,
-        $notUsed,
+        mixed $notUsed,
         bool $supportsLimitOffset
     ) {
         $driver = $this->getMockBuilder(DriverInterface::class)->getMock();
@@ -75,8 +75,8 @@ class SelectDecoratorTest extends TestCase
                            dialect sql statements')]
     public function testGetSqlString(
         Select $select,
-        $ignored0,
-        $ignored1,
+        mixed $ignored0,
+        mixed $ignored1,
         string $expectedSql,
         bool $supportsLimitOffset
     ) {
@@ -99,7 +99,7 @@ class SelectDecoratorTest extends TestCase
      *
      * @return array
      */
-    public static function dataProvider()
+    public static function dataProvider(): array
     {
         // phpcs:disable Generic.Files.LineLength.TooLong
         $select0 = new Select();

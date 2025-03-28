@@ -15,7 +15,7 @@ use PHPUnit\Framework\TestCase;
 class PdoTest extends TestCase
 {
     /** @var Pdo */
-    protected $pdo;
+    protected Pdo $pdo;
 
     /**
      * Sets up the fixture, for example, opens a network connection.
@@ -56,7 +56,7 @@ class PdoTest extends TestCase
      * @param int|string $name
      */
     #[DataProvider('getParamsAndType')]
-    public function testFormatParameterName($name, ?string $type, string $expected)
+    public function testFormatParameterName(int|string $name, ?string $type, string $expected)
     {
         $result = $this->pdo->formatParameterName($name, $type);
         $this->assertEquals($expected, $result);

@@ -41,7 +41,7 @@ class UpdateTest extends TestCase
     use DeprecatedAssertionsTrait;
 
     /** @var Update */
-    protected $update;
+    protected Update $update;
 
     /**
      * Sets up the fixture, for example, opens a network connection.
@@ -60,6 +60,9 @@ class UpdateTest extends TestCase
     {
     }
 
+    /**
+     * @throws \ReflectionException
+     */
     public function testTable()
     {
         $this->update->table('foo');
@@ -70,6 +73,9 @@ class UpdateTest extends TestCase
         self::assertEquals($tableIdentifier, $this->readAttribute($this->update, 'table'));
     }
 
+    /**
+     * @throws \ReflectionException
+     */
     public function testConstruct()
     {
         $update = new Update('foo');
@@ -100,6 +106,9 @@ class UpdateTest extends TestCase
         );
     }
 
+    /**
+     * @throws \ReflectionException
+     */
     public function testWhere()
     {
         $this->update->where('x = y');

@@ -15,8 +15,11 @@ use function printf;
 final class IntegrationTestStartedListener implements StartedSubscriber
 {
     /** @var FixtureLoader[] */
-    private $fixtureLoaders = [];
+    private array $fixtureLoaders = [];
 
+    /**
+     * @throws \Exception
+     */
     public function notify(Started $event): void
     {
         if ($event->testSuite()->name() !== 'integration test') {

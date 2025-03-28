@@ -21,7 +21,7 @@ class PdoStubDriver extends PDO
      * @param string $user
      * @param string $password
      */
-    public function __construct($dsn, $user, $password)
+    public function __construct(string $dsn, $user, $password)
     {
     }
 

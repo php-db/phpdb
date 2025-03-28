@@ -31,7 +31,7 @@ class SelectDecoratorTest extends TestCase
         Select $select,
         string $expectedSql,
         array $expectedParams,
-        $notUsed,
+        mixed $notUsed,
         int $expectedFormatParamCount
     ) {
         $driver = $this->getMockBuilder(DriverInterface::class)->getMock();
@@ -68,7 +68,7 @@ class SelectDecoratorTest extends TestCase
     #[DataProvider('dataProvider')]
     #[TestDox('integration test: Testing SelectDecorator will use Select an internal state to prepare
                            a proper limit/offset sql statement')]
-    public function testGetSqlString(Select $select, $ignored, $alsoIgnored, string $expectedSql)
+    public function testGetSqlString(Select $select, mixed $ignored, mixed $alsoIgnored, string $expectedSql)
     {
         $parameterContainer = new ParameterContainer();
         $statement          = $this->getMockBuilder(StatementInterface::class)->getMock();

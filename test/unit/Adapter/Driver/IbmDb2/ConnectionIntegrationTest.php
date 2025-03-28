@@ -141,7 +141,7 @@ class ConnectionIntegrationTest extends AbstractIntegrationTestCase
      *
      * @return bool
      */
-    protected function isTransactionEnabled()
+    protected function isTransactionEnabled(): bool
     {
         $os = php_uname('s') === 'OS400';
         if ($os) {
@@ -163,8 +163,10 @@ class ConnectionIntegrationTest extends AbstractIntegrationTestCase
     public function testGetLastGeneratedValue(): never
     {
         $this->markTestIncomplete('Need to create a temporary sequence.');
+        /*
         $connection = new Connection($this->variables);
         $connection->getLastGeneratedValue();
+        */
     }
 
     #[Group('laminas3469')]

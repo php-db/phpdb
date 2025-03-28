@@ -12,22 +12,26 @@ use Laminas\Db\Sql\Update;
 use Laminas\Db\TableGateway\Feature\EventFeature;
 use Laminas\Db\TableGateway\TableGateway;
 use Laminas\EventManager\EventManager;
+use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
 
 class EventFeatureTest extends TestCase
 {
     /** @var EventManager */
-    protected $eventManager;
+    protected EventManager $eventManager;
 
     /** @var EventFeature */
-    protected $feature;
+    protected EventFeature $feature;
 
     /** @var EventFeature\TableGatewayEvent */
-    protected $event;
+    protected EventFeature\TableGatewayEvent $event;
 
     /** @var TableGateway */
-    protected $tableGateway;
+    protected TableGateway|\PHPUnit\Framework\MockObject\MockObject $tableGateway;
 
+    /**
+     * @throws Exception
+     */
     protected function setUp(): void
     {
         $this->eventManager = new EventManager();

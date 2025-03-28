@@ -4,14 +4,19 @@ namespace LaminasTest\Db\Metadata\Source;
 
 use Laminas\Db\Metadata\Object\ConstraintKeyObject;
 use Laminas\Db\Metadata\Source\AbstractSource;
+use PHPUnit\Framework\MockObject\Exception;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
 
 class AbstractSourceTest extends TestCase
 {
     /** @var AbstractSource */
-    protected $abstractSourceMock;
+    protected MockObject|AbstractSource $abstractSourceMock;
 
+    /**
+     * @throws Exception
+     */
     protected function setUp(): void
     {
         $this->abstractSourceMock = $this->getMockForAbstractClass(
@@ -22,9 +27,13 @@ class AbstractSourceTest extends TestCase
         );
     }
 
+    /**
+     * @throws \ReflectionException
+     */
     public function testGetConstraintKeys()
     {
         $refProp = new ReflectionProperty($this->abstractSourceMock, 'data');
+        /** @psalm-suppress UnusedMethodCall */
         $refProp->setAccessible(true);
 
         // internal data

@@ -17,6 +17,9 @@ class JoinTest extends TestCase
 {
     use DeprecatedAssertionsTrait;
 
+    /**
+     * @throws \ReflectionException
+     */
     public function testInitialPositionIsZero()
     {
         $join = new Join();
@@ -24,6 +27,9 @@ class JoinTest extends TestCase
         self::assertAttributeEquals(0, 'position', $join);
     }
 
+    /**
+     * @throws \ReflectionException
+     */
     public function testNextIncrementsThePosition()
     {
         $join = new Join();
@@ -33,6 +39,9 @@ class JoinTest extends TestCase
         self::assertAttributeEquals(1, 'position', $join);
     }
 
+    /**
+     * @throws \ReflectionException
+     */
     public function testRewindResetsPositionToZero()
     {
         $join = new Join();

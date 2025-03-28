@@ -6,6 +6,7 @@ use Laminas\Db\Adapter\Driver\Oci8\Oci8;
 use Laminas\Db\Adapter\Exception\InvalidArgumentException;
 use Laminas\Db\Adapter\Platform\Oracle;
 use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
 
 #[CoversMethod(Oracle::class, '__construct')]
@@ -24,7 +25,7 @@ use PHPUnit\Framework\TestCase;
 class OracleTest extends TestCase
 {
     /** @var Oracle */
-    protected $platform;
+    protected Oracle $platform;
 
     /**
      * Sets up the fixture, for example, opens a network connection.
@@ -44,6 +45,9 @@ class OracleTest extends TestCase
         self::assertEquals('"test"."test"', $plataform2->quoteIdentifier('"test"."test"'));
     }
 
+    /**
+     * @throws Exception
+     */
     public function testContructWithDriver()
     {
         $mockDriver = $this->getMockForAbstractClass(
@@ -59,6 +63,9 @@ class OracleTest extends TestCase
         self::assertEquals($mockDriver, $platform->getDriver());
     }
 
+    /**
+     * @throws Exception
+     */
     public function testSetDriver()
     {
         $mockDriver = $this->getMockForAbstractClass(

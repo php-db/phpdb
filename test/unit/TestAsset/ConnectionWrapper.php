@@ -15,7 +15,7 @@ class ConnectionWrapper extends Connection
     }
 
     /** @return int */
-    public function getNestedTransactionsCount()
+    public function getNestedTransactionsCount(): int
     {
         return $this->nestedTransactionsCount;
     }

@@ -10,7 +10,7 @@ class ConcreteAdapterAwareObject implements AdapterAwareInterface
 {
     use AdapterAwareTrait;
 
-    public function __construct(private array $options = [])
+    public function __construct(private readonly array $options = [])
     {
     }
 

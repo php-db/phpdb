@@ -43,16 +43,16 @@ use ReflectionClass;
 class AbstractTableGatewayTest extends TestCase
 {
     /** @var Generator */
-    protected $mockAdapter;
+    protected Adapter|MockObject|Generator $mockAdapter;
 
     /** @var Generator */
-    protected $mockSql;
+    protected Generator|MockObject|Sql\Sql $mockSql;
 
     /** @var AbstractTableGateway */
-    protected $table;
+    protected AbstractTableGateway|MockObject $table;
 
     /** @var FeatureSet&MockObject */
-    protected $mockFeatureSet;
+    protected FeatureSet|MockObject $mockFeatureSet;
 
     /**
      * Sets up the fixture, for example, opens a network connection.
@@ -107,6 +107,7 @@ class AbstractTableGatewayTest extends TestCase
         );
         $tgReflection = new ReflectionClass(AbstractTableGateway::class);
         foreach ($tgReflection->getProperties() as $tgPropReflection) {
+            /** @psalm-suppress UnusedMethodCall */
             $tgPropReflection->setAccessible(true);
             switch ($tgPropReflection->getName()) {
                 case 'table':
@@ -322,6 +323,7 @@ class AbstractTableGatewayTest extends TestCase
 
         $tgReflection = new ReflectionClass(AbstractTableGateway::class);
         foreach ($tgReflection->getProperties() as $tgPropReflection) {
+            /** @psalm-suppress UnusedMethodCall */
             $tgPropReflection->setAccessible(true);
             switch ($tgPropReflection->getName()) {
                 case 'table':

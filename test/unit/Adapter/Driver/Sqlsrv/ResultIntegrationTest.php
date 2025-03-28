@@ -25,7 +25,7 @@ use PHPUnit\Framework\TestCase;
 class ResultIntegrationTest extends TestCase
 {
     /** @var Result */
-    protected $object;
+    protected Result $object;
 
     /**
      * Sets up the fixture, for example, opens a network connection.

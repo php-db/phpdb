@@ -27,7 +27,7 @@ use PHPUnit\Framework\TestCase;
 class ConnectionIntegrationTest extends TestCase
 {
     /** @var array<string, string> */
-    protected $variables = ['pdodriver' => 'sqlite', 'database' => ':memory:'];
+    protected array $variables = ['pdodriver' => 'sqlite', 'database' => ':memory:'];
 
     public function testGetCurrentSchema()
     {
@@ -140,8 +140,8 @@ class ConnectionIntegrationTest extends TestCase
     public function testGetLastGeneratedValue(): never
     {
         $this->markTestIncomplete('Need to create a temporary sequence.');
-        $connection = new Connection($this->variables);
-        $connection->getLastGeneratedValue();
+        //$connection = new Connection($this->variables);
+        //$connection->getLastGeneratedValue();
     }
 
     #[Group('laminas3469')]

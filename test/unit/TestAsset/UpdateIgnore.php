@@ -23,7 +23,7 @@ class UpdateIgnore extends Update
         PlatformInterface $platform,
         ?DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null
-    ) {
+    ): string {
         return parent::processUpdate($platform, $driver, $parameterContainer);
     }
 }

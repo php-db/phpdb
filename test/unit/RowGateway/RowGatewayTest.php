@@ -15,13 +15,13 @@ use PHPUnit\Framework\TestCase;
 class RowGatewayTest extends TestCase
 {
     /** @var Adapter&MockObject */
-    protected $mockAdapter;
+    protected Adapter|MockObject $mockAdapter;
 
     /** @var RowGateway */
-    protected $rowGateway;
+    protected RowGateway $rowGateway;
 
     /** @var ResultInterface&MockObject */
-    protected $mockResult;
+    protected ResultInterface|MockObject $mockResult;
     protected function setUp(): void
     {
         // mock the adapter, driver, and parts

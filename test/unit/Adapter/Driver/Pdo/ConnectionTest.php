@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
 class ConnectionTest extends TestCase
 {
     /** @var Connection */
-    protected $connection;
+    protected Connection $connection;
 
     /**
      * Sets up the fixture, for example, opens a network connection.

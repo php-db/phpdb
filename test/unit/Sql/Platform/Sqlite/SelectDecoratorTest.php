@@ -63,8 +63,8 @@ statement')]
 statement')]
     public function testGetSqlStringPreparesUnionSyntaxFromCombine(
         Select $select,
-        $ignore,
-        $alsoIgnore,
+        mixed $ignore,
+        mixed $alsoIgnore,
         string $expectedSql
     ) {
         $parameterContainer = new ParameterContainer();

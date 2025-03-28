@@ -8,6 +8,7 @@ use Laminas\Db\Adapter\Driver\Sqlsrv\Sqlsrv;
 use Laminas\Db\Adapter\Driver\Sqlsrv\Statement;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Depends;
+use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
 
 #[CoversMethod(Sqlsrv::class, 'registerConnection')]
@@ -24,7 +25,7 @@ use PHPUnit\Framework\TestCase;
 class SqlsrvTest extends TestCase
 {
     /** @var Sqlsrv */
-    protected $sqlsrv;
+    protected Sqlsrv $sqlsrv;
 
     /**
      * Sets up the fixture, for example, opens a network connection.
@@ -35,6 +36,9 @@ class SqlsrvTest extends TestCase
         $this->sqlsrv = new Sqlsrv([]);
     }
 
+    /**
+     * @throws Exception
+     */
     public function testRegisterConnection()
     {
         $mockConnection = $this->getMockForAbstractClass(
@@ -50,6 +54,9 @@ class SqlsrvTest extends TestCase
         self::assertSame($this->sqlsrv, $this->sqlsrv->registerConnection($mockConnection));
     }
 
+    /**
+     * @throws Exception
+     */
     public function testRegisterStatementPrototype()
     {
         $this->sqlsrv  = new Sqlsrv([]);
@@ -66,6 +73,9 @@ class SqlsrvTest extends TestCase
         self::assertSame($this->sqlsrv, $this->sqlsrv->registerStatementPrototype($mockStatement));
     }
 
+    /**
+     * @throws Exception
+     */
     public function testRegisterResultPrototype()
     {
         $this->sqlsrv  = new Sqlsrv([]);

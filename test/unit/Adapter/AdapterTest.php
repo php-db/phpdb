@@ -27,6 +27,7 @@ use LaminasTest\Db\TestAsset\TemporaryResultSet;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\TestDox;
+use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -45,21 +46,19 @@ use function extension_loaded;
 #[CoversMethod(Adapter::class, '__get')]
 class AdapterTest extends TestCase
 {
-    /** @var MockObject&DriverInterface */
-    protected $mockDriver;
+    protected DriverInterface&MockObject $mockDriver;
 
-    /** @var MockObject&PlatformInterface */
-    protected $mockPlatform;
+    protected PlatformInterface&MockObject $mockPlatform;
 
-    /** @var MockObject&ConnectionInterface */
-    protected $mockConnection;
+    protected ConnectionInterface&MockObject $mockConnection;
 
-    /** @var MockObject&StatementInterface */
-    protected $mockStatement;
+    protected StatementInterface&MockObject $mockStatement;
 
-    /** @var Adapter */
-    protected $adapter;
+    protected Adapter $adapter;
 
+    /**
+     * @throws Exception
+     */
     protected function setUp(): void
     {
         $this->mockDriver     = $this->createMock(DriverInterface::class);
@@ -89,7 +88,7 @@ class AdapterTest extends TestCase
         self::assertSame($profiler, $this->adapter->getProfiler());
 
         $adapter = new Adapter(['driver' => $this->mockDriver, 'profiler' => true], $this->mockPlatform);
-        self::assertInstanceOf(\Laminas\Db\Adapter\Profiler\Profiler::class, $adapter->getProfiler());
+        self::assertInstanceOf(Profiler\Profiler::class, $adapter->getProfiler());
     }
 
     #[TestDox('unit test: Test createDriverFromParameters() will create proper driver type')]
@@ -202,6 +201,9 @@ class AdapterTest extends TestCase
         self::assertEquals('FooSchema', $this->adapter->getCurrentSchema());
     }
 
+    /**
+     * @throws \Exception
+     */
     #[TestDox('unit test: Test query() in prepare mode produces a statement object')]
     public function testQueryWhenPreparedProducesStatement()
     {
@@ -209,6 +211,10 @@ class AdapterTest extends TestCase
         self::assertSame($this->mockStatement, $s);
     }
 
+    /**
+     * @throws Exception
+     * @throws \Exception
+     */
     #[Group('#210')]
     public function testProducedResultSetPrototypeIsDifferentForEachQuery()
     {
@@ -228,6 +234,9 @@ class AdapterTest extends TestCase
         );
     }
 
+    /**
+     * @throws \Exception
+     */
     #[TestDox('unit test: Test query() in prepare mode, with array of parameters, produces a result object')]
     public function testQueryWhenPreparedWithParameterArrayProducesResult()
     {
@@ -243,6 +252,9 @@ class AdapterTest extends TestCase
         self::assertSame($result, $r);
     }
 
+    /**
+     * @throws \Exception
+     */
     #[TestDox('unit test: Test query() in prepare mode, with ParameterContainer, produces a result object')]
     public function testQueryWhenPreparedWithParameterContainerProducesResult()
     {
@@ -258,6 +270,9 @@ class AdapterTest extends TestCase
         self::assertInstanceOf(ResultSet::class, $r);
     }
 
+    /**
+     * @throws \Exception
+     */
     #[TestDox('unit test: Test query() in execute mode produces a driver result object')]
     public function testQueryWhenExecutedProducesAResult()
     {
@@ -269,6 +284,9 @@ class AdapterTest extends TestCase
         self::assertSame($result, $r);
     }
 
+    /**
+     * @throws \Exception
+     */
     #[TestDox('unit test: Test query() in execute mode produces a resultset object')]
     public function testQueryWhenExecutedProducesAResultSetObjectWhenResultIsQuery()
     {
@@ -292,12 +310,13 @@ class AdapterTest extends TestCase
     }
 
     // @codingStandardsIgnoreStart
-    #[\PHPUnit\Framework\Attributes\TestDox('unit test: Test __get() works')]
     public function test__get()
     {
         // @codingStandardsIgnoreEnd
         self::assertSame($this->mockDriver, $this->adapter->driver);
+        /** @psalm-suppress UndefinedMagicPropertyFetch */
         self::assertSame($this->mockDriver, $this->adapter->DrivER);
+        /** @psalm-suppress UndefinedMagicPropertyFetch */
         self::assertSame($this->mockPlatform, $this->adapter->PlatForm);
         self::assertSame($this->mockPlatform, $this->adapter->platform);
 

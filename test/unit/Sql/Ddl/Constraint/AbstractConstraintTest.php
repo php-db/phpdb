@@ -4,6 +4,8 @@ namespace LaminasTest\Db\Sql\Ddl\Constraint;
 
 use Laminas\Db\Sql\Ddl\Constraint\AbstractConstraint;
 use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\MockObject\Exception;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 #[CoversMethod(AbstractConstraint::class, 'setColumns')]
@@ -12,8 +14,11 @@ use PHPUnit\Framework\TestCase;
 class AbstractConstraintTest extends TestCase
 {
     /** @var AbstractConstraint */
-    protected $ac;
+    protected AbstractConstraint|MockObject $ac;
 
+    /**
+     * @throws Exception
+     */
     protected function setUp(): void
     {
         $this->ac = $this->getMockForAbstractClass(AbstractConstraint::class);

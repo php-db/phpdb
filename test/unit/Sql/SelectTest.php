@@ -26,6 +26,7 @@ use PHPUnit\Framework\Attributes\Depends;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\TestDox;
 use PHPUnit\Framework\TestCase;
+use ReflectionException;
 use ReflectionObject;
 
 #[CoversMethod(Select::class, '__construct')]
@@ -155,6 +156,9 @@ class SelectTest extends TestCase
         $select->join(['foo'], 'x = y', Select::SQL_STAR, Select::JOIN_INNER);
     }
 
+    /**
+     * @throws ReflectionException
+     */
     #[TestDox('unit test: Test processJoins() exception with bad join name')]
     public function testBadJoinName()
     {
@@ -171,6 +175,7 @@ class SelectTest extends TestCase
 
         $mr = $sr->getMethod('processJoins');
 
+        /** @psalm-suppress UnusedMethodCall */
         $mr->setAccessible(true);
 
         $this->expectException(InvalidArgumentException::class);
@@ -355,6 +360,9 @@ class SelectTest extends TestCase
         self::assertSame($newWhere, $select->getRawState('where'));
     }
 
+    /**
+     * @throws ReflectionException
+     */
     #[TestDox('unit test: Test order()')]
     public function testOrder()
     {
@@ -376,6 +384,7 @@ class SelectTest extends TestCase
         $select->order(new Expression('RAND()'));
         $sr     = new ReflectionObject($select);
         $method = $sr->getMethod('processOrder');
+        /** @psalm-suppress UnusedMethodCall */
         $method->setAccessible(true);
         self::assertEquals(
             [[['RAND()']]],
@@ -391,6 +400,7 @@ class SelectTest extends TestCase
         );
         $sr     = new ReflectionObject($select);
         $method = $sr->getMethod('processOrder');
+        /** @psalm-suppress UnusedMethodCall */
         $method->setAccessible(true);
         self::assertEquals(
             [[['"rating" < \'10\'']]],
@@ -608,8 +618,8 @@ class SelectTest extends TestCase
         Select $select,
         string $expectedSqlString,
         array $expectedParameters,
-        $unused1,
-        $unused2,
+        mixed $unused1,
+        mixed $unused2,
         bool $useNamedParameters = false
     ) {
         $mockDriver = $this->getMockBuilder(DriverInterface::class)->getMock();
@@ -653,7 +663,7 @@ class SelectTest extends TestCase
     #[DataProvider('providerData')]
     #[TestDox('unit test: Test getSqlString() will produce expected sql and parameters based on
                     a variety of provided arguments [uses data provider]')]
-    public function testGetSqlString(Select $select, $unused, $unused2, string $expectedSqlString)
+    public function testGetSqlString(Select $select, mixed $unused, mixed $unused2, string $expectedSqlString)
     {
         self::assertEquals($expectedSqlString, $select->getSqlString(new TrustingSql92Platform()));
     }
@@ -682,14 +692,15 @@ class SelectTest extends TestCase
     }
 
     /**
-     * @param mixed $unused
-     * @param mixed $unused2
-     * @param mixed $unused3
+     * @param mixed  $unused
+     * @param mixed  $unused2
+     * @param mixed  $unused3
+     * @throws ReflectionException
      */
     #[DataProvider('providerData')]
     #[TestDox('unit test: Text process*() methods will return proper array when internally called,
                     part of extension API')]
-    public function testProcessMethods(Select $select, $unused, $unused2, $unused3, array $internalTests)
+    public function testProcessMethods(Select $select, mixed $unused, mixed $unused2, mixed $unused3, array $internalTests)
     {
         if (! $internalTests) {
             $this->expectNotToPerformAssertions();
@@ -704,6 +715,7 @@ class SelectTest extends TestCase
 
         foreach ($internalTests as $method => $expected) {
             $mr = $sr->getMethod($method);
+            /** @psalm-suppress UnusedMethodCall */
             $mr->setAccessible(true);
             $return = $mr->invokeArgs($select, [new Sql92(), $mockDriver, $parameterContainer]);
             self::assertEquals($expected, $return);
@@ -1101,14 +1113,13 @@ class SelectTest extends TestCase
                 new Predicate\Operator('id', '=', 3),
                 new Predicate\Operator('number', '>', 20),
             ]));
-        $sqlPrep36        = 'SELECT "foo".*, "tableA".*, "tableB".*, "tableC".* FROM "foo"'
+        $sqlPrep36       = 'SELECT "foo".*, "tableA".*, "tableB".*, "tableC".* FROM "foo"'
             . ' INNER JOIN "tableA" ON "id" = :join1part1 INNER JOIN "tableB" ON "id" = :join2part1 '
             . 'INNER JOIN "tableC" ON "id" = :join3part1 AND "number" > :join3part2';
-        $sqlStr36         = 'SELECT "foo".*, "tableA".*, "tableB".*, "tableC".* FROM "foo" '
+        $sqlStr36        = 'SELECT "foo".*, "tableA".*, "tableB".*, "tableC".* FROM "foo" '
             . 'INNER JOIN "tableA" ON "id" = \'1\' INNER JOIN "tableB" ON "id" = \'2\' '
             . 'INNER JOIN "tableC" ON "id" = \'3\' AND "number" > \'20\'';
-        $internalTests36  = [];
-        $useNamedParams36 = true;
+        $internalTests36 = [];
 
         /**
          * @link https://github.com/zendframework/zf2/pull/2714
@@ -1374,7 +1385,7 @@ class SelectTest extends TestCase
             [$select33, $sqlPrep33, [], $sqlStr33, $internalTests33, false],
             [$select34, $sqlPrep34, [], $sqlStr34, $internalTests34, false],
             [$select35, $sqlPrep35, [], $sqlStr35, $internalTests35, false],
-            [$select36, $sqlPrep36, [], $sqlStr36, $internalTests36, $useNamedParams36],
+            [$select36, $sqlPrep36, [], $sqlStr36, $internalTests36, true],
             [$select37, $sqlPrep37, [], $sqlStr37, $internalTests37, false],
             [$select38, $sqlPrep38, [], $sqlStr38, $internalTests38, false],
             [$select39, $sqlPrep39, [], $sqlStr39, $internalTests39, false],

@@ -13,8 +13,10 @@ use Laminas\Db\Sql\Select;
 use LaminasTest\Db\TestAsset\TrustingSql92Platform;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use ReflectionException;
 use ReflectionMethod;
 
 use function current;
@@ -26,12 +28,13 @@ use function uniqid;
 #[CoversMethod(AbstractSql::class, 'processExpression')]
 class AbstractSqlTest extends TestCase
 {
-    /** @var AbstractSql&MockObject */
-    protected $abstractSql;
+    protected AbstractSql&MockObject $abstractSql;
 
-    /** @var DriverInterface&MockObject */
-    protected $mockDriver;
+    protected DriverInterface&MockObject $mockDriver;
 
+    /**
+     * @throws Exception
+     */
     protected function setUp(): void
     {
         $this->abstractSql = $this->getMockForAbstractClass(AbstractSql::class);
@@ -47,6 +50,9 @@ class AbstractSqlTest extends TestCase
             ->willReturnCallback(fn($x) => ':' . $x);
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public function testProcessExpressionWithoutParameterContainer()
     {
         $expression   = new Expression('? > ? AND y < ?', [['x' => ExpressionInterface::TYPE_IDENTIFIER], 5, 10]);
@@ -55,6 +61,9 @@ class AbstractSqlTest extends TestCase
         self::assertEquals("\"x\" > '5' AND y < '10'", $sqlAndParams);
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public function testProcessExpressionWithParameterContainerAndParameterizationTypeNamed()
     {
         $parameterContainer = new ParameterContainer();
@@ -87,6 +96,9 @@ class AbstractSqlTest extends TestCase
         self::assertEquals(1, (int) $expressionNumberNext - (int) $expressionNumber);
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public function testProcessExpressionWorksWithExpressionContainingStringParts()
     {
         $expression = new Predicate\Expression('x = ?', 5);
@@ -97,6 +109,9 @@ class AbstractSqlTest extends TestCase
         self::assertEquals("(x = '5')", $sqlAndParams);
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public function testProcessExpressionWorksWithExpressionContainingSelectObject()
     {
         $select = new Select();
@@ -109,6 +124,9 @@ class AbstractSqlTest extends TestCase
         self::assertEquals('("x" IN (SELECT "x".* FROM "x" WHERE "bar" LIKE \'Foo%\'))', $sqlAndParams);
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public function testProcessExpressionWorksWithExpressionContainingExpressionObject()
     {
         $expression = new Predicate\Operator(
@@ -121,6 +139,9 @@ class AbstractSqlTest extends TestCase
         self::assertEquals('"release_date" = FROM_UNIXTIME(\'100000000\')', $sqlAndParams);
     }
 
+    /**
+     * @throws ReflectionException
+     */
     #[Group('7407')]
     public function testProcessExpressionWorksWithExpressionObjectWithPercentageSigns()
     {
@@ -131,6 +152,9 @@ class AbstractSqlTest extends TestCase
         self::assertSame($expressionString, $sqlString);
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public function testProcessExpressionWorksWithNamedParameterPrefix()
     {
         $parameterContainer   = new ParameterContainer();
@@ -141,6 +165,9 @@ class AbstractSqlTest extends TestCase
         self::assertSame($namedParameterPrefix . '1', key($parameterContainer->getNamedArray()));
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public function testProcessExpressionWorksWithNamedParameterPrefixContainingWhitespace()
     {
         $parameterContainer   = new ParameterContainer();
@@ -152,16 +179,17 @@ class AbstractSqlTest extends TestCase
     }
 
     /**
-     * @param ParameterContainer $parameterContainer
-     * @param string $namedParameterPrefix
-     * @return StatementContainer|string
+     * @param null                $parameterContainer
+     * @param null                $namedParameterPrefix
+     * @throws ReflectionException
      */
     protected function invokeProcessExpressionMethod(
         ExpressionInterface $expression,
         $parameterContainer = null,
         $namedParameterPrefix = null
-    ) {
+    ): string|StatementContainer {
         $method = new ReflectionMethod($this->abstractSql, 'processExpression');
+        /** @psalm-suppress UnusedMethodCall */
         $method->setAccessible(true);
         return $method->invoke(
             $this->abstractSql,

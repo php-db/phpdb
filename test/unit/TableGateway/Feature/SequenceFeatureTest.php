@@ -9,27 +9,31 @@ use Laminas\Db\Adapter\Platform\PlatformInterface;
 use Laminas\Db\TableGateway\Feature\SequenceFeature;
 use Laminas\Db\TableGateway\TableGateway;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
 
 class SequenceFeatureTest extends TestCase
 {
     /** @var SequenceFeature */
-    protected $feature;
+    protected SequenceFeature $feature;
 
     /** @var TableGateway */
-    protected $tableGateway;
+    protected TableGateway $tableGateway;
 
     /**  @var string primary key name */
-    protected $primaryKeyField = 'id';
+    protected string $primaryKeyField = 'id';
 
     /** @var string  sequence name */
-    protected static $sequenceName = 'table_sequence';
+    protected static string $sequenceName = 'table_sequence';
 
     protected function setUp(): void
     {
         $this->feature = new SequenceFeature($this->primaryKeyField, self::$sequenceName);
     }
 
+    /**
+     * @throws Exception
+     */
     #[DataProvider('nextSequenceIdProvider')]
     public function testNextSequenceId(string $platformName, string $statementSql)
     {

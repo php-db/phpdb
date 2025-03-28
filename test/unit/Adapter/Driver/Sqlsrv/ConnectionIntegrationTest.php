@@ -145,8 +145,10 @@ class ConnectionIntegrationTest extends AbstractIntegrationTestCase
     public function testGetLastGeneratedValue(): never
     {
         $this->markTestIncomplete('Need to create a temporary sequence.');
+        /*
         $connection = new Connection($this->variables);
         $connection->getLastGeneratedValue();
+        */
     }
 
     #[Group('laminas3469')]

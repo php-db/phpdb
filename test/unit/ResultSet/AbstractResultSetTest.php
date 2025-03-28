@@ -31,7 +31,7 @@ use function assert;
 class AbstractResultSetTest extends TestCase
 {
     /** @var MockObject */
-    protected $resultSet;
+    protected AbstractResultSet|MockObject $resultSet;
 
     /**
      * Sets up the fixture, for example, opens a network connection.

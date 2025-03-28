@@ -19,7 +19,7 @@ use PHPUnit\Framework\TestCase;
 class RowCounterTest extends TestCase
 {
     /** @var RowCounter */
-    protected $rowCounter;
+    protected RowCounter $rowCounter;
 
     protected function setUp(): void
     {
@@ -59,10 +59,10 @@ class RowCounterTest extends TestCase
 
     /**
      * @param string $sql
-     * @param mixed $returnValue
+     * @param mixed  $returnValue
      * @return Statement&MockObject
      */
-    protected function getMockStatement($sql, $returnValue)
+    protected function getMockStatement(string $sql, mixed $returnValue): MockObject&Statement
     {
         $statement = $this->getMockBuilder(Statement::class)
             ->onlyMethods(['prepare', 'execute'])
@@ -88,7 +88,7 @@ class RowCounterTest extends TestCase
      * @param mixed $returnValue
      * @return Oci8&MockObject
      */
-    protected function getMockDriver($returnValue)
+    protected function getMockDriver(mixed $returnValue): Oci8&MockObject
     {
         $oci8Statement = $this->getMockBuilder(Result::class)
             ->onlyMethods(['current'])

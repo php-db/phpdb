@@ -9,7 +9,7 @@ class TrustingSql92Platform extends Sql92
     /**
      * {@inheritDoc}
      */
-    public function quoteValue($value)
+    public function quoteValue($value): string
     {
         return $this->quoteTrustedValue($value);
     }

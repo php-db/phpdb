@@ -13,6 +13,7 @@ use Laminas\Db\RowGateway\RowGateway;
 use Laminas\Db\Sql\Select;
 use Laminas\Db\Sql\Sql;
 use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use ReflectionObject;
@@ -35,14 +36,18 @@ use ReflectionObject;
 class AbstractRowGatewayTest extends TestCase
 {
     /** @var Adapter&MockObject */
-    protected $mockAdapter;
+    protected Adapter|MockObject $mockAdapter;
 
     /** @var RowGateway */
-    protected $rowGateway;
+    protected RowGateway|AbstractRowGateway|MockObject $rowGateway;
 
     /** @var ResultInterface&MockObject */
-    protected $mockResult;
+    protected ResultInterface|MockObject $mockResult;
 
+    /**
+     * @throws \ReflectionException
+     * @throws Exception
+     */
     protected function setUp(): void
     {
         // mock the adapter, driver, and parts
@@ -158,6 +163,10 @@ class AbstractRowGatewayTest extends TestCase
         self::assertEquals(5, $this->rowGateway['id']);
     }
 
+    /**
+     * @throws \ReflectionException
+     * @throws Exception
+     */
     public function testSaveInsertMultiKey()
     {
         $this->rowGateway = $this->getMockForAbstractClass(AbstractRowGateway::class);
@@ -179,6 +188,7 @@ class AbstractRowGatewayTest extends TestCase
 
         $refRowGateway     = new ReflectionObject($this->rowGateway);
         $refRowGatewayProp = $refRowGateway->getProperty('primaryKeyData');
+        /** @psalm-suppress UnusedMethodCall */
         $refRowGatewayProp->setAccessible(true);
 
         $this->rowGateway->populate(['one' => 'foo', 'two' => 'bar']);
@@ -274,11 +284,15 @@ class AbstractRowGatewayTest extends TestCase
         self::assertEquals(['id' => 5, 'name' => 'foo'], $this->rowGateway->toArray());
     }
 
-    protected function setRowGatewayState(array $properties)
+    /**
+     * @throws \ReflectionException
+     */
+    protected function setRowGatewayState(array $properties): void
     {
         $refRowGateway = new ReflectionObject($this->rowGateway);
         foreach ($properties as $rgPropertyName => $rgPropertyValue) {
             $refRowGatewayProp = $refRowGateway->getProperty($rgPropertyName);
+            /** @psalm-suppress UnusedMethodCall */
             $refRowGatewayProp->setAccessible(true);
             $refRowGatewayProp->setValue($this->rowGateway, $rgPropertyValue);
         }

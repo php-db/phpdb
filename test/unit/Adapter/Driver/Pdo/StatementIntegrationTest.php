@@ -10,10 +10,10 @@ use PHPUnit\Framework\TestCase;
 class StatementIntegrationTest extends TestCase
 {
     /** @var Statement */
-    protected $statement;
+    protected Statement $statement;
 
     /** @var MockObject */
-    protected $pdoStatementMock;
+    protected \PDOStatement|MockObject $pdoStatementMock;
 
     /**
      * Sets up the fixture, for example, opens a network connection.

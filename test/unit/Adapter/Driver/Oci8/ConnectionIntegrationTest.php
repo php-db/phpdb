@@ -32,6 +32,7 @@ class ConnectionIntegrationTest extends AbstractIntegrationTestCase
     public function testSetResource(): never
     {
         $this->markTestIncomplete('edit this');
+        /*
         $resource = oci_connect(
             $this->variables['username'],
             $this->variables['password'],
@@ -44,6 +45,7 @@ class ConnectionIntegrationTest extends AbstractIntegrationTestCase
         $connection->disconnect();
         unset($connection);
         unset($resource);
+        */
     }
 
     public function testGetResource()
@@ -131,14 +133,17 @@ class ConnectionIntegrationTest extends AbstractIntegrationTestCase
     public function testGetLastGeneratedValue(): never
     {
         $this->markTestIncomplete('Need to create a temporary sequence.');
+        /*
         $connection = new Connection($this->variables);
         $connection->getLastGeneratedValue();
+        */
     }
 
     #[Group('laminas3469')]
     public function testConnectReturnsConnectionWhenResourceSet(): never
     {
         $this->markTestIncomplete('edit this');
+        /*
         $resource = oci_connect(
             $this->variables['username'],
             $this->variables['password'],
@@ -152,5 +157,6 @@ class ConnectionIntegrationTest extends AbstractIntegrationTestCase
         $connection->disconnect();
         unset($connection);
         unset($resource);
+        */
     }
 }

@@ -13,9 +13,12 @@ use function sprintf;
 class SqliteMemoryPdo extends PDO
 {
     /** @var PDOStatement&MockObject */
-    protected $mockStatement;
+    protected MockObject&PDOStatement $mockStatement;
 
-    /** @param null|string $sql */
+    /**
+     * @param null $sql
+     * @throws Exception
+     */
     public function __construct($sql = null)
     {
         parent::__construct('sqlite::memory:');

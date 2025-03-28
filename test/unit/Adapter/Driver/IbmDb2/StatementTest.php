@@ -25,9 +25,9 @@ include __DIR__ . '/TestAsset/Db2Functions.php';
 class StatementTest extends TestCase
 {
     /** @var Statement */
-    protected $statement;
+    protected Statement $statement;
     /** @var int */
-    protected $currentErrorReporting;
+    protected int $currentErrorReporting;
 
     /**
      * Sets up the fixture, for example, opens a network connection.

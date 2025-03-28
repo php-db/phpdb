@@ -9,22 +9,23 @@ use Laminas\Db\Adapter\Platform\Sql92;
 use Laminas\Db\ResultSet\ResultSet;
 use Laminas\Db\TableGateway\Feature\MasterSlaveFeature;
 use Laminas\Db\TableGateway\TableGateway;
+use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class MasterSlaveFeatureTest extends TestCase
 {
     /** @var AdapterInterface&MockObject */
-    protected $mockMasterAdapter;
+    protected AdapterInterface|MockObject $mockMasterAdapter;
 
     /** @var AdapterInterface&MockObject */
-    protected $mockSlaveAdapter;
+    protected AdapterInterface|MockObject $mockSlaveAdapter;
 
     /** @var MasterSlaveFeature */
-    protected $feature;
+    protected MasterSlaveFeature $feature;
 
     /** @var TableGateway&MockObject */
-    protected $table;
+    protected TableGateway&MockObject $table;
 
     protected function setUp(): void
     {
@@ -47,6 +48,9 @@ class MasterSlaveFeatureTest extends TestCase
         $this->feature = new MasterSlaveFeature($this->mockSlaveAdapter);
     }
 
+    /**
+     * @throws Exception
+     */
     public function testPostInitialize()
     {
         $this->getMockForAbstractClass(
@@ -57,6 +61,9 @@ class MasterSlaveFeatureTest extends TestCase
         self::assertSame($this->mockSlaveAdapter, $this->feature->getSlaveSql()->getAdapter());
     }
 
+    /**
+     * @throws Exception
+     */
     public function testPreSelect()
     {
         $table = $this->getMockForAbstractClass(
@@ -69,6 +76,9 @@ class MasterSlaveFeatureTest extends TestCase
         $table->select('foo = bar');
     }
 
+    /**
+     * @throws Exception
+     */
     public function testPostSelect()
     {
         $table = $this->getMockForAbstractClass(

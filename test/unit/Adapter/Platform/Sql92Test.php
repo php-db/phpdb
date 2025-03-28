@@ -19,7 +19,7 @@ use PHPUnit\Framework\TestCase;
 class Sql92Test extends TestCase
 {
     /** @var Sql92 */
-    protected $platform;
+    protected Sql92 $platform;
 
     /**
      * Sets up the fixture, for example, opens a network connection.

@@ -20,7 +20,7 @@ use function strtolower;
 class Predicate extends PredicateSet
 {
     /** @var null|Predicate */
-    protected $unnest;
+    private $unnest;
 
     /** @var null|string */
     protected $nextPredicateCombineOperator;

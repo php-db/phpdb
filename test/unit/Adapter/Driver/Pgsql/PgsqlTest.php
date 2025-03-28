@@ -9,6 +9,7 @@ use Laminas\Db\Adapter\Driver\Pgsql\Statement;
 use Laminas\Db\Adapter\Exception\RuntimeException;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Depends;
+use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
 
 use function extension_loaded;
@@ -28,7 +29,7 @@ use function extension_loaded;
 class PgsqlTest extends TestCase
 {
     /** @var Pgsql */
-    protected $pgsql;
+    protected Pgsql $pgsql;
 
     /**
      * Sets up the fixture, for example, opens a network connection.
@@ -48,6 +49,9 @@ class PgsqlTest extends TestCase
         self::assertTrue(true, 'No exception was thrown');
     }
 
+    /**
+     * @throws Exception
+     */
     public function testRegisterConnection()
     {
         $mockConnection = $this->getMockForAbstractClass(
@@ -63,6 +67,9 @@ class PgsqlTest extends TestCase
         self::assertSame($this->pgsql, $this->pgsql->registerConnection($mockConnection));
     }
 
+    /**
+     * @throws Exception
+     */
     public function testRegisterStatementPrototype()
     {
         $this->pgsql   = new Pgsql([]);
@@ -79,6 +86,9 @@ class PgsqlTest extends TestCase
         self::assertSame($this->pgsql, $this->pgsql->registerStatementPrototype($mockStatement));
     }
 
+    /**
+     * @throws Exception
+     */
     public function testRegisterResultPrototype()
     {
         $this->pgsql   = new Pgsql([]);

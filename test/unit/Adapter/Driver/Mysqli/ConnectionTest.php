@@ -20,7 +20,7 @@ use const MYSQLI_CLIENT_SSL_DONT_VERIFY_SERVER_CERT;
 class ConnectionTest extends TestCase
 {
     /** @var Connection */
-    protected $connection;
+    protected Connection $connection;
 
     /**
      * Sets up the fixture, for example, opens a network connection.
@@ -129,7 +129,7 @@ class ConnectionTest extends TestCase
      * @param int $flags Expected flags to real_connect
      * @return MockObject
      */
-    protected function createMockMysqli($flags)
+    protected function createMockMysqli(int $flags): MockObject
     {
         $mysqli = $this->getMockBuilder(\mysqli::class)->getMock();
         $mysqli->expects($flags ? $this->once() : $this->never())
@@ -178,10 +178,10 @@ class ConnectionTest extends TestCase
      * Create a mock connection
      *
      * @param MockObject $mysqli Mock mysqli object
-     * @param array                                    $params Connection params
+     * @param array      $params Connection params
      * @return MockObject
      */
-    protected function createMockConnection($mysqli, $params)
+    protected function createMockConnection(MockObject $mysqli, array $params): MockObject
     {
         $connection = $this->getMockBuilder(Connection::class)
             ->onlyMethods(['createResource'])

@@ -29,14 +29,14 @@ use TypeError;
 class SqlTest extends TestCase
 {
     /** @var Adapter&MockObject */
-    protected $mockAdapter;
+    protected Adapter|MockObject $mockAdapter;
 
     /**
      * Sql object
      *
      * @var Sql
      */
-    protected $sql;
+    protected Sql $sql;
 
     protected function setUp(): void
     {
@@ -200,7 +200,7 @@ class SqlTest extends TestCase
      * @param string $platform
      * @return Adapter
      */
-    protected function getAdapterForPlatform($platform)
+    protected function getAdapterForPlatform(string $platform): Adapter
     {
         $platform = match ($platform) {
             'sql92' => new TestAsset\TrustingSql92Platform(),

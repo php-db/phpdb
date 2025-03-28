@@ -11,11 +11,13 @@ use Laminas\ServiceManager\ServiceManager;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\RequiresPhpExtension;
 use PHPUnit\Framework\TestCase;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
 class AdapterAbstractServiceFactoryTest extends TestCase
 {
     /** @var ServiceLocatorInterface */
-    private $serviceManager;
+    private ServiceManager|ServiceLocatorInterface $serviceManager;
 
     protected function setUp(): void
     {
@@ -43,7 +45,7 @@ class AdapterAbstractServiceFactoryTest extends TestCase
     /**
      * @return array
      */
-    public static function providerValidService()
+    public static function providerValidService(): array
     {
         return [
             ['Laminas\Db\Adapter\Writer'],
@@ -54,7 +56,7 @@ class AdapterAbstractServiceFactoryTest extends TestCase
     /**
      * @return array
      */
-    public static function providerInvalidService()
+    public static function providerInvalidService(): array
     {
         return [
             ['Laminas\Db\Adapter\Unknown'],
@@ -63,10 +65,12 @@ class AdapterAbstractServiceFactoryTest extends TestCase
 
     /**
      * @param string $service
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
     #[RequiresPhpExtension('mysqli')]
     #[DataProvider('providerValidService')]
-    public function testValidService($service)
+    public function testValidService(string $service)
     {
         $actual = $this->serviceManager->get($service);
         self::assertInstanceOf(Adapter::class, $actual);
@@ -74,9 +78,11 @@ class AdapterAbstractServiceFactoryTest extends TestCase
 
     /**
      * @param string $service
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
     #[DataProvider('providerInvalidService')]
-    public function testInvalidService($service)
+    public function testInvalidService(string $service)
     {
         $this->expectException(ServiceNotFoundException::class);
         $this->serviceManager->get($service);

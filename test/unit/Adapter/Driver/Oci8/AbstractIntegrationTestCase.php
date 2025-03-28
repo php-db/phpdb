@@ -10,7 +10,7 @@ use function getenv;
 abstract class AbstractIntegrationTestCase extends TestCase
 {
     /** @var array<string, string> */
-    protected $variables = [
+    protected string|array|false $variables = [
         'hostname' => 'TESTS_LAMINAS_DB_ADAPTER_DRIVER_OCI8_HOSTNAME',
         'username' => 'TESTS_LAMINAS_DB_ADAPTER_DRIVER_OCI8_USERNAME',
         'password' => 'TESTS_LAMINAS_DB_ADAPTER_DRIVER_OCI8_PASSWORD',

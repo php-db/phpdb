@@ -34,7 +34,7 @@ class InsertTest extends TestCase
     use DeprecatedAssertionsTrait;
 
     /** @var Insert */
-    protected $insert;
+    protected Insert $insert;
 
     /**
      * Sets up the fixture, for example, opens a network connection.
@@ -107,6 +107,9 @@ class InsertTest extends TestCase
         $this->insert->values(['foo' => 'bar'], Insert::VALUES_MERGE);
     }
 
+    /**
+     * @throws \ReflectionException
+     */
     #[Group('Laminas-4926')]
     public function testEmptyArrayValues()
     {
