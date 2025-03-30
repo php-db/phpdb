@@ -137,27 +137,27 @@ class AbstractTableGatewayTest extends TestCase
     {
     }
 
-    public function testGetTable()
+    public function testGetTable(): void
     {
         self::assertEquals('foo', $this->table->getTable());
     }
 
-    public function testGetAdapter()
+    public function testGetAdapter(): void
     {
         self::assertSame($this->mockAdapter, $this->table->getAdapter());
     }
 
-    public function testGetSql()
+    public function testGetSql(): void
     {
         self::assertInstanceOf(\Laminas\Db\Sql\Sql::class, $this->table->getSql());
     }
 
-    public function testGetSelectResultPrototype()
+    public function testGetSelectResultPrototype(): void
     {
         self::assertInstanceOf(ResultSet::class, $this->table->getResultSetPrototype());
     }
 
-    public function testSelectWithNoWhere()
+    public function testSelectWithNoWhere(): void
     {
         $resultSet = $this->table->select();
 
@@ -166,7 +166,7 @@ class AbstractTableGatewayTest extends TestCase
         self::assertNotSame($this->table->getResultSetPrototype(), $resultSet);
     }
 
-    public function testSelectWithWhereString()
+    public function testSelectWithWhereString(): void
     {
         $mockSelect = $this->mockSql->select();
 
@@ -185,7 +185,7 @@ class AbstractTableGatewayTest extends TestCase
         $this->table->select('foo');
     }
 
-    public function testSelectWithArrayTable()
+    public function testSelectWithArrayTable(): void
     {
         // Case 1
 
@@ -212,7 +212,7 @@ class AbstractTableGatewayTest extends TestCase
         self::assertNotNull($return);
     }
 
-    public function testInsert()
+    public function testInsert(): void
     {
         $mockInsert = $this->mockSql->insert();
 
@@ -228,7 +228,7 @@ class AbstractTableGatewayTest extends TestCase
         self::assertEquals(5, $affectedRows);
     }
 
-    public function testUpdate()
+    public function testUpdate(): void
     {
         $mockUpdate = $this->mockSql->update();
 
@@ -241,7 +241,7 @@ class AbstractTableGatewayTest extends TestCase
         self::assertEquals(5, $affectedRows);
     }
 
-    public function testUpdateWithJoin()
+    public function testUpdateWithJoin(): void
     {
         $mockUpdate = $this->mockSql->update();
 
@@ -266,7 +266,7 @@ class AbstractTableGatewayTest extends TestCase
         self::assertEquals(5, $affectedRows);
     }
 
-    public function testUpdateWithJoinDefaultType()
+    public function testUpdateWithJoinDefaultType(): void
     {
         $mockUpdate = $this->mockSql->update();
 
@@ -290,15 +290,15 @@ class AbstractTableGatewayTest extends TestCase
         self::assertEquals(5, $affectedRows);
     }
 
-    public function testUpdateWithNoCriteria()
+    public function testUpdateWithNoCriteria(): void
     {
-        $mockUpdate = $this->mockSql->update();
+        $this->mockSql->update();
 
         $affectedRows = $this->table->update(['foo' => 'bar']);
         self::assertEquals(5, $affectedRows);
     }
 
-    public function testDelete()
+    public function testDelete(): void
     {
         $mockDelete = $this->mockSql->delete();
 
@@ -311,13 +311,13 @@ class AbstractTableGatewayTest extends TestCase
         self::assertEquals(5, $affectedRows);
     }
 
-    public function testGetLastInsertValue()
+    public function testGetLastInsertValue(): void
     {
         $this->table->insert(['foo' => 'bar']);
         self::assertEquals(10, $this->table->getLastInsertValue());
     }
 
-    public function testInitializeBuildsAResultSet()
+    public function testInitializeBuildsAResultSet(): void
     {
         $stub = $this->getMockForAbstractClass(AbstractTableGateway::class);
 
@@ -343,7 +343,7 @@ class AbstractTableGatewayTest extends TestCase
     }
 
     // @codingStandardsIgnoreStart
-    public function test__get()
+    public function test__get(): void
     {
         // @codingStandardsIgnoreEnd
         $this->table->insert(['foo']); // trigger last insert id update
@@ -354,7 +354,7 @@ class AbstractTableGatewayTest extends TestCase
     }
 
     // @codingStandardsIgnoreStart
-    public function test__clone()
+    public function test__clone(): void
     {
         // @codingStandardsIgnoreEnd
         $cTable = clone $this->table;

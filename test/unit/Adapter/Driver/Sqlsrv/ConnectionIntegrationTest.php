@@ -27,13 +27,13 @@ use function sqlsrv_connect;
 #[Group('integration-sqlserver')]
 class ConnectionIntegrationTest extends AbstractIntegrationTestCase
 {
-    public function testGetCurrentSchema()
+    public function testGetCurrentSchema(): void
     {
         $connection = new Connection($this->variables);
         self::assertIsString($connection->getCurrentSchema());
     }
 
-    public function testSetResource()
+    public function testSetResource(): void
     {
         $resource   = sqlsrv_connect(
             $this->variables['hostname'],
@@ -51,7 +51,7 @@ class ConnectionIntegrationTest extends AbstractIntegrationTestCase
         unset($resource);
     }
 
-    public function testGetResource()
+    public function testGetResource(): void
     {
         $connection = new Connection($this->variables);
         $connection->connect();
@@ -61,7 +61,7 @@ class ConnectionIntegrationTest extends AbstractIntegrationTestCase
         unset($connection);
     }
 
-    public function testConnect()
+    public function testConnect(): void
     {
         $connection = new Connection($this->variables);
         self::assertSame($connection, $connection->connect());
@@ -71,7 +71,7 @@ class ConnectionIntegrationTest extends AbstractIntegrationTestCase
         unset($connection);
     }
 
-    public function testIsConnected()
+    public function testIsConnected(): void
     {
         $connection = new Connection($this->variables);
         self::assertFalse($connection->isConnected());
@@ -82,7 +82,7 @@ class ConnectionIntegrationTest extends AbstractIntegrationTestCase
         unset($connection);
     }
 
-    public function testDisconnect()
+    public function testDisconnect(): void
     {
         $connection = new Connection($this->variables);
         $connection->connect();
@@ -124,7 +124,7 @@ class ConnectionIntegrationTest extends AbstractIntegrationTestCase
         );
     }
 
-    public function testExecute()
+    public function testExecute(): void
     {
         $sqlsrv     = new Sqlsrv($this->variables);
         $connection = $sqlsrv->getConnection();
@@ -133,7 +133,7 @@ class ConnectionIntegrationTest extends AbstractIntegrationTestCase
         self::assertInstanceOf(Result::class, $result);
     }
 
-    public function testPrepare()
+    public function testPrepare(): void
     {
         $sqlsrv     = new Sqlsrv($this->variables);
         $connection = $sqlsrv->getConnection();
@@ -152,7 +152,7 @@ class ConnectionIntegrationTest extends AbstractIntegrationTestCase
     }
 
     #[Group('laminas3469')]
-    public function testConnectReturnsConnectionWhenResourceSet()
+    public function testConnectReturnsConnectionWhenResourceSet(): void
     {
         $resource   = sqlsrv_connect(
             $this->variables['hostname'],

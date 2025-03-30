@@ -29,6 +29,9 @@ class SqliteTest extends TestCase
         }
     }
 
+    /**
+     * @return void
+     */
     public function testQuoteValueWithPdoSqlite()
     {
         if (! $this->adapters['pdo_sqlite'] instanceof \PDO) {

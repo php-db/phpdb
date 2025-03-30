@@ -37,7 +37,7 @@ class Oci8Test extends TestCase
     /**
      * @throws Exception
      */
-    public function testRegisterConnection()
+    public function testRegisterConnection(): void
     {
         $mockConnection = $this->getMockForAbstractClass(
             Connection::class,
@@ -55,7 +55,7 @@ class Oci8Test extends TestCase
     /**
      * @throws Exception
      */
-    public function testRegisterStatementPrototype()
+    public function testRegisterStatementPrototype(): void
     {
         $this->oci8    = new Oci8([]);
         $mockStatement = $this->getMockForAbstractClass(
@@ -74,7 +74,7 @@ class Oci8Test extends TestCase
     /**
      * @throws Exception
      */
-    public function testRegisterResultPrototype()
+    public function testRegisterResultPrototype(): void
     {
         $this->oci8    = new Oci8([]);
         $mockStatement = $this->getMockForAbstractClass(
@@ -89,7 +89,7 @@ class Oci8Test extends TestCase
         self::assertSame($this->oci8, $this->oci8->registerResultPrototype($mockStatement));
     }
 
-    public function testGetDatabasePlatformName()
+    public function testGetDatabasePlatformName(): void
     {
         $this->oci8 = new Oci8([]);
         self::assertEquals('Oracle', $this->oci8->getDatabasePlatformName());
@@ -97,7 +97,7 @@ class Oci8Test extends TestCase
     }
 
     #[Depends('testRegisterConnection')]
-    public function testGetConnection()
+    public function testGetConnection(): void
     {
         $conn = new Connection([]);
         $this->oci8->registerConnection($conn);

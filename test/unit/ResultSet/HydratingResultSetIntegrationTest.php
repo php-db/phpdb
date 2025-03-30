@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(HydratingResultSet::class, 'current')]
 class HydratingResultSetIntegrationTest extends TestCase
 {
-    public function testCurrentWillReturnBufferedRow()
+    public function testCurrentWillReturnBufferedRow(): void
     {
         $hydratingRs = new HydratingResultSet();
         $hydratingRs->initialize(new ArrayIterator([

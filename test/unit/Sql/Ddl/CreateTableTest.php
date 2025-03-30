@@ -27,14 +27,14 @@ class CreateTableTest extends TestCase
     /**
      * test object construction
      */
-    public function testObjectConstruction()
+    public function testObjectConstruction(): void
     {
         $ct = new CreateTable('foo', true);
         self::assertEquals('foo', $ct->getRawState($ct::TABLE));
         self::assertTrue($ct->isTemporary());
     }
 
-    public function testSetTemporary()
+    public function testSetTemporary(): void
     {
         $ct = new CreateTable();
         self::assertSame($ct, $ct->setTemporary(false));
@@ -47,7 +47,7 @@ class CreateTableTest extends TestCase
         self::assertStringStartsWith("CREATE TEMPORARY TABLE", $ct->getSqlString());
     }
 
-    public function testIsTemporary()
+    public function testIsTemporary(): void
     {
         $ct = new CreateTable();
         self::assertFalse($ct->isTemporary());
@@ -64,7 +64,7 @@ class CreateTableTest extends TestCase
     }
 
     #[Depends('testSetTable')]
-    public function testRawStateViaTable(CreateTable $ct)
+    public function testRawStateViaTable(CreateTable $ct): void
     {
         self::assertEquals('test', $ct->getRawState('table'));
     }
@@ -78,7 +78,7 @@ class CreateTableTest extends TestCase
     }
 
     #[Depends('testAddColumn')]
-    public function testRawStateViaColumn(CreateTable $ct)
+    public function testRawStateViaColumn(CreateTable $ct): void
     {
         $state = $ct->getRawState('columns');
         self::assertIsArray($state);
@@ -95,7 +95,7 @@ class CreateTableTest extends TestCase
     }
 
     #[Depends('testAddConstraint')]
-    public function testRawStateViaConstraint(CreateTable $ct)
+    public function testRawStateViaConstraint(CreateTable $ct): void
     {
         $state = $ct->getRawState('constraints');
         self::assertIsArray($state);
@@ -103,7 +103,7 @@ class CreateTableTest extends TestCase
         self::assertInstanceOf(ConstraintInterface::class, $constraint);
     }
 
-    public function testGetSqlString()
+    public function testGetSqlString(): void
     {
         $ct = new CreateTable('foo');
         self::assertEquals("CREATE TABLE \"foo\" ( \n)", $ct->getSqlString());

@@ -59,7 +59,7 @@ use ReflectionObject;
 #[CoversMethod(Select::class, 'processCombine')]
 class SelectTest extends TestCase
 {
-    public function testConstruct()
+    public function testConstruct(): void
     {
         $select = new Select('foo');
         self::assertEquals('foo', $select->getRawState('table'));
@@ -77,7 +77,7 @@ class SelectTest extends TestCase
 
     #[Depends('testFrom')]
     #[TestDox('unit test: Test getRawState() returns information populated via from()')]
-    public function testGetRawStateViaFrom(Select $select)
+    public function testGetRawStateViaFrom(Select $select): void
     {
         self::assertEquals('foo', $select->getRawState('table'));
     }
@@ -93,13 +93,13 @@ class SelectTest extends TestCase
 
     #[Depends('testQuantifier')]
     #[TestDox('unit test: Test getRawState() returns information populated via quantifier()')]
-    public function testGetRawStateViaQuantifier(Select $select)
+    public function testGetRawStateViaQuantifier(Select $select): void
     {
         self::assertEquals(Select::QUANTIFIER_DISTINCT, $select->getRawState('quantifier'));
     }
 
     #[TestDox('unit test: Test quantifier() accepts expression')]
-    public function testQuantifierParameterExpressionInterface()
+    public function testQuantifierParameterExpressionInterface(): void
     {
         $expr   = $this->getMockBuilder(ExpressionInterface::class)->getMock();
         $select = new Select();
@@ -121,7 +121,7 @@ class SelectTest extends TestCase
     }
 
     #[TestDox('unit test: Test isTableReadOnly() returns correct state for read only')]
-    public function testIsTableReadOnly()
+    public function testIsTableReadOnly(): void
     {
         $select = new Select('foo');
         self::assertTrue($select->isTableReadOnly());
@@ -132,7 +132,7 @@ class SelectTest extends TestCase
 
     #[Depends('testColumns')]
     #[TestDox('unit test: Test getRawState() returns information populated via columns()')]
-    public function testGetRawStateViaColumns(Select $select)
+    public function testGetRawStateViaColumns(Select $select): void
     {
         self::assertEquals(['foo', 'bar'], $select->getRawState('columns'));
     }
@@ -148,7 +148,7 @@ class SelectTest extends TestCase
     }
 
     #[TestDox('unit test: Test join() exception with bad join')]
-    public function testBadJoin()
+    public function testBadJoin(): void
     {
         $select = new Select();
         $this->expectException(InvalidArgumentException::class);
@@ -160,7 +160,7 @@ class SelectTest extends TestCase
      * @throws ReflectionException
      */
     #[TestDox('unit test: Test processJoins() exception with bad join name')]
-    public function testBadJoinName()
+    public function testBadJoinName(): void
     {
         $mockExpression = $this->getMockBuilder(ExpressionInterface::class)
             ->getMock();
@@ -185,7 +185,7 @@ class SelectTest extends TestCase
 
     #[Depends('testJoin')]
     #[TestDox('unit test: Test getRawState() returns information populated via join()')]
-    public function testGetRawStateViaJoin(Select $select)
+    public function testGetRawStateViaJoin(Select $select): void
     {
         self::assertEquals(
             [
@@ -201,14 +201,14 @@ class SelectTest extends TestCase
     }
 
     #[TestDox('unit test: Test where() returns Select object (is chainable)')]
-    public function testWhereReturnsSameSelectObject()
+    public function testWhereReturnsSameSelectObject(): void
     {
         $select = new Select();
         self::assertSame($select, $select->where('x = y'));
     }
 
     #[TestDox('unit test: Test where() will accept a string for the predicate to create an expression predicate')]
-    public function testWhereArgument1IsString()
+    public function testWhereArgument1IsString(): void
     {
         $select = new Select();
         $select->where('x = ?');
@@ -232,7 +232,7 @@ class SelectTest extends TestCase
 
     #[TestDox('unit test: Test where() will accept an array with a string key (containing ?) used as an
                     expression with placeholder')]
-    public function testWhereArgument1IsAssociativeArrayContainingReplacementCharacter()
+    public function testWhereArgument1IsAssociativeArrayContainingReplacementCharacter(): void
     {
         $select = new Select();
         $select->where(['foo > ?' => 5]);
@@ -249,7 +249,7 @@ class SelectTest extends TestCase
 
     #[TestDox('unit test: Test where() will accept any array with string key (without ?) to be used
                     as Operator predicate')]
-    public function testWhereArgument1IsAssociativeArrayNotContainingReplacementCharacter()
+    public function testWhereArgument1IsAssociativeArrayNotContainingReplacementCharacter(): void
     {
         $select = new Select();
         $select->where(['name' => 'Ralph', 'age' => 33]);
@@ -280,7 +280,7 @@ class SelectTest extends TestCase
     #[TestDox('
         unit test: Test where() will accept any array with string key (without ?) with Predicate throw Exception
     ')]
-    public function testWhereArgument1IsAssociativeArrayIsPredicate()
+    public function testWhereArgument1IsAssociativeArrayIsPredicate(): void
     {
         $select = new Select();
         $where  = [
@@ -293,7 +293,7 @@ class SelectTest extends TestCase
     }
 
     #[TestDox('unit test: Test where() will accept an indexed array to be used by joining string expressions')]
-    public function testWhereArgument1IsIndexedArray()
+    public function testWhereArgument1IsIndexedArray(): void
     {
         $select = new Select();
         $select->where(['name = "Ralph"']);
@@ -310,7 +310,7 @@ class SelectTest extends TestCase
 
     #[TestDox('unit test: Test where() will accept an indexed array to be used by joining string expressions,
                     combined by OR')]
-    public function testWhereArgument1IsIndexedArrayArgument2IsOr()
+    public function testWhereArgument1IsIndexedArrayArgument2IsOr(): void
     {
         $select = new Select();
         $select->where(['name = "Ralph"'], Where::OP_OR);
@@ -326,7 +326,7 @@ class SelectTest extends TestCase
     }
 
     #[TestDox('unit test: Test where() will accept a closure to be executed with Where object as argument')]
-    public function testWhereArgument1IsClosure()
+    public function testWhereArgument1IsClosure(): void
     {
         $select = new Select();
         $where  = $select->getRawState('where');
@@ -337,7 +337,7 @@ class SelectTest extends TestCase
     }
 
     #[TestDox('unit test: Test where() will accept any Predicate object as-is')]
-    public function testWhereArgument1IsPredicate()
+    public function testWhereArgument1IsPredicate(): void
     {
         $select    = new Select();
         $predicate = new Predicate\Predicate([
@@ -353,7 +353,7 @@ class SelectTest extends TestCase
     }
 
     #[TestDox('unit test: Test where() will accept a Where object')]
-    public function testWhereArgument1IsWhereObject()
+    public function testWhereArgument1IsWhereObject(): void
     {
         $select = new Select();
         $select->where($newWhere = new Where());
@@ -364,7 +364,7 @@ class SelectTest extends TestCase
      * @throws ReflectionException
      */
     #[TestDox('unit test: Test order()')]
-    public function testOrder()
+    public function testOrder(): void
     {
         $select = new Select();
         $return = $select->order('id DESC');
@@ -409,7 +409,7 @@ class SelectTest extends TestCase
     }
 
     #[TestDox('unit test: Test order() correctly splits parameters.')]
-    public function testOrderCorrectlySplitsParameter()
+    public function testOrderCorrectlySplitsParameter(): void
     {
         $select = new Select();
         $select->order('name  desc');
@@ -429,13 +429,13 @@ class SelectTest extends TestCase
 
     #[Depends('testLimit')]
     #[TestDox(': unit test: Test getRawState() returns information populated via limit()')]
-    public function testGetRawStateViaLimit(Select $select)
+    public function testGetRawStateViaLimit(Select $select): void
     {
         self::assertEquals(5, $select->getRawState($select::LIMIT));
     }
 
     #[TestDox(': unit test: test limit() throws execption when invalid parameter passed')]
-    public function testLimitExceptionOnInvalidParameter()
+    public function testLimitExceptionOnInvalidParameter(): void
     {
         $select = new Select();
         $this->expectException(InvalidArgumentException::class);
@@ -453,13 +453,13 @@ class SelectTest extends TestCase
 
     #[Depends('testOffset')]
     #[TestDox(': unit test: Test getRawState() returns information populated via offset()')]
-    public function testGetRawStateViaOffset(Select $select)
+    public function testGetRawStateViaOffset(Select $select): void
     {
         self::assertEquals(10, $select->getRawState($select::OFFSET));
     }
 
     #[TestDox(': unit test: test offset() throws exception when invalid parameter passed')]
-    public function testOffsetExceptionOnInvalidParameter()
+    public function testOffsetExceptionOnInvalidParameter(): void
     {
         $select = new Select();
         $this->expectException(InvalidArgumentException::class);
@@ -479,7 +479,7 @@ class SelectTest extends TestCase
 
     #[Depends('testGroup')]
     #[TestDox('unit test: Test getRawState() returns information populated via group()')]
-    public function testGetRawStateViaGroup(Select $select)
+    public function testGetRawStateViaGroup(Select $select): void
     {
         self::assertEquals(
             ['col1', 'col2'],
@@ -511,7 +511,7 @@ class SelectTest extends TestCase
 
     #[Depends('testHaving')]
     #[TestDox('unit test: Test getRawState() returns information populated via having()')]
-    public function testGetRawStateViaHaving(Select $select)
+    public function testGetRawStateViaHaving(Select $select): void
     {
         self::assertInstanceOf(Having::class, $select->getRawState('having'));
     }
@@ -529,7 +529,7 @@ class SelectTest extends TestCase
 
     #[Depends('testCombine')]
     #[TestDox('unit test: Test getRawState() returns information populated via combine()')]
-    public function testGetRawStateViaCombine(Select $select)
+    public function testGetRawStateViaCombine(Select $select): void
     {
         $state = $select->getRawState('combine');
         self::assertInstanceOf(Select::class, $state['select']);
@@ -539,7 +539,7 @@ class SelectTest extends TestCase
     }
 
     #[TestDox('unit test: Test reset() resets internal stat of Select object, based on input')]
-    public function testReset()
+    public function testReset(): void
     {
         $select = new Select();
 
@@ -617,7 +617,7 @@ class SelectTest extends TestCase
         mixed $unused1,
         mixed $unused2,
         bool $useNamedParameters = false
-    ) {
+    ): void {
         $mockDriver = $this->getMockBuilder(DriverInterface::class)->getMock();
         $mockDriver->expects($this->any())->method('formatParameterName')->willReturnCallback(fn($name) => $useNamedParameters ? ':' . $name : '?');
         $mockAdapter = $this->getMockBuilder(Adapter::class)
@@ -640,7 +640,7 @@ class SelectTest extends TestCase
     }
 
     #[Group('Laminas-5192')]
-    public function testSelectUsingTableIdentifierWithEmptyScheme()
+    public function testSelectUsingTableIdentifierWithEmptyScheme(): void
     {
         $select = new Select();
         $select->from(new TableIdentifier('foo'));
@@ -655,13 +655,13 @@ class SelectTest extends TestCase
     #[DataProvider('providerData')]
     #[TestDox('unit test: Test getSqlString() will produce expected sql and parameters based on
                     a variety of provided arguments [uses data provider]')]
-    public function testGetSqlString(Select $select, mixed $unused, mixed $unused2, string $expectedSqlString)
+    public function testGetSqlString(Select $select, mixed $unused, mixed $unused2, string $expectedSqlString): void
     {
         self::assertEquals($expectedSqlString, $select->getSqlString(new TrustingSql92Platform()));
     }
 
     #[TestDox('unit test: Test __get() returns expected objects magically')]
-    public function testMagicAccessor()
+    public function testMagicAccessor(): void
     {
         $select = new Select();
         self::assertInstanceOf(Where::class, $select->where);
@@ -669,7 +669,7 @@ class SelectTest extends TestCase
 
     #[TestDox('unit test: Test __clone() will clone the where object so that this select can be used
                     in multiple contexts')]
-    public function testCloning()
+    public function testCloning(): void
     {
         $select  = new Select();
         $select1 = clone $select;
@@ -685,6 +685,8 @@ class SelectTest extends TestCase
 
     /**
      * @throws ReflectionException
+     *
+     * @return void
      */
     #[DataProvider('providerData')]
     #[TestDox('unit test: Text process*() methods will return proper array when internally called,

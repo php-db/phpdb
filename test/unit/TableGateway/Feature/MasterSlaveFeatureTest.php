@@ -49,7 +49,7 @@ class MasterSlaveFeatureTest extends TestCase
     /**
      * @throws Exception
      */
-    public function testPostInitialize()
+    public function testPostInitialize(): void
     {
         $this->getMockForAbstractClass(
             TableGateway::class,
@@ -62,7 +62,7 @@ class MasterSlaveFeatureTest extends TestCase
     /**
      * @throws Exception
      */
-    public function testPreSelect()
+    public function testPreSelect(): void
     {
         $table = $this->getMockForAbstractClass(
             TableGateway::class,
@@ -77,7 +77,7 @@ class MasterSlaveFeatureTest extends TestCase
     /**
      * @throws Exception
      */
-    public function testPostSelect()
+    public function testPostSelect(): void
     {
         $table = $this->getMockForAbstractClass(
             TableGateway::class,

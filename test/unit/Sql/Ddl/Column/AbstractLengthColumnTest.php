@@ -15,7 +15,7 @@ class AbstractLengthColumnTest extends TestCase
     /**
      * @throws Exception
      */
-    public function testSetLength()
+    public function testSetLength(): void
     {
         $column = $this->getMockForAbstractClass(AbstractLengthColumn::class, ['foo', 55]);
         self::assertEquals(55, $column->getLength());
@@ -26,7 +26,7 @@ class AbstractLengthColumnTest extends TestCase
     /**
      * @throws Exception
      */
-    public function testGetLength()
+    public function testGetLength(): void
     {
         $column = $this->getMockForAbstractClass(AbstractLengthColumn::class, ['foo', 55]);
         self::assertEquals(55, $column->getLength());
@@ -35,7 +35,7 @@ class AbstractLengthColumnTest extends TestCase
     /**
      * @throws Exception
      */
-    public function testGetExpressionData()
+    public function testGetExpressionData(): void
     {
         $column = $this->getMockForAbstractClass(AbstractLengthColumn::class, ['foo', 4]);
 

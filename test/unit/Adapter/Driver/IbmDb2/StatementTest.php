@@ -49,20 +49,20 @@ class StatementTest extends TestCase
         error_reporting($this->currentErrorReporting);
     }
 
-    public function testSetDriver()
+    public function testSetDriver(): void
     {
         self::assertEquals($this->statement, $this->statement->setDriver(new IbmDb2([])));
     }
 
-    public function testSetParameterContainer()
+    public function testSetParameterContainer(): void
     {
         self::assertSame($this->statement, $this->statement->setParameterContainer(new ParameterContainer()));
     }
 
     /**
-     * @todo   Implement testGetParameterContainer().
+     * @todo Implement testGetParameterContainer().
      */
-    public function testGetParameterContainer()
+    public function testGetParameterContainer(): void
     {
         $container = new ParameterContainer();
         $this->statement->setParameterContainer($container);
@@ -102,14 +102,14 @@ class StatementTest extends TestCase
         );
     }
 
-    public function testPrepare()
+    public function testPrepare(): void
     {
         $sql = "SELECT 'foo' FROM SYSIBM.SYSDUMMY1";
         $this->statement->prepare($sql);
         $this->assertTrue($this->statement->isPrepared());
     }
 
-    public function testPreparingTwiceErrors()
+    public function testPreparingTwiceErrors(): void
     {
         $sql = "SELECT 'foo' FROM SYSIBM.SYSDUMMY1";
         $this->statement->prepare($sql);
@@ -121,7 +121,7 @@ class StatementTest extends TestCase
         $this->statement->prepare($sql);
     }
 
-    public function testPrepareThrowsRuntimeExceptionOnInvalidSql()
+    public function testPrepareThrowsRuntimeExceptionOnInvalidSql(): void
     {
         $sql = "INVALID SQL";
         $this->statement->setSql($sql);
@@ -137,7 +137,7 @@ class StatementTest extends TestCase
      * be called, but a RuntimeException will still be generated as the
      * resource is false
      */
-    public function testPrepareThrowsRuntimeExceptionOnInvalidSqlWithErrorReportingDisabled()
+    public function testPrepareThrowsRuntimeExceptionOnInvalidSqlWithErrorReportingDisabled(): void
     {
         error_reporting(0);
         $sql = "INVALID SQL";

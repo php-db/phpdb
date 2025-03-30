@@ -50,7 +50,7 @@ class StatementIntegrationTest extends TestCase
         }
     }
 
-    public function testInitialize()
+    public function testInitialize(): void
     {
         $db2Resource = db2_connect(
             $this->variables['database'],
@@ -63,7 +63,7 @@ class StatementIntegrationTest extends TestCase
         unset($stmtResource, $db2Resource);
     }
 
-    public function testGetResource()
+    public function testGetResource(): void
     {
         $db2Resource = db2_connect(
             $this->variables['database'],
@@ -79,7 +79,7 @@ class StatementIntegrationTest extends TestCase
         unset($resource, $db2Resource);
     }
 
-    public function testPrepare()
+    public function testPrepare(): void
     {
         $db2Resource = db2_connect(
             $this->variables['database'],
@@ -95,7 +95,7 @@ class StatementIntegrationTest extends TestCase
         unset($resource, $db2Resource);
     }
 
-    public function testPrepareThrowsAnExceptionOnFailure()
+    public function testPrepareThrowsAnExceptionOnFailure(): void
     {
         $db2Resource = db2_connect(
             $this->variables['database'],
@@ -108,7 +108,7 @@ class StatementIntegrationTest extends TestCase
         $statement->prepare("SELECT");
     }
 
-    public function testExecute()
+    public function testExecute(): void
     {
         $ibmdb2    = new IbmDb2($this->variables);
         $statement = $ibmdb2->createStatement("SELECT 'foo' FROM SYSIBM.SYSDUMMY1");

@@ -44,6 +44,9 @@ class PostgresqlTest extends TestCase
         }
     }
 
+    /**
+     * @return void
+     */
     public function testQuoteValueWithPgsql()
     {
         if (
@@ -64,6 +67,9 @@ class PostgresqlTest extends TestCase
         self::assertEquals('\'value\'', $value);
     }
 
+    /**
+     * @return void
+     */
     public function testQuoteValueWithPdoPgsql()
     {
         if (! isset($this->adapters['pdo_pgsql']) || ! $this->adapters['pdo_pgsql'] instanceof \PDO) {

@@ -43,7 +43,7 @@ class ParameterContainerTest extends TestCase
     }
 
     #[TestDox('unit test: Test offsetExists() returns proper values via method call and isset()')]
-    public function testOffsetExists()
+    public function testOffsetExists(): void
     {
         self::assertTrue($this->parameterContainer->offsetExists('foo'));
         self::assertTrue(isset($this->parameterContainer['foo']));
@@ -52,7 +52,7 @@ class ParameterContainerTest extends TestCase
     }
 
     #[TestDox('unit test: Test offsetGet() returns proper values via method call and array access')]
-    public function testOffsetGet()
+    public function testOffsetGet(): void
     {
         self::assertEquals('bar', $this->parameterContainer->offsetGet('foo'));
         self::assertEquals('bar', $this->parameterContainer['foo']);
@@ -62,7 +62,7 @@ class ParameterContainerTest extends TestCase
     }
 
     #[TestDox('unit test: Test offsetSet() works via method call and array access')]
-    public function testOffsetSet()
+    public function testOffsetSet(): void
     {
         $this->parameterContainer->offsetSet('boo', 'baz');
         self::assertEquals('baz', $this->parameterContainer->offsetGet('boo'));
@@ -110,7 +110,7 @@ class ParameterContainerTest extends TestCase
     }
 
     #[TestDox('unit test: Test offsetUnset() works via method call and array access')]
-    public function testOffsetUnset()
+    public function testOffsetUnset(): void
     {
         $this->parameterContainer->offsetSet('boo', 'baz');
         self::assertTrue($this->parameterContainer->offsetExists('boo'));
@@ -120,7 +120,7 @@ class ParameterContainerTest extends TestCase
     }
 
     #[TestDox('unit test: Test setFromArray() will populate the container')]
-    public function testSetFromArray()
+    public function testSetFromArray(): void
     {
         $this->parameterContainer->setFromArray(['bar' => 'baz']);
         self::assertEquals('baz', $this->parameterContainer['bar']);
@@ -131,7 +131,7 @@ class ParameterContainerTest extends TestCase
      *
      * @see Insert::procesInsert as example
      */
-    public function testSetFromArrayNamed()
+    public function testSetFromArrayNamed(): void
     {
         $this->parameterContainer->offsetSet('c_0', ':myparam');
         $this->parameterContainer->setFromArray([':myparam' => 'baz']);
@@ -143,21 +143,21 @@ class ParameterContainerTest extends TestCase
         unit test: Test offsetSetMaxLength() will persist errata data
         unit test: Test offsetGetMaxLength() return persisted errata data, if it exists
     ')]
-    public function testOffsetSetAndGetMaxLength()
+    public function testOffsetSetAndGetMaxLength(): void
     {
         $this->parameterContainer->offsetSetMaxLength('foo', 100);
         self::assertEquals(100, $this->parameterContainer->offsetGetMaxLength('foo'));
     }
 
     #[TestDox('unit test: Test offsetHasMaxLength() will check if errata exists for a particular key')]
-    public function testOffsetHasMaxLength()
+    public function testOffsetHasMaxLength(): void
     {
         $this->parameterContainer->offsetSetMaxLength('foo', 100);
         self::assertTrue($this->parameterContainer->offsetHasMaxLength('foo'));
     }
 
     #[TestDox('unit test: Test offsetUnsetMaxLength() will unset data for a particular key')]
-    public function testOffsetUnsetMaxLength()
+    public function testOffsetUnsetMaxLength(): void
     {
         $this->parameterContainer->offsetSetMaxLength('foo', 100);
         $this->parameterContainer->offsetUnsetMaxLength('foo');
@@ -165,7 +165,7 @@ class ParameterContainerTest extends TestCase
     }
 
     #[TestDox('unit test: Test getMaxLengthIterator() will return an iterator for the errata data')]
-    public function testGetMaxLengthIterator()
+    public function testGetMaxLengthIterator(): void
     {
         $this->parameterContainer->offsetSetMaxLength('foo', 100);
         $data = $this->parameterContainer->getMaxLengthIterator();
@@ -173,28 +173,28 @@ class ParameterContainerTest extends TestCase
     }
 
     #[TestDox('unit test: Test offsetSetErrata() will persist errata data')]
-    public function testOffsetSetErrata()
+    public function testOffsetSetErrata(): void
     {
         $this->parameterContainer->offsetSetErrata('foo', ParameterContainer::TYPE_INTEGER);
         self::assertEquals(ParameterContainer::TYPE_INTEGER, $this->parameterContainer->offsetGetErrata('foo'));
     }
 
     #[TestDox('unit test: Test offsetGetErrata() return persisted errata data, if it exists')]
-    public function testOffsetGetErrata()
+    public function testOffsetGetErrata(): void
     {
         $this->parameterContainer->offsetSetErrata('foo', ParameterContainer::TYPE_INTEGER);
         self::assertEquals(ParameterContainer::TYPE_INTEGER, $this->parameterContainer->offsetGetErrata('foo'));
     }
 
     #[TestDox('unit test: Test offsetHasErrata() will check if errata exists for a particular key')]
-    public function testOffsetHasErrata()
+    public function testOffsetHasErrata(): void
     {
         $this->parameterContainer->offsetSetErrata('foo', ParameterContainer::TYPE_INTEGER);
         self::assertTrue($this->parameterContainer->offsetHasErrata('foo'));
     }
 
     #[TestDox('unit test: Test offsetUnsetErrata() will unset data for a particular key')]
-    public function testOffsetUnsetErrata()
+    public function testOffsetUnsetErrata(): void
     {
         $this->parameterContainer->offsetSetErrata('foo', ParameterContainer::TYPE_INTEGER);
         $this->parameterContainer->offsetUnsetErrata('foo');
@@ -202,7 +202,7 @@ class ParameterContainerTest extends TestCase
     }
 
     #[TestDox('unit test: Test getErrataIterator() will return an iterator for the errata data')]
-    public function testGetErrataIterator()
+    public function testGetErrataIterator(): void
     {
         $this->parameterContainer->offsetSetErrata('foo', ParameterContainer::TYPE_INTEGER);
         $data = $this->parameterContainer->getErrataIterator();
@@ -210,27 +210,27 @@ class ParameterContainerTest extends TestCase
     }
 
     #[TestDox('unit test: Test getNamedArray()')]
-    public function testGetNamedArray()
+    public function testGetNamedArray(): void
     {
         $data = $this->parameterContainer->getNamedArray();
         self::assertEquals(['foo' => 'bar'], $data);
     }
 
     #[TestDox('unit test: Test count() returns the proper count')]
-    public function testCount()
+    public function testCount(): void
     {
         self::assertEquals(1, $this->parameterContainer->count());
     }
 
     #[TestDox('unit test: Test current() returns the current element when used as an iterator')]
-    public function testCurrent()
+    public function testCurrent(): void
     {
         $value = $this->parameterContainer->current();
         self::assertEquals('bar', $value);
     }
 
     #[TestDox('unit test: Test next() increases the pointer when used as an iterator')]
-    public function testNext()
+    public function testNext(): void
     {
         $this->parameterContainer['bar'] = 'baz';
         $this->parameterContainer->next();
@@ -238,13 +238,13 @@ class ParameterContainerTest extends TestCase
     }
 
     #[TestDox("unit test: Test key() returns the name of the current item's name")]
-    public function testKey()
+    public function testKey(): void
     {
         self::assertEquals('foo', $this->parameterContainer->key());
     }
 
     #[TestDox('unit test: Test valid() returns whether the iterators current position is valid')]
-    public function testValid()
+    public function testValid(): void
     {
         self::assertTrue($this->parameterContainer->valid());
         $this->parameterContainer->next();
@@ -252,7 +252,7 @@ class ParameterContainerTest extends TestCase
     }
 
     #[TestDox('unit test: Test rewind() resets the iterators pointer')]
-    public function testRewind()
+    public function testRewind(): void
     {
         $this->parameterContainer->offsetSet('bar', 'baz');
         $this->parameterContainer->next();

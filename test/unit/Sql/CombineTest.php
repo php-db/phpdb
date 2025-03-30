@@ -28,14 +28,14 @@ class CombineTest extends TestCase
         $this->combine = new Combine();
     }
 
-    public function testRejectsInvalidStatement()
+    public function testRejectsInvalidStatement(): void
     {
         $this->expectException(InvalidArgumentException::class);
 
         $this->combine->combine('foo');
     }
 
-    public function testGetSqlString()
+    public function testGetSqlString(): void
     {
         $this->combine
                 ->union(new Select('t1'))
@@ -51,7 +51,7 @@ class CombineTest extends TestCase
         );
     }
 
-    public function testGetSqlStringWithModifier()
+    public function testGetSqlStringWithModifier(): void
     {
         $this->combine
                 ->union(new Select('t1'))
@@ -63,7 +63,7 @@ class CombineTest extends TestCase
         );
     }
 
-    public function testGetSqlStringFromArray()
+    public function testGetSqlStringFromArray(): void
     {
         $this->combine->combine([
             [new Select('t1')],
@@ -89,12 +89,12 @@ class CombineTest extends TestCase
         );
     }
 
-    public function testGetSqlStringEmpty()
+    public function testGetSqlStringEmpty(): void
     {
         self::assertNull($this->combine->getSqlString());
     }
 
-    public function testPrepareStatementWithModifier()
+    public function testPrepareStatementWithModifier(): void
     {
         $select1 = new Select('t1');
         $select1->where(['x1' => 10]);
@@ -116,7 +116,7 @@ class CombineTest extends TestCase
         );
     }
 
-    public function testAlignColumns()
+    public function testAlignColumns(): void
     {
         $select1 = new Select('t1');
         $select1->columns([
@@ -152,7 +152,7 @@ class CombineTest extends TestCase
         );
     }
 
-    public function testGetRawState()
+    public function testGetRawState(): void
     {
         $select = new Select('t1');
         $this->combine->combine($select);

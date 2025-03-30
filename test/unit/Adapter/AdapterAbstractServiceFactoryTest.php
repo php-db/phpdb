@@ -63,7 +63,7 @@ class AdapterAbstractServiceFactoryTest extends TestCase
      */
     #[RequiresPhpExtension('mysqli')]
     #[DataProvider('providerValidService')]
-    public function testValidService(string $service)
+    public function testValidService(string $service): void
     {
         $actual = $this->serviceManager->get($service);
         self::assertInstanceOf(Adapter::class, $actual);
@@ -74,7 +74,7 @@ class AdapterAbstractServiceFactoryTest extends TestCase
      * @throws NotFoundExceptionInterface
      */
     #[DataProvider('providerInvalidService')]
-    public function testInvalidService(string $service)
+    public function testInvalidService(string $service): void
     {
         $this->expectException(ServiceNotFoundException::class);
         $this->serviceManager->get($service);

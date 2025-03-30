@@ -16,7 +16,7 @@ use function key;
 class SqlServerTest extends TestCase
 {
     #[TestDox('unit test / object test: Test SqlServer object has Select proxy')]
-    public function testConstruct()
+    public function testConstruct(): void
     {
         $sqlServer  = new SqlServer();
         $decorators = $sqlServer->getDecorators();

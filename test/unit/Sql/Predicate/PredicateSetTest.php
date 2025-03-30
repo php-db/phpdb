@@ -22,13 +22,13 @@ class PredicateSetTest extends TestCase
 {
     use DeprecatedAssertionsTrait;
 
-    public function testEmptyConstructorYieldsCountOfZero()
+    public function testEmptyConstructorYieldsCountOfZero(): void
     {
         $predicateSet = new PredicateSet();
         self::assertCount(0, $predicateSet);
     }
 
-    public function testCombinationIsAndByDefault()
+    public function testCombinationIsAndByDefault(): void
     {
         $predicateSet = new PredicateSet();
         $predicateSet->addPredicate(new IsNull('foo'))
@@ -39,9 +39,9 @@ class PredicateSetTest extends TestCase
         self::assertStringNotContainsString('OR', $parts[1]);
     }
 
-    public function testCanPassPredicatesAndDefaultCombinationViaConstructor()
+    public function testCanPassPredicatesAndDefaultCombinationViaConstructor(): void
     {
-        $predicateSet = new PredicateSet();
+        new PredicateSet();
         $set          = new PredicateSet([
             new IsNull('foo'),
             new IsNull('bar'),
@@ -52,7 +52,7 @@ class PredicateSetTest extends TestCase
         self::assertStringNotContainsString('AND', $parts[1]);
     }
 
-    public function testCanPassBothPredicateAndCombinationToAddPredicate()
+    public function testCanPassBothPredicateAndCombinationToAddPredicate(): void
     {
         $predicateSet = new PredicateSet();
         $predicateSet->addPredicate(new IsNull('foo'), 'OR')
@@ -72,7 +72,7 @@ class PredicateSetTest extends TestCase
         self::assertStringContainsString('AND', $parts[5]);
     }
 
-    public function testCanUseOrPredicateAndAndPredicateMethods()
+    public function testCanUseOrPredicateAndAndPredicateMethods(): void
     {
         $predicateSet = new PredicateSet();
         $predicateSet->orPredicate(new IsNull('foo'))
@@ -95,7 +95,7 @@ class PredicateSetTest extends TestCase
     /**
      * @throws ReflectionException
      */
-    public function testAddPredicates()
+    public function testAddPredicates(): void
     {
         $predicateSet = new PredicateSet();
 

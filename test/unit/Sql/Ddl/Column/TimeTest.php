@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(Time::class, 'getExpressionData')]
 class TimeTest extends TestCase
 {
-    public function testGetExpressionData()
+    public function testGetExpressionData(): void
     {
         $column = new Time('foo');
         self::assertEquals(

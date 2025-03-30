@@ -28,7 +28,7 @@ class ForeignKeyTest extends TestCase
     }
 
     #[Depends('testSetName')]
-    public function testGetName(ForeignKey $fk)
+    public function testGetName(ForeignKey $fk): void
     {
         self::assertEquals('xxxx', $fk->getName());
     }
@@ -41,7 +41,7 @@ class ForeignKeyTest extends TestCase
     }
 
     #[Depends('testSetReferenceTable')]
-    public function testGetReferenceTable(ForeignKey $fk)
+    public function testGetReferenceTable(ForeignKey $fk): void
     {
         self::assertEquals('xxxx', $fk->getReferenceTable());
     }
@@ -54,7 +54,7 @@ class ForeignKeyTest extends TestCase
     }
 
     #[Depends('testSetReferenceColumn')]
-    public function testGetReferenceColumn(ForeignKey $fk)
+    public function testGetReferenceColumn(ForeignKey $fk): void
     {
         self::assertEquals(['xxxx'], $fk->getReferenceColumn());
     }
@@ -67,7 +67,7 @@ class ForeignKeyTest extends TestCase
     }
 
     #[Depends('testSetOnDeleteRule')]
-    public function testGetOnDeleteRule(ForeignKey $fk)
+    public function testGetOnDeleteRule(ForeignKey $fk): void
     {
         self::assertEquals('CASCADE', $fk->getOnDeleteRule());
     }
@@ -80,12 +80,12 @@ class ForeignKeyTest extends TestCase
     }
 
     #[Depends('testSetOnUpdateRule')]
-    public function testGetOnUpdateRule(ForeignKey $fk)
+    public function testGetOnUpdateRule(ForeignKey $fk): void
     {
         self::assertEquals('CASCADE', $fk->getOnUpdateRule());
     }
 
-    public function testGetExpressionData()
+    public function testGetExpressionData(): void
     {
         $fk = new ForeignKey('foo', 'bar', 'baz', 'bam', 'CASCADE', 'SET NULL');
         self::assertEquals(

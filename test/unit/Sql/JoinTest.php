@@ -21,7 +21,7 @@ class JoinTest extends TestCase
     /**
      * @throws ReflectionException
      */
-    public function testInitialPositionIsZero()
+    public function testInitialPositionIsZero(): void
     {
         $join = new Join();
 
@@ -31,7 +31,7 @@ class JoinTest extends TestCase
     /**
      * @throws ReflectionException
      */
-    public function testNextIncrementsThePosition()
+    public function testNextIncrementsThePosition(): void
     {
         $join = new Join();
 
@@ -43,7 +43,7 @@ class JoinTest extends TestCase
     /**
      * @throws ReflectionException
      */
-    public function testRewindResetsPositionToZero()
+    public function testRewindResetsPositionToZero(): void
     {
         $join = new Join();
 
@@ -55,7 +55,7 @@ class JoinTest extends TestCase
         self::assertAttributeEquals(0, 'position', $join);
     }
 
-    public function testKeyReturnsTheCurrentPosition()
+    public function testKeyReturnsTheCurrentPosition(): void
     {
         $join = new Join();
 
@@ -66,7 +66,7 @@ class JoinTest extends TestCase
         self::assertEquals(3, $join->key());
     }
 
-    public function testCurrentReturnsTheCurrentJoinSpecification()
+    public function testCurrentReturnsTheCurrentJoinSpecification(): void
     {
         $name = 'baz';
         $on   = 'foo.id = baz.id';
@@ -84,7 +84,7 @@ class JoinTest extends TestCase
         self::assertEquals($expectedSpecification, $join->current());
     }
 
-    public function testValidReturnsTrueIfTheIteratorIsAtAValidPositionAndFalseIfNot()
+    public function testValidReturnsTrueIfTheIteratorIsAtAValidPositionAndFalseIfNot(): void
     {
         $join = new Join();
         $join->join('baz', 'foo.id = baz.id');
@@ -97,21 +97,21 @@ class JoinTest extends TestCase
     }
 
     #[TestDox('unit test: Test join() returns Join object (is chainable)')]
-    public function testJoin()
+    public function testJoin(): void
     {
         $join   = new Join();
         $return = $join->join('baz', 'foo.fooId = baz.fooId', Join::JOIN_LEFT);
         self::assertSame($join, $return);
     }
 
-    public function testJoinFullOuter()
+    public function testJoinFullOuter(): void
     {
         $join   = new Join();
         $return = $join->join('baz', 'foo.fooId = baz.fooId', Join::JOIN_FULL_OUTER);
         self::assertSame($join, $return);
     }
 
-    public function testJoinWillThrowAnExceptionIfNameIsNoValid()
+    public function testJoinWillThrowAnExceptionIfNameIsNoValid(): void
     {
         $join = new Join();
 
@@ -121,7 +121,7 @@ class JoinTest extends TestCase
     }
 
     #[TestDox('unit test: Test count() returns correct count')]
-    public function testCount()
+    public function testCount(): void
     {
         $join = new Join();
         $join->join('baz', 'foo.fooId = baz.fooId', Join::JOIN_LEFT);
@@ -132,7 +132,7 @@ class JoinTest extends TestCase
     }
 
     #[TestDox('unit test: Test reset() resets the joins')]
-    public function testReset()
+    public function testReset(): void
     {
         $join = new Join();
         $join->join('baz', 'foo.fooId = baz.fooId', Join::JOIN_LEFT);

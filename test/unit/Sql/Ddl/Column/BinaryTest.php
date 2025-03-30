@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(Binary::class, 'getExpressionData')]
 class BinaryTest extends TestCase
 {
-    public function testGetExpressionData()
+    public function testGetExpressionData(): void
     {
         $column = new Binary('foo', 10000000);
         self::assertEquals(

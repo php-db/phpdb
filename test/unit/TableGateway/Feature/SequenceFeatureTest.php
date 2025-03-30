@@ -33,7 +33,7 @@ class SequenceFeatureTest extends TestCase
      * @throws Exception
      */
     #[DataProvider('nextSequenceIdProvider')]
-    public function testNextSequenceId(string $platformName, string $statementSql)
+    public function testNextSequenceId(string $platformName, string $statementSql): void
     {
         $platform = $this->createMock(PlatformInterface::class);
         $platform->expects($this->any())

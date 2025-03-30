@@ -38,17 +38,17 @@ class StatementTest extends TestCase
     {
     }
 
-    public function testSetDriver()
+    public function testSetDriver(): void
     {
         self::assertEquals($this->statement, $this->statement->setDriver(new Sqlsrv([])));
     }
 
-    public function testSetParameterContainer()
+    public function testSetParameterContainer(): void
     {
         self::assertSame($this->statement, $this->statement->setParameterContainer(new ParameterContainer()));
     }
 
-    public function testGetParameterContainer()
+    public function testGetParameterContainer(): void
     {
         $container = new ParameterContainer();
         $this->statement->setParameterContainer($container);

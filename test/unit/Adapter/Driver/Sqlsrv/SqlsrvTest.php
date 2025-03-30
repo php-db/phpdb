@@ -38,7 +38,7 @@ class SqlsrvTest extends TestCase
     /**
      * @throws Exception
      */
-    public function testRegisterConnection()
+    public function testRegisterConnection(): void
     {
         $mockConnection = $this->getMockForAbstractClass(
             Connection::class,
@@ -56,7 +56,7 @@ class SqlsrvTest extends TestCase
     /**
      * @throws Exception
      */
-    public function testRegisterStatementPrototype()
+    public function testRegisterStatementPrototype(): void
     {
         $this->sqlsrv  = new Sqlsrv([]);
         $mockStatement = $this->getMockForAbstractClass(
@@ -75,7 +75,7 @@ class SqlsrvTest extends TestCase
     /**
      * @throws Exception
      */
-    public function testRegisterResultPrototype()
+    public function testRegisterResultPrototype(): void
     {
         $this->sqlsrv  = new Sqlsrv([]);
         $mockStatement = $this->getMockForAbstractClass(
@@ -90,7 +90,7 @@ class SqlsrvTest extends TestCase
         self::assertSame($this->sqlsrv, $this->sqlsrv->registerResultPrototype($mockStatement));
     }
 
-    public function testGetDatabasePlatformName()
+    public function testGetDatabasePlatformName(): void
     {
         $this->sqlsrv = new Sqlsrv([]);
         self::assertEquals('SqlServer', $this->sqlsrv->getDatabasePlatformName());
@@ -98,7 +98,7 @@ class SqlsrvTest extends TestCase
     }
 
     #[Depends('testRegisterConnection')]
-    public function testGetConnection()
+    public function testGetConnection(): void
     {
         $conn = new Connection([]);
         $this->sqlsrv->registerConnection($conn);
@@ -160,7 +160,7 @@ class SqlsrvTest extends TestCase
         );
     }
 
-    public function testGetResultPrototype()
+    public function testGetResultPrototype(): void
     {
         $resultPrototype = $this->sqlsrv->getResultPrototype();
 

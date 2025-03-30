@@ -28,13 +28,13 @@ class SqlSrvIntegrationTest extends AbstractIntegrationTestCase
     }
 
     #[Group('integration-sqlserver')]
-    public function testCheckEnvironment()
+    public function testCheckEnvironment(): void
     {
         $sqlserver = new Sqlsrv([]);
         self::assertNull($sqlserver->checkEnvironment());
     }
 
-    public function testCreateStatement()
+    public function testCreateStatement(): void
     {
         $stmt = $this->driver->createStatement('SELECT 1');
         $this->assertInstanceOf(Statement::class, $stmt);
@@ -48,7 +48,7 @@ class SqlSrvIntegrationTest extends AbstractIntegrationTestCase
         $this->driver->createStatement(new stdClass());
     }
 
-    public function testParameterizedQuery()
+    public function testParameterizedQuery(): void
     {
         $stmt   = $this->driver->createStatement('SELECT ? as col_one');
         $result = $stmt->execute(['a']);

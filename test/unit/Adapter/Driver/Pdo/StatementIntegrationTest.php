@@ -43,7 +43,7 @@ class StatementIntegrationTest extends TestCase
     {
     }
 
-    public function testStatementExecuteWillConvertPhpBoolToPdoBoolWhenBinding()
+    public function testStatementExecuteWillConvertPhpBoolToPdoBoolWhenBinding(): void
     {
         $this->pdoStatementMock->expects($this->any())->method('bindParam')->with(
             $this->equalTo(':foo'),
@@ -53,7 +53,7 @@ class StatementIntegrationTest extends TestCase
         $this->statement->execute(['foo' => false]);
     }
 
-    public function testStatementExecuteWillUsePdoStrByDefaultWhenBinding()
+    public function testStatementExecuteWillUsePdoStrByDefaultWhenBinding(): void
     {
         $this->pdoStatementMock->expects($this->any())->method('bindParam')->with(
             $this->equalTo(':foo'),
@@ -63,7 +63,7 @@ class StatementIntegrationTest extends TestCase
         $this->statement->execute(['foo' => 'bar']);
     }
 
-    public function testStatementExecuteWillUsePdoStrForStringIntegerWhenBinding()
+    public function testStatementExecuteWillUsePdoStrForStringIntegerWhenBinding(): void
     {
         $this->pdoStatementMock->expects($this->any())->method('bindParam')->with(
             $this->equalTo(':foo'),
@@ -73,7 +73,7 @@ class StatementIntegrationTest extends TestCase
         $this->statement->execute(['foo' => '123']);
     }
 
-    public function testStatementExecuteWillUsePdoIntForIntWhenBinding()
+    public function testStatementExecuteWillUsePdoIntForIntWhenBinding(): void
     {
         $this->pdoStatementMock->expects($this->any())->method('bindParam')->with(
             $this->equalTo(':foo'),

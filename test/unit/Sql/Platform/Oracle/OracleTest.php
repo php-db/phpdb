@@ -16,7 +16,7 @@ use function key;
 class OracleTest extends TestCase
 {
     #[TestDox('unit test / object test: Test Mysql object has Select proxy')]
-    public function testConstruct()
+    public function testConstruct(): void
     {
         $oracle     = new Oracle();
         $decorators = $oracle->getDecorators();

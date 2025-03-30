@@ -45,7 +45,7 @@ class InsertTest extends TestCase
         $this->insert = new Insert();
     }
 
-    public function testInto()
+    public function testInto(): void
     {
         $this->insert->into('table');
         self::assertEquals('table', $this->insert->getRawState('table'));
@@ -55,14 +55,14 @@ class InsertTest extends TestCase
         self::assertEquals($tableIdentifier, $this->insert->getRawState('table'));
     }
 
-    public function testColumns()
+    public function testColumns(): void
     {
         $columns = ['foo', 'bar'];
         $this->insert->columns($columns);
         self::assertEquals($columns, $this->insert->getRawState('columns'));
     }
 
-    public function testValues()
+    public function testValues(): void
     {
         $this->insert->values(['foo' => 'bar']);
         self::assertEquals(['foo'], $this->insert->getRawState('columns'));
@@ -79,14 +79,14 @@ class InsertTest extends TestCase
         self::assertEquals(['bax'], $this->insert->getRawState('values'));
     }
 
-    public function testValuesThrowsExceptionWhenNotArrayOrSelect()
+    public function testValuesThrowsExceptionWhenNotArrayOrSelect(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('values() expects an array of values or Laminas\Db\Sql\Select instance');
         $this->insert->values(5);
     }
 
-    public function testValuesThrowsExceptionWhenSelectMergeOverArray()
+    public function testValuesThrowsExceptionWhenSelectMergeOverArray(): void
     {
         $this->insert->values(['foo' => 'bar']);
 
@@ -95,7 +95,7 @@ class InsertTest extends TestCase
         $this->insert->values(new Select(), Insert::VALUES_MERGE);
     }
 
-    public function testValuesThrowsExceptionWhenArrayMergeOverSelect()
+    public function testValuesThrowsExceptionWhenArrayMergeOverSelect(): void
     {
         $this->insert->values(new Select());
 
@@ -111,13 +111,13 @@ class InsertTest extends TestCase
      * @throws ReflectionException
      */
     #[Group('Laminas-4926')]
-    public function testEmptyArrayValues()
+    public function testEmptyArrayValues(): void
     {
         $this->insert->values([]);
         self::assertEquals([], $this->readAttribute($this->insert, 'columns'));
     }
 
-    public function testPrepareStatement()
+    public function testPrepareStatement(): void
     {
         $mockDriver = $this->getMockBuilder(DriverInterface::class)->getMock();
         $mockDriver->expects($this->any())->method('getPrepareType')->willReturn('positional');
@@ -162,7 +162,7 @@ class InsertTest extends TestCase
         $this->insert->prepareStatement($mockAdapter, $mockStatement);
     }
 
-    public function testPrepareStatementWithSelect()
+    public function testPrepareStatementWithSelect(): void
     {
         $mockDriver = $this->getMockBuilder(DriverInterface::class)->getMock();
         $mockDriver->expects($this->any())->method('getPrepareType')->willReturn('positional');
@@ -189,7 +189,7 @@ class InsertTest extends TestCase
         self::assertSame(['subselect1where1' => 5], $parameters);
     }
 
-    public function testGetSqlString()
+    public function testGetSqlString(): void
     {
         $this->insert->into('foo')
             ->values(['bar' => 'baz', 'boo' => new Expression('NOW()'), 'bam' => null]);
@@ -227,7 +227,7 @@ class InsertTest extends TestCase
         );
     }
 
-    public function testGetSqlStringUsingColumnsAndValuesMethods()
+    public function testGetSqlStringUsingColumnsAndValuesMethods(): void
     {
         // With columns() and values()
         $this->insert
@@ -241,7 +241,7 @@ class InsertTest extends TestCase
     }
 
     // @codingStandardsIgnoreStart
-    public function test__set()
+    public function test__set(): void
     {
         // @codingStandardsIgnoreEnd
         $this->insert->foo = 'bar';
@@ -250,7 +250,7 @@ class InsertTest extends TestCase
     }
 
     // @codingStandardsIgnoreStart
-    public function test__unset()
+    public function test__unset(): void
     {
         // @codingStandardsIgnoreEnd
         $this->insert->foo = 'bar';
@@ -270,7 +270,7 @@ class InsertTest extends TestCase
     }
 
     // @codingStandardsIgnoreStart
-    public function test__isset()
+    public function test__isset(): void
     {
         // @codingStandardsIgnoreEnd
         $this->insert->foo = 'bar';
@@ -281,7 +281,7 @@ class InsertTest extends TestCase
     }
 
     // @codingStandardsIgnoreStart
-    public function test__get()
+    public function test__get(): void
     {
         // @codingStandardsIgnoreEnd
         $this->insert->foo = 'bar';
@@ -292,7 +292,7 @@ class InsertTest extends TestCase
     }
 
     #[Group('Laminas-536')]
-    public function testValuesMerge()
+    public function testValuesMerge(): void
     {
         $this->insert->into('foo')
             ->values(['bar' => 'baz', 'boo' => new Expression('NOW()'), 'bam' => null]);
@@ -306,7 +306,7 @@ class InsertTest extends TestCase
     }
 
     #[CoversNothing]
-    public function testSpecificationconstantsCouldBeOverridedByExtensionInPrepareStatement()
+    public function testSpecificationconstantsCouldBeOverridedByExtensionInPrepareStatement(): void
     {
         $replace = new Replace();
 
@@ -355,7 +355,7 @@ class InsertTest extends TestCase
     }
 
     #[CoversNothing]
-    public function testSpecificationconstantsCouldBeOverridedByExtensionInGetSqlString()
+    public function testSpecificationconstantsCouldBeOverridedByExtensionInGetSqlString(): void
     {
         $replace = new Replace();
         $replace->into('foo')

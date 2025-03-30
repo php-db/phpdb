@@ -7,25 +7,25 @@ use PHPUnit\Framework\TestCase;
 
 class LiteralTest extends TestCase
 {
-    public function testSetLiteral()
+    public function testSetLiteral(): void
     {
         $literal = new Literal('bar');
         self::assertSame($literal, $literal->setLiteral('foo'));
     }
 
-    public function testGetLiteral()
+    public function testGetLiteral(): void
     {
         $literal = new Literal('bar');
         self::assertEquals('bar', $literal->getLiteral());
     }
 
-    public function testGetExpressionData()
+    public function testGetExpressionData(): void
     {
         $literal = new Literal('bar');
         self::assertEquals([['bar', [], []]], $literal->getExpressionData());
     }
 
-    public function testGetExpressionDataWillEscapePercent()
+    public function testGetExpressionDataWillEscapePercent(): void
     {
         $expression = new Literal('X LIKE "foo%"');
         self::assertEquals(

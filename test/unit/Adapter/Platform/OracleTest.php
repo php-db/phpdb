@@ -35,7 +35,7 @@ class OracleTest extends TestCase
         $this->platform = new Oracle();
     }
 
-    public function testContructWithOptions()
+    public function testContructWithOptions(): void
     {
         self::assertEquals('"\'test\'.\'test\'"', $this->platform->quoteIdentifier('"test"."test"'));
         $plataform1 = new Oracle(['quote_identifiers' => false]);
@@ -47,7 +47,7 @@ class OracleTest extends TestCase
     /**
      * @throws Exception
      */
-    public function testContructWithDriver()
+    public function testContructWithDriver(): void
     {
         $mockDriver = $this->getMockForAbstractClass(
             Oci8::class,
@@ -65,7 +65,7 @@ class OracleTest extends TestCase
     /**
      * @throws Exception
      */
-    public function testSetDriver()
+    public function testSetDriver(): void
     {
         $mockDriver = $this->getMockForAbstractClass(
             Oci8::class,
@@ -80,7 +80,7 @@ class OracleTest extends TestCase
         self::assertEquals($mockDriver, $platform->getDriver());
     }
 
-    public function testSetDriverInvalid()
+    public function testSetDriverInvalid(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
@@ -89,22 +89,22 @@ class OracleTest extends TestCase
         $this->platform->setDriver(null);
     }
 
-    public function testGetDriver()
+    public function testGetDriver(): void
     {
         self::assertNull($this->platform->getDriver());
     }
 
-    public function testGetName()
+    public function testGetName(): void
     {
         self::assertEquals('Oracle', $this->platform->getName());
     }
 
-    public function testGetQuoteIdentifierSymbol()
+    public function testGetQuoteIdentifierSymbol(): void
     {
         self::assertEquals('"', $this->platform->getQuoteIdentifierSymbol());
     }
 
-    public function testQuoteIdentifier()
+    public function testQuoteIdentifier(): void
     {
         self::assertEquals('"identifier"', $this->platform->quoteIdentifier('identifier'));
 
@@ -112,7 +112,7 @@ class OracleTest extends TestCase
         self::assertEquals('identifier', $platform->quoteIdentifier('identifier'));
     }
 
-    public function testQuoteIdentifierChain()
+    public function testQuoteIdentifierChain(): void
     {
         self::assertEquals('"identifier"', $this->platform->quoteIdentifierChain('identifier'));
         self::assertEquals('"identifier"', $this->platform->quoteIdentifierChain(['identifier']));
@@ -124,12 +124,12 @@ class OracleTest extends TestCase
         self::assertEquals('schema.identifier', $platform->quoteIdentifierChain(['schema', 'identifier']));
     }
 
-    public function testGetQuoteValueSymbol()
+    public function testGetQuoteValueSymbol(): void
     {
         self::assertEquals("'", $this->platform->getQuoteValueSymbol());
     }
 
-    public function testQuoteValueRaisesNoticeWithoutPlatformSupport()
+    public function testQuoteValueRaisesNoticeWithoutPlatformSupport(): void
     {
         /**
          * @todo Determine if vulnerability warning is required during unit testing
@@ -143,7 +143,7 @@ class OracleTest extends TestCase
         $this->platform->quoteValue('value');
     }
 
-    public function testQuoteValue()
+    public function testQuoteValue(): void
     {
         self::assertEquals("'value'", @$this->platform->quoteValue('value'));
         self::assertEquals("'Foo O''Bar'", @$this->platform->quoteValue("Foo O'Bar"));
@@ -157,7 +157,7 @@ class OracleTest extends TestCase
         );
     }
 
-    public function testQuoteTrustedValue()
+    public function testQuoteTrustedValue(): void
     {
         self::assertEquals("'value'", $this->platform->quoteTrustedValue('value'));
         self::assertEquals("'Foo O''Bar'", $this->platform->quoteTrustedValue("Foo O'Bar"));
@@ -173,7 +173,7 @@ class OracleTest extends TestCase
         );
     }
 
-    public function testQuoteValueList()
+    public function testQuoteValueList(): void
     {
         /**
          * @todo Determine if vulnerability warning is required during unit testing
@@ -186,12 +186,12 @@ class OracleTest extends TestCase
         self::assertEquals("'Foo O''Bar'", $this->platform->quoteValueList("Foo O'Bar"));
     }
 
-    public function testGetIdentifierSeparator()
+    public function testGetIdentifierSeparator(): void
     {
         self::assertEquals('.', $this->platform->getIdentifierSeparator());
     }
 
-    public function testQuoteIdentifierInFragment()
+    public function testQuoteIdentifierInFragment(): void
     {
         self::assertEquals('"foo"."bar"', $this->platform->quoteIdentifierInFragment('foo.bar'));
         self::assertEquals('"foo" as "bar"', $this->platform->quoteIdentifierInFragment('foo as bar'));

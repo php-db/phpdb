@@ -8,21 +8,21 @@ use PHPUnit\Framework\TestCase;
 
 class NotLikeTest extends TestCase
 {
-    public function testConstructEmptyArgs()
+    public function testConstructEmptyArgs(): void
     {
         $notLike = new NotLike();
         self::assertEquals('', $notLike->getIdentifier());
         self::assertEquals('', $notLike->getLike());
     }
 
-    public function testConstructWithArgs()
+    public function testConstructWithArgs(): void
     {
         $notLike = new NotLike('bar', 'Foo%');
         self::assertEquals('bar', $notLike->getIdentifier());
         self::assertEquals('Foo%', $notLike->getLike());
     }
 
-    public function testAccessorsMutators()
+    public function testAccessorsMutators(): void
     {
         $notLike = new NotLike();
         $notLike->setIdentifier('bar');
@@ -33,7 +33,7 @@ class NotLikeTest extends TestCase
         self::assertEquals('target = target', $notLike->getSpecification());
     }
 
-    public function testGetExpressionData()
+    public function testGetExpressionData(): void
     {
         $notLike = new NotLike('bar', 'Foo%');
         self::assertEquals(
@@ -48,7 +48,7 @@ class NotLikeTest extends TestCase
         );
     }
 
-    public function testInstanceOfPerSetters()
+    public function testInstanceOfPerSetters(): void
     {
         $notLike = new NotLike();
         self::assertInstanceOf(Like::class, $notLike->setIdentifier('bar'));

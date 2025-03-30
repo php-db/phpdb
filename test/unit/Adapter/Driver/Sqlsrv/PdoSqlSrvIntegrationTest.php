@@ -9,6 +9,9 @@ use PHPUnit\Framework\Attributes\Group;
 #[Group('integration-sqlserver')]
 class PdoSqlSrvIntegrationTest extends AbstractIntegrationTestCase
 {
+    /**
+     * @return void
+     */
     public function testParameterizedQuery()
     {
         if (! isset($this->adapters['pdo_sqlsrv'])) {

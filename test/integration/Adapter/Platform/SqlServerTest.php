@@ -55,6 +55,9 @@ class SqlServerTest extends TestCase
         }
     }
 
+    /**
+     * @return void
+     */
     public function testQuoteValueWithSqlServer()
     {
         if (! isset($this->adapters['pdo_sqlsrv'])) {

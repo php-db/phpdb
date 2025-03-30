@@ -42,7 +42,7 @@ class AbstractResultSetTest extends TestCase
         $this->resultSet = $this->getMockForAbstractClass(AbstractResultSet::class);
     }
 
-    public function testInitialize()
+    public function testInitialize(): void
     {
         $resultSet = $this->getMockForAbstractClass(AbstractResultSet::class);
 
@@ -59,7 +59,7 @@ class AbstractResultSetTest extends TestCase
         $resultSet->initialize('foo');
     }
 
-    public function testInitializeDoesNotCallCount()
+    public function testInitializeDoesNotCallCount(): void
     {
         $resultSet = $this->getMockForAbstractClass(AbstractResultSet::class);
         $result    = $this->getMockForAbstractClass(ResultInterface::class);
@@ -67,13 +67,13 @@ class AbstractResultSetTest extends TestCase
         $resultSet->initialize($result);
     }
 
-    public function testInitializeWithEmptyArray()
+    public function testInitializeWithEmptyArray(): void
     {
         $resultSet = $this->getMockForAbstractClass(AbstractResultSet::class);
         self::assertSame($resultSet, $resultSet->initialize([]));
     }
 
-    public function testBuffer()
+    public function testBuffer(): void
     {
         $resultSet = $this->getMockForAbstractClass(AbstractResultSet::class);
         self::assertSame($resultSet, $resultSet->buffer());
@@ -90,7 +90,7 @@ class AbstractResultSetTest extends TestCase
         $resultSet->buffer();
     }
 
-    public function testIsBuffered()
+    public function testIsBuffered(): void
     {
         $resultSet = $this->getMockForAbstractClass(AbstractResultSet::class);
         self::assertFalse($resultSet->isBuffered());
@@ -98,7 +98,7 @@ class AbstractResultSetTest extends TestCase
         self::assertTrue($resultSet->isBuffered());
     }
 
-    public function testGetDataSource()
+    public function testGetDataSource(): void
     {
         $resultSet = $this->getMockForAbstractClass(AbstractResultSet::class);
         $resultSet->initialize(new ArrayIterator([
@@ -109,7 +109,7 @@ class AbstractResultSetTest extends TestCase
         self::assertInstanceOf(ArrayIterator::class, $resultSet->getDataSource());
     }
 
-    public function testGetFieldCount()
+    public function testGetFieldCount(): void
     {
         $resultSet = $this->getMockForAbstractClass(AbstractResultSet::class);
         $resultSet->initialize(new ArrayIterator([
@@ -118,7 +118,7 @@ class AbstractResultSetTest extends TestCase
         self::assertEquals(2, $resultSet->getFieldCount());
     }
 
-    public function testNext()
+    public function testNext(): void
     {
         $resultSet = $this->getMockForAbstractClass(AbstractResultSet::class);
         $resultSet->initialize(new ArrayIterator([
@@ -129,7 +129,7 @@ class AbstractResultSetTest extends TestCase
         self::assertNull($resultSet->next());
     }
 
-    public function testKey()
+    public function testKey(): void
     {
         $resultSet = $this->getMockForAbstractClass(AbstractResultSet::class);
         $resultSet->initialize(new ArrayIterator([
@@ -145,7 +145,7 @@ class AbstractResultSetTest extends TestCase
         self::assertEquals(3, $resultSet->key());
     }
 
-    public function testCurrent()
+    public function testCurrent(): void
     {
         $resultSet = $this->getMockForAbstractClass(AbstractResultSet::class);
         $resultSet->initialize(new ArrayIterator([
@@ -156,7 +156,7 @@ class AbstractResultSetTest extends TestCase
         self::assertEquals(['id' => 1, 'name' => 'one'], $resultSet->current());
     }
 
-    public function testValid()
+    public function testValid(): void
     {
         $resultSet = $this->getMockForAbstractClass(AbstractResultSet::class);
         $resultSet->initialize(new ArrayIterator([
@@ -171,7 +171,7 @@ class AbstractResultSetTest extends TestCase
         self::assertFalse($resultSet->valid());
     }
 
-    public function testRewind()
+    public function testRewind(): void
     {
         $resultSet = $this->getMockForAbstractClass(AbstractResultSet::class);
         $resultSet->initialize(new ArrayIterator([
@@ -182,7 +182,7 @@ class AbstractResultSetTest extends TestCase
         self::assertNull($resultSet->rewind());
     }
 
-    public function testCount()
+    public function testCount(): void
     {
         $resultSet = $this->getMockForAbstractClass(AbstractResultSet::class);
         $resultSet->initialize(new ArrayIterator([
@@ -193,7 +193,7 @@ class AbstractResultSetTest extends TestCase
         self::assertEquals(3, $resultSet->count());
     }
 
-    public function testToArray()
+    public function testToArray(): void
     {
         $resultSet = $this->getMockForAbstractClass(AbstractResultSet::class);
         $resultSet->initialize(new ArrayIterator([
@@ -215,7 +215,7 @@ class AbstractResultSetTest extends TestCase
      * Test multiple iterations with buffer
      */
     #[Group('issue-6845')]
-    public function testBufferIterations()
+    public function testBufferIterations(): void
     {
         $resultSet = $this->getMockForAbstractClass(AbstractResultSet::class);
         $resultSet->initialize(new ArrayIterator([
@@ -246,7 +246,7 @@ class AbstractResultSetTest extends TestCase
      * Test multiple iterations with buffer with multiple rewind() calls
      */
     #[Group('issue-6845')]
-    public function testMultipleRewindBufferIterations()
+    public function testMultipleRewindBufferIterations(): void
     {
         $resultSet = $this->getMockForAbstractClass(AbstractResultSet::class);
         $result    = new Result();

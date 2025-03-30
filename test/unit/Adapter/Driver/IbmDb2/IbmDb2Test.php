@@ -38,7 +38,7 @@ class IbmDb2Test extends TestCase
     /**
      * @throws Exception
      */
-    public function testRegisterConnection()
+    public function testRegisterConnection(): void
     {
         $mockConnection = $this->getMockForAbstractClass(
             Connection::class,
@@ -56,7 +56,7 @@ class IbmDb2Test extends TestCase
     /**
      * @throws Exception
      */
-    public function testRegisterStatementPrototype()
+    public function testRegisterStatementPrototype(): void
     {
         $this->ibmdb2  = new IbmDb2([]);
         $mockStatement = $this->getMockForAbstractClass(
@@ -75,7 +75,7 @@ class IbmDb2Test extends TestCase
     /**
      * @throws Exception
      */
-    public function testRegisterResultPrototype()
+    public function testRegisterResultPrototype(): void
     {
         $this->ibmdb2  = new IbmDb2([]);
         $mockStatement = $this->getMockForAbstractClass(
@@ -90,7 +90,7 @@ class IbmDb2Test extends TestCase
         self::assertSame($this->ibmdb2, $this->ibmdb2->registerResultPrototype($mockStatement));
     }
 
-    public function testGetDatabasePlatformName()
+    public function testGetDatabasePlatformName(): void
     {
         $this->ibmdb2 = new IbmDb2([]);
         self::assertEquals('IbmDb2', $this->ibmdb2->getDatabasePlatformName());
@@ -98,7 +98,7 @@ class IbmDb2Test extends TestCase
     }
 
     #[Depends('testRegisterConnection')]
-    public function testGetConnection()
+    public function testGetConnection(): void
     {
         $conn = new Connection([]);
         $this->ibmdb2->registerConnection($conn);
@@ -160,7 +160,7 @@ class IbmDb2Test extends TestCase
         );
     }
 
-    public function testGetResultPrototype()
+    public function testGetResultPrototype(): void
     {
         $resultPrototype = $this->ibmdb2->getResultPrototype();
 

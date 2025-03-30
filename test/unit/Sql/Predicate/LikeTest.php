@@ -7,21 +7,21 @@ use PHPUnit\Framework\TestCase;
 
 class LikeTest extends TestCase
 {
-    public function testConstructEmptyArgs()
+    public function testConstructEmptyArgs(): void
     {
         $like = new Like();
         self::assertEquals('', $like->getIdentifier());
         self::assertEquals('', $like->getLike());
     }
 
-    public function testConstructWithArgs()
+    public function testConstructWithArgs(): void
     {
         $like = new Like('bar', 'Foo%');
         self::assertEquals('bar', $like->getIdentifier());
         self::assertEquals('Foo%', $like->getLike());
     }
 
-    public function testAccessorsMutators()
+    public function testAccessorsMutators(): void
     {
         $like = new Like();
         $like->setIdentifier('bar');
@@ -32,7 +32,7 @@ class LikeTest extends TestCase
         self::assertEquals('target = target', $like->getSpecification());
     }
 
-    public function testGetExpressionData()
+    public function testGetExpressionData(): void
     {
         $like = new Like('bar', 'Foo%');
         self::assertEquals(
@@ -51,7 +51,7 @@ class LikeTest extends TestCase
         );
     }
 
-    public function testInstanceOfPerSetters()
+    public function testInstanceOfPerSetters(): void
     {
         $like = new Like();
         self::assertInstanceOf(Like::class, $like->setIdentifier('bar'));

@@ -40,7 +40,7 @@ class QueryTest extends TestCase
     }
 
     #[DataProvider('getQueriesWithRowResult')]
-    public function testQuery(string $query, array $params, array $expected)
+    public function testQuery(string $query, array $params, array $expected): void
     {
         $result = $this->adapter->query($query, $params);
         $this->assertInstanceOf(ResultSet::class, $result);
@@ -56,13 +56,13 @@ class QueryTest extends TestCase
     /**
      * @see https://github.com/zendframework/zend-db/issues/288
      */
-    public function testSetSessionTimeZone()
+    public function testSetSessionTimeZone(): void
     {
         $result = $this->adapter->query('SET @@session.time_zone = :tz', [':tz' => 'SYSTEM']);
         $this->assertInstanceOf(PdoResult::class, $result);
     }
 
-    public function testSelectWithNotPermittedBindParamName()
+    public function testSelectWithNotPermittedBindParamName(): void
     {
         $this->expectException(RuntimeException::class);
         $this->adapter->query('SET @@session.time_zone = :tz$', [':tz$' => 'SYSTEM']);
@@ -71,7 +71,7 @@ class QueryTest extends TestCase
     /**
      * @see https://github.com/laminas/laminas-db/issues/47
      */
-    public function testNamedParameters()
+    public function testNamedParameters(): void
     {
         $this->expectNotToPerformAssertions();
 

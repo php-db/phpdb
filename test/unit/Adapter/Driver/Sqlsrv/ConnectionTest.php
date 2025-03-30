@@ -31,17 +31,17 @@ class ConnectionTest extends TestCase
     {
     }
 
-    public function testSetDriver()
+    public function testSetDriver(): void
     {
         self::assertEquals($this->connection, $this->connection->setDriver(new Sqlsrv([])));
     }
 
-    public function testSetConnectionParameters()
+    public function testSetConnectionParameters(): void
     {
         self::assertEquals($this->connection, $this->connection->setConnectionParameters([]));
     }
 
-    public function testGetConnectionParameters()
+    public function testGetConnectionParameters(): void
     {
         $this->connection->setConnectionParameters(['foo' => 'bar']);
         self::assertEquals(['foo' => 'bar'], $this->connection->getConnectionParameters());

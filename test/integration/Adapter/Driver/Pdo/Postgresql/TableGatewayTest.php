@@ -15,7 +15,7 @@ class TableGatewayTest extends TestCase
 
     /** @var Adapter */
     protected $adapter;
-    public function testLastInsertValue()
+    public function testLastInsertValue(): void
     {
         $table      = new TableIdentifier('test_seq');
         $featureSet = new FeatureSet();

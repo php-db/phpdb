@@ -19,28 +19,28 @@ use function array_merge;
 #[CoversClass(TableIdentifier::class)]
 class TableIdentifierTest extends TestCase
 {
-    public function testGetTable()
+    public function testGetTable(): void
     {
         $tableIdentifier = new TableIdentifier('foo');
 
         self::assertSame('foo', $tableIdentifier->getTable());
     }
 
-    public function testGetDefaultSchema()
+    public function testGetDefaultSchema(): void
     {
         $tableIdentifier = new TableIdentifier('foo');
 
         self::assertNull($tableIdentifier->getSchema());
     }
 
-    public function testGetSchema()
+    public function testGetSchema(): void
     {
         $tableIdentifier = new TableIdentifier('foo', 'bar');
 
         self::assertSame('bar', $tableIdentifier->getSchema());
     }
 
-    public function testGetTableFromObjectStringCast()
+    public function testGetTableFromObjectStringCast(): void
     {
         $table           = new ObjectToString('castResult');
         $tableIdentifier = new TableIdentifier((string) $table);
@@ -49,7 +49,7 @@ class TableIdentifierTest extends TestCase
         self::assertSame('castResult', $tableIdentifier->getTable());
     }
 
-    public function testGetSchemaFromObjectStringCast()
+    public function testGetSchemaFromObjectStringCast(): void
     {
         $schema          = new ObjectToString('castResult');
         $tableIdentifier = new TableIdentifier('foo', (string) $schema);
@@ -59,7 +59,7 @@ class TableIdentifierTest extends TestCase
     }
 
     #[DataProvider('invalidTableProvider')]
-    public function testRejectsInvalidTable(mixed $invalidTable)
+    public function testRejectsInvalidTable(mixed $invalidTable): void
     {
         $this->expectException($invalidTable === '' ? InvalidArgumentException::class : TypeError::class);
 
@@ -67,7 +67,7 @@ class TableIdentifierTest extends TestCase
     }
 
     #[DataProvider('invalidSchemaProvider')]
-    public function testRejectsInvalidSchema(mixed $invalidSchema)
+    public function testRejectsInvalidSchema(mixed $invalidSchema): void
     {
         $this->expectException($invalidSchema === '' ? InvalidArgumentException::class : TypeError::class);
 

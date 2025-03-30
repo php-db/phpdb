@@ -25,14 +25,14 @@ class BetweenTest extends TestCase
         $this->between = new Between();
     }
 
-    public function testConstructorYieldsNullIdentifierMinimumAndMaximumValues()
+    public function testConstructorYieldsNullIdentifierMinimumAndMaximumValues(): void
     {
         self::assertNull($this->between->getIdentifier());
         self::assertNull($this->between->getMinValue());
         self::assertNull($this->between->getMaxValue());
     }
 
-    public function testConstructorCanPassIdentifierMinimumAndMaximumValues()
+    public function testConstructorCanPassIdentifierMinimumAndMaximumValues(): void
     {
         $between = new Between('foo.bar', 1, 300);
         self::assertEquals('foo.bar', $between->getIdentifier());
@@ -50,36 +50,36 @@ class BetweenTest extends TestCase
         self::assertSame(0, $between->getMaxValue());
     }
 
-    public function testSpecificationHasSaneDefaultValue()
+    public function testSpecificationHasSaneDefaultValue(): void
     {
         self::assertEquals('%1$s BETWEEN %2$s AND %3$s', $this->between->getSpecification());
     }
 
-    public function testIdentifierIsMutable()
+    public function testIdentifierIsMutable(): void
     {
         $this->between->setIdentifier('foo.bar');
         self::assertEquals('foo.bar', $this->between->getIdentifier());
     }
 
-    public function testMinValueIsMutable()
+    public function testMinValueIsMutable(): void
     {
         $this->between->setMinValue(10);
         self::assertEquals(10, $this->between->getMinValue());
     }
 
-    public function testMaxValueIsMutable()
+    public function testMaxValueIsMutable(): void
     {
         $this->between->setMaxValue(10);
         self::assertEquals(10, $this->between->getMaxValue());
     }
 
-    public function testSpecificationIsMutable()
+    public function testSpecificationIsMutable(): void
     {
         $this->between->setSpecification('%1$s IS INBETWEEN %2$s AND %3$s');
         self::assertEquals('%1$s IS INBETWEEN %2$s AND %3$s', $this->between->getSpecification());
     }
 
-    public function testRetrievingWherePartsReturnsSpecificationArrayOfIdentifierAndValuesAndArrayOfTypes()
+    public function testRetrievingWherePartsReturnsSpecificationArrayOfIdentifierAndValuesAndArrayOfTypes(): void
     {
         $this->between->setIdentifier('foo.bar')
                       ->setMinValue(10)

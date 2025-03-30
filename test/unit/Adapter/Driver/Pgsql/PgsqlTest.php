@@ -39,7 +39,7 @@ class PgsqlTest extends TestCase
         $this->pgsql = new Pgsql([]);
     }
 
-    public function testCheckEnvironment()
+    public function testCheckEnvironment(): void
     {
         if (! extension_loaded('pgsql')) {
             $this->expectException(RuntimeException::class);
@@ -51,7 +51,7 @@ class PgsqlTest extends TestCase
     /**
      * @throws Exception
      */
-    public function testRegisterConnection()
+    public function testRegisterConnection(): void
     {
         $mockConnection = $this->getMockForAbstractClass(
             Connection::class,
@@ -69,7 +69,7 @@ class PgsqlTest extends TestCase
     /**
      * @throws Exception
      */
-    public function testRegisterStatementPrototype()
+    public function testRegisterStatementPrototype(): void
     {
         $this->pgsql   = new Pgsql([]);
         $mockStatement = $this->getMockForAbstractClass(
@@ -88,7 +88,7 @@ class PgsqlTest extends TestCase
     /**
      * @throws Exception
      */
-    public function testRegisterResultPrototype()
+    public function testRegisterResultPrototype(): void
     {
         $this->pgsql   = new Pgsql([]);
         $mockStatement = $this->getMockForAbstractClass(
@@ -103,7 +103,7 @@ class PgsqlTest extends TestCase
         self::assertSame($this->pgsql, $this->pgsql->registerResultPrototype($mockStatement));
     }
 
-    public function testGetDatabasePlatformName()
+    public function testGetDatabasePlatformName(): void
     {
         $this->pgsql = new Pgsql([]);
         self::assertEquals('Postgresql', $this->pgsql->getDatabasePlatformName());
@@ -111,7 +111,7 @@ class PgsqlTest extends TestCase
     }
 
     #[Depends('testRegisterConnection')]
-    public function testGetConnection()
+    public function testGetConnection(): void
     {
         $conn = new Connection([]);
         $this->pgsql->registerConnection($conn);
@@ -173,7 +173,7 @@ class PgsqlTest extends TestCase
         );
     }
 
-    public function testGetResultPrototype()
+    public function testGetResultPrototype(): void
     {
         $resultPrototype = $this->pgsql->getResultPrototype();
 

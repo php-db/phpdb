@@ -24,19 +24,19 @@ class AbstractConstraintTest extends TestCase
         $this->ac = $this->getMockForAbstractClass(AbstractConstraint::class);
     }
 
-    public function testSetColumns()
+    public function testSetColumns(): void
     {
         self::assertSame($this->ac, $this->ac->setColumns(['foo', 'bar']));
         self::assertEquals(['foo', 'bar'], $this->ac->getColumns());
     }
 
-    public function testAddColumn()
+    public function testAddColumn(): void
     {
         self::assertSame($this->ac, $this->ac->addColumn('foo'));
         self::assertEquals(['foo'], $this->ac->getColumns());
     }
 
-    public function testGetColumns()
+    public function testGetColumns(): void
     {
         $this->ac->setColumns(['foo', 'bar']);
         self::assertEquals(['foo', 'bar'], $this->ac->getColumns());

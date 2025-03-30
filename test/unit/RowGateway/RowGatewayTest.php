@@ -44,7 +44,7 @@ class RowGatewayTest extends TestCase
             ->getMock();
     }
 
-    public function testEmptyPrimaryKey()
+    public function testEmptyPrimaryKey(): void
     {
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('This row object does not have a primary key column set.');

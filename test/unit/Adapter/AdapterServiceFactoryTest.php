@@ -31,7 +31,7 @@ class AdapterServiceFactoryTest extends TestCase
         $this->factory = new AdapterServiceFactory();
     }
 
-    public function testV2FactoryReturnsAdapter()
+    public function testV2FactoryReturnsAdapter(): void
     {
         $this->services
             ->method('get')
@@ -47,7 +47,7 @@ class AdapterServiceFactoryTest extends TestCase
         self::assertInstanceOf(Adapter::class, $adapter);
     }
 
-    public function testV3FactoryReturnsAdapter()
+    public function testV3FactoryReturnsAdapter(): void
     {
         $this->services
             ->method('get')

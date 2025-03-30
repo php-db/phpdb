@@ -28,7 +28,7 @@ class SelectDecoratorTest extends TestCase
         array $expectedParams,
         mixed $notUsed,
         int $expectedFormatParamCount
-    ) {
+    ): void {
         $driver = $this->getMockBuilder(DriverInterface::class)->getMock();
         $driver->expects($this->exactly($expectedFormatParamCount))
             ->method('formatParameterName')
@@ -61,7 +61,7 @@ class SelectDecoratorTest extends TestCase
     #[DataProvider('dataProvider')]
     #[TestDox('integration test: Testing SelectDecorator will use Select to produce properly Oracle
                            dialect sql statements')]
-    public function testGetSqlString(Select $select, mixed $ignored, mixed $alsoIgnored, string $expectedSql)
+    public function testGetSqlString(Select $select, mixed $ignored, mixed $alsoIgnored, string $expectedSql): void
     {
         $parameterContainer = new ParameterContainer();
         $statement          = $this->getMockBuilder(StatementInterface::class)->getMock();

@@ -7,40 +7,40 @@ use PHPUnit\Framework\TestCase;
 
 class IsNullTest extends TestCase
 {
-    public function testEmptyConstructorYieldsNullIdentifier()
+    public function testEmptyConstructorYieldsNullIdentifier(): void
     {
         $isNotNull = new IsNotNull();
         self::assertNull($isNotNull->getIdentifier());
     }
 
-    public function testSpecificationHasSaneDefaultValue()
+    public function testSpecificationHasSaneDefaultValue(): void
     {
         $isNotNull = new IsNotNull();
         self::assertEquals('%1$s IS NOT NULL', $isNotNull->getSpecification());
     }
 
-    public function testCanPassIdentifierToConstructor()
+    public function testCanPassIdentifierToConstructor(): void
     {
-        $isNotNull = new IsNotNull();
+        new IsNotNull();
         $isnull    = new IsNotNull('foo.bar');
         self::assertEquals('foo.bar', $isnull->getIdentifier());
     }
 
-    public function testIdentifierIsMutable()
+    public function testIdentifierIsMutable(): void
     {
         $isNotNull = new IsNotNull();
         $isNotNull->setIdentifier('foo.bar');
         self::assertEquals('foo.bar', $isNotNull->getIdentifier());
     }
 
-    public function testSpecificationIsMutable()
+    public function testSpecificationIsMutable(): void
     {
         $isNotNull = new IsNotNull();
         $isNotNull->setSpecification('%1$s NOT NULL');
         self::assertEquals('%1$s NOT NULL', $isNotNull->getSpecification());
     }
 
-    public function testRetrievingWherePartsReturnsSpecificationArrayOfIdentifierAndArrayOfTypes()
+    public function testRetrievingWherePartsReturnsSpecificationArrayOfIdentifierAndArrayOfTypes(): void
     {
         $isNotNull = new IsNotNull();
         $isNotNull->setIdentifier('foo.bar');

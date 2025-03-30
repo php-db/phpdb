@@ -35,7 +35,7 @@ class ExpressionTest extends TestCase
         return $return;
     }
 
-    public function testSetExpressionException()
+    public function testSetExpressionException(): void
     {
         $expression = new Expression();
         $this->expectException(TypeError::class);
@@ -48,7 +48,7 @@ class ExpressionTest extends TestCase
     }
 
     #[Depends('testSetExpression')]
-    public function testGetExpression(Expression $expression)
+    public function testGetExpression(Expression $expression): void
     {
         self::assertEquals('Foo Bar', $expression->getExpression());
     }
@@ -61,7 +61,7 @@ class ExpressionTest extends TestCase
         return $return;
     }
 
-    public function testSetParametersException()
+    public function testSetParametersException(): void
     {
         $expression = new Expression('', 'foo');
 
@@ -70,12 +70,12 @@ class ExpressionTest extends TestCase
     }
 
     #[Depends('testSetParameters')]
-    public function testGetParameters(Expression $expression)
+    public function testGetParameters(Expression $expression): void
     {
         self::assertEquals('foo', $expression->getParameters());
     }
 
-    public function testGetExpressionData()
+    public function testGetExpressionData(): void
     {
         $expression = new Expression(
             'X SAME AS ? AND Y = ? BUT LITERALLY ?',
@@ -97,7 +97,7 @@ class ExpressionTest extends TestCase
         self::assertEquals($expected, $expression->getExpressionData());
     }
 
-    public function testGetExpressionDataWillEscapePercent()
+    public function testGetExpressionDataWillEscapePercent(): void
     {
         $expression = new Expression('X LIKE "foo%"');
         self::assertEquals(
@@ -106,14 +106,14 @@ class ExpressionTest extends TestCase
         );
     }
 
-    public function testConstructorWithLiteralZero()
+    public function testConstructorWithLiteralZero(): void
     {
         $expression = new Expression('0');
         self::assertSame('0', $expression->getExpression());
     }
 
     #[Group('7407')]
-    public function testGetExpressionPreservesPercentageSignInFromUnixtime()
+    public function testGetExpressionPreservesPercentageSignInFromUnixtime(): void
     {
         $expressionString = 'FROM_UNIXTIME(date, "%Y-%m")';
         $expression       = new Expression($expressionString);
@@ -121,7 +121,7 @@ class ExpressionTest extends TestCase
         self::assertSame($expressionString, $expression->getExpression());
     }
 
-    public function testNumberOfReplacementsConsidersWhenSameVariableIsUsedManyTimes()
+    public function testNumberOfReplacementsConsidersWhenSameVariableIsUsedManyTimes(): void
     {
         $expression = new Expression('uf.user_id = :user_id OR uf.friend_id = :user_id', ['user_id' => 1]);
 
@@ -138,13 +138,13 @@ class ExpressionTest extends TestCase
     }
 
     #[DataProvider('falsyExpressionParametersProvider')]
-    public function testConstructorWithFalsyValidParameters(mixed $falsyParameter)
+    public function testConstructorWithFalsyValidParameters(mixed $falsyParameter): void
     {
         $expression = new Expression('?', $falsyParameter);
         self::assertSame($falsyParameter, $expression->getParameters());
     }
 
-    public function testConstructorWithInvalidParameter()
+    public function testConstructorWithInvalidParameter(): void
     {
         $this->expectException(TypeError::class);
         new Expression('?', (object) []);
@@ -163,7 +163,7 @@ class ExpressionTest extends TestCase
         ];
     }
 
-    public function testNumberOfReplacementsForExpressionWithParameters()
+    public function testNumberOfReplacementsForExpressionWithParameters(): void
     {
         $expression = new Expression(':a + :b', ['a' => 1, 'b' => 2]);
 

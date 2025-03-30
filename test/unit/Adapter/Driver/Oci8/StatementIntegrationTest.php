@@ -49,7 +49,7 @@ class StatementIntegrationTest extends TestCase
         }
     }
 
-    public function testInitialize()
+    public function testInitialize(): void
     {
         $ociResource = oci_connect(
             $this->variables['username'],
@@ -62,7 +62,7 @@ class StatementIntegrationTest extends TestCase
         unset($stmtResource, $ociResource);
     }
 
-    public function testGetResource()
+    public function testGetResource(): void
     {
         $ociResource = oci_connect(
             $this->variables['username'],
@@ -78,7 +78,7 @@ class StatementIntegrationTest extends TestCase
         unset($resource, $ociResource);
     }
 
-    public function testPrepare()
+    public function testPrepare(): void
     {
         $ociResource = oci_connect(
             $this->variables['username'],
@@ -94,7 +94,7 @@ class StatementIntegrationTest extends TestCase
         unset($resource, $ociResource);
     }
 
-    public function testExecute()
+    public function testExecute(): void
     {
         $oci8      = new Oci8($this->variables);
         $statement = $oci8->createStatement('SELECT * FROM DUAL');

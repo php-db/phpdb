@@ -25,7 +25,7 @@ class AbstractResultSetIntegrationTest extends TestCase
         $this->resultSet = $this->getMockForAbstractClass(AbstractResultSet::class);
     }
 
-    public function testCurrentCallsDataSourceCurrentAsManyTimesWithoutBuffer()
+    public function testCurrentCallsDataSourceCurrentAsManyTimesWithoutBuffer(): void
     {
         $result = $this->getMockBuilder(ResultInterface::class)->getMock();
         $this->resultSet->initialize($result);
@@ -36,7 +36,7 @@ class AbstractResultSetIntegrationTest extends TestCase
         self::assertEquals($value1, $value2);
     }
 
-    public function testCurrentCallsDataSourceCurrentOnceWithBuffer()
+    public function testCurrentCallsDataSourceCurrentOnceWithBuffer(): void
     {
         $result = $this->getMockBuilder(ResultInterface::class)->getMock();
         $this->resultSet->buffer();

@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(DropTable::class, 'getSqlString')]
 class DropTableTest extends TestCase
 {
-    public function testGetSqlString()
+    public function testGetSqlString(): void
     {
         $dt = new DropTable('foo');
         self::assertEquals('DROP TABLE "foo"', $dt->getSqlString());

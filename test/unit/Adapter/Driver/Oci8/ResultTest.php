@@ -17,37 +17,37 @@ use PHPUnit\Framework\TestCase;
 #[Group('result-oci8')]
 class ResultTest extends TestCase
 {
-    public function testGetResource()
+    public function testGetResource(): void
     {
         $result = new Result();
         self::assertNull($result->getResource());
     }
 
-    public function testBuffer()
+    public function testBuffer(): void
     {
         $result = new Result();
         self::assertNull($result->buffer());
     }
 
-    public function testIsBuffered()
+    public function testIsBuffered(): void
     {
         $result = new Result();
         self::assertFalse($result->isBuffered());
     }
 
-    public function testGetGeneratedValue()
+    public function testGetGeneratedValue(): void
     {
         $result = new Result();
         self::assertNull($result->getGeneratedValue());
     }
 
-    public function testKey()
+    public function testKey(): void
     {
         $result = new Result();
         self::assertEquals(0, $result->key());
     }
 
-    public function testNext()
+    public function testNext(): void
     {
         $mockResult = $this->getMockBuilder(Result::class)
             ->onlyMethods(['loadData'])
@@ -58,7 +58,7 @@ class ResultTest extends TestCase
         self::assertNull($mockResult->next());
     }
 
-    public function testRewind()
+    public function testRewind(): void
     {
         $result = new Result();
         self::assertNull($result->rewind());

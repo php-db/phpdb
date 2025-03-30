@@ -13,7 +13,7 @@ class TableGatewayTest extends TestCase
     /**
      * @see https://github.com/zendframework/zend-db/issues/330
      */
-    public function testSelectWithEmptyCurrentWithBufferResult()
+    public function testSelectWithEmptyCurrentWithBufferResult(): void
     {
         $adapter      = new Adapter([
             'driver'   => 'mysqli',
@@ -34,7 +34,7 @@ class TableGatewayTest extends TestCase
     /**
      * @see https://github.com/zendframework/zend-db/issues/330
      */
-    public function testSelectWithEmptyCurrentWithoutBufferResult()
+    public function testSelectWithEmptyCurrentWithoutBufferResult(): void
     {
         $adapter      = new Adapter([
             'driver'   => 'mysqli',

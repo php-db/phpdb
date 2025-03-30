@@ -23,7 +23,7 @@ use function str_replace;
 #[CoversMethod(AlterTable::class, 'getSqlString')]
 class AlterTableTest extends TestCase
 {
-    public function testSetTable()
+    public function testSetTable(): void
     {
         $at = new AlterTable();
         self::assertEquals('', $at->getRawState('table'));
@@ -31,7 +31,7 @@ class AlterTableTest extends TestCase
         self::assertEquals('test', $at->getRawState('table'));
     }
 
-    public function testAddColumn()
+    public function testAddColumn(): void
     {
         $at = new AlterTable();
         /** @var ColumnInterface $colMock */
@@ -40,7 +40,7 @@ class AlterTableTest extends TestCase
         self::assertEquals([$colMock], $at->getRawState($at::ADD_COLUMNS));
     }
 
-    public function testChangeColumn()
+    public function testChangeColumn(): void
     {
         $at = new AlterTable();
         /** @var ColumnInterface $colMock */
@@ -49,21 +49,21 @@ class AlterTableTest extends TestCase
         self::assertEquals(['newname' => $colMock], $at->getRawState($at::CHANGE_COLUMNS));
     }
 
-    public function testDropColumn()
+    public function testDropColumn(): void
     {
         $at = new AlterTable();
         self::assertSame($at, $at->dropColumn('foo'));
         self::assertEquals(['foo'], $at->getRawState($at::DROP_COLUMNS));
     }
 
-    public function testDropConstraint()
+    public function testDropConstraint(): void
     {
         $at = new AlterTable();
         self::assertSame($at, $at->dropConstraint('foo'));
         self::assertEquals(['foo'], $at->getRawState($at::DROP_CONSTRAINTS));
     }
 
-    public function testAddConstraint()
+    public function testAddConstraint(): void
     {
         $at = new AlterTable();
         /** @var ConstraintInterface $conMock */
@@ -72,7 +72,7 @@ class AlterTableTest extends TestCase
         self::assertEquals([$conMock], $at->getRawState($at::ADD_CONSTRAINTS));
     }
 
-    public function testDropIndex()
+    public function testDropIndex(): void
     {
         $at = new AlterTable();
         self::assertSame($at, $at->dropIndex('foo'));
@@ -80,9 +80,9 @@ class AlterTableTest extends TestCase
     }
 
     /**
-     * @todo   Implement testGetSqlString().
+     * @todo Implement testGetSqlString().
      */
-    public function testGetSqlString()
+    public function testGetSqlString(): void
     {
         $at = new AlterTable('foo');
         $at->addColumn(new Column\Varchar('another', 255));

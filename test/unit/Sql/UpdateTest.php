@@ -63,7 +63,7 @@ class UpdateTest extends TestCase
     /**
      * @throws ReflectionException
      */
-    public function testTable()
+    public function testTable(): void
     {
         $this->update->table('foo');
         self::assertEquals('foo', $this->readAttribute($this->update, 'table'));
@@ -76,19 +76,19 @@ class UpdateTest extends TestCase
     /**
      * @throws ReflectionException
      */
-    public function testConstruct()
+    public function testConstruct(): void
     {
         $update = new Update('foo');
         self::assertEquals('foo', $this->readAttribute($update, 'table'));
     }
 
-    public function testSet()
+    public function testSet(): void
     {
         $this->update->set(['foo' => 'bar']);
         self::assertEquals(['foo' => 'bar'], $this->update->getRawState('set'));
     }
 
-    public function testSortableSet()
+    public function testSortableSet(): void
     {
         $this->update->set([
             'two'   => 'с_two',
@@ -109,7 +109,7 @@ class UpdateTest extends TestCase
     /**
      * @throws ReflectionException
      */
-    public function testWhere()
+    public function testWhere(): void
     {
         $this->update->where('x = y');
         $this->update->where(['foo > ?' => 5]);
@@ -156,7 +156,7 @@ class UpdateTest extends TestCase
     }
 
     #[Group('Laminas-240')]
-    public function testPassingMultipleKeyValueInWhereClause()
+    public function testPassingMultipleKeyValueInWhereClause(): void
     {
         $update = clone $this->update;
         $update->table('table');
@@ -168,7 +168,7 @@ class UpdateTest extends TestCase
         );
     }
 
-    public function testGetRawState()
+    public function testGetRawState(): void
     {
         $this->update->table('foo')
             ->set(['bar' => 'baz'])
@@ -180,7 +180,7 @@ class UpdateTest extends TestCase
         self::assertInstanceOf(Where::class, $this->update->getRawState('where'));
     }
 
-    public function testPrepareStatement()
+    public function testPrepareStatement(): void
     {
         $mockDriver = $this->getMockBuilder(DriverInterface::class)->getMock();
         $mockDriver->expects($this->any())->method('getPrepareType')->willReturn('positional');
@@ -229,7 +229,7 @@ class UpdateTest extends TestCase
         $this->update->prepareStatement($mockAdapter, $mockStatement);
     }
 
-    public function testGetSqlString()
+    public function testGetSqlString(): void
     {
         $this->update->table('foo')
             ->set(['bar' => 'baz', 'boo' => new Expression('NOW()'), 'bam' => null])
@@ -254,7 +254,7 @@ class UpdateTest extends TestCase
 
     #[Group('6768')]
     #[Group('6773')]
-    public function testGetSqlStringForFalseUpdateValueParameter()
+    public function testGetSqlStringForFalseUpdateValueParameter(): void
     {
         $this->update = new Update();
         $this->update->table(new TableIdentifier('foo', 'sch'))
@@ -266,19 +266,19 @@ class UpdateTest extends TestCase
         );
     }
 
-    public function testGetUpdate()
+    public function testGetUpdate(): void
     {
         $getWhere = $this->update->__get('where');
         self::assertInstanceOf(Where::class, $getWhere);
     }
 
-    public function testGetUpdateFails()
+    public function testGetUpdateFails(): void
     {
         $getWhat = $this->update->__get('what');
         self::assertNull($getWhat);
     }
 
-    public function testCloneUpdate()
+    public function testCloneUpdate(): void
     {
         $update1 = clone $this->update;
         $update1->table('foo')
@@ -298,7 +298,7 @@ class UpdateTest extends TestCase
     }
 
     #[CoversNothing]
-    public function testSpecificationconstantsCouldBeOverridedByExtensionInPrepareStatement()
+    public function testSpecificationconstantsCouldBeOverridedByExtensionInPrepareStatement(): void
     {
         $updateIgnore = new UpdateIgnore();
 
@@ -326,7 +326,7 @@ class UpdateTest extends TestCase
     }
 
     #[CoversNothing]
-    public function testSpecificationconstantsCouldBeOverridedByExtensionInGetSqlString()
+    public function testSpecificationconstantsCouldBeOverridedByExtensionInGetSqlString(): void
     {
         $this->update = new UpdateIgnore();
 
@@ -351,7 +351,7 @@ class UpdateTest extends TestCase
         );
     }
 
-    public function testJoin()
+    public function testJoin(): void
     {
         $this->update->table('Document');
         $this->update->set(['x' => 'y'])
@@ -378,7 +378,7 @@ class UpdateTest extends TestCase
      * Important when we're updating fields that are existing in several tables in one query.
      * The same test as above but here we will specify table in update params
      */
-    public function testJoinMultiUpdate()
+    public function testJoinMultiUpdate(): void
     {
         $this->update->table('Document');
         $this->update->set(['Documents.x' => 'y'])
@@ -400,7 +400,7 @@ class UpdateTest extends TestCase
     }
 
     #[TestDox('unit test: Test join() returns Update object (is chainable)')]
-    public function testJoinChainable()
+    public function testJoinChainable(): void
     {
         $return = $this->update->join('baz', 'foo.fooId = baz.fooId', Join::JOIN_LEFT);
         self::assertSame($this->update, $return);

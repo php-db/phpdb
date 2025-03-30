@@ -11,13 +11,13 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(Column::class, 'getExpressionData')]
 class BigIntegerTest extends TestCase
 {
-    public function testObjectConstruction()
+    public function testObjectConstruction(): void
     {
         $integer = new BigInteger('foo');
         self::assertEquals('foo', $integer->getName());
     }
 
-    public function testGetExpressionData()
+    public function testGetExpressionData(): void
     {
         $column = new BigInteger('foo');
         self::assertEquals(

@@ -15,13 +15,13 @@ use stdClass;
 class Oci8IntegrationTest extends AbstractIntegrationTestCase
 {
     #[Group('integration-oci8')]
-    public function testCheckEnvironment()
+    public function testCheckEnvironment(): void
     {
         $sqlserver = new Oci8([]);
         self::assertNull($sqlserver->checkEnvironment());
     }
 
-    public function testCreateStatement()
+    public function testCreateStatement(): void
     {
         $driver   = new Oci8([]);
         $resource = oci_connect(

@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(Text::class, 'getExpressionData')]
 class TextTest extends TestCase
 {
-    public function testGetExpressionData()
+    public function testGetExpressionData(): void
     {
         $column = new Text('foo');
         self::assertEquals(

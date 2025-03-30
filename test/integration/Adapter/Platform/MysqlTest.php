@@ -41,6 +41,9 @@ class MysqlTest extends TestCase
         }
     }
 
+    /**
+     * @return void
+     */
     public function testQuoteValueWithMysqli()
     {
         if (! $this->adapters['mysqli'] instanceof \Mysqli) {
@@ -55,6 +58,9 @@ class MysqlTest extends TestCase
         self::assertEquals('\'value\'', $value);
     }
 
+    /**
+     * @return void
+     */
     public function testQuoteValueWithPdoMysql()
     {
         if (! $this->adapters['pdo_mysql'] instanceof \PDO) {

@@ -19,13 +19,13 @@ class TableGatewayTest extends TestCase
 {
     use AdapterTrait;
 
-    public function testConstructor()
+    public function testConstructor(): void
     {
         $tableGateway = new TableGateway('test', $this->adapter);
         $this->assertInstanceOf(TableGateway::class, $tableGateway);
     }
 
-    public function testSelect()
+    public function testSelect(): void
     {
         $tableGateway = new TableGateway('test', $this->adapter);
         $rowset       = $tableGateway->select();
@@ -38,11 +38,11 @@ class TableGatewayTest extends TestCase
         }
     }
 
-    public function testInsert()
+    public function testInsert(): void
     {
         $tableGateway = new TableGateway('test', $this->adapter);
 
-        $rowset       = $tableGateway->select();
+        $tableGateway->select();
         $data         = [
             'name'  => 'test_name',
             'value' => 'test_value',
@@ -78,7 +78,7 @@ class TableGatewayTest extends TestCase
     }
 
     #[Depends('testInsertWithExtendedCharsetFieldName')]
-    public function testUpdateWithExtendedCharsetFieldName(mixed $id)
+    public function testUpdateWithExtendedCharsetFieldName(mixed $id): void
     {
         $tableGateway = new TableGateway('test_charset', $this->adapter);
 
@@ -98,7 +98,7 @@ class TableGatewayTest extends TestCase
     }
 
     #[DataProvider('tableProvider')]
-    public function testTableGatewayWithMetadataFeature(array|string|TableIdentifier $table)
+    public function testTableGatewayWithMetadataFeature(array|string|TableIdentifier $table): void
     {
         $tableGateway = new TableGateway($table, $this->adapter, new MetadataFeature());
 

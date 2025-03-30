@@ -20,7 +20,7 @@ use function sqlsrv_connect;
 #[Group('integration-sqlserver')]
 class StatementIntegrationTest extends AbstractIntegrationTestCase
 {
-    public function testInitialize()
+    public function testInitialize(): void
     {
         $sqlsrvResource = sqlsrv_connect(
             $this->variables['hostname'],
@@ -36,7 +36,7 @@ class StatementIntegrationTest extends AbstractIntegrationTestCase
         unset($stmtResource, $sqlsrvResource);
     }
 
-    public function testGetResource()
+    public function testGetResource(): void
     {
         $sqlsrvResource = sqlsrv_connect(
             $this->variables['hostname'],
@@ -55,7 +55,7 @@ class StatementIntegrationTest extends AbstractIntegrationTestCase
         unset($resource, $sqlsrvResource);
     }
 
-    public function testPrepare()
+    public function testPrepare(): void
     {
         $sqlsrvResource = sqlsrv_connect(
             $this->variables['hostname'],
@@ -74,7 +74,7 @@ class StatementIntegrationTest extends AbstractIntegrationTestCase
         unset($resource, $sqlsrvResource);
     }
 
-    public function testExecute()
+    public function testExecute(): void
     {
         $sqlsrv    = new Sqlsrv($this->variables);
         $statement = $sqlsrv->createStatement("SELECT 'foo'");

@@ -48,7 +48,7 @@ class TableGatewayTest extends TestCase
     /**
      * Beside other tests checks for plain string table identifier
      */
-    public function testConstructor()
+    public function testConstructor(): void
     {
         // constructor with only required args
         $table = new TableGateway(
@@ -88,7 +88,7 @@ class TableGatewayTest extends TestCase
 
     #[Group('6726')]
     #[Group('6740')]
-    public function testTableAsString()
+    public function testTableAsString(): void
     {
         $ti = 'fooTable.barSchema';
         // constructor with only required args
@@ -102,7 +102,7 @@ class TableGatewayTest extends TestCase
 
     #[Group('6726')]
     #[Group('6740')]
-    public function testTableAsTableIdentifierObject()
+    public function testTableAsTableIdentifierObject(): void
     {
         $ti = new TableIdentifier('fooTable', 'barSchema');
         // constructor with only required args
@@ -116,7 +116,7 @@ class TableGatewayTest extends TestCase
 
     #[Group('6726')]
     #[Group('6740')]
-    public function testTableAsAliasedTableIdentifierObject()
+    public function testTableAsAliasedTableIdentifierObject(): void
     {
         // phpcs:disable WebimpressCodingStandard.NamingConventions.ValidVariableName.NotCamelCaps
         $aliasedTI = ['foo' => new TableIdentifier('fooTable', 'barSchema')];
@@ -150,7 +150,7 @@ class TableGatewayTest extends TestCase
      */
     #[DataProvider('aliasedTables')]
     #[Group('7311')]
-    public function testInsertShouldResetTableToUnaliasedTable(array $tableValue, string|TableIdentifier $expected)
+    public function testInsertShouldResetTableToUnaliasedTable(array $tableValue, string|TableIdentifier $expected): void
     {
         $insert = new Insert();
         $insert->into($tableValue);
@@ -167,7 +167,7 @@ class TableGatewayTest extends TestCase
             ->method('execute')
             ->willReturn($result);
 
-        $statementExpectation = function ($insert) use ($expected, $statement) {
+        $statementExpectation = function ($insert) use ($expected, $statement): \PHPUnit\Framework\MockObject\MockObject&\Laminas\Db\Adapter\Driver\StatementInterface {
             $state = $insert->getRawState();
             self::assertSame($expected, $state['table']);
             return $statement;
@@ -195,7 +195,7 @@ class TableGatewayTest extends TestCase
             $sql
         );
 
-        $result = $table->insert([
+        $table->insert([
             'foo' => 'FOO',
         ]);
 
@@ -211,7 +211,7 @@ class TableGatewayTest extends TestCase
      * @param array<string, string|TableIdentifier> $tableValue
      */
     #[DataProvider('aliasedTables')]
-    public function testUpdateShouldResetTableToUnaliasedTable(array $tableValue, string|TableIdentifier $expected)
+    public function testUpdateShouldResetTableToUnaliasedTable(array $tableValue, string|TableIdentifier $expected): void
     {
         $update = new Update();
         $update->table($tableValue);
@@ -228,7 +228,7 @@ class TableGatewayTest extends TestCase
             ->method('execute')
             ->willReturn($result);
 
-        $statementExpectation = function ($update) use ($expected, $statement) {
+        $statementExpectation = function ($update) use ($expected, $statement): \PHPUnit\Framework\MockObject\MockObject&\Laminas\Db\Adapter\Driver\StatementInterface {
             $state = $update->getRawState();
             self::assertSame($expected, $state['table']);
             return $statement;
@@ -256,7 +256,7 @@ class TableGatewayTest extends TestCase
             $sql
         );
 
-        $result = $table->update([
+        $table->update([
             'foo' => 'FOO',
         ], [
             'bar' => 'BAR',
@@ -274,7 +274,7 @@ class TableGatewayTest extends TestCase
      * @param array<string, string|TableIdentifier> $tableValue
      */
     #[DataProvider('aliasedTables')]
-    public function testDeleteShouldResetTableToUnaliasedTable(array $tableValue, string|TableIdentifier $expected)
+    public function testDeleteShouldResetTableToUnaliasedTable(array $tableValue, string|TableIdentifier $expected): void
     {
         $delete = new Delete();
         $delete->from($tableValue);
@@ -291,7 +291,7 @@ class TableGatewayTest extends TestCase
             ->method('execute')
             ->willReturn($result);
 
-        $statementExpectation = function ($delete) use ($expected, $statement) {
+        $statementExpectation = function ($delete) use ($expected, $statement): \PHPUnit\Framework\MockObject\MockObject&\Laminas\Db\Adapter\Driver\StatementInterface {
             $state = $delete->getRawState();
             self::assertSame($expected, $state['table']);
             return $statement;
@@ -319,7 +319,7 @@ class TableGatewayTest extends TestCase
             $sql
         );
 
-        $result = $table->delete([
+        $table->delete([
             'foo' => 'FOO',
         ]);
 

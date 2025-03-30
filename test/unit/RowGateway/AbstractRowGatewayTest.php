@@ -78,7 +78,7 @@ class AbstractRowGatewayTest extends TestCase
         $this->setRowGatewayState($rgPropertyValues);
     }
 
-    public function testOffsetSet()
+    public function testOffsetSet(): void
     {
         // If we set with an index, both getters should retrieve the same value:
         $this->rowGateway['testColumn'] = 'test';
@@ -87,7 +87,7 @@ class AbstractRowGatewayTest extends TestCase
     }
 
     // @codingStandardsIgnoreStart
-    public function test__set()
+    public function test__set(): void
     {
         // @codingStandardsIgnoreEnd
         // If we set with a property, both getters should retrieve the same value:
@@ -97,7 +97,7 @@ class AbstractRowGatewayTest extends TestCase
     }
 
     // @codingStandardsIgnoreStart
-    public function test__isset()
+    public function test__isset(): void
     {
         // @codingStandardsIgnoreEnd
         // Test isset before and after assigning to a property:
@@ -106,7 +106,7 @@ class AbstractRowGatewayTest extends TestCase
         self::assertTrue(isset($this->rowGateway->foo));
     }
 
-    public function testOffsetExists()
+    public function testOffsetExists(): void
     {
         // Test isset before and after assigning to an index:
         self::assertFalse(isset($this->rowGateway['foo']));
@@ -115,7 +115,7 @@ class AbstractRowGatewayTest extends TestCase
     }
 
     // @codingStandardsIgnoreStart
-    public function test__unset()
+    public function test__unset(): void
     {
         // @codingStandardsIgnoreEnd
         $this->rowGateway->foo = 'bar';
@@ -125,7 +125,7 @@ class AbstractRowGatewayTest extends TestCase
         self::assertEmpty($this->rowGateway['foo']);
     }
 
-    public function testOffsetUnset()
+    public function testOffsetUnset(): void
     {
         $this->rowGateway['foo'] = 'bar';
         self::assertEquals('bar', $this->rowGateway['foo']);
@@ -134,7 +134,7 @@ class AbstractRowGatewayTest extends TestCase
         self::assertEmpty($this->rowGateway['foo']);
     }
 
-    public function testOffsetGet()
+    public function testOffsetGet(): void
     {
         // If we set with an index, both getters should retrieve the same value:
         $this->rowGateway['testColumn'] = 'test';
@@ -143,7 +143,7 @@ class AbstractRowGatewayTest extends TestCase
     }
 
     // @codingStandardsIgnoreStart
-    public function test__get()
+    public function test__get(): void
     {
         // @codingStandardsIgnoreEnd
         // If we set with a property, both getters should retrieve the same value:
@@ -152,7 +152,7 @@ class AbstractRowGatewayTest extends TestCase
         self::assertEquals('test', $this->rowGateway['testColumn']);
     }
 
-    public function testSaveInsert()
+    public function testSaveInsert(): void
     {
         // test insert
         $this->mockResult->expects($this->any())->method('current')
@@ -168,7 +168,7 @@ class AbstractRowGatewayTest extends TestCase
      * @throws ReflectionException
      * @throws Exception
      */
-    public function testSaveInsertMultiKey()
+    public function testSaveInsertMultiKey(): void
     {
         $this->rowGateway = $this->getMockForAbstractClass(AbstractRowGateway::class);
 
@@ -202,7 +202,7 @@ class AbstractRowGatewayTest extends TestCase
         self::assertEquals(['one' => 'foo', 'two' => 'bar'], $refRowGatewayProp->getValue($this->rowGateway));
     }
 
-    public function testSaveUpdate()
+    public function testSaveUpdate(): void
     {
         // test update
         $this->mockResult->expects($this->any())->method('current')
@@ -212,7 +212,7 @@ class AbstractRowGatewayTest extends TestCase
         self::assertEquals(6, $this->rowGateway['id']);
     }
 
-    public function testSaveUpdateChangingPrimaryKey()
+    public function testSaveUpdateChangingPrimaryKey(): void
     {
         // this mock is the select to be used to re-fresh the rowobject's data
         $selectMock = $this->getMockBuilder(Select::class)
@@ -245,7 +245,7 @@ class AbstractRowGatewayTest extends TestCase
         self::assertEquals(['id' => 7, 'name' => 'fooUpdated'], $this->rowGateway->toArray());
     }
 
-    public function testDelete()
+    public function testDelete(): void
     {
         $this->rowGateway->foo = 'bar';
         $affectedRows          = $this->rowGateway->delete();
@@ -253,7 +253,7 @@ class AbstractRowGatewayTest extends TestCase
         self::assertEquals(1, $affectedRows);
     }
 
-    public function testPopulate()
+    public function testPopulate(): void
     {
         $this->rowGateway->populate(['id' => 5, 'name' => 'foo']);
         self::assertEquals(5, $this->rowGateway['id']);
@@ -264,7 +264,7 @@ class AbstractRowGatewayTest extends TestCase
         self::assertTrue($this->rowGateway->rowExistsInDatabase());
     }
 
-    public function testProcessPrimaryKeyData()
+    public function testProcessPrimaryKeyData(): void
     {
         $this->rowGateway->populate(['id' => 5, 'name' => 'foo'], true);
 
@@ -273,13 +273,13 @@ class AbstractRowGatewayTest extends TestCase
         $this->rowGateway->populate(['boo' => 5, 'name' => 'foo'], true);
     }
 
-    public function testCount()
+    public function testCount(): void
     {
         $this->rowGateway->populate(['id' => 5, 'name' => 'foo'], true);
         self::assertEquals(2, $this->rowGateway->count());
     }
 
-    public function testToArray()
+    public function testToArray(): void
     {
         $this->rowGateway->populate(['id' => 5, 'name' => 'foo'], true);
         self::assertEquals(['id' => 5, 'name' => 'foo'], $this->rowGateway->toArray());

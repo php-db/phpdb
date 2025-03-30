@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(UniqueKey::class, 'getExpressionData')]
 class UniqueKeyTest extends TestCase
 {
-    public function testGetExpressionData()
+    public function testGetExpressionData(): void
     {
         $uk = new UniqueKey('foo', 'my_uk');
         self::assertEquals(

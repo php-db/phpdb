@@ -75,14 +75,14 @@ class AdapterTest extends TestCase
     }
 
     #[TestDox('unit test: Test setProfiler() will store profiler')]
-    public function testSetProfiler()
+    public function testSetProfiler(): void
     {
         $ret = $this->adapter->setProfiler(new Profiler\Profiler());
         self::assertSame($this->adapter, $ret);
     }
 
     #[TestDox('unit test: Test getProfiler() will store profiler')]
-    public function testGetProfiler()
+    public function testGetProfiler(): void
     {
         $this->adapter->setProfiler($profiler = new Profiler\Profiler());
         self::assertSame($profiler, $this->adapter->getProfiler());
@@ -92,7 +92,7 @@ class AdapterTest extends TestCase
     }
 
     #[TestDox('unit test: Test createDriverFromParameters() will create proper driver type')]
-    public function testCreateDriver()
+    public function testCreateDriver(): void
     {
         if (extension_loaded('mysqli')) {
             $adapter = new Adapter(['driver' => 'mysqli'], $this->mockPlatform);
@@ -120,7 +120,7 @@ class AdapterTest extends TestCase
     }
 
     #[TestDox('unit test: Test createPlatformFromDriver() will create proper platform from driver')]
-    public function testCreatePlatform()
+    public function testCreatePlatform(): void
     {
         $driver = clone $this->mockDriver;
         $driver->expects($this->any())->method('getDatabasePlatformName')->willReturn('Mysql');
@@ -177,25 +177,25 @@ class AdapterTest extends TestCase
     }
 
     #[TestDox('unit test: Test getDriver() will return driver object')]
-    public function testGetDriver()
+    public function testGetDriver(): void
     {
         self::assertSame($this->mockDriver, $this->adapter->getDriver());
     }
 
     #[TestDox('unit test: Test getPlatform() returns platform object')]
-    public function testGetPlatform()
+    public function testGetPlatform(): void
     {
         self::assertSame($this->mockPlatform, $this->adapter->getPlatform());
     }
 
     #[TestDox('unit test: Test getPlatform() returns platform object')]
-    public function testGetQueryResultSetPrototype()
+    public function testGetQueryResultSetPrototype(): void
     {
         self::assertInstanceOf(ResultSetInterface::class, $this->adapter->getQueryResultSetPrototype());
     }
 
     #[TestDox('unit test: Test getCurrentSchema() returns current schema from connection object')]
-    public function testGetCurrentSchema()
+    public function testGetCurrentSchema(): void
     {
         $this->mockConnection->expects($this->any())->method('getCurrentSchema')->willReturn('FooSchema');
         self::assertEquals('FooSchema', $this->adapter->getCurrentSchema());
@@ -205,7 +205,7 @@ class AdapterTest extends TestCase
      * @throws \Exception
      */
     #[TestDox('unit test: Test query() in prepare mode produces a statement object')]
-    public function testQueryWhenPreparedProducesStatement()
+    public function testQueryWhenPreparedProducesStatement(): void
     {
         $s = $this->adapter->query('SELECT foo');
         self::assertSame($this->mockStatement, $s);
@@ -216,7 +216,7 @@ class AdapterTest extends TestCase
      * @throws \Exception
      */
     #[Group('#210')]
-    public function testProducedResultSetPrototypeIsDifferentForEachQuery()
+    public function testProducedResultSetPrototypeIsDifferentForEachQuery(): void
     {
         $statement = $this->createMock(StatementInterface::class);
         $result    = $this->createMock(ResultInterface::class);
@@ -238,7 +238,7 @@ class AdapterTest extends TestCase
      * @throws \Exception
      */
     #[TestDox('unit test: Test query() in prepare mode, with array of parameters, produces a result object')]
-    public function testQueryWhenPreparedWithParameterArrayProducesResult()
+    public function testQueryWhenPreparedWithParameterArrayProducesResult(): void
     {
         $parray    = ['bar' => 'foo'];
         $sql       = 'SELECT foo, :bar';
@@ -256,7 +256,7 @@ class AdapterTest extends TestCase
      * @throws \Exception
      */
     #[TestDox('unit test: Test query() in prepare mode, with ParameterContainer, produces a result object')]
-    public function testQueryWhenPreparedWithParameterContainerProducesResult()
+    public function testQueryWhenPreparedWithParameterContainerProducesResult(): void
     {
         $sql                = 'SELECT foo';
         $parameterContainer = $this->getMockBuilder(ParameterContainer::class)->getMock();
@@ -274,7 +274,7 @@ class AdapterTest extends TestCase
      * @throws \Exception
      */
     #[TestDox('unit test: Test query() in execute mode produces a driver result object')]
-    public function testQueryWhenExecutedProducesAResult()
+    public function testQueryWhenExecutedProducesAResult(): void
     {
         $sql    = 'SELECT foo';
         $result = $this->getMockBuilder(ResultInterface::class)->getMock();
@@ -288,7 +288,7 @@ class AdapterTest extends TestCase
      * @throws \Exception
      */
     #[TestDox('unit test: Test query() in execute mode produces a resultset object')]
-    public function testQueryWhenExecutedProducesAResultSetObjectWhenResultIsQuery()
+    public function testQueryWhenExecutedProducesAResultSetObjectWhenResultIsQuery(): void
     {
         $sql = 'SELECT foo';
 
@@ -304,13 +304,13 @@ class AdapterTest extends TestCase
     }
 
     #[TestDox('unit test: Test createStatement() produces a statement object')]
-    public function testCreateStatement()
+    public function testCreateStatement(): void
     {
         self::assertSame($this->mockStatement, $this->adapter->createStatement());
     }
 
     // @codingStandardsIgnoreStart
-    public function test__get()
+    public function test__get(): void
     {
         // @codingStandardsIgnoreEnd
         self::assertSame($this->mockDriver, $this->adapter->driver);

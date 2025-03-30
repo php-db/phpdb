@@ -20,7 +20,7 @@ class PlatformTest extends TestCase
     /**
      * @throws ReflectionException
      */
-    public function testResolveDefaultPlatform()
+    public function testResolveDefaultPlatform(): void
     {
         $adapter  = $this->resolveAdapter('sql92');
         $platform = new Platform($adapter);
@@ -36,7 +36,7 @@ class PlatformTest extends TestCase
     /**
      * @throws ReflectionException
      */
-    public function testResolvePlatformName()
+    public function testResolvePlatformName(): void
     {
         $platform = new Platform($this->resolveAdapter('sql92'));
 
@@ -58,7 +58,7 @@ class PlatformTest extends TestCase
      * @throws ReflectionException
      */
     #[Group('6890')]
-    public function testAbstractPlatformCrashesGracefullyOnMissingDefaultPlatform()
+    public function testAbstractPlatformCrashesGracefullyOnMissingDefaultPlatform(): void
     {
         $adapter            = $this->resolveAdapter('sql92');
         $reflectionProperty = new ReflectionProperty($adapter, 'platform');
@@ -81,7 +81,7 @@ class PlatformTest extends TestCase
      * @throws ReflectionException
      */
     #[Group('6890')]
-    public function testAbstractPlatformCrashesGracefullyOnMissingDefaultPlatformWithGetDecorators()
+    public function testAbstractPlatformCrashesGracefullyOnMissingDefaultPlatformWithGetDecorators(): void
     {
         $adapter            = $this->resolveAdapter('sql92');
         $reflectionProperty = new ReflectionProperty($adapter, 'platform');

@@ -27,7 +27,7 @@ class ConnectionTest extends TestCase
     /**
      * Test getResource method tries to connect to  the database, it should never return null
      */
-    public function testResource()
+    public function testResource(): void
     {
         $this->expectException(InvalidConnectionParametersException::class);
         $this->connection->getResource();
@@ -36,7 +36,7 @@ class ConnectionTest extends TestCase
     /**
      * Test getConnectedDsn returns a DSN string if it has been set
      */
-    public function testGetDsn()
+    public function testGetDsn(): void
     {
         $dsn = "sqlite::memory:";
         $this->connection->setConnectionParameters(['dsn' => $dsn]);
@@ -50,7 +50,7 @@ class ConnectionTest extends TestCase
     }
 
     #[Group('2622')]
-    public function testArrayOfConnectionParametersCreatesCorrectDsn()
+    public function testArrayOfConnectionParametersCreatesCorrectDsn(): void
     {
         $this->connection->setConnectionParameters([
             'driver'      => 'pdo_mysql',
@@ -72,7 +72,7 @@ class ConnectionTest extends TestCase
         self::assertStringContainsString('unix_socket=/var/run/mysqld/mysqld.sock', $responseString);
     }
 
-    public function testHostnameAndUnixSocketThrowsInvalidConnectionParametersException()
+    public function testHostnameAndUnixSocketThrowsInvalidConnectionParametersException(): void
     {
         $this->expectException(InvalidConnectionParametersException::class);
         $this->expectExceptionMessage(
@@ -89,7 +89,7 @@ class ConnectionTest extends TestCase
         $this->connection->connect();
     }
 
-    public function testDblibArrayOfConnectionParametersCreatesCorrectDsn()
+    public function testDblibArrayOfConnectionParametersCreatesCorrectDsn(): void
     {
         $this->connection->setConnectionParameters([
             'driver'  => 'pdo_dblib',

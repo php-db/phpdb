@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(Floating::class, 'getExpressionData')]
 class FloatingTest extends TestCase
 {
-    public function testGetExpressionData()
+    public function testGetExpressionData(): void
     {
         $column = new Floating('foo', 10, 5);
         self::assertEquals(

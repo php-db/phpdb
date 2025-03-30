@@ -26,12 +26,12 @@ class SqliteRowCounterTest extends TestCase
         $this->rowCounter = new SqliteRowCounter();
     }
 
-    public function testGetName()
+    public function testGetName(): void
     {
         self::assertEquals('SqliteRowCounter', $this->rowCounter->getName());
     }
 
-    public function testGetCountForStatement()
+    public function testGetCountForStatement(): void
     {
         $statement = $this->getMockStatement('SELECT XXX', 5);
         $statement->expects($this->once())->method('prepare')
@@ -41,14 +41,14 @@ class SqliteRowCounterTest extends TestCase
         self::assertEquals(5, $count);
     }
 
-    public function testGetCountForSql()
+    public function testGetCountForSql(): void
     {
         $this->rowCounter->setDriver($this->getMockDriver(5));
         $count = $this->rowCounter->getCountForSql('SELECT XXX');
         self::assertEquals(5, $count);
     }
 
-    public function testGetRowCountClosure()
+    public function testGetRowCountClosure(): void
     {
         $stmt = $this->getMockStatement('SELECT XXX', 5);
 
@@ -57,7 +57,10 @@ class SqliteRowCounterTest extends TestCase
         self::assertEquals(5, $closure());
     }
 
-    protected function getMockStatement(string $sql, mixed $returnValue): MockObject&Statement
+    /**
+     * @psalm-param 5 $returnValue
+     */
+    protected function getMockStatement(string $sql, int $returnValue): MockObject&Statement
     {
         /** @var Statement|MockObject $statement */
         $statement = $this->getMockBuilder(Statement::class)
@@ -87,7 +90,10 @@ class SqliteRowCounterTest extends TestCase
         return $statement;
     }
 
-    protected function getMockDriver(mixed $returnValue): MockObject&Pdo
+    /**
+     * @psalm-param 5 $returnValue
+     */
+    protected function getMockDriver(int $returnValue): MockObject&Pdo
     {
         $pdoStatement = $this->getMockBuilder(PDOStatement::class)
             ->onlyMethods(['fetch'])

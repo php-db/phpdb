@@ -610,7 +610,7 @@ class SqlFunctionalTest extends TestCase
      * @param $expected
      */
     #[DataProvider('dataProvider')]
-    public function test($sqlObject, $platform, $expected)
+    public function test($sqlObject, $platform, $expected): void
     {
         $sql = new Sql\Sql($this->resolveAdapter($platform));
 

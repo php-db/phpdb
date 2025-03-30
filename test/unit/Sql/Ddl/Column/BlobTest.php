@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(Blob::class, 'getExpressionData')]
 class BlobTest extends TestCase
 {
-    public function testGetExpressionData()
+    public function testGetExpressionData(): void
     {
         $column = new Blob('foo');
         self::assertEquals(

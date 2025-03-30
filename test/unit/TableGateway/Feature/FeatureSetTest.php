@@ -28,10 +28,11 @@ class FeatureSetTest extends TestCase
 {
     /**
      * @cover FeatureSet::addFeature
+     *
      * @throws Exception
      */
     #[Group('Laminas-4993')]
-    public function testAddFeatureThatFeatureDoesNotHaveTableGatewayButFeatureSetHas()
+    public function testAddFeatureThatFeatureDoesNotHaveTableGatewayButFeatureSetHas(): void
     {
         $mockMasterAdapter = $this->getMockBuilder(AdapterInterface::class)->getMock();
 
@@ -62,10 +63,11 @@ class FeatureSetTest extends TestCase
 
     /**
      * @cover FeatureSet::addFeature
+     *
      * @throws Exception
      */
     #[Group('Laminas-4993')]
-    public function testAddFeatureThatFeatureHasTableGatewayButFeatureSetDoesNotHave()
+    public function testAddFeatureThatFeatureHasTableGatewayButFeatureSetDoesNotHave(): void
     {
         $tableGatewayMock = $this->getMockForAbstractClass(AbstractTableGateway::class);
 
@@ -86,7 +88,7 @@ class FeatureSetTest extends TestCase
         self::assertInstanceOf(FeatureSet::class, $featureSet->addFeature($feature));
     }
 
-    public function testCanCallMagicCallReturnsTrueForAddedMethodOfAddedFeature()
+    public function testCanCallMagicCallReturnsTrueForAddedMethodOfAddedFeature(): void
     {
         $feature    = new SequenceFeature('id', 'table_sequence');
         $featureSet = new FeatureSet();
@@ -98,7 +100,7 @@ class FeatureSetTest extends TestCase
         );
     }
 
-    public function testCanCallMagicCallReturnsFalseForAddedMethodOfAddedFeature()
+    public function testCanCallMagicCallReturnsFalseForAddedMethodOfAddedFeature(): void
     {
         $feature    = new SequenceFeature('id', 'table_sequence');
         $featureSet = new FeatureSet();
@@ -110,7 +112,7 @@ class FeatureSetTest extends TestCase
         );
     }
 
-    public function testCanCallMagicCallReturnsFalseWhenNoFeaturesHaveBeenAdded()
+    public function testCanCallMagicCallReturnsFalseWhenNoFeaturesHaveBeenAdded(): void
     {
         $featureSet = new FeatureSet();
         self::assertFalse(
@@ -118,7 +120,7 @@ class FeatureSetTest extends TestCase
         );
     }
 
-    public function testCallMagicCallSucceedsForValidMethodOfAddedFeature()
+    public function testCallMagicCallSucceedsForValidMethodOfAddedFeature(): void
     {
         $sequenceName = 'table_sequence';
 

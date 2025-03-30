@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(Varbinary::class, 'getExpressionData')]
 class VarbinaryTest extends TestCase
 {
-    public function testGetExpressionData()
+    public function testGetExpressionData(): void
     {
         $column = new Varbinary('foo', 20);
         self::assertEquals(

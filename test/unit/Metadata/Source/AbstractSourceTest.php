@@ -31,7 +31,7 @@ class AbstractSourceTest extends TestCase
     /**
      * @throws ReflectionException
      */
-    public function testGetConstraintKeys()
+    public function testGetConstraintKeys(): void
     {
         $refProp = new ReflectionProperty($this->abstractSourceMock, 'data');
         /** @psalm-suppress UnusedMethodCall */
@@ -66,9 +66,6 @@ class AbstractSourceTest extends TestCase
         $constraints = $this->abstractSourceMock->getConstraintKeys('bam_constraint', 'bar_table', 'foo_schema');
         self::assertCount(1, $constraints);
 
-        /**
-         * @var ConstraintKeyObject $constraintKeyObj
-         */
         $constraintKeyObj = $constraints[0];
         self::assertInstanceOf(ConstraintKeyObject::class, $constraintKeyObj);
 

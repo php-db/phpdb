@@ -30,7 +30,7 @@ class SelectDecoratorTest extends TestCase
         array $expectedParams,
         mixed $notUsed,
         bool $supportsLimitOffset
-    ) {
+    ): void {
         $driver = $this->getMockBuilder(DriverInterface::class)->getMock();
         $driver->expects($this->any())->method('formatParameterName')->willReturn('?');
 
@@ -72,7 +72,7 @@ class SelectDecoratorTest extends TestCase
         mixed $ignored1,
         string $expectedSql,
         bool $supportsLimitOffset
-    ) {
+    ): void {
         $parameterContainer = new ParameterContainer();
         $statement          = $this->getMockBuilder(StatementInterface::class)->getMock();
         $statement

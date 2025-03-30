@@ -9,14 +9,14 @@ use function var_export;
 
 class OperatorTest extends TestCase
 {
-    public function testEmptyConstructorYieldsNullLeftAndRightValues()
+    public function testEmptyConstructorYieldsNullLeftAndRightValues(): void
     {
         $operator = new Operator();
         self::assertNull($operator->getLeft());
         self::assertNull($operator->getRight());
     }
 
-    public function testEmptyConstructorYieldsDefaultsForOperatorAndLeftAndRightTypes()
+    public function testEmptyConstructorYieldsDefaultsForOperatorAndLeftAndRightTypes(): void
     {
         $operator = new Operator();
         self::assertEquals(Operator::OP_EQ, $operator->getOperator());
@@ -24,7 +24,7 @@ class OperatorTest extends TestCase
         self::assertEquals(Operator::TYPE_VALUE, $operator->getRightType());
     }
 
-    public function testCanPassAllValuesToConstructor()
+    public function testCanPassAllValuesToConstructor(): void
     {
         $operator = new Operator('bar', '>=', 'foo.bar', Operator::TYPE_VALUE, Operator::TYPE_IDENTIFIER);
         self::assertEquals(Operator::OP_GTE, $operator->getOperator());
@@ -44,42 +44,42 @@ class OperatorTest extends TestCase
         self::assertEquals(0, $operator->getRight());
     }
 
-    public function testLeftIsMutable()
+    public function testLeftIsMutable(): void
     {
         $operator = new Operator();
         $operator->setLeft('foo.bar');
         self::assertEquals('foo.bar', $operator->getLeft());
     }
 
-    public function testRightIsMutable()
+    public function testRightIsMutable(): void
     {
         $operator = new Operator();
         $operator->setRight('bar');
         self::assertEquals('bar', $operator->getRight());
     }
 
-    public function testLeftTypeIsMutable()
+    public function testLeftTypeIsMutable(): void
     {
         $operator = new Operator();
         $operator->setLeftType(Operator::TYPE_VALUE);
         self::assertEquals(Operator::TYPE_VALUE, $operator->getLeftType());
     }
 
-    public function testRightTypeIsMutable()
+    public function testRightTypeIsMutable(): void
     {
         $operator = new Operator();
         $operator->setRightType(Operator::TYPE_IDENTIFIER);
         self::assertEquals(Operator::TYPE_IDENTIFIER, $operator->getRightType());
     }
 
-    public function testOperatorIsMutable()
+    public function testOperatorIsMutable(): void
     {
         $operator = new Operator();
         $operator->setOperator(Operator::OP_LTE);
         self::assertEquals(Operator::OP_LTE, $operator->getOperator());
     }
 
-    public function testRetrievingWherePartsReturnsSpecificationArrayOfLeftAndRightAndArrayOfTypes()
+    public function testRetrievingWherePartsReturnsSpecificationArrayOfLeftAndRightAndArrayOfTypes(): void
     {
         $operator = new Operator();
         $operator->setLeft('foo')

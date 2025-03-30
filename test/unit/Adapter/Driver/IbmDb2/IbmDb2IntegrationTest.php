@@ -15,13 +15,13 @@ use stdClass;
 class IbmDb2IntegrationTest extends AbstractIntegrationTestCase
 {
     #[Group('integration-ibm_db2')]
-    public function testCheckEnvironment()
+    public function testCheckEnvironment(): void
     {
         $ibmdb2 = new IbmDb2([]);
         self::assertNull($ibmdb2->checkEnvironment());
     }
 
-    public function testCreateStatement()
+    public function testCreateStatement(): void
     {
         $driver = new IbmDb2([]);
 

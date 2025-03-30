@@ -53,7 +53,7 @@ class AbstractSqlTest extends TestCase
     /**
      * @throws ReflectionException
      */
-    public function testProcessExpressionWithoutParameterContainer()
+    public function testProcessExpressionWithoutParameterContainer(): void
     {
         $expression   = new Expression('? > ? AND y < ?', [['x' => ExpressionInterface::TYPE_IDENTIFIER], 5, 10]);
         $sqlAndParams = $this->invokeProcessExpressionMethod($expression);
@@ -64,7 +64,7 @@ class AbstractSqlTest extends TestCase
     /**
      * @throws ReflectionException
      */
-    public function testProcessExpressionWithParameterContainerAndParameterizationTypeNamed()
+    public function testProcessExpressionWithParameterContainerAndParameterizationTypeNamed(): void
     {
         $parameterContainer = new ParameterContainer();
         $expression         = new Expression('? > ? AND y < ?', [['x' => ExpressionInterface::TYPE_IDENTIFIER], 5, 10]);
@@ -86,7 +86,7 @@ class AbstractSqlTest extends TestCase
 
         // ensure next invocation increases number by 1
         $parameterContainer = new ParameterContainer();
-        $sqlAndParamsNext   = $this->invokeProcessExpressionMethod($expression, $parameterContainer);
+        $this->invokeProcessExpressionMethod($expression, $parameterContainer);
 
         $parameters = $parameterContainer->getNamedArray();
 
@@ -99,7 +99,7 @@ class AbstractSqlTest extends TestCase
     /**
      * @throws ReflectionException
      */
-    public function testProcessExpressionWorksWithExpressionContainingStringParts()
+    public function testProcessExpressionWorksWithExpressionContainingStringParts(): void
     {
         $expression = new Predicate\Expression('x = ?', 5);
 
@@ -112,7 +112,7 @@ class AbstractSqlTest extends TestCase
     /**
      * @throws ReflectionException
      */
-    public function testProcessExpressionWorksWithExpressionContainingSelectObject()
+    public function testProcessExpressionWorksWithExpressionContainingSelectObject(): void
     {
         $select = new Select();
         $select->from('x')->where->like('bar', 'Foo%');
@@ -127,7 +127,7 @@ class AbstractSqlTest extends TestCase
     /**
      * @throws ReflectionException
      */
-    public function testProcessExpressionWorksWithExpressionContainingExpressionObject()
+    public function testProcessExpressionWorksWithExpressionContainingExpressionObject(): void
     {
         $expression = new Predicate\Operator(
             'release_date',
@@ -143,7 +143,7 @@ class AbstractSqlTest extends TestCase
      * @throws ReflectionException
      */
     #[Group('7407')]
-    public function testProcessExpressionWorksWithExpressionObjectWithPercentageSigns()
+    public function testProcessExpressionWorksWithExpressionObjectWithPercentageSigns(): void
     {
         $expressionString = 'FROM_UNIXTIME(date, "%Y-%m")';
         $expression       = new Expression($expressionString);
@@ -155,7 +155,7 @@ class AbstractSqlTest extends TestCase
     /**
      * @throws ReflectionException
      */
-    public function testProcessExpressionWorksWithNamedParameterPrefix()
+    public function testProcessExpressionWorksWithNamedParameterPrefix(): void
     {
         $parameterContainer   = new ParameterContainer();
         $namedParameterPrefix = uniqid();
@@ -168,7 +168,7 @@ class AbstractSqlTest extends TestCase
     /**
      * @throws ReflectionException
      */
-    public function testProcessExpressionWorksWithNamedParameterPrefixContainingWhitespace()
+    public function testProcessExpressionWorksWithNamedParameterPrefixContainingWhitespace(): void
     {
         $parameterContainer   = new ParameterContainer();
         $namedParameterPrefix = "string\ncontaining white space";

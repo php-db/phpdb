@@ -12,7 +12,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversClass(Boolean::class)]
 class BooleanTest extends TestCase
 {
-    public function testGetExpressionData()
+    public function testGetExpressionData(): void
     {
         $column = new Boolean('foo');
         self::assertEquals(
@@ -22,7 +22,7 @@ class BooleanTest extends TestCase
     }
 
     #[Group('6257')]
-    public function testIsAlwaysNotNullable()
+    public function testIsAlwaysNotNullable(): void
     {
         $column = new Boolean('foo', true);
 

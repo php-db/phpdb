@@ -36,33 +36,33 @@ class HydratingResultSetTest extends TestCase
             : ClassMethods::class;
     }
 
-    public function testSetObjectPrototype()
+    public function testSetObjectPrototype(): void
     {
         $prototype   = new stdClass();
         $hydratingRs = new HydratingResultSet();
         self::assertSame($hydratingRs, $hydratingRs->setObjectPrototype($prototype));
     }
 
-    public function testGetObjectPrototype()
+    public function testGetObjectPrototype(): void
     {
         $hydratingRs = new HydratingResultSet();
         self::assertInstanceOf('ArrayObject', $hydratingRs->getObjectPrototype());
     }
 
-    public function testSetHydrator()
+    public function testSetHydrator(): void
     {
         $hydratingRs   = new HydratingResultSet();
         $hydratorClass = $this->classMethodsHydratorClass;
         self::assertSame($hydratingRs, $hydratingRs->setHydrator(new $hydratorClass()));
     }
 
-    public function testGetHydrator()
+    public function testGetHydrator(): void
     {
         $hydratingRs = new HydratingResultSet();
         self::assertInstanceOf($this->arraySerializableHydratorClass, $hydratingRs->getHydrator());
     }
 
-    public function testCurrentHasData()
+    public function testCurrentHasData(): void
     {
         $hydratingRs = new HydratingResultSet();
         $hydratingRs->initialize([
@@ -72,7 +72,7 @@ class HydratingResultSetTest extends TestCase
         self::assertInstanceOf('ArrayObject', $obj);
     }
 
-    public function testCurrentDoesnotHasData()
+    public function testCurrentDoesnotHasData(): void
     {
         $hydratingRs = new HydratingResultSet();
         $hydratingRs->initialize([]);
@@ -81,9 +81,9 @@ class HydratingResultSetTest extends TestCase
     }
 
     /**
-     * @todo   Implement testToArray().
+     * @todo Implement testToArray().
      */
-    public function testToArray()
+    public function testToArray(): void
     {
         $hydratingRs = new HydratingResultSet();
         $hydratingRs->initialize([

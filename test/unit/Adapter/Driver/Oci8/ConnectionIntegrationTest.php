@@ -23,7 +23,7 @@ use PHPUnit\Framework\Attributes\Group;
 #[Group('integration-oracle')]
 class ConnectionIntegrationTest extends AbstractIntegrationTestCase
 {
-    public function testGetCurrentSchema()
+    public function testGetCurrentSchema(): void
     {
         $connection = new Connection($this->variables);
         self::assertInternalType('string', $connection->getCurrentSchema());
@@ -48,7 +48,7 @@ class ConnectionIntegrationTest extends AbstractIntegrationTestCase
         */
     }
 
-    public function testGetResource()
+    public function testGetResource(): void
     {
         $connection = new Connection($this->variables);
         $connection->connect();
@@ -58,7 +58,7 @@ class ConnectionIntegrationTest extends AbstractIntegrationTestCase
         unset($connection);
     }
 
-    public function testConnect()
+    public function testConnect(): void
     {
         $connection = new Connection($this->variables);
         self::assertSame($connection, $connection->connect());
@@ -68,7 +68,7 @@ class ConnectionIntegrationTest extends AbstractIntegrationTestCase
         unset($connection);
     }
 
-    public function testIsConnected()
+    public function testIsConnected(): void
     {
         $connection = new Connection($this->variables);
         self::assertFalse($connection->isConnected());
@@ -79,7 +79,7 @@ class ConnectionIntegrationTest extends AbstractIntegrationTestCase
         unset($connection);
     }
 
-    public function testDisconnect()
+    public function testDisconnect(): void
     {
         $connection = new Connection($this->variables);
         $connection->connect();
@@ -121,7 +121,7 @@ class ConnectionIntegrationTest extends AbstractIntegrationTestCase
         );
     }
 
-    public function testExecute()
+    public function testExecute(): void
     {
         $oci8       = new Oci8($this->variables);
         $connection = $oci8->getConnection();

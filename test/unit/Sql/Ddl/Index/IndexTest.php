@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(Index::class, 'getExpressionData')]
 class IndexTest extends TestCase
 {
-    public function testGetExpressionData()
+    public function testGetExpressionData(): void
     {
         $uk = new Index('foo', 'my_uk');
         self::assertEquals(
@@ -24,7 +24,7 @@ class IndexTest extends TestCase
         );
     }
 
-    public function testGetExpressionDataWithLength()
+    public function testGetExpressionDataWithLength(): void
     {
         $key = new Index(['foo', 'bar'], 'my_uk', [10, 5]);
         self::assertEquals(
@@ -39,7 +39,7 @@ class IndexTest extends TestCase
         );
     }
 
-    public function testGetExpressionDataWithLengthUnmatched()
+    public function testGetExpressionDataWithLengthUnmatched(): void
     {
         $key = new Index(['foo', 'bar'], 'my_uk', [10]);
         self::assertEquals(

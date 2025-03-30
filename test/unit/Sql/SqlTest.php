@@ -58,7 +58,7 @@ class SqlTest extends TestCase
     }
 
     // @codingStandardsIgnoreStart
-    public function test__construct()
+    public function test__construct(): void
     {
         // @codingStandardsIgnoreEnd
         $sql = new Sql($this->mockAdapter);
@@ -72,7 +72,7 @@ class SqlTest extends TestCase
         $sql->setTable(null);
     }
 
-    public function testSelect()
+    public function testSelect(): void
     {
         $select = $this->sql->select();
         self::assertInstanceOf(Select::class, $select);
@@ -85,7 +85,7 @@ class SqlTest extends TestCase
         $this->sql->select('bar');
     }
 
-    public function testInsert()
+    public function testInsert(): void
     {
         $insert = $this->sql->insert();
         self::assertInstanceOf(Insert::class, $insert);
@@ -98,7 +98,7 @@ class SqlTest extends TestCase
         $this->sql->insert('bar');
     }
 
-    public function testUpdate()
+    public function testUpdate(): void
     {
         $update = $this->sql->update();
         self::assertInstanceOf(Update::class, $update);
@@ -111,7 +111,7 @@ class SqlTest extends TestCase
         $this->sql->update('bar');
     }
 
-    public function testDelete()
+    public function testDelete(): void
     {
         $delete = $this->sql->delete();
 
@@ -125,7 +125,7 @@ class SqlTest extends TestCase
         $this->sql->delete('bar');
     }
 
-    public function testPrepareStatementForSqlObject()
+    public function testPrepareStatementForSqlObject(): void
     {
         $insert = $this->sql->insert()->columns(['foo'])->values(['foo' => 'bar']);
         $stmt   = $this->sql->prepareStatementForSqlObject($insert);
@@ -133,7 +133,7 @@ class SqlTest extends TestCase
     }
 
     #[Group('6890')]
-    public function testForDifferentAdapters()
+    public function testForDifferentAdapters(): void
     {
         $adapterSql92     = $this->getAdapterForPlatform('sql92');
         $adapterMySql     = $this->getAdapterForPlatform('MySql');

@@ -27,7 +27,7 @@ class ColumnTest extends TestCase
     }
 
     #[Depends('testSetName')]
-    public function testGetName(Column $column)
+    public function testGetName(Column $column): void
     {
         self::assertEquals('foo', $column->getName());
     }
@@ -40,7 +40,7 @@ class ColumnTest extends TestCase
     }
 
     #[Depends('testSetNullable')]
-    public function testIsNullable(Column $column)
+    public function testIsNullable(Column $column): void
     {
         self::assertTrue($column->isNullable());
         $column->setNullable(false);
@@ -55,7 +55,7 @@ class ColumnTest extends TestCase
     }
 
     #[Depends('testSetDefault')]
-    public function testGetDefault(Column $column)
+    public function testGetDefault(Column $column): void
     {
         self::assertEquals('foo bar', $column->getDefault());
     }
@@ -67,19 +67,19 @@ class ColumnTest extends TestCase
         return $column;
     }
 
-    public function testSetOption()
+    public function testSetOption(): void
     {
         $column = new Column();
         self::assertSame($column, $column->setOption('primary', true));
     }
 
     #[Depends('testSetOptions')]
-    public function testGetOptions(Column $column)
+    public function testGetOptions(Column $column): void
     {
         self::assertEquals(['autoincrement' => true], $column->getOptions());
     }
 
-    public function testGetExpressionData()
+    public function testGetExpressionData(): void
     {
         $column = new Column();
         $column->setName('foo');

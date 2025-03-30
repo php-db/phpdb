@@ -36,6 +36,8 @@ class ConnectionTest extends TestCase
 
     /**
      * Test getResource method if it tries to connect to the database.
+     *
+     * @return void
      */
     public function testResourceInvalid()
     {
@@ -46,7 +48,7 @@ class ConnectionTest extends TestCase
         // invalid port should lead to the custom error handler throwing
         $conn = new Connection(['socket' => '127.0.0.1', 'port' => 65112]);
         try {
-            $resource = $conn->getResource();
+            $conn->getResource();
             $this->fail('should throw');
         } catch (AdapterException\RuntimeException $exc) {
             $this->assertSame(
@@ -58,6 +60,8 @@ class ConnectionTest extends TestCase
 
     /**
      * Test getResource method if it tries to connect to the database.
+     *
+     * @return void
      */
     public function testResource()
     {
@@ -79,7 +83,7 @@ class ConnectionTest extends TestCase
     /**
      * Test disconnect method to return instance of ConnectionInterface
      */
-    public function testDisconnect()
+    public function testDisconnect(): void
     {
         include_once 'pgsqlMockFunctions.php';
         self::assertSame($this->connection, $this->connection->disconnect());
@@ -87,7 +91,7 @@ class ConnectionTest extends TestCase
 
     #[Group('6760')]
     #[Group('6787')]
-    public function testGetConnectionStringEncodeSpecialSymbol()
+    public function testGetConnectionStringEncodeSpecialSymbol(): void
     {
         $connectionParameters = [
             'driver'   => 'pgsql',
@@ -114,6 +118,9 @@ class ConnectionTest extends TestCase
         );
     }
 
+    /**
+     * @return void
+     */
     public function testSetConnectionTypeException()
     {
         if (! extension_loaded('pgsql')) {
@@ -126,6 +133,8 @@ class ConnectionTest extends TestCase
 
     /**
      * Test the connection type setter
+     *
+     * @return void
      */
     public function testSetConnectionType()
     {
@@ -137,6 +146,9 @@ class ConnectionTest extends TestCase
         self::assertEquals($type, self::readAttribute($this->connection, 'type'));
     }
 
+    /**
+     * @return void
+     */
     #[RunInSeparateProcess]
     public function testSetCharset()
     {
@@ -163,6 +175,9 @@ class ConnectionTest extends TestCase
         self::assertEquals('SQL_ASCII', pg_client_encoding($this->connection->getResource()));
     }
 
+    /**
+     * @return void
+     */
     #[RunInSeparateProcess]
     public function testSetInvalidCharset()
     {

@@ -33,7 +33,7 @@ class ConfigProviderTest extends TestCase
     }
 
     #[Depends('testProvidesExpectedConfiguration')]
-    public function testInvocationProvidesDependencyConfiguration(ConfigProvider $provider)
+    public function testInvocationProvidesDependencyConfiguration(ConfigProvider $provider): void
     {
         self::assertEquals(['dependencies' => $provider->getDependencyConfig()], $provider());
     }

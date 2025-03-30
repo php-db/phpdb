@@ -47,7 +47,7 @@ class DeleteTest extends TestCase
     {
     }
 
-    public function testFrom()
+    public function testFrom(): void
     {
         $this->delete->from('foo');
         self::assertEquals('foo', $this->readAttribute($this->delete, 'table'));
@@ -60,7 +60,7 @@ class DeleteTest extends TestCase
     /**
      * @todo REMOVE THIS IN 3.x
      */
-    public function testWhere()
+    public function testWhere(): void
     {
         $this->delete->where('x = y');
         $this->delete->where(['foo > ?' => 5]);
@@ -109,7 +109,7 @@ class DeleteTest extends TestCase
         });
     }
 
-    public function testPrepareStatement()
+    public function testPrepareStatement(): void
     {
         $mockDriver  = $this->getMockBuilder(DriverInterface::class)->getMock();
         $mockAdapter = $this->getMockBuilder(Adapter::class)
@@ -146,7 +146,7 @@ class DeleteTest extends TestCase
         $this->delete->prepareStatement($mockAdapter, $mockStatement);
     }
 
-    public function testGetSqlString()
+    public function testGetSqlString(): void
     {
         $this->delete->from('foo')
             ->where('x = y');
@@ -160,7 +160,7 @@ class DeleteTest extends TestCase
     }
 
     #[CoversNothing]
-    public function testSpecificationconstantsCouldBeOverridedByExtensionInPrepareStatement()
+    public function testSpecificationconstantsCouldBeOverridedByExtensionInPrepareStatement(): void
     {
         $deleteIgnore = new DeleteIgnore();
 
@@ -201,7 +201,7 @@ class DeleteTest extends TestCase
     }
 
     #[CoversNothing]
-    public function testSpecificationconstantsCouldBeOverridedByExtensionInGetSqlString()
+    public function testSpecificationconstantsCouldBeOverridedByExtensionInGetSqlString(): void
     {
         $deleteIgnore = new DeleteIgnore();
 

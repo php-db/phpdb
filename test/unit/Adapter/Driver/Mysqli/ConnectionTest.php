@@ -41,23 +41,23 @@ class ConnectionTest extends TestCase
     {
     }
 
-    public function testSetDriver()
+    public function testSetDriver(): void
     {
         self::assertEquals($this->connection, $this->connection->setDriver(new Mysqli([])));
     }
 
-    public function testSetConnectionParameters()
+    public function testSetConnectionParameters(): void
     {
         self::assertEquals($this->connection, $this->connection->setConnectionParameters([]));
     }
 
-    public function testGetConnectionParameters()
+    public function testGetConnectionParameters(): void
     {
         $this->connection->setConnectionParameters(['foo' => 'bar']);
         self::assertEquals(['foo' => 'bar'], $this->connection->getConnectionParameters());
     }
 
-    public function testNonSecureConnection()
+    public function testNonSecureConnection(): void
     {
         $mysqli     = $this->createMockMysqli(0);
         $connection = $this->createMockConnection(
@@ -74,7 +74,7 @@ class ConnectionTest extends TestCase
         $connection->connect();
     }
 
-    public function testSslConnection()
+    public function testSslConnection(): void
     {
         $mysqli     = $this->createMockMysqli(MYSQLI_CLIENT_SSL);
         $connection = $this->createMockConnection(
@@ -92,7 +92,7 @@ class ConnectionTest extends TestCase
         $connection->connect();
     }
 
-    public function testSslConnectionNoVerify()
+    public function testSslConnectionNoVerify(): void
     {
         $mysqli     = $this->createMockMysqli(MYSQLI_CLIENT_SSL | MYSQLI_CLIENT_SSL_DONT_VERIFY_SERVER_CERT);
         $connection = $this->createMockConnection(
@@ -113,7 +113,7 @@ class ConnectionTest extends TestCase
         $connection->connect();
     }
 
-    public function testConnectionFails()
+    public function testConnectionFails(): void
     {
         $connection = new Connection([]);
 

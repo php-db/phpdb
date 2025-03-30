@@ -19,7 +19,7 @@ class AdapterAwareTraitTest extends TestCase
      * @throws ReflectionException
      * @throws Exception
      */
-    public function testSetDbAdapter()
+    public function testSetDbAdapter(): void
     {
         $object = $this->getObjectForTrait(AdapterAwareTrait::class);
 

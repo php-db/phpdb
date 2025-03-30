@@ -17,12 +17,12 @@ class NotBetweenTest extends TestCase
         $this->notBetween = new NotBetween();
     }
 
-    public function testSpecificationHasSameDefaultValue()
+    public function testSpecificationHasSameDefaultValue(): void
     {
         self::assertEquals('%1$s NOT BETWEEN %2$s AND %3$s', $this->notBetween->getSpecification());
     }
 
-    public function testRetrievingWherePartsReturnsSpecificationArrayOfIdentifierAndValuesAndArrayOfTypes()
+    public function testRetrievingWherePartsReturnsSpecificationArrayOfIdentifierAndValuesAndArrayOfTypes(): void
     {
         $this->notBetween->setIdentifier('foo.bar')
                       ->setMinValue(10)

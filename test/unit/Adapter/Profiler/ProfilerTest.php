@@ -26,7 +26,7 @@ class ProfilerTest extends TestCase
         $this->profiler = new Profiler();
     }
 
-    public function testProfilerStart()
+    public function testProfilerStart(): void
     {
         $ret = $this->profiler->profilerStart('SELECT * FROM FOO');
         self::assertSame($this->profiler, $ret);
@@ -38,7 +38,7 @@ class ProfilerTest extends TestCase
         $this->profiler->profilerStart(5);
     }
 
-    public function testProfilerFinish()
+    public function testProfilerFinish(): void
     {
         $this->profiler->profilerStart('SELECT * FROM FOO');
         $ret = $this->profiler->profilerFinish();
@@ -50,7 +50,7 @@ class ProfilerTest extends TestCase
         $profiler->profilerFinish();
     }
 
-    public function testGetLastProfile()
+    public function testGetLastProfile(): void
     {
         $this->profiler->profilerStart('SELECT * FROM FOO');
         $this->profiler->profilerFinish();
@@ -62,7 +62,7 @@ class ProfilerTest extends TestCase
         self::assertIsFloat($profile['elapse']);
     }
 
-    public function testGetProfiles()
+    public function testGetProfiles(): void
     {
         $this->profiler->profilerStart('SELECT * FROM FOO1');
         $this->profiler->profilerFinish();

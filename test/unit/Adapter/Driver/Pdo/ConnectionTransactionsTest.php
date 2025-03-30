@@ -32,24 +32,24 @@ class ConnectionTransactionsTest extends TestCase
         $this->wrapper = new ConnectionWrapper();
     }
 
-    public function testBeginTransactionReturnsInstanceOfConnection()
+    public function testBeginTransactionReturnsInstanceOfConnection(): void
     {
         self::assertInstanceOf(Connection::class, $this->wrapper->beginTransaction());
     }
 
-    public function testBeginTransactionSetsInTransactionAtTrue()
+    public function testBeginTransactionSetsInTransactionAtTrue(): void
     {
         $this->wrapper->beginTransaction();
         self::assertTrue($this->wrapper->inTransaction());
     }
 
-    public function testCommitReturnsInstanceOfConnection()
+    public function testCommitReturnsInstanceOfConnection(): void
     {
         $this->wrapper->beginTransaction();
         self::assertInstanceOf(Connection::class, $this->wrapper->commit());
     }
 
-    public function testCommitSetsInTransactionAtFalse()
+    public function testCommitSetsInTransactionAtFalse(): void
     {
         $this->wrapper->beginTransaction();
         $this->wrapper->commit();
@@ -59,12 +59,12 @@ class ConnectionTransactionsTest extends TestCase
     /**
      * Standalone commit after a SET autocommit=0;
      */
-    public function testCommitWithoutBeginReturnsInstanceOfConnection()
+    public function testCommitWithoutBeginReturnsInstanceOfConnection(): void
     {
         self::assertInstanceOf(Connection::class, $this->wrapper->commit());
     }
 
-    public function testNestedTransactionsCommit()
+    public function testNestedTransactionsCommit(): void
     {
         $nested = 0;
 
@@ -91,7 +91,7 @@ class ConnectionTransactionsTest extends TestCase
         self::assertSame(--$nested, $this->wrapper->getNestedTransactionsCount());
     }
 
-    public function testNestedTransactionsRollback()
+    public function testNestedTransactionsRollback(): void
     {
         $nested = 0;
 
@@ -113,7 +113,7 @@ class ConnectionTransactionsTest extends TestCase
         self::assertSame(0, $this->wrapper->getNestedTransactionsCount());
     }
 
-    public function testRollbackDisconnectedThrowsException()
+    public function testRollbackDisconnectedThrowsException(): void
     {
         $this->wrapper->disconnect();
 
@@ -122,20 +122,20 @@ class ConnectionTransactionsTest extends TestCase
         $this->wrapper->rollback();
     }
 
-    public function testRollbackReturnsInstanceOfConnection()
+    public function testRollbackReturnsInstanceOfConnection(): void
     {
         $this->wrapper->beginTransaction();
         self::assertInstanceOf(Connection::class, $this->wrapper->rollback());
     }
 
-    public function testRollbackSetsInTransactionAtFalse()
+    public function testRollbackSetsInTransactionAtFalse(): void
     {
         $this->wrapper->beginTransaction();
         $this->wrapper->rollback();
         self::assertFalse($this->wrapper->inTransaction());
     }
 
-    public function testRollbackWithoutBeginThrowsException()
+    public function testRollbackWithoutBeginThrowsException(): void
     {
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Must call beginTransaction() before you can rollback');
@@ -145,7 +145,7 @@ class ConnectionTransactionsTest extends TestCase
     /**
      * Standalone commit after a SET autocommit=0;
      */
-    public function testStandaloneCommit()
+    public function testStandaloneCommit(): void
     {
         self::assertFalse($this->wrapper->inTransaction());
         self::assertSame(0, $this->wrapper->getNestedTransactionsCount());

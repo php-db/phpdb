@@ -26,13 +26,13 @@ use function php_uname;
 #[Group('integration-ibm_db2')]
 class ConnectionIntegrationTest extends AbstractIntegrationTestCase
 {
-    public function testGetCurrentSchema()
+    public function testGetCurrentSchema(): void
     {
         $connection = new Connection($this->variables);
         self::assertInternalType('string', $connection->getCurrentSchema());
     }
 
-    public function testSetResource()
+    public function testSetResource(): void
     {
         $resource   = db2_connect(
             $this->variables['database'],
@@ -47,7 +47,7 @@ class ConnectionIntegrationTest extends AbstractIntegrationTestCase
         unset($resource);
     }
 
-    public function testGetResource()
+    public function testGetResource(): void
     {
         $connection = new Connection($this->variables);
         $connection->connect();
@@ -57,7 +57,7 @@ class ConnectionIntegrationTest extends AbstractIntegrationTestCase
         unset($connection);
     }
 
-    public function testConnect()
+    public function testConnect(): void
     {
         $connection = new Connection($this->variables);
         self::assertSame($connection, $connection->connect());
@@ -67,7 +67,7 @@ class ConnectionIntegrationTest extends AbstractIntegrationTestCase
         unset($connection);
     }
 
-    public function testIsConnected()
+    public function testIsConnected(): void
     {
         $connection = new Connection($this->variables);
         self::assertFalse($connection->isConnected());
@@ -78,7 +78,7 @@ class ConnectionIntegrationTest extends AbstractIntegrationTestCase
         unset($connection);
     }
 
-    public function testDisconnect()
+    public function testDisconnect(): void
     {
         $connection = new Connection($this->variables);
         $connection->connect();
@@ -87,6 +87,9 @@ class ConnectionIntegrationTest extends AbstractIntegrationTestCase
         self::assertFalse($connection->isConnected());
     }
 
+    /**
+     * @return void
+     */
     public function testBeginTransaction()
     {
         if (! $this->isTransactionEnabled()) {
@@ -100,6 +103,9 @@ class ConnectionIntegrationTest extends AbstractIntegrationTestCase
         self::assertEquals(0, db2_autocommit($connection->getResource()));
     }
 
+    /**
+     * @return void
+     */
     public function testCommit()
     {
         if (! $this->isTransactionEnabled()) {
@@ -118,6 +124,9 @@ class ConnectionIntegrationTest extends AbstractIntegrationTestCase
         self::assertEquals($oldValue, db2_autocommit($connection->getResource()));
     }
 
+    /**
+     * @return void
+     */
     public function testRollback()
     {
         if (! $this->isTransactionEnabled()) {
@@ -149,7 +158,7 @@ class ConnectionIntegrationTest extends AbstractIntegrationTestCase
         return true;
     }
 
-    public function testExecute()
+    public function testExecute(): void
     {
         $ibmdb2     = new IbmDb2($this->variables);
         $connection = $ibmdb2->getConnection();
@@ -168,7 +177,7 @@ class ConnectionIntegrationTest extends AbstractIntegrationTestCase
     }
 
     #[Group('laminas3469')]
-    public function testConnectReturnsConnectionWhenResourceSet()
+    public function testConnectReturnsConnectionWhenResourceSet(): void
     {
         $resource   = db2_connect(
             $this->variables['database'],

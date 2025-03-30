@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(PrimaryKey::class, 'getExpressionData')]
 class PrimaryKeyTest extends TestCase
 {
-    public function testGetExpressionData()
+    public function testGetExpressionData(): void
     {
         $pk = new PrimaryKey('foo');
         self::assertEquals(

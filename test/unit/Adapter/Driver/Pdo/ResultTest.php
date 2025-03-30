@@ -21,7 +21,7 @@ class ResultTest extends TestCase
     /**
      * Tests current method returns same data on consecutive calls.
      */
-    public function testCurrent()
+    public function testCurrent(): void
     {
         $stub = $this->getMockBuilder('PDOStatement')->getMock();
         $stub->expects($this->any())
@@ -34,7 +34,7 @@ class ResultTest extends TestCase
         self::assertEquals($result->current(), $result->current());
     }
 
-    public function testFetchModeException()
+    public function testFetchModeException(): void
     {
         $result = new Result();
 
@@ -45,7 +45,7 @@ class ResultTest extends TestCase
     /**
      * Tests whether the fetch mode was set properly and
      */
-    public function testFetchModeAnonymousObject()
+    public function testFetchModeAnonymousObject(): void
     {
         $stub = $this->getMockBuilder('PDOStatement')->getMock();
         $stub->expects($this->any())
@@ -63,7 +63,7 @@ class ResultTest extends TestCase
     /**
      * Tests whether the fetch mode has a broader range
      */
-    public function testFetchModeRange()
+    public function testFetchModeRange(): void
     {
         $stub = $this->getMockBuilder('PDOStatement')->getMock();
         $stub->expects($this->any())
@@ -76,7 +76,7 @@ class ResultTest extends TestCase
         self::assertInstanceOf('stdClass', $result->current());
     }
 
-    public function testMultipleRewind()
+    public function testMultipleRewind(): void
     {
         $data     = [
             ['test' => 1],

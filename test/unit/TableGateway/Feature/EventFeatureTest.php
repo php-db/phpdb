@@ -42,17 +42,17 @@ class EventFeatureTest extends TestCase
         $this->feature->preInitialize();
     }
 
-    public function testGetEventManager()
+    public function testGetEventManager(): void
     {
         self::assertSame($this->eventManager, $this->feature->getEventManager());
     }
 
-    public function testGetEvent()
+    public function testGetEvent(): void
     {
         self::assertSame($this->event, $this->feature->getEvent());
     }
 
-    public function testPreInitialize()
+    public function testPreInitialize(): void
     {
         $closureHasRun = false;
 
@@ -69,7 +69,7 @@ class EventFeatureTest extends TestCase
         self::assertEquals(EventFeature::EVENT_PRE_INITIALIZE, $event->getName());
     }
 
-    public function testPostInitialize()
+    public function testPostInitialize(): void
     {
         $closureHasRun = false;
 
@@ -86,7 +86,7 @@ class EventFeatureTest extends TestCase
         self::assertEquals(EventFeature::EVENT_POST_INITIALIZE, $event->getName());
     }
 
-    public function testPreSelect()
+    public function testPreSelect(): void
     {
         $closureHasRun = false;
 
@@ -104,7 +104,7 @@ class EventFeatureTest extends TestCase
         self::assertSame($select, $event->getParam('select'));
     }
 
-    public function testPostSelect()
+    public function testPostSelect(): void
     {
         $closureHasRun = false;
 
@@ -128,7 +128,7 @@ class EventFeatureTest extends TestCase
         self::assertSame($resultset, $event->getParam('result_set'));
     }
 
-    public function testPreInsert()
+    public function testPreInsert(): void
     {
         $closureHasRun = false;
 
@@ -146,7 +146,7 @@ class EventFeatureTest extends TestCase
         self::assertSame($insert, $event->getParam('insert'));
     }
 
-    public function testPostInsert()
+    public function testPostInsert(): void
     {
         $closureHasRun = false;
 
@@ -168,7 +168,7 @@ class EventFeatureTest extends TestCase
         self::assertSame($result, $event->getParam('result'));
     }
 
-    public function testPreUpdate()
+    public function testPreUpdate(): void
     {
         $closureHasRun = false;
 
@@ -186,7 +186,7 @@ class EventFeatureTest extends TestCase
         self::assertSame($update, $event->getParam('update'));
     }
 
-    public function testPostUpdate()
+    public function testPostUpdate(): void
     {
         $closureHasRun = false;
 
@@ -208,7 +208,7 @@ class EventFeatureTest extends TestCase
         self::assertSame($result, $event->getParam('result'));
     }
 
-    public function testPreDelete()
+    public function testPreDelete(): void
     {
         $closureHasRun = false;
 
@@ -226,7 +226,7 @@ class EventFeatureTest extends TestCase
         self::assertSame($delete, $event->getParam('delete'));
     }
 
-    public function testPostDelete()
+    public function testPostDelete(): void
     {
         $closureHasRun = false;
 

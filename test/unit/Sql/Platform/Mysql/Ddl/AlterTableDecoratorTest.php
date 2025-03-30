@@ -14,14 +14,14 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(AlterTableDecorator::class, 'getSqlString')]
 class AlterTableDecoratorTest extends TestCase
 {
-    public function testSetSubject()
+    public function testSetSubject(): void
     {
         $ctd = new AlterTableDecorator();
         $ct  = new AlterTable();
         self::assertSame($ctd, $ctd->setSubject($ct));
     }
 
-    public function testGetSqlString()
+    public function testGetSqlString(): void
     {
         $ctd = new AlterTableDecorator();
         $ct  = new AlterTable('foo');

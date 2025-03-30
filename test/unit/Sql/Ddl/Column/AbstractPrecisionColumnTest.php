@@ -17,7 +17,7 @@ class AbstractPrecisionColumnTest extends TestCase
     /**
      * @throws Exception
      */
-    public function testSetDigits()
+    public function testSetDigits(): void
     {
         $column = $this->getMockForAbstractClass(AbstractPrecisionColumn::class, ['foo', 10]);
         self::assertEquals(10, $column->getDigits());
@@ -28,7 +28,7 @@ class AbstractPrecisionColumnTest extends TestCase
     /**
      * @throws Exception
      */
-    public function testGetDigits()
+    public function testGetDigits(): void
     {
         $column = $this->getMockForAbstractClass(AbstractPrecisionColumn::class, ['foo', 10]);
         self::assertEquals(10, $column->getDigits());
@@ -37,7 +37,7 @@ class AbstractPrecisionColumnTest extends TestCase
     /**
      * @throws Exception
      */
-    public function testSetDecimal()
+    public function testSetDecimal(): void
     {
         $column = $this->getMockForAbstractClass(AbstractPrecisionColumn::class, ['foo', 10, 5]);
         self::assertEquals(5, $column->getDecimal());
@@ -48,7 +48,7 @@ class AbstractPrecisionColumnTest extends TestCase
     /**
      * @throws Exception
      */
-    public function testGetDecimal()
+    public function testGetDecimal(): void
     {
         $column = $this->getMockForAbstractClass(AbstractPrecisionColumn::class, ['foo', 10, 5]);
         self::assertEquals(5, $column->getDecimal());
@@ -57,7 +57,7 @@ class AbstractPrecisionColumnTest extends TestCase
     /**
      * @throws Exception
      */
-    public function testGetExpressionData()
+    public function testGetExpressionData(): void
     {
         $column = $this->getMockForAbstractClass(AbstractPrecisionColumn::class, ['foo', 10, 5]);
 

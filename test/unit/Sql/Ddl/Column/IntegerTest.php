@@ -12,13 +12,13 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(Column::class, 'getExpressionData')]
 class IntegerTest extends TestCase
 {
-    public function testObjectConstruction()
+    public function testObjectConstruction(): void
     {
         $integer = new Integer('foo');
         self::assertEquals('foo', $integer->getName());
     }
 
-    public function testGetExpressionData()
+    public function testGetExpressionData(): void
     {
         $column = new Integer('foo');
         self::assertEquals(

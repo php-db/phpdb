@@ -40,27 +40,27 @@ class StatementTest extends TestCase
     {
     }
 
-    public function testSetDriver()
+    public function testSetDriver(): void
     {
         self::assertEquals($this->statement, $this->statement->setDriver(new Pdo([])));
     }
 
-    public function testSetParameterContainer()
+    public function testSetParameterContainer(): void
     {
         self::assertSame($this->statement, $this->statement->setParameterContainer(new ParameterContainer()));
     }
 
     /**
-     * @todo   Implement testGetParameterContainer().
+     * @todo Implement testGetParameterContainer().
      */
-    public function testGetParameterContainer()
+    public function testGetParameterContainer(): void
     {
         $container = new ParameterContainer();
         $this->statement->setParameterContainer($container);
         self::assertSame($container, $this->statement->getParameterContainer());
     }
 
-    public function testGetResource()
+    public function testGetResource(): void
     {
         $pdo  = new TestAsset\SqliteMemoryPdo();
         $stmt = $pdo->prepare('SELECT 1');
@@ -69,28 +69,28 @@ class StatementTest extends TestCase
         self::assertSame($stmt, $this->statement->getResource());
     }
 
-    public function testSetSql()
+    public function testSetSql(): void
     {
         $this->statement->setSql('SELECT 1');
         self::assertEquals('SELECT 1', $this->statement->getSql());
     }
 
-    public function testGetSql()
+    public function testGetSql(): void
     {
         $this->statement->setSql('SELECT 1');
         self::assertEquals('SELECT 1', $this->statement->getSql());
     }
 
     /**
-     * @todo   Implement testPrepare().
+     * @todo Implement testPrepare().
      */
-    public function testPrepare()
+    public function testPrepare(): void
     {
         $this->statement->initialize(new TestAsset\SqliteMemoryPdo());
         self::assertNull($this->statement->prepare('SELECT 1'));
     }
 
-    public function testIsPrepared()
+    public function testIsPrepared(): void
     {
         self::assertFalse($this->statement->isPrepared());
         $this->statement->initialize(new TestAsset\SqliteMemoryPdo());
@@ -98,7 +98,7 @@ class StatementTest extends TestCase
         self::assertTrue($this->statement->isPrepared());
     }
 
-    public function testExecute()
+    public function testExecute(): void
     {
         $this->statement->setDriver(new Pdo(new Connection($pdo = new TestAsset\SqliteMemoryPdo())));
         $this->statement->initialize($pdo);

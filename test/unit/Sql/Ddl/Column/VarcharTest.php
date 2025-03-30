@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(Varchar::class, 'getExpressionData')]
 class VarcharTest extends TestCase
 {
-    public function testGetExpressionData()
+    public function testGetExpressionData(): void
     {
         $column = new Varchar('foo', 20);
         self::assertEquals(

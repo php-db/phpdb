@@ -15,7 +15,7 @@ use const E_USER_NOTICE;
 
 class PredicateTest extends TestCase
 {
-    public function testEqualToCreatesOperatorPredicate()
+    public function testEqualToCreatesOperatorPredicate(): void
     {
         $predicate = new Predicate();
         $predicate->equalTo('foo.bar', 'bar');
@@ -25,7 +25,7 @@ class PredicateTest extends TestCase
         self::assertContains(['foo.bar', 'bar'], $parts[0]);
     }
 
-    public function testNotEqualToCreatesOperatorPredicate()
+    public function testNotEqualToCreatesOperatorPredicate(): void
     {
         $predicate = new Predicate();
         $predicate->notEqualTo('foo.bar', 'bar');
@@ -35,7 +35,7 @@ class PredicateTest extends TestCase
         self::assertContains(['foo.bar', 'bar'], $parts[0]);
     }
 
-    public function testLessThanCreatesOperatorPredicate()
+    public function testLessThanCreatesOperatorPredicate(): void
     {
         $predicate = new Predicate();
         $predicate->lessThan('foo.bar', 'bar');
@@ -45,7 +45,7 @@ class PredicateTest extends TestCase
         self::assertContains(['foo.bar', 'bar'], $parts[0]);
     }
 
-    public function testGreaterThanCreatesOperatorPredicate()
+    public function testGreaterThanCreatesOperatorPredicate(): void
     {
         $predicate = new Predicate();
         $predicate->greaterThan('foo.bar', 'bar');
@@ -55,7 +55,7 @@ class PredicateTest extends TestCase
         self::assertContains(['foo.bar', 'bar'], $parts[0]);
     }
 
-    public function testLessThanOrEqualToCreatesOperatorPredicate()
+    public function testLessThanOrEqualToCreatesOperatorPredicate(): void
     {
         $predicate = new Predicate();
         $predicate->lessThanOrEqualTo('foo.bar', 'bar');
@@ -65,7 +65,7 @@ class PredicateTest extends TestCase
         self::assertContains(['foo.bar', 'bar'], $parts[0]);
     }
 
-    public function testGreaterThanOrEqualToCreatesOperatorPredicate()
+    public function testGreaterThanOrEqualToCreatesOperatorPredicate(): void
     {
         $predicate = new Predicate();
         $predicate->greaterThanOrEqualTo('foo.bar', 'bar');
@@ -75,7 +75,7 @@ class PredicateTest extends TestCase
         self::assertContains(['foo.bar', 'bar'], $parts[0]);
     }
 
-    public function testLikeCreatesLikePredicate()
+    public function testLikeCreatesLikePredicate(): void
     {
         $predicate = new Predicate();
         $predicate->like('foo.bar', 'bar%');
@@ -85,7 +85,7 @@ class PredicateTest extends TestCase
         self::assertContains(['foo.bar', 'bar%'], $parts[0]);
     }
 
-    public function testNotLikeCreatesLikePredicate()
+    public function testNotLikeCreatesLikePredicate(): void
     {
         $predicate = new Predicate();
         $predicate->notLike('foo.bar', 'bar%');
@@ -95,7 +95,7 @@ class PredicateTest extends TestCase
         self::assertContains(['foo.bar', 'bar%'], $parts[0]);
     }
 
-    public function testLiteralCreatesLiteralPredicate()
+    public function testLiteralCreatesLiteralPredicate(): void
     {
         $predicate = new Predicate();
         $predicate->literal('foo.bar = ?', 'bar');
@@ -105,7 +105,7 @@ class PredicateTest extends TestCase
         self::assertContains(['bar'], $parts[0]);
     }
 
-    public function testIsNullCreatesIsNullPredicate()
+    public function testIsNullCreatesIsNullPredicate(): void
     {
         $predicate = new Predicate();
         $predicate->isNull('foo.bar');
@@ -115,7 +115,7 @@ class PredicateTest extends TestCase
         self::assertContains(['foo.bar'], $parts[0]);
     }
 
-    public function testIsNotNullCreatesIsNotNullPredicate()
+    public function testIsNotNullCreatesIsNotNullPredicate(): void
     {
         $predicate = new Predicate();
         $predicate->isNotNull('foo.bar');
@@ -125,7 +125,7 @@ class PredicateTest extends TestCase
         self::assertContains(['foo.bar'], $parts[0]);
     }
 
-    public function testInCreatesInPredicate()
+    public function testInCreatesInPredicate(): void
     {
         $predicate = new Predicate();
         $predicate->in('foo.bar', ['foo', 'bar']);
@@ -135,7 +135,7 @@ class PredicateTest extends TestCase
         self::assertContains(['foo.bar', 'foo', 'bar'], $parts[0]);
     }
 
-    public function testNotInCreatesNotInPredicate()
+    public function testNotInCreatesNotInPredicate(): void
     {
         $predicate = new Predicate();
         $predicate->notIn('foo.bar', ['foo', 'bar']);
@@ -145,7 +145,7 @@ class PredicateTest extends TestCase
         self::assertContains(['foo.bar', 'foo', 'bar'], $parts[0]);
     }
 
-    public function testBetweenCreatesBetweenPredicate()
+    public function testBetweenCreatesBetweenPredicate(): void
     {
         $predicate = new Predicate();
         $predicate->between('foo.bar', 1, 10);
@@ -155,7 +155,7 @@ class PredicateTest extends TestCase
         self::assertContains(['foo.bar', 1, 10], $parts[0]);
     }
 
-    public function testBetweenCreatesNotBetweenPredicate()
+    public function testBetweenCreatesNotBetweenPredicate(): void
     {
         $predicate = new Predicate();
         $predicate->notBetween('foo.bar', 1, 10);
@@ -165,7 +165,7 @@ class PredicateTest extends TestCase
         self::assertContains(['foo.bar', 1, 10], $parts[0]);
     }
 
-    public function testCanChainPredicateFactoriesBetweenOperators()
+    public function testCanChainPredicateFactoriesBetweenOperators(): void
     {
         $predicate = new Predicate();
         $predicate->isNull('foo.bar')
@@ -190,7 +190,7 @@ class PredicateTest extends TestCase
         self::assertContains(['baz.bat', 'foo'], $parts[4]);
     }
 
-    public function testCanNestPredicates()
+    public function testCanNestPredicates(): void
     {
         $predicate = new Predicate();
         $predicate->isNull('foo.bar')
@@ -222,7 +222,7 @@ class PredicateTest extends TestCase
     }
 
     #[TestDox('Unit test: Test expression() is chainable and returns proper values')]
-    public function testExpression()
+    public function testExpression(): void
     {
         $predicate = new Predicate();
 
@@ -236,7 +236,7 @@ class PredicateTest extends TestCase
     }
 
     #[TestDox('Unit test: Test expression() allows null $parameters')]
-    public function testExpressionNullParameters()
+    public function testExpressionNullParameters(): void
     {
         $predicate = new Predicate();
 
@@ -247,7 +247,7 @@ class PredicateTest extends TestCase
     }
 
     #[TestDox('Unit test: Test literal() is chainable, returns proper values, and is backwards compatible with 2.0.*')]
-    public function testLiteral()
+    public function testLiteral(): void
     {
         $predicate = new Predicate();
 

@@ -27,7 +27,7 @@ statement')]
         Select $select,
         string $expectedSql,
         array $expectedParams
-    ) {
+    ): void {
         $driver = $this->getMockBuilder(DriverInterface::class)->getMock();
         $driver->expects($this->any())->method('formatParameterName')->willReturn('?');
 
@@ -62,7 +62,7 @@ statement')]
         mixed $ignore,
         mixed $alsoIgnore,
         string $expectedSql
-    ) {
+    ): void {
         $parameterContainer = new ParameterContainer();
         $statement          = $this->getMockBuilder(StatementInterface::class)->getMock();
         $statement->expects($this->any())->method('getParameterContainer')

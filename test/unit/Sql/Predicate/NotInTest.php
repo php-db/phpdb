@@ -8,7 +8,7 @@ use PHPUnit\Framework\TestCase;
 
 class NotInTest extends TestCase
 {
-    public function testRetrievingWherePartsReturnsSpecificationArrayOfIdentifierAndValuesAndArrayOfTypes()
+    public function testRetrievingWherePartsReturnsSpecificationArrayOfIdentifierAndValuesAndArrayOfTypes(): void
     {
         $in = new NotIn();
         $in->setIdentifier('foo.bar')
@@ -23,7 +23,7 @@ class NotInTest extends TestCase
         self::assertEquals($expected, $in->getExpressionData());
     }
 
-    public function testGetExpressionDataWithSubselect()
+    public function testGetExpressionDataWithSubselect(): void
     {
         $select   = new Select();
         $in       = new NotIn('foo', $select);
@@ -37,7 +37,7 @@ class NotInTest extends TestCase
         self::assertEquals($expected, $in->getExpressionData());
     }
 
-    public function testGetExpressionDataWithSubselectAndIdentifier()
+    public function testGetExpressionDataWithSubselectAndIdentifier(): void
     {
         $select   = new Select();
         $in       = new NotIn('foo', $select);
@@ -51,7 +51,7 @@ class NotInTest extends TestCase
         self::assertEquals($expected, $in->getExpressionData());
     }
 
-    public function testGetExpressionDataWithSubselectAndArrayIdentifier()
+    public function testGetExpressionDataWithSubselectAndArrayIdentifier(): void
     {
         $select   = new Select();
         $in       = new NotIn(['foo', 'bar'], $select);

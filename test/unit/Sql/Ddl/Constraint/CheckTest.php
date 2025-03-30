@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(Check::class, 'getExpressionData')]
 class CheckTest extends TestCase
 {
-    public function testGetExpressionData()
+    public function testGetExpressionData(): void
     {
         $check = new Check('id>0', 'foo');
         self::assertEquals(

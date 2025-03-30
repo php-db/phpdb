@@ -19,7 +19,7 @@ class MetadataFeatureTest extends TestCase
      * @throws Exception
      */
     #[Group('integration-test')]
-    public function testPostInitialize()
+    public function testPostInitialize(): void
     {
         $tableGatewayMock = $this->getMockForAbstractClass(AbstractTableGateway::class);
         $metadataMock     = $this->getMockBuilder(MetadataInterface::class)->getMock();
@@ -41,7 +41,7 @@ class MetadataFeatureTest extends TestCase
     /**
      * @throws Exception
      */
-    public function testPostInitializeRecordsPrimaryKeyColumnToSharedMetadata()
+    public function testPostInitializeRecordsPrimaryKeyColumnToSharedMetadata(): void
     {
         /** @var AbstractTableGateway $tableGatewayMock */
         $tableGatewayMock = $this->getMockForAbstractClass(AbstractTableGateway::class);
@@ -76,7 +76,7 @@ class MetadataFeatureTest extends TestCase
     /**
      * @throws Exception
      */
-    public function testPostInitializeRecordsListOfColumnsInPrimaryKeyToSharedMetadata()
+    public function testPostInitializeRecordsListOfColumnsInPrimaryKeyToSharedMetadata(): void
     {
         /** @var AbstractTableGateway $tableGatewayMock */
         $tableGatewayMock = $this->getMockForAbstractClass(AbstractTableGateway::class);
@@ -111,7 +111,7 @@ class MetadataFeatureTest extends TestCase
     /**
      * @throws Exception
      */
-    public function testPostInitializeSkipsPrimaryKeyCheckIfNotTable()
+    public function testPostInitializeSkipsPrimaryKeyCheckIfNotTable(): void
     {
         /** @var AbstractTableGateway $tableGatewayMock */
         $tableGatewayMock = $this->getMockForAbstractClass(AbstractTableGateway::class);

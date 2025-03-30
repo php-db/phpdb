@@ -153,7 +153,6 @@ final class AdapterServiceDelegatorTest extends TestCase
             ],
         ]);
 
-        /** @var ConcreteAdapterAwareObject $result */
         $result = $container->get(ConcreteAdapterAwareObject::class);
 
         $this->assertInstanceOf(
@@ -167,7 +166,7 @@ final class AdapterServiceDelegatorTest extends TestCase
      * @throws NotFoundExceptionInterface
      * @throws Exception
      */
-    public function testDelegatorWithServiceManagerAndCustomAdapterName()
+    public function testDelegatorWithServiceManagerAndCustomAdapterName(): void
     {
         $databaseAdapter = new Adapter($this->createMock(DriverInterface::class));
 
@@ -185,7 +184,6 @@ final class AdapterServiceDelegatorTest extends TestCase
             ],
         ]);
 
-        /** @var ConcreteAdapterAwareObject $result */
         $result = $container->get(ConcreteAdapterAwareObject::class);
 
         $this->assertInstanceOf(
@@ -197,7 +195,7 @@ final class AdapterServiceDelegatorTest extends TestCase
     /**
      * @throws Exception
      */
-    public function testDelegatorWithPluginManager()
+    public function testDelegatorWithPluginManager(): void
     {
         $databaseAdapter = new Adapter($this->createMock(DriverInterface::class));
 

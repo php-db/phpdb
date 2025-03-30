@@ -25,7 +25,7 @@ class PdoTest extends TestCase
         $this->pdo = new Pdo([]);
     }
 
-    public function testGetDatabasePlatformName()
+    public function testGetDatabasePlatformName(): void
     {
         // Test platform name for SqlServer
         $this->pdo->getConnection()->setConnectionParameters(['pdodriver' => 'sqlsrv']);
@@ -52,7 +52,7 @@ class PdoTest extends TestCase
     }
 
     #[DataProvider('getParamsAndType')]
-    public function testFormatParameterName(int|string $name, ?string $type, string $expected)
+    public function testFormatParameterName(int|string $name, ?string $type, string $expected): void
     {
         $result = $this->pdo->formatParameterName($name, $type);
         $this->assertEquals($expected, $result);
@@ -70,13 +70,13 @@ class PdoTest extends TestCase
     }
 
     #[DataProvider('getInvalidParamName')]
-    public function testFormatParameterNameWithInvalidCharacters(string $name)
+    public function testFormatParameterNameWithInvalidCharacters(string $name): void
     {
         $this->expectException(RuntimeException::class);
         $this->pdo->formatParameterName($name);
     }
 
-    public function testGetResultPrototype()
+    public function testGetResultPrototype(): void
     {
         $resultPrototype = $this->pdo->getResultPrototype();
 

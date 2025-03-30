@@ -11,7 +11,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(CreateTableDecorator::class, 'getSqlString')]
 class CreateTableDecoratorTest extends TestCase
 {
-    public function testGetSqlString()
+    public function testGetSqlString(): void
     {
         $ctd = new CreateTableDecorator();
 
