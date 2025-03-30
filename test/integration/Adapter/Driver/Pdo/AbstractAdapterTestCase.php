@@ -17,12 +17,12 @@ abstract class AbstractAdapterTestCase extends TestCase
 {
     public const DB_SERVER_PORT = null;
 
-    public function testConnection()
+    public function testConnection(): void
     {
         $this->assertInstanceOf(Adapter::class, $this->adapter);
     }
 
-    public function testDriverDisconnectAfterQuoteWithPlatform()
+    public function testDriverDisconnectAfterQuoteWithPlatform(): void
     {
         $isTcpConnection = $this->isTcpConnection();
 

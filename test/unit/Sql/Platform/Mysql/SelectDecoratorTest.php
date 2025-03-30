@@ -31,6 +31,7 @@ class SelectDecoratorTest extends TestCase
 
     protected Sql $sql;
     #[DataProvider('dataProvider')]
+
     #[TestDox('integration test: Testing SelectDecorator will use Select an internal state to prepare
                            a proper limit/offset sql statement')]
     public function testPrepareStatement(Select $select, string $expectedSql, array $expectedParams)

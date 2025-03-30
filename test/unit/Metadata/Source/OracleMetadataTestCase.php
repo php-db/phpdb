@@ -37,7 +37,7 @@ class OracleMetadataTestCase extends AbstractIntegrationTestCase
     }
 
     #[DataProvider('constraintDataProvider')]
-    public function testGetConstraints(array $constraintData)
+    public function testGetConstraints(array $constraintData): void
     {
         $statement = $this->getMockBuilder(Statement::class)
             ->getMock();

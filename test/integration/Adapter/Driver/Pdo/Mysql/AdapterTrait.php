@@ -25,7 +25,7 @@ trait AdapterTrait
         ]);
     }
 
-    protected function getHostname(): ?string
+    protected function getHostname(): array|string|false|null
     {
         return getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_MYSQL_HOSTNAME');
     }
