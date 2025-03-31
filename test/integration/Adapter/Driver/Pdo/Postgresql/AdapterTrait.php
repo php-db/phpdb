@@ -3,29 +3,31 @@
 namespace LaminasIntegrationTest\Db\Adapter\Driver\Pdo\Postgresql;
 
 use Laminas\Db\Adapter\Adapter;
+use Override;
 
 use function getenv;
+use function is_string;
+use function strtolower;
 
 trait AdapterTrait
 {
-    #[\Override]
+    protected ?string $hostname = 'localhost';
+
+    #[Override]
     protected function setUp(): void
     {
-        if (! getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_PGSQL')) {
+        if (! is_string(getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_PGSQL')) || strtolower(getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_PGSQL')) !== 'true') {
             $this->markTestSkipped('pdo_pgsql integration tests are not enabled!');
         }
 
         $this->adapter = new Adapter([
             'driver'   => 'pdo_pgsql',
-            'database' => getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_PGSQL_DATABASE'),
-            'hostname' => getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_PGSQL_HOSTNAME'),
-            'username' => getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_PGSQL_USERNAME'),
-            'password' => getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_PGSQL_PASSWORD'),
+            'database' => (string) getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_PGSQL_DATABASE'),
+            'hostname' => (string) getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_PGSQL_HOSTNAME'),
+            'username' => (string) getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_PGSQL_USERNAME'),
+            'password' => (string) getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_PGSQL_PASSWORD'),
         ]);
-    }
 
-    protected function getHostname(): string|false
-    {
-        return getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_PGSQL_HOSTNAME');
+        $this->hostname = (string) getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_PGSQL_HOSTNAME');
     }
 }

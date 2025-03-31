@@ -17,6 +17,7 @@ use Laminas\Db\TableGateway\Exception\InvalidArgumentException;
 use Laminas\Db\TableGateway\Feature;
 use Laminas\Db\TableGateway\Feature\FeatureSet;
 use Laminas\Db\TableGateway\TableGateway;
+use Override;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -29,7 +30,7 @@ final class TableGatewayTest extends TestCase
 {
     protected Adapter&MockObject $mockAdapter;
 
-    #[\Override]
+    #[Override]
     protected function setUp(): void
     {
         // mock the adapter, driver, and parts
@@ -151,7 +152,6 @@ final class TableGatewayTest extends TestCase
 
     /**
      * @param AliasedTable           $tableValue
-     * @param string|TableIdentifier $expected
      */
     #[DataProvider('aliasedTables')]
     #[Group('7311')]
@@ -216,7 +216,6 @@ final class TableGatewayTest extends TestCase
 
     /**
      * @param AliasedTable           $tableValue
-     * @param string|TableIdentifier $expected
      */
     #[DataProvider('aliasedTables')]
     public function testUpdateShouldResetTableToUnaliasedTable(array $tableValue, string|TableIdentifier $expected): void
@@ -282,7 +281,6 @@ final class TableGatewayTest extends TestCase
 
     /**
      * @param AliasedTable           $tableValue
-     * @param string|TableIdentifier $expected
      */
     #[DataProvider('aliasedTables')]
     public function testDeleteShouldResetTableToUnaliasedTable(array $tableValue, string|TableIdentifier $expected): void

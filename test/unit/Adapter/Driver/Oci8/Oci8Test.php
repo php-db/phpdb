@@ -6,6 +6,7 @@ use Laminas\Db\Adapter\Driver\Oci8\Connection;
 use Laminas\Db\Adapter\Driver\Oci8\Oci8;
 use Laminas\Db\Adapter\Driver\Oci8\Result;
 use Laminas\Db\Adapter\Driver\Oci8\Statement;
+use Override;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Depends;
 use PHPUnit\Framework\MockObject\Exception;
@@ -29,7 +30,7 @@ final class Oci8Test extends TestCase
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
-    #[\Override]
+    #[Override]
     protected function setUp(): void
     {
         $this->oci8 = new Oci8([]);
@@ -40,15 +41,7 @@ final class Oci8Test extends TestCase
      */
     public function testRegisterConnection(): void
     {
-        $mockConnection = $this->getMockForAbstractClass(
-            Connection::class,
-            [[]],
-            '',
-            true,
-            true,
-            true,
-            ['setDriver']
-        );
+        $mockConnection = $this->getMockBuilder(Connection::class)->setConstructorArgs([[]])->onlyMethods(['setDriver'])->getMock();
         $mockConnection->expects($this->once())->method('setDriver')->with($this->equalTo($this->oci8));
         self::assertSame($this->oci8, $this->oci8->registerConnection($mockConnection));
     }
@@ -59,15 +52,7 @@ final class Oci8Test extends TestCase
     public function testRegisterStatementPrototype(): void
     {
         $this->oci8    = new Oci8([]);
-        $mockStatement = $this->getMockForAbstractClass(
-            Statement::class,
-            [],
-            '',
-            true,
-            true,
-            true,
-            ['setDriver']
-        );
+        $mockStatement = $this->getMockBuilder(Statement::class)->setConstructorArgs([])->onlyMethods(['setDriver'])->getMock();
         $mockStatement->expects($this->once())->method('setDriver')->with($this->equalTo($this->oci8));
         self::assertSame($this->oci8, $this->oci8->registerStatementPrototype($mockStatement));
     }
@@ -78,15 +63,7 @@ final class Oci8Test extends TestCase
     public function testRegisterResultPrototype(): void
     {
         $this->oci8    = new Oci8([]);
-        $mockStatement = $this->getMockForAbstractClass(
-            Result::class,
-            [],
-            '',
-            true,
-            true,
-            true,
-            ['setDriver']
-        );
+        $mockStatement = $this->getMockBuilder(Result::class)->setConstructorArgs([])->onlyMethods([])->getMock();
         self::assertSame($this->oci8, $this->oci8->registerResultPrototype($mockStatement));
     }
 

@@ -129,12 +129,13 @@ final class PredicateSetTest extends TestCase
         self::assertEquals('AND', $predicates[6][0]);
         self::assertInstanceOf(IsNotNull::class, $predicates[6][1]);
 
-        $predicateSet->addPredicates(function ($what) use ($predicateSet) {
+        $predicateSet->addPredicates(function ($what) use ($predicateSet): void {
             self::assertSame($predicateSet, $what);
         });
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Predicate cannot be null');
+        /** @psalm-suppress NullArgument - ensure an exception is thrown */
         $predicateSet->addPredicates(null);
     }
 }

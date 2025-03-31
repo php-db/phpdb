@@ -3,6 +3,7 @@
 namespace LaminasTest\Db\Adapter;
 
 use Laminas\Db\Adapter\ParameterContainer;
+use Override;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\TestDox;
 use PHPUnit\Framework\TestCase;
@@ -37,7 +38,7 @@ final class ParameterContainerTest extends TestCase
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
-    #[\Override]
+    #[Override]
     protected function setUp(): void
     {
         $this->parameterContainer = new ParameterContainer(['foo' => 'bar']);

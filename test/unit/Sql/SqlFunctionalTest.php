@@ -25,10 +25,10 @@ use function is_array;
 use function is_string;
 
 /**
- * @method Select select(null|string $table)
- * @method Update update(null|string $table)
- * @method Delete delete(null|string $table)
- * @method Insert insert(null|string $table)
+ * @method Select select(TableIdentifier|null|string $table)
+ * @method Update update(TableIdentifier|null|string $table)
+ * @method Delete delete(TableIdentifier|null|string $table)
+ * @method Insert insert(TableIdentifier|null|string $table)
  * @method CreateTable createTable(null|string $table)
  * @method Column createColumn(null|string $name)
  */
@@ -146,7 +146,7 @@ final class SqlFunctionalTest extends TestCase
                                     ->join(
                                         'joined_table2',
                                         'my_table.id = joined_table2.id',
-                                        $columns = []
+                                        []
                                     )
                                     ->join(
                                         'joined_table3',
@@ -621,7 +621,7 @@ final class SqlFunctionalTest extends TestCase
         }
 
         $expectedString = is_string($expected) ? $expected : ($expected['string'] ?? null);
-        if ($expectedString) {
+        if ($expectedString !== '') {
             $actual = $sql->buildSqlString($sqlObject);
             self::assertEquals($expectedString, $actual, "getSqlString()");
         }
@@ -635,10 +635,6 @@ final class SqlFunctionalTest extends TestCase
         }
     }
 
-    /**
-     * @return null|PlatformDecoratorInterface
-     * @psalm-return null|PlatformDecoratorInterface&MockObject
-     */
     protected function resolveDecorator(
         PlatformDecoratorInterface|array $decorator
     ): PlatformDecoratorInterface|MockObject|null {

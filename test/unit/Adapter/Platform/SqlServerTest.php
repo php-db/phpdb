@@ -4,6 +4,7 @@ namespace LaminasTest\Db\Adapter\Platform;
 
 use Laminas\Db\Adapter\Driver\Pdo\Pdo;
 use Laminas\Db\Adapter\Platform\SqlServer;
+use Override;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 
@@ -29,7 +30,7 @@ final class SqlServerTest extends TestCase
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
-    #[\Override]
+    #[Override]
     protected function setUp(): void
     {
         $this->platform = new SqlServer();
@@ -161,7 +162,7 @@ final class SqlServerTest extends TestCase
 
     public function testPlatformQuotesNullByteCharacter(): void
     {
-        set_error_handler(function () {
+        set_error_handler(function (): void {
         });
         $string = "1\0";
         $value  = $this->platform->quoteValue($string);

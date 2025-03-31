@@ -5,6 +5,7 @@ namespace LaminasTest\Db\Adapter\Platform;
 use Laminas\Db\Adapter\Driver\Oci8\Oci8;
 use Laminas\Db\Adapter\Exception\InvalidArgumentException;
 use Laminas\Db\Adapter\Platform\Oracle;
+use Override;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
@@ -30,7 +31,7 @@ final class OracleTest extends TestCase
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
-    #[\Override]
+    #[Override]
     protected function setUp(): void
     {
         $this->platform = new Oracle();
@@ -50,15 +51,7 @@ final class OracleTest extends TestCase
      */
     public function testContructWithDriver(): void
     {
-        $mockDriver = $this->getMockForAbstractClass(
-            Oci8::class,
-            [[]],
-            '',
-            true,
-            true,
-            true,
-            []
-        );
+        $mockDriver = $this->getMockBuilder(Oci8::class)->setConstructorArgs([[]])->onlyMethods([])->getMock();
         $platform   = new Oracle([], $mockDriver);
         self::assertEquals($mockDriver, $platform->getDriver());
     }
@@ -68,15 +61,7 @@ final class OracleTest extends TestCase
      */
     public function testSetDriver(): void
     {
-        $mockDriver = $this->getMockForAbstractClass(
-            Oci8::class,
-            [[]],
-            '',
-            true,
-            true,
-            true,
-            []
-        );
+        $mockDriver = $this->getMockBuilder(Oci8::class)->setConstructorArgs([[]])->onlyMethods([])->getMock();
         $platform   = $this->platform->setDriver($mockDriver);
         self::assertEquals($mockDriver, $platform->getDriver());
     }
@@ -87,6 +72,7 @@ final class OracleTest extends TestCase
         $this->expectExceptionMessage(
             '$driver must be a Oci8 or Oracle PDO Laminas\Db\Adapter\Driver, Oci8 instance, or Oci PDO instance'
         );
+        /** @psalm-suppress NullArgument - ensure an exception is thrown */
         $this->platform->setDriver(null);
     }
 

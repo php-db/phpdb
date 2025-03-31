@@ -2,10 +2,12 @@
 
 namespace LaminasIntegrationTest\Db\Adapter\Driver\Mysqli;
 
+use Override;
 use PHPUnit\Framework\Attributes\RequiresPhpExtension;
 
 use function extension_loaded;
 use function getenv;
+use function is_string;
 use function sprintf;
 use function strtolower;
 
@@ -30,7 +32,7 @@ trait TraitSetup
      * This method is called before a test is executed.
      */
     #[RequiresPhpExtension('mysqli')]
-    #[\Override]
+    #[Override]
     protected function setUp(): void
     {
         $testEnabled = (string) getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_MYSQL_ENABLED');
@@ -43,17 +45,18 @@ trait TraitSetup
         }
 
         foreach ($this->variables as $name => $value) {
-            if (! getenv($value)) {
+            if (! is_string(getenv($value)) || '' === getenv($value)) {
                 $this->markTestSkipped(sprintf(
                     'Missing required variable %s $this->mockUpdate phpunit.xml for this integration test',
                     $value
                 ));
+            } else {
+                $this->variables[$name] = getenv($value);
             }
-            $this->variables[$name] = getenv($value);
         }
 
         foreach ($this->optional as $name => $value) {
-            if (getenv($value)) {
+            if (is_string(getenv($value)) && '' === getenv($value)) {
                 $this->variables[$name] = getenv($value);
             }
         }

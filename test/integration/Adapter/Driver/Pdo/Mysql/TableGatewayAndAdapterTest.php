@@ -4,6 +4,7 @@ namespace LaminasIntegrationTest\Db\Adapter\Driver\Pdo\Mysql;
 
 use Exception;
 use Laminas\Db\TableGateway\TableGateway;
+use LaminasIntegrationTest\Db\Adapter\Driver\Pdo\AdapterTrait as BaseAdapterTrait;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
@@ -18,6 +19,7 @@ use function array_fill;
 final class TableGatewayAndAdapterTest extends TestCase
 {
     use AdapterTrait;
+    use BaseAdapterTrait;
 
     /**
      * @throws Exception

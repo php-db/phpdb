@@ -24,6 +24,7 @@ use Laminas\Db\Adapter\Profiler;
 use Laminas\Db\ResultSet\ResultSet;
 use Laminas\Db\ResultSet\ResultSetInterface;
 use LaminasTest\Db\TestAsset\TemporaryResultSet;
+use Override;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\TestDox;
@@ -59,7 +60,7 @@ final class AdapterTest extends TestCase
     /**
      * @throws Exception
      */
-    #[\Override]
+    #[Override]
     protected function setUp(): void
     {
         $this->mockDriver     = $this->createMock(DriverInterface::class);

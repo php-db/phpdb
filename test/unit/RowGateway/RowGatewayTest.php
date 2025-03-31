@@ -9,6 +9,7 @@ use Laminas\Db\Adapter\Driver\ResultInterface;
 use Laminas\Db\Adapter\Driver\StatementInterface;
 use Laminas\Db\RowGateway\Exception\RuntimeException;
 use Laminas\Db\RowGateway\RowGateway;
+use Override;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -21,7 +22,7 @@ final class RowGatewayTest extends TestCase
 
     /** @var ResultInterface&MockObject */
     protected ResultInterface|MockObject $mockResult;
-    #[\Override]
+    #[Override]
     protected function setUp(): void
     {
         // mock the adapter, driver, and parts

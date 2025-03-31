@@ -12,6 +12,7 @@ use Laminas\Db\RowGateway\Exception\RuntimeException;
 use Laminas\Db\RowGateway\RowGateway;
 use Laminas\Db\Sql\Select;
 use Laminas\Db\Sql\Sql;
+use Override;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -49,7 +50,7 @@ final class AbstractRowGatewayTest extends TestCase
      * @throws ReflectionException
      * @throws Exception
      */
-    #[\Override]
+    #[Override]
     protected function setUp(): void
     {
         // mock the adapter, driver, and parts
@@ -69,7 +70,7 @@ final class AbstractRowGatewayTest extends TestCase
             ->setConstructorArgs([$mockDriver])
             ->getMock();
 
-        $this->rowGateway = $this->getMockForAbstractClass(AbstractRowGateway::class);
+        $this->rowGateway = $this->getMockBuilder(AbstractRowGateway::class)->onlyMethods([])->getMock();
 
         $rgPropertyValues = [
             'primaryKeyColumn' => 'id',
@@ -171,9 +172,9 @@ final class AbstractRowGatewayTest extends TestCase
      */
     public function testSaveInsertMultiKey(): void
     {
-        $this->rowGateway = $this->getMockForAbstractClass(AbstractRowGateway::class);
+        $this->rowGateway = $this->getMockBuilder(AbstractRowGateway::class)->onlyMethods([])->getMock();
 
-        $mockSql = $this->getMockForAbstractClass(Sql::class, [$this->mockAdapter]);
+        $mockSql = $this->getMockBuilder(Sql::class)->setConstructorArgs([$this->mockAdapter])->onlyMethods([])->getMock();
 
         $rgPropertyValues = [
             'primaryKeyColumn' => ['one', 'two'],

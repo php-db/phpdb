@@ -6,6 +6,7 @@ use Laminas\Db\Adapter\Driver\Pdo\Result as PdoResult;
 use Laminas\Db\Adapter\Exception\RuntimeException;
 use Laminas\Db\ResultSet\ResultSet;
 use Laminas\Db\Sql\Sql;
+use LaminasIntegrationTest\Db\Adapter\Driver\Pdo\AdapterTrait as BaseAdapterTrait;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
@@ -15,6 +16,7 @@ use PHPUnit\Framework\TestCase;
 final class QueryTest extends TestCase
 {
     use AdapterTrait;
+    use BaseAdapterTrait;
 
     /**
      * @psalm-return array<array-key, array{

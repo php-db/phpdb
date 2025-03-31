@@ -3,6 +3,7 @@
 namespace LaminasTest\Db\Sql\Ddl\Constraint;
 
 use Laminas\Db\Sql\Ddl\Constraint\AbstractConstraint;
+use Override;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -19,10 +20,10 @@ final class AbstractConstraintTest extends TestCase
     /**
      * @throws Exception
      */
-    #[\Override]
+    #[Override]
     protected function setUp(): void
     {
-        $this->ac = $this->getMockForAbstractClass(AbstractConstraint::class);
+        $this->ac = $this->getMockBuilder(AbstractConstraint::class)->onlyMethods([])->getMock();
     }
 
     public function testSetColumns(): void

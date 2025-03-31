@@ -14,8 +14,10 @@ use Laminas\Db\Sql\Select;
 use Laminas\Db\Sql\Sql;
 use Laminas\Db\Sql\Update;
 use LaminasTest\Db\TestAsset;
+use Override;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use TypeError;
@@ -28,31 +30,39 @@ use TypeError;
 #[CoversMethod(Sql::class, 'prepareStatementForSqlObject')]
 final class SqlTest extends TestCase
 {
-    /** @var Adapter&MockObject */
-    protected Adapter|MockObject $mockAdapter;
+    protected MockObject&Adapter $mockAdapter;
 
     /**
      * Sql object
      */
     protected Sql $sql;
 
-    #[\Override]
+    /**
+     * @throws Exception
+     */
+    #[Override]
     protected function setUp(): void
     {
         // mock the adapter, driver, and parts
-        $mockResult    = $this->getMockBuilder(ResultInterface::class)->getMock();
-        $mockStatement = $this->getMockBuilder(StatementInterface::class)->getMock();
-        $mockStatement->expects($this->any())->method('execute')->willReturn($mockResult);
-        $mockConnection = $this->getMockBuilder(ConnectionInterface::class)->getMock();
-        $mockDriver     = $this->getMockBuilder(DriverInterface::class)->getMock();
-        $mockDriver->expects($this->any())->method('createStatement')->willReturn($mockStatement);
+        $mockResult    = $this->createMock(ResultInterface::class);
+
+        $mockStatement = $this->createMock(StatementInterface::class);
+        $mockStatement->expects($this->any())->method('execute')->willReturn($mockResult::class);
+
+        $mockConnection = $this->getMockBuilder(ConnectionInterface::class)->onlyMethods([])->getMock();
+
+        $mockDriver     = $this->getMockBuilder(DriverInterface::class)->onlyMethods([])->getMock();
+        $mockDriver->expects($this->any())->method('createStatement')->willReturn($mockStatement::class);
         $mockDriver->expects($this->any())->method('getConnection')->willReturn($mockConnection);
         $mockDriver->expects($this->any())->method('formatParameterName')->willReturn('?');
 
         // setup mock adapter
         $this->mockAdapter = $this->getMockBuilder(Adapter::class)
             ->onlyMethods([])
-            ->setConstructorArgs([$mockDriver, new TestAsset\TrustingSql92Platform()])
+            ->setConstructorArgs([
+                $mockDriver,
+                new TestAsset\TrustingSql92Platform()
+            ])
             ->getMock();
 
         $this->sql = new Sql($this->mockAdapter, 'foo');
@@ -70,6 +80,7 @@ final class SqlTest extends TestCase
         self::assertSame('foo', $sql->getTable());
 
         $this->expectException(TypeError::class);
+        /** @psalm-suppress NullArgument - ensure an exception is thrown */
         $sql->setTable(null);
     }
 
@@ -133,6 +144,9 @@ final class SqlTest extends TestCase
         self::assertInstanceOf(StatementInterface::class, $stmt);
     }
 
+    /**
+     * @throws Exception
+     */
     #[Group('6890')]
     public function testForDifferentAdapters(): void
     {
@@ -148,6 +162,7 @@ final class SqlTest extends TestCase
             'SELECT "foo".* FROM "foo" OFFSET \'10\'',
             $this->sql->buildSqlString($select)
         );
+
         $this->mockAdapter->getDriver()->createStatement()->expects($this->any())->method('setSql')
                 ->with($this->equalTo('SELECT "foo".* FROM "foo" OFFSET ?'));
         $this->sql->prepareStatementForSqlObject($select);
@@ -195,6 +210,8 @@ final class SqlTest extends TestCase
 
     /**
      * Data provider
+     *
+     * @throws Exception
      */
     protected function getAdapterForPlatform(string $platform): Adapter
     {
@@ -206,8 +223,12 @@ final class SqlTest extends TestCase
             default     => null,
         };
 
-        $mockStatement = $this->getMockBuilder(StatementInterface::class)->getMock();
-        $mockDriver    = $this->getMockBuilder(DriverInterface::class)->getMock();
+        $mockResult    = $this->createMock(ResultInterface::class);
+
+        $mockStatement = $this->createMock(StatementInterface::class);
+        $mockStatement->expects($this->any())->method('execute')->willReturn($mockResult::class);
+
+        $mockDriver    = $this->getMockBuilder(DriverInterface::class)->onlyMethods([])->getMock();
         $mockDriver->expects($this->any())->method('formatParameterName')->willReturn('?');
         $mockDriver->expects($this->any())->method('createStatement')->willReturn($mockStatement);
 

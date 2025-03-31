@@ -3,6 +3,7 @@
 namespace LaminasTest\Db\Sql\Predicate;
 
 use Laminas\Db\Sql\Predicate\Between;
+use Override;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 
@@ -20,7 +21,7 @@ final class BetweenTest extends TestCase
 {
     protected Between $between;
 
-    #[\Override]
+    #[Override]
     protected function setUp(): void
     {
         $this->between = new Between();

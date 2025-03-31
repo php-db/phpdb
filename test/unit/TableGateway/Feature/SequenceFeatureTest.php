@@ -8,6 +8,7 @@ use Laminas\Db\Adapter\Driver\StatementInterface;
 use Laminas\Db\Adapter\Platform\PlatformInterface;
 use Laminas\Db\TableGateway\Feature\SequenceFeature;
 use Laminas\Db\TableGateway\TableGateway;
+use Override;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
@@ -24,7 +25,7 @@ final class SequenceFeatureTest extends TestCase
     /** @var string  sequence name */
     protected static string $sequenceName = 'table_sequence';
 
-    #[\Override]
+    #[Override]
     protected function setUp(): void
     {
         $this->feature = new SequenceFeature($this->primaryKeyField, self::$sequenceName);

@@ -16,6 +16,7 @@ use Laminas\Db\Sql\TableIdentifier;
 use Laminas\Db\Sql\Where;
 use LaminasTest\Db\DeprecatedAssertionsTrait;
 use LaminasTest\Db\TestAsset\DeleteIgnore;
+use Override;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
@@ -34,7 +35,7 @@ final class DeleteTest extends TestCase
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
-    #[\Override]
+    #[Override]
     protected function setUp(): void
     {
         $this->delete = new Delete();
@@ -105,7 +106,7 @@ final class DeleteTest extends TestCase
         $this->delete->where($where);
         self::assertSame($where, $this->delete->where);
 
-        $this->delete->where(function ($what) use ($where) {
+        $this->delete->where(function ($what) use ($where): void {
             self::assertSame($where, $what);
         });
     }

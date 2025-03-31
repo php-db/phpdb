@@ -3,31 +3,31 @@
 namespace LaminasIntegrationTest\Db\Adapter\Driver\Pdo\Mysql;
 
 use Laminas\Db\Adapter\Adapter;
+use Override;
 
 use function getenv;
+use function is_string;
+use function strtolower;
 
 trait AdapterTrait
 {
-    protected ?Adapter $adapter;
+    protected ?string $hostname = 'localhost';
 
-    #[\Override]
+    #[Override]
     protected function setUp(): void
     {
-        if (! getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_MYSQL')) {
+        if (! is_string(getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_MYSQL')) || strtolower(getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_MYSQL')) !== 'true') {
             $this->markTestSkipped('pdo_mysql integration tests are not enabled!');
         }
 
         $this->adapter = new Adapter([
             'driver'   => 'pdo_mysql',
-            'database' => getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_MYSQL_DATABASE'),
-            'hostname' => getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_MYSQL_HOSTNAME'),
-            'username' => getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_MYSQL_USERNAME'),
-            'password' => getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_MYSQL_PASSWORD'),
+            'database' => (string) getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_MYSQL_DATABASE'),
+            'hostname' => (string) getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_MYSQL_HOSTNAME'),
+            'username' => (string) getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_MYSQL_USERNAME'),
+            'password' => (string) getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_MYSQL_PASSWORD'),
         ]);
-    }
 
-    protected function getHostname(): array|string|false|null
-    {
-        return getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_MYSQL_HOSTNAME');
+        $this->hostname = (string) getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_MYSQL_HOSTNAME');
     }
 }

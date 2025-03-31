@@ -5,6 +5,7 @@ namespace LaminasTest\Db\Adapter\Driver\Sqlsrv;
 use Laminas\Db\Adapter\Driver\Sqlsrv\Sqlsrv;
 use Laminas\Db\Adapter\Driver\Sqlsrv\Statement;
 use Laminas\Db\Adapter\Exception\InvalidArgumentException;
+use Override;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Group;
 use stdClass;
@@ -20,7 +21,7 @@ final class SqlSrvIntegrationTest extends AbstractIntegrationTestCase
     /** @var resource SQL Server Connection */
     private $resource;
 
-    #[\Override]
+    #[Override]
     protected function setUp(): void
     {
         parent::setUp();

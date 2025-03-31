@@ -4,6 +4,7 @@ namespace LaminasTest\Db\Metadata\Source;
 
 use Laminas\Db\Metadata\Object\ConstraintKeyObject;
 use Laminas\Db\Metadata\Source\AbstractSource;
+use Override;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -18,15 +19,10 @@ final class AbstractSourceTest extends TestCase
     /**
      * @throws Exception
      */
-    #[\Override]
+    #[Override]
     protected function setUp(): void
     {
-        $this->abstractSourceMock = $this->getMockForAbstractClass(
-            AbstractSource::class,
-            [],
-            '',
-            false
-        );
+        $this->abstractSourceMock = $this->getMockBuilder(AbstractSource::class)->setConstructorArgs([])->onlyMethods([])->disableOriginalConstructor()->getMock();
     }
 
     /**

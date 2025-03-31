@@ -6,6 +6,7 @@ use Laminas\Db\Adapter\Driver\AbstractConnection;
 use Laminas\Db\Adapter\Driver\Pdo\Connection;
 use Laminas\Db\Adapter\Exception\RuntimeException;
 use LaminasTest\Db\TestAsset\ConnectionWrapper;
+use Override;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
@@ -27,7 +28,7 @@ final class ConnectionTransactionsTest extends TestCase
     /**
      * {@inheritDoc}
      */
-    #[\Override]
+    #[Override]
     protected function setUp(): void
     {
         $this->wrapper = new ConnectionWrapper();

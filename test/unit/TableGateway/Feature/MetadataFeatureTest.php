@@ -21,7 +21,7 @@ final class MetadataFeatureTest extends TestCase
     #[Group('integration-test')]
     public function testPostInitialize(): void
     {
-        $tableGatewayMock = $this->getMockForAbstractClass(AbstractTableGateway::class);
+        $tableGatewayMock = $this->getMockBuilder(AbstractTableGateway::class)->onlyMethods([])->getMock();
         $metadataMock     = $this->getMockBuilder(MetadataInterface::class)->getMock();
         $metadataMock->expects($this->any())->method('getColumnNames')->willReturn(['id', 'name']);
 
@@ -44,7 +44,7 @@ final class MetadataFeatureTest extends TestCase
     public function testPostInitializeRecordsPrimaryKeyColumnToSharedMetadata(): void
     {
         /** @var AbstractTableGateway $tableGatewayMock */
-        $tableGatewayMock = $this->getMockForAbstractClass(AbstractTableGateway::class);
+        $tableGatewayMock = $this->getMockBuilder(AbstractTableGateway::class)->onlyMethods([])->getMock();
         $metadataMock     = $this->getMockBuilder(MetadataInterface::class)->getMock();
         $metadataMock->expects($this->any())->method('getColumnNames')->willReturn(['id', 'name']);
         $metadataMock->expects($this->any())
@@ -66,6 +66,7 @@ final class MetadataFeatureTest extends TestCase
         $r->setAccessible(true);
         $sharedData = $r->getValue($feature);
 
+        self::assertIsArray($sharedData);
         self::assertTrue(
             isset($sharedData['metadata']['primaryKey']),
             'Shared data must have metadata entry for primary key'
@@ -79,7 +80,7 @@ final class MetadataFeatureTest extends TestCase
     public function testPostInitializeRecordsListOfColumnsInPrimaryKeyToSharedMetadata(): void
     {
         /** @var AbstractTableGateway $tableGatewayMock */
-        $tableGatewayMock = $this->getMockForAbstractClass(AbstractTableGateway::class);
+        $tableGatewayMock = $this->getMockBuilder(AbstractTableGateway::class)->onlyMethods([])->getMock();
         $metadataMock     = $this->getMockBuilder(MetadataInterface::class)->getMock();
         $metadataMock->expects($this->any())->method('getColumnNames')->willReturn(['id', 'name']);
         $metadataMock->expects($this->any())
@@ -101,6 +102,7 @@ final class MetadataFeatureTest extends TestCase
         $r->setAccessible(true);
         $sharedData = $r->getValue($feature);
 
+        self::assertIsArray($sharedData);
         self::assertTrue(
             isset($sharedData['metadata']['primaryKey']),
             'Shared data must have metadata entry for primary key'
@@ -114,7 +116,7 @@ final class MetadataFeatureTest extends TestCase
     public function testPostInitializeSkipsPrimaryKeyCheckIfNotTable(): void
     {
         /** @var AbstractTableGateway $tableGatewayMock */
-        $tableGatewayMock = $this->getMockForAbstractClass(AbstractTableGateway::class);
+        $tableGatewayMock = $this->getMockBuilder(AbstractTableGateway::class)->onlyMethods([])->getMock();
         $metadataMock     = $this->getMockBuilder(MetadataInterface::class)->getMock();
         $metadataMock->expects($this->any())->method('getColumnNames')->willReturn(['id', 'name']);
         $metadataMock->expects($this->any())

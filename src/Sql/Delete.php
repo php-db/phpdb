@@ -70,10 +70,10 @@ class Delete extends AbstractPreparableSql
     }
 
     /**
-     * @param null $key
+     * @param ?string $key
      * @return mixed
      */
-    public function getRawState($key = null)
+    public function getRawState(?string $key = null)
     {
         $rawState = [
             'emptyWhereProtection' => $this->emptyWhereProtection,

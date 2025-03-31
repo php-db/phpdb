@@ -7,6 +7,7 @@ use Laminas\Hydrator\ArraySerializable;
 use Laminas\Hydrator\ArraySerializableHydrator;
 use Laminas\Hydrator\ClassMethods;
 use Laminas\Hydrator\ClassMethodsHydrator;
+use Override;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 use stdClass;
@@ -25,7 +26,7 @@ final class HydratingResultSetTest extends TestCase
 
     private string $classMethodsHydratorClass;
 
-    #[\Override]
+    #[Override]
     protected function setUp(): void
     {
         $this->arraySerializableHydratorClass = class_exists(ArraySerializableHydrator::class)

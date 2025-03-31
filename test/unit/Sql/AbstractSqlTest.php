@@ -11,6 +11,7 @@ use Laminas\Db\Sql\ExpressionInterface;
 use Laminas\Db\Sql\Predicate;
 use Laminas\Db\Sql\Select;
 use LaminasTest\Db\TestAsset\TrustingSql92Platform;
+use Override;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\MockObject\Exception;
@@ -35,10 +36,10 @@ final class AbstractSqlTest extends TestCase
     /**
      * @throws Exception
      */
-    #[\Override]
+    #[Override]
     protected function setUp(): void
     {
-        $this->abstractSql = $this->getMockForAbstractClass(AbstractSql::class);
+        $this->abstractSql = $this->getMockBuilder(AbstractSql::class)->onlyMethods([])->getMock();
 
         $this->mockDriver = $this->getMockBuilder(DriverInterface::class)->getMock();
         $this->mockDriver

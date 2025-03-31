@@ -7,6 +7,7 @@ use Laminas\Db\Adapter\Driver\Pgsql\Pgsql;
 use Laminas\Db\Adapter\Driver\Pgsql\Result;
 use Laminas\Db\Adapter\Driver\Pgsql\Statement;
 use Laminas\Db\Adapter\Exception\RuntimeException;
+use Override;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Depends;
 use PHPUnit\Framework\MockObject\Exception;
@@ -34,7 +35,7 @@ final class PgsqlTest extends TestCase
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
-    #[\Override]
+    #[Override]
     protected function setUp(): void
     {
         $this->pgsql = new Pgsql([]);
@@ -54,15 +55,7 @@ final class PgsqlTest extends TestCase
      */
     public function testRegisterConnection(): void
     {
-        $mockConnection = $this->getMockForAbstractClass(
-            Connection::class,
-            [[]],
-            '',
-            true,
-            true,
-            true,
-            ['setDriver']
-        );
+        $mockConnection = $this->getMockBuilder(Connection::class)->setConstructorArgs([[]])->onlyMethods(['setDriver'])->getMock();
         $mockConnection->expects($this->once())->method('setDriver')->with($this->equalTo($this->pgsql));
         self::assertSame($this->pgsql, $this->pgsql->registerConnection($mockConnection));
     }
@@ -73,15 +66,7 @@ final class PgsqlTest extends TestCase
     public function testRegisterStatementPrototype(): void
     {
         $this->pgsql   = new Pgsql([]);
-        $mockStatement = $this->getMockForAbstractClass(
-            Statement::class,
-            [],
-            '',
-            true,
-            true,
-            true,
-            ['setDriver']
-        );
+        $mockStatement = $this->getMockBuilder(Statement::class)->setConstructorArgs([])->onlyMethods(['setDriver'])->getMock();
         $mockStatement->expects($this->once())->method('setDriver')->with($this->equalTo($this->pgsql));
         self::assertSame($this->pgsql, $this->pgsql->registerStatementPrototype($mockStatement));
     }
@@ -92,15 +77,7 @@ final class PgsqlTest extends TestCase
     public function testRegisterResultPrototype(): void
     {
         $this->pgsql   = new Pgsql([]);
-        $mockStatement = $this->getMockForAbstractClass(
-            Result::class,
-            [],
-            '',
-            true,
-            true,
-            true,
-            ['setDriver']
-        );
+        $mockStatement = $this->getMockBuilder(Result::class)->setConstructorArgs([])->onlyMethods([])->getMock();
         self::assertSame($this->pgsql, $this->pgsql->registerResultPrototype($mockStatement));
     }
 

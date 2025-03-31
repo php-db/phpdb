@@ -5,6 +5,7 @@ namespace LaminasIntegrationTest\Db\Adapter\Platform;
 use Laminas\Db\Adapter\Driver\Mysqli;
 use Laminas\Db\Adapter\Driver\Pdo;
 use Laminas\Db\Adapter\Platform\Mysql;
+use Override;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 
@@ -18,7 +19,7 @@ final class MysqlTest extends TestCase
     /** @var array<string, resource|\PDO> */
     public array|\PDO $adapters = [];
 
-    #[\Override]
+    #[Override]
     protected function setUp(): void
     {
         if (! getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_MYSQL')) {

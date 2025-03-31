@@ -331,7 +331,7 @@ final class SelectTest extends TestCase
         $select = new Select();
         $where  = $select->getRawState('where');
 
-        $select->where(function ($what) use ($where) {
+        $select->where(function ($what) use ($where): void {
             self::assertSame($where, $what);
         });
     }

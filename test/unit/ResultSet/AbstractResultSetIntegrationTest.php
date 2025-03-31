@@ -4,6 +4,7 @@ namespace LaminasTest\Db\ResultSet;
 
 use Laminas\Db\Adapter\Driver\ResultInterface;
 use Laminas\Db\ResultSet\AbstractResultSet;
+use Override;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -20,10 +21,10 @@ final class AbstractResultSetIntegrationTest extends TestCase
      *
      * @throws Exception
      */
-    #[\Override]
+    #[Override]
     protected function setUp(): void
     {
-        $this->resultSet = $this->getMockForAbstractClass(AbstractResultSet::class);
+        $this->resultSet = $this->getMockBuilder(AbstractResultSet::class)->onlyMethods([])->getMock();
     }
 
     public function testCurrentCallsDataSourceCurrentAsManyTimesWithoutBuffer(): void

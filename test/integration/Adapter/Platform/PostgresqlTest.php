@@ -5,6 +5,7 @@ namespace LaminasIntegrationTest\Db\Adapter\Platform;
 use Laminas\Db\Adapter\Driver\Pdo;
 use Laminas\Db\Adapter\Driver\Pgsql;
 use Laminas\Db\Adapter\Platform\Postgresql;
+use Override;
 use PgSql\Connection as PgSqlConnection;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
@@ -21,7 +22,7 @@ final class PostgresqlTest extends TestCase
     /** @var array<string, resource> */
     public array|\PDO $adapters = [];
 
-    #[\Override]
+    #[Override]
     protected function setUp(): void
     {
         if (! getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_PGSQL')) {

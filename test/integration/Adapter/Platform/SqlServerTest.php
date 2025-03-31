@@ -3,6 +3,7 @@
 namespace LaminasIntegrationTest\Db\Adapter\Platform;
 
 use Laminas\Db\Adapter\Platform\SqlServer;
+use Override;
 use PDO;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
@@ -20,7 +21,7 @@ final class SqlServerTest extends TestCase
     /** @var array<string, resource> */
     public array|PDO $adapters = [];
 
-    #[\Override]
+    #[Override]
     protected function setUp(): void
     {
         if (! getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_SQLSRV')) {

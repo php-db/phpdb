@@ -49,7 +49,7 @@ final class FeatureSetTest extends TestCase
         $mockSlaveAdapter->expects($this->any())->method('getDriver')->willReturn($mockDriver);
         $mockSlaveAdapter->expects($this->any())->method('getPlatform')->willReturn(new Sql92());
 
-        $tableGatewayMock = $this->getMockForAbstractClass(AbstractTableGateway::class);
+        $tableGatewayMock = $this->getMockBuilder(AbstractTableGateway::class)->onlyMethods([])->getMock();
 
         //feature doesn't have tableGateway, but FeatureSet has
         $feature = new MasterSlaveFeature($mockSlaveAdapter);
@@ -67,7 +67,7 @@ final class FeatureSetTest extends TestCase
     #[Group('Laminas-4993')]
     public function testAddFeatureThatFeatureHasTableGatewayButFeatureSetDoesNotHave(): void
     {
-        $tableGatewayMock = $this->getMockForAbstractClass(AbstractTableGateway::class);
+        $tableGatewayMock = $this->getMockBuilder(AbstractTableGateway::class)->onlyMethods([])->getMock();
 
         $metadataMock = $this->getMockBuilder(MetadataInterface::class)->getMock();
         $metadataMock->expects($this->any())->method('getColumnNames')->willReturn(['id', 'name']);

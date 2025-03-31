@@ -6,6 +6,7 @@ use Laminas\Db\Adapter\Driver\Sqlsrv\Connection;
 use Laminas\Db\Adapter\Driver\Sqlsrv\Result;
 use Laminas\Db\Adapter\Driver\Sqlsrv\Sqlsrv;
 use Laminas\Db\Adapter\Driver\Sqlsrv\Statement;
+use Override;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Depends;
 use PHPUnit\Framework\MockObject\Exception;
@@ -30,7 +31,7 @@ final class SqlsrvTest extends TestCase
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
-    #[\Override]
+    #[Override]
     protected function setUp(): void
     {
         $this->sqlsrv = new Sqlsrv([]);
@@ -41,15 +42,7 @@ final class SqlsrvTest extends TestCase
      */
     public function testRegisterConnection(): void
     {
-        $mockConnection = $this->getMockForAbstractClass(
-            Connection::class,
-            [[]],
-            '',
-            true,
-            true,
-            true,
-            ['setDriver']
-        );
+        $mockConnection = $this->getMockBuilder(Connection::class)->setConstructorArgs([[]])->onlyMethods(['setDriver'])->getMock();
         $mockConnection->expects($this->once())->method('setDriver')->with($this->equalTo($this->sqlsrv));
         self::assertSame($this->sqlsrv, $this->sqlsrv->registerConnection($mockConnection));
     }
@@ -60,15 +53,7 @@ final class SqlsrvTest extends TestCase
     public function testRegisterStatementPrototype(): void
     {
         $this->sqlsrv  = new Sqlsrv([]);
-        $mockStatement = $this->getMockForAbstractClass(
-            Statement::class,
-            [],
-            '',
-            true,
-            true,
-            true,
-            ['setDriver']
-        );
+        $mockStatement = $this->getMockBuilder(Statement::class)->setConstructorArgs([])->onlyMethods(['setDriver'])->getMock();
         $mockStatement->expects($this->once())->method('setDriver')->with($this->equalTo($this->sqlsrv));
         self::assertSame($this->sqlsrv, $this->sqlsrv->registerStatementPrototype($mockStatement));
     }
@@ -79,15 +64,7 @@ final class SqlsrvTest extends TestCase
     public function testRegisterResultPrototype(): void
     {
         $this->sqlsrv  = new Sqlsrv([]);
-        $mockStatement = $this->getMockForAbstractClass(
-            Result::class,
-            [],
-            '',
-            true,
-            true,
-            true,
-            ['setDriver']
-        );
+        $mockStatement = $this->getMockBuilder(Result::class)->setConstructorArgs([])->onlyMethods([])->getMock();
         self::assertSame($this->sqlsrv, $this->sqlsrv->registerResultPrototype($mockStatement));
     }
 

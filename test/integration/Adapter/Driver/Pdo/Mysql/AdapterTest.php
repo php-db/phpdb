@@ -2,13 +2,13 @@
 
 namespace LaminasIntegrationTest\Db\Adapter\Driver\Pdo\Mysql;
 
-use Laminas\Db\Adapter\Adapter;
 use LaminasIntegrationTest\Db\Adapter\Driver\Pdo\AbstractAdapterTestCase;
+use LaminasIntegrationTest\Db\Adapter\Driver\Pdo\AdapterTrait as BaseAdapterTrait;
 
 final class AdapterTest extends AbstractAdapterTestCase
 {
     use AdapterTrait;
+    use BaseAdapterTrait;
 
-    /** @var Adapter */
-    public const DB_SERVER_PORT = 3306;
+    public ?int $port = 3306;
 }

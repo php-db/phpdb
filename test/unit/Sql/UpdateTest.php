@@ -14,12 +14,14 @@ use Laminas\Db\Sql\Predicate\IsNotNull;
 use Laminas\Db\Sql\Predicate\IsNull;
 use Laminas\Db\Sql\Predicate\Literal;
 use Laminas\Db\Sql\Predicate\Operator;
+use Laminas\Db\Sql\Predicate\PredicateSet;
 use Laminas\Db\Sql\TableIdentifier;
 use Laminas\Db\Sql\Update;
 use Laminas\Db\Sql\Where;
 use LaminasTest\Db\DeprecatedAssertionsTrait;
 use LaminasTest\Db\TestAsset\TrustingSql92Platform;
 use LaminasTest\Db\TestAsset\UpdateIgnore;
+use Override;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\Group;
@@ -47,18 +49,10 @@ final class UpdateTest extends TestCase
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
-    #[\Override]
+    #[Override]
     protected function setUp(): void
     {
         $this->update = new Update();
-    }
-
-    /**
-     * Tears down the fixture, for example, closes a network connection.
-     * This method is called after a test is executed.
-     */
-    protected function tearDown(): void
-    {
     }
 
     /**
@@ -95,7 +89,7 @@ final class UpdateTest extends TestCase
             'two'   => 'с_two',
             'three' => 'с_three',
         ]);
-        $this->update->set(['one' => 'с_one'], 10);
+        $this->update->set(['one' => 'с_one'], '10');
 
         self::assertEquals(
             [
@@ -115,44 +109,48 @@ final class UpdateTest extends TestCase
         $this->update->where('x = y');
         $this->update->where(['foo > ?' => 5]);
         $this->update->where(['id' => 2]);
-        $this->update->where(['a = b'], Where::OP_OR);
+        $this->update->where(['a = b'], PredicateSet::OP_OR);
         $this->update->where(['c1' => null]);
         $this->update->where(['c2' => [1, 2, 3]]);
         $this->update->where([new IsNotNull('c3')]);
         $where = $this->update->where;
 
         $predicates = $this->readAttribute($where, 'predicates');
-        self::assertEquals('AND', $predicates[0][0]);
-        self::assertInstanceOf(Literal::class, $predicates[0][1]);
 
-        self::assertEquals('AND', $predicates[1][0]);
-        self::assertInstanceOf(\Laminas\Db\Sql\Predicate\Expression::class, $predicates[1][1]);
+        self::assertIsArray($predicates);
 
-        self::assertEquals('AND', $predicates[2][0]);
-        self::assertInstanceOf(Operator::class, $predicates[2][1]);
+        self::assertEquals('AND', $predicates[0][0] ?? '');
+        self::assertInstanceOf(Literal::class, $predicates[0][1] ?? null);
 
-        self::assertEquals('OR', $predicates[3][0]);
-        self::assertInstanceOf(Literal::class, $predicates[3][1]);
+        self::assertEquals('AND', $predicates[1][0] ?? '');
+        self::assertInstanceOf(\Laminas\Db\Sql\Predicate\Expression::class, $predicates[1][1] ?? null);
 
-        self::assertEquals('AND', $predicates[4][0]);
-        self::assertInstanceOf(IsNull::class, $predicates[4][1]);
+        self::assertEquals('AND', $predicates[2][0] ?? '');
+        self::assertInstanceOf(Operator::class, $predicates[2][1] ?? null);
 
-        self::assertEquals('AND', $predicates[5][0]);
-        self::assertInstanceOf(In::class, $predicates[5][1]);
+        self::assertEquals('OR', $predicates[3][0] ?? '');
+        self::assertInstanceOf(Literal::class, $predicates[3][1] ?? null);
 
-        self::assertEquals('AND', $predicates[6][0]);
-        self::assertInstanceOf(IsNotNull::class, $predicates[6][1]);
+        self::assertEquals('AND', $predicates[4][0] ?? '');
+        self::assertInstanceOf(IsNull::class, $predicates[4][1] ?? null);
+
+        self::assertEquals('AND', $predicates[5][0] ?? '');
+        self::assertInstanceOf(In::class, $predicates[5][1] ?? null);
+
+        self::assertEquals('AND', $predicates[6][0] ?? '');
+        self::assertInstanceOf(IsNotNull::class, $predicates[6][1] ?? null);
 
         $where = new Where();
         $this->update->where($where);
         self::assertSame($where, $this->update->where);
 
-        $this->update->where(function ($what) use ($where) {
+        $this->update->where(function (Where $what) use ($where): void {
             self::assertSame($where, $what);
         });
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Predicate cannot be null');
+        /** @psalm-suppress NullArgument - Ensure exception is thrown */
         $this->update->where(null);
     }
 
@@ -275,6 +273,7 @@ final class UpdateTest extends TestCase
 
     public function testGetUpdateFails(): void
     {
+        /** @psalm-suppress UndefinedThisPropertyFetch - Ensure non-existent property returns null */
         $getWhat = $this->update->__get('what');
         self::assertNull($getWhat);
     }

@@ -7,6 +7,7 @@ use Laminas\Db\Adapter\Driver\Pdo\Feature\OracleRowCounter;
 use Laminas\Db\Adapter\Driver\Pdo\Pdo;
 use Laminas\Db\Adapter\Driver\Pdo\Statement;
 use Laminas\Db\Adapter\Driver\ResultInterface;
+use Override;
 use PDO as PDOConnection;
 use PDOStatement;
 use PHPUnit\Framework\Attributes\CoversMethod;
@@ -21,7 +22,7 @@ final class OracleRowCounterTest extends TestCase
 {
     protected OracleRowCounter $rowCounter;
 
-    #[\Override]
+    #[Override]
     protected function setUp(): void
     {
         $this->rowCounter = new OracleRowCounter();
