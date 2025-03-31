@@ -4,7 +4,7 @@ namespace LaminasTest\Db\TestAsset;
 
 use Laminas\Db\Adapter\Platform\Oracle;
 
-class TrustingOraclePlatform extends Oracle
+final class TrustingOraclePlatform extends Oracle
 {
     /**
      * @param string $value

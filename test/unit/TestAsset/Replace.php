@@ -7,7 +7,7 @@ use Laminas\Db\Adapter\ParameterContainer;
 use Laminas\Db\Adapter\Platform\PlatformInterface;
 use Laminas\Db\Sql\Insert;
 
-class Replace extends Insert
+final class Replace extends Insert
 {
     public const SPECIFICATION_INSERT = 'replace';
 

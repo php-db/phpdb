@@ -7,7 +7,7 @@ use PHPUnit\Framework\Attributes\Group;
 
 #[Group('integration')]
 #[Group('integration-sqlserver')]
-class PdoSqlSrvIntegrationTest extends AbstractIntegrationTestCase
+final class PdoSqlSrvIntegrationTest extends AbstractIntegrationTestCase
 {
     /**
      * @return void

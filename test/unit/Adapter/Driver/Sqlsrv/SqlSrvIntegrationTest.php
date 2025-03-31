@@ -12,7 +12,7 @@ use stdClass;
 #[CoversMethod(Sqlsrv::class, 'checkEnvironment')]
 #[Group('integration')]
 #[Group('integration-sqlserver')]
-class SqlSrvIntegrationTest extends AbstractIntegrationTestCase
+final class SqlSrvIntegrationTest extends AbstractIntegrationTestCase
 {
     /** @var Laminas\Db\Adapter\Driver\Sqlsrv\Sqlsrv */
     private Laminas\Db\Adapter\Driver\Sqlsrv\Sqlsrv|Sqlsrv $driver;

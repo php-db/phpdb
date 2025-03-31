@@ -7,7 +7,7 @@ use Laminas\Db\Adapter\ParameterContainer;
 use Laminas\Db\Adapter\Platform\PlatformInterface;
 use Laminas\Db\Sql\Delete;
 
-class DeleteIgnore extends Delete
+final class DeleteIgnore extends Delete
 {
     public const SPECIFICATION_DELETE = 'deleteIgnore';
 

@@ -7,7 +7,7 @@ use Laminas\Db\Adapter\ParameterContainer;
 use Laminas\Db\Adapter\Platform\PlatformInterface;
 use Laminas\Db\Sql\Update;
 
-class UpdateIgnore extends Update
+final class UpdateIgnore extends Update
 {
     public const SPECIFICATION_UPDATE = 'updateIgnore';
 

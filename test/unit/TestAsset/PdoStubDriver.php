@@ -4,7 +4,7 @@ namespace LaminasTest\Db\TestAsset;
 
 use PDO;
 
-class PdoStubDriver extends PDO
+final class PdoStubDriver extends PDO
 {
     public function beginTransaction(): bool
     {

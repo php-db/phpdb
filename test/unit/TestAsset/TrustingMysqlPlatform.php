@@ -4,7 +4,7 @@ namespace LaminasTest\Db\TestAsset;
 
 use Laminas\Db\Adapter\Platform\Mysql;
 
-class TrustingMysqlPlatform extends Mysql
+final class TrustingMysqlPlatform extends Mysql
 {
     /**
      * @param string $value

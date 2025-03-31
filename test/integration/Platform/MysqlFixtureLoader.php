@@ -10,7 +10,7 @@ use function getenv;
 use function print_r;
 use function sprintf;
 
-class MysqlFixtureLoader implements FixtureLoader
+final class MysqlFixtureLoader implements FixtureLoader
 {
     private string $fixtureFile = __DIR__ . '/../TestFixtures/mysql.sql';
 

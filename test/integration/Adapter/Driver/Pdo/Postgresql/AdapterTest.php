@@ -5,7 +5,7 @@ namespace LaminasIntegrationTest\Db\Adapter\Driver\Pdo\Postgresql;
 use Laminas\Db\Adapter\Adapter;
 use LaminasIntegrationTest\Db\Adapter\Driver\Pdo\AbstractAdapterTestCase;
 
-class AdapterTest extends AbstractAdapterTestCase
+final class AdapterTest extends AbstractAdapterTestCase
 {
     use AdapterTrait;
 

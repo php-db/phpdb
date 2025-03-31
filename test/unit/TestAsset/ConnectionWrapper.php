@@ -7,7 +7,7 @@ use Laminas\Db\Adapter\Driver\Pdo\Connection;
 /**
  * Test asset class used only by {@see \LaminasTest\Db\Adapter\Driver\Pdo\ConnectionTransactionsTest}
  */
-class ConnectionWrapper extends Connection
+final class ConnectionWrapper extends Connection
 {
     public function __construct()
     {

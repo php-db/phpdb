@@ -15,7 +15,7 @@ use function count;
 use function extension_loaded;
 
 #[RequiresPhpExtension('oci8')]
-class OracleMetadataTestCase extends AbstractIntegrationTestCase
+final class OracleMetadataTestCase extends AbstractIntegrationTestCase
 {
     protected OracleMetadata $metadata;
 

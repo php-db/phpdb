@@ -18,7 +18,7 @@ use function sqlsrv_connect;
 #[CoversMethod(Statement::class, 'execute')]
 #[Group('integration')]
 #[Group('integration-sqlserver')]
-class StatementIntegrationTest extends AbstractIntegrationTestCase
+final class StatementIntegrationTest extends AbstractIntegrationTestCase
 {
     public function testInitialize(): void
     {

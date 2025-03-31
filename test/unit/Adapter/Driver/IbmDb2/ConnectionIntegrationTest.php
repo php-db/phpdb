@@ -24,7 +24,7 @@ use function php_uname;
 #[CoversMethod(Connection::class, 'getLastGeneratedValue')]
 #[Group('integration')]
 #[Group('integration-ibm_db2')]
-class ConnectionIntegrationTest extends AbstractIntegrationTestCase
+final class ConnectionIntegrationTest extends AbstractIntegrationTestCase
 {
     public function testGetCurrentSchema(): void
     {

@@ -7,7 +7,7 @@ use PDO;
 use PDOStatement;
 use PHPUnit\Framework\MockObject\MockObject;
 
-class CtorlessPdo extends PDO
+final class CtorlessPdo extends PDO
 {
     public function __construct(protected PDOStatement&MockObject $mockStatement)
     {
