@@ -29,7 +29,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(ParameterContainer::class, 'key')]
 #[CoversMethod(ParameterContainer::class, 'valid')]
 #[CoversMethod(ParameterContainer::class, 'rewind')]
-class ParameterContainerTest extends TestCase
+final class ParameterContainerTest extends TestCase
 {
     protected ParameterContainer $parameterContainer;
 

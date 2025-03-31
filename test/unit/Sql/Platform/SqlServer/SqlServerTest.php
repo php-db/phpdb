@@ -13,7 +13,7 @@ use function current;
 use function key;
 
 #[CoversMethod(SqlServer::class, '__construct')]
-class SqlServerTest extends TestCase
+final class SqlServerTest extends TestCase
 {
     #[TestDox('unit test / object test: Test SqlServer object has Select proxy')]
     public function testConstruct(): void

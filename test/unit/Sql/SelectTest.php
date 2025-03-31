@@ -57,7 +57,7 @@ use ReflectionObject;
 #[CoversMethod(Select::class, 'processLimit')]
 #[CoversMethod(Select::class, 'processOffset')]
 #[CoversMethod(Select::class, 'processCombine')]
-class SelectTest extends TestCase
+final class SelectTest extends TestCase
 {
     public function testConstruct(): void
     {

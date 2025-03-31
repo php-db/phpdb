@@ -5,7 +5,7 @@ namespace LaminasTest\Db\Sql\Predicate;
 use Laminas\Db\Sql\Predicate\Like;
 use PHPUnit\Framework\TestCase;
 
-class LikeTest extends TestCase
+final class LikeTest extends TestCase
 {
     public function testConstructEmptyArgs(): void
     {

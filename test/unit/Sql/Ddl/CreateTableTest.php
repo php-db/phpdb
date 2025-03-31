@@ -22,7 +22,7 @@ use function array_pop;
 #[CoversMethod(CreateTable::class, 'addColumn')]
 #[CoversMethod(CreateTable::class, 'addConstraint')]
 #[CoversMethod(CreateTable::class, 'getSqlString')]
-class CreateTableTest extends TestCase
+final class CreateTableTest extends TestCase
 {
     /**
      * test object construction

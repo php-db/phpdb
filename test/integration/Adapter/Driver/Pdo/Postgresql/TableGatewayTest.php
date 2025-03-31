@@ -9,7 +9,7 @@ use Laminas\Db\TableGateway\Feature\SequenceFeature;
 use Laminas\Db\TableGateway\TableGateway;
 use PHPUnit\Framework\TestCase;
 
-class TableGatewayTest extends TestCase
+final class TableGatewayTest extends TestCase
 {
     use AdapterTrait;
 

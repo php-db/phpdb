@@ -23,7 +23,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(Statement::class, 'isPrepared')]
 #[CoversMethod(Statement::class, 'execute')]
 #[Group('integrationOracle')]
-class StatementTest extends TestCase
+final class StatementTest extends TestCase
 {
     protected Statement $statement;
 

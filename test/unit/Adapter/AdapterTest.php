@@ -44,7 +44,7 @@ use function extension_loaded;
 #[CoversMethod(Adapter::class, 'query')]
 #[CoversMethod(Adapter::class, 'createStatement')]
 #[CoversMethod(Adapter::class, '__get')]
-class AdapterTest extends TestCase
+final class AdapterTest extends TestCase
 {
     protected DriverInterface&MockObject $mockDriver;
 

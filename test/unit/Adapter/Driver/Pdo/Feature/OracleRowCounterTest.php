@@ -17,7 +17,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(OracleRowCounter::class, 'getCountForStatement')]
 #[CoversMethod(OracleRowCounter::class, 'getCountForSql')]
 #[CoversMethod(OracleRowCounter::class, 'getRowCountClosure')]
-class OracleRowCounterTest extends TestCase
+final class OracleRowCounterTest extends TestCase
 {
     protected OracleRowCounter $rowCounter;
 

@@ -6,7 +6,7 @@ use Laminas\Db\Adapter\Adapter;
 use Laminas\Db\TableGateway\TableGateway;
 use PHPUnit\Framework\TestCase;
 
-class TableGatewayTest extends TestCase
+final class TableGatewayTest extends TestCase
 {
     use TraitSetup;
 

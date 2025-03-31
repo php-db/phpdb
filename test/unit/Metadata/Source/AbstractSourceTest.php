@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 use ReflectionException;
 use ReflectionProperty;
 
-class AbstractSourceTest extends TestCase
+final class AbstractSourceTest extends TestCase
 {
     /** @var AbstractSource */
     protected MockObject|AbstractSource $abstractSourceMock;

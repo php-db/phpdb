@@ -19,7 +19,7 @@ use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 use ReflectionException;
 
-class InsertIgnoreTest extends TestCase
+final class InsertIgnoreTest extends TestCase
 {
     use DeprecatedAssertionsTrait;
 

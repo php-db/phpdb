@@ -23,7 +23,7 @@ use function var_export;
 
 #[CoversMethod(AbstractResultSet::class, 'current')]
 #[CoversMethod(AbstractResultSet::class, 'buffer')]
-class ResultSetIntegrationTest extends TestCase
+final class ResultSetIntegrationTest extends TestCase
 {
     protected ResultSet $resultSet;
 

@@ -8,7 +8,7 @@ use PDOStatement;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-class StatementIntegrationTest extends TestCase
+final class StatementIntegrationTest extends TestCase
 {
     protected Statement $statement;
 

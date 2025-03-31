@@ -40,7 +40,7 @@ use ReflectionClass;
 #[CoversMethod(AbstractTableGateway::class, 'getLastInsertValue')]
 #[CoversMethod(AbstractTableGateway::class, '__get')]
 #[CoversMethod(AbstractTableGateway::class, '__clone')]
-class AbstractTableGatewayTest extends TestCase
+final class AbstractTableGatewayTest extends TestCase
 {
     /** @var Generator */
     protected Adapter|MockObject|Generator $mockAdapter;

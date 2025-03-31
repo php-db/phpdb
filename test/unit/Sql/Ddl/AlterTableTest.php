@@ -21,7 +21,7 @@ use function str_replace;
 #[CoversMethod(AlterTable::class, 'addConstraint')]
 #[CoversMethod(AlterTable::class, 'dropIndex')]
 #[CoversMethod(AlterTable::class, 'getSqlString')]
-class AlterTableTest extends TestCase
+final class AlterTableTest extends TestCase
 {
     public function testSetTable(): void
     {

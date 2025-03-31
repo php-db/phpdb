@@ -5,7 +5,7 @@ namespace LaminasTest\Db\Sql;
 use Laminas\Db\Sql\Literal;
 use PHPUnit\Framework\TestCase;
 
-class LiteralTest extends TestCase
+final class LiteralTest extends TestCase
 {
     public function testSetLiteral(): void
     {

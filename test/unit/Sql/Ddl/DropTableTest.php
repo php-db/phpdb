@@ -8,7 +8,7 @@ use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 
 #[CoversMethod(DropTable::class, 'getSqlString')]
-class DropTableTest extends TestCase
+final class DropTableTest extends TestCase
 {
     public function testGetSqlString(): void
     {

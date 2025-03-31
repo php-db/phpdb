@@ -12,7 +12,7 @@ use PHPUnit\Framework\TestCase;
 
 #[CoversMethod(Adapter::class, 'query')]
 #[CoversMethod(ResultSet::class, 'current')]
-class QueryTest extends TestCase
+final class QueryTest extends TestCase
 {
     use AdapterTrait;
 

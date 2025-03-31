@@ -16,7 +16,7 @@ use function uniqid;
 
 #[CoversMethod(Result::class, 'current')]
 #[Group('result-pdo')]
-class ResultTest extends TestCase
+final class ResultTest extends TestCase
 {
     /**
      * Tests current method returns same data on consecutive calls.

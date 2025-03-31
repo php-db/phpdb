@@ -7,7 +7,7 @@ use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 
 #[CoversMethod(Binary::class, 'getExpressionData')]
-class BinaryTest extends TestCase
+final class BinaryTest extends TestCase
 {
     public function testGetExpressionData(): void
     {

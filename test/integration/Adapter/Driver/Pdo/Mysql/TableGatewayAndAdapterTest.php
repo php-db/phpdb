@@ -15,7 +15,7 @@ use function array_fill;
  * On tear down disconnected from the database and set the driver adapter on null
  * Running many tests ended up in consuming all mysql connections and not releasing them
  */
-class TableGatewayAndAdapterTest extends TestCase
+final class TableGatewayAndAdapterTest extends TestCase
 {
     use AdapterTrait;
 

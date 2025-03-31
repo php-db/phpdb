@@ -18,7 +18,7 @@ use ReflectionException;
 use function var_export;
 
 #[CoversMethod(PredicateSet::class, 'addPredicates')]
-class PredicateSetTest extends TestCase
+final class PredicateSetTest extends TestCase
 {
     use DeprecatedAssertionsTrait;
 

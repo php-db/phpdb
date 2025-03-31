@@ -37,7 +37,7 @@ use ReflectionException;
 #[CoversMethod(Update::class, '__get')]
 #[CoversMethod(Update::class, '__clone')]
 #[CoversMethod(Update::class, 'join')]
-class UpdateTest extends TestCase
+final class UpdateTest extends TestCase
 {
     use DeprecatedAssertionsTrait;
 

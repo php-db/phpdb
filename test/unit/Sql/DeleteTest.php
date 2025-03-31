@@ -24,7 +24,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(Delete::class, 'where')]
 #[CoversMethod(Delete::class, 'prepareStatement')]
 #[CoversMethod(Delete::class, 'getSqlString')]
-class DeleteTest extends TestCase
+final class DeleteTest extends TestCase
 {
     use DeprecatedAssertionsTrait;
 

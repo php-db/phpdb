@@ -6,7 +6,7 @@ use Laminas\Db\Sql\Predicate\NotIn;
 use Laminas\Db\Sql\Select;
 use PHPUnit\Framework\TestCase;
 
-class NotInTest extends TestCase
+final class NotInTest extends TestCase
 {
     public function testRetrievingWherePartsReturnsSpecificationArrayOfIdentifierAndValuesAndArrayOfTypes(): void
     {

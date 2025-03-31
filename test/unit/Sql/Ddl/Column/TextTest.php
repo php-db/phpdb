@@ -7,7 +7,7 @@ use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 
 #[CoversMethod(Text::class, 'getExpressionData')]
-class TextTest extends TestCase
+final class TextTest extends TestCase
 {
     public function testGetExpressionData(): void
     {

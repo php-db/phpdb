@@ -11,7 +11,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(AbstractConstraint::class, 'setColumns')]
 #[CoversMethod(AbstractConstraint::class, 'addColumn')]
 #[CoversMethod(AbstractConstraint::class, 'getColumns')]
-class AbstractConstraintTest extends TestCase
+final class AbstractConstraintTest extends TestCase
 {
     /** @var AbstractConstraint */
     protected AbstractConstraint|MockObject $ac;

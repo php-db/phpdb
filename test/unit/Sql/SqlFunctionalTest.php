@@ -32,7 +32,7 @@ use function is_string;
  * @method CreateTable createTable(null|string $table)
  * @method Column createColumn(null|string $name)
  */
-class SqlFunctionalTest extends TestCase
+final class SqlFunctionalTest extends TestCase
 {
     /**
      * @psalm-return array<string, array{

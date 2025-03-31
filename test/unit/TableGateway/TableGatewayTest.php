@@ -22,7 +22,7 @@ use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-class TableGatewayTest extends TestCase
+final class TableGatewayTest extends TestCase
 {
     /** @var Adapter&MockObject */
     protected Adapter|MockObject $mockAdapter;

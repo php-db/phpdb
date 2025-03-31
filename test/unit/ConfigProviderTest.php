@@ -6,9 +6,8 @@ use Laminas\Db\Adapter;
 use Laminas\Db\ConfigProvider;
 use PHPUnit\Framework\Attributes\Depends;
 use PHPUnit\Framework\TestCase;
-use Zend\Db\Adapter\AdapterInterface;
 
-class ConfigProviderTest extends TestCase
+final class ConfigProviderTest extends TestCase
 {
     /** @var array<string, array<array-key, string>> */
     private array $config = [
@@ -19,7 +18,7 @@ class ConfigProviderTest extends TestCase
             Adapter\AdapterInterface::class => Adapter\AdapterServiceFactory::class,
         ],
         'aliases'            => [
-            Adapter\Adapter::class          => Adapter\AdapterInterface::class,
+            Adapter\Adapter::class => Adapter\AdapterInterface::class,
         ],
     ];
 

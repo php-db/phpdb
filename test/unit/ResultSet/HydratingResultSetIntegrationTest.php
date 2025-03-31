@@ -8,7 +8,7 @@ use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 
 #[CoversMethod(HydratingResultSet::class, 'current')]
-class HydratingResultSetIntegrationTest extends TestCase
+final class HydratingResultSetIntegrationTest extends TestCase
 {
     public function testCurrentWillReturnBufferedRow(): void
     {

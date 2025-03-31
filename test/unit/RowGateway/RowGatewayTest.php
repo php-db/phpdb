@@ -12,7 +12,7 @@ use Laminas\Db\RowGateway\RowGateway;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-class RowGatewayTest extends TestCase
+final class RowGatewayTest extends TestCase
 {
     /** @var Adapter&MockObject */
     protected Adapter|MockObject $mockAdapter;

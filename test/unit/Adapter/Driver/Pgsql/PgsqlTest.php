@@ -26,7 +26,7 @@ use function extension_loaded;
 #[CoversMethod(Pgsql::class, 'formatParameterName')]
 #[CoversMethod(Pgsql::class, 'getLastGeneratedValue')]
 #[CoversMethod(Pgsql::class, 'getResultPrototype')]
-class PgsqlTest extends TestCase
+final class PgsqlTest extends TestCase
 {
     protected Pgsql $pgsql;
 

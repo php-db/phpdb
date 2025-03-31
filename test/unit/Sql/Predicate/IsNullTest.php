@@ -5,7 +5,7 @@ namespace LaminasTest\Db\Sql\Predicate;
 use Laminas\Db\Sql\Predicate\IsNotNull;
 use PHPUnit\Framework\TestCase;
 
-class IsNullTest extends TestCase
+final class IsNullTest extends TestCase
 {
     public function testEmptyConstructorYieldsNullIdentifier(): void
     {

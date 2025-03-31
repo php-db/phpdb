@@ -11,7 +11,7 @@ use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
 use ReflectionException;
 
-class AdapterAwareTraitTest extends TestCase
+final class AdapterAwareTraitTest extends TestCase
 {
     use DeprecatedAssertionsTrait;
 

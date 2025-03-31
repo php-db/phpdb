@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
 
 use function var_export;
 
-class ExpressionTest extends TestCase
+final class ExpressionTest extends TestCase
 {
     public function testEmptyConstructorYieldsEmptyLiteralAndParameter(): void
     {

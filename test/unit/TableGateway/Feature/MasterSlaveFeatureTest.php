@@ -13,7 +13,7 @@ use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-class MasterSlaveFeatureTest extends TestCase
+final class MasterSlaveFeatureTest extends TestCase
 {
     /** @var AdapterInterface&MockObject */
     protected AdapterInterface|MockObject $mockMasterAdapter;

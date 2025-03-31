@@ -13,7 +13,7 @@ use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
 
-class MetadataFeatureTest extends TestCase
+final class MetadataFeatureTest extends TestCase
 {
     /**
      * @throws Exception

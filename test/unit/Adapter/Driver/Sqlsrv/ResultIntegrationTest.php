@@ -22,7 +22,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(Result::class, 'getGeneratedValue')]
 #[Group('integration')]
 #[Group('integration-sqlsrv')]
-class ResultIntegrationTest extends TestCase
+final class ResultIntegrationTest extends TestCase
 {
     protected Result $object;
 

@@ -12,7 +12,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
 
-class SequenceFeatureTest extends TestCase
+final class SequenceFeatureTest extends TestCase
 {
     protected SequenceFeature $feature;
 

@@ -14,9 +14,8 @@ use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 
-class AdapterAbstractServiceFactoryTest extends TestCase
+final class AdapterAbstractServiceFactoryTest extends TestCase
 {
-    /** @var ServiceManager|ContainerInterface */
     private ServiceManager|ContainerInterface $serviceManager;
 
     protected function setUp(): void

@@ -19,7 +19,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(\Laminas\Db\Sql\Platform\SqlServer\SelectDecorator::class, 'prepareStatement')]
 #[CoversMethod(\Laminas\Db\Sql\Platform\SqlServer\SelectDecorator::class, 'processLimitOffset')]
 #[CoversMethod(SelectDecorator::class, 'getSqlString')]
-class SelectDecoratorTest extends TestCase
+final class SelectDecoratorTest extends TestCase
 {
     #[DataProvider('dataProvider')]
     #[TestDox('integration test: Testing SelectDecorator will use Select to produce properly IBM Db2

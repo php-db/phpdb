@@ -10,7 +10,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 #[CoversMethod(AbstractResultSet::class, 'current')]
-class AbstractResultSetIntegrationTest extends TestCase
+final class AbstractResultSetIntegrationTest extends TestCase
 {
     protected AbstractResultSet|MockObject $resultSet;
 

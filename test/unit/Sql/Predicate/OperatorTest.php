@@ -7,7 +7,7 @@ use PHPUnit\Framework\TestCase;
 
 use function var_export;
 
-class OperatorTest extends TestCase
+final class OperatorTest extends TestCase
 {
     public function testEmptyConstructorYieldsNullLeftAndRightValues(): void
     {

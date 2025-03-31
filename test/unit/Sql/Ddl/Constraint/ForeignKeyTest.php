@@ -18,7 +18,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(ForeignKey::class, 'setOnUpdateRule')]
 #[CoversMethod(ForeignKey::class, 'getOnUpdateRule')]
 #[CoversMethod(ForeignKey::class, 'getExpressionData')]
-class ForeignKeyTest extends TestCase
+final class ForeignKeyTest extends TestCase
 {
     public function testSetName(): ForeignKey
     {

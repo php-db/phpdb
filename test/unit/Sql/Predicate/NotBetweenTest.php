@@ -8,7 +8,7 @@ use PHPUnit\Framework\TestCase;
 
 #[CoversMethod(NotBetween::class, 'getSpecification')]
 #[CoversMethod(NotBetween::class, 'getExpressionData')]
-class NotBetweenTest extends TestCase
+final class NotBetweenTest extends TestCase
 {
     protected NotBetween $notBetween;
 

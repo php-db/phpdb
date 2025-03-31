@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
 
 #[CoversMethod(BigInteger::class, '__construct')]
 #[CoversMethod(Column::class, 'getExpressionData')]
-class BigIntegerTest extends TestCase
+final class BigIntegerTest extends TestCase
 {
     public function testObjectConstruction(): void
     {

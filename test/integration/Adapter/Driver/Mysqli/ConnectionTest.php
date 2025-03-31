@@ -8,7 +8,7 @@ use PHPUnit\Framework\TestCase;
 
 #[Group('integration')]
 #[Group('integration-mysqli')]
-class ConnectionTest extends TestCase
+final class ConnectionTest extends TestCase
 {
     use TraitSetup;
 

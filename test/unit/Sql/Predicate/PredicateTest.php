@@ -13,7 +13,7 @@ use PHPUnit\Framework\TestCase;
 
 use const E_USER_NOTICE;
 
-class PredicateTest extends TestCase
+final class PredicateTest extends TestCase
 {
     public function testEqualToCreatesOperatorPredicate(): void
     {

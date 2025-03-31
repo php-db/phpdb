@@ -6,7 +6,7 @@ use Laminas\Db\Sql\Predicate\In;
 use Laminas\Db\Sql\Select;
 use PHPUnit\Framework\TestCase;
 
-class InTest extends TestCase
+final class InTest extends TestCase
 {
     public function testEmptyConstructorYieldsNullIdentifierAndValueSet(): void
     {

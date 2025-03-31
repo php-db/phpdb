@@ -15,7 +15,7 @@ use function var_dump;
 
 #[Group('integration')]
 #[Group('integration-sqlserver')]
-class SqlServerTest extends TestCase
+final class SqlServerTest extends TestCase
 {
     /** @var array<string, resource> */
     public array|PDO $adapters = [];

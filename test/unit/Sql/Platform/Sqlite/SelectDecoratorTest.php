@@ -18,7 +18,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(SelectDecorator::class, 'prepareStatement')]
 #[CoversMethod(SelectDecorator::class, 'processCombine')]
 #[CoversMethod(SelectDecorator::class, 'getSqlString')]
-class SelectDecoratorTest extends TestCase
+final class SelectDecoratorTest extends TestCase
 {
     #[DataProvider('dataProviderUnionSyntaxFromCombine')]
     #[TestDox('integration test: Testing SelectDecorator will use Select an internal state to prepare a proper combine

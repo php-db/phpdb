@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 
 #[CoversMethod(Boolean::class, 'getExpressionData')]
 #[CoversClass(Boolean::class)]
-class BooleanTest extends TestCase
+final class BooleanTest extends TestCase
 {
     public function testGetExpressionData(): void
     {

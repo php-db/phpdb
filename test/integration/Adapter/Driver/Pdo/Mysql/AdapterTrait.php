@@ -4,8 +4,6 @@ namespace LaminasIntegrationTest\Db\Adapter\Driver\Pdo\Mysql;
 
 use Laminas\Db\Adapter\Adapter;
 
-use PHPUnit\Framework\Attributes\RequiresPhpExtension;
-
 use function getenv;
 
 trait AdapterTrait

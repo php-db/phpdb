@@ -17,7 +17,7 @@ use function array_merge;
  * Tests for {@see TableIdentifier}
  */
 #[CoversClass(TableIdentifier::class)]
-class TableIdentifierTest extends TestCase
+final class TableIdentifierTest extends TestCase
 {
     public function testGetTable(): void
     {

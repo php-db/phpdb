@@ -30,7 +30,7 @@ use ReflectionException;
 #[CoversMethod(Insert::class, '__unset')]
 #[CoversMethod(Insert::class, '__isset')]
 #[CoversMethod(Insert::class, '__get')]
-class InsertTest extends TestCase
+final class InsertTest extends TestCase
 {
     use DeprecatedAssertionsTrait;
 

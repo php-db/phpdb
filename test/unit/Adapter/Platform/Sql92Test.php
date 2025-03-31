@@ -16,7 +16,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(Sql92::class, 'quoteValueList')]
 #[CoversMethod(Sql92::class, 'getIdentifierSeparator')]
 #[CoversMethod(Sql92::class, 'quoteIdentifierInFragment')]
-class Sql92Test extends TestCase
+final class Sql92Test extends TestCase
 {
     protected Sql92 $platform;
 

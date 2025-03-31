@@ -26,7 +26,7 @@ use function preg_match;
 use function uniqid;
 
 #[CoversMethod(AbstractSql::class, 'processExpression')]
-class AbstractSqlTest extends TestCase
+final class AbstractSqlTest extends TestCase
 {
     protected AbstractSql&MockObject $abstractSql;
 

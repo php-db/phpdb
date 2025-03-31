@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(AbstractLengthColumn::class, 'setLength')]
 #[CoversMethod(AbstractLengthColumn::class, 'getLength')]
 #[CoversMethod(AbstractLengthColumn::class, 'getExpressionData')]
-class AbstractLengthColumnTest extends TestCase
+final class AbstractLengthColumnTest extends TestCase
 {
     /**
      * @throws Exception

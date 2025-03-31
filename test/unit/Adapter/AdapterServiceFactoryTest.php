@@ -11,7 +11,7 @@ use PHPUnit\Framework\TestCase;
 
 use function extension_loaded;
 
-class AdapterServiceFactoryTest extends TestCase
+final class AdapterServiceFactoryTest extends TestCase
 {
     private ServiceLocatorInterface&MockObject $services;
 

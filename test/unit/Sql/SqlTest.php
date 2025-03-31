@@ -26,7 +26,7 @@ use TypeError;
 #[CoversMethod(Sql::class, 'update')]
 #[CoversMethod(Sql::class, 'delete')]
 #[CoversMethod(Sql::class, 'prepareStatementForSqlObject')]
-class SqlTest extends TestCase
+final class SqlTest extends TestCase
 {
     /** @var Adapter&MockObject */
     protected Adapter|MockObject $mockAdapter;

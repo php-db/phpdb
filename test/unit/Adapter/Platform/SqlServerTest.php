@@ -21,7 +21,7 @@ use function set_error_handler;
 #[CoversMethod(SqlServer::class, 'getIdentifierSeparator')]
 #[CoversMethod(SqlServer::class, 'quoteIdentifierInFragment')]
 #[CoversMethod(SqlServer::class, 'setDriver')]
-class SqlServerTest extends TestCase
+final class SqlServerTest extends TestCase
 {
     protected SqlServer $platform;
 

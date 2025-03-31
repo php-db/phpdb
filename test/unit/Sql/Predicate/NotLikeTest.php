@@ -6,7 +6,7 @@ use Laminas\Db\Sql\Predicate\Like;
 use Laminas\Db\Sql\Predicate\NotLike;
 use PHPUnit\Framework\TestCase;
 
-class NotLikeTest extends TestCase
+final class NotLikeTest extends TestCase
 {
     public function testConstructEmptyArgs(): void
     {

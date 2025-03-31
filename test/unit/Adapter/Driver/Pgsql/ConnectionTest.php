@@ -19,7 +19,7 @@ use function pg_client_encoding;
 use const PGSQL_CONNECT_FORCE_NEW;
 
 #[CoversMethod(Connection::class, 'getResource')]
-class ConnectionTest extends TestCase
+final class ConnectionTest extends TestCase
 {
     use DeprecatedAssertionsTrait;
 

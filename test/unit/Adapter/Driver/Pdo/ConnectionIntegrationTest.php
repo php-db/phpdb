@@ -24,7 +24,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(Connection::class, 'getLastGeneratedValue')]
 #[Group('integration')]
 #[Group('integration-pdo')]
-class ConnectionIntegrationTest extends TestCase
+final class ConnectionIntegrationTest extends TestCase
 {
     /** @var array<string, string> */
     protected array $variables = ['pdodriver' => 'sqlite', 'database' => ':memory:'];

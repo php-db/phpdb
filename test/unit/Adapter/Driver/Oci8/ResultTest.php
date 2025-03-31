@@ -15,7 +15,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(Result::class, 'next')]
 #[CoversMethod(Result::class, 'rewind')]
 #[Group('result-oci8')]
-class ResultTest extends TestCase
+final class ResultTest extends TestCase
 {
     public function testGetResource(): void
     {

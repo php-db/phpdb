@@ -15,7 +15,7 @@ use Laminas\Db\Sql\Select;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-class CombineTest extends TestCase
+final class CombineTest extends TestCase
 {
     protected Combine $combine;
 
