@@ -6,18 +6,18 @@ use Laminas\Db\Adapter\Adapter;
 use Laminas\Db\Adapter\AdapterAbstractServiceFactory;
 use Laminas\ServiceManager\Config;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
-use Laminas\ServiceManager\ServiceLocatorInterface;
 use Laminas\ServiceManager\ServiceManager;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\RequiresPhpExtension;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 
 class AdapterAbstractServiceFactoryTest extends TestCase
 {
-    /** @var ServiceLocatorInterface */
-    private ServiceManager|ServiceLocatorInterface $serviceManager;
+    /** @var ServiceManager|ContainerInterface */
+    private ServiceManager|ContainerInterface $serviceManager;
 
     protected function setUp(): void
     {

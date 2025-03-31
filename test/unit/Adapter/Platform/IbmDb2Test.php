@@ -4,6 +4,7 @@ namespace LaminasTest\Db\Adapter\Platform;
 
 use Laminas\Db\Adapter\Platform\IbmDb2;
 use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\RequiresFunction;
 use PHPUnit\Framework\TestCase;
 
 #[CoversMethod(IbmDb2::class, 'getName')]
@@ -111,18 +112,9 @@ class IbmDb2Test extends TestCase
         );
     }
 
+    #[RequiresFunction('db2_escape_string')]
     public function testQuoteValueList(): void
     {
-        /**
-         * @todo Determine if vulnerability warning is required during unit testing
-         */
-        //if (! function_exists('db2_escape_string')) {
-            //$this->expectError();
-            //$this->expectExceptionMessage(
-            //    'Attempting to quote a value in Laminas\Db\Adapter\Platform\IbmDb2 without extension/driver'
-            //    . ' support can introduce security vulnerabilities in a production environment'
-            //);
-        //}
         self::assertEquals("'Foo O''Bar'", $this->platform->quoteValueList("Foo O'Bar"));
     }
 
