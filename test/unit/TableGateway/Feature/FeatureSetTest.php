@@ -28,7 +28,6 @@ class FeatureSetTest extends TestCase
 {
     /**
      * @cover FeatureSet::addFeature
-     *
      * @throws Exception
      */
     #[Group('Laminas-4993')]
@@ -63,7 +62,6 @@ class FeatureSetTest extends TestCase
 
     /**
      * @cover FeatureSet::addFeature
-     *
      * @throws Exception
      */
     #[Group('Laminas-4993')]

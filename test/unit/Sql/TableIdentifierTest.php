@@ -49,6 +49,9 @@ class TableIdentifierTest extends TestCase
         self::assertSame('castResult', $tableIdentifier->getTable());
     }
 
+    /**
+     * @todo Review test to see if relevant?
+     */
     public function testGetSchemaFromObjectStringCast(): void
     {
         $schema          = new ObjectToString('castResult');

@@ -22,7 +22,7 @@ class IsNullTest extends TestCase
     public function testCanPassIdentifierToConstructor(): void
     {
         new IsNotNull();
-        $isnull    = new IsNotNull('foo.bar');
+        $isnull = new IsNotNull('foo.bar');
         self::assertEquals('foo.bar', $isnull->getIdentifier());
     }
 

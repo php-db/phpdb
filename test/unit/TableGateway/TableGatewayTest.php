@@ -167,7 +167,7 @@ class TableGatewayTest extends TestCase
             ->method('execute')
             ->willReturn($result);
 
-        $statementExpectation = function ($insert) use ($expected, $statement): \PHPUnit\Framework\MockObject\MockObject&\Laminas\Db\Adapter\Driver\StatementInterface {
+        $statementExpectation = function ($insert) use ($expected, $statement): MockObject&StatementInterface {
             $state = $insert->getRawState();
             self::assertSame($expected, $state['table']);
             return $statement;
@@ -228,7 +228,7 @@ class TableGatewayTest extends TestCase
             ->method('execute')
             ->willReturn($result);
 
-        $statementExpectation = function ($update) use ($expected, $statement): \PHPUnit\Framework\MockObject\MockObject&\Laminas\Db\Adapter\Driver\StatementInterface {
+        $statementExpectation = function ($update) use ($expected, $statement): MockObject&StatementInterface {
             $state = $update->getRawState();
             self::assertSame($expected, $state['table']);
             return $statement;
@@ -291,7 +291,7 @@ class TableGatewayTest extends TestCase
             ->method('execute')
             ->willReturn($result);
 
-        $statementExpectation = function ($delete) use ($expected, $statement): \PHPUnit\Framework\MockObject\MockObject&\Laminas\Db\Adapter\Driver\StatementInterface {
+        $statementExpectation = function ($delete) use ($expected, $statement): MockObject&StatementInterface {
             $state = $delete->getRawState();
             self::assertSame($expected, $state['table']);
             return $statement;

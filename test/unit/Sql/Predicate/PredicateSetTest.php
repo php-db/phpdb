@@ -42,11 +42,11 @@ class PredicateSetTest extends TestCase
     public function testCanPassPredicatesAndDefaultCombinationViaConstructor(): void
     {
         new PredicateSet();
-        $set          = new PredicateSet([
+        $set   = new PredicateSet([
             new IsNull('foo'),
             new IsNull('bar'),
         ], 'OR');
-        $parts        = $set->getExpressionData();
+        $parts = $set->getExpressionData();
         self::assertCount(3, $parts);
         self::assertStringContainsString('OR', $parts[1]);
         self::assertStringNotContainsString('AND', $parts[1]);

@@ -198,11 +198,11 @@ class SqlTest extends TestCase
     protected function getAdapterForPlatform(string $platform): Adapter
     {
         $platform = match ($platform) {
-            'sql92' => new TestAsset\TrustingSql92Platform(),
-            'MySql' => new TestAsset\TrustingMysqlPlatform(),
-            'Oracle' => new TestAsset\TrustingOraclePlatform(),
+            'sql92'     => new TestAsset\TrustingSql92Platform(),
+            'MySql'     => new TestAsset\TrustingMysqlPlatform(),
+            'Oracle'    => new TestAsset\TrustingOraclePlatform(),
             'SqlServer' => new TestAsset\TrustingSqlServerPlatform(),
-            default => null,
+            default     => null,
         };
 
         $mockStatement = $this->getMockBuilder(StatementInterface::class)->getMock();

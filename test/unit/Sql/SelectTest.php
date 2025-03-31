@@ -685,7 +685,6 @@ class SelectTest extends TestCase
 
     /**
      * @throws ReflectionException
-     *
      * @return void
      */
     #[DataProvider('providerData')]
