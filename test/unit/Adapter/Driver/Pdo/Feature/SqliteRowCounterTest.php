@@ -21,6 +21,7 @@ final class SqliteRowCounterTest extends TestCase
 {
     protected SqliteRowCounter $rowCounter;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->rowCounter = new SqliteRowCounter();

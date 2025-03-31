@@ -21,6 +21,7 @@ final class RowGatewayTest extends TestCase
 
     /** @var ResultInterface&MockObject */
     protected ResultInterface|MockObject $mockResult;
+    #[\Override]
     protected function setUp(): void
     {
         // mock the adapter, driver, and parts

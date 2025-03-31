@@ -36,6 +36,7 @@ final class SqlTest extends TestCase
      */
     protected Sql $sql;
 
+    #[\Override]
     protected function setUp(): void
     {
         // mock the adapter, driver, and parts

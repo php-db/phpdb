@@ -25,6 +25,7 @@ final class MasterSlaveFeatureTest extends TestCase
 
     protected TableGateway&MockObject $table;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->mockMasterAdapter = $this->getMockBuilder(AdapterInterface::class)->getMock();

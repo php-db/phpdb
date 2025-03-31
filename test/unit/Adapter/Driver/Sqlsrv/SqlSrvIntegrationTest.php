@@ -20,6 +20,7 @@ final class SqlSrvIntegrationTest extends AbstractIntegrationTestCase
     /** @var resource SQL Server Connection */
     private $resource;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

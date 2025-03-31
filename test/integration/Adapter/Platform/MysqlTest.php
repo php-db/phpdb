@@ -18,6 +18,7 @@ final class MysqlTest extends TestCase
     /** @var array<string, resource|\PDO> */
     public array|\PDO $adapters = [];
 
+    #[\Override]
     protected function setUp(): void
     {
         if (! getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_MYSQL')) {

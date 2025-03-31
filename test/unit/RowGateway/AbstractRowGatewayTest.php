@@ -49,6 +49,7 @@ final class AbstractRowGatewayTest extends TestCase
      * @throws ReflectionException
      * @throws Exception
      */
+    #[\Override]
     protected function setUp(): void
     {
         // mock the adapter, driver, and parts

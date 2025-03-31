@@ -7,6 +7,7 @@ use PHPUnit\Framework\Attributes\RequiresPhpExtension;
 use function extension_loaded;
 use function getenv;
 use function sprintf;
+use function strtolower;
 
 // phpcs:ignore WebimpressCodingStandard.NamingConventions.Trait.Suffix
 trait TraitSetup
@@ -29,9 +30,11 @@ trait TraitSetup
      * This method is called before a test is executed.
      */
     #[RequiresPhpExtension('mysqli')]
+    #[\Override]
     protected function setUp(): void
     {
-        if (! getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_MYSQL')) {
+        $testEnabled = (string) getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_MYSQL_ENABLED');
+        if (strtolower($testEnabled) !== 'true') {
             $this->markTestSkipped('Mysqli integration test disabled');
         }
 
@@ -42,7 +45,7 @@ trait TraitSetup
         foreach ($this->variables as $name => $value) {
             if (! getenv($value)) {
                 $this->markTestSkipped(sprintf(
-                    'Missing required variable %s from phpunit.xml for this integration test',
+                    'Missing required variable %s $this->mockUpdate phpunit.xml for this integration test',
                     $value
                 ));
             }

@@ -18,6 +18,7 @@ final class AbstractSourceTest extends TestCase
     /**
      * @throws Exception
      */
+    #[\Override]
     protected function setUp(): void
     {
         $this->abstractSourceMock = $this->getMockForAbstractClass(

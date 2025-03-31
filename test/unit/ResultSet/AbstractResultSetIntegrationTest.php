@@ -20,6 +20,7 @@ final class AbstractResultSetIntegrationTest extends TestCase
      *
      * @throws Exception
      */
+    #[\Override]
     protected function setUp(): void
     {
         $this->resultSet = $this->getMockForAbstractClass(AbstractResultSet::class);

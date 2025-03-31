@@ -21,6 +21,7 @@ final class OracleRowCounterTest extends TestCase
 {
     protected OracleRowCounter $rowCounter;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->rowCounter = new OracleRowCounter();

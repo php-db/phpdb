@@ -10,6 +10,7 @@ trait AdapterTrait
 {
     protected ?Adapter $adapter;
 
+    #[\Override]
     protected function setUp(): void
     {
         if (! getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_MYSQL')) {

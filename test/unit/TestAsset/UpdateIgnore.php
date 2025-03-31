@@ -7,8 +7,16 @@ use Laminas\Db\Adapter\ParameterContainer;
 use Laminas\Db\Adapter\Platform\PlatformInterface;
 use Laminas\Db\Sql\Update;
 
+/**
+ * @psalm-return UpdateIgnore&static
+ */
 final class UpdateIgnore extends Update
 {
+    /**
+     * Override specification update for testing
+     *
+     * @psalm-suppress InvalidClassConstantType
+     */
     public const SPECIFICATION_UPDATE = 'updateIgnore';
 
     /** @var array<string, string> */

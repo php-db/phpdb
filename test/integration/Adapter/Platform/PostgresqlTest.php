@@ -21,6 +21,7 @@ final class PostgresqlTest extends TestCase
     /** @var array<string, resource> */
     public array|\PDO $adapters = [];
 
+    #[\Override]
     protected function setUp(): void
     {
         if (! getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_PGSQL')) {

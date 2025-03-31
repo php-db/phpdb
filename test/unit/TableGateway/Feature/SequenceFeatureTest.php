@@ -24,6 +24,7 @@ final class SequenceFeatureTest extends TestCase
     /** @var string  sequence name */
     protected static string $sequenceName = 'table_sequence';
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->feature = new SequenceFeature($this->primaryKeyField, self::$sequenceName);
@@ -63,12 +64,11 @@ final class SequenceFeatureTest extends TestCase
         $adapter->expects($this->once())
             ->method('createStatement')
             ->willReturn($statement);
-        $this->tableGateway = $this->getMockForAbstractClass(
-            TableGateway::class,
-            ['table', $adapter],
-            '',
-            true
-        );
+        $this->tableGateway = $this
+            ->getMockBuilder(TableGateway::class)
+            ->setConstructorArgs(['table', $adapter])
+            ->onlyMethods([])
+            ->getMock();
         $this->feature->setTableGateway($this->tableGateway);
         $this->feature->nextSequenceId();
     }

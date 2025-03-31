@@ -114,8 +114,8 @@ class Select extends AbstractPreparableSql
 
     protected bool $prefixColumnsWithTable = true;
 
-    /** @var string|array|TableIdentifier */
-    protected $table;
+    /** @var null|string|array|TableIdentifier */
+    protected $table = null;
 
     /** @var null|string|Expression */
     protected $quantifier;

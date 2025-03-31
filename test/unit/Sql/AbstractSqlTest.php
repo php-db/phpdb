@@ -35,6 +35,7 @@ final class AbstractSqlTest extends TestCase
     /**
      * @throws Exception
      */
+    #[\Override]
     protected function setUp(): void
     {
         $this->abstractSql = $this->getMockForAbstractClass(AbstractSql::class);

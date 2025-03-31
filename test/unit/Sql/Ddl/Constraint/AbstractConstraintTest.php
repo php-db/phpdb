@@ -19,6 +19,7 @@ final class AbstractConstraintTest extends TestCase
     /**
      * @throws Exception
      */
+    #[\Override]
     protected function setUp(): void
     {
         $this->ac = $this->getMockForAbstractClass(AbstractConstraint::class);

@@ -12,6 +12,7 @@ final class NotBetweenTest extends TestCase
 {
     protected NotBetween $notBetween;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->notBetween = new NotBetween();
