@@ -2,6 +2,7 @@
 
 namespace LaminasTest\Db\Sql\Predicate;
 
+use Laminas\Db\Sql\ExpressionInterface;
 use Laminas\Db\Sql\Predicate\NotBetween;
 use Override;
 use PHPUnit\Framework\Attributes\CoversMethod;
@@ -33,19 +34,20 @@ final class NotBetweenTest extends TestCase
             [
                 $this->notBetween->getSpecification(),
                 ['foo.bar', 10, 19],
-                [NotBetween::TYPE_IDENTIFIER, NotBetween::TYPE_VALUE, NotBetween::TYPE_VALUE],
+                [ExpressionInterface::TYPE_IDENTIFIER, ExpressionInterface::TYPE_VALUE, ExpressionInterface::TYPE_VALUE],
             ],
         ];
         self::assertEquals($expected, $this->notBetween->getExpressionData());
 
-        $this->notBetween->setIdentifier([10 => NotBetween::TYPE_VALUE])
-                      ->setMinValue(['foo.bar' => NotBetween::TYPE_IDENTIFIER])
-                      ->setMaxValue(['foo.baz' => NotBetween::TYPE_IDENTIFIER]);
+        $this->notBetween
+            ->setIdentifier(10)
+            ->setMinValue(['foo.bar' => ExpressionInterface::TYPE_IDENTIFIER])
+            ->setMaxValue(['foo.baz' => ExpressionInterface::TYPE_IDENTIFIER]);
         $expected = [
             [
                 $this->notBetween->getSpecification(),
                 [10, 'foo.bar', 'foo.baz'],
-                [NotBetween::TYPE_VALUE, NotBetween::TYPE_IDENTIFIER, NotBetween::TYPE_IDENTIFIER],
+                [ExpressionInterface::TYPE_VALUE, ExpressionInterface::TYPE_IDENTIFIER, ExpressionInterface::TYPE_IDENTIFIER],
             ],
         ];
         self::assertEquals($expected, $this->notBetween->getExpressionData());

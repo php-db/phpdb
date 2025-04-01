@@ -217,7 +217,7 @@ final class ResultSetIntegrationTest extends TestCase
         $dataSource = $this->getArrayDataSource($count);
         $this->resultSet->initialize($dataSource);
         $test = $this->resultSet->toArray();
-        self::assertEquals($dataSource->getArrayCopy(), $test, var_export($test, 1));
+        self::assertEquals($dataSource->getArrayCopy(), $test, var_export($test, true));
     }
 
     public function testCurrentWithBufferingCallsDataSourceCurrentOnce(): void

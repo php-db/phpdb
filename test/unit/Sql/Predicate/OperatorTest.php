@@ -95,6 +95,6 @@ final class OperatorTest extends TestCase
             ],
         ];
         $test     = $operator->getExpressionData();
-        self::assertEquals($expected, $test, var_export($test, 1));
+        self::assertEquals($expected, $test, var_export($test, true));
     }
 }

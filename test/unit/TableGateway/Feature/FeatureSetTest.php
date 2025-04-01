@@ -161,6 +161,6 @@ final class FeatureSetTest extends TestCase
         $feature->setTableGateway($tableGatewayMock);
         $featureSet = new FeatureSet();
         $featureSet->addFeature($feature);
-        self::assertEquals(1, $featureSet->callMagicCall('lastSequenceId', null));
+        self::assertEquals(1, $featureSet->callMagicCall('lastSequenceId', []));
     }
 }
