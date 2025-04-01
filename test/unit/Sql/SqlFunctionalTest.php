@@ -12,7 +12,9 @@ use Laminas\Db\Sql\Delete;
 use Laminas\Db\Sql\Expression;
 use Laminas\Db\Sql\Insert;
 use Laminas\Db\Sql\Platform\PlatformDecoratorInterface;
+use Laminas\Db\Sql\PreparableSqlInterface;
 use Laminas\Db\Sql\Select;
+use Laminas\Db\Sql\SqlInterface;
 use Laminas\Db\Sql\TableIdentifier;
 use Laminas\Db\Sql\Update;
 use LaminasTest\Db\TestAsset;
@@ -25,12 +27,12 @@ use function is_array;
 use function is_string;
 
 /**
- * @method Select select(TableIdentifier|null|string $table)
- * @method Update update(TableIdentifier|null|string $table)
- * @method Delete delete(TableIdentifier|null|string $table)
- * @method Insert insert(TableIdentifier|null|string $table)
- * @method CreateTable createTable(null|string $table)
- * @method Column createColumn(null|string $name)
+ * @method Select select(string|array|null $sqlString)
+ * @method Update update(TableIdentifier|null|string $sqlString)
+ * @method Delete delete(TableIdentifier|null|string $sqlString)
+ * @method Insert insert(TableIdentifier|null|string $sqlString)
+ * @method CreateTable createTable(null|string|TableIdentifier $sqlString)
+ * @method Column createColumn(null|string $sqlString)
  */
 final class SqlFunctionalTest extends TestCase
 {
@@ -41,22 +43,22 @@ final class SqlFunctionalTest extends TestCase
      *         sql92: {
      *             string: string,
      *             prepare: string,
-     *             parameters: array<string, mixed>
+     *             parameters: array<string, mixed>,
      *         },
      *         MySql: {
      *             string: string,
      *             prepare: string,
-     *             parameters: array<string, mixed>
+     *             parameters: array<string, mixed>,
      *         },
      *         Oracle: {
      *             string: string,
      *             prepare: string,
-     *             parameters: array<string, mixed>
+     *             parameters: array<string, mixed>,
      *         },
      *         SqlServer: {
      *             string: string,
      *             prepare: string,
-     *             parameters: array<string, mixed>
+     *             parameters: array<string, mixed>,
      *         }
      *     }
      * }>
@@ -557,32 +559,7 @@ final class SqlFunctionalTest extends TestCase
     }
 
     /**
-     * @psalm-return array<string, array{
-     *     sqlObject: AbstractSql,
-     *     platform: string,
-     *     expected: array{
-     *         sql92: array{
-     *             string: string,
-     *             prepare: string,
-     *             parameters: array<string, mixed>
-     *         },
-     *         MySql: array{
-     *             string: string,
-     *             prepare: string,
-     *             parameters: array<string, mixed>
-     *         },
-     *         Oracle: array{
-     *             string: string,
-     *             prepare: string,
-     *             parameters: array<string, mixed>
-     *         },
-     *         SqlServer: array{
-     *             string: string,
-     *             prepare: string,
-     *             parameters: array<string, mixed>
-     *         },
-     *     }
-     * }>
+     * @psalm-return array<string, array{expected: array<array-key, mixed>, platform: mixed, sqlObject: mixed}>
      */
     public static function dataProvider(): array
     {
@@ -592,7 +569,10 @@ final class SqlFunctionalTest extends TestCase
         );
 
         $res = [];
+        /** @var array $test */
         foreach ($data as $index => $test) {
+            /** @var string $platform */
+            /** @var array $expected */
             foreach ($test['expected'] as $platform => $expected) {
                 $res[$index . '->' . $platform] = [
                     'sqlObject' => $test['sqlObject'],
@@ -605,22 +585,29 @@ final class SqlFunctionalTest extends TestCase
     }
 
     /**
-     * @param $sqlObject
-     * @param $platform
-     * @param $expected
+     * @param PreparableSqlInterface|SqlInterface $sqlObject
+     * @param string                              $platform
+     * @param string|array{
+     *     decorators: array<class-string, PlatformDecoratorInterface>
+     *         } $expected
      */
     #[DataProvider('dataProvider')]
-    public function test($sqlObject, $platform, $expected): void
+    public function test(PreparableSqlInterface|SqlInterface $sqlObject, string $platform, string|array $expected): void
     {
         $sql = new Sql\Sql($this->resolveAdapter($platform));
 
         if (is_array($expected) && isset($expected['decorators'])) {
             foreach ($expected['decorators'] as $type => $decorator) {
-                $sql->getSqlPlatform()->setTypeDecorator($type, $this->resolveDecorator($decorator));
+                $decorator = $this->resolveDecorator($decorator);
+                $this->assertInstanceOf(PlatformDecoratorInterface::class, $decorator);
+
+                $platform = $sql->getSqlPlatform();
+                $this->assertNotNull($platform);
+                $platform->setTypeDecorator($type, $decorator);
             }
         }
 
-        $expectedString = is_string($expected) ? $expected : ($expected['string'] ?? null);
+        $expectedString = is_string($expected) ? $expected : ($expected['string'] ?? '');
         if ($expectedString !== '') {
             $actual = $sql->buildSqlString($sqlObject);
             self::assertEquals($expectedString, $actual, "getSqlString()");
@@ -639,7 +626,9 @@ final class SqlFunctionalTest extends TestCase
         PlatformDecoratorInterface|array $decorator
     ): PlatformDecoratorInterface|MockObject|null {
         if (is_array($decorator)) {
-            $decoratorMock = $this->getMockBuilder($decorator[0])
+            /** @var class-string $classString */
+            $classString   = $decorator[0];
+            $decoratorMock = $this->getMockBuilder($classString)
                 ->onlyMethods(['buildSqlString'])
                 ->setConstructorArgs([null])
                 ->getMock();

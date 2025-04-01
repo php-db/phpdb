@@ -44,15 +44,15 @@ final class SqlTest extends TestCase
     protected function setUp(): void
     {
         // mock the adapter, driver, and parts
-        $mockResult    = $this->createMock(ResultInterface::class);
+        $mockResult = $this->createMock(ResultInterface::class);
 
         $mockStatement = $this->createMock(StatementInterface::class);
         $mockStatement->expects($this->any())->method('execute')->willReturn($mockResult::class);
 
         $mockConnection = $this->getMockBuilder(ConnectionInterface::class)->onlyMethods([])->getMock();
 
-        $mockDriver     = $this->getMockBuilder(DriverInterface::class)->onlyMethods([])->getMock();
-        $mockDriver->expects($this->any())->method('createStatement')->willReturn($mockStatement::class);
+        $mockDriver = $this->getMockBuilder(DriverInterface::class)->onlyMethods([])->getMock();
+        $mockDriver->expects($this->any())->method('createStatement')->willReturn($mockStatement);
         $mockDriver->expects($this->any())->method('getConnection')->willReturn($mockConnection);
         $mockDriver->expects($this->any())->method('formatParameterName')->willReturn('?');
 
@@ -61,7 +61,7 @@ final class SqlTest extends TestCase
             ->onlyMethods([])
             ->setConstructorArgs([
                 $mockDriver,
-                new TestAsset\TrustingSql92Platform()
+                new TestAsset\TrustingSql92Platform(),
             ])
             ->getMock();
 
@@ -163,7 +163,13 @@ final class SqlTest extends TestCase
             $this->sql->buildSqlString($select)
         );
 
-        $this->mockAdapter->getDriver()->createStatement()->expects($this->any())->method('setSql')
+        $stmt = $this
+            ->mockAdapter
+            ->getDriver()
+            ->createStatement();
+
+        /** @var MockObject&StatementInterface $stmt */
+        $stmt->expects($this->any())->method('setSql')
                 ->with($this->equalTo('SELECT "foo".* FROM "foo" OFFSET ?'));
         $this->sql->prepareStatementForSqlObject($select);
 
@@ -172,7 +178,12 @@ final class SqlTest extends TestCase
             'SELECT "foo".* FROM "foo" OFFSET \'10\'',
             $this->sql->buildSqlString($select, $adapterSql92)
         );
-        $adapterSql92->getDriver()->createStatement()->expects($this->any())->method('setSql')
+        $stmt = $adapterSql92
+            ->getDriver()
+            ->createStatement();
+
+        /** @var MockObject&StatementInterface $stmt */
+        $stmt->expects($this->any())->method('setSql')
                 ->with($this->equalTo('SELECT "foo".* FROM "foo" OFFSET ?'));
         $this->sql->prepareStatementForSqlObject($select, null, $adapterSql92);
 
@@ -181,7 +192,12 @@ final class SqlTest extends TestCase
             'SELECT `foo`.* FROM `foo` LIMIT 18446744073709551615 OFFSET 10',
             $this->sql->buildSqlString($select, $adapterMySql)
         );
-        $adapterMySql->getDriver()->createStatement()->expects($this->any())->method('setSql')
+        $stmt = $adapterMySql
+            ->getDriver()
+            ->createStatement();
+
+        /** @var MockObject&StatementInterface $stmt */
+        $stmt->expects($this->any())->method('setSql')
                 ->with($this->equalTo('SELECT `foo`.* FROM `foo` LIMIT 18446744073709551615 OFFSET ?'));
         $this->sql->prepareStatementForSqlObject($select, null, $adapterMySql);
 
@@ -190,8 +206,14 @@ final class SqlTest extends TestCase
             'SELECT * FROM (SELECT b.*, rownum b_rownum FROM ( SELECT "foo".* FROM "foo" ) b ) WHERE b_rownum > (10)',
             $this->sql->buildSqlString($select, $adapterOracle)
         );
+
+        $stmt = $adapterOracle
+            ->getDriver()
+            ->createStatement();
+
         // @codingStandardsIgnoreStart
-        $adapterOracle->getDriver()->createStatement()->expects($this->any())->method('setSql')
+        /** @var MockObject&StatementInterface $stmt */
+        $stmt->expects($this->any())->method('setSql')
                 ->with($this->equalTo('SELECT * FROM (SELECT b.*, rownum b_rownum FROM ( SELECT "foo".* FROM "foo" ) b ) WHERE b_rownum > (:offset)'));
         // @codingStandardsIgnoreEnd
         $this->sql->prepareStatementForSqlObject($select, null, $adapterOracle);
@@ -201,7 +223,13 @@ final class SqlTest extends TestCase
             'WHERE [LAMINAS_SQL_SERVER_LIMIT_OFFSET_EMULATION].[__LAMINAS_ROW_NUMBER] BETWEEN 10+1 AND 0+10',
             $this->sql->buildSqlString($select, $adapterSqlServer)
         );
-        $adapterSqlServer->getDriver()->createStatement()->expects($this->any())->method('setSql')
+
+        $stmt = $adapterSqlServer
+            ->getDriver()
+            ->createStatement();
+
+        /** @var MockObject&StatementInterface $stmt */
+        $stmt->expects($this->any())->method('setSql')
                 ->with($this->stringContains(
                     'WHERE [LAMINAS_SQL_SERVER_LIMIT_OFFSET_EMULATION].[__LAMINAS_ROW_NUMBER] BETWEEN ?+1 AND ?+?'
                 ));
@@ -223,12 +251,12 @@ final class SqlTest extends TestCase
             default     => null,
         };
 
-        $mockResult    = $this->createMock(ResultInterface::class);
+        $mockResult = $this->createMock(ResultInterface::class);
 
         $mockStatement = $this->createMock(StatementInterface::class);
         $mockStatement->expects($this->any())->method('execute')->willReturn($mockResult::class);
 
-        $mockDriver    = $this->getMockBuilder(DriverInterface::class)->onlyMethods([])->getMock();
+        $mockDriver = $this->getMockBuilder(DriverInterface::class)->onlyMethods([])->getMock();
         $mockDriver->expects($this->any())->method('formatParameterName')->willReturn('?');
         $mockDriver->expects($this->any())->method('createStatement')->willReturn($mockStatement);
 

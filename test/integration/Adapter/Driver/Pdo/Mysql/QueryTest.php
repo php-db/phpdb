@@ -2,6 +2,8 @@
 
 namespace LaminasIntegrationTest\Db\Adapter\Driver\Pdo\Mysql;
 
+use Exception;
+use Laminas\Db\Adapter\Adapter;
 use Laminas\Db\Adapter\Driver\Pdo\Result as PdoResult;
 use Laminas\Db\Adapter\Exception\RuntimeException;
 use Laminas\Db\ResultSet\ResultSet;
@@ -21,7 +23,7 @@ final class QueryTest extends TestCase
     /**
      * @psalm-return array<array-key, array{
      *     0: string,
-     *     1: mixed[]|array<string, mixed>,
+     *     1: array|array<string, mixed>,
      *     2: array<string, mixed>
      * }>
      */
@@ -41,6 +43,9 @@ final class QueryTest extends TestCase
         ];
     }
 
+    /**
+     * @throws Exception
+     */
     #[DataProvider('getQueriesWithRowResult')]
     public function testQuery(string $query, array $params, array $expected): void
     {
@@ -57,6 +62,8 @@ final class QueryTest extends TestCase
 
     /**
      * @see https://github.com/zendframework/zend-db/issues/288
+     *
+     * @throws Exception
      */
     public function testSetSessionTimeZone(): void
     {
@@ -64,6 +71,9 @@ final class QueryTest extends TestCase
         $this->assertInstanceOf(PdoResult::class, $result);
     }
 
+    /**
+     * @throws Exception
+     */
     public function testSelectWithNotPermittedBindParamName(): void
     {
         $this->expectException(RuntimeException::class);
@@ -75,8 +85,7 @@ final class QueryTest extends TestCase
      */
     public function testNamedParameters(): void
     {
-        $this->expectNotToPerformAssertions();
-
+        $this->assertNotNull($this->adapter);
         $sql = new Sql($this->adapter);
 
         $insert = $sql->update('test');

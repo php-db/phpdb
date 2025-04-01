@@ -70,7 +70,7 @@ class Select extends AbstractPreparableSql
     public const COMBINE_INTERSECT   = 'intersect';
     /**#@-*/
 
-    /** @var array Specifications */
+    /** @var string[]|array[] $specifications */
     protected $specifications = [
         'statementStart' => '%1$s',
         self::SELECT     => [

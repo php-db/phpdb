@@ -244,7 +244,7 @@ class Predicate extends PredicateSet
      * Create an expression, with parameter placeholders
      *
      * @param string $expression
-     * @param null|array $parameters
+     * @param null|string|int|array $parameters
      * @return $this Provides a fluent interface
      */
     public function expression($expression, $parameters = null)

@@ -27,8 +27,7 @@ final class MasterSlaveFeatureTest extends TestCase
     {
         $this->mockMasterAdapter = $this->getMockBuilder(AdapterInterface::class)->onlyMethods([])->getMock();
         $this->mockSlaveAdapter  = $this->getMockBuilder(AdapterInterface::class)->onlyMethods([])->getMock();
-
-        $this->mockStatement = $this->getMockBuilder(StatementInterface::class)->onlyMethods([])->getMock();
+        $this->mockStatement     = $this->getMockBuilder(StatementInterface::class)->onlyMethods([])->getMock();
 
         $mockDriver = $this->getMockBuilder(DriverInterface::class)->onlyMethods([])->getMock();
         $mockDriver->expects($this->any())->method('createStatement')->willReturn(clone $this->mockStatement);
@@ -58,12 +57,20 @@ final class MasterSlaveFeatureTest extends TestCase
      */
     public function testPreSelect(): void
     {
-        $table = $this->getMockBuilder(TableGateway::class)->setConstructorArgs(['foo', $this->mockMasterAdapter, $this->feature])->onlyMethods([])->getMock();
+        $this->expectNotToPerformAssertions();
 
-        $this
+        $table = $this
+            ->getMockBuilder(TableGateway::class)
+            ->setConstructorArgs(['foo', $this->mockMasterAdapter, $this->feature])
+            ->onlyMethods([])->getMock();
+
+        $stmt = $this
             ->mockSlaveAdapter
             ->getDriver()
-            ->createStatement()
+            ->createStatement();
+
+        /** @var MockObject&StatementInterface $stmt */
+        $stmt
             ->expects($this->once())
             ->method('execute')
             ->willReturn($this->getMockBuilder(ResultSet::class)->onlyMethods([])->getMock());
@@ -76,10 +83,13 @@ final class MasterSlaveFeatureTest extends TestCase
     public function testPostSelect(): void
     {
         $table = $this->getMockBuilder(TableGateway::class)->setConstructorArgs(['foo', $this->mockMasterAdapter, $this->feature])->onlyMethods([])->getMock();
-        $this
+        $stmt = $this
             ->mockSlaveAdapter
             ->getDriver()
-            ->createStatement()
+            ->createStatement();
+
+        /** @var MockObject&StatementInterface $stmt */
+        $stmt
             ->expects($this->once())
             ->method('execute')
             ->willReturn($this->getMockBuilder(ResultSet::class)->onlyMethods([])->getMock());

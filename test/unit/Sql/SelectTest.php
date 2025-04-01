@@ -101,7 +101,7 @@ final class SelectTest extends TestCase
     #[TestDox('unit test: Test quantifier() accepts expression')]
     public function testQuantifierParameterExpressionInterface(): void
     {
-        $expr   = $this->getMockBuilder(ExpressionInterface::class)->getMock();
+        $expr   = $this->getMockBuilder(ExpressionInterface::class)->onlyMethods([])->getMock();
         $select = new Select();
         $select->quantifier($expr);
         self::assertSame(
@@ -141,7 +141,7 @@ final class SelectTest extends TestCase
     public function testJoin(): Select
     {
         $select = new Select();
-        $return = $select->join('foo', 'x = y', Select::SQL_STAR, Select::JOIN_INNER);
+        $return = $select->join('foo', 'x = y');
         self::assertSame($select, $return);
 
         return $return;
@@ -153,7 +153,7 @@ final class SelectTest extends TestCase
         $select = new Select();
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage("expects 'foo' as");
-        $select->join(['foo'], 'x = y', Select::SQL_STAR, Select::JOIN_INNER);
+        $select->join(['foo'], 'x = y');
     }
 
     /**
@@ -169,7 +169,7 @@ final class SelectTest extends TestCase
         $parameterContainer = new ParameterContainer();
 
         $select = new Select();
-        $select->join(['foo' => $mockExpression], 'x = y', Select::SQL_STAR, Select::JOIN_INNER);
+        $select->join(['foo' => $mockExpression], 'x = y');
 
         $sr = new ReflectionObject($select);
 
@@ -217,8 +217,8 @@ final class SelectTest extends TestCase
         $where      = $select->getRawState('where');
         $predicates = $where->getPredicates();
         self::assertCount(1, $predicates);
-        self::assertInstanceOf(\Laminas\Db\Sql\Predicate\Expression::class, $predicates[0][1]);
-        self::assertEquals(Where::OP_AND, $predicates[0][0]);
+        self::assertInstanceOf(Predicate\Expression::class, $predicates[0][1]);
+        self::assertEquals(Predicate\PredicateSet::OP_AND, $predicates[0][0]);
         self::assertEquals('x = ?', $predicates[0][1]->getExpression());
 
         $select = new Select();
@@ -241,8 +241,8 @@ final class SelectTest extends TestCase
         $where      = $select->getRawState('where');
         $predicates = $where->getPredicates();
         self::assertCount(1, $predicates);
-        self::assertInstanceOf(\Laminas\Db\Sql\Predicate\Expression::class, $predicates[0][1]);
-        self::assertEquals(Where::OP_AND, $predicates[0][0]);
+        self::assertInstanceOf(Predicate\Expression::class, $predicates[0][1]);
+        self::assertEquals(Predicate\PredicateSet::OP_AND, $predicates[0][0]);
         self::assertEquals('foo > ?', $predicates[0][1]->getExpression());
         self::assertEquals([5], $predicates[0][1]->getParameters());
     }
@@ -260,12 +260,12 @@ final class SelectTest extends TestCase
         self::assertCount(2, $predicates);
 
         self::assertInstanceOf(Operator::class, $predicates[0][1]);
-        self::assertEquals(Where::OP_AND, $predicates[0][0]);
+        self::assertEquals(Predicate\PredicateSet::OP_AND, $predicates[0][0]);
         self::assertEquals('name', $predicates[0][1]->getLeft());
         self::assertEquals('Ralph', $predicates[0][1]->getRight());
 
         self::assertInstanceOf(Operator::class, $predicates[1][1]);
-        self::assertEquals(Where::OP_AND, $predicates[1][0]);
+        self::assertEquals(Predicate\PredicateSet::OP_AND, $predicates[1][0]);
         self::assertEquals('age', $predicates[1][1]->getLeft());
         self::assertEquals(33, $predicates[1][1]->getRight());
 
@@ -304,7 +304,7 @@ final class SelectTest extends TestCase
         self::assertCount(1, $predicates);
 
         self::assertInstanceOf(Literal::class, $predicates[0][1]);
-        self::assertEquals(Where::OP_AND, $predicates[0][0]);
+        self::assertEquals(Predicate\PredicateSet::OP_AND, $predicates[0][0]);
         self::assertEquals('name = "Ralph"', $predicates[0][1]->getLiteral());
     }
 
@@ -313,7 +313,7 @@ final class SelectTest extends TestCase
     public function testWhereArgument1IsIndexedArrayArgument2IsOr(): void
     {
         $select = new Select();
-        $select->where(['name = "Ralph"'], Where::OP_OR);
+        $select->where(['name = "Ralph"'], Predicate\PredicateSet::OP_OR);
 
         /** @var Where $where */
         $where      = $select->getRawState('where');
@@ -321,7 +321,7 @@ final class SelectTest extends TestCase
         self::assertCount(1, $predicates);
 
         self::assertInstanceOf(Literal::class, $predicates[0][1]);
-        self::assertEquals(Where::OP_OR, $predicates[0][0]);
+        self::assertEquals(Predicate\PredicateSet::OP_OR, $predicates[0][0]);
         self::assertEquals('name = "Ralph"', $predicates[0][1]->getLiteral());
     }
 
