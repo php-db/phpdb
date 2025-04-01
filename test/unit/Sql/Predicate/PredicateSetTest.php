@@ -35,8 +35,9 @@ final class PredicateSetTest extends TestCase
                   ->addPredicate(new IsNull('bar'));
         $parts = $predicateSet->getExpressionData();
         self::assertCount(3, $parts);
-        self::assertStringContainsString('AND', $parts[1]);
-        self::assertStringNotContainsString('OR', $parts[1]);
+
+        self::assertStringContainsString('AND', (string) $parts[1]);
+        self::assertStringNotContainsString('OR', (string) $parts[1]);
     }
 
     public function testCanPassPredicatesAndDefaultCombinationViaConstructor(): void
@@ -48,8 +49,8 @@ final class PredicateSetTest extends TestCase
         ], 'OR');
         $parts = $set->getExpressionData();
         self::assertCount(3, $parts);
-        self::assertStringContainsString('OR', $parts[1]);
-        self::assertStringNotContainsString('AND', $parts[1]);
+        self::assertStringContainsString('OR', (string) $parts[1]);
+        self::assertStringNotContainsString('AND', (string) $parts[1]);
     }
 
     public function testCanPassBothPredicateAndCombinationToAddPredicate(): void
@@ -62,14 +63,14 @@ final class PredicateSetTest extends TestCase
         $parts = $predicateSet->getExpressionData();
         self::assertCount(7, $parts);
 
-        self::assertStringNotContainsString('OR', $parts[1], var_export($parts, 1));
-        self::assertStringContainsString('AND', $parts[1]);
+        self::assertStringNotContainsString('OR', (string) $parts[1], var_export($parts, true));
+        self::assertStringContainsString('AND', (string) $parts[1]);
 
-        self::assertStringContainsString('OR', $parts[3]);
-        self::assertStringNotContainsString('AND', $parts[3]);
+        self::assertStringContainsString('OR', (string) $parts[3]);
+        self::assertStringNotContainsString('AND', (string) $parts[3]);
 
-        self::assertStringNotContainsString('OR', $parts[5]);
-        self::assertStringContainsString('AND', $parts[5]);
+        self::assertStringNotContainsString('OR', (string) $parts[5]);
+        self::assertStringContainsString('AND', (string) $parts[5]);
     }
 
     public function testCanUseOrPredicateAndAndPredicateMethods(): void
@@ -82,14 +83,14 @@ final class PredicateSetTest extends TestCase
         $parts = $predicateSet->getExpressionData();
         self::assertCount(7, $parts);
 
-        self::assertStringNotContainsString('OR', $parts[1], var_export($parts, 1));
-        self::assertStringContainsString('AND', $parts[1]);
+        self::assertStringNotContainsString('OR', (string) $parts[1], var_export($parts, true));
+        self::assertStringContainsString('AND', (string) $parts[1]);
 
-        self::assertStringContainsString('OR', $parts[3]);
-        self::assertStringNotContainsString('AND', $parts[3]);
+        self::assertStringContainsString('OR', (string) $parts[3]);
+        self::assertStringNotContainsString('AND', (string) $parts[3]);
 
-        self::assertStringNotContainsString('OR', $parts[5]);
-        self::assertStringContainsString('AND', $parts[5]);
+        self::assertStringNotContainsString('OR', (string) $parts[5]);
+        self::assertStringContainsString('AND', (string) $parts[5]);
     }
 
     /**
@@ -107,29 +108,38 @@ final class PredicateSetTest extends TestCase
         $predicateSet->addPredicates(['c2' => [1, 2, 3]]);
         $predicateSet->addPredicates([new IsNotNull('c3')]);
 
-        $predicates = $this->readAttribute($predicateSet, 'predicates');
+        $predicates = (array) $this->readAttribute($predicateSet, 'predicates');
+        self::assertCount(7, $predicates);
+
+        self::assertIsArray($predicates[0]);
         self::assertEquals('AND', $predicates[0][0]);
         self::assertInstanceOf(Literal::class, $predicates[0][1]);
 
+        self::assertIsArray($predicates[1]);
         self::assertEquals('AND', $predicates[1][0]);
         self::assertInstanceOf(Expression::class, $predicates[1][1]);
 
+        self::assertIsArray($predicates[2]);
         self::assertEquals('AND', $predicates[2][0]);
         self::assertInstanceOf(Operator::class, $predicates[2][1]);
 
+        self::assertIsArray($predicates[3]);
         self::assertEquals('OR', $predicates[3][0]);
         self::assertInstanceOf(Literal::class, $predicates[3][1]);
 
+        self::assertIsArray($predicates[4]);
         self::assertEquals('AND', $predicates[4][0]);
         self::assertInstanceOf(IsNull::class, $predicates[4][1]);
 
+        self::assertIsArray($predicates[5]);
         self::assertEquals('AND', $predicates[5][0]);
         self::assertInstanceOf(In::class, $predicates[5][1]);
 
+        self::assertIsArray($predicates[6]);
         self::assertEquals('AND', $predicates[6][0]);
         self::assertInstanceOf(IsNotNull::class, $predicates[6][1]);
 
-        $predicateSet->addPredicates(function ($what) use ($predicateSet): void {
+        $predicateSet->addPredicates(function (PredicateSet $what) use ($predicateSet): void {
             self::assertSame($predicateSet, $what);
         });
 

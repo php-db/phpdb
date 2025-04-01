@@ -4,8 +4,10 @@ namespace LaminasTest\Db\Sql;
 
 use Laminas\Db\Adapter;
 use Laminas\Db\Adapter\Driver\DriverInterface;
+use Laminas\Db\Adapter\Driver\StatementInterface;
+use Laminas\Db\Adapter\ParameterContainer;
+use Laminas\Db\Adapter\StatementContainer;
 use Laminas\Db\Sql;
-use Laminas\Db\Sql\AbstractSql;
 use Laminas\Db\Sql\Ddl\Column\Column;
 use Laminas\Db\Sql\Ddl\CreateTable;
 use Laminas\Db\Sql\Delete;
@@ -36,33 +38,6 @@ use function is_string;
  */
 final class SqlFunctionalTest extends TestCase
 {
-    /**
-     * @psalm-return array<string, array{
-     *     sqlObject: AbstractSql,
-     *     expected: array{
-     *         sql92: {
-     *             string: string,
-     *             prepare: string,
-     *             parameters: array<string, mixed>,
-     *         },
-     *         MySql: {
-     *             string: string,
-     *             prepare: string,
-     *             parameters: array<string, mixed>,
-     *         },
-     *         Oracle: {
-     *             string: string,
-     *             prepare: string,
-     *             parameters: array<string, mixed>,
-     *         },
-     *         SqlServer: {
-     *             string: string,
-     *             prepare: string,
-     *             parameters: array<string, mixed>,
-     *         }
-     *     }
-     * }>
-     */
     protected static function dataProviderCommonProcessMethods(): array
     {
         // phpcs:disable Generic.Files.LineLength.TooLong
@@ -365,29 +340,6 @@ final class SqlFunctionalTest extends TestCase
         // phpcs:enable Generic.Files.LineLength.TooLong
     }
 
-    /**
-     * @psalm-return array<string, array{
-     *     sqlObject: AbstractSql,
-     *     expected: array{
-     *         sql92: array{
-     *             decorators: array<class-string, PlatformDecoratorInterface>,
-     *             string: string
-     *         },
-     *         MySql: array{
-     *             decorators: array<class-string, PlatformDecoratorInterface>,
-     *             string: string
-     *         },
-     *         Oracle: array{
-     *             decorators: array<class-string, PlatformDecoratorInterface>,
-     *             string: string
-     *         },
-     *         SqlServer: array{
-     *             decorators: array<class-string, PlatformDecoratorInterface>,
-     *             string: string
-     *         }
-     *     }
-     * }>
-     */
     protected static function dataProviderDecorators(): array
     {
         return [
@@ -558,9 +510,6 @@ final class SqlFunctionalTest extends TestCase
         ];
     }
 
-    /**
-     * @psalm-return array<string, array{expected: array<array-key, mixed>, platform: mixed, sqlObject: mixed}>
-     */
     public static function dataProvider(): array
     {
         $data = array_merge(
@@ -569,11 +518,12 @@ final class SqlFunctionalTest extends TestCase
         );
 
         $res = [];
-        /** @var array $test */
         foreach ($data as $index => $test) {
-            /** @var string $platform */
-            /** @var array $expected */
-            foreach ($test['expected'] as $platform => $expected) {
+            self::assertIsArray($test);
+            $testExpected = $test['expected'] ?? [];
+            self::assertIsArray($testExpected);
+            /** @psalm-suppress MixedAssignment */
+            foreach ($testExpected as $platform => $expected) {
                 $res[$index . '->' . $platform] = [
                     'sqlObject' => $test['sqlObject'],
                     'platform'  => $platform,
@@ -581,15 +531,14 @@ final class SqlFunctionalTest extends TestCase
                 ];
             }
         }
+
         return $res;
     }
 
     /**
      * @param PreparableSqlInterface|SqlInterface $sqlObject
      * @param string                              $platform
-     * @param string|array{
-     *     decorators: array<class-string, PlatformDecoratorInterface>
-     *         } $expected
+     * @param array|string                        $expected
      */
     #[DataProvider('dataProvider')]
     public function test(PreparableSqlInterface|SqlInterface $sqlObject, string $platform, string|array $expected): void
@@ -597,7 +546,9 @@ final class SqlFunctionalTest extends TestCase
         $sql = new Sql\Sql($this->resolveAdapter($platform));
 
         if (is_array($expected) && isset($expected['decorators'])) {
+            /** @var PlatformDecoratorInterface|array $decorator */
             foreach ($expected['decorators'] as $type => $decorator) {
+                self::assertIsString($type);
                 $decorator = $this->resolveDecorator($decorator);
                 $this->assertInstanceOf(PlatformDecoratorInterface::class, $decorator);
 
@@ -607,16 +558,21 @@ final class SqlFunctionalTest extends TestCase
             }
         }
 
-        $expectedString = is_string($expected) ? $expected : ($expected['string'] ?? '');
+        $expectedString = is_string($expected) ? $expected : (string) $expected['string'];
         if ($expectedString !== '') {
+            self::assertInstanceOf(SqlInterface::class, $sqlObject);
             $actual = $sql->buildSqlString($sqlObject);
             self::assertEquals($expectedString, $actual, "getSqlString()");
         }
         if (is_array($expected) && isset($expected['prepare'])) {
+            self::assertInstanceOf(PreparableSqlInterface::class, $sqlObject);
+            /** @var StatementInterface|StatementContainer $actual */
             $actual = $sql->prepareStatementForSqlObject($sqlObject);
             self::assertEquals($expected['prepare'], $actual->getSql(), "prepareStatement()");
             if (isset($expected['parameters'])) {
-                $actual = $actual->getParameterContainer()->getNamedArray();
+                $parametersContainer = $actual->getParameterContainer();
+                self::assertInstanceOf(ParameterContainer::class, $parametersContainer);
+                $actual = $parametersContainer->getNamedArray();
                 self::assertSame($expected['parameters'], $actual, "parameterContainer()");
             }
         }
