@@ -47,6 +47,8 @@ final class TableGatewayTest extends TestCase
         $tableGateway = new TableGateway('test', $adapter);
         $rowset       = $tableGateway->select('id = 0');
 
+        /** @todo Have resultset implememt Iterator */
+        /** @psalm-suppress UndefinedInterfaceMethod */
         $this->assertNull($rowset->current());
 
         $adapter->getDriver()->getConnection()->disconnect();

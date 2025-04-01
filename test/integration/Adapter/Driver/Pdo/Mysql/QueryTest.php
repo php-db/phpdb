@@ -5,6 +5,7 @@ namespace LaminasIntegrationTest\Db\Adapter\Driver\Pdo\Mysql;
 use Exception;
 use Laminas\Db\Adapter\Adapter;
 use Laminas\Db\Adapter\Driver\Pdo\Result as PdoResult;
+use Laminas\Db\Adapter\Driver\StatementInterface;
 use Laminas\Db\Adapter\Exception\RuntimeException;
 use Laminas\Db\ResultSet\ResultSet;
 use Laminas\Db\Sql\Sql;
@@ -49,12 +50,15 @@ final class QueryTest extends TestCase
     #[DataProvider('getQueriesWithRowResult')]
     public function testQuery(string $query, array $params, array $expected): void
     {
-        $result = $this->adapter->query($query, $params);
+        /** @todo Have AdapterInterface implement query */
+        /** @psalm-suppress UndefinedInterfaceMethod */
+        $result = $this->getAdapter()->query($query, $params);
         $this->assertInstanceOf(ResultSet::class, $result);
         $current = $result->current();
         // test as array value
         $this->assertEquals($expected, (array) $current);
         // test as object value
+        /** @var string $value */
         foreach ($expected as $key => $value) {
             $this->assertEquals($value, $current->$key);
         }
@@ -67,7 +71,9 @@ final class QueryTest extends TestCase
      */
     public function testSetSessionTimeZone(): void
     {
-        $result = $this->adapter->query('SET @@session.time_zone = :tz', [':tz' => 'SYSTEM']);
+        /** @todo Have AdapterInterface implement query */
+        /** @psalm-suppress UndefinedInterfaceMethod */
+        $result = $this->getAdapter()->query('SET @@session.time_zone = :tz', [':tz' => 'SYSTEM']);
         $this->assertInstanceOf(PdoResult::class, $result);
     }
 
@@ -77,7 +83,9 @@ final class QueryTest extends TestCase
     public function testSelectWithNotPermittedBindParamName(): void
     {
         $this->expectException(RuntimeException::class);
-        $this->adapter->query('SET @@session.time_zone = :tz$', [':tz$' => 'SYSTEM']);
+        /** @todo Have AdapterInterface implement query */
+        /** @psalm-suppress UndefinedInterfaceMethod */
+        $this->getAdapter()->query('SET @@session.time_zone = :tz$', [':tz$' => 'SYSTEM']);
     }
 
     /**
@@ -94,6 +102,7 @@ final class QueryTest extends TestCase
             'value' => ':value',
         ])->where(['id' => ':id']);
         $stmt = $sql->prepareStatementForSqlObject($insert);
+        $this->assertInstanceOf(StatementInterface::class, $stmt);
 
         //positional parameters
         $stmt->execute([

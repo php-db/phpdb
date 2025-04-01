@@ -11,6 +11,7 @@ use Laminas\Db\Sql\Exception\InvalidArgumentException;
 use Laminas\Db\Sql\Expression;
 use Laminas\Db\Sql\ExpressionInterface;
 use Laminas\Db\Sql\Having;
+use Laminas\Db\Sql\Join;
 use Laminas\Db\Sql\Predicate;
 use Laminas\Db\Sql\Predicate\In;
 use Laminas\Db\Sql\Predicate\IsNotNull;
@@ -103,6 +104,7 @@ final class SelectTest extends TestCase
     {
         $expr   = $this->getMockBuilder(ExpressionInterface::class)->onlyMethods([])->getMock();
         $select = new Select();
+        /** @psalm-suppress InvalidArgument */
         $select->quantifier($expr);
         self::assertSame(
             $expr,
@@ -174,12 +176,10 @@ final class SelectTest extends TestCase
         $sr = new ReflectionObject($select);
 
         $mr = $sr->getMethod('processJoins');
-
         /** @psalm-suppress UnusedMethodCall */
         $mr->setAccessible(true);
 
         $this->expectException(InvalidArgumentException::class);
-
         $mr->invokeArgs($select, [new Sql92(), $mockDriver, $parameterContainer]);
     }
 
@@ -187,6 +187,8 @@ final class SelectTest extends TestCase
     #[TestDox('unit test: Test getRawState() returns information populated via join()')]
     public function testGetRawStateViaJoin(Select $select): void
     {
+        $joins = $select->getRawState('joins');
+        self::assertInstanceOf(Join::class, $joins);
         self::assertEquals(
             [
                 [
@@ -196,7 +198,7 @@ final class SelectTest extends TestCase
                     'type'    => Select::JOIN_INNER,
                 ],
             ],
-            $select->getRawState('joins')->getJoins()
+            $joins->getJoins()
         );
     }
 
@@ -217,6 +219,7 @@ final class SelectTest extends TestCase
         $where      = $select->getRawState('where');
         $predicates = $where->getPredicates();
         self::assertCount(1, $predicates);
+        self::assertIsArray($predicates[0]);
         self::assertInstanceOf(Predicate\Expression::class, $predicates[0][1]);
         self::assertEquals(Predicate\PredicateSet::OP_AND, $predicates[0][0]);
         self::assertEquals('x = ?', $predicates[0][1]->getExpression());
@@ -227,6 +230,7 @@ final class SelectTest extends TestCase
         /** @var Where $where */
         $where      = $select->getRawState('where');
         $predicates = $where->getPredicates();
+        self::assertIsArray($predicates[0]);
         self::assertInstanceOf(Literal::class, $predicates[0][1]);
     }
 
@@ -241,6 +245,7 @@ final class SelectTest extends TestCase
         $where      = $select->getRawState('where');
         $predicates = $where->getPredicates();
         self::assertCount(1, $predicates);
+        self::assertIsArray($predicates[0]);
         self::assertInstanceOf(Predicate\Expression::class, $predicates[0][1]);
         self::assertEquals(Predicate\PredicateSet::OP_AND, $predicates[0][0]);
         self::assertEquals('foo > ?', $predicates[0][1]->getExpression());
@@ -258,6 +263,8 @@ final class SelectTest extends TestCase
         $where      = $select->getRawState('where');
         $predicates = $where->getPredicates();
         self::assertCount(2, $predicates);
+        self::assertIsArray($predicates[0]);
+        self::assertIsArray($predicates[1]);
 
         self::assertInstanceOf(Operator::class, $predicates[0][1]);
         self::assertEquals(Predicate\PredicateSet::OP_AND, $predicates[0][0]);
@@ -272,8 +279,10 @@ final class SelectTest extends TestCase
         $select = new Select();
         $select->where(['x = y']);
 
+        /** @var Where $where */
         $where      = $select->getRawState('where');
         $predicates = $where->getPredicates();
+        self::assertIsArray($predicates[0]);
         self::assertInstanceOf(Literal::class, $predicates[0][1]);
     }
 
@@ -302,7 +311,7 @@ final class SelectTest extends TestCase
         $where      = $select->getRawState('where');
         $predicates = $where->getPredicates();
         self::assertCount(1, $predicates);
-
+        self::assertIsArray($predicates[0]);
         self::assertInstanceOf(Literal::class, $predicates[0][1]);
         self::assertEquals(Predicate\PredicateSet::OP_AND, $predicates[0][0]);
         self::assertEquals('name = "Ralph"', $predicates[0][1]->getLiteral());
@@ -319,7 +328,7 @@ final class SelectTest extends TestCase
         $where      = $select->getRawState('where');
         $predicates = $where->getPredicates();
         self::assertCount(1, $predicates);
-
+        self::assertIsArray($predicates[0]);
         self::assertInstanceOf(Literal::class, $predicates[0][1]);
         self::assertEquals(Predicate\PredicateSet::OP_OR, $predicates[0][0]);
         self::assertEquals('name = "Ralph"', $predicates[0][1]->getLiteral());
@@ -329,9 +338,10 @@ final class SelectTest extends TestCase
     public function testWhereArgument1IsClosure(): void
     {
         $select = new Select();
+        /** @var Where $where */
         $where  = $select->getRawState('where');
 
-        $select->where(function ($what) use ($where): void {
+        $select->where(function (Where $what) use ($where): void {
             self::assertSame($where, $what);
         });
     }
@@ -349,6 +359,7 @@ final class SelectTest extends TestCase
         /** @var Where $where */
         $where      = $select->getRawState('where');
         $predicates = $where->getPredicates();
+        self::assertIsArray($predicates[0]);
         self::assertSame($predicate, $predicates[0][1]);
     }
 
@@ -392,6 +403,7 @@ final class SelectTest extends TestCase
         );
 
         $select = new Select();
+        /** @psalm-suppress InvalidArgument - mocked Operator */
         $select->order(
             $this->getMockBuilder(Operator::class)
                 ->onlyMethods([])
@@ -431,10 +443,12 @@ final class SelectTest extends TestCase
     #[TestDox(': unit test: Test getRawState() returns information populated via limit()')]
     public function testGetRawStateViaLimit(Select $select): void
     {
-        self::assertEquals(5, $select->getRawState($select::LIMIT));
+        $limit = $select->getRawState((string) $select::LIMIT);
+        self::assertIsNumeric($limit);
+        self::assertEquals(5, $limit);
     }
 
-    #[TestDox(': unit test: test limit() throws execption when invalid parameter passed')]
+    #[TestDox(': unit test: test limit() throws exception when invalid parameter passed')]
     public function testLimitExceptionOnInvalidParameter(): void
     {
         $select = new Select();
@@ -455,7 +469,9 @@ final class SelectTest extends TestCase
     #[TestDox(': unit test: Test getRawState() returns information populated via offset()')]
     public function testGetRawStateViaOffset(Select $select): void
     {
-        self::assertEquals(10, $select->getRawState($select::OFFSET));
+        $offset = $select->getRawState((string) $select::OFFSET);
+        self::assertIsNumeric($offset);
+        self::assertEquals(10, $offset);
     }
 
     #[TestDox(': unit test: test offset() throws exception when invalid parameter passed')]
@@ -531,6 +547,7 @@ final class SelectTest extends TestCase
     #[TestDox('unit test: Test getRawState() returns information populated via combine()')]
     public function testGetRawStateViaCombine(Select $select): void
     {
+        /** @var array $state */
         $state = $select->getRawState('combine');
         self::assertInstanceOf(Select::class, $state['select']);
         self::assertNotSame($select, $state['select']);
@@ -557,18 +574,24 @@ final class SelectTest extends TestCase
 
         // joins
         $select->join('foo', 'id = boo');
+        $joins = $select->getRawState(Select::JOINS);
+        self::assertInstanceOf(Join::class, $joins);
         self::assertEquals(
             [['name' => 'foo', 'on' => 'id = boo', 'columns' => ['*'], 'type' => 'inner']],
-            $select->getRawState(Select::JOINS)->getJoins()
+            $joins->getJoins()
         );
         $select->reset(Select::JOINS);
-        self::assertEmpty($select->getRawState(Select::JOINS)->getJoins());
+        $emptyJoins = $select->getRawState(Select::JOINS);
+        self::assertInstanceOf(Join::class, $emptyJoins);
+        self::assertEmpty($emptyJoins->getJoins());
 
         // where
         $select->where('foo = bar');
+        /** @var Where $where1 */
         $where1 = $select->getRawState(Select::WHERE);
         self::assertEquals(1, $where1->count());
         $select->reset(Select::WHERE);
+        /** @var Where $where2 */
         $where2 = $select->getRawState(Select::WHERE);
         self::assertEquals(0, $where2->count());
         self::assertNotSame($where1, $where2);
@@ -581,9 +604,11 @@ final class SelectTest extends TestCase
 
         // having
         $select->having('foo = bar');
+        /** @var Having $having1 */
         $having1 = $select->getRawState(Select::HAVING);
         self::assertEquals(1, $having1->count());
         $select->reset(Select::HAVING);
+        /** @var Having $having2 */
         $having2 = $select->getRawState(Select::HAVING);
         self::assertEquals(0, $having2->count());
         self::assertNotSame($having1, $having2);
@@ -619,7 +644,11 @@ final class SelectTest extends TestCase
         bool $useNamedParameters = false
     ): void {
         $mockDriver = $this->getMockBuilder(DriverInterface::class)->getMock();
-        $mockDriver->expects($this->any())->method('formatParameterName')->willReturnCallback(fn($name) => $useNamedParameters ? ':' . $name : '?');
+        $mockDriver
+            ->expects($this->any())
+            ->method('formatParameterName')
+            ->willReturnCallback(fn(string $name) => $useNamedParameters ? ':' . $name : '?');
+
         $mockAdapter = $this->getMockBuilder(Adapter::class)
             ->onlyMethods([])
             ->setConstructorArgs([$mockDriver])
@@ -703,10 +732,15 @@ final class SelectTest extends TestCase
 
         $sr = new ReflectionObject($select);
 
+        /**
+         * @var string $method
+         * @var array $expected
+         */
         foreach ($internalTests as $method => $expected) {
             $mr = $sr->getMethod($method);
             /** @psalm-suppress UnusedMethodCall */
             $mr->setAccessible(true);
+            /** @psalm-suppress MixedAssignment */
             $return = $mr->invokeArgs($select, [new Sql92(), $mockDriver, $parameterContainer]);
             self::assertEquals($expected, $return);
         }
@@ -717,10 +751,10 @@ final class SelectTest extends TestCase
      *     0: Select,
      *     1: string,
      *     2: array<string, mixed>,
-     *     3 string,
+     *     3: string,
      *     4: array,
      *     5: bool,
-     * }
+     * }>
      */
     public static function providerData(): array
     {
@@ -1039,7 +1073,7 @@ final class SelectTest extends TestCase
 
         // join with expression in ON part
         $select31 = new Select();
-        $select31->from('foo')->join('zac', new Expression('(m = n AND c.x) BETWEEN x AND y.z'));
+        $select31->from('foo')->join('zac', new Predicate\Expression('(m = n AND c.x) BETWEEN x AND y.z'));
         $sqlPrep31       = // same
         $sqlStr31        = 'SELECT "foo".*, "zac".* FROM "foo" INNER JOIN "zac" ON (m = n AND c.x) BETWEEN x AND y.z';
         $internalTests31 = [

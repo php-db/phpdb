@@ -170,7 +170,7 @@ class Select extends AbstractPreparableSql
      * @return $this Provides a fluent interface
      * @throws Exception\InvalidArgumentException
      */
-    public function from($table)
+    public function from($table): static
     {
         if ($this->tableReadOnly) {
             throw new Exception\InvalidArgumentException(
@@ -239,7 +239,7 @@ class Select extends AbstractPreparableSql
      * Create join clause
      *
      * @param  string|array|TableIdentifier $name
-     * @param  string|Predicate\Expression $on
+     * @param  string|Predicate\PredicateInterface $on
      * @param  string|array $columns
      * @param  string $type one of the JOIN_* constants
      * @return $this Provides a fluent interface
@@ -329,7 +329,7 @@ class Select extends AbstractPreparableSql
     }
 
     /**
-     * @param int $limit
+     * @param int|string $limit
      * @return $this Provides a fluent interface
      * @throws Exception\InvalidArgumentException
      */
@@ -348,7 +348,7 @@ class Select extends AbstractPreparableSql
     }
 
     /**
-     * @param int $offset
+     * @param int|string $offset
      * @return $this Provides a fluent interface
      * @throws Exception\InvalidArgumentException
      */

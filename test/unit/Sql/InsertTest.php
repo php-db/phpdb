@@ -85,6 +85,7 @@ final class InsertTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('values() expects an array of values or Laminas\Db\Sql\Select instance');
+        /** @psalm-suppress InvalidArgument */
         $this->insert->values(5);
     }
 
@@ -187,8 +188,11 @@ final class InsertTest extends TestCase
             'INSERT INTO "foo" ("col1") SELECT "bar".* FROM "bar" WHERE "x" = ?',
             $mockStatement->getSql()
         );
-        $parameters = $mockStatement->getParameterContainer()->getNamedArray();
-        self::assertSame(['subselect1where1' => 5], $parameters);
+        $parameters = $mockStatement->getParameterContainer();
+        $this->assertInstanceOf(ParameterContainer::class, $parameters);
+
+        $namedArray = $parameters->getNamedArray();
+        self::assertSame(['subselect1where1' => 5], $namedArray);
     }
 
     public function testGetSqlString(): void
@@ -246,6 +250,7 @@ final class InsertTest extends TestCase
     public function test__set(): void
     {
         // @codingStandardsIgnoreEnd
+        /** @psalm-suppress UndefinedMagicPropertyAssignment */
         $this->insert->foo = 'bar';
         self::assertEquals(['foo'], $this->insert->getRawState('columns'));
         self::assertEquals(['bar'], $this->insert->getRawState('values'));
@@ -255,6 +260,7 @@ final class InsertTest extends TestCase
     public function test__unset(): void
     {
         // @codingStandardsIgnoreEnd
+        /** @psalm-suppress UndefinedMagicPropertyAssignment */
         $this->insert->foo = 'bar';
         self::assertEquals(['foo'], $this->insert->getRawState('columns'));
         self::assertEquals(['bar'], $this->insert->getRawState('values'));
@@ -262,6 +268,7 @@ final class InsertTest extends TestCase
         self::assertEquals([], $this->insert->getRawState('columns'));
         self::assertEquals([], $this->insert->getRawState('values'));
 
+        /** @psalm-suppress UndefinedMagicPropertyAssignment */
         $this->insert->foo = null;
         self::assertEquals(['foo'], $this->insert->getRawState('columns'));
         self::assertEquals([null], $this->insert->getRawState('values'));
@@ -275,10 +282,14 @@ final class InsertTest extends TestCase
     public function test__isset(): void
     {
         // @codingStandardsIgnoreEnd
+        /** @psalm-suppress UndefinedMagicPropertyAssignment */
         $this->insert->foo = 'bar';
+        /** @psalm-suppress RedundantCondition */
         self::assertTrue(isset($this->insert->foo));
 
+        /** @psalm-suppress UndefinedMagicPropertyAssignment */
         $this->insert->foo = null;
+        /** @psalm-suppress TypeDoesNotContainType */
         self::assertTrue(isset($this->insert->foo));
     }
 
@@ -286,9 +297,11 @@ final class InsertTest extends TestCase
     public function test__get(): void
     {
         // @codingStandardsIgnoreEnd
+        /** @psalm-suppress UndefinedMagicPropertyAssignment */
         $this->insert->foo = 'bar';
         self::assertEquals('bar', $this->insert->foo);
 
+        /** @psalm-suppress UndefinedMagicPropertyAssignment */
         $this->insert->foo = null;
         self::assertNull($this->insert->foo);
     }

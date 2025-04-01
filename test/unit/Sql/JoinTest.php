@@ -117,6 +117,7 @@ final class JoinTest extends TestCase
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage("join() expects '' as a single element associative array");
+        /** @psalm-suppress InvalidArgument */
         $join->join([], false);
     }
 

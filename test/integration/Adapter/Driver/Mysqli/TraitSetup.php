@@ -51,13 +51,13 @@ trait TraitSetup
                     $value
                 ));
             } else {
-                $this->variables[$name] = getenv($value);
+                $this->variables[$name] = (string) getenv($value);
             }
         }
 
         foreach ($this->optional as $name => $value) {
             if (is_string(getenv($value)) && '' === getenv($value)) {
-                $this->variables[$name] = getenv($value);
+                $this->variables[$name] = (string) getenv($value);
             }
         }
     }

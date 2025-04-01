@@ -14,6 +14,8 @@ use function strtolower;
  * @property Predicate $or
  * @property Predicate $AND
  * @property Predicate $OR
+ * @property Predicate $nest
+ * @property Predicate $unnest
  * @property Predicate $NEST
  * @property Predicate $UNNEST
  */

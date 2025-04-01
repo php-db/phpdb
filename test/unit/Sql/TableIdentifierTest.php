@@ -65,7 +65,7 @@ final class TableIdentifierTest extends TestCase
     public function testRejectsInvalidTable(mixed $invalidTable): void
     {
         $this->expectException($invalidTable === '' ? InvalidArgumentException::class : TypeError::class);
-
+        /** @psalm-suppress MixedArgument */
         new TableIdentifier($invalidTable);
     }
 
@@ -73,14 +73,14 @@ final class TableIdentifierTest extends TestCase
     public function testRejectsInvalidSchema(mixed $invalidSchema): void
     {
         $this->expectException($invalidSchema === '' ? InvalidArgumentException::class : TypeError::class);
-
+        /** @psalm-suppress MixedArgument */
         new TableIdentifier('foo', $invalidSchema);
     }
 
     /**
      * Data provider
      *
-     * @return mixed[][]
+     * @return array[]
      */
     public static function invalidTableProvider(): array
     {
@@ -93,7 +93,7 @@ final class TableIdentifierTest extends TestCase
     /**
      * Data provider
      *
-     * @return mixed[][]
+     * @return array[]
      */
     public static function invalidSchemaProvider(): array
     {
