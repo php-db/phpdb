@@ -7,8 +7,16 @@ use Laminas\Db\Adapter\ParameterContainer;
 use Laminas\Db\Adapter\Platform\PlatformInterface;
 use Laminas\Db\Sql\Update;
 
-class UpdateIgnore extends Update
+/**
+ * @psalm-return UpdateIgnore&static
+ */
+final class UpdateIgnore extends Update
 {
+    /**
+     * Override specification update for testing
+     *
+     * @psalm-suppress InvalidClassConstantType
+     */
     public const SPECIFICATION_UPDATE = 'updateIgnore';
 
     /** @var array<string, string> */
@@ -18,12 +26,11 @@ class UpdateIgnore extends Update
         self::SPECIFICATION_WHERE  => 'WHERE %1$s',
     ];
 
-    /** @return string */
     protected function processupdateIgnore(
         PlatformInterface $platform,
         ?DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null
-    ) {
+    ): string {
         return parent::processUpdate($platform, $driver, $parameterContainer);
     }
 }

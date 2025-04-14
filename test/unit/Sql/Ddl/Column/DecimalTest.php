@@ -3,14 +3,13 @@
 namespace LaminasTest\Db\Sql\Ddl\Column;
 
 use Laminas\Db\Sql\Ddl\Column\Decimal;
+use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 
-class DecimalTest extends TestCase
+#[CoversMethod(Decimal::class, 'getExpressionData')]
+final class DecimalTest extends TestCase
 {
-    /**
-     * @covers \Laminas\Db\Sql\Ddl\Column\Decimal::getExpressionData
-     */
-    public function testGetExpressionData()
+    public function testGetExpressionData(): void
     {
         $column = new Decimal('foo', 10, 5);
         self::assertEquals(

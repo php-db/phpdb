@@ -5,25 +5,23 @@ namespace LaminasTest\Db\Adapter\Driver\IbmDb2;
 use Laminas\Db\Adapter\Driver\IbmDb2\IbmDb2;
 use Laminas\Db\Adapter\Driver\IbmDb2\Statement;
 use Laminas\Db\Adapter\Exception\InvalidArgumentException;
+use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\Group;
 use stdClass;
 
-/**
- * @group integration
- * @group integration-ibm_db2
- */
-class IbmDb2IntegrationTest extends AbstractIntegrationTest
+#[CoversMethod(IbmDb2::class, 'checkEnvironment')]
+#[Group('integration')]
+#[Group('integration-ibm_db2')]
+final class IbmDb2IntegrationTest extends AbstractIntegrationTestCase
 {
-    /**
-     * @group integration-ibm_db2
-     * @covers \Laminas\Db\Adapter\Driver\IbmDb2\IbmDb2::checkEnvironment
-     */
-    public function testCheckEnvironment()
+    #[Group('integration-ibm_db2')]
+    public function testCheckEnvironment(): void
     {
         $ibmdb2 = new IbmDb2([]);
         self::assertNull($ibmdb2->checkEnvironment());
     }
 
-    public function testCreateStatement()
+    public function testCreateStatement(): void
     {
         $driver = new IbmDb2([]);
 

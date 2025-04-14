@@ -7,7 +7,7 @@ use Laminas\Db\Adapter\ParameterContainer;
 use Laminas\Db\Adapter\Platform\PlatformInterface;
 use Laminas\Db\Sql\Delete;
 
-class DeleteIgnore extends Delete
+final class DeleteIgnore extends Delete
 {
     public const SPECIFICATION_DELETE = 'deleteIgnore';
 
@@ -17,12 +17,11 @@ class DeleteIgnore extends Delete
         self::SPECIFICATION_WHERE  => 'WHERE %1$s',
     ];
 
-    /** @return string */
     protected function processdeleteIgnore(
         PlatformInterface $platform,
         ?DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null
-    ) {
+    ): string {
         return parent::processDelete($platform, $driver, $parameterContainer);
     }
 }

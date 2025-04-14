@@ -6,30 +6,27 @@ use Laminas\Db\Adapter\Driver\Pdo\Result;
 use Laminas\Db\Adapter\Exception\InvalidArgumentException;
 use PDO;
 use PDOStatement;
+use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
 use function assert;
 use function uniqid;
 
-/**
- * @group result-pdo
- */
-class ResultTest extends TestCase
+#[CoversMethod(Result::class, 'current')]
+#[Group('result-pdo')]
+final class ResultTest extends TestCase
 {
     /**
      * Tests current method returns same data on consecutive calls.
-     *
-     * @covers \Laminas\Db\Adapter\Driver\Pdo\Result::current
      */
-    public function testCurrent()
+    public function testCurrent(): void
     {
         $stub = $this->getMockBuilder('PDOStatement')->getMock();
         $stub->expects($this->any())
             ->method('fetch')
-            ->will($this->returnCallback(function () {
-                return uniqid();
-            }));
+            ->willReturnCallback(fn() => uniqid());
 
         $result = new Result();
         $result->initialize($stub, null);
@@ -37,7 +34,7 @@ class ResultTest extends TestCase
         self::assertEquals($result->current(), $result->current());
     }
 
-    public function testFetchModeException()
+    public function testFetchModeException(): void
     {
         $result = new Result();
 
@@ -48,14 +45,12 @@ class ResultTest extends TestCase
     /**
      * Tests whether the fetch mode was set properly and
      */
-    public function testFetchModeAnonymousObject()
+    public function testFetchModeAnonymousObject(): void
     {
         $stub = $this->getMockBuilder('PDOStatement')->getMock();
         $stub->expects($this->any())
             ->method('fetch')
-            ->will($this->returnCallback(function () {
-                return new stdClass();
-            }));
+            ->willReturnCallback(fn() => new stdClass());
 
         $result = new Result();
         $result->initialize($stub, null);
@@ -68,14 +63,12 @@ class ResultTest extends TestCase
     /**
      * Tests whether the fetch mode has a broader range
      */
-    public function testFetchModeRange()
+    public function testFetchModeRange(): void
     {
         $stub = $this->getMockBuilder('PDOStatement')->getMock();
         $stub->expects($this->any())
             ->method('fetch')
-            ->will($this->returnCallback(function () {
-                return new stdClass();
-            }));
+            ->willReturnCallback(fn() => new stdClass());
         $result = new Result();
         $result->initialize($stub, null);
         $result->setFetchMode(PDO::FETCH_NAMED);
@@ -83,7 +76,7 @@ class ResultTest extends TestCase
         self::assertInstanceOf('stdClass', $result->current());
     }
 
-    public function testMultipleRewind()
+    public function testMultipleRewind(): void
     {
         $data     = [
             ['test' => 1],
@@ -95,9 +88,9 @@ class ResultTest extends TestCase
         assert($stub instanceof PDOStatement); // to suppress IDE type warnings
         $stub->expects($this->any())
             ->method('fetch')
-            ->will($this->returnCallback(function () use ($data, &$position) {
+            ->willReturnCallback(function () use ($data, &$position) {
                 return $data[$position++];
-            }));
+            });
         $result = new Result();
         $result->initialize($stub, null);
 

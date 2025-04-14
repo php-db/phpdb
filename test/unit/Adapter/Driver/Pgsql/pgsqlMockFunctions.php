@@ -8,9 +8,8 @@ namespace Laminas\Db\Adapter\Driver\Pgsql;
  * @see http://php.net/manual/en/function.pg-close.php
  *
  * @param resource $connection
- * @return bool
  */
-function pg_close($connection = null)
+function pg_close($connection = null): bool
 {
     return true;
 }

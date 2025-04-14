@@ -11,8 +11,13 @@ use Laminas\Db\Sql\ExpressionInterface;
 use Laminas\Db\Sql\Predicate;
 use Laminas\Db\Sql\Select;
 use LaminasTest\Db\TestAsset\TrustingSql92Platform;
+use Override;
+use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use ReflectionException;
 use ReflectionMethod;
 
 use function current;
@@ -21,35 +26,36 @@ use function next;
 use function preg_match;
 use function uniqid;
 
-class AbstractSqlTest extends TestCase
+#[CoversMethod(AbstractSql::class, 'processExpression')]
+final class AbstractSqlTest extends TestCase
 {
-    /** @var AbstractSql&MockObject */
-    protected $abstractSql;
+    protected AbstractSql&MockObject $abstractSql;
 
-    /** @var DriverInterface&MockObject */
-    protected $mockDriver;
+    protected DriverInterface&MockObject $mockDriver;
 
+    /**
+     * @throws Exception
+     */
+    #[Override]
     protected function setUp(): void
     {
-        $this->abstractSql = $this->getMockForAbstractClass(AbstractSql::class);
+        $this->abstractSql = $this->getMockBuilder(AbstractSql::class)->onlyMethods([])->getMock();
 
         $this->mockDriver = $this->getMockBuilder(DriverInterface::class)->getMock();
         $this->mockDriver
             ->expects($this->any())
             ->method('getPrepareType')
-            ->will($this->returnValue(DriverInterface::PARAMETERIZATION_NAMED));
+            ->willReturn(DriverInterface::PARAMETERIZATION_NAMED);
         $this->mockDriver
             ->expects($this->any())
             ->method('formatParameterName')
-            ->will($this->returnCallback(function ($x) {
-                return ':' . $x;
-            }));
+            ->willReturnCallback(fn($x) => ':' . $x);
     }
 
     /**
-     * @covers \Laminas\Db\Sql\AbstractSql::processExpression
+     * @throws ReflectionException
      */
-    public function testProcessExpressionWithoutParameterContainer()
+    public function testProcessExpressionWithoutParameterContainer(): void
     {
         $expression   = new Expression('? > ? AND y < ?', [['x' => ExpressionInterface::TYPE_IDENTIFIER], 5, 10]);
         $sqlAndParams = $this->invokeProcessExpressionMethod($expression);
@@ -58,9 +64,9 @@ class AbstractSqlTest extends TestCase
     }
 
     /**
-     * @covers \Laminas\Db\Sql\AbstractSql::processExpression
+     * @throws ReflectionException
      */
-    public function testProcessExpressionWithParameterContainerAndParameterizationTypeNamed()
+    public function testProcessExpressionWithParameterContainerAndParameterizationTypeNamed(): void
     {
         $parameterContainer = new ParameterContainer();
         $expression         = new Expression('? > ? AND y < ?', [['x' => ExpressionInterface::TYPE_IDENTIFIER], 5, 10]);
@@ -82,7 +88,7 @@ class AbstractSqlTest extends TestCase
 
         // ensure next invocation increases number by 1
         $parameterContainer = new ParameterContainer();
-        $sqlAndParamsNext   = $this->invokeProcessExpressionMethod($expression, $parameterContainer);
+        $this->invokeProcessExpressionMethod($expression, $parameterContainer);
 
         $parameters = $parameterContainer->getNamedArray();
 
@@ -93,9 +99,9 @@ class AbstractSqlTest extends TestCase
     }
 
     /**
-     * @covers \Laminas\Db\Sql\AbstractSql::processExpression
+     * @throws ReflectionException
      */
-    public function testProcessExpressionWorksWithExpressionContainingStringParts()
+    public function testProcessExpressionWorksWithExpressionContainingStringParts(): void
     {
         $expression = new Predicate\Expression('x = ?', 5);
 
@@ -106,9 +112,9 @@ class AbstractSqlTest extends TestCase
     }
 
     /**
-     * @covers \Laminas\Db\Sql\AbstractSql::processExpression
+     * @throws ReflectionException
      */
-    public function testProcessExpressionWorksWithExpressionContainingSelectObject()
+    public function testProcessExpressionWorksWithExpressionContainingSelectObject(): void
     {
         $select = new Select();
         $select->from('x')->where->like('bar', 'Foo%');
@@ -120,7 +126,10 @@ class AbstractSqlTest extends TestCase
         self::assertEquals('("x" IN (SELECT "x".* FROM "x" WHERE "bar" LIKE \'Foo%\'))', $sqlAndParams);
     }
 
-    public function testProcessExpressionWorksWithExpressionContainingExpressionObject()
+    /**
+     * @throws ReflectionException
+     */
+    public function testProcessExpressionWorksWithExpressionContainingExpressionObject(): void
     {
         $expression = new Predicate\Operator(
             'release_date',
@@ -133,9 +142,10 @@ class AbstractSqlTest extends TestCase
     }
 
     /**
-     * @group 7407
+     * @throws ReflectionException
      */
-    public function testProcessExpressionWorksWithExpressionObjectWithPercentageSigns()
+    #[Group('7407')]
+    public function testProcessExpressionWorksWithExpressionObjectWithPercentageSigns(): void
     {
         $expressionString = 'FROM_UNIXTIME(date, "%Y-%m")';
         $expression       = new Expression($expressionString);
@@ -144,7 +154,10 @@ class AbstractSqlTest extends TestCase
         self::assertSame($expressionString, $sqlString);
     }
 
-    public function testProcessExpressionWorksWithNamedParameterPrefix()
+    /**
+     * @throws ReflectionException
+     */
+    public function testProcessExpressionWorksWithNamedParameterPrefix(): void
     {
         $parameterContainer   = new ParameterContainer();
         $namedParameterPrefix = uniqid();
@@ -154,7 +167,10 @@ class AbstractSqlTest extends TestCase
         self::assertSame($namedParameterPrefix . '1', key($parameterContainer->getNamedArray()));
     }
 
-    public function testProcessExpressionWorksWithNamedParameterPrefixContainingWhitespace()
+    /**
+     * @throws ReflectionException
+     */
+    public function testProcessExpressionWorksWithNamedParameterPrefixContainingWhitespace(): void
     {
         $parameterContainer   = new ParameterContainer();
         $namedParameterPrefix = "string\ncontaining white space";
@@ -165,16 +181,17 @@ class AbstractSqlTest extends TestCase
     }
 
     /**
-     * @param ParameterContainer $parameterContainer
-     * @param string $namedParameterPrefix
-     * @return StatementContainer|string
+     * @param null                $parameterContainer
+     * @param null                $namedParameterPrefix
+     * @throws ReflectionException
      */
     protected function invokeProcessExpressionMethod(
         ExpressionInterface $expression,
         $parameterContainer = null,
         $namedParameterPrefix = null
-    ) {
+    ): string|StatementContainer {
         $method = new ReflectionMethod($this->abstractSql, 'processExpression');
+        /** @psalm-suppress UnusedMethodCall */
         $method->setAccessible(true);
         return $method->invoke(
             $this->abstractSql,

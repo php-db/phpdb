@@ -4,7 +4,7 @@ namespace LaminasTest\Db\TestAsset;
 
 use PDO;
 
-class PdoStubDriver extends PDO
+final class PdoStubDriver extends PDO
 {
     public function beginTransaction(): bool
     {
@@ -17,11 +17,10 @@ class PdoStubDriver extends PDO
     }
 
     /**
-     * @param string $dsn
      * @param string $user
      * @param string $password
      */
-    public function __construct($dsn, $user, $password)
+    public function __construct(string $dsn, $user, $password)
     {
     }
 

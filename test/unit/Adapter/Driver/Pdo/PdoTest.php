@@ -6,26 +6,28 @@ use Laminas\Db\Adapter\Driver\DriverInterface;
 use Laminas\Db\Adapter\Driver\Pdo\Pdo;
 use Laminas\Db\Adapter\Driver\Pdo\Result;
 use Laminas\Db\Exception\RuntimeException;
+use Override;
+use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
-class PdoTest extends TestCase
+#[CoversMethod(Pdo::class, 'getDatabasePlatformName')]
+#[CoversMethod(Pdo::class, 'getResultPrototype')]
+final class PdoTest extends TestCase
 {
-    /** @var Pdo */
-    protected $pdo;
+    protected Pdo $pdo;
 
     /**
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
+    #[Override]
     protected function setUp(): void
     {
         $this->pdo = new Pdo([]);
     }
 
-    /**
-     * @covers \Laminas\Db\Adapter\Driver\Pdo\Pdo::getDatabasePlatformName
-     */
-    public function testGetDatabasePlatformName()
+    public function testGetDatabasePlatformName(): void
     {
         // Test platform name for SqlServer
         $this->pdo->getConnection()->setConnectionParameters(['pdodriver' => 'sqlsrv']);
@@ -34,7 +36,7 @@ class PdoTest extends TestCase
     }
 
     /** @psalm-return array<array-key, array{0: int|string, 1: null|string, 2: string}> */
-    public function getParamsAndType(): array
+    public static function getParamsAndType(): array
     {
         return [
             ['foo', null, ':foo'],
@@ -51,18 +53,15 @@ class PdoTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider getParamsAndType
-     * @param int|string $name
-     */
-    public function testFormatParameterName($name, ?string $type, string $expected)
+    #[DataProvider('getParamsAndType')]
+    public function testFormatParameterName(int|string $name, ?string $type, string $expected): void
     {
         $result = $this->pdo->formatParameterName($name, $type);
         $this->assertEquals($expected, $result);
     }
 
     /** @psalm-return array<array-key, array{0: string}> */
-    public function getInvalidParamName(): array
+    public static function getInvalidParamName(): array
     {
         return [
             ['foo%'],
@@ -72,19 +71,14 @@ class PdoTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider getInvalidParamName
-     */
-    public function testFormatParameterNameWithInvalidCharacters(string $name)
+    #[DataProvider('getInvalidParamName')]
+    public function testFormatParameterNameWithInvalidCharacters(string $name): void
     {
         $this->expectException(RuntimeException::class);
         $this->pdo->formatParameterName($name);
     }
 
-    /**
-     * @covers \Laminas\Db\Adapter\Driver\Pdo\Pdo::getResultPrototype
-     */
-    public function testGetResultPrototype()
+    public function testGetResultPrototype(): void
     {
         $resultPrototype = $this->pdo->getResultPrototype();
 

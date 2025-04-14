@@ -18,7 +18,7 @@
     "config": {
         "sort-packages": true,
         "platform": {
-            "php": "8.1.99"
+            "php": "8.3.99"
         },
         "allow-plugins": {
             "dealerdirect/phpcodesniffer-composer-installer": true
@@ -41,6 +41,7 @@
         "laminas/laminas-servicemanager": "^3.23.0",
         "phpunit/phpunit": "^11.5.12",
         "psalm/plugin-phpunit": "^0.19.2",
+        "rector/rector": "^2.0",
         "vimeo/psalm": "^6.8.8"
     },
     "suggest": {
@@ -50,7 +51,8 @@
     },
     "autoload": {
         "psr-4": {
-            "Laminas\\Db\\": "src/"
+            "Laminas\\Db\\": "src/",
+            "CustomRule\\PHPUnit\\": "rector/"
         }
     },
     "autoload-dev": {

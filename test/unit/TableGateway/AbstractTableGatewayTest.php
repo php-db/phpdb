@@ -15,86 +15,109 @@ use Laminas\Db\Sql\Select;
 use Laminas\Db\Sql\Update;
 use Laminas\Db\TableGateway\AbstractTableGateway;
 use Laminas\Db\TableGateway\Feature\FeatureSet;
-use PHPUnit\Framework\MockObject\Generator;
+use Override;
+use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 
-class AbstractTableGatewayTest extends TestCase
+#[CoversMethod(AbstractTableGateway::class, 'getTable')]
+#[CoversMethod(AbstractTableGateway::class, 'getAdapter')]
+#[CoversMethod(AbstractTableGateway::class, 'getSql')]
+#[CoversMethod(AbstractTableGateway::class, 'getResultSetPrototype')]
+#[CoversMethod(AbstractTableGateway::class, 'select')]
+#[CoversMethod(AbstractTableGateway::class, 'selectWith')]
+#[CoversMethod(AbstractTableGateway::class, 'executeSelect')]
+#[CoversMethod(AbstractTableGateway::class, 'insert')]
+#[CoversMethod(AbstractTableGateway::class, 'insertWith')]
+#[CoversMethod(AbstractTableGateway::class, 'executeInsert')]
+#[CoversMethod(AbstractTableGateway::class, 'update')]
+#[CoversMethod(AbstractTableGateway::class, 'updateWith')]
+#[CoversMethod(AbstractTableGateway::class, 'executeUpdate')]
+#[CoversMethod(AbstractTableGateway::class, 'delete')]
+#[CoversMethod(AbstractTableGateway::class, 'deleteWith')]
+#[CoversMethod(AbstractTableGateway::class, 'executeDelete')]
+#[CoversMethod(AbstractTableGateway::class, 'getLastInsertValue')]
+#[CoversMethod(AbstractTableGateway::class, '__get')]
+#[CoversMethod(AbstractTableGateway::class, '__clone')]
+final class AbstractTableGatewayTest extends TestCase
 {
-    /** @var Generator */
-    protected $mockAdapter;
-
-    /** @var Generator */
-    protected $mockSql;
-
-    /** @var AbstractTableGateway */
-    protected $table;
-
-    /** @var FeatureSet&MockObject */
-    protected $mockFeatureSet;
+    protected MockObject&Adapter $mockAdapter;
+    protected MockObject&Sql\Sql $mockSql;
+    protected AbstractTableGateway&MockObject $table;
+    protected FeatureSet&MockObject $mockFeatureSet;
+    protected MockObject&Select $mockSelect;
+    protected MockObject&Insert $mockInsert;
+    protected MockObject&Update $mockUpdate;
+    protected MockObject&Delete $mockDelete;
 
     /**
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
+    #[Override]
     protected function setUp(): void
     {
         // mock the adapter, driver, and parts
         $mockResult = $this->getMockBuilder(ResultInterface::class)->getMock();
-        $mockResult->expects($this->any())->method('getAffectedRows')->will($this->returnValue(5));
+        $mockResult->expects($this->any())->method('getAffectedRows')->willReturn(5);
 
         $mockStatement = $this->getMockBuilder(StatementInterface::class)->getMock();
-        $mockStatement->expects($this->any())->method('execute')->will($this->returnValue($mockResult));
+        $mockStatement->expects($this->any())->method('execute')->willReturn($mockResult);
 
         $mockConnection = $this->getMockBuilder(ConnectionInterface::class)->getMock();
-        $mockConnection->expects($this->any())->method('getLastGeneratedValue')->will($this->returnValue(10));
+        $mockConnection->expects($this->any())->method('getLastGeneratedValue')->willReturn(10);
 
         $mockDriver = $this->getMockBuilder(DriverInterface::class)->getMock();
-        $mockDriver->expects($this->any())->method('createStatement')->will($this->returnValue($mockStatement));
-        $mockDriver->expects($this->any())->method('getConnection')->will($this->returnValue($mockConnection));
+        $mockDriver->expects($this->any())->method('createStatement')->willReturn($mockStatement);
+        $mockDriver->expects($this->any())->method('getConnection')->willReturn($mockConnection);
+
+        $this->mockSelect = $this
+            ->getMockBuilder(Select::class)
+            ->onlyMethods(['where', 'getRawState'])
+            ->setConstructorArgs(['foo'])
+            ->getMock();
+
+        $this->mockInsert = $this
+            ->getMockBuilder(Insert::class)
+            ->onlyMethods(['prepareStatement', 'values'])
+            ->setConstructorArgs(['foo'])
+            ->getMock();
+
+        $this->mockUpdate = $this
+            ->getMockBuilder(Update::class)
+            ->onlyMethods(['where', 'join'])
+            ->setConstructorArgs(['foo'])
+            ->getMock();
+
+        $this->mockDelete = $this->getMockBuilder(Delete::class)
+            ->onlyMethods(['where'])
+            ->setConstructorArgs(['foo'])
+            ->getMock();
 
         $this->mockAdapter = $this->getMockBuilder(Adapter::class)
-            ->setMethods()
+            ->onlyMethods([])
             ->setConstructorArgs([$mockDriver])
             ->getMock();
-        $this->mockSql     = $this->getMockBuilder(\Laminas\Db\Sql\Sql::class)
-            ->setMethods(['select', 'insert', 'update', 'delete'])
+        $this->mockSql     = $this->getMockBuilder(Sql\Sql::class)
+            ->onlyMethods(['select', 'insert', 'update', 'delete'])
             ->setConstructorArgs([$this->mockAdapter, 'foo'])
             ->getMock();
-        $this->mockSql->expects($this->any())->method('select')->will($this->returnValue(
-            $this->getMockBuilder(Select::class)
-                ->setMethods(['where', 'getRawState'])
-                ->setConstructorArgs(['foo'])
-                ->getMock()
-        ));
-        $this->mockSql->expects($this->any())->method('insert')->will($this->returnValue(
-            $this->getMockBuilder(Insert::class)
-                ->setMethods(['prepareStatement', 'values'])
-                ->setConstructorArgs(['foo'])
-                ->getMock()
-        ));
-        $this->mockSql->expects($this->any())->method('update')->will($this->returnValue(
-            $this->getMockBuilder(Update::class)
-                ->setMethods(['where', 'join'])
-                ->setConstructorArgs(['foo'])
-                ->getMock()
-        ));
-        $this->mockSql->expects($this->any())->method('delete')->will($this->returnValue(
-            $this->getMockBuilder(Delete::class)
-                ->setMethods(['where'])
-                ->setConstructorArgs(['foo'])
-                ->getMock()
-        ));
+        $this->mockSql->expects($this->any())->method('select')->willReturn($this->mockSelect);
+        $this->mockSql->expects($this->any())->method('insert')->willReturn($this->mockInsert);
+        $this->mockSql->expects($this->any())->method('update')->willReturn($this->mockUpdate);
+        $this->mockSql->expects($this->any())->method('delete')->willReturn($this->mockDelete);
 
         $this->mockFeatureSet = $this->getMockBuilder(FeatureSet::class)->getMock();
 
-        $this->table = $this->getMockForAbstractClass(
-            AbstractTableGateway::class
-            //array('getTable')
-        );
+        $this->table = $this
+            ->getMockBuilder(AbstractTableGateway::class)
+            ->onlyMethods([])
+            ->getMock();
+
         $tgReflection = new ReflectionClass(AbstractTableGateway::class);
         foreach ($tgReflection->getProperties() as $tgPropReflection) {
+            /** @psalm-suppress UnusedMethodCall */
             $tgPropReflection->setAccessible(true);
             switch ($tgPropReflection->getName()) {
                 case 'table':
@@ -113,55 +136,32 @@ class AbstractTableGatewayTest extends TestCase
                     $tgPropReflection->setValue($this->table, $this->mockFeatureSet);
                     break;
             }
+            /** @psalm-suppress UnusedMethodCall */
+            $tgPropReflection->setAccessible(false);
         }
     }
 
-    /**
-     * Tears down the fixture, for example, closes a network connection.
-     * This method is called after a test is executed.
-     */
-    protected function tearDown(): void
-    {
-    }
-
-    /**
-     * @covers \Laminas\Db\TableGateway\AbstractTableGateway::getTable
-     */
-    public function testGetTable()
+    public function testGetTable(): void
     {
         self::assertEquals('foo', $this->table->getTable());
     }
 
-    /**
-     * @covers \Laminas\Db\TableGateway\AbstractTableGateway::getAdapter
-     */
-    public function testGetAdapter()
+    public function testGetAdapter(): void
     {
         self::assertSame($this->mockAdapter, $this->table->getAdapter());
     }
 
-    /**
-     * @covers \Laminas\Db\TableGateway\AbstractTableGateway::getSql
-     */
-    public function testGetSql()
+    public function testGetSql(): void
     {
-        self::assertInstanceOf(\Laminas\Db\Sql\Sql::class, $this->table->getSql());
+        self::assertInstanceOf(Sql\Sql::class, $this->table->getSql());
     }
 
-    /**
-     * @covers \Laminas\Db\TableGateway\AbstractTableGateway::getResultSetPrototype
-     */
-    public function testGetSelectResultPrototype()
+    public function testGetSelectResultPrototype(): void
     {
         self::assertInstanceOf(ResultSet::class, $this->table->getResultSetPrototype());
     }
 
-    /**
-     * @covers \Laminas\Db\TableGateway\AbstractTableGateway::select
-     * @covers \Laminas\Db\TableGateway\AbstractTableGateway::selectWith
-     * @covers \Laminas\Db\TableGateway\AbstractTableGateway::executeSelect
-     */
-    public function testSelectWithNoWhere()
+    public function testSelectWithNoWhere(): void
     {
         $resultSet = $this->table->select();
 
@@ -170,21 +170,15 @@ class AbstractTableGatewayTest extends TestCase
         self::assertNotSame($this->table->getResultSetPrototype(), $resultSet);
     }
 
-    /**
-     * @covers \Laminas\Db\TableGateway\AbstractTableGateway::select
-     * @covers \Laminas\Db\TableGateway\AbstractTableGateway::selectWith
-     * @covers \Laminas\Db\TableGateway\AbstractTableGateway::executeSelect
-     */
-    public function testSelectWithWhereString()
+    public function testSelectWithWhereString(): void
     {
-        $mockSelect = $this->mockSql->select();
-
+        $mockSelect = $this->mockSelect;
         $mockSelect->expects($this->any())
             ->method('getRawState')
-            ->will($this->returnValue([
+            ->willReturn([
                 'table'   => $this->table->getTable(),
                 'columns' => [],
-            ]));
+            ]);
 
         // assert select::from() is called
         $mockSelect->expects($this->once())
@@ -194,57 +188,34 @@ class AbstractTableGatewayTest extends TestCase
         $this->table->select('foo');
     }
 
-    /**
-     * @covers \Laminas\Db\TableGateway\AbstractTableGateway::select
-     * @covers \Laminas\Db\TableGateway\AbstractTableGateway::selectWith
-     * @covers \Laminas\Db\TableGateway\AbstractTableGateway::executeSelect
-     *
-     * This is a test for the case when a valid $select is built using an aliased table name, then used
-     * with AbstractTableGateway::selectWith (or AbstractTableGateway::select).
-     *
-     * $myTable = new MyTable(...);
-     * $sql = new \Laminas\Db\Sql\Sql(...);
-     * $select = $sql->select()->from(array('t' => 'mytable'));
-     *
-     * // Following fails, with Fatal error: Uncaught exception 'RuntimeException' with message
-     * 'The table name of the provided select object must match that of the table' unless fix is provided.
-     * $myTable->selectWith($select);
-     */
-    public function testSelectWithArrayTable()
+    public function testSelectWithArrayTable(): void
     {
         // Case 1
-
-        $select1 = $this->getMockBuilder(Select::class)->setMethods(['getRawState'])->getMock();
+        $select1 = $this->getMockBuilder(Select::class)->onlyMethods(['getRawState'])->getMock();
         $select1->expects($this->once())
             ->method('getRawState')
-            ->will($this->returnValue([
+            ->willReturn([
                 'table'   => 'foo', // Standard table name format, valid according to Select::from()
                 'columns' => null,
-            ]));
+            ]);
         $return = $this->table->selectWith($select1);
-        self::assertNotNull($return);
+        $this->assertInstanceOf(ResultSet::class, $return);
 
         // Case 2
-
-        $select1 = $this->getMockBuilder(Select::class)->setMethods(['getRawState'])->getMock();
+        $select1 = $this->getMockBuilder(Select::class)->onlyMethods(['getRawState'])->getMock();
         $select1->expects($this->once())
             ->method('getRawState')
-            ->will($this->returnValue([
+            ->willReturn([
                 'table'   => ['f' => 'foo'], // Alias table name format, valid according to Select::from()
                 'columns' => null,
-            ]));
+            ]);
         $return = $this->table->selectWith($select1);
-        self::assertNotNull($return);
+        $this->assertInstanceOf(ResultSet::class, $return);
     }
 
-    /**
-     * @covers \Laminas\Db\TableGateway\AbstractTableGateway::insert
-     * @covers \Laminas\Db\TableGateway\AbstractTableGateway::insertWith
-     * @covers \Laminas\Db\TableGateway\AbstractTableGateway::executeInsert
-     */
-    public function testInsert()
+    public function testInsert(): void
     {
-        $mockInsert = $this->mockSql->insert();
+        $mockInsert = $this->mockInsert;
 
         $mockInsert->expects($this->once())
             ->method('prepareStatement')
@@ -258,14 +229,9 @@ class AbstractTableGatewayTest extends TestCase
         self::assertEquals(5, $affectedRows);
     }
 
-    /**
-     * @covers \Laminas\Db\TableGateway\AbstractTableGateway::update
-     * @covers \Laminas\Db\TableGateway\AbstractTableGateway::updateWith
-     * @covers \Laminas\Db\TableGateway\AbstractTableGateway::executeUpdate
-     */
-    public function testUpdate()
+    public function testUpdate(): void
     {
-        $mockUpdate = $this->mockSql->update();
+        $mockUpdate = $this->mockUpdate;
 
         // assert select::from() is called
         $mockUpdate->expects($this->once())
@@ -276,14 +242,9 @@ class AbstractTableGatewayTest extends TestCase
         self::assertEquals(5, $affectedRows);
     }
 
-    /**
-     * @covers \Laminas\Db\TableGateway\AbstractTableGateway::update
-     * @covers \Laminas\Db\TableGateway\AbstractTableGateway::updateWith
-     * @covers \Laminas\Db\TableGateway\AbstractTableGateway::executeUpdate
-     */
-    public function testUpdateWithJoin()
+    public function testUpdateWithJoin(): void
     {
-        $mockUpdate = $this->mockSql->update();
+        $mockUpdate = $this->mockUpdate;
 
         $joins = [
             [
@@ -306,14 +267,9 @@ class AbstractTableGatewayTest extends TestCase
         self::assertEquals(5, $affectedRows);
     }
 
-    /**
-     * @covers \Laminas\Db\TableGateway\AbstractTableGateway::update
-     * @covers \Laminas\Db\TableGateway\AbstractTableGateway::updateWith
-     * @covers \Laminas\Db\TableGateway\AbstractTableGateway::executeUpdate
-     */
-    public function testUpdateWithJoinDefaultType()
+    public function testUpdateWithJoinDefaultType(): void
     {
-        $mockUpdate = $this->mockSql->update();
+        $mockUpdate = $this->mockUpdate;
 
         $joins = [
             [
@@ -335,27 +291,17 @@ class AbstractTableGatewayTest extends TestCase
         self::assertEquals(5, $affectedRows);
     }
 
-    /**
-     * @covers \Laminas\Db\TableGateway\AbstractTableGateway::update
-     * @covers \Laminas\Db\TableGateway\AbstractTableGateway::updateWith
-     * @covers \Laminas\Db\TableGateway\AbstractTableGateway::executeUpdate
-     */
-    public function testUpdateWithNoCriteria()
+    public function testUpdateWithNoCriteria(): void
     {
-        $mockUpdate = $this->mockSql->update();
+        $this->mockUpdate;
 
         $affectedRows = $this->table->update(['foo' => 'bar']);
         self::assertEquals(5, $affectedRows);
     }
 
-    /**
-     * @covers \Laminas\Db\TableGateway\AbstractTableGateway::delete
-     * @covers \Laminas\Db\TableGateway\AbstractTableGateway::deleteWith
-     * @covers \Laminas\Db\TableGateway\AbstractTableGateway::executeDelete
-     */
-    public function testDelete()
+    public function testDelete(): void
     {
-        $mockDelete = $this->mockSql->delete();
+        $mockDelete = $this->mockDelete;
 
         // assert select::from() is called
         $mockDelete->expects($this->once())
@@ -366,21 +312,22 @@ class AbstractTableGatewayTest extends TestCase
         self::assertEquals(5, $affectedRows);
     }
 
-    /**
-     * @covers \Laminas\Db\TableGateway\AbstractTableGateway::getLastInsertValue
-     */
-    public function testGetLastInsertValue()
+    public function testGetLastInsertValue(): void
     {
         $this->table->insert(['foo' => 'bar']);
         self::assertEquals(10, $this->table->getLastInsertValue());
     }
 
-    public function testInitializeBuildsAResultSet()
+    public function testInitializeBuildsAResultSet(): void
     {
-        $stub = $this->getMockForAbstractClass(AbstractTableGateway::class);
+        $stub = $this
+            ->getMockBuilder(AbstractTableGateway::class)
+            ->onlyMethods([])
+            ->getMock();
 
         $tgReflection = new ReflectionClass(AbstractTableGateway::class);
         foreach ($tgReflection->getProperties() as $tgPropReflection) {
+            /** @psalm-suppress UnusedMethodCall */
             $tgPropReflection->setAccessible(true);
             switch ($tgPropReflection->getName()) {
                 case 'table':
@@ -399,11 +346,8 @@ class AbstractTableGatewayTest extends TestCase
         $this->assertInstanceOf(ResultSet::class, $stub->getResultSetPrototype());
     }
 
-    /**
-     * @covers \Laminas\Db\TableGateway\AbstractTableGateway::__get
-     */
     // @codingStandardsIgnoreStart
-    public function test__get()
+    public function test__get(): void
     {
         // @codingStandardsIgnoreEnd
         $this->table->insert(['foo']); // trigger last insert id update
@@ -413,11 +357,8 @@ class AbstractTableGatewayTest extends TestCase
         //self::assertEquals('foo', $this->table->table);
     }
 
-    /**
-     * @covers \Laminas\Db\TableGateway\AbstractTableGateway::__clone
-     */
     // @codingStandardsIgnoreStart
-    public function test__clone()
+    public function test__clone(): void
     {
         // @codingStandardsIgnoreEnd
         $cTable = clone $this->table;

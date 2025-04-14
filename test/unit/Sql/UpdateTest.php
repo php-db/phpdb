@@ -14,44 +14,53 @@ use Laminas\Db\Sql\Predicate\IsNotNull;
 use Laminas\Db\Sql\Predicate\IsNull;
 use Laminas\Db\Sql\Predicate\Literal;
 use Laminas\Db\Sql\Predicate\Operator;
+use Laminas\Db\Sql\Predicate\PredicateSet;
 use Laminas\Db\Sql\TableIdentifier;
 use Laminas\Db\Sql\Update;
 use Laminas\Db\Sql\Where;
 use LaminasTest\Db\DeprecatedAssertionsTrait;
 use LaminasTest\Db\TestAsset\TrustingSql92Platform;
 use LaminasTest\Db\TestAsset\UpdateIgnore;
+use Override;
+use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\CoversNothing;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\TestDox;
 use PHPUnit\Framework\TestCase;
+use ReflectionException;
 
-class UpdateTest extends TestCase
+#[CoversMethod(Update::class, 'table')]
+#[CoversMethod(Update::class, '__construct')]
+#[CoversMethod(Update::class, 'set')]
+#[CoversMethod(Update::class, 'where')]
+#[CoversMethod(Update::class, 'getRawState')]
+#[CoversMethod(Update::class, 'prepareStatement')]
+#[CoversMethod(Update::class, 'getSqlString')]
+#[CoversMethod(Update::class, '__get')]
+#[CoversMethod(Update::class, '__clone')]
+#[CoversMethod(Update::class, 'join')]
+final class UpdateTest extends TestCase
 {
     use DeprecatedAssertionsTrait;
 
-    /** @var Update */
-    protected $update;
+    protected Update $update;
 
     /**
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
+    #[Override]
     protected function setUp(): void
     {
         $this->update = new Update();
     }
 
     /**
-     * Tears down the fixture, for example, closes a network connection.
-     * This method is called after a test is executed.
+     * @throws ReflectionException
      */
-    protected function tearDown(): void
+    public function testTable(): void
     {
-    }
-
-    /**
-     * @covers \Laminas\Db\Sql\Update::table
-     */
-    public function testTable()
-    {
-        $this->update->table('foo', 'bar');
+        $this->update->table('foo');
         self::assertEquals('foo', $this->readAttribute($this->update, 'table'));
 
         $tableIdentifier = new TableIdentifier('foo', 'bar');
@@ -60,33 +69,27 @@ class UpdateTest extends TestCase
     }
 
     /**
-     * @covers \Laminas\Db\Sql\Update::__construct
+     * @throws ReflectionException
      */
-    public function testConstruct()
+    public function testConstruct(): void
     {
         $update = new Update('foo');
         self::assertEquals('foo', $this->readAttribute($update, 'table'));
     }
 
-    /**
-     * @covers \Laminas\Db\Sql\Update::set
-     */
-    public function testSet()
+    public function testSet(): void
     {
         $this->update->set(['foo' => 'bar']);
         self::assertEquals(['foo' => 'bar'], $this->update->getRawState('set'));
     }
 
-    /**
-     * @covers \Laminas\Db\Sql\Update::set
-     */
-    public function testSortableSet()
+    public function testSortableSet(): void
     {
         $this->update->set([
             'two'   => 'с_two',
             'three' => 'с_three',
         ]);
-        $this->update->set(['one' => 'с_one'], 10);
+        $this->update->set(['one' => 'с_one'], '10');
 
         self::assertEquals(
             [
@@ -99,59 +102,60 @@ class UpdateTest extends TestCase
     }
 
     /**
-     * @covers \Laminas\Db\Sql\Update::where
+     * @throws ReflectionException
      */
-    public function testWhere()
+    public function testWhere(): void
     {
         $this->update->where('x = y');
         $this->update->where(['foo > ?' => 5]);
         $this->update->where(['id' => 2]);
-        $this->update->where(['a = b'], Where::OP_OR);
+        $this->update->where(['a = b'], PredicateSet::OP_OR);
         $this->update->where(['c1' => null]);
         $this->update->where(['c2' => [1, 2, 3]]);
         $this->update->where([new IsNotNull('c3')]);
         $where = $this->update->where;
 
         $predicates = $this->readAttribute($where, 'predicates');
-        self::assertEquals('AND', $predicates[0][0]);
-        self::assertInstanceOf(Literal::class, $predicates[0][1]);
 
-        self::assertEquals('AND', $predicates[1][0]);
-        self::assertInstanceOf(\Laminas\Db\Sql\Predicate\Expression::class, $predicates[1][1]);
+        self::assertIsArray($predicates);
 
-        self::assertEquals('AND', $predicates[2][0]);
-        self::assertInstanceOf(Operator::class, $predicates[2][1]);
+        self::assertEquals('AND', $predicates[0][0] ?? '');
+        self::assertInstanceOf(Literal::class, $predicates[0][1] ?? null);
 
-        self::assertEquals('OR', $predicates[3][0]);
-        self::assertInstanceOf(Literal::class, $predicates[3][1]);
+        self::assertEquals('AND', $predicates[1][0] ?? '');
+        self::assertInstanceOf(\Laminas\Db\Sql\Predicate\Expression::class, $predicates[1][1] ?? null);
 
-        self::assertEquals('AND', $predicates[4][0]);
-        self::assertInstanceOf(IsNull::class, $predicates[4][1]);
+        self::assertEquals('AND', $predicates[2][0] ?? '');
+        self::assertInstanceOf(Operator::class, $predicates[2][1] ?? null);
 
-        self::assertEquals('AND', $predicates[5][0]);
-        self::assertInstanceOf(In::class, $predicates[5][1]);
+        self::assertEquals('OR', $predicates[3][0] ?? '');
+        self::assertInstanceOf(Literal::class, $predicates[3][1] ?? null);
 
-        self::assertEquals('AND', $predicates[6][0]);
-        self::assertInstanceOf(IsNotNull::class, $predicates[6][1]);
+        self::assertEquals('AND', $predicates[4][0] ?? '');
+        self::assertInstanceOf(IsNull::class, $predicates[4][1] ?? null);
+
+        self::assertEquals('AND', $predicates[5][0] ?? '');
+        self::assertInstanceOf(In::class, $predicates[5][1] ?? null);
+
+        self::assertEquals('AND', $predicates[6][0] ?? '');
+        self::assertInstanceOf(IsNotNull::class, $predicates[6][1] ?? null);
 
         $where = new Where();
         $this->update->where($where);
         self::assertSame($where, $this->update->where);
 
-        $this->update->where(function ($what) use ($where) {
+        $this->update->where(function (Where $what) use ($where): void {
             self::assertSame($where, $what);
         });
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Predicate cannot be null');
+        /** @psalm-suppress NullArgument - Ensure exception is thrown */
         $this->update->where(null);
     }
 
-    /**
-     * @group Laminas-240
-     * @covers \Laminas\Db\Sql\Update::where
-     */
-    public function testPassingMultipleKeyValueInWhereClause()
+    #[Group('Laminas-240')]
+    public function testPassingMultipleKeyValueInWhereClause(): void
     {
         $update = clone $this->update;
         $update->table('table');
@@ -163,39 +167,33 @@ class UpdateTest extends TestCase
         );
     }
 
-    /**
-     * @covers \Laminas\Db\Sql\Update::getRawState
-     */
-    public function testGetRawState()
+    public function testGetRawState(): void
     {
         $this->update->table('foo')
             ->set(['bar' => 'baz'])
             ->where('x = y');
 
         self::assertEquals('foo', $this->update->getRawState('table'));
-        self::assertEquals(true, $this->update->getRawState('emptyWhereProtection'));
+        self::assertTrue($this->update->getRawState('emptyWhereProtection'));
         self::assertEquals(['bar' => 'baz'], $this->update->getRawState('set'));
         self::assertInstanceOf(Where::class, $this->update->getRawState('where'));
     }
 
-    /**
-     * @covers \Laminas\Db\Sql\Update::prepareStatement
-     */
-    public function testPrepareStatement()
+    public function testPrepareStatement(): void
     {
         $mockDriver = $this->getMockBuilder(DriverInterface::class)->getMock();
-        $mockDriver->expects($this->any())->method('getPrepareType')->will($this->returnValue('positional'));
-        $mockDriver->expects($this->any())->method('formatParameterName')->will($this->returnValue('?'));
+        $mockDriver->expects($this->any())->method('getPrepareType')->willReturn('positional');
+        $mockDriver->expects($this->any())->method('formatParameterName')->willReturn('?');
         $mockAdapter = $this->getMockBuilder(Adapter::class)
-            ->setMethods()
+            ->onlyMethods([])
             ->setConstructorArgs([$mockDriver])
             ->getMock();
 
         $mockStatement = $this->getMockBuilder(StatementInterface::class)->getMock();
         $pContainer    = new ParameterContainer([]);
-        $mockStatement->expects($this->any())->method('getParameterContainer')->will($this->returnValue($pContainer));
+        $mockStatement->expects($this->any())->method('getParameterContainer')->willReturn($pContainer);
 
-        $mockStatement->expects($this->at(1))
+        $mockStatement->expects($this->once())
             ->method('setSql')
             ->with($this->equalTo('UPDATE "foo" SET "bar" = ?, "boo" = NOW() WHERE x = y'));
 
@@ -208,18 +206,18 @@ class UpdateTest extends TestCase
         // with TableIdentifier
         $this->update = new Update();
         $mockDriver   = $this->getMockBuilder(DriverInterface::class)->getMock();
-        $mockDriver->expects($this->any())->method('getPrepareType')->will($this->returnValue('positional'));
-        $mockDriver->expects($this->any())->method('formatParameterName')->will($this->returnValue('?'));
+        $mockDriver->expects($this->any())->method('getPrepareType')->willReturn('positional');
+        $mockDriver->expects($this->any())->method('formatParameterName')->willReturn('?');
         $mockAdapter = $this->getMockBuilder(Adapter::class)
-            ->setMethods()
+            ->onlyMethods([])
             ->setConstructorArgs([$mockDriver])
             ->getMock();
 
         $mockStatement = $this->getMockBuilder(StatementInterface::class)->getMock();
         $pContainer    = new ParameterContainer([]);
-        $mockStatement->expects($this->any())->method('getParameterContainer')->will($this->returnValue($pContainer));
+        $mockStatement->expects($this->any())->method('getParameterContainer')->willReturn($pContainer);
 
-        $mockStatement->expects($this->at(1))
+        $mockStatement->expects($this->once())
             ->method('setSql')
             ->with($this->equalTo('UPDATE "sch"."foo" SET "bar" = ?, "boo" = NOW() WHERE x = y'));
 
@@ -230,10 +228,7 @@ class UpdateTest extends TestCase
         $this->update->prepareStatement($mockAdapter, $mockStatement);
     }
 
-    /**
-     * @covers \Laminas\Db\Sql\Update::getSqlString
-     */
-    public function testGetSqlString()
+    public function testGetSqlString(): void
     {
         $this->update->table('foo')
             ->set(['bar' => 'baz', 'boo' => new Expression('NOW()'), 'bam' => null])
@@ -256,11 +251,9 @@ class UpdateTest extends TestCase
         );
     }
 
-    /**
-     * @group 6768
-     * @group 6773
-     */
-    public function testGetSqlStringForFalseUpdateValueParameter()
+    #[Group('6768')]
+    #[Group('6773')]
+    public function testGetSqlStringForFalseUpdateValueParameter(): void
     {
         $this->update = new Update();
         $this->update->table(new TableIdentifier('foo', 'sch'))
@@ -272,28 +265,20 @@ class UpdateTest extends TestCase
         );
     }
 
-    /**
-     * @covers \Laminas\Db\Sql\Update::__get
-     */
-    public function testGetUpdate()
+    public function testGetUpdate(): void
     {
         $getWhere = $this->update->__get('where');
         self::assertInstanceOf(Where::class, $getWhere);
     }
 
-    /**
-     * @covers \Laminas\Db\Sql\Update::__get
-     */
-    public function testGetUpdateFails()
+    public function testGetUpdateFails(): void
     {
+        /** @psalm-suppress UndefinedThisPropertyFetch - Ensure non-existent property returns null */
         $getWhat = $this->update->__get('what');
         self::assertNull($getWhat);
     }
 
-    /**
-     * @covers \Laminas\Db\Sql\Update::__clone
-     */
-    public function testCloneUpdate()
+    public function testCloneUpdate(): void
     {
         $update1 = clone $this->update;
         $update1->table('foo')
@@ -312,26 +297,24 @@ class UpdateTest extends TestCase
         );
     }
 
-    /**
-     * @coversNothing
-     */
-    public function testSpecificationconstantsCouldBeOverridedByExtensionInPrepareStatement()
+    #[CoversNothing]
+    public function testSpecificationconstantsCouldBeOverridedByExtensionInPrepareStatement(): void
     {
         $updateIgnore = new UpdateIgnore();
 
         $mockDriver = $this->getMockBuilder(DriverInterface::class)->getMock();
-        $mockDriver->expects($this->any())->method('getPrepareType')->will($this->returnValue('positional'));
-        $mockDriver->expects($this->any())->method('formatParameterName')->will($this->returnValue('?'));
+        $mockDriver->expects($this->any())->method('getPrepareType')->willReturn('positional');
+        $mockDriver->expects($this->any())->method('formatParameterName')->willReturn('?');
         $mockAdapter = $this->getMockBuilder(Adapter::class)
-            ->setMethods()
+            ->onlyMethods([])
             ->setConstructorArgs([$mockDriver])
             ->getMock();
 
         $mockStatement = $this->getMockBuilder(StatementInterface::class)->getMock();
         $pContainer    = new ParameterContainer([]);
-        $mockStatement->expects($this->any())->method('getParameterContainer')->will($this->returnValue($pContainer));
+        $mockStatement->expects($this->any())->method('getParameterContainer')->willReturn($pContainer);
 
-        $mockStatement->expects($this->at(1))
+        $mockStatement->expects($this->once())
             ->method('setSql')
             ->with($this->equalTo('UPDATE IGNORE "foo" SET "bar" = ?, "boo" = NOW() WHERE x = y'));
 
@@ -342,10 +325,8 @@ class UpdateTest extends TestCase
         $updateIgnore->prepareStatement($mockAdapter, $mockStatement);
     }
 
-    /**
-     * @coversNothing
-     */
-    public function testSpecificationconstantsCouldBeOverridedByExtensionInGetSqlString()
+    #[CoversNothing]
+    public function testSpecificationconstantsCouldBeOverridedByExtensionInGetSqlString(): void
     {
         $this->update = new UpdateIgnore();
 
@@ -370,10 +351,7 @@ class UpdateTest extends TestCase
         );
     }
 
-    /**
-     * @covers \Laminas\Db\Sql\Update::where
-     */
-    public function testJoin()
+    public function testJoin(): void
     {
         $this->update->table('Document');
         $this->update->set(['x' => 'y'])
@@ -400,7 +378,7 @@ class UpdateTest extends TestCase
      * Important when we're updating fields that are existing in several tables in one query.
      * The same test as above but here we will specify table in update params
      */
-    public function testJoinMultiUpdate()
+    public function testJoinMultiUpdate(): void
     {
         $this->update->table('Document');
         $this->update->set(['Documents.x' => 'y'])
@@ -421,11 +399,8 @@ class UpdateTest extends TestCase
         );
     }
 
-    /**
-     * @testdox unit test: Test join() returns Update object (is chainable)
-     * @covers \Laminas\Db\Sql\Update::join
-     */
-    public function testJoinChainable()
+    #[TestDox('unit test: Test join() returns Update object (is chainable)')]
+    public function testJoinChainable(): void
     {
         $return = $this->update->join('baz', 'foo.fooId = baz.fooId', Join::JOIN_LEFT);
         self::assertSame($this->update, $return);

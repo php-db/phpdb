@@ -33,14 +33,14 @@ class Insert extends AbstractPreparableSql
     public const VALUES_SET           = 'set';
     /**#@-*/
 
-    /** @var array Specification array */
+    /** @var string[]|array[] $specifications */
     protected $specifications = [
         self::SPECIFICATION_INSERT => 'INSERT INTO %1$s (%2$s) VALUES (%3$s)',
         self::SPECIFICATION_SELECT => 'INSERT INTO %1$s %2$s %3$s',
     ];
 
-    /** @var string|TableIdentifier */
-    protected $table;
+    /** @var string|array|TableIdentifier */
+    protected TableIdentifier|string|array $table = '';
 
     /** @var string[] */
     protected $columns = [];
@@ -63,10 +63,10 @@ class Insert extends AbstractPreparableSql
     /**
      * Create INTO clause
      *
-     * @param  string|TableIdentifier $table
+     * @param  string|array|TableIdentifier $table
      * @return $this Provides a fluent interface
      */
-    public function into($table)
+    public function into($table): static
     {
         $this->table = $table;
         return $this;

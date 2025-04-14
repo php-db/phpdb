@@ -6,20 +6,32 @@ use InvalidArgumentException;
 use Laminas\Db\Sql\Join;
 use Laminas\Db\Sql\Select;
 use LaminasTest\Db\DeprecatedAssertionsTrait;
+use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\TestDox;
 use PHPUnit\Framework\TestCase;
+use ReflectionException;
 
-class JoinTest extends TestCase
+#[CoversMethod(Join::class, 'join')]
+#[CoversMethod(Join::class, 'count')]
+#[CoversMethod(Join::class, 'reset')]
+final class JoinTest extends TestCase
 {
     use DeprecatedAssertionsTrait;
 
-    public function testInitialPositionIsZero()
+    /**
+     * @throws ReflectionException
+     */
+    public function testInitialPositionIsZero(): void
     {
         $join = new Join();
 
         self::assertAttributeEquals(0, 'position', $join);
     }
 
-    public function testNextIncrementsThePosition()
+    /**
+     * @throws ReflectionException
+     */
+    public function testNextIncrementsThePosition(): void
     {
         $join = new Join();
 
@@ -28,7 +40,10 @@ class JoinTest extends TestCase
         self::assertAttributeEquals(1, 'position', $join);
     }
 
-    public function testRewindResetsPositionToZero()
+    /**
+     * @throws ReflectionException
+     */
+    public function testRewindResetsPositionToZero(): void
     {
         $join = new Join();
 
@@ -40,7 +55,7 @@ class JoinTest extends TestCase
         self::assertAttributeEquals(0, 'position', $join);
     }
 
-    public function testKeyReturnsTheCurrentPosition()
+    public function testKeyReturnsTheCurrentPosition(): void
     {
         $join = new Join();
 
@@ -51,7 +66,7 @@ class JoinTest extends TestCase
         self::assertEquals(3, $join->key());
     }
 
-    public function testCurrentReturnsTheCurrentJoinSpecification()
+    public function testCurrentReturnsTheCurrentJoinSpecification(): void
     {
         $name = 'baz';
         $on   = 'foo.id = baz.id';
@@ -69,7 +84,7 @@ class JoinTest extends TestCase
         self::assertEquals($expectedSpecification, $join->current());
     }
 
-    public function testValidReturnsTrueIfTheIteratorIsAtAValidPositionAndFalseIfNot()
+    public function testValidReturnsTrueIfTheIteratorIsAtAValidPositionAndFalseIfNot(): void
     {
         $join = new Join();
         $join->join('baz', 'foo.id = baz.id');
@@ -81,39 +96,33 @@ class JoinTest extends TestCase
         self::assertFalse($join->valid());
     }
 
-    /**
-     * @testdox unit test: Test join() returns Join object (is chainable)
-     * @covers \Laminas\Db\Sql\Join::join
-     */
-    public function testJoin()
+    #[TestDox('unit test: Test join() returns Join object (is chainable)')]
+    public function testJoin(): void
     {
         $join   = new Join();
         $return = $join->join('baz', 'foo.fooId = baz.fooId', Join::JOIN_LEFT);
         self::assertSame($join, $return);
     }
 
-    public function testJoinFullOuter()
+    public function testJoinFullOuter(): void
     {
         $join   = new Join();
         $return = $join->join('baz', 'foo.fooId = baz.fooId', Join::JOIN_FULL_OUTER);
         self::assertSame($join, $return);
     }
 
-    public function testJoinWillThrowAnExceptionIfNameIsNoValid()
+    public function testJoinWillThrowAnExceptionIfNameIsNoValid(): void
     {
         $join = new Join();
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage("join() expects '' as a single element associative array");
+        /** @psalm-suppress InvalidArgument */
         $join->join([], false);
     }
 
-    /**
-     * @testdox unit test: Test count() returns correct count
-     * @covers \Laminas\Db\Sql\Join::count
-     * @covers \Laminas\Db\Sql\Join::join
-     */
-    public function testCount()
+    #[TestDox('unit test: Test count() returns correct count')]
+    public function testCount(): void
     {
         $join = new Join();
         $join->join('baz', 'foo.fooId = baz.fooId', Join::JOIN_LEFT);
@@ -123,13 +132,8 @@ class JoinTest extends TestCase
         self::assertCount($join->count(), $join->getJoins());
     }
 
-    /**
-     * @testdox unit test: Test reset() resets the joins
-     * @covers \Laminas\Db\Sql\Join::count
-     * @covers \Laminas\Db\Sql\Join::join
-     * @covers \Laminas\Db\Sql\Join::reset
-     */
-    public function testReset()
+    #[TestDox('unit test: Test reset() resets the joins')]
+    public function testReset(): void
     {
         $join = new Join();
         $join->join('baz', 'foo.fooId = baz.fooId', Join::JOIN_LEFT);

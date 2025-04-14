@@ -14,13 +14,15 @@ use function strtolower;
  * @property Predicate $or
  * @property Predicate $AND
  * @property Predicate $OR
+ * @property Predicate $nest
+ * @property Predicate $unnest
  * @property Predicate $NEST
  * @property Predicate $UNNEST
  */
 class Predicate extends PredicateSet
 {
     /** @var null|Predicate */
-    protected $unnest;
+    private $unnest;
 
     /** @var null|string */
     protected $nextPredicateCombineOperator;
@@ -244,7 +246,7 @@ class Predicate extends PredicateSet
      * Create an expression, with parameter placeholders
      *
      * @param string $expression
-     * @param null|array $parameters
+     * @param null|string|int|array $parameters
      * @return $this Provides a fluent interface
      */
     public function expression($expression, $parameters = null)

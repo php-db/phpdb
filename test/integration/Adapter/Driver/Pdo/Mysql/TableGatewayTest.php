@@ -5,32 +5,35 @@ namespace LaminasIntegrationTest\Db\Adapter\Driver\Pdo\Mysql;
 use Laminas\Db\Sql\TableIdentifier;
 use Laminas\Db\TableGateway\Feature\MetadataFeature;
 use Laminas\Db\TableGateway\TableGateway;
+use LaminasIntegrationTest\Db\Adapter\Driver\Pdo\AdapterTrait as BaseAdapterTrait;
+use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Depends;
 use PHPUnit\Framework\TestCase;
 
 use function count;
 
-class TableGatewayTest extends TestCase
+#[CoversMethod(TableGateway::class, '__construct')]
+#[CoversMethod(TableGateway::class, 'select')]
+#[CoversMethod(TableGateway::class, 'insert')]
+final class TableGatewayTest extends TestCase
 {
     use AdapterTrait;
+    use BaseAdapterTrait;
 
-    /**
-     * @covers \Laminas\Db\TableGateway\TableGateway::__construct
-     */
-    public function testConstructor()
+    public function testConstructor(): void
     {
-        $tableGateway = new TableGateway('test', $this->adapter);
+        $tableGateway = new TableGateway('test', $this->getAdapter());
         $this->assertInstanceOf(TableGateway::class, $tableGateway);
     }
 
-    /**
-     * @covers \Laminas\Db\TableGateway\TableGateway::select
-     */
-    public function testSelect()
+    public function testSelect(): void
     {
-        $tableGateway = new TableGateway('test', $this->adapter);
+        $tableGateway = new TableGateway('test', $this->getAdapter());
         $rowset       = $tableGateway->select();
 
         $this->assertTrue(count($rowset) > 0);
+        /** @var object $row */
         foreach ($rowset as $row) {
             $this->assertTrue(isset($row->id));
             $this->assertNotEmpty(isset($row->name));
@@ -38,15 +41,11 @@ class TableGatewayTest extends TestCase
         }
     }
 
-    /**
-     * @covers \Laminas\Db\TableGateway\TableGateway::insert
-     * @covers \Laminas\Db\TableGateway\TableGateway::select
-     */
-    public function testInsert()
+    public function testInsert(): void
     {
-        $tableGateway = new TableGateway('test', $this->adapter);
+        $tableGateway = new TableGateway('test', $this->getAdapter());
 
-        $rowset       = $tableGateway->select();
+        $tableGateway->select();
         $data         = [
             'name'  => 'test_name',
             'value' => 'test_value',
@@ -55,7 +54,8 @@ class TableGatewayTest extends TestCase
         $this->assertEquals(1, $affectedRows);
 
         $rowSet = $tableGateway->select(['id' => $tableGateway->getLastInsertValue()]);
-        $row    = $rowSet->current();
+        /** @var object $row */
+        $row = $rowSet->current();
 
         foreach ($data as $key => $value) {
             $this->assertEquals($row->$key, $value);
@@ -65,12 +65,10 @@ class TableGatewayTest extends TestCase
     /**
      * @see https://github.com/zendframework/zend-db/issues/35
      * @see https://github.com/zendframework/zend-db/pull/178
-     *
-     * @return mixed
      */
-    public function testInsertWithExtendedCharsetFieldName()
+    public function testInsertWithExtendedCharsetFieldName(): int
     {
-        $tableGateway = new TableGateway('test_charset', $this->adapter);
+        $tableGateway = new TableGateway('test_charset', $this->getAdapter());
 
         $affectedRows = $tableGateway->insert([
             'field$' => 'test_value1',
@@ -81,13 +79,10 @@ class TableGatewayTest extends TestCase
         return $tableGateway->getLastInsertValue();
     }
 
-    /**
-     * @depends testInsertWithExtendedCharsetFieldName
-     * @param mixed $id
-     */
-    public function testUpdateWithExtendedCharsetFieldName($id)
+    #[Depends('testInsertWithExtendedCharsetFieldName')]
+    public function testUpdateWithExtendedCharsetFieldName(mixed $id): void
     {
-        $tableGateway = new TableGateway('test_charset', $this->adapter);
+        $tableGateway = new TableGateway('test_charset', $this->getAdapter());
 
         $data         = [
             'field$' => 'test_value3',
@@ -97,20 +92,18 @@ class TableGatewayTest extends TestCase
         $this->assertEquals(1, $affectedRows);
 
         $rowSet = $tableGateway->select(['id' => $id]);
-        $row    = $rowSet->current();
+        /** @var object $row */
+        $row = $rowSet->current();
 
         foreach ($data as $key => $value) {
             $this->assertEquals($row->$key, $value);
         }
     }
 
-    /**
-     * @dataProvider tableProvider
-     * @param string|TableIdentifier|array $table
-     */
-    public function testTableGatewayWithMetadataFeature($table)
+    #[DataProvider('tableProvider')]
+    public function testTableGatewayWithMetadataFeature(array|string|TableIdentifier $table): void
     {
-        $tableGateway = new TableGateway($table, $this->adapter, new MetadataFeature());
+        $tableGateway = new TableGateway($table, $this->getAdapter(), new MetadataFeature());
 
         self::assertInstanceOf(TableGateway::class, $tableGateway);
         self::assertSame($table, $tableGateway->getTable());

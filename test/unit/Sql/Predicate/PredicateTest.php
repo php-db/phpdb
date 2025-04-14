@@ -2,168 +2,187 @@
 
 namespace LaminasTest\Db\Sql\Predicate;
 
+use ErrorException;
 use Laminas\Db\Adapter\Platform\Sql92;
 use Laminas\Db\Sql\Expression;
+use Laminas\Db\Sql\ExpressionInterface;
 use Laminas\Db\Sql\Predicate\Predicate;
 use Laminas\Db\Sql\Select;
 use Laminas\Stdlib\ErrorHandler;
+use PHPUnit\Framework\Attributes\TestDox;
 use PHPUnit\Framework\TestCase;
 
 use const E_USER_NOTICE;
 
-class PredicateTest extends TestCase
+final class PredicateTest extends TestCase
 {
-    public function testEqualToCreatesOperatorPredicate()
+    public function testEqualToCreatesOperatorPredicate(): void
     {
         $predicate = new Predicate();
         $predicate->equalTo('foo.bar', 'bar');
         $parts = $predicate->getExpressionData();
+        $this->assertIsArray($parts[0]);
         self::assertCount(1, $parts);
         self::assertContains('%s = %s', $parts[0]);
         self::assertContains(['foo.bar', 'bar'], $parts[0]);
     }
 
-    public function testNotEqualToCreatesOperatorPredicate()
+    public function testNotEqualToCreatesOperatorPredicate(): void
     {
         $predicate = new Predicate();
         $predicate->notEqualTo('foo.bar', 'bar');
         $parts = $predicate->getExpressionData();
+        $this->assertIsArray($parts[0]);
         self::assertCount(1, $parts);
         self::assertContains('%s != %s', $parts[0]);
         self::assertContains(['foo.bar', 'bar'], $parts[0]);
     }
 
-    public function testLessThanCreatesOperatorPredicate()
+    public function testLessThanCreatesOperatorPredicate(): void
     {
         $predicate = new Predicate();
         $predicate->lessThan('foo.bar', 'bar');
         $parts = $predicate->getExpressionData();
+        $this->assertIsArray($parts[0]);
         self::assertCount(1, $parts);
         self::assertContains('%s < %s', $parts[0]);
         self::assertContains(['foo.bar', 'bar'], $parts[0]);
     }
 
-    public function testGreaterThanCreatesOperatorPredicate()
+    public function testGreaterThanCreatesOperatorPredicate(): void
     {
         $predicate = new Predicate();
         $predicate->greaterThan('foo.bar', 'bar');
         $parts = $predicate->getExpressionData();
+        $this->assertIsArray($parts[0]);
         self::assertCount(1, $parts);
         self::assertContains('%s > %s', $parts[0]);
         self::assertContains(['foo.bar', 'bar'], $parts[0]);
     }
 
-    public function testLessThanOrEqualToCreatesOperatorPredicate()
+    public function testLessThanOrEqualToCreatesOperatorPredicate(): void
     {
         $predicate = new Predicate();
         $predicate->lessThanOrEqualTo('foo.bar', 'bar');
         $parts = $predicate->getExpressionData();
+        $this->assertIsArray($parts[0]);
         self::assertCount(1, $parts);
         self::assertContains('%s <= %s', $parts[0]);
         self::assertContains(['foo.bar', 'bar'], $parts[0]);
     }
 
-    public function testGreaterThanOrEqualToCreatesOperatorPredicate()
+    public function testGreaterThanOrEqualToCreatesOperatorPredicate(): void
     {
         $predicate = new Predicate();
         $predicate->greaterThanOrEqualTo('foo.bar', 'bar');
         $parts = $predicate->getExpressionData();
+        $this->assertIsArray($parts[0]);
         self::assertCount(1, $parts);
         self::assertContains('%s >= %s', $parts[0]);
         self::assertContains(['foo.bar', 'bar'], $parts[0]);
     }
 
-    public function testLikeCreatesLikePredicate()
+    public function testLikeCreatesLikePredicate(): void
     {
         $predicate = new Predicate();
         $predicate->like('foo.bar', 'bar%');
         $parts = $predicate->getExpressionData();
+        $this->assertIsArray($parts[0]);
         self::assertCount(1, $parts);
         self::assertContains('%1$s LIKE %2$s', $parts[0]);
         self::assertContains(['foo.bar', 'bar%'], $parts[0]);
     }
 
-    public function testNotLikeCreatesLikePredicate()
+    public function testNotLikeCreatesLikePredicate(): void
     {
         $predicate = new Predicate();
         $predicate->notLike('foo.bar', 'bar%');
         $parts = $predicate->getExpressionData();
+        $this->assertIsArray($parts[0]);
         self::assertCount(1, $parts);
         self::assertContains('%1$s NOT LIKE %2$s', $parts[0]);
         self::assertContains(['foo.bar', 'bar%'], $parts[0]);
     }
 
-    public function testLiteralCreatesLiteralPredicate()
+    public function testLiteralCreatesLiteralPredicate(): void
     {
         $predicate = new Predicate();
+        /** @psalm-suppress TooManyArguments */
         $predicate->literal('foo.bar = ?', 'bar');
         $parts = $predicate->getExpressionData();
+        $this->assertIsArray($parts[0]);
         self::assertCount(1, $parts);
         self::assertContains('foo.bar = %s', $parts[0]);
         self::assertContains(['bar'], $parts[0]);
     }
 
-    public function testIsNullCreatesIsNullPredicate()
+    public function testIsNullCreatesIsNullPredicate(): void
     {
         $predicate = new Predicate();
         $predicate->isNull('foo.bar');
         $parts = $predicate->getExpressionData();
+        $this->assertIsArray($parts[0]);
         self::assertCount(1, $parts);
         self::assertContains('%1$s IS NULL', $parts[0]);
         self::assertContains(['foo.bar'], $parts[0]);
     }
 
-    public function testIsNotNullCreatesIsNotNullPredicate()
+    public function testIsNotNullCreatesIsNotNullPredicate(): void
     {
         $predicate = new Predicate();
         $predicate->isNotNull('foo.bar');
         $parts = $predicate->getExpressionData();
+        $this->assertIsArray($parts[0]);
         self::assertCount(1, $parts);
         self::assertContains('%1$s IS NOT NULL', $parts[0]);
         self::assertContains(['foo.bar'], $parts[0]);
     }
 
-    public function testInCreatesInPredicate()
+    public function testInCreatesInPredicate(): void
     {
         $predicate = new Predicate();
         $predicate->in('foo.bar', ['foo', 'bar']);
         $parts = $predicate->getExpressionData();
+        $this->assertIsArray($parts[0]);
         self::assertCount(1, $parts);
         self::assertContains('%s IN (%s, %s)', $parts[0]);
         self::assertContains(['foo.bar', 'foo', 'bar'], $parts[0]);
     }
 
-    public function testNotInCreatesNotInPredicate()
+    public function testNotInCreatesNotInPredicate(): void
     {
         $predicate = new Predicate();
         $predicate->notIn('foo.bar', ['foo', 'bar']);
         $parts = $predicate->getExpressionData();
+        $this->assertIsArray($parts[0]);
         self::assertCount(1, $parts);
         self::assertContains('%s NOT IN (%s, %s)', $parts[0]);
         self::assertContains(['foo.bar', 'foo', 'bar'], $parts[0]);
     }
 
-    public function testBetweenCreatesBetweenPredicate()
+    public function testBetweenCreatesBetweenPredicate(): void
     {
         $predicate = new Predicate();
         $predicate->between('foo.bar', 1, 10);
         $parts = $predicate->getExpressionData();
+        $this->assertIsArray($parts[0]);
         self::assertCount(1, $parts);
         self::assertContains('%1$s BETWEEN %2$s AND %3$s', $parts[0]);
         self::assertContains(['foo.bar', 1, 10], $parts[0]);
     }
 
-    public function testBetweenCreatesNotBetweenPredicate()
+    public function testBetweenCreatesNotBetweenPredicate(): void
     {
         $predicate = new Predicate();
         $predicate->notBetween('foo.bar', 1, 10);
         $parts = $predicate->getExpressionData();
+        $this->assertIsArray($parts[0]);
         self::assertCount(1, $parts);
         self::assertContains('%1$s NOT BETWEEN %2$s AND %3$s', $parts[0]);
         self::assertContains(['foo.bar', 1, 10], $parts[0]);
     }
 
-    public function testCanChainPredicateFactoriesBetweenOperators()
+    public function testCanChainPredicateFactoriesBetweenOperators(): void
     {
         $predicate = new Predicate();
         $predicate->isNull('foo.bar')
@@ -172,6 +191,7 @@ class PredicateTest extends TestCase
                   ->and
                   ->equalTo('baz.bat', 'foo');
         $parts = $predicate->getExpressionData();
+        $this->assertIsArray($parts[0]);
         self::assertCount(5, $parts);
 
         self::assertContains('%1$s IS NULL', $parts[0]);
@@ -179,16 +199,18 @@ class PredicateTest extends TestCase
 
         self::assertEquals(' OR ', $parts[1]);
 
+        $this->assertIsArray($parts[2]);
         self::assertContains('%1$s IS NOT NULL', $parts[2]);
         self::assertContains(['bar.baz'], $parts[2]);
 
         self::assertEquals(' AND ', $parts[3]);
 
+        $this->assertIsArray($parts[4]);
         self::assertContains('%s = %s', $parts[4]);
         self::assertContains(['baz.bat', 'foo'], $parts[4]);
     }
 
-    public function testCanNestPredicates()
+    public function testCanNestPredicates(): void
     {
         $predicate = new Predicate();
         $predicate->isNull('foo.bar')
@@ -201,6 +223,7 @@ class PredicateTest extends TestCase
 
         self::assertCount(7, $parts);
 
+        $this->assertIsArray($parts[0]);
         self::assertContains('%1$s IS NULL', $parts[0]);
         self::assertContains(['foo.bar'], $parts[0]);
 
@@ -208,21 +231,21 @@ class PredicateTest extends TestCase
 
         self::assertEquals('(', $parts[2]);
 
+        $this->assertIsArray($parts[3]);
         self::assertContains('%1$s IS NOT NULL', $parts[3]);
         self::assertContains(['bar.baz'], $parts[3]);
 
         self::assertEquals(' AND ', $parts[4]);
 
+        $this->assertIsArray($parts[5]);
         self::assertContains('%s = %s', $parts[5]);
         self::assertContains(['baz.bat', 'foo'], $parts[5]);
 
         self::assertEquals(')', $parts[6]);
     }
 
-    /**
-     * @testdox Unit test: Test expression() is chainable and returns proper values
-     */
-    public function testExpression()
+    #[TestDox('Unit test: Test expression() is chainable and returns proper values')]
+    public function testExpression(): void
     {
         $predicate = new Predicate();
 
@@ -230,28 +253,30 @@ class PredicateTest extends TestCase
         self::assertSame($predicate, $predicate->expression('foo = ?', 0));
         // with parameter
         self::assertEquals(
-            [['foo = %s', [0], [Expression::TYPE_VALUE]]],
+            [['foo = %s', [0], [ExpressionInterface::TYPE_VALUE]]],
             $predicate->getExpressionData()
         );
     }
 
-    /**
-     * @testdox Unit test: Test expression() allows null $parameters
-     */
-    public function testExpressionNullParameters()
+    #[TestDox('Unit test: Test expression() allows null $parameters')]
+    public function testExpressionNullParameters(): void
     {
         $predicate = new Predicate();
 
         $predicate->expression('foo = bar');
         $predicates = $predicate->getPredicates();
-        $expression = $predicates[0][1];
-        self::assertEquals([], $expression->getParameters());
+
+        if (isset($predicates[0][1])) {
+            $expression = $predicates[0][1];
+            $this->assertInstanceOf(Expression::class, $expression);
+            self::assertEquals([], $expression->getParameters());
+        } else {
+            $this->fail('Expression not found');
+        }
     }
 
-    /**
-     * @testdox Unit test: Test literal() is chainable, returns proper values, and is backwards compatible with 2.0.*
-     */
-    public function testLiteral()
+    #[TestDox('Unit test: Test literal() is chainable, returns proper values, and is backwards compatible with 2.0.*')]
+    public function testLiteral(): void
     {
         $predicate = new Predicate();
 
@@ -268,7 +293,7 @@ class PredicateTest extends TestCase
         $predicate->expression('foo = ?', 'bar');
         // with parameter
         self::assertEquals(
-            [['foo = %s', ['bar'], [Expression::TYPE_VALUE]]],
+            [['foo = %s', ['bar'], [ExpressionInterface::TYPE_VALUE]]],
             $predicate->getExpressionData()
         );
 
@@ -277,11 +302,14 @@ class PredicateTest extends TestCase
         $predicate->expression('foo = ?', 0);
         // with parameter
         self::assertEquals(
-            [['foo = %s', [0], [Expression::TYPE_VALUE]]],
+            [['foo = %s', [0], [ExpressionInterface::TYPE_VALUE]]],
             $predicate->getExpressionData()
         );
     }
 
+    /**
+     * @throws ErrorException
+     */
     public function testCanCreateExpressionsWithoutAnyBoundSqlParameters(): void
     {
         $where1 = new Predicate();
@@ -294,6 +322,9 @@ class PredicateTest extends TestCase
         );
     }
 
+    /**
+     * @throws ErrorException
+     */
     public function testWillBindSqlParametersToExpressionsWithGivenParameter(): void
     {
         $where = new Predicate();
@@ -306,6 +337,9 @@ class PredicateTest extends TestCase
         );
     }
 
+    /**
+     * @throws ErrorException
+     */
     public function testWillBindSqlParametersToExpressionsWithGivenStringParameter(): void
     {
         $where = new Predicate();
@@ -318,6 +352,9 @@ class PredicateTest extends TestCase
         );
     }
 
+    /**
+     * @throws ErrorException
+     */
     private function makeSqlString(Predicate $where): string
     {
         $select = new Select('a_table');

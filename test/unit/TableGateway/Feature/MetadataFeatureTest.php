@@ -8,25 +8,28 @@ use Laminas\Db\Metadata\Object\TableObject;
 use Laminas\Db\Metadata\Object\ViewObject;
 use Laminas\Db\TableGateway\AbstractTableGateway;
 use Laminas\Db\TableGateway\Feature\MetadataFeature;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
 
-class MetadataFeatureTest extends TestCase
+final class MetadataFeatureTest extends TestCase
 {
     /**
-     * @group integration-test
+     * @throws Exception
      */
-    public function testPostInitialize()
+    #[Group('integration-test')]
+    public function testPostInitialize(): void
     {
-        $tableGatewayMock = $this->getMockForAbstractClass(AbstractTableGateway::class);
+        $tableGatewayMock = $this->getMockBuilder(AbstractTableGateway::class)->onlyMethods([])->getMock();
         $metadataMock     = $this->getMockBuilder(MetadataInterface::class)->getMock();
-        $metadataMock->expects($this->any())->method('getColumnNames')->will($this->returnValue(['id', 'name']));
+        $metadataMock->expects($this->any())->method('getColumnNames')->willReturn(['id', 'name']);
 
         $constraintObject = new ConstraintObject('id_pk', 'table');
         $constraintObject->setColumns(['id']);
         $constraintObject->setType('PRIMARY KEY');
 
-        $metadataMock->expects($this->any())->method('getConstraints')->will($this->returnValue([$constraintObject]));
+        $metadataMock->expects($this->any())->method('getConstraints')->willReturn([$constraintObject]);
 
         $feature = new MetadataFeature($metadataMock);
         $feature->setTableGateway($tableGatewayMock);
@@ -35,30 +38,35 @@ class MetadataFeatureTest extends TestCase
         self::assertEquals(['id', 'name'], $tableGatewayMock->getColumns());
     }
 
-    public function testPostInitializeRecordsPrimaryKeyColumnToSharedMetadata()
+    /**
+     * @throws Exception
+     */
+    public function testPostInitializeRecordsPrimaryKeyColumnToSharedMetadata(): void
     {
         /** @var AbstractTableGateway $tableGatewayMock */
-        $tableGatewayMock = $this->getMockForAbstractClass(AbstractTableGateway::class);
+        $tableGatewayMock = $this->getMockBuilder(AbstractTableGateway::class)->onlyMethods([])->getMock();
         $metadataMock     = $this->getMockBuilder(MetadataInterface::class)->getMock();
-        $metadataMock->expects($this->any())->method('getColumnNames')->will($this->returnValue(['id', 'name']));
+        $metadataMock->expects($this->any())->method('getColumnNames')->willReturn(['id', 'name']);
         $metadataMock->expects($this->any())
             ->method('getTable')
-            ->will($this->returnValue(new TableObject('foo')));
+            ->willReturn(new TableObject('foo'));
 
         $constraintObject = new ConstraintObject('id_pk', 'table');
         $constraintObject->setColumns(['id']);
         $constraintObject->setType('PRIMARY KEY');
 
-        $metadataMock->expects($this->any())->method('getConstraints')->will($this->returnValue([$constraintObject]));
+        $metadataMock->expects($this->any())->method('getConstraints')->willReturn([$constraintObject]);
 
         $feature = new MetadataFeature($metadataMock);
         $feature->setTableGateway($tableGatewayMock);
         $feature->postInitialize();
 
         $r = new ReflectionProperty(MetadataFeature::class, 'sharedData');
+        /** @psalm-suppress UnusedMethodCall */
         $r->setAccessible(true);
         $sharedData = $r->getValue($feature);
 
+        self::assertIsArray($sharedData);
         self::assertTrue(
             isset($sharedData['metadata']['primaryKey']),
             'Shared data must have metadata entry for primary key'
@@ -66,46 +74,54 @@ class MetadataFeatureTest extends TestCase
         self::assertSame($sharedData['metadata']['primaryKey'], 'id');
     }
 
-    public function testPostInitializeRecordsListOfColumnsInPrimaryKeyToSharedMetadata()
+    /**
+     * @throws Exception
+     */
+    public function testPostInitializeRecordsListOfColumnsInPrimaryKeyToSharedMetadata(): void
     {
         /** @var AbstractTableGateway $tableGatewayMock */
-        $tableGatewayMock = $this->getMockForAbstractClass(AbstractTableGateway::class);
+        $tableGatewayMock = $this->getMockBuilder(AbstractTableGateway::class)->onlyMethods([])->getMock();
         $metadataMock     = $this->getMockBuilder(MetadataInterface::class)->getMock();
-        $metadataMock->expects($this->any())->method('getColumnNames')->will($this->returnValue(['id', 'name']));
+        $metadataMock->expects($this->any())->method('getColumnNames')->willReturn(['id', 'name']);
         $metadataMock->expects($this->any())
             ->method('getTable')
-            ->will($this->returnValue(new TableObject('foo')));
+            ->willReturn(new TableObject('foo'));
 
         $constraintObject = new ConstraintObject('id_pk', 'table');
         $constraintObject->setColumns(['composite', 'id']);
         $constraintObject->setType('PRIMARY KEY');
 
-        $metadataMock->expects($this->any())->method('getConstraints')->will($this->returnValue([$constraintObject]));
+        $metadataMock->expects($this->any())->method('getConstraints')->willReturn([$constraintObject]);
 
         $feature = new MetadataFeature($metadataMock);
         $feature->setTableGateway($tableGatewayMock);
         $feature->postInitialize();
 
         $r = new ReflectionProperty(MetadataFeature::class, 'sharedData');
+        /** @psalm-suppress UnusedMethodCall */
         $r->setAccessible(true);
         $sharedData = $r->getValue($feature);
 
+        self::assertIsArray($sharedData);
         self::assertTrue(
             isset($sharedData['metadata']['primaryKey']),
             'Shared data must have metadata entry for primary key'
         );
-        self::assertEquals($sharedData['metadata']['primaryKey'], ['composite', 'id']);
+        self::assertEquals(['composite', 'id'], $sharedData['metadata']['primaryKey']);
     }
 
-    public function testPostInitializeSkipsPrimaryKeyCheckIfNotTable()
+    /**
+     * @throws Exception
+     */
+    public function testPostInitializeSkipsPrimaryKeyCheckIfNotTable(): void
     {
         /** @var AbstractTableGateway $tableGatewayMock */
-        $tableGatewayMock = $this->getMockForAbstractClass(AbstractTableGateway::class);
+        $tableGatewayMock = $this->getMockBuilder(AbstractTableGateway::class)->onlyMethods([])->getMock();
         $metadataMock     = $this->getMockBuilder(MetadataInterface::class)->getMock();
-        $metadataMock->expects($this->any())->method('getColumnNames')->will($this->returnValue(['id', 'name']));
+        $metadataMock->expects($this->any())->method('getColumnNames')->willReturn(['id', 'name']);
         $metadataMock->expects($this->any())
             ->method('getTable')
-            ->will($this->returnValue(new ViewObject('foo')));
+            ->willReturn(new ViewObject('foo'));
 
         $metadataMock->expects($this->never())->method('getConstraints');
 

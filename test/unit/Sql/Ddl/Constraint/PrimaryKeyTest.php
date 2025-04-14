@@ -3,14 +3,13 @@
 namespace LaminasTest\Db\Sql\Ddl\Constraint;
 
 use Laminas\Db\Sql\Ddl\Constraint\PrimaryKey;
+use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 
-class PrimaryKeyTest extends TestCase
+#[CoversMethod(PrimaryKey::class, 'getExpressionData')]
+final class PrimaryKeyTest extends TestCase
 {
-    /**
-     * @covers \Laminas\Db\Sql\Ddl\Constraint\PrimaryKey::getExpressionData
-     */
-    public function testGetExpressionData()
+    public function testGetExpressionData(): void
     {
         $pk = new PrimaryKey('foo');
         self::assertEquals(

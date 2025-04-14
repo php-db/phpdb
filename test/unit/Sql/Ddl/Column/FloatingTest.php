@@ -3,14 +3,13 @@
 namespace LaminasTest\Db\Sql\Ddl\Column;
 
 use Laminas\Db\Sql\Ddl\Column\Floating;
+use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 
-class FloatingTest extends TestCase
+#[CoversMethod(Floating::class, 'getExpressionData')]
+final class FloatingTest extends TestCase
 {
-    /**
-     * @covers \Laminas\Db\Sql\Ddl\Column\Floating::getExpressionData
-     */
-    public function testGetExpressionData()
+    public function testGetExpressionData(): void
     {
         $column = new Floating('foo', 10, 5);
         self::assertEquals(

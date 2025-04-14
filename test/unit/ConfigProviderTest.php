@@ -4,13 +4,13 @@ namespace LaminasTest\Db;
 
 use Laminas\Db\Adapter;
 use Laminas\Db\ConfigProvider;
+use PHPUnit\Framework\Attributes\Depends;
 use PHPUnit\Framework\TestCase;
-use Zend\Db\Adapter\AdapterInterface;
 
-class ConfigProviderTest extends TestCase
+final class ConfigProviderTest extends TestCase
 {
     /** @var array<string, array<array-key, string>> */
-    private $config = [
+    private array $config = [
         'abstract_factories' => [
             Adapter\AdapterAbstractServiceFactory::class,
         ],
@@ -18,9 +18,7 @@ class ConfigProviderTest extends TestCase
             Adapter\AdapterInterface::class => Adapter\AdapterServiceFactory::class,
         ],
         'aliases'            => [
-            Adapter\Adapter::class          => Adapter\AdapterInterface::class,
-            AdapterInterface::class         => Adapter\AdapterInterface::class,
-            \Zend\Db\Adapter\Adapter::class => Adapter\Adapter::class,
+            Adapter\Adapter::class => Adapter\AdapterInterface::class,
         ],
     ];
 
@@ -31,10 +29,8 @@ class ConfigProviderTest extends TestCase
         return $provider;
     }
 
-    /**
-     * @depends testProvidesExpectedConfiguration
-     */
-    public function testInvocationProvidesDependencyConfiguration(ConfigProvider $provider)
+    #[Depends('testProvidesExpectedConfiguration')]
+    public function testInvocationProvidesDependencyConfiguration(ConfigProvider $provider): void
     {
         self::assertEquals(['dependencies' => $provider->getDependencyConfig()], $provider());
     }

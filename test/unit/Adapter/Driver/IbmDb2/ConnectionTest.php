@@ -4,17 +4,22 @@ namespace LaminasTest\Db\Adapter\Driver\IbmDb2;
 
 use Laminas\Db\Adapter\Driver\IbmDb2\Connection;
 use Laminas\Db\Adapter\Driver\IbmDb2\IbmDb2;
+use Override;
+use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 
-class ConnectionTest extends TestCase
+#[CoversMethod(Connection::class, 'setDriver')]
+#[CoversMethod(Connection::class, 'setConnectionParameters')]
+#[CoversMethod(Connection::class, 'getConnectionParameters')]
+final class ConnectionTest extends TestCase
 {
-    /** @var Connection */
-    protected $connection;
+    protected Connection $connection;
 
     /**
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
+    #[Override]
     protected function setUp(): void
     {
         $this->connection = new Connection([]);
@@ -28,26 +33,17 @@ class ConnectionTest extends TestCase
     {
     }
 
-    /**
-     * @covers \Laminas\Db\Adapter\Driver\IbmDb2\Connection::setDriver
-     */
-    public function testSetDriver()
+    public function testSetDriver(): void
     {
         self::assertEquals($this->connection, $this->connection->setDriver(new IbmDb2([])));
     }
 
-    /**
-     * @covers \Laminas\Db\Adapter\Driver\IbmDb2\Connection::setConnectionParameters
-     */
-    public function testSetConnectionParameters()
+    public function testSetConnectionParameters(): void
     {
         self::assertEquals($this->connection, $this->connection->setConnectionParameters([]));
     }
 
-    /**
-     * @covers \Laminas\Db\Adapter\Driver\IbmDb2\Connection::getConnectionParameters
-     */
-    public function testGetConnectionParameters()
+    public function testGetConnectionParameters(): void
     {
         $this->connection->setConnectionParameters(['foo' => 'bar']);
         self::assertEquals(['foo' => 'bar'], $this->connection->getConnectionParameters());

@@ -17,28 +17,34 @@ use Laminas\Db\TableGateway\Exception\InvalidArgumentException;
 use Laminas\Db\TableGateway\Feature;
 use Laminas\Db\TableGateway\Feature\FeatureSet;
 use Laminas\Db\TableGateway\TableGateway;
+use Override;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-class TableGatewayTest extends TestCase
+/**
+ * @psalm-type AliasedTable = array{alias: string|TableIdentifier}
+ */
+final class TableGatewayTest extends TestCase
 {
-    /** @var Adapter&MockObject */
-    protected $mockAdapter;
+    protected Adapter&MockObject $mockAdapter;
 
+    #[Override]
     protected function setUp(): void
     {
         // mock the adapter, driver, and parts
         $mockResult    = $this->getMockBuilder(ResultInterface::class)->getMock();
         $mockStatement = $this->getMockBuilder(StatementInterface::class)->getMock();
-        $mockStatement->expects($this->any())->method('execute')->will($this->returnValue($mockResult));
+        $mockStatement->expects($this->any())->method('execute')->willReturn($mockResult);
         $mockConnection = $this->getMockBuilder(ConnectionInterface::class)->getMock();
         $mockDriver     = $this->getMockBuilder(DriverInterface::class)->getMock();
-        $mockDriver->expects($this->any())->method('createStatement')->will($this->returnValue($mockStatement));
-        $mockDriver->expects($this->any())->method('getConnection')->will($this->returnValue($mockConnection));
+        $mockDriver->expects($this->any())->method('createStatement')->willReturn($mockStatement);
+        $mockDriver->expects($this->any())->method('getConnection')->willReturn($mockConnection);
 
         // setup mock adapter
         $this->mockAdapter = $this->getMockBuilder(Adapter::class)
-            ->setMethods()
+            ->onlyMethods([])
             ->setConstructorArgs([$mockDriver])
             ->getMock();
     }
@@ -46,7 +52,7 @@ class TableGatewayTest extends TestCase
     /**
      * Beside other tests checks for plain string table identifier
      */
-    public function testConstructor()
+    public function testConstructor(): void
     {
         // constructor with only required args
         $table = new TableGateway(
@@ -78,17 +84,16 @@ class TableGatewayTest extends TestCase
         // constructor expects exception
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Table name must be a string or an instance of Laminas\Db\Sql\TableIdentifier');
+        /** @psalm-suppress NullArgument - Testing incorrect constructor */
         new TableGateway(
             null,
             $this->mockAdapter
         );
     }
 
-    /**
-     * @group 6726
-     * @group 6740
-     */
-    public function testTableAsString()
+    #[Group('6726')]
+    #[Group('6740')]
+    public function testTableAsString(): void
     {
         $ti = 'fooTable.barSchema';
         // constructor with only required args
@@ -100,11 +105,9 @@ class TableGatewayTest extends TestCase
         self::assertEquals($ti, $table->getTable());
     }
 
-    /**
-     * @group 6726
-     * @group 6740
-     */
-    public function testTableAsTableIdentifierObject()
+    #[Group('6726')]
+    #[Group('6740')]
+    public function testTableAsTableIdentifierObject(): void
     {
         $ti = new TableIdentifier('fooTable', 'barSchema');
         // constructor with only required args
@@ -116,11 +119,9 @@ class TableGatewayTest extends TestCase
         self::assertEquals($ti, $table->getTable());
     }
 
-    /**
-     * @group 6726
-     * @group 6740
-     */
-    public function testTableAsAliasedTableIdentifierObject()
+    #[Group('6726')]
+    #[Group('6740')]
+    public function testTableAsAliasedTableIdentifierObject(): void
     {
         // phpcs:disable WebimpressCodingStandard.NamingConventions.ValidVariableName.NotCamelCaps
         $aliasedTI = ['foo' => new TableIdentifier('fooTable', 'barSchema')];
@@ -135,12 +136,12 @@ class TableGatewayTest extends TestCase
     }
 
     /**
-     * @psalm-return array<string, array{
-     *     0: array<string, string|TableIdentifier>,
-     *     1: string|TableIdentifier
-     * }>
+     * @psalm-return array{
+     *     'identifier-alias': list{array{U: TableIdentifier}, TableIdentifier},
+     *     'simple-alias': list{array{U: string}, string}
+     * }
      */
-    public function aliasedTables(): array
+    public static function aliasedTables(): array
     {
         $identifier = new TableIdentifier('Users');
         return [
@@ -150,12 +151,11 @@ class TableGatewayTest extends TestCase
     }
 
     /**
-     * @group 7311
-     * @dataProvider aliasedTables
-     * @param array<string, string|TableIdentifier> $tableValue
-     * @param string|TableIdentifier $expected
+     * @param AliasedTable           $tableValue
      */
-    public function testInsertShouldResetTableToUnaliasedTable(array $tableValue, $expected)
+    #[DataProvider('aliasedTables')]
+    #[Group('7311')]
+    public function testInsertShouldResetTableToUnaliasedTable(array $tableValue, string|TableIdentifier $expected): void
     {
         $insert = new Insert();
         $insert->into($tableValue);
@@ -164,16 +164,17 @@ class TableGatewayTest extends TestCase
             ->getMock();
         $result->expects($this->once())
             ->method('getAffectedRows')
-            ->will($this->returnValue(1));
+            ->willReturn(1);
 
         $statement = $this->getMockBuilder(StatementInterface::class)
             ->getMock();
         $statement->expects($this->once())
             ->method('execute')
-            ->will($this->returnValue($result));
+            ->willReturn($result);
 
-        $statementExpectation = function ($insert) use ($expected, $statement) {
+        $statementExpectation = function (Insert $insert) use ($expected, $statement): MockObject&StatementInterface {
             $state = $insert->getRawState();
+            $this->assertIsArray($state);
             self::assertSame($expected, $state['table']);
             return $statement;
         };
@@ -183,14 +184,14 @@ class TableGatewayTest extends TestCase
             ->getMock();
         $sql->expects($this->atLeastOnce())
             ->method('getTable')
-            ->will($this->returnValue($tableValue));
+            ->willReturn($tableValue);
         $sql->expects($this->once())
             ->method('insert')
-            ->will($this->returnValue($insert));
+            ->willReturn($insert);
         $sql->expects($this->once())
             ->method('prepareStatementForSqlObject')
             ->with($this->equalTo($insert))
-            ->will($this->returnCallback($statementExpectation));
+            ->willReturnCallback($statementExpectation);
 
         $table = new TableGateway(
             $tableValue,
@@ -200,24 +201,24 @@ class TableGatewayTest extends TestCase
             $sql
         );
 
-        $result = $table->insert([
+        $table->insert([
             'foo' => 'FOO',
         ]);
 
         $state = $insert->getRawState();
-        self::assertIsArray($state['table']);
-        self::assertEquals(
+        $this->assertIsArray($state);
+        $this->assertIsArray($state['table']);
+        $this->assertEquals(
             $tableValue,
             $state['table']
         );
     }
 
     /**
-     * @dataProvider aliasedTables
-     * @param array<string, string|TableIdentifier> $tableValue
-     * @param string|TableIdentifier $expected
+     * @param AliasedTable           $tableValue
      */
-    public function testUpdateShouldResetTableToUnaliasedTable(array $tableValue, $expected)
+    #[DataProvider('aliasedTables')]
+    public function testUpdateShouldResetTableToUnaliasedTable(array $tableValue, string|TableIdentifier $expected): void
     {
         $update = new Update();
         $update->table($tableValue);
@@ -226,17 +227,18 @@ class TableGatewayTest extends TestCase
             ->getMock();
         $result->expects($this->once())
             ->method('getAffectedRows')
-            ->will($this->returnValue(1));
+            ->willReturn(1);
 
         $statement = $this->getMockBuilder(StatementInterface::class)
             ->getMock();
         $statement->expects($this->once())
             ->method('execute')
-            ->will($this->returnValue($result));
+            ->willReturn($result);
 
-        $statementExpectation = function ($update) use ($expected, $statement) {
+        $statementExpectation = function (Update $update) use ($expected, $statement): MockObject&StatementInterface {
             $state = $update->getRawState();
-            self::assertSame($expected, $state['table']);
+            $this->assertIsArray($state);
+            $this->assertSame($expected, $state['table']);
             return $statement;
         };
 
@@ -245,14 +247,14 @@ class TableGatewayTest extends TestCase
             ->getMock();
         $sql->expects($this->atLeastOnce())
             ->method('getTable')
-            ->will($this->returnValue($tableValue));
+            ->willReturn($tableValue);
         $sql->expects($this->once())
             ->method('update')
-            ->will($this->returnValue($update));
+            ->willReturn($update);
         $sql->expects($this->once())
             ->method('prepareStatementForSqlObject')
             ->with($this->equalTo($update))
-            ->will($this->returnCallback($statementExpectation));
+            ->willReturnCallback($statementExpectation);
 
         $table = new TableGateway(
             $tableValue,
@@ -262,26 +264,26 @@ class TableGatewayTest extends TestCase
             $sql
         );
 
-        $result = $table->update([
+        $table->update([
             'foo' => 'FOO',
         ], [
             'bar' => 'BAR',
         ]);
 
         $state = $update->getRawState();
-        self::assertIsArray($state['table']);
-        self::assertEquals(
+        $this->assertIsArray($state);
+        $this->assertIsArray($state['table']);
+        $this->assertEquals(
             $tableValue,
             $state['table']
         );
     }
 
     /**
-     * @dataProvider aliasedTables
-     * @param array<string, string|TableIdentifier> $tableValue
-     * @param string|TableIdentifier $expected
+     * @param AliasedTable           $tableValue
      */
-    public function testDeleteShouldResetTableToUnaliasedTable(array $tableValue, $expected)
+    #[DataProvider('aliasedTables')]
+    public function testDeleteShouldResetTableToUnaliasedTable(array $tableValue, string|TableIdentifier $expected): void
     {
         $delete = new Delete();
         $delete->from($tableValue);
@@ -290,17 +292,18 @@ class TableGatewayTest extends TestCase
             ->getMock();
         $result->expects($this->once())
             ->method('getAffectedRows')
-            ->will($this->returnValue(1));
+            ->willReturn(1);
 
         $statement = $this->getMockBuilder(StatementInterface::class)
             ->getMock();
         $statement->expects($this->once())
             ->method('execute')
-            ->will($this->returnValue($result));
+            ->willReturn($result);
 
-        $statementExpectation = function ($delete) use ($expected, $statement) {
+        $statementExpectation = function (Delete $delete) use ($expected, $statement): MockObject&StatementInterface {
             $state = $delete->getRawState();
-            self::assertSame($expected, $state['table']);
+            $this->assertIsArray($state);
+            $this->assertSame($expected, $state['table']);
             return $statement;
         };
 
@@ -309,14 +312,14 @@ class TableGatewayTest extends TestCase
             ->getMock();
         $sql->expects($this->atLeastOnce())
             ->method('getTable')
-            ->will($this->returnValue($tableValue));
+            ->willReturn($tableValue);
         $sql->expects($this->once())
             ->method('delete')
-            ->will($this->returnValue($delete));
+            ->willReturn($delete);
         $sql->expects($this->once())
             ->method('prepareStatementForSqlObject')
             ->with($this->equalTo($delete))
-            ->will($this->returnCallback($statementExpectation));
+            ->willReturnCallback($statementExpectation);
 
         $table = new TableGateway(
             $tableValue,
@@ -326,13 +329,15 @@ class TableGatewayTest extends TestCase
             $sql
         );
 
-        $result = $table->delete([
+        $table->delete([
             'foo' => 'FOO',
         ]);
 
         $state = $delete->getRawState();
-        self::assertIsArray($state['table']);
-        self::assertEquals(
+
+        $this->assertIsArray($state);
+        $this->assertIsArray($state['table']);
+        $this->assertEquals(
             $tableValue,
             $state['table']
         );

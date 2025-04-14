@@ -3,65 +3,54 @@
 namespace LaminasTest\Db\Adapter\Driver\Oci8;
 
 use Laminas\Db\Adapter\Driver\Oci8\Result;
+use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @group result-oci8
- */
-class ResultTest extends TestCase
+#[CoversMethod(Result::class, 'getResource')]
+#[CoversMethod(Result::class, 'buffer')]
+#[CoversMethod(Result::class, 'isBuffered')]
+#[CoversMethod(Result::class, 'getGeneratedValue')]
+#[CoversMethod(Result::class, 'key')]
+#[CoversMethod(Result::class, 'next')]
+#[CoversMethod(Result::class, 'rewind')]
+#[Group('result-oci8')]
+final class ResultTest extends TestCase
 {
-    /**
-     * @covers \Laminas\Db\Adapter\Driver\Oci8\Result::getResource
-     */
-    public function testGetResource()
+    public function testGetResource(): void
     {
         $result = new Result();
         self::assertNull($result->getResource());
     }
 
-    /**
-     * @covers \Laminas\Db\Adapter\Driver\Oci8\Result::buffer
-     */
-    public function testBuffer()
+    public function testBuffer(): void
     {
         $result = new Result();
         self::assertNull($result->buffer());
     }
 
-    /**
-     * @covers \Laminas\Db\Adapter\Driver\Oci8\Result::isBuffered
-     */
-    public function testIsBuffered()
+    public function testIsBuffered(): void
     {
         $result = new Result();
         self::assertFalse($result->isBuffered());
     }
 
-    /**
-     * @covers \Laminas\Db\Adapter\Driver\Oci8\Result::getGeneratedValue
-     */
-    public function testGetGeneratedValue()
+    public function testGetGeneratedValue(): void
     {
         $result = new Result();
         self::assertNull($result->getGeneratedValue());
     }
 
-    /**
-     * @covers \Laminas\Db\Adapter\Driver\Oci8\Result::key
-     */
-    public function testKey()
+    public function testKey(): void
     {
         $result = new Result();
         self::assertEquals(0, $result->key());
     }
 
-    /**
-     * @covers \Laminas\Db\Adapter\Driver\Oci8\Result::next
-     */
-    public function testNext()
+    public function testNext(): void
     {
         $mockResult = $this->getMockBuilder(Result::class)
-            ->setMethods(['loadData'])
+            ->onlyMethods(['loadData'])
             ->getMock();
         $mockResult->expects($this->any())
             ->method('loadData')
@@ -69,10 +58,7 @@ class ResultTest extends TestCase
         self::assertNull($mockResult->next());
     }
 
-    /**
-     * @covers \Laminas\Db\Adapter\Driver\Oci8\Result::rewind
-     */
-    public function testRewind()
+    public function testRewind(): void
     {
         $result = new Result();
         self::assertNull($result->rewind());

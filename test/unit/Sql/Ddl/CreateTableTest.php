@@ -8,28 +8,33 @@ use Laminas\Db\Sql\Ddl\Constraint;
 use Laminas\Db\Sql\Ddl\Constraint\ConstraintInterface;
 use Laminas\Db\Sql\Ddl\CreateTable;
 use Laminas\Db\Sql\TableIdentifier;
+use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\Depends;
 use PHPUnit\Framework\TestCase;
 
 use function array_pop;
 
-class CreateTableTest extends TestCase
+#[CoversMethod(CreateTable::class, '__construct')]
+#[CoversMethod(CreateTable::class, 'setTemporary')]
+#[CoversMethod(CreateTable::class, 'isTemporary')]
+#[CoversMethod(CreateTable::class, 'setTable')]
+#[CoversMethod(CreateTable::class, 'getRawState')]
+#[CoversMethod(CreateTable::class, 'addColumn')]
+#[CoversMethod(CreateTable::class, 'addConstraint')]
+#[CoversMethod(CreateTable::class, 'getSqlString')]
+final class CreateTableTest extends TestCase
 {
     /**
      * test object construction
-     *
-     * @covers \Laminas\Db\Sql\Ddl\CreateTable::__construct
      */
-    public function testObjectConstruction()
+    public function testObjectConstruction(): void
     {
         $ct = new CreateTable('foo', true);
         self::assertEquals('foo', $ct->getRawState($ct::TABLE));
         self::assertTrue($ct->isTemporary());
     }
 
-    /**
-     * @covers \Laminas\Db\Sql\Ddl\CreateTable::setTemporary
-     */
-    public function testSetTemporary()
+    public function testSetTemporary(): void
     {
         $ct = new CreateTable();
         self::assertSame($ct, $ct->setTemporary(false));
@@ -42,10 +47,7 @@ class CreateTableTest extends TestCase
         self::assertStringStartsWith("CREATE TEMPORARY TABLE", $ct->getSqlString());
     }
 
-    /**
-     * @covers \Laminas\Db\Sql\Ddl\CreateTable::isTemporary
-     */
-    public function testIsTemporary()
+    public function testIsTemporary(): void
     {
         $ct = new CreateTable();
         self::assertFalse($ct->isTemporary());
@@ -53,9 +55,6 @@ class CreateTableTest extends TestCase
         self::assertTrue($ct->isTemporary());
     }
 
-    /**
-     * @covers \Laminas\Db\Sql\Ddl\CreateTable::setTable
-     */
     public function testSetTable(): CreateTable
     {
         $ct = new CreateTable();
@@ -64,18 +63,12 @@ class CreateTableTest extends TestCase
         return $ct;
     }
 
-    /**
-     * @covers \Laminas\Db\Sql\Ddl\CreateTable::getRawState
-     * @depends testSetTable
-     */
-    public function testRawStateViaTable(CreateTable $ct)
+    #[Depends('testSetTable')]
+    public function testRawStateViaTable(CreateTable $ct): void
     {
         self::assertEquals('test', $ct->getRawState('table'));
     }
 
-    /**
-     * @covers \Laminas\Db\Sql\Ddl\CreateTable::addColumn
-     */
     public function testAddColumn(): CreateTable
     {
         $column = $this->getMockBuilder(ColumnInterface::class)->getMock();
@@ -84,11 +77,8 @@ class CreateTableTest extends TestCase
         return $ct;
     }
 
-    /**
-     * @covers \Laminas\Db\Sql\Ddl\CreateTable::getRawState
-     * @depends testAddColumn
-     */
-    public function testRawStateViaColumn(CreateTable $ct)
+    #[Depends('testAddColumn')]
+    public function testRawStateViaColumn(CreateTable $ct): void
     {
         $state = $ct->getRawState('columns');
         self::assertIsArray($state);
@@ -96,9 +86,6 @@ class CreateTableTest extends TestCase
         self::assertInstanceOf(ColumnInterface::class, $column);
     }
 
-    /**
-     * @covers \Laminas\Db\Sql\Ddl\CreateTable::addConstraint
-     */
     public function testAddConstraint(): CreateTable
     {
         $constraint = $this->getMockBuilder(ConstraintInterface::class)->getMock();
@@ -107,11 +94,8 @@ class CreateTableTest extends TestCase
         return $ct;
     }
 
-    /**
-     * @covers \Laminas\Db\Sql\Ddl\CreateTable::getRawState
-     * @depends testAddConstraint
-     */
-    public function testRawStateViaConstraint(CreateTable $ct)
+    #[Depends('testAddConstraint')]
+    public function testRawStateViaConstraint(CreateTable $ct): void
     {
         $state = $ct->getRawState('constraints');
         self::assertIsArray($state);
@@ -119,10 +103,7 @@ class CreateTableTest extends TestCase
         self::assertInstanceOf(ConstraintInterface::class, $constraint);
     }
 
-    /**
-     * @covers \Laminas\Db\Sql\Ddl\CreateTable::getSqlString
-     */
-    public function testGetSqlString()
+    public function testGetSqlString(): void
     {
         $ct = new CreateTable('foo');
         self::assertEquals("CREATE TABLE \"foo\" ( \n)", $ct->getSqlString());

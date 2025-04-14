@@ -4,20 +4,21 @@ namespace LaminasIntegrationTest\Db\Adapter\Platform;
 
 use Laminas\Db\Adapter\Driver\Pdo;
 use Laminas\Db\Adapter\Platform\Sqlite;
+use Override;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 
 use function extension_loaded;
 use function getenv;
 
-/**
- * @group integration
- * @group integration-sqlite
- */
-class SqliteTest extends TestCase
+#[Group('integration')]
+#[Group('integration-sqlite')]
+final class SqliteTest extends TestCase
 {
     /** @var array<string, resource|\PDO> */
-    public $adapters = [];
+    public array|\PDO $adapters = [];
 
+    #[Override]
     protected function setUp(): void
     {
         if (! getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_SQLITE_MEMORY')) {
@@ -30,6 +31,9 @@ class SqliteTest extends TestCase
         }
     }
 
+    /**
+     * @return void
+     */
     public function testQuoteValueWithPdoSqlite()
     {
         if (! $this->adapters['pdo_sqlite'] instanceof \PDO) {

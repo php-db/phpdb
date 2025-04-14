@@ -3,56 +3,63 @@
 namespace LaminasTest\Db\Sql\Ddl\Column;
 
 use Laminas\Db\Sql\Ddl\Column\AbstractPrecisionColumn;
+use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
 
-class AbstractPrecisionColumnTest extends TestCase
+#[CoversMethod(AbstractPrecisionColumn::class, 'setDigits')]
+#[CoversMethod(AbstractPrecisionColumn::class, 'getDigits')]
+#[CoversMethod(AbstractPrecisionColumn::class, 'setDecimal')]
+#[CoversMethod(AbstractPrecisionColumn::class, 'getDecimal')]
+#[CoversMethod(AbstractPrecisionColumn::class, 'getExpressionData')]
+final class AbstractPrecisionColumnTest extends TestCase
 {
     /**
-     * @covers \Laminas\Db\Sql\Ddl\Column\AbstractPrecisionColumn::setDigits
+     * @throws Exception
      */
-    public function testSetDigits()
+    public function testSetDigits(): void
     {
-        $column = $this->getMockForAbstractClass(AbstractPrecisionColumn::class, ['foo', 10]);
+        $column = $this->getMockBuilder(AbstractPrecisionColumn::class)->setConstructorArgs(['foo', 10])->onlyMethods([])->getMock();
         self::assertEquals(10, $column->getDigits());
         self::assertSame($column, $column->setDigits(12));
         self::assertEquals(12, $column->getDigits());
     }
 
     /**
-     * @covers \Laminas\Db\Sql\Ddl\Column\AbstractPrecisionColumn::getDigits
+     * @throws Exception
      */
-    public function testGetDigits()
+    public function testGetDigits(): void
     {
-        $column = $this->getMockForAbstractClass(AbstractPrecisionColumn::class, ['foo', 10]);
+        $column = $this->getMockBuilder(AbstractPrecisionColumn::class)->setConstructorArgs(['foo', 10])->onlyMethods([])->getMock();
         self::assertEquals(10, $column->getDigits());
     }
 
     /**
-     * @covers \Laminas\Db\Sql\Ddl\Column\AbstractPrecisionColumn::setDecimal
+     * @throws Exception
      */
-    public function testSetDecimal()
+    public function testSetDecimal(): void
     {
-        $column = $this->getMockForAbstractClass(AbstractPrecisionColumn::class, ['foo', 10, 5]);
+        $column = $this->getMockBuilder(AbstractPrecisionColumn::class)->setConstructorArgs(['foo', 10, 5])->onlyMethods([])->getMock();
         self::assertEquals(5, $column->getDecimal());
         self::assertSame($column, $column->setDecimal(2));
         self::assertEquals(2, $column->getDecimal());
     }
 
     /**
-     * @covers \Laminas\Db\Sql\Ddl\Column\AbstractPrecisionColumn::getDecimal
+     * @throws Exception
      */
-    public function testGetDecimal()
+    public function testGetDecimal(): void
     {
-        $column = $this->getMockForAbstractClass(AbstractPrecisionColumn::class, ['foo', 10, 5]);
+        $column = $this->getMockBuilder(AbstractPrecisionColumn::class)->setConstructorArgs(['foo', 10, 5])->onlyMethods([])->getMock();
         self::assertEquals(5, $column->getDecimal());
     }
 
     /**
-     * @covers \Laminas\Db\Sql\Ddl\Column\AbstractPrecisionColumn::getExpressionData
+     * @throws Exception
      */
-    public function testGetExpressionData()
+    public function testGetExpressionData(): void
     {
-        $column = $this->getMockForAbstractClass(AbstractPrecisionColumn::class, ['foo', 10, 5]);
+        $column = $this->getMockBuilder(AbstractPrecisionColumn::class)->setConstructorArgs(['foo', 10, 5])->onlyMethods([])->getMock();
 
         self::assertEquals(
             [['%s %s NOT NULL', ['foo', 'INTEGER(10,5)'], [$column::TYPE_IDENTIFIER, $column::TYPE_LITERAL]]],

@@ -3,26 +3,28 @@
 namespace LaminasTest\Db\Adapter\Driver\Pdo;
 
 use Laminas\Db\Adapter\Driver\Pdo\Statement;
+use Override;
 use PDO;
+use PDOStatement;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-class StatementIntegrationTest extends TestCase
+final class StatementIntegrationTest extends TestCase
 {
-    /** @var Statement */
-    protected $statement;
+    protected Statement $statement;
 
     /** @var MockObject */
-    protected $pdoStatementMock;
+    protected PDOStatement|MockObject $pdoStatementMock;
 
     /**
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
+    #[Override]
     protected function setUp(): void
     {
         $driver = $this->getMockBuilder(\Laminas\Db\Adapter\Driver\Pdo\Pdo::class)
-            ->setMethods(['createResult'])
+            ->onlyMethods(['createResult'])
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -30,7 +32,7 @@ class StatementIntegrationTest extends TestCase
         $this->statement->setDriver($driver);
         $this->statement->initialize(new TestAsset\CtorlessPdo(
             $this->pdoStatementMock = $this->getMockBuilder('PDOStatement')
-                ->setMethods(['execute', 'bindParam'])
+                ->onlyMethods(['execute', 'bindParam'])
                 ->getMock()
         ));
     }
@@ -43,9 +45,8 @@ class StatementIntegrationTest extends TestCase
     {
     }
 
-    public function testStatementExecuteWillConvertPhpBoolToPdoBoolWhenBinding()
+    public function testStatementExecuteWillConvertPhpBoolToPdoBoolWhenBinding(): void
     {
-        $this->expectNotToPerformAssertions();
         $this->pdoStatementMock->expects($this->any())->method('bindParam')->with(
             $this->equalTo(':foo'),
             $this->equalTo(false),
@@ -54,9 +55,8 @@ class StatementIntegrationTest extends TestCase
         $this->statement->execute(['foo' => false]);
     }
 
-    public function testStatementExecuteWillUsePdoStrByDefaultWhenBinding()
+    public function testStatementExecuteWillUsePdoStrByDefaultWhenBinding(): void
     {
-        $this->expectNotToPerformAssertions();
         $this->pdoStatementMock->expects($this->any())->method('bindParam')->with(
             $this->equalTo(':foo'),
             $this->equalTo('bar'),
@@ -65,9 +65,8 @@ class StatementIntegrationTest extends TestCase
         $this->statement->execute(['foo' => 'bar']);
     }
 
-    public function testStatementExecuteWillUsePdoStrForStringIntegerWhenBinding()
+    public function testStatementExecuteWillUsePdoStrForStringIntegerWhenBinding(): void
     {
-        $this->expectNotToPerformAssertions();
         $this->pdoStatementMock->expects($this->any())->method('bindParam')->with(
             $this->equalTo(':foo'),
             $this->equalTo('123'),
@@ -76,9 +75,8 @@ class StatementIntegrationTest extends TestCase
         $this->statement->execute(['foo' => '123']);
     }
 
-    public function testStatementExecuteWillUsePdoIntForIntWhenBinding()
+    public function testStatementExecuteWillUsePdoIntForIntWhenBinding(): void
     {
-        $this->expectNotToPerformAssertions();
         $this->pdoStatementMock->expects($this->any())->method('bindParam')->with(
             $this->equalTo(':foo'),
             $this->equalTo(123),

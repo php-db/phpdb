@@ -6,14 +6,14 @@ use Laminas\Db\Adapter\Adapter;
 use Laminas\Db\TableGateway\TableGateway;
 use PHPUnit\Framework\TestCase;
 
-class TableGatewayTest extends TestCase
+final class TableGatewayTest extends TestCase
 {
     use TraitSetup;
 
     /**
      * @see https://github.com/zendframework/zend-db/issues/330
      */
-    public function testSelectWithEmptyCurrentWithBufferResult()
+    public function testSelectWithEmptyCurrentWithBufferResult(): void
     {
         $adapter      = new Adapter([
             'driver'   => 'mysqli',
@@ -34,7 +34,7 @@ class TableGatewayTest extends TestCase
     /**
      * @see https://github.com/zendframework/zend-db/issues/330
      */
-    public function testSelectWithEmptyCurrentWithoutBufferResult()
+    public function testSelectWithEmptyCurrentWithoutBufferResult(): void
     {
         $adapter      = new Adapter([
             'driver'   => 'mysqli',
@@ -47,6 +47,8 @@ class TableGatewayTest extends TestCase
         $tableGateway = new TableGateway('test', $adapter);
         $rowset       = $tableGateway->select('id = 0');
 
+        /** @todo Have resultset implememt Iterator */
+        /** @psalm-suppress UndefinedInterfaceMethod */
         $this->assertNull($rowset->current());
 
         $adapter->getDriver()->getConnection()->disconnect();

@@ -3,40 +3,42 @@
 namespace LaminasTest\Db\Sql\Ddl\Constraint;
 
 use Laminas\Db\Sql\Ddl\Constraint\AbstractConstraint;
+use Override;
+use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\MockObject\Exception;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-class AbstractConstraintTest extends TestCase
+#[CoversMethod(AbstractConstraint::class, 'setColumns')]
+#[CoversMethod(AbstractConstraint::class, 'addColumn')]
+#[CoversMethod(AbstractConstraint::class, 'getColumns')]
+final class AbstractConstraintTest extends TestCase
 {
     /** @var AbstractConstraint */
-    protected $ac;
-
-    protected function setUp(): void
-    {
-        $this->ac = $this->getMockForAbstractClass(AbstractConstraint::class);
-    }
+    protected AbstractConstraint|MockObject $ac;
 
     /**
-     * @covers \Laminas\Db\Sql\Ddl\Constraint\AbstractConstraint::setColumns
+     * @throws Exception
      */
-    public function testSetColumns()
+    #[Override]
+    protected function setUp(): void
+    {
+        $this->ac = $this->getMockBuilder(AbstractConstraint::class)->onlyMethods([])->getMock();
+    }
+
+    public function testSetColumns(): void
     {
         self::assertSame($this->ac, $this->ac->setColumns(['foo', 'bar']));
         self::assertEquals(['foo', 'bar'], $this->ac->getColumns());
     }
 
-    /**
-     * @covers \Laminas\Db\Sql\Ddl\Constraint\AbstractConstraint::addColumn
-     */
-    public function testAddColumn()
+    public function testAddColumn(): void
     {
         self::assertSame($this->ac, $this->ac->addColumn('foo'));
         self::assertEquals(['foo'], $this->ac->getColumns());
     }
 
-    /**
-     * @covers \Laminas\Db\Sql\Ddl\Constraint\AbstractConstraint::getColumns
-     */
-    public function testGetColumns()
+    public function testGetColumns(): void
     {
         $this->ac->setColumns(['foo', 'bar']);
         self::assertEquals(['foo', 'bar'], $this->ac->getColumns());

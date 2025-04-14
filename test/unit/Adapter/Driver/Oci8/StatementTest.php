@@ -6,20 +6,33 @@ use Laminas\Db\Adapter\Driver\Oci8\Oci8;
 use Laminas\Db\Adapter\Driver\Oci8\Statement;
 use Laminas\Db\Adapter\ParameterContainer;
 use Laminas\Db\Adapter\Profiler\Profiler;
+use Override;
+use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @group integrationOracle
- */
-class StatementTest extends TestCase
+#[CoversMethod(Statement::class, 'setDriver')]
+#[CoversMethod(Statement::class, 'setProfiler')]
+#[CoversMethod(Statement::class, 'getProfiler')]
+#[CoversMethod(Statement::class, 'initialize')]
+#[CoversMethod(Statement::class, 'setSql')]
+#[CoversMethod(Statement::class, 'setParameterContainer')]
+#[CoversMethod(Statement::class, 'getParameterContainer')]
+#[CoversMethod(Statement::class, 'getResource')]
+#[CoversMethod(Statement::class, 'getSql')]
+#[CoversMethod(Statement::class, 'prepare')]
+#[CoversMethod(Statement::class, 'isPrepared')]
+#[CoversMethod(Statement::class, 'execute')]
+#[Group('integrationOracle')]
+final class StatementTest extends TestCase
 {
-    /** @var Statement */
-    protected $statement;
+    protected Statement $statement;
 
     /**
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
+    #[Override]
     protected function setUp(): void
     {
         $this->statement = new Statement();
@@ -33,63 +46,44 @@ class StatementTest extends TestCase
     {
     }
 
-    /**
-     * @covers \Laminas\Db\Adapter\Driver\Oci8\Statement::setDriver
-     */
-    public function testSetDriver()
+    public function testSetDriver(): void
     {
         self::assertEquals($this->statement, $this->statement->setDriver(new Oci8([])));
     }
 
-    /**
-     * @covers \Laminas\Db\Adapter\Driver\Oci8\Statement::setProfiler
-     */
-    public function testSetProfiler()
+    public function testSetProfiler(): void
     {
         self::assertEquals($this->statement, $this->statement->setProfiler(new Profiler()));
     }
 
-    /**
-     * @covers \Laminas\Db\Adapter\Driver\Oci8\Statement::getProfiler
-     */
-    public function testGetProfiler()
+    public function testGetProfiler(): void
     {
         $profiler = new Profiler();
         $this->statement->setProfiler($profiler);
         self::assertEquals($profiler, $this->statement->getProfiler());
     }
 
-    /**
-     * @covers \Laminas\Db\Adapter\Driver\Oci8\Statement::initialize
-     */
-    public function testInitialize()
+    public function testInitialize(): void
     {
         $oci8 = new Oci8([]);
         self::assertEquals($this->statement, $this->statement->initialize($oci8));
     }
 
-    /**
-     * @covers \Laminas\Db\Adapter\Driver\Oci8\Statement::setSql
-     */
-    public function testSetSql()
+    public function testSetSql(): void
     {
         self::assertEquals($this->statement, $this->statement->setSql('select * from table'));
         self::assertEquals('select * from table', $this->statement->getSql());
     }
 
-    /**
-     * @covers \Laminas\Db\Adapter\Driver\Oci8\Statement::setParameterContainer
-     */
-    public function testSetParameterContainer()
+    public function testSetParameterContainer(): void
     {
         self::assertSame($this->statement, $this->statement->setParameterContainer(new ParameterContainer()));
     }
 
     /**
-     * @covers \Laminas\Db\Adapter\Driver\Oci8\Statement::getParameterContainer
-     * @todo   Implement testGetParameterContainer().
+     * @todo Implement testGetParameterContainer().
      */
-    public function testGetParameterContainer()
+    public function testGetParameterContainer(): void
     {
         $container = new ParameterContainer();
         $this->statement->setParameterContainer($container);
@@ -97,10 +91,9 @@ class StatementTest extends TestCase
     }
 
     /**
-     * @covers \Laminas\Db\Adapter\Driver\Oci8\Statement::getResource
      * @todo   Implement testGetResource().
      */
-    public function testGetResource()
+    public function testGetResource(): never
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
@@ -109,20 +102,18 @@ class StatementTest extends TestCase
     }
 
     /**
-     * @covers \Laminas\Db\Adapter\Driver\Oci8\Statement::getSql
-     * @todo   Implement testGetSql().
+     * @todo Implement testGetSql().
      */
-    public function testGetSql()
+    public function testGetSql(): void
     {
         self::assertEquals($this->statement, $this->statement->setSql('select * from table'));
         self::assertEquals('select * from table', $this->statement->getSql());
     }
 
     /**
-     * @covers \Laminas\Db\Adapter\Driver\Oci8\Statement::prepare
      * @todo   Implement testPrepare().
      */
-    public function testPrepare()
+    public function testPrepare(): never
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
@@ -130,19 +121,15 @@ class StatementTest extends TestCase
         );
     }
 
-    /**
-     * @covers \Laminas\Db\Adapter\Driver\Oci8\Statement::isPrepared
-     */
-    public function testIsPrepared()
+    public function testIsPrepared(): void
     {
         self::assertFalse($this->statement->isPrepared());
     }
 
     /**
-     * @covers \Laminas\Db\Adapter\Driver\Oci8\Statement::execute
      * @todo   Implement testExecute().
      */
-    public function testExecute()
+    public function testExecute(): never
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(

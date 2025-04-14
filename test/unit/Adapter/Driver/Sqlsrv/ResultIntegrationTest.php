@@ -3,21 +3,35 @@
 namespace LaminasTest\Db\Adapter\Driver\Sqlsrv;
 
 use Laminas\Db\Adapter\Driver\Sqlsrv\Result;
+use Override;
+use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @group integration
- * @group integration-sqlsrv
- */
-class ResultIntegrationTest extends TestCase
+#[CoversMethod(Result::class, 'initialize')]
+#[CoversMethod(Result::class, 'buffer')]
+#[CoversMethod(Result::class, 'getResource')]
+#[CoversMethod(Result::class, 'current')]
+#[CoversMethod(Result::class, 'next')]
+#[CoversMethod(Result::class, 'key')]
+#[CoversMethod(Result::class, 'rewind')]
+#[CoversMethod(Result::class, 'valid')]
+#[CoversMethod(Result::class, 'count')]
+#[CoversMethod(Result::class, 'getFieldCount')]
+#[CoversMethod(Result::class, 'isQueryResult')]
+#[CoversMethod(Result::class, 'getAffectedRows')]
+#[CoversMethod(Result::class, 'getGeneratedValue')]
+#[Group('integration')]
+#[Group('integration-sqlsrv')]
+final class ResultIntegrationTest extends TestCase
 {
-    /** @var Result */
-    protected $object;
+    protected Result $object;
 
     /**
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
+    #[Override]
     protected function setUp(): void
     {
         $this->object = new Result();
@@ -32,10 +46,9 @@ class ResultIntegrationTest extends TestCase
     }
 
     /**
-     * @covers \Laminas\Db\Adapter\Driver\Sqlsrv\Result::initialize
      * @todo   Implement testInitialize().
      */
-    public function testInitialize()
+    public function testInitialize(): never
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
@@ -44,10 +57,9 @@ class ResultIntegrationTest extends TestCase
     }
 
     /**
-     * @covers \Laminas\Db\Adapter\Driver\Sqlsrv\Result::buffer
      * @todo   Implement testBuffer().
      */
-    public function testBuffer()
+    public function testBuffer(): never
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
@@ -56,10 +68,9 @@ class ResultIntegrationTest extends TestCase
     }
 
     /**
-     * @covers \Laminas\Db\Adapter\Driver\Sqlsrv\Result::getResource
      * @todo   Implement testGetResource().
      */
-    public function testGetResource()
+    public function testGetResource(): never
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
@@ -68,10 +79,9 @@ class ResultIntegrationTest extends TestCase
     }
 
     /**
-     * @covers \Laminas\Db\Adapter\Driver\Sqlsrv\Result::current
      * @todo   Implement testCurrent().
      */
-    public function testCurrent()
+    public function testCurrent(): never
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
@@ -80,10 +90,9 @@ class ResultIntegrationTest extends TestCase
     }
 
     /**
-     * @covers \Laminas\Db\Adapter\Driver\Sqlsrv\Result::next
      * @todo   Implement testNext().
      */
-    public function testNext()
+    public function testNext(): never
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
@@ -92,10 +101,9 @@ class ResultIntegrationTest extends TestCase
     }
 
     /**
-     * @covers \Laminas\Db\Adapter\Driver\Sqlsrv\Result::key
      * @todo   Implement testKey().
      */
-    public function testKey()
+    public function testKey(): never
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
@@ -104,10 +112,9 @@ class ResultIntegrationTest extends TestCase
     }
 
     /**
-     * @covers \Laminas\Db\Adapter\Driver\Sqlsrv\Result::rewind
      * @todo   Implement testRewind().
      */
-    public function testRewind()
+    public function testRewind(): never
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
@@ -116,10 +123,9 @@ class ResultIntegrationTest extends TestCase
     }
 
     /**
-     * @covers \Laminas\Db\Adapter\Driver\Sqlsrv\Result::valid
      * @todo   Implement testValid().
      */
-    public function testValid()
+    public function testValid(): never
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
@@ -128,10 +134,9 @@ class ResultIntegrationTest extends TestCase
     }
 
     /**
-     * @covers \Laminas\Db\Adapter\Driver\Sqlsrv\Result::count
      * @todo   Implement testCount().
      */
-    public function testCount()
+    public function testCount(): never
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
@@ -140,10 +145,9 @@ class ResultIntegrationTest extends TestCase
     }
 
     /**
-     * @covers \Laminas\Db\Adapter\Driver\Sqlsrv\Result::getFieldCount
      * @todo   Implement testGetFieldCount().
      */
-    public function testGetFieldCount()
+    public function testGetFieldCount(): never
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
@@ -152,10 +156,9 @@ class ResultIntegrationTest extends TestCase
     }
 
     /**
-     * @covers \Laminas\Db\Adapter\Driver\Sqlsrv\Result::isQueryResult
      * @todo   Implement testIsQueryResult().
      */
-    public function testIsQueryResult()
+    public function testIsQueryResult(): never
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
@@ -164,10 +167,9 @@ class ResultIntegrationTest extends TestCase
     }
 
     /**
-     * @covers \Laminas\Db\Adapter\Driver\Sqlsrv\Result::getAffectedRows
      * @todo   Implement testGetAffectedRows().
      */
-    public function testGetAffectedRows()
+    public function testGetAffectedRows(): never
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
@@ -176,10 +178,9 @@ class ResultIntegrationTest extends TestCase
     }
 
     /**
-     * @covers \Laminas\Db\Adapter\Driver\Sqlsrv\Result::getGeneratedValue
      * @todo   Implement testGetGeneratedValue().
      */
-    public function testGetGeneratedValue()
+    public function testGetGeneratedValue(): never
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(

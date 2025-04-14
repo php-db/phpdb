@@ -3,36 +3,41 @@
 namespace LaminasTest\Db\Sql\Ddl\Column;
 
 use Laminas\Db\Sql\Ddl\Column\AbstractLengthColumn;
+use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
 
-class AbstractLengthColumnTest extends TestCase
+#[CoversMethod(AbstractLengthColumn::class, 'setLength')]
+#[CoversMethod(AbstractLengthColumn::class, 'getLength')]
+#[CoversMethod(AbstractLengthColumn::class, 'getExpressionData')]
+final class AbstractLengthColumnTest extends TestCase
 {
     /**
-     * @covers \Laminas\Db\Sql\Ddl\Column\AbstractLengthColumn::setLength
+     * @throws Exception
      */
-    public function testSetLength()
+    public function testSetLength(): void
     {
-        $column = $this->getMockForAbstractClass(AbstractLengthColumn::class, ['foo', 55]);
+        $column = $this->getMockBuilder(AbstractLengthColumn::class)->setConstructorArgs(['foo', 55])->onlyMethods([])->getMock();
         self::assertEquals(55, $column->getLength());
         self::assertSame($column, $column->setLength(20));
         self::assertEquals(20, $column->getLength());
     }
 
     /**
-     * @covers \Laminas\Db\Sql\Ddl\Column\AbstractLengthColumn::getLength
+     * @throws Exception
      */
-    public function testGetLength()
+    public function testGetLength(): void
     {
-        $column = $this->getMockForAbstractClass(AbstractLengthColumn::class, ['foo', 55]);
+        $column = $this->getMockBuilder(AbstractLengthColumn::class)->setConstructorArgs(['foo', 55])->onlyMethods([])->getMock();
         self::assertEquals(55, $column->getLength());
     }
 
     /**
-     * @covers \Laminas\Db\Sql\Ddl\Column\AbstractLengthColumn::getExpressionData
+     * @throws Exception
      */
-    public function testGetExpressionData()
+    public function testGetExpressionData(): void
     {
-        $column = $this->getMockForAbstractClass(AbstractLengthColumn::class, ['foo', 4]);
+        $column = $this->getMockBuilder(AbstractLengthColumn::class)->setConstructorArgs(['foo', 4])->onlyMethods([])->getMock();
 
         self::assertEquals(
             [['%s %s NOT NULL', ['foo', 'INTEGER(4)'], [$column::TYPE_IDENTIFIER, $column::TYPE_LITERAL]]],

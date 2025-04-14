@@ -5,7 +5,9 @@ namespace LaminasIntegrationTest\Db\Adapter\Platform;
 use Laminas\Db\Adapter\Driver\Pdo;
 use Laminas\Db\Adapter\Driver\Pgsql;
 use Laminas\Db\Adapter\Platform\Postgresql;
+use Override;
 use PgSql\Connection as PgSqlConnection;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 
 use function extension_loaded;
@@ -13,15 +15,14 @@ use function getenv;
 use function is_resource;
 use function pg_connect;
 
-/**
- * @group integration
- * @group integration-postgres
- */
-class PostgresqlTest extends TestCase
+#[Group('integration')]
+#[Group('integration-postgres')]
+final class PostgresqlTest extends TestCase
 {
     /** @var array<string, resource> */
-    public $adapters = [];
+    public array|\PDO $adapters = [];
 
+    #[Override]
     protected function setUp(): void
     {
         if (! getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_PGSQL')) {
@@ -45,6 +46,9 @@ class PostgresqlTest extends TestCase
         }
     }
 
+    /**
+     * @return void
+     */
     public function testQuoteValueWithPgsql()
     {
         if (
@@ -65,6 +69,9 @@ class PostgresqlTest extends TestCase
         self::assertEquals('\'value\'', $value);
     }
 
+    /**
+     * @return void
+     */
     public function testQuoteValueWithPdoPgsql()
     {
         if (! isset($this->adapters['pdo_pgsql']) || ! $this->adapters['pdo_pgsql'] instanceof \PDO) {

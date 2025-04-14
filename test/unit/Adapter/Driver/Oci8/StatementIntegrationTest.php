@@ -5,20 +5,26 @@ namespace LaminasTest\Db\Adapter\Driver\Oci8;
 use Laminas\Db\Adapter\Driver\Oci8\Oci8;
 use Laminas\Db\Adapter\Driver\Oci8\Result;
 use Laminas\Db\Adapter\Driver\Oci8\Statement;
+use Override;
+use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 
 use function extension_loaded;
 use function get_resource_type;
 use function getenv;
 
-/**
- * @group integration
- * @group integration-oracle
- */
-class StatementIntegrationTest extends TestCase
+#[CoversMethod(Statement::class, 'initialize')]
+#[CoversMethod(Statement::class, 'getResource')]
+#[CoversMethod(Statement::class, 'prepare')]
+#[CoversMethod(Statement::class, 'isPrepared')]
+#[CoversMethod(Statement::class, 'execute')]
+#[Group('integration')]
+#[Group('integration-oracle')]
+final class StatementIntegrationTest extends TestCase
 {
     /** @var array<string, string> */
-    protected $variables = [
+    protected string|array|false $variables = [
         'hostname' => 'TESTS_LAMINAS_DB_ADAPTER_DRIVER_OCI8_HOSTNAME',
         'username' => 'TESTS_LAMINAS_DB_ADAPTER_DRIVER_OCI8_USERNAME',
         'password' => 'TESTS_LAMINAS_DB_ADAPTER_DRIVER_OCI8_PASSWORD',
@@ -28,6 +34,7 @@ class StatementIntegrationTest extends TestCase
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
+    #[Override]
     protected function setUp(): void
     {
         foreach ($this->variables as $name => $value) {
@@ -44,10 +51,7 @@ class StatementIntegrationTest extends TestCase
         }
     }
 
-    /**
-     * @covers \Laminas\Db\Adapter\Driver\Oci8\Statement::initialize
-     */
-    public function testInitialize()
+    public function testInitialize(): void
     {
         $ociResource = oci_connect(
             $this->variables['username'],
@@ -60,10 +64,7 @@ class StatementIntegrationTest extends TestCase
         unset($stmtResource, $ociResource);
     }
 
-    /**
-     * @covers \Laminas\Db\Adapter\Driver\Oci8\Statement::getResource
-     */
-    public function testGetResource()
+    public function testGetResource(): void
     {
         $ociResource = oci_connect(
             $this->variables['username'],
@@ -79,11 +80,7 @@ class StatementIntegrationTest extends TestCase
         unset($resource, $ociResource);
     }
 
-    /**
-     * @covers \Laminas\Db\Adapter\Driver\Oci8\Statement::prepare
-     * @covers \Laminas\Db\Adapter\Driver\Oci8\Statement::isPrepared
-     */
-    public function testPrepare()
+    public function testPrepare(): void
     {
         $ociResource = oci_connect(
             $this->variables['username'],
@@ -99,10 +96,7 @@ class StatementIntegrationTest extends TestCase
         unset($resource, $ociResource);
     }
 
-    /**
-     * @covers \Laminas\Db\Adapter\Driver\Oci8\Statement::execute
-     */
-    public function testExecute()
+    public function testExecute(): void
     {
         $oci8      = new Oci8($this->variables);
         $statement = $oci8->createStatement('SELECT * FROM DUAL');

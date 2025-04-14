@@ -5,17 +5,22 @@ namespace LaminasTest\Db\Adapter\Driver\Pdo;
 use Exception;
 use Laminas\Db\Adapter\Driver\Pdo\Connection;
 use Laminas\Db\Adapter\Exception\InvalidConnectionParametersException;
+use Override;
+use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 
-class ConnectionTest extends TestCase
+#[CoversMethod(Connection::class, 'getResource')]
+#[CoversMethod(Connection::class, 'getDsn')]
+final class ConnectionTest extends TestCase
 {
-    /** @var Connection */
-    protected $connection;
+    protected Connection $connection;
 
     /**
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
+    #[Override]
     protected function setUp(): void
     {
         $this->connection = new Connection();
@@ -23,10 +28,8 @@ class ConnectionTest extends TestCase
 
     /**
      * Test getResource method tries to connect to  the database, it should never return null
-     *
-     * @covers \Laminas\Db\Adapter\Driver\Pdo\Connection::getResource
      */
-    public function testResource()
+    public function testResource(): void
     {
         $this->expectException(InvalidConnectionParametersException::class);
         $this->connection->getResource();
@@ -34,26 +37,22 @@ class ConnectionTest extends TestCase
 
     /**
      * Test getConnectedDsn returns a DSN string if it has been set
-     *
-     * @covers \Laminas\Db\Adapter\Driver\Pdo\Connection::getDsn
      */
-    public function testGetDsn()
+    public function testGetDsn(): void
     {
         $dsn = "sqlite::memory:";
         $this->connection->setConnectionParameters(['dsn' => $dsn]);
         try {
             $this->connection->connect();
-        } catch (Exception $e) {
+        } catch (Exception) {
         }
         $responseString = $this->connection->getDsn();
 
         self::assertEquals($dsn, $responseString);
     }
 
-    /**
-     * @group 2622
-     */
-    public function testArrayOfConnectionParametersCreatesCorrectDsn()
+    #[Group('2622')]
+    public function testArrayOfConnectionParametersCreatesCorrectDsn(): void
     {
         $this->connection->setConnectionParameters([
             'driver'      => 'pdo_mysql',
@@ -64,7 +63,7 @@ class ConnectionTest extends TestCase
         ]);
         try {
             $this->connection->connect();
-        } catch (Exception $e) {
+        } catch (Exception) {
         }
         $responseString = $this->connection->getDsn();
 
@@ -75,7 +74,7 @@ class ConnectionTest extends TestCase
         self::assertStringContainsString('unix_socket=/var/run/mysqld/mysqld.sock', $responseString);
     }
 
-    public function testHostnameAndUnixSocketThrowsInvalidConnectionParametersException()
+    public function testHostnameAndUnixSocketThrowsInvalidConnectionParametersException(): void
     {
         $this->expectException(InvalidConnectionParametersException::class);
         $this->expectExceptionMessage(
@@ -92,7 +91,7 @@ class ConnectionTest extends TestCase
         $this->connection->connect();
     }
 
-    public function testDblibArrayOfConnectionParametersCreatesCorrectDsn()
+    public function testDblibArrayOfConnectionParametersCreatesCorrectDsn(): void
     {
         $this->connection->setConnectionParameters([
             'driver'  => 'pdo_dblib',
@@ -103,7 +102,7 @@ class ConnectionTest extends TestCase
         ]);
         try {
             $this->connection->connect();
-        } catch (Exception $e) {
+        } catch (Exception) {
         }
         $responseString = $this->connection->getDsn();
 

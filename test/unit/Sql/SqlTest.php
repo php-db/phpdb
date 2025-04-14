@@ -14,48 +14,62 @@ use Laminas\Db\Sql\Select;
 use Laminas\Db\Sql\Sql;
 use Laminas\Db\Sql\Update;
 use LaminasTest\Db\TestAsset;
+use Override;
+use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use TypeError;
 
-class SqlTest extends TestCase
+#[CoversMethod(Sql::class, '__construct')]
+#[CoversMethod(Sql::class, 'select')]
+#[CoversMethod(Sql::class, 'insert')]
+#[CoversMethod(Sql::class, 'update')]
+#[CoversMethod(Sql::class, 'delete')]
+#[CoversMethod(Sql::class, 'prepareStatementForSqlObject')]
+final class SqlTest extends TestCase
 {
-    /** @var Adapter&MockObject */
-    protected $mockAdapter;
+    protected MockObject&Adapter $mockAdapter;
 
     /**
      * Sql object
-     *
-     * @var Sql
      */
-    protected $sql;
+    protected Sql $sql;
 
+    /**
+     * @throws Exception
+     */
+    #[Override]
     protected function setUp(): void
     {
         // mock the adapter, driver, and parts
-        $mockResult    = $this->getMockBuilder(ResultInterface::class)->getMock();
-        $mockStatement = $this->getMockBuilder(StatementInterface::class)->getMock();
-        $mockStatement->expects($this->any())->method('execute')->will($this->returnValue($mockResult));
-        $mockConnection = $this->getMockBuilder(ConnectionInterface::class)->getMock();
-        $mockDriver     = $this->getMockBuilder(DriverInterface::class)->getMock();
-        $mockDriver->expects($this->any())->method('createStatement')->will($this->returnValue($mockStatement));
-        $mockDriver->expects($this->any())->method('getConnection')->will($this->returnValue($mockConnection));
-        $mockDriver->expects($this->any())->method('formatParameterName')->will($this->returnValue('?'));
+        $mockResult = $this->createMock(ResultInterface::class);
+
+        $mockStatement = $this->createMock(StatementInterface::class);
+        $mockStatement->expects($this->any())->method('execute')->willReturn($mockResult::class);
+
+        $mockConnection = $this->getMockBuilder(ConnectionInterface::class)->onlyMethods([])->getMock();
+
+        $mockDriver = $this->getMockBuilder(DriverInterface::class)->onlyMethods([])->getMock();
+        $mockDriver->expects($this->any())->method('createStatement')->willReturn($mockStatement);
+        $mockDriver->expects($this->any())->method('getConnection')->willReturn($mockConnection);
+        $mockDriver->expects($this->any())->method('formatParameterName')->willReturn('?');
 
         // setup mock adapter
         $this->mockAdapter = $this->getMockBuilder(Adapter::class)
-            ->setMethods()
-            ->setConstructorArgs([$mockDriver, new TestAsset\TrustingSql92Platform()])
+            ->onlyMethods([])
+            ->setConstructorArgs([
+                $mockDriver,
+                new TestAsset\TrustingSql92Platform(),
+            ])
             ->getMock();
 
         $this->sql = new Sql($this->mockAdapter, 'foo');
     }
 
-    /**
-     * @covers \Laminas\Db\Sql\Sql::__construct
-     */
     // @codingStandardsIgnoreStart
-    public function test__construct()
+    public function test__construct(): void
     {
         // @codingStandardsIgnoreEnd
         $sql = new Sql($this->mockAdapter);
@@ -66,13 +80,11 @@ class SqlTest extends TestCase
         self::assertSame('foo', $sql->getTable());
 
         $this->expectException(TypeError::class);
+        /** @psalm-suppress NullArgument - ensure an exception is thrown */
         $sql->setTable(null);
     }
 
-    /**
-     * @covers \Laminas\Db\Sql\Sql::select
-     */
-    public function testSelect()
+    public function testSelect(): void
     {
         $select = $this->sql->select();
         self::assertInstanceOf(Select::class, $select);
@@ -85,10 +97,7 @@ class SqlTest extends TestCase
         $this->sql->select('bar');
     }
 
-    /**
-     * @covers \Laminas\Db\Sql\Sql::insert
-     */
-    public function testInsert()
+    public function testInsert(): void
     {
         $insert = $this->sql->insert();
         self::assertInstanceOf(Insert::class, $insert);
@@ -101,10 +110,7 @@ class SqlTest extends TestCase
         $this->sql->insert('bar');
     }
 
-    /**
-     * @covers \Laminas\Db\Sql\Sql::update
-     */
-    public function testUpdate()
+    public function testUpdate(): void
     {
         $update = $this->sql->update();
         self::assertInstanceOf(Update::class, $update);
@@ -117,10 +123,7 @@ class SqlTest extends TestCase
         $this->sql->update('bar');
     }
 
-    /**
-     * @covers \Laminas\Db\Sql\Sql::delete
-     */
-    public function testDelete()
+    public function testDelete(): void
     {
         $delete = $this->sql->delete();
 
@@ -134,10 +137,7 @@ class SqlTest extends TestCase
         $this->sql->delete('bar');
     }
 
-    /**
-     * @covers \Laminas\Db\Sql\Sql::prepareStatementForSqlObject
-     */
-    public function testPrepareStatementForSqlObject()
+    public function testPrepareStatementForSqlObject(): void
     {
         $insert = $this->sql->insert()->columns(['foo'])->values(['foo' => 'bar']);
         $stmt   = $this->sql->prepareStatementForSqlObject($insert);
@@ -145,9 +145,10 @@ class SqlTest extends TestCase
     }
 
     /**
-     * @group 6890
+     * @throws Exception
      */
-    public function testForDifferentAdapters()
+    #[Group('6890')]
+    public function testForDifferentAdapters(): void
     {
         $adapterSql92     = $this->getAdapterForPlatform('sql92');
         $adapterMySql     = $this->getAdapterForPlatform('MySql');
@@ -161,7 +162,14 @@ class SqlTest extends TestCase
             'SELECT "foo".* FROM "foo" OFFSET \'10\'',
             $this->sql->buildSqlString($select)
         );
-        $this->mockAdapter->getDriver()->createStatement()->expects($this->any())->method('setSql')
+
+        $stmt = $this
+            ->mockAdapter
+            ->getDriver()
+            ->createStatement();
+
+        /** @var MockObject&StatementInterface $stmt */
+        $stmt->expects($this->any())->method('setSql')
                 ->with($this->equalTo('SELECT "foo".* FROM "foo" OFFSET ?'));
         $this->sql->prepareStatementForSqlObject($select);
 
@@ -170,7 +178,12 @@ class SqlTest extends TestCase
             'SELECT "foo".* FROM "foo" OFFSET \'10\'',
             $this->sql->buildSqlString($select, $adapterSql92)
         );
-        $adapterSql92->getDriver()->createStatement()->expects($this->any())->method('setSql')
+        $stmt = $adapterSql92
+            ->getDriver()
+            ->createStatement();
+
+        /** @var MockObject&StatementInterface $stmt */
+        $stmt->expects($this->any())->method('setSql')
                 ->with($this->equalTo('SELECT "foo".* FROM "foo" OFFSET ?'));
         $this->sql->prepareStatementForSqlObject($select, null, $adapterSql92);
 
@@ -179,7 +192,12 @@ class SqlTest extends TestCase
             'SELECT `foo`.* FROM `foo` LIMIT 18446744073709551615 OFFSET 10',
             $this->sql->buildSqlString($select, $adapterMySql)
         );
-        $adapterMySql->getDriver()->createStatement()->expects($this->any())->method('setSql')
+        $stmt = $adapterMySql
+            ->getDriver()
+            ->createStatement();
+
+        /** @var MockObject&StatementInterface $stmt */
+        $stmt->expects($this->any())->method('setSql')
                 ->with($this->equalTo('SELECT `foo`.* FROM `foo` LIMIT 18446744073709551615 OFFSET ?'));
         $this->sql->prepareStatementForSqlObject($select, null, $adapterMySql);
 
@@ -188,8 +206,14 @@ class SqlTest extends TestCase
             'SELECT * FROM (SELECT b.*, rownum b_rownum FROM ( SELECT "foo".* FROM "foo" ) b ) WHERE b_rownum > (10)',
             $this->sql->buildSqlString($select, $adapterOracle)
         );
+
+        $stmt = $adapterOracle
+            ->getDriver()
+            ->createStatement();
+
         // @codingStandardsIgnoreStart
-        $adapterOracle->getDriver()->createStatement()->expects($this->any())->method('setSql')
+        /** @var MockObject&StatementInterface $stmt */
+        $stmt->expects($this->any())->method('setSql')
                 ->with($this->equalTo('SELECT * FROM (SELECT b.*, rownum b_rownum FROM ( SELECT "foo".* FROM "foo" ) b ) WHERE b_rownum > (:offset)'));
         // @codingStandardsIgnoreEnd
         $this->sql->prepareStatementForSqlObject($select, null, $adapterOracle);
@@ -199,7 +223,13 @@ class SqlTest extends TestCase
             'WHERE [LAMINAS_SQL_SERVER_LIMIT_OFFSET_EMULATION].[__LAMINAS_ROW_NUMBER] BETWEEN 10+1 AND 0+10',
             $this->sql->buildSqlString($select, $adapterSqlServer)
         );
-        $adapterSqlServer->getDriver()->createStatement()->expects($this->any())->method('setSql')
+
+        $stmt = $adapterSqlServer
+            ->getDriver()
+            ->createStatement();
+
+        /** @var MockObject&StatementInterface $stmt */
+        $stmt->expects($this->any())->method('setSql')
                 ->with($this->stringContains(
                     'WHERE [LAMINAS_SQL_SERVER_LIMIT_OFFSET_EMULATION].[__LAMINAS_ROW_NUMBER] BETWEEN ?+1 AND ?+?'
                 ));
@@ -209,32 +239,26 @@ class SqlTest extends TestCase
     /**
      * Data provider
      *
-     * @param string $platform
-     * @return Adapter
+     * @throws Exception
      */
-    protected function getAdapterForPlatform($platform)
+    protected function getAdapterForPlatform(string $platform): Adapter
     {
-        switch ($platform) {
-            case 'sql92':
-                $platform = new TestAsset\TrustingSql92Platform();
-                break;
-            case 'MySql':
-                $platform = new TestAsset\TrustingMysqlPlatform();
-                break;
-            case 'Oracle':
-                $platform = new TestAsset\TrustingOraclePlatform();
-                break;
-            case 'SqlServer':
-                $platform = new TestAsset\TrustingSqlServerPlatform();
-                break;
-            default:
-                $platform = null;
-        }
+        $platform = match ($platform) {
+            'sql92'     => new TestAsset\TrustingSql92Platform(),
+            'MySql'     => new TestAsset\TrustingMysqlPlatform(),
+            'Oracle'    => new TestAsset\TrustingOraclePlatform(),
+            'SqlServer' => new TestAsset\TrustingSqlServerPlatform(),
+            default     => null,
+        };
 
-        $mockStatement = $this->getMockBuilder(StatementInterface::class)->getMock();
-        $mockDriver    = $this->getMockBuilder(DriverInterface::class)->getMock();
-        $mockDriver->expects($this->any())->method('formatParameterName')->will($this->returnValue('?'));
-        $mockDriver->expects($this->any())->method('createStatement')->will($this->returnValue($mockStatement));
+        $mockResult = $this->createMock(ResultInterface::class);
+
+        $mockStatement = $this->createMock(StatementInterface::class);
+        $mockStatement->expects($this->any())->method('execute')->willReturn($mockResult::class);
+
+        $mockDriver = $this->getMockBuilder(DriverInterface::class)->onlyMethods([])->getMock();
+        $mockDriver->expects($this->any())->method('formatParameterName')->willReturn('?');
+        $mockDriver->expects($this->any())->method('createStatement')->willReturn($mockStatement);
 
         return new Adapter($mockDriver, $platform);
     }

@@ -47,8 +47,8 @@ class Update extends AbstractPreparableSql
         self::SPECIFICATION_WHERE  => 'WHERE %1$s',
     ];
 
-    /** @var string|TableIdentifier */
-    protected $table = '';
+    /** @var string|array|TableIdentifier */
+    protected TableIdentifier|string|array $table = '';
 
     /** @var bool */
     protected $emptyWhereProtection = true;
@@ -81,10 +81,10 @@ class Update extends AbstractPreparableSql
     /**
      * Specify table for statement
      *
-     * @param  string|TableIdentifier $table
+     * @param  string|array|TableIdentifier $table
      * @return $this Provides a fluent interface
      */
-    public function table($table)
+    public function table($table): static
     {
         $this->table = $table;
         return $this;

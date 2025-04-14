@@ -3,14 +3,13 @@
 namespace LaminasTest\Db\Sql\Ddl\Constraint;
 
 use Laminas\Db\Sql\Ddl\Constraint\Check;
+use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 
-class CheckTest extends TestCase
+#[CoversMethod(Check::class, 'getExpressionData')]
+final class CheckTest extends TestCase
 {
-    /**
-     * @covers \Laminas\Db\Sql\Ddl\Constraint\Check::getExpressionData
-     */
-    public function testGetExpressionData()
+    public function testGetExpressionData(): void
     {
         $check = new Check('id>0', 'foo');
         self::assertEquals(

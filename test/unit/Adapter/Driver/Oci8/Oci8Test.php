@@ -6,92 +6,76 @@ use Laminas\Db\Adapter\Driver\Oci8\Connection;
 use Laminas\Db\Adapter\Driver\Oci8\Oci8;
 use Laminas\Db\Adapter\Driver\Oci8\Result;
 use Laminas\Db\Adapter\Driver\Oci8\Statement;
+use Override;
+use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\Depends;
+use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
 
-class Oci8Test extends TestCase
+#[CoversMethod(Oci8::class, 'registerConnection')]
+#[CoversMethod(Oci8::class, 'registerStatementPrototype')]
+#[CoversMethod(Oci8::class, 'registerResultPrototype')]
+#[CoversMethod(Oci8::class, 'getDatabasePlatformName')]
+#[CoversMethod(Oci8::class, 'getConnection')]
+#[CoversMethod(Oci8::class, 'createStatement')]
+#[CoversMethod(Oci8::class, 'createResult')]
+#[CoversMethod(Oci8::class, 'getPrepareType')]
+#[CoversMethod(Oci8::class, 'formatParameterName')]
+#[CoversMethod(Oci8::class, 'getLastGeneratedValue')]
+final class Oci8Test extends TestCase
 {
-    /** @var Oci8 */
-    protected $oci8;
+    protected Oci8 $oci8;
 
     /**
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
+    #[Override]
     protected function setUp(): void
     {
         $this->oci8 = new Oci8([]);
     }
 
     /**
-     * @covers \Laminas\Db\Adapter\Driver\Oci8\Oci8::registerConnection
+     * @throws Exception
      */
-    public function testRegisterConnection()
+    public function testRegisterConnection(): void
     {
-        $mockConnection = $this->getMockForAbstractClass(
-            Connection::class,
-            [[]],
-            '',
-            true,
-            true,
-            true,
-            ['setDriver']
-        );
+        $mockConnection = $this->getMockBuilder(Connection::class)->setConstructorArgs([[]])->onlyMethods(['setDriver'])->getMock();
         $mockConnection->expects($this->once())->method('setDriver')->with($this->equalTo($this->oci8));
         self::assertSame($this->oci8, $this->oci8->registerConnection($mockConnection));
     }
 
     /**
-     * @covers \Laminas\Db\Adapter\Driver\Oci8\Oci8::registerStatementPrototype
+     * @throws Exception
      */
-    public function testRegisterStatementPrototype()
+    public function testRegisterStatementPrototype(): void
     {
         $this->oci8    = new Oci8([]);
-        $mockStatement = $this->getMockForAbstractClass(
-            Statement::class,
-            [],
-            '',
-            true,
-            true,
-            true,
-            ['setDriver']
-        );
+        $mockStatement = $this->getMockBuilder(Statement::class)->setConstructorArgs([])->onlyMethods(['setDriver'])->getMock();
         $mockStatement->expects($this->once())->method('setDriver')->with($this->equalTo($this->oci8));
         self::assertSame($this->oci8, $this->oci8->registerStatementPrototype($mockStatement));
     }
 
     /**
-     * @covers \Laminas\Db\Adapter\Driver\Oci8\Oci8::registerResultPrototype
+     * @throws Exception
      */
-    public function testRegisterResultPrototype()
+    public function testRegisterResultPrototype(): void
     {
         $this->oci8    = new Oci8([]);
-        $mockStatement = $this->getMockForAbstractClass(
-            Result::class,
-            [],
-            '',
-            true,
-            true,
-            true,
-            ['setDriver']
-        );
+        $mockStatement = $this->getMockBuilder(Result::class)->setConstructorArgs([])->onlyMethods([])->getMock();
         self::assertSame($this->oci8, $this->oci8->registerResultPrototype($mockStatement));
     }
 
-    /**
-     * @covers \Laminas\Db\Adapter\Driver\Oci8\Oci8::getDatabasePlatformName
-     */
-    public function testGetDatabasePlatformName()
+    public function testGetDatabasePlatformName(): void
     {
         $this->oci8 = new Oci8([]);
         self::assertEquals('Oracle', $this->oci8->getDatabasePlatformName());
         self::assertEquals('Oracle', $this->oci8->getDatabasePlatformName(Oci8::NAME_FORMAT_NATURAL));
     }
 
-    /**
-     * @depends testRegisterConnection
-     * @covers \Laminas\Db\Adapter\Driver\Oci8\Oci8::getConnection
-     */
-    public function testGetConnection()
+    #[Depends('testRegisterConnection')]
+    public function testGetConnection(): void
     {
         $conn = new Connection([]);
         $this->oci8->registerConnection($conn);
@@ -99,10 +83,9 @@ class Oci8Test extends TestCase
     }
 
     /**
-     * @covers \Laminas\Db\Adapter\Driver\Oci8\Oci8::createStatement
      * @todo   Implement testGetPrepareType().
      */
-    public function testCreateStatement()
+    public function testCreateStatement(): never
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
@@ -111,10 +94,9 @@ class Oci8Test extends TestCase
     }
 
     /**
-     * @covers \Laminas\Db\Adapter\Driver\Oci8\Oci8::createResult
      * @todo   Implement testGetPrepareType().
      */
-    public function testCreateResult()
+    public function testCreateResult(): never
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
@@ -123,10 +105,9 @@ class Oci8Test extends TestCase
     }
 
     /**
-     * @covers \Laminas\Db\Adapter\Driver\Oci8\Oci8::getPrepareType
      * @todo   Implement testGetPrepareType().
      */
-    public function testGetPrepareType()
+    public function testGetPrepareType(): never
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
@@ -135,10 +116,9 @@ class Oci8Test extends TestCase
     }
 
     /**
-     * @covers \Laminas\Db\Adapter\Driver\Oci8\Oci8::formatParameterName
      * @todo   Implement testFormatParameterName().
      */
-    public function testFormatParameterName()
+    public function testFormatParameterName(): never
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
@@ -147,10 +127,9 @@ class Oci8Test extends TestCase
     }
 
     /**
-     * @covers \Laminas\Db\Adapter\Driver\Oci8\Oci8::getLastGeneratedValue
      * @todo   Implement testGetLastGeneratedValue().
      */
-    public function testGetLastGeneratedValue()
+    public function testGetLastGeneratedValue(): never
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(

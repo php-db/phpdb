@@ -5,20 +5,23 @@ namespace LaminasTest\Db\Adapter\Driver\Sqlsrv;
 use Laminas\Db\Adapter\Driver\Sqlsrv\Sqlsrv;
 use Laminas\Db\Adapter\Driver\Sqlsrv\Statement;
 use Laminas\Db\Adapter\Exception\InvalidArgumentException;
+use Override;
+use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\Group;
 use stdClass;
 
-/**
- * @group integration
- * @group integration-sqlserver
- */
-class SqlSrvIntegrationTest extends AbstractIntegrationTest
+#[CoversMethod(Sqlsrv::class, 'checkEnvironment')]
+#[Group('integration')]
+#[Group('integration-sqlserver')]
+final class SqlSrvIntegrationTest extends AbstractIntegrationTestCase
 {
     /** @var Laminas\Db\Adapter\Driver\Sqlsrv\Sqlsrv */
-    private $driver;
+    private Laminas\Db\Adapter\Driver\Sqlsrv\Sqlsrv|Sqlsrv $driver;
 
     /** @var resource SQL Server Connection */
     private $resource;
 
+    #[Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -26,17 +29,14 @@ class SqlSrvIntegrationTest extends AbstractIntegrationTest
         $this->driver   = new Sqlsrv($this->resource);
     }
 
-    /**
-     * @group integration-sqlserver
-     * @covers \Laminas\Db\Adapter\Driver\Sqlsrv\Sqlsrv::checkEnvironment
-     */
-    public function testCheckEnvironment()
+    #[Group('integration-sqlserver')]
+    public function testCheckEnvironment(): void
     {
         $sqlserver = new Sqlsrv([]);
         self::assertNull($sqlserver->checkEnvironment());
     }
 
-    public function testCreateStatement()
+    public function testCreateStatement(): void
     {
         $stmt = $this->driver->createStatement('SELECT 1');
         $this->assertInstanceOf(Statement::class, $stmt);
@@ -50,7 +50,7 @@ class SqlSrvIntegrationTest extends AbstractIntegrationTest
         $this->driver->createStatement(new stdClass());
     }
 
-    public function testParameterizedQuery()
+    public function testParameterizedQuery(): void
     {
         $stmt   = $this->driver->createStatement('SELECT ? as col_one');
         $result = $stmt->execute(['a']);

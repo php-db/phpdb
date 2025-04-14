@@ -3,23 +3,21 @@
 namespace LaminasTest\Db\Sql\Ddl\Column;
 
 use Laminas\Db\Sql\Ddl\Column\BigInteger;
+use Laminas\Db\Sql\Ddl\Column\Column;
+use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 
-class BigIntegerTest extends TestCase
+#[CoversMethod(BigInteger::class, '__construct')]
+#[CoversMethod(Column::class, 'getExpressionData')]
+final class BigIntegerTest extends TestCase
 {
-    /**
-     * @covers \Laminas\Db\Sql\Ddl\Column\BigInteger::__construct
-     */
-    public function testObjectConstruction()
+    public function testObjectConstruction(): void
     {
         $integer = new BigInteger('foo');
         self::assertEquals('foo', $integer->getName());
     }
 
-    /**
-     * @covers \Laminas\Db\Sql\Ddl\Column\Column::getExpressionData
-     */
-    public function testGetExpressionData()
+    public function testGetExpressionData(): void
     {
         $column = new BigInteger('foo');
         self::assertEquals(
