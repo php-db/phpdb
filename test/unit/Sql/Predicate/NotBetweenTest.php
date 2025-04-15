@@ -47,7 +47,7 @@ final class NotBetweenTest extends TestCase
             [
                 $this->notBetween->getSpecification(),
                 [10, 'foo.bar', 'foo.baz'],
-                [ExpressionInterface::TYPE_VALUE, ExpressionInterface::TYPE_IDENTIFIER, ExpressionInterface::TYPE_IDENTIFIER],
+                [ExpressionInterface::TYPE_IDENTIFIER, ExpressionInterface::TYPE_IDENTIFIER, ExpressionInterface::TYPE_IDENTIFIER],
             ],
         ];
         self::assertEquals($expected, $this->notBetween->getExpressionData());
