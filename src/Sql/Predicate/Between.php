@@ -3,31 +3,32 @@
 namespace Laminas\Db\Sql\Predicate;
 
 use Laminas\Db\Sql\AbstractExpression;
+use Laminas\Db\Sql\Argument;
+use Laminas\Db\Sql\ArgumentType;
 
 class Between extends AbstractExpression implements PredicateInterface
 {
-    /** @var string */
-    protected $specification = '%1$s BETWEEN %2$s AND %3$s';
+    protected string $specification = '%1$s BETWEEN %2$s AND %3$s';
 
-    /** @var string */
-    protected $identifier;
+    protected ?Argument $identifier = null;
 
-    /** @var null|int */
-    protected $minValue;
+    protected ?Argument $minValue = null;
 
-    /** @var null|int */
-    protected $maxValue;
+    protected ?Argument $maxValue = null;
 
     /**
      * Constructor
      *
-     * @param  string $identifier
-     * @param  int|float|string $minValue
-     * @param  int|float|string $maxValue
+     * @param null|float|int|string|array|Argument  $identifier
+     * @param  null|float|int|string|array|Argument $minValue
+     * @param  null|float|int|string|array|Argument $maxValue
      */
-    public function __construct($identifier = null, $minValue = null, $maxValue = null)
-    {
-        if ($identifier) {
+    public function __construct(
+        null|float|int|string|array|Argument $identifier = null,
+        null|float|int|string|array|Argument $minValue = null,
+        null|float|int|string|array|Argument $maxValue = null
+    ) {
+        if ($identifier !== null) {
             $this->setIdentifier($identifier);
         }
         if ($minValue !== null) {
@@ -41,43 +42,37 @@ class Between extends AbstractExpression implements PredicateInterface
     /**
      * Set identifier for comparison
      *
-     * @param  string $identifier
      * @return $this Provides a fluent interface
      */
-    public function setIdentifier($identifier)
+    public function setIdentifier(null|string|int|float|array|Argument $value, ArgumentType $type = ArgumentType::Value): static
     {
-        $this->identifier = $identifier;
+        $this->identifier = ($value instanceof Argument) ? $value : new Argument($value, $type);
         return $this;
     }
 
     /**
-     * Get identifier of comparison
-     *
-     * @return null|string
+     * Get argument of comparison
      */
-    public function getIdentifier()
+    public function getIdentifier(): ?Argument
     {
         return $this->identifier;
     }
 
     /**
-     * Set minimum boundary for comparison
+     * Set minimum value or column for comparison
      *
-     * @param  int|float|string|array $minValue
      * @return $this Provides a fluent interface
      */
-    public function setMinValue($minValue)
+    public function setMinValue(null|string|int|float|array|Argument $value, ArgumentType $type = ArgumentType::Value): static
     {
-        $this->minValue = $minValue;
+        $this->minValue = ($value instanceof Argument) ? $value : new Argument($value, $type);
         return $this;
     }
 
     /**
-     * Get minimum boundary for comparison
-     *
-     * @return null|int|float|string|array
+     * Get minimum value or column for comparison
      */
-    public function getMinValue()
+    public function getMinValue(): ?Argument
     {
         return $this->minValue;
     }
@@ -85,21 +80,18 @@ class Between extends AbstractExpression implements PredicateInterface
     /**
      * Set maximum boundary for comparison
      *
-     * @param  int|float|string|array $maxValue
      * @return $this Provides a fluent interface
      */
-    public function setMaxValue($maxValue)
+    public function setMaxValue(null|string|int|float|array|Argument $value, ArgumentType $type = ArgumentType::Value): static
     {
-        $this->maxValue = $maxValue;
+        $this->maxValue = ($value instanceof Argument) ? $value : new Argument($value, $type);
         return $this;
     }
 
     /**
-     * Get maximum boundary for comparison
-     *
-     * @return null|int|float|string|array
+     * Get maximum value or column for comparison
      */
-    public function getMaxValue()
+    public function getMaxValue(): ?Argument
     {
         return $this->maxValue;
     }
@@ -107,10 +99,9 @@ class Between extends AbstractExpression implements PredicateInterface
     /**
      * Set specification string to use in forming SQL predicate
      *
-     * @param  string $specification
      * @return $this Provides a fluent interface
      */
-    public function setSpecification($specification)
+    public function setSpecification(string $specification): static
     {
         $this->specification = $specification;
         return $this;
@@ -121,7 +112,7 @@ class Between extends AbstractExpression implements PredicateInterface
      *
      * @return string
      */
-    public function getSpecification()
+    public function getSpecification(): string
     {
         return $this->specification;
     }
@@ -131,16 +122,13 @@ class Between extends AbstractExpression implements PredicateInterface
      *
      * @return array
      */
-    public function getExpressionData()
+    #[\Override]
+    public function getExpressionData(): array
     {
-        [$values[], $types[]] = $this->normalizeArgument($this->identifier, self::TYPE_IDENTIFIER);
-        [$values[], $types[]] = $this->normalizeArgument($this->minValue, self::TYPE_VALUE);
-        [$values[], $types[]] = $this->normalizeArgument($this->maxValue, self::TYPE_VALUE);
         return [
             [
                 $this->getSpecification(),
-                $values,
-                $types,
+                [$this->identifier, $this->minValue, $this->maxValue]
             ],
         ];
     }

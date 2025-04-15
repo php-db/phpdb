@@ -9,7 +9,7 @@ class IsNull extends AbstractExpression implements PredicateInterface
     /** @var string */
     protected $specification = '%1$s IS NULL';
 
-    /** @var nuill|string */
+    /** @var null|string */
     protected $identifier;
 
     /**
