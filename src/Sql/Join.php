@@ -4,7 +4,7 @@ namespace Laminas\Db\Sql;
 
 use Countable;
 use Iterator;
-// phpcs:ignore SlevomatCodingStandard.Namespaces.UnusedUses.UnusedUse
+use Override;
 use ReturnTypeWillChange;
 
 use function array_shift;
@@ -16,15 +16,16 @@ use function sprintf;
 
 /**
  * Aggregate JOIN specifications.
- *
  * Each specification is an array with the following keys:
- *
  * - name: the JOIN name
  * - on: the table on which the JOIN occurs
  * - columns: the columns to include with the JOIN operation; defaults to
  *   `Select::SQL_STAR`.
  * - type: the type of JOIN being performed; see the `JOIN_*` constants;
  *   defaults to `JOIN_INNER`
+ *
+ * @implements Iterator
+ * @implements Countable
  */
 class Join implements Iterator, Countable
 {
@@ -38,17 +39,13 @@ class Join implements Iterator, Countable
 
     /**
      * Current iterator position.
-     *
-     * @var int
      */
-    private $position = 0;
+    private int $position;
 
     /**
      * JOIN specifications
-     *
-     * @var array
      */
-    protected $joins = [];
+    protected array $joins = [];
 
     /**
      * Initialize iterator position.
@@ -61,30 +58,29 @@ class Join implements Iterator, Countable
     /**
      * Rewind iterator.
      */
+    #[Override]
     #[ReturnTypeWillChange]
-    public function rewind()
+    public function rewind(): void
     {
         $this->position = 0;
     }
 
     /**
      * Return current join specification.
-     *
-     * @return array
      */
+    #[Override]
     #[ReturnTypeWillChange]
-    public function current()
+    public function current(): array
     {
         return $this->joins[$this->position];
     }
 
     /**
      * Return the current iterator index.
-     *
-     * @return int
      */
+    #[Override]
     #[ReturnTypeWillChange]
-    public function key()
+    public function key(): int
     {
         return $this->position;
     }
@@ -92,27 +88,24 @@ class Join implements Iterator, Countable
     /**
      * Advance to the next JOIN specification.
      */
+    #[Override]
     #[ReturnTypeWillChange]
-    public function next()
+    public function next(): void
     {
         ++$this->position;
     }
 
     /**
      * Is the iterator at a valid position?
-     *
-     * @return bool
      */
+    #[Override]
     #[ReturnTypeWillChange]
-    public function valid()
+    public function valid(): bool
     {
         return isset($this->joins[$this->position]);
     }
 
-    /**
-     * @return array
-     */
-    public function getJoins()
+    public function getJoins(): array
     {
         return $this->joins;
     }
@@ -128,7 +121,7 @@ class Join implements Iterator, Countable
      * @return $this Provides a fluent interface
      * @throws Exception\InvalidArgumentException For invalid $name values.
      */
-    public function join($name, $on, $columns = [Select::SQL_STAR], $type = self::JOIN_INNER)
+    public function join($name, $on, $columns = [Select::SQL_STAR], $type = self::JOIN_INNER): static
     {
         if (is_array($name) && (! is_string(key($name)) || count($name) !== 1)) {
             throw new Exception\InvalidArgumentException(
@@ -144,7 +137,7 @@ class Join implements Iterator, Countable
             'name'    => $name,
             'on'      => $on,
             'columns' => $columns,
-            'type'    => $type ? $type : self::JOIN_INNER,
+            'type'    => $type ?: self::JOIN_INNER,
         ];
 
         return $this;
@@ -155,7 +148,7 @@ class Join implements Iterator, Countable
      *
      * @return $this Provides a fluent interface
      */
-    public function reset()
+    public function reset(): static
     {
         $this->joins = [];
         return $this;
@@ -163,11 +156,9 @@ class Join implements Iterator, Countable
 
     /**
      * Get count of attached predicates
-     *
-     * @return int
      */
     #[ReturnTypeWillChange]
-    public function count()
+    public function count(): int
     {
         return count($this->joins);
     }

@@ -5,6 +5,8 @@ namespace Laminas\Db\Sql\Predicate;
 use Laminas\Db\Sql\AbstractExpression;
 use Laminas\Db\Sql\Argument;
 use Laminas\Db\Sql\ArgumentType;
+use Laminas\Db\Sql\Exception\InvalidArgumentException;
+use Override;
 
 class Between extends AbstractExpression implements PredicateInterface
 {
@@ -18,10 +20,6 @@ class Between extends AbstractExpression implements PredicateInterface
 
     /**
      * Constructor
-     *
-     * @param null|float|int|string|array|Argument  $identifier
-     * @param  null|float|int|string|array|Argument $minValue
-     * @param  null|float|int|string|array|Argument $maxValue
      */
     public function __construct(
         null|float|int|string|array|Argument $identifier = null,
@@ -44,9 +42,12 @@ class Between extends AbstractExpression implements PredicateInterface
      *
      * @return $this Provides a fluent interface
      */
-    public function setIdentifier(null|string|int|float|array|Argument $value, ArgumentType $type = ArgumentType::Value): static
-    {
-        $this->identifier = ($value instanceof Argument) ? $value : new Argument($value, $type);
+    public function setIdentifier(
+        null|string|int|float|array|Argument $value,
+        ArgumentType $type = ArgumentType::Identifier
+    ): static {
+        $this->identifier = $value instanceof Argument ? $value : new Argument($value, $type);
+
         return $this;
     }
 
@@ -65,7 +66,8 @@ class Between extends AbstractExpression implements PredicateInterface
      */
     public function setMinValue(null|string|int|float|array|Argument $value, ArgumentType $type = ArgumentType::Value): static
     {
-        $this->minValue = ($value instanceof Argument) ? $value : new Argument($value, $type);
+        $this->minValue = $value instanceof Argument ? $value : new Argument($value, $type);
+
         return $this;
     }
 
@@ -84,7 +86,8 @@ class Between extends AbstractExpression implements PredicateInterface
      */
     public function setMaxValue(null|string|int|float|array|Argument $value, ArgumentType $type = ArgumentType::Value): static
     {
-        $this->maxValue = ($value instanceof Argument) ? $value : new Argument($value, $type);
+        $this->maxValue = $value instanceof Argument ? $value : new Argument($value, $type);
+
         return $this;
     }
 
@@ -104,13 +107,12 @@ class Between extends AbstractExpression implements PredicateInterface
     public function setSpecification(string $specification): static
     {
         $this->specification = $specification;
+
         return $this;
     }
 
     /**
      * Get specification string to use in forming SQL predicate
-     *
-     * @return string
      */
     public function getSpecification(): string
     {
@@ -119,16 +121,26 @@ class Between extends AbstractExpression implements PredicateInterface
 
     /**
      * Return "where" parts
-     *
-     * @return array
      */
-    #[\Override]
+    #[Override]
     public function getExpressionData(): array
     {
+        if ($this->identifier === null) {
+            throw new InvalidArgumentException('Identifier must be specified');
+        }
+
+        if ($this->minValue === null) {
+            throw new InvalidArgumentException('minValue must be specified');
+        }
+
+        if ($this->maxValue === null) {
+            throw new InvalidArgumentException('maxValue must be specified');
+        }
+
         return [
             [
                 $this->getSpecification(),
-                [$this->identifier, $this->minValue, $this->maxValue]
+                [$this->identifier, $this->minValue, $this->maxValue],
             ],
         ];
     }

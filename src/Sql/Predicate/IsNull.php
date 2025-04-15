@@ -3,23 +3,23 @@
 namespace Laminas\Db\Sql\Predicate;
 
 use Laminas\Db\Sql\AbstractExpression;
+use Laminas\Db\Sql\Argument;
+use Laminas\Db\Sql\ArgumentType;
+use Laminas\Db\Sql\Exception\InvalidArgumentException;
+use Override;
 
 class IsNull extends AbstractExpression implements PredicateInterface
 {
-    /** @var string */
-    protected $specification = '%1$s IS NULL';
+    protected string $specification = '%1$s IS NULL';
 
-    /** @var null|string */
-    protected $identifier;
+    protected ?Argument $identifier = null;
 
     /**
      * Constructor
-     *
-     * @param  string $identifier
      */
-    public function __construct($identifier = null)
+    public function __construct(null|float|int|string|array|Argument $identifier = null)
     {
-        if ($identifier) {
+        if ($identifier !== null) {
             $this->setIdentifier($identifier);
         }
     }
@@ -27,21 +27,20 @@ class IsNull extends AbstractExpression implements PredicateInterface
     /**
      * Set identifier for comparison
      *
-     * @param  string $identifier
      * @return $this Provides a fluent interface
      */
-    public function setIdentifier($identifier)
-    {
-        $this->identifier = $identifier;
+    public function setIdentifier(
+        null|string|int|float|array|Argument $value,
+        ArgumentType $type = ArgumentType::Identifier
+    ): static {
+        $this->identifier = $value instanceof Argument ? $value : new Argument($value, $type);
         return $this;
     }
 
     /**
      * Get identifier of comparison
-     *
-     * @return null|string
      */
-    public function getIdentifier()
+    public function getIdentifier(): ?Argument
     {
         return $this->identifier;
     }
@@ -49,10 +48,9 @@ class IsNull extends AbstractExpression implements PredicateInterface
     /**
      * Set specification string to use in forming SQL predicate
      *
-     * @param  string $specification
      * @return $this Provides a fluent interface
      */
-    public function setSpecification($specification)
+    public function setSpecification(string $specification): static
     {
         $this->specification = $specification;
         return $this;
@@ -60,27 +58,26 @@ class IsNull extends AbstractExpression implements PredicateInterface
 
     /**
      * Get specification string to use in forming SQL predicate
-     *
-     * @return string
      */
-    public function getSpecification()
+    public function getSpecification(): string
     {
         return $this->specification;
     }
 
     /**
      * Get parts for where statement
-     *
-     * @return array
      */
-    public function getExpressionData()
+    #[Override]
+    public function getExpressionData(): array
     {
-        $identifier = $this->normalizeArgument($this->identifier, self::TYPE_IDENTIFIER);
+        if ($this->identifier === null) {
+            throw new InvalidArgumentException('Identifier must be specified');
+        }
+
         return [
             [
                 $this->getSpecification(),
-                [$identifier[0]],
-                [$identifier[1]],
+                [$this->identifier],
             ],
         ];
     }

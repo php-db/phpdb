@@ -6,16 +6,14 @@ use Laminas\Db\Sql\AbstractExpression;
 use Laminas\Db\Sql\Argument;
 use Laminas\Db\Sql\ArgumentType;
 use Laminas\Db\Sql\Exception\InvalidArgumentException;
+use Override;
 
 use function vsprintf;
 
 class In extends AbstractExpression implements PredicateInterface
 {
     protected ?Argument $identifier = null;
-
-    protected ?Argument $valueSet = null;
-
-    /** @var string */
+    protected ?Argument $valueSet   = null;
     protected string $specification = '%s IN %s';
 
     /**
@@ -38,9 +36,11 @@ class In extends AbstractExpression implements PredicateInterface
      *
      * @return $this Provides a fluent interface
      */
-    public function setIdentifier(null|string|int|float|array|Argument $value, ArgumentType $type = ArgumentType::Value): static
-    {
-        $this->identifier = ($value instanceof Argument) ? $value : new Argument($value, $type);
+    public function setIdentifier(
+        null|string|int|float|array|Argument $value,
+        ArgumentType $type = ArgumentType::Value
+    ): static {
+        $this->identifier = $value instanceof Argument ? $value : new Argument($value, $type);
 
         return $this;
     }
@@ -58,9 +58,9 @@ class In extends AbstractExpression implements PredicateInterface
      *
      * @return $this Provides a fluent interface
      */
-    public function setValueSet(array|Argument $valueSet = null): static
+    public function setValueSet(array|Argument $valueSet): static
     {
-        $this->valueSet = ($valueSet instanceof Argument) ? $valueSet : new Argument($valueSet);
+        $this->valueSet = $valueSet instanceof Argument ? $valueSet : new Argument($valueSet);
 
         return $this;
     }
@@ -75,15 +75,15 @@ class In extends AbstractExpression implements PredicateInterface
 
     /**
      * Return array of parts for where statement
-     *
-     * @return array
      */
-    #[\Override]
+    #[Override]
     public function getExpressionData(): array
     {
-        $identifier = $this->getIdentifier();
-        $values = $this->getValueSet();
-        if ($values === null) {
+        if ($this->identifier === null) {
+            throw new InvalidArgumentException('Identifier must be specified');
+        }
+
+        if ($this->valueSet === null) {
             throw new InvalidArgumentException('Value set must be provided for IN predicate');
         }
 
@@ -91,12 +91,11 @@ class In extends AbstractExpression implements PredicateInterface
             $this->specification,
             ['%s', '%s']
         );
-        $replacements  = [$identifier, $values];
 
         return [
             [
                 $specification,
-                $replacements,
+                [$this->identifier, $this->valueSet],
             ],
         ];
     }
