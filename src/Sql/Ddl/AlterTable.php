@@ -41,7 +41,7 @@ class AlterTable extends AbstractSql implements SqlInterface
      *
      * @var array
      */
-    protected $specifications = [
+    protected array $specifications = [
         self::TABLE            => "ALTER TABLE %1\$s\n",
         self::ADD_COLUMNS      => [
             "%1\$s" => [

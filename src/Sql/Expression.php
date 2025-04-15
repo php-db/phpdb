@@ -19,19 +19,26 @@ class Expression extends AbstractExpression
 
     protected string $expression = '';
 
-    protected float|array|int|string|bool $parameters = [];
+    protected array $parameters = [];
 
     /**
      * @todo Update documentation to show how parameters can be specifically typed
      */
-    public function __construct(string $expression = '', float|array|int|string|bool|null $parameters = null)
+    public function __construct(string $expression = '')
     {
         if ($expression !== '') {
             $this->setExpression($expression);
         }
 
+        if (func_num_args() > 1) {
+            $parameters = func_get_args();
+            $parameters = array_slice($parameters, 1);
+        } else {
+            $parameters = null;
+        }
+
         if ($parameters !== null) {
-            $this->setParameters($parameters);
+            call_user_func_array([$this, 'setParameters'], $parameters);
         }
     }
 
@@ -55,16 +62,19 @@ class Expression extends AbstractExpression
     /**
      * @throws Exception\InvalidArgumentException
      */
-    public function setParameters(float|array|int|string|bool $parameters): self
-    {
-        if (! is_scalar($parameters) && ! is_array($parameters)) {
-            throw new Exception\InvalidArgumentException('Expression parameters must be a scalar or array.');
+    public function setParameters(): self {
+        if (func_num_args() > 0) {
+            foreach (func_get_args() as $parameter) {
+                if ($parameter !== null) {
+                    $this->parameters[] = $parameter instanceof Argument ? $parameter : new Argument($parameter);
+                }
+            }
         }
-        $this->parameters = $parameters;
+
         return $this;
     }
 
-    public function getParameters(): float|array|int|string|bool
+    public function getParameters(): array
     {
         return $this->parameters;
     }
@@ -74,7 +84,7 @@ class Expression extends AbstractExpression
      */
     public function getExpressionData(): array
     {
-        $parameters      = is_scalar($this->parameters) ? [$this->parameters] : $this->parameters;
+        $parameters      = $this->parameters;
         $parametersCount = count($parameters);
         $expression      = str_replace('%', '%%', $this->expression);
 
@@ -99,13 +109,12 @@ class Expression extends AbstractExpression
         }
 
         foreach ($parameters as $parameter) {
-            [$values[], $types[]] = $this->normalizeArgument($parameter);
+            $values[] = $parameter;
         }
         return [
             [
                 $expression,
-                $values,
-                $types,
+                $values
             ],
         ];
     }

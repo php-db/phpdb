@@ -27,7 +27,7 @@ class Delete extends AbstractPreparableSql
     /**
      * {@inheritDoc}
      */
-    protected $specifications = [
+    protected array $specifications = [
         self::SPECIFICATION_DELETE => 'DELETE FROM %1$s',
         self::SPECIFICATION_WHERE  => 'WHERE %1$s',
     ];

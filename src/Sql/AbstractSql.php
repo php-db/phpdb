@@ -31,31 +31,34 @@ abstract class AbstractSql implements SqlInterface
      *
      * @var string[]|array[]
      */
-    protected $specifications = [];
+    protected array $specifications = [];
 
-    /** @var string */
-    protected $processInfo = ['paramPrefix' => '', 'subselectCount' => 0];
+    protected array $processInfo = ['paramPrefix' => '', 'subselectCount' => 0];
 
     /** @var array */
-    protected $instanceParameterIndex = [];
+    protected array $instanceParameterIndex = [];
 
     /**
      * {@inheritDoc}
      */
-    public function getSqlString(?PlatformInterface $adapterPlatform = null)
+    #[\Override]
+    public function getSqlString(?PlatformInterface $adapterPlatform = null): string
     {
         $adapterPlatform = $adapterPlatform ?: new DefaultAdapterPlatform();
         return $this->buildSqlString($adapterPlatform);
     }
 
     /**
+     * @param PlatformInterface       $platform
+     * @param DriverInterface|null    $driver
+     * @param ParameterContainer|null $parameterContainer
      * @return string
      */
     protected function buildSqlString(
         PlatformInterface $platform,
         ?DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null
-    ) {
+    ): string {
         $this->localizeVariables();
 
         $sqls       = [];
@@ -99,17 +102,20 @@ abstract class AbstractSql implements SqlInterface
 
     /**
      * @staticvar int $runtimeExpressionPrefix
-     * @param null|string $namedParameterPrefix
+     * @param ExpressionInterface     $expression
+     * @param PlatformInterface       $platform
+     * @param DriverInterface|null    $driver
+     * @param ParameterContainer|null $parameterContainer
+     * @param string|null             $namedParameterPrefix
      * @return string
-     * @throws Exception\RuntimeException
      */
     protected function processExpression(
         ExpressionInterface $expression,
         PlatformInterface $platform,
         ?DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null,
-        $namedParameterPrefix = null
-    ) {
+        ?string $namedParameterPrefix = null
+    ): string {
         $namedParameterPrefix = ! $namedParameterPrefix
             ? ''
             : $this->processInfo['paramPrefix'] . $namedParameterPrefix;
@@ -154,45 +160,48 @@ abstract class AbstractSql implements SqlInterface
                 );
             }
 
-            // Process values and types (the middle and last position of the
-            // expression data)
+            /** @var Argument[] $values */
             $values = $part[1];
-            $types  = $part[2] ?? [];
             foreach ($values as $vIndex => $value) {
-                if (! isset($types[$vIndex])) {
-                    continue;
-                }
-                $type = $types[$vIndex];
-                if ($value instanceof Select) {
+                if (is_string($value)) {
+                    $values[$vIndex] = $value;
+                } elseif ($value->getValue() instanceof Select) {
                     // process sub-select
                     $values[$vIndex] = '('
-                        . $this->processSubSelect($value, $platform, $driver, $parameterContainer)
+                        . $this->processSubSelect($value->getValue(), $platform, $driver, $parameterContainer)
                         . ')';
-                } elseif ($value instanceof ExpressionInterface) {
+                } elseif ($value->getValue() instanceof ExpressionInterface) {
                     // recursive call to satisfy nested expressions
                     $values[$vIndex] = $this->processExpression(
-                        $value,
+                        $value->getValue(),
                         $platform,
                         $driver,
                         $parameterContainer,
                         $namedParameterPrefix . $vIndex . 'subpart'
                     );
-                } elseif ($type === ExpressionInterface::TYPE_IDENTIFIER) {
-                    $values[$vIndex] = $platform->quoteIdentifierInFragment($value);
-                } elseif ($type === ExpressionInterface::TYPE_VALUE) {
+                } elseif ($value->getType() === ArgumentType::Identifier) {
+                    $values[$vIndex] = $platform->quoteIdentifierInFragment($value->getValue());
+                } elseif ($value->getType() === ArgumentType::Value) {
                     // if prepareType is set, it means that this particular value must be
                     // passed back to the statement in a way it can be used as a placeholder value
                     if ($parameterContainer) {
                         $name = $namedParameterPrefix . $expressionParamIndex++;
-                        $parameterContainer->offsetSet($name, $value);
+                        $parameterContainer->offsetSet($name, $value->getValue());
                         $values[$vIndex] = $driver->formatParameterName($name);
                         continue;
                     }
 
                     // if not a preparable statement, simply quote the value and move on
-                    $values[$vIndex] = $platform->quoteValue($value);
-                } elseif ($type === ExpressionInterface::TYPE_LITERAL) {
-                    $values[$vIndex] = $value;
+                    if (is_array($value->getValue())) {
+                        $values[$vIndex] = sprintf(
+                            '(%s)',
+                            join(', ', array_map([$platform, 'quoteValue'], $value->getValue()))
+                        );
+                    } else {
+                        $values[$vIndex] = $platform->quoteValue($value->getValue());
+                    }
+                } elseif ($value->getType() === ArgumentType::Literal) {
+                    $values[$vIndex] = $value->getValue();
                 }
             }
 
@@ -314,9 +323,9 @@ abstract class AbstractSql implements SqlInterface
         PlatformInterface $platform,
         ?DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null
-    ) {
+    ): ?array {
         if (! $joins->count()) {
-            return;
+            return null;
         }
 
         // process joins
@@ -381,7 +390,7 @@ abstract class AbstractSql implements SqlInterface
 
     /**
      * @param null|array|ExpressionInterface|Select $column
-     * @param null|string $namedParameterPrefix
+     * @param string|null                           $namedParameterPrefix
      * @return string
      */
     protected function resolveColumnValue(
@@ -389,7 +398,7 @@ abstract class AbstractSql implements SqlInterface
         PlatformInterface $platform,
         ?DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null,
-        $namedParameterPrefix = null
+        ?string $namedParameterPrefix = null
     ) {
         $namedParameterPrefix = ! $namedParameterPrefix
             ? $namedParameterPrefix

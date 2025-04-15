@@ -26,7 +26,7 @@ class CreateTable extends AbstractSql implements SqlInterface
     /**
      * {@inheritDoc}
      */
-    protected $specifications = [
+    protected array $specifications = [
         self::TABLE       => 'CREATE %1$sTABLE %2$s (',
         self::COLUMNS     => [
             "\n    %1\$s" => [

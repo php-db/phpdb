@@ -27,7 +27,7 @@ class Combine extends AbstractPreparableSql
     public const COMBINE_INTERSECT = 'intersect';
 
     /** @var string[] */
-    protected $specifications = [
+    protected array $specifications = [
         self::COMBINE => '%1$s (%2$s) ',
     ];
 
@@ -132,9 +132,9 @@ class Combine extends AbstractPreparableSql
         PlatformInterface $platform,
         ?DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null
-    ) {
+    ): string {
         if (! $this->combine) {
-            return;
+            return '';
         }
 
         $sql = '';

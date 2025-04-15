@@ -14,44 +14,24 @@ class Argument
         protected null|string|int|float|array|ExpressionInterface|SqlInterface $value = null,
         protected ArgumentType $type = ArgumentType::Value
     ) {
-        if (is_array($value)) {
-            $type  = $this->processArrayType($value);
-            $value = $this->processArrayValue($value);
-        }
-
         if ($value instanceof ExpressionInterface || $value instanceof SqlInterface) {
             $type = ArgumentType::Select;
-        } elseif (is_string($value) || is_array($value) || is_float($value) || is_int($value) || $value === null) {
+        } elseif (is_array($value)) {
+            $key     = key($value);
+            $current = current($value);
+            if ($current instanceof ArgumentType) {
+                $type  = $current;
+                $value = $key;
+            } else {
+                $type    = ArgumentType::Value;
+                $value = array_values($value);
+            }
+        } elseif ($type === ArgumentType::Select) {
             throw new InvalidArgumentException('Invalid argument value');
         }
 
         $this->setType($type);
         $this->setValue($value);
-    }
-
-    protected function processArrayType(array $value): ArgumentType
-    {
-        $type = ArgumentType::Value;
-        if (count($value) !== 1) {
-            return $type;
-        }
-
-        $key   = key($value);
-        if (is_int($key)) {
-            return $type;
-        }
-
-        return ArgumentType::tryFrom($key) ?? ArgumentType::Value;
-    }
-
-    protected function processArrayValue(array $value): array|string|int|float|ExpressionInterface|SqlInterface
-    {
-        if (count($value) !== 1) {
-            return $value;
-        }
-
-        /** @var array|string|int|float|ExpressionInterface|SqlInterface */
-        return current($value);
     }
 
     public function setType(ArgumentType|string $type): static

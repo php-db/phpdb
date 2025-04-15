@@ -71,7 +71,7 @@ class Select extends AbstractPreparableSql
     /**#@-*/
 
     /** @var string[]|array[] $specifications */
-    protected $specifications = [
+    protected array $specifications = [
         'statementStart' => '%1$s',
         self::SELECT     => [
             'SELECT %1$s FROM %2$s'      => [

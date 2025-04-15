@@ -7,6 +7,8 @@ use Laminas\Db\Adapter\Driver\DriverInterface;
 use Laminas\Db\Adapter\Driver\StatementInterface;
 use Laminas\Db\Adapter\ParameterContainer;
 use Laminas\Db\Adapter\Platform\Sql92;
+use Laminas\Db\Sql\Argument;
+use Laminas\Db\Sql\ArgumentType;
 use Laminas\Db\Sql\Exception\InvalidArgumentException;
 use Laminas\Db\Sql\Expression;
 use Laminas\Db\Sql\ExpressionInterface;
@@ -244,12 +246,13 @@ final class SelectTest extends TestCase
         /** @var Where $where */
         $where      = $select->getRawState('where');
         $predicates = $where->getPredicates();
+        $expression = new Argument(5, ArgumentType::Value);
         self::assertCount(1, $predicates);
         self::assertIsArray($predicates[0]);
         self::assertInstanceOf(Predicate\Expression::class, $predicates[0][1]);
         self::assertEquals(Predicate\PredicateSet::OP_AND, $predicates[0][0]);
         self::assertEquals('foo > ?', $predicates[0][1]->getExpression());
-        self::assertEquals([5], $predicates[0][1]->getParameters());
+        self::assertEquals([$expression], $predicates[0][1]->getParameters());
     }
 
     #[TestDox('unit test: Test where() will accept any array with string key (without ?) to be used
@@ -258,6 +261,10 @@ final class SelectTest extends TestCase
     {
         $select = new Select();
         $select->where(['name' => 'Ralph', 'age' => 33]);
+        $identifier1 = new Argument('name', ArgumentType::Identifier);
+        $expression1 = new Argument('Ralph', ArgumentType::Value);
+        $identifier2 = new Argument('age', ArgumentType::Identifier);
+        $expression2 = new Argument(33, ArgumentType::Value);
 
         /** @var Where $where */
         $where      = $select->getRawState('where');
@@ -268,13 +275,13 @@ final class SelectTest extends TestCase
 
         self::assertInstanceOf(Operator::class, $predicates[0][1]);
         self::assertEquals(Predicate\PredicateSet::OP_AND, $predicates[0][0]);
-        self::assertEquals('name', $predicates[0][1]->getLeft());
-        self::assertEquals('Ralph', $predicates[0][1]->getRight());
+        self::assertEquals($identifier1, $predicates[0][1]->getLeft());
+        self::assertEquals($expression1, $predicates[0][1]->getRight());
 
         self::assertInstanceOf(Operator::class, $predicates[1][1]);
         self::assertEquals(Predicate\PredicateSet::OP_AND, $predicates[1][0]);
-        self::assertEquals('age', $predicates[1][1]->getLeft());
-        self::assertEquals(33, $predicates[1][1]->getRight());
+        self::assertEquals($identifier2, $predicates[1][1]->getLeft());
+        self::assertEquals($expression2, $predicates[1][1]->getRight());
 
         $select = new Select();
         $select->where(['x = y']);
@@ -846,11 +853,9 @@ final class SelectTest extends TestCase
             [
                 new Expression(
                     '(COUNT(?) + ?) AS ?',
-                    [
-                        ['some_column' => ExpressionInterface::TYPE_IDENTIFIER],
-                        [5 => ExpressionInterface::TYPE_VALUE],
-                        ['bar' => ExpressionInterface::TYPE_IDENTIFIER],
-                    ],
+                    ['some_column' => ArgumentType::Identifier],
+                    [5 => ArgumentType::Value],
+                    ['bar' => ArgumentType::Identifier],
                 ),
             ]
         );
@@ -952,7 +957,7 @@ final class SelectTest extends TestCase
         ];
 
         $select19 = new Select();
-        $select19->from('foo')->group(new Expression('DAY(?)', [['col1' => ExpressionInterface::TYPE_IDENTIFIER]]));
+        $select19->from('foo')->group(new Expression('DAY(?)', ['col1' => ArgumentType::Identifier]));
         $sqlPrep19       = // same
         $sqlStr19        = 'SELECT "foo".* FROM "foo" GROUP BY DAY("col1")';
         $internalTests19 = [
@@ -1107,7 +1112,7 @@ final class SelectTest extends TestCase
         // @author Demian Katz
         $select34 = new Select();
         $select34->from('table')->order([
-            new Expression('isnull(?) DESC', [['name' => ExpressionInterface::TYPE_IDENTIFIER]]),
+            new Expression('isnull(?) DESC', ['name' => ArgumentType::Identifier]),
             'name',
         ]);
         $sqlPrep34       = 'SELECT "table".* FROM "table" ORDER BY isnull("name") DESC, "name" ASC';
@@ -1210,7 +1215,7 @@ final class SelectTest extends TestCase
         ];
 
         $select42 = new Select();
-        $select42->from('foo')->quantifier(new Expression('TOP ?', [10]));
+        $select42->from('foo')->quantifier(new Expression('TOP ?', 10));
         $sqlPrep42       = 'SELECT TOP ? "foo".* FROM "foo"';
         $sqlStr42        = 'SELECT TOP \'10\' "foo".* FROM "foo"';
         $internalTests42 = [

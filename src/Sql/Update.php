@@ -36,7 +36,7 @@ class Update extends AbstractPreparableSql
     /**@#-**/
 
     /** @var array<string, string>|array<string, array> */
-    protected $specifications = [
+    protected array $specifications = [
         self::SPECIFICATION_UPDATE => 'UPDATE %1$s',
         self::SPECIFICATION_JOIN   => [
             '%1$s' => [

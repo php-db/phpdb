@@ -93,7 +93,7 @@ final class CombineTest extends TestCase
 
     public function testGetSqlStringEmpty(): void
     {
-        self::assertNull($this->combine->getSqlString());
+        self::assertEmpty($this->combine->getSqlString());
     }
 
     public function testPrepareStatementWithModifier(): void

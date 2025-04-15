@@ -2,6 +2,8 @@
 
 namespace LaminasTest\Db\Sql\Predicate;
 
+use Laminas\Db\Sql\Argument;
+use Laminas\Db\Sql\ArgumentType;
 use Laminas\Db\Sql\Predicate\Between;
 use Override;
 use PHPUnit\Framework\Attributes\CoversMethod;
@@ -37,19 +39,31 @@ final class BetweenTest extends TestCase
     public function testConstructorCanPassIdentifierMinimumAndMaximumValues(): void
     {
         $between = new Between('foo.bar', 1, 300);
-        self::assertEquals('foo.bar', $between->getIdentifier());
-        self::assertSame(1, $between->getMinValue());
-        self::assertSame(300, $between->getMaxValue());
+        $identifier = new Argument('foo.bar', ArgumentType::Identifier);
+        $minValue = new Argument(1, ArgumentType::Value);
+        $maxValue = new Argument(300, ArgumentType::Value);
+
+        self::assertEquals($identifier, $between->getIdentifier());
+        self::assertEquals($minValue, $between->getMinValue());
+        self::assertEquals($maxValue, $between->getMaxValue());
 
         $between = new Between('foo.bar', 0, 1);
-        self::assertEquals('foo.bar', $between->getIdentifier());
-        self::assertSame(0, $between->getMinValue());
-        self::assertSame(1, $between->getMaxValue());
+        $identifier = new Argument('foo.bar', ArgumentType::Identifier);
+        $minValue = new Argument(0, ArgumentType::Value);
+        $maxValue = new Argument(1, ArgumentType::Value);
+
+        self::assertEquals($identifier, $between->getIdentifier());
+        self::assertEquals($minValue, $between->getMinValue());
+        self::assertEquals($maxValue, $between->getMaxValue());
 
         $between = new Between('foo.bar', -1, 0);
-        self::assertEquals('foo.bar', $between->getIdentifier());
-        self::assertSame(-1, $between->getMinValue());
-        self::assertSame(0, $between->getMaxValue());
+        $identifier = new Argument('foo.bar', ArgumentType::Identifier);
+        $minValue = new Argument(-1, ArgumentType::Value);
+        $maxValue = new Argument(0, ArgumentType::Value);
+
+        self::assertEquals($identifier, $between->getIdentifier());
+        self::assertEquals($minValue, $between->getMinValue());
+        self::assertEquals($maxValue, $between->getMaxValue());
     }
 
     public function testSpecificationHasSaneDefaultValue(): void
@@ -60,19 +74,22 @@ final class BetweenTest extends TestCase
     public function testIdentifierIsMutable(): void
     {
         $this->between->setIdentifier('foo.bar');
-        self::assertEquals('foo.bar', $this->between->getIdentifier());
+        $identifier = new Argument('foo.bar', ArgumentType::Identifier);
+        self::assertEquals($identifier, $this->between->getIdentifier());
     }
 
     public function testMinValueIsMutable(): void
     {
         $this->between->setMinValue(10);
-        self::assertEquals(10, $this->between->getMinValue());
+        $expression = new Argument(10, ArgumentType::Value);
+        self::assertEquals($expression, $this->between->getMinValue());
     }
 
     public function testMaxValueIsMutable(): void
     {
         $this->between->setMaxValue(10);
-        self::assertEquals(10, $this->between->getMaxValue());
+        $expression = new Argument(10, ArgumentType::Value);
+        self::assertEquals($expression, $this->between->getMaxValue());
     }
 
     public function testSpecificationIsMutable(): void
@@ -86,23 +103,31 @@ final class BetweenTest extends TestCase
         $this->between->setIdentifier('foo.bar')
                       ->setMinValue(10)
                       ->setMaxValue(19);
+
+        $identifier = new Argument('foo.bar', ArgumentType::Identifier);
+        $minValue = new Argument(10, ArgumentType::Value);
+        $maxValue = new Argument(19, ArgumentType::Value);
+
         $expected = [
             [
                 $this->between->getSpecification(),
-                ['foo.bar', 10, 19],
-                [Between::TYPE_IDENTIFIER, Between::TYPE_VALUE, Between::TYPE_VALUE],
+                [$identifier, $minValue, $maxValue]
             ],
         ];
         self::assertEquals($expected, $this->between->getExpressionData());
 
-        $this->between->setIdentifier([10 => Between::TYPE_VALUE])
-                      ->setMinValue(['foo.bar' => Between::TYPE_IDENTIFIER])
-                      ->setMaxValue(['foo.baz' => Between::TYPE_IDENTIFIER]);
+        $this->between->setIdentifier([10 => ArgumentType::Value])
+                      ->setMinValue(['foo.bar' => ArgumentType::Identifier])
+                      ->setMaxValue(['foo.baz' => ArgumentType::Identifier]);
+
+        $identifier = new Argument(10, ArgumentType::Value);
+        $minValue = new Argument('foo.bar', ArgumentType::Identifier);
+        $maxValue = new Argument('foo.baz', ArgumentType::Identifier);
+
         $expected = [
             [
                 $this->between->getSpecification(),
-                [10, 'foo.bar', 'foo.baz'],
-                [Between::TYPE_VALUE, Between::TYPE_IDENTIFIER, Between::TYPE_IDENTIFIER],
+                [$identifier, $minValue, $maxValue]
             ],
         ];
         self::assertEquals($expected, $this->between->getExpressionData());

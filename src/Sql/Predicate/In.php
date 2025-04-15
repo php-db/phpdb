@@ -6,6 +6,7 @@ use Laminas\Db\Sql\AbstractExpression;
 use Laminas\Db\Sql\Argument;
 use Laminas\Db\Sql\ArgumentType;
 use Laminas\Db\Sql\Exception\InvalidArgumentException;
+use Laminas\Db\Sql\Select;
 use Override;
 
 use function vsprintf;
@@ -21,7 +22,7 @@ class In extends AbstractExpression implements PredicateInterface
      */
     public function __construct(
         null|float|int|string|array|Argument $identifier = null,
-        null|array|Argument $valueSet = null
+        null|array|Select|Argument $valueSet = null
     ) {
         if ($identifier !== null) {
             $this->setIdentifier($identifier);
@@ -38,7 +39,7 @@ class In extends AbstractExpression implements PredicateInterface
      */
     public function setIdentifier(
         null|string|int|float|array|Argument $value,
-        ArgumentType $type = ArgumentType::Value
+        ArgumentType $type = ArgumentType::Identifier
     ): static {
         $this->identifier = $value instanceof Argument ? $value : new Argument($value, $type);
 
@@ -58,7 +59,7 @@ class In extends AbstractExpression implements PredicateInterface
      *
      * @return $this Provides a fluent interface
      */
-    public function setValueSet(array|Argument $valueSet): static
+    public function setValueSet(array|Select|Argument $valueSet): static
     {
         $this->valueSet = $valueSet instanceof Argument ? $valueSet : new Argument($valueSet);
 

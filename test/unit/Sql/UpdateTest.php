@@ -28,6 +28,7 @@ use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\TestDox;
 use PHPUnit\Framework\TestCase;
 use ReflectionException;
+use TypeError;
 
 #[CoversMethod(Update::class, 'table')]
 #[CoversMethod(Update::class, '__construct')]
@@ -148,8 +149,7 @@ final class UpdateTest extends TestCase
             self::assertSame($where, $what);
         });
 
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Predicate cannot be null');
+        $this->expectException(TypeError::class);
         /** @psalm-suppress NullArgument - Ensure exception is thrown */
         $this->update->where(null);
     }

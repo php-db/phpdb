@@ -44,7 +44,6 @@ class Literal implements ExpressionInterface
             [
                 str_replace('%', '%%', $this->literal),
                 [],
-                [],
             ],
         ];
     }

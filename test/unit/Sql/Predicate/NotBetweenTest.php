@@ -2,6 +2,7 @@
 
 namespace LaminasTest\Db\Sql\Predicate;
 
+use Laminas\Db\Sql\ArgumentType;
 use Laminas\Db\Sql\ExpressionInterface;
 use Laminas\Db\Sql\Predicate\NotBetween;
 use Override;
@@ -41,8 +42,8 @@ final class NotBetweenTest extends TestCase
 
         $this->notBetween
             ->setIdentifier(10)
-            ->setMinValue(['foo.bar' => ExpressionInterface::TYPE_IDENTIFIER])
-            ->setMaxValue(['foo.baz' => ExpressionInterface::TYPE_IDENTIFIER]);
+            ->setMinValue(['foo.bar' => ArgumentType::Identifier])
+            ->setMaxValue(['foo.baz' => ArgumentType::Identifier]);
         $expected = [
             [
                 $this->notBetween->getSpecification(),

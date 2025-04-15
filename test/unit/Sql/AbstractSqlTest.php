@@ -6,6 +6,7 @@ use Laminas\Db\Adapter\Driver\DriverInterface;
 use Laminas\Db\Adapter\ParameterContainer;
 use Laminas\Db\Adapter\StatementContainer;
 use Laminas\Db\Sql\AbstractSql;
+use Laminas\Db\Sql\ArgumentType;
 use Laminas\Db\Sql\Expression;
 use Laminas\Db\Sql\ExpressionInterface;
 use Laminas\Db\Sql\Predicate;
@@ -57,7 +58,7 @@ final class AbstractSqlTest extends TestCase
      */
     public function testProcessExpressionWithoutParameterContainer(): void
     {
-        $expression   = new Expression('? > ? AND y < ?', [['x' => ExpressionInterface::TYPE_IDENTIFIER], 5, 10]);
+        $expression   = new Expression('? > ? AND y < ?', ['x' => ArgumentType::Identifier], 5, 10);
         $sqlAndParams = $this->invokeProcessExpressionMethod($expression);
 
         self::assertEquals("\"x\" > '5' AND y < '10'", $sqlAndParams);
@@ -69,7 +70,7 @@ final class AbstractSqlTest extends TestCase
     public function testProcessExpressionWithParameterContainerAndParameterizationTypeNamed(): void
     {
         $parameterContainer = new ParameterContainer();
-        $expression         = new Expression('? > ? AND y < ?', [['x' => ExpressionInterface::TYPE_IDENTIFIER], 5, 10]);
+        $expression         = new Expression('? > ? AND y < ?', ['x' => ArgumentType::Identifier], 5, 10);
         $sqlAndParams       = $this->invokeProcessExpressionMethod($expression, $parameterContainer);
 
         $parameters = $parameterContainer->getNamedArray();
