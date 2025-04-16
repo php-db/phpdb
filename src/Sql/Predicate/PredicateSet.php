@@ -6,8 +6,9 @@ use Closure;
 use Countable;
 use Laminas\Db\Sql\Exception;
 use Laminas\Db\Sql\Expression;
+use Laminas\Db\Sql\ExpressionData;
+use Laminas\Db\Sql\ExpressionDataSet;
 use Laminas\Db\Sql\Predicate\Expression as PredicateExpression;
-use Override;
 use ReturnTypeWillChange;
 
 use function array_merge;
@@ -177,30 +178,30 @@ class PredicateSet implements PredicateInterface, Countable
      * Get predicate parts for where statement
      */
     #[Override]
-    public function getExpressionData(): array
+    public function getExpressionData(): ExpressionData
     {
-        $parts = [];
+        $expressionData = new ExpressionData();
 
         for ($i = 0, $count = count($this->predicates); $i < $count; $i++) {
             /** @var PredicateInterface $predicate */
             $predicate = $this->predicates[$i][1];
 
             if ($predicate instanceof PredicateSet) {
-                $parts[] = '(';
+                $expressionData->addExpressionPart('(');
             }
 
-            $parts = array_merge($parts, $predicate->getExpressionData());
+            $expressionData->addExpressionParts($predicate->getExpressionData()->getExpressionParts());
 
             if ($predicate instanceof PredicateSet) {
-                $parts[] = ')';
+                $expressionData->addExpressionPart(')');
             }
 
             if (isset($this->predicates[$i + 1])) {
-                $parts[] = sprintf(' %s ', $this->predicates[$i + 1][0]);
+                $expressionData->addExpressionPart(sprintf('%s', (string) $this->predicates[$i + 1][0]));
             }
         }
 
-        return $parts;
+        return $expressionData;
     }
 
     /**

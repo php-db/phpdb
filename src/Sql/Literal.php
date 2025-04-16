@@ -35,16 +35,9 @@ class Literal implements ExpressionInterface
         return $this->literal;
     }
 
-    /**
-     * @return array
-     */
-    public function getExpressionData()
+    #[\Override]
+    public function getExpressionData(): ExpressionData
     {
-        return [
-            [
-                str_replace('%', '%%', $this->literal),
-                [],
-            ],
-        ];
+        return new ExpressionData(str_replace('%', '%%', $this->literal));
     }
 }

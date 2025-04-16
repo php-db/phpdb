@@ -2,6 +2,8 @@
 
 namespace LaminasTest\Db\Sql\Predicate;
 
+use Laminas\Db\Sql\Argument;
+use Laminas\Db\Sql\ArgumentType;
 use Laminas\Db\Sql\Predicate\IsNotNull;
 use PHPUnit\Framework\TestCase;
 
@@ -23,14 +25,16 @@ final class IsNullTest extends TestCase
     {
         new IsNotNull();
         $isnull = new IsNotNull('foo.bar');
-        self::assertEquals('foo.bar', $isnull->getIdentifier());
+        $identifier = new Argument('foo.bar', ArgumentType::Identifier);
+        self::assertEquals($identifier, $isnull->getIdentifier());
     }
 
     public function testIdentifierIsMutable(): void
     {
         $isNotNull = new IsNotNull();
         $isNotNull->setIdentifier('foo.bar');
-        self::assertEquals('foo.bar', $isNotNull->getIdentifier());
+        $identifier = new Argument('foo.bar', ArgumentType::Identifier);
+        self::assertEquals($identifier, $isNotNull->getIdentifier());
     }
 
     public function testSpecificationIsMutable(): void
@@ -44,11 +48,11 @@ final class IsNullTest extends TestCase
     {
         $isNotNull = new IsNotNull();
         $isNotNull->setIdentifier('foo.bar');
+        $identifier = new Argument('foo.bar', ArgumentType::Identifier);
         $expected = [
             [
                 $isNotNull->getSpecification(),
-                ['foo.bar'],
-                [IsNotNull::TYPE_IDENTIFIER],
+                [$identifier],
             ],
         ];
         self::assertEquals($expected, $isNotNull->getExpressionData());

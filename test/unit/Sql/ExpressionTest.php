@@ -2,6 +2,8 @@
 
 namespace LaminasTest\Db\Sql;
 
+use Laminas\Db\Sql\Argument;
+use Laminas\Db\Sql\ArgumentType;
 use Laminas\Db\Sql\Exception\InvalidArgumentException;
 use Laminas\Db\Sql\Expression;
 use PHPUnit\Framework\Attributes\CoversMethod;
@@ -126,12 +128,13 @@ final class ExpressionTest extends TestCase
     public function testNumberOfReplacementsConsidersWhenSameVariableIsUsedManyTimes(): void
     {
         $expression = new Expression('uf.user_id = :user_id OR uf.friend_id = :user_id', ['user_id' => 1]);
+        $value      = new Argument(1, ArgumentType::Value);
 
         self::assertSame(
             [
                 [
                     'uf.user_id = :user_id OR uf.friend_id = :user_id',
-                    [1],
+                    [$value],
                     ['value'],
                 ],
             ],
@@ -143,7 +146,8 @@ final class ExpressionTest extends TestCase
     public function testConstructorWithFalsyValidParameters(mixed $falsyParameter): void
     {
         $expression = new Expression('?', $falsyParameter);
-        self::assertSame($falsyParameter, $expression->getParameters());
+        $falsyValue = new Argument($falsyParameter, ArgumentType::Value);
+        self::assertEquals($falsyValue, $expression->getParameters());
     }
 
     public function testConstructorWithInvalidParameter(): void
@@ -168,13 +172,14 @@ final class ExpressionTest extends TestCase
     public function testNumberOfReplacementsForExpressionWithParameters(): void
     {
         $expression = new Expression(':a + :b', ['a' => 1, 'b' => 2]);
+        $value1 = new Argument(1, ArgumentType::Value);
+        $value2 = new Argument(2, ArgumentType::Value);
 
         self::assertSame(
             [
                 [
                     ':a + :b',
-                    [1, 2],
-                    ['value', 'value'],
+                    [$value1, $value2],
                 ],
             ],
             $expression->getExpressionData()

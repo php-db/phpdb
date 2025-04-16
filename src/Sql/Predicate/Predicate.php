@@ -4,6 +4,7 @@ namespace Laminas\Db\Sql\Predicate;
 
 use Laminas\Db\Sql\Argument;
 use Laminas\Db\Sql\Exception\RuntimeException;
+use Laminas\Db\Sql\ExpressionInterface;
 
 /**
  * @property Predicate $and
@@ -216,11 +217,13 @@ class Predicate extends PredicateSet
      *
      * @return $this Provides a fluent interface
      */
-    public function expression(?string $expression): static
-    {
-        if (func_num_args() > 1) {
+    public function expression(
+        string $expression,
+        null|string|float|int|array|Argument|ExpressionInterface $parameters = []
+    ): static {
+        if ($parameters !== []) {
             $this->addPredicate(
-                new Expression($expression, array_slice(func_get_args(), 1)),
+                new Expression($expression, $parameters),
                 $this->getNextPredicateCombineOperator()
             );
         } else {

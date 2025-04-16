@@ -6,6 +6,7 @@ use Laminas\Db\Sql\AbstractExpression;
 use Laminas\Db\Sql\Argument;
 use Laminas\Db\Sql\ArgumentType;
 use Laminas\Db\Sql\Exception\InvalidArgumentException;
+use Laminas\Db\Sql\ExpressionData;
 use Override;
 
 class Like extends AbstractExpression implements PredicateInterface
@@ -18,8 +19,8 @@ class Like extends AbstractExpression implements PredicateInterface
      * Constructor
      */
     public function __construct(
-        null|float|int|string|Argument $identifier = null,
-        null|float|int|string|Argument $like = null
+        null|float|int|string|array|Argument $identifier = null,
+        null|float|int|string|array|Argument $like = null
     ) {
         if ($identifier !== null) {
             $this->setIdentifier($identifier);
@@ -82,7 +83,7 @@ class Like extends AbstractExpression implements PredicateInterface
     }
 
     #[Override]
-    public function getExpressionData(): array
+    public function getExpressionData(): ExpressionData
     {
         if ($this->identifier === null) {
             throw new InvalidArgumentException('Identifier must be specified');
@@ -92,11 +93,12 @@ class Like extends AbstractExpression implements PredicateInterface
             throw new InvalidArgumentException('Like expression must be specified');
         }
 
-        return [
+        return new ExpressionData(
+            $this->getSpecification(),
             [
-                $this->specification,
-                [$this->identifier, $this->like],
-            ],
-        ];
+                $this->identifier,
+                $this->like
+            ]
+        );
     }
 }

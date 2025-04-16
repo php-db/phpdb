@@ -2,6 +2,8 @@
 
 namespace LaminasTest\Db\Sql\Predicate;
 
+use Laminas\Db\Sql\Argument;
+use Laminas\Db\Sql\ArgumentType;
 use Laminas\Db\Sql\Predicate\NotIn;
 use Laminas\Db\Sql\Select;
 use PHPUnit\Framework\TestCase;
@@ -13,11 +15,14 @@ final class NotInTest extends TestCase
         $in = new NotIn();
         $in->setIdentifier('foo.bar')
             ->setValueSet([1, 2, 3]);
+
+        $identifier = new Argument('foo.bar', ArgumentType::Identifier);
+        $expression = new Argument([1, 2, 3], ArgumentType::Value);
+
         $expected = [
             [
                 '%s NOT IN (%s, %s, %s)',
-                ['foo.bar', 1, 2, 3],
-                [NotIn::TYPE_IDENTIFIER, NotIn::TYPE_VALUE, NotIn::TYPE_VALUE, NotIn::TYPE_VALUE],
+                [$identifier, $expression],
             ],
         ];
         self::assertEquals($expected, $in->getExpressionData());
@@ -27,11 +32,14 @@ final class NotInTest extends TestCase
     {
         $select   = new Select();
         $in       = new NotIn('foo', $select);
+
+        $identifier = new Argument('foo', ArgumentType::Identifier);
+        $expression = new Argument($select, ArgumentType::Select);
+
         $expected = [
             [
                 '%s NOT IN %s',
-                ['foo', $select],
-                [$in::TYPE_IDENTIFIER, $in::TYPE_VALUE],
+                [$identifier, $expression]
             ],
         ];
         self::assertEquals($expected, $in->getExpressionData());
@@ -39,13 +47,14 @@ final class NotInTest extends TestCase
 
     public function testGetExpressionDataWithSubselectAndIdentifier(): void
     {
-        $select   = new Select();
-        $in       = new NotIn('foo', $select);
+        $select     = new Select();
+        $in         = new NotIn('foo', $select);
+        $identifier = new Argument('foo', ArgumentType::Identifier);
+        $expression = new Argument($select, ArgumentType::Select);
         $expected = [
             [
                 '%s NOT IN %s',
-                ['foo', $select],
-                [$in::TYPE_IDENTIFIER, $in::TYPE_VALUE],
+                [$identifier, $expression]
             ],
         ];
         self::assertEquals($expected, $in->getExpressionData());
@@ -54,14 +63,18 @@ final class NotInTest extends TestCase
     public function testGetExpressionDataWithSubselectAndArrayIdentifier(): void
     {
         $select   = new Select();
-        $in       = new NotIn(['foo', 'bar'], $select);
+        $in       = new NotIn(new Argument(['foo', 'bar'], ArgumentType::Identifier), $select);
+
+        $identifier = new Argument(['foo', 'bar'], ArgumentType::Identifier);
+        $expression = new Argument($select, ArgumentType::Select);
+
         $expected = [
             [
                 '(%s, %s) NOT IN %s',
-                ['foo', 'bar', $select],
-                [$in::TYPE_IDENTIFIER, $in::TYPE_IDENTIFIER, $in::TYPE_VALUE],
+                [$identifier, $expression],
             ],
         ];
+
         self::assertEquals($expected, $in->getExpressionData());
     }
 }

@@ -2,17 +2,21 @@
 
 namespace Laminas\Db\Sql\Ddl\Column;
 
+use Laminas\Db\Sql\Argument;
+use Laminas\Db\Sql\ExpressionData;
+
 abstract class AbstractLengthColumn extends Column
 {
-    /** @var int */
-    protected $length;
+    protected string $specification = '%s %s(%s)';
+
+    protected int $length;
 
     /**
      * {@inheritDoc}
      *
      * @param int $length
      */
-    public function __construct($name, $length = null, $nullable = false, $default = null, array $options = [])
+    public function __construct($name, int $length = null, $nullable = false, $default = null, array $options = [])
     {
         $this->setLength($length);
 
@@ -20,43 +24,39 @@ abstract class AbstractLengthColumn extends Column
     }
 
     /**
-     * @param  int $length
      * @return $this Provides a fluent interface
      */
-    public function setLength($length)
+    public function setLength(?int $length = 0): static
     {
-        $this->length = (int) $length;
+        $this->length = $length;
 
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getLength()
+    public function getLength(): int
     {
         return $this->length;
     }
 
-    /**
-     * @return string
-     */
-    protected function getLengthExpression()
+    protected function getLengthExpression(): string
     {
         return (string) $this->length;
     }
 
     /**
-     * @return array
+     * @return ExpressionData
      */
-    public function getExpressionData()
+    #[\Override]
+    public function getExpressionData(): ExpressionData
     {
-        $data = parent::getExpressionData();
+        $expressionData = parent::getExpressionData();
 
         if ($this->getLengthExpression()) {
-            $data[0][1][1] .= '(' . $this->getLengthExpression() . ')';
+            $expressionData
+                ->getExpressionPart(0)
+                ->addValue(Argument::Literal($this->getLengthExpression()));
         }
 
-        return $data;
+        return $expressionData;
     }
 }

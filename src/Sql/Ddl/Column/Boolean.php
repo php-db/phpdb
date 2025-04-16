@@ -5,12 +5,12 @@ namespace Laminas\Db\Sql\Ddl\Column;
 class Boolean extends Column
 {
     /** @var string */
-    protected $type = 'BOOLEAN';
+    protected string $type = 'BOOLEAN';
 
     /**
      * {@inheritDoc}
      */
-    protected $isNullable = false;
+    protected bool $isNullable = false;
 
     /**
      * {@inheritDoc}

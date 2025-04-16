@@ -2,6 +2,8 @@
 
 namespace LaminasTest\Db\Sql\Predicate;
 
+use Laminas\Db\Sql\Argument;
+use Laminas\Db\Sql\ArgumentType;
 use Laminas\Db\Sql\Predicate\Like;
 use PHPUnit\Framework\TestCase;
 
@@ -16,18 +18,25 @@ final class LikeTest extends TestCase
 
     public function testConstructWithArgs(): void
     {
-        $like = new Like('bar', 'Foo%');
-        self::assertEquals('bar', $like->getIdentifier());
-        self::assertEquals('Foo%', $like->getLike());
+        $like = new Like('bar', 'foo%');
+        $identifier = new Argument('bar', ArgumentType::Identifier);
+        $expression = new Argument('foo%', ArgumentType::Value);
+        self::assertEquals($identifier, $like->getIdentifier());
+        self::assertEquals($expression, $like->getLike());
     }
 
     public function testAccessorsMutators(): void
     {
         $like = new Like();
+
         $like->setIdentifier('bar');
-        self::assertEquals('bar', $like->getIdentifier());
+        $expression = new Argument('bar', ArgumentType::Identifier);
+        self::assertEquals($expression, $like->getIdentifier());
+
         $like->setLike('foo%');
-        self::assertEquals('foo%', $like->getLike());
+        $expression = new Argument('foo%', ArgumentType::Value);
+        self::assertEquals($expression, $like->getLike());
+
         $like->setSpecification('target = target');
         self::assertEquals('target = target', $like->getSpecification());
     }
@@ -35,9 +44,11 @@ final class LikeTest extends TestCase
     public function testGetExpressionData(): void
     {
         $like = new Like('bar', 'Foo%');
+        $identifier = new Argument('bar', ArgumentType::Identifier);
+        $expression = new Argument('Foo%', ArgumentType::Value);
         self::assertEquals(
             [
-                ['%1$s LIKE %2$s', ['bar', 'Foo%'], [$like::TYPE_IDENTIFIER, $like::TYPE_VALUE]],
+                ['%1$s LIKE %2$s', [$identifier, $expression]],
             ],
             $like->getExpressionData()
         );

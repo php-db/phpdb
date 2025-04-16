@@ -2,20 +2,22 @@
 
 namespace Laminas\Db\Sql\Ddl\Column;
 
+use Laminas\Db\Sql\ExpressionData;
+
 class Integer extends Column
 {
-    /**
-     * @return array
-     */
-    public function getExpressionData()
+    #[\Override]
+    public function getExpressionData(): ExpressionData
     {
-        $data    = parent::getExpressionData();
-        $options = $this->getOptions();
+        $expressionData = parent::getExpressionData();
+        $options        = $this->getOptions();
 
         if (isset($options['length'])) {
-            $data[0][1][1] .= '(' . $options['length'] . ')';
+            $expressionData
+                ->getExpressionPart(0)
+                ->addSpecification(sprintf('(%s)', $options['length']));
         }
 
-        return $data;
+        return $expressionData;
     }
 }

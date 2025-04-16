@@ -4,8 +4,7 @@ namespace Laminas\Db\Sql\Ddl\Column;
 
 abstract class AbstractPrecisionColumn extends AbstractLengthColumn
 {
-    /** @var int|null */
-    protected $decimal;
+    protected int $decimal;
 
     /**
      * {@inheritDoc}
@@ -65,7 +64,7 @@ abstract class AbstractPrecisionColumn extends AbstractLengthColumn
     /**
      * {@inheritDoc}
      */
-    protected function getLengthExpression()
+    protected function getLengthExpression(): string
     {
         if ($this->decimal !== null) {
             return $this->length . ',' . $this->decimal;

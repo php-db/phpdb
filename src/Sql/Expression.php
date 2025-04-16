@@ -5,7 +5,6 @@ namespace Laminas\Db\Sql;
 use function array_unique;
 use function count;
 use function is_array;
-use function is_scalar;
 use function preg_match_all;
 use function str_ireplace;
 use function str_replace;
@@ -19,27 +18,19 @@ class Expression extends AbstractExpression
 
     protected string $expression = '';
 
+    /** @var Argument[] */
     protected array $parameters = [];
 
     /**
      * @todo Update documentation to show how parameters can be specifically typed
      */
-    public function __construct(string $expression = '')
+    public function __construct(string $expression = '', null|string|float|int|array|Argument|ExpressionInterface $parameters = [])
     {
         if ($expression !== '') {
             $this->setExpression($expression);
         }
 
-        if (func_num_args() > 1) {
-            $parameters = func_get_args();
-            $parameters = array_slice($parameters, 1);
-        } else {
-            $parameters = null;
-        }
-
-        if ($parameters !== null) {
-            call_user_func_array([$this, 'setParameters'], $parameters);
-        }
+        $this->setParameters($parameters);
     }
 
     /**
@@ -62,13 +53,14 @@ class Expression extends AbstractExpression
     /**
      * @throws Exception\InvalidArgumentException
      */
-    public function setParameters(): self {
-        if (func_num_args() > 0) {
-            foreach (func_get_args() as $parameter) {
-                if ($parameter !== null) {
-                    $this->parameters[] = $parameter instanceof Argument ? $parameter : new Argument($parameter);
-                }
-            }
+    public function setParameters(null|string|float|int|array|ExpressionInterface|Argument $parameters = []): self {
+        if (! is_array($parameters)) {
+            $parameters = [$parameters];
+        }
+
+        /** @var null|string|float|int|array|ExpressionInterface|Argument $parameter */
+        foreach ($parameters as $parameter) {
+            $this->parameters[] = $parameter instanceof Argument ? $parameter : new Argument($parameter);
         }
 
         return $this;
@@ -82,25 +74,25 @@ class Expression extends AbstractExpression
     /**
      * @throws Exception\RuntimeException
      */
-    public function getExpressionData(): array
+    #[\Override]
+    public function getExpressionData(): ExpressionData
     {
         $parameters      = $this->parameters;
         $parametersCount = count($parameters);
-        $expression      = str_replace('%', '%%', $this->expression);
+        $specification      = str_replace('%', '%%', $this->expression);
 
         if ($parametersCount === 0) {
-            return [
-                str_ireplace(self::PLACEHOLDER, '', $expression),
-            ];
+            $specification = str_ireplace(self::PLACEHOLDER, '', $specification);
+            return new ExpressionData($specification);
         }
 
         // assign locally, escaping % signs
-        $expression = str_replace(self::PLACEHOLDER, '%s', $expression, $count);
+        $specification = str_replace(self::PLACEHOLDER, '%s', $specification, $count);
 
         // test number of replacements without considering same variable begin used many times first, which is
         // faster, if the test fails then resort to regex which are slow and used rarely
         if ($count !== $parametersCount) {
-            preg_match_all('/:\w*/', $expression, $matches);
+            preg_match_all('/:\w*/', $specification, $matches);
             if ($parametersCount !== count(array_unique($matches[0]))) {
                 throw new Exception\RuntimeException(
                     'The number of replacements in the expression does not match the number of parameters'
@@ -108,14 +100,6 @@ class Expression extends AbstractExpression
             }
         }
 
-        foreach ($parameters as $parameter) {
-            $values[] = $parameter;
-        }
-        return [
-            [
-                $expression,
-                $values
-            ],
-        ];
+        return new ExpressionData($specification, $parameters);
     }
 }

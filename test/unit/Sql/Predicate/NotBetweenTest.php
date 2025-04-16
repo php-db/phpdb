@@ -2,6 +2,7 @@
 
 namespace LaminasTest\Db\Sql\Predicate;
 
+use Laminas\Db\Sql\Argument;
 use Laminas\Db\Sql\ArgumentType;
 use Laminas\Db\Sql\ExpressionInterface;
 use Laminas\Db\Sql\Predicate\NotBetween;
@@ -28,27 +29,36 @@ final class NotBetweenTest extends TestCase
 
     public function testRetrievingWherePartsReturnsSpecificationArrayOfIdentifierAndValuesAndArrayOfTypes(): void
     {
-        $this->notBetween->setIdentifier('foo.bar')
-                      ->setMinValue(10)
-                      ->setMaxValue(19);
+        $this->notBetween
+            ->setIdentifier('foo.bar')
+            ->setMinValue(10)
+            ->setMaxValue(19);
+
+        $identifier = new Argument('foo.bar', ArgumentType::Identifier);
+        $minValue = new Argument(10, ArgumentType::Value);
+        $maxValue = new Argument(19, ArgumentType::Value);
+
         $expected = [
             [
                 $this->notBetween->getSpecification(),
-                ['foo.bar', 10, 19],
-                [ExpressionInterface::TYPE_IDENTIFIER, ExpressionInterface::TYPE_VALUE, ExpressionInterface::TYPE_VALUE],
+                [$identifier, $minValue, $maxValue]
             ],
         ];
         self::assertEquals($expected, $this->notBetween->getExpressionData());
 
         $this->notBetween
-            ->setIdentifier(10)
+            ->setIdentifier(10, ArgumentType::Value)
             ->setMinValue(['foo.bar' => ArgumentType::Identifier])
             ->setMaxValue(['foo.baz' => ArgumentType::Identifier]);
+
+        $identifier = new Argument(10, ArgumentType::Value);
+        $minValue = new Argument('foo.bar', ArgumentType::Identifier);
+        $maxValue = new Argument('foo.baz', ArgumentType::Identifier);
+
         $expected = [
             [
                 $this->notBetween->getSpecification(),
-                [10, 'foo.bar', 'foo.baz'],
-                [ExpressionInterface::TYPE_IDENTIFIER, ExpressionInterface::TYPE_IDENTIFIER, ExpressionInterface::TYPE_IDENTIFIER],
+                [$identifier, $minValue, $maxValue]
             ],
         ];
         self::assertEquals($expected, $this->notBetween->getExpressionData());

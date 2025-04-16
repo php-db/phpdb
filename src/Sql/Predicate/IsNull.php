@@ -6,6 +6,7 @@ use Laminas\Db\Sql\AbstractExpression;
 use Laminas\Db\Sql\Argument;
 use Laminas\Db\Sql\ArgumentType;
 use Laminas\Db\Sql\Exception\InvalidArgumentException;
+use Laminas\Db\Sql\ExpressionData;
 use Override;
 
 class IsNull extends AbstractExpression implements PredicateInterface
@@ -68,17 +69,17 @@ class IsNull extends AbstractExpression implements PredicateInterface
      * Get parts for where statement
      */
     #[Override]
-    public function getExpressionData(): array
+    public function getExpressionData(): ExpressionData
     {
         if ($this->identifier === null) {
             throw new InvalidArgumentException('Identifier must be specified');
         }
 
-        return [
+        return new ExpressionData(
+            $this->getSpecification(),
             [
-                $this->getSpecification(),
-                [$this->identifier],
-            ],
-        ];
+                $this->identifier
+            ]
+        );
     }
 }

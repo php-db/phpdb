@@ -22,21 +22,32 @@ final class LiteralTest extends TestCase
     public function testGetExpressionData(): void
     {
         $literal = new Literal('bar');
-        self::assertEquals([['bar', [], []]], $literal->getExpressionData());
+        $expressionData = $literal->getExpressionData();
+
+        self::assertEquals(
+            'bar',
+            $expressionData->getExpressionSpecification()
+        );
+
+        self::assertEquals(
+            [],
+            $expressionData->getExpressionValues()
+        );
     }
 
     public function testGetExpressionDataWillEscapePercent(): void
     {
-        $expression = new Literal('X LIKE "foo%"');
+        $literal = new Literal('X LIKE "foo%"');
+        $expressionData = $literal->getExpressionData();
+
         self::assertEquals(
-            [
-                [
-                    'X LIKE "foo%%"',
-                    [],
-                    [],
-                ],
-            ],
-            $expression->getExpressionData()
+            'X LIKE "foo%%"',
+            $expressionData->getExpressionSpecification()
+        );
+
+        self::assertEquals(
+            [],
+            $expressionData->getExpressionValues()
         );
     }
 }

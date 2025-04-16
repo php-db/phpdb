@@ -14,7 +14,7 @@ class DropTable extends AbstractSql implements SqlInterface
         self::TABLE => 'DROP TABLE %1$s',
     ];
 
-    protected string $table = '';
+    protected string|TableIdentifier $table = '';
 
     /**
      * @param string|TableIdentifier $table

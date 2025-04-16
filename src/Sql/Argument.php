@@ -16,18 +16,20 @@ class Argument
     ) {
         if ($value instanceof ExpressionInterface || $value instanceof SqlInterface) {
             $type = ArgumentType::Select;
-        } elseif (is_array($value)) {
+        } elseif ($type === ArgumentType::Select) {
+            throw new InvalidArgumentException('Invalid argument value');
+        }
+
+        if (is_array($value)) {
             $key     = key($value);
+            /** @var null|string|int|float|array|ArgumentType $current */
             $current = current($value);
             if ($current instanceof ArgumentType) {
                 $type  = $current;
                 $value = $key;
             } else {
-                $type    = ArgumentType::Value;
                 $value = array_values($value);
             }
-        } elseif ($type === ArgumentType::Select) {
-            throw new InvalidArgumentException('Invalid argument value');
         }
 
         $this->setType($type);
@@ -63,5 +65,32 @@ class Argument
     public function getValue(): null|string|int|float|array|ExpressionInterface|SqlInterface
     {
         return $this->value;
+    }
+
+    public function getSpecification(): string
+    {
+        return (is_array($this->value)) ?
+            sprintf('(%s)', implode(', ', array_fill(0, count($this->value), '%s'))) :
+            '%s';
+    }
+
+    static public function value(null|string|int|float|array|ExpressionInterface|SqlInterface $value): Argument
+    {
+        return new self($value, ArgumentType::Value);
+    }
+
+    static public function identifier(null|string|int|float|array|ExpressionInterface|SqlInterface $value): Argument
+    {
+        return new self($value, ArgumentType::Identifier);
+    }
+
+    static public function literal(null|string|int|float|array|ExpressionInterface|SqlInterface $value): Argument
+    {
+        return new self($value, ArgumentType::Literal);
+    }
+
+    static public function select(null|string|int|float|array|ExpressionInterface|SqlInterface $value): Argument
+    {
+        return new self($value, ArgumentType::Value);
     }
 }

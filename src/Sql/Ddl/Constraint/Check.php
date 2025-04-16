@@ -2,7 +2,12 @@
 
 namespace Laminas\Db\Sql\Ddl\Constraint;
 
+use Laminas\Db\Sql\Argument;
+use Laminas\Db\Sql\ArgumentType;
+use Laminas\Db\Sql\ExpressionData;
 use Laminas\Db\Sql\ExpressionInterface;
+
+use Laminas\Db\Sql\ExpressionPart;
 
 use function array_unshift;
 
@@ -14,7 +19,7 @@ class Check extends AbstractConstraint
     /**
      * {@inheritDoc}
      */
-    protected $specification = 'CHECK (%s)';
+    protected string $specification = 'CHECK (%s)';
 
     /**
      * @param string|ExpressionInterface $expression
@@ -22,32 +27,26 @@ class Check extends AbstractConstraint
      */
     public function __construct($expression, $name)
     {
+        parent::__construct(null, $name);
+
         $this->expression = $expression;
-        $this->name       = $name;
     }
 
     /**
      * {@inheritDoc}
      */
-    public function getExpressionData()
+    public function getExpressionData(): ExpressionData
     {
-        $newSpecTypes = [self::TYPE_LITERAL];
-        $values       = [$this->expression];
-        $newSpec      = '';
+        $expressionPart = new ExpressionPart();
+        $expressionPart->setValues([
+            new Argument($this->expression, ArgumentType::Literal),
+        ]);
 
-        if ($this->name) {
-            $newSpec .= $this->namedSpecification;
-
-            array_unshift($values, $this->name);
-            array_unshift($newSpecTypes, self::TYPE_IDENTIFIER);
+        if ($this->name !== '') {
+            $expressionPart->addSpecification($this->namedSpecification);
+            $expressionPart->addValue(new Argument($this->name, ArgumentType::Identifier));
         }
 
-        return [
-            [
-                $newSpec . $this->specification,
-                $values,
-                $newSpecTypes,
-            ],
-        ];
+        return new ExpressionData($expressionPart);
     }
 }

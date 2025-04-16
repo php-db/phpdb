@@ -2,6 +2,11 @@
 
 namespace Laminas\Db\Sql\Ddl\Column;
 
+use Laminas\Db\Sql\Argument;
+use Laminas\Db\Sql\ArgumentType;
+use Laminas\Db\Sql\ExpressionData;
+use Laminas\Db\Sql\ExpressionPart;
+
 use function array_merge;
 
 /**
@@ -12,47 +17,19 @@ abstract class AbstractTimestampColumn extends Column
     /**
      * @return array
      */
-    public function getExpressionData()
+    #[\Override]
+    public function getExpressionData(): ExpressionData
     {
-        $spec = $this->specification;
-
-        $params   = [];
-        $params[] = $this->name;
-        $params[] = $this->type;
-
-        $types = [self::TYPE_IDENTIFIER, self::TYPE_LITERAL];
-
-        if (! $this->isNullable) {
-            $spec .= ' NOT NULL';
-        }
-
-        if ($this->default !== null) {
-            $spec    .= ' DEFAULT %s';
-            $params[] = $this->default;
-            $types[]  = self::TYPE_VALUE;
-        }
-
+        $expressionData = parent::getExpressionData();
         $options = $this->getOptions();
 
         if (isset($options['on_update'])) {
-            $spec    .= ' %s';
-            $params[] = 'ON UPDATE CURRENT_TIMESTAMP';
-            $types[]  = self::TYPE_LITERAL;
+            $expressionData
+                ->getExpressionPart(0)
+                ->addSpecification('%s')
+                ->addValue(new Argument('ON UPDATE CURRENT_TIMESTAMP', ArgumentType::Literal));
         }
 
-        $data = [
-            [
-                $spec,
-                $params,
-                $types,
-            ],
-        ];
-
-        foreach ($this->constraints as $constraint) {
-            $data[] = ' ';
-            $data   = array_merge($data, $constraint->getExpressionData());
-        }
-
-        return $data;
+        return $expressionData;
     }
 }

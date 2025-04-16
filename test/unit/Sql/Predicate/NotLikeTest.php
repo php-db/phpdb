@@ -2,6 +2,8 @@
 
 namespace LaminasTest\Db\Sql\Predicate;
 
+use Laminas\Db\Sql\Argument;
+use Laminas\Db\Sql\ArgumentType;
 use Laminas\Db\Sql\Predicate\Like;
 use Laminas\Db\Sql\Predicate\NotLike;
 use PHPUnit\Framework\TestCase;
@@ -18,17 +20,26 @@ final class NotLikeTest extends TestCase
     public function testConstructWithArgs(): void
     {
         $notLike = new NotLike('bar', 'Foo%');
-        self::assertEquals('bar', $notLike->getIdentifier());
-        self::assertEquals('Foo%', $notLike->getLike());
+
+        $identifier = new Argument('bar', ArgumentType::Identifier);
+        self::assertEquals($identifier, $notLike->getIdentifier());
+
+        $expression = new Argument('Foo%', ArgumentType::Value);
+        self::assertEquals($expression, $notLike->getLike());
     }
 
     public function testAccessorsMutators(): void
     {
         $notLike = new NotLike();
+
         $notLike->setIdentifier('bar');
-        self::assertEquals('bar', $notLike->getIdentifier());
+        $identifier = new Argument('bar', ArgumentType::Identifier);
+        self::assertEquals($identifier, $notLike->getIdentifier());
+
         $notLike->setLike('foo%');
-        self::assertEquals('foo%', $notLike->getLike());
+        $expression = new Argument('foo%', ArgumentType::Value);
+        self::assertEquals($expression, $notLike->getLike());
+
         $notLike->setSpecification('target = target');
         self::assertEquals('target = target', $notLike->getSpecification());
     }
@@ -36,12 +47,13 @@ final class NotLikeTest extends TestCase
     public function testGetExpressionData(): void
     {
         $notLike = new NotLike('bar', 'Foo%');
+        $identifier = new Argument('bar', ArgumentType::Identifier);
+        $expression = new Argument('Foo%', ArgumentType::Value);
         self::assertEquals(
             [
                 [
                     '%1$s NOT LIKE %2$s',
-                    ['bar', 'Foo%'],
-                    [$notLike::TYPE_IDENTIFIER, $notLike::TYPE_VALUE],
+                    [$identifier, $expression]
                 ],
             ],
             $notLike->getExpressionData()

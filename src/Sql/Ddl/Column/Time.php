@@ -5,5 +5,5 @@ namespace Laminas\Db\Sql\Ddl\Column;
 class Time extends Column
 {
     /** @var string */
-    protected $type = 'TIME';
+    protected string $type = 'TIME';
 }

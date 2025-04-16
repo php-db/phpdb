@@ -2,32 +2,38 @@
 
 namespace Laminas\Db\Sql\Ddl\Column;
 
+use Laminas\Db\Sql\Argument;
+use Laminas\Db\Sql\ArgumentType;
 use Laminas\Db\Sql\Ddl\Constraint\ConstraintInterface;
+
+use Laminas\Db\Sql\ExpressionData;
+
+use Laminas\Db\Sql\ExpressionPart;
 
 use function array_merge;
 
 class Column implements ColumnInterface
 {
     /** @var null|string|int */
-    protected $default;
+    protected string|int|null $default;
 
     /** @var bool */
-    protected $isNullable = false;
+    protected bool $isNullable = false;
 
     /** @var string */
-    protected $name = '';
+    protected string $name = '';
 
     /** @var array */
-    protected $options = [];
+    protected array $options = [];
 
     /** @var ConstraintInterface[] */
-    protected $constraints = [];
+    protected array $constraints = [];
 
     /** @var string */
-    protected $specification = '%s %s';
+    protected string $specification = '%s %s';
 
     /** @var string */
-    protected $type = 'INTEGER';
+    protected string $type = 'INTEGER';
 
     /**
      * @param null|string $name
@@ -135,42 +141,31 @@ class Column implements ColumnInterface
         return $this;
     }
 
-    /**
-     * @return array
-     */
-    public function getExpressionData()
+    #[\Override]
+    public function getExpressionData(): ExpressionData
     {
-        $spec = $this->specification;
+        $expressionPart = new ExpressionPart();
+        $expressionPart->setSpecification($this->specification);
+        $expressionPart->setValues([
+            new Argument($this->name, ArgumentType::Identifier),
+            new Argument($this->type, ArgumentType::Literal),
+        ]);
 
-        $params   = [];
-        $params[] = $this->name;
-        $params[] = $this->type;
-
-        $types = [self::TYPE_IDENTIFIER, self::TYPE_LITERAL];
-
-        if (! $this->isNullable) {
-            $spec .= ' NOT NULL';
+        if ($this->isNullable === false) {
+            $expressionPart->addSpecification('NOT NULL');
         }
 
         if ($this->default !== null) {
-            $spec    .= ' DEFAULT %s';
-            $params[] = $this->default;
-            $types[]  = self::TYPE_VALUE;
+            $expressionPart->addSpecification('DEFAULT %s');
+            $expressionPart->addValue(new Argument($this->default, ArgumentType::Value));
         }
 
-        $data = [
-            [
-                $spec,
-                $params,
-                $types,
-            ],
-        ];
+        $expressionData = new ExpressionData($expressionPart);
 
         foreach ($this->constraints as $constraint) {
-            $data[] = ' ';
-            $data   = array_merge($data, $constraint->getExpressionData());
+            $expressionData->addExpressionParts($constraint->getExpressionData()->getExpressionParts());
         }
 
-        return $data;
+        return $expressionData;
     }
 }

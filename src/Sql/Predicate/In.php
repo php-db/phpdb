@@ -6,6 +6,7 @@ use Laminas\Db\Sql\AbstractExpression;
 use Laminas\Db\Sql\Argument;
 use Laminas\Db\Sql\ArgumentType;
 use Laminas\Db\Sql\Exception\InvalidArgumentException;
+use Laminas\Db\Sql\ExpressionData;
 use Laminas\Db\Sql\Select;
 use Override;
 
@@ -78,7 +79,7 @@ class In extends AbstractExpression implements PredicateInterface
      * Return array of parts for where statement
      */
     #[Override]
-    public function getExpressionData(): array
+    public function getExpressionData(): ExpressionData
     {
         if ($this->identifier === null) {
             throw new InvalidArgumentException('Identifier must be specified');
@@ -88,16 +89,17 @@ class In extends AbstractExpression implements PredicateInterface
             throw new InvalidArgumentException('Value set must be provided for IN predicate');
         }
 
-        $specification = vsprintf(
-            $this->specification,
-            ['%s', '%s']
-        );
+        $specification = vsprintf($this->specification, [
+            $this->identifier->getSpecification(),
+            $this->valueSet->getSpecification()
+        ]);
 
-        return [
+        return new ExpressionData(
+            $specification,
             [
-                $specification,
-                [$this->identifier, $this->valueSet],
-            ],
-        ];
+                $this->identifier,
+                $this->valueSet,
+            ]
+        );
     }
 }

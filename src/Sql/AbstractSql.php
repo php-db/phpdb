@@ -45,6 +45,7 @@ abstract class AbstractSql implements SqlInterface
     public function getSqlString(?PlatformInterface $adapterPlatform = null): string
     {
         $adapterPlatform = $adapterPlatform ?: new DefaultAdapterPlatform();
+
         return $this->buildSqlString($adapterPlatform);
     }
 
@@ -75,7 +76,6 @@ abstract class AbstractSql implements SqlInterface
 
             if ($specification && is_array($parameters[$name])) {
                 $sqls[$name] = $this->createSqlFromSpecificationAndParameters($specification, $parameters[$name]);
-
                 continue;
             }
 
@@ -90,10 +90,10 @@ abstract class AbstractSql implements SqlInterface
     /**
      * Render table with alias in from/join parts
      *
-     * @todo move TableIdentifier concatenation here
      * @param string $table
      * @param string $alias
      * @return string
+     * @todo move TableIdentifier concatenation here
      */
     protected function renderTable($table, $alias = null)
     {
@@ -116,108 +116,78 @@ abstract class AbstractSql implements SqlInterface
         ?ParameterContainer $parameterContainer = null,
         ?string $namedParameterPrefix = null
     ): string {
-        $namedParameterPrefix = ! $namedParameterPrefix
-            ? ''
-            : $this->processInfo['paramPrefix'] . $namedParameterPrefix;
         // static counter for the number of times this method was invoked across the PHP runtime
         static $runtimeExpressionPrefix = 0;
 
-        if ($parameterContainer && (! is_string($namedParameterPrefix) || $namedParameterPrefix === '')) {
+        $namedParameterPrefix = ($namedParameterPrefix === null || $namedParameterPrefix === '')
+            ? ''
+            : $this->processInfo['paramPrefix'] . $namedParameterPrefix;
+
+        if ($parameterContainer && $namedParameterPrefix === '') {
             $namedParameterPrefix = sprintf('expr%04dParam', ++$runtimeExpressionPrefix);
         } else {
             $namedParameterPrefix = preg_replace('/\s/', '__', $namedParameterPrefix);
         }
-
-        $sql = '';
-
-        // initialize variables
-        $parts = $expression->getExpressionData();
 
         if (! isset($this->instanceParameterIndex[$namedParameterPrefix])) {
             $this->instanceParameterIndex[$namedParameterPrefix] = 1;
         }
 
         $expressionParamIndex = &$this->instanceParameterIndex[$namedParameterPrefix];
+        $expressionData       = $expression->getExpressionData();
+        $expressionValues     = $expressionData->getExpressionValues();
 
-        foreach ($parts as $part) {
-            // #7407: use $expression->getExpression() to get the unescaped
-            // version of the expression
-            if (is_string($part) && $expression instanceof Expression) {
-                $sql .= $expression->getExpression();
-                continue;
-            }
-
-            // If it is a string, simply tack it onto the return sql
-            // "specification" string
-            if (is_string($part)) {
-                $sql .= $part;
-                continue;
-            }
-
-            if (! is_array($part)) {
-                throw new Exception\RuntimeException(
-                    'Elements returned from getExpressionData() array must be a string or array.'
+        foreach ($expressionValues as $vIndex => $value) {
+            if (is_string($value)) {
+                $expressionValues[$vIndex] = $value;
+            } elseif ($value->getValue() instanceof Select) {
+                // process sub-select
+                $expressionValues[$vIndex] = '('
+                    . $this->processSubSelect($value->getValue(), $platform, $driver, $parameterContainer)
+                    . ')';
+            } elseif ($value->getValue() instanceof ExpressionInterface) {
+                // recursive call to satisfy nested expressions
+                $expressionValues[$vIndex] = $this->processExpression(
+                    $value->getValue(),
+                    $platform,
+                    $driver,
+                    $parameterContainer,
+                    $namedParameterPrefix . $vIndex . 'subpart'
                 );
-            }
-
-            /** @var Argument[] $values */
-            $values = $part[1];
-            foreach ($values as $vIndex => $value) {
-                if (is_string($value)) {
-                    $values[$vIndex] = $value;
-                } elseif ($value->getValue() instanceof Select) {
-                    // process sub-select
-                    $values[$vIndex] = '('
-                        . $this->processSubSelect($value->getValue(), $platform, $driver, $parameterContainer)
-                        . ')';
-                } elseif ($value->getValue() instanceof ExpressionInterface) {
-                    // recursive call to satisfy nested expressions
-                    $values[$vIndex] = $this->processExpression(
-                        $value->getValue(),
-                        $platform,
-                        $driver,
-                        $parameterContainer,
-                        $namedParameterPrefix . $vIndex . 'subpart'
-                    );
-                } elseif ($value->getType() === ArgumentType::Identifier) {
-                    $values[$vIndex] = $platform->quoteIdentifierInFragment($value->getValue());
-                } elseif ($value->getType() === ArgumentType::Value) {
-                    // if prepareType is set, it means that this particular value must be
-                    // passed back to the statement in a way it can be used as a placeholder value
-                    if ($parameterContainer) {
-                        $name = $namedParameterPrefix . $expressionParamIndex++;
-                        $parameterContainer->offsetSet($name, $value->getValue());
-                        $values[$vIndex] = $driver->formatParameterName($name);
-                        continue;
-                    }
-
-                    // if not a preparable statement, simply quote the value and move on
-                    if (is_array($value->getValue())) {
-                        $values[$vIndex] = sprintf(
-                            '(%s)',
-                            join(', ', array_map([$platform, 'quoteValue'], $value->getValue()))
-                        );
-                    } else {
-                        $values[$vIndex] = $platform->quoteValue($value->getValue());
-                    }
-                } elseif ($value->getType() === ArgumentType::Literal) {
-                    $values[$vIndex] = $value->getValue();
+            } elseif ($value->getType() === ArgumentType::Identifier) {
+                $expressionValues[$vIndex] = $platform->quoteIdentifierInFragment($value->getValue());
+            } elseif ($value->getType() === ArgumentType::Value) {
+                // if prepareType is set, it means that this particular value must be
+                // passed back to the statement in a way it can be used as a placeholder value
+                if ($parameterContainer) {
+                    $name = $namedParameterPrefix . $expressionParamIndex++;
+                    $parameterContainer->offsetSet($name, $value->getValue());
+                    $values[$vIndex] = $driver->formatParameterName($name);
+                    continue;
                 }
-            }
 
-            // After looping the values, interpolate them into the sql string
-            // (they might be placeholder names, or values)
-            $sql .= vsprintf($part[0], $values);
+                // if not a preparable statement, simply quote the value and move on
+                if (is_array($value->getValue())) {
+                    $expressionValues[$vIndex] = sprintf(
+                        '(%s)',
+                        join(', ', array_map([$platform, 'quoteValue'], $value->getValue()))
+                    );
+                } else {
+                    $expressionValues[$vIndex] = $platform->quoteValue($value->getValue());
+                }
+            } elseif ($value->getType() === ArgumentType::Literal) {
+                $expressionValues[$vIndex] = $value->getValue();
+            }
         }
 
-        return $sql;
+        return vsprintf($expressionData->getExpressionSpecification(), $expressionValues);
     }
 
     /**
      * @param string|array $specifications
-     * @param array $parameters
-     * @return string
+     * @param array        $parameters
      * @throws Exception\RuntimeException
+     * @return string
      */
     protected function createSqlFromSpecificationAndParameters($specifications, $parameters)
     {
@@ -275,6 +245,7 @@ abstract class AbstractSql implements SqlInterface
                 $topParameters[] = $paramsForPosition;
             }
         }
+
         return vsprintf($specificationString, $topParameters);
     }
 
@@ -306,6 +277,7 @@ abstract class AbstractSql implements SqlInterface
 
             // copy count
             $this->processInfo['subselectCount'] = $decorator->processInfo['subselectCount'];
+
             return $sql;
         }
 
@@ -314,9 +286,9 @@ abstract class AbstractSql implements SqlInterface
 
     /**
      * @param Join[] $joins
+     * @throws Exception\InvalidArgumentException For invalid JOIN table names.
      * @return null|string[] Null if no joins present, array of JOIN statements
      *     otherwise
-     * @throws Exception\InvalidArgumentException For invalid JOIN table names.
      */
     protected function processJoin(
         Join $joins,
@@ -424,9 +396,10 @@ abstract class AbstractSql implements SqlInterface
         if ($column === null) {
             return 'NULL';
         }
+
         return $isIdentifier
-                ? $fromTable . $platform->quoteIdentifierInFragment($column)
-                : $platform->quoteValue($column);
+            ? $fromTable . $platform->quoteIdentifierInFragment($column)
+            : $platform->quoteValue($column);
     }
 
     /**
@@ -453,6 +426,7 @@ abstract class AbstractSql implements SqlInterface
         if ($schema && $table) {
             $table = $platform->quoteIdentifier($schema) . $platform->getIdentifierSeparator() . $table;
         }
+
         return $table;
     }
 

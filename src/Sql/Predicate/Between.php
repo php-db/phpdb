@@ -6,6 +6,7 @@ use Laminas\Db\Sql\AbstractExpression;
 use Laminas\Db\Sql\Argument;
 use Laminas\Db\Sql\ArgumentType;
 use Laminas\Db\Sql\Exception\InvalidArgumentException;
+use Laminas\Db\Sql\ExpressionData;
 use Override;
 
 class Between extends AbstractExpression implements PredicateInterface
@@ -123,7 +124,7 @@ class Between extends AbstractExpression implements PredicateInterface
      * Return "where" parts
      */
     #[Override]
-    public function getExpressionData(): array
+    public function getExpressionData(): ExpressionData
     {
         if ($this->identifier === null) {
             throw new InvalidArgumentException('Identifier must be specified');
@@ -137,11 +138,13 @@ class Between extends AbstractExpression implements PredicateInterface
             throw new InvalidArgumentException('maxValue must be specified');
         }
 
-        return [
+        return new ExpressionData(
+            $this->getSpecification(),
             [
-                $this->getSpecification(),
-                [$this->identifier, $this->minValue, $this->maxValue],
-            ],
-        ];
+                $this->identifier,
+                $this->minValue,
+                $this->maxValue
+            ]
+        );
     }
 }

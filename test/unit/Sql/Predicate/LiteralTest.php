@@ -22,6 +22,6 @@ final class LiteralTest extends TestCase
     public function testGetExpressionData(): void
     {
         $literal = new Literal('bar');
-        self::assertEquals([['bar', [], []]], $literal->getExpressionData());
+        self::assertEquals([['bar', []]], $literal->getExpressionData());
     }
 }

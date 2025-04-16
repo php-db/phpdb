@@ -11,5 +11,5 @@ namespace Laminas\Db\Sql\Ddl\Column;
 class Floating extends AbstractPrecisionColumn
 {
     /** @var string */
-    protected $type = 'FLOAT';
+    protected string $type = 'FLOAT';
 }

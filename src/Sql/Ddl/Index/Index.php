@@ -2,6 +2,12 @@
 
 namespace Laminas\Db\Sql\Ddl\Index;
 
+use Laminas\Db\Sql\Argument;
+use Laminas\Db\Sql\ArgumentType;
+use Laminas\Db\Sql\ExpressionData;
+
+use Laminas\Db\Sql\ExpressionPart;
+
 use function array_merge;
 use function count;
 use function implode;
@@ -10,10 +16,10 @@ use function str_replace;
 class Index extends AbstractIndex
 {
     /** @var string */
-    protected $specification = 'INDEX %s(...)';
+    protected string $specification = 'INDEX %s(...)';
 
     /** @var array */
-    protected $lengths;
+    protected array $lengths;
 
     /**
      * @param  string|array|null $columns
@@ -21,34 +27,21 @@ class Index extends AbstractIndex
      */
     public function __construct($columns, $name = null, array $lengths = [])
     {
-        $this->setColumns($columns);
+        parent::__construct($columns, $name);
 
-        $this->name    = null === $name ? null : (string) $name;
         $this->lengths = $lengths;
     }
 
-    /**
-     * @return array of array|string should return an array in the format:
-     *
-     * array (
-     *    // a sprintf formatted string
-     *    string $specification,
-     *
-     *    // the values for the above sprintf formatted string
-     *    array $values,
-     *
-     *    // an array of equal length of the $values array, with either TYPE_IDENTIFIER or TYPE_VALUE for each value
-     *    array $types,
-     * )
-     */
-    public function getExpressionData()
+    #[\Override]
+    public function getExpressionData(): ExpressionData
     {
         $colCount     = count($this->columns);
-        $values       = [];
-        $values[]     = $this->name ?: '';
-        $newSpecTypes = [self::TYPE_IDENTIFIER];
-        $newSpecParts = [];
 
+        $expressionPart = new ExpressionPart();
+        $expressionPart
+            ->addValue(new Argument($this->name, ArgumentType::Identifier));
+
+        $specification = [];
         for ($i = 0; $i < $colCount; $i++) {
             $specPart = '%s';
 
@@ -56,18 +49,11 @@ class Index extends AbstractIndex
                 $specPart .= "({$this->lengths[$i]})";
             }
 
-            $newSpecParts[] = $specPart;
-            $newSpecTypes[] = self::TYPE_IDENTIFIER;
+            $specification[] = $specPart;
         }
 
-        $newSpec = str_replace('...', implode(', ', $newSpecParts), $this->specification);
+        $expressionPart->addSpecification(str_replace('...', implode(', ', $specification), $this->specification));
 
-        return [
-            [
-                $newSpec,
-                array_merge($values, $this->columns),
-                $newSpecTypes,
-            ],
-        ];
+        return new ExpressionData($expressionPart);
     }
 }
