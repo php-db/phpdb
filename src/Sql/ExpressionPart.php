@@ -27,6 +27,28 @@ class ExpressionPart
         return implode(' ', $this->specification);
     }
 
+    public function getSpecificationValues(array $values = []): array
+    {
+        foreach ($this->values as $value) {
+            if (is_array($value->getValue())) {
+                foreach ($value->getValue() as $v) {
+                    $values[] = new Argument($v);
+                }
+            } else {
+                $values[] = $value;
+            }
+        }
+
+        return $values;
+    }
+
+    protected function getValueArray($value, $values = []): array
+    {
+        foreach ($this->values as $value) {
+            $values[] = $value->getValue();
+        }
+    }
+
     public function getSpecification(): array
     {
         return $this->specification;
@@ -47,6 +69,7 @@ class ExpressionPart
         return $this;
     }
 
+    /** @return Argument[] */
     public function getValues(): array
     {
         return $this->values;

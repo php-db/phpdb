@@ -67,6 +67,11 @@ class Argument
         return $this->value;
     }
 
+    public function getValueAsString(): string
+    {
+        return (string) $this->value;
+    }
+
     public function getSpecification(): string
     {
         return (is_array($this->value)) ?

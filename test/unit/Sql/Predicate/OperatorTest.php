@@ -79,13 +79,9 @@ final class OperatorTest extends TestCase
         $left = new Argument('foo', ArgumentType::Value);
         $right = new Argument('foo.bar', ArgumentType::Identifier);
 
-        $expected = [
-            [
-                '%s >= %s',
-                [$left, $right]
-            ],
-        ];
-        $test     = $operator->getExpressionData();
-        self::assertEquals($expected, $test, var_export($test, true));
+        $expressionData = $operator->getExpressionData();
+
+        self::assertEquals('%s >= %s', $expressionData->getExpressionSpecification());
+        self::assertEquals([$left, $right], $expressionData->getExpressionValues());
     }
 }

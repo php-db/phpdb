@@ -2,11 +2,14 @@
 
 namespace Laminas\Db\Sql;
 
+use http\Exception\InvalidArgumentException;
 use Laminas\Db\Adapter\Driver\DriverInterface;
 use Laminas\Db\Adapter\ParameterContainer;
 use Laminas\Db\Adapter\Platform\PlatformInterface;
 use Laminas\Db\Adapter\Platform\Sql92 as DefaultAdapterPlatform;
 use Laminas\Db\Sql\Platform\PlatformDecoratorInterface;
+
+use ValueError;
 
 use function count;
 use function current;
@@ -135,52 +138,97 @@ abstract class AbstractSql implements SqlInterface
 
         $expressionParamIndex = &$this->instanceParameterIndex[$namedParameterPrefix];
         $expressionData       = $expression->getExpressionData();
-        $expressionValues     = $expressionData->getExpressionValues();
+        $sqlString            = '';
 
-        foreach ($expressionValues as $vIndex => $value) {
-            if (is_string($value)) {
-                $expressionValues[$vIndex] = $value;
-            } elseif ($value->getValue() instanceof Select) {
-                // process sub-select
-                $expressionValues[$vIndex] = '('
-                    . $this->processSubSelect($value->getValue(), $platform, $driver, $parameterContainer)
-                    . ')';
-            } elseif ($value->getValue() instanceof ExpressionInterface) {
-                // recursive call to satisfy nested expressions
-                $expressionValues[$vIndex] = $this->processExpression(
-                    $value->getValue(),
+        foreach ($expressionData->getExpressionParts() as $expressionPart) {
+            $specification    = $expressionPart->getSpecificationString();
+            $expressionValues = $expressionPart->getSpecificationValues();
+            $values           = [];
+            foreach ($expressionValues as $vIndex => $argument) {
+                $values[] = $this->processExpressionValue(
+                    $argument,
+                    $expressionParamIndex,
+                    $namedParameterPrefix,
+                    $vIndex,
                     $platform,
                     $driver,
                     $parameterContainer,
-                    $namedParameterPrefix . $vIndex . 'subpart'
                 );
-            } elseif ($value->getType() === ArgumentType::Identifier) {
-                $expressionValues[$vIndex] = $platform->quoteIdentifierInFragment($value->getValue());
-            } elseif ($value->getType() === ArgumentType::Value) {
-                // if prepareType is set, it means that this particular value must be
-                // passed back to the statement in a way it can be used as a placeholder value
-                if ($parameterContainer) {
-                    $name = $namedParameterPrefix . $expressionParamIndex++;
-                    $parameterContainer->offsetSet($name, $value->getValue());
-                    $values[$vIndex] = $driver->formatParameterName($name);
-                    continue;
-                }
-
-                // if not a preparable statement, simply quote the value and move on
-                if (is_array($value->getValue())) {
-                    $expressionValues[$vIndex] = sprintf(
-                        '(%s)',
-                        join(', ', array_map([$platform, 'quoteValue'], $value->getValue()))
-                    );
-                } else {
-                    $expressionValues[$vIndex] = $platform->quoteValue($value->getValue());
-                }
-            } elseif ($value->getType() === ArgumentType::Literal) {
-                $expressionValues[$vIndex] = $value->getValue();
             }
+            $sqlString .= vsprintf($specification, $values);
         }
 
-        return vsprintf($expressionData->getExpressionSpecification(), $expressionValues);
+        return $sqlString;
+    }
+
+    protected function processExpressionValue(
+        Argument $argument,
+        int &$expressionParamIndex,
+        string $namedParameterPrefix,
+        int $vIndex,
+        PlatformInterface $platform,
+        ?DriverInterface $driver = null,
+        ?ParameterContainer $parameterContainer = null,
+    ): string {
+        $value = $argument->getValue();
+
+        return match($argument->getType()) {
+            ArgumentType::Select => $this->processExpressionOrSelect(
+                $argument,
+                $namedParameterPrefix,
+                $vIndex,
+                $platform,
+                $driver,
+                $parameterContainer
+            ),
+            ArgumentType::Identifier => $platform->quoteIdentifierInFragment($argument->getValueAsString()),
+            ArgumentType::Literal => $argument->getValueAsString(),
+            ArgumentType::Value => ($parameterContainer) ?
+                $this->processExpressionParameterName(
+                    $argument->getValueAsString(),
+                    $namedParameterPrefix,
+                    $expressionParamIndex,
+                    $driver,
+                    $parameterContainer
+                ) :
+                $platform->quoteValue($argument->getValueAsString())
+        };
+    }
+
+    protected function processExpressionOrSelect(
+        Argument $argument,
+        string $namedParameterPrefix,
+        int $vIndex,
+        PlatformInterface $platform,
+        ?DriverInterface $driver = null,
+        ?ParameterContainer $parameterContainer = null
+    ): string {
+        $value = $argument->getValue();
+
+        return match (true) {
+            $value instanceof Select => '(' . $this->processSubSelect($value, $platform, $driver, $parameterContainer) . ')',
+            $value instanceof ExpressionInterface => $this->processExpression(
+                $value,
+                $platform,
+                $driver,
+                $parameterContainer,
+                "{$namedParameterPrefix}{$vIndex}subpart"
+            ),
+            default => throw new ValueError('Invalid Argument type'),
+        };
+    }
+
+    protected function processExpressionParameterName(
+        string $value,
+        string $namedParameterPrefix,
+        int &$expressionParamIndex,
+        DriverInterface $driver,
+        ParameterContainer $parameterContainer
+    ): string {
+        $name = $namedParameterPrefix . $expressionParamIndex++;
+        $parameterContainer->offsetSet($name, $value);
+
+        return $driver->formatParameterName($name);
     }
 
     /**

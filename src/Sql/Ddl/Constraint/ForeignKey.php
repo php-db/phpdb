@@ -40,8 +40,8 @@ class ForeignKey extends AbstractConstraint
         string|array $columns,
         string $referenceTable,
         array|string|null $referenceColumn,
-        string $onDeleteRule = null,
-        string $onUpdateRule = null
+        null|string $onDeleteRule = null,
+        null|string $onUpdateRule = null
     ) {
         parent::__construct($columns, $name);
 

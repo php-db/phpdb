@@ -184,16 +184,19 @@ class PredicateSet implements PredicateInterface, Countable
         for ($i = 0, $count = count($this->predicates); $i < $count; $i++) {
             /** @var PredicateInterface $predicate */
             $predicate               = $this->predicates[$i][1];
-            $predicateExpressionData = $predicate->getExpressionData();
-            $predicateValues         = $predicateExpressionData->getExpressionValues();
-            $predicateSpecification  = $predicateExpressionData->getExpressionSpecification();
-            $predicateFormat         = ($predicate instanceof PredicateSet) ? '(%s)' : '%s';
-            $predicateSpecification  = sprintf($predicateFormat, $predicateSpecification);
+            if ($predicate instanceof PredicateSet) {
+                 $expressionData->addExpressionPart('(');
+             }
 
-            $expressionData->addExpressionPart($predicateSpecification, $predicateValues);
-            if (isset($this->predicates[$i + 1])) {
-                $expressionData->addExpressionPart(sprintf('%s', (string) $this->predicates[$i + 1][0]));
-            }
+             $expressionData->addExpressionParts($predicate->getExpressionData()->getExpressionParts());
+
+             if ($predicate instanceof PredicateSet) {
+                 $expressionData->addExpressionPart(')');
+             }
+
+             if (isset($this->predicates[$i + 1])) {
+                 $expressionData->addExpressionPart(sprintf(' %s ', (string) $this->predicates[$i + 1][0]));
+             }
         }
 
         return $expressionData;

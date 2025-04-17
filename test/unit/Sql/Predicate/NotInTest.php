@@ -19,13 +19,10 @@ final class NotInTest extends TestCase
         $identifier = new Argument('foo.bar', ArgumentType::Identifier);
         $expression = new Argument([1, 2, 3], ArgumentType::Value);
 
-        $expected = [
-            [
-                '%s NOT IN (%s, %s, %s)',
-                [$identifier, $expression],
-            ],
-        ];
-        self::assertEquals($expected, $in->getExpressionData());
+        $expressionData = $in->getExpressionData();
+
+        self::assertEquals('%s NOT IN (%s, %s, %s)', $expressionData->getExpressionSpecification());
+        self::assertEquals([$identifier, $expression], $expressionData->getExpressionValues());
     }
 
     public function testGetExpressionDataWithSubselect(): void
@@ -36,13 +33,10 @@ final class NotInTest extends TestCase
         $identifier = new Argument('foo', ArgumentType::Identifier);
         $expression = new Argument($select, ArgumentType::Select);
 
-        $expected = [
-            [
-                '%s NOT IN %s',
-                [$identifier, $expression]
-            ],
-        ];
-        self::assertEquals($expected, $in->getExpressionData());
+        $expressionData = $in->getExpressionData();
+
+        self::assertEquals('%s NOT IN %s', $expressionData->getExpressionSpecification());
+        self::assertEquals([$identifier, $expression], $expressionData->getExpressionValues());
     }
 
     public function testGetExpressionDataWithSubselectAndIdentifier(): void
@@ -51,13 +45,11 @@ final class NotInTest extends TestCase
         $in         = new NotIn('foo', $select);
         $identifier = new Argument('foo', ArgumentType::Identifier);
         $expression = new Argument($select, ArgumentType::Select);
-        $expected = [
-            [
-                '%s NOT IN %s',
-                [$identifier, $expression]
-            ],
-        ];
-        self::assertEquals($expected, $in->getExpressionData());
+
+        $expressionData = $in->getExpressionData();
+
+        self::assertEquals('%s NOT IN %s', $expressionData->getExpressionSpecification());
+        self::assertEquals([$identifier, $expression], $expressionData->getExpressionValues());
     }
 
     public function testGetExpressionDataWithSubselectAndArrayIdentifier(): void
@@ -68,13 +60,9 @@ final class NotInTest extends TestCase
         $identifier = new Argument(['foo', 'bar'], ArgumentType::Identifier);
         $expression = new Argument($select, ArgumentType::Select);
 
-        $expected = [
-            [
-                '(%s, %s) NOT IN %s',
-                [$identifier, $expression],
-            ],
-        ];
+        $expressionData = $in->getExpressionData();
 
-        self::assertEquals($expected, $in->getExpressionData());
+        self::assertEquals('(%s, %s) NOT IN %s', $expressionData->getExpressionSpecification());
+        self::assertEquals([$identifier, $expression], $expressionData->getExpressionValues());
     }
 }

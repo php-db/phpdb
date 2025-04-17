@@ -30,6 +30,14 @@ class Expression extends AbstractExpression
             $this->setExpression($expression);
         }
 
+        if (func_num_args() > 2) {
+            /**
+             * @deprecated
+             * @todo Make notes in documentation
+             */
+            $parameters = array_slice(func_get_args(), 1);
+        }
+
         $this->setParameters($parameters);
     }
 
@@ -54,13 +62,26 @@ class Expression extends AbstractExpression
      * @throws Exception\InvalidArgumentException
      */
     public function setParameters(null|string|float|int|array|ExpressionInterface|Argument $parameters = []): self {
+        if (func_num_args() > 1) {
+            /**
+             * @deprecated
+             * @todo Make notes in documentation
+             */
+            $parameters = func_get_args();
+        }
+
         if (! is_array($parameters)) {
             $parameters = [$parameters];
         }
 
         /** @var null|string|float|int|array|ExpressionInterface|Argument $parameter */
-        foreach ($parameters as $parameter) {
-            $this->parameters[] = $parameter instanceof Argument ? $parameter : new Argument($parameter);
+        foreach ($parameters as $key => $parameter) {
+            if ($parameter instanceof ArgumentType) {
+                $parameter = new Argument($key, $parameter);
+            } elseif (! ($parameter instanceof Argument)) {
+                $parameter = new Argument($parameter);
+            }
+            $this->parameters[] = $parameter;
         }
 
         return $this;

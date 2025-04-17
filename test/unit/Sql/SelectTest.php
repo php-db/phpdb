@@ -247,6 +247,7 @@ final class SelectTest extends TestCase
         $where      = $select->getRawState('where');
         $predicates = $where->getPredicates();
         $expression = new Argument(5, ArgumentType::Value);
+
         self::assertCount(1, $predicates);
         self::assertIsArray($predicates[0]);
         self::assertInstanceOf(Predicate\Expression::class, $predicates[0][1]);
@@ -261,6 +262,7 @@ final class SelectTest extends TestCase
     {
         $select = new Select();
         $select->where(['name' => 'Ralph', 'age' => 33]);
+
         $identifier1 = new Argument('name', ArgumentType::Identifier);
         $expression1 = new Argument('Ralph', ArgumentType::Value);
         $identifier2 = new Argument('age', ArgumentType::Identifier);
@@ -317,6 +319,7 @@ final class SelectTest extends TestCase
         /** @var Where $where */
         $where      = $select->getRawState('where');
         $predicates = $where->getPredicates();
+
         self::assertCount(1, $predicates);
         self::assertIsArray($predicates[0]);
         self::assertInstanceOf(Literal::class, $predicates[0][1]);
@@ -334,6 +337,7 @@ final class SelectTest extends TestCase
         /** @var Where $where */
         $where      = $select->getRawState('where');
         $predicates = $where->getPredicates();
+
         self::assertCount(1, $predicates);
         self::assertIsArray($predicates[0]);
         self::assertInstanceOf(Literal::class, $predicates[0][1]);
@@ -682,9 +686,11 @@ final class SelectTest extends TestCase
         $select->from(new TableIdentifier('foo'));
         $select->join(new TableIdentifier('bar'), 'foo.id = bar.fooid');
 
+        $sqlString = $select->getSqlString(new TrustingSql92Platform());
+
         self::assertEquals(
             'SELECT "foo".*, "bar".* FROM "foo" INNER JOIN "bar" ON "foo"."id" = "bar"."fooid"',
-            $select->getSqlString(new TrustingSql92Platform())
+            $sqlString
         );
     }
 

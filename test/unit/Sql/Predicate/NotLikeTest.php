@@ -49,15 +49,11 @@ final class NotLikeTest extends TestCase
         $notLike = new NotLike('bar', 'Foo%');
         $identifier = new Argument('bar', ArgumentType::Identifier);
         $expression = new Argument('Foo%', ArgumentType::Value);
-        self::assertEquals(
-            [
-                [
-                    '%1$s NOT LIKE %2$s',
-                    [$identifier, $expression]
-                ],
-            ],
-            $notLike->getExpressionData()
-        );
+
+        $expressionData = $notLike->getExpressionData();
+
+        self::assertEquals('%1$s NOT LIKE %2$s', $expressionData->getExpressionSpecification());
+        self::assertEquals([$identifier, $expression], $expressionData->getExpressionValues());
     }
 
     public function testInstanceOfPerSetters(): void
