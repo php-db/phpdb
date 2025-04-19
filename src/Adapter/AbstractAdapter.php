@@ -17,26 +17,8 @@ use function strtolower;
  * @property Driver\DriverInterface $driver
  * @property Platform\PlatformInterface $platform
  */
-class Adapter implements AdapterInterface, Profiler\ProfilerAwareInterface
+abstract class AbstractAdapter implements AdapterInterface, Profiler\ProfilerAwareInterface
 {
-    /**
-     * Query Mode Constants
-     */
-    public const QUERY_MODE_EXECUTE = 'execute';
-    public const QUERY_MODE_PREPARE = 'prepare';
-
-    /**
-     * Prepare Type Constants
-     */
-    public const PREPARE_TYPE_POSITIONAL = 'positional';
-    public const PREPARE_TYPE_NAMED      = 'named';
-
-    public const FUNCTION_FORMAT_PARAMETER_NAME = 'formatParameterName';
-    public const FUNCTION_QUOTE_IDENTIFIER      = 'quoteIdentifier';
-    public const FUNCTION_QUOTE_VALUE           = 'quoteValue';
-
-    public const VALUE_QUOTE_SEPARATOR = 'quoteSeparator';
-
     /** @var Driver\DriverInterface */
     protected $driver;
 
@@ -230,9 +212,9 @@ class Adapter implements AdapterInterface, Profiler\ProfilerAwareInterface
     public function __get(string $name)
     {
         return match (strtolower($name)) {
-            'driver' => $this->driver,
+            'driver'   => $this->driver,
             'platform' => $this->platform,
-            default => throw new Exception\InvalidArgumentException('Invalid magic property on adapter'),
+            default    => throw new Exception\InvalidArgumentException('Invalid magic property on adapter'),
         };
     }
 

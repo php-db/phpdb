@@ -38,7 +38,7 @@ class AdapterServiceDelegator
 
         $databaseAdapter = $container->get($this->adapterName);
 
-        if (! $databaseAdapter instanceof Adapter) {
+        if (! $databaseAdapter instanceof AdapterInterface) {
             return $instance;
         }
 
