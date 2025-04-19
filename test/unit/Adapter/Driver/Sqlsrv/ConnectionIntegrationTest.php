@@ -6,34 +6,28 @@ use Laminas\Db\Adapter\Driver\Sqlsrv\Connection;
 use Laminas\Db\Adapter\Driver\Sqlsrv\Result;
 use Laminas\Db\Adapter\Driver\Sqlsrv\Sqlsrv;
 use Laminas\Db\Adapter\Driver\Sqlsrv\Statement;
-use PHPUnit\Framework\Attributes\CoversMethod;
-use PHPUnit\Framework\Attributes\Group;
 
 use function sqlsrv_connect;
 
-#[CoversMethod(Connection::class, 'getCurrentSchema')]
-#[CoversMethod(Connection::class, 'setResource')]
-#[CoversMethod(Connection::class, 'getResource')]
-#[CoversMethod(Connection::class, 'connect')]
-#[CoversMethod(Connection::class, 'isConnected')]
-#[CoversMethod(Connection::class, 'disconnect')]
-#[CoversMethod(Connection::class, 'beginTransaction')]
-#[CoversMethod(Connection::class, 'commit')]
-#[CoversMethod(Connection::class, 'rollback')]
-#[CoversMethod(Connection::class, 'execute')]
-#[CoversMethod(Connection::class, 'prepare')]
-#[CoversMethod(Connection::class, 'getLastGeneratedValue')]
-#[Group('integration')]
-#[Group('integration-sqlserver')]
-final class ConnectionIntegrationTest extends AbstractIntegrationTestCase
+/**
+ * @group integration
+ * @group integration-sqlserver
+ */
+class ConnectionIntegrationTest extends AbstractIntegrationTest
 {
-    public function testGetCurrentSchema(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Driver\Sqlsrv\Connection::getCurrentSchema
+     */
+    public function testGetCurrentSchema()
     {
         $connection = new Connection($this->variables);
         self::assertIsString($connection->getCurrentSchema());
     }
 
-    public function testSetResource(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Driver\Sqlsrv\Connection::setResource
+     */
+    public function testSetResource()
     {
         $resource   = sqlsrv_connect(
             $this->variables['hostname'],
@@ -51,7 +45,10 @@ final class ConnectionIntegrationTest extends AbstractIntegrationTestCase
         unset($resource);
     }
 
-    public function testGetResource(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Driver\Sqlsrv\Connection::getResource
+     */
+    public function testGetResource()
     {
         $connection = new Connection($this->variables);
         $connection->connect();
@@ -61,7 +58,10 @@ final class ConnectionIntegrationTest extends AbstractIntegrationTestCase
         unset($connection);
     }
 
-    public function testConnect(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Driver\Sqlsrv\Connection::connect
+     */
+    public function testConnect()
     {
         $connection = new Connection($this->variables);
         self::assertSame($connection, $connection->connect());
@@ -71,7 +71,10 @@ final class ConnectionIntegrationTest extends AbstractIntegrationTestCase
         unset($connection);
     }
 
-    public function testIsConnected(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Driver\Sqlsrv\Connection::isConnected
+     */
+    public function testIsConnected()
     {
         $connection = new Connection($this->variables);
         self::assertFalse($connection->isConnected());
@@ -82,7 +85,10 @@ final class ConnectionIntegrationTest extends AbstractIntegrationTestCase
         unset($connection);
     }
 
-    public function testDisconnect(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Driver\Sqlsrv\Connection::disconnect
+     */
+    public function testDisconnect()
     {
         $connection = new Connection($this->variables);
         $connection->connect();
@@ -92,9 +98,10 @@ final class ConnectionIntegrationTest extends AbstractIntegrationTestCase
     }
 
     /**
+     * @covers \Laminas\Db\Adapter\Driver\Sqlsrv\Connection::beginTransaction
      * @todo   Implement testBeginTransaction().
      */
-    public function testBeginTransaction(): never
+    public function testBeginTransaction()
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
@@ -103,9 +110,10 @@ final class ConnectionIntegrationTest extends AbstractIntegrationTestCase
     }
 
     /**
+     * @covers \Laminas\Db\Adapter\Driver\Sqlsrv\Connection::commit
      * @todo   Implement testCommit().
      */
-    public function testCommit(): never
+    public function testCommit()
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
@@ -114,9 +122,10 @@ final class ConnectionIntegrationTest extends AbstractIntegrationTestCase
     }
 
     /**
+     * @covers \Laminas\Db\Adapter\Driver\Sqlsrv\Connection::rollback
      * @todo   Implement testRollback().
      */
-    public function testRollback(): never
+    public function testRollback()
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
@@ -124,7 +133,10 @@ final class ConnectionIntegrationTest extends AbstractIntegrationTestCase
         );
     }
 
-    public function testExecute(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Driver\Sqlsrv\Connection::execute
+     */
+    public function testExecute()
     {
         $sqlsrv     = new Sqlsrv($this->variables);
         $connection = $sqlsrv->getConnection();
@@ -133,7 +145,10 @@ final class ConnectionIntegrationTest extends AbstractIntegrationTestCase
         self::assertInstanceOf(Result::class, $result);
     }
 
-    public function testPrepare(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Driver\Sqlsrv\Connection::prepare
+     */
+    public function testPrepare()
     {
         $sqlsrv     = new Sqlsrv($this->variables);
         $connection = $sqlsrv->getConnection();
@@ -142,17 +157,20 @@ final class ConnectionIntegrationTest extends AbstractIntegrationTestCase
         self::assertInstanceOf(Statement::class, $statement);
     }
 
-    public function testGetLastGeneratedValue(): never
+    /**
+     * @covers \Laminas\Db\Adapter\Driver\Sqlsrv\Connection::getLastGeneratedValue
+     */
+    public function testGetLastGeneratedValue()
     {
         $this->markTestIncomplete('Need to create a temporary sequence.');
-        /*
         $connection = new Connection($this->variables);
         $connection->getLastGeneratedValue();
-        */
     }
 
-    #[Group('laminas3469')]
-    public function testConnectReturnsConnectionWhenResourceSet(): void
+    /**
+     * @group laminas3469
+     */
+    public function testConnectReturnsConnectionWhenResourceSet()
     {
         $resource   = sqlsrv_connect(
             $this->variables['hostname'],

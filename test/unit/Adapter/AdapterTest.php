@@ -24,77 +24,71 @@ use Laminas\Db\Adapter\Profiler;
 use Laminas\Db\ResultSet\ResultSet;
 use Laminas\Db\ResultSet\ResultSetInterface;
 use LaminasTest\Db\TestAsset\TemporaryResultSet;
-use Override;
-use PHPUnit\Framework\Attributes\CoversMethod;
-use PHPUnit\Framework\Attributes\Group;
-use PHPUnit\Framework\Attributes\TestDox;
-use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 use function extension_loaded;
 
-#[CoversMethod(Adapter::class, 'setProfiler')]
-#[CoversMethod(Adapter::class, 'getProfiler')]
-#[CoversMethod(Adapter::class, 'createDriver')]
-#[CoversMethod(Adapter::class, 'createPlatform')]
-#[CoversMethod(Adapter::class, 'getDriver')]
-#[CoversMethod(Adapter::class, 'getPlatform')]
-#[CoversMethod(Adapter::class, 'getQueryResultSetPrototype')]
-#[CoversMethod(Adapter::class, 'getCurrentSchema')]
-#[CoversMethod(Adapter::class, 'query')]
-#[CoversMethod(Adapter::class, 'createStatement')]
-#[CoversMethod(Adapter::class, '__get')]
-final class AdapterTest extends TestCase
+class AdapterTest extends TestCase
 {
-    protected DriverInterface&MockObject $mockDriver;
+    /** @var MockObject&DriverInterface */
+    protected $mockDriver;
 
-    protected PlatformInterface&MockObject $mockPlatform;
+    /** @var MockObject&PlatformInterface */
+    protected $mockPlatform;
 
-    protected ConnectionInterface&MockObject $mockConnection;
+    /** @var MockObject&ConnectionInterface */
+    protected $mockConnection;
 
-    protected StatementInterface&MockObject $mockStatement;
+    /** @var MockObject&StatementInterface */
+    protected $mockStatement;
 
-    protected Adapter $adapter;
+    /** @var Adapter */
+    protected $adapter;
 
-    /**
-     * @throws Exception
-     */
-    #[Override]
     protected function setUp(): void
     {
         $this->mockDriver     = $this->createMock(DriverInterface::class);
         $this->mockConnection = $this->createMock(ConnectionInterface::class);
-        $this->mockDriver->method('checkEnvironment')->willReturn(true);
+        $this->mockDriver->method('checkEnvironment')->will($this->returnValue(true));
         $this->mockDriver->method('getConnection')
-            ->willReturn($this->mockConnection);
+            ->will($this->returnValue($this->mockConnection));
         $this->mockPlatform  = $this->createMock(PlatformInterface::class);
         $this->mockStatement = $this->createMock(StatementInterface::class);
         $this->mockDriver->method('createStatement')
-            ->willReturn($this->mockStatement);
+            ->will($this->returnValue($this->mockStatement));
 
         $this->adapter = new Adapter($this->mockDriver, $this->mockPlatform);
     }
 
-    #[TestDox('unit test: Test setProfiler() will store profiler')]
-    public function testSetProfiler(): void
+    /**
+     * @testdox unit test: Test setProfiler() will store profiler
+     * @covers \Laminas\Db\Adapter\Adapter::setProfiler
+     */
+    public function testSetProfiler()
     {
         $ret = $this->adapter->setProfiler(new Profiler\Profiler());
         self::assertSame($this->adapter, $ret);
     }
 
-    #[TestDox('unit test: Test getProfiler() will store profiler')]
-    public function testGetProfiler(): void
+    /**
+     * @testdox unit test: Test getProfiler() will store profiler
+     * @covers \Laminas\Db\Adapter\Adapter::getProfiler
+     */
+    public function testGetProfiler()
     {
         $this->adapter->setProfiler($profiler = new Profiler\Profiler());
         self::assertSame($profiler, $this->adapter->getProfiler());
 
         $adapter = new Adapter(['driver' => $this->mockDriver, 'profiler' => true], $this->mockPlatform);
-        self::assertInstanceOf(Profiler\Profiler::class, $adapter->getProfiler());
+        self::assertInstanceOf(\Laminas\Db\Adapter\Profiler\Profiler::class, $adapter->getProfiler());
     }
 
-    #[TestDox('unit test: Test createDriverFromParameters() will create proper driver type')]
-    public function testCreateDriver(): void
+    /**
+     * @testdox unit test: Test createDriverFromParameters() will create proper driver type
+     * @covers \Laminas\Db\Adapter\Adapter::createDriver
+     */
+    public function testCreateDriver()
     {
         if (extension_loaded('mysqli')) {
             $adapter = new Adapter(['driver' => 'mysqli'], $this->mockPlatform);
@@ -121,47 +115,50 @@ final class AdapterTest extends TestCase
         }
     }
 
-    #[TestDox('unit test: Test createPlatformFromDriver() will create proper platform from driver')]
-    public function testCreatePlatform(): void
+    /**
+     * @testdox unit test: Test createPlatformFromDriver() will create proper platform from driver
+     * @covers \Laminas\Db\Adapter\Adapter::createPlatform
+     */
+    public function testCreatePlatform()
     {
         $driver = clone $this->mockDriver;
-        $driver->expects($this->any())->method('getDatabasePlatformName')->willReturn('Mysql');
+        $driver->expects($this->any())->method('getDatabasePlatformName')->will($this->returnValue('Mysql'));
         $adapter = new Adapter($driver);
         self::assertInstanceOf(Mysql::class, $adapter->platform);
         unset($adapter, $driver);
 
         $driver = clone $this->mockDriver;
-        $driver->expects($this->any())->method('getDatabasePlatformName')->willReturn('SqlServer');
+        $driver->expects($this->any())->method('getDatabasePlatformName')->will($this->returnValue('SqlServer'));
         $adapter = new Adapter($driver);
         self::assertInstanceOf(SqlServer::class, $adapter->platform);
         unset($adapter, $driver);
 
         $driver = clone $this->mockDriver;
-        $driver->expects($this->any())->method('getDatabasePlatformName')->willReturn('Postgresql');
+        $driver->expects($this->any())->method('getDatabasePlatformName')->will($this->returnValue('Postgresql'));
         $adapter = new Adapter($driver);
         self::assertInstanceOf(Postgresql::class, $adapter->platform);
         unset($adapter, $driver);
 
         $driver = clone $this->mockDriver;
-        $driver->expects($this->any())->method('getDatabasePlatformName')->willReturn('Sqlite');
+        $driver->expects($this->any())->method('getDatabasePlatformName')->will($this->returnValue('Sqlite'));
         $adapter = new Adapter($driver);
         self::assertInstanceOf(Sqlite::class, $adapter->platform);
         unset($adapter, $driver);
 
         $driver = clone $this->mockDriver;
-        $driver->expects($this->any())->method('getDatabasePlatformName')->willReturn('IbmDb2');
+        $driver->expects($this->any())->method('getDatabasePlatformName')->will($this->returnValue('IbmDb2'));
         $adapter = new Adapter($driver);
         self::assertInstanceOf(IbmDb2::class, $adapter->platform);
         unset($adapter, $driver);
 
         $driver = clone $this->mockDriver;
-        $driver->expects($this->any())->method('getDatabasePlatformName')->willReturn('Oracle');
+        $driver->expects($this->any())->method('getDatabasePlatformName')->will($this->returnValue('Oracle'));
         $adapter = new Adapter($driver);
         self::assertInstanceOf(Oracle::class, $adapter->platform);
         unset($adapter, $driver);
 
         $driver = clone $this->mockDriver;
-        $driver->expects($this->any())->method('getDatabasePlatformName')->willReturn('Foo');
+        $driver->expects($this->any())->method('getDatabasePlatformName')->will($this->returnValue('Foo'));
         $adapter = new Adapter($driver);
         self::assertInstanceOf(Sql92::class, $adapter->platform);
         unset($adapter, $driver);
@@ -178,47 +175,55 @@ final class AdapterTest extends TestCase
         unset($adapter, $driver);
     }
 
-    #[TestDox('unit test: Test getDriver() will return driver object')]
-    public function testGetDriver(): void
+    /**
+     * @testdox unit test: Test getDriver() will return driver object
+     * @covers \Laminas\Db\Adapter\Adapter::getDriver
+     */
+    public function testGetDriver()
     {
         self::assertSame($this->mockDriver, $this->adapter->getDriver());
     }
 
-    #[TestDox('unit test: Test getPlatform() returns platform object')]
-    public function testGetPlatform(): void
+    /**
+     * @testdox unit test: Test getPlatform() returns platform object
+     * @covers \Laminas\Db\Adapter\Adapter::getPlatform
+     */
+    public function testGetPlatform()
     {
         self::assertSame($this->mockPlatform, $this->adapter->getPlatform());
     }
 
-    #[TestDox('unit test: Test getPlatform() returns platform object')]
-    public function testGetQueryResultSetPrototype(): void
+    /**
+     * @testdox unit test: Test getPlatform() returns platform object
+     * @covers \Laminas\Db\Adapter\Adapter::getQueryResultSetPrototype
+     */
+    public function testGetQueryResultSetPrototype()
     {
         self::assertInstanceOf(ResultSetInterface::class, $this->adapter->getQueryResultSetPrototype());
     }
 
-    #[TestDox('unit test: Test getCurrentSchema() returns current schema from connection object')]
-    public function testGetCurrentSchema(): void
+    /**
+     * @testdox unit test: Test getCurrentSchema() returns current schema from connection object
+     * @covers \Laminas\Db\Adapter\Adapter::getCurrentSchema
+     */
+    public function testGetCurrentSchema()
     {
-        $this->mockConnection->expects($this->any())->method('getCurrentSchema')->willReturn('FooSchema');
+        $this->mockConnection->expects($this->any())->method('getCurrentSchema')->will($this->returnValue('FooSchema'));
         self::assertEquals('FooSchema', $this->adapter->getCurrentSchema());
     }
 
     /**
-     * @throws \Exception
+     * @testdox unit test: Test query() in prepare mode produces a statement object
+     * @covers \Laminas\Db\Adapter\Adapter::query
      */
-    #[TestDox('unit test: Test query() in prepare mode produces a statement object')]
-    public function testQueryWhenPreparedProducesStatement(): void
+    public function testQueryWhenPreparedProducesStatement()
     {
         $s = $this->adapter->query('SELECT foo');
         self::assertSame($this->mockStatement, $s);
     }
 
-    /**
-     * @throws Exception
-     * @throws \Exception
-     */
-    #[Group('#210')]
-    public function testProducedResultSetPrototypeIsDifferentForEachQuery(): void
+    /** @group #210 */
+    public function testProducedResultSetPrototypeIsDifferentForEachQuery()
     {
         $statement = $this->createMock(StatementInterface::class);
         $result    = $this->createMock(ResultInterface::class);
@@ -237,66 +242,66 @@ final class AdapterTest extends TestCase
     }
 
     /**
-     * @throws \Exception
+     * @testdox unit test: Test query() in prepare mode, with array of parameters, produces a result object
+     * @covers \Laminas\Db\Adapter\Adapter::query
      */
-    #[TestDox('unit test: Test query() in prepare mode, with array of parameters, produces a result object')]
-    public function testQueryWhenPreparedWithParameterArrayProducesResult(): void
+    public function testQueryWhenPreparedWithParameterArrayProducesResult()
     {
         $parray    = ['bar' => 'foo'];
         $sql       = 'SELECT foo, :bar';
         $statement = $this->getMockBuilder(StatementInterface::class)->getMock();
         $result    = $this->getMockBuilder(ResultInterface::class)->getMock();
         $this->mockDriver->expects($this->any())->method('createStatement')
-            ->with($sql)->willReturn($statement);
-        $this->mockStatement->expects($this->any())->method('execute')->willReturn($result);
+            ->with($sql)->will($this->returnValue($statement));
+        $this->mockStatement->expects($this->any())->method('execute')->will($this->returnValue($result));
 
         $r = $this->adapter->query($sql, $parray);
         self::assertSame($result, $r);
     }
 
     /**
-     * @throws \Exception
+     * @testdox unit test: Test query() in prepare mode, with ParameterContainer, produces a result object
+     * @covers \Laminas\Db\Adapter\Adapter::query
      */
-    #[TestDox('unit test: Test query() in prepare mode, with ParameterContainer, produces a result object')]
-    public function testQueryWhenPreparedWithParameterContainerProducesResult(): void
+    public function testQueryWhenPreparedWithParameterContainerProducesResult()
     {
         $sql                = 'SELECT foo';
         $parameterContainer = $this->getMockBuilder(ParameterContainer::class)->getMock();
         $result             = $this->getMockBuilder(ResultInterface::class)->getMock();
         $this->mockDriver->expects($this->any())->method('createStatement')
-            ->with($sql)->willReturn($this->mockStatement);
-        $this->mockStatement->expects($this->any())->method('execute')->willReturn($result);
-        $result->expects($this->any())->method('isQueryResult')->willReturn(true);
+            ->with($sql)->will($this->returnValue($this->mockStatement));
+        $this->mockStatement->expects($this->any())->method('execute')->will($this->returnValue($result));
+        $result->expects($this->any())->method('isQueryResult')->will($this->returnValue(true));
 
         $r = $this->adapter->query($sql, $parameterContainer);
         self::assertInstanceOf(ResultSet::class, $r);
     }
 
     /**
-     * @throws \Exception
+     * @testdox unit test: Test query() in execute mode produces a driver result object
+     * @covers \Laminas\Db\Adapter\Adapter::query
      */
-    #[TestDox('unit test: Test query() in execute mode produces a driver result object')]
-    public function testQueryWhenExecutedProducesAResult(): void
+    public function testQueryWhenExecutedProducesAResult()
     {
         $sql    = 'SELECT foo';
         $result = $this->getMockBuilder(ResultInterface::class)->getMock();
-        $this->mockConnection->expects($this->any())->method('execute')->with($sql)->willReturn($result);
+        $this->mockConnection->expects($this->any())->method('execute')->with($sql)->will($this->returnValue($result));
 
         $r = $this->adapter->query($sql, Adapter::QUERY_MODE_EXECUTE);
         self::assertSame($result, $r);
     }
 
     /**
-     * @throws \Exception
+     * @testdox unit test: Test query() in execute mode produces a resultset object
+     * @covers \Laminas\Db\Adapter\Adapter::query
      */
-    #[TestDox('unit test: Test query() in execute mode produces a resultset object')]
-    public function testQueryWhenExecutedProducesAResultSetObjectWhenResultIsQuery(): void
+    public function testQueryWhenExecutedProducesAResultSetObjectWhenResultIsQuery()
     {
         $sql = 'SELECT foo';
 
         $result = $this->getMockBuilder(ResultInterface::class)->getMock();
-        $this->mockConnection->expects($this->any())->method('execute')->with($sql)->willReturn($result);
-        $result->expects($this->any())->method('isQueryResult')->willReturn(true);
+        $this->mockConnection->expects($this->any())->method('execute')->with($sql)->will($this->returnValue($result));
+        $result->expects($this->any())->method('isQueryResult')->will($this->returnValue(true));
 
         $r = $this->adapter->query($sql, Adapter::QUERY_MODE_EXECUTE);
         self::assertInstanceOf(ResultSet::class, $r);
@@ -305,20 +310,25 @@ final class AdapterTest extends TestCase
         self::assertInstanceOf(TemporaryResultSet::class, $r);
     }
 
-    #[TestDox('unit test: Test createStatement() produces a statement object')]
-    public function testCreateStatement(): void
+    /**
+     * @testdox unit test: Test createStatement() produces a statement object
+     * @covers \Laminas\Db\Adapter\Adapter::createStatement
+     */
+    public function testCreateStatement()
     {
         self::assertSame($this->mockStatement, $this->adapter->createStatement());
     }
 
+    /**
+     * @testdox unit test: Test __get() works
+     * @covers \Laminas\Db\Adapter\Adapter::__get
+     */
     // @codingStandardsIgnoreStart
-    public function test__get(): void
+    public function test__get()
     {
         // @codingStandardsIgnoreEnd
         self::assertSame($this->mockDriver, $this->adapter->driver);
-        /** @psalm-suppress UndefinedMagicPropertyFetch */
         self::assertSame($this->mockDriver, $this->adapter->DrivER);
-        /** @psalm-suppress UndefinedMagicPropertyFetch */
         self::assertSame($this->mockPlatform, $this->adapter->PlatForm);
         self::assertSame($this->mockPlatform, $this->adapter->platform);
 

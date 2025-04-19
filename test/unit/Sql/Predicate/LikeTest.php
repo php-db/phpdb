@@ -5,23 +5,23 @@ namespace LaminasTest\Db\Sql\Predicate;
 use Laminas\Db\Sql\Predicate\Like;
 use PHPUnit\Framework\TestCase;
 
-final class LikeTest extends TestCase
+class LikeTest extends TestCase
 {
-    public function testConstructEmptyArgs(): void
+    public function testConstructEmptyArgs()
     {
         $like = new Like();
         self::assertEquals('', $like->getIdentifier());
         self::assertEquals('', $like->getLike());
     }
 
-    public function testConstructWithArgs(): void
+    public function testConstructWithArgs()
     {
         $like = new Like('bar', 'Foo%');
         self::assertEquals('bar', $like->getIdentifier());
         self::assertEquals('Foo%', $like->getLike());
     }
 
-    public function testAccessorsMutators(): void
+    public function testAccessorsMutators()
     {
         $like = new Like();
         $like->setIdentifier('bar');
@@ -32,7 +32,7 @@ final class LikeTest extends TestCase
         self::assertEquals('target = target', $like->getSpecification());
     }
 
-    public function testGetExpressionData(): void
+    public function testGetExpressionData()
     {
         $like = new Like('bar', 'Foo%');
         self::assertEquals(
@@ -51,7 +51,7 @@ final class LikeTest extends TestCase
         );
     }
 
-    public function testInstanceOfPerSetters(): void
+    public function testInstanceOfPerSetters()
     {
         $like = new Like();
         self::assertInstanceOf(Like::class, $like->setIdentifier('bar'));

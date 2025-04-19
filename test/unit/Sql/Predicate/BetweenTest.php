@@ -3,38 +3,38 @@
 namespace LaminasTest\Db\Sql\Predicate;
 
 use Laminas\Db\Sql\Predicate\Between;
-use Override;
-use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 
-#[CoversMethod(Between::class, '__construct')]
-#[CoversMethod(Between::class, 'getIdentifier')]
-#[CoversMethod(Between::class, 'getMinValue')]
-#[CoversMethod(Between::class, 'getMaxValue')]
-#[CoversMethod(Between::class, 'getSpecification')]
-#[CoversMethod(Between::class, 'setIdentifier')]
-#[CoversMethod(Between::class, 'setMinValue')]
-#[CoversMethod(Between::class, 'setMaxValue')]
-#[CoversMethod(Between::class, 'setSpecification')]
-#[CoversMethod(Between::class, 'getExpressionData')]
-final class BetweenTest extends TestCase
+class BetweenTest extends TestCase
 {
-    protected Between $between;
+    /** @var Between */
+    protected $between;
 
-    #[Override]
     protected function setUp(): void
     {
         $this->between = new Between();
     }
 
-    public function testConstructorYieldsNullIdentifierMinimumAndMaximumValues(): void
+    /**
+     * @covers \Laminas\Db\Sql\Predicate\Between::__construct
+     * @covers \Laminas\Db\Sql\Predicate\Between::getIdentifier
+     * @covers \Laminas\Db\Sql\Predicate\Between::getMinValue
+     * @covers \Laminas\Db\Sql\Predicate\Between::getMaxValue
+     */
+    public function testConstructorYieldsNullIdentifierMinimumAndMaximumValues()
     {
         self::assertNull($this->between->getIdentifier());
         self::assertNull($this->between->getMinValue());
         self::assertNull($this->between->getMaxValue());
     }
 
-    public function testConstructorCanPassIdentifierMinimumAndMaximumValues(): void
+    /**
+     * @covers \Laminas\Db\Sql\Predicate\Between::__construct
+     * @covers \Laminas\Db\Sql\Predicate\Between::getIdentifier
+     * @covers \Laminas\Db\Sql\Predicate\Between::getMinValue
+     * @covers \Laminas\Db\Sql\Predicate\Between::getMaxValue
+     */
+    public function testConstructorCanPassIdentifierMinimumAndMaximumValues()
     {
         $between = new Between('foo.bar', 1, 300);
         self::assertEquals('foo.bar', $between->getIdentifier());
@@ -52,36 +52,58 @@ final class BetweenTest extends TestCase
         self::assertSame(0, $between->getMaxValue());
     }
 
-    public function testSpecificationHasSaneDefaultValue(): void
+    /**
+     * @covers \Laminas\Db\Sql\Predicate\Between::getSpecification
+     */
+    public function testSpecificationHasSaneDefaultValue()
     {
         self::assertEquals('%1$s BETWEEN %2$s AND %3$s', $this->between->getSpecification());
     }
 
-    public function testIdentifierIsMutable(): void
+    /**
+     * @covers \Laminas\Db\Sql\Predicate\Between::setIdentifier
+     * @covers \Laminas\Db\Sql\Predicate\Between::getIdentifier
+     */
+    public function testIdentifierIsMutable()
     {
         $this->between->setIdentifier('foo.bar');
         self::assertEquals('foo.bar', $this->between->getIdentifier());
     }
 
-    public function testMinValueIsMutable(): void
+    /**
+     * @covers \Laminas\Db\Sql\Predicate\Between::setMinValue
+     * @covers \Laminas\Db\Sql\Predicate\Between::getMinValue
+     */
+    public function testMinValueIsMutable()
     {
         $this->between->setMinValue(10);
         self::assertEquals(10, $this->between->getMinValue());
     }
 
-    public function testMaxValueIsMutable(): void
+    /**
+     * @covers \Laminas\Db\Sql\Predicate\Between::setMaxValue
+     * @covers \Laminas\Db\Sql\Predicate\Between::getMaxValue
+     */
+    public function testMaxValueIsMutable()
     {
         $this->between->setMaxValue(10);
         self::assertEquals(10, $this->between->getMaxValue());
     }
 
-    public function testSpecificationIsMutable(): void
+    /**
+     * @covers \Laminas\Db\Sql\Predicate\Between::setSpecification
+     * @covers \Laminas\Db\Sql\Predicate\Between::getSpecification
+     */
+    public function testSpecificationIsMutable()
     {
         $this->between->setSpecification('%1$s IS INBETWEEN %2$s AND %3$s');
         self::assertEquals('%1$s IS INBETWEEN %2$s AND %3$s', $this->between->getSpecification());
     }
 
-    public function testRetrievingWherePartsReturnsSpecificationArrayOfIdentifierAndValuesAndArrayOfTypes(): void
+    /**
+     * @covers \Laminas\Db\Sql\Predicate\Between::getExpressionData
+     */
+    public function testRetrievingWherePartsReturnsSpecificationArrayOfIdentifierAndValuesAndArrayOfTypes()
     {
         $this->between->setIdentifier('foo.bar')
                       ->setMinValue(10)

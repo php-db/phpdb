@@ -4,12 +4,13 @@ namespace LaminasTest\Db\TestAsset;
 
 use Laminas\Db\Adapter\Platform\SqlServer;
 
-final class TrustingSqlServerPlatform extends SqlServer
+class TrustingSqlServerPlatform extends SqlServer
 {
     /**
      * @param string $value
+     * @return string
      */
-    public function quoteValue($value): string
+    public function quoteValue($value)
     {
         return $this->quoteTrustedValue($value);
     }

@@ -6,77 +6,92 @@ use Laminas\Db\Adapter\Driver\Sqlsrv\Connection;
 use Laminas\Db\Adapter\Driver\Sqlsrv\Result;
 use Laminas\Db\Adapter\Driver\Sqlsrv\Sqlsrv;
 use Laminas\Db\Adapter\Driver\Sqlsrv\Statement;
-use Override;
-use PHPUnit\Framework\Attributes\CoversMethod;
-use PHPUnit\Framework\Attributes\Depends;
-use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
 
-#[CoversMethod(Sqlsrv::class, 'registerConnection')]
-#[CoversMethod(Sqlsrv::class, 'registerStatementPrototype')]
-#[CoversMethod(Sqlsrv::class, 'registerResultPrototype')]
-#[CoversMethod(Sqlsrv::class, 'getDatabasePlatformName')]
-#[CoversMethod(Sqlsrv::class, 'getConnection')]
-#[CoversMethod(Sqlsrv::class, 'createStatement')]
-#[CoversMethod(Sqlsrv::class, 'createResult')]
-#[CoversMethod(Sqlsrv::class, 'getPrepareType')]
-#[CoversMethod(Sqlsrv::class, 'formatParameterName')]
-#[CoversMethod(Sqlsrv::class, 'getLastGeneratedValue')]
-#[CoversMethod(Sqlsrv::class, 'getResultPrototype')]
-final class SqlsrvTest extends TestCase
+class SqlsrvTest extends TestCase
 {
-    protected Sqlsrv $sqlsrv;
+    /** @var Sqlsrv */
+    protected $sqlsrv;
 
     /**
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
-    #[Override]
     protected function setUp(): void
     {
         $this->sqlsrv = new Sqlsrv([]);
     }
 
     /**
-     * @throws Exception
+     * @covers \Laminas\Db\Adapter\Driver\Sqlsrv\Sqlsrv::registerConnection
      */
-    public function testRegisterConnection(): void
+    public function testRegisterConnection()
     {
-        $mockConnection = $this->getMockBuilder(Connection::class)->setConstructorArgs([[]])->onlyMethods(['setDriver'])->getMock();
+        $mockConnection = $this->getMockForAbstractClass(
+            Connection::class,
+            [[]],
+            '',
+            true,
+            true,
+            true,
+            ['setDriver']
+        );
         $mockConnection->expects($this->once())->method('setDriver')->with($this->equalTo($this->sqlsrv));
         self::assertSame($this->sqlsrv, $this->sqlsrv->registerConnection($mockConnection));
     }
 
     /**
-     * @throws Exception
+     * @covers \Laminas\Db\Adapter\Driver\Sqlsrv\Sqlsrv::registerStatementPrototype
      */
-    public function testRegisterStatementPrototype(): void
+    public function testRegisterStatementPrototype()
     {
         $this->sqlsrv  = new Sqlsrv([]);
-        $mockStatement = $this->getMockBuilder(Statement::class)->setConstructorArgs([])->onlyMethods(['setDriver'])->getMock();
+        $mockStatement = $this->getMockForAbstractClass(
+            Statement::class,
+            [],
+            '',
+            true,
+            true,
+            true,
+            ['setDriver']
+        );
         $mockStatement->expects($this->once())->method('setDriver')->with($this->equalTo($this->sqlsrv));
         self::assertSame($this->sqlsrv, $this->sqlsrv->registerStatementPrototype($mockStatement));
     }
 
     /**
-     * @throws Exception
+     * @covers \Laminas\Db\Adapter\Driver\Sqlsrv\Sqlsrv::registerResultPrototype
      */
-    public function testRegisterResultPrototype(): void
+    public function testRegisterResultPrototype()
     {
         $this->sqlsrv  = new Sqlsrv([]);
-        $mockStatement = $this->getMockBuilder(Result::class)->setConstructorArgs([])->onlyMethods([])->getMock();
+        $mockStatement = $this->getMockForAbstractClass(
+            Result::class,
+            [],
+            '',
+            true,
+            true,
+            true,
+            ['setDriver']
+        );
         self::assertSame($this->sqlsrv, $this->sqlsrv->registerResultPrototype($mockStatement));
     }
 
-    public function testGetDatabasePlatformName(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Driver\Sqlsrv\Sqlsrv::getDatabasePlatformName
+     */
+    public function testGetDatabasePlatformName()
     {
         $this->sqlsrv = new Sqlsrv([]);
         self::assertEquals('SqlServer', $this->sqlsrv->getDatabasePlatformName());
         self::assertEquals('SQLServer', $this->sqlsrv->getDatabasePlatformName(Sqlsrv::NAME_FORMAT_NATURAL));
     }
 
-    #[Depends('testRegisterConnection')]
-    public function testGetConnection(): void
+    /**
+     * @depends testRegisterConnection
+     * @covers \Laminas\Db\Adapter\Driver\Sqlsrv\Sqlsrv::getConnection
+     */
+    public function testGetConnection()
     {
         $conn = new Connection([]);
         $this->sqlsrv->registerConnection($conn);
@@ -84,9 +99,10 @@ final class SqlsrvTest extends TestCase
     }
 
     /**
+     * @covers \Laminas\Db\Adapter\Driver\Sqlsrv\Sqlsrv::createStatement
      * @todo   Implement testGetPrepareType().
      */
-    public function testCreateStatement(): never
+    public function testCreateStatement()
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
@@ -95,9 +111,10 @@ final class SqlsrvTest extends TestCase
     }
 
     /**
+     * @covers \Laminas\Db\Adapter\Driver\Sqlsrv\Sqlsrv::createResult
      * @todo   Implement testGetPrepareType().
      */
-    public function testCreateResult(): never
+    public function testCreateResult()
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
@@ -106,9 +123,10 @@ final class SqlsrvTest extends TestCase
     }
 
     /**
+     * @covers \Laminas\Db\Adapter\Driver\Sqlsrv\Sqlsrv::getPrepareType
      * @todo   Implement testGetPrepareType().
      */
-    public function testGetPrepareType(): never
+    public function testGetPrepareType()
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
@@ -117,9 +135,10 @@ final class SqlsrvTest extends TestCase
     }
 
     /**
+     * @covers \Laminas\Db\Adapter\Driver\Sqlsrv\Sqlsrv::formatParameterName
      * @todo   Implement testFormatParameterName().
      */
-    public function testFormatParameterName(): never
+    public function testFormatParameterName()
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
@@ -128,9 +147,10 @@ final class SqlsrvTest extends TestCase
     }
 
     /**
+     * @covers \Laminas\Db\Adapter\Driver\Sqlsrv\Sqlsrv::getLastGeneratedValue
      * @todo   Implement testGetLastGeneratedValue().
      */
-    public function testGetLastGeneratedValue(): never
+    public function testGetLastGeneratedValue()
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
@@ -138,7 +158,10 @@ final class SqlsrvTest extends TestCase
         );
     }
 
-    public function testGetResultPrototype(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Driver\Sqlsrv\Sqlsrv::getResultPrototype
+     */
+    public function testGetResultPrototype()
     {
         $resultPrototype = $this->sqlsrv->getResultPrototype();
 

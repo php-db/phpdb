@@ -10,36 +10,33 @@ use Laminas\Db\Adapter\Platform\SqlServer as SqlServerPlatform;
 use Laminas\Db\Sql\Expression;
 use Laminas\Db\Sql\Platform\SqlServer\SelectDecorator;
 use Laminas\Db\Sql\Select;
-use PHPUnit\Framework\Attributes\CoversMethod;
-use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\Attributes\TestDox;
 use PHPUnit\Framework\TestCase;
 
-#[CoversMethod(SelectDecorator::class, 'prepareStatement')]
-#[CoversMethod(SelectDecorator::class, 'processLimitOffset')]
-#[CoversMethod(SelectDecorator::class, 'getSqlString')]
-final class SelectDecoratorTest extends TestCase
+class SelectDecoratorTest extends TestCase
 {
     /**
+     * @testdox integration test: Testing SelectDecorator will use Select an internal state to prepare
+     *                            a proper limit/offset sql statement
+     * @covers \Laminas\Db\Sql\Platform\SqlServer\SelectDecorator::prepareStatement
+     * @covers \Laminas\Db\Sql\Platform\SqlServer\SelectDecorator::processLimitOffset
+     * @dataProvider dataProvider
      * @param array<string, mixed> $expectedParams
+     * @param mixed $notUsed
      */
-    #[DataProvider('dataProvider')]
-    #[TestDox('integration test: Testing SelectDecorator will use Select an internal state to prepare
-                           a proper limit/offset sql statement')]
     public function testPrepareStatement(
         Select $select,
         string $expectedSql,
         array $expectedParams,
-        mixed $notUsed,
+        $notUsed,
         int $expectedFormatParamCount
-    ): void {
+    ) {
         $driver = $this->getMockBuilder(DriverInterface::class)->getMock();
         $driver->expects($this->exactly($expectedFormatParamCount))->method('formatParameterName')
-            ->willReturn('?');
+            ->will($this->returnValue('?'));
 
         // test
         $adapter = $this->getMockBuilder(Adapter::class)
-            ->onlyMethods([])
+            ->setMethods()
             ->setConstructorArgs([
                 $driver,
                 new SqlServerPlatform(),
@@ -49,7 +46,7 @@ final class SelectDecoratorTest extends TestCase
         $parameterContainer = new ParameterContainer();
         $statement          = $this->getMockBuilder(StatementInterface::class)->getMock();
         $statement->expects($this->any())->method('getParameterContainer')
-            ->willReturn($parameterContainer);
+            ->will($this->returnValue($parameterContainer));
 
         $statement->expects($this->once())->method('setSql')->with($expectedSql);
 
@@ -60,15 +57,21 @@ final class SelectDecoratorTest extends TestCase
         self::assertEquals($expectedParams, $parameterContainer->getNamedArray());
     }
 
-    #[DataProvider('dataProvider')]
-    #[TestDox('integration test: Testing SelectDecorator will use Select an internal state to prepare
-                           a proper limit/offset sql statement')]
-    public function testGetSqlString(Select $select, mixed $ignored, mixed $alsoIgnored, string $expectedSql): void
+    /**
+     * @testdox integration test: Testing SelectDecorator will use Select an internal state to prepare
+     *                            a proper limit/offset sql statement
+     * @covers \Laminas\Db\Sql\Platform\SqlServer\SelectDecorator::getSqlString
+     * @covers \Laminas\Db\Sql\Platform\SqlServer\SelectDecorator::processLimitOffset
+     * @dataProvider dataProvider
+     * @param mixed $ignored
+     * @param mixed $alsoIgnored
+     */
+    public function testGetSqlString(Select $select, $ignored, $alsoIgnored, string $expectedSql)
     {
         $parameterContainer = new ParameterContainer();
         $statement          = $this->getMockBuilder(StatementInterface::class)->getMock();
         $statement->expects($this->any())->method('getParameterContainer')
-            ->willReturn($parameterContainer);
+            ->will($this->returnValue($parameterContainer));
 
         $selectDecorator = new SelectDecorator();
         $selectDecorator->setSubject($select);
@@ -76,7 +79,7 @@ final class SelectDecoratorTest extends TestCase
     }
 
     /** @psalm-return array<array-key, array{0: Select, 1: string, 2: array<string, mixed>, 3: string, 4: int}> */
-    public static function dataProvider(): array
+    public function dataProvider(): array
     {
         // phpcs:disable Generic.Files.LineLength.TooLong
         $select0 = new Select();

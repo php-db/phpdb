@@ -12,65 +12,41 @@ use Laminas\Db\RowGateway\Exception\RuntimeException;
 use Laminas\Db\RowGateway\RowGateway;
 use Laminas\Db\Sql\Select;
 use Laminas\Db\Sql\Sql;
-use Override;
-use PHPUnit\Framework\Attributes\CoversMethod;
-use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use ReflectionException;
 use ReflectionObject;
 
-#[CoversMethod(RowGateway::class, 'offsetSet')]
-#[CoversMethod(RowGateway::class, '__set')]
-#[CoversMethod(RowGateway::class, '__isset')]
-#[CoversMethod(RowGateway::class, 'offsetExists')]
-#[CoversMethod(RowGateway::class, '__unset')]
-#[CoversMethod(RowGateway::class, 'offsetUnset')]
-#[CoversMethod(RowGateway::class, 'offsetGet')]
-#[CoversMethod(RowGateway::class, '__get')]
-#[CoversMethod(RowGateway::class, 'save')]
-#[CoversMethod(RowGateway::class, 'delete')]
-#[CoversMethod(RowGateway::class, 'populate')]
-#[CoversMethod(RowGateway::class, 'rowExistsInDatabase')]
-#[CoversMethod(RowGateway::class, 'processPrimaryKeyData')]
-#[CoversMethod(RowGateway::class, 'count')]
-#[CoversMethod(RowGateway::class, 'toArray')]
-final class AbstractRowGatewayTest extends TestCase
+class AbstractRowGatewayTest extends TestCase
 {
     /** @var Adapter&MockObject */
-    protected Adapter|MockObject $mockAdapter;
+    protected $mockAdapter;
 
     /** @var RowGateway */
-    protected RowGateway|AbstractRowGateway|MockObject $rowGateway;
+    protected $rowGateway;
 
     /** @var ResultInterface&MockObject */
-    protected ResultInterface|MockObject $mockResult;
+    protected $mockResult;
 
-    /**
-     * @throws ReflectionException
-     * @throws Exception
-     */
-    #[Override]
     protected function setUp(): void
     {
         // mock the adapter, driver, and parts
         $mockResult = $this->getMockBuilder(ResultInterface::class)->getMock();
-        $mockResult->expects($this->any())->method('getAffectedRows')->willReturn(1);
+        $mockResult->expects($this->any())->method('getAffectedRows')->will($this->returnValue(1));
         $this->mockResult = $mockResult;
         $mockStatement    = $this->getMockBuilder(StatementInterface::class)->getMock();
-        $mockStatement->expects($this->any())->method('execute')->willReturn($mockResult);
+        $mockStatement->expects($this->any())->method('execute')->will($this->returnValue($mockResult));
         $mockConnection = $this->getMockBuilder(ConnectionInterface::class)->getMock();
         $mockDriver     = $this->getMockBuilder(DriverInterface::class)->getMock();
-        $mockDriver->expects($this->any())->method('createStatement')->willReturn($mockStatement);
-        $mockDriver->expects($this->any())->method('getConnection')->willReturn($mockConnection);
+        $mockDriver->expects($this->any())->method('createStatement')->will($this->returnValue($mockStatement));
+        $mockDriver->expects($this->any())->method('getConnection')->will($this->returnValue($mockConnection));
 
         // setup mock adapter
         $this->mockAdapter = $this->getMockBuilder(Adapter::class)
-            ->onlyMethods([])
+            ->setMethods()
             ->setConstructorArgs([$mockDriver])
             ->getMock();
 
-        $this->rowGateway = $this->getMockBuilder(AbstractRowGateway::class)->onlyMethods([])->getMock();
+        $this->rowGateway = $this->getMockForAbstractClass(AbstractRowGateway::class);
 
         $rgPropertyValues = [
             'primaryKeyColumn' => 'id',
@@ -80,7 +56,10 @@ final class AbstractRowGatewayTest extends TestCase
         $this->setRowGatewayState($rgPropertyValues);
     }
 
-    public function testOffsetSet(): void
+    /**
+     * @covers \Laminas\Db\RowGateway\RowGateway::offsetSet
+     */
+    public function testOffsetSet()
     {
         // If we set with an index, both getters should retrieve the same value:
         $this->rowGateway['testColumn'] = 'test';
@@ -88,8 +67,11 @@ final class AbstractRowGatewayTest extends TestCase
         self::assertEquals('test', $this->rowGateway['testColumn']);
     }
 
+    /**
+     * @covers \Laminas\Db\RowGateway\RowGateway::__set
+     */
     // @codingStandardsIgnoreStart
-    public function test__set(): void
+    public function test__set()
     {
         // @codingStandardsIgnoreEnd
         // If we set with a property, both getters should retrieve the same value:
@@ -98,8 +80,11 @@ final class AbstractRowGatewayTest extends TestCase
         self::assertEquals('test', $this->rowGateway['testColumn']);
     }
 
+    /**
+     * @covers \Laminas\Db\RowGateway\RowGateway::__isset
+     */
     // @codingStandardsIgnoreStart
-    public function test__isset(): void
+    public function test__isset()
     {
         // @codingStandardsIgnoreEnd
         // Test isset before and after assigning to a property:
@@ -108,7 +93,10 @@ final class AbstractRowGatewayTest extends TestCase
         self::assertTrue(isset($this->rowGateway->foo));
     }
 
-    public function testOffsetExists(): void
+    /**
+     * @covers \Laminas\Db\RowGateway\RowGateway::offsetExists
+     */
+    public function testOffsetExists()
     {
         // Test isset before and after assigning to an index:
         self::assertFalse(isset($this->rowGateway['foo']));
@@ -116,8 +104,11 @@ final class AbstractRowGatewayTest extends TestCase
         self::assertTrue(isset($this->rowGateway['foo']));
     }
 
+    /**
+     * @covers \Laminas\Db\RowGateway\RowGateway::__unset
+     */
     // @codingStandardsIgnoreStart
-    public function test__unset(): void
+    public function test__unset()
     {
         // @codingStandardsIgnoreEnd
         $this->rowGateway->foo = 'bar';
@@ -127,7 +118,10 @@ final class AbstractRowGatewayTest extends TestCase
         self::assertEmpty($this->rowGateway['foo']);
     }
 
-    public function testOffsetUnset(): void
+    /**
+     * @covers \Laminas\Db\RowGateway\RowGateway::offsetUnset
+     */
+    public function testOffsetUnset()
     {
         $this->rowGateway['foo'] = 'bar';
         self::assertEquals('bar', $this->rowGateway['foo']);
@@ -136,7 +130,10 @@ final class AbstractRowGatewayTest extends TestCase
         self::assertEmpty($this->rowGateway['foo']);
     }
 
-    public function testOffsetGet(): void
+    /**
+     * @covers \Laminas\Db\RowGateway\RowGateway::offsetGet
+     */
+    public function testOffsetGet()
     {
         // If we set with an index, both getters should retrieve the same value:
         $this->rowGateway['testColumn'] = 'test';
@@ -144,8 +141,11 @@ final class AbstractRowGatewayTest extends TestCase
         self::assertEquals('test', $this->rowGateway['testColumn']);
     }
 
+    /**
+     * @covers \Laminas\Db\RowGateway\RowGateway::__get
+     */
     // @codingStandardsIgnoreStart
-    public function test__get(): void
+    public function test__get()
     {
         // @codingStandardsIgnoreEnd
         // If we set with a property, both getters should retrieve the same value:
@@ -154,12 +154,15 @@ final class AbstractRowGatewayTest extends TestCase
         self::assertEquals('test', $this->rowGateway['testColumn']);
     }
 
-    public function testSaveInsert(): void
+    /**
+     * @covers \Laminas\Db\RowGateway\RowGateway::save
+     */
+    public function testSaveInsert()
     {
         // test insert
         $this->mockResult->expects($this->any())->method('current')
-            ->willReturn(['id' => 5, 'name' => 'foo']);
-        $this->mockResult->expects($this->any())->method('getGeneratedValue')->willReturn(5);
+            ->will($this->returnValue(['id' => 5, 'name' => 'foo']));
+        $this->mockResult->expects($this->any())->method('getGeneratedValue')->will($this->returnValue(5));
         $this->rowGateway->populate(['name' => 'foo']);
         $this->rowGateway->save();
         self::assertEquals(5, $this->rowGateway->id);
@@ -167,14 +170,13 @@ final class AbstractRowGatewayTest extends TestCase
     }
 
     /**
-     * @throws ReflectionException
-     * @throws Exception
+     * @covers \Laminas\Db\RowGateway\RowGateway::save
      */
-    public function testSaveInsertMultiKey(): void
+    public function testSaveInsertMultiKey()
     {
-        $this->rowGateway = $this->getMockBuilder(AbstractRowGateway::class)->onlyMethods([])->getMock();
+        $this->rowGateway = $this->getMockForAbstractClass(AbstractRowGateway::class);
 
-        $mockSql = $this->getMockBuilder(Sql::class)->setConstructorArgs([$this->mockAdapter])->onlyMethods([])->getMock();
+        $mockSql = $this->getMockForAbstractClass(Sql::class, [$this->mockAdapter]);
 
         $rgPropertyValues = [
             'primaryKeyColumn' => ['one', 'two'],
@@ -185,13 +187,12 @@ final class AbstractRowGatewayTest extends TestCase
 
         // test insert
         $this->mockResult->expects($this->any())->method('current')
-            ->willReturn(['one' => 'foo', 'two' => 'bar']);
+            ->will($this->returnValue(['one' => 'foo', 'two' => 'bar']));
 
         // @todo Need to assert that $where was filled in
 
         $refRowGateway     = new ReflectionObject($this->rowGateway);
         $refRowGatewayProp = $refRowGateway->getProperty('primaryKeyData');
-        /** @psalm-suppress UnusedMethodCall */
         $refRowGatewayProp->setAccessible(true);
 
         $this->rowGateway->populate(['one' => 'foo', 'two' => 'bar']);
@@ -204,41 +205,47 @@ final class AbstractRowGatewayTest extends TestCase
         self::assertEquals(['one' => 'foo', 'two' => 'bar'], $refRowGatewayProp->getValue($this->rowGateway));
     }
 
-    public function testSaveUpdate(): void
+    /**
+     * @covers \Laminas\Db\RowGateway\RowGateway::save
+     */
+    public function testSaveUpdate()
     {
         // test update
         $this->mockResult->expects($this->any())->method('current')
-            ->willReturn(['id' => 6, 'name' => 'foo']);
+            ->will($this->returnValue(['id' => 6, 'name' => 'foo']));
         $this->rowGateway->populate(['id' => 6, 'name' => 'foo'], true);
         $this->rowGateway->save();
         self::assertEquals(6, $this->rowGateway['id']);
     }
 
-    public function testSaveUpdateChangingPrimaryKey(): void
+    /**
+     * @covers \Laminas\Db\RowGateway\RowGateway::save
+     */
+    public function testSaveUpdateChangingPrimaryKey()
     {
         // this mock is the select to be used to re-fresh the rowobject's data
         $selectMock = $this->getMockBuilder(Select::class)
-            ->onlyMethods(['where'])
+            ->setMethods(['where'])
             ->getMock();
         $selectMock->expects($this->once())
             ->method('where')
             ->with($this->equalTo(['id' => 7]))
-            ->willReturn($selectMock);
+            ->will($this->returnValue($selectMock));
 
         $sqlMock = $this->getMockBuilder(Sql::class)
-            ->onlyMethods(['select'])
+            ->setMethods(['select'])
             ->setConstructorArgs([$this->mockAdapter])
             ->getMock();
         $sqlMock->expects($this->any())
             ->method('select')
-            ->willReturn($selectMock);
+            ->will($this->returnValue($selectMock));
 
         $this->setRowGatewayState(['sql' => $sqlMock]);
 
         // original mock returning updated data
         $this->mockResult->expects($this->any())
             ->method('current')
-            ->willReturn(['id' => 7, 'name' => 'fooUpdated']);
+            ->will($this->returnValue(['id' => 7, 'name' => 'fooUpdated']));
 
         // populate forces an update in save(), seeds with original data (from db)
         $this->rowGateway->populate(['id' => 6, 'name' => 'foo'], true);
@@ -247,7 +254,10 @@ final class AbstractRowGatewayTest extends TestCase
         self::assertEquals(['id' => 7, 'name' => 'fooUpdated'], $this->rowGateway->toArray());
     }
 
-    public function testDelete(): void
+    /**
+     * @covers \Laminas\Db\RowGateway\RowGateway::delete
+     */
+    public function testDelete()
     {
         $this->rowGateway->foo = 'bar';
         $affectedRows          = $this->rowGateway->delete();
@@ -255,7 +265,11 @@ final class AbstractRowGatewayTest extends TestCase
         self::assertEquals(1, $affectedRows);
     }
 
-    public function testPopulate(): void
+    /**
+     * @covers \Laminas\Db\RowGateway\RowGateway::populate
+     * @covers \Laminas\Db\RowGateway\RowGateway::rowExistsInDatabase
+     */
+    public function testPopulate()
     {
         $this->rowGateway->populate(['id' => 5, 'name' => 'foo']);
         self::assertEquals(5, $this->rowGateway['id']);
@@ -266,7 +280,10 @@ final class AbstractRowGatewayTest extends TestCase
         self::assertTrue($this->rowGateway->rowExistsInDatabase());
     }
 
-    public function testProcessPrimaryKeyData(): void
+    /**
+     * @covers \Laminas\Db\RowGateway\RowGateway::processPrimaryKeyData
+     */
+    public function testProcessPrimaryKeyData()
     {
         $this->rowGateway->populate(['id' => 5, 'name' => 'foo'], true);
 
@@ -275,27 +292,29 @@ final class AbstractRowGatewayTest extends TestCase
         $this->rowGateway->populate(['boo' => 5, 'name' => 'foo'], true);
     }
 
-    public function testCount(): void
+    /**
+     * @covers \Laminas\Db\RowGateway\RowGateway::count
+     */
+    public function testCount()
     {
         $this->rowGateway->populate(['id' => 5, 'name' => 'foo'], true);
         self::assertEquals(2, $this->rowGateway->count());
     }
 
-    public function testToArray(): void
+    /**
+     * @covers \Laminas\Db\RowGateway\RowGateway::toArray
+     */
+    public function testToArray()
     {
         $this->rowGateway->populate(['id' => 5, 'name' => 'foo'], true);
         self::assertEquals(['id' => 5, 'name' => 'foo'], $this->rowGateway->toArray());
     }
 
-    /**
-     * @throws ReflectionException
-     */
-    protected function setRowGatewayState(array $properties): void
+    protected function setRowGatewayState(array $properties)
     {
         $refRowGateway = new ReflectionObject($this->rowGateway);
         foreach ($properties as $rgPropertyName => $rgPropertyValue) {
             $refRowGatewayProp = $refRowGateway->getProperty($rgPropertyName);
-            /** @psalm-suppress UnusedMethodCall */
             $refRowGatewayProp->setAccessible(true);
             $refRowGatewayProp->setValue($this->rowGateway, $rgPropertyValue);
         }

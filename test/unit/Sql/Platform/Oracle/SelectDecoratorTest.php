@@ -9,34 +9,33 @@ use Laminas\Db\Adapter\ParameterContainer;
 use Laminas\Db\Adapter\Platform\Oracle as OraclePlatform;
 use Laminas\Db\Sql\Platform\Oracle\SelectDecorator;
 use Laminas\Db\Sql\Select;
-use PHPUnit\Framework\Attributes\CoversMethod;
-use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\Attributes\TestDox;
 use PHPUnit\Framework\TestCase;
 
-#[CoversMethod(\Laminas\Db\Sql\Platform\SqlServer\SelectDecorator::class, 'prepareStatement')]
-#[CoversMethod(\Laminas\Db\Sql\Platform\SqlServer\SelectDecorator::class, 'processLimitOffset')]
-#[CoversMethod(SelectDecorator::class, 'getSqlString')]
-final class SelectDecoratorTest extends TestCase
+class SelectDecoratorTest extends TestCase
 {
-    #[DataProvider('dataProvider')]
-    #[TestDox('integration test: Testing SelectDecorator will use Select to produce properly Oracle
-                           dialect prepared sql')]
+    /**
+     * @testdox integration test: Testing SelectDecorator will use Select to produce properly Oracle
+     *                            dialect prepared sql
+     * @covers \Laminas\Db\Sql\Platform\SqlServer\SelectDecorator::prepareStatement
+     * @covers \Laminas\Db\Sql\Platform\SqlServer\SelectDecorator::processLimitOffset
+     * @dataProvider dataProvider
+     * @param mixed $notUsed
+     */
     public function testPrepareStatement(
         Select $select,
         string $expectedSql,
         array $expectedParams,
-        mixed $notUsed,
+        $notUsed,
         int $expectedFormatParamCount
-    ): void {
+    ) {
         $driver = $this->getMockBuilder(DriverInterface::class)->getMock();
         $driver->expects($this->exactly($expectedFormatParamCount))
             ->method('formatParameterName')
-            ->willReturn('?');
+            ->will($this->returnValue('?'));
 
         // test
         $adapter = $this->getMockBuilder(Adapter::class)
-            ->onlyMethods([])
+            ->setMethods()
             ->setConstructorArgs([
                 $driver,
                 new OraclePlatform(),
@@ -47,7 +46,7 @@ final class SelectDecoratorTest extends TestCase
         $statement          = $this->getMockBuilder(StatementInterface::class)->getMock();
         $statement->expects($this->any())
             ->method('getParameterContainer')
-            ->willReturn($parameterContainer);
+            ->will($this->returnValue($parameterContainer));
 
         $statement->expects($this->once())->method('setSql')->with($expectedSql);
 
@@ -58,16 +57,21 @@ final class SelectDecoratorTest extends TestCase
         self::assertEquals($expectedParams, $parameterContainer->getNamedArray());
     }
 
-    #[DataProvider('dataProvider')]
-    #[TestDox('integration test: Testing SelectDecorator will use Select to produce properly Oracle
-                           dialect sql statements')]
-    public function testGetSqlString(Select $select, mixed $ignored, mixed $alsoIgnored, string $expectedSql): void
+    /**
+     * @testdox integration test: Testing SelectDecorator will use Select to produce properly Oracle
+     *                            dialect sql statements
+     * @covers \Laminas\Db\Sql\Platform\Oracle\SelectDecorator::getSqlString
+     * @dataProvider dataProvider
+     * @param mixed $ignored
+     * @param mixed $alsoIgnored
+     */
+    public function testGetSqlString(Select $select, $ignored, $alsoIgnored, string $expectedSql)
     {
         $parameterContainer = new ParameterContainer();
         $statement          = $this->getMockBuilder(StatementInterface::class)->getMock();
         $statement->expects($this->any())
             ->method('getParameterContainer')
-            ->willReturn($parameterContainer);
+            ->will($this->returnValue($parameterContainer));
 
         $selectDecorator = new SelectDecorator();
         $selectDecorator->setSubject($select);
@@ -85,7 +89,7 @@ final class SelectDecoratorTest extends TestCase
      *     4: int
      * }>
      */
-    public static function dataProvider(): array
+    public function dataProvider(): array
     {
         // phpcs:disable Generic.Files.LineLength.TooLong,WebimpressCodingStandard.NamingConventions.ValidVariableName.NotCamelCaps
         $select0 = new Select();

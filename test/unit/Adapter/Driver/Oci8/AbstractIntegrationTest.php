@@ -1,27 +1,25 @@
 <?php
 
-namespace LaminasTest\Db\Adapter\Driver\IbmDb2;
+namespace LaminasTest\Db\Adapter\Driver\Oci8;
 
-use Override;
 use PHPUnit\Framework\TestCase;
 
 use function extension_loaded;
 use function getenv;
 
-abstract class AbstractIntegrationTestCase extends TestCase
+abstract class AbstractIntegrationTest extends TestCase
 {
-    /** @var array */
-    protected string|array|false $variables = [
-        'database' => 'TESTS_LAMINAS_DB_ADAPTER_DRIVER_IBMDB2_DATABASE',
-        'username' => 'TESTS_LAMINAS_DB_ADAPTER_DRIVER_IBMDB2_USERNAME',
-        'password' => 'TESTS_LAMINAS_DB_ADAPTER_DRIVER_IBMDB2_PASSWORD',
+    /** @var array<string, string> */
+    protected $variables = [
+        'hostname' => 'TESTS_LAMINAS_DB_ADAPTER_DRIVER_OCI8_HOSTNAME',
+        'username' => 'TESTS_LAMINAS_DB_ADAPTER_DRIVER_OCI8_USERNAME',
+        'password' => 'TESTS_LAMINAS_DB_ADAPTER_DRIVER_OCI8_PASSWORD',
     ];
 
     /**
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
-    #[Override]
     protected function setUp(): void
     {
         foreach ($this->variables as $name => $value) {
@@ -33,8 +31,8 @@ abstract class AbstractIntegrationTestCase extends TestCase
             $this->variables[$name] = getenv($value);
         }
 
-        if (! extension_loaded('ibm_db2')) {
-            $this->fail('The phpunit group integration-ibm_db2 was enabled, but the extension is not loaded.');
+        if (! extension_loaded('oci8')) {
+            $this->fail('The phpunit group integration-oci8 was enabled, but the extension is not loaded.');
         }
     }
 }

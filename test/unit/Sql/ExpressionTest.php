@@ -4,10 +4,6 @@ namespace LaminasTest\Db\Sql;
 
 use Laminas\Db\Sql\Exception\InvalidArgumentException;
 use Laminas\Db\Sql\Expression;
-use PHPUnit\Framework\Attributes\CoversMethod;
-use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\Attributes\Depends;
-use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 use TypeError;
 
@@ -17,14 +13,10 @@ use TypeError;
  *
  * Expression is a value object with no dependencies/collaborators, therefore, no fixure needed
  */
-#[CoversMethod(Expression::class, 'setExpression')]
-#[CoversMethod(Expression::class, 'getExpression')]
-#[CoversMethod(Expression::class, 'setParameters')]
-#[CoversMethod(Expression::class, 'getParameters')]
-#[CoversMethod(Expression::class, 'getExpressionData')]
-final class ExpressionTest extends TestCase
+class ExpressionTest extends TestCase
 {
     /**
+     * @covers \Laminas\Db\Sql\Expression::setExpression
      * @return Expression
      */
     public function testSetExpression()
@@ -35,11 +27,13 @@ final class ExpressionTest extends TestCase
         return $return;
     }
 
-    public function testSetExpressionException(): void
+    /**
+     * @covers \Laminas\Db\Sql\Expression::setExpression
+     */
+    public function testSetExpressionException()
     {
         $expression = new Expression();
         $this->expectException(TypeError::class);
-        /** @psalm-suppress NullArgument - ensure an exception is thrown */
         $expression->setExpression(null);
 
         $expression = new Expression();
@@ -48,12 +42,18 @@ final class ExpressionTest extends TestCase
         $expression->setExpression('');
     }
 
-    #[Depends('testSetExpression')]
-    public function testGetExpression(Expression $expression): void
+    /**
+     * @covers \Laminas\Db\Sql\Expression::getExpression
+     * @depends testSetExpression
+     */
+    public function testGetExpression(Expression $expression)
     {
         self::assertEquals('Foo Bar', $expression->getExpression());
     }
 
+    /**
+     * @covers \Laminas\Db\Sql\Expression::setParameters
+     */
     public function testSetParameters(): Expression
     {
         $expression = new Expression();
@@ -62,22 +62,30 @@ final class ExpressionTest extends TestCase
         return $return;
     }
 
-    public function testSetParametersException(): void
+    /**
+     * @covers \Laminas\Db\Sql\Expression::setParameters
+     */
+    public function testSetParametersException()
     {
         $expression = new Expression('', 'foo');
 
         $this->expectException(TypeError::class);
-        /** @psalm-suppress NullArgument - ensure an exception is thrown */
         $expression->setParameters(null);
     }
 
-    #[Depends('testSetParameters')]
-    public function testGetParameters(Expression $expression): void
+    /**
+     * @covers \Laminas\Db\Sql\Expression::getParameters
+     * @depends testSetParameters
+     */
+    public function testGetParameters(Expression $expression)
     {
         self::assertEquals('foo', $expression->getParameters());
     }
 
-    public function testGetExpressionData(): void
+    /**
+     * @covers \Laminas\Db\Sql\Expression::getExpressionData
+     */
+    public function testGetExpressionData()
     {
         $expression = new Expression(
             'X SAME AS ? AND Y = ? BUT LITERALLY ?',
@@ -99,7 +107,7 @@ final class ExpressionTest extends TestCase
         self::assertEquals($expected, $expression->getExpressionData());
     }
 
-    public function testGetExpressionDataWillEscapePercent(): void
+    public function testGetExpressionDataWillEscapePercent()
     {
         $expression = new Expression('X LIKE "foo%"');
         self::assertEquals(
@@ -108,14 +116,16 @@ final class ExpressionTest extends TestCase
         );
     }
 
-    public function testConstructorWithLiteralZero(): void
+    public function testConstructorWithLiteralZero()
     {
         $expression = new Expression('0');
         self::assertSame('0', $expression->getExpression());
     }
 
-    #[Group('7407')]
-    public function testGetExpressionPreservesPercentageSignInFromUnixtime(): void
+    /**
+     * @group 7407
+     */
+    public function testGetExpressionPreservesPercentageSignInFromUnixtime()
     {
         $expressionString = 'FROM_UNIXTIME(date, "%Y-%m")';
         $expression       = new Expression($expressionString);
@@ -123,7 +133,7 @@ final class ExpressionTest extends TestCase
         self::assertSame($expressionString, $expression->getExpression());
     }
 
-    public function testNumberOfReplacementsConsidersWhenSameVariableIsUsedManyTimes(): void
+    public function testNumberOfReplacementsConsidersWhenSameVariableIsUsedManyTimes()
     {
         $expression = new Expression('uf.user_id = :user_id OR uf.friend_id = :user_id', ['user_id' => 1]);
 
@@ -139,21 +149,24 @@ final class ExpressionTest extends TestCase
         );
     }
 
-    #[DataProvider('falsyExpressionParametersProvider')]
-    public function testConstructorWithFalsyValidParameters(mixed $falsyParameter): void
+    /**
+     * @dataProvider falsyExpressionParametersProvider
+     * @param mixed $falsyParameter
+     */
+    public function testConstructorWithFalsyValidParameters($falsyParameter)
     {
         $expression = new Expression('?', $falsyParameter);
         self::assertSame($falsyParameter, $expression->getParameters());
     }
 
-    public function testConstructorWithInvalidParameter(): void
+    public function testConstructorWithInvalidParameter()
     {
         $this->expectException(TypeError::class);
         new Expression('?', (object) []);
     }
 
     /** @psalm-return array<array-key, array{0: mixed}> */
-    public static function falsyExpressionParametersProvider(): array
+    public function falsyExpressionParametersProvider(): array
     {
         return [
             [''],
@@ -165,7 +178,7 @@ final class ExpressionTest extends TestCase
         ];
     }
 
-    public function testNumberOfReplacementsForExpressionWithParameters(): void
+    public function testNumberOfReplacementsForExpressionWithParameters()
     {
         $expression = new Expression(':a + :b', ['a' => 1, 'b' => 2]);
 

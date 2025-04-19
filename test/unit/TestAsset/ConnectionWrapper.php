@@ -7,14 +7,15 @@ use Laminas\Db\Adapter\Driver\Pdo\Connection;
 /**
  * Test asset class used only by {@see \LaminasTest\Db\Adapter\Driver\Pdo\ConnectionTransactionsTest}
  */
-final class ConnectionWrapper extends Connection
+class ConnectionWrapper extends Connection
 {
     public function __construct()
     {
         $this->resource = new PdoStubDriver('foo', 'bar', 'baz');
     }
 
-    public function getNestedTransactionsCount(): int
+    /** @return int */
+    public function getNestedTransactionsCount()
     {
         return $this->nestedTransactionsCount;
     }

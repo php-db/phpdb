@@ -6,44 +6,44 @@ use Laminas\Db\Sql\Predicate\In;
 use Laminas\Db\Sql\Select;
 use PHPUnit\Framework\TestCase;
 
-final class InTest extends TestCase
+class InTest extends TestCase
 {
-    public function testEmptyConstructorYieldsNullIdentifierAndValueSet(): void
+    public function testEmptyConstructorYieldsNullIdentifierAndValueSet()
     {
         $in = new In();
         self::assertNull($in->getIdentifier());
         self::assertNull($in->getValueSet());
     }
 
-    public function testCanPassIdentifierAndValueSetToConstructor(): void
+    public function testCanPassIdentifierAndValueSetToConstructor()
     {
         $in = new In('foo.bar', [1, 2]);
         self::assertEquals('foo.bar', $in->getIdentifier());
         self::assertEquals([1, 2], $in->getValueSet());
     }
 
-    public function testCanPassIdentifierAndEmptyValueSetToConstructor(): void
+    public function testCanPassIdentifierAndEmptyValueSetToConstructor()
     {
         $in = new In('foo.bar', []);
         $this->assertEquals('foo.bar', $in->getIdentifier());
         $this->assertEquals([], $in->getValueSet());
     }
 
-    public function testIdentifierIsMutable(): void
+    public function testIdentifierIsMutable()
     {
         $in = new In();
         $in->setIdentifier('foo.bar');
         self::assertEquals('foo.bar', $in->getIdentifier());
     }
 
-    public function testValueSetIsMutable(): void
+    public function testValueSetIsMutable()
     {
         $in = new In();
         $in->setValueSet([1, 2]);
         self::assertEquals([1, 2], $in->getValueSet());
     }
 
-    public function testRetrievingWherePartsReturnsSpecificationArrayOfIdentifierAndValuesAndArrayOfTypes(): void
+    public function testRetrievingWherePartsReturnsSpecificationArrayOfIdentifierAndValuesAndArrayOfTypes()
     {
         $in = new In();
         $in->setIdentifier('foo.bar')
@@ -70,11 +70,11 @@ final class InTest extends TestCase
                 [In::TYPE_IDENTIFIER, In::TYPE_LITERAL, In::TYPE_VALUE, In::TYPE_LITERAL],
             ],
         ];
-        $in->getExpressionData();
+        $qqq      = $in->getExpressionData();
         self::assertEquals($expected, $in->getExpressionData());
     }
 
-    public function testGetExpressionDataWithSubselect(): void
+    public function testGetExpressionDataWithSubselect()
     {
         $select   = new Select();
         $in       = new In('foo', $select);
@@ -88,9 +88,9 @@ final class InTest extends TestCase
         self::assertEquals($expected, $in->getExpressionData());
     }
 
-    public function testGetExpressionDataWithEmptyValues(): void
+    public function testGetExpressionDataWithEmptyValues()
     {
-        new Select();
+        $select   = new Select();
         $in       = new In('foo', []);
         $expected = [
             [
@@ -102,7 +102,7 @@ final class InTest extends TestCase
         $this->assertEquals($expected, $in->getExpressionData());
     }
 
-    public function testGetExpressionDataWithSubselectAndIdentifier(): void
+    public function testGetExpressionDataWithSubselectAndIdentifier()
     {
         $select   = new Select();
         $in       = new In('foo', $select);
@@ -116,7 +116,7 @@ final class InTest extends TestCase
         self::assertEquals($expected, $in->getExpressionData());
     }
 
-    public function testGetExpressionDataWithSubselectAndArrayIdentifier(): void
+    public function testGetExpressionDataWithSubselectAndArrayIdentifier()
     {
         $select   = new Select();
         $in       = new In(['foo', 'bar'], $select);

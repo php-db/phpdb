@@ -6,23 +6,23 @@ use Laminas\Db\Sql\Predicate\Like;
 use Laminas\Db\Sql\Predicate\NotLike;
 use PHPUnit\Framework\TestCase;
 
-final class NotLikeTest extends TestCase
+class NotLikeTest extends TestCase
 {
-    public function testConstructEmptyArgs(): void
+    public function testConstructEmptyArgs()
     {
         $notLike = new NotLike();
         self::assertEquals('', $notLike->getIdentifier());
         self::assertEquals('', $notLike->getLike());
     }
 
-    public function testConstructWithArgs(): void
+    public function testConstructWithArgs()
     {
         $notLike = new NotLike('bar', 'Foo%');
         self::assertEquals('bar', $notLike->getIdentifier());
         self::assertEquals('Foo%', $notLike->getLike());
     }
 
-    public function testAccessorsMutators(): void
+    public function testAccessorsMutators()
     {
         $notLike = new NotLike();
         $notLike->setIdentifier('bar');
@@ -33,7 +33,7 @@ final class NotLikeTest extends TestCase
         self::assertEquals('target = target', $notLike->getSpecification());
     }
 
-    public function testGetExpressionData(): void
+    public function testGetExpressionData()
     {
         $notLike = new NotLike('bar', 'Foo%');
         self::assertEquals(
@@ -48,7 +48,7 @@ final class NotLikeTest extends TestCase
         );
     }
 
-    public function testInstanceOfPerSetters(): void
+    public function testInstanceOfPerSetters()
     {
         $notLike = new NotLike();
         self::assertInstanceOf(Like::class, $notLike->setIdentifier('bar'));

@@ -3,46 +3,44 @@
 namespace LaminasTest\Db\Adapter\Platform;
 
 use Laminas\Db\Adapter\Platform\IbmDb2;
-use Override;
-use PHPUnit\Framework\Attributes\CoversMethod;
-use PHPUnit\Framework\Attributes\RequiresFunction;
 use PHPUnit\Framework\TestCase;
 
-#[CoversMethod(IbmDb2::class, 'getName')]
-#[CoversMethod(IbmDb2::class, 'getQuoteIdentifierSymbol')]
-#[CoversMethod(IbmDb2::class, 'quoteIdentifier')]
-#[CoversMethod(IbmDb2::class, 'quoteIdentifierChain')]
-#[CoversMethod(IbmDb2::class, 'getQuoteValueSymbol')]
-#[CoversMethod(IbmDb2::class, 'quoteValue')]
-#[CoversMethod(IbmDb2::class, 'quoteTrustedValue')]
-#[CoversMethod(IbmDb2::class, 'quoteValueList')]
-#[CoversMethod(IbmDb2::class, 'getIdentifierSeparator')]
-#[CoversMethod(IbmDb2::class, 'quoteIdentifierInFragment')]
-final class IbmDb2Test extends TestCase
+use function function_exists;
+
+class IbmDb2Test extends TestCase
 {
-    protected IbmDb2 $platform;
+    /** @var IbmDb2 */
+    protected $platform;
 
     /**
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
-    #[Override]
     protected function setUp(): void
     {
         $this->platform = new IbmDb2();
     }
 
-    public function testGetName(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Platform\IbmDb2::getName
+     */
+    public function testGetName()
     {
         self::assertEquals('IBM DB2', $this->platform->getName());
     }
 
-    public function testGetQuoteIdentifierSymbol(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Platform\IbmDb2::getQuoteIdentifierSymbol
+     */
+    public function testGetQuoteIdentifierSymbol()
     {
         self::assertEquals('"', $this->platform->getQuoteIdentifierSymbol());
     }
 
-    public function testQuoteIdentifier(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Platform\IbmDb2::quoteIdentifier
+     */
+    public function testQuoteIdentifier()
     {
         self::assertEquals('"identifier"', $this->platform->quoteIdentifier('identifier'));
 
@@ -50,7 +48,10 @@ final class IbmDb2Test extends TestCase
         self::assertEquals('identifier', $platform->quoteIdentifier('identifier'));
     }
 
-    public function testQuoteIdentifierChain(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Platform\IbmDb2::quoteIdentifierChain
+     */
+    public function testQuoteIdentifierChain()
     {
         self::assertEquals('"identifier"', $this->platform->quoteIdentifierChain('identifier'));
         self::assertEquals('"identifier"', $this->platform->quoteIdentifierChain(['identifier']));
@@ -65,28 +66,33 @@ final class IbmDb2Test extends TestCase
         self::assertEquals('"schema"\"identifier"', $platform->quoteIdentifierChain(['schema', 'identifier']));
     }
 
-    public function testGetQuoteValueSymbol(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Platform\IbmDb2::getQuoteValueSymbol
+     */
+    public function testGetQuoteValueSymbol()
     {
         self::assertEquals("'", $this->platform->getQuoteValueSymbol());
     }
 
-    public function testQuoteValueRaisesNoticeWithoutPlatformSupport(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Platform\IbmDb2::quoteValue
+     */
+    public function testQuoteValueRaisesNoticeWithoutPlatformSupport()
     {
-        /**
-         * @todo Determine if vulnerability warning is required during unit testing
-         */
-        //if (! function_exists('db2_escape_string')) {
-            //$this->expectNotice();
-            //$this->expectExceptionMessage(
-            //    'Attempting to quote a value in Laminas\Db\Adapter\Platform\IbmDb2 without extension/driver'
-            //    . ' support can introduce security vulnerabilities in a production environment'
-            //);
-        //}
-        $this->expectNotToPerformAssertions();
+        if (! function_exists('db2_escape_string')) {
+            $this->expectNotice();
+            $this->expectNoticeMessage(
+                'Attempting to quote a value in Laminas\Db\Adapter\Platform\IbmDb2 without extension/driver'
+                . ' support can introduce security vulnerabilities in a production environment'
+            );
+        }
         $this->platform->quoteValue('value');
     }
 
-    public function testQuoteValue(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Platform\IbmDb2::quoteValue
+     */
+    public function testQuoteValue()
     {
         self::assertEquals("'value'", @$this->platform->quoteValue('value'));
         self::assertEquals("'Foo O''Bar'", @$this->platform->quoteValue("Foo O'Bar"));
@@ -100,7 +106,10 @@ final class IbmDb2Test extends TestCase
         );
     }
 
-    public function testQuoteTrustedValue(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Platform\IbmDb2::quoteTrustedValue
+     */
+    public function testQuoteTrustedValue()
     {
         self::assertEquals("'value'", $this->platform->quoteTrustedValue('value'));
         self::assertEquals("'Foo O''Bar'", $this->platform->quoteTrustedValue("Foo O'Bar"));
@@ -114,13 +123,25 @@ final class IbmDb2Test extends TestCase
         );
     }
 
-    #[RequiresFunction('db2_escape_string')]
-    public function testQuoteValueList(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Platform\IbmDb2::quoteValueList
+     */
+    public function testQuoteValueList()
     {
+        if (! function_exists('db2_escape_string')) {
+            $this->expectError();
+            $this->expectErrorMessage(
+                'Attempting to quote a value in Laminas\Db\Adapter\Platform\IbmDb2 without extension/driver'
+                . ' support can introduce security vulnerabilities in a production environment'
+            );
+        }
         self::assertEquals("'Foo O''Bar'", $this->platform->quoteValueList("Foo O'Bar"));
     }
 
-    public function testGetIdentifierSeparator(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Platform\IbmDb2::getIdentifierSeparator
+     */
+    public function testGetIdentifierSeparator()
     {
         self::assertEquals('.', $this->platform->getIdentifierSeparator());
 
@@ -128,7 +149,10 @@ final class IbmDb2Test extends TestCase
         self::assertEquals('\\', $platform->getIdentifierSeparator());
     }
 
-    public function testQuoteIdentifierInFragment(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Platform\IbmDb2::quoteIdentifierInFragment
+     */
+    public function testQuoteIdentifierInFragment()
     {
         self::assertEquals('"foo"."bar"', $this->platform->quoteIdentifierInFragment('foo.bar'));
         self::assertEquals('"foo" as "bar"', $this->platform->quoteIdentifierInFragment('foo as bar'));

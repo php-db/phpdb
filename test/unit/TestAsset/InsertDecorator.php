@@ -4,15 +4,16 @@ namespace LaminasTest\Db\TestAsset;
 
 use Laminas\Db\Sql;
 
-final class InsertDecorator extends Sql\Insert implements Sql\Platform\PlatformDecoratorInterface
+class InsertDecorator extends Sql\Insert implements Sql\Platform\PlatformDecoratorInterface
 {
-    protected ?object $subject;
+    /** @var null|object */
+    protected $subject;
 
     /**
      * @param null|object $subject
      * @return $this Provides a fluent interface
      */
-    public function setSubject($subject): static
+    public function setSubject($subject)
     {
         $this->subject = $subject;
         return $this;

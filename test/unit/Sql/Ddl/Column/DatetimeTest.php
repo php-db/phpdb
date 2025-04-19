@@ -3,13 +3,14 @@
 namespace LaminasTest\Db\Sql\Ddl\Column;
 
 use Laminas\Db\Sql\Ddl\Column\Datetime;
-use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 
-#[CoversMethod(Datetime::class, 'getExpressionData')]
-final class DatetimeTest extends TestCase
+class DatetimeTest extends TestCase
 {
-    public function testGetExpressionData(): void
+    /**
+     * @covers \Laminas\Db\Sql\Ddl\Column\Datetime::getExpressionData
+     */
+    public function testGetExpressionData()
     {
         $column = new Datetime('foo');
         self::assertEquals(

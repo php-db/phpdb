@@ -10,18 +10,18 @@ use function getenv;
 use function print_r;
 use function sprintf;
 
-final class PgsqlFixtureLoader implements FixtureLoader
+class PgsqlFixtureLoader implements FixtureLoader
 {
-    private string $fixtureFile = __DIR__ . '/../TestFixtures/pgsql.sql';
+    /** @var string */
+    private $fixtureFile = __DIR__ . '/../TestFixtures/pgsql.sql';
 
-    private PDO $pdo;
+    /** @var PDO */
+    private $pdo;
 
-    private bool $initialRun = true;
+    /** @var bool */
+    private $initialRun = true;
 
-    /**
-     * @throws Exception
-     */
-    public function createDatabase(): void
+    public function createDatabase()
     {
         $this->connect();
 
@@ -59,7 +59,7 @@ final class PgsqlFixtureLoader implements FixtureLoader
         $this->disconnect();
     }
 
-    public function dropDatabase(): void
+    public function dropDatabase()
     {
         if (! $this->initialRun) {
             // Not possible to drop in PostgreSQL.
@@ -82,7 +82,7 @@ final class PgsqlFixtureLoader implements FixtureLoader
     /**
      * @param bool $useDb add dbname using in dsn
      */
-    protected function connect(bool $useDb = false): void
+    protected function connect($useDb = false)
     {
         $dsn = 'pgsql:host=' . getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_PGSQL_HOSTNAME');
 
@@ -97,7 +97,7 @@ final class PgsqlFixtureLoader implements FixtureLoader
         );
     }
 
-    protected function disconnect(): void
+    protected function disconnect()
     {
         $this->pdo = null;
     }

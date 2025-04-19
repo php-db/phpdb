@@ -32,6 +32,12 @@ class ConfigProvider
             ],
             'aliases'            => [
                 Adapter\Adapter::class => Adapter\AdapterInterface::class,
+
+                // Legacy Zend Framework aliases
+                // phpcs:disable WebimpressCodingStandard.Formatting.StringClassReference.Found
+                'Zend\Db\Adapter\AdapterInterface' => Adapter\AdapterInterface::class,
+                'Zend\Db\Adapter\Adapter'          => Adapter\Adapter::class,
+                // phpcs:enable WebimpressCodingStandard.Formatting.StringClassReference.Found
             ],
         ];
     }

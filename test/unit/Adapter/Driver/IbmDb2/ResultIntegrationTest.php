@@ -3,35 +3,21 @@
 namespace LaminasTest\Db\Adapter\Driver\IbmDb2;
 
 use Laminas\Db\Adapter\Driver\IbmDb2\Result;
-use Override;
-use PHPUnit\Framework\Attributes\CoversMethod;
-use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 
-#[CoversMethod(Result::class, 'initialize')]
-#[CoversMethod(Result::class, 'buffer')]
-#[CoversMethod(Result::class, 'getResource')]
-#[CoversMethod(Result::class, 'current')]
-#[CoversMethod(Result::class, 'next')]
-#[CoversMethod(Result::class, 'key')]
-#[CoversMethod(Result::class, 'rewind')]
-#[CoversMethod(Result::class, 'valid')]
-#[CoversMethod(Result::class, 'count')]
-#[CoversMethod(Result::class, 'getFieldCount')]
-#[CoversMethod(Result::class, 'isQueryResult')]
-#[CoversMethod(Result::class, 'getAffectedRows')]
-#[CoversMethod(Result::class, 'getGeneratedValue')]
-#[Group('integration')]
-#[Group('integration-ibm_db2')]
-final class ResultIntegrationTest extends TestCase
+/**
+ * @group integration
+ * @group integration-ibm_db2
+ */
+class ResultIntegrationTest extends TestCase
 {
-    protected Result $object;
+    /** @var Result */
+    protected $object;
 
     /**
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
-    #[Override]
     protected function setUp(): void
     {
         $this->object = new Result();
@@ -46,9 +32,10 @@ final class ResultIntegrationTest extends TestCase
     }
 
     /**
+     * @covers \Laminas\Db\Adapter\Driver\IbmDb2\Result::initialize
      * @todo   Implement testInitialize().
      */
-    public function testInitialize(): never
+    public function testInitialize()
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
@@ -57,9 +44,10 @@ final class ResultIntegrationTest extends TestCase
     }
 
     /**
+     * @covers \Laminas\Db\Adapter\Driver\IbmDb2\Result::buffer
      * @todo   Implement testBuffer().
      */
-    public function testBuffer(): never
+    public function testBuffer()
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
@@ -68,9 +56,10 @@ final class ResultIntegrationTest extends TestCase
     }
 
     /**
+     * @covers \Laminas\Db\Adapter\Driver\IbmDb2\Result::getResource
      * @todo   Implement testGetResource().
      */
-    public function testGetResource(): never
+    public function testGetResource()
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
@@ -79,9 +68,10 @@ final class ResultIntegrationTest extends TestCase
     }
 
     /**
+     * @covers \Laminas\Db\Adapter\Driver\IbmDb2\Result::current
      * @todo   Implement testCurrent().
      */
-    public function testCurrent(): never
+    public function testCurrent()
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
@@ -90,9 +80,10 @@ final class ResultIntegrationTest extends TestCase
     }
 
     /**
+     * @covers \Laminas\Db\Adapter\Driver\IbmDb2\Result::next
      * @todo   Implement testNext().
      */
-    public function testNext(): never
+    public function testNext()
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
@@ -101,9 +92,10 @@ final class ResultIntegrationTest extends TestCase
     }
 
     /**
+     * @covers \Laminas\Db\Adapter\Driver\IbmDb2\Result::key
      * @todo   Implement testKey().
      */
-    public function testKey(): never
+    public function testKey()
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
@@ -112,9 +104,10 @@ final class ResultIntegrationTest extends TestCase
     }
 
     /**
+     * @covers \Laminas\Db\Adapter\Driver\IbmDb2\Result::rewind
      * @todo   Implement testRewind().
      */
-    public function testRewind(): never
+    public function testRewind()
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
@@ -123,9 +116,10 @@ final class ResultIntegrationTest extends TestCase
     }
 
     /**
+     * @covers \Laminas\Db\Adapter\Driver\IbmDb2\Result::valid
      * @todo   Implement testValid().
      */
-    public function testValid(): never
+    public function testValid()
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
@@ -134,9 +128,10 @@ final class ResultIntegrationTest extends TestCase
     }
 
     /**
+     * @covers \Laminas\Db\Adapter\Driver\IbmDb2\Result::count
      * @todo   Implement testCount().
      */
-    public function testCount(): never
+    public function testCount()
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
@@ -145,9 +140,10 @@ final class ResultIntegrationTest extends TestCase
     }
 
     /**
+     * @covers \Laminas\Db\Adapter\Driver\IbmDb2\Result::getFieldCount
      * @todo   Implement testGetFieldCount().
      */
-    public function testGetFieldCount(): never
+    public function testGetFieldCount()
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
@@ -156,9 +152,10 @@ final class ResultIntegrationTest extends TestCase
     }
 
     /**
+     * @covers \Laminas\Db\Adapter\Driver\IbmDb2\Result::isQueryResult
      * @todo   Implement testIsQueryResult().
      */
-    public function testIsQueryResult(): never
+    public function testIsQueryResult()
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
@@ -167,9 +164,10 @@ final class ResultIntegrationTest extends TestCase
     }
 
     /**
+     * @covers \Laminas\Db\Adapter\Driver\IbmDb2\Result::getAffectedRows
      * @todo   Implement testGetAffectedRows().
      */
-    public function testGetAffectedRows(): never
+    public function testGetAffectedRows()
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
@@ -178,9 +176,10 @@ final class ResultIntegrationTest extends TestCase
     }
 
     /**
+     * @covers \Laminas\Db\Adapter\Driver\IbmDb2\Result::getGeneratedValue
      * @todo   Implement testGetGeneratedValue().
      */
-    public function testGetGeneratedValue(): never
+    public function testGetGeneratedValue()
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(

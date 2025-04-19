@@ -6,27 +6,27 @@ use Laminas\Db\Adapter\Adapter;
 use Laminas\Db\Adapter\Driver\Oci8\Statement;
 use Laminas\Db\Metadata\Object\ConstraintObject;
 use Laminas\Db\Metadata\Source\OracleMetadata;
-use LaminasTest\Db\Adapter\Driver\Oci8\AbstractIntegrationTestCase;
-use Override;
-use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\Attributes\RequiresPhpExtension;
+use LaminasTest\Db\Adapter\Driver\Oci8\AbstractIntegrationTest;
 use PHPUnit\Framework\MockObject\MockObject;
 
 use function count;
 use function extension_loaded;
 
-#[RequiresPhpExtension('oci8')]
-final class OracleMetadataTestCase extends AbstractIntegrationTestCase
+/**
+ * @requires extension oci8
+ */
+class OracleMetadataTest extends AbstractIntegrationTest
 {
-    protected OracleMetadata $metadata;
+    /** @var OracleMetadata */
+    protected $metadata;
 
-    protected Adapter $adapter;
+    /** @var Adapter */
+    protected $adapter;
 
     /**
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
-    #[Override]
     protected function setUp(): void
     {
         if (! extension_loaded('oci8')) {
@@ -38,8 +38,10 @@ final class OracleMetadataTestCase extends AbstractIntegrationTestCase
         $this->metadata            = new OracleMetadata($this->adapter);
     }
 
-    #[DataProvider('constraintDataProvider')]
-    public function testGetConstraints(array $constraintData): void
+    /**
+     * @dataProvider constraintDataProvider
+     */
+    public function testGetConstraints(array $constraintData)
     {
         $statement = $this->getMockBuilder(Statement::class)
             ->getMock();
@@ -67,7 +69,10 @@ final class OracleMetadataTestCase extends AbstractIntegrationTestCase
         );
     }
 
-    public static function constraintDataProvider(): array
+    /**
+     * @return array
+     */
+    public function constraintDataProvider()
     {
         return [
             [

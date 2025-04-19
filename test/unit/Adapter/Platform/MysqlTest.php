@@ -3,52 +3,52 @@
 namespace LaminasTest\Db\Adapter\Platform;
 
 use Laminas\Db\Adapter\Platform\Mysql;
-use Override;
-use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 
-#[CoversMethod(Mysql::class, 'getName')]
-#[CoversMethod(Mysql::class, 'getQuoteIdentifierSymbol')]
-#[CoversMethod(Mysql::class, 'quoteIdentifier')]
-#[CoversMethod(Mysql::class, 'quoteIdentifierChain')]
-#[CoversMethod(Mysql::class, 'getQuoteValueSymbol')]
-#[CoversMethod(Mysql::class, 'quoteValue')]
-#[CoversMethod(Mysql::class, 'quoteTrustedValue')]
-#[CoversMethod(Mysql::class, 'quoteValueList')]
-#[CoversMethod(Mysql::class, 'getIdentifierSeparator')]
-#[CoversMethod(Mysql::class, 'quoteIdentifierInFragment')]
-final class MysqlTest extends TestCase
+class MysqlTest extends TestCase
 {
-    protected Mysql $platform;
+    /** @var Mysql */
+    protected $platform;
 
     /**
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
-    #[Override]
     protected function setUp(): void
     {
         $this->platform = new Mysql();
     }
 
-    public function testGetName(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Platform\Mysql::getName
+     */
+    public function testGetName()
     {
         self::assertEquals('MySQL', $this->platform->getName());
     }
 
-    public function testGetQuoteIdentifierSymbol(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Platform\Mysql::getQuoteIdentifierSymbol
+     */
+    public function testGetQuoteIdentifierSymbol()
     {
         self::assertEquals('`', $this->platform->getQuoteIdentifierSymbol());
     }
 
-    public function testQuoteIdentifier(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Platform\Mysql::quoteIdentifier
+     */
+    public function testQuoteIdentifier()
     {
         self::assertEquals('`identifier`', $this->platform->quoteIdentifier('identifier'));
         self::assertEquals('`ident``ifier`', $this->platform->quoteIdentifier('ident`ifier'));
         self::assertEquals('`namespace:$identifier`', $this->platform->quoteIdentifier('namespace:$identifier'));
     }
 
-    public function testQuoteIdentifierChain(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Platform\Mysql::quoteIdentifierChain
+     */
+    public function testQuoteIdentifierChain()
     {
         self::assertEquals('`identifier`', $this->platform->quoteIdentifierChain('identifier'));
         self::assertEquals('`identifier`', $this->platform->quoteIdentifierChain(['identifier']));
@@ -62,26 +62,31 @@ final class MysqlTest extends TestCase
         );
     }
 
-    public function testGetQuoteValueSymbol(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Platform\Mysql::getQuoteValueSymbol
+     */
+    public function testGetQuoteValueSymbol()
     {
         self::assertEquals("'", $this->platform->getQuoteValueSymbol());
     }
 
-    public function testQuoteValueRaisesNoticeWithoutPlatformSupport(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Platform\Mysql::quoteValue
+     */
+    public function testQuoteValueRaisesNoticeWithoutPlatformSupport()
     {
-        /**
-         * @todo Determine if vulnerability warning is required during unit testing
-         */
-        //$this->expectNotice();
-        //$this->expectExceptionMessage(
-        //    'Attempting to quote a value in Laminas\Db\Adapter\Platform\Mysql without extension/driver support can '
-        //    . 'introduce security vulnerabilities in a production environment'
-        //);
-        $this->expectNotToPerformAssertions();
+        $this->expectNotice();
+        $this->expectNoticeMessage(
+            'Attempting to quote a value in Laminas\Db\Adapter\Platform\Mysql without extension/driver support can '
+            . 'introduce security vulnerabilities in a production environment'
+        );
         $this->platform->quoteValue('value');
     }
 
-    public function testQuoteValue(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Platform\Mysql::quoteValue
+     */
+    public function testQuoteValue()
     {
         self::assertEquals("'value'", @$this->platform->quoteValue('value'));
         self::assertEquals("'Foo O\\'Bar'", @$this->platform->quoteValue("Foo O'Bar"));
@@ -95,7 +100,10 @@ final class MysqlTest extends TestCase
         );
     }
 
-    public function testQuoteTrustedValue(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Platform\Mysql::quoteTrustedValue
+     */
+    public function testQuoteTrustedValue()
     {
         self::assertEquals("'value'", $this->platform->quoteTrustedValue('value'));
         self::assertEquals("'Foo O\\'Bar'", $this->platform->quoteTrustedValue("Foo O'Bar"));
@@ -111,25 +119,31 @@ final class MysqlTest extends TestCase
         );
     }
 
-    public function testQuoteValueList(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Platform\Mysql::quoteValueList
+     */
+    public function testQuoteValueList()
     {
-        /**
-         * @todo Determine if vulnerability warning is required during unit testing
-         */
-        //$this->expectError();
-        //$this->expectExceptionMessage(
-        //    'Attempting to quote a value in Laminas\Db\Adapter\Platform\Mysql without extension/driver support can '
-        //    . 'introduce security vulnerabilities in a production environment'
-        //);
+        $this->expectError();
+        $this->expectErrorMessage(
+            'Attempting to quote a value in Laminas\Db\Adapter\Platform\Mysql without extension/driver support can '
+            . 'introduce security vulnerabilities in a production environment'
+        );
         self::assertEquals("'Foo O\\'Bar'", $this->platform->quoteValueList("Foo O'Bar"));
     }
 
-    public function testGetIdentifierSeparator(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Platform\Mysql::getIdentifierSeparator
+     */
+    public function testGetIdentifierSeparator()
     {
         self::assertEquals('.', $this->platform->getIdentifierSeparator());
     }
 
-    public function testQuoteIdentifierInFragment(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Platform\Mysql::quoteIdentifierInFragment
+     */
+    public function testQuoteIdentifierInFragment()
     {
         self::assertEquals('`foo`.`bar`', $this->platform->quoteIdentifierInFragment('foo.bar'));
         self::assertEquals('`foo` as `bar`', $this->platform->quoteIdentifierInFragment('foo as bar'));

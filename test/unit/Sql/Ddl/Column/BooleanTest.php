@@ -3,16 +3,14 @@
 namespace LaminasTest\Db\Sql\Ddl\Column;
 
 use Laminas\Db\Sql\Ddl\Column\Boolean;
-use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\Attributes\CoversMethod;
-use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 
-#[CoversMethod(Boolean::class, 'getExpressionData')]
-#[CoversClass(Boolean::class)]
-final class BooleanTest extends TestCase
+class BooleanTest extends TestCase
 {
-    public function testGetExpressionData(): void
+    /**
+     * @covers \Laminas\Db\Sql\Ddl\Column\Boolean::getExpressionData
+     */
+    public function testGetExpressionData()
     {
         $column = new Boolean('foo');
         self::assertEquals(
@@ -21,8 +19,11 @@ final class BooleanTest extends TestCase
         );
     }
 
-    #[Group('6257')]
-    public function testIsAlwaysNotNullable(): void
+    /**
+     * @covers \Laminas\Db\Sql\Ddl\Column\Boolean
+     * @group 6257
+     */
+    public function testIsAlwaysNotNullable()
     {
         $column = new Boolean('foo', true);
 

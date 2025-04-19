@@ -5,34 +5,28 @@ namespace LaminasTest\Db\Adapter\Driver\Oci8;
 use Laminas\Db\Adapter\Driver\Oci8\Connection;
 use Laminas\Db\Adapter\Driver\Oci8\Oci8;
 use Laminas\Db\Adapter\Driver\Oci8\Result;
-use PHPUnit\Framework\Attributes\CoversMethod;
-use PHPUnit\Framework\Attributes\Group;
 
-#[CoversMethod(Connection::class, 'getCurrentSchema')]
-#[CoversMethod(Connection::class, 'setResource')]
-#[CoversMethod(Connection::class, 'getResource')]
-#[CoversMethod(Connection::class, 'connect')]
-#[CoversMethod(Connection::class, 'isConnected')]
-#[CoversMethod(Connection::class, 'disconnect')]
-#[CoversMethod(Connection::class, 'beginTransaction')]
-#[CoversMethod(Connection::class, 'commit')]
-#[CoversMethod(Connection::class, 'rollback')]
-#[CoversMethod(Connection::class, 'execute')]
-#[CoversMethod(Connection::class, 'getLastGeneratedValue')]
-#[Group('integration')]
-#[Group('integration-oracle')]
-final class ConnectionIntegrationTest extends AbstractIntegrationTestCase
+/**
+ * @group integration
+ * @group integration-oracle
+ */
+class ConnectionIntegrationTest extends AbstractIntegrationTest
 {
-    public function testGetCurrentSchema(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Driver\Oci8\Connection::getCurrentSchema
+     */
+    public function testGetCurrentSchema()
     {
         $connection = new Connection($this->variables);
         self::assertInternalType('string', $connection->getCurrentSchema());
     }
 
-    public function testSetResource(): never
+    /**
+     * @covers \Laminas\Db\Adapter\Driver\Oci8\Connection::setResource
+     */
+    public function testSetResource()
     {
         $this->markTestIncomplete('edit this');
-        /*
         $resource = oci_connect(
             $this->variables['username'],
             $this->variables['password'],
@@ -45,10 +39,12 @@ final class ConnectionIntegrationTest extends AbstractIntegrationTestCase
         $connection->disconnect();
         unset($connection);
         unset($resource);
-        */
     }
 
-    public function testGetResource(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Driver\Oci8\Connection::getResource
+     */
+    public function testGetResource()
     {
         $connection = new Connection($this->variables);
         $connection->connect();
@@ -58,7 +54,10 @@ final class ConnectionIntegrationTest extends AbstractIntegrationTestCase
         unset($connection);
     }
 
-    public function testConnect(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Driver\Oci8\Connection::connect
+     */
+    public function testConnect()
     {
         $connection = new Connection($this->variables);
         self::assertSame($connection, $connection->connect());
@@ -68,7 +67,10 @@ final class ConnectionIntegrationTest extends AbstractIntegrationTestCase
         unset($connection);
     }
 
-    public function testIsConnected(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Driver\Oci8\Connection::isConnected
+     */
+    public function testIsConnected()
     {
         $connection = new Connection($this->variables);
         self::assertFalse($connection->isConnected());
@@ -79,7 +81,10 @@ final class ConnectionIntegrationTest extends AbstractIntegrationTestCase
         unset($connection);
     }
 
-    public function testDisconnect(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Driver\Oci8\Connection::disconnect
+     */
+    public function testDisconnect()
     {
         $connection = new Connection($this->variables);
         $connection->connect();
@@ -89,9 +94,10 @@ final class ConnectionIntegrationTest extends AbstractIntegrationTestCase
     }
 
     /**
+     * @covers \Laminas\Db\Adapter\Driver\Oci8\Connection::beginTransaction
      * @todo   Implement testBeginTransaction().
      */
-    public function testBeginTransaction(): never
+    public function testBeginTransaction()
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
@@ -100,9 +106,10 @@ final class ConnectionIntegrationTest extends AbstractIntegrationTestCase
     }
 
     /**
+     * @covers \Laminas\Db\Adapter\Driver\Oci8\Connection::commit
      * @todo   Implement testCommit().
      */
-    public function testCommit(): never
+    public function testCommit()
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
@@ -111,9 +118,10 @@ final class ConnectionIntegrationTest extends AbstractIntegrationTestCase
     }
 
     /**
+     * @covers \Laminas\Db\Adapter\Driver\Oci8\Connection::rollback
      * @todo   Implement testRollback().
      */
-    public function testRollback(): never
+    public function testRollback()
     {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
@@ -121,7 +129,10 @@ final class ConnectionIntegrationTest extends AbstractIntegrationTestCase
         );
     }
 
-    public function testExecute(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Driver\Oci8\Connection::execute
+     */
+    public function testExecute()
     {
         $oci8       = new Oci8($this->variables);
         $connection = $oci8->getConnection();
@@ -130,20 +141,22 @@ final class ConnectionIntegrationTest extends AbstractIntegrationTestCase
         self::assertInstanceOf(Result::class, $result);
     }
 
-    public function testGetLastGeneratedValue(): never
+    /**
+     * @covers \Laminas\Db\Adapter\Driver\Oci8\Connection::getLastGeneratedValue
+     */
+    public function testGetLastGeneratedValue()
     {
         $this->markTestIncomplete('Need to create a temporary sequence.');
-        /*
         $connection = new Connection($this->variables);
         $connection->getLastGeneratedValue();
-        */
     }
 
-    #[Group('laminas3469')]
-    public function testConnectReturnsConnectionWhenResourceSet(): never
+    /**
+     * @group laminas3469
+     */
+    public function testConnectReturnsConnectionWhenResourceSet()
     {
         $this->markTestIncomplete('edit this');
-        /*
         $resource = oci_connect(
             $this->variables['username'],
             $this->variables['password'],
@@ -157,6 +170,5 @@ final class ConnectionIntegrationTest extends AbstractIntegrationTestCase
         $connection->disconnect();
         unset($connection);
         unset($resource);
-        */
     }
 }

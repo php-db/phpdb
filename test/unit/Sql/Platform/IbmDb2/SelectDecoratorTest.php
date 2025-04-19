@@ -11,32 +11,31 @@ use Laminas\Db\Sql\Expression;
 use Laminas\Db\Sql\Platform\IbmDb2\SelectDecorator;
 use Laminas\Db\Sql\Select;
 use Laminas\Db\Sql\Where;
-use PHPUnit\Framework\Attributes\CoversMethod;
-use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\Attributes\TestDox;
 use PHPUnit\Framework\TestCase;
 
-#[CoversMethod(\Laminas\Db\Sql\Platform\SqlServer\SelectDecorator::class, 'prepareStatement')]
-#[CoversMethod(\Laminas\Db\Sql\Platform\SqlServer\SelectDecorator::class, 'processLimitOffset')]
-#[CoversMethod(SelectDecorator::class, 'getSqlString')]
-final class SelectDecoratorTest extends TestCase
+class SelectDecoratorTest extends TestCase
 {
-    #[DataProvider('dataProvider')]
-    #[TestDox('integration test: Testing SelectDecorator will use Select to produce properly IBM Db2
-                           dialect prepared sql')]
+    /**
+     * @testdox integration test: Testing SelectDecorator will use Select to produce properly IBM Db2
+     *                            dialect prepared sql
+     * @covers \Laminas\Db\Sql\Platform\SqlServer\SelectDecorator::prepareStatement
+     * @covers \Laminas\Db\Sql\Platform\SqlServer\SelectDecorator::processLimitOffset
+     * @dataProvider dataProvider
+     * @param mixed $notUsed
+     */
     public function testPrepareStatement(
         Select $select,
         string $expectedPrepareSql,
         array $expectedParams,
-        mixed $notUsed,
+        $notUsed,
         bool $supportsLimitOffset
-    ): void {
+    ) {
         $driver = $this->getMockBuilder(DriverInterface::class)->getMock();
-        $driver->expects($this->any())->method('formatParameterName')->willReturn('?');
+        $driver->expects($this->any())->method('formatParameterName')->will($this->returnValue('?'));
 
         // test
         $adapter = $this->getMockBuilder(Adapter::class)
-            ->onlyMethods([])
+            ->setMethods()
             ->setConstructorArgs([
                 $driver,
                 new IbmDb2Platform(),
@@ -49,7 +48,7 @@ final class SelectDecoratorTest extends TestCase
         $statement
             ->expects($this->any())
             ->method('getParameterContainer')
-            ->willReturn($parameterContainer);
+            ->will($this->returnValue($parameterContainer));
         $statement
             ->expects($this->once())
             ->method('setSql')
@@ -63,22 +62,27 @@ final class SelectDecoratorTest extends TestCase
         self::assertEquals($expectedParams, $parameterContainer->getNamedArray());
     }
 
-    #[DataProvider('dataProvider')]
-    #[TestDox('integration test: Testing SelectDecorator will use Select to produce properly Ibm DB2
-                           dialect sql statements')]
+    /**
+     * @testdox integration test: Testing SelectDecorator will use Select to produce properly Ibm DB2
+     *                            dialect sql statements
+     * @covers \Laminas\Db\Sql\Platform\IbmDb2\SelectDecorator::getSqlString
+     * @dataProvider dataProvider
+     * @param mixed $ignored0
+     * @param mixed $ignored1
+     */
     public function testGetSqlString(
         Select $select,
-        mixed $ignored0,
-        mixed $ignored1,
+        $ignored0,
+        $ignored1,
         string $expectedSql,
         bool $supportsLimitOffset
-    ): void {
+    ) {
         $parameterContainer = new ParameterContainer();
         $statement          = $this->getMockBuilder(StatementInterface::class)->getMock();
         $statement
             ->expects($this->any())
             ->method('getParameterContainer')
-            ->willReturn($parameterContainer);
+            ->will($this->returnValue($parameterContainer));
 
         $selectDecorator = new SelectDecorator();
         $selectDecorator->setSubject($select);
@@ -89,8 +93,10 @@ final class SelectDecoratorTest extends TestCase
 
     /**
      * Data provider for testGetSqlString
+     *
+     * @return array
      */
-    public static function dataProvider(): array
+    public function dataProvider()
     {
         // phpcs:disable Generic.Files.LineLength.TooLong
         $select0 = new Select();

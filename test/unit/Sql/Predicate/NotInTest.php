@@ -6,9 +6,9 @@ use Laminas\Db\Sql\Predicate\NotIn;
 use Laminas\Db\Sql\Select;
 use PHPUnit\Framework\TestCase;
 
-final class NotInTest extends TestCase
+class NotInTest extends TestCase
 {
-    public function testRetrievingWherePartsReturnsSpecificationArrayOfIdentifierAndValuesAndArrayOfTypes(): void
+    public function testRetrievingWherePartsReturnsSpecificationArrayOfIdentifierAndValuesAndArrayOfTypes()
     {
         $in = new NotIn();
         $in->setIdentifier('foo.bar')
@@ -23,7 +23,7 @@ final class NotInTest extends TestCase
         self::assertEquals($expected, $in->getExpressionData());
     }
 
-    public function testGetExpressionDataWithSubselect(): void
+    public function testGetExpressionDataWithSubselect()
     {
         $select   = new Select();
         $in       = new NotIn('foo', $select);
@@ -37,7 +37,7 @@ final class NotInTest extends TestCase
         self::assertEquals($expected, $in->getExpressionData());
     }
 
-    public function testGetExpressionDataWithSubselectAndIdentifier(): void
+    public function testGetExpressionDataWithSubselectAndIdentifier()
     {
         $select   = new Select();
         $in       = new NotIn('foo', $select);
@@ -51,7 +51,7 @@ final class NotInTest extends TestCase
         self::assertEquals($expected, $in->getExpressionData());
     }
 
-    public function testGetExpressionDataWithSubselectAndArrayIdentifier(): void
+    public function testGetExpressionDataWithSubselectAndArrayIdentifier()
     {
         $select   = new Select();
         $in       = new NotIn(['foo', 'bar'], $select);

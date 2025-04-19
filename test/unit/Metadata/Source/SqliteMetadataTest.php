@@ -2,31 +2,30 @@
 
 namespace LaminasTest\Db\Metadata\Source;
 
-use Exception;
 use Laminas\Db\Adapter\Adapter;
 use Laminas\Db\Metadata\Object\ConstraintKeyObject;
 use Laminas\Db\Metadata\Object\ConstraintObject;
 use Laminas\Db\Metadata\Object\TriggerObject;
 use Laminas\Db\Metadata\Source\SqliteMetadata;
-use Override;
-use PHPUnit\Framework\Attributes\Group;
-use PHPUnit\Framework\Attributes\RequiresPhpExtension;
 use PHPUnit\Framework\TestCase;
 
 use function extension_loaded;
 
-#[RequiresPhpExtension('pdo_sqlite')]
-final class SqliteMetadataTest extends TestCase
+/**
+ * @requires extension pdo_sqlite
+ */
+class SqliteMetadataTest extends TestCase
 {
-    protected SqliteMetadata $metadata;
+    /** @var SqliteMetadata */
+    protected $metadata;
 
-    protected Adapter $adapter;
+    /** @var Adapter */
+    protected $adapter;
 
     /**
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
-    #[Override]
     protected function setUp(): void
     {
         if (! extension_loaded('pdo_sqlite')) {
@@ -39,29 +38,26 @@ final class SqliteMetadataTest extends TestCase
         $this->metadata = new SqliteMetadata($this->adapter);
     }
 
-    public function testGetSchemas(): void
+    public function testGetSchemas()
     {
         $schemas = $this->metadata->getSchemas();
         self::assertContains('main', $schemas);
         self::assertCount(1, $schemas);
     }
 
-    public function testGetTableNames(): void
+    public function testGetTableNames()
     {
         $tables = $this->metadata->getTableNames('main');
         self::assertCount(0, $tables);
     }
 
-    /**
-     * @throws Exception
-     */
-    public function testGetColumnNames(): void
+    public function testGetColumnNames()
     {
         $columns = $this->metadata->getColumnNames(null, 'main');
         self::assertCount(0, $columns);
     }
 
-    public function testGetConstraints(): void
+    public function testGetConstraints()
     {
         $constraints = $this->metadata->getConstraints(null, 'main');
         self::assertCount(0, $constraints);
@@ -71,8 +67,10 @@ final class SqliteMetadataTest extends TestCase
         );
     }
 
-    #[Group('Laminas-3719')]
-    public function testGetConstraintKeys(): void
+    /**
+     * @group Laminas-3719
+     */
+    public function testGetConstraintKeys()
     {
         $keys = $this->metadata->getConstraintKeys(
             null,
@@ -86,7 +84,7 @@ final class SqliteMetadataTest extends TestCase
         );
     }
 
-    public function testGetTriggers(): void
+    public function testGetTriggers()
     {
         $triggers = $this->metadata->getTriggers('main');
         self::assertCount(0, $triggers);

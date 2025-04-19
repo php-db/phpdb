@@ -5,21 +5,20 @@ namespace LaminasIntegrationTest\Db\Adapter\Platform;
 use Laminas\Db\Adapter\Driver\Mysqli;
 use Laminas\Db\Adapter\Driver\Pdo;
 use Laminas\Db\Adapter\Platform\Mysql;
-use Override;
-use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 
 use function extension_loaded;
 use function getenv;
 
-#[Group('integration')]
-#[Group('integration-mysql')]
-final class MysqlTest extends TestCase
+/**
+ * @group integration
+ * @group integration-mysql
+ */
+class MysqlTest extends TestCase
 {
     /** @var array<string, resource|\PDO> */
-    public array|\PDO $adapters = [];
+    public $adapters = [];
 
-    #[Override]
     protected function setUp(): void
     {
         if (! getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_MYSQL')) {
@@ -43,9 +42,6 @@ final class MysqlTest extends TestCase
         }
     }
 
-    /**
-     * @return void
-     */
     public function testQuoteValueWithMysqli()
     {
         if (! $this->adapters['mysqli'] instanceof \Mysqli) {
@@ -60,9 +56,6 @@ final class MysqlTest extends TestCase
         self::assertEquals('\'value\'', $value);
     }
 
-    /**
-     * @return void
-     */
     public function testQuoteValueWithPdoMysql()
     {
         if (! $this->adapters['pdo_mysql'] instanceof \PDO) {

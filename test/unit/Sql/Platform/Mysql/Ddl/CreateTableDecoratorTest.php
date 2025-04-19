@@ -7,21 +7,24 @@ use Laminas\Db\Sql\Ddl\Column\Column;
 use Laminas\Db\Sql\Ddl\Constraint\PrimaryKey;
 use Laminas\Db\Sql\Ddl\CreateTable;
 use Laminas\Db\Sql\Platform\Mysql\Ddl\CreateTableDecorator;
-use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 
-#[CoversMethod(CreateTableDecorator::class, 'setSubject')]
-#[CoversMethod(CreateTableDecorator::class, 'getSqlString')]
-final class CreateTableDecoratorTest extends TestCase
+class CreateTableDecoratorTest extends TestCase
 {
-    public function testSetSubject(): void
+    /**
+     * @covers \Laminas\Db\Sql\Platform\Mysql\Ddl\CreateTableDecorator::setSubject
+     */
+    public function testSetSubject()
     {
         $ctd = new CreateTableDecorator();
         $ct  = new CreateTable();
         self::assertSame($ctd, $ctd->setSubject($ct));
     }
 
-    public function testGetSqlString(): void
+    /**
+     * @covers \Laminas\Db\Sql\Platform\Mysql\Ddl\CreateTableDecorator::getSqlString
+     */
+    public function testGetSqlString()
     {
         $ctd = new CreateTableDecorator();
         $ct  = new CreateTable('foo');

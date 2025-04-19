@@ -11,7 +11,7 @@ use function printf;
 final class IntegrationTestStoppedListener implements FinishedSubscriber
 {
     /** @var FixtureLoader[] */
-    private array $fixtureLoaders = [];
+    private $fixtureLoaders = [];
 
     public function notify(Finished $event): void
     {

@@ -2,22 +2,36 @@
 
 namespace LaminasTest\Db\Adapter\Driver\Pdo\TestAsset;
 
-use Override;
 use PDO;
 use PDOStatement;
 use PHPUnit\Framework\MockObject\MockObject;
+// phpcs:ignore SlevomatCodingStandard.Namespaces.UnusedUses.UnusedUse
+use ReturnTypeWillChange;
 
-final class CtorlessPdo extends PDO
+class CtorlessPdo extends PDO
 {
-    public function __construct(protected PDOStatement&MockObject $mockStatement)
+    /**
+     * @var PDOStatement
+     * @psalm-var PDOStatement&MockObject
+     */
+    protected $mockStatement;
+
+    /**
+     * @param PDOStatement $mockStatement
+     * @psalm-param PDOStatement&MockObject $mockStatement
+     */
+    public function __construct($mockStatement)
     {
+        $this->mockStatement = $mockStatement;
     }
 
     /**
-     * @param array<array-key, mixed> $options
+     * @param string $sql
+     * @param null|array $options
+     * @return PDOStatement|false
      */
-    #[Override]
-    public function prepare(string $query, $options = null): PDOStatement
+    #[ReturnTypeWillChange]
+    public function prepare($sql, $options = null): PDOStatement
     {
         return $this->mockStatement;
     }

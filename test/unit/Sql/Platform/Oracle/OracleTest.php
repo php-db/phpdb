@@ -5,18 +5,18 @@ namespace LaminasTest\Db\Sql\Platform\Oracle;
 use Laminas\Db\Sql\Platform\Oracle\Oracle;
 use Laminas\Db\Sql\Platform\Oracle\SelectDecorator;
 use Laminas\Db\Sql\Select;
-use PHPUnit\Framework\Attributes\CoversMethod;
-use PHPUnit\Framework\Attributes\TestDox;
 use PHPUnit\Framework\TestCase;
 
 use function current;
 use function key;
 
-#[CoversMethod(Oracle::class, '__construct')]
-final class OracleTest extends TestCase
+class OracleTest extends TestCase
 {
-    #[TestDox('unit test / object test: Test Mysql object has Select proxy')]
-    public function testConstruct(): void
+    /**
+     * @testdox unit test / object test: Test Mysql object has Select proxy
+     * @covers \Laminas\Db\Sql\Platform\Oracle\Oracle::__construct
+     */
+    public function testConstruct()
     {
         $oracle     = new Oracle();
         $decorators = $oracle->getDecorators();

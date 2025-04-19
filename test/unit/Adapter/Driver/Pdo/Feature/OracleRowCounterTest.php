@@ -2,38 +2,37 @@
 
 namespace LaminasTest\Db\Adapter\Driver\Pdo\Feature;
 
+use Closure;
 use Laminas\Db\Adapter\Driver\ConnectionInterface;
 use Laminas\Db\Adapter\Driver\Pdo\Feature\OracleRowCounter;
 use Laminas\Db\Adapter\Driver\Pdo\Pdo;
 use Laminas\Db\Adapter\Driver\Pdo\Statement;
 use Laminas\Db\Adapter\Driver\ResultInterface;
-use Override;
-use PDO as PDOConnection;
-use PDOStatement;
-use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-#[CoversMethod(OracleRowCounter::class, 'getName')]
-#[CoversMethod(OracleRowCounter::class, 'getCountForStatement')]
-#[CoversMethod(OracleRowCounter::class, 'getCountForSql')]
-#[CoversMethod(OracleRowCounter::class, 'getRowCountClosure')]
-final class OracleRowCounterTest extends TestCase
+class OracleRowCounterTest extends TestCase
 {
-    protected OracleRowCounter $rowCounter;
+    /** @var OracleRowCounter */
+    protected $rowCounter;
 
-    #[Override]
     protected function setUp(): void
     {
         $this->rowCounter = new OracleRowCounter();
     }
 
-    public function testGetName(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Driver\Pdo\Feature\OracleRowCounter::getName
+     */
+    public function testGetName()
     {
         self::assertEquals('OracleRowCounter', $this->rowCounter->getName());
     }
 
-    public function testGetCountForStatement(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Driver\Pdo\Feature\OracleRowCounter::getCountForStatement
+     */
+    public function testGetCountForStatement()
     {
         $statement = $this->getMockStatement('SELECT XXX', 5);
         $statement->expects($this->once())->method('prepare')
@@ -43,88 +42,96 @@ final class OracleRowCounterTest extends TestCase
         self::assertEquals(5, $count);
     }
 
-    public function testGetCountForSql(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Driver\Pdo\Feature\OracleRowCounter::getCountForSql
+     */
+    public function testGetCountForSql()
     {
         $this->rowCounter->setDriver($this->getMockDriver(5));
         $count = $this->rowCounter->getCountForSql('SELECT XXX');
         self::assertEquals(5, $count);
     }
 
-    public function testGetRowCountClosure(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Driver\Pdo\Feature\OracleRowCounter::getRowCountClosure
+     */
+    public function testGetRowCountClosure()
     {
         $stmt = $this->getMockStatement('SELECT XXX', 5);
 
+        /** @var Closure $closure */
         $closure = $this->rowCounter->getRowCountClosure($stmt);
         self::assertInstanceOf('Closure', $closure);
         self::assertEquals(5, $closure());
     }
 
     /**
-     * @psalm-param 5 $returnValue
+     * @param mixed $returnValue
+     * @return Statement&MockObject
      */
-    protected function getMockStatement(string $sql, int $returnValue): MockObject&Statement
+    protected function getMockStatement(string $sql, $returnValue)
     {
         /** @var Statement|MockObject $statement */
         $statement = $this->getMockBuilder(Statement::class)
-            ->onlyMethods(['prepare', 'execute'])
+            ->setMethods(['prepare', 'execute'])
             ->disableOriginalConstructor()
             ->getMock();
 
         // mock PDOStatement with stdClass
-        $resource = $this->getMockBuilder(PDOStatement::class)
-            ->onlyMethods(['fetch'])
+        $resource = $this->getMockBuilder('stdClass')
+            ->setMethods(['fetch'])
             ->getMock();
-        $resource->expects($this->any())
+        $resource->expects($this->once())
             ->method('fetch')
-            ->willReturn(['count' => $returnValue]);
+            ->will($this->returnValue(['count' => $returnValue]));
 
         // mock the result
         $result = $this->getMockBuilder(ResultInterface::class)->getMock();
         $result->expects($this->once())
             ->method('getResource')
-            ->willReturn($resource);
+            ->will($this->returnValue($resource));
 
         $statement->setSql($sql);
         $statement->expects($this->once())
             ->method('execute')
-            ->willReturn($result);
+            ->will($this->returnValue($result));
 
         return $statement;
     }
 
     /**
-     * @psalm-param 5 $returnValue
+     * @param mixed $returnValue
+     * @return Pdo&MockObject
      */
-    protected function getMockDriver(int $returnValue): MockObject&Pdo
+    protected function getMockDriver($returnValue)
     {
-        $pdoStatement = $this->getMockBuilder(PDOStatement::class)
-            ->onlyMethods(['fetch'])
+        $pdoStatement = $this->getMockBuilder('stdClass')
+            ->setMethods(['fetch'])
             ->disableOriginalConstructor()
             ->getMock(); // stdClass can be used here
         $pdoStatement->expects($this->once())
             ->method('fetch')
-            ->willReturn(['count' => $returnValue]);
+            ->will($this->returnValue(['count' => $returnValue]));
 
-        $pdoConnection = $this->getMockBuilder(PDOConnection::class)
-            ->onlyMethods(['query'])
-            ->disableOriginalConstructor()
+        $pdoConnection = $this->getMockBuilder('stdClass')
+            ->setMethods(['query'])
             ->getMock();
-        $pdoConnection->expects($this->any())
+        $pdoConnection->expects($this->once())
             ->method('query')
-            ->willReturn($pdoStatement);
+            ->will($this->returnValue($pdoStatement));
 
         $connection = $this->getMockBuilder(ConnectionInterface::class)->getMock();
         $connection->expects($this->once())
             ->method('getResource')
-            ->willReturn($pdoConnection);
+            ->will($this->returnValue($pdoConnection));
 
         $driver = $this->getMockBuilder(Pdo::class)
-            ->onlyMethods(['getConnection'])
+            ->setMethods(['getConnection'])
             ->disableOriginalConstructor()
             ->getMock();
         $driver->expects($this->once())
             ->method('getConnection')
-            ->willReturn($connection);
+            ->will($this->returnValue($connection));
 
         return $driver;
     }

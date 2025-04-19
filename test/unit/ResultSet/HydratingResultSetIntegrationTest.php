@@ -4,13 +4,14 @@ namespace LaminasTest\Db\ResultSet;
 
 use ArrayIterator;
 use Laminas\Db\ResultSet\HydratingResultSet;
-use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 
-#[CoversMethod(HydratingResultSet::class, 'current')]
-final class HydratingResultSetIntegrationTest extends TestCase
+class HydratingResultSetIntegrationTest extends TestCase
 {
-    public function testCurrentWillReturnBufferedRow(): void
+    /**
+     * @covers \Laminas\Db\ResultSet\HydratingResultSet::current
+     */
+    public function testCurrentWillReturnBufferedRow()
     {
         $hydratingRs = new HydratingResultSet();
         $hydratingRs->initialize(new ArrayIterator([

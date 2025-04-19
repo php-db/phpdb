@@ -3,22 +3,13 @@
 namespace LaminasTest\Db\Sql\Ddl\Column;
 
 use Laminas\Db\Sql\Ddl\Column\Column;
-use PHPUnit\Framework\Attributes\CoversMethod;
-use PHPUnit\Framework\Attributes\Depends;
 use PHPUnit\Framework\TestCase;
 
-#[CoversMethod(Column::class, 'setName')]
-#[CoversMethod(Column::class, 'getName')]
-#[CoversMethod(Column::class, 'setNullable')]
-#[CoversMethod(Column::class, 'isNullable')]
-#[CoversMethod(Column::class, 'setDefault')]
-#[CoversMethod(Column::class, 'getDefault')]
-#[CoversMethod(Column::class, 'setOptions')]
-#[CoversMethod(Column::class, 'setOption')]
-#[CoversMethod(Column::class, 'getOptions')]
-#[CoversMethod(Column::class, 'getExpressionData')]
-final class ColumnTest extends TestCase
+class ColumnTest extends TestCase
 {
+    /**
+     * @covers \Laminas\Db\Sql\Ddl\Column\Column::setName
+     */
     public function testSetName(): Column
     {
         $column = new Column();
@@ -26,12 +17,18 @@ final class ColumnTest extends TestCase
         return $column;
     }
 
-    #[Depends('testSetName')]
-    public function testGetName(Column $column): void
+    /**
+     * @covers \Laminas\Db\Sql\Ddl\Column\Column::getName
+     * @depends testSetName
+     */
+    public function testGetName(Column $column)
     {
         self::assertEquals('foo', $column->getName());
     }
 
+    /**
+     * @covers \Laminas\Db\Sql\Ddl\Column\Column::setNullable
+     */
     public function testSetNullable(): Column
     {
         $column = new Column();
@@ -39,14 +36,20 @@ final class ColumnTest extends TestCase
         return $column;
     }
 
-    #[Depends('testSetNullable')]
-    public function testIsNullable(Column $column): void
+    /**
+     * @covers \Laminas\Db\Sql\Ddl\Column\Column::isNullable
+     * @depends testSetNullable
+     */
+    public function testIsNullable(Column $column)
     {
         self::assertTrue($column->isNullable());
         $column->setNullable(false);
         self::assertFalse($column->isNullable());
     }
 
+    /**
+     * @covers \Laminas\Db\Sql\Ddl\Column\Column::setDefault
+     */
     public function testSetDefault(): Column
     {
         $column = new Column();
@@ -54,12 +57,18 @@ final class ColumnTest extends TestCase
         return $column;
     }
 
-    #[Depends('testSetDefault')]
-    public function testGetDefault(Column $column): void
+    /**
+     * @covers \Laminas\Db\Sql\Ddl\Column\Column::getDefault
+     * @depends testSetDefault
+     */
+    public function testGetDefault(Column $column)
     {
         self::assertEquals('foo bar', $column->getDefault());
     }
 
+    /**
+     * @covers \Laminas\Db\Sql\Ddl\Column\Column::setOptions
+     */
     public function testSetOptions(): Column
     {
         $column = new Column();
@@ -67,19 +76,28 @@ final class ColumnTest extends TestCase
         return $column;
     }
 
-    public function testSetOption(): void
+    /**
+     * @covers \Laminas\Db\Sql\Ddl\Column\Column::setOption
+     */
+    public function testSetOption()
     {
         $column = new Column();
         self::assertSame($column, $column->setOption('primary', true));
     }
 
-    #[Depends('testSetOptions')]
-    public function testGetOptions(Column $column): void
+    /**
+     * @covers \Laminas\Db\Sql\Ddl\Column\Column::getOptions
+     * @depends testSetOptions
+     */
+    public function testGetOptions(Column $column)
     {
         self::assertEquals(['autoincrement' => true], $column->getOptions());
     }
 
-    public function testGetExpressionData(): void
+    /**
+     * @covers \Laminas\Db\Sql\Ddl\Column\Column::getExpressionData
+     */
+    public function testGetExpressionData()
     {
         $column = new Column();
         $column->setName('foo');

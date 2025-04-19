@@ -5,22 +5,20 @@ namespace LaminasTest\Db\Adapter\Driver\Sqlsrv;
 use Laminas\Db\Adapter\Driver\Sqlsrv\Result;
 use Laminas\Db\Adapter\Driver\Sqlsrv\Sqlsrv;
 use Laminas\Db\Adapter\Driver\Sqlsrv\Statement;
-use PHPUnit\Framework\Attributes\CoversMethod;
-use PHPUnit\Framework\Attributes\Group;
 
 use function get_resource_type;
 use function sqlsrv_connect;
 
-#[CoversMethod(Statement::class, 'initialize')]
-#[CoversMethod(Statement::class, 'getResource')]
-#[CoversMethod(Statement::class, 'prepare')]
-#[CoversMethod(Statement::class, 'isPrepared')]
-#[CoversMethod(Statement::class, 'execute')]
-#[Group('integration')]
-#[Group('integration-sqlserver')]
-final class StatementIntegrationTest extends AbstractIntegrationTestCase
+/**
+ * @group integration
+ * @group integration-sqlserver
+ */
+class StatementIntegrationTest extends AbstractIntegrationTest
 {
-    public function testInitialize(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Driver\Sqlsrv\Statement::initialize
+     */
+    public function testInitialize()
     {
         $sqlsrvResource = sqlsrv_connect(
             $this->variables['hostname'],
@@ -36,7 +34,10 @@ final class StatementIntegrationTest extends AbstractIntegrationTestCase
         unset($stmtResource, $sqlsrvResource);
     }
 
-    public function testGetResource(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Driver\Sqlsrv\Statement::getResource
+     */
+    public function testGetResource()
     {
         $sqlsrvResource = sqlsrv_connect(
             $this->variables['hostname'],
@@ -55,7 +56,11 @@ final class StatementIntegrationTest extends AbstractIntegrationTestCase
         unset($resource, $sqlsrvResource);
     }
 
-    public function testPrepare(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Driver\Sqlsrv\Statement::prepare
+     * @covers \Laminas\Db\Adapter\Driver\Sqlsrv\Statement::isPrepared
+     */
+    public function testPrepare()
     {
         $sqlsrvResource = sqlsrv_connect(
             $this->variables['hostname'],
@@ -74,7 +79,10 @@ final class StatementIntegrationTest extends AbstractIntegrationTestCase
         unset($resource, $sqlsrvResource);
     }
 
-    public function testExecute(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Driver\Sqlsrv\Statement::execute
+     */
+    public function testExecute()
     {
         $sqlsrv    = new Sqlsrv($this->variables);
         $statement = $sqlsrv->createStatement("SELECT 'foo'");

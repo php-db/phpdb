@@ -8,7 +8,7 @@ use ReturnTypeWillChange;
 /**
  * Stub class
  */
-final class PdoMock extends PDO
+class PdoMock extends PDO
 {
     public function __construct()
     {

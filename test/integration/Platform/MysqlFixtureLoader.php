@@ -10,16 +10,15 @@ use function getenv;
 use function print_r;
 use function sprintf;
 
-final class MysqlFixtureLoader implements FixtureLoader
+class MysqlFixtureLoader implements FixtureLoader
 {
-    private string $fixtureFile = __DIR__ . '/../TestFixtures/mysql.sql';
+    /** @var string */
+    private $fixtureFile = __DIR__ . '/../TestFixtures/mysql.sql';
 
-    private PDO $pdo;
+    /** @var PDO */
+    private $pdo;
 
-    /**
-     * @throws Exception
-     */
-    public function createDatabase(): void
+    public function createDatabase()
     {
         $this->connect();
 
@@ -50,7 +49,7 @@ final class MysqlFixtureLoader implements FixtureLoader
         $this->disconnect();
     }
 
-    public function dropDatabase(): void
+    public function dropDatabase()
     {
         $this->connect();
 
@@ -62,7 +61,7 @@ final class MysqlFixtureLoader implements FixtureLoader
         $this->disconnect();
     }
 
-    protected function connect(): void
+    protected function connect()
     {
         $dsn = 'mysql:host=' . getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_MYSQL_HOSTNAME');
         if (getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_MYSQL_PORT')) {
@@ -76,7 +75,7 @@ final class MysqlFixtureLoader implements FixtureLoader
         );
     }
 
-    protected function disconnect(): void
+    protected function disconnect()
     {
         $this->pdo = null;
     }

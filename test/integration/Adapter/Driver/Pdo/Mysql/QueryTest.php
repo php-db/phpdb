@@ -2,29 +2,20 @@
 
 namespace LaminasIntegrationTest\Db\Adapter\Driver\Pdo\Mysql;
 
-use Exception;
-use Laminas\Db\Adapter\Adapter;
 use Laminas\Db\Adapter\Driver\Pdo\Result as PdoResult;
-use Laminas\Db\Adapter\Driver\StatementInterface;
 use Laminas\Db\Adapter\Exception\RuntimeException;
 use Laminas\Db\ResultSet\ResultSet;
 use Laminas\Db\Sql\Sql;
-use LaminasIntegrationTest\Db\Adapter\Driver\Pdo\AdapterTrait as BaseAdapterTrait;
-use PHPUnit\Framework\Attributes\CoversMethod;
-use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
-#[CoversMethod(Adapter::class, 'query')]
-#[CoversMethod(ResultSet::class, 'current')]
-final class QueryTest extends TestCase
+class QueryTest extends TestCase
 {
     use AdapterTrait;
-    use BaseAdapterTrait;
 
     /**
      * @psalm-return array<array-key, array{
      *     0: string,
-     *     1: array|array<string, mixed>,
+     *     1: mixed[]|array<string, mixed>,
      *     2: array<string, mixed>
      * }>
      */
@@ -45,20 +36,18 @@ final class QueryTest extends TestCase
     }
 
     /**
-     * @throws Exception
+     * @dataProvider getQueriesWithRowResult
+     * @covers \Laminas\Db\Adapter\Adapter::query
+     * @covers \Laminas\Db\ResultSet\ResultSet::current
      */
-    #[DataProvider('getQueriesWithRowResult')]
-    public function testQuery(string $query, array $params, array $expected): void
+    public function testQuery(string $query, array $params, array $expected)
     {
-        /** @todo Have AdapterInterface implement query */
-        /** @psalm-suppress UndefinedInterfaceMethod */
-        $result = $this->getAdapter()->query($query, $params);
+        $result = $this->adapter->query($query, $params);
         $this->assertInstanceOf(ResultSet::class, $result);
         $current = $result->current();
         // test as array value
         $this->assertEquals($expected, (array) $current);
         // test as object value
-        /** @var string $value */
         foreach ($expected as $key => $value) {
             $this->assertEquals($value, $current->$key);
         }
@@ -66,34 +55,26 @@ final class QueryTest extends TestCase
 
     /**
      * @see https://github.com/zendframework/zend-db/issues/288
-     *
-     * @throws Exception
      */
-    public function testSetSessionTimeZone(): void
+    public function testSetSessionTimeZone()
     {
-        /** @todo Have AdapterInterface implement query */
-        /** @psalm-suppress UndefinedInterfaceMethod */
-        $result = $this->getAdapter()->query('SET @@session.time_zone = :tz', [':tz' => 'SYSTEM']);
+        $result = $this->adapter->query('SET @@session.time_zone = :tz', [':tz' => 'SYSTEM']);
         $this->assertInstanceOf(PdoResult::class, $result);
     }
 
-    /**
-     * @throws Exception
-     */
-    public function testSelectWithNotPermittedBindParamName(): void
+    public function testSelectWithNotPermittedBindParamName()
     {
         $this->expectException(RuntimeException::class);
-        /** @todo Have AdapterInterface implement query */
-        /** @psalm-suppress UndefinedInterfaceMethod */
-        $this->getAdapter()->query('SET @@session.time_zone = :tz$', [':tz$' => 'SYSTEM']);
+        $this->adapter->query('SET @@session.time_zone = :tz$', [':tz$' => 'SYSTEM']);
     }
 
     /**
      * @see https://github.com/laminas/laminas-db/issues/47
      */
-    public function testNamedParameters(): void
+    public function testNamedParameters()
     {
-        $this->assertNotNull($this->adapter);
+        $this->expectNotToPerformAssertions();
+
         $sql = new Sql($this->adapter);
 
         $insert = $sql->update('test');
@@ -102,7 +83,6 @@ final class QueryTest extends TestCase
             'value' => ':value',
         ])->where(['id' => ':id']);
         $stmt = $sql->prepareStatementForSqlObject($insert);
-        $this->assertInstanceOf(StatementInterface::class, $stmt);
 
         //positional parameters
         $stmt->execute([

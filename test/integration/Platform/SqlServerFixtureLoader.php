@@ -12,16 +12,14 @@ use function sqlsrv_connect;
 use function sqlsrv_errors;
 use function sqlsrv_query;
 
-final class SqlServerFixtureLoader implements FixtureLoader
+class SqlServerFixtureLoader implements FixtureLoader
 {
-    private string $fixtureFilePrefix = __DIR__ . '/../TestFixtures/sqlsrv';
+    /** @var string */
+    private $fixtureFilePrefix = __DIR__ . '/../TestFixtures/sqlsrv';
 
     /** @var resource */
     private $connection;
 
-    /**
-     * @throws Exception
-     */
     public function createDatabase(): void
     {
         $this->connect();
@@ -70,10 +68,7 @@ final class SqlServerFixtureLoader implements FixtureLoader
         // phpcs:enable Squiz.PHP.NonExecutableCode.Unreachable
     }
 
-    /**
-     * @throws Exception
-     */
-    public function dropDatabase(): void
+    public function dropDatabase()
     {
         $this->connect();
 
@@ -99,10 +94,7 @@ final class SqlServerFixtureLoader implements FixtureLoader
         $this->disconnect();
     }
 
-    /**
-     * @throws Exception
-     */
-    protected function connect(): void
+    protected function connect()
     {
         $this->connection = sqlsrv_connect(
             getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_SQLSRV_HOSTNAME'),
@@ -122,7 +114,7 @@ final class SqlServerFixtureLoader implements FixtureLoader
         }
     }
 
-    protected function disconnect(): void
+    protected function disconnect()
     {
         $this->connection = null;
     }

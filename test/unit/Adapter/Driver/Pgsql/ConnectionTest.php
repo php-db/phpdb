@@ -7,10 +7,6 @@ use Laminas\Db\Adapter\Exception as AdapterException;
 use Laminas\Db\Adapter\Exception\InvalidArgumentException;
 use Laminas\Db\Adapter\Exception\RuntimeException;
 use LaminasTest\Db\DeprecatedAssertionsTrait;
-use Override;
-use PHPUnit\Framework\Attributes\CoversMethod;
-use PHPUnit\Framework\Attributes\Group;
-use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 use PHPUnit\Framework\TestCase;
 use ReflectionMethod;
 
@@ -19,18 +15,17 @@ use function pg_client_encoding;
 
 use const PGSQL_CONNECT_FORCE_NEW;
 
-#[CoversMethod(Connection::class, 'getResource')]
-final class ConnectionTest extends TestCase
+class ConnectionTest extends TestCase
 {
     use DeprecatedAssertionsTrait;
 
-    protected Connection $connection;
+    /** @var Connection */
+    protected $connection;
 
     /**
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
-    #[Override]
     protected function setUp(): void
     {
         $this->connection = new Connection();
@@ -39,7 +34,7 @@ final class ConnectionTest extends TestCase
     /**
      * Test getResource method if it tries to connect to the database.
      *
-     * @return void
+     * @covers \Laminas\Db\Adapter\Driver\Pgsql\Connection::getResource
      */
     public function testResourceInvalid()
     {
@@ -50,7 +45,7 @@ final class ConnectionTest extends TestCase
         // invalid port should lead to the custom error handler throwing
         $conn = new Connection(['socket' => '127.0.0.1', 'port' => 65112]);
         try {
-            $conn->getResource();
+            $resource = $conn->getResource();
             $this->fail('should throw');
         } catch (AdapterException\RuntimeException $exc) {
             $this->assertSame(
@@ -63,7 +58,7 @@ final class ConnectionTest extends TestCase
     /**
      * Test getResource method if it tries to connect to the database.
      *
-     * @return void
+     * @covers \Laminas\Db\Adapter\Driver\Pgsql\Connection::getResource
      */
     public function testResource()
     {
@@ -85,15 +80,17 @@ final class ConnectionTest extends TestCase
     /**
      * Test disconnect method to return instance of ConnectionInterface
      */
-    public function testDisconnect(): void
+    public function testDisconnect()
     {
         include_once 'pgsqlMockFunctions.php';
         self::assertSame($this->connection, $this->connection->disconnect());
     }
 
-    #[Group('6760')]
-    #[Group('6787')]
-    public function testGetConnectionStringEncodeSpecialSymbol(): void
+    /**
+     * @group 6760
+     * @group 6787
+     */
+    public function testGetConnectionStringEncodeSpecialSymbol()
     {
         $connectionParameters = [
             'driver'   => 'pgsql',
@@ -111,7 +108,6 @@ final class ConnectionTest extends TestCase
             'getConnectionString'
         );
 
-        /** @psalm-suppress UnusedMethodCall */
         $getConnectionString->setAccessible(true);
 
         self::assertEquals(
@@ -120,9 +116,6 @@ final class ConnectionTest extends TestCase
         );
     }
 
-    /**
-     * @return void
-     */
     public function testSetConnectionTypeException()
     {
         if (! extension_loaded('pgsql')) {
@@ -135,8 +128,6 @@ final class ConnectionTest extends TestCase
 
     /**
      * Test the connection type setter
-     *
-     * @return void
      */
     public function testSetConnectionType()
     {
@@ -149,9 +140,8 @@ final class ConnectionTest extends TestCase
     }
 
     /**
-     * @return void
+     * @runInSeparateProcess
      */
-    #[RunInSeparateProcess]
     public function testSetCharset()
     {
         if (! extension_loaded('pgsql')) {
@@ -170,7 +160,7 @@ final class ConnectionTest extends TestCase
 
         try {
             $this->connection->connect();
-        } catch (AdapterException\RuntimeException) {
+        } catch (AdapterException\RuntimeException $e) {
             $this->markTestSkipped('Skipping pgsql charset test due to inability to connecto to database');
         }
 
@@ -178,9 +168,8 @@ final class ConnectionTest extends TestCase
     }
 
     /**
-     * @return void
+     * @runInSeparateProcess
      */
-    #[RunInSeparateProcess]
     public function testSetInvalidCharset()
     {
         if (! extension_loaded('pgsql')) {

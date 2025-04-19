@@ -3,41 +3,36 @@
 namespace LaminasTest\Db\Sql\Ddl\Column;
 
 use Laminas\Db\Sql\Ddl\Column\AbstractLengthColumn;
-use PHPUnit\Framework\Attributes\CoversMethod;
-use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
 
-#[CoversMethod(AbstractLengthColumn::class, 'setLength')]
-#[CoversMethod(AbstractLengthColumn::class, 'getLength')]
-#[CoversMethod(AbstractLengthColumn::class, 'getExpressionData')]
-final class AbstractLengthColumnTest extends TestCase
+class AbstractLengthColumnTest extends TestCase
 {
     /**
-     * @throws Exception
+     * @covers \Laminas\Db\Sql\Ddl\Column\AbstractLengthColumn::setLength
      */
-    public function testSetLength(): void
+    public function testSetLength()
     {
-        $column = $this->getMockBuilder(AbstractLengthColumn::class)->setConstructorArgs(['foo', 55])->onlyMethods([])->getMock();
+        $column = $this->getMockForAbstractClass(AbstractLengthColumn::class, ['foo', 55]);
         self::assertEquals(55, $column->getLength());
         self::assertSame($column, $column->setLength(20));
         self::assertEquals(20, $column->getLength());
     }
 
     /**
-     * @throws Exception
+     * @covers \Laminas\Db\Sql\Ddl\Column\AbstractLengthColumn::getLength
      */
-    public function testGetLength(): void
+    public function testGetLength()
     {
-        $column = $this->getMockBuilder(AbstractLengthColumn::class)->setConstructorArgs(['foo', 55])->onlyMethods([])->getMock();
+        $column = $this->getMockForAbstractClass(AbstractLengthColumn::class, ['foo', 55]);
         self::assertEquals(55, $column->getLength());
     }
 
     /**
-     * @throws Exception
+     * @covers \Laminas\Db\Sql\Ddl\Column\AbstractLengthColumn::getExpressionData
      */
-    public function testGetExpressionData(): void
+    public function testGetExpressionData()
     {
-        $column = $this->getMockBuilder(AbstractLengthColumn::class)->setConstructorArgs(['foo', 4])->onlyMethods([])->getMock();
+        $column = $this->getMockForAbstractClass(AbstractLengthColumn::class, ['foo', 4]);
 
         self::assertEquals(
             [['%s %s NOT NULL', ['foo', 'INTEGER(4)'], [$column::TYPE_IDENTIFIER, $column::TYPE_LITERAL]]],

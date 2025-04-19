@@ -941,6 +941,9 @@
       <code><![CDATA[$this->connectionParameters]]></code>
       <code><![CDATA[$this->connectionParameters]]></code>
     </InvalidArgument>
+    <InvalidClass>
+      <code><![CDATA[RunTimeException]]></code>
+    </InvalidClass>
     <InvalidReturnType>
       <code><![CDATA[setConnectionParameters]]></code>
     </InvalidReturnType>
@@ -1305,6 +1308,9 @@
     <TypeDoesNotContainType>
       <code><![CDATA[$resultResource === true]]></code>
     </TypeDoesNotContainType>
+    <UndefinedConstant>
+      <code><![CDATA[PGSQL_CONNECT_FORCE_NEW]]></code>
+    </UndefinedConstant>
     <UnusedFunctionCall>
       <code><![CDATA[pg_close]]></code>
       <code><![CDATA[pg_query]]></code>
@@ -5597,6 +5603,51 @@
       <code><![CDATA[getenv($value)]]></code>
     </RiskyTruthyFalsyComparison>
   </file>
+  <file src="test/integration/Adapter/Driver/Pdo/AbstractAdapterTest.php">
+    <ForbiddenCode>
+      <code><![CDATA[shell_exec("lsof -i -P -n | grep $dbPort | grep $mypid")]]></code>
+    </ForbiddenCode>
+    <MissingReturnType>
+      <code><![CDATA[getHostname]]></code>
+      <code><![CDATA[testConnection]]></code>
+      <code><![CDATA[testDriverDisconnectAfterQuoteWithPlatform]]></code>
+    </MissingReturnType>
+    <MixedAssignment>
+      <code><![CDATA[$dbPort]]></code>
+    </MixedAssignment>
+    <MixedMethodCall>
+      <code><![CDATA[connect]]></code>
+      <code><![CDATA[connect]]></code>
+      <code><![CDATA[disconnect]]></code>
+      <code><![CDATA[disconnect]]></code>
+      <code><![CDATA[getConnection]]></code>
+      <code><![CDATA[getConnection]]></code>
+      <code><![CDATA[getConnection]]></code>
+      <code><![CDATA[getConnection]]></code>
+      <code><![CDATA[getConnection]]></code>
+      <code><![CDATA[getConnection]]></code>
+      <code><![CDATA[getConnection]]></code>
+      <code><![CDATA[getConnection]]></code>
+      <code><![CDATA[getDriver]]></code>
+      <code><![CDATA[getDriver]]></code>
+      <code><![CDATA[getDriver]]></code>
+      <code><![CDATA[getDriver]]></code>
+      <code><![CDATA[getDriver]]></code>
+      <code><![CDATA[getDriver]]></code>
+      <code><![CDATA[getDriver]]></code>
+      <code><![CDATA[getDriver]]></code>
+      <code><![CDATA[getPlatform]]></code>
+      <code><![CDATA[isConnected]]></code>
+      <code><![CDATA[isConnected]]></code>
+      <code><![CDATA[isConnected]]></code>
+      <code><![CDATA[isConnected]]></code>
+      <code><![CDATA[quoteValue]]></code>
+    </MixedMethodCall>
+    <UndefinedThisPropertyFetch>
+      <code><![CDATA[$this->adapter]]></code>
+      <code><![CDATA[$this->adapter]]></code>
+    </UndefinedThisPropertyFetch>
+  </file>
   <file src="test/integration/Adapter/Driver/Pdo/Mysql/AdapterTest.php">
     <ClassMustBeFinal>
       <code><![CDATA[AdapterTest]]></code>
@@ -5609,6 +5660,9 @@
     </InvalidConstantAssignmentValue>
   </file>
   <file src="test/integration/Adapter/Driver/Pdo/Mysql/AdapterTrait.php">
+    <InvalidFalsableReturnType>
+      <code><![CDATA[null|string]]></code>
+    </InvalidFalsableReturnType>
     <MissingConstructor>
       <code><![CDATA[$adapter]]></code>
       <code><![CDATA[$adapter]]></code>
@@ -5656,6 +5710,9 @@
     <MixedArgument>
       <code><![CDATA[$result->current()]]></code>
     </MixedArgument>
+    <MixedReturnStatement>
+      <code><![CDATA[array]]></code>
+    </MixedReturnStatement>
     <PossiblyNullReference>
       <code><![CDATA[getDriver]]></code>
       <code><![CDATA[query]]></code>
@@ -5687,6 +5744,9 @@
       <code><![CDATA[$row->name]]></code>
       <code><![CDATA[$row->value]]></code>
     </MixedPropertyFetch>
+    <PossiblyInvalidArgument>
+      <code><![CDATA[testTableGatewayWithMetadataFeature]]></code>
+    </PossiblyInvalidArgument>
     <PossiblyNullArgument>
       <code><![CDATA[$this->adapter]]></code>
       <code><![CDATA[$this->adapter]]></code>
@@ -5718,7 +5778,9 @@
     </PossiblyUnusedProperty>
   </file>
   <file src="test/integration/Adapter/Driver/Pdo/Postgresql/AdapterTrait.php">
-    <InvalidFalsableReturnType/>
+    <InvalidFalsableReturnType>
+      <code><![CDATA[null|string]]></code>
+    </InvalidFalsableReturnType>
     <RiskyTruthyFalsyComparison>
       <code><![CDATA[! getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_PGSQL')]]></code>
     </RiskyTruthyFalsyComparison>
@@ -5846,6 +5908,21 @@
       <code><![CDATA[! getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_SQLITE_MEMORY')]]></code>
     </RiskyTruthyFalsyComparison>
   </file>
+  <file src="test/integration/IntegrationTestListener.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[IntegrationTestListener]]></code>
+    </ClassMustBeFinal>
+    <PossiblyUnusedParam>
+      <code><![CDATA[$suite]]></code>
+      <code><![CDATA[$suite]]></code>
+    </PossiblyUnusedParam>
+    <UndefinedClass>
+      <code><![CDATA[TestHook]]></code>
+    </UndefinedClass>
+    <UnusedClass>
+      <code><![CDATA[IntegrationTestListener]]></code>
+    </UnusedClass>
+  </file>
   <file src="test/integration/Platform/FixtureLoader.php">
     <MissingReturnType>
       <code><![CDATA[createDatabase]]></code>
@@ -5859,6 +5936,12 @@
     <MissingConstructor>
       <code><![CDATA[$pdo]]></code>
     </MissingConstructor>
+    <MissingReturnType>
+      <code><![CDATA[connect]]></code>
+      <code><![CDATA[createDatabase]]></code>
+      <code><![CDATA[disconnect]]></code>
+      <code><![CDATA[dropDatabase]]></code>
+    </MissingReturnType>
     <PossiblyFalseArgument>
       <code><![CDATA[file_get_contents($this->fixtureFile)]]></code>
       <code><![CDATA[getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_MYSQL_DATABASE')]]></code>
@@ -5879,6 +5962,9 @@
     <RiskyTruthyFalsyComparison>
       <code><![CDATA[getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_MYSQL_PORT')]]></code>
     </RiskyTruthyFalsyComparison>
+    <UnusedClass>
+      <code><![CDATA[MysqlFixtureLoader]]></code>
+    </UnusedClass>
   </file>
   <file src="test/integration/Platform/PgsqlFixtureLoader.php">
     <ClassMustBeFinal>
@@ -5887,6 +5973,12 @@
     <MissingConstructor>
       <code><![CDATA[$pdo]]></code>
     </MissingConstructor>
+    <MissingReturnType>
+      <code><![CDATA[connect]]></code>
+      <code><![CDATA[createDatabase]]></code>
+      <code><![CDATA[disconnect]]></code>
+      <code><![CDATA[dropDatabase]]></code>
+    </MissingReturnType>
     <PossiblyFalseArgument>
       <code><![CDATA[file_get_contents($this->fixtureFile)]]></code>
       <code><![CDATA[getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_PGSQL_DATABASE')]]></code>
@@ -5903,6 +5995,9 @@
     <PossiblyNullPropertyAssignmentValue>
       <code><![CDATA[null]]></code>
     </PossiblyNullPropertyAssignmentValue>
+    <UnusedClass>
+      <code><![CDATA[PgsqlFixtureLoader]]></code>
+    </UnusedClass>
   </file>
   <file src="test/integration/Platform/SqlServerFixtureLoader.php">
     <ClassMustBeFinal>
@@ -5911,6 +6006,11 @@
     <MissingConstructor>
       <code><![CDATA[$connection]]></code>
     </MissingConstructor>
+    <MissingReturnType>
+      <code><![CDATA[connect]]></code>
+      <code><![CDATA[disconnect]]></code>
+      <code><![CDATA[dropDatabase]]></code>
+    </MissingReturnType>
     <PossiblyFalseArgument>
       <code><![CDATA[file_get_contents($fixtureFile)]]></code>
       <code><![CDATA[getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_SQLSRV_DATABASE')]]></code>
@@ -5939,6 +6039,9 @@
     <PossiblyNullPropertyAssignmentValue>
       <code><![CDATA[null]]></code>
     </PossiblyNullPropertyAssignmentValue>
+    <UnusedClass>
+      <code><![CDATA[SqlServerFixtureLoader]]></code>
+    </UnusedClass>
     <UnusedFunctionCall>
       <code><![CDATA[sqlsrv_query]]></code>
       <code><![CDATA[sqlsrv_query]]></code>
@@ -5958,6 +6061,10 @@
       <code><![CDATA[testInvalidService]]></code>
       <code><![CDATA[testValidService]]></code>
     </MissingReturnType>
+    <MixedReturnStatement>
+      <code><![CDATA[array]]></code>
+      <code><![CDATA[array]]></code>
+    </MixedReturnStatement>
   </file>
   <file src="test/unit/Adapter/AdapterAwareTraitTest.php">
     <ClassMustBeFinal>
@@ -6008,6 +6115,27 @@
     <ClassMustBeFinal>
       <code><![CDATA[AdapterTest]]></code>
     </ClassMustBeFinal>
+    <DeprecatedMethod>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+    </DeprecatedMethod>
     <MissingReturnType>
       <code><![CDATA[testCreateDriver]]></code>
       <code><![CDATA[testCreatePlatform]]></code>
@@ -6027,8 +6155,25 @@
       <code><![CDATA[test__get]]></code>
     </MissingReturnType>
     <UndefinedMagicPropertyFetch>
+      <code><![CDATA[$this->adapter->DrivER]]></code>
+      <code><![CDATA[$this->adapter->PlatForm]]></code>
       <code><![CDATA[$this->adapter->foo]]></code>
     </UndefinedMagicPropertyFetch>
+  </file>
+  <file src="test/unit/Adapter/Driver/IbmDb2/AbstractIntegrationTest.php">
+    <MixedArgument>
+      <code><![CDATA[$value]]></code>
+      <code><![CDATA[$value]]></code>
+    </MixedArgument>
+    <MixedAssignment>
+      <code><![CDATA[$value]]></code>
+    </MixedAssignment>
+    <MixedOperand>
+      <code><![CDATA[$value]]></code>
+    </MixedOperand>
+    <RiskyTruthyFalsyComparison>
+      <code><![CDATA[! getenv($value)]]></code>
+    </RiskyTruthyFalsyComparison>
   </file>
   <file src="test/unit/Adapter/Driver/IbmDb2/ConnectionIntegrationTest.php">
     <ClassMustBeFinal>
@@ -6042,6 +6187,7 @@
       <code><![CDATA[testDisconnect]]></code>
       <code><![CDATA[testExecute]]></code>
       <code><![CDATA[testGetCurrentSchema]]></code>
+      <code><![CDATA[testGetLastGeneratedValue]]></code>
       <code><![CDATA[testGetResource]]></code>
       <code><![CDATA[testIsConnected]]></code>
       <code><![CDATA[testRollback]]></code>
@@ -6066,6 +6212,10 @@
       <code><![CDATA[self::assertInternalType('resource', $connection->getResource())]]></code>
       <code><![CDATA[self::assertInternalType('string', $connection->getCurrentSchema())]]></code>
     </UndefinedMethod>
+    <UnevaluatedCode>
+      <code><![CDATA[$connection = new Connection($this->variables);]]></code>
+      <code><![CDATA[$connection->getLastGeneratedValue();]]></code>
+    </UnevaluatedCode>
   </file>
   <file src="test/unit/Adapter/Driver/IbmDb2/ConnectionTest.php">
     <ClassMustBeFinal>
@@ -6109,8 +6259,13 @@
       <code><![CDATA[getMockForAbstractClass]]></code>
     </DeprecatedMethod>
     <MissingReturnType>
+      <code><![CDATA[testCreateResult]]></code>
+      <code><![CDATA[testCreateStatement]]></code>
+      <code><![CDATA[testFormatParameterName]]></code>
       <code><![CDATA[testGetConnection]]></code>
       <code><![CDATA[testGetDatabasePlatformName]]></code>
+      <code><![CDATA[testGetLastGeneratedValue]]></code>
+      <code><![CDATA[testGetPrepareType]]></code>
       <code><![CDATA[testGetResultPrototype]]></code>
       <code><![CDATA[testRegisterConnection]]></code>
       <code><![CDATA[testRegisterResultPrototype]]></code>
@@ -6121,6 +6276,21 @@
     <ClassMustBeFinal>
       <code><![CDATA[ResultIntegrationTest]]></code>
     </ClassMustBeFinal>
+    <MissingReturnType>
+      <code><![CDATA[testBuffer]]></code>
+      <code><![CDATA[testCount]]></code>
+      <code><![CDATA[testCurrent]]></code>
+      <code><![CDATA[testGetAffectedRows]]></code>
+      <code><![CDATA[testGetFieldCount]]></code>
+      <code><![CDATA[testGetGeneratedValue]]></code>
+      <code><![CDATA[testGetResource]]></code>
+      <code><![CDATA[testInitialize]]></code>
+      <code><![CDATA[testIsQueryResult]]></code>
+      <code><![CDATA[testKey]]></code>
+      <code><![CDATA[testNext]]></code>
+      <code><![CDATA[testRewind]]></code>
+      <code><![CDATA[testValid]]></code>
+    </MissingReturnType>
     <PossiblyUnusedProperty>
       <code><![CDATA[$object]]></code>
     </PossiblyUnusedProperty>
@@ -6159,14 +6329,23 @@
       <code><![CDATA[StatementTest]]></code>
     </ClassMustBeFinal>
     <MissingReturnType>
+      <code><![CDATA[testExecute]]></code>
       <code><![CDATA[testGetParameterContainer]]></code>
+      <code><![CDATA[testGetResource]]></code>
+      <code><![CDATA[testGetSql]]></code>
       <code><![CDATA[testPrepare]]></code>
       <code><![CDATA[testPrepareThrowsRuntimeExceptionOnInvalidSql]]></code>
       <code><![CDATA[testPrepareThrowsRuntimeExceptionOnInvalidSqlWithErrorReportingDisabled]]></code>
       <code><![CDATA[testPreparingTwiceErrors]]></code>
       <code><![CDATA[testSetDriver]]></code>
       <code><![CDATA[testSetParameterContainer]]></code>
+      <code><![CDATA[testSetSql]]></code>
     </MissingReturnType>
+    <TooManyArguments>
+      <code><![CDATA[expectException]]></code>
+      <code><![CDATA[expectException]]></code>
+      <code><![CDATA[expectException]]></code>
+    </TooManyArguments>
   </file>
   <file src="test/unit/Adapter/Driver/IbmDb2/TestAsset/Db2Functions.php">
     <UnusedParam>
@@ -6195,22 +6374,61 @@
       <code><![CDATA[connect]]></code>
     </UndefinedInterfaceMethod>
   </file>
+  <file src="test/unit/Adapter/Driver/Oci8/AbstractIntegrationTest.php">
+    <InvalidPropertyAssignmentValue>
+      <code><![CDATA[$this->variables]]></code>
+    </InvalidPropertyAssignmentValue>
+    <RiskyTruthyFalsyComparison>
+      <code><![CDATA[! getenv($value)]]></code>
+    </RiskyTruthyFalsyComparison>
+  </file>
   <file src="test/unit/Adapter/Driver/Oci8/ConnectionIntegrationTest.php">
     <ClassMustBeFinal>
       <code><![CDATA[ConnectionIntegrationTest]]></code>
     </ClassMustBeFinal>
     <MissingReturnType>
+      <code><![CDATA[testBeginTransaction]]></code>
+      <code><![CDATA[testCommit]]></code>
       <code><![CDATA[testConnect]]></code>
+      <code><![CDATA[testConnectReturnsConnectionWhenResourceSet]]></code>
       <code><![CDATA[testDisconnect]]></code>
       <code><![CDATA[testExecute]]></code>
       <code><![CDATA[testGetCurrentSchema]]></code>
+      <code><![CDATA[testGetLastGeneratedValue]]></code>
       <code><![CDATA[testGetResource]]></code>
       <code><![CDATA[testIsConnected]]></code>
+      <code><![CDATA[testRollback]]></code>
+      <code><![CDATA[testSetResource]]></code>
     </MissingReturnType>
     <UndefinedMethod>
       <code><![CDATA[self::assertInternalType('resource', $connection->getResource())]]></code>
       <code><![CDATA[self::assertInternalType('string', $connection->getCurrentSchema())]]></code>
     </UndefinedMethod>
+    <UnevaluatedCode>
+      <code><![CDATA[$connection = new Connection($this->variables);]]></code>
+      <code><![CDATA[$connection = new Connection([]);]]></code>
+      <code><![CDATA[$connection = new Connection([]);]]></code>
+      <code><![CDATA[$connection->disconnect();]]></code>
+      <code><![CDATA[$connection->disconnect();]]></code>
+      <code><![CDATA[$connection->getLastGeneratedValue();]]></code>
+      <code><![CDATA[$connection->setResource($resource);]]></code>
+      <code><![CDATA[$resource = oci_connect(
+            $this->variables['username'],
+            $this->variables['password'],
+            $this->variables['hostname']
+        );]]></code>
+      <code><![CDATA[$resource = oci_connect(
+            $this->variables['username'],
+            $this->variables['password'],
+            $this->variables['hostname']
+        );]]></code>
+      <code><![CDATA[self::assertSame($connection, $connection->connect());]]></code>
+      <code><![CDATA[self::assertSame($connection, $connection->setResource($resource));]]></code>
+      <code><![CDATA[unset($connection);]]></code>
+      <code><![CDATA[unset($connection);]]></code>
+      <code><![CDATA[unset($resource);]]></code>
+      <code><![CDATA[unset($resource);]]></code>
+    </UnevaluatedCode>
   </file>
   <file src="test/unit/Adapter/Driver/Oci8/ConnectionTest.php">
     <ClassMustBeFinal>
@@ -6225,10 +6443,19 @@
   <file src="test/unit/Adapter/Driver/Oci8/Feature/RowCounterTest.php">
     <ArgumentTypeCoercion>
       <code><![CDATA['Closure']]></code>
+      <code><![CDATA['stdClass']]></code>
+      <code><![CDATA['stdClass']]></code>
     </ArgumentTypeCoercion>
     <ClassMustBeFinal>
       <code><![CDATA[RowCounterTest]]></code>
     </ClassMustBeFinal>
+    <DeprecatedMethod>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+    </DeprecatedMethod>
     <MissingReturnType>
       <code><![CDATA[testGetCountForSql]]></code>
       <code><![CDATA[testGetCountForStatement]]></code>
@@ -6261,8 +6488,13 @@
       <code><![CDATA[getMockForAbstractClass]]></code>
     </DeprecatedMethod>
     <MissingReturnType>
+      <code><![CDATA[testCreateResult]]></code>
+      <code><![CDATA[testCreateStatement]]></code>
+      <code><![CDATA[testFormatParameterName]]></code>
       <code><![CDATA[testGetConnection]]></code>
       <code><![CDATA[testGetDatabasePlatformName]]></code>
+      <code><![CDATA[testGetLastGeneratedValue]]></code>
+      <code><![CDATA[testGetPrepareType]]></code>
       <code><![CDATA[testRegisterConnection]]></code>
       <code><![CDATA[testRegisterResultPrototype]]></code>
       <code><![CDATA[testRegisterStatementPrototype]]></code>
@@ -6272,6 +6504,21 @@
     <ClassMustBeFinal>
       <code><![CDATA[ResultIntegrationTest]]></code>
     </ClassMustBeFinal>
+    <MissingReturnType>
+      <code><![CDATA[testBuffer]]></code>
+      <code><![CDATA[testCount]]></code>
+      <code><![CDATA[testCurrent]]></code>
+      <code><![CDATA[testGetAffectedRows]]></code>
+      <code><![CDATA[testGetFieldCount]]></code>
+      <code><![CDATA[testGetGeneratedValue]]></code>
+      <code><![CDATA[testGetResource]]></code>
+      <code><![CDATA[testInitialize]]></code>
+      <code><![CDATA[testIsQueryResult]]></code>
+      <code><![CDATA[testKey]]></code>
+      <code><![CDATA[testNext]]></code>
+      <code><![CDATA[testRewind]]></code>
+      <code><![CDATA[testValid]]></code>
+    </MissingReturnType>
     <PossiblyUnusedProperty>
       <code><![CDATA[$object]]></code>
     </PossiblyUnusedProperty>
@@ -6331,11 +6578,14 @@
       <code><![CDATA[$oci8]]></code>
     </InvalidArgument>
     <MissingReturnType>
+      <code><![CDATA[testExecute]]></code>
       <code><![CDATA[testGetParameterContainer]]></code>
       <code><![CDATA[testGetProfiler]]></code>
+      <code><![CDATA[testGetResource]]></code>
       <code><![CDATA[testGetSql]]></code>
       <code><![CDATA[testInitialize]]></code>
       <code><![CDATA[testIsPrepared]]></code>
+      <code><![CDATA[testPrepare]]></code>
       <code><![CDATA[testSetDriver]]></code>
       <code><![CDATA[testSetParameterContainer]]></code>
       <code><![CDATA[testSetProfiler]]></code>
@@ -6350,16 +6600,24 @@
       <code><![CDATA[ConnectionIntegrationTest]]></code>
     </ClassMustBeFinal>
     <MissingReturnType>
+      <code><![CDATA[testBeginTransaction]]></code>
+      <code><![CDATA[testCommit]]></code>
       <code><![CDATA[testConnect]]></code>
       <code><![CDATA[testConnectReturnsConnectionWhenResourceSet]]></code>
       <code><![CDATA[testDisconnect]]></code>
       <code><![CDATA[testExecute]]></code>
       <code><![CDATA[testGetCurrentSchema]]></code>
+      <code><![CDATA[testGetLastGeneratedValue]]></code>
       <code><![CDATA[testGetResource]]></code>
       <code><![CDATA[testIsConnected]]></code>
       <code><![CDATA[testPrepare]]></code>
+      <code><![CDATA[testRollback]]></code>
       <code><![CDATA[testSetResource]]></code>
     </MissingReturnType>
+    <UnevaluatedCode>
+      <code><![CDATA[$connection = new Connection($this->variables);]]></code>
+      <code><![CDATA[$connection->getLastGeneratedValue();]]></code>
+    </UnevaluatedCode>
   </file>
   <file src="test/unit/Adapter/Driver/Pdo/ConnectionTest.php">
     <ClassMustBeFinal>
@@ -6394,18 +6652,80 @@
       <code><![CDATA[testRollbackWithoutBeginThrowsException]]></code>
       <code><![CDATA[testStandaloneCommit]]></code>
     </MissingReturnType>
+    <UndefinedDocblockClass>
+      <code><![CDATA[$this->wrapper]]></code>
+      <code><![CDATA[$this->wrapper]]></code>
+      <code><![CDATA[$this->wrapper]]></code>
+      <code><![CDATA[$this->wrapper]]></code>
+      <code><![CDATA[$this->wrapper]]></code>
+      <code><![CDATA[$this->wrapper]]></code>
+      <code><![CDATA[$this->wrapper]]></code>
+      <code><![CDATA[$this->wrapper]]></code>
+      <code><![CDATA[$this->wrapper]]></code>
+      <code><![CDATA[$this->wrapper]]></code>
+      <code><![CDATA[$this->wrapper]]></code>
+      <code><![CDATA[$this->wrapper]]></code>
+      <code><![CDATA[$this->wrapper]]></code>
+      <code><![CDATA[$this->wrapper]]></code>
+      <code><![CDATA[$this->wrapper]]></code>
+      <code><![CDATA[$this->wrapper]]></code>
+      <code><![CDATA[$this->wrapper]]></code>
+      <code><![CDATA[$this->wrapper]]></code>
+      <code><![CDATA[$this->wrapper]]></code>
+      <code><![CDATA[$this->wrapper]]></code>
+      <code><![CDATA[$this->wrapper]]></code>
+      <code><![CDATA[$this->wrapper]]></code>
+      <code><![CDATA[$this->wrapper]]></code>
+      <code><![CDATA[$this->wrapper]]></code>
+      <code><![CDATA[$this->wrapper]]></code>
+      <code><![CDATA[$this->wrapper]]></code>
+      <code><![CDATA[$this->wrapper]]></code>
+      <code><![CDATA[$this->wrapper]]></code>
+      <code><![CDATA[$this->wrapper]]></code>
+      <code><![CDATA[$this->wrapper]]></code>
+      <code><![CDATA[$this->wrapper]]></code>
+      <code><![CDATA[$this->wrapper]]></code>
+      <code><![CDATA[$this->wrapper]]></code>
+      <code><![CDATA[$this->wrapper]]></code>
+      <code><![CDATA[$this->wrapper]]></code>
+      <code><![CDATA[$this->wrapper]]></code>
+      <code><![CDATA[$this->wrapper]]></code>
+      <code><![CDATA[$this->wrapper]]></code>
+      <code><![CDATA[$this->wrapper]]></code>
+      <code><![CDATA[$this->wrapper]]></code>
+      <code><![CDATA[$this->wrapper]]></code>
+      <code><![CDATA[$this->wrapper]]></code>
+      <code><![CDATA[$this->wrapper]]></code>
+      <code><![CDATA[$this->wrapper]]></code>
+      <code><![CDATA[$this->wrapper]]></code>
+      <code><![CDATA[Wrapper]]></code>
+    </UndefinedDocblockClass>
   </file>
   <file src="test/unit/Adapter/Driver/Pdo/Feature/OracleRowCounterTest.php">
     <ArgumentTypeCoercion>
       <code><![CDATA['Closure']]></code>
+      <code><![CDATA['stdClass']]></code>
+      <code><![CDATA['stdClass']]></code>
+      <code><![CDATA['stdClass']]></code>
     </ArgumentTypeCoercion>
     <ClassMustBeFinal>
       <code><![CDATA[OracleRowCounterTest]]></code>
     </ClassMustBeFinal>
+    <DeprecatedMethod>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+    </DeprecatedMethod>
     <InvalidReturnStatement>
       <code><![CDATA[$statement]]></code>
     </InvalidReturnStatement>
-    <InvalidReturnType/>
+    <InvalidReturnType>
+      <code><![CDATA[Statement&MockObject]]></code>
+    </InvalidReturnType>
     <MissingReturnType>
       <code><![CDATA[testGetCountForSql]]></code>
       <code><![CDATA[testGetCountForStatement]]></code>
@@ -6414,23 +6734,41 @@
     </MissingReturnType>
     <MixedMethodCall>
       <code><![CDATA[method]]></code>
+      <code><![CDATA[will]]></code>
     </MixedMethodCall>
     <PossiblyUndefinedMethod>
       <code><![CDATA[expects]]></code>
       <code><![CDATA[setSql]]></code>
     </PossiblyUndefinedMethod>
+    <UnnecessaryVarAnnotation>
+      <code><![CDATA[Closure]]></code>
+    </UnnecessaryVarAnnotation>
   </file>
   <file src="test/unit/Adapter/Driver/Pdo/Feature/SqliteRowCounterTest.php">
     <ArgumentTypeCoercion>
       <code><![CDATA['Closure']]></code>
+      <code><![CDATA['stdClass']]></code>
+      <code><![CDATA['stdClass']]></code>
+      <code><![CDATA['stdClass']]></code>
     </ArgumentTypeCoercion>
     <ClassMustBeFinal>
       <code><![CDATA[SqliteRowCounterTest]]></code>
     </ClassMustBeFinal>
+    <DeprecatedMethod>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+    </DeprecatedMethod>
     <InvalidReturnStatement>
       <code><![CDATA[$statement]]></code>
     </InvalidReturnStatement>
-    <InvalidReturnType/>
+    <InvalidReturnType>
+      <code><![CDATA[Statement&MockObject]]></code>
+    </InvalidReturnType>
     <MissingReturnType>
       <code><![CDATA[testGetCountForSql]]></code>
       <code><![CDATA[testGetCountForStatement]]></code>
@@ -6439,11 +6777,15 @@
     </MissingReturnType>
     <MixedMethodCall>
       <code><![CDATA[method]]></code>
+      <code><![CDATA[will]]></code>
     </MixedMethodCall>
     <PossiblyUndefinedMethod>
       <code><![CDATA[expects]]></code>
       <code><![CDATA[setSql]]></code>
     </PossiblyUndefinedMethod>
+    <UnnecessaryVarAnnotation>
+      <code><![CDATA[Closure]]></code>
+    </UnnecessaryVarAnnotation>
   </file>
   <file src="test/unit/Adapter/Driver/Pdo/PdoTest.php">
     <ClassMustBeFinal>
@@ -6471,6 +6813,12 @@
     <ClassMustBeFinal>
       <code><![CDATA[ResultTest]]></code>
     </ClassMustBeFinal>
+    <DeprecatedMethod>
+      <code><![CDATA[returnCallback]]></code>
+      <code><![CDATA[returnCallback]]></code>
+      <code><![CDATA[returnCallback]]></code>
+      <code><![CDATA[returnCallback]]></code>
+    </DeprecatedMethod>
     <InvalidArrayOffset>
       <code><![CDATA[$data[$position++]]]></code>
     </InvalidArrayOffset>
@@ -6503,7 +6851,11 @@
       <code><![CDATA[testStatementExecuteWillUsePdoStrByDefaultWhenBinding]]></code>
       <code><![CDATA[testStatementExecuteWillUsePdoStrForStringIntegerWhenBinding]]></code>
     </MissingReturnType>
-    <MixedArgumentTypeCoercion/>
+    <MixedArgumentTypeCoercion>
+      <code><![CDATA[$this->pdoStatementMock = $this->getMockBuilder('PDOStatement')
+                ->setMethods(['execute', 'bindParam'])
+                ->getMock()]]></code>
+    </MixedArgumentTypeCoercion>
   </file>
   <file src="test/unit/Adapter/Driver/Pdo/StatementTest.php">
     <ClassMustBeFinal>
@@ -6525,6 +6877,15 @@
     <ClassMustBeFinal>
       <code><![CDATA[CtorlessPdo]]></code>
     </ClassMustBeFinal>
+    <MismatchingDocblockReturnType>
+      <code><![CDATA[PDOStatement|false]]></code>
+    </MismatchingDocblockReturnType>
+    <ParamNameMismatch>
+      <code><![CDATA[$sql]]></code>
+    </ParamNameMismatch>
+    <PossiblyUnusedProperty>
+      <code><![CDATA[$mockStatement]]></code>
+    </PossiblyUnusedProperty>
   </file>
   <file src="test/unit/Adapter/Driver/Pdo/TestAsset/SqliteMemoryPdo.php">
     <ClassMustBeFinal>
@@ -6542,6 +6903,9 @@
     <PropertyNotSetInConstructor>
       <code><![CDATA[$mockStatement]]></code>
     </PropertyNotSetInConstructor>
+    <RiskyTruthyFalsyComparison>
+      <code><![CDATA[empty($sql)]]></code>
+    </RiskyTruthyFalsyComparison>
   </file>
   <file src="test/unit/Adapter/Driver/Pgsql/ConnectionTest.php">
     <ClassMustBeFinal>
@@ -6560,9 +6924,21 @@
       <code><![CDATA[testSetConnectionTypeException]]></code>
       <code><![CDATA[testSetInvalidCharset]]></code>
     </MissingReturnType>
+    <MixedArgument>
+      <code><![CDATA[$type]]></code>
+    </MixedArgument>
+    <MixedAssignment>
+      <code><![CDATA[$type]]></code>
+    </MixedAssignment>
     <RedundantConditionGivenDocblockType>
       <code><![CDATA[assertIsResource]]></code>
     </RedundantConditionGivenDocblockType>
+    <UndefinedConstant>
+      <code><![CDATA[PGSQL_CONNECT_FORCE_NEW]]></code>
+    </UndefinedConstant>
+    <UnusedMethodCall>
+      <code><![CDATA[setAccessible]]></code>
+    </UnusedMethodCall>
     <UnusedVariable>
       <code><![CDATA[$resource]]></code>
     </UnusedVariable>
@@ -6578,8 +6954,13 @@
     </DeprecatedMethod>
     <MissingReturnType>
       <code><![CDATA[testCheckEnvironment]]></code>
+      <code><![CDATA[testCreateResult]]></code>
+      <code><![CDATA[testCreateStatement]]></code>
+      <code><![CDATA[testFormatParameterName]]></code>
       <code><![CDATA[testGetConnection]]></code>
       <code><![CDATA[testGetDatabasePlatformName]]></code>
+      <code><![CDATA[testGetLastGeneratedValue]]></code>
+      <code><![CDATA[testGetPrepareType]]></code>
       <code><![CDATA[testGetResultPrototype]]></code>
       <code><![CDATA[testRegisterConnection]]></code>
       <code><![CDATA[testRegisterResultPrototype]]></code>
@@ -6591,6 +6972,20 @@
       <code><![CDATA[$connection]]></code>
     </UnusedParam>
   </file>
+  <file src="test/unit/Adapter/Driver/Sqlsrv/AbstractIntegrationTest.php">
+    <InvalidPropertyAssignmentValue>
+      <code><![CDATA[$this->adapters]]></code>
+      <code><![CDATA[$this->variables]]></code>
+      <code><![CDATA[$this->variables]]></code>
+    </InvalidPropertyAssignmentValue>
+    <PossiblyFalseArgument>
+      <code><![CDATA[getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_SQLSRV_HOSTNAME')]]></code>
+    </PossiblyFalseArgument>
+    <RiskyTruthyFalsyComparison>
+      <code><![CDATA[! getenv($value)]]></code>
+      <code><![CDATA[! getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_SQLSRV')]]></code>
+    </RiskyTruthyFalsyComparison>
+  </file>
   <file src="test/unit/Adapter/Driver/Sqlsrv/ConnectionIntegrationTest.php">
     <ClassMustBeFinal>
       <code><![CDATA[ConnectionIntegrationTest]]></code>
@@ -6599,20 +6994,28 @@
       <code><![CDATA[assertInstanceOf]]></code>
     </DocblockTypeContradiction>
     <MissingReturnType>
+      <code><![CDATA[testBeginTransaction]]></code>
+      <code><![CDATA[testCommit]]></code>
       <code><![CDATA[testConnect]]></code>
       <code><![CDATA[testConnectReturnsConnectionWhenResourceSet]]></code>
       <code><![CDATA[testDisconnect]]></code>
       <code><![CDATA[testExecute]]></code>
       <code><![CDATA[testGetCurrentSchema]]></code>
+      <code><![CDATA[testGetLastGeneratedValue]]></code>
       <code><![CDATA[testGetResource]]></code>
       <code><![CDATA[testIsConnected]]></code>
       <code><![CDATA[testPrepare]]></code>
+      <code><![CDATA[testRollback]]></code>
       <code><![CDATA[testSetResource]]></code>
     </MissingReturnType>
     <PossiblyFalseArgument>
       <code><![CDATA[$resource]]></code>
       <code><![CDATA[$resource]]></code>
     </PossiblyFalseArgument>
+    <UnevaluatedCode>
+      <code><![CDATA[$connection = new Connection($this->variables);]]></code>
+      <code><![CDATA[$connection->getLastGeneratedValue();]]></code>
+    </UnevaluatedCode>
   </file>
   <file src="test/unit/Adapter/Driver/Sqlsrv/ConnectionTest.php">
     <ClassMustBeFinal>
@@ -6645,6 +7048,21 @@
     <ClassMustBeFinal>
       <code><![CDATA[ResultIntegrationTest]]></code>
     </ClassMustBeFinal>
+    <MissingReturnType>
+      <code><![CDATA[testBuffer]]></code>
+      <code><![CDATA[testCount]]></code>
+      <code><![CDATA[testCurrent]]></code>
+      <code><![CDATA[testGetAffectedRows]]></code>
+      <code><![CDATA[testGetFieldCount]]></code>
+      <code><![CDATA[testGetGeneratedValue]]></code>
+      <code><![CDATA[testGetResource]]></code>
+      <code><![CDATA[testInitialize]]></code>
+      <code><![CDATA[testIsQueryResult]]></code>
+      <code><![CDATA[testKey]]></code>
+      <code><![CDATA[testNext]]></code>
+      <code><![CDATA[testRewind]]></code>
+      <code><![CDATA[testValid]]></code>
+    </MissingReturnType>
     <PossiblyUnusedProperty>
       <code><![CDATA[$object]]></code>
     </PossiblyUnusedProperty>
@@ -6675,6 +7093,14 @@
       <code><![CDATA[current]]></code>
       <code><![CDATA[execute]]></code>
     </MixedMethodCall>
+    <UndefinedDocblockClass>
+      <code><![CDATA[$this->driver]]></code>
+      <code><![CDATA[$this->driver]]></code>
+      <code><![CDATA[$this->driver]]></code>
+      <code><![CDATA[$this->driver]]></code>
+      <code><![CDATA[$this->driver]]></code>
+      <code><![CDATA[Laminas\Db\Adapter\Driver\Sqlsrv\Sqlsrv]]></code>
+    </UndefinedDocblockClass>
   </file>
   <file src="test/unit/Adapter/Driver/Sqlsrv/SqlsrvTest.php">
     <ClassMustBeFinal>
@@ -6686,8 +7112,13 @@
       <code><![CDATA[getMockForAbstractClass]]></code>
     </DeprecatedMethod>
     <MissingReturnType>
+      <code><![CDATA[testCreateResult]]></code>
+      <code><![CDATA[testCreateStatement]]></code>
+      <code><![CDATA[testFormatParameterName]]></code>
       <code><![CDATA[testGetConnection]]></code>
       <code><![CDATA[testGetDatabasePlatformName]]></code>
+      <code><![CDATA[testGetLastGeneratedValue]]></code>
+      <code><![CDATA[testGetPrepareType]]></code>
       <code><![CDATA[testGetResultPrototype]]></code>
       <code><![CDATA[testRegisterConnection]]></code>
       <code><![CDATA[testRegisterResultPrototype]]></code>
@@ -6721,9 +7152,15 @@
       <code><![CDATA[StatementTest]]></code>
     </ClassMustBeFinal>
     <MissingReturnType>
+      <code><![CDATA[testExecute]]></code>
       <code><![CDATA[testGetParameterContainer]]></code>
+      <code><![CDATA[testGetResource]]></code>
+      <code><![CDATA[testGetSql]]></code>
+      <code><![CDATA[testIsPrepared]]></code>
+      <code><![CDATA[testPrepare]]></code>
       <code><![CDATA[testSetDriver]]></code>
       <code><![CDATA[testSetParameterContainer]]></code>
+      <code><![CDATA[testSetSql]]></code>
     </MissingReturnType>
   </file>
   <file src="test/unit/Adapter/Driver/TestAsset/PdoMock.php">
@@ -6798,6 +7235,12 @@
       <code><![CDATA[testQuoteValueList]]></code>
       <code><![CDATA[testQuoteValueRaisesNoticeWithoutPlatformSupport]]></code>
     </MissingReturnType>
+    <UndefinedMethod>
+      <code><![CDATA[expectError]]></code>
+      <code><![CDATA[expectErrorMessage]]></code>
+      <code><![CDATA[expectNotice]]></code>
+      <code><![CDATA[expectNoticeMessage]]></code>
+    </UndefinedMethod>
   </file>
   <file src="test/unit/Adapter/Platform/MysqlTest.php">
     <ClassMustBeFinal>
@@ -6816,6 +7259,12 @@
       <code><![CDATA[testQuoteValueList]]></code>
       <code><![CDATA[testQuoteValueRaisesNoticeWithoutPlatformSupport]]></code>
     </MissingReturnType>
+    <UndefinedMethod>
+      <code><![CDATA[expectError]]></code>
+      <code><![CDATA[expectErrorMessage]]></code>
+      <code><![CDATA[expectNotice]]></code>
+      <code><![CDATA[expectNoticeMessage]]></code>
+    </UndefinedMethod>
   </file>
   <file src="test/unit/Adapter/Platform/OracleTest.php">
     <ClassMustBeFinal>
@@ -6846,6 +7295,12 @@
     <NullArgument>
       <code><![CDATA[null]]></code>
     </NullArgument>
+    <UndefinedMethod>
+      <code><![CDATA[expectError]]></code>
+      <code><![CDATA[expectErrorMessage]]></code>
+      <code><![CDATA[expectNotice]]></code>
+      <code><![CDATA[expectNoticeMessage]]></code>
+    </UndefinedMethod>
   </file>
   <file src="test/unit/Adapter/Platform/PostgresqlTest.php">
     <ClassMustBeFinal>
@@ -6864,6 +7319,12 @@
       <code><![CDATA[testQuoteValueList]]></code>
       <code><![CDATA[testQuoteValueRaisesNoticeWithoutPlatformSupport]]></code>
     </MissingReturnType>
+    <UndefinedMethod>
+      <code><![CDATA[expectError]]></code>
+      <code><![CDATA[expectErrorMessage]]></code>
+      <code><![CDATA[expectNotice]]></code>
+      <code><![CDATA[expectNoticeMessage]]></code>
+    </UndefinedMethod>
   </file>
   <file src="test/unit/Adapter/Platform/Sql92Test.php">
     <ClassMustBeFinal>
@@ -6882,6 +7343,12 @@
       <code><![CDATA[testQuoteValueList]]></code>
       <code><![CDATA[testQuoteValueRaisesNoticeWithoutPlatformSupport]]></code>
     </MissingReturnType>
+    <UndefinedMethod>
+      <code><![CDATA[expectError]]></code>
+      <code><![CDATA[expectErrorMessage]]></code>
+      <code><![CDATA[expectNotice]]></code>
+      <code><![CDATA[expectNoticeMessage]]></code>
+    </UndefinedMethod>
   </file>
   <file src="test/unit/Adapter/Platform/SqlServerTest.php">
     <ClassMustBeFinal>
@@ -6906,6 +7373,12 @@
       <code><![CDATA[testQuoteValueRaisesNoticeWithoutPlatformSupport]]></code>
       <code><![CDATA[testSetDriver]]></code>
     </MissingReturnType>
+    <UndefinedMethod>
+      <code><![CDATA[expectError]]></code>
+      <code><![CDATA[expectErrorMessage]]></code>
+      <code><![CDATA[expectNotice]]></code>
+      <code><![CDATA[expectNoticeMessage]]></code>
+    </UndefinedMethod>
   </file>
   <file src="test/unit/Adapter/Platform/SqliteTest.php">
     <ClassMustBeFinal>
@@ -6928,6 +7401,12 @@
     <PossiblyFalseOperand>
       <code><![CDATA[realpath(__DIR__)]]></code>
     </PossiblyFalseOperand>
+    <UndefinedMethod>
+      <code><![CDATA[expectError]]></code>
+      <code><![CDATA[expectErrorMessage]]></code>
+      <code><![CDATA[expectNotice]]></code>
+      <code><![CDATA[expectNoticeMessage]]></code>
+    </UndefinedMethod>
   </file>
   <file src="test/unit/Adapter/Profiler/ProfilerTest.php">
     <ClassMustBeFinal>
@@ -6970,6 +7449,12 @@
       <code><![CDATA[\Zend\Db\Adapter\Adapter]]></code>
     </UndefinedClass>
   </file>
+  <file src="test/unit/DeprecatedAssertionsTrait.php">
+    <UnusedMethodCall>
+      <code><![CDATA[setAccessible]]></code>
+      <code><![CDATA[setAccessible]]></code>
+    </UnusedMethodCall>
+  </file>
   <file src="test/unit/Metadata/Source/AbstractSourceTest.php">
     <ClassMustBeFinal>
       <code><![CDATA[AbstractSourceTest]]></code>
@@ -6983,11 +7468,63 @@
     <UnnecessaryVarAnnotation>
       <code><![CDATA[ConstraintKeyObject]]></code>
     </UnnecessaryVarAnnotation>
+    <UnusedMethodCall>
+      <code><![CDATA[setAccessible]]></code>
+    </UnusedMethodCall>
   </file>
   <file src="test/unit/Metadata/Source/FactoryTest.php">
+    <ArgumentTypeCoercion>
+      <code><![CDATA[$expectedReturnClass]]></code>
+    </ArgumentTypeCoercion>
     <ClassMustBeFinal>
       <code><![CDATA[FactoryTest]]></code>
     </ClassMustBeFinal>
+    <InvalidArgument>
+      <code><![CDATA[testCreateSourceFromAdapter]]></code>
+    </InvalidArgument>
+    <InvalidReturnStatement>
+      <code><![CDATA[[
+            // Description => [adapter, expected return class]
+            'MySQL'      => [$createAdapterForPlatform('MySQL'), MysqlMetadata::class],
+            'SQLServer'  => [$createAdapterForPlatform('SQLServer'), SqlServerMetadata::class],
+            'SQLite'     => [$createAdapterForPlatform('SQLite'), SqliteMetadata::class],
+            'PostgreSQL' => [$createAdapterForPlatform('PostgreSQL'), PostgresqlMetadata::class],
+            'Oracle'     => [$createAdapterForPlatform('Oracle'), OracleMetadata::class],
+        ]]]></code>
+    </InvalidReturnStatement>
+    <InvalidReturnType>
+      <code><![CDATA[array<string, array{0: Adapter&MockObject, 1: MetadataInterface}>]]></code>
+    </InvalidReturnType>
+    <MissingClosureReturnType>
+      <code><![CDATA[function (string $platformName) {]]></code>
+    </MissingClosureReturnType>
+    <MissingReturnType>
+      <code><![CDATA[testCreateSourceFromAdapter]]></code>
+    </MissingReturnType>
+  </file>
+  <file src="test/unit/Metadata/Source/OracleMetadataTest.php">
+    <ClassMustBeFinal>
+      <code><![CDATA[OracleMetadataTest]]></code>
+    </ClassMustBeFinal>
+    <MissingReturnType>
+      <code><![CDATA[testGetConstraints]]></code>
+    </MissingReturnType>
+    <MixedMethodCall>
+      <code><![CDATA[method]]></code>
+      <code><![CDATA[willReturn]]></code>
+    </MixedMethodCall>
+    <MixedReturnStatement>
+      <code><![CDATA[array]]></code>
+    </MixedReturnStatement>
+    <NullArgument>
+      <code><![CDATA[null]]></code>
+    </NullArgument>
+    <PossiblyInvalidArgument>
+      <code><![CDATA[$adapter]]></code>
+    </PossiblyInvalidArgument>
+    <PossiblyUndefinedMethod>
+      <code><![CDATA[expects]]></code>
+    </PossiblyUndefinedMethod>
   </file>
   <file src="test/unit/Metadata/Source/SqliteMetadataTest.php">
     <ClassMustBeFinal>
@@ -7014,6 +7551,8 @@
     </ClassMustBeFinal>
     <DeprecatedMethod>
       <code><![CDATA[getMockForAbstractClass]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
     </DeprecatedMethod>
     <MissingReturnType>
       <code><![CDATA[testCurrentCallsDataSourceCurrentAsManyTimesWithoutBuffer]]></code>
@@ -7061,6 +7600,7 @@
       <code><![CDATA[getMockForAbstractClass]]></code>
       <code><![CDATA[getMockForAbstractClass]]></code>
       <code><![CDATA[getMockForAbstractClass]]></code>
+      <code><![CDATA[returnCallback]]></code>
     </DeprecatedMethod>
     <InvalidArgument>
       <code><![CDATA['foo']]></code>
@@ -7149,6 +7689,11 @@
     <ClassMustBeFinal>
       <code><![CDATA[ResultSetIntegrationTest]]></code>
     </ClassMustBeFinal>
+    <DeprecatedMethod>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+    </DeprecatedMethod>
     <InvalidScalarArgument>
       <code><![CDATA[1]]></code>
     </InvalidScalarArgument>
@@ -7219,12 +7764,24 @@
       <code><![CDATA[getMockForAbstractClass]]></code>
       <code><![CDATA[getMockForAbstractClass]]></code>
       <code><![CDATA[getMockForAbstractClass]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
     </DeprecatedMethod>
     <InvalidPropertyAssignmentValue>
       <code><![CDATA[$this->getMockForAbstractClass(AbstractRowGateway::class)]]></code>
       <code><![CDATA[$this->getMockForAbstractClass(AbstractRowGateway::class)]]></code>
     </InvalidPropertyAssignmentValue>
     <MissingReturnType>
+      <code><![CDATA[setRowGatewayState]]></code>
       <code><![CDATA[testCount]]></code>
       <code><![CDATA[testDelete]]></code>
       <code><![CDATA[testOffsetExists]]></code>
@@ -7267,11 +7824,21 @@
       <code><![CDATA[$this->rowGateway->testColumn]]></code>
       <code><![CDATA[$this->rowGateway->testColumn]]></code>
     </UndefinedMagicPropertyFetch>
+    <UnusedMethodCall>
+      <code><![CDATA[setAccessible]]></code>
+      <code><![CDATA[setAccessible]]></code>
+    </UnusedMethodCall>
   </file>
   <file src="test/unit/RowGateway/RowGatewayTest.php">
     <ClassMustBeFinal>
       <code><![CDATA[RowGatewayTest]]></code>
     </ClassMustBeFinal>
+    <DeprecatedMethod>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+    </DeprecatedMethod>
     <MissingReturnType>
       <code><![CDATA[testEmptyPrimaryKey]]></code>
     </MissingReturnType>
@@ -7286,6 +7853,8 @@
     </ClassMustBeFinal>
     <DeprecatedMethod>
       <code><![CDATA[getMockForAbstractClass]]></code>
+      <code><![CDATA[returnCallback]]></code>
+      <code><![CDATA[returnValue]]></code>
     </DeprecatedMethod>
     <InvalidArgument>
       <code><![CDATA[new Expression('FROM_UNIXTIME(?)', 100000000)]]></code>
@@ -7334,6 +7903,9 @@
       <code><![CDATA[key($parameters)]]></code>
       <code><![CDATA[key($parameters)]]></code>
     </PossiblyNullArgument>
+    <UnusedMethodCall>
+      <code><![CDATA[setAccessible]]></code>
+    </UnusedMethodCall>
     <UnusedVariable>
       <code><![CDATA[$sqlAndParamsNext]]></code>
     </UnusedVariable>
@@ -7342,6 +7914,13 @@
     <ClassMustBeFinal>
       <code><![CDATA[CombineTest]]></code>
     </ClassMustBeFinal>
+    <DeprecatedMethod>
+      <code><![CDATA[returnCallback]]></code>
+      <code><![CDATA[returnCallback]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+    </DeprecatedMethod>
     <InvalidArgument>
       <code><![CDATA['foo']]></code>
     </InvalidArgument>
@@ -7668,6 +8247,12 @@
       <code><![CDATA[testSpecificationconstantsCouldBeOverridedByExtensionInPrepareStatement]]></code>
       <code><![CDATA[testWhere]]></code>
     </MissingReturnType>
+    <MixedArgument>
+      <code><![CDATA[$this->at(2)]]></code>
+      <code><![CDATA[$this->at(2)]]></code>
+      <code><![CDATA[$this->at(2)]]></code>
+      <code><![CDATA[$this->at(2)]]></code>
+    </MixedArgument>
     <MixedArrayAccess>
       <code><![CDATA[$predicates[0]]]></code>
       <code><![CDATA[$predicates[0]]]></code>
@@ -7712,6 +8297,15 @@
     <PossiblyInvalidArgument>
       <code><![CDATA[$where]]></code>
     </PossiblyInvalidArgument>
+    <TooManyArguments>
+      <code><![CDATA[from]]></code>
+    </TooManyArguments>
+    <UndefinedMethod>
+      <code><![CDATA[at]]></code>
+      <code><![CDATA[at]]></code>
+      <code><![CDATA[at]]></code>
+      <code><![CDATA[at]]></code>
+    </UndefinedMethod>
   </file>
   <file src="test/unit/Sql/ExpressionTest.php">
     <ClassMustBeFinal>
@@ -7746,6 +8340,22 @@
     <ClassMustBeFinal>
       <code><![CDATA[InsertIgnoreTest]]></code>
     </ClassMustBeFinal>
+    <DeprecatedMethod>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+    </DeprecatedMethod>
     <InvalidArgument>
       <code><![CDATA[5]]></code>
     </InvalidArgument>
@@ -7769,6 +8379,12 @@
       <code><![CDATA[test__set]]></code>
       <code><![CDATA[test__unset]]></code>
     </MissingReturnType>
+    <MixedArgument>
+      <code><![CDATA[$this->at(1)]]></code>
+      <code><![CDATA[$this->at(1)]]></code>
+      <code><![CDATA[$this->at(1)]]></code>
+      <code><![CDATA[$this->at(1)]]></code>
+    </MixedArgument>
     <PossiblyNullReference>
       <code><![CDATA[getNamedArray]]></code>
     </PossiblyNullReference>
@@ -7787,11 +8403,33 @@
       <code><![CDATA[$this->insert->foo]]></code>
       <code><![CDATA[$this->insert->foo]]></code>
     </UndefinedMagicPropertyAssignment>
+    <UndefinedMethod>
+      <code><![CDATA[at]]></code>
+      <code><![CDATA[at]]></code>
+      <code><![CDATA[at]]></code>
+      <code><![CDATA[at]]></code>
+    </UndefinedMethod>
   </file>
   <file src="test/unit/Sql/InsertTest.php">
     <ClassMustBeFinal>
       <code><![CDATA[InsertTest]]></code>
     </ClassMustBeFinal>
+    <DeprecatedMethod>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+    </DeprecatedMethod>
     <InvalidArgument>
       <code><![CDATA[5]]></code>
     </InvalidArgument>
@@ -7815,12 +8453,21 @@
       <code><![CDATA[test__set]]></code>
       <code><![CDATA[test__unset]]></code>
     </MissingReturnType>
+    <MixedArgument>
+      <code><![CDATA[$this->at(1)]]></code>
+      <code><![CDATA[$this->at(1)]]></code>
+      <code><![CDATA[$this->at(1)]]></code>
+      <code><![CDATA[$this->at(1)]]></code>
+    </MixedArgument>
     <PossiblyNullReference>
       <code><![CDATA[getNamedArray]]></code>
     </PossiblyNullReference>
     <RedundantCondition>
       <code><![CDATA[assertTrue]]></code>
     </RedundantCondition>
+    <TooManyArguments>
+      <code><![CDATA[into]]></code>
+    </TooManyArguments>
     <TypeDoesNotContainType>
       <code><![CDATA[assertTrue]]></code>
     </TypeDoesNotContainType>
@@ -7833,6 +8480,12 @@
       <code><![CDATA[$this->insert->foo]]></code>
       <code><![CDATA[$this->insert->foo]]></code>
     </UndefinedMagicPropertyAssignment>
+    <UndefinedMethod>
+      <code><![CDATA[at]]></code>
+      <code><![CDATA[at]]></code>
+      <code><![CDATA[at]]></code>
+      <code><![CDATA[at]]></code>
+    </UndefinedMethod>
   </file>
   <file src="test/unit/Sql/JoinTest.php">
     <ClassMustBeFinal>
@@ -7870,10 +8523,18 @@
     <ClassMustBeFinal>
       <code><![CDATA[SelectDecoratorTest]]></code>
     </ClassMustBeFinal>
+    <DeprecatedMethod>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+    </DeprecatedMethod>
     <MissingReturnType>
       <code><![CDATA[testGetSqlString]]></code>
       <code><![CDATA[testPrepareStatement]]></code>
     </MissingReturnType>
+    <MixedReturnStatement>
+      <code><![CDATA[array]]></code>
+    </MixedReturnStatement>
     <PossiblyUnusedParam>
       <code><![CDATA[$ignored0]]></code>
       <code><![CDATA[$ignored1]]></code>
@@ -7920,11 +8581,23 @@
     <ClassMustBeFinal>
       <code><![CDATA[SelectDecoratorTest]]></code>
     </ClassMustBeFinal>
+    <DeprecatedMethod>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+    </DeprecatedMethod>
     <InvalidArgument>
       <code><![CDATA['10000000000000000000']]></code>
       <code><![CDATA['5']]></code>
     </InvalidArgument>
-    <InvalidDocblock/>
+    <InvalidDocblock>
+      <code><![CDATA[public function dataProvider(): array]]></code>
+    </InvalidDocblock>
+    <InvalidDocblockParamName>
+      <code><![CDATA[$params]]></code>
+    </InvalidDocblockParamName>
     <MissingConstructor>
       <code><![CDATA[$mockAdapter]]></code>
       <code><![CDATA[$sql]]></code>
@@ -7934,6 +8607,15 @@
       <code><![CDATA[testPrepareStatement]]></code>
       <code><![CDATA[testPrepareStatementForSqlObject]]></code>
     </MissingReturnType>
+    <MixedReturnStatement>
+      <code><![CDATA[array<array-key, array{
+     *     0: Select,
+     *     1: string,
+     *     2: array<string, mixed>
+     *     3: string,
+     *     4: string
+     * }>]]></code>
+    </MixedReturnStatement>
     <PossiblyNullReference>
       <code><![CDATA[getSql]]></code>
     </PossiblyNullReference>
@@ -7957,11 +8639,27 @@
     <ClassMustBeFinal>
       <code><![CDATA[SelectDecoratorTest]]></code>
     </ClassMustBeFinal>
-    <InvalidDocblock/>
+    <DeprecatedMethod>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+    </DeprecatedMethod>
+    <InvalidDocblock>
+      <code><![CDATA[public function dataProvider(): array]]></code>
+    </InvalidDocblock>
     <MissingReturnType>
       <code><![CDATA[testGetSqlString]]></code>
       <code><![CDATA[testPrepareStatement]]></code>
     </MissingReturnType>
+    <MixedReturnStatement>
+      <code><![CDATA[array<array-key, array{
+     *     0: Select,
+     *     1: string,
+     *     2: array<string, mixed>
+     *     3: string,
+     *     4: int
+     * }>]]></code>
+    </MixedReturnStatement>
     <PossiblyUnusedParam>
       <code><![CDATA[$alsoIgnored]]></code>
       <code><![CDATA[$ignored]]></code>
@@ -7972,6 +8670,10 @@
     <ClassMustBeFinal>
       <code><![CDATA[PlatformTest]]></code>
     </ClassMustBeFinal>
+    <DeprecatedMethod>
+      <code><![CDATA[returnCallback]]></code>
+      <code><![CDATA[returnValue]]></code>
+    </DeprecatedMethod>
     <MissingReturnType>
       <code><![CDATA[testAbstractPlatformCrashesGracefullyOnMissingDefaultPlatform]]></code>
       <code><![CDATA[testAbstractPlatformCrashesGracefullyOnMissingDefaultPlatformWithGetDecorators]]></code>
@@ -7981,6 +8683,8 @@
     <MixedMethodCall>
       <code><![CDATA[method]]></code>
       <code><![CDATA[method]]></code>
+      <code><![CDATA[will]]></code>
+      <code><![CDATA[will]]></code>
     </MixedMethodCall>
     <PossiblyInvalidArgument>
       <code><![CDATA[$mockDriver]]></code>
@@ -7989,6 +8693,14 @@
       <code><![CDATA[expects]]></code>
       <code><![CDATA[expects]]></code>
     </PossiblyUndefinedMethod>
+    <UnusedMethodCall>
+      <code><![CDATA[setAccessible]]></code>
+      <code><![CDATA[setAccessible]]></code>
+      <code><![CDATA[setAccessible]]></code>
+      <code><![CDATA[setAccessible]]></code>
+      <code><![CDATA[setAccessible]]></code>
+      <code><![CDATA[setAccessible]]></code>
+    </UnusedMethodCall>
   </file>
   <file src="test/unit/Sql/Platform/SqlServer/Ddl/CreateTableDecoratorTest.php">
     <ClassMustBeFinal>
@@ -8002,6 +8714,11 @@
     <ClassMustBeFinal>
       <code><![CDATA[SelectDecoratorTest]]></code>
     </ClassMustBeFinal>
+    <DeprecatedMethod>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+    </DeprecatedMethod>
     <MissingReturnType>
       <code><![CDATA[testGetSqlString]]></code>
       <code><![CDATA[testPrepareStatement]]></code>
@@ -8024,6 +8741,11 @@
     <ClassMustBeFinal>
       <code><![CDATA[SelectDecoratorTest]]></code>
     </ClassMustBeFinal>
+    <DeprecatedMethod>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+    </DeprecatedMethod>
     <MissingReturnType>
       <code><![CDATA[testGetSqlStringPreparesUnionSyntaxFromCombine]]></code>
       <code><![CDATA[testPrepareStatementPreparesUnionSyntaxFromCombine]]></code>
@@ -8402,12 +9124,22 @@
     <ClassMustBeFinal>
       <code><![CDATA[SelectTest]]></code>
     </ClassMustBeFinal>
+    <DeprecatedMethod>
+      <code><![CDATA[returnCallback]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+    </DeprecatedMethod>
     <InvalidArgument>
       <code><![CDATA["10"]]></code>
       <code><![CDATA["10000000000000000000"]]></code>
       <code><![CDATA["10000000000000000000"]]></code>
       <code><![CDATA["5"]]></code>
       <code><![CDATA[$expr]]></code>
+      <code><![CDATA[$this->getMockBuilder(Operator::class)
+                ->setMethods()
+                ->setConstructorArgs(['rating', '<', '10'])
+                ->getMock()]]></code>
       <code><![CDATA['foobar']]></code>
       <code><![CDATA['foobar']]></code>
       <code><![CDATA[new Predicate\Operator('id', '=', 1)]]></code>
@@ -8417,7 +9149,9 @@
                 new Predicate\Operator('number', '>', 20),
             ])]]></code>
     </InvalidArgument>
-    <InvalidDocblock/>
+    <InvalidDocblock>
+      <code><![CDATA[public function providerData(): array]]></code>
+    </InvalidDocblock>
     <InvalidMethodCall>
       <code><![CDATA[count]]></code>
     </InvalidMethodCall>
@@ -8517,6 +9251,16 @@
                 ->isNull('bar')
                 ->or]]></code>
     </MixedPropertyFetch>
+    <MixedReturnStatement>
+      <code><![CDATA[array<array-key, array{
+     *     0: Select,
+     *     1: string,
+     *     2: array<string, mixed>,
+     *     3 string,
+     *     4: array,
+     *     5: bool,
+     * }]]></code>
+    </MixedReturnStatement>
     <PossiblyInvalidMethodCall>
       <code><![CDATA[count]]></code>
       <code><![CDATA[count]]></code>
@@ -8534,6 +9278,9 @@
       <code><![CDATA[$unused]]></code>
       <code><![CDATA[$unused]]></code>
     </PossiblyUnusedParam>
+    <TooManyArguments>
+      <code><![CDATA[from]]></code>
+    </TooManyArguments>
     <UndefinedInterfaceMethod>
       <code><![CDATA[$predicates[0]]]></code>
       <code><![CDATA[$predicates[0]]]></code>
@@ -8558,21 +9305,59 @@
             ->where
             ->nest]]></code>
     </UndefinedMagicPropertyFetch>
+    <UnusedMethodCall>
+      <code><![CDATA[setAccessible]]></code>
+      <code><![CDATA[setAccessible]]></code>
+      <code><![CDATA[setAccessible]]></code>
+      <code><![CDATA[setAccessible]]></code>
+    </UnusedMethodCall>
   </file>
   <file src="test/unit/Sql/SqlFunctionalTest.php">
     <ClassMustBeFinal>
       <code><![CDATA[SqlFunctionalTest]]></code>
     </ClassMustBeFinal>
+    <DeprecatedMethod>
+      <code><![CDATA[returnCallback]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+    </DeprecatedMethod>
     <InvalidArgument>
+      <code><![CDATA[[
+                                'b' => $this->select('c')->where(['cc' => 'CC']),
+                            ]]]></code>
+      <code><![CDATA[[
+                        'a' => $this
+                            ->select([
+                                'b' => $this->select('c')->where(['cc' => 'CC']),
+                            ])
+                            ->where(['bb' => 'BB']),
+                    ]]]></code>
+      <code><![CDATA[test]]></code>
+      <code><![CDATA[test]]></code>
+      <code><![CDATA[test]]></code>
       <code><![CDATA[true]]></code>
       <code><![CDATA[true]]></code>
     </InvalidArgument>
-    <InvalidDocblock/>
-    <InvalidReturnStatement/>
+    <InvalidDocblock>
+      <code><![CDATA[array{0: class-string, 1: * string}|Sql\Platform\PlatformDecoratorInterface]]></code>
+      <code><![CDATA[protected function dataProviderCommonProcessMethods(): array]]></code>
+    </InvalidDocblock>
+    <InvalidReturnStatement>
+      <code><![CDATA[new Sql\Ddl\Column\Column($arg0)]]></code>
+    </InvalidReturnStatement>
+    <InvalidReturnType>
+      <code><![CDATA[AbstractSql]]></code>
+    </InvalidReturnType>
     <MissingReturnType>
       <code><![CDATA[test]]></code>
     </MissingReturnType>
     <MixedArgument>
+      <code><![CDATA[$arg0]]></code>
+      <code><![CDATA[$arg0]]></code>
+      <code><![CDATA[$arg0]]></code>
+      <code><![CDATA[$arg0]]></code>
+      <code><![CDATA[$arg0]]></code>
+      <code><![CDATA[$arg0]]></code>
       <code><![CDATA[$decorator[0]]]></code>
     </MixedArgument>
     <MixedArrayAccess>
@@ -8580,6 +9365,7 @@
       <code><![CDATA[$test['sqlObject']]]></code>
     </MixedArrayAccess>
     <MixedAssignment>
+      <code><![CDATA[$arg0]]></code>
       <code><![CDATA[$expected]]></code>
       <code><![CDATA[$platform]]></code>
       <code><![CDATA[$test]]></code>
@@ -8616,13 +9402,35 @@
      *         },
      *     }
      * }>]]></code>
+      <code><![CDATA[null|PlatformDecoratorInterface|PlatformDecoratorInterface&MockObject]]></code>
     </MixedReturnTypeCoercion>
-    <PossiblyNullArgument/>
+    <PossiblyNullArgument>
+      <code><![CDATA[$arg0]]></code>
+    </PossiblyNullArgument>
+    <PossiblyUnusedParam>
+      <code><![CDATA[$expected]]></code>
+      <code><![CDATA[$platform]]></code>
+      <code><![CDATA[$sqlObject]]></code>
+    </PossiblyUnusedParam>
+    <UndefinedDocblockClass>
+      <code><![CDATA[null|PlatformDecoratorInterface|PlatformDecoratorInterface&MockObject]]></code>
+      <code><![CDATA[type]]></code>
+      <code><![CDATA[type]]></code>
+      <code><![CDATA[type]]></code>
+    </UndefinedDocblockClass>
   </file>
   <file src="test/unit/Sql/SqlTest.php">
     <ClassMustBeFinal>
       <code><![CDATA[SqlTest]]></code>
     </ClassMustBeFinal>
+    <DeprecatedMethod>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+    </DeprecatedMethod>
     <InvalidArgument>
       <code><![CDATA['table']]></code>
     </InvalidArgument>
@@ -8659,9 +9467,21 @@
     </UndefinedInterfaceMethod>
   </file>
   <file src="test/unit/Sql/TableIdentifierTest.php">
+    <ArgumentTypeCoercion>
+      <code><![CDATA['stdClass']]></code>
+      <code><![CDATA['stdClass']]></code>
+    </ArgumentTypeCoercion>
     <ClassMustBeFinal>
       <code><![CDATA[TableIdentifierTest]]></code>
     </ClassMustBeFinal>
+    <DeprecatedMethod>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+    </DeprecatedMethod>
+    <InvalidCast>
+      <code><![CDATA[$schema]]></code>
+      <code><![CDATA[$table]]></code>
+    </InvalidCast>
     <MissingReturnType>
       <code><![CDATA[testGetDefaultSchema]]></code>
       <code><![CDATA[testGetSchema]]></code>
@@ -8680,6 +9500,17 @@
     <ClassMustBeFinal>
       <code><![CDATA[UpdateTest]]></code>
     </ClassMustBeFinal>
+    <DeprecatedMethod>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+    </DeprecatedMethod>
     <InvalidArgument>
       <code><![CDATA[10]]></code>
     </InvalidArgument>
@@ -8706,6 +9537,11 @@
       <code><![CDATA[testTable]]></code>
       <code><![CDATA[testWhere]]></code>
     </MissingReturnType>
+    <MixedArgument>
+      <code><![CDATA[$this->at(1)]]></code>
+      <code><![CDATA[$this->at(1)]]></code>
+      <code><![CDATA[$this->at(1)]]></code>
+    </MixedArgument>
     <MixedArrayAccess>
       <code><![CDATA[$predicates[0]]]></code>
       <code><![CDATA[$predicates[0]]]></code>
@@ -8745,6 +9581,14 @@
     <PossiblyInvalidArgument>
       <code><![CDATA[$where]]></code>
     </PossiblyInvalidArgument>
+    <TooManyArguments>
+      <code><![CDATA[table]]></code>
+    </TooManyArguments>
+    <UndefinedMethod>
+      <code><![CDATA[at]]></code>
+      <code><![CDATA[at]]></code>
+      <code><![CDATA[at]]></code>
+    </UndefinedMethod>
     <UndefinedThisPropertyFetch>
       <code><![CDATA[$this->update->__get('what')]]></code>
     </UndefinedThisPropertyFetch>
@@ -8756,8 +9600,29 @@
     <DeprecatedMethod>
       <code><![CDATA[getMockForAbstractClass]]></code>
       <code><![CDATA[getMockForAbstractClass]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
     </DeprecatedMethod>
-    <InvalidPropertyAssignmentValue/>
+    <InvalidPropertyAssignmentValue>
+      <code><![CDATA[$this->getMockBuilder(Adapter::class)
+            ->setMethods()
+            ->setConstructorArgs([$mockDriver])
+            ->getMock()]]></code>
+      <code><![CDATA[$this->getMockBuilder(\Laminas\Db\Sql\Sql::class)
+            ->setMethods(['select', 'insert', 'update', 'delete'])
+            ->setConstructorArgs([$this->mockAdapter, 'foo'])
+            ->getMock()]]></code>
+    </InvalidPropertyAssignmentValue>
     <MissingReturnType>
       <code><![CDATA[testDelete]]></code>
       <code><![CDATA[testGetAdapter]]></code>
@@ -8807,6 +9672,7 @@
       <code><![CDATA[method]]></code>
       <code><![CDATA[method]]></code>
       <code><![CDATA[method]]></code>
+      <code><![CDATA[will]]></code>
       <code><![CDATA[with]]></code>
       <code><![CDATA[with]]></code>
       <code><![CDATA[with]]></code>
@@ -8821,6 +9687,21 @@
       <code><![CDATA[assertNotNull]]></code>
       <code><![CDATA[assertNotNull]]></code>
     </RedundantConditionGivenDocblockType>
+    <UndefinedDocblockClass>
+      <code><![CDATA[$this->mockSql]]></code>
+      <code><![CDATA[$this->mockSql]]></code>
+      <code><![CDATA[$this->mockSql]]></code>
+      <code><![CDATA[$this->mockSql]]></code>
+      <code><![CDATA[$this->mockSql]]></code>
+      <code><![CDATA[$this->mockSql]]></code>
+      <code><![CDATA[$this->mockSql]]></code>
+      <code><![CDATA[Generator]]></code>
+      <code><![CDATA[Generator]]></code>
+    </UndefinedDocblockClass>
+    <UnusedMethodCall>
+      <code><![CDATA[setAccessible]]></code>
+      <code><![CDATA[setAccessible]]></code>
+    </UnusedMethodCall>
     <UnusedVariable>
       <code><![CDATA[$mockUpdate]]></code>
     </UnusedVariable>
@@ -8913,6 +9794,19 @@
     <DeprecatedMethod>
       <code><![CDATA[getMockForAbstractClass]]></code>
       <code><![CDATA[getMockForAbstractClass]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
     </DeprecatedMethod>
     <MissingReturnType>
       <code><![CDATA[testAddFeatureThatFeatureDoesNotHaveTableGatewayButFeatureSetHas]]></code>
@@ -8925,6 +9819,9 @@
     <NullArgument>
       <code><![CDATA[null]]></code>
     </NullArgument>
+    <UnusedMethodCall>
+      <code><![CDATA[setAccessible]]></code>
+    </UnusedMethodCall>
   </file>
   <file src="test/unit/TableGateway/Feature/MasterSlaveFeatureTest.php">
     <ClassMustBeFinal>
@@ -8934,6 +9831,14 @@
       <code><![CDATA[getMockForAbstractClass]]></code>
       <code><![CDATA[getMockForAbstractClass]]></code>
       <code><![CDATA[getMockForAbstractClass]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
     </DeprecatedMethod>
     <MissingReturnType>
       <code><![CDATA[testPostInitialize]]></code>
@@ -8943,6 +9848,8 @@
     <MixedMethodCall>
       <code><![CDATA[method]]></code>
       <code><![CDATA[method]]></code>
+      <code><![CDATA[will]]></code>
+      <code><![CDATA[will]]></code>
     </MixedMethodCall>
     <PossiblyUnusedProperty>
       <code><![CDATA[$table]]></code>
@@ -8961,6 +9868,16 @@
       <code><![CDATA[getMockForAbstractClass]]></code>
       <code><![CDATA[getMockForAbstractClass]]></code>
       <code><![CDATA[getMockForAbstractClass]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
     </DeprecatedMethod>
     <MissingReturnType>
       <code><![CDATA[testPostInitialize]]></code>
@@ -8972,6 +9889,10 @@
       <code><![CDATA[$sharedData['metadata']['primaryKey']]]></code>
       <code><![CDATA[$sharedData['metadata']['primaryKey']]]></code>
     </MixedArrayAccess>
+    <UnusedMethodCall>
+      <code><![CDATA[setAccessible]]></code>
+      <code><![CDATA[setAccessible]]></code>
+    </UnusedMethodCall>
   </file>
   <file src="test/unit/TableGateway/Feature/SequenceFeatureTest.php">
     <ClassMustBeFinal>
@@ -8979,6 +9900,12 @@
     </ClassMustBeFinal>
     <DeprecatedMethod>
       <code><![CDATA[getMockForAbstractClass]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
     </DeprecatedMethod>
     <MissingReturnType>
       <code><![CDATA[testNextSequenceId]]></code>
@@ -8988,6 +9915,26 @@
     <ClassMustBeFinal>
       <code><![CDATA[TableGatewayTest]]></code>
     </ClassMustBeFinal>
+    <DeprecatedMethod>
+      <code><![CDATA[returnCallback]]></code>
+      <code><![CDATA[returnCallback]]></code>
+      <code><![CDATA[returnCallback]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+      <code><![CDATA[returnValue]]></code>
+    </DeprecatedMethod>
     <InvalidArgument>
       <code><![CDATA[$tableValue]]></code>
       <code><![CDATA[$tableValue]]></code>

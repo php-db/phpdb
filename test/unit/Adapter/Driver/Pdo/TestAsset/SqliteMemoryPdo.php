@@ -10,14 +10,12 @@ use PHPUnit\Framework\MockObject\MockObject;
 use function implode;
 use function sprintf;
 
-final class SqliteMemoryPdo extends PDO
+class SqliteMemoryPdo extends PDO
 {
-    protected MockObject&PDOStatement $mockStatement;
+    /** @var PDOStatement&MockObject */
+    protected $mockStatement;
 
-    /**
-     * @param null $sql
-     * @throws Exception
-     */
+    /** @param null|string $sql */
     public function __construct($sql = null)
     {
         parent::__construct('sqlite::memory:');

@@ -8,41 +8,31 @@ use Laminas\Db\Adapter\StatementContainer;
 use Laminas\Db\Sql\Exception\RuntimeException;
 use Laminas\Db\Sql\Platform\Platform;
 use LaminasTest\Db\TestAsset;
-use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use ReflectionException;
 use ReflectionMethod;
 use ReflectionProperty;
 
-final class PlatformTest extends TestCase
+class PlatformTest extends TestCase
 {
-    /**
-     * @throws ReflectionException
-     */
-    public function testResolveDefaultPlatform(): void
+    public function testResolveDefaultPlatform()
     {
         $adapter  = $this->resolveAdapter('sql92');
         $platform = new Platform($adapter);
 
         $reflectionMethod = new ReflectionMethod($platform, 'resolvePlatform');
 
-        /** @psalm-suppress UnusedMethodCall */
         $reflectionMethod->setAccessible(true);
 
         self::assertEquals($adapter->getPlatform(), $reflectionMethod->invoke($platform, null));
     }
 
-    /**
-     * @throws ReflectionException
-     */
-    public function testResolvePlatformName(): void
+    public function testResolvePlatformName()
     {
         $platform = new Platform($this->resolveAdapter('sql92'));
 
         $reflectionMethod = new ReflectionMethod($platform, 'resolvePlatformName');
 
-        /** @psalm-suppress UnusedMethodCall */
         $reflectionMethod->setAccessible(true);
 
         self::assertEquals('mysql', $reflectionMethod->invoke($platform, new TestAsset\TrustingMysqlPlatform()));
@@ -55,20 +45,18 @@ final class PlatformTest extends TestCase
     }
 
     /**
-     * @throws ReflectionException
+     * @group 6890
      */
-    #[Group('6890')]
-    public function testAbstractPlatformCrashesGracefullyOnMissingDefaultPlatform(): void
+    public function testAbstractPlatformCrashesGracefullyOnMissingDefaultPlatform()
     {
         $adapter            = $this->resolveAdapter('sql92');
         $reflectionProperty = new ReflectionProperty($adapter, 'platform');
-        /** @psalm-suppress UnusedMethodCall */
         $reflectionProperty->setAccessible(true);
         $reflectionProperty->setValue($adapter, null);
 
         $platform         = new Platform($adapter);
         $reflectionMethod = new ReflectionMethod($platform, 'resolvePlatform');
-        /** @psalm-suppress UnusedMethodCall */
+
         $reflectionMethod->setAccessible(true);
 
         $this->expectException(RuntimeException::class);
@@ -78,20 +66,18 @@ final class PlatformTest extends TestCase
     }
 
     /**
-     * @throws ReflectionException
+     * @group 6890
      */
-    #[Group('6890')]
-    public function testAbstractPlatformCrashesGracefullyOnMissingDefaultPlatformWithGetDecorators(): void
+    public function testAbstractPlatformCrashesGracefullyOnMissingDefaultPlatformWithGetDecorators()
     {
         $adapter            = $this->resolveAdapter('sql92');
         $reflectionProperty = new ReflectionProperty($adapter, 'platform');
-        /** @psalm-suppress UnusedMethodCall */
         $reflectionProperty->setAccessible(true);
         $reflectionProperty->setValue($adapter, null);
 
         $platform         = new Platform($adapter);
         $reflectionMethod = new ReflectionMethod($platform, 'resolvePlatform');
-        /** @psalm-suppress UnusedMethodCall */
+
         $reflectionMethod->setAccessible(true);
 
         $this->expectException(RuntimeException::class);
@@ -100,7 +86,11 @@ final class PlatformTest extends TestCase
         $platform->getDecorators();
     }
 
-    protected function resolveAdapter(string $platformName): Adapter
+    /**
+     * @param string $platformName
+     * @return Adapter
+     */
+    protected function resolveAdapter($platformName)
     {
         $platform = null;
 
@@ -122,8 +112,10 @@ final class PlatformTest extends TestCase
         /** @var DriverInterface|MockObject $mockDriver */
         $mockDriver = $this->getMockBuilder(DriverInterface::class)->getMock();
 
-        $mockDriver->expects($this->any())->method('formatParameterName')->willReturn('?');
-        $mockDriver->expects($this->any())->method('createStatement')->willReturnCallback(fn() => new StatementContainer());
+        $mockDriver->expects($this->any())->method('formatParameterName')->will($this->returnValue('?'));
+        $mockDriver->expects($this->any())->method('createStatement')->will($this->returnCallback(function () {
+            return new StatementContainer();
+        }));
 
         return new Adapter($mockDriver, $platform);
     }

@@ -6,29 +6,26 @@ use Laminas\Db\Adapter\Exception\InvalidArgumentException;
 use Laminas\Db\Adapter\Exception\RuntimeException;
 use Laminas\Db\Adapter\Profiler\Profiler;
 use Laminas\Db\Adapter\StatementContainer;
-use Override;
-use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 
-#[CoversMethod(Profiler::class, 'profilerStart')]
-#[CoversMethod(Profiler::class, 'profilerFinish')]
-#[CoversMethod(Profiler::class, 'getLastProfile')]
-#[CoversMethod(Profiler::class, 'getProfiles')]
-final class ProfilerTest extends TestCase
+class ProfilerTest extends TestCase
 {
-    protected Profiler $profiler;
+    /** @var Profiler */
+    protected $profiler;
 
     /**
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
-    #[Override]
     protected function setUp(): void
     {
         $this->profiler = new Profiler();
     }
 
-    public function testProfilerStart(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Profiler\Profiler::profilerStart
+     */
+    public function testProfilerStart()
     {
         $ret = $this->profiler->profilerStart('SELECT * FROM FOO');
         self::assertSame($this->profiler, $ret);
@@ -40,7 +37,10 @@ final class ProfilerTest extends TestCase
         $this->profiler->profilerStart(5);
     }
 
-    public function testProfilerFinish(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Profiler\Profiler::profilerFinish
+     */
+    public function testProfilerFinish()
     {
         $this->profiler->profilerStart('SELECT * FROM FOO');
         $ret = $this->profiler->profilerFinish();
@@ -52,7 +52,10 @@ final class ProfilerTest extends TestCase
         $profiler->profilerFinish();
     }
 
-    public function testGetLastProfile(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Profiler\Profiler::getLastProfile
+     */
+    public function testGetLastProfile()
     {
         $this->profiler->profilerStart('SELECT * FROM FOO');
         $this->profiler->profilerFinish();
@@ -64,7 +67,10 @@ final class ProfilerTest extends TestCase
         self::assertIsFloat($profile['elapse']);
     }
 
-    public function testGetProfiles(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Profiler\Profiler::getProfiles
+     */
+    public function testGetProfiles()
     {
         $this->profiler->profilerStart('SELECT * FROM FOO1');
         $this->profiler->profilerFinish();

@@ -108,7 +108,7 @@ class Column implements ColumnInterface
 
     /**
      * @param  string $name
-     * @param  string|boolean $value
+     * @param  string $value
      * @return $this Provides a fluent interface
      */
     public function setOption($name, $value)

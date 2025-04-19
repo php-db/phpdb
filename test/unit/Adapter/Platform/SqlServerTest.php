@@ -4,80 +4,84 @@ namespace LaminasTest\Db\Adapter\Platform;
 
 use Laminas\Db\Adapter\Driver\Pdo\Pdo;
 use Laminas\Db\Adapter\Platform\SqlServer;
-use Override;
-use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 
 use function restore_error_handler;
 use function set_error_handler;
 
-#[CoversMethod(SqlServer::class, 'getName')]
-#[CoversMethod(SqlServer::class, 'getQuoteIdentifierSymbol')]
-#[CoversMethod(SqlServer::class, 'quoteIdentifier')]
-#[CoversMethod(SqlServer::class, 'quoteIdentifierChain')]
-#[CoversMethod(SqlServer::class, 'getQuoteValueSymbol')]
-#[CoversMethod(SqlServer::class, 'quoteValue')]
-#[CoversMethod(SqlServer::class, 'quoteTrustedValue')]
-#[CoversMethod(SqlServer::class, 'quoteValueList')]
-#[CoversMethod(SqlServer::class, 'getIdentifierSeparator')]
-#[CoversMethod(SqlServer::class, 'quoteIdentifierInFragment')]
-#[CoversMethod(SqlServer::class, 'setDriver')]
-final class SqlServerTest extends TestCase
+class SqlServerTest extends TestCase
 {
-    protected SqlServer $platform;
+    /** @var SqlServer */
+    protected $platform;
 
     /**
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
-    #[Override]
     protected function setUp(): void
     {
         $this->platform = new SqlServer();
     }
 
-    public function testGetName(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Platform\SqlServer::getName
+     */
+    public function testGetName()
     {
         self::assertEquals('SQLServer', $this->platform->getName());
     }
 
-    public function testGetQuoteIdentifierSymbol(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Platform\SqlServer::getQuoteIdentifierSymbol
+     */
+    public function testGetQuoteIdentifierSymbol()
     {
         self::assertEquals(['[', ']'], $this->platform->getQuoteIdentifierSymbol());
     }
 
-    public function testQuoteIdentifier(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Platform\SqlServer::quoteIdentifier
+     */
+    public function testQuoteIdentifier()
     {
         self::assertEquals('[identifier]', $this->platform->quoteIdentifier('identifier'));
     }
 
-    public function testQuoteIdentifierChain(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Platform\SqlServer::quoteIdentifierChain
+     */
+    public function testQuoteIdentifierChain()
     {
         self::assertEquals('[identifier]', $this->platform->quoteIdentifierChain('identifier'));
         self::assertEquals('[identifier]', $this->platform->quoteIdentifierChain(['identifier']));
         self::assertEquals('[schema].[identifier]', $this->platform->quoteIdentifierChain(['schema', 'identifier']));
     }
 
-    public function testGetQuoteValueSymbol(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Platform\SqlServer::getQuoteValueSymbol
+     */
+    public function testGetQuoteValueSymbol()
     {
         self::assertEquals("'", $this->platform->getQuoteValueSymbol());
     }
 
-    public function testQuoteValueRaisesNoticeWithoutPlatformSupport(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Platform\SqlServer::quoteValue
+     */
+    public function testQuoteValueRaisesNoticeWithoutPlatformSupport()
     {
-        /**
-         * @todo Determine if vulnerability warning is required during unit testing
-         */
-        //$this->expectNotice();
-        //$this->expectExceptionMessage(
-        //    'Attempting to quote a value in Laminas\Db\Adapter\Platform\SqlServer without extension/driver support can '
-        //    . 'introduce security vulnerabilities in a production environment'
-        //);
-        $this->expectNotToPerformAssertions();
+        $this->expectNotice();
+        $this->expectNoticeMessage(
+            'Attempting to quote a value in Laminas\Db\Adapter\Platform\SqlServer without extension/driver support can '
+            . 'introduce security vulnerabilities in a production environment'
+        );
         $this->platform->quoteValue('value');
     }
 
-    public function testQuoteValue(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Platform\SqlServer::quoteValue
+     */
+    public function testQuoteValue()
     {
         self::assertEquals("'value'", @$this->platform->quoteValue('value'));
         self::assertEquals("'Foo O''Bar'", @$this->platform->quoteValue("Foo O'Bar"));
@@ -91,7 +95,10 @@ final class SqlServerTest extends TestCase
         );
     }
 
-    public function testQuoteTrustedValue(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Platform\SqlServer::quoteTrustedValue
+     */
+    public function testQuoteTrustedValue()
     {
         self::assertEquals("'value'", $this->platform->quoteTrustedValue('value'));
         self::assertEquals("'Foo O''Bar'", $this->platform->quoteTrustedValue("Foo O'Bar"));
@@ -105,25 +112,31 @@ final class SqlServerTest extends TestCase
         );
     }
 
-    public function testQuoteValueList(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Platform\SqlServer::quoteValueList
+     */
+    public function testQuoteValueList()
     {
-        /**
-         * @todo Determine if vulnerability warning is required during unit testing
-         */
-        //$this->expectError();
-        //$this->expectExceptionMessage(
-        //    'Attempting to quote a value in Laminas\Db\Adapter\Platform\SqlServer without extension/driver support can '
-        //    . 'introduce security vulnerabilities in a production environment'
-        //);
+        $this->expectError();
+        $this->expectErrorMessage(
+            'Attempting to quote a value in Laminas\Db\Adapter\Platform\SqlServer without extension/driver support can '
+            . 'introduce security vulnerabilities in a production environment'
+        );
         self::assertEquals("'Foo O''Bar'", $this->platform->quoteValueList("Foo O'Bar"));
     }
 
-    public function testGetIdentifierSeparator(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Platform\SqlServer::getIdentifierSeparator
+     */
+    public function testGetIdentifierSeparator()
     {
         self::assertEquals('.', $this->platform->getIdentifierSeparator());
     }
 
-    public function testQuoteIdentifierInFragment(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Platform\SqlServer::quoteIdentifierInFragment
+     */
+    public function testQuoteIdentifierInFragment()
     {
         self::assertEquals('[foo].[bar]', $this->platform->quoteIdentifierInFragment('foo.bar'));
         self::assertEquals('[foo] as [bar]', $this->platform->quoteIdentifierInFragment('foo as bar'));
@@ -153,16 +166,19 @@ final class SqlServerTest extends TestCase
         );
     }
 
-    public function testSetDriver(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Platform\SqlServer::setDriver
+     */
+    public function testSetDriver()
     {
         $this->expectNotToPerformAssertions();
         $driver = new Pdo(['pdodriver' => 'sqlsrv']);
         $this->platform->setDriver($driver);
     }
 
-    public function testPlatformQuotesNullByteCharacter(): void
+    public function testPlatformQuotesNullByteCharacter()
     {
-        set_error_handler(function (): void {
+        set_error_handler(function () {
         });
         $string = "1\0";
         $value  = $this->platform->quoteValue($string);

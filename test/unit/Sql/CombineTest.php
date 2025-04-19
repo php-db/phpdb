@@ -12,32 +12,31 @@ use Laminas\Db\Sql\Combine;
 use Laminas\Db\Sql\Exception\InvalidArgumentException;
 use Laminas\Db\Sql\Predicate\Expression;
 use Laminas\Db\Sql\Select;
-use Override;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-final class CombineTest extends TestCase
+class CombineTest extends TestCase
 {
-    protected Combine $combine;
+    /** @var Combine */
+    protected $combine;
 
     /**
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
-    #[Override]
     protected function setUp(): void
     {
         $this->combine = new Combine();
     }
 
-    public function testRejectsInvalidStatement(): void
+    public function testRejectsInvalidStatement()
     {
         $this->expectException(InvalidArgumentException::class);
 
         $this->combine->combine('foo');
     }
 
-    public function testGetSqlString(): void
+    public function testGetSqlString()
     {
         $this->combine
                 ->union(new Select('t1'))
@@ -53,7 +52,7 @@ final class CombineTest extends TestCase
         );
     }
 
-    public function testGetSqlStringWithModifier(): void
+    public function testGetSqlStringWithModifier()
     {
         $this->combine
                 ->union(new Select('t1'))
@@ -65,7 +64,7 @@ final class CombineTest extends TestCase
         );
     }
 
-    public function testGetSqlStringFromArray(): void
+    public function testGetSqlStringFromArray()
     {
         $this->combine->combine([
             [new Select('t1')],
@@ -91,12 +90,12 @@ final class CombineTest extends TestCase
         );
     }
 
-    public function testGetSqlStringEmpty(): void
+    public function testGetSqlStringEmpty()
     {
         self::assertNull($this->combine->getSqlString());
     }
 
-    public function testPrepareStatementWithModifier(): void
+    public function testPrepareStatementWithModifier()
     {
         $select1 = new Select('t1');
         $select1->where(['x1' => 10]);
@@ -118,7 +117,7 @@ final class CombineTest extends TestCase
         );
     }
 
-    public function testAlignColumns(): void
+    public function testAlignColumns()
     {
         $select1 = new Select('t1');
         $select1->columns([
@@ -154,7 +153,7 @@ final class CombineTest extends TestCase
         );
     }
 
-    public function testGetRawState(): void
+    public function testGetRawState()
     {
         $select = new Select('t1');
         $this->combine->combine($select);
@@ -175,13 +174,16 @@ final class CombineTest extends TestCase
         );
     }
 
-    protected function getMockAdapter(): Adapter|MockObject
+    /**
+     * @return MockObject|Adapter
+     */
+    protected function getMockAdapter()
     {
         $parameterContainer = new ParameterContainer();
 
         $mockStatement = $this->getMockBuilder(StatementInterface::class)->getMock();
         $mockStatement->expects($this->any())->method('getParameterContainer')
-            ->willReturn($parameterContainer);
+            ->will($this->returnValue($parameterContainer));
 
         $setGetSqlFunction = function ($sql = null) use ($mockStatement) {
             static $sqlValue;
@@ -191,15 +193,15 @@ final class CombineTest extends TestCase
             }
             return $sqlValue;
         };
-        $mockStatement->expects($this->any())->method('setSql')->willReturnCallback($setGetSqlFunction);
-        $mockStatement->expects($this->any())->method('getSql')->willReturnCallback($setGetSqlFunction);
+        $mockStatement->expects($this->any())->method('setSql')->will($this->returnCallback($setGetSqlFunction));
+        $mockStatement->expects($this->any())->method('getSql')->will($this->returnCallback($setGetSqlFunction));
 
         $mockDriver = $this->getMockBuilder(DriverInterface::class)->getMock();
-        $mockDriver->expects($this->any())->method('formatParameterName')->willReturn('?');
-        $mockDriver->expects($this->any())->method('createStatement')->willReturn($mockStatement);
+        $mockDriver->expects($this->any())->method('formatParameterName')->will($this->returnValue('?'));
+        $mockDriver->expects($this->any())->method('createStatement')->will($this->returnValue($mockStatement));
 
         return $this->getMockBuilder(Adapter::class)
-            ->onlyMethods([])
+            ->setMethods()
             ->setConstructorArgs([$mockDriver])
             ->getMock();
     }

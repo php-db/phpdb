@@ -6,20 +6,15 @@ use Laminas\Db\Adapter\Adapter;
 use Laminas\Db\Adapter\AdapterAbstractServiceFactory;
 use Laminas\ServiceManager\Config;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
+use Laminas\ServiceManager\ServiceLocatorInterface;
 use Laminas\ServiceManager\ServiceManager;
-use Override;
-use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\Attributes\RequiresPhpExtension;
 use PHPUnit\Framework\TestCase;
-use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\ContainerInterface;
-use Psr\Container\NotFoundExceptionInterface;
 
-final class AdapterAbstractServiceFactoryTest extends TestCase
+class AdapterAbstractServiceFactoryTest extends TestCase
 {
-    private ServiceManager|ContainerInterface $serviceManager;
+    /** @var ServiceLocatorInterface */
+    private $serviceManager;
 
-    #[Override]
     protected function setUp(): void
     {
         $this->serviceManager = new ServiceManager();
@@ -43,7 +38,10 @@ final class AdapterAbstractServiceFactoryTest extends TestCase
         ]);
     }
 
-    public static function providerValidService(): array
+    /**
+     * @return array
+     */
+    public function providerValidService()
     {
         return [
             ['Laminas\Db\Adapter\Writer'],
@@ -51,7 +49,10 @@ final class AdapterAbstractServiceFactoryTest extends TestCase
         ];
     }
 
-    public static function providerInvalidService(): array
+    /**
+     * @return array
+     */
+    public function providerInvalidService()
     {
         return [
             ['Laminas\Db\Adapter\Unknown'],
@@ -59,23 +60,21 @@ final class AdapterAbstractServiceFactoryTest extends TestCase
     }
 
     /**
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
+     * @param string $service
+     * @dataProvider providerValidService
+     * @requires extension mysqli
      */
-    #[RequiresPhpExtension('mysqli')]
-    #[DataProvider('providerValidService')]
-    public function testValidService(string $service): void
+    public function testValidService($service)
     {
         $actual = $this->serviceManager->get($service);
         self::assertInstanceOf(Adapter::class, $actual);
     }
 
     /**
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
+     * @dataProvider providerInvalidService
+     * @param string $service
      */
-    #[DataProvider('providerInvalidService')]
-    public function testInvalidService(string $service): void
+    public function testInvalidService($service)
     {
         $this->expectException(ServiceNotFoundException::class);
         $this->serviceManager->get($service);

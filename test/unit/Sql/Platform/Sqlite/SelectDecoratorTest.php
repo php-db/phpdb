@@ -10,30 +10,28 @@ use Laminas\Db\Adapter\Platform\Sqlite as SqlitePlatform;
 use Laminas\Db\Sql\Expression;
 use Laminas\Db\Sql\Platform\Sqlite\SelectDecorator;
 use Laminas\Db\Sql\Select;
-use PHPUnit\Framework\Attributes\CoversMethod;
-use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\Attributes\TestDox;
 use PHPUnit\Framework\TestCase;
 
-#[CoversMethod(SelectDecorator::class, 'prepareStatement')]
-#[CoversMethod(SelectDecorator::class, 'processCombine')]
-#[CoversMethod(SelectDecorator::class, 'getSqlString')]
-final class SelectDecoratorTest extends TestCase
+class SelectDecoratorTest extends TestCase
 {
-    #[DataProvider('dataProviderUnionSyntaxFromCombine')]
-    #[TestDox('integration test: Testing SelectDecorator will use Select an internal state to prepare a proper combine
-statement')]
+    /**
+     * @testdox integration test: Testing SelectDecorator will use Select an internal state to prepare a proper combine
+     * statement
+     * @covers \Laminas\Db\Sql\Platform\Sqlite\SelectDecorator::prepareStatement
+     * @covers \Laminas\Db\Sql\Platform\Sqlite\SelectDecorator::processCombine
+     * @dataProvider dataProviderUnionSyntaxFromCombine
+     */
     public function testPrepareStatementPreparesUnionSyntaxFromCombine(
         Select $select,
         string $expectedSql,
         array $expectedParams
-    ): void {
+    ) {
         $driver = $this->getMockBuilder(DriverInterface::class)->getMock();
-        $driver->expects($this->any())->method('formatParameterName')->willReturn('?');
+        $driver->expects($this->any())->method('formatParameterName')->will($this->returnValue('?'));
 
         // test
         $adapter = $this->getMockBuilder(Adapter::class)
-            ->onlyMethods([])
+            ->setMethods()
             ->setConstructorArgs([
                 $driver,
                 new SqlitePlatform(),
@@ -43,7 +41,7 @@ statement')]
         $parameterContainer = new ParameterContainer();
         $statement          = $this->getMockBuilder(StatementInterface::class)->getMock();
         $statement->expects($this->any())->method('getParameterContainer')
-            ->willReturn($parameterContainer);
+            ->will($this->returnValue($parameterContainer));
 
         $statement->expects($this->once())->method('setSql')->with($expectedSql);
 
@@ -54,19 +52,25 @@ statement')]
         self::assertEquals($expectedParams, $parameterContainer->getNamedArray());
     }
 
-    #[DataProvider('dataProviderUnionSyntaxFromCombine')]
-    #[TestDox('integration test: Testing SelectDecorator will use Select an internal state to prepare a proper combine
-statement')]
+    /**
+     * @testdox integration test: Testing SelectDecorator will use Select an internal state to prepare a proper combine
+     * statement
+     * @covers \Laminas\Db\Sql\Platform\Sqlite\SelectDecorator::getSqlString
+     * @covers \Laminas\Db\Sql\Platform\Sqlite\SelectDecorator::processCombine
+     * @dataProvider dataProviderUnionSyntaxFromCombine
+     * @param mixed $ignore
+     * @param mixed $alsoIgnore
+     */
     public function testGetSqlStringPreparesUnionSyntaxFromCombine(
         Select $select,
-        mixed $ignore,
-        mixed $alsoIgnore,
+        $ignore,
+        $alsoIgnore,
         string $expectedSql
-    ): void {
+    ) {
         $parameterContainer = new ParameterContainer();
         $statement          = $this->getMockBuilder(StatementInterface::class)->getMock();
         $statement->expects($this->any())->method('getParameterContainer')
-            ->willReturn($parameterContainer);
+            ->will($this->returnValue($parameterContainer));
 
         $selectDecorator = new SelectDecorator();
         $selectDecorator->setSubject($select);
@@ -83,7 +87,7 @@ statement')]
      *     3: string
      * }>
      */
-    public static function dataProviderUnionSyntaxFromCombine(): array
+    public function dataProviderUnionSyntaxFromCombine(): array
     {
         $select0 = new Select();
         $select0->from('foo');

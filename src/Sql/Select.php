@@ -70,7 +70,7 @@ class Select extends AbstractPreparableSql
     public const COMBINE_INTERSECT   = 'intersect';
     /**#@-*/
 
-    /** @var string[]|array[] $specifications */
+    /** @var array Specifications */
     protected $specifications = [
         'statementStart' => '%1$s',
         self::SELECT     => [
@@ -114,8 +114,8 @@ class Select extends AbstractPreparableSql
 
     protected bool $prefixColumnsWithTable = true;
 
-    /** @var null|string|array|TableIdentifier */
-    protected $table = null;
+    /** @var string|array|TableIdentifier */
+    protected $table;
 
     /** @var null|string|Expression */
     protected $quantifier;
@@ -170,7 +170,7 @@ class Select extends AbstractPreparableSql
      * @return $this Provides a fluent interface
      * @throws Exception\InvalidArgumentException
      */
-    public function from($table): static
+    public function from($table)
     {
         if ($this->tableReadOnly) {
             throw new Exception\InvalidArgumentException(
@@ -239,7 +239,7 @@ class Select extends AbstractPreparableSql
      * Create join clause
      *
      * @param  string|array|TableIdentifier $name
-     * @param  string|Predicate\PredicateInterface $on
+     * @param  string|Predicate\Expression $on
      * @param  string|array $columns
      * @param  string $type one of the JOIN_* constants
      * @return $this Provides a fluent interface
@@ -329,7 +329,7 @@ class Select extends AbstractPreparableSql
     }
 
     /**
-     * @param int|string $limit
+     * @param int $limit
      * @return $this Provides a fluent interface
      * @throws Exception\InvalidArgumentException
      */
@@ -348,7 +348,7 @@ class Select extends AbstractPreparableSql
     }
 
     /**
-     * @param int|string $offset
+     * @param int $offset
      * @return $this Provides a fluent interface
      * @throws Exception\InvalidArgumentException
      */

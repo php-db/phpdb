@@ -4,138 +4,165 @@ namespace LaminasTest\Db\Sql\Predicate;
 
 use Laminas\Db\Sql\Predicate\Expression;
 use Laminas\Db\Sql\Predicate\IsNull;
-use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 
 use function var_export;
 
-final class ExpressionTest extends TestCase
+class ExpressionTest extends TestCase
 {
-    public function testEmptyConstructorYieldsEmptyLiteralAndParameter(): void
+    public function testEmptyConstructorYieldsEmptyLiteralAndParameter()
     {
         $expression = new Expression();
         self::assertEquals('', $expression->getExpression());
         self::assertEmpty($expression->getParameters());
     }
 
-    #[Group('6849')]
-    public function testCanPassLiteralAndSingleScalarParameterToConstructor(): void
+    /**
+     * @group 6849
+     */
+    public function testCanPassLiteralAndSingleScalarParameterToConstructor()
     {
         $expression = new Expression('foo.bar = ?', 'bar');
         self::assertEquals('foo.bar = ?', $expression->getExpression());
         self::assertEquals(['bar'], $expression->getParameters());
     }
 
-    #[Group('6849')]
-    public function testCanPassNoParameterToConstructor(): void
+    /**
+     * @group 6849
+     */
+    public function testCanPassNoParameterToConstructor()
     {
         $expression = new Expression('foo.bar');
         self::assertEquals([], $expression->getParameters());
     }
 
-    #[Group('6849')]
-    public function testCanPassSingleNullParameterToConstructor(): void
+    /**
+     * @group 6849
+     */
+    public function testCanPassSingleNullParameterToConstructor()
     {
         $expression = new Expression('?', null);
         self::assertEquals([null], $expression->getParameters());
     }
 
-    #[Group('6849')]
-    public function testCanPassSingleZeroParameterValueToConstructor(): void
+    /**
+     * @group 6849
+     */
+    public function testCanPassSingleZeroParameterValueToConstructor()
     {
         $predicate = new Expression('?', 0);
         self::assertEquals([0], $predicate->getParameters());
     }
 
-    #[Group('6849')]
-    public function testCanPassSinglePredicateParameterToConstructor(): void
+    /**
+     * @group 6849
+     */
+    public function testCanPassSinglePredicateParameterToConstructor()
     {
         $predicate  = new IsNull('foo.baz');
         $expression = new Expression('?', $predicate);
         self::assertEquals([$predicate], $expression->getParameters());
     }
 
-    #[Group('6849')]
-    public function testCanPassMultiScalarParametersToConstructor(): void
+    /**
+     * @group 6849
+     */
+    public function testCanPassMultiScalarParametersToConstructor()
     {
         $expression = new Expression('? OR ?', 'foo', 'bar');
         self::assertEquals(['foo', 'bar'], $expression->getParameters());
     }
 
-    #[Group('6849')]
-    public function testCanPassMultiNullParametersToConstructor(): void
+    /**
+     * @group 6849
+     */
+    public function testCanPassMultiNullParametersToConstructor()
     {
         $expression = new Expression('? OR ?', null, null);
         self::assertEquals([null, null], $expression->getParameters());
     }
 
-    #[Group('6849')]
-    public function testCanPassMultiPredicateParametersToConstructor(): void
+    /**
+     * @group 6849
+     */
+    public function testCanPassMultiPredicateParametersToConstructor()
     {
         $predicate  = new IsNull('foo.baz');
         $expression = new Expression('? OR ?', $predicate, $predicate);
         self::assertEquals([$predicate, $predicate], $expression->getParameters());
     }
 
-    #[Group('6849')]
-    public function testCanPassArrayOfOneScalarParameterToConstructor(): void
+    /**
+     * @group 6849
+     */
+    public function testCanPassArrayOfOneScalarParameterToConstructor()
     {
         $expression = new Expression('?', ['foo']);
         self::assertEquals(['foo'], $expression->getParameters());
     }
 
-    #[Group('6849')]
-    public function testCanPassArrayOfMultiScalarsParameterToConstructor(): void
+    /**
+     * @group 6849
+     */
+    public function testCanPassArrayOfMultiScalarsParameterToConstructor()
     {
         $expression = new Expression('? OR ?', ['foo', 'bar']);
         self::assertEquals(['foo', 'bar'], $expression->getParameters());
     }
 
-    #[Group('6849')]
-    public function testCanPassArrayOfOneNullParameterToConstructor(): void
+    /**
+     * @group 6849
+     */
+    public function testCanPassArrayOfOneNullParameterToConstructor()
     {
         $expression = new Expression('?', [null]);
         self::assertEquals([null], $expression->getParameters());
     }
 
-    #[Group('6849')]
-    public function testCanPassArrayOfMultiNullsParameterToConstructor(): void
+    /**
+     * @group 6849
+     */
+    public function testCanPassArrayOfMultiNullsParameterToConstructor()
     {
         $expression = new Expression('? OR ?', [null, null]);
         self::assertEquals([null, null], $expression->getParameters());
     }
 
-    #[Group('6849')]
-    public function testCanPassArrayOfOnePredicateParameterToConstructor(): void
+    /**
+     * @group 6849
+     */
+    public function testCanPassArrayOfOnePredicateParameterToConstructor()
     {
         $predicate  = new IsNull('foo.baz');
         $expression = new Expression('?', [$predicate]);
         self::assertEquals([$predicate], $expression->getParameters());
     }
 
-    #[Group('6849')]
-    public function testCanPassArrayOfMultiPredicatesParameterToConstructor(): void
+    /**
+     * @group 6849
+     */
+    public function testCanPassArrayOfMultiPredicatesParameterToConstructor()
     {
         $predicate  = new IsNull('foo.baz');
         $expression = new Expression('? OR ?', [$predicate, $predicate]);
         self::assertEquals([$predicate, $predicate], $expression->getParameters());
     }
 
-    public function testLiteralIsMutable(): void
+    public function testLiteralIsMutable()
     {
         $expression = new Expression();
         $expression->setExpression('foo.bar = ?');
         self::assertEquals('foo.bar = ?', $expression->getExpression());
     }
 
-    public function testParameterIsMutable(): void
+    public function testParameterIsMutable()
     {
         $expression = new Expression();
         $expression->setParameters(['foo', 'bar']);
         self::assertEquals(['foo', 'bar'], $expression->getParameters());
     }
 
-    public function testRetrievingWherePartsReturnsSpecificationArrayOfLiteralAndParametersAndArrayOfTypes(): void
+    public function testRetrievingWherePartsReturnsSpecificationArrayOfLiteralAndParametersAndArrayOfTypes()
     {
         $expression = new Expression();
         $expression->setExpression('foo.bar = ? AND id != ?')
@@ -148,6 +175,6 @@ final class ExpressionTest extends TestCase
             ],
         ];
         $test     = $expression->getExpressionData();
-        self::assertEquals($expected, $test, var_export($test, true));
+        self::assertEquals($expected, $test, var_export($test, 1));
     }
 }

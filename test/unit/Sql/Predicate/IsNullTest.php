@@ -5,42 +5,42 @@ namespace LaminasTest\Db\Sql\Predicate;
 use Laminas\Db\Sql\Predicate\IsNotNull;
 use PHPUnit\Framework\TestCase;
 
-final class IsNullTest extends TestCase
+class IsNullTest extends TestCase
 {
-    public function testEmptyConstructorYieldsNullIdentifier(): void
+    public function testEmptyConstructorYieldsNullIdentifier()
     {
         $isNotNull = new IsNotNull();
         self::assertNull($isNotNull->getIdentifier());
     }
 
-    public function testSpecificationHasSaneDefaultValue(): void
+    public function testSpecificationHasSaneDefaultValue()
     {
         $isNotNull = new IsNotNull();
         self::assertEquals('%1$s IS NOT NULL', $isNotNull->getSpecification());
     }
 
-    public function testCanPassIdentifierToConstructor(): void
+    public function testCanPassIdentifierToConstructor()
     {
-        new IsNotNull();
-        $isnull = new IsNotNull('foo.bar');
+        $isNotNull = new IsNotNull();
+        $isnull    = new IsNotNull('foo.bar');
         self::assertEquals('foo.bar', $isnull->getIdentifier());
     }
 
-    public function testIdentifierIsMutable(): void
+    public function testIdentifierIsMutable()
     {
         $isNotNull = new IsNotNull();
         $isNotNull->setIdentifier('foo.bar');
         self::assertEquals('foo.bar', $isNotNull->getIdentifier());
     }
 
-    public function testSpecificationIsMutable(): void
+    public function testSpecificationIsMutable()
     {
         $isNotNull = new IsNotNull();
         $isNotNull->setSpecification('%1$s NOT NULL');
         self::assertEquals('%1$s NOT NULL', $isNotNull->getSpecification());
     }
 
-    public function testRetrievingWherePartsReturnsSpecificationArrayOfIdentifierAndArrayOfTypes(): void
+    public function testRetrievingWherePartsReturnsSpecificationArrayOfIdentifierAndArrayOfTypes()
     {
         $isNotNull = new IsNotNull();
         $isNotNull->setIdentifier('foo.bar');

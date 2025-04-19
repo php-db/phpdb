@@ -5,39 +5,26 @@ namespace LaminasTest\Db\Adapter\Platform;
 use Laminas\Db\Adapter\Driver\Oci8\Oci8;
 use Laminas\Db\Adapter\Exception\InvalidArgumentException;
 use Laminas\Db\Adapter\Platform\Oracle;
-use Override;
-use PHPUnit\Framework\Attributes\CoversMethod;
-use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
 
-#[CoversMethod(Oracle::class, '__construct')]
-#[CoversMethod(Oracle::class, 'setDriver')]
-#[CoversMethod(Oracle::class, 'getDriver')]
-#[CoversMethod(Oracle::class, 'getName')]
-#[CoversMethod(Oracle::class, 'getQuoteIdentifierSymbol')]
-#[CoversMethod(Oracle::class, 'quoteIdentifier')]
-#[CoversMethod(Oracle::class, 'quoteIdentifierChain')]
-#[CoversMethod(Oracle::class, 'getQuoteValueSymbol')]
-#[CoversMethod(Oracle::class, 'quoteValue')]
-#[CoversMethod(Oracle::class, 'quoteTrustedValue')]
-#[CoversMethod(Oracle::class, 'quoteValueList')]
-#[CoversMethod(Oracle::class, 'getIdentifierSeparator')]
-#[CoversMethod(Oracle::class, 'quoteIdentifierInFragment')]
-final class OracleTest extends TestCase
+class OracleTest extends TestCase
 {
-    protected Oracle $platform;
+    /** @var Oracle */
+    protected $platform;
 
     /**
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
-    #[Override]
     protected function setUp(): void
     {
         $this->platform = new Oracle();
     }
 
-    public function testContructWithOptions(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Platform\Oracle::__construct
+     */
+    public function testContructWithOptions()
     {
         self::assertEquals('"\'test\'.\'test\'"', $this->platform->quoteIdentifier('"test"."test"'));
         $plataform1 = new Oracle(['quote_identifiers' => false]);
@@ -47,51 +34,81 @@ final class OracleTest extends TestCase
     }
 
     /**
-     * @throws Exception
+     * @covers \Laminas\Db\Adapter\Platform\Oracle::__construct
      */
-    public function testContructWithDriver(): void
+    public function testContructWithDriver()
     {
-        $mockDriver = $this->getMockBuilder(Oci8::class)->setConstructorArgs([[]])->onlyMethods([])->getMock();
+        $mockDriver = $this->getMockForAbstractClass(
+            Oci8::class,
+            [[]],
+            '',
+            true,
+            true,
+            true,
+            []
+        );
         $platform   = new Oracle([], $mockDriver);
         self::assertEquals($mockDriver, $platform->getDriver());
     }
 
     /**
-     * @throws Exception
+     * @covers \Laminas\Db\Adapter\Platform\Oracle::setDriver
      */
-    public function testSetDriver(): void
+    public function testSetDriver()
     {
-        $mockDriver = $this->getMockBuilder(Oci8::class)->setConstructorArgs([[]])->onlyMethods([])->getMock();
+        $mockDriver = $this->getMockForAbstractClass(
+            Oci8::class,
+            [[]],
+            '',
+            true,
+            true,
+            true,
+            []
+        );
         $platform   = $this->platform->setDriver($mockDriver);
         self::assertEquals($mockDriver, $platform->getDriver());
     }
 
-    public function testSetDriverInvalid(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Platform\Oracle::setDriver
+     */
+    public function testSetDriverInvalid()
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
             '$driver must be a Oci8 or Oracle PDO Laminas\Db\Adapter\Driver, Oci8 instance, or Oci PDO instance'
         );
-        /** @psalm-suppress NullArgument - ensure an exception is thrown */
         $this->platform->setDriver(null);
     }
 
-    public function testGetDriver(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Platform\Oracle::getDriver
+     */
+    public function testGetDriver()
     {
         self::assertNull($this->platform->getDriver());
     }
 
-    public function testGetName(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Platform\Oracle::getName
+     */
+    public function testGetName()
     {
         self::assertEquals('Oracle', $this->platform->getName());
     }
 
-    public function testGetQuoteIdentifierSymbol(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Platform\Oracle::getQuoteIdentifierSymbol
+     */
+    public function testGetQuoteIdentifierSymbol()
     {
         self::assertEquals('"', $this->platform->getQuoteIdentifierSymbol());
     }
 
-    public function testQuoteIdentifier(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Platform\Oracle::quoteIdentifier
+     */
+    public function testQuoteIdentifier()
     {
         self::assertEquals('"identifier"', $this->platform->quoteIdentifier('identifier'));
 
@@ -99,7 +116,10 @@ final class OracleTest extends TestCase
         self::assertEquals('identifier', $platform->quoteIdentifier('identifier'));
     }
 
-    public function testQuoteIdentifierChain(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Platform\Oracle::quoteIdentifierChain
+     */
+    public function testQuoteIdentifierChain()
     {
         self::assertEquals('"identifier"', $this->platform->quoteIdentifierChain('identifier'));
         self::assertEquals('"identifier"', $this->platform->quoteIdentifierChain(['identifier']));
@@ -111,26 +131,31 @@ final class OracleTest extends TestCase
         self::assertEquals('schema.identifier', $platform->quoteIdentifierChain(['schema', 'identifier']));
     }
 
-    public function testGetQuoteValueSymbol(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Platform\Oracle::getQuoteValueSymbol
+     */
+    public function testGetQuoteValueSymbol()
     {
         self::assertEquals("'", $this->platform->getQuoteValueSymbol());
     }
 
-    public function testQuoteValueRaisesNoticeWithoutPlatformSupport(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Platform\Oracle::quoteValue
+     */
+    public function testQuoteValueRaisesNoticeWithoutPlatformSupport()
     {
-        /**
-         * @todo Determine if vulnerability warning is required during unit testing
-         */
-        //$this->expectNotice();
-        //$this->expectExceptionMessage(
-        //    'Attempting to quote a value in Laminas\Db\Adapter\Platform\Oracle without '
-        //    . 'extension/driver support can introduce security vulnerabilities in a production environment'
-        //);
-        $this->expectNotToPerformAssertions();
+        $this->expectNotice();
+        $this->expectNoticeMessage(
+            'Attempting to quote a value in Laminas\Db\Adapter\Platform\Oracle without '
+            . 'extension/driver support can introduce security vulnerabilities in a production environment'
+        );
         $this->platform->quoteValue('value');
     }
 
-    public function testQuoteValue(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Platform\Oracle::quoteValue
+     */
+    public function testQuoteValue()
     {
         self::assertEquals("'value'", @$this->platform->quoteValue('value'));
         self::assertEquals("'Foo O''Bar'", @$this->platform->quoteValue("Foo O'Bar"));
@@ -144,7 +169,10 @@ final class OracleTest extends TestCase
         );
     }
 
-    public function testQuoteTrustedValue(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Platform\Oracle::quoteTrustedValue
+     */
+    public function testQuoteTrustedValue()
     {
         self::assertEquals("'value'", $this->platform->quoteTrustedValue('value'));
         self::assertEquals("'Foo O''Bar'", $this->platform->quoteTrustedValue("Foo O'Bar"));
@@ -160,25 +188,31 @@ final class OracleTest extends TestCase
         );
     }
 
-    public function testQuoteValueList(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Platform\Oracle::quoteValueList
+     */
+    public function testQuoteValueList()
     {
-        /**
-         * @todo Determine if vulnerability warning is required during unit testing
-         */
-        //$this->expectError();
-        //$this->expectExceptionMessage(
-        //    'Attempting to quote a value in Laminas\Db\Adapter\Platform\Oracle without '
-        //    . 'extension/driver support can introduce security vulnerabilities in a production environment'
-        //);
+        $this->expectError();
+        $this->expectErrorMessage(
+            'Attempting to quote a value in Laminas\Db\Adapter\Platform\Oracle without '
+            . 'extension/driver support can introduce security vulnerabilities in a production environment'
+        );
         self::assertEquals("'Foo O''Bar'", $this->platform->quoteValueList("Foo O'Bar"));
     }
 
-    public function testGetIdentifierSeparator(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Platform\Oracle::getIdentifierSeparator
+     */
+    public function testGetIdentifierSeparator()
     {
         self::assertEquals('.', $this->platform->getIdentifierSeparator());
     }
 
-    public function testQuoteIdentifierInFragment(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Platform\Oracle::quoteIdentifierInFragment
+     */
+    public function testQuoteIdentifierInFragment()
     {
         self::assertEquals('"foo"."bar"', $this->platform->quoteIdentifierInFragment('foo.bar'));
         self::assertEquals('"foo" as "bar"', $this->platform->quoteIdentifierInFragment('foo as bar'));

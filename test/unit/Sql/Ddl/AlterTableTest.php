@@ -8,22 +8,16 @@ use Laminas\Db\Sql\Ddl\Column\ColumnInterface;
 use Laminas\Db\Sql\Ddl\Constraint;
 use Laminas\Db\Sql\Ddl\Constraint\ConstraintInterface;
 use Laminas\Db\Sql\TableIdentifier;
-use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 
 use function str_replace;
 
-#[CoversMethod(AlterTable::class, 'setTable')]
-#[CoversMethod(AlterTable::class, 'addColumn')]
-#[CoversMethod(AlterTable::class, 'changeColumn')]
-#[CoversMethod(AlterTable::class, 'dropColumn')]
-#[CoversMethod(AlterTable::class, 'dropConstraint')]
-#[CoversMethod(AlterTable::class, 'addConstraint')]
-#[CoversMethod(AlterTable::class, 'dropIndex')]
-#[CoversMethod(AlterTable::class, 'getSqlString')]
-final class AlterTableTest extends TestCase
+class AlterTableTest extends TestCase
 {
-    public function testSetTable(): void
+    /**
+     * @covers \Laminas\Db\Sql\Ddl\AlterTable::setTable
+     */
+    public function testSetTable()
     {
         $at = new AlterTable();
         self::assertEquals('', $at->getRawState('table'));
@@ -31,7 +25,10 @@ final class AlterTableTest extends TestCase
         self::assertEquals('test', $at->getRawState('table'));
     }
 
-    public function testAddColumn(): void
+    /**
+     * @covers \Laminas\Db\Sql\Ddl\AlterTable::addColumn
+     */
+    public function testAddColumn()
     {
         $at = new AlterTable();
         /** @var ColumnInterface $colMock */
@@ -40,7 +37,10 @@ final class AlterTableTest extends TestCase
         self::assertEquals([$colMock], $at->getRawState($at::ADD_COLUMNS));
     }
 
-    public function testChangeColumn(): void
+    /**
+     * @covers \Laminas\Db\Sql\Ddl\AlterTable::changeColumn
+     */
+    public function testChangeColumn()
     {
         $at = new AlterTable();
         /** @var ColumnInterface $colMock */
@@ -49,21 +49,30 @@ final class AlterTableTest extends TestCase
         self::assertEquals(['newname' => $colMock], $at->getRawState($at::CHANGE_COLUMNS));
     }
 
-    public function testDropColumn(): void
+    /**
+     * @covers \Laminas\Db\Sql\Ddl\AlterTable::dropColumn
+     */
+    public function testDropColumn()
     {
         $at = new AlterTable();
         self::assertSame($at, $at->dropColumn('foo'));
         self::assertEquals(['foo'], $at->getRawState($at::DROP_COLUMNS));
     }
 
-    public function testDropConstraint(): void
+    /**
+     * @covers \Laminas\Db\Sql\Ddl\AlterTable::dropConstraint
+     */
+    public function testDropConstraint()
     {
         $at = new AlterTable();
         self::assertSame($at, $at->dropConstraint('foo'));
         self::assertEquals(['foo'], $at->getRawState($at::DROP_CONSTRAINTS));
     }
 
-    public function testAddConstraint(): void
+    /**
+     * @covers \Laminas\Db\Sql\Ddl\AlterTable::addConstraint
+     */
+    public function testAddConstraint()
     {
         $at = new AlterTable();
         /** @var ConstraintInterface $conMock */
@@ -72,7 +81,10 @@ final class AlterTableTest extends TestCase
         self::assertEquals([$conMock], $at->getRawState($at::ADD_CONSTRAINTS));
     }
 
-    public function testDropIndex(): void
+    /**
+     * @covers \Laminas\Db\Sql\Ddl\AlterTable::dropIndex
+     */
+    public function testDropIndex()
     {
         $at = new AlterTable();
         self::assertSame($at, $at->dropIndex('foo'));
@@ -80,9 +92,10 @@ final class AlterTableTest extends TestCase
     }
 
     /**
-     * @todo Implement testGetSqlString().
+     * @covers \Laminas\Db\Sql\Ddl\AlterTable::getSqlString
+     * @todo   Implement testGetSqlString().
      */
-    public function testGetSqlString(): void
+    public function testGetSqlString()
     {
         $at = new AlterTable('foo');
         $at->addColumn(new Column\Varchar('another', 255));

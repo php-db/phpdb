@@ -3,9 +3,7 @@
 namespace LaminasIntegrationTest\Db\Adapter\Platform;
 
 use Laminas\Db\Adapter\Platform\SqlServer;
-use Override;
 use PDO;
-use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 
 use function extension_loaded;
@@ -14,14 +12,15 @@ use function sqlsrv_connect;
 use function sqlsrv_errors;
 use function var_dump;
 
-#[Group('integration')]
-#[Group('integration-sqlserver')]
-final class SqlServerTest extends TestCase
+/**
+ * @group integration
+ * @group integration-sqlserver
+ */
+class SqlServerTest extends TestCase
 {
     /** @var array<string, resource> */
-    public array|PDO $adapters = [];
+    public $adapters = [];
 
-    #[Override]
     protected function setUp(): void
     {
         if (! getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_SQLSRV')) {
@@ -57,9 +56,6 @@ final class SqlServerTest extends TestCase
         }
     }
 
-    /**
-     * @return void
-     */
     public function testQuoteValueWithSqlServer()
     {
         if (! isset($this->adapters['pdo_sqlsrv'])) {

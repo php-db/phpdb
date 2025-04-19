@@ -32,8 +32,8 @@ class Delete extends AbstractPreparableSql
         self::SPECIFICATION_WHERE  => 'WHERE %1$s',
     ];
 
-    /** @var string|array|TableIdentifier */
-    protected TableIdentifier|string|array $table = '';
+    /** @var string|TableIdentifier */
+    protected $table = '';
 
     /** @var bool */
     protected $emptyWhereProtection = true;
@@ -60,20 +60,20 @@ class Delete extends AbstractPreparableSql
     /**
      * Create from statement
      *
-     * @param  string|array|TableIdentifier $table
+     * @param  string|TableIdentifier $table
      * @return $this Provides a fluent interface
      */
-    public function from($table): static
+    public function from($table)
     {
         $this->table = $table;
         return $this;
     }
 
     /**
-     * @param ?string $key
+     * @param null $key
      * @return mixed
      */
-    public function getRawState(?string $key = null)
+    public function getRawState($key = null)
     {
         $rawState = [
             'emptyWhereProtection' => $this->emptyWhereProtection,

@@ -5,23 +5,19 @@ namespace LaminasTest\Db\Adapter;
 use Laminas\Db\Adapter\Adapter;
 use Laminas\Db\Adapter\AdapterServiceFactory;
 use Laminas\ServiceManager\ServiceLocatorInterface;
-use Override;
-use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 use function extension_loaded;
 
-final class AdapterServiceFactoryTest extends TestCase
+class AdapterServiceFactoryTest extends TestCase
 {
-    private ServiceLocatorInterface&MockObject $services;
+    /** @var ServiceLocatorInterface&MockObject */
+    private $services;
 
-    private AdapterServiceFactory $factory;
+    /** @var AdapterServiceFactory */
+    private $factory;
 
-    /**
-     * @throws Exception
-     */
-    #[Override]
     protected function setUp(): void
     {
         if (! extension_loaded('pdo_sqlite')) {
@@ -33,7 +29,7 @@ final class AdapterServiceFactoryTest extends TestCase
         $this->factory = new AdapterServiceFactory();
     }
 
-    public function testV2FactoryReturnsAdapter(): void
+    public function testV2FactoryReturnsAdapter()
     {
         $this->services
             ->method('get')
@@ -49,7 +45,7 @@ final class AdapterServiceFactoryTest extends TestCase
         self::assertInstanceOf(Adapter::class, $adapter);
     }
 
-    public function testV3FactoryReturnsAdapter(): void
+    public function testV3FactoryReturnsAdapter()
     {
         $this->services
             ->method('get')

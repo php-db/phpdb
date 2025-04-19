@@ -5,18 +5,18 @@ namespace LaminasTest\Db\Sql\Platform\Mysql;
 use Laminas\Db\Sql\Platform\Mysql\Mysql;
 use Laminas\Db\Sql\Platform\Mysql\SelectDecorator;
 use Laminas\Db\Sql\Select;
-use PHPUnit\Framework\Attributes\CoversMethod;
-use PHPUnit\Framework\Attributes\TestDox;
 use PHPUnit\Framework\TestCase;
 
 use function current;
 use function key;
 
-#[CoversMethod(Mysql::class, '__construct')]
-final class MysqlTest extends TestCase
+class MysqlTest extends TestCase
 {
-    #[TestDox('unit test / object test: Test Mysql object has Select proxy')]
-    public function testConstruct(): void
+    /**
+     * @testdox unit test / object test: Test Mysql object has Select proxy
+     * @covers \Laminas\Db\Sql\Platform\Mysql\Mysql::__construct
+     */
+    public function testConstruct()
     {
         $mysql      = new Mysql();
         $decorators = $mysql->getDecorators();

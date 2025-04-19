@@ -5,34 +5,29 @@ namespace LaminasTest\Db\Adapter\Driver\IbmDb2;
 use Laminas\Db\Adapter\Driver\IbmDb2\Connection;
 use Laminas\Db\Adapter\Driver\IbmDb2\IbmDb2;
 use Laminas\Db\Adapter\Driver\IbmDb2\Result;
-use PHPUnit\Framework\Attributes\CoversMethod;
-use PHPUnit\Framework\Attributes\Group;
 
 use function ini_get;
 use function php_uname;
 
-#[CoversMethod(Connection::class, 'getCurrentSchema')]
-#[CoversMethod(Connection::class, 'setResource')]
-#[CoversMethod(Connection::class, 'getResource')]
-#[CoversMethod(Connection::class, 'connect')]
-#[CoversMethod(Connection::class, 'isConnected')]
-#[CoversMethod(Connection::class, 'disconnect')]
-#[CoversMethod(Connection::class, 'beginTransaction')]
-#[CoversMethod(Connection::class, 'commit')]
-#[CoversMethod(Connection::class, 'rollback')]
-#[CoversMethod(Connection::class, 'execute')]
-#[CoversMethod(Connection::class, 'getLastGeneratedValue')]
-#[Group('integration')]
-#[Group('integration-ibm_db2')]
-final class ConnectionIntegrationTest extends AbstractIntegrationTestCase
+/**
+ * @group integration
+ * @group integration-ibm_db2
+ */
+class ConnectionIntegrationTest extends AbstractIntegrationTest
 {
-    public function testGetCurrentSchema(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Driver\IbmDb2\Connection::getCurrentSchema
+     */
+    public function testGetCurrentSchema()
     {
         $connection = new Connection($this->variables);
         self::assertInternalType('string', $connection->getCurrentSchema());
     }
 
-    public function testSetResource(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Driver\IbmDb2\Connection::setResource
+     */
+    public function testSetResource()
     {
         $resource   = db2_connect(
             $this->variables['database'],
@@ -47,7 +42,10 @@ final class ConnectionIntegrationTest extends AbstractIntegrationTestCase
         unset($resource);
     }
 
-    public function testGetResource(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Driver\IbmDb2\Connection::getResource
+     */
+    public function testGetResource()
     {
         $connection = new Connection($this->variables);
         $connection->connect();
@@ -57,7 +55,10 @@ final class ConnectionIntegrationTest extends AbstractIntegrationTestCase
         unset($connection);
     }
 
-    public function testConnect(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Driver\IbmDb2\Connection::connect
+     */
+    public function testConnect()
     {
         $connection = new Connection($this->variables);
         self::assertSame($connection, $connection->connect());
@@ -67,7 +68,10 @@ final class ConnectionIntegrationTest extends AbstractIntegrationTestCase
         unset($connection);
     }
 
-    public function testIsConnected(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Driver\IbmDb2\Connection::isConnected
+     */
+    public function testIsConnected()
     {
         $connection = new Connection($this->variables);
         self::assertFalse($connection->isConnected());
@@ -78,7 +82,10 @@ final class ConnectionIntegrationTest extends AbstractIntegrationTestCase
         unset($connection);
     }
 
-    public function testDisconnect(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Driver\IbmDb2\Connection::disconnect
+     */
+    public function testDisconnect()
     {
         $connection = new Connection($this->variables);
         $connection->connect();
@@ -88,7 +95,7 @@ final class ConnectionIntegrationTest extends AbstractIntegrationTestCase
     }
 
     /**
-     * @return void
+     * @covers \Laminas\Db\Adapter\Driver\IbmDb2\Connection::beginTransaction
      */
     public function testBeginTransaction()
     {
@@ -104,7 +111,7 @@ final class ConnectionIntegrationTest extends AbstractIntegrationTestCase
     }
 
     /**
-     * @return void
+     * @covers \Laminas\Db\Adapter\Driver\IbmDb2\Connection::commit
      */
     public function testCommit()
     {
@@ -125,7 +132,7 @@ final class ConnectionIntegrationTest extends AbstractIntegrationTestCase
     }
 
     /**
-     * @return void
+     * @covers \Laminas\Db\Adapter\Driver\IbmDb2\Connection::rollback
      */
     public function testRollback()
     {
@@ -147,8 +154,10 @@ final class ConnectionIntegrationTest extends AbstractIntegrationTestCase
 
     /**
      * Return true if the transaction is enabled for DB2
+     *
+     * @return bool
      */
-    protected function isTransactionEnabled(): bool
+    protected function isTransactionEnabled()
     {
         $os = php_uname('s') === 'OS400';
         if ($os) {
@@ -158,7 +167,10 @@ final class ConnectionIntegrationTest extends AbstractIntegrationTestCase
         return true;
     }
 
-    public function testExecute(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Driver\IbmDb2\Connection::execute
+     */
+    public function testExecute()
     {
         $ibmdb2     = new IbmDb2($this->variables);
         $connection = $ibmdb2->getConnection();
@@ -167,17 +179,20 @@ final class ConnectionIntegrationTest extends AbstractIntegrationTestCase
         self::assertInstanceOf(Result::class, $result);
     }
 
-    public function testGetLastGeneratedValue(): never
+    /**
+     * @covers \Laminas\Db\Adapter\Driver\IbmDb2\Connection::getLastGeneratedValue
+     */
+    public function testGetLastGeneratedValue()
     {
         $this->markTestIncomplete('Need to create a temporary sequence.');
-        /*
         $connection = new Connection($this->variables);
         $connection->getLastGeneratedValue();
-        */
     }
 
-    #[Group('laminas3469')]
-    public function testConnectReturnsConnectionWhenResourceSet(): void
+    /**
+     * @group laminas3469
+     */
+    public function testConnectReturnsConnectionWhenResourceSet()
     {
         $resource   = db2_connect(
             $this->variables['database'],

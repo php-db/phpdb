@@ -4,9 +4,6 @@ namespace LaminasTest\Db\Sql;
 
 use Laminas\Db\Sql\Exception\InvalidArgumentException;
 use Laminas\Db\Sql\TableIdentifier;
-use LaminasTest\Db\TestAsset\ObjectToString;
-use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 use TypeError;
@@ -14,88 +11,98 @@ use TypeError;
 use function array_merge;
 
 /**
- * Tests for {@see TableIdentifier}
+ * Tests for {@see \Laminas\Db\Sql\TableIdentifier}
+ *
+ * @covers \Laminas\Db\Sql\TableIdentifier
  */
-#[CoversClass(TableIdentifier::class)]
-final class TableIdentifierTest extends TestCase
+class TableIdentifierTest extends TestCase
 {
-    public function testGetTable(): void
+    public function testGetTable()
     {
         $tableIdentifier = new TableIdentifier('foo');
 
         self::assertSame('foo', $tableIdentifier->getTable());
     }
 
-    public function testGetDefaultSchema(): void
+    public function testGetDefaultSchema()
     {
         $tableIdentifier = new TableIdentifier('foo');
 
         self::assertNull($tableIdentifier->getSchema());
     }
 
-    public function testGetSchema(): void
+    public function testGetSchema()
     {
         $tableIdentifier = new TableIdentifier('foo', 'bar');
 
         self::assertSame('bar', $tableIdentifier->getSchema());
     }
 
-    public function testGetTableFromObjectStringCast(): void
+    public function testGetTableFromObjectStringCast()
     {
-        $table           = new ObjectToString('castResult');
+        $table = $this->getMockBuilder('stdClass')->setMethods(['__toString'])->getMock();
+
+        $table->expects($this->once())->method('__toString')->will($this->returnValue('castResult'));
+
         $tableIdentifier = new TableIdentifier((string) $table);
 
         self::assertSame('castResult', $tableIdentifier->getTable());
         self::assertSame('castResult', $tableIdentifier->getTable());
     }
 
-    /**
-     * @todo Review test to see if relevant?
-     */
-    public function testGetSchemaFromObjectStringCast(): void
+    public function testGetSchemaFromObjectStringCast()
     {
-        $schema          = new ObjectToString('castResult');
+        $schema = $this->getMockBuilder('stdClass')->setMethods(['__toString'])->getMock();
+
+        $schema->expects($this->once())->method('__toString')->will($this->returnValue('castResult'));
+
         $tableIdentifier = new TableIdentifier('foo', (string) $schema);
 
         self::assertSame('castResult', $tableIdentifier->getSchema());
         self::assertSame('castResult', $tableIdentifier->getSchema());
     }
 
-    #[DataProvider('invalidTableProvider')]
-    public function testRejectsInvalidTable(mixed $invalidTable): void
+    /**
+     * @dataProvider invalidTableProvider
+     * @param mixed $invalidTable
+     */
+    public function testRejectsInvalidTable($invalidTable)
     {
         $this->expectException($invalidTable === '' ? InvalidArgumentException::class : TypeError::class);
-        /** @psalm-suppress MixedArgument */
+
         new TableIdentifier($invalidTable);
     }
 
-    #[DataProvider('invalidSchemaProvider')]
-    public function testRejectsInvalidSchema(mixed $invalidSchema): void
+    /**
+     * @dataProvider invalidSchemaProvider
+     * @param mixed $invalidSchema
+     */
+    public function testRejectsInvalidSchema($invalidSchema)
     {
         $this->expectException($invalidSchema === '' ? InvalidArgumentException::class : TypeError::class);
-        /** @psalm-suppress MixedArgument */
+
         new TableIdentifier('foo', $invalidSchema);
     }
 
     /**
      * Data provider
      *
-     * @return array[]
+     * @return mixed[][]
      */
-    public static function invalidTableProvider(): array
+    public function invalidTableProvider()
     {
         return array_merge(
             [[null]],
-            self::invalidSchemaProvider()
+            $this->invalidSchemaProvider()
         );
     }
 
     /**
      * Data provider
      *
-     * @return array[]
+     * @return mixed[][]
      */
-    public static function invalidSchemaProvider(): array
+    public function invalidSchemaProvider()
     {
         return [
             [''],

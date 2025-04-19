@@ -8,78 +8,76 @@ use Laminas\Db\Adapter\Driver\StatementInterface;
 use Laminas\Db\Adapter\Platform\PlatformInterface;
 use Laminas\Db\TableGateway\Feature\SequenceFeature;
 use Laminas\Db\TableGateway\TableGateway;
-use Override;
-use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
 
-final class SequenceFeatureTest extends TestCase
+class SequenceFeatureTest extends TestCase
 {
-    protected SequenceFeature $feature;
+    /** @var SequenceFeature */
+    protected $feature;
 
-    protected TableGateway $tableGateway;
+    /** @var TableGateway */
+    protected $tableGateway;
 
     /**  @var string primary key name */
-    protected string $primaryKeyField = 'id';
+    protected $primaryKeyField = 'id';
 
     /** @var string  sequence name */
-    protected static string $sequenceName = 'table_sequence';
+    protected $sequenceName = 'table_sequence';
 
-    #[Override]
     protected function setUp(): void
     {
-        $this->feature = new SequenceFeature($this->primaryKeyField, self::$sequenceName);
+        $this->feature = new SequenceFeature($this->primaryKeyField, $this->sequenceName);
     }
 
     /**
-     * @throws Exception
+     * @dataProvider nextSequenceIdProvider
      */
-    #[DataProvider('nextSequenceIdProvider')]
-    public function testNextSequenceId(string $platformName, string $statementSql): void
+    public function testNextSequenceId(string $platformName, string $statementSql)
     {
         $platform = $this->createMock(PlatformInterface::class);
         $platform->expects($this->any())
             ->method('getName')
-            ->willReturn($platformName);
+            ->will($this->returnValue($platformName));
         $platform->expects($this->any())
             ->method('quoteIdentifier')
-            ->willReturn(self::$sequenceName);
+            ->will($this->returnValue($this->sequenceName));
         $adapter = $this->getMockBuilder(Adapter::class)
-            ->onlyMethods(['getPlatform', 'createStatement'])
+            ->setMethods(['getPlatform', 'createStatement'])
             ->disableOriginalConstructor()
             ->getMock();
         $adapter->expects($this->any())
             ->method('getPlatform')
-            ->willReturn($platform);
+            ->will($this->returnValue($platform));
         $result = $this->createMock(ResultInterface::class);
         $result->expects($this->any())
             ->method('current')
-            ->willReturn(['nextval' => 2]);
+            ->will($this->returnValue(['nextval' => 2]));
         $statement = $this->createMock(StatementInterface::class);
         $statement->expects($this->any())
             ->method('execute')
-            ->willReturn($result);
+            ->will($this->returnValue($result));
         $statement->expects($this->any())
             ->method('prepare')
             ->with($statementSql);
         $adapter->expects($this->once())
             ->method('createStatement')
-            ->willReturn($statement);
-        $this->tableGateway = $this
-            ->getMockBuilder(TableGateway::class)
-            ->setConstructorArgs(['table', $adapter])
-            ->onlyMethods([])
-            ->getMock();
+            ->will($this->returnValue($statement));
+        $this->tableGateway = $this->getMockForAbstractClass(
+            TableGateway::class,
+            ['table', $adapter],
+            '',
+            true
+        );
         $this->feature->setTableGateway($this->tableGateway);
         $this->feature->nextSequenceId();
     }
 
     /** @psalm-return array<array-key, array{0: string, 1: string}> */
-    public static function nextSequenceIdProvider(): array
+    public function nextSequenceIdProvider(): array
     {
         return [
-            ['PostgreSQL', 'SELECT NEXTVAL(\'"' . self::$sequenceName . '"\')'],
-            ['Oracle', 'SELECT ' . self::$sequenceName . '.NEXTVAL as "nextval" FROM dual'],
+            ['PostgreSQL', 'SELECT NEXTVAL(\'"' . $this->sequenceName . '"\')'],
+            ['Oracle', 'SELECT ' . $this->sequenceName . '.NEXTVAL as "nextval" FROM dual'],
         ];
     }
 }

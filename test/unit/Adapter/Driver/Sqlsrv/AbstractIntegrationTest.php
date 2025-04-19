@@ -1,20 +1,17 @@
 <?php
 
-/** @noinspection PhpComposerExtensionStubsInspection */
-
 namespace LaminasTest\Db\Adapter\Driver\Sqlsrv;
 
-use Override;
 use PHPUnit\Framework\TestCase;
 
 use function extension_loaded;
 use function getenv;
 use function sqlsrv_connect;
 
-abstract class AbstractIntegrationTestCase extends TestCase
+abstract class AbstractIntegrationTest extends TestCase
 {
     /** @var array<string, string> */
-    protected array $variables = [
+    protected $variables = [
         'hostname' => 'TESTS_LAMINAS_DB_ADAPTER_DRIVER_SQLSRV_HOSTNAME',
         'username' => 'TESTS_LAMINAS_DB_ADAPTER_DRIVER_SQLSRV_USERNAME',
         'password' => 'TESTS_LAMINAS_DB_ADAPTER_DRIVER_SQLSRV_PASSWORD',
@@ -27,7 +24,6 @@ abstract class AbstractIntegrationTestCase extends TestCase
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
-    #[Override]
     protected function setUp(): void
     {
         if (! getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_SQLSRV')) {

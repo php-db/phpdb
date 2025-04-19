@@ -27,7 +27,8 @@ class PredicateSet implements PredicateInterface, Countable
     /** @var string */
     protected $defaultCombination = self::COMBINED_BY_AND;
 
-    protected array $predicates = [];
+    /** @var PredicateInterface[] */
+    protected $predicates = [];
 
     /**
      * Constructor
@@ -134,9 +135,9 @@ class PredicateSet implements PredicateInterface, Countable
     /**
      * Return the predicates
      *
-     * @return array
+     * @return PredicateInterface[]
      */
-    public function getPredicates(): array
+    public function getPredicates()
     {
         return $this->predicates;
     }

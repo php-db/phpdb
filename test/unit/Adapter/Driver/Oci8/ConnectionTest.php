@@ -4,22 +4,17 @@ namespace LaminasTest\Db\Adapter\Driver\Oci8;
 
 use Laminas\Db\Adapter\Driver\Oci8\Connection;
 use Laminas\Db\Adapter\Driver\Oci8\Oci8;
-use Override;
-use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 
-#[CoversMethod(Connection::class, 'setDriver')]
-#[CoversMethod(Connection::class, 'setConnectionParameters')]
-#[CoversMethod(Connection::class, 'getConnectionParameters')]
-final class ConnectionTest extends TestCase
+class ConnectionTest extends TestCase
 {
-    protected Connection $connection;
+    /** @var Connection */
+    protected $connection;
 
     /**
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
-    #[Override]
     protected function setUp(): void
     {
         $this->connection = new Connection([]);
@@ -33,17 +28,26 @@ final class ConnectionTest extends TestCase
     {
     }
 
-    public function testSetDriver(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Driver\Oci8\Connection::setDriver
+     */
+    public function testSetDriver()
     {
         self::assertEquals($this->connection, $this->connection->setDriver(new Oci8([])));
     }
 
-    public function testSetConnectionParameters(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Driver\Oci8\Connection::setConnectionParameters
+     */
+    public function testSetConnectionParameters()
     {
         self::assertEquals($this->connection, $this->connection->setConnectionParameters([]));
     }
 
-    public function testGetConnectionParameters(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Driver\Oci8\Connection::getConnectionParameters
+     */
+    public function testGetConnectionParameters()
     {
         $this->connection->setConnectionParameters(['foo' => 'bar']);
         self::assertEquals(['foo' => 'bar'], $this->connection->getConnectionParameters());

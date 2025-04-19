@@ -3,13 +3,14 @@
 namespace LaminasTest\Db\Sql\Ddl\Column;
 
 use Laminas\Db\Sql\Ddl\Column\Char;
-use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 
-#[CoversMethod(Char::class, 'getExpressionData')]
-final class CharTest extends TestCase
+class CharTest extends TestCase
 {
-    public function testGetExpressionData(): void
+    /**
+     * @covers \Laminas\Db\Sql\Ddl\Column\Char::getExpressionData
+     */
+    public function testGetExpressionData()
     {
         $column = new Char('foo', 20);
         self::assertEquals(

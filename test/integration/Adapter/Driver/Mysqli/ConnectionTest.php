@@ -3,16 +3,17 @@
 namespace LaminasIntegrationTest\Db\Adapter\Driver\Mysqli;
 
 use Laminas\Db\Adapter\Driver\Mysqli\Connection;
-use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 
-#[Group('integration')]
-#[Group('integration-mysqli')]
-final class ConnectionTest extends TestCase
+/**
+ * @group integration
+ * @group integration-mysqli
+ */
+class ConnectionTest extends TestCase
 {
     use TraitSetup;
 
-    public function testConnectionOk(): void
+    public function testConnectionOk()
     {
         $connection = new Connection($this->variables);
         $connection->connect();

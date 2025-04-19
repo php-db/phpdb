@@ -4,12 +4,13 @@ namespace LaminasTest\Db\TestAsset;
 
 use Laminas\Db\Adapter\Platform\Mysql;
 
-final class TrustingMysqlPlatform extends Mysql
+class TrustingMysqlPlatform extends Mysql
 {
     /**
      * @param string $value
+     * @return string
      */
-    public function quoteValue($value): string
+    public function quoteValue($value)
     {
         return $this->quoteTrustedValue($value);
     }

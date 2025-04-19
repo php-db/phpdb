@@ -3,76 +3,81 @@
 namespace LaminasTest\Db\Adapter\Platform;
 
 use Laminas\Db\Adapter\Platform\Sql92;
-use Override;
-use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 
-#[CoversMethod(Sql92::class, 'getName')]
-#[CoversMethod(Sql92::class, 'getQuoteIdentifierSymbol')]
-#[CoversMethod(Sql92::class, 'quoteIdentifier')]
-#[CoversMethod(Sql92::class, 'quoteIdentifierChain')]
-#[CoversMethod(Sql92::class, 'getQuoteValueSymbol')]
-#[CoversMethod(Sql92::class, 'quoteValue')]
-#[CoversMethod(Sql92::class, 'quoteTrustedValue')]
-#[CoversMethod(Sql92::class, 'quoteValueList')]
-#[CoversMethod(Sql92::class, 'getIdentifierSeparator')]
-#[CoversMethod(Sql92::class, 'quoteIdentifierInFragment')]
-final class Sql92Test extends TestCase
+class Sql92Test extends TestCase
 {
-    protected Sql92 $platform;
+    /** @var Sql92 */
+    protected $platform;
 
     /**
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
-    #[Override]
     protected function setUp(): void
     {
         $this->platform = new Sql92();
     }
 
-    public function testGetName(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Platform\Sql92::getName
+     */
+    public function testGetName()
     {
         self::assertEquals('SQL92', $this->platform->getName());
     }
 
-    public function testGetQuoteIdentifierSymbol(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Platform\Sql92::getQuoteIdentifierSymbol
+     */
+    public function testGetQuoteIdentifierSymbol()
     {
         self::assertEquals('"', $this->platform->getQuoteIdentifierSymbol());
     }
 
-    public function testQuoteIdentifier(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Platform\Sql92::quoteIdentifier
+     */
+    public function testQuoteIdentifier()
     {
         self::assertEquals('"identifier"', $this->platform->quoteIdentifier('identifier'));
     }
 
-    public function testQuoteIdentifierChain(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Platform\Sql92::quoteIdentifierChain
+     */
+    public function testQuoteIdentifierChain()
     {
         self::assertEquals('"identifier"', $this->platform->quoteIdentifierChain('identifier'));
         self::assertEquals('"identifier"', $this->platform->quoteIdentifierChain(['identifier']));
         self::assertEquals('"schema"."identifier"', $this->platform->quoteIdentifierChain(['schema', 'identifier']));
     }
 
-    public function testGetQuoteValueSymbol(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Platform\Sql92::getQuoteValueSymbol
+     */
+    public function testGetQuoteValueSymbol()
     {
         self::assertEquals("'", $this->platform->getQuoteValueSymbol());
     }
 
-    public function testQuoteValueRaisesNoticeWithoutPlatformSupport(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Platform\Sql92::quoteValue
+     */
+    public function testQuoteValueRaisesNoticeWithoutPlatformSupport()
     {
-        /**
-         * @todo Determine if vulnerability warning is required during unit testing
-         */
-        //$this->expectNotice();
-        //$this->expectExceptionMessage(
-        //    'Attempting to quote a value without specific driver level support can introduce security vulnerabilities '
-        //    . 'in a production environment.'
-        //);
-        $this->expectNotToPerformAssertions();
+        $this->expectNotice();
+        $this->expectNoticeMessage(
+            'Attempting to quote a value without specific driver level support can introduce security vulnerabilities '
+            . 'in a production environment.'
+        );
         $this->platform->quoteValue('value');
     }
 
-    public function testQuoteValue(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Platform\Sql92::quoteValue
+     */
+    public function testQuoteValue()
     {
         self::assertEquals("'value'", @$this->platform->quoteValue('value'));
         self::assertEquals("'Foo O\\'Bar'", @$this->platform->quoteValue("Foo O'Bar"));
@@ -86,7 +91,10 @@ final class Sql92Test extends TestCase
         );
     }
 
-    public function testQuoteTrustedValue(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Platform\Sql92::quoteTrustedValue
+     */
+    public function testQuoteTrustedValue()
     {
         self::assertEquals("'value'", $this->platform->quoteTrustedValue('value'));
         self::assertEquals("'Foo O\\'Bar'", $this->platform->quoteTrustedValue("Foo O'Bar"));
@@ -102,25 +110,31 @@ final class Sql92Test extends TestCase
         );
     }
 
-    public function testQuoteValueList(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Platform\Sql92::quoteValueList
+     */
+    public function testQuoteValueList()
     {
-        /**
-         * @todo Determine if vulnerability warning is required during unit testing
-         */
-        //$this->expectError();
-        //$this->expectExceptionMessage(
-        //    'Attempting to quote a value without specific driver level support can introduce security vulnerabilities '
-        //    . 'in a production environment.'
-        //);
+        $this->expectError();
+        $this->expectErrorMessage(
+            'Attempting to quote a value without specific driver level support can introduce security vulnerabilities '
+            . 'in a production environment.'
+        );
         self::assertEquals("'Foo O\\'Bar'", $this->platform->quoteValueList("Foo O'Bar"));
     }
 
-    public function testGetIdentifierSeparator(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Platform\Sql92::getIdentifierSeparator
+     */
+    public function testGetIdentifierSeparator()
     {
         self::assertEquals('.', $this->platform->getIdentifierSeparator());
     }
 
-    public function testQuoteIdentifierInFragment(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Platform\Sql92::quoteIdentifierInFragment
+     */
+    public function testQuoteIdentifierInFragment()
     {
         self::assertEquals('"foo"."bar"', $this->platform->quoteIdentifierInFragment('foo.bar'));
         self::assertEquals('"foo" as "bar"', $this->platform->quoteIdentifierInFragment('foo as bar'));

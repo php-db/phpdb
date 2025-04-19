@@ -5,8 +5,6 @@ namespace LaminasTest\Db\Adapter\Driver\Mysqli;
 use Laminas\Db\Adapter\Driver\Mysqli\Connection;
 use Laminas\Db\Adapter\Driver\Mysqli\Mysqli;
 use Laminas\Db\Adapter\Exception\RuntimeException;
-use Override;
-use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -15,18 +13,15 @@ use function getenv;
 use const MYSQLI_CLIENT_SSL;
 use const MYSQLI_CLIENT_SSL_DONT_VERIFY_SERVER_CERT;
 
-#[CoversMethod(Connection::class, 'setDriver')]
-#[CoversMethod(Connection::class, 'setConnectionParameters')]
-#[CoversMethod(Connection::class, 'getConnectionParameters')]
-final class ConnectionTest extends TestCase
+class ConnectionTest extends TestCase
 {
-    protected Connection $connection;
+    /** @var Connection */
+    protected $connection;
 
     /**
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
-    #[Override]
     protected function setUp(): void
     {
         if (! getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_MYSQL')) {
@@ -43,23 +38,32 @@ final class ConnectionTest extends TestCase
     {
     }
 
-    public function testSetDriver(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Driver\Mysqli\Connection::setDriver
+     */
+    public function testSetDriver()
     {
         self::assertEquals($this->connection, $this->connection->setDriver(new Mysqli([])));
     }
 
-    public function testSetConnectionParameters(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Driver\Mysqli\Connection::setConnectionParameters
+     */
+    public function testSetConnectionParameters()
     {
         self::assertEquals($this->connection, $this->connection->setConnectionParameters([]));
     }
 
-    public function testGetConnectionParameters(): void
+    /**
+     * @covers \Laminas\Db\Adapter\Driver\Mysqli\Connection::getConnectionParameters
+     */
+    public function testGetConnectionParameters()
     {
         $this->connection->setConnectionParameters(['foo' => 'bar']);
         self::assertEquals(['foo' => 'bar'], $this->connection->getConnectionParameters());
     }
 
-    public function testNonSecureConnection(): void
+    public function testNonSecureConnection()
     {
         $mysqli     = $this->createMockMysqli(0);
         $connection = $this->createMockConnection(
@@ -76,7 +80,7 @@ final class ConnectionTest extends TestCase
         $connection->connect();
     }
 
-    public function testSslConnection(): void
+    public function testSslConnection()
     {
         $mysqli     = $this->createMockMysqli(MYSQLI_CLIENT_SSL);
         $connection = $this->createMockConnection(
@@ -94,7 +98,7 @@ final class ConnectionTest extends TestCase
         $connection->connect();
     }
 
-    public function testSslConnectionNoVerify(): void
+    public function testSslConnectionNoVerify()
     {
         $mysqli     = $this->createMockMysqli(MYSQLI_CLIENT_SSL | MYSQLI_CLIENT_SSL_DONT_VERIFY_SERVER_CERT);
         $connection = $this->createMockConnection(
@@ -115,7 +119,7 @@ final class ConnectionTest extends TestCase
         $connection->connect();
     }
 
-    public function testConnectionFails(): void
+    public function testConnectionFails()
     {
         $connection = new Connection([]);
 
@@ -128,8 +132,9 @@ final class ConnectionTest extends TestCase
      * Create a mock mysqli
      *
      * @param int $flags Expected flags to real_connect
+     * @return MockObject
      */
-    protected function createMockMysqli(int $flags): MockObject
+    protected function createMockMysqli($flags)
     {
         $mysqli = $this->getMockBuilder(\mysqli::class)->getMock();
         $mysqli->expects($flags ? $this->once() : $this->never())
@@ -178,12 +183,13 @@ final class ConnectionTest extends TestCase
      * Create a mock connection
      *
      * @param MockObject $mysqli Mock mysqli object
-     * @param array      $params Connection params
+     * @param array                                    $params Connection params
+     * @return MockObject
      */
-    protected function createMockConnection(MockObject $mysqli, array $params): MockObject
+    protected function createMockConnection($mysqli, $params)
     {
         $connection = $this->getMockBuilder(Connection::class)
-            ->onlyMethods(['createResource'])
+            ->setMethods(['createResource'])
             ->setConstructorArgs([$params])
             ->getMock();
         $connection->expects($this->once())

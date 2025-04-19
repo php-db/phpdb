@@ -4,12 +4,13 @@ namespace LaminasTest\Db\TestAsset;
 
 use Laminas\Db\Adapter\Platform\Oracle;
 
-final class TrustingOraclePlatform extends Oracle
+class TrustingOraclePlatform extends Oracle
 {
     /**
      * @param string $value
+     * @return string
      */
-    public function quoteValue($value): string
+    public function quoteValue($value)
     {
         return $this->quoteTrustedValue($value);
     }

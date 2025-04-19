@@ -3,13 +3,14 @@
 namespace LaminasTest\Db\Sql\Ddl\Column;
 
 use Laminas\Db\Sql\Ddl\Column\Binary;
-use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 
-#[CoversMethod(Binary::class, 'getExpressionData')]
-final class BinaryTest extends TestCase
+class BinaryTest extends TestCase
 {
-    public function testGetExpressionData(): void
+    /**
+     * @covers \Laminas\Db\Sql\Ddl\Column\Binary::getExpressionData
+     */
+    public function testGetExpressionData()
     {
         $column = new Binary('foo', 10000000);
         self::assertEquals(

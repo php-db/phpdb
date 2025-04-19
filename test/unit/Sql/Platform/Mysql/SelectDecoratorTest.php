@@ -15,33 +15,32 @@ use Laminas\Db\Sql\Platform\Mysql\SelectDecorator;
 use Laminas\Db\Sql\Select;
 use Laminas\Db\Sql\Sql;
 use LaminasTest\Db\TestAsset\TrustingMysqlPlatform;
-use PHPUnit\Framework\Attributes\CoversMethod;
-use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\Attributes\TestDox;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-#[CoversMethod(SelectDecorator::class, 'prepareStatement')]
-#[CoversMethod(SelectDecorator::class, 'processLimit')]
-#[CoversMethod(SelectDecorator::class, 'processOffset')]
-#[CoversMethod(SelectDecorator::class, 'getSqlString')]
-final class SelectDecoratorTest extends TestCase
+class SelectDecoratorTest extends TestCase
 {
-    protected Adapter&MockObject $mockAdapter;
+    /** @var Adapter&MockObject */
+    protected $mockAdapter;
 
-    protected Sql $sql;
-    #[DataProvider('dataProvider')]
-
-    #[TestDox('integration test: Testing SelectDecorator will use Select an internal state to prepare
-                           a proper limit/offset sql statement')]
-    public function testPrepareStatement(Select $select, string $expectedSql, array $expectedParams): void
+    /** @var Sql */
+    protected $sql;
+    /**
+     * @testdox integration test: Testing SelectDecorator will use Select an internal state to prepare
+     *                            a proper limit/offset sql statement
+     * @covers \Laminas\Db\Sql\Platform\Mysql\SelectDecorator::prepareStatement
+     * @covers \Laminas\Db\Sql\Platform\Mysql\SelectDecorator::processLimit
+     * @covers \Laminas\Db\Sql\Platform\Mysql\SelectDecorator::processOffset
+     * @dataProvider dataProvider
+     */
+    public function testPrepareStatement(Select $select, string $expectedSql, array $expectedParams)
     {
         $driver = $this->getMockBuilder(DriverInterface::class)->getMock();
-        $driver->expects($this->any())->method('formatParameterName')->willReturn('?');
+        $driver->expects($this->any())->method('formatParameterName')->will($this->returnValue('?'));
 
         // test
         $adapter = $this->getMockBuilder(Adapter::class)
-            ->onlyMethods([])
+            ->setMethods()
             ->setConstructorArgs([
                 $driver,
                 new MysqlPlatform(),
@@ -51,7 +50,7 @@ final class SelectDecoratorTest extends TestCase
         $parameterContainer = new ParameterContainer();
         $statement          = $this->getMockBuilder(StatementInterface::class)->getMock();
         $statement->expects($this->any())->method('getParameterContainer')
-            ->willReturn($parameterContainer);
+            ->will($this->returnValue($parameterContainer));
 
         $statement->expects($this->once())->method('setSql')->with($expectedSql);
 
@@ -62,16 +61,24 @@ final class SelectDecoratorTest extends TestCase
         self::assertEquals($expectedParams, $parameterContainer->getNamedArray());
     }
 
-    #[DataProvider('dataProvider')]
-    #[TestDox('integration test: Testing SelectDecorator will use Select an internal state to prepare
-                           a proper limit/offset sql statement')]
+    /**
+     * @testdox integration test: Testing SelectDecorator will use Select an internal state to prepare
+     *                            a proper limit/offset sql statement
+     * @covers \Laminas\Db\Sql\Platform\Mysql\SelectDecorator::prepareStatement
+     * @covers \Laminas\Db\Sql\Platform\Mysql\SelectDecorator::processLimit
+     * @covers \Laminas\Db\Sql\Platform\Mysql\SelectDecorator::processOffset
+     * @dataProvider dataProvider
+     * @param mixed $ignore
+     * @param array<string, mixed> $params
+     * @param mixed $alsoIgnore
+     */
     public function testPrepareStatementForSqlObject(
         Select $select,
-        mixed $ignore,
+        $ignore,
         array $expectedParams,
-        mixed $alsoIgnore,
+        $alsoIgnore,
         string $expectedPdoSql
-    ): void {
+    ) {
         // mock the adapter, driver, and parts
         $newStatement     = new Statement();
         $driver           = new Pdo(new Connection());
@@ -79,8 +86,8 @@ final class SelectDecoratorTest extends TestCase
                             ->setConstructorArgs([$driver, new TrustingMysqlPlatform()])
                             ->getMock();
         $trustingPlatform = new TrustingMysqlPlatform();
-        $mockAdapter->expects($this->any())->method('getPlatform')->willReturn($trustingPlatform);
-        $mockAdapter->expects($this->any())->method('getDriver')->willReturn($driver);
+        $mockAdapter->expects($this->any())->method('getPlatform')->will($this->returnValue($trustingPlatform));
+        $mockAdapter->expects($this->any())->method('getDriver')->will($this->returnValue($driver));
         // setup mock adapter
         $this->mockAdapter = $mockAdapter;
 
@@ -91,15 +98,22 @@ final class SelectDecoratorTest extends TestCase
         self::assertEquals($expectedPdoSql, $statement->getSql());
     }
 
-    #[DataProvider('dataProvider')]
-    #[TestDox('integration test: Testing SelectDecorator will use Select an internal state to prepare
-                           a proper limit/offset sql statement')]
-    public function testGetSqlString(Select $select, mixed $ignore, mixed $alsoIgnore, string $expectedSql): void
+    /**
+     * @testdox integration test: Testing SelectDecorator will use Select an internal state to prepare
+     *                            a proper limit/offset sql statement
+     * @covers \Laminas\Db\Sql\Platform\Mysql\SelectDecorator::getSqlString
+     * @covers \Laminas\Db\Sql\Platform\Mysql\SelectDecorator::processLimit
+     * @covers \Laminas\Db\Sql\Platform\Mysql\SelectDecorator::processOffset
+     * @dataProvider dataProvider
+     * @param mixed $ignore
+     * @param mixed $alsoIgnore
+     */
+    public function testGetSqlString(Select $select, $ignore, $alsoIgnore, string $expectedSql)
     {
         $parameterContainer = new ParameterContainer();
         $statement          = $this->getMockBuilder(StatementInterface::class)->getMock();
         $statement->expects($this->any())->method('getParameterContainer')
-            ->willReturn($parameterContainer);
+            ->will($this->returnValue($parameterContainer));
 
         $selectDecorator = new SelectDecorator();
         $selectDecorator->setSubject($select);
@@ -115,7 +129,7 @@ final class SelectDecoratorTest extends TestCase
      *     4: string
      * }>
      */
-    public static function dataProvider(): array
+    public function dataProvider(): array
     {
         // phpcs:disable Generic.Files.LineLength.TooLong
         $select0 = new Select();

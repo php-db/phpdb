@@ -4,34 +4,27 @@ namespace LaminasTest\Db\Metadata\Source;
 
 use Laminas\Db\Metadata\Object\ConstraintKeyObject;
 use Laminas\Db\Metadata\Source\AbstractSource;
-use Override;
-use PHPUnit\Framework\MockObject\Exception;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use ReflectionException;
 use ReflectionProperty;
 
-final class AbstractSourceTest extends TestCase
+class AbstractSourceTest extends TestCase
 {
     /** @var AbstractSource */
-    protected MockObject|AbstractSource $abstractSourceMock;
+    protected $abstractSourceMock;
 
-    /**
-     * @throws Exception
-     */
-    #[Override]
     protected function setUp(): void
     {
-        $this->abstractSourceMock = $this->getMockBuilder(AbstractSource::class)->setConstructorArgs([])->onlyMethods([])->disableOriginalConstructor()->getMock();
+        $this->abstractSourceMock = $this->getMockForAbstractClass(
+            AbstractSource::class,
+            [],
+            '',
+            false
+        );
     }
 
-    /**
-     * @throws ReflectionException
-     */
-    public function testGetConstraintKeys(): void
+    public function testGetConstraintKeys()
     {
         $refProp = new ReflectionProperty($this->abstractSourceMock, 'data');
-        /** @psalm-suppress UnusedMethodCall */
         $refProp->setAccessible(true);
 
         // internal data
@@ -63,6 +56,9 @@ final class AbstractSourceTest extends TestCase
         $constraints = $this->abstractSourceMock->getConstraintKeys('bam_constraint', 'bar_table', 'foo_schema');
         self::assertCount(1, $constraints);
 
+        /**
+         * @var ConstraintKeyObject $constraintKeyObj
+         */
         $constraintKeyObj = $constraints[0];
         self::assertInstanceOf(ConstraintKeyObject::class, $constraintKeyObj);
 

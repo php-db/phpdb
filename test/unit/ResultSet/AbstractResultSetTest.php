@@ -8,45 +8,32 @@ use Laminas\Db\Adapter\Driver\ResultInterface;
 use Laminas\Db\ResultSet\AbstractResultSet;
 use Laminas\Db\ResultSet\Exception\InvalidArgumentException;
 use Laminas\Db\ResultSet\Exception\RuntimeException;
-use Override;
 use PDOStatement;
-use PHPUnit\Framework\Attributes\CoversMethod;
-use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 use function assert;
 
-#[CoversMethod(AbstractResultSet::class, 'initialize')]
-#[CoversMethod(AbstractResultSet::class, 'buffer')]
-#[CoversMethod(AbstractResultSet::class, 'isBuffered')]
-#[CoversMethod(AbstractResultSet::class, 'getDataSource')]
-#[CoversMethod(AbstractResultSet::class, 'getFieldCount')]
-#[CoversMethod(AbstractResultSet::class, 'next')]
-#[CoversMethod(AbstractResultSet::class, 'key')]
-#[CoversMethod(AbstractResultSet::class, 'current')]
-#[CoversMethod(AbstractResultSet::class, 'valid')]
-#[CoversMethod(AbstractResultSet::class, 'rewind')]
-#[CoversMethod(AbstractResultSet::class, 'count')]
-#[CoversMethod(AbstractResultSet::class, 'toArray')]
-final class AbstractResultSetTest extends TestCase
+class AbstractResultSetTest extends TestCase
 {
     /** @var MockObject */
-    protected AbstractResultSet|MockObject $resultSet;
+    protected $resultSet;
 
     /**
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
-    #[Override]
     protected function setUp(): void
     {
-        $this->resultSet = $this->getMockBuilder(AbstractResultSet::class)->onlyMethods([])->getMock();
+        $this->resultSet = $this->getMockForAbstractClass(AbstractResultSet::class);
     }
 
-    public function testInitialize(): void
+    /**
+     * @covers \Laminas\Db\ResultSet\AbstractResultSet::initialize
+     */
+    public function testInitialize()
     {
-        $resultSet = $this->getMockBuilder(AbstractResultSet::class)->onlyMethods([])->getMock();
+        $resultSet = $this->getMockForAbstractClass(AbstractResultSet::class);
 
         self::assertSame($resultSet, $resultSet->initialize([
             ['id' => 1, 'name' => 'one'],
@@ -61,26 +48,35 @@ final class AbstractResultSetTest extends TestCase
         $resultSet->initialize('foo');
     }
 
-    public function testInitializeDoesNotCallCount(): void
+    /**
+     * @covers \Laminas\Db\ResultSet\AbstractResultSet::initialize
+     */
+    public function testInitializeDoesNotCallCount()
     {
-        $resultSet = $this->getMockBuilder(AbstractResultSet::class)->onlyMethods([])->getMock();
-        $result    = $this->getMockBuilder(ResultInterface::class)->onlyMethods([])->getMock();
+        $resultSet = $this->getMockForAbstractClass(AbstractResultSet::class);
+        $result    = $this->getMockForAbstractClass(ResultInterface::class);
         $result->expects($this->never())->method('count');
         $resultSet->initialize($result);
     }
 
-    public function testInitializeWithEmptyArray(): void
+    /**
+     * @covers \Laminas\Db\ResultSet\AbstractResultSet::initialize
+     */
+    public function testInitializeWithEmptyArray()
     {
-        $resultSet = $this->getMockBuilder(AbstractResultSet::class)->onlyMethods([])->getMock();
+        $resultSet = $this->getMockForAbstractClass(AbstractResultSet::class);
         self::assertSame($resultSet, $resultSet->initialize([]));
     }
 
-    public function testBuffer(): void
+    /**
+     * @covers \Laminas\Db\ResultSet\AbstractResultSet::buffer
+     */
+    public function testBuffer()
     {
-        $resultSet = $this->getMockBuilder(AbstractResultSet::class)->onlyMethods([])->getMock();
+        $resultSet = $this->getMockForAbstractClass(AbstractResultSet::class);
         self::assertSame($resultSet, $resultSet->buffer());
 
-        $resultSet = $this->getMockBuilder(AbstractResultSet::class)->onlyMethods([])->getMock();
+        $resultSet = $this->getMockForAbstractClass(AbstractResultSet::class);
         $resultSet->initialize(new ArrayIterator([
             ['id' => 1, 'name' => 'one'],
             ['id' => 2, 'name' => 'two'],
@@ -92,17 +88,23 @@ final class AbstractResultSetTest extends TestCase
         $resultSet->buffer();
     }
 
-    public function testIsBuffered(): void
+    /**
+     * @covers \Laminas\Db\ResultSet\AbstractResultSet::isBuffered
+     */
+    public function testIsBuffered()
     {
-        $resultSet = $this->getMockBuilder(AbstractResultSet::class)->onlyMethods([])->getMock();
+        $resultSet = $this->getMockForAbstractClass(AbstractResultSet::class);
         self::assertFalse($resultSet->isBuffered());
         $resultSet->buffer();
         self::assertTrue($resultSet->isBuffered());
     }
 
-    public function testGetDataSource(): void
+    /**
+     * @covers \Laminas\Db\ResultSet\AbstractResultSet::getDataSource
+     */
+    public function testGetDataSource()
     {
-        $resultSet = $this->getMockBuilder(AbstractResultSet::class)->onlyMethods([])->getMock();
+        $resultSet = $this->getMockForAbstractClass(AbstractResultSet::class);
         $resultSet->initialize(new ArrayIterator([
             ['id' => 1, 'name' => 'one'],
             ['id' => 2, 'name' => 'two'],
@@ -111,18 +113,24 @@ final class AbstractResultSetTest extends TestCase
         self::assertInstanceOf(ArrayIterator::class, $resultSet->getDataSource());
     }
 
-    public function testGetFieldCount(): void
+    /**
+     * @covers \Laminas\Db\ResultSet\AbstractResultSet::getFieldCount
+     */
+    public function testGetFieldCount()
     {
-        $resultSet = $this->getMockBuilder(AbstractResultSet::class)->onlyMethods([])->getMock();
+        $resultSet = $this->getMockForAbstractClass(AbstractResultSet::class);
         $resultSet->initialize(new ArrayIterator([
             ['id' => 1, 'name' => 'one'],
         ]));
         self::assertEquals(2, $resultSet->getFieldCount());
     }
 
-    public function testNext(): void
+    /**
+     * @covers \Laminas\Db\ResultSet\AbstractResultSet::next
+     */
+    public function testNext()
     {
-        $resultSet = $this->getMockBuilder(AbstractResultSet::class)->onlyMethods([])->getMock();
+        $resultSet = $this->getMockForAbstractClass(AbstractResultSet::class);
         $resultSet->initialize(new ArrayIterator([
             ['id' => 1, 'name' => 'one'],
             ['id' => 2, 'name' => 'two'],
@@ -131,9 +139,12 @@ final class AbstractResultSetTest extends TestCase
         self::assertNull($resultSet->next());
     }
 
-    public function testKey(): void
+    /**
+     * @covers \Laminas\Db\ResultSet\AbstractResultSet::key
+     */
+    public function testKey()
     {
-        $resultSet = $this->getMockBuilder(AbstractResultSet::class)->onlyMethods([])->getMock();
+        $resultSet = $this->getMockForAbstractClass(AbstractResultSet::class);
         $resultSet->initialize(new ArrayIterator([
             ['id' => 1, 'name' => 'one'],
             ['id' => 2, 'name' => 'two'],
@@ -147,9 +158,12 @@ final class AbstractResultSetTest extends TestCase
         self::assertEquals(3, $resultSet->key());
     }
 
-    public function testCurrent(): void
+    /**
+     * @covers \Laminas\Db\ResultSet\AbstractResultSet::current
+     */
+    public function testCurrent()
     {
-        $resultSet = $this->getMockBuilder(AbstractResultSet::class)->onlyMethods([])->getMock();
+        $resultSet = $this->getMockForAbstractClass(AbstractResultSet::class);
         $resultSet->initialize(new ArrayIterator([
             ['id' => 1, 'name' => 'one'],
             ['id' => 2, 'name' => 'two'],
@@ -158,9 +172,12 @@ final class AbstractResultSetTest extends TestCase
         self::assertEquals(['id' => 1, 'name' => 'one'], $resultSet->current());
     }
 
-    public function testValid(): void
+    /**
+     * @covers \Laminas\Db\ResultSet\AbstractResultSet::valid
+     */
+    public function testValid()
     {
-        $resultSet = $this->getMockBuilder(AbstractResultSet::class)->onlyMethods([])->getMock();
+        $resultSet = $this->getMockForAbstractClass(AbstractResultSet::class);
         $resultSet->initialize(new ArrayIterator([
             ['id' => 1, 'name' => 'one'],
             ['id' => 2, 'name' => 'two'],
@@ -173,9 +190,12 @@ final class AbstractResultSetTest extends TestCase
         self::assertFalse($resultSet->valid());
     }
 
-    public function testRewind(): void
+    /**
+     * @covers \Laminas\Db\ResultSet\AbstractResultSet::rewind
+     */
+    public function testRewind()
     {
-        $resultSet = $this->getMockBuilder(AbstractResultSet::class)->onlyMethods([])->getMock();
+        $resultSet = $this->getMockForAbstractClass(AbstractResultSet::class);
         $resultSet->initialize(new ArrayIterator([
             ['id' => 1, 'name' => 'one'],
             ['id' => 2, 'name' => 'two'],
@@ -184,9 +204,12 @@ final class AbstractResultSetTest extends TestCase
         self::assertNull($resultSet->rewind());
     }
 
-    public function testCount(): void
+    /**
+     * @covers \Laminas\Db\ResultSet\AbstractResultSet::count
+     */
+    public function testCount()
     {
-        $resultSet = $this->getMockBuilder(AbstractResultSet::class)->onlyMethods([])->getMock();
+        $resultSet = $this->getMockForAbstractClass(AbstractResultSet::class);
         $resultSet->initialize(new ArrayIterator([
             ['id' => 1, 'name' => 'one'],
             ['id' => 2, 'name' => 'two'],
@@ -195,9 +218,12 @@ final class AbstractResultSetTest extends TestCase
         self::assertEquals(3, $resultSet->count());
     }
 
-    public function testToArray(): void
+    /**
+     * @covers \Laminas\Db\ResultSet\AbstractResultSet::toArray
+     */
+    public function testToArray()
     {
-        $resultSet = $this->getMockBuilder(AbstractResultSet::class)->onlyMethods([])->getMock();
+        $resultSet = $this->getMockForAbstractClass(AbstractResultSet::class);
         $resultSet->initialize(new ArrayIterator([
             ['id' => 1, 'name' => 'one'],
             ['id' => 2, 'name' => 'two'],
@@ -215,11 +241,12 @@ final class AbstractResultSetTest extends TestCase
 
     /**
      * Test multiple iterations with buffer
+     *
+     * @group issue-6845
      */
-    #[Group('issue-6845')]
-    public function testBufferIterations(): void
+    public function testBufferIterations()
     {
-        $resultSet = $this->getMockBuilder(AbstractResultSet::class)->onlyMethods([])->getMock();
+        $resultSet = $this->getMockForAbstractClass(AbstractResultSet::class);
         $resultSet->initialize(new ArrayIterator([
             ['id' => 1, 'name' => 'one'],
             ['id' => 2, 'name' => 'two'],
@@ -246,11 +273,12 @@ final class AbstractResultSetTest extends TestCase
 
     /**
      * Test multiple iterations with buffer with multiple rewind() calls
+     *
+     * @group issue-6845
      */
-    #[Group('issue-6845')]
-    public function testMultipleRewindBufferIterations(): void
+    public function testMultipleRewindBufferIterations()
     {
-        $resultSet = $this->getMockBuilder(AbstractResultSet::class)->onlyMethods([])->getMock();
+        $resultSet = $this->getMockForAbstractClass(AbstractResultSet::class);
         $result    = new Result();
         $stub      = $this->getMockBuilder(PDOStatement::class)->getMock();
         $data      = new ArrayIterator([
@@ -261,11 +289,11 @@ final class AbstractResultSetTest extends TestCase
         assert($stub instanceof PDOStatement); // to suppress IDE type warnings
         $stub->expects($this->any())
             ->method('fetch')
-            ->willReturnCallback(function () use ($data) {
+            ->will($this->returnCallback(function () use ($data) {
                 $r = $data->current();
                 $data->next();
                 return $r;
-            });
+            }));
         $result->initialize($stub, null);
         $result->rewind();
         $result->rewind();
