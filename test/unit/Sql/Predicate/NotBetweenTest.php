@@ -40,7 +40,7 @@ final class NotBetweenTest extends TestCase
         self::assertEquals($expected, $this->notBetween->getExpressionData());
 
         $this->notBetween
-            ->setIdentifier(10)
+            ->setIdentifier([10 => ExpressionInterface::TYPE_VALUE])
             ->setMinValue(['foo.bar' => ExpressionInterface::TYPE_IDENTIFIER])
             ->setMaxValue(['foo.baz' => ExpressionInterface::TYPE_IDENTIFIER]);
         $expected = [

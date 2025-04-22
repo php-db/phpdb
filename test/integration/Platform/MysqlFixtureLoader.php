@@ -14,7 +14,7 @@ final class MysqlFixtureLoader implements FixtureLoader
 {
     private string $fixtureFile = __DIR__ . '/../TestFixtures/mysql.sql';
 
-    private PDO $pdo;
+    private ?PDO $pdo = null;
 
     /**
      * @throws Exception
