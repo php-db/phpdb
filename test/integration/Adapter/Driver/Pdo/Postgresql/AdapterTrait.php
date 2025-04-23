@@ -16,7 +16,10 @@ trait AdapterTrait
     #[Override]
     protected function setUp(): void
     {
-        if (! is_string(getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_PGSQL')) || strtolower(getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_PGSQL')) !== 'true') {
+        if (
+            ! is_string(getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_PGSQL'))
+            || strtolower(getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_PGSQL')) !== 'true'
+        ) {
             $this->markTestSkipped('pdo_pgsql integration tests are not enabled!');
         }
 

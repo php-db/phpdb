@@ -65,7 +65,8 @@ final class Sql92Test extends TestCase
          */
         //$this->expectNotice();
         //$this->expectExceptionMessage(
-        //    'Attempting to quote a value without specific driver level support can introduce security vulnerabilities '
+        //    'Attempting to quote a value without specific driver level '
+        //    . ' support can introduce security vulnerabilities'
         //    . 'in a production environment.'
         //);
         $this->expectNotToPerformAssertions();
@@ -109,7 +110,8 @@ final class Sql92Test extends TestCase
          */
         //$this->expectError();
         //$this->expectExceptionMessage(
-        //    'Attempting to quote a value without specific driver level support can introduce security vulnerabilities '
+        //    'Attempting to quote a value without specific driver level '
+        //    . 'support can introduce security vulnerabilities '
         //    . 'in a production environment.'
         //);
         self::assertEquals("'Foo O\\'Bar'", $this->platform->quoteValueList("Foo O'Bar"));
