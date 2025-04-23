@@ -2,6 +2,7 @@
 
 namespace LaminasTest\Db\Sql\Ddl\Column;
 
+use Laminas\Db\Sql\Argument;
 use Laminas\Db\Sql\Ddl\Column\AbstractLengthColumn;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\MockObject\Exception;
@@ -39,9 +40,13 @@ final class AbstractLengthColumnTest extends TestCase
     {
         $column = $this->getMockBuilder(AbstractLengthColumn::class)->setConstructorArgs(['foo', 4])->onlyMethods([])->getMock();
 
-        self::assertEquals(
-            [['%s %s NOT NULL', ['foo', 'INTEGER(4)'], [$column::TYPE_IDENTIFIER, $column::TYPE_LITERAL]]],
-            $column->getExpressionData()
-        );
+        $expressionData = $column->getExpressionData();
+
+        self::assertEquals('%s %s(%s) NOT NULL', $expressionData->getExpressionSpecification());
+        self::assertEquals([
+            Argument::identifier('foo'),
+            Argument::literal('INTEGER'),
+            Argument::literal('4')
+        ], $expressionData->getExpressionValues());
     }
 }

@@ -10,6 +10,8 @@ class ExpressionPart
     /** @var Argument[] $values */
     protected array $values = [];
 
+    protected bool $isJoin = false;
+
     /** @param Argument[] $values */
     public function __construct(?string $specification = null, ?array $values = null)
     {
@@ -22,9 +24,11 @@ class ExpressionPart
         }
     }
 
-    public function getSpecificationString(): string
+    public function getSpecificationString(bool $decorateString = false): string
     {
-        return implode(' ', $this->specification);
+        $specification = ($decorateString && $this->isJoin) ? ' %s ' : '%s';
+
+        return sprintf($specification, implode(' ', $this->specification));
     }
 
     public function getSpecificationValues(array $values = []): array
@@ -88,6 +92,18 @@ class ExpressionPart
     public function addValue(Argument $value): static
     {
         $this->values[] = $value;
+
+        return $this;
+    }
+
+    public function isJoin(): bool
+    {
+        return $this->isJoin;
+    }
+
+    public function setIsJoin(bool $isJoin): ExpressionPart
+    {
+        $this->isJoin = $isJoin;
 
         return $this;
     }

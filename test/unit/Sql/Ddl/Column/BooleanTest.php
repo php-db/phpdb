@@ -2,6 +2,7 @@
 
 namespace LaminasTest\Db\Sql\Ddl\Column;
 
+use Laminas\Db\Sql\Argument;
 use Laminas\Db\Sql\Ddl\Column\Boolean;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\CoversMethod;
@@ -15,10 +16,14 @@ final class BooleanTest extends TestCase
     public function testGetExpressionData(): void
     {
         $column = new Boolean('foo');
-        self::assertEquals(
-            [['%s %s NOT NULL', ['foo', 'BOOLEAN'], [$column::TYPE_IDENTIFIER, $column::TYPE_LITERAL]]],
-            $column->getExpressionData()
-        );
+
+        $expressionData = $column->getExpressionData();
+
+        self::assertEquals('%s %s NOT NULL', $expressionData->getExpressionSpecification());
+        self::assertEquals([
+            Argument::identifier('foo'),
+            Argument::literal('BOOLEAN')
+        ], $expressionData->getExpressionValues());
     }
 
     #[Group('6257')]

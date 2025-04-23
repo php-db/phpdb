@@ -74,9 +74,13 @@ class Argument
 
     public function getSpecification(): string
     {
-        return (is_array($this->value)) ?
-            sprintf('(%s)', implode(', ', array_fill(0, count($this->value), '%s'))) :
-            '%s';
+        if (is_array($this->value)) {
+            return (count($this->value) > 0) ?
+                sprintf('(%s)', implode(', ', array_fill(0, count($this->value), '%s'))) :
+                '(NULL)';
+        }
+
+        return '%s';
     }
 
     static public function value(null|string|int|float|array|ExpressionInterface|SqlInterface $value): Argument

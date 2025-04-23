@@ -9,7 +9,7 @@ abstract class AbstractLengthColumn extends Column
 {
     protected string $specification = '%s %s(%s)';
 
-    protected int $length;
+    protected ?int $length = null;
 
     /**
      * {@inheritDoc}

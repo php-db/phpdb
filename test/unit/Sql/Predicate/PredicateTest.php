@@ -322,11 +322,15 @@ final class PredicateTest extends TestCase
 
         $expressionData = $predicate->getExpressionData();
 
-        self::assertCount(3, $expressionData->getExpressionParts());
+        self::assertCount(7, $expressionData->getExpressionParts());
         self::assertEquals('%1$s IS NULL', $expressionData->getExpressionPart(0)->getSpecificationString());
         self::assertEquals($identifier1, $expressionData->getExpressionValues()[0]);
         self::assertEquals('AND', $expressionData->getExpressionPart(1)->getSpecificationString());
-        self::assertEquals('(%1$s IS NOT NULL AND %s = %s)', $expressionData->getExpressionPart(2)->getSpecificationString());
+        self::assertEquals('(', $expressionData->getExpressionPart(2)->getSpecificationString());
+        self::assertEquals('%1$s IS NOT NULL', $expressionData->getExpressionPart(3)->getSpecificationString());
+        self::assertEquals('AND', $expressionData->getExpressionPart(4)->getSpecificationString());
+        self::assertEquals('%s = %s', $expressionData->getExpressionPart(5)->getSpecificationString());
+        self::assertEquals(')', $expressionData->getExpressionPart(6)->getSpecificationString());
         self::assertEquals($identifier2, $expressionData->getExpressionValues()[1]);
         self::assertEquals($identifier3, $expressionData->getExpressionValues()[2]);
         self::assertEquals($expression3, $expressionData->getExpressionValues()[3]);

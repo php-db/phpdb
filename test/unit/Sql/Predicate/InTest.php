@@ -58,13 +58,11 @@ final class InTest extends TestCase
             ->setValueSet([1, 2, 3]);
         $expression1 = new Argument('foo.bar', ArgumentType::Identifier);
         $expression2 = new Argument([1, 2, 3], ArgumentType::Value);
-        $expected = [
-            [
-                '%s IN (%s, %s, %s)',
-                [$expression1, $expression2]
-            ],
-        ];
-        self::assertEquals($expected, $in->getExpressionData());
+
+        $expressionData = $in->getExpressionData();
+
+        self::assertEquals('%s IN (%s, %s, %s)', $expressionData->getExpressionSpecification());
+        self::assertEquals([$expression1, $expression2], $expressionData->getExpressionValues());
 
         $in->setIdentifier('foo.bar')
             ->setValueSet([
@@ -93,27 +91,21 @@ final class InTest extends TestCase
         $in       = new In(new Argument('foo'), $select);
         $expression1 = new Argument('foo', ArgumentType::Value);
         $expression2 = new Argument($select, ArgumentType::Select);
-        $expected = [
-            [
-                '%s IN %s',
-                [$expression1, $expression2],
-            ],
-        ];
-        self::assertEquals($expected, $in->getExpressionData());
+
+        $expressionData = $in->getExpressionData();
+
+        self::assertEquals('%s IN %s', $expressionData->getExpressionSpecification());
+        self::assertEquals([$expression1, $expression2], $expressionData->getExpressionValues());
     }
 
     public function testGetExpressionDataWithEmptyValues(): void
     {
         new Select();
         $in       = new In('foo', []);
-        $expression1 = new Argument(new Argument('foo'), ArgumentType::Identifier);
-        $expected = [
-            [
-                '%s IN (NULL)',
-                [$expression1],
-            ],
-        ];
-        $this->assertEquals($expected, $in->getExpressionData());
+
+        $expressionData = $in->getExpressionData();
+
+        self::assertEquals('%s IN (NULL)', $expressionData->getExpressionSpecification());
     }
 
     public function testGetExpressionDataWithSubselectAndIdentifier(): void

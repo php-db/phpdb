@@ -8,6 +8,7 @@ use Laminas\Db\Sql\ArgumentType;
 use Laminas\Db\Sql\Exception\InvalidArgumentException;
 use Laminas\Db\Sql\Expression;
 use Laminas\Db\Sql\ExpressionData;
+use Laminas\Db\Sql\Select;
 use Override;
 
 class Operator extends AbstractExpression implements PredicateInterface
@@ -33,9 +34,9 @@ class Operator extends AbstractExpression implements PredicateInterface
      * Constructor
      */
     public function __construct(
-        null|string|int|float|array|Argument|Expression $left = null,
+        null|string|int|float|array|Argument|Expression|Select $left = null,
         string $operator = self::OPERATOR_EQUAL_TO,
-        null|string|int|float|array|Argument|Expression $right = null
+        null|string|int|float|array|Argument|Expression|Select $right = null
     ) {
         if ($left !== null) {
             $this->setLeft($left);
@@ -64,7 +65,7 @@ class Operator extends AbstractExpression implements PredicateInterface
      * @return $this Provides a fluent interface
      */
     public function setLeft(
-        null|string|int|float|array|Expression|Argument $left,
+        null|string|int|float|array|Expression|Select|Argument $left,
         ArgumentType $type = ArgumentType::Identifier
     ): static {
         $this->left = $left instanceof Argument ? $left : new Argument($left, $type);
@@ -106,7 +107,7 @@ class Operator extends AbstractExpression implements PredicateInterface
      * @return $this Provides a fluent interface
      */
     public function setRight(
-        null|string|int|float|array|Expression|Argument $right,
+        null|string|int|float|array|Expression|Select|Argument $right,
         ArgumentType $type = ArgumentType::Value
     ): static {
         $this->right = $right instanceof Argument ? $right : new Argument($right, $type);

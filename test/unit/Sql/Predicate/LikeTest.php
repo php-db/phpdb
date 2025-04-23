@@ -46,20 +46,19 @@ final class LikeTest extends TestCase
         $like = new Like('bar', 'Foo%');
         $identifier = new Argument('bar', ArgumentType::Identifier);
         $expression = new Argument('Foo%', ArgumentType::Value);
-        self::assertEquals(
-            [
-                ['%1$s LIKE %2$s', [$identifier, $expression]],
-            ],
-            $like->getExpressionData()
-        );
 
-        $like = new Like(['Foo%' => $like::TYPE_VALUE], ['bar' => $like::TYPE_IDENTIFIER]);
-        self::assertEquals(
-            [
-                ['%1$s LIKE %2$s', ['Foo%', 'bar'], [$like::TYPE_VALUE, $like::TYPE_IDENTIFIER]],
-            ],
-            $like->getExpressionData()
-        );
+        $expressionData = $like->getExpressionData();
+
+        self::assertEquals('%1$s LIKE %2$s', $expressionData->getExpressionSpecification());
+        self::assertEquals([$identifier, $expression], $expressionData->getExpressionValues());
+
+        $like = new Like(['Foo%' => ArgumentType::Value], ['bar' => ArgumentType::Identifier]);
+        $identifier = new Argument('Foo%', ArgumentType::Value);
+        $expression = new Argument('bar', ArgumentType::Identifier);
+
+        $expressionData = $like->getExpressionData();
+        self::assertEquals('%1$s LIKE %2$s', $expressionData->getExpressionSpecification());
+        self::assertEquals([$identifier, $expression], $expressionData->getExpressionValues());
     }
 
     public function testInstanceOfPerSetters(): void

@@ -144,6 +144,8 @@ class Column implements ColumnInterface
     #[\Override]
     public function getExpressionData(): ExpressionData
     {
+        $expressionData = new ExpressionData();
+
         $expressionPart = new ExpressionPart();
         $expressionPart->setSpecification($this->specification);
         $expressionPart->setValues([
@@ -155,12 +157,14 @@ class Column implements ColumnInterface
             $expressionPart->addSpecification('NOT NULL');
         }
 
+        $expressionData->addExpressionPart($expressionPart);
+
         if ($this->default !== null) {
+            $expressionPart = new ExpressionPart();
             $expressionPart->addSpecification('DEFAULT %s');
             $expressionPart->addValue(new Argument($this->default, ArgumentType::Value));
+            $expressionData->addExpressionPart($expressionPart);
         }
-
-        $expressionData = new ExpressionData($expressionPart);
 
         foreach ($this->constraints as $constraint) {
             $expressionData->addExpressionParts($constraint->getExpressionData()->getExpressionParts());

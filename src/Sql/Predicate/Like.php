@@ -37,7 +37,7 @@ class Like extends AbstractExpression implements PredicateInterface
      * @return $this Provides a fluent interface
      */
     public function setIdentifier(
-        null|string|int|float|Argument $value,
+        null|string|int|float|array|Argument $value,
         ArgumentType $type = ArgumentType::Identifier
     ): static {
         $this->identifier = $value instanceof Argument ? $value : new Argument($value, $type);
@@ -54,7 +54,7 @@ class Like extends AbstractExpression implements PredicateInterface
      * @return $this Provides a fluent interface
      */
     public function setLike(
-        null|string|int|float|Argument $like,
+        null|string|int|float|array|Argument $like,
         ArgumentType $type = ArgumentType::Value
     ): static {
         $this->like = $like instanceof Argument ? $like : new Argument($like, $type);

@@ -38,13 +38,10 @@ final class NotBetweenTest extends TestCase
         $minValue = new Argument(10, ArgumentType::Value);
         $maxValue = new Argument(19, ArgumentType::Value);
 
-        $expected = [
-            [
-                $this->notBetween->getSpecification(),
-                [$identifier, $minValue, $maxValue]
-            ],
-        ];
-        self::assertEquals($expected, $this->notBetween->getExpressionData());
+        $expressionData = $this->notBetween->getExpressionData();
+
+        self::assertEquals($this->notBetween->getSpecification(), $expressionData->getExpressionSpecification());
+        self::assertEquals([$identifier, $minValue, $maxValue], $expressionData->getExpressionValues());
 
         $this->notBetween
             ->setIdentifier(10, ArgumentType::Value)
@@ -55,12 +52,9 @@ final class NotBetweenTest extends TestCase
         $minValue = new Argument('foo.bar', ArgumentType::Identifier);
         $maxValue = new Argument('foo.baz', ArgumentType::Identifier);
 
-        $expected = [
-            [
-                $this->notBetween->getSpecification(),
-                [$identifier, $minValue, $maxValue]
-            ],
-        ];
-        self::assertEquals($expected, $this->notBetween->getExpressionData());
+        $expressionData = $this->notBetween->getExpressionData();
+
+        self::assertEquals($this->notBetween->getSpecification(), $expressionData->getExpressionSpecification());
+        self::assertEquals([$identifier, $minValue, $maxValue], $expressionData->getExpressionValues());
     }
 }

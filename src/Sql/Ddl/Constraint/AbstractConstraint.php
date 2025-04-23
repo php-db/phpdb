@@ -35,7 +35,7 @@ abstract class AbstractConstraint implements ConstraintInterface
      * @param array|string|null $columns
      * @param string|null       $name
      */
-    public function __construct(null|array|string $columns = null, null|string $name = null)
+    public function __construct(null|array|string $columns = null, ?string $name = null)
     {
         if ($columns !== null) {
             $this->setColumns($columns);

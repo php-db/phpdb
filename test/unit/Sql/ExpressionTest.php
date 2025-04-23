@@ -76,7 +76,7 @@ final class ExpressionTest extends TestCase
     #[Depends('testSetParameters')]
     public function testGetParameters(Expression $expression): void
     {
-        self::assertEquals('foo', $expression->getParameters());
+        self::assertEquals([Argument::value('foo')], $expression->getParameters());
     }
 
     public function testGetExpressionData(): void
@@ -84,21 +84,20 @@ final class ExpressionTest extends TestCase
         $expression = new Expression(
             'X SAME AS ? AND Y = ? BUT LITERALLY ?',
             [
-                ['foo' => Expression::TYPE_IDENTIFIER],
-                [5 => Expression::TYPE_VALUE],
-                ['FUNC(FF%X)' => Expression::TYPE_LITERAL],
+                ['foo' => ArgumentType::Identifier],
+                [5 => ArgumentType::Value],
+                ['FUNC(FF%X)' => ArgumentType::Literal],
             ]
         );
 
-        $expected = [
-            [
-                'X SAME AS %s AND Y = %s BUT LITERALLY %s',
-                ['foo', 5, 'FUNC(FF%X)'],
-                [Expression::TYPE_IDENTIFIER, Expression::TYPE_VALUE, Expression::TYPE_LITERAL],
-            ],
-        ];
+        $expressionData = $expression->getExpressionData();
 
-        self::assertEquals($expected, $expression->getExpressionData());
+        self::assertEquals('X SAME AS %s AND Y = %s BUT LITERALLY %s', $expressionData->getExpressionSpecification());
+        self::assertEquals([
+            Argument::identifier('foo'),
+            Argument::value(5),
+            Argument::literal('FUNC(FF%X)'),
+        ], $expressionData->getExpressionValues());
     }
 
     public function testGetExpressionDataWillEscapePercent(): void
@@ -130,16 +129,10 @@ final class ExpressionTest extends TestCase
         $expression = new Expression('uf.user_id = :user_id OR uf.friend_id = :user_id', ['user_id' => 1]);
         $value      = new Argument(1, ArgumentType::Value);
 
-        self::assertSame(
-            [
-                [
-                    'uf.user_id = :user_id OR uf.friend_id = :user_id',
-                    [$value],
-                    ['value'],
-                ],
-            ],
-            $expression->getExpressionData()
-        );
+        $expressionData = $expression->getExpressionData();
+
+        self::assertEquals('uf.user_id = :user_id OR uf.friend_id = :user_id', $expressionData->getExpressionSpecification());
+        self::assertEquals([$value], $expressionData->getExpressionValues());
     }
 
     #[DataProvider('falsyExpressionParametersProvider')]

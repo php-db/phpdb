@@ -4,7 +4,7 @@ namespace Laminas\Db\Sql\Ddl\Column;
 
 abstract class AbstractPrecisionColumn extends AbstractLengthColumn
 {
-    protected int $decimal;
+    protected ?int $decimal;
 
     /**
      * {@inheritDoc}
@@ -43,12 +43,11 @@ abstract class AbstractPrecisionColumn extends AbstractLengthColumn
     }
 
     /**
-     * @param int|null $decimal
      * @return $this Provides a fluent interface
      */
-    public function setDecimal($decimal)
+    public function setDecimal(?int $decimal)
     {
-        $this->decimal = null === $decimal ? null : (int) $decimal;
+        $this->decimal = $decimal;
 
         return $this;
     }

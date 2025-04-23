@@ -44,6 +44,7 @@ class Index extends AbstractIndex
         $specification = [];
         for ($i = 0; $i < $colCount; $i++) {
             $specPart = '%s';
+            $expressionPart->addValue(new Argument($this->columns[$i], ArgumentType::Identifier));
 
             if (isset($this->lengths[$i])) {
                 $specPart .= "({$this->lengths[$i]})";

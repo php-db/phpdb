@@ -8,6 +8,7 @@ use Laminas\Db\Sql\Exception;
 use Laminas\Db\Sql\Expression;
 use Laminas\Db\Sql\ExpressionData;
 use Laminas\Db\Sql\ExpressionDataSet;
+use Laminas\Db\Sql\ExpressionPart;
 use Laminas\Db\Sql\Predicate\Expression as PredicateExpression;
 use ReturnTypeWillChange;
 
@@ -195,7 +196,9 @@ class PredicateSet implements PredicateInterface, Countable
              }
 
              if (isset($this->predicates[$i + 1])) {
-                 $expressionData->addExpressionPart(sprintf(' %s ', (string) $this->predicates[$i + 1][0]));
+                 $expressionPart = new ExpressionPart(sprintf('%s', (string) $this->predicates[$i + 1][0]));
+                 $expressionPart->setIsJoin(true);
+                 $expressionData->addExpressionPart($expressionPart);
              }
         }
 

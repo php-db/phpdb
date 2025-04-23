@@ -2,6 +2,7 @@
 
 namespace LaminasTest\Db\Sql\Ddl\Constraint;
 
+use Laminas\Db\Sql\Argument;
 use Laminas\Db\Sql\Ddl\Constraint\ForeignKey;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Depends;
@@ -88,22 +89,20 @@ final class ForeignKeyTest extends TestCase
     public function testGetExpressionData(): void
     {
         $fk = new ForeignKey('foo', 'bar', 'baz', 'bam', 'CASCADE', 'SET NULL');
+
+        $expressionData = $fk->getExpressionData();
+
         self::assertEquals(
-            [
-                [
-                    'CONSTRAINT %s FOREIGN KEY (%s) REFERENCES %s (%s) ON DELETE %s ON UPDATE %s',
-                    ['foo', 'bar', 'baz', 'bam', 'CASCADE', 'SET NULL'],
-                    [
-                        $fk::TYPE_IDENTIFIER,
-                        $fk::TYPE_IDENTIFIER,
-                        $fk::TYPE_IDENTIFIER,
-                        $fk::TYPE_IDENTIFIER,
-                        $fk::TYPE_LITERAL,
-                        $fk::TYPE_LITERAL,
-                    ],
-                ],
-            ],
-            $fk->getExpressionData()
+            'CONSTRAINT %s FOREIGN KEY (%s) REFERENCES %s (%s) ON DELETE %s ON UPDATE %s',
+            $expressionData->getExpressionSpecification()
         );
+        self::assertEquals([
+            Argument::identifier('foo'),
+            Argument::identifier('bar'),
+            Argument::identifier('baz'),
+            Argument::identifier('bam'),
+            Argument::literal('CASCADE'),
+            Argument::literal('SET NULL')
+        ], $expressionData->getExpressionValues());
     }
 }

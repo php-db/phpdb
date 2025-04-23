@@ -141,11 +141,11 @@ abstract class AbstractSql implements SqlInterface
         $sqlString            = '';
 
         foreach ($expressionData->getExpressionParts() as $expressionPart) {
-            $specification    = $expressionPart->getSpecificationString();
+            $specification    = $expressionPart->getSpecificationString(true);
             $expressionValues = $expressionPart->getSpecificationValues();
             $values           = [];
             foreach ($expressionValues as $vIndex => $argument) {
-                $values[] = $this->processExpressionValue(
+                $values[] = (string) $this->processExpressionValue(
                     $argument,
                     $expressionParamIndex,
                     $namedParameterPrefix,
@@ -169,7 +169,7 @@ abstract class AbstractSql implements SqlInterface
         PlatformInterface $platform,
         ?DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null,
-    ): string {
+    ): ?string {
         $value = $argument->getValue();
 
         return match($argument->getType()) {
@@ -185,7 +185,7 @@ abstract class AbstractSql implements SqlInterface
             ArgumentType::Literal => $argument->getValueAsString(),
             ArgumentType::Value => ($parameterContainer) ?
                 $this->processExpressionParameterName(
-                    $argument->getValueAsString(),
+                    $argument->getValue(),
                     $namedParameterPrefix,
                     $expressionParamIndex,
                     $driver,
@@ -224,7 +224,7 @@ abstract class AbstractSql implements SqlInterface
         int &$expressionParamIndex,
         DriverInterface $driver,
         ParameterContainer $parameterContainer
-    ): string {
+    ): ?string {
         $name = $namedParameterPrefix . $expressionParamIndex++;
         $parameterContainer->offsetSet($name, $value);
 

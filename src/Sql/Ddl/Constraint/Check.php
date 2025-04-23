@@ -38,13 +38,15 @@ class Check extends AbstractConstraint
     public function getExpressionData(): ExpressionData
     {
         $expressionPart = new ExpressionPart();
-        $expressionPart->setValues([
-            new Argument($this->expression, ArgumentType::Literal),
-        ]);
 
         if ($this->name !== '') {
             $expressionPart->addSpecification($this->namedSpecification);
             $expressionPart->addValue(new Argument($this->name, ArgumentType::Identifier));
+        }
+
+        if ($this->expression !== '') {
+            $expressionPart->addSpecification($this->specification);
+            $expressionPart->addValue(new Argument($this->expression, ArgumentType::Literal));
         }
 
         return new ExpressionData($expressionPart);

@@ -2,6 +2,7 @@
 
 namespace LaminasTest\Db\Sql\Ddl\Column;
 
+use Laminas\Db\Sql\Argument;
 use Laminas\Db\Sql\Ddl\Column\Column;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Depends;
@@ -83,27 +84,34 @@ final class ColumnTest extends TestCase
     {
         $column = new Column();
         $column->setName('foo');
-        self::assertEquals(
-            [['%s %s NOT NULL', ['foo', 'INTEGER'], [$column::TYPE_IDENTIFIER, $column::TYPE_LITERAL]]],
-            $column->getExpressionData()
-        );
+
+        $expressionData = $column->getExpressionData();
+
+        self::assertEquals('%s %s NOT NULL', $expressionData->getExpressionSpecification());
+        self::assertEquals([
+            Argument::identifier('foo'),
+            Argument::literal('INTEGER')
+        ], $expressionData->getExpressionValues());
 
         $column->setNullable(true);
-        self::assertEquals(
-            [['%s %s', ['foo', 'INTEGER'], [$column::TYPE_IDENTIFIER, $column::TYPE_LITERAL]]],
-            $column->getExpressionData()
-        );
+
+        $expressionData = $column->getExpressionData();
+
+        self::assertEquals('%s %s', $expressionData->getExpressionSpecification());
+        self::assertEquals([
+            Argument::identifier('foo'),
+            Argument::literal('INTEGER')
+        ], $expressionData->getExpressionValues());
 
         $column->setDefault('bar');
-        self::assertEquals(
-            [
-                [
-                    '%s %s DEFAULT %s',
-                    ['foo', 'INTEGER', 'bar'],
-                    [$column::TYPE_IDENTIFIER, $column::TYPE_LITERAL, $column::TYPE_VALUE],
-                ],
-            ],
-            $column->getExpressionData()
-        );
+
+        $expressionData = $column->getExpressionData();
+
+        self::assertEquals('%s %s DEFAULT %s', $expressionData->getExpressionSpecification());
+        self::assertEquals([
+            Argument::identifier('foo'),
+            Argument::literal('INTEGER'),
+            Argument::value('bar')
+        ], $expressionData->getExpressionValues());
     }
 }

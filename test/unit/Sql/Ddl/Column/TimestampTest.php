@@ -2,6 +2,7 @@
 
 namespace LaminasTest\Db\Sql\Ddl\Column;
 
+use Laminas\Db\Sql\Argument;
 use Laminas\Db\Sql\Ddl\Column\Timestamp;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
@@ -12,9 +13,13 @@ final class TimestampTest extends TestCase
     public function testGetExpressionData(): void
     {
         $column = new Timestamp('foo');
-        self::assertEquals(
-            [['%s %s NOT NULL', ['foo', 'TIMESTAMP'], [$column::TYPE_IDENTIFIER, $column::TYPE_LITERAL]]],
-            $column->getExpressionData()
-        );
+
+        $expressionData = $column->getExpressionData();
+
+        self::assertEquals('%s %s NOT NULL', $expressionData->getExpressionSpecification());
+        self::assertEquals([
+            Argument::identifier('foo'),
+            Argument::literal('TIMESTAMP')
+        ], $expressionData->getExpressionValues());
     }
 }

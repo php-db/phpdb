@@ -2,6 +2,7 @@
 
 namespace LaminasTest\Db\Sql\Ddl\Column;
 
+use Laminas\Db\Sql\Argument;
 use Laminas\Db\Sql\Ddl\Column\Column;
 use Laminas\Db\Sql\Ddl\Column\Integer;
 use Laminas\Db\Sql\Ddl\Constraint\PrimaryKey;
@@ -21,20 +22,24 @@ final class IntegerTest extends TestCase
     public function testGetExpressionData(): void
     {
         $column = new Integer('foo');
-        self::assertEquals(
-            [['%s %s NOT NULL', ['foo', 'INTEGER'], [$column::TYPE_IDENTIFIER, $column::TYPE_LITERAL]]],
-            $column->getExpressionData()
-        );
+
+        $expressionData = $column->getExpressionData();
+
+        self::assertEquals('%s %s NOT NULL', $expressionData->getExpressionSpecification());
+        self::assertEquals([
+            Argument::identifier('foo'),
+            Argument::literal('INTEGER')
+        ], $expressionData->getExpressionValues());
 
         $column = new Integer('foo');
         $column->addConstraint(new PrimaryKey());
-        self::assertEquals(
-            [
-                ['%s %s NOT NULL', ['foo', 'INTEGER'], [$column::TYPE_IDENTIFIER, $column::TYPE_LITERAL]],
-                ' ',
-                ['PRIMARY KEY', [], []],
-            ],
-            $column->getExpressionData()
-        );
+
+        $expressionData = $column->getExpressionData();
+
+        self::assertEquals('%s %s NOT NULL PRIMARY KEY', $expressionData->getExpressionSpecification());
+        self::assertEquals([
+            Argument::identifier('foo'),
+            Argument::literal('INTEGER')
+        ], $expressionData->getExpressionValues());
     }
 }
