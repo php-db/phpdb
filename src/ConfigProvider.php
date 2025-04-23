@@ -23,16 +23,16 @@ class ConfigProvider
      */
     public function getDependencyConfig()
     {
-        return [
-            'abstract_factories' => [
-                Adapter\AdapterAbstractServiceFactory::class,
-            ],
-            'factories'          => [
-                Adapter\AdapterInterface::class => Adapter\AdapterServiceFactory::class,
-            ],
-            'aliases'            => [
-                Adapter\Adapter::class => Adapter\AdapterInterface::class,
-            ],
-        ];
-    }
+    //     return [
+    //         'abstract_factories' => [
+    //             Adapter\AdapterAbstractServiceFactory::class,
+    //         ],
+    //         'factories'          => [
+    //             Adapter\AdapterInterface::class => Adapter\AdapterServiceFactory::class,
+    //         ],
+    //         'aliases'            => [
+    //             Adapter\Adapter::class => Adapter\AdapterInterface::class,
+    //         ],
+    //     ];
+    // }
 }
