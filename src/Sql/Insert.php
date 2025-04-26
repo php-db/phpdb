@@ -2,8 +2,7 @@
 
 namespace Laminas\Db\Sql;
 
-use Laminas\Db\Adapter\Driver\DriverInterface;
-use Laminas\Db\Adapter\Driver\Pdo\Pdo;
+use Laminas\Db\Adapter\Driver;
 use Laminas\Db\Adapter\ParameterContainer;
 use Laminas\Db\Adapter\Platform\PlatformInterface;
 
@@ -168,7 +167,7 @@ class Insert extends AbstractPreparableSql
 
     protected function processInsert(
         PlatformInterface $platform,
-        ?DriverInterface $driver = null,
+        ?Driver\DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null
     ) {
         if ($this->select) {
@@ -187,7 +186,7 @@ class Insert extends AbstractPreparableSql
             if (is_scalar($value) && $parameterContainer) {
                 // use incremental value instead of column name for PDO
                 // @see https://github.com/zendframework/zend-db/issues/35
-                if ($driver instanceof Pdo) {
+                if ($driver instanceof Driver\PdoDriverInterface) {
                     $column = 'c_' . $i++;
                 }
                 $values[] = $driver->formatParameterName($column);
@@ -211,7 +210,7 @@ class Insert extends AbstractPreparableSql
 
     protected function processSelect(
         PlatformInterface $platform,
-        ?DriverInterface $driver = null,
+        ?Driver\DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null
     ) {
         if (! $this->select) {

@@ -3,8 +3,7 @@
 namespace Laminas\Db\Sql;
 
 use Closure;
-use Laminas\Db\Adapter\Driver\DriverInterface;
-use Laminas\Db\Adapter\Driver\Pdo\Pdo;
+use Laminas\Db\Adapter\Driver;
 use Laminas\Db\Adapter\ParameterContainer;
 use Laminas\Db\Adapter\Platform\PlatformInterface;
 use Laminas\Db\Sql\Predicate\PredicateInterface;
@@ -166,7 +165,7 @@ class Update extends AbstractPreparableSql
     /** @return string */
     protected function processUpdate(
         PlatformInterface $platform,
-        ?DriverInterface $driver = null,
+        ?Driver\DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null
     ) {
         return sprintf(
@@ -178,7 +177,7 @@ class Update extends AbstractPreparableSql
     /** @return string */
     protected function processSet(
         PlatformInterface $platform,
-        ?DriverInterface $driver = null,
+        ?Driver\DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null
     ) {
         $setSql = [];
@@ -199,7 +198,7 @@ class Update extends AbstractPreparableSql
             if (is_scalar($value) && $parameterContainer) {
                 // use incremental value instead of column name for PDO
                 // @see https://github.com/zendframework/zend-db/issues/35
-                if ($driver instanceof Pdo) {
+                if ($driver instanceof Driver\PdoDriverInterface) {
                     $column = 'c_' . $i++;
                 }
                 $setSql[] = $prefix . $driver->formatParameterName($column);
@@ -222,7 +221,7 @@ class Update extends AbstractPreparableSql
 
     protected function processWhere(
         PlatformInterface $platform,
-        ?DriverInterface $driver = null,
+        ?Driver\DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null
     ) {
         if ($this->where->count() === 0) {
@@ -237,7 +236,7 @@ class Update extends AbstractPreparableSql
     /** @return null|string[] */
     protected function processJoins(
         PlatformInterface $platform,
-        ?DriverInterface $driver = null,
+        ?Driver\DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null
     ) {
         return $this->processJoin($this->joins, $platform, $driver, $parameterContainer);
