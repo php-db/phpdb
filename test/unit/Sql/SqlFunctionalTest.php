@@ -557,18 +557,18 @@ class SqlFunctionalTest extends TestCase
         if ($expectedString !== '') {
             self::assertInstanceOf(SqlInterface::class, $sqlObject);
             $actual = $sql->buildSqlString($sqlObject);
-            self::assertEquals($expectedString, $actual, "getSqlString()");
+            self::assertEquals($expectedString, $actual, 'getSqlString()');
         }
         if (is_array($expected) && isset($expected['prepare'])) {
             self::assertInstanceOf(PreparableSqlInterface::class, $sqlObject);
             /** @var StatementInterface|StatementContainer $actual */
             $actual = $sql->prepareStatementForSqlObject($sqlObject);
-            self::assertEquals($expected['prepare'], $actual->getSql(), "prepareStatement()");
+            self::assertEquals($expected['prepare'], $actual->getSql(), 'prepareStatement()');
             if (isset($expected['parameters'])) {
                 $parametersContainer = $actual->getParameterContainer();
                 self::assertInstanceOf(ParameterContainer::class, $parametersContainer);
                 $actual = $parametersContainer->getNamedArray();
-                self::assertSame($expected['parameters'], $actual, "parameterContainer()");
+                self::assertSame($expected['parameters'], $actual, 'parameterContainer()');
             }
         }
     }

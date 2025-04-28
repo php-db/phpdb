@@ -39,7 +39,7 @@ class SqlServerFixtureLoader implements FixtureLoader
             ))
         ) {
             throw new Exception(sprintf(
-                "I cannot create the MSSQL %s database: %s",
+                'I cannot create the MSSQL %s database: %s',
                 getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_SQLSRV_DATABASE'),
                 print_r(sqlsrv_errors(), true)
             ));
@@ -57,7 +57,7 @@ class SqlServerFixtureLoader implements FixtureLoader
         foreach ($fixtures as $name => $fixtureFile) {
             if (false === sqlsrv_query($this->connection, file_get_contents($fixtureFile))) {
                 throw new Exception(sprintf(
-                    "I cannot create the %s for %s database. Check the %s file. %s ",
+                    'I cannot create the %s for %s database. Check the %s file. %s ',
                     $name,
                     getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_SQLSRV_DATABASE'),
                     $fixtureFile,
@@ -77,20 +77,20 @@ class SqlServerFixtureLoader implements FixtureLoader
     {
         $this->connect();
 
-        sqlsrv_query($this->connection, "USE master");
+        sqlsrv_query($this->connection, 'USE master');
         sqlsrv_query($this->connection, sprintf(
-            "ALTER DATABASE %s SET SINGLE_USER WITH ROLLBACK IMMEDIATE",
+            'ALTER DATABASE %s SET SINGLE_USER WITH ROLLBACK IMMEDIATE',
             getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_SQLSRV_DATABASE')
         ));
 
         if (
             false === sqlsrv_query($this->connection, sprintf(
-                "DROP DATABASE %s",
+                'DROP DATABASE %s',
                 getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_SQLSRV_DATABASE')
             ))
         ) {
             throw new Exception(sprintf(
-                "Unable to drop database %s. %s",
+                'Unable to drop database %s. %s',
                 getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_SQLSRV_DATABASE'),
                 print_r(sqlsrv_errors(), true)
             ));
@@ -115,7 +115,7 @@ class SqlServerFixtureLoader implements FixtureLoader
 
         if (false === $this->connection) {
             throw new Exception(sprintf(
-                "Unable to connect %s. %s",
+                'Unable to connect %s. %s',
                 getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_SQLSRV_DATABASE'),
                 print_r(sqlsrv_errors(), true)
             ));

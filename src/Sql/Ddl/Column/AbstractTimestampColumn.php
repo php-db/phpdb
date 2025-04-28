@@ -11,7 +11,7 @@ use Laminas\Db\Sql\ExpressionData;
  */
 abstract class AbstractTimestampColumn extends Column
 {
-    #[Override]
+    #[\Override]
     public function getExpressionData(): ExpressionData
     {
         $expressionData = parent::getExpressionData();

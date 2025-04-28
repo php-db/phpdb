@@ -191,7 +191,7 @@ class IbmDb2 implements DriverInterface, Profiler\ProfilerAwareInterface
     /**
      * Get last generated value
      *
-     * @return mixed
+     * @return string|null
      */
     public function getLastGeneratedValue()
     {

@@ -14,13 +14,13 @@ use stdClass;
 #[Group('integration-sqlserver')]
 class SqlSrvIntegrationTest extends AbstractIntegrationTestCase
 {
-    /** @var Laminas\Db\Adapter\Driver\Sqlsrv\Sqlsrv */
-    private Laminas\Db\Adapter\Driver\Sqlsrv\Sqlsrv|Sqlsrv $driver;
+    /** @var \Laminas\Db\Adapter\Driver\Sqlsrv\Sqlsrv */
+    private \Laminas\Db\Adapter\Driver\Sqlsrv\Sqlsrv $driver;
 
     /** @var resource SQL Server Connection */
     private $resource;
 
-    #[Override]
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

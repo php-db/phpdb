@@ -20,7 +20,7 @@ class SqlServerTest extends TestCase
     /** @var array<string, resource> */
     public array|PDO $adapters = [];
 
-    #[Override]
+    #[\Override]
     protected function setUp(): void
     {
         if (! getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_SQLSRV')) {

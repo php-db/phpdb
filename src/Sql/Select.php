@@ -24,7 +24,6 @@ use function preg_split;
 use function sprintf;
 use function strcasecmp;
 use function stripos;
-use function strpos;
 use function strtolower;
 use function strtoupper;
 use function trim;
@@ -310,7 +309,7 @@ class Select extends AbstractPreparableSql
     public function order($order)
     {
         if (is_string($order)) {
-            if (strpos($order, ',') !== false) {
+            if (str_contains($order, ',')) {
                 $order = preg_split('#,\s+#', $order);
             } else {
                 $order = (array) $order;
@@ -595,7 +594,7 @@ class Select extends AbstractPreparableSql
         }
     }
 
-    /** @return null|string[] */
+    /** @return \string[][][]|null */
     protected function processJoins(
         PlatformInterface $platform,
         ?DriverInterface $driver = null,
@@ -672,8 +671,8 @@ class Select extends AbstractPreparableSql
                 continue;
             }
             if (is_int($k)) {
-                if (strpos($v, ' ') !== false) {
-                    [$k, $v] = preg_split('# #', $v, 2);
+                if (str_contains($v, ' ')) {
+                    [$k, $v] = explode(' ', $v, 2);
                 } else {
                     $k = $v;
                     $v = self::ORDER_ASCENDING;

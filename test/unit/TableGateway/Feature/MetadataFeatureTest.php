@@ -17,6 +17,7 @@ class MetadataFeatureTest extends TestCase
 {
     /**
      * @throws Exception
+     * @throws \Exception
      */
     #[Group('integration-test')]
     public function testPostInitialize(): void
@@ -40,6 +41,7 @@ class MetadataFeatureTest extends TestCase
 
     /**
      * @throws Exception
+     * @throws \Exception
      */
     public function testPostInitializeRecordsPrimaryKeyColumnToSharedMetadata(): void
     {
@@ -76,6 +78,7 @@ class MetadataFeatureTest extends TestCase
 
     /**
      * @throws Exception
+     * @throws \Exception
      */
     public function testPostInitializeRecordsListOfColumnsInPrimaryKeyToSharedMetadata(): void
     {
@@ -112,6 +115,7 @@ class MetadataFeatureTest extends TestCase
 
     /**
      * @throws Exception
+     * @throws \Exception
      */
     public function testPostInitializeSkipsPrimaryKeyCheckIfNotTable(): void
     {

@@ -28,9 +28,9 @@ class SqliteMemoryPdo extends PDO
 
         if (false === $this->exec($sql)) {
             throw new Exception(sprintf(
-                "Error: %s, %s",
+                'Error: %s, %s',
                 $this->errorCode(),
-                implode(",", $this->errorInfo())
+                implode(',', $this->errorInfo())
             ));
         }
     }

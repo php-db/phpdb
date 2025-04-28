@@ -206,7 +206,7 @@ class Mysqli implements DriverInterface, Profiler\ProfilerAwareInterface
     /**
      * Get last generated value
      *
-     * @return mixed
+     * @return int|string
      */
     public function getLastGeneratedValue()
     {

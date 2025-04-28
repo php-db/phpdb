@@ -58,7 +58,7 @@ abstract class AbstractPrecisionColumn extends AbstractLengthColumn
     }
 
     /**
-     * {@inheritDoc}
+     * {}
      * @return string
      */
     protected function getLengthExpression(): string

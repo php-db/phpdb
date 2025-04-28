@@ -11,7 +11,7 @@ use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Tests for {@see \Laminas\Db\Adapter\Driver\Pdo\Connection} transaction support
+ * Tests for {@see Connection} transaction support
  */
 #[CoversClass(Connection::class)]
 #[CoversClass(AbstractConnection::class)]
@@ -21,13 +21,13 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(Connection::class, 'rollback()')]
 class ConnectionTransactionsTest extends TestCase
 {
-    /** @var Wrapper */
+    /** @var ConnectionWrapper|Wrapper */
     protected Wrapper|ConnectionWrapper $wrapper;
 
     /**
      * {@inheritDoc}
      */
-    #[Override]
+    #[\Override]
     protected function setUp(): void
     {
         $this->wrapper = new ConnectionWrapper();

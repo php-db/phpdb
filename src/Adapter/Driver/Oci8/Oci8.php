@@ -7,8 +7,6 @@ use Laminas\Db\Adapter\Driver\Feature\AbstractFeature;
 use Laminas\Db\Adapter\Exception;
 use Laminas\Db\Adapter\Profiler;
 
-use function array_intersect_key;
-use function array_merge;
 use function extension_loaded;
 use function get_resource_type;
 use function is_array;
@@ -252,7 +250,7 @@ class Oci8 implements DriverInterface, Profiler\ProfilerAwareInterface
     }
 
     /**
-     * @return mixed
+     * @return int|null
      */
     public function getLastGeneratedValue()
     {

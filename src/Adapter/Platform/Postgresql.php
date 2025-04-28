@@ -34,7 +34,7 @@ class Postgresql extends AbstractPlatform
     ];
 
     /**
-     * @param null|\Laminas\Db\Adapter\Driver\Pgsql\Pgsql|\Laminas\Db\Adapter\Driver\Pdo\Pdo|resource|\PDO $driver
+     * @param null|Pgsql\Pgsql|Pdo\Pdo|resource|\PDO $driver
      */
     public function __construct($driver = null)
     {
@@ -45,8 +45,8 @@ class Postgresql extends AbstractPlatform
 
     /**
      * @param Pgsql\Pgsql|Pdo\Pdo|resource|\PDO $driver
-     * @return $this Provides a fluent interface
      * @throws Exception\InvalidArgumentException
+     *@return $this Provides a fluent interface
      */
     public function setDriver($driver)
     {

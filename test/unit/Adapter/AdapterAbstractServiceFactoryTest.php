@@ -18,7 +18,7 @@ class AdapterAbstractServiceFactoryTest extends TestCase
 {
     private ServiceManager|ContainerInterface $serviceManager;
 
-    #[Override]
+    #[\Override]
     protected function setUp(): void
     {
         $this->serviceManager = new ServiceManager();

@@ -81,6 +81,7 @@ class AlterTableDecorator extends AlterTable implements PlatformDecoratorInterfa
     }
 
     /**
+     * @param PlatformInterface|null $adapterPlatform
      * @return array
      */
     protected function processAddColumns(?PlatformInterface $adapterPlatform = null): array
@@ -150,6 +151,7 @@ class AlterTableDecorator extends AlterTable implements PlatformDecoratorInterfa
     }
 
     /**
+     * @param PlatformInterface|null $adapterPlatform
      * @return array
      */
     protected function processChangeColumns(?PlatformInterface $adapterPlatform = null): array

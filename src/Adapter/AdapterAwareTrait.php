@@ -4,7 +4,7 @@ namespace Laminas\Db\Adapter;
 
 trait AdapterAwareTrait
 {
-    /** @var Adapter */
+    /** @var AdapterInterface */
     protected $adapter;
 
     /**
@@ -12,7 +12,7 @@ trait AdapterAwareTrait
      *
      * @return $this Provides a fluent interface
      */
-    public function setDbAdapter(Adapter $adapter)
+    public function setDbAdapter(AdapterInterface $adapter)
     {
         $this->adapter = $adapter;
 

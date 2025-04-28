@@ -111,7 +111,7 @@ class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
     /**
      * Get resource
      *
-     * @return mixed
+     * @return mysqli_stmt
      */
     public function getResource()
     {
@@ -194,7 +194,7 @@ class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
      *
      * @param null|array|ParameterContainer $parameters
      * @throws Exception\RuntimeException
-     * @return mixed
+     * @return Result
      */
     public function execute($parameters = null)
     {
@@ -221,15 +221,11 @@ class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
         }
         /** END Standard ParameterContainer Merging Block */
 
-        if ($this->profiler) {
-            $this->profiler->profilerStart($this);
-        }
+        $this->profiler?->profilerStart($this);
 
         $return = $this->resource->execute();
 
-        if ($this->profiler) {
-            $this->profiler->profilerFinish();
-        }
+        $this->profiler?->profilerFinish();
 
         if ($return === false) {
             throw new Exception\RuntimeException($this->resource->error);

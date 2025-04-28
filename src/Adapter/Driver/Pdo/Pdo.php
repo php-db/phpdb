@@ -178,33 +178,21 @@ class Pdo implements DriverInterface, DriverFeatureInterface, Profiler\ProfilerA
     {
         $name = $this->getConnection()->getDriverName();
         if ($nameFormat === self::NAME_FORMAT_CAMELCASE) {
-            switch ($name) {
-                case 'pgsql':
-                    return 'Postgresql';
-                case 'oci':
-                    return 'Oracle';
-                case 'dblib':
-                case 'sqlsrv':
-                    return 'SqlServer';
-                default:
-                    return ucfirst($name);
-            }
+            return match ($name) {
+                'pgsql' => 'Postgresql',
+                'oci' => 'Oracle',
+                'dblib', 'sqlsrv' => 'SqlServer',
+                default => ucfirst($name),
+            };
         } else {
-            switch ($name) {
-                case 'sqlite':
-                    return 'SQLite';
-                case 'mysql':
-                    return 'MySQL';
-                case 'pgsql':
-                    return 'PostgreSQL';
-                case 'oci':
-                    return 'Oracle';
-                case 'dblib':
-                case 'sqlsrv':
-                    return 'SQLServer';
-                default:
-                    return ucfirst($name);
-            }
+            return match ($name) {
+                'sqlite' => 'SQLite',
+                'mysql' => 'MySQL',
+                'pgsql' => 'PostgreSQL',
+                'oci' => 'Oracle',
+                'dblib', 'sqlsrv' => 'SQLServer',
+                default => ucfirst($name),
+            };
         }
     }
 

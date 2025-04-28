@@ -96,7 +96,7 @@ abstract class AbstractConnection implements ConnectionInterface, ProfilerAwareI
     }
 
     /**
-     * {@inheritDoc}
+     * {}
      *
      * @return $this Provides a fluent interface
      */

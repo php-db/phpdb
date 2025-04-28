@@ -17,6 +17,7 @@ use const CASE_LOWER;
 class PostgresqlMetadata extends AbstractSource
 {
     /**
+     * @throws \Exception
      * @return void
      */
     protected function loadSchemaData()
@@ -46,6 +47,7 @@ class PostgresqlMetadata extends AbstractSource
 
     /**
      * @param string $schema
+     * @throws \Exception
      * @return void
      */
     protected function loadTableNameData($schema)
@@ -107,6 +109,7 @@ class PostgresqlMetadata extends AbstractSource
     /**
      * @param string $table
      * @param string $schema
+     * @throws \Exception
      * @return void
      */
     protected function loadColumnData($table, $schema)
@@ -172,6 +175,7 @@ class PostgresqlMetadata extends AbstractSource
     /**
      * @param string $table
      * @param string $schema
+     * @throws \Exception
      * @return void
      */
     protected function loadConstraintData($table, $schema)
@@ -262,7 +266,7 @@ class PostgresqlMetadata extends AbstractSource
               . " WHEN 'UNIQUE' THEN 2"
               . " WHEN 'FOREIGN KEY' THEN 3"
               . " WHEN 'CHECK' THEN 4"
-              . " ELSE 5 END"
+              . ' ELSE 5 END'
               . ', ' . $p->quoteIdentifierChain(['tc', 'constraint_name'])
               . ', ' . $p->quoteIdentifierChain(['kcu', 'ordinal_position']);
 
@@ -305,6 +309,7 @@ class PostgresqlMetadata extends AbstractSource
 
     /**
      * @param string $schema
+     * @throws \Exception
      * @return void
      */
     protected function loadTriggerData($schema)

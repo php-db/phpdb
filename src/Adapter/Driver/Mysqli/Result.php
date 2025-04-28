@@ -122,7 +122,7 @@ class Result implements
     /**
      * Return the resource
      *
-     * @return mixed
+     * @return mysqli|mysqli_result|mysqli_stmt
      */
     public function getResource()
     {
@@ -263,7 +263,7 @@ class Result implements
     /**
      * Key
      *
-     * @return mixed
+     * @return int
      */
     #[ReturnTypeWillChange]
     public function key()

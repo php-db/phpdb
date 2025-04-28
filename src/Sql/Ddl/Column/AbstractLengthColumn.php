@@ -43,7 +43,7 @@ abstract class AbstractLengthColumn extends Column
         return (string) $this->length;
     }
 
-    #[Override]
+    #[\Override]
     public function getExpressionData(): ExpressionData
     {
         $expressionData = parent::getExpressionData();

@@ -30,14 +30,14 @@ use function assert;
 #[CoversMethod(AbstractResultSet::class, 'toArray')]
 class AbstractResultSetTest extends TestCase
 {
-    /** @var MockObject */
+    /** @var AbstractResultSet|MockObject */
     protected AbstractResultSet|MockObject $resultSet;
 
     /**
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
-    #[Override]
+    #[\Override]
     protected function setUp(): void
     {
         $this->resultSet = $this->getMockBuilder(AbstractResultSet::class)->onlyMethods([])->getMock();

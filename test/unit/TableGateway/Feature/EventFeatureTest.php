@@ -266,7 +266,7 @@ class EventFeatureTest extends TestCase
     /**
      * @throws Exception
      */
-    #[Override]
+    #[\Override]
     protected function setUp(): void
     {
         $this->eventManager = new EventManager();

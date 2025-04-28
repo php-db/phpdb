@@ -43,27 +43,27 @@ class AlterTable extends AbstractSql implements SqlInterface
         self::TABLE            => "ALTER TABLE %1\$s\n",
         self::ADD_COLUMNS      => [
             "%1\$s" => [
-                [1 => "ADD COLUMN %1\$s,\n", 'combinedby' => ""],
+                [1 => "ADD COLUMN %1\$s,\n", 'combinedby' => ''],
             ],
         ],
         self::CHANGE_COLUMNS   => [
             "%1\$s" => [
-                [2 => "CHANGE COLUMN %1\$s %2\$s,\n", 'combinedby' => ""],
+                [2 => "CHANGE COLUMN %1\$s %2\$s,\n", 'combinedby' => ''],
             ],
         ],
         self::DROP_COLUMNS     => [
             "%1\$s" => [
-                [1 => "DROP COLUMN %1\$s,\n", 'combinedby' => ""],
+                [1 => "DROP COLUMN %1\$s,\n", 'combinedby' => ''],
             ],
         ],
         self::ADD_CONSTRAINTS  => [
             "%1\$s" => [
-                [1 => "ADD %1\$s,\n", 'combinedby' => ""],
+                [1 => "ADD %1\$s,\n", 'combinedby' => ''],
             ],
         ],
         self::DROP_CONSTRAINTS => [
             "%1\$s" => [
-                [1 => "DROP CONSTRAINT %1\$s,\n", 'combinedby' => ""],
+                [1 => "DROP CONSTRAINT %1\$s,\n", 'combinedby' => ''],
             ],
         ],
         self::DROP_INDEXES     => [

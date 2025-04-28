@@ -116,7 +116,7 @@ class ForeignKey extends AbstractConstraint
         return $this;
     }
 
-    #[Override]
+    #[\Override]
     public function getExpressionData(): ExpressionData
     {
         $colCount = count($this->referenceColumn);

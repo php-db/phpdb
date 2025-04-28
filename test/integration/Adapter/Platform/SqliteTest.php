@@ -17,7 +17,7 @@ class SqliteTest extends TestCase
     /** @var array<string, resource|\PDO> */
     public array|\PDO $adapters = [];
 
-    #[Override]
+    #[\Override]
     protected function setUp(): void
     {
         if (! getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_SQLITE_MEMORY')) {

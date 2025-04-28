@@ -20,7 +20,7 @@ class RowCounterTest extends TestCase
 {
     protected RowCounter $rowCounter;
 
-    #[Override]
+    #[\Override]
     protected function setUp(): void
     {
         $this->rowCounter = new RowCounter();

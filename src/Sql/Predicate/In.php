@@ -77,7 +77,7 @@ class In extends AbstractExpression implements PredicateInterface
     /**
      * Return array of parts for where statement
      */
-    #[Override]
+    #[\Override]
     public function getExpressionData(): ExpressionData
     {
         if ($this->identifier === null) {

@@ -208,7 +208,7 @@ class Pgsql implements DriverInterface, Profiler\ProfilerAwareInterface
      * Get last generated value
      *
      * @param string $name
-     * @return mixed
+     * @return bool|string|null
      */
     public function getLastGeneratedValue($name = null)
     {

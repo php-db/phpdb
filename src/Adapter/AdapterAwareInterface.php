@@ -9,5 +9,5 @@ interface AdapterAwareInterface
      *
      * @return AdapterAwareInterface
      */
-    public function setDbAdapter(Adapter $adapter);
+    public function setDbAdapter(AdapterInterface $adapter);
 }

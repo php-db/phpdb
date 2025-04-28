@@ -12,7 +12,7 @@ trait AdapterTrait
 {
     protected ?string $hostname = 'localhost';
 
-    #[Override]
+    #[\Override]
     protected function setUp(): void
     {
         if (

@@ -21,7 +21,7 @@ class OracleRowCounterTest extends TestCase
 {
     protected OracleRowCounter $rowCounter;
 
-    #[Override]
+    #[\Override]
     protected function setUp(): void
     {
         $this->rowCounter = new OracleRowCounter();
@@ -59,9 +59,9 @@ class OracleRowCounterTest extends TestCase
     }
 
     /**
-     * @psalm-param 5 $returnValue
-     *
-     * @return MockObject|Statement
+     * @param string $sql
+     * @param int    $returnValue
+     * @return MockObject&Statement
      */
     protected function getMockStatement(string $sql, int $returnValue): MockObject&Statement
     {

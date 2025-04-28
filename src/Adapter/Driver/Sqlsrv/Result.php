@@ -77,7 +77,7 @@ class Result implements Iterator, ResultInterface
     /**
      * Current
      *
-     * @return mixed
+     * @return bool
      */
     #[ReturnTypeWillChange]
     public function current()
@@ -106,7 +106,7 @@ class Result implements Iterator, ResultInterface
      * Load
      *
      * @param  int $row
-     * @return mixed
+     * @return array|bool|null
      */
     protected function load($row = SQLSRV_SCROLL_NEXT)
     {
@@ -119,7 +119,7 @@ class Result implements Iterator, ResultInterface
     /**
      * Key
      *
-     * @return mixed
+     * @return int
      */
     #[ReturnTypeWillChange]
     public function key()

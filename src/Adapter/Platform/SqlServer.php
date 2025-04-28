@@ -30,7 +30,7 @@ class SqlServer extends AbstractPlatform
     protected $resource;
 
     /**
-     * @param null|Sqlsrv|\Laminas\Db\Adapter\Driver\Pdo\Pdo|resource|\PDO $driver
+     * @param null|Sqlsrv|Pdo\Pdo|resource|\PDO $driver
      */
     public function __construct($driver = null)
     {
@@ -40,9 +40,9 @@ class SqlServer extends AbstractPlatform
     }
 
     /**
-     * @param Sqlsrv|\Laminas\Db\Adapter\Driver\Pdo\Pdo|resource|\PDO $driver
-     * @return $this Provides a fluent interface
+     * @param Sqlsrv|Pdo\Pdo|resource|\PDO $driver
      * @throws InvalidArgumentException
+     *@return $this Provides a fluent interface
      */
     public function setDriver($driver)
     {

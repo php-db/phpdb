@@ -13,13 +13,13 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(AbstractConstraint::class, 'getColumns')]
 class AbstractConstraintTest extends TestCase
 {
-    /** @var AbstractConstraint */
+    /** @var AbstractConstraint|MockObject */
     protected AbstractConstraint|MockObject $ac;
 
     /**
      * @throws Exception
      */
-    #[Override]
+    #[\Override]
     protected function setUp(): void
     {
         $this->ac = $this->getMockBuilder(AbstractConstraint::class)->onlyMethods([])->getMock();

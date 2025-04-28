@@ -13,14 +13,12 @@ use function array_key_exists;
 use function array_values;
 use function count;
 use function current;
-use function is_array;
 use function is_int;
 use function is_string;
 use function key;
 use function ltrim;
 use function next;
 use function reset;
-use function strpos;
 
 class ParameterContainer implements Iterator, ArrayAccess, Countable
 {
@@ -148,7 +146,7 @@ class ParameterContainer implements Iterator, ArrayAccess, Countable
             $position = array_key_exists($name, $this->data);
 
             // @todo: this assumes that any data begining with a ":" will be considered a parameter
-            if (is_string($value) && strpos($value, ':') === 0) {
+            if (is_string($value) && str_starts_with($value, ':')) {
                 // We have a named parameter; handle name mapping (container creation)
                 $this->nameMapping[ltrim($value, ':')] = $name;
             }
@@ -410,7 +408,7 @@ class ParameterContainer implements Iterator, ArrayAccess, Countable
     /**
      * Key
      *
-     * @return mixed
+     * @return int|string|null
      */
     #[ReturnTypeWillChange]
     public function key()

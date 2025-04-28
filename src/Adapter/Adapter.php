@@ -5,7 +5,6 @@ namespace Laminas\Db\Adapter;
 use Exception as PhpException;
 use Laminas\Db\ResultSet;
 
-use function func_get_args;
 use function in_array;
 use function is_array;
 use function is_bool;

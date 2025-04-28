@@ -88,7 +88,7 @@ class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
     /**
      * Get resource
      *
-     * @return mixed
+     * @return PDOStatement
      */
     public function getResource()
     {
@@ -199,16 +199,12 @@ class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
         }
         /** END Standard ParameterContainer Merging Block */
 
-        if ($this->profiler) {
-            $this->profiler->profilerStart($this);
-        }
+        $this->profiler?->profilerStart($this);
 
         try {
             $this->resource->execute();
         } catch (PDOException $e) {
-            if ($this->profiler) {
-                $this->profiler->profilerFinish();
-            }
+            $this->profiler?->profilerFinish();
 
             $code = $e->getCode();
             if (! is_int($code)) {
@@ -222,9 +218,7 @@ class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
             );
         }
 
-        if ($this->profiler) {
-            $this->profiler->profilerFinish();
-        }
+        $this->profiler?->profilerFinish();
 
         return $this->driver->createResult($this->resource, $this);
     }

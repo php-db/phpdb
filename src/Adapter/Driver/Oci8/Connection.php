@@ -228,9 +228,7 @@ class Connection extends AbstractConnection
             $this->connect();
         }
 
-        if ($this->profiler) {
-            $this->profiler->profilerStart($sql);
-        }
+        $this->profiler?->profilerStart($sql);
 
         $ociStmt = oci_parse($this->resource, $sql);
 
@@ -240,9 +238,7 @@ class Connection extends AbstractConnection
             $valid = @oci_execute($ociStmt, OCI_COMMIT_ON_SUCCESS);
         }
 
-        if ($this->profiler) {
-            $this->profiler->profilerFinish($sql);
-        }
+        $this->profiler?->profilerFinish($sql);
 
         if ($valid === false) {
             $e = oci_error($ociStmt);

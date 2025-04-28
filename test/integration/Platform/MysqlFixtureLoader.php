@@ -25,12 +25,12 @@ class MysqlFixtureLoader implements FixtureLoader
 
         if (
             false === $this->pdo->exec(sprintf(
-                "CREATE DATABASE IF NOT EXISTS %s",
+                'CREATE DATABASE IF NOT EXISTS %s',
                 getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_MYSQL_DATABASE')
             ))
         ) {
             throw new Exception(sprintf(
-                "I cannot create the MySQL %s test database: %s",
+                'I cannot create the MySQL %s test database: %s',
                 getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_MYSQL_DATABASE'),
                 print_r($this->pdo->errorInfo(), true)
             ));
@@ -40,7 +40,7 @@ class MysqlFixtureLoader implements FixtureLoader
 
         if (false === $this->pdo->exec(file_get_contents($this->fixtureFile))) {
             throw new Exception(sprintf(
-                "I cannot create the table for %s database. Check the %s file. %s ",
+                'I cannot create the table for %s database. Check the %s file. %s ',
                 getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_MYSQL_DATABASE'),
                 $this->fixtureFile,
                 print_r($this->pdo->errorInfo(), true)
@@ -55,7 +55,7 @@ class MysqlFixtureLoader implements FixtureLoader
         $this->connect();
 
         $this->pdo->exec(sprintf(
-            "DROP DATABASE IF EXISTS %s",
+            'DROP DATABASE IF EXISTS %s',
             getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_MYSQL_DATABASE')
         ));
 

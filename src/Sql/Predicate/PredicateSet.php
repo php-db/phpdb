@@ -34,6 +34,7 @@ class PredicateSet implements PredicateInterface, Countable
      * Constructor
      *
      * @param null|array $predicates
+     * @param string     $defaultCombination
      */
     public function __construct(?array $predicates = null, string $defaultCombination = self::COMBINED_BY_AND)
     {
@@ -172,7 +173,7 @@ class PredicateSet implements PredicateInterface, Countable
     /**
      * Get predicate parts for where statement
      */
-    #[Override]
+    #[\Override]
     public function getExpressionData(): ExpressionData
     {
         $expressionData = new ExpressionData();
@@ -187,7 +188,7 @@ class PredicateSet implements PredicateInterface, Countable
             );
 
             if (isset($this->predicates[$i + 1])) {
-                $expressionPart = new ExpressionPart(sprintf('%s', (string) $this->predicates[$i + 1][0]));
+                $expressionPart = new ExpressionPart(sprintf('%s', $this->predicates[$i + 1][0]));
                 $expressionData->addExpressionPart($expressionPart);
             }
         }
@@ -198,7 +199,7 @@ class PredicateSet implements PredicateInterface, Countable
     /**
      * Get count of attached predicates
      */
-    #[Override]
+    #[\Override]
     #[ReturnTypeWillChange]
     public function count(): int
     {

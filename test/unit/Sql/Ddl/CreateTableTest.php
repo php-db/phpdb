@@ -44,7 +44,7 @@ class CreateTableTest extends TestCase
         $ct->setTemporary('yes');
         self::assertTrue($ct->isTemporary());
 
-        self::assertStringStartsWith("CREATE TEMPORARY TABLE", $ct->getSqlString());
+        self::assertStringStartsWith('CREATE TEMPORARY TABLE', $ct->getSqlString());
     }
 
     public function testIsTemporary(): void

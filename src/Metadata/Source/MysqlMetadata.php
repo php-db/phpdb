@@ -11,7 +11,6 @@ use function implode;
 use function preg_match;
 use function preg_match_all;
 use function str_replace;
-use function strpos;
 
 use const CASE_LOWER;
 use const PREG_PATTERN_ORDER;
@@ -19,6 +18,7 @@ use const PREG_PATTERN_ORDER;
 class MysqlMetadata extends AbstractSource
 {
     /**
+     * @throws \Exception
      * @return void
      */
     protected function loadSchemaData()
@@ -47,6 +47,7 @@ class MysqlMetadata extends AbstractSource
 
     /**
      * @param string $schema
+     * @throws \Exception
      * @return void
      */
     protected function loadTableNameData($schema)
@@ -108,6 +109,7 @@ class MysqlMetadata extends AbstractSource
     /**
      * @param string $table
      * @param string $schema
+     * @throws \Exception
      * @return void
      */
     protected function loadColumnData($table, $schema)
@@ -185,7 +187,7 @@ class MysqlMetadata extends AbstractSource
                 'character_octet_length'   => $row['CHARACTER_OCTET_LENGTH'],
                 'numeric_precision'        => $row['NUMERIC_PRECISION'],
                 'numeric_scale'            => $row['NUMERIC_SCALE'],
-                'numeric_unsigned'         => false !== strpos($row['COLUMN_TYPE'], 'unsigned'),
+                'numeric_unsigned'         => str_contains($row['COLUMN_TYPE'], 'unsigned'),
                 'erratas'                  => $erratas,
             ];
         }
@@ -196,6 +198,7 @@ class MysqlMetadata extends AbstractSource
     /**
      * @param string $table
      * @param string $schema
+     * @throws \Exception
      * @return void
      */
     protected function loadConstraintData($table, $schema)
@@ -266,7 +269,7 @@ class MysqlMetadata extends AbstractSource
               . " WHEN 'PRIMARY KEY' THEN 1"
               . " WHEN 'UNIQUE' THEN 2"
               . " WHEN 'FOREIGN KEY' THEN 3"
-              . " ELSE 4 END"
+              . ' ELSE 4 END'
 
               . ', ' . $p->quoteIdentifierChain(['TC', 'CONSTRAINT_NAME'])
               . ', ' . $p->quoteIdentifierChain(['KCU', 'ORDINAL_POSITION']);
@@ -311,6 +314,7 @@ class MysqlMetadata extends AbstractSource
 
     /**
      * @param string $schema
+     * @throws \Exception
      * @return void
      */
     protected function loadConstraintDataKeys($schema)
@@ -367,6 +371,7 @@ class MysqlMetadata extends AbstractSource
     /**
      * @param string $table
      * @param string $schema
+     * @throws \Exception
      * @return void
      */
     protected function loadConstraintReferences($table, $schema)
@@ -429,6 +434,7 @@ class MysqlMetadata extends AbstractSource
 
     /**
      * @param string $schema
+     * @throws \Exception
      * @return void
      */
     protected function loadTriggerData($schema)

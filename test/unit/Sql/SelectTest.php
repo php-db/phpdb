@@ -1130,7 +1130,7 @@ class SelectTest extends TestCase
         // join with Expression object in COLUMNS part (Laminas-514)
         // @co-author Koen Pieters (kpieters)
         $select35 = new Select();
-        $select35->from('foo')->columns([])->join('bar', 'm = n', ['thecount' => new Expression("COUNT(*)")]);
+        $select35->from('foo')->columns([])->join('bar', 'm = n', ['thecount' => new Expression('COUNT(*)')]);
         $sqlPrep35       = // same
         $sqlStr35        = 'SELECT COUNT(*) AS "thecount" FROM "foo" INNER JOIN "bar" ON "m" = "n"';
         $internalTests35 = [
@@ -1171,7 +1171,7 @@ class SelectTest extends TestCase
         // Test TableIdentifier In Joins
         $select38 = new Select();
         $select38->from('foo')->columns([])
-            ->join(new TableIdentifier('bar', 'baz'), 'm = n', ['thecount' => new Expression("COUNT(*)")]);
+            ->join(new TableIdentifier('bar', 'baz'), 'm = n', ['thecount' => new Expression('COUNT(*)')]);
         $sqlPrep38       = // same
         $sqlStr38        = 'SELECT COUNT(*) AS "thecount" FROM "foo" INNER JOIN "baz"."bar" ON "m" = "n"';
         $internalTests38 = [
@@ -1249,7 +1249,7 @@ class SelectTest extends TestCase
 
         // limit with offset
         $select45 = new Select();
-        $select45->from('foo')->limit("5")->offset("10");
+        $select45->from('foo')->limit('5')->offset('10');
         $sqlPrep45       = 'SELECT "foo".* FROM "foo" LIMIT ? OFFSET ?';
         $sqlStr45        = 'SELECT "foo".* FROM "foo" LIMIT \'5\' OFFSET \'10\'';
         $params45        = ['limit' => 5, 'offset' => 10];
@@ -1272,7 +1272,7 @@ class SelectTest extends TestCase
 
         // limit with big offset and limit
         $select47 = new Select();
-        $select47->from('foo')->limit("10000000000000000000")->offset("10000000000000000000");
+        $select47->from('foo')->limit('10000000000000000000')->offset('10000000000000000000');
         $sqlPrep47       = 'SELECT "foo".* FROM "foo" LIMIT ? OFFSET ?';
         $sqlStr47        = 'SELECT "foo".* FROM "foo" LIMIT \'10000000000000000000\' OFFSET \'10000000000000000000\'';
         $params47        = ['limit' => 10000000000000000000, 'offset' => 10000000000000000000];

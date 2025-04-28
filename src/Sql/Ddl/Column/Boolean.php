@@ -7,7 +7,7 @@ class Boolean extends Column
     protected string $type = 'BOOLEAN';
 
     /**
-     * {@inheritDoc}
+     * {}
      */
     protected bool $isNullable = false;
 

@@ -31,7 +31,7 @@ trait TraitSetup
      * This method is called before a test is executed.
      */
     #[RequiresPhpExtension('mysqli')]
-    #[Override]
+    #[\Override]
     protected function setUp(): void
     {
         $testEnabled = (string) getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_MYSQL_ENABLED');

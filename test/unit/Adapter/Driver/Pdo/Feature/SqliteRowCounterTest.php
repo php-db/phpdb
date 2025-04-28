@@ -21,7 +21,7 @@ class SqliteRowCounterTest extends TestCase
 {
     protected SqliteRowCounter $rowCounter;
 
-    #[Override]
+    #[\Override]
     protected function setUp(): void
     {
         $this->rowCounter = new SqliteRowCounter();
@@ -59,9 +59,9 @@ class SqliteRowCounterTest extends TestCase
     }
 
     /**
-     * @psalm-param 5 $returnValue
-     *
-     * @return MockObject|Statement
+     * @param string $sql
+     * @param int    $returnValue
+     * @return MockObject&Statement
      */
     protected function getMockStatement(string $sql, int $returnValue): MockObject&Statement
     {

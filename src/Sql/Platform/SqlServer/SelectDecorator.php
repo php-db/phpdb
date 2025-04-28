@@ -8,7 +8,6 @@ use Laminas\Db\Adapter\Platform\PlatformInterface;
 use Laminas\Db\Sql\Platform\PlatformDecoratorInterface;
 use Laminas\Db\Sql\Select;
 
-use function array_push;
 use function array_shift;
 use function array_unshift;
 use function array_values;

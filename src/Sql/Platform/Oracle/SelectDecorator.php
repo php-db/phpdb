@@ -8,7 +8,6 @@ use Laminas\Db\Adapter\Platform\PlatformInterface;
 use Laminas\Db\Sql\Platform\PlatformDecoratorInterface;
 use Laminas\Db\Sql\Select;
 
-use function array_push;
 use function array_shift;
 use function array_unshift;
 use function current;
@@ -51,7 +50,7 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
         ?DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null,
         array &$sqls = [],
-        array &$parameters = []
+        array $parameters = []
     ): void {
         if ($this->limit === null && $this->offset === null) {
             return;

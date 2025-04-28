@@ -127,7 +127,7 @@ class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
     /**
      * Get resource
      *
-     * @return mixed
+     * @return resource
      */
     public function getResource()
     {
@@ -212,7 +212,7 @@ class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
      * Execute
      *
      * @param null|array|ParameterContainer $parameters
-     * @return mixed
+     * @return Result
      */
     public function execute($parameters = null)
     {
@@ -239,9 +239,7 @@ class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
         }
         /** END Standard ParameterContainer Merging Block */
 
-        if ($this->profiler) {
-            $this->profiler->profilerStart($this);
-        }
+        $this->profiler?->profilerStart($this);
 
         if ($this->driver->getConnection()->inTransaction()) {
             $ret = @oci_execute($this->resource, OCI_NO_AUTO_COMMIT);
@@ -249,9 +247,7 @@ class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
             $ret = @oci_execute($this->resource, OCI_COMMIT_ON_SUCCESS);
         }
 
-        if ($this->profiler) {
-            $this->profiler->profilerFinish();
-        }
+        $this->profiler?->profilerFinish();
 
         if ($ret === false) {
             $e = oci_error($this->resource);

@@ -14,7 +14,7 @@ class Check extends AbstractConstraint
     protected $expression;
 
     /**
-     * {@inheritDoc}
+     * {}
      */
     protected string $specification = 'CHECK (%s)';
 
@@ -32,7 +32,7 @@ class Check extends AbstractConstraint
     /**
      * {@inheritDoc}
      */
-    #[\Laminas\Db\Sql\Ddl\Constraint\Override] public function getExpressionData(): ExpressionData
+    #[\Override] public function getExpressionData(): ExpressionData
     {
         $expressionPart = new ExpressionPart();
 

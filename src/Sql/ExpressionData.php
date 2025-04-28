@@ -106,37 +106,37 @@ class ExpressionData implements Iterator, Countable
         return array_merge(...array_map(fn (ExpressionPart $part) => $part->getValues(), $this->expressionParts));
     }
 
-    #[Override]
+    #[\Override]
     public function rewind(): void
     {
         $this->position = 0;
     }
 
-    #[Override]
+    #[\Override]
     public function current(): ExpressionPart
     {
         return $this->expressionParts[$this->position];
     }
 
-    #[Override]
+    #[\Override]
     public function key(): int
     {
         return $this->position;
     }
 
-    #[Override]
+    #[\Override]
     public function next(): void
     {
         ++$this->position;
     }
 
-    #[Override]
+    #[\Override]
     public function valid(): bool
     {
         return isset($this->expressionParts[$this->position]);
     }
 
-    #[Override]
+    #[\Override]
     public function count(): int
     {
         return count($this->expressionParts);

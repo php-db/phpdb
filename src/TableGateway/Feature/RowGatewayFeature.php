@@ -6,7 +6,6 @@ use Laminas\Db\ResultSet\ResultSet;
 use Laminas\Db\RowGateway\RowGateway;
 use Laminas\Db\RowGateway\RowGatewayInterface;
 use Laminas\Db\TableGateway\Exception;
-use Laminas\Db\TableGateway\Feature\MetadataFeature;
 
 use function func_get_args;
 use function is_string;

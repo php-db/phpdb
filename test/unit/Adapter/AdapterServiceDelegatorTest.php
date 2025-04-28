@@ -20,7 +20,9 @@ use stdClass;
 class AdapterServiceDelegatorTest extends TestCase
 {
     /**
+     * @throws ContainerExceptionInterface
      * @throws Exception
+     * @throws NotFoundExceptionInterface
      */
     public function testSetAdapterShouldBeCalledForExistingAdapter(): void
     {
@@ -34,7 +36,7 @@ class AdapterServiceDelegatorTest extends TestCase
             ->expects(self::once())
             ->method('get')
             ->with(AdapterInterface::class)
-            ->willReturn($this->createMock(Adapter::class));
+            ->willReturn($this->createMock(AdapterInterface::class));
 
         $callback = static fn(): ConcreteAdapterAwareObject => new ConcreteAdapterAwareObject();
 
@@ -52,7 +54,9 @@ class AdapterServiceDelegatorTest extends TestCase
     }
 
     /**
+     * @throws ContainerExceptionInterface
      * @throws Exception
+     * @throws NotFoundExceptionInterface
      */
     public function testSetAdapterShouldBeCalledForOnlyConcreteAdapter(): void
     {
@@ -68,7 +72,7 @@ class AdapterServiceDelegatorTest extends TestCase
             ->expects(self::once())
             ->method('get')
             ->with(AdapterInterface::class)
-            ->willReturn($this->createMock(AdapterInterface::class));
+            ->willReturn($this->createMock(ConcreteAdapterAwareObject::class));
 
         $callback = static fn(): ConcreteAdapterAwareObject => new ConcreteAdapterAwareObject();
 
@@ -83,7 +87,9 @@ class AdapterServiceDelegatorTest extends TestCase
     }
 
     /**
+     * @throws ContainerExceptionInterface
      * @throws Exception
+     * @throws NotFoundExceptionInterface
      */
     public function testSetAdapterShouldNotBeCalledForMissingAdapter(): void
     {
@@ -110,7 +116,9 @@ class AdapterServiceDelegatorTest extends TestCase
     }
 
     /**
+     * @throws ContainerExceptionInterface
      * @throws Exception
+     * @throws NotFoundExceptionInterface
      */
     public function testSetAdapterShouldNotBeCalledForWrongClassInstance(): void
     {

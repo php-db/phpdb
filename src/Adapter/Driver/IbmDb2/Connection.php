@@ -122,7 +122,7 @@ class Connection extends AbstractConnection
         $password     = $findParameterValue(['password', 'pwd', 'PWD']);
         $isPersistent = $findParameterValue(['persistent', 'PERSISTENT', 'Persistent']);
         $options      = $p['driver_options'] ?? [];
-        $connect      = (bool) $isPersistent ? 'db2_pconnect' : 'db2_connect';
+        $connect      = $isPersistent ? 'db2_pconnect' : 'db2_connect';
 
         $this->resource = $connect($database, $username, $password, $options);
 
@@ -189,7 +189,7 @@ class Connection extends AbstractConnection
         }
 
         if (! db2_commit($this->resource)) {
-            throw new Exception\RuntimeException("The commit has not been successful");
+            throw new Exception\RuntimeException('The commit has not been successful');
         }
 
         if ($this->prevAutocommit) {
@@ -239,18 +239,14 @@ class Connection extends AbstractConnection
             $this->connect();
         }
 
-        if ($this->profiler) {
-            $this->profiler->profilerStart($sql);
-        }
+        $this->profiler?->profilerStart($sql);
 
         set_error_handler(function () {
         }, E_WARNING); // suppress warnings
         $resultResource = db2_exec($this->resource, $sql);
         restore_error_handler();
 
-        if ($this->profiler) {
-            $this->profiler->profilerFinish($sql);
-        }
+        $this->profiler?->profilerFinish($sql);
 
         // if the returnValue is something other than a pg result resource, bypass wrapping it
         if ($resultResource === false) {

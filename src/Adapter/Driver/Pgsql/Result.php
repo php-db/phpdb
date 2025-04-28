@@ -57,7 +57,7 @@ class Result implements ResultInterface
     /**
      * Current
      *
-     * @return array|bool|mixed
+     * @return array|false
      */
     #[ReturnTypeWillChange]
     public function current()
@@ -82,7 +82,7 @@ class Result implements ResultInterface
     /**
      * Key
      *
-     * @return int|mixed
+     * @return int
      */
     #[ReturnTypeWillChange]
     public function key()

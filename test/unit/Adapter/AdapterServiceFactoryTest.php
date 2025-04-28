@@ -20,7 +20,7 @@ class AdapterServiceFactoryTest extends TestCase
     /**
      * @throws Exception
      */
-    #[Override]
+    #[\Override]
     protected function setUp(): void
     {
         if (! extension_loaded('pdo_sqlite')) {

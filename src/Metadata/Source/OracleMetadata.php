@@ -21,10 +21,11 @@ class OracleMetadata extends AbstractSource
 
     /**
      * {@inheritdoc}
-     *
-     * @see \Laminas\Db\Metadata\Source\AbstractSource::loadColumnData()
-     *
+     * @param $table
+     * @param $schema
+     * @throws \Exception
      * @return null|static
+     * @see AbstractSource::loadColumnData
      */
     protected function loadColumnData($table, $schema)
     {
@@ -92,10 +93,11 @@ class OracleMetadata extends AbstractSource
 
     /**
      * {@inheritdoc}
-     *
-     * @see \Laminas\Db\Metadata\Source\AbstractSource::loadConstraintData()
-     *
+     * @param $table
+     * @param $schema
+     * @throws \Exception
      * @return null|static
+     * @see AbstractSource::loadConstraintData
      */
     protected function loadConstraintData($table, $schema)
     {
@@ -181,10 +183,9 @@ class OracleMetadata extends AbstractSource
 
     /**
      * {@inheritdoc}
-     *
-     * @see \Laminas\Db\Metadata\Source\AbstractSource::loadSchemaData()
-     *
+     * @throws \Exception
      * @return void
+     * @see AbstractSource::loadSchemaData
      */
     protected function loadSchemaData()
     {
@@ -206,10 +207,10 @@ class OracleMetadata extends AbstractSource
 
     /**
      * {@inheritdoc}
-     *
-     * @see \Laminas\Db\Metadata\Source\AbstractSource::loadTableNameData()
-     *
+     * @param $schema
+     * @throws \Exception
      * @return static
+     * @see AbstractSource::loadTableNameData
      */
     protected function loadTableNameData($schema)
     {
@@ -253,7 +254,7 @@ class OracleMetadata extends AbstractSource
      *
      * {@inheritdoc}
      *
-     * @see \Laminas\Db\Metadata\Source\AbstractSource::loadTriggerData()
+     * @see AbstractSource::loadTriggerData
      *
      * @return void
      */

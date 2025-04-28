@@ -29,7 +29,7 @@ class ConnectionTest extends TestCase
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
-    #[Override]
+    #[\Override]
     protected function setUp(): void
     {
         $this->connection = new Connection();
@@ -135,6 +135,7 @@ class ConnectionTest extends TestCase
     /**
      * Test the connection type setter
      *
+     * @throws \ReflectionException
      * @return void
      */
     public function testSetConnectionType()

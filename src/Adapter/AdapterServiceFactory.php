@@ -5,13 +5,19 @@ namespace Laminas\Db\Adapter;
 use Interop\Container\ContainerInterface;
 use Laminas\ServiceManager\FactoryInterface;
 use Laminas\ServiceManager\ServiceLocatorInterface;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
 class AdapterServiceFactory implements FactoryInterface
 {
     /**
      * Create db adapter service
      *
-     * @param string $requestedName
+     * @param ContainerInterface $container
+     * @param string             $requestedName
+     * @param array|null         $options
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      * @return Adapter
      */
     public function __invoke(ContainerInterface $container, $requestedName, ?array $options = null)
@@ -23,6 +29,9 @@ class AdapterServiceFactory implements FactoryInterface
     /**
      * Create db adapter service (v2)
      *
+     * @param ServiceLocatorInterface $serviceLocator
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      * @return Adapter
      */
     public function createService(ServiceLocatorInterface $serviceLocator): Adapter

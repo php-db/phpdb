@@ -3,7 +3,6 @@
 namespace Laminas\Db\TableGateway\Feature;
 
 use Laminas\Db\Metadata\MetadataInterface;
-use Laminas\Db\Metadata\Object\ConstraintObject;
 use Laminas\Db\Metadata\Object\TableObject;
 use Laminas\Db\Metadata\Source\Factory as SourceFactory;
 use Laminas\Db\Sql\TableIdentifier;
@@ -33,6 +32,7 @@ class MetadataFeature extends AbstractFeature
     }
 
     /**
+     * @throws \Exception
      * @return void
      */
     public function postInitialize()

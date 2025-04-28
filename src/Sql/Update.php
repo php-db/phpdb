@@ -236,7 +236,7 @@ class Update extends AbstractPreparableSql
         );
     }
 
-    /** @return null|string[] */
+    /** @return \string[][][]|null */
     protected function processJoins(
         PlatformInterface $platform,
         ?DriverInterface $driver = null,
@@ -247,11 +247,10 @@ class Update extends AbstractPreparableSql
 
     /**
      * Variable overloading
-     *
      * Proxies to "where" only
      *
      * @param  string $name
-     * @return mixed
+     * @return string|void|Where
      */
     public function __get($name)
     {

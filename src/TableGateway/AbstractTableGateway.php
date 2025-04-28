@@ -24,7 +24,6 @@ use function is_array;
 use function is_object;
 use function is_string;
 use function reset;
-use function sprintf;
 use function strtolower;
 
 /**
@@ -458,7 +457,7 @@ abstract class AbstractTableGateway implements TableGatewayInterface
             && count($this->table) === 1
             && is_object(reset($this->table))
         ) {
-            foreach ($this->table as $alias => &$tableObject) {
+            foreach ($this->table as &$tableObject) {
                 $tableObject = clone $tableObject;
             }
         }

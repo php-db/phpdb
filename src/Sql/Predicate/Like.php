@@ -81,7 +81,7 @@ class Like extends AbstractExpression implements PredicateInterface
         return $this->specification;
     }
 
-    #[Override]
+    #[\Override]
     public function getExpressionData(): ExpressionData
     {
         if ($this->identifier === null) {

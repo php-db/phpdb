@@ -15,6 +15,8 @@ use function strtoupper;
 class SqliteMetadata extends AbstractSource
 {
     /**
+     * @throws \Exception
+     * @throws \Exception
      * @return void
      */
     protected function loadSchemaData()
@@ -33,6 +35,7 @@ class SqliteMetadata extends AbstractSource
 
     /**
      * @param string $schema
+     * @throws \Exception
      * @return void
      */
     protected function loadTableNameData($schema)
@@ -80,6 +83,8 @@ class SqliteMetadata extends AbstractSource
     /**
      * @param string $table
      * @param string $schema
+     * @throws \Exception
+     * @throws \Exception
      * @return void
      */
     protected function loadColumnData($table, $schema)
@@ -99,7 +104,7 @@ class SqliteMetadata extends AbstractSource
                 // cid appears to be zero-based, ordinal position needs to be one-based
                 'ordinal_position'         => $row['cid'] + 1,
                 'column_default'           => $row['dflt_value'],
-                'is_nullable'              => ! (bool) $row['notnull'],
+                'is_nullable'              => ! $row['notnull'],
                 'data_type'                => $row['type'],
                 'character_maximum_length' => null,
                 'character_octet_length'   => null,
@@ -118,6 +123,8 @@ class SqliteMetadata extends AbstractSource
     /**
      * @param string $table
      * @param string $schema
+     * @throws \Exception
+     * @throws \Exception
      * @return void
      */
     protected function loadConstraintData($table, $schema)
@@ -132,7 +139,7 @@ class SqliteMetadata extends AbstractSource
         $primaryKey = [];
 
         foreach ($this->data['sqlite_columns'][$schema][$table] as $col) {
-            if ((bool) $col['pk']) {
+            if ($col['pk']) {
                 $primaryKey[] = $col['name'];
             }
         }
@@ -143,7 +150,7 @@ class SqliteMetadata extends AbstractSource
         $constraints = [];
         $indexes     = $this->fetchPragma('index_list', $table, $schema);
         foreach ($indexes as $index) {
-            if (! (bool) $index['unique']) {
+            if (! $index['unique']) {
                 continue;
             }
             $constraint = [
@@ -205,7 +212,8 @@ class SqliteMetadata extends AbstractSource
 
     /**
      * @param string $schema
-     * @return null|array<string, string>
+     * @throws \Exception
+     * @return void
      */
     protected function loadTriggerData($schema)
     {
@@ -254,8 +262,9 @@ class SqliteMetadata extends AbstractSource
 
     /**
      * @param string $name
-     * @param null|scalar $value
-     * @param string $schema
+     * @param null   $value
+     * @param null   $schema
+     * @throws \Exception
      * @return array
      */
     protected function fetchPragma($name, $value = null, $schema = null)
@@ -344,13 +353,8 @@ class SqliteMetadata extends AbstractSource
         if (! preg_match($re, $sql, $matches)) {
             return null;
         }
-        $data = [];
 
-        foreach ($matches as $key => $value) {
-            if (is_string($key)) {
-                $data[$key] = $value;
-            }
-        }
+        $data = array_filter($matches, function ($key) { return is_string($key); }, ARRAY_FILTER_USE_KEY);
 
         // Normalize data and populate defaults, if necessary
 
@@ -383,8 +387,8 @@ class SqliteMetadata extends AbstractSource
             }
         }
         unset($value);
-        $re = '/^' . implode('\\s*+', $re) . '$/';
-        return $re;
+
+        return '/^' . implode('\\s*+', $re) . '$/';
     }
 
     /** @return string */

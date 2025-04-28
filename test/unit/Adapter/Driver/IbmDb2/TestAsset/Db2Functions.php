@@ -17,7 +17,7 @@ function db2_prepare($connection, string $sql, array $options = []): bool
 {
     if ($sql === 'INVALID SQL') {
         // db2_prepare issues a warning with invalid SQL
-        trigger_error("SQL is invalid", E_USER_WARNING);
+        trigger_error('SQL is invalid', E_USER_WARNING);
         return false;
     }
 

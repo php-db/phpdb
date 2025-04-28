@@ -104,7 +104,7 @@ class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
     /**
      * Get parameter container
      *
-     * @return mixed
+     * @return ParameterContainer
      */
     public function getParameterContainer()
     {
@@ -207,18 +207,14 @@ class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
         }
         /** END Standard ParameterContainer Merging Block */
 
-        if ($this->profiler) {
-            $this->profiler->profilerStart($this);
-        }
+        $this->profiler?->profilerStart($this);
 
         set_error_handler(function () {
         }, E_WARNING); // suppress warnings
         $response = db2_execute($this->resource, $this->parameterContainer->getPositionalArray());
         restore_error_handler();
 
-        if ($this->profiler) {
-            $this->profiler->profilerFinish();
-        }
+        $this->profiler?->profilerFinish();
 
         if ($response === false) {
             throw new Exception\RuntimeException(db2_stmt_errormsg($this->resource));

@@ -102,7 +102,7 @@ class Expression extends AbstractExpression
     /**
      * @throws Exception\RuntimeException
      */
-    #[Override]
+    #[\Override]
     public function getExpressionData(): ExpressionData
     {
         $parameters      = $this->parameters;

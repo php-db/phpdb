@@ -103,8 +103,8 @@ EOS;
 
         $actual = $at->getSqlString();
         self::assertEquals(
-            str_replace(["\r", "\n"], "", $expected),
-            str_replace(["\r", "\n"], "", $actual)
+            str_replace(["\r", "\n"], '', $expected),
+            str_replace(["\r", "\n"], '', $actual)
         );
 
         $at = new AlterTable(new TableIdentifier('foo'));

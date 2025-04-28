@@ -69,7 +69,7 @@ abstract class AbstractConstraint implements ConstraintInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {}
      */
     public function getColumns(): array
     {
@@ -77,9 +77,9 @@ abstract class AbstractConstraint implements ConstraintInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {}
      */
-    #[Override]
+    #[\Override]
     public function getExpressionData(): ExpressionData
     {
         $expressionPart = new ExpressionPart();

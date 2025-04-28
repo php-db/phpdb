@@ -31,7 +31,7 @@ class IbmDb2Test extends TestCase
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
-    #[Override]
+    #[\Override]
     protected function setUp(): void
     {
         $this->ibmdb2 = new IbmDb2([]);

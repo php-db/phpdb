@@ -94,7 +94,7 @@ class FeatureSetTest extends TestCase
 
         self::assertTrue(
             $featureSet->canCallMagicCall('lastSequenceId'),
-            "Should have been able to call lastSequenceId from the Sequence Feature"
+            'Should have been able to call lastSequenceId from the Sequence Feature'
         );
     }
 
@@ -106,7 +106,7 @@ class FeatureSetTest extends TestCase
 
         self::assertFalse(
             $featureSet->canCallMagicCall('postInitialize'),
-            "Should have been able to call postInitialize from the MetaData Feature"
+            'Should have been able to call postInitialize from the MetaData Feature'
         );
     }
 

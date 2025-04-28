@@ -141,9 +141,8 @@ class Delete extends AbstractPreparableSql
      */
     public function __get($name)
     {
-        switch (strtolower($name)) {
-            case 'where':
-                return $this->where;
+        if (strtolower($name) == 'where') {
+            return $this->where;
         }
     }
 }

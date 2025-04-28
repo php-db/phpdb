@@ -122,7 +122,7 @@ class Between extends AbstractExpression implements PredicateInterface
     /**
      * Return "where" parts
      */
-    #[Override]
+    #[\Override]
     public function getExpressionData(): ExpressionData
     {
         if ($this->identifier === null) {

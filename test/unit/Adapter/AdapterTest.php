@@ -59,7 +59,7 @@ class AdapterTest extends TestCase
     /**
      * @throws Exception
      */
-    #[Override]
+    #[\Override]
     protected function setUp(): void
     {
         $this->mockDriver     = $this->createMock(DriverInterface::class);

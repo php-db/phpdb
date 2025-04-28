@@ -20,7 +20,7 @@ class TableGatewayEvent implements EventInterface
     /**
      * Get event name
      *
-     * @return string
+     * @return string|null
      */
     public function getName()
     {
@@ -30,7 +30,7 @@ class TableGatewayEvent implements EventInterface
     /**
      * Get target/context from which event was triggered
      *
-     * @return null|string|object
+     * @return AbstractTableGateway
      */
     public function getTarget()
     {

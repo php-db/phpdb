@@ -12,14 +12,14 @@ class StatementIntegrationTest extends TestCase
 {
     protected Statement $statement;
 
-    /** @var MockObject */
+    /** @var PDOStatement|MockObject */
     protected PDOStatement|MockObject $pdoStatementMock;
 
     /**
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
-    #[Override]
+    #[\Override]
     protected function setUp(): void
     {
         $driver = $this->getMockBuilder(\Laminas\Db\Adapter\Driver\Pdo\Pdo::class)

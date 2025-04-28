@@ -39,7 +39,7 @@ class SqlTest extends TestCase
     /**
      * @throws Exception
      */
-    #[Override]
+    #[\Override]
     protected function setUp(): void
     {
         // mock the adapter, driver, and parts

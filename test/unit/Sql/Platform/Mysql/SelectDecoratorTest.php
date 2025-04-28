@@ -156,20 +156,20 @@ class SelectDecoratorTest extends TestCase
             ->limit(10)->offset(50);
 
         $expectedPrepareSql3       =
-            "SELECT (SELECT count(foo1.id) AS `cnt` FROM `foo1` LIMIT ? OFFSET ?) AS `res`"
-            . " FROM `foo` LIMIT ? OFFSET ?";
+            'SELECT (SELECT count(foo1.id) AS `cnt` FROM `foo1` LIMIT ? OFFSET ?) AS `res`'
+            . ' FROM `foo` LIMIT ? OFFSET ?';
         $expectedPrepareObjectSql3 =
-        "SELECT (SELECT count(foo1.id) AS `cnt` FROM `foo1` LIMIT :subselect1limit OFFSET :subselect1offset) AS `res`"
-        . " FROM `foo` LIMIT :limit OFFSET :offset";
+        'SELECT (SELECT count(foo1.id) AS `cnt` FROM `foo1` LIMIT :subselect1limit OFFSET :subselect1offset) AS `res`'
+        . ' FROM `foo` LIMIT :limit OFFSET :offset';
         $expectedParams3           = [
             'subselect1limit'  => 100,
             'subselect1offset' => 500,
             'limit'            => 10,
             'offset'           => 50,
         ];
-        $expectedSql3              = "SELECT (SELECT count(foo1.id) AS `cnt`"
-            . " FROM `foo1` LIMIT 100 OFFSET 500) AS `res`"
-            . " FROM `foo` LIMIT 10 OFFSET 50";
+        $expectedSql3              = 'SELECT (SELECT count(foo1.id) AS `cnt`'
+            . ' FROM `foo1` LIMIT 100 OFFSET 500) AS `res`'
+            . ' FROM `foo` LIMIT 10 OFFSET 50';
 
         // nested multiple limit & offset in field param
         $nestedSelect0 = new Select();
@@ -193,13 +193,13 @@ class SelectDecoratorTest extends TestCase
             ->limit(10)->offset(5);
 
         $expectedPrepareSql4       =
-            "SELECT (SELECT count(foo1.id) AS `cnt` FROM `foo1` LIMIT ? OFFSET ?) AS `res`,"
-            . " (SELECT count(foo2.id) AS `cnt` FROM `foo2` LIMIT ? OFFSET ?) AS `res0`"
-            . " FROM `foo` LIMIT ? OFFSET ?";
+            'SELECT (SELECT count(foo1.id) AS `cnt` FROM `foo1` LIMIT ? OFFSET ?) AS `res`,'
+            . ' (SELECT count(foo2.id) AS `cnt` FROM `foo2` LIMIT ? OFFSET ?) AS `res0`'
+            . ' FROM `foo` LIMIT ? OFFSET ?';
         $expectedPrepareObjectSql4 =
-            "SELECT (SELECT count(foo1.id) AS `cnt` FROM `foo1` LIMIT :subselect1limit OFFSET :subselect1offset)"
-            . " AS `res`, (SELECT count(foo2.id) AS `cnt` FROM `foo2` LIMIT :subselect2limit OFFSET :subselect2offset)"
-            . " AS `res0` FROM `foo` LIMIT :limit OFFSET :offset";
+            'SELECT (SELECT count(foo1.id) AS `cnt` FROM `foo1` LIMIT :subselect1limit OFFSET :subselect1offset)'
+            . ' AS `res`, (SELECT count(foo2.id) AS `cnt` FROM `foo2` LIMIT :subselect2limit OFFSET :subselect2offset)'
+            . ' AS `res0` FROM `foo` LIMIT :limit OFFSET :offset';
         $expectedParams4           = [
             'subselect1limit'  => 100,
             'subselect1offset' => 500,
@@ -208,9 +208,9 @@ class SelectDecoratorTest extends TestCase
             'limit'            => 10,
             'offset'           => 5,
         ];
-        $expectedSql4              = "SELECT (SELECT count(foo1.id) AS `cnt` FROM `foo1` LIMIT 100 OFFSET 500) AS `res`,"
-            . " (SELECT count(foo2.id) AS `cnt` FROM `foo2` LIMIT 50 OFFSET 101) AS `res0`"
-            . " FROM `foo` LIMIT 10 OFFSET 5";
+        $expectedSql4              = 'SELECT (SELECT count(foo1.id) AS `cnt` FROM `foo1` LIMIT 100 OFFSET 500) AS `res`,'
+            . ' (SELECT count(foo2.id) AS `cnt` FROM `foo2` LIMIT 50 OFFSET 101) AS `res0`'
+            . ' FROM `foo` LIMIT 10 OFFSET 5';
 
         // nested limit in field param, no limit in containing select
         $nestedSelect0 = new Select();
@@ -228,18 +228,18 @@ class SelectDecoratorTest extends TestCase
             ]);
 
         $expectedPrepareSql5       =
-            "SELECT (SELECT count(foo1.id) AS `cnt` FROM `foo1` WHERE `foo2` = ? LIMIT ?) AS `res`"
-            . " FROM `foo`";
+            'SELECT (SELECT count(foo1.id) AS `cnt` FROM `foo1` WHERE `foo2` = ? LIMIT ?) AS `res`'
+            . ' FROM `foo`';
         $expectedPrepareObjectSql5 =
-            "SELECT (SELECT count(foo1.id) AS `cnt` FROM `foo1` WHERE `foo2` = :subselect1where1 LIMIT"
-            . " :subselect1limit) AS `res` FROM `foo`";
+            'SELECT (SELECT count(foo1.id) AS `cnt` FROM `foo1` WHERE `foo2` = :subselect1where1 LIMIT'
+            . ' :subselect1limit) AS `res` FROM `foo`';
         $expectedParams5           = [
             'subselect1limit'  => 1,
             'subselect1where1' => 'ab',
         ];
-        $expectedSql5              = "SELECT (SELECT count(foo1.id) AS `cnt`"
+        $expectedSql5              = 'SELECT (SELECT count(foo1.id) AS `cnt`'
             . " FROM `foo1` WHERE `foo2` = 'ab' LIMIT 1) AS `res`"
-            . " FROM `foo`";
+            . ' FROM `foo`';
 
         return [
             [$select0, $expectedPrepareSql0, $expectedParams0, $expectedSql0, $expectedPrepareObjectSql0],

@@ -67,7 +67,7 @@ class IsNull extends AbstractExpression implements PredicateInterface
     /**
      * Get parts for where statement
      */
-    #[Override]
+    #[\Override]
     public function getExpressionData(): ExpressionData
     {
         if ($this->identifier === null) {

@@ -117,7 +117,7 @@ class Operator extends AbstractExpression implements PredicateInterface
     /**
      * Get predicate parts for where statement
      */
-    #[Override]
+    #[\Override]
     public function getExpressionData(): ExpressionData
     {
         if ($this->left === null) {

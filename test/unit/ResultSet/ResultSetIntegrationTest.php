@@ -11,7 +11,6 @@ use Laminas\Db\ResultSet\Exception\RuntimeException;
 use Laminas\Db\ResultSet\ResultSet;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
 use SplStack;
 use stdClass;
@@ -30,7 +29,7 @@ class ResultSetIntegrationTest extends TestCase
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
-    #[Override]
+    #[\Override]
     protected function setUp(): void
     {
         $this->resultSet = new ResultSet();
@@ -86,6 +85,9 @@ class ResultSetIntegrationTest extends TestCase
         self::assertNull($this->resultSet->getDataSource());
     }
 
+    /**
+     * @throws \Exception
+     */
     public function testCanProvideIteratorAsDataSource(): void
     {
         $it = new SplStack();
@@ -93,6 +95,9 @@ class ResultSetIntegrationTest extends TestCase
         self::assertSame($it, $this->resultSet->getDataSource());
     }
 
+    /**
+     * @throws \Exception
+     */
     public function testCanProvideArrayAsDataSource(): void
     {
         $dataSource = [['foo']];
@@ -121,6 +126,8 @@ class ResultSetIntegrationTest extends TestCase
     }
 
     /**
+     * @throws \Exception
+     * @throws \Exception
      * @return void
      */
     #[DataProvider('invalidReturnTypes')]
@@ -152,6 +159,9 @@ class ResultSetIntegrationTest extends TestCase
         return new ArrayIterator($array);
     }
 
+    /**
+     * @throws \Exception
+     */
     public function testFieldCountRepresentsNumberOfFieldsInARowOfData(): void
     {
         $resultSet  = new ResultSet(ResultSet::TYPE_ARRAY);
@@ -160,6 +170,9 @@ class ResultSetIntegrationTest extends TestCase
         self::assertEquals(2, $resultSet->getFieldCount());
     }
 
+    /**
+     * @throws \Exception
+     */
     public function testWhenReturnTypeIsArrayThenIterationReturnsArrays(): void
     {
         $resultSet  = new ResultSet(ResultSet::TYPE_ARRAY);
@@ -170,6 +183,9 @@ class ResultSetIntegrationTest extends TestCase
         }
     }
 
+    /**
+     * @throws \Exception
+     */
     public function testWhenReturnTypeIsObjectThenIterationReturnsRowObjects(): void
     {
         $dataSource = $this->getArrayDataSource(10);
@@ -181,7 +197,7 @@ class ResultSetIntegrationTest extends TestCase
     }
 
     /**
-     * @throws Exception
+     * @throws \Exception
      */
     public function testCountReturnsCountOfRows(): void
     {
@@ -192,7 +208,7 @@ class ResultSetIntegrationTest extends TestCase
     }
 
     /**
-     * @throws Exception
+     * @throws \Exception
      */
     public function testToArrayRaisesExceptionForRowsThatAreNotArraysOrArrayCastable(): void
     {
@@ -207,7 +223,7 @@ class ResultSetIntegrationTest extends TestCase
     }
 
     /**
-     * @throws RandomException
+     * @throws \Exception
      */
     public function testToArrayCreatesArrayOfArraysRepresentingRows(): void
     {
@@ -218,6 +234,9 @@ class ResultSetIntegrationTest extends TestCase
         self::assertEquals($dataSource->getArrayCopy(), $test, var_export($test, true));
     }
 
+    /**
+     * @throws \Exception
+     */
     public function testCurrentWithBufferingCallsDataSourceCurrentOnce(): void
     {
         $mockResult = $this->getMockBuilder(ResultInterface::class)->getMock();
@@ -232,7 +251,7 @@ class ResultSetIntegrationTest extends TestCase
     }
 
     /**
-     * @throws Exception
+     * @throws \Exception
      */
     public function testBufferCalledAfterIterationThrowsException(): void
     {
@@ -245,12 +264,12 @@ class ResultSetIntegrationTest extends TestCase
     }
 
     /**
-     * @throws Exception
+     * @throws \Exception
      */
     public function testCurrentReturnsNullForNonExistingValues(): void
     {
         $mockResult = $this->createMock(ResultInterface::class);
-        $mockResult->expects($this->once())->method('current')->willReturn("Not an Array");
+        $mockResult->expects($this->once())->method('current')->willReturn('Not an Array');
 
         $this->resultSet->initialize($mockResult);
         $this->resultSet->buffer();

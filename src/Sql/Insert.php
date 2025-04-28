@@ -44,7 +44,7 @@ class Insert extends AbstractPreparableSql
     /** @var string[] */
     protected $columns = [];
 
-    /** @var array|Select */
+    /** @var array|Select|null */
     protected null|array|Select $select = null;
 
     /**
@@ -229,7 +229,7 @@ class Insert extends AbstractPreparableSql
         return sprintf(
             $this->specifications[static::SPECIFICATION_SELECT],
             $this->resolveTable($this->table, $platform, $driver, $parameterContainer),
-            $columns ? "($columns)" : "",
+            $columns ? "($columns)" : '',
             $selectSql
         );
     }
@@ -284,12 +284,11 @@ class Insert extends AbstractPreparableSql
 
     /**
      * Overloading: variable retrieval
-     *
      * Retrieves value by column name
      *
      * @param  string $name
      * @throws Exception\InvalidArgumentException
-     * @return mixed
+     * @return string
      */
     public function __get($name)
     {

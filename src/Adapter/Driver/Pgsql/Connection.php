@@ -4,7 +4,6 @@ namespace Laminas\Db\Adapter\Driver\Pgsql;
 
 use Laminas\Db\Adapter\Driver\AbstractConnection;
 use Laminas\Db\Adapter\Exception;
-use Laminas\Db\ResultSet\ResultSetInterface;
 use PgSql\Connection as PgSqlConnection;
 
 use function array_filter;
@@ -252,15 +251,11 @@ class Connection extends AbstractConnection
             $this->connect();
         }
 
-        if ($this->profiler) {
-            $this->profiler->profilerStart($sql);
-        }
+        $this->profiler?->profilerStart($sql);
 
         $resultResource = pg_query($this->resource, $sql);
 
-        if ($this->profiler) {
-            $this->profiler->profilerFinish($sql);
-        }
+        $this->profiler?->profilerFinish($sql);
 
         // if the returnValue is something other than a pg result resource, bypass wrapping it
         if ($resultResource === false) {

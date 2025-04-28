@@ -96,7 +96,7 @@ class Result implements Iterator, ResultInterface
     /**
      * Return the resource
      *
-     * @return mixed
+     * @return resource
      */
     public function getResource()
     {
@@ -123,7 +123,7 @@ class Result implements Iterator, ResultInterface
         return oci_num_rows($this->resource);
     }
 
-    /** @return mixed */
+    /** @return array|bool */
     #[ReturnTypeWillChange]
     public function current()
     {
@@ -158,7 +158,7 @@ class Result implements Iterator, ResultInterface
         $this->loadData();
     }
 
-    /** @return int|string */
+    /** @return int */
     #[ReturnTypeWillChange]
     public function key()
     {

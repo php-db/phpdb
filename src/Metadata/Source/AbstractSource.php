@@ -76,7 +76,9 @@ abstract class AbstractSource implements MetadataInterface
 
     /**
      * {@inheritdoc}
-     *
+     * @param      $tableName
+     * @param null $schema
+     * @throws Exception
      * @return TableObject|ViewObject
      */
     public function getTable($tableName, $schema = null): ViewObject|TableObject

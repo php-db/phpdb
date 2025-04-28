@@ -29,7 +29,7 @@ class TableGatewayTest extends TestCase
 {
     protected Adapter&MockObject $mockAdapter;
 
-    #[Override]
+    #[\Override]
     protected function setUp(): void
     {
         // mock the adapter, driver, and parts

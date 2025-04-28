@@ -15,7 +15,7 @@ class CtorlessPdo extends PDO
     /**
      * @param array<array-key, mixed> $options
      */
-    #[Override]
+    #[\Override]
     public function prepare(string $query, $options = null): PDOStatement
     {
         return $this->mockStatement;

@@ -8,7 +8,6 @@ use Laminas\Db\Adapter\Platform\PlatformInterface;
 use Laminas\Db\Sql\Platform\PlatformDecoratorInterface;
 use Laminas\Db\Sql\Select;
 
-use function array_push;
 use function array_shift;
 use function array_unshift;
 use function current;
@@ -120,11 +119,11 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
 
             $offset = (int) $this->offset;
             if ($offset) {
-                $sqls[] = sprintf("LIMIT %s OFFSET %s", $limit, $offset);
+                $sqls[] = sprintf('LIMIT %s OFFSET %s', $limit, $offset);
                 return;
             }
 
-            $sqls[] = sprintf("LIMIT %s", $limit);
+            $sqls[] = sprintf('LIMIT %s', $limit);
             return;
         }
 
@@ -164,7 +163,7 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
 
             $sqls[] = sprintf(
             // @codingStandardsIgnoreStart
-                ") AS LAMINAS_IBMDB2_SERVER_LIMIT_OFFSET_EMULATION WHERE LAMINAS_IBMDB2_SERVER_LIMIT_OFFSET_EMULATION.LAMINAS_DB_ROWNUM BETWEEN %s AND %s",
+                ') AS LAMINAS_IBMDB2_SERVER_LIMIT_OFFSET_EMULATION WHERE LAMINAS_IBMDB2_SERVER_LIMIT_OFFSET_EMULATION.LAMINAS_DB_ROWNUM BETWEEN %s AND %s',
                 // @codingStandardsIgnoreEnd
                 $offsetParamName,
                 $limitParamName
@@ -186,7 +185,7 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
 
             $sqls[] = sprintf(
             // @codingStandardsIgnoreStart
-                ") AS LAMINAS_IBMDB2_SERVER_LIMIT_OFFSET_EMULATION WHERE LAMINAS_IBMDB2_SERVER_LIMIT_OFFSET_EMULATION.LAMINAS_DB_ROWNUM BETWEEN %d AND %d",
+                ') AS LAMINAS_IBMDB2_SERVER_LIMIT_OFFSET_EMULATION WHERE LAMINAS_IBMDB2_SERVER_LIMIT_OFFSET_EMULATION.LAMINAS_DB_ROWNUM BETWEEN %d AND %d',
                 // @codingStandardsIgnoreEnd
                 $offset,
                 (int) $this->limit + (int) $this->offset

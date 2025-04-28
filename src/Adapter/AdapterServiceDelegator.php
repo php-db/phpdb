@@ -2,7 +2,9 @@
 
 namespace Laminas\Db\Adapter;
 
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
 class AdapterServiceDelegator
 {
@@ -19,7 +21,15 @@ class AdapterServiceDelegator
         return new self($state['adapterName'] ?? AdapterInterface::class);
     }
 
-    /** @return AdapterInterface */
+    /**
+     * @param ContainerInterface $container
+     * @param string             $name
+     * @param callable           $callback
+     * @param array|null         $options
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     * @return AdapterInterface
+     */
     public function __invoke(
         ContainerInterface $container,
         string $name,
@@ -34,7 +44,7 @@ class AdapterServiceDelegator
 
         $databaseAdapter = $container->get($this->adapterName);
 
-        if (! $databaseAdapter instanceof Adapter) {
+        if (! $databaseAdapter instanceof AdapterInterface) {
             return $instance;
         }
 

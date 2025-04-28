@@ -42,7 +42,7 @@ abstract class AbstractSql implements SqlInterface
     /**
      * {@inheritDoc}
      */
-    #[Override]
+    #[\Override]
     public function getSqlString(?PlatformInterface $adapterPlatform = null): string
     {
         $adapterPlatform = $adapterPlatform ?: new DefaultAdapterPlatform();
@@ -144,7 +144,7 @@ abstract class AbstractSql implements SqlInterface
             $sqlStrings[] = vsprintf($specification, $values);
         }
 
-        return join(" ", $sqlStrings);
+        return join(' ', $sqlStrings);
     }
 
     protected function processExpressionValue(
@@ -319,13 +319,11 @@ abstract class AbstractSql implements SqlInterface
     }
 
     /**
-     * @param Join $joins
-     *
-     * @throws Exception\InvalidArgumentException For invalid JOIN table names.
-     *
+     * @param Join                    $joins
+     * @param PlatformInterface       $platform
+     * @param DriverInterface|null    $driver
+     * @param ParameterContainer|null $parameterContainer
      * @return null|string[][][] Null if no joins present, array of JOIN statements otherwise
-     *
-     * @psalm-return list{array<list{0: string, 1: string, 2?: string,...}>}|null
      */
     protected function processJoin(
         Join $joins,

@@ -68,7 +68,7 @@ class Result implements ResultInterface
     }
 
     /**
-     * @return int|string
+     * @return int
      */
     #[ReturnTypeWillChange]
     public function key()
@@ -159,7 +159,7 @@ class Result implements ResultInterface
     /**
      * Get the resource
      *
-     * @return mixed
+     * @return resource
      */
     public function getResource()
     {

@@ -47,9 +47,9 @@ abstract class AbstractResultSet implements Iterator, ResultSetInterface
     /**
      * Set the data source for the result set
      *
-     * @param  array|Iterator|IteratorAggregate|ResultInterface $dataSource
+     * @param array|Iterator|IteratorAggregate|ResultInterface $dataSource
+     * @throws \Exception
      * @return $this Provides a fluent interface
-     * @throws Exception\InvalidArgumentException
      */
     public function initialize($dataSource)
     {
@@ -180,7 +180,7 @@ abstract class AbstractResultSet implements Iterator, ResultSetInterface
     /**
      * Iterator: retrieve current key
      *
-     * @return mixed
+     * @return int
      */
     #[ReturnTypeWillChange]
     public function key()

@@ -16,6 +16,7 @@ use const CASE_LOWER;
 class SqlServerMetadata extends AbstractSource
 {
     /**
+     * @throws \Exception
      * @return void
      */
     protected function loadSchemaData()
@@ -44,6 +45,7 @@ class SqlServerMetadata extends AbstractSource
 
     /**
      * @param string $schema
+     * @throws \Exception
      * @return void
      */
     protected function loadTableNameData($schema)
@@ -105,6 +107,7 @@ class SqlServerMetadata extends AbstractSource
     /**
      * @param string $table
      * @param string $schema
+     * @throws \Exception
      */
     protected function loadColumnData($table, $schema): void
     {
@@ -173,6 +176,7 @@ class SqlServerMetadata extends AbstractSource
     /**
      * @param string $table
      * @param string $schema
+     * @throws \Exception
      * @return void
      */
     protected function loadConstraintData($table, $schema)
@@ -263,7 +267,7 @@ class SqlServerMetadata extends AbstractSource
               . " WHEN 'UNIQUE' THEN 2"
               . " WHEN 'FOREIGN KEY' THEN 3"
               . " WHEN 'CHECK' THEN 4"
-              . " ELSE 5 END"
+              . ' ELSE 5 END'
               . ', ' . $p->quoteIdentifierChain(['TC', 'CONSTRAINT_NAME'])
               . ', ' . $p->quoteIdentifierChain(['KCU', 'ORDINAL_POSITION']);
 
@@ -307,6 +311,7 @@ class SqlServerMetadata extends AbstractSource
 
     /**
      * @param string $schema
+     * @throws \Exception
      * @return void
      */
     protected function loadTriggerData($schema)

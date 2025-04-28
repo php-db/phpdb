@@ -12,13 +12,13 @@ use ReflectionProperty;
 
 class AbstractSourceTest extends TestCase
 {
-    /** @var AbstractSource */
+    /** @var AbstractSource|MockObject */
     protected MockObject|AbstractSource $abstractSourceMock;
 
     /**
      * @throws Exception
      */
-    #[Override]
+    #[\Override]
     protected function setUp(): void
     {
         $this->abstractSourceMock = $this->getMockBuilder(AbstractSource::class)->setConstructorArgs([])->onlyMethods([])->disableOriginalConstructor()->getMock();

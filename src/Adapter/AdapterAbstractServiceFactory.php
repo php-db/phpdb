@@ -6,6 +6,9 @@ use Interop\Container\ContainerInterface;
 use Laminas\ServiceManager\AbstractFactoryInterface;
 use Laminas\ServiceManager\ServiceLocatorInterface;
 
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
+
 use function is_array;
 
 /**
@@ -21,7 +24,10 @@ class AdapterAbstractServiceFactory implements AbstractFactoryInterface
     /**
      * Can we create an adapter by the requested name?
      *
-     * @param  string $requestedName
+     * @param ContainerInterface $container
+     * @param string             $requestedName
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      * @return bool
      */
     public function canCreate(ContainerInterface $container, $requestedName)
@@ -39,8 +45,11 @@ class AdapterAbstractServiceFactory implements AbstractFactoryInterface
     /**
      * Determine if we can create a service with name (SM v2 compatibility)
      *
-     * @param string $name
-     * @param string $requestedName
+     * @param ServiceLocatorInterface $serviceLocator
+     * @param string                  $name
+     * @param string                  $requestedName
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      * @return bool
      */
     public function canCreateServiceWithName(ServiceLocatorInterface $serviceLocator, $name, $requestedName)
@@ -51,7 +60,11 @@ class AdapterAbstractServiceFactory implements AbstractFactoryInterface
     /**
      * Create a DB adapter
      *
-     * @param  string $requestedName
+     * @param ContainerInterface $container
+     * @param string             $requestedName
+     * @param array|null         $options
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      * @return Adapter
      */
     public function __invoke(ContainerInterface $container, $requestedName, ?array $options = null)
@@ -63,8 +76,11 @@ class AdapterAbstractServiceFactory implements AbstractFactoryInterface
     /**
      * Create service with name
      *
-     * @param string $name
-     * @param string $requestedName
+     * @param ServiceLocatorInterface $serviceLocator
+     * @param string                  $name
+     * @param string                  $requestedName
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      * @return Adapter
      */
     public function createServiceWithName(ServiceLocatorInterface $serviceLocator, $name, $requestedName)
@@ -75,6 +91,9 @@ class AdapterAbstractServiceFactory implements AbstractFactoryInterface
     /**
      * Get db configuration, if any
      *
+     * @param ContainerInterface $container
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      * @return array
      */
     protected function getConfig(ContainerInterface $container)

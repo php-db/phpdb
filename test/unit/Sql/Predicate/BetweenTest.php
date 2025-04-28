@@ -22,7 +22,7 @@ class BetweenTest extends TestCase
 {
     protected Between $between;
 
-    #[Override]
+    #[\Override]
     protected function setUp(): void
     {
         $this->between = new Between();

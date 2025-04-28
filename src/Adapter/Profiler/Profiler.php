@@ -20,10 +20,10 @@ class Profiler implements ProfilerInterface
 
     /**
      * @param string|StatementContainerInterface $target
-     * @return $this Provides a fluent interface
      * @throws InvalidArgumentException
+     *@return \static Provides a fluent interface
      */
-    public function profilerStart($target): mixed
+    public function profilerStart($target): static
     {
         $profileInformation = [
             'sql'        => '',

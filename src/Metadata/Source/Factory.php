@@ -21,19 +21,13 @@ class Factory
     {
         $platformName = $adapter->getPlatform()->getName();
 
-        switch ($platformName) {
-            case 'MySQL':
-                return new MysqlMetadata($adapter);
-            case 'SQLServer':
-                return new SqlServerMetadata($adapter);
-            case 'SQLite':
-                return new SqliteMetadata($adapter);
-            case 'PostgreSQL':
-                return new PostgresqlMetadata($adapter);
-            case 'Oracle':
-                return new OracleMetadata($adapter);
-            default:
-                throw new InvalidArgumentException("Unknown adapter platform '{$platformName}'");
-        }
+        return match ($platformName) {
+            'MySQL' => new MysqlMetadata($adapter),
+            'SQLServer' => new SqlServerMetadata($adapter),
+            'SQLite' => new SqliteMetadata($adapter),
+            'PostgreSQL' => new PostgresqlMetadata($adapter),
+            'Oracle' => new OracleMetadata($adapter),
+            default => throw new InvalidArgumentException("Unknown adapter platform '{$platformName}'"),
+        };
     }
 }

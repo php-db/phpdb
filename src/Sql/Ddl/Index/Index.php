@@ -28,7 +28,7 @@ class Index extends AbstractIndex
         $this->lengths = $lengths;
     }
 
-    #[\Laminas\Db\Sql\Ddl\Constraint\Override] #[Override]
+    #[\Laminas\Db\Sql\Ddl\Constraint\Override] #[\Override]
     public function getExpressionData(): ExpressionData
     {
         $colCount = count($this->columns);

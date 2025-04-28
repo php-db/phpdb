@@ -31,7 +31,7 @@ class StatementTest extends TestCase
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
-    #[Override]
+    #[\Override]
     protected function setUp(): void
     {
         // store current error_reporting value as we may change it
@@ -124,7 +124,7 @@ class StatementTest extends TestCase
 
     public function testPrepareThrowsRuntimeExceptionOnInvalidSql(): void
     {
-        $sql = "INVALID SQL";
+        $sql = 'INVALID SQL';
         $this->statement->setSql($sql);
 
         $this->expectException(
@@ -141,7 +141,7 @@ class StatementTest extends TestCase
     public function testPrepareThrowsRuntimeExceptionOnInvalidSqlWithErrorReportingDisabled(): void
     {
         error_reporting(0);
-        $sql = "INVALID SQL";
+        $sql = 'INVALID SQL';
         $this->statement->setSql($sql);
 
         $this->expectException(

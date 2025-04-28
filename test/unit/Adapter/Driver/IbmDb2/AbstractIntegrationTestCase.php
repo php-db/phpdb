@@ -9,7 +9,7 @@ use function getenv;
 
 abstract class AbstractIntegrationTestCase extends TestCase
 {
-    /** @var array */
+    /** @var string|array|false */
     protected string|array|false $variables = [
         'database' => 'TESTS_LAMINAS_DB_ADAPTER_DRIVER_IBMDB2_DATABASE',
         'username' => 'TESTS_LAMINAS_DB_ADAPTER_DRIVER_IBMDB2_USERNAME',
@@ -20,7 +20,7 @@ abstract class AbstractIntegrationTestCase extends TestCase
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
-    #[Override]
+    #[\Override]
     protected function setUp(): void
     {
         foreach ($this->variables as $name => $value) {

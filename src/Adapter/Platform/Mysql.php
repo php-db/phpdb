@@ -34,7 +34,7 @@ class Mysql extends AbstractPlatform
     protected $quoteIdentifierFragmentPattern = '/([^0-9,a-z,A-Z$_\-:])/i';
 
     /**
-     * @param null|\Laminas\Db\Adapter\Driver\Mysqli\Mysqli|\Laminas\Db\Adapter\Driver\Pdo\Pdo|\mysqli|\PDO $driver
+     * @param null|Mysqli\Mysqli|Pdo\Pdo|\mysqli|\PDO $driver
      */
     public function __construct($driver = null)
     {
@@ -44,9 +44,9 @@ class Mysql extends AbstractPlatform
     }
 
     /**
-     * @param \Laminas\Db\Adapter\Driver\Mysqli\Mysqli|\Laminas\Db\Adapter\Driver\Pdo\Pdo|\mysqli|\PDO $driver
-     * @return $this Provides a fluent interface
+     * @param Mysqli\Mysqli|Pdo\Pdo|\mysqli|\PDO $driver
      * @throws InvalidArgumentException
+     *@return $this Provides a fluent interface
      */
     public function setDriver($driver)
     {

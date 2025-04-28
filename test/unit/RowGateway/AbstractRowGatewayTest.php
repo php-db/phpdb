@@ -36,20 +36,20 @@ use ReflectionObject;
 #[CoversMethod(RowGateway::class, 'toArray')]
 class AbstractRowGatewayTest extends TestCase
 {
-    /** @var Adapter&MockObject */
+    /** @var Adapter|MockObject */
     protected Adapter|MockObject $mockAdapter;
 
-    /** @var RowGateway */
+    /** @var AbstractRowGateway|MockObject|RowGateway */
     protected RowGateway|AbstractRowGateway|MockObject $rowGateway;
 
-    /** @var ResultInterface&MockObject */
+    /** @var MockObject|ResultInterface */
     protected ResultInterface|MockObject $mockResult;
 
     /**
      * @throws ReflectionException
      * @throws Exception
      */
-    #[Override]
+    #[\Override]
     protected function setUp(): void
     {
         // mock the adapter, driver, and parts

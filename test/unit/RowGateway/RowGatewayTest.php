@@ -14,14 +14,14 @@ use PHPUnit\Framework\TestCase;
 
 class RowGatewayTest extends TestCase
 {
-    /** @var Adapter&MockObject */
+    /** @var Adapter|MockObject */
     protected Adapter|MockObject $mockAdapter;
 
     protected RowGateway $rowGateway;
 
-    /** @var ResultInterface&MockObject */
+    /** @var MockObject|ResultInterface */
     protected ResultInterface|MockObject $mockResult;
-    #[Override]
+    #[\Override]
     protected function setUp(): void
     {
         // mock the adapter, driver, and parts

@@ -30,7 +30,7 @@ class SqliteTest extends TestCase
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
-    #[Override]
+    #[\Override]
     protected function setUp(): void
     {
         $this->platform = new Sqlite();
@@ -158,7 +158,7 @@ class SqliteTest extends TestCase
     public function testCanCloseConnectionAfterQuoteValue(): void
     {
         // Creating the SQLite database file
-        $filePath = realpath(__DIR__) . "/_files/sqlite.db";
+        $filePath = realpath(__DIR__) . '/_files/sqlite.db';
         if (! file_exists($filePath)) {
             touch($filePath);
         }
@@ -170,8 +170,8 @@ class SqliteTest extends TestCase
 
         $this->platform->setDriver($driver);
 
-        $this->platform->quoteValue("some; random]/ value");
-        $this->platform->quoteTrustedValue("some; random]/ value");
+        $this->platform->quoteValue('some; random]/ value');
+        $this->platform->quoteTrustedValue('some; random]/ value');
 
         // Closing the connection so we can delete the file
         $driver->getConnection()->disconnect();
