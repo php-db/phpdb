@@ -4,6 +4,7 @@ namespace Laminas\Db\Adapter\Driver;
 
 use Laminas\Db\Adapter\Profiler\ProfilerAwareInterface;
 use Laminas\Db\Adapter\Profiler\ProfilerInterface;
+use Override;
 
 abstract class AbstractConnection implements ConnectionInterface, ProfilerAwareInterface
 {
@@ -32,7 +33,7 @@ abstract class AbstractConnection implements ConnectionInterface, ProfilerAwareI
     /**
      * {@inheritDoc}
      */
-    public function disconnect()
+    #[Override] public function disconnect()
     {
         if ($this->isConnected()) {
             $this->resource = null;
@@ -66,7 +67,7 @@ abstract class AbstractConnection implements ConnectionInterface, ProfilerAwareI
      *
      * @return null|resource
      */
-    public function getResource()
+    #[Override] public function getResource()
     {
         if (! $this->isConnected()) {
             $this->connect();
@@ -100,7 +101,7 @@ abstract class AbstractConnection implements ConnectionInterface, ProfilerAwareI
      *
      * @return $this Provides a fluent interface
      */
-    public function setProfiler(ProfilerInterface $profiler)
+    #[Override] public function setProfiler(ProfilerInterface $profiler)
     {
         $this->profiler = $profiler;
 

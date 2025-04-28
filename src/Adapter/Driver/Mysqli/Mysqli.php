@@ -7,6 +7,8 @@ use Laminas\Db\Adapter\Exception;
 use Laminas\Db\Adapter\Profiler;
 use mysqli_stmt;
 
+use Override;
+
 use function array_intersect_key;
 use function array_merge;
 use function extension_loaded;
@@ -56,7 +58,7 @@ class Mysqli implements DriverInterface, Profiler\ProfilerAwareInterface
     /**
      * @return $this Provides a fluent interface
      */
-    public function setProfiler(Profiler\ProfilerInterface $profiler)
+    #[Override] public function setProfiler(Profiler\ProfilerInterface $profiler)
     {
         $this->profiler = $profiler;
         if ($this->connection instanceof Profiler\ProfilerAwareInterface) {
@@ -103,7 +105,7 @@ class Mysqli implements DriverInterface, Profiler\ProfilerAwareInterface
      * @param  string $nameFormat
      * @return string
      */
-    public function getDatabasePlatformName($nameFormat = self::NAME_FORMAT_CAMELCASE)
+    #[Override] public function getDatabasePlatformName($nameFormat = self::NAME_FORMAT_CAMELCASE)
     {
         if ($nameFormat === self::NAME_FORMAT_CAMELCASE) {
             return 'Mysql';
@@ -118,7 +120,7 @@ class Mysqli implements DriverInterface, Profiler\ProfilerAwareInterface
      * @throws Exception\RuntimeException
      * @return void
      */
-    public function checkEnvironment()
+    #[Override] public function checkEnvironment()
     {
         if (! extension_loaded('mysqli')) {
             throw new Exception\RuntimeException(
@@ -132,7 +134,7 @@ class Mysqli implements DriverInterface, Profiler\ProfilerAwareInterface
      *
      * @return Connection
      */
-    public function getConnection()
+    #[Override] public function getConnection()
     {
         return $this->connection;
     }
@@ -143,7 +145,7 @@ class Mysqli implements DriverInterface, Profiler\ProfilerAwareInterface
      * @param string $sqlOrResource
      * @return Statement
      */
-    public function createStatement($sqlOrResource = null)
+    #[Override] public function createStatement($sqlOrResource = null)
     {
         /**
          * @todo Resource tracking
@@ -174,7 +176,7 @@ class Mysqli implements DriverInterface, Profiler\ProfilerAwareInterface
      * @param null|bool $isBuffered
      * @return Result
      */
-    public function createResult($resource, $isBuffered = null)
+    #[Override] public function createResult($resource, $isBuffered = null)
     {
         $result = clone $this->resultPrototype;
         $result->initialize($resource, $this->connection->getLastGeneratedValue(), $isBuffered);
@@ -186,7 +188,7 @@ class Mysqli implements DriverInterface, Profiler\ProfilerAwareInterface
      *
      * @return string
      */
-    public function getPrepareType()
+    #[Override] public function getPrepareType()
     {
         return self::PARAMETERIZATION_POSITIONAL;
     }
@@ -198,7 +200,7 @@ class Mysqli implements DriverInterface, Profiler\ProfilerAwareInterface
      * @param mixed  $type
      * @return string
      */
-    public function formatParameterName($name, $type = null)
+    #[Override] public function formatParameterName($name, $type = null)
     {
         return '?';
     }

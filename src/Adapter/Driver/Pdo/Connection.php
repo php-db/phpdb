@@ -5,6 +5,7 @@ namespace Laminas\Db\Adapter\Driver\Pdo;
 use Laminas\Db\Adapter\Driver\AbstractConnection;
 use Laminas\Db\Adapter\Exception;
 use Laminas\Db\Adapter\Exception\RuntimeException;
+use Override;
 use PDOException;
 use PDOStatement;
 
@@ -64,6 +65,7 @@ class Connection extends AbstractConnection
      *
      * @return void
      */
+    #[\Override]
     public function setConnectionParameters(array $connectionParameters)
     {
         $this->connectionParameters = $connectionParameters;
@@ -103,7 +105,7 @@ class Connection extends AbstractConnection
     /**
      * {@inheritDoc}
      */
-    public function getCurrentSchema()
+    #[Override] public function getCurrentSchema()
     {
         if (! $this->isConnected()) {
             $this->connect();
@@ -153,7 +155,7 @@ class Connection extends AbstractConnection
      * @throws Exception\InvalidConnectionParametersException
      * @throws Exception\RuntimeException
      */
-    public function connect()
+    #[Override] public function connect()
     {
         if ($this->resource) {
             return $this;
@@ -288,7 +290,7 @@ class Connection extends AbstractConnection
     /**
      * {@inheritDoc}
      */
-    public function isConnected()
+    #[Override] public function isConnected()
     {
         return $this->resource instanceof \PDO;
     }
@@ -296,7 +298,7 @@ class Connection extends AbstractConnection
     /**
      * {@inheritDoc}
      */
-    public function beginTransaction()
+    #[Override] public function beginTransaction()
     {
         if (! $this->isConnected()) {
             $this->connect();
@@ -315,7 +317,7 @@ class Connection extends AbstractConnection
     /**
      * {@inheritDoc}
      */
-    public function commit()
+    #[Override] public function commit()
     {
         if (! $this->isConnected()) {
             $this->connect();
@@ -342,7 +344,7 @@ class Connection extends AbstractConnection
      *
      * @throws Exception\RuntimeException
      */
-    public function rollback()
+    #[Override] public function rollback()
     {
         if (! $this->isConnected()) {
             throw new Exception\RuntimeException('Must be connected before you can rollback');
@@ -365,7 +367,7 @@ class Connection extends AbstractConnection
      *
      * @throws Exception\InvalidQueryException
      */
-    public function execute($sql)
+    #[Override] public function execute($sql)
     {
         if (! $this->isConnected()) {
             $this->connect();
@@ -406,13 +408,13 @@ class Connection extends AbstractConnection
      * @param  string            $name
      * @return string|null|false
      */
-    public function getLastGeneratedValue($name = null)
+    #[Override] public function getLastGeneratedValue($name = null)
     {
         if (
             $name === null
             && ($this->driverName === 'pgsql' || $this->driverName === 'firebird')
         ) {
-            return;
+            return null;
         }
 
         try {

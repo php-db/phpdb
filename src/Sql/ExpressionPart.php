@@ -30,7 +30,7 @@ class ExpressionPart
 
     public function getSpecificationString(bool $decorateString = false): string
     {
-        return sprintf('%s', implode(' ', $this->specification));
+        return implode(' ', $this->specification);
     }
 
     public function getSpecificationValues(array $values = []): array

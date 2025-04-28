@@ -2,6 +2,8 @@
 
 namespace Laminas\Db\Adapter\Platform;
 
+use Override;
+
 use function db2_escape_string;
 use function function_exists;
 use function implode;
@@ -42,7 +44,7 @@ class IbmDb2 extends AbstractPlatform
     /**
      * {@inheritDoc}
      */
-    public function getName()
+    #[Override] public function getName()
     {
         return 'IBM DB2';
     }
@@ -50,7 +52,7 @@ class IbmDb2 extends AbstractPlatform
     /**
      * {@inheritDoc}
      */
-    public function quoteIdentifierInFragment($identifier, array $safeWords = [])
+    #[Override] public function quoteIdentifierInFragment($identifier, array $safeWords = [])
     {
         if (! $this->quoteIdentifiers) {
             return $identifier;
@@ -81,14 +83,14 @@ class IbmDb2 extends AbstractPlatform
     /**
      * {@inheritDoc}
      */
-    public function quoteIdentifierChain($identifierChain)
+    #[Override] public function quoteIdentifierChain($identifierChain)
     {
         if ($this->quoteIdentifiers === false) {
             if (is_array($identifierChain)) {
                 return implode($this->identifierSeparator, $identifierChain);
-            } else {
-                return $identifierChain;
             }
+
+            return $identifierChain;
         }
         $identifierChain = str_replace('"', '\\"', $identifierChain);
         if (is_array($identifierChain)) {
@@ -100,7 +102,7 @@ class IbmDb2 extends AbstractPlatform
     /**
      * {@inheritDoc}
      */
-    public function quoteValue($value)
+    #[Override] public function quoteValue($value)
     {
         if (function_exists('db2_escape_string')) {
             return '\'' . db2_escape_string($value) . '\'';
@@ -116,7 +118,7 @@ class IbmDb2 extends AbstractPlatform
     /**
      * {@inheritDoc}
      */
-    public function quoteTrustedValue($value)
+    #[Override] public function quoteTrustedValue($value)
     {
         if (function_exists('db2_escape_string')) {
             return '\'' . db2_escape_string($value) . '\'';
@@ -127,7 +129,7 @@ class IbmDb2 extends AbstractPlatform
     /**
      * {@inheritDoc}
      */
-    public function getIdentifierSeparator()
+    #[Override] public function getIdentifierSeparator()
     {
         return $this->identifierSeparator;
     }

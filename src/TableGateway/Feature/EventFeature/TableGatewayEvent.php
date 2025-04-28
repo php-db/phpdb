@@ -5,6 +5,7 @@ namespace Laminas\Db\TableGateway\Feature\EventFeature;
 use ArrayAccess;
 use Laminas\Db\TableGateway\AbstractTableGateway;
 use Laminas\EventManager\EventInterface;
+use Override;
 
 class TableGatewayEvent implements EventInterface
 {
@@ -22,7 +23,7 @@ class TableGatewayEvent implements EventInterface
      *
      * @return string|null
      */
-    public function getName()
+    #[Override] public function getName()
     {
         return $this->name;
     }
@@ -32,7 +33,7 @@ class TableGatewayEvent implements EventInterface
      *
      * @return AbstractTableGateway
      */
-    public function getTarget()
+    #[Override] public function getTarget()
     {
         return $this->target;
     }
@@ -42,7 +43,7 @@ class TableGatewayEvent implements EventInterface
      *
      * @return array|ArrayAccess
      */
-    public function getParams()
+    #[Override] public function getParams()
     {
         return $this->params;
     }
@@ -54,7 +55,7 @@ class TableGatewayEvent implements EventInterface
      * @param  mixed $default Default value to return if parameter does not exist
      * @return mixed
      */
-    public function getParam($name, $default = null)
+    #[Override] public function getParam($name, $default = null)
     {
         return $this->params[$name] ?? $default;
     }
@@ -65,7 +66,7 @@ class TableGatewayEvent implements EventInterface
      * @param  string $name
      * @return void
      */
-    public function setName($name)
+    #[Override] public function setName($name)
     {
         $this->name = $name;
     }
@@ -76,7 +77,7 @@ class TableGatewayEvent implements EventInterface
      * @param  null|string|object $target
      * @return void
      */
-    public function setTarget($target)
+    #[Override] public function setTarget($target)
     {
         $this->target = $target;
     }
@@ -87,7 +88,7 @@ class TableGatewayEvent implements EventInterface
      * @param  string $params
      * @return void
      */
-    public function setParams($params)
+    #[Override] public function setParams($params)
     {
         $this->params = $params;
     }
@@ -99,7 +100,7 @@ class TableGatewayEvent implements EventInterface
      * @param  mixed $value
      * @return void
      */
-    public function setParam($name, $value)
+    #[Override] public function setParam($name, $value)
     {
         $this->params[$name] = $value;
     }
@@ -110,7 +111,7 @@ class TableGatewayEvent implements EventInterface
      * @param  bool $flag
      * @return void
      */
-    public function stopPropagation($flag = true)
+    #[Override] public function stopPropagation($flag = true)
     {
     }
 
@@ -119,7 +120,7 @@ class TableGatewayEvent implements EventInterface
      *
      * @return bool
      */
-    public function propagationIsStopped()
+    #[Override] public function propagationIsStopped()
     {
         return false;
     }

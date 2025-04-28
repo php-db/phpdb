@@ -674,7 +674,7 @@ class SelectTest extends TestCase
 
         $select->prepareStatement($mockAdapter, $mockStatement);
 
-        if ($expectedParameters) {
+        if ($expectedParameters !== []) {
             self::assertEquals($expectedParameters, $parameterContainer->getNamedArray());
         }
     }
@@ -734,7 +734,7 @@ class SelectTest extends TestCase
                     part of extension API')]
     public function testProcessMethods(Select $select, mixed $unused, mixed $unused2, mixed $unused3, array $internalTests)
     {
-        if (! $internalTests) {
+        if ($internalTests === []) {
             $this->expectNotToPerformAssertions();
             return;
         }

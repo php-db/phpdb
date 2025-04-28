@@ -7,10 +7,11 @@ use Laminas\Db\Adapter\ParameterContainer;
 use Laminas\Db\Adapter\Platform\PlatformInterface;
 use Laminas\Db\Sql\Platform\PlatformDecoratorInterface;
 use Laminas\Db\Sql\Select;
+use Override;
 
 class SelectDecorator extends Select implements PlatformDecoratorInterface
 {
-    protected Select $subject;
+    public $subject;
 
     /**
      * Set Subject
@@ -18,7 +19,7 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
      * @param Select $subject
      * @return $this Provides a fluent interface
      */
-    public function setSubject($subject): self
+    #[Override] public function setSubject($subject): self
     {
         $this->subject = $subject;
 
@@ -28,6 +29,7 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
     /**
      * {@inheritDoc}
      */
+    #[\Override]
     protected function localizeVariables(): void
     {
         parent::localizeVariables();
@@ -37,6 +39,7 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
     /**
      * {@inheritDoc}
      */
+    #[\Override]
     protected function processStatementStart(
         PlatformInterface $platform,
         ?DriverInterface $driver = null,
@@ -45,6 +48,7 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
         return '';
     }
 
+    #[\Override]
     protected function processLimit(
         PlatformInterface $platform,
         ?DriverInterface $driver = null,
@@ -56,7 +60,7 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
         if ($this->limit === null) {
             return null;
         }
-        if ($parameterContainer) {
+        if ($parameterContainer instanceof \Laminas\Db\Adapter\ParameterContainer) {
             $paramPrefix = $this->processInfo['paramPrefix'];
             $parameterContainer->offsetSet($paramPrefix . 'limit', $this->limit, ParameterContainer::TYPE_INTEGER);
             return [$driver->formatParameterName('limit')];
@@ -65,6 +69,7 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
         return [$this->limit];
     }
 
+    #[\Override]
     protected function processOffset(
         PlatformInterface $platform,
         ?DriverInterface $driver = null,
@@ -73,7 +78,7 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
         if ($this->offset === null) {
             return null;
         }
-        if ($parameterContainer) {
+        if ($parameterContainer instanceof \Laminas\Db\Adapter\ParameterContainer) {
             $paramPrefix = $this->processInfo['paramPrefix'];
             $parameterContainer->offsetSet($paramPrefix . 'offset', $this->offset, ParameterContainer::TYPE_INTEGER);
             return [$driver->formatParameterName('offset')];
@@ -85,6 +90,7 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
     /**
      * {@inheritDoc}
      */
+    #[\Override]
     protected function processStatementEnd(
         PlatformInterface $platform,
         ?DriverInterface $driver = null,

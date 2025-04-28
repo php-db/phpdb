@@ -6,6 +6,7 @@ use Interop\Container\ContainerInterface;
 use Laminas\ServiceManager\AbstractFactoryInterface;
 use Laminas\ServiceManager\ServiceLocatorInterface;
 
+use Override;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 
@@ -30,7 +31,7 @@ class AdapterAbstractServiceFactory implements AbstractFactoryInterface
      * @throws NotFoundExceptionInterface
      * @return bool
      */
-    public function canCreate(ContainerInterface $container, $requestedName)
+    #[Override] public function canCreate(ContainerInterface $container, $requestedName)
     {
         $config = $this->getConfig($container);
         if (empty($config)) {
@@ -39,7 +40,7 @@ class AdapterAbstractServiceFactory implements AbstractFactoryInterface
 
         return isset($config[$requestedName])
             && is_array($config[$requestedName])
-            && ! empty($config[$requestedName]);
+            && (isset($config[$requestedName]) && $config[$requestedName] !== []);
     }
 
     /**
@@ -52,7 +53,7 @@ class AdapterAbstractServiceFactory implements AbstractFactoryInterface
      * @throws NotFoundExceptionInterface
      * @return bool
      */
-    public function canCreateServiceWithName(ServiceLocatorInterface $serviceLocator, $name, $requestedName)
+    #[Override] public function canCreateServiceWithName(ServiceLocatorInterface $serviceLocator, $name, $requestedName)
     {
         return $this->canCreate($serviceLocator, $requestedName);
     }
@@ -67,7 +68,7 @@ class AdapterAbstractServiceFactory implements AbstractFactoryInterface
      * @throws NotFoundExceptionInterface
      * @return Adapter
      */
-    public function __invoke(ContainerInterface $container, $requestedName, ?array $options = null)
+    #[Override] public function __invoke(ContainerInterface $container, $requestedName, ?array $options = null)
     {
         $config = $this->getConfig($container);
         return new Adapter($config[$requestedName]);
@@ -83,7 +84,7 @@ class AdapterAbstractServiceFactory implements AbstractFactoryInterface
      * @throws NotFoundExceptionInterface
      * @return Adapter
      */
-    public function createServiceWithName(ServiceLocatorInterface $serviceLocator, $name, $requestedName)
+    #[Override] public function createServiceWithName(ServiceLocatorInterface $serviceLocator, $name, $requestedName)
     {
         return $this($serviceLocator, $requestedName);
     }

@@ -5,6 +5,7 @@ namespace Laminas\Db\Adapter\Driver\IbmDb2;
 use Laminas\Db\Adapter\Driver\ResultInterface;
 use Laminas\Db\Adapter\Exception;
 // phpcs:ignore SlevomatCodingStandard.Namespaces.UnusedUses.UnusedUse
+use Override;
 use ReturnTypeWillChange;
 
 class Result implements ResultInterface
@@ -44,7 +45,7 @@ class Result implements ResultInterface
      *
      * @return mixed Can return any type.
      */
-    #[ReturnTypeWillChange]
+    #[Override] #[ReturnTypeWillChange]
     public function current()
     {
         if ($this->currentComplete) {
@@ -58,7 +59,7 @@ class Result implements ResultInterface
     /**
      * @return mixed
      */
-    #[ReturnTypeWillChange]
+    #[Override] #[ReturnTypeWillChange]
     public function next()
     {
         $this->currentData     = db2_fetch_assoc($this->resource);
@@ -70,7 +71,7 @@ class Result implements ResultInterface
     /**
      * @return int
      */
-    #[ReturnTypeWillChange]
+    #[Override] #[ReturnTypeWillChange]
     public function key()
     {
         return $this->position;
@@ -79,7 +80,7 @@ class Result implements ResultInterface
     /**
      * @return bool
      */
-    #[ReturnTypeWillChange]
+    #[Override] #[ReturnTypeWillChange]
     public function valid()
     {
         return $this->currentData !== false;
@@ -93,7 +94,7 @@ class Result implements ResultInterface
      *
      * @return void Any returned value is ignored.
      */
-    #[ReturnTypeWillChange]
+    #[Override] #[ReturnTypeWillChange]
     public function rewind()
     {
         if ($this->position > 0) {
@@ -111,7 +112,7 @@ class Result implements ResultInterface
      *
      * @return null
      */
-    public function buffer()
+    #[Override] public function buffer()
     {
         return null;
     }
@@ -121,7 +122,7 @@ class Result implements ResultInterface
      *
      * @return bool|null
      */
-    public function isBuffered()
+    #[Override] public function isBuffered()
     {
         return false;
     }
@@ -131,7 +132,7 @@ class Result implements ResultInterface
      *
      * @return bool
      */
-    public function isQueryResult()
+    #[Override] public function isQueryResult()
     {
         return db2_num_fields($this->resource) > 0;
     }
@@ -141,7 +142,7 @@ class Result implements ResultInterface
      *
      * @return false|int
      */
-    public function getAffectedRows(): int|false
+    #[Override] public function getAffectedRows(): int|false
     {
         return db2_num_rows($this->resource);
     }
@@ -151,7 +152,7 @@ class Result implements ResultInterface
      *
      * @return mixed|null
      */
-    public function getGeneratedValue()
+    #[Override] public function getGeneratedValue()
     {
         return $this->generatedValue;
     }
@@ -161,7 +162,7 @@ class Result implements ResultInterface
      *
      * @return resource
      */
-    public function getResource()
+    #[Override] public function getResource()
     {
         return $this->resource;
     }
@@ -171,7 +172,7 @@ class Result implements ResultInterface
      *
      * @return false|int
      */
-    public function getFieldCount(): int|false
+    #[Override] public function getFieldCount(): int|false
     {
         return db2_num_fields($this->resource);
     }
@@ -179,7 +180,7 @@ class Result implements ResultInterface
     /**
      * @return int
      */
-    #[ReturnTypeWillChange]
+    #[Override] #[ReturnTypeWillChange]
     public function count()
     {
         return 0;

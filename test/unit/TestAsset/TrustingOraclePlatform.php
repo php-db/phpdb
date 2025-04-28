@@ -3,13 +3,14 @@
 namespace LaminasTest\Db\TestAsset;
 
 use Laminas\Db\Adapter\Platform\Oracle;
+use Override;
 
 class TrustingOraclePlatform extends Oracle
 {
     /**
      * @param string $value
      */
-    public function quoteValue($value): string
+    #[Override] public function quoteValue($value): string
     {
         return $this->quoteTrustedValue($value);
     }

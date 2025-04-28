@@ -3,6 +3,7 @@
 namespace LaminasIntegrationTest\Db\Platform;
 
 use Exception;
+use Override;
 use PDO;
 
 use function file_get_contents;
@@ -19,7 +20,7 @@ class MysqlFixtureLoader implements FixtureLoader
     /**
      * @throws Exception
      */
-    public function createDatabase(): void
+    #[Override] public function createDatabase(): void
     {
         $this->connect();
 
@@ -50,7 +51,7 @@ class MysqlFixtureLoader implements FixtureLoader
         $this->disconnect();
     }
 
-    public function dropDatabase(): void
+    #[Override] public function dropDatabase(): void
     {
         $this->connect();
 

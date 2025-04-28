@@ -143,7 +143,7 @@ class ConstraintObject
     /** @return bool */
     public function hasColumns()
     {
-        return ! empty($this->columns);
+        return $this->columns !== [];
     }
 
     /**

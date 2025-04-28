@@ -5,6 +5,7 @@ namespace LaminasIntegrationTest\Db\Adapter\Driver\Pdo\Mysql;
 use Exception;
 use Laminas\Db\TableGateway\TableGateway;
 use LaminasIntegrationTest\Db\Adapter\Driver\Pdo\AdapterTrait as BaseAdapterTrait;
+use Override;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
@@ -37,7 +38,7 @@ class TableGatewayAndAdapterTest extends TestCase
         self::assertCount(3, $result->current());
     }
 
-    protected function tearDown(): void
+    #[Override] protected function tearDown(): void
     {
         if ($this->adapter->getDriver()->getConnection()->isConnected()) {
             $this->adapter->getDriver()->getConnection()->disconnect();

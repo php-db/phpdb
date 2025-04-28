@@ -5,6 +5,8 @@ namespace Laminas\Db\Metadata\Source;
 use DateTime;
 use Laminas\Db\Adapter\Adapter;
 
+use Override;
+
 use function array_change_key_case;
 use function array_walk;
 use function implode;
@@ -19,7 +21,7 @@ class SqlServerMetadata extends AbstractSource
      * @throws \Exception
      * @return void
      */
-    protected function loadSchemaData()
+    #[Override] protected function loadSchemaData()
     {
         if (isset($this->data['schemas'])) {
             return;
@@ -48,7 +50,7 @@ class SqlServerMetadata extends AbstractSource
      * @throws \Exception
      * @return void
      */
-    protected function loadTableNameData($schema)
+    #[Override] protected function loadTableNameData($schema)
     {
         if (isset($this->data['table_names'][$schema])) {
             return;
@@ -109,7 +111,7 @@ class SqlServerMetadata extends AbstractSource
      * @param string $schema
      * @throws \Exception
      */
-    protected function loadColumnData($table, $schema): void
+    #[Override] protected function loadColumnData($table, $schema): void
     {
         if (isset($this->data['columns'][$schema][$table])) {
             return;
@@ -179,7 +181,7 @@ class SqlServerMetadata extends AbstractSource
      * @throws \Exception
      * @return void
      */
-    protected function loadConstraintData($table, $schema)
+    #[Override] protected function loadConstraintData($table, $schema)
     {
         // phpcs:disable WebimpressCodingStandard.NamingConventions.ValidVariableName.NotCamelCaps
         if (isset($this->data['constraints'][$schema][$table])) {
@@ -314,7 +316,7 @@ class SqlServerMetadata extends AbstractSource
      * @throws \Exception
      * @return void
      */
-    protected function loadTriggerData($schema)
+    #[Override] protected function loadTriggerData($schema)
     {
         if (isset($this->data['triggers'][$schema])) {
             return;

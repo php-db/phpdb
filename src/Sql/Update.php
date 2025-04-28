@@ -228,7 +228,7 @@ class Update extends AbstractPreparableSql
         ?ParameterContainer $parameterContainer = null
     ) {
         if ($this->where->count() === 0) {
-            return;
+            return null;
         }
         return sprintf(
             $this->specifications[static::SPECIFICATION_WHERE],
@@ -250,13 +250,14 @@ class Update extends AbstractPreparableSql
      * Proxies to "where" only
      *
      * @param  string $name
-     * @return string|void|Where
+     * @return string|null|\Laminas\Db\Sql\Where
      */
     public function __get($name)
     {
         if (strtolower($name) === 'where') {
             return $this->where;
         }
+        return null;
     }
 
     /**

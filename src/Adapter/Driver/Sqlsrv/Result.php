@@ -5,6 +5,7 @@ namespace Laminas\Db\Adapter\Driver\Sqlsrv;
 use Iterator;
 use Laminas\Db\Adapter\Driver\ResultInterface;
 // phpcs:ignore SlevomatCodingStandard.Namespaces.UnusedUses.UnusedUse
+use Override;
 use ReturnTypeWillChange;
 
 use function is_bool;
@@ -51,7 +52,7 @@ class Result implements Iterator, ResultInterface
     /**
      * @return null
      */
-    public function buffer()
+    #[Override] public function buffer()
     {
         return null;
     }
@@ -59,7 +60,7 @@ class Result implements Iterator, ResultInterface
     /**
      * @return bool
      */
-    public function isBuffered()
+    #[Override] public function isBuffered()
     {
         return false;
     }
@@ -69,7 +70,7 @@ class Result implements Iterator, ResultInterface
      *
      * @return resource
      */
-    public function getResource()
+    #[Override] public function getResource()
     {
         return $this->resource;
     }
@@ -79,7 +80,7 @@ class Result implements Iterator, ResultInterface
      *
      * @return bool
      */
-    #[ReturnTypeWillChange]
+    #[Override] #[ReturnTypeWillChange]
     public function current()
     {
         if ($this->currentComplete) {
@@ -95,7 +96,7 @@ class Result implements Iterator, ResultInterface
      *
      * @return bool
      */
-    #[ReturnTypeWillChange]
+    #[Override] #[ReturnTypeWillChange]
     public function next()
     {
         $this->load();
@@ -121,7 +122,7 @@ class Result implements Iterator, ResultInterface
      *
      * @return int
      */
-    #[ReturnTypeWillChange]
+    #[Override] #[ReturnTypeWillChange]
     public function key()
     {
         return $this->position;
@@ -132,7 +133,7 @@ class Result implements Iterator, ResultInterface
      *
      * @return bool
      */
-    #[ReturnTypeWillChange]
+    #[Override] #[ReturnTypeWillChange]
     public function rewind()
     {
         $this->position = 0;
@@ -145,7 +146,7 @@ class Result implements Iterator, ResultInterface
      *
      * @return bool
      */
-    #[ReturnTypeWillChange]
+    #[Override] #[ReturnTypeWillChange]
     public function valid()
     {
         if ($this->currentComplete && $this->currentData) {
@@ -160,7 +161,7 @@ class Result implements Iterator, ResultInterface
      *
      * @return false|int
      */
-    #[ReturnTypeWillChange]
+    #[Override] #[ReturnTypeWillChange]
     public function count(): int|false
     {
         return sqlsrv_num_rows($this->resource);
@@ -169,7 +170,7 @@ class Result implements Iterator, ResultInterface
     /**
      * @return bool|int
      */
-    public function getFieldCount()
+    #[Override] public function getFieldCount()
     {
         return sqlsrv_num_fields($this->resource);
     }
@@ -179,7 +180,7 @@ class Result implements Iterator, ResultInterface
      *
      * @return bool
      */
-    public function isQueryResult()
+    #[Override] public function isQueryResult()
     {
         if (is_bool($this->resource)) {
             return false;
@@ -192,7 +193,7 @@ class Result implements Iterator, ResultInterface
      *
      * @return false|int
      */
-    public function getAffectedRows(): int|false
+    #[Override] public function getAffectedRows(): int|false
     {
         return sqlsrv_rows_affected($this->resource);
     }
@@ -200,7 +201,7 @@ class Result implements Iterator, ResultInterface
     /**
      * @return mixed|null
      */
-    public function getGeneratedValue()
+    #[Override] public function getGeneratedValue()
     {
         return $this->generatedValue;
     }

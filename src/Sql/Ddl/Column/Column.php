@@ -7,6 +7,7 @@ use Laminas\Db\Sql\ArgumentType;
 use Laminas\Db\Sql\Ddl\Constraint\ConstraintInterface;
 use Laminas\Db\Sql\ExpressionData;
 use Laminas\Db\Sql\ExpressionPart;
+use Override;
 
 class Column implements ColumnInterface
 {
@@ -52,7 +53,7 @@ class Column implements ColumnInterface
     /**
      * @return null|string
      */
-    public function getName()
+    #[Override] public function getName()
     {
         return $this->name;
     }
@@ -70,7 +71,7 @@ class Column implements ColumnInterface
     /**
      * @return bool
      */
-    public function isNullable()
+    #[Override] public function isNullable()
     {
         return $this->isNullable;
     }
@@ -88,7 +89,7 @@ class Column implements ColumnInterface
     /**
      * @return null|string|int
      */
-    public function getDefault()
+    #[Override] public function getDefault()
     {
         return $this->default;
     }
@@ -116,7 +117,7 @@ class Column implements ColumnInterface
     /**
      * @return array
      */
-    public function getOptions()
+    #[Override] public function getOptions()
     {
         return $this->options;
     }

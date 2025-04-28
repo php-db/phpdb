@@ -5,6 +5,7 @@ namespace LaminasTest\Db\Adapter\Driver\Mysqli;
 use Laminas\Db\Adapter\Driver\Mysqli\Connection;
 use Laminas\Db\Adapter\Driver\Mysqli\Mysqli;
 use Laminas\Db\Adapter\Exception\RuntimeException;
+use Override;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -38,7 +39,7 @@ class ConnectionTest extends TestCase
      * Tears down the fixture, for example, closes a network connection.
      * This method is called after a test is executed.
      */
-    protected function tearDown(): void
+    #[Override] protected function tearDown(): void
     {
     }
 
@@ -131,7 +132,7 @@ class ConnectionTest extends TestCase
     protected function createMockMysqli(int $flags): MockObject
     {
         $mysqli = $this->getMockBuilder(\mysqli::class)->getMock();
-        $mysqli->expects($flags ? $this->once() : $this->never())
+        $mysqli->expects($flags !== 0 ? $this->once() : $this->never())
             ->method('ssl_set')
             ->with(
                 $this->equalTo(''),

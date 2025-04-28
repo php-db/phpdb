@@ -5,6 +5,7 @@ namespace Laminas\Db\Adapter\Platform;
 use Laminas\Db\Adapter\Driver\DriverInterface;
 use Laminas\Db\Adapter\Driver\Pdo;
 use Laminas\Db\Adapter\Exception;
+use Override;
 
 class Sqlite extends AbstractPlatform
 {
@@ -56,7 +57,7 @@ class Sqlite extends AbstractPlatform
     /**
      * {@inheritDoc}
      */
-    public function getName()
+    #[Override] public function getName()
     {
         return 'SQLite';
     }
@@ -64,7 +65,7 @@ class Sqlite extends AbstractPlatform
     /**
      * {@inheritDoc}
      */
-    public function quoteValue($value)
+    #[Override] public function quoteValue($value)
     {
         $resource = $this->resource;
 
@@ -82,7 +83,7 @@ class Sqlite extends AbstractPlatform
     /**
      * {@inheritDoc}
      */
-    public function quoteTrustedValue($value)
+    #[Override] public function quoteTrustedValue($value)
     {
         $resource = $this->resource;
 

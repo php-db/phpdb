@@ -123,6 +123,6 @@ class Sql
         return $this
             ->sqlPlatform
             ->setSubject($sqlObject)
-            ->getSqlString($adapter ? $adapter->getPlatform() : $this->adapter->getPlatform());
+            ->getSqlString($adapter instanceof \Laminas\Db\Adapter\AdapterInterface ? $adapter->getPlatform() : $this->adapter->getPlatform());
     }
 }

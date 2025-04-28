@@ -3,15 +3,17 @@
 namespace LaminasTest\Db\TestAsset;
 
 use Laminas\Db\Sql;
+use Override;
 
 class DeleteDecorator extends Sql\Delete implements Sql\Platform\PlatformDecoratorInterface
 {
-    protected ?object $subject;
+    protected $subject;
 
     /**
      * @param null|object $subject
      * @return $this Provides a fluent interface
      */
+    #[Override]
     public function setSubject($subject): static
     {
         $this->subject = $subject;

@@ -7,6 +7,8 @@ use Laminas\Db\Sql\ArgumentType;
 use Laminas\Db\Sql\ExpressionData;
 use Laminas\Db\Sql\ExpressionPart;
 
+use Override;
+
 use function array_fill;
 use function count;
 use function implode;
@@ -71,7 +73,7 @@ abstract class AbstractConstraint implements ConstraintInterface
     /**
      * {}
      */
-    public function getColumns(): array
+    #[Override] public function getColumns(): array
     {
         return $this->columns;
     }
@@ -94,7 +96,7 @@ abstract class AbstractConstraint implements ConstraintInterface
         }
 
         $columnCount = count($this->columns);
-        if ($columnCount) {
+        if ($columnCount !== 0) {
             $columnSpecification = array_fill(0, $columnCount, '%s');
             $columnSpecification = sprintf($this->columnSpecification, implode(', ', $columnSpecification));
             $expressionPart->addSpecification($columnSpecification);

@@ -2,16 +2,17 @@
 
 namespace LaminasTest\Db\TestAsset;
 
+use Override;
 use PDO;
 
 class PdoStubDriver extends PDO
 {
-    public function beginTransaction(): bool
+    #[Override] public function beginTransaction(): bool
     {
         return true;
     }
 
-    public function commit(): bool
+    #[Override] public function commit(): bool
     {
         return true;
     }
@@ -24,7 +25,7 @@ class PdoStubDriver extends PDO
     {
     }
 
-    public function rollBack(): bool
+    #[Override] public function rollBack(): bool
     {
         return true;
     }

@@ -126,6 +126,7 @@ class Combine extends AbstractPreparableSql
     /**
      * Build sql string
      */
+    #[\Override]
     protected function buildSqlString(
         PlatformInterface $platform,
         ?DriverInterface $driver = null,
@@ -170,7 +171,7 @@ class Combine extends AbstractPreparableSql
         foreach ($this->combine as $combine) {
             $combineColumns = $combine['select']->getRawState(self::COLUMNS);
             $aligned        = [];
-            foreach ($allColumns as $alias => $column) {
+            foreach (array_keys($allColumns) as $alias) {
                 $aligned[$alias] = $combineColumns[$alias] ?? new Predicate\Expression('NULL');
             }
             $combine['select']->columns($aligned, false);

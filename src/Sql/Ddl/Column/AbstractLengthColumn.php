@@ -48,7 +48,7 @@ abstract class AbstractLengthColumn extends Column
     {
         $expressionData = parent::getExpressionData();
 
-        if ($this->getLengthExpression()) {
+        if ($this->getLengthExpression() !== '' && $this->getLengthExpression() !== '0') {
             $expressionData
                 ->getExpressionPart(0)
                 ->addValue(Argument::Literal($this->getLengthExpression()));

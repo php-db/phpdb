@@ -4,6 +4,8 @@ namespace LaminasIntegrationTest\Db\Platform;
 
 use Exception;
 
+use Override;
+
 use function file_get_contents;
 use function getenv;
 use function print_r;
@@ -22,7 +24,7 @@ class SqlServerFixtureLoader implements FixtureLoader
     /**
      * @throws Exception
      */
-    public function createDatabase(): void
+    #[Override] public function createDatabase(): void
     {
         $this->connect();
 
@@ -73,7 +75,7 @@ class SqlServerFixtureLoader implements FixtureLoader
     /**
      * @throws Exception
      */
-    public function dropDatabase(): void
+    #[Override] public function dropDatabase(): void
     {
         $this->connect();
 

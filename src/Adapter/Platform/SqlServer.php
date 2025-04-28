@@ -8,6 +8,8 @@ use Laminas\Db\Adapter\Driver\Sqlsrv\Sqlsrv;
 use Laminas\Db\Adapter\Exception;
 use Laminas\Db\Adapter\Exception\InvalidArgumentException;
 
+use Override;
+
 use function addcslashes;
 use function implode;
 use function in_array;
@@ -63,7 +65,7 @@ class SqlServer extends AbstractPlatform
     /**
      * {@inheritDoc}
      */
-    public function getName()
+    #[Override] public function getName()
     {
         return 'SQLServer';
     }
@@ -71,7 +73,7 @@ class SqlServer extends AbstractPlatform
     /**
      * {@inheritDoc}
      */
-    public function getQuoteIdentifierSymbol()
+    #[Override] public function getQuoteIdentifierSymbol()
     {
         return $this->quoteIdentifier;
     }
@@ -79,7 +81,7 @@ class SqlServer extends AbstractPlatform
     /**
      * {@inheritDoc}
      */
-    public function quoteIdentifierChain($identifierChain)
+    #[Override] public function quoteIdentifierChain($identifierChain)
     {
         return '[' . implode('].[', (array) $identifierChain) . ']';
     }
@@ -87,7 +89,7 @@ class SqlServer extends AbstractPlatform
     /**
      * {@inheritDoc}
      */
-    public function quoteValue($value)
+    #[Override] public function quoteValue($value)
     {
         $resource = $this->resource;
 
@@ -108,7 +110,7 @@ class SqlServer extends AbstractPlatform
     /**
      * {@inheritDoc}
      */
-    public function quoteTrustedValue($value)
+    #[Override] public function quoteTrustedValue($value)
     {
         $resource = $this->resource;
 

@@ -6,6 +6,7 @@ use Closure;
 use Iterator;
 use Laminas\Db\Adapter\Driver\ResultInterface;
 use Laminas\Db\Adapter\Exception;
+use Override;
 use PDO;
 use PDOStatement;
 // phpcs:ignore SlevomatCodingStandard.Namespaces.UnusedUses.UnusedUse
@@ -102,14 +103,14 @@ class Result implements Iterator, ResultInterface
     /**
      * @return void
      */
-    public function buffer()
+    #[Override] public function buffer()
     {
     }
 
     /**
      * @return bool|null
      */
-    public function isBuffered()
+    #[Override] public function isBuffered()
     {
         return false;
     }
@@ -145,7 +146,7 @@ class Result implements Iterator, ResultInterface
      *
      * @return PDOStatement
      */
-    public function getResource()
+    #[Override] public function getResource()
     {
         return $this->resource;
     }
@@ -155,7 +156,7 @@ class Result implements Iterator, ResultInterface
      *
      * @return mixed
      */
-    #[ReturnTypeWillChange]
+    #[Override] #[ReturnTypeWillChange]
     public function current()
     {
         if ($this->currentComplete) {
@@ -172,7 +173,7 @@ class Result implements Iterator, ResultInterface
      *
      * @return mixed
      */
-    #[ReturnTypeWillChange]
+    #[Override] #[ReturnTypeWillChange]
     public function next()
     {
         $this->currentData     = $this->resource->fetch($this->fetchMode);
@@ -186,7 +187,7 @@ class Result implements Iterator, ResultInterface
      *
      * @return int
      */
-    #[ReturnTypeWillChange]
+    #[Override] #[ReturnTypeWillChange]
     public function key()
     {
         return $this->position;
@@ -196,7 +197,7 @@ class Result implements Iterator, ResultInterface
      * @throws Exception\RuntimeException
      * @return void
      */
-    #[ReturnTypeWillChange]
+    #[Override] #[ReturnTypeWillChange]
     public function rewind()
     {
         if ($this->statementMode === self::STATEMENT_MODE_FORWARD && $this->position > 0) {
@@ -216,7 +217,7 @@ class Result implements Iterator, ResultInterface
      *
      * @return bool
      */
-    #[ReturnTypeWillChange]
+    #[Override] #[ReturnTypeWillChange]
     public function valid()
     {
         return $this->currentData !== false;
@@ -227,7 +228,7 @@ class Result implements Iterator, ResultInterface
      *
      * @return int
      */
-    #[ReturnTypeWillChange]
+    #[Override] #[ReturnTypeWillChange]
     public function count()
     {
         if (is_int($this->rowCount)) {
@@ -244,7 +245,7 @@ class Result implements Iterator, ResultInterface
     /**
      * @return int
      */
-    public function getFieldCount()
+    #[Override] public function getFieldCount()
     {
         return $this->resource->columnCount();
     }
@@ -254,7 +255,7 @@ class Result implements Iterator, ResultInterface
      *
      * @return bool
      */
-    public function isQueryResult()
+    #[Override] public function isQueryResult()
     {
         return $this->resource->columnCount() > 0;
     }
@@ -264,7 +265,7 @@ class Result implements Iterator, ResultInterface
      *
      * @return int
      */
-    public function getAffectedRows()
+    #[Override] public function getAffectedRows()
     {
         return $this->resource->rowCount();
     }
@@ -272,7 +273,7 @@ class Result implements Iterator, ResultInterface
     /**
      * @return mixed|null
      */
-    public function getGeneratedValue()
+    #[Override] public function getGeneratedValue()
     {
         return $this->generatedValue;
     }

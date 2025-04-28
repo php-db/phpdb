@@ -44,11 +44,7 @@ class ResultSet extends AbstractResultSet
      */
     public function __construct($returnType = self::TYPE_ARRAYOBJECT, $arrayObjectPrototype = null)
     {
-        if (in_array($returnType, $this->allowedReturnTypes, true)) {
-            $this->returnType = $returnType;
-        } else {
-            $this->returnType = self::TYPE_ARRAYOBJECT;
-        }
+        $this->returnType = in_array($returnType, $this->allowedReturnTypes, true) ? $returnType : self::TYPE_ARRAYOBJECT;
         if ($this->returnType === self::TYPE_ARRAYOBJECT) {
             $this->setArrayObjectPrototype($arrayObjectPrototype ?: new ArrayObject([], ArrayObject::ARRAY_AS_PROPS));
         }
@@ -101,7 +97,8 @@ class ResultSet extends AbstractResultSet
     /**
      * @return array|ArrayObject|null
      */
-    #[ReturnTypeWillChange] public function current()
+    #[ReturnTypeWillChange]
+    #[\Override] public function current()
     {
         $data = parent::current();
 

@@ -22,7 +22,7 @@ class MetadataFeature extends AbstractFeature
      */
     public function __construct(?MetadataInterface $metadata = null)
     {
-        if ($metadata) {
+        if ($metadata instanceof \Laminas\Db\Metadata\MetadataInterface) {
             $this->metadata = $metadata;
         }
         $this->sharedData['metadata'] = [
@@ -81,11 +81,7 @@ class MetadataFeature extends AbstractFeature
         }
 
         $pkcColumns = $pkc->getColumns();
-        if (count($pkcColumns) === 1) {
-            $primaryKey = $pkcColumns[0];
-        } else {
-            $primaryKey = $pkcColumns;
-        }
+        $primaryKey = count($pkcColumns) === 1 ? $pkcColumns[0] : $pkcColumns;
 
         $this->sharedData['metadata']['primaryKey'] = $primaryKey;
     }

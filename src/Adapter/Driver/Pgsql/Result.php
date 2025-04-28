@@ -4,6 +4,7 @@ namespace Laminas\Db\Adapter\Driver\Pgsql;
 
 use Laminas\Db\Adapter\Driver\ResultInterface;
 use Laminas\Db\Adapter\Exception;
+use Override;
 use PgSql\Result as PgSqlResult;
 // phpcs:ignore SlevomatCodingStandard.Namespaces.UnusedUses.UnusedUse
 use ReturnTypeWillChange;
@@ -59,7 +60,7 @@ class Result implements ResultInterface
      *
      * @return array|false
      */
-    #[ReturnTypeWillChange]
+    #[Override] #[ReturnTypeWillChange]
     public function current()
     {
         if ($this->count === 0) {
@@ -73,7 +74,7 @@ class Result implements ResultInterface
      *
      * @return void
      */
-    #[ReturnTypeWillChange]
+    #[Override] #[ReturnTypeWillChange]
     public function next()
     {
         $this->position++;
@@ -84,7 +85,7 @@ class Result implements ResultInterface
      *
      * @return int
      */
-    #[ReturnTypeWillChange]
+    #[Override] #[ReturnTypeWillChange]
     public function key()
     {
         return $this->position;
@@ -95,7 +96,7 @@ class Result implements ResultInterface
      *
      * @return bool
      */
-    #[ReturnTypeWillChange]
+    #[Override] #[ReturnTypeWillChange]
     public function valid()
     {
         return $this->position < $this->count;
@@ -106,7 +107,7 @@ class Result implements ResultInterface
      *
      * @return void
      */
-    #[ReturnTypeWillChange]
+    #[Override] #[ReturnTypeWillChange]
     public function rewind()
     {
         $this->position = 0;
@@ -117,7 +118,7 @@ class Result implements ResultInterface
      *
      * @return null
      */
-    public function buffer()
+    #[Override] public function buffer()
     {
         return null;
     }
@@ -127,7 +128,7 @@ class Result implements ResultInterface
      *
      * @return false
      */
-    public function isBuffered()
+    #[Override] public function isBuffered()
     {
         return false;
     }
@@ -137,7 +138,7 @@ class Result implements ResultInterface
      *
      * @return bool
      */
-    public function isQueryResult()
+    #[Override] public function isQueryResult()
     {
         return pg_num_fields($this->resource) > 0;
     }
@@ -147,7 +148,7 @@ class Result implements ResultInterface
      *
      * @return int
      */
-    public function getAffectedRows()
+    #[Override] public function getAffectedRows()
     {
         return pg_affected_rows($this->resource);
     }
@@ -157,7 +158,7 @@ class Result implements ResultInterface
      *
      * @return mixed|null
      */
-    public function getGeneratedValue()
+    #[Override] public function getGeneratedValue()
     {
         return $this->generatedValue;
     }
@@ -167,7 +168,7 @@ class Result implements ResultInterface
      *
      * @return void
      */
-    public function getResource()
+    #[Override] public function getResource()
     {
         // TODO: Implement getResource() method.
     }
@@ -177,7 +178,7 @@ class Result implements ResultInterface
      *
      * @return int The custom count as an integer.
      */
-    #[ReturnTypeWillChange]
+    #[Override] #[ReturnTypeWillChange]
     public function count()
     {
         return $this->count;
@@ -188,7 +189,7 @@ class Result implements ResultInterface
      *
      * @return int
      */
-    public function getFieldCount()
+    #[Override] public function getFieldCount()
     {
         return pg_num_fields($this->resource);
     }

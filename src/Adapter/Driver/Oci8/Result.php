@@ -6,6 +6,7 @@ use Iterator;
 use Laminas\Db\Adapter\Driver\ResultInterface;
 use Laminas\Db\Adapter\Exception;
 // phpcs:ignore SlevomatCodingStandard.Namespaces.UnusedUses.UnusedUse
+use Override;
 use ReturnTypeWillChange;
 
 use function call_user_func;
@@ -78,7 +79,7 @@ class Result implements Iterator, ResultInterface
      *
      * @return null
      */
-    public function buffer()
+    #[Override] public function buffer()
     {
         return null;
     }
@@ -88,7 +89,7 @@ class Result implements Iterator, ResultInterface
      *
      * @return bool
      */
-    public function isBuffered()
+    #[Override] public function isBuffered()
     {
         return false;
     }
@@ -98,7 +99,7 @@ class Result implements Iterator, ResultInterface
      *
      * @return resource
      */
-    public function getResource()
+    #[Override] public function getResource()
     {
         return $this->resource;
     }
@@ -108,7 +109,7 @@ class Result implements Iterator, ResultInterface
      *
      * @return bool
      */
-    public function isQueryResult()
+    #[Override] public function isQueryResult()
     {
         return oci_num_fields($this->resource) > 0;
     }
@@ -118,19 +119,17 @@ class Result implements Iterator, ResultInterface
      *
      * @return false|int
      */
-    public function getAffectedRows(): int|false
+    #[Override] public function getAffectedRows(): int|false
     {
         return oci_num_rows($this->resource);
     }
 
     /** @return array|bool */
-    #[ReturnTypeWillChange]
+    #[Override] #[ReturnTypeWillChange]
     public function current()
     {
-        if ($this->currentComplete === false) {
-            if ($this->loadData() === false) {
-                return false;
-            }
+        if ($this->currentComplete === false && $this->loadData() === false) {
+            return false;
         }
         return $this->currentData;
     }
@@ -152,21 +151,21 @@ class Result implements Iterator, ResultInterface
     }
 
     /** @return void */
-    #[ReturnTypeWillChange]
+    #[Override] #[ReturnTypeWillChange]
     public function next()
     {
         $this->loadData();
     }
 
     /** @return int */
-    #[ReturnTypeWillChange]
+    #[Override] #[ReturnTypeWillChange]
     public function key()
     {
         return $this->position;
     }
 
     /** @return void */
-    #[ReturnTypeWillChange]
+    #[Override] #[ReturnTypeWillChange]
     public function rewind()
     {
         if ($this->position > 0) {
@@ -175,7 +174,7 @@ class Result implements Iterator, ResultInterface
     }
 
     /** @return bool */
-    #[ReturnTypeWillChange]
+    #[Override] #[ReturnTypeWillChange]
     public function valid()
     {
         if ($this->currentComplete) {
@@ -185,7 +184,7 @@ class Result implements Iterator, ResultInterface
     }
 
     /** @return int */
-    #[ReturnTypeWillChange]
+    #[Override] #[ReturnTypeWillChange]
     public function count()
     {
         if (is_int($this->rowCount)) {
@@ -203,7 +202,7 @@ class Result implements Iterator, ResultInterface
     /**
      * @return false|int
      */
-    public function getFieldCount(): int|false
+    #[Override] public function getFieldCount(): int|false
     {
         return oci_num_fields($this->resource);
     }
@@ -212,7 +211,7 @@ class Result implements Iterator, ResultInterface
      * @todo OCI8 generated value in Driver Result
      * @return null
      */
-    public function getGeneratedValue()
+    #[Override] public function getGeneratedValue()
     {
         return null;
     }

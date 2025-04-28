@@ -2,6 +2,8 @@
 
 namespace Laminas\Db\Adapter;
 
+use Override;
+
 trait AdapterAwareTrait
 {
     /** @var AdapterInterface */

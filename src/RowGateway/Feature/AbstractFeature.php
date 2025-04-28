@@ -5,6 +5,7 @@ namespace Laminas\Db\RowGateway\Feature;
 use Laminas\Db\RowGateway\AbstractRowGateway;
 use Laminas\Db\RowGateway\Exception;
 use Laminas\Db\RowGateway\Exception\RuntimeException;
+use Override;
 
 abstract class AbstractFeature extends AbstractRowGateway
 {
@@ -32,7 +33,7 @@ abstract class AbstractFeature extends AbstractRowGateway
      *
      * @return never
      */
-    public function initialize()
+    #[Override] public function initialize()
     {
         throw new Exception\RuntimeException('This method is not intended to be called on this object.');
     }

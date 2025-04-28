@@ -22,7 +22,7 @@ class FeatureSet
 
     public function __construct(array $features = [])
     {
-        if ($features) {
+        if ($features !== []) {
             $this->addFeatures($features);
         }
     }

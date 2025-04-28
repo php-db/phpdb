@@ -4,6 +4,7 @@ namespace Laminas\Db\TableGateway\Feature;
 
 use Laminas\Db\TableGateway\AbstractTableGateway;
 use Laminas\Db\TableGateway\Exception;
+use Override;
 
 abstract class AbstractFeature extends AbstractTableGateway
 {
@@ -24,7 +25,7 @@ abstract class AbstractFeature extends AbstractTableGateway
         $this->tableGateway = $tableGateway;
     }
 
-    public function initialize(): void
+    #[Override] public function initialize(): void
     {
         throw new Exception\RuntimeException('This method is not intended to be called on this object.');
     }

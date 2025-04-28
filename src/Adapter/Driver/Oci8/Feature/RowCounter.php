@@ -5,6 +5,8 @@ namespace Laminas\Db\Adapter\Driver\Oci8\Feature;
 use Laminas\Db\Adapter\Driver\Feature\AbstractFeature;
 use Laminas\Db\Adapter\Driver\Oci8\Statement;
 
+use Override;
+
 use function stripos;
 use function strtolower;
 
@@ -16,7 +18,7 @@ class RowCounter extends AbstractFeature
     /**
      * @return string
      */
-    public function getName()
+    #[Override] public function getName()
     {
         return 'RowCounter';
     }
@@ -29,7 +31,7 @@ class RowCounter extends AbstractFeature
         $countStmt = clone $statement;
         $sql       = $statement->getSql();
         if ($sql === '' || stripos(strtolower($sql), 'select') === false) {
-            return;
+            return null;
         }
         $countSql = 'SELECT COUNT(*) as "count" FROM (' . $sql . ')';
         $countStmt->prepare($countSql);
@@ -45,7 +47,7 @@ class RowCounter extends AbstractFeature
     public function getCountForSql($sql)
     {
         if (stripos(strtolower($sql), 'select') === false) {
-            return;
+            return null;
         }
         $countSql = 'SELECT COUNT(*) as "count" FROM (' . $sql . ')';
         $result   = $this->driver->getConnection()->execute($countSql);

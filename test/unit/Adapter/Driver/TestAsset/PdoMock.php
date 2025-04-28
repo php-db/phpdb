@@ -2,6 +2,7 @@
 
 namespace LaminasTest\Db\Adapter\Driver\TestAsset;
 
+use Override;
 use PDO;
 use ReturnTypeWillChange;
 
@@ -14,12 +15,12 @@ class PdoMock extends PDO
     {
     }
 
-    public function beginTransaction(): bool
+    #[Override] public function beginTransaction(): bool
     {
         return true;
     }
 
-    public function commit(): bool
+    #[Override] public function commit(): bool
     {
         return true;
     }
@@ -28,13 +29,13 @@ class PdoMock extends PDO
      * @param string $attribute
      * @return null
      */
-    #[ReturnTypeWillChange]
+    #[Override] #[ReturnTypeWillChange]
     public function getAttribute($attribute)
     {
         return null;
     }
 
-    public function rollBack(): bool
+    #[Override] public function rollBack(): bool
     {
         return true;
     }

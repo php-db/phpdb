@@ -8,6 +8,8 @@ use Laminas\Db\Adapter\Platform\PlatformInterface;
 use Laminas\Db\Sql\Platform\PlatformDecoratorInterface;
 use Laminas\Db\Sql\Select;
 
+use Override;
+
 use function array_shift;
 use function array_unshift;
 use function current;
@@ -15,12 +17,12 @@ use function strpos;
 
 class SelectDecorator extends Select implements PlatformDecoratorInterface
 {
-    protected Select $subject;
+    public $subject;
 
     /**
      * @param Select $subject
      */
-    public function setSubject($subject): void
+    #[Override] public function setSubject($subject): void
     {
         $this->subject = $subject;
     }
@@ -31,11 +33,13 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
      * @param string $table
      * @param null|string $alias
      */
+    #[\Override]
     protected function renderTable($table, $alias = null): string
     {
         return $table . ($alias ? ' ' . $alias : '');
     }
 
+    #[\Override]
     protected function localizeVariables(): void
     {
         parent::localizeVariables();
@@ -84,9 +88,8 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
             'SELECT %1$s FROM (SELECT b.%1$s, rownum b_rownum FROM (' => current($this->specifications[self::SELECT]),
         ], $selectParameters));
 
-        if ($parameterContainer) {
+        if ($parameterContainer instanceof \Laminas\Db\Adapter\ParameterContainer) {
             $number = $this->processInfo['subselectCount'] ?: '';
-
             if ($this->limit === null) {
                 $sqls[] = ') b ) WHERE b_rownum > (:offset' . $number . ')';
                 $parameterContainer->offsetSet(
@@ -117,18 +120,16 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
                 );
             }
             $this->processInfo['subselectCount']++;
+        } elseif ($this->limit === null) {
+            $sqls[] = ') b ) WHERE b_rownum > (' . (int) $this->offset . ')';
         } else {
-            if ($this->limit === null) {
-                $sqls[] = ') b ) WHERE b_rownum > (' . (int) $this->offset . ')';
-            } else {
-                $sqls[] = ') b WHERE rownum <= ('
-                    . (int) $this->offset
-                    . '+'
-                    . (int) $this->limit
-                    . ')) WHERE b_rownum >= ('
-                    . (int) $this->offset
-                    . ' + 1)';
-            }
+            $sqls[] = ') b WHERE rownum <= ('
+                . (int) $this->offset
+                . '+'
+                . (int) $this->limit
+                . ')) WHERE b_rownum >= ('
+                . (int) $this->offset
+                . ' + 1)';
         }
 
         $sqls[self::SELECT] = $this->createSqlFromSpecificationAndParameters(

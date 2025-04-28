@@ -128,7 +128,7 @@ class ForeignKey extends AbstractConstraint
             ->addSpecification($this->referenceSpecification[0])
             ->addValue(new Argument($this->referenceTable, ArgumentType::Identifier));
 
-        if ($colCount) {
+        if ($colCount !== 0) {
             $expressionPart->addSpecification(sprintf(
                 '(%s)',
                 implode(', ', array_fill(0, $colCount, '%s'))

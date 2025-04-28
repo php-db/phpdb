@@ -2,6 +2,8 @@
 
 namespace Laminas\Db\Adapter\Platform;
 
+use Override;
+
 use function addcslashes;
 use function trigger_error;
 
@@ -10,7 +12,7 @@ class Sql92 extends AbstractPlatform
     /**
      * {@inheritDoc}
      */
-    public function getName()
+    #[Override] public function getName()
     {
         return 'SQL92';
     }
@@ -18,7 +20,7 @@ class Sql92 extends AbstractPlatform
     /**
      * {@inheritDoc}
      */
-    public function quoteValue($value): string
+    #[Override] public function quoteValue($value): string
     {
         trigger_error(
             'Attempting to quote a value without specific driver level support'

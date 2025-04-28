@@ -23,7 +23,7 @@ class FeatureSet
 
     public function __construct(array $features = [])
     {
-        if ($features) {
+        if ($features !== []) {
             $this->addFeatures($features);
         }
     }
@@ -122,7 +122,7 @@ class FeatureSet
      */
     public function canCallMagicCall($method)
     {
-        if (! empty($this->features)) {
+        if ($this->features !== []) {
             foreach ($this->features as $feature) {
                 if (method_exists($feature, $method)) {
                     return true;

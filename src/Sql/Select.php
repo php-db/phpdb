@@ -309,11 +309,7 @@ class Select extends AbstractPreparableSql
     public function order($order)
     {
         if (is_string($order)) {
-            if (str_contains($order, ',')) {
-                $order = preg_split('#,\s+#', $order);
-            } else {
-                $order = (array) $order;
-            }
+            $order = str_contains($order, ',') ? preg_split('#,\s+#', $order) : (array) $order;
         } elseif (! is_array($order)) {
             $order = [$order];
         }
@@ -695,7 +691,7 @@ class Select extends AbstractPreparableSql
         if ($this->limit === null) {
             return null;
         }
-        if ($parameterContainer) {
+        if ($parameterContainer instanceof \Laminas\Db\Adapter\ParameterContainer) {
             $paramPrefix = $this->processInfo['paramPrefix'];
             $parameterContainer->offsetSet($paramPrefix . 'limit', $this->limit, ParameterContainer::TYPE_INTEGER);
             return [$driver->formatParameterName($paramPrefix . 'limit')];
@@ -711,7 +707,7 @@ class Select extends AbstractPreparableSql
         if ($this->offset === null) {
             return null;
         }
-        if ($parameterContainer) {
+        if ($parameterContainer instanceof \Laminas\Db\Adapter\ParameterContainer) {
             $paramPrefix = $this->processInfo['paramPrefix'];
             $parameterContainer->offsetSet($paramPrefix . 'offset', $this->offset, ParameterContainer::TYPE_INTEGER);
             return [$driver->formatParameterName($paramPrefix . 'offset')];
@@ -775,6 +771,7 @@ class Select extends AbstractPreparableSql
      * @param string|TableIdentifier|Select $table
      * @return array
      */
+    #[\Override]
     protected function resolveTable(
         $table,
         PlatformInterface $platform,

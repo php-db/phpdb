@@ -122,7 +122,7 @@ class Delete extends AbstractPreparableSql
         ?ParameterContainer $parameterContainer = null
     ) {
         if ($this->where->count() === 0) {
-            return;
+            return null;
         }
 
         return sprintf(
@@ -141,8 +141,9 @@ class Delete extends AbstractPreparableSql
      */
     public function __get($name)
     {
-        if (strtolower($name) == 'where') {
+        if (strtolower($name) === 'where') {
             return $this->where;
         }
+        return null;
     }
 }

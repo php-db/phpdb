@@ -7,6 +7,8 @@ use Laminas\Db\Adapter\Driver\Sqlsrv\Exception\ErrorException;
 use Laminas\Db\Adapter\Exception;
 use Laminas\Db\Adapter\Exception\InvalidArgumentException;
 
+use Override;
+
 use function array_merge;
 use function get_resource_type;
 use function is_array;
@@ -58,7 +60,7 @@ class Connection extends AbstractConnection
     /**
      * {@inheritDoc}
      */
-    public function getCurrentSchema()
+    #[Override] public function getCurrentSchema()
     {
         if (! $this->isConnected()) {
             $this->connect();
@@ -92,7 +94,7 @@ class Connection extends AbstractConnection
      *
      * @throws Exception\RuntimeException
      */
-    public function connect()
+    #[Override] public function connect()
     {
         if ($this->resource) {
             return $this;
@@ -146,7 +148,7 @@ class Connection extends AbstractConnection
     /**
      * {@inheritDoc}
      */
-    public function isConnected()
+    #[Override] public function isConnected()
     {
         return is_resource($this->resource);
     }
@@ -156,7 +158,7 @@ class Connection extends AbstractConnection
      *
      * @return void
      */
-    public function disconnect()
+    #[Override] public function disconnect()
     {
         sqlsrv_close($this->resource);
         $this->resource = null;
@@ -165,7 +167,7 @@ class Connection extends AbstractConnection
     /**
      * {@inheritDoc}
      */
-    public function beginTransaction()
+    #[Override] public function beginTransaction()
     {
         if (! $this->isConnected()) {
             $this->connect();
@@ -185,7 +187,7 @@ class Connection extends AbstractConnection
     /**
      * {@inheritDoc}
      */
-    public function commit()
+    #[Override] public function commit()
     {
         // http://msdn.microsoft.com/en-us/library/cc296194.aspx
 
@@ -203,7 +205,7 @@ class Connection extends AbstractConnection
     /**
      * {@inheritDoc}
      */
-    public function rollback()
+    #[Override] public function rollback()
     {
         // http://msdn.microsoft.com/en-us/library/cc296176.aspx
 
@@ -222,7 +224,7 @@ class Connection extends AbstractConnection
      *
      * @throws Exception\RuntimeException
      */
-    public function execute($sql)
+    #[Override] public function execute($sql)
     {
         if (! $this->isConnected()) {
             $this->connect();
@@ -273,7 +275,7 @@ class Connection extends AbstractConnection
      *
      * @return mixed
      */
-    public function getLastGeneratedValue($name = null)
+    #[Override] public function getLastGeneratedValue($name = null)
     {
         if (! $this->resource) {
             $this->connect();

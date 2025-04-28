@@ -4,6 +4,7 @@ namespace Laminas\Db\Adapter\Driver\Pgsql;
 
 use Laminas\Db\Adapter\Driver\AbstractConnection;
 use Laminas\Db\Adapter\Exception;
+use Override;
 use PgSql\Connection as PgSqlConnection;
 
 use function array_filter;
@@ -102,7 +103,7 @@ class Connection extends AbstractConnection
      *
      * @return false|null|string
      */
-    public function getCurrentSchema(): string|false|null
+    #[Override] public function getCurrentSchema(): string|false|null
     {
         if (! $this->isConnected()) {
             $this->connect();
@@ -121,7 +122,7 @@ class Connection extends AbstractConnection
      *
      * @throws Exception\RuntimeException On failure.
      */
-    public function connect()
+    #[Override] public function connect()
     {
         if ($this->resource instanceof PgSqlConnection || is_resource($this->resource)) {
             return $this;
@@ -150,14 +151,12 @@ class Connection extends AbstractConnection
 
         $p = $this->connectionParameters;
 
-        if (! empty($p['charset'])) {
-            if (-1 === pg_set_client_encoding($this->resource, $p['charset'])) {
-                throw new Exception\RuntimeException(sprintf(
-                    "%s: Unable to set client encoding '%s'",
-                    __METHOD__,
-                    $p['charset']
-                ));
-            }
+        if (!empty($p['charset']) && -1 === pg_set_client_encoding($this->resource, $p['charset'])) {
+            throw new Exception\RuntimeException(sprintf(
+                "%s: Unable to set client encoding '%s'",
+                __METHOD__,
+                $p['charset']
+            ));
         }
 
         return $this;
@@ -166,7 +165,7 @@ class Connection extends AbstractConnection
     /**
      * {@inheritDoc}
      */
-    public function isConnected()
+    #[Override] public function isConnected()
     {
         return $this->resource instanceof PgSqlConnection || is_resource($this->resource);
     }
@@ -174,6 +173,7 @@ class Connection extends AbstractConnection
     /**
      * {@inheritDoc}
      */
+    #[\Override]
     public function disconnect()
     {
         // phpcs:ignore SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly.ReferenceViaFallbackGlobalName
@@ -184,7 +184,7 @@ class Connection extends AbstractConnection
     /**
      * {@inheritDoc}
      */
-    public function beginTransaction()
+    #[Override] public function beginTransaction()
     {
         if ($this->inTransaction()) {
             throw new Exception\RuntimeException('Nested transactions are not supported');
@@ -205,14 +205,14 @@ class Connection extends AbstractConnection
      *
      * @return null|static
      */
-    public function commit()
+    #[Override] public function commit()
     {
         if (! $this->isConnected()) {
             $this->connect();
         }
 
         if (! $this->inTransaction()) {
-            return; // We ignore attempts to commit non-existing transaction
+            return null; // We ignore attempts to commit non-existing transaction
         }
 
         pg_query($this->resource, 'COMMIT');
@@ -224,7 +224,7 @@ class Connection extends AbstractConnection
     /**
      * {@inheritDoc}
      */
-    public function rollback()
+    #[Override] public function rollback()
     {
         if (! $this->isConnected()) {
             throw new Exception\RuntimeException('Must be connected before you can rollback');
@@ -245,7 +245,7 @@ class Connection extends AbstractConnection
      *
      * @throws Exception\InvalidQueryException
      */
-    public function execute($sql): Result
+    #[Override] public function execute($sql): Result
     {
         if (! $this->isConnected()) {
             $this->connect();
@@ -272,7 +272,7 @@ class Connection extends AbstractConnection
      *
      * @param null|string $name
      */
-    public function getLastGeneratedValue($name = null): bool|string|null
+    #[Override] public function getLastGeneratedValue($name = null): bool|string|null
     {
         if ($name === null) {
             return null;

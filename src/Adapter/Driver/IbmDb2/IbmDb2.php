@@ -6,6 +6,8 @@ use Laminas\Db\Adapter\Driver\DriverInterface;
 use Laminas\Db\Adapter\Exception;
 use Laminas\Db\Adapter\Profiler;
 
+use Override;
+
 use function extension_loaded;
 use function get_resource_type;
 use function is_resource;
@@ -42,7 +44,7 @@ class IbmDb2 implements DriverInterface, Profiler\ProfilerAwareInterface
     /**
      * @return $this Provides a fluent interface
      */
-    public function setProfiler(Profiler\ProfilerInterface $profiler)
+    #[Override] public function setProfiler(Profiler\ProfilerInterface $profiler)
     {
         $this->profiler = $profiler;
         if ($this->connection instanceof Profiler\ProfilerAwareInterface) {
@@ -89,7 +91,7 @@ class IbmDb2 implements DriverInterface, Profiler\ProfilerAwareInterface
      * @param string $nameFormat
      * @return string
      */
-    public function getDatabasePlatformName($nameFormat = self::NAME_FORMAT_CAMELCASE)
+    #[Override] public function getDatabasePlatformName($nameFormat = self::NAME_FORMAT_CAMELCASE)
     {
         return $nameFormat === self::NAME_FORMAT_CAMELCASE
             ? 'IbmDb2'
@@ -101,7 +103,7 @@ class IbmDb2 implements DriverInterface, Profiler\ProfilerAwareInterface
      *
      * @return void
      */
-    public function checkEnvironment()
+    #[Override] public function checkEnvironment()
     {
         if (! extension_loaded('ibm_db2')) {
             throw new Exception\RuntimeException('The ibm_db2 extension is required by this driver.');
@@ -113,7 +115,7 @@ class IbmDb2 implements DriverInterface, Profiler\ProfilerAwareInterface
      *
      * @return Connection
      */
-    public function getConnection()
+    #[Override] public function getConnection()
     {
         return $this->connection;
     }
@@ -124,7 +126,7 @@ class IbmDb2 implements DriverInterface, Profiler\ProfilerAwareInterface
      * @param string|resource $sqlOrResource
      * @return Statement
      */
-    public function createStatement($sqlOrResource = null)
+    #[Override] public function createStatement($sqlOrResource = null)
     {
         $statement = clone $this->statementPrototype;
         if (is_resource($sqlOrResource) && get_resource_type($sqlOrResource) === 'DB2 Statement') {
@@ -151,7 +153,7 @@ class IbmDb2 implements DriverInterface, Profiler\ProfilerAwareInterface
      * @param resource $resource
      * @return Result
      */
-    public function createResult($resource)
+    #[Override] public function createResult($resource)
     {
         $result = clone $this->resultPrototype;
         $result->initialize($resource, $this->connection->getLastGeneratedValue());
@@ -171,7 +173,7 @@ class IbmDb2 implements DriverInterface, Profiler\ProfilerAwareInterface
      *
      * @return string
      */
-    public function getPrepareType()
+    #[Override] public function getPrepareType()
     {
         return self::PARAMETERIZATION_POSITIONAL;
     }
@@ -183,7 +185,7 @@ class IbmDb2 implements DriverInterface, Profiler\ProfilerAwareInterface
      * @param mixed  $type
      * @return string
      */
-    public function formatParameterName($name, $type = null)
+    #[Override] public function formatParameterName($name, $type = null)
     {
         return '?';
     }

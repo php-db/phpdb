@@ -12,6 +12,8 @@ use Laminas\Db\Metadata\Object\TableObject;
 use Laminas\Db\Metadata\Object\TriggerObject;
 use Laminas\Db\Metadata\Object\ViewObject;
 
+use Override;
+
 use function array_keys;
 use function func_get_args;
 use function str_replace;
@@ -43,7 +45,7 @@ abstract class AbstractSource implements MetadataInterface
      *
      * @return string[]
      */
-    public function getSchemas()
+    #[Override] public function getSchemas()
     {
         $this->loadSchemaData();
 
@@ -53,7 +55,7 @@ abstract class AbstractSource implements MetadataInterface
     /**
      * {@inheritdoc}
      */
-    public function getTableNames($schema = null, $includeViews = false)
+    #[Override] public function getTableNames($schema = null, $includeViews = false)
     {
         if ($schema === null) {
             $schema = $this->defaultSchema;
@@ -81,7 +83,7 @@ abstract class AbstractSource implements MetadataInterface
      * @throws Exception
      * @return TableObject|ViewObject
      */
-    public function getTable($tableName, $schema = null): ViewObject|TableObject
+    #[Override] public function getTable($tableName, $schema = null): ViewObject|TableObject
     {
         if ($schema === null) {
             $schema = $this->defaultSchema;
@@ -117,7 +119,7 @@ abstract class AbstractSource implements MetadataInterface
     /**
      * {@inheritdoc}
      */
-    public function getColumnNames($table, $schema = null)
+    #[Override] public function getColumnNames($table, $schema = null)
     {
         if ($schema === null) {
             $schema = $this->defaultSchema;
@@ -135,7 +137,7 @@ abstract class AbstractSource implements MetadataInterface
     /**
      * {@inheritdoc}
      */
-    public function getColumns($table, $schema = null)
+    #[Override] public function getColumns($table, $schema = null)
     {
         if ($schema === null) {
             $schema = $this->defaultSchema;
@@ -153,7 +155,7 @@ abstract class AbstractSource implements MetadataInterface
     /**
      * {@inheritdoc}
      */
-    public function getColumn($columnName, $table, $schema = null)
+    #[Override] public function getColumn($columnName, $table, $schema = null)
     {
         if ($schema === null) {
             $schema = $this->defaultSchema;
@@ -203,7 +205,7 @@ abstract class AbstractSource implements MetadataInterface
     /**
      * {@inheritdoc}
      */
-    public function getConstraints($table, $schema = null)
+    #[Override] public function getConstraints($table, $schema = null)
     {
         if ($schema === null) {
             $schema = $this->defaultSchema;
@@ -222,7 +224,7 @@ abstract class AbstractSource implements MetadataInterface
     /**
      * {@inheritdoc}
      */
-    public function getConstraint($constraintName, $table, $schema = null)
+    #[Override] public function getConstraint($constraintName, $table, $schema = null)
     {
         if ($schema === null) {
             $schema = $this->defaultSchema;
@@ -261,7 +263,7 @@ abstract class AbstractSource implements MetadataInterface
     /**
      * {@inheritdoc}
      */
-    public function getConstraintKeys($constraint, $table, $schema = null)
+    #[Override] public function getConstraintKeys($constraint, $table, $schema = null)
     {
         if ($schema === null) {
             $schema = $this->defaultSchema;
@@ -301,7 +303,7 @@ abstract class AbstractSource implements MetadataInterface
     /**
      * {@inheritdoc}
      */
-    public function getTriggerNames($schema = null)
+    #[Override] public function getTriggerNames($schema = null)
     {
         if ($schema === null) {
             $schema = $this->defaultSchema;
@@ -315,7 +317,7 @@ abstract class AbstractSource implements MetadataInterface
     /**
      * {@inheritdoc}
      */
-    public function getTriggers($schema = null)
+    #[Override] public function getTriggers($schema = null)
     {
         if ($schema === null) {
             $schema = $this->defaultSchema;
@@ -331,7 +333,7 @@ abstract class AbstractSource implements MetadataInterface
     /**
      * {@inheritdoc}
      */
-    public function getTrigger($triggerName, $schema = null)
+    #[Override] public function getTrigger($triggerName, $schema = null)
     {
         if ($schema === null) {
             $schema = $this->defaultSchema;

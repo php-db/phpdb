@@ -2,6 +2,8 @@
 
 namespace Laminas\Db\Sql\Ddl\Column;
 
+use Override;
+
 class Boolean extends Column
 {
     protected string $type = 'BOOLEAN';
@@ -14,7 +16,7 @@ class Boolean extends Column
     /**
      * {@inheritDoc}
      */
-    public function setNullable($nullable)
+    #[Override] public function setNullable($nullable)
     {
         return parent::setNullable(false);
     }

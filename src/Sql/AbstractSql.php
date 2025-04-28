@@ -28,6 +28,7 @@ use function vsprintf;
 
 abstract class AbstractSql implements SqlInterface
 {
+    public $subject;
     /**
      * Specifications for Sql String generation
      *
@@ -144,7 +145,7 @@ abstract class AbstractSql implements SqlInterface
             $sqlStrings[] = vsprintf($specification, $values);
         }
 
-        return join(' ', $sqlStrings);
+        return implode(' ', $sqlStrings);
     }
 
     protected function processExpressionValue(
@@ -169,7 +170,7 @@ abstract class AbstractSql implements SqlInterface
             ),
             ArgumentType::Identifier => $platform->quoteIdentifierInFragment($argument->getValueAsString()),
             ArgumentType::Literal => $argument->getValueAsString(),
-            ArgumentType::Value => $parameterContainer ?
+            ArgumentType::Value => $parameterContainer instanceof \Laminas\Db\Adapter\ParameterContainer ?
                 $this->processExpressionParameterName(
                     $argument->getValue(),
                     $namedParameterPrefix,
@@ -299,7 +300,7 @@ abstract class AbstractSql implements SqlInterface
             $decorator = $subselect;
         }
 
-        if ($parameterContainer) {
+        if ($parameterContainer instanceof \Laminas\Db\Adapter\ParameterContainer) {
             // Track subselect prefix and count for parameters
             $processInfoContext = $decorator instanceof PlatformDecoratorInterface ? $subselect : $decorator;
             $this->processInfo['subselectCount']++;
@@ -331,7 +332,7 @@ abstract class AbstractSql implements SqlInterface
         ?DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null
     ): array|null {
-        if (! $joins->count()) {
+        if ($joins->count() === 0) {
             return null;
         }
 
@@ -405,9 +406,9 @@ abstract class AbstractSql implements SqlInterface
         ?ParameterContainer $parameterContainer = null,
         ?string $namedParameterPrefix = null
     ) {
-        $namedParameterPrefix = ! $namedParameterPrefix
-            ? $namedParameterPrefix
-            : $this->processInfo['paramPrefix'] . $namedParameterPrefix;
+        $namedParameterPrefix = $namedParameterPrefix
+            ? $this->processInfo['paramPrefix'] . $namedParameterPrefix
+            : $namedParameterPrefix;
         $isIdentifier         = false;
         $fromTable            = '';
         if (is_array($column)) {

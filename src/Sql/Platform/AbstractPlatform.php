@@ -8,6 +8,7 @@ use Laminas\Db\Adapter\StatementContainerInterface;
 use Laminas\Db\Sql\Exception;
 use Laminas\Db\Sql\PreparableSqlInterface;
 use Laminas\Db\Sql\SqlInterface;
+use Override;
 
 class AbstractPlatform implements PlatformDecoratorInterface, PreparableSqlInterface, SqlInterface
 {
@@ -20,7 +21,7 @@ class AbstractPlatform implements PlatformDecoratorInterface, PreparableSqlInter
     /**
      * {@inheritDoc}
      */
-    public function setSubject($subject)
+    #[Override] public function setSubject($subject)
     {
         $this->subject = $subject;
 
@@ -66,7 +67,7 @@ class AbstractPlatform implements PlatformDecoratorInterface, PreparableSqlInter
      *
      * @throws Exception\RuntimeException
      */
-    public function prepareStatement(AdapterInterface $adapter, StatementContainerInterface $statementContainer): StatementContainerInterface
+    #[Override] public function prepareStatement(AdapterInterface $adapter, StatementContainerInterface $statementContainer): StatementContainerInterface
     {
         if (! $this->subject instanceof PreparableSqlInterface) {
             throw new Exception\RuntimeException(
@@ -85,7 +86,7 @@ class AbstractPlatform implements PlatformDecoratorInterface, PreparableSqlInter
      *
      * @throws Exception\RuntimeException
      */
-    public function getSqlString(?PlatformInterface $adapterPlatform = null)
+    #[Override] public function getSqlString(?PlatformInterface $adapterPlatform = null)
     {
         if (! $this->subject instanceof SqlInterface) {
             throw new Exception\RuntimeException(

@@ -76,7 +76,7 @@ class SequenceFeature extends AbstractFeature
                 $sql = 'SELECT NEXTVAL(\'"' . $this->sequenceName . '"\')';
                 break;
             default:
-                return;
+                return null;
         }
 
         $statement = $this->tableGateway->adapter->createStatement();
@@ -105,7 +105,7 @@ class SequenceFeature extends AbstractFeature
                 $sql = 'SELECT CURRVAL(\'' . $this->sequenceName . '\')';
                 break;
             default:
-                return;
+                return null;
         }
 
         $statement = $this->tableGateway->adapter->createStatement();

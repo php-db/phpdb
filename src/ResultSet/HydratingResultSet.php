@@ -7,6 +7,7 @@ use Laminas\Hydrator\ArraySerializable;
 use Laminas\Hydrator\ArraySerializableHydrator;
 use Laminas\Hydrator\HydratorInterface;
 
+use Override;
 use ReturnTypeWillChange;
 
 use function class_exists;
@@ -90,7 +91,7 @@ class HydratingResultSet extends AbstractResultSet
      *
      * @return object|null
      */
-    #[ReturnTypeWillChange] public function current()
+    #[Override] #[ReturnTypeWillChange] public function current()
     {
         if ($this->buffer === null) {
             $this->buffer = -2; // implicitly disable buffering from here on
@@ -113,7 +114,7 @@ class HydratingResultSet extends AbstractResultSet
      * @return array
      * @throws Exception\RuntimeException If any row is not castable to an array.
      */
-    public function toArray()
+    #[Override] public function toArray()
     {
         $return = [];
         foreach ($this as $row) {

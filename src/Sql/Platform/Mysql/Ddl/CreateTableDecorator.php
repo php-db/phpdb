@@ -6,6 +6,8 @@ use Laminas\Db\Adapter\Platform\PlatformInterface;
 use Laminas\Db\Sql\Ddl\CreateTable;
 use Laminas\Db\Sql\Platform\PlatformDecoratorInterface;
 
+use Override;
+
 use function count;
 use function range;
 use function str_replace;
@@ -19,7 +21,7 @@ use function uksort;
 class CreateTableDecorator extends CreateTable implements PlatformDecoratorInterface
 {
     /** @var CreateTable */
-    protected $subject;
+    public $subject;
 
     /** @var int[] */
     protected $columnOptionSortOrder = [
@@ -38,7 +40,7 @@ class CreateTableDecorator extends CreateTable implements PlatformDecoratorInter
      * @param CreateTable $subject
      * @return $this Provides a fluent interface
      */
-    public function setSubject($subject)
+    #[Override] public function setSubject($subject)
     {
         $this->subject = $subject;
 
@@ -60,14 +62,14 @@ class CreateTableDecorator extends CreateTable implements PlatformDecoratorInter
             if ($insertPos !== false) {
                 switch ($needle) {
                     case 'REFERENCES':
-                        $insertStart[2] = ! isset($insertStart[2]) ? $insertPos : $insertStart[2];
+                        $insertStart[2] = isset($insertStart[2]) ? $insertStart[2] : $insertPos;
                         // no break
                     case 'PRIMARY':
                     case 'UNIQUE':
-                        $insertStart[1] = ! isset($insertStart[1]) ? $insertPos : $insertStart[1];
+                        $insertStart[1] = isset($insertStart[1]) ? $insertStart[1] : $insertPos;
                         // no break
                     default:
-                        $insertStart[0] = ! isset($insertStart[0]) ? $insertPos : $insertStart[0];
+                        $insertStart[0] = isset($insertStart[0]) ? $insertStart[0] : $insertPos;
                 }
             }
         }
@@ -82,10 +84,11 @@ class CreateTableDecorator extends CreateTable implements PlatformDecoratorInter
     /**
      * {@inheritDoc}
      */
+    #[\Override]
     protected function processColumns(?PlatformInterface $adapterPlatform = null)
     {
         if (! $this->columns) {
-            return;
+            return null;
         }
 
         $sqls = [];
@@ -134,7 +137,7 @@ class CreateTableDecorator extends CreateTable implements PlatformDecoratorInter
                         break;
                 }
 
-                if ($insert) {
+                if ($insert !== '' && $insert !== '0') {
                     $j                = $j ?? 0;
                     $sql              = substr_replace($sql, $insert, $insertStart[$j], 0);
                     $insertStartCount = count($insertStart);

@@ -7,6 +7,7 @@ use LaminasIntegrationTest\Db\Platform\FixtureLoader;
 use LaminasIntegrationTest\Db\Platform\MysqlFixtureLoader;
 use LaminasIntegrationTest\Db\Platform\PgsqlFixtureLoader;
 use LaminasIntegrationTest\Db\Platform\SqlServerFixtureLoader;
+use Override;
 use PHPUnit\Event\TestSuite\Started;
 use PHPUnit\Event\TestSuite\StartedSubscriber;
 
@@ -21,7 +22,7 @@ class IntegrationTestStartedListener implements StartedSubscriber
     /**
      * @throws Exception
      */
-    public function notify(Started $event): void
+    #[Override] public function notify(Started $event): void
     {
         if ($event->testSuite()->name() !== 'integration test') {
             return;
@@ -39,7 +40,7 @@ class IntegrationTestStartedListener implements StartedSubscriber
             $this->fixtureLoaders[] = new SqlServerFixtureLoader();
         }
 
-        if (empty($this->fixtureLoaders)) {
+        if ($this->fixtureLoaders === []) {
             return;
         }
 

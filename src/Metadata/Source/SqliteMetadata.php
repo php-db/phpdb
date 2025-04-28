@@ -5,6 +5,8 @@ namespace Laminas\Db\Metadata\Source;
 use Laminas\Db\Adapter\Adapter;
 use Laminas\Db\ResultSet\ResultSetInterface;
 
+use Override;
+
 use function array_merge;
 use function implode;
 use function is_array;
@@ -19,7 +21,7 @@ class SqliteMetadata extends AbstractSource
      * @throws \Exception
      * @return void
      */
-    protected function loadSchemaData()
+    #[Override] protected function loadSchemaData()
     {
         if (isset($this->data['schemas'])) {
             return;
@@ -38,6 +40,7 @@ class SqliteMetadata extends AbstractSource
      * @throws \Exception
      * @return void
      */
+    #[\Override]
     protected function loadTableNameData($schema)
     {
         if (isset($this->data['table_names'][$schema])) {
@@ -87,6 +90,7 @@ class SqliteMetadata extends AbstractSource
      * @throws \Exception
      * @return void
      */
+    #[\Override]
     protected function loadColumnData($table, $schema)
     {
         if (isset($this->data['columns'][$schema][$table])) {
@@ -127,6 +131,7 @@ class SqliteMetadata extends AbstractSource
      * @throws \Exception
      * @return void
      */
+    #[\Override]
     protected function loadConstraintData($table, $schema)
     {
         if (isset($this->data['constraints'][$schema][$table])) {
@@ -144,7 +149,7 @@ class SqliteMetadata extends AbstractSource
             }
         }
 
-        if (empty($primaryKey)) {
+        if ($primaryKey === []) {
             $primaryKey = null;
         }
         $constraints = [];
@@ -215,6 +220,7 @@ class SqliteMetadata extends AbstractSource
      * @throws \Exception
      * @return void
      */
+    #[\Override]
     protected function loadTriggerData($schema)
     {
         if (isset($this->data['triggers'][$schema])) {
@@ -362,7 +368,7 @@ class SqliteMetadata extends AbstractSource
         if (empty($data['action_condition'])) {
             $data['action_condition'] = null;
         }
-        if (! empty($data['action_timing'])) {
+        if (isset($data['action_timing']) && ($data['action_timing'] !== '' && $data['action_timing'] !== '0')) {
             $data['action_timing'] = strtoupper($data['action_timing']);
             if ('I' === $data['action_timing'][0]) {
                 // normalize the white-space between the two words

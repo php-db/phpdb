@@ -7,6 +7,7 @@ use Laminas\Db\Adapter\Driver\Feature\AbstractFeature;
 use Laminas\Db\Adapter\Driver\Feature\DriverFeatureInterface;
 use Laminas\Db\Adapter\Exception;
 use Laminas\Db\Adapter\Profiler;
+use Override;
 use PDOStatement;
 
 use function extension_loaded;
@@ -75,7 +76,7 @@ class Pdo implements DriverInterface, DriverFeatureInterface, Profiler\ProfilerA
     /**
      * @return $this Provides a fluent interface
      */
-    public function setProfiler(Profiler\ProfilerInterface $profiler)
+    #[Override] public function setProfiler(Profiler\ProfilerInterface $profiler)
     {
         $this->profiler = $profiler;
         if ($this->connection instanceof Profiler\ProfilerAwareInterface) {
@@ -123,7 +124,7 @@ class Pdo implements DriverInterface, DriverFeatureInterface, Profiler\ProfilerA
      * @param AbstractFeature $feature
      * @return $this Provides a fluent interface
      */
-    public function addFeature($name, $feature)
+    #[Override] public function addFeature($name, $feature)
     {
         if ($feature instanceof AbstractFeature) {
             $name = $feature->getName(); // overwrite the name, just in case
@@ -138,7 +139,7 @@ class Pdo implements DriverInterface, DriverFeatureInterface, Profiler\ProfilerA
      *
      * @return $this Provides a fluent interface
      */
-    public function setupDefaultFeatures()
+    #[Override] public function setupDefaultFeatures()
     {
         $driverName = $this->connection->getDriverName();
         if ($driverName === 'sqlite') {
@@ -160,7 +161,7 @@ class Pdo implements DriverInterface, DriverFeatureInterface, Profiler\ProfilerA
      * @param string $name
      * @return AbstractFeature|false
      */
-    public function getFeature($name)
+    #[Override] public function getFeature($name)
     {
         if (isset($this->features[$name])) {
             return $this->features[$name];
@@ -174,7 +175,7 @@ class Pdo implements DriverInterface, DriverFeatureInterface, Profiler\ProfilerA
      * @param  string $nameFormat
      * @return string
      */
-    public function getDatabasePlatformName($nameFormat = self::NAME_FORMAT_CAMELCASE)
+    #[Override] public function getDatabasePlatformName($nameFormat = self::NAME_FORMAT_CAMELCASE)
     {
         $name = $this->getConnection()->getDriverName();
         if ($nameFormat === self::NAME_FORMAT_CAMELCASE) {
@@ -184,16 +185,16 @@ class Pdo implements DriverInterface, DriverFeatureInterface, Profiler\ProfilerA
                 'dblib', 'sqlsrv' => 'SqlServer',
                 default => ucfirst($name),
             };
-        } else {
-            return match ($name) {
-                'sqlite' => 'SQLite',
-                'mysql' => 'MySQL',
-                'pgsql' => 'PostgreSQL',
-                'oci' => 'Oracle',
-                'dblib', 'sqlsrv' => 'SQLServer',
-                default => ucfirst($name),
-            };
         }
+
+        return match ($name) {
+            'sqlite' => 'SQLite',
+            'mysql' => 'MySQL',
+            'pgsql' => 'PostgreSQL',
+            'oci' => 'Oracle',
+            'dblib', 'sqlsrv' => 'SQLServer',
+            default => ucfirst($name),
+        };
     }
 
     /**
@@ -201,7 +202,7 @@ class Pdo implements DriverInterface, DriverFeatureInterface, Profiler\ProfilerA
      *
      * @return void
      */
-    public function checkEnvironment()
+    #[Override] public function checkEnvironment()
     {
         if (! extension_loaded('PDO')) {
             throw new Exception\RuntimeException(
@@ -213,7 +214,7 @@ class Pdo implements DriverInterface, DriverFeatureInterface, Profiler\ProfilerA
     /**
      * @return Connection
      */
-    public function getConnection()
+    #[Override] public function getConnection()
     {
         return $this->connection;
     }
@@ -222,7 +223,7 @@ class Pdo implements DriverInterface, DriverFeatureInterface, Profiler\ProfilerA
      * @param string|PDOStatement $sqlOrResource
      * @return Statement
      */
-    public function createStatement($sqlOrResource = null)
+    #[Override] public function createStatement($sqlOrResource = null)
     {
         $statement = clone $this->statementPrototype;
         if ($sqlOrResource instanceof PDOStatement) {
@@ -244,7 +245,7 @@ class Pdo implements DriverInterface, DriverFeatureInterface, Profiler\ProfilerA
      * @param mixed $context
      * @return Result
      */
-    public function createResult($resource, $context = null)
+    #[Override] public function createResult($resource, $context = null)
     {
         $result   = clone $this->resultPrototype;
         $rowCount = null;
@@ -282,7 +283,7 @@ class Pdo implements DriverInterface, DriverFeatureInterface, Profiler\ProfilerA
     /**
      * @return string
      */
-    public function getPrepareType()
+    #[Override] public function getPrepareType()
     {
         return self::PARAMETERIZATION_NAMED;
     }
@@ -292,7 +293,7 @@ class Pdo implements DriverInterface, DriverFeatureInterface, Profiler\ProfilerA
      * @param string|null $type
      * @return string
      */
-    public function formatParameterName($name, $type = null)
+    #[Override] public function formatParameterName($name, $type = null)
     {
         if ($type === null && ! is_numeric($name) || $type === self::PARAMETERIZATION_NAMED) {
             $name = ltrim($name, ':');

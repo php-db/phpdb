@@ -4,6 +4,8 @@ namespace Laminas\Db\Metadata\Source;
 
 use Laminas\Db\Adapter\Adapter;
 
+use Override;
+
 use function implode;
 use function strtoupper;
 
@@ -27,10 +29,11 @@ class OracleMetadata extends AbstractSource
      * @return null|static
      * @see AbstractSource::loadColumnData
      */
+    #[\Override]
     protected function loadColumnData($table, $schema)
     {
         if (isset($this->data['columns'][$schema][$table])) {
-            return;
+            return null;
         }
 
         $isColumns = [
@@ -99,11 +102,12 @@ class OracleMetadata extends AbstractSource
      * @return null|static
      * @see AbstractSource::loadConstraintData
      */
+    #[\Override]
     protected function loadConstraintData($table, $schema)
     {
         // phpcs:disable WebimpressCodingStandard.NamingConventions.ValidVariableName.NotCamelCaps
         if (isset($this->data['constraints'][$schema][$table])) {
-            return;
+            return null;
         }
 
         $this->prepareDataHierarchy('constraints', $schema, $table);
@@ -187,7 +191,7 @@ class OracleMetadata extends AbstractSource
      * @return void
      * @see AbstractSource::loadSchemaData
      */
-    protected function loadSchemaData()
+    #[Override] protected function loadSchemaData()
     {
         if (isset($this->data['schemas'])) {
             return;
@@ -212,6 +216,7 @@ class OracleMetadata extends AbstractSource
      * @return static
      * @see AbstractSource::loadTableNameData
      */
+    #[\Override]
     protected function loadTableNameData($schema)
     {
         if (isset($this->data['table_names'][$schema])) {
@@ -258,6 +263,7 @@ class OracleMetadata extends AbstractSource
      *
      * @return void
      */
+    #[\Override]
     protected function loadTriggerData($schema)
     {
         if (isset($this->data['triggers'][$schema])) {

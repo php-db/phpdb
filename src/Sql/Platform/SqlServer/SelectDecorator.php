@@ -8,6 +8,8 @@ use Laminas\Db\Adapter\Platform\PlatformInterface;
 use Laminas\Db\Sql\Platform\PlatformDecoratorInterface;
 use Laminas\Db\Sql\Select;
 
+use Override;
+
 use function array_shift;
 use function array_unshift;
 use function array_values;
@@ -17,14 +19,14 @@ use function strpos;
 class SelectDecorator extends Select implements PlatformDecoratorInterface
 {
     /** @var Select */
-    protected $subject;
+    public $subject;
 
     /**
      * @param Select $subject
      *
      * @return void
      */
-    public function setSubject($subject)
+    #[Override] public function setSubject($subject)
     {
         $this->subject = $subject;
     }
@@ -32,6 +34,7 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
     /**
      * @return void
      */
+    #[\Override]
     protected function localizeVariables()
     {
         parent::localizeVariables();
@@ -91,7 +94,7 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
 
         // phpcs:disable Generic.Files.LineLength.TooLong
 
-        if ($parameterContainer) {
+        if ($parameterContainer instanceof \Laminas\Db\Adapter\ParameterContainer) {
             // create bottom part of query, with offset and limit using row_number
             $limitParamName        = $driver->formatParameterName('limit');
             $offsetParamName       = $driver->formatParameterName('offset');

@@ -3,6 +3,7 @@
 namespace LaminasIntegrationTest\Db\Platform;
 
 use Exception;
+use Override;
 use PDO;
 
 use function file_get_contents;
@@ -21,7 +22,7 @@ class PgsqlFixtureLoader implements FixtureLoader
     /**
      * @throws Exception
      */
-    public function createDatabase(): void
+    #[Override] public function createDatabase(): void
     {
         $this->connect();
 
@@ -59,7 +60,7 @@ class PgsqlFixtureLoader implements FixtureLoader
         $this->disconnect();
     }
 
-    public function dropDatabase(): void
+    #[Override] public function dropDatabase(): void
     {
         if (! $this->initialRun) {
             // Not possible to drop in PostgreSQL.

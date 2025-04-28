@@ -6,6 +6,7 @@ use Laminas\Db\Adapter\Driver\StatementInterface;
 use Laminas\Db\Adapter\Exception;
 use Laminas\Db\Adapter\ParameterContainer;
 use Laminas\Db\Adapter\Profiler;
+use Override;
 use PgSql\Connection as PgSqlConnection;
 
 use function get_resource_type;
@@ -55,7 +56,7 @@ class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
     /**
      * @return $this Provides a fluent interface
      */
-    public function setProfiler(Profiler\ProfilerInterface $profiler)
+    #[Override] public function setProfiler(Profiler\ProfilerInterface $profiler)
     {
         $this->profiler = $profiler;
         return $this;
@@ -94,7 +95,7 @@ class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
      *
      * @return void
      */
-    public function getResource()
+    #[Override] public function getResource()
     {
     }
 
@@ -104,7 +105,7 @@ class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
      * @param string $sql
      * @return $this Provides a fluent interface
      */
-    public function setSql($sql)
+    #[Override] public function setSql($sql)
     {
         $this->sql = $sql;
         return $this;
@@ -115,7 +116,7 @@ class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
      *
      * @return string
      */
-    public function getSql()
+    #[Override] public function getSql()
     {
         return $this->sql;
     }
@@ -125,7 +126,7 @@ class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
      *
      * @return $this Provides a fluent interface
      */
-    public function setParameterContainer(ParameterContainer $parameterContainer)
+    #[Override] public function setParameterContainer(ParameterContainer $parameterContainer)
     {
         $this->parameterContainer = $parameterContainer;
         return $this;
@@ -136,7 +137,7 @@ class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
      *
      * @return ParameterContainer
      */
-    public function getParameterContainer()
+    #[Override] public function getParameterContainer()
     {
         return $this->parameterContainer;
     }
@@ -148,7 +149,7 @@ class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
      *
      * @return void
      */
-    public function prepare($sql = null)
+    #[Override] public function prepare($sql = null)
     {
         $sql = $sql ?: $this->sql;
 
@@ -171,9 +172,9 @@ class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
      *
      * @return bool
      */
-    public function isPrepared()
+    #[Override] public function isPrepared()
     {
-        return isset($this->resource);
+        return $this->resource !== null;
     }
 
     /**
@@ -183,7 +184,7 @@ class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
      * @throws Exception\InvalidQueryException
      * @return Result
      */
-    public function execute($parameters = null)
+    #[Override] public function execute($parameters = null)
     {
         if (! $this->isPrepared()) {
             $this->prepare();

@@ -4,6 +4,7 @@ namespace LaminasTest\Db\Adapter\Driver\Sqlsrv;
 
 use Laminas\Db\Adapter\Driver\Sqlsrv\Connection;
 use Laminas\Db\Adapter\Driver\Sqlsrv\Sqlsrv;
+use Override;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 
@@ -28,7 +29,7 @@ class ConnectionTest extends TestCase
      * Tears down the fixture, for example, closes a network connection.
      * This method is called after a test is executed.
      */
-    protected function tearDown(): void
+    #[Override] protected function tearDown(): void
     {
     }
 

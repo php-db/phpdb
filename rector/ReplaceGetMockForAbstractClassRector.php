@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace CustomRule\PHPUnit;
 
+use Override;
 use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\MethodCall;
@@ -34,12 +35,12 @@ class ReplaceGetMockForAbstractClassRector extends AbstractRector
         );
     }
 
-    public function getNodeTypes(): array
+    #[Override] public function getNodeTypes(): array
     {
         return [MethodCall::class];
     }
 
-    public function refactor(Node $node): ?Node
+    #[Override] public function refactor(Node $node): ?Node
     {
         if (! $this->isName($node->name, 'getMockForAbstractClass') || ! $this->isName($node->var, 'this')) {
             return null;

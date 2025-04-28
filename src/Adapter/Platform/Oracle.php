@@ -7,6 +7,8 @@ use Laminas\Db\Adapter\Driver\Oci8\Oci8;
 use Laminas\Db\Adapter\Driver\Pdo\Pdo;
 use Laminas\Db\Adapter\Exception\InvalidArgumentException;
 
+use Override;
+
 use function addcslashes;
 use function get_resource_type;
 use function implode;
@@ -71,7 +73,7 @@ class Oracle extends AbstractPlatform
     /**
      * {@inheritDoc}
      */
-    public function getName()
+    #[Override] public function getName()
     {
         return 'Oracle';
     }
@@ -79,7 +81,7 @@ class Oracle extends AbstractPlatform
     /**
      * {@inheritDoc}
      */
-    public function quoteIdentifierChain($identifierChain)
+    #[Override] public function quoteIdentifierChain($identifierChain)
     {
         if ($this->quoteIdentifiers === false) {
             return implode('.', (array) $identifierChain);
@@ -91,7 +93,7 @@ class Oracle extends AbstractPlatform
     /**
      * {@inheritDoc}
      */
-    public function quoteValue($value)
+    #[Override] public function quoteValue($value)
     {
         if ($this->resource instanceof DriverInterface) {
             $resource = $this->resource->getConnection()->getResource();
@@ -123,7 +125,7 @@ class Oracle extends AbstractPlatform
     /**
      * {@inheritDoc}
      */
-    public function quoteTrustedValue($value)
+    #[Override] public function quoteTrustedValue($value)
     {
         return "'" . addcslashes(str_replace('\'', '\'\'', $value), "\x00\n\r\"\x1a") . "'";
     }

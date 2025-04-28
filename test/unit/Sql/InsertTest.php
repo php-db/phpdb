@@ -280,16 +280,14 @@ class InsertTest extends TestCase
     // @codingStandardsIgnoreStart
     public function test__isset(): void
     {
-        // @codingStandardsIgnoreEnd
         /** @psalm-suppress UndefinedMagicPropertyAssignment */
         $this->insert->foo = 'bar';
-        /** @psalm-suppress RedundantCondition */
-        self::assertTrue(isset($this->insert->foo));
+
+        self::assertEquals('bar', $this->insert->foo);
 
         /** @psalm-suppress UndefinedMagicPropertyAssignment */
         $this->insert->foo = null;
-        /** @psalm-suppress TypeDoesNotContainType */
-        self::assertTrue(isset($this->insert->foo));
+        self::assertEquals(null, $this->insert->foo);
     }
 
     // @codingStandardsIgnoreStart

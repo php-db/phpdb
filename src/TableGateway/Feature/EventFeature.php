@@ -14,6 +14,8 @@ use Laminas\EventManager\EventManager;
 use Laminas\EventManager\EventManagerInterface;
 use Laminas\EventManager\EventsCapableInterface;
 
+use Override;
+
 use function get_class;
 
 class EventFeature extends AbstractFeature implements
@@ -46,7 +48,7 @@ class EventFeature extends AbstractFeature implements
      *
      * @return EventManagerInterface
      */
-    public function getEventManager()
+    #[Override] public function getEventManager()
     {
         return $this->eventManager;
     }

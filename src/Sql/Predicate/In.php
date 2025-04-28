@@ -80,11 +80,11 @@ class In extends AbstractExpression implements PredicateInterface
     #[\Override]
     public function getExpressionData(): ExpressionData
     {
-        if ($this->identifier === null) {
+        if (!$this->identifier instanceof \Laminas\Db\Sql\Argument) {
             throw new InvalidArgumentException('Identifier must be specified');
         }
 
-        if ($this->valueSet === null) {
+        if (!$this->valueSet instanceof \Laminas\Db\Sql\Argument) {
             throw new InvalidArgumentException('Value set must be provided for IN predicate');
         }
 

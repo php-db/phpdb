@@ -5,6 +5,8 @@ namespace Laminas\Db\Metadata\Source;
 use DateTime;
 use Laminas\Db\Adapter\Adapter;
 
+use Override;
+
 use function array_change_key_case;
 use function array_walk;
 use function implode;
@@ -20,7 +22,7 @@ class PostgresqlMetadata extends AbstractSource
      * @throws \Exception
      * @return void
      */
-    protected function loadSchemaData()
+    #[Override] protected function loadSchemaData()
     {
         if (isset($this->data['schemas'])) {
             return;
@@ -50,7 +52,7 @@ class PostgresqlMetadata extends AbstractSource
      * @throws \Exception
      * @return void
      */
-    protected function loadTableNameData($schema)
+    #[Override] protected function loadTableNameData($schema)
     {
         if (isset($this->data['table_names'][$schema])) {
             return;
@@ -112,7 +114,7 @@ class PostgresqlMetadata extends AbstractSource
      * @throws \Exception
      * @return void
      */
-    protected function loadColumnData($table, $schema)
+    #[Override] protected function loadColumnData($table, $schema)
     {
         if (isset($this->data['columns'][$schema][$table])) {
             return;
@@ -178,7 +180,7 @@ class PostgresqlMetadata extends AbstractSource
      * @throws \Exception
      * @return void
      */
-    protected function loadConstraintData($table, $schema)
+    #[Override] protected function loadConstraintData($table, $schema)
     {
         // phpcs:disable WebimpressCodingStandard.NamingConventions.ValidVariableName.NotCamelCaps
         if (isset($this->data['constraints'][$schema][$table])) {
@@ -312,7 +314,7 @@ class PostgresqlMetadata extends AbstractSource
      * @throws \Exception
      * @return void
      */
-    protected function loadTriggerData($schema)
+    #[Override] protected function loadTriggerData($schema)
     {
         if (isset($this->data['triggers'][$schema])) {
             return;

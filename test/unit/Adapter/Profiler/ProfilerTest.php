@@ -8,6 +8,8 @@ use Laminas\Db\Adapter\Profiler\Profiler;
 use Laminas\Db\Adapter\StatementContainer;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
+use stdClass;
+use TypeError;
 
 #[CoversMethod(Profiler::class, 'profilerStart')]
 #[CoversMethod(Profiler::class, 'profilerFinish')]
@@ -34,9 +36,8 @@ class ProfilerTest extends TestCase
         $ret = $this->profiler->profilerStart(new StatementContainer());
         self::assertSame($this->profiler, $ret);
 
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('profilerStart takes either a StatementContainer or a string');
-        $this->profiler->profilerStart(5);
+        $this->expectException(TypeError::class);
+        $this->profiler->profilerStart(new stdClass());;
     }
 
     public function testProfilerFinish(): void

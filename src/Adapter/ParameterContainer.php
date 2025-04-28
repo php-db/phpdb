@@ -7,6 +7,7 @@ use ArrayIterator;
 use Countable;
 use Iterator;
 // phpcs:ignore SlevomatCodingStandard.Namespaces.UnusedUses.UnusedUse
+use Override;
 use ReturnTypeWillChange;
 
 use function array_key_exists;
@@ -62,7 +63,7 @@ class ParameterContainer implements Iterator, ArrayAccess, Countable
      */
     public function __construct(array $data = [])
     {
-        if ($data) {
+        if ($data !== []) {
             $this->setFromArray($data);
         }
     }
@@ -73,7 +74,7 @@ class ParameterContainer implements Iterator, ArrayAccess, Countable
      * @param  string $offset
      * @return bool
      */
-    #[ReturnTypeWillChange]
+    #[Override] #[ReturnTypeWillChange]
     public function offsetExists($offset)
     {
         return isset($this->data[$offset]);
@@ -85,7 +86,7 @@ class ParameterContainer implements Iterator, ArrayAccess, Countable
      * @param  string $offset
      * @return mixed
      */
-    #[ReturnTypeWillChange]
+    #[Override] #[ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         if (isset($this->data[$offset])) {
@@ -122,7 +123,7 @@ class ParameterContainer implements Iterator, ArrayAccess, Countable
      * @param mixed $maxLength
      * @throws Exception\InvalidArgumentException
      */
-    #[ReturnTypeWillChange]
+    #[Override] #[ReturnTypeWillChange]
     public function offsetSet($name, $value, $errata = null, $maxLength = null)
     {
         $position = false;
@@ -177,7 +178,7 @@ class ParameterContainer implements Iterator, ArrayAccess, Countable
      * @param  string $name
      * @return $this Provides a fluent interface
      */
-    #[ReturnTypeWillChange]
+    #[Override] #[ReturnTypeWillChange]
     public function offsetUnset($name)
     {
         if (is_int($name) && isset($this->positions[$name])) {
@@ -377,7 +378,7 @@ class ParameterContainer implements Iterator, ArrayAccess, Countable
      *
      * @return int
      */
-    #[ReturnTypeWillChange]
+    #[Override] #[ReturnTypeWillChange]
     public function count()
     {
         return count($this->data);
@@ -388,7 +389,7 @@ class ParameterContainer implements Iterator, ArrayAccess, Countable
      *
      * @return mixed
      */
-    #[ReturnTypeWillChange]
+    #[Override] #[ReturnTypeWillChange]
     public function current()
     {
         return current($this->data);
@@ -399,7 +400,7 @@ class ParameterContainer implements Iterator, ArrayAccess, Countable
      *
      * @return mixed
      */
-    #[ReturnTypeWillChange]
+    #[Override] #[ReturnTypeWillChange]
     public function next()
     {
         return next($this->data);
@@ -410,7 +411,7 @@ class ParameterContainer implements Iterator, ArrayAccess, Countable
      *
      * @return int|string|null
      */
-    #[ReturnTypeWillChange]
+    #[Override] #[ReturnTypeWillChange]
     public function key()
     {
         return key($this->data);
@@ -421,7 +422,7 @@ class ParameterContainer implements Iterator, ArrayAccess, Countable
      *
      * @return bool
      */
-    #[ReturnTypeWillChange]
+    #[Override] #[ReturnTypeWillChange]
     public function valid()
     {
         return current($this->data) !== false;
@@ -430,7 +431,7 @@ class ParameterContainer implements Iterator, ArrayAccess, Countable
     /**
      * Rewind
      */
-    #[ReturnTypeWillChange]
+    #[Override] #[ReturnTypeWillChange]
     public function rewind()
     {
         reset($this->data);

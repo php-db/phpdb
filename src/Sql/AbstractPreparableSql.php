@@ -5,6 +5,7 @@ namespace Laminas\Db\Sql;
 use Laminas\Db\Adapter\AdapterInterface;
 use Laminas\Db\Adapter\ParameterContainer;
 use Laminas\Db\Adapter\StatementContainerInterface;
+use Override;
 
 abstract class AbstractPreparableSql extends AbstractSql implements PreparableSqlInterface
 {
@@ -13,7 +14,7 @@ abstract class AbstractPreparableSql extends AbstractSql implements PreparableSq
      *
      * @return StatementContainerInterface
      */
-    public function prepareStatement(AdapterInterface $adapter, StatementContainerInterface $statementContainer): StatementContainerInterface
+    #[Override] public function prepareStatement(AdapterInterface $adapter, StatementContainerInterface $statementContainer): StatementContainerInterface
     {
         $parameterContainer = $statementContainer->getParameterContainer();
 

@@ -8,6 +8,8 @@ use Laminas\Db\Adapter\Driver\Pdo;
 use Laminas\Db\Adapter\Exception;
 use Laminas\Db\Adapter\Exception\InvalidArgumentException;
 
+use Override;
+
 use function implode;
 use function str_replace;
 
@@ -69,7 +71,7 @@ class Mysql extends AbstractPlatform
     /**
      * {@inheritDoc}
      */
-    public function getName()
+    #[Override] public function getName()
     {
         return 'MySQL';
     }
@@ -77,7 +79,7 @@ class Mysql extends AbstractPlatform
     /**
      * {@inheritDoc}
      */
-    public function quoteIdentifierChain($identifierChain)
+    #[Override] public function quoteIdentifierChain($identifierChain)
     {
         return '`' . implode('`.`', (array) str_replace('`', '``', $identifierChain)) . '`';
     }
@@ -85,7 +87,7 @@ class Mysql extends AbstractPlatform
     /**
      * {@inheritDoc}
      */
-    public function quoteValue($value)
+    #[Override] public function quoteValue($value)
     {
         $quotedViaDriverValue = $this->quoteViaDriver($value);
 
@@ -95,7 +97,7 @@ class Mysql extends AbstractPlatform
     /**
      * {@inheritDoc}
      */
-    public function quoteTrustedValue($value)
+    #[Override] public function quoteTrustedValue($value)
     {
         $quotedViaDriverValue = $this->quoteViaDriver($value);
 

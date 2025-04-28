@@ -9,6 +9,8 @@ use Laminas\Db\Sql\Exception;
 use Laminas\Db\Sql\PreparableSqlInterface;
 use Laminas\Db\Sql\SqlInterface;
 
+use Override;
+
 use function is_a;
 use function sprintf;
 use function str_replace;
@@ -43,7 +45,7 @@ class Platform extends AbstractPlatform
      * @param string                             $type
      * @param AdapterInterface|PlatformInterface $adapterOrPlatform
      */
-    public function setTypeDecorator($type, PlatformDecoratorInterface $decorator, $adapterOrPlatform = null)
+    #[Override] public function setTypeDecorator($type, PlatformDecoratorInterface $decorator, $adapterOrPlatform = null)
     {
         $platformName                           = $this->resolvePlatformName($adapterOrPlatform);
         $this->decorators[$platformName][$type] = $decorator;
@@ -54,7 +56,7 @@ class Platform extends AbstractPlatform
      * @param AdapterInterface|PlatformInterface|null $adapterOrPlatform
      * @return PlatformDecoratorInterface|PreparableSqlInterface|SqlInterface
      */
-    public function getTypeDecorator($subject, $adapterOrPlatform = null)
+    #[Override] public function getTypeDecorator($subject, $adapterOrPlatform = null)
     {
         $platformName = $this->resolvePlatformName($adapterOrPlatform);
 
@@ -70,7 +72,7 @@ class Platform extends AbstractPlatform
         return $subject;
     }
 
-    public function getDecorators(): PlatformDecoratorInterface
+    #[Override] public function getDecorators(): PlatformDecoratorInterface
     {
         $platformName = $this->resolvePlatformName($this->getDefaultPlatform());
         return $this->decorators[$platformName];
@@ -81,7 +83,7 @@ class Platform extends AbstractPlatform
      *
      * @throws Exception\RuntimeException
      */
-    public function prepareStatement(AdapterInterface $adapter, StatementContainerInterface $statementContainer): StatementContainerInterface
+    #[Override] public function prepareStatement(AdapterInterface $adapter, StatementContainerInterface $statementContainer): StatementContainerInterface
     {
         if (! $this->subject instanceof PreparableSqlInterface) {
             throw new Exception\RuntimeException(
@@ -100,7 +102,7 @@ class Platform extends AbstractPlatform
      *
      * @throws Exception\RuntimeException
      */
-    public function getSqlString(?PlatformInterface $adapterPlatform = null)
+    #[Override] public function getSqlString(?PlatformInterface $adapterPlatform = null)
     {
         if (! $this->subject instanceof SqlInterface) {
             throw new Exception\RuntimeException(

@@ -8,12 +8,14 @@ use Laminas\Db\Adapter\Exception;
 use mysqli;
 use mysqli_result;
 use mysqli_stmt;
-// phpcs:ignore SlevomatCodingStandard.Namespaces.UnusedUses.UnusedUse
+use Override;
 use ReturnTypeWillChange;
 
 use function array_fill;
 use function call_user_func_array;
 use function count;
+
+// phpcs:ignore SlevomatCodingStandard.Namespaces.UnusedUses.UnusedUse
 
 class Result implements
     Iterator,
@@ -61,11 +63,11 @@ class Result implements
     /**
      * Initialize
      *
-     * @param mixed $resource
-     * @param mixed $generatedValue
+     * @param mixed     $resource
+     * @param mixed     $generatedValue
      * @param bool|null $isBuffered
-     * @return $this Provides a fluent interface
      * @throws Exception\InvalidArgumentException
+     * @return $this Provides a fluent interface
      */
     public function initialize($resource, $generatedValue, $isBuffered = null)
     {
@@ -79,17 +81,14 @@ class Result implements
 
         if ($isBuffered !== null) {
             $this->isBuffered = $isBuffered;
-        } else {
-            if (
-                $resource instanceof mysqli || $resource instanceof mysqli_result
-                || $resource instanceof mysqli_stmt && $resource->num_rows !== 0
-            ) {
-                $this->isBuffered = true;
-            }
+        } elseif ($resource instanceof mysqli || $resource instanceof mysqli_result
+            || $resource instanceof mysqli_stmt && $resource->num_rows !== 0) {
+            $this->isBuffered = true;
         }
 
         $this->resource       = $resource;
         $this->generatedValue = $generatedValue;
+
         return $this;
     }
 
@@ -98,7 +97,7 @@ class Result implements
      *
      * @throws Exception\RuntimeException
      */
-    public function buffer()
+    #[Override] public function buffer()
     {
         if ($this->resource instanceof mysqli_stmt && $this->isBuffered !== true) {
             if ($this->position > 0) {
@@ -114,7 +113,7 @@ class Result implements
      *
      * @return bool|null
      */
-    public function isBuffered()
+    #[Override] public function isBuffered()
     {
         return $this->isBuffered;
     }
@@ -124,7 +123,7 @@ class Result implements
      *
      * @return mysqli|mysqli_result|mysqli_stmt
      */
-    public function getResource()
+    #[Override] public function getResource()
     {
         return $this->resource;
     }
@@ -134,7 +133,7 @@ class Result implements
      *
      * @return bool
      */
-    public function isQueryResult()
+    #[Override] public function isQueryResult()
     {
         return $this->resource->field_count > 0;
     }
@@ -143,10 +142,9 @@ class Result implements
      * Get affected rows
      *
      * @return int|numeric-string
-     *
      * @psalm-return int<-1, max>|numeric-string
      */
-    public function getAffectedRows(): int|string
+    #[Override] public function getAffectedRows(): int|string
     {
         if ($this->resource instanceof mysqli || $this->resource instanceof mysqli_stmt) {
             return $this->resource->affected_rows;
@@ -160,6 +158,7 @@ class Result implements
      *
      * @return mixed
      */
+    #[Override]
     #[ReturnTypeWillChange]
     public function current()
     {
@@ -169,21 +168,18 @@ class Result implements
 
         if ($this->resource instanceof mysqli_stmt) {
             $this->loadDataFromMysqliStatement();
-            return $this->currentData;
-        } else {
-            $this->loadFromMysqliResult();
-            return $this->currentData;
         }
+        $this->loadFromMysqliResult();
+
+        return $this->currentData;
     }
 
     /**
      * Mysqli's binding and returning of statement values
-     *
      * Mysqli requires you to bind variables to the extension in order to
      * get data out.  These values have to be references:
      *
      * @see http://php.net/manual/en/mysqli-stmt.bind-result.php
-     *
      * @throws Exception\RuntimeException
      * @return bool
      */
@@ -207,6 +203,7 @@ class Result implements
             if (! $this->isBuffered) {
                 $this->resource->close();
             }
+
             return false;
         } elseif ($r === false) {
             throw new Exception\RuntimeException($this->resource->error);
@@ -219,6 +216,7 @@ class Result implements
         $this->currentComplete = true;
         $this->nextComplete    = true;
         $this->position++;
+
         return true;
     }
 
@@ -240,6 +238,7 @@ class Result implements
         $this->currentComplete = true;
         $this->nextComplete    = true;
         $this->position++;
+
         return true;
     }
 
@@ -248,7 +247,7 @@ class Result implements
      *
      * @return void
      */
-    #[ReturnTypeWillChange]
+    #[Override] #[ReturnTypeWillChange]
     public function next()
     {
         $this->currentComplete = false;
@@ -265,7 +264,7 @@ class Result implements
      *
      * @return int
      */
-    #[ReturnTypeWillChange]
+    #[Override] #[ReturnTypeWillChange]
     public function key()
     {
         return $this->position;
@@ -277,7 +276,7 @@ class Result implements
      * @throws Exception\RuntimeException
      * @return void
      */
-    #[ReturnTypeWillChange]
+    #[Override] #[ReturnTypeWillChange]
     public function rewind()
     {
         if (0 !== $this->position && false === $this->isBuffered) {
@@ -294,7 +293,7 @@ class Result implements
      *
      * @return bool
      */
-    #[ReturnTypeWillChange]
+    #[Override] #[ReturnTypeWillChange]
     public function valid()
     {
         if ($this->currentComplete) {
@@ -314,12 +313,13 @@ class Result implements
      * @throws Exception\RuntimeException
      * @return int
      */
-    #[ReturnTypeWillChange]
+    #[Override] #[ReturnTypeWillChange]
     public function count()
     {
         if ($this->isBuffered === false) {
             throw new Exception\RuntimeException('Row count is not available in unbuffered result sets.');
         }
+
         return $this->resource->num_rows;
     }
 
@@ -328,7 +328,7 @@ class Result implements
      *
      * @return int
      */
-    public function getFieldCount()
+    #[Override] public function getFieldCount()
     {
         return $this->resource->field_count;
     }
@@ -338,7 +338,7 @@ class Result implements
      *
      * @return mixed|null
      */
-    public function getGeneratedValue()
+    #[Override] public function getGeneratedValue()
     {
         return $this->generatedValue;
     }

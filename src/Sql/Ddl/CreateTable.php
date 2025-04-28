@@ -136,7 +136,7 @@ class CreateTable extends AbstractSql implements SqlInterface
     protected function processColumns(?PlatformInterface $adapterPlatform = null)
     {
         if (! $this->columns) {
-            return;
+            return null;
         }
 
         $sqls = [];
@@ -156,6 +156,7 @@ class CreateTable extends AbstractSql implements SqlInterface
         if ($this->constraints && $this->columns) {
             return $this->specifications['combinedBy'];
         }
+        return null;
     }
 
     /**
@@ -164,7 +165,7 @@ class CreateTable extends AbstractSql implements SqlInterface
     protected function processConstraints(?PlatformInterface $adapterPlatform = null)
     {
         if (! $this->constraints) {
-            return;
+            return null;
         }
 
         $sqls = [];

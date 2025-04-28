@@ -5,6 +5,8 @@ namespace Laminas\Db\Metadata\Source;
 use DateTime;
 use Laminas\Db\Adapter\Adapter;
 
+use Override;
+
 use function array_change_key_case;
 use function array_walk;
 use function implode;
@@ -21,7 +23,7 @@ class MysqlMetadata extends AbstractSource
      * @throws \Exception
      * @return void
      */
-    protected function loadSchemaData()
+    #[Override] protected function loadSchemaData()
     {
         if (isset($this->data['schemas'])) {
             return;
@@ -50,6 +52,7 @@ class MysqlMetadata extends AbstractSource
      * @throws \Exception
      * @return void
      */
+    #[\Override]
     protected function loadTableNameData($schema)
     {
         if (isset($this->data['table_names'][$schema])) {
@@ -112,6 +115,7 @@ class MysqlMetadata extends AbstractSource
      * @throws \Exception
      * @return void
      */
+    #[\Override]
     protected function loadColumnData($table, $schema)
     {
         if (isset($this->data['columns'][$schema][$table])) {
@@ -201,6 +205,7 @@ class MysqlMetadata extends AbstractSource
      * @throws \Exception
      * @return void
      */
+    #[\Override]
     protected function loadConstraintData($table, $schema)
     {
         // phpcs:disable WebimpressCodingStandard.NamingConventions.ValidVariableName.NotCamelCaps
@@ -282,11 +287,7 @@ class MysqlMetadata extends AbstractSource
             if ($row['CONSTRAINT_NAME'] !== $realName) {
                 $realName = $row['CONSTRAINT_NAME'];
                 $isFK     = 'FOREIGN KEY' === $row['CONSTRAINT_TYPE'];
-                if ($isFK) {
-                    $name = $realName;
-                } else {
-                    $name = '_laminas_' . $row['TABLE_NAME'] . '_' . $realName;
-                }
+                $name = $isFK ? $realName : '_laminas_' . $row['TABLE_NAME'] . '_' . $realName;
                 $constraints[$name] = [
                     'constraint_name' => $name,
                     'constraint_type' => $row['CONSTRAINT_TYPE'],
@@ -317,6 +318,7 @@ class MysqlMetadata extends AbstractSource
      * @throws \Exception
      * @return void
      */
+    #[\Override]
     protected function loadConstraintDataKeys($schema)
     {
         if (isset($this->data['constraint_keys'][$schema])) {
@@ -374,6 +376,7 @@ class MysqlMetadata extends AbstractSource
      * @throws \Exception
      * @return void
      */
+    #[\Override]
     protected function loadConstraintReferences($table, $schema)
     {
         parent::loadConstraintReferences($table, $schema);
@@ -437,6 +440,7 @@ class MysqlMetadata extends AbstractSource
      * @throws \Exception
      * @return void
      */
+    #[\Override]
     protected function loadTriggerData($schema)
     {
         if (isset($this->data['triggers'][$schema])) {

@@ -6,18 +6,20 @@ use Laminas\Db\Adapter\Platform\PlatformInterface;
 use Laminas\Db\Sql\Ddl\CreateTable;
 use Laminas\Db\Sql\Platform\PlatformDecoratorInterface;
 
+use Override;
+
 use function ltrim;
 
 class CreateTableDecorator extends CreateTable implements PlatformDecoratorInterface
 {
     /** @var CreateTable */
-    protected $subject;
+    public $subject;
 
     /**
      * @param CreateTable $subject
      * @return $this Provides a fluent interface
      */
-    public function setSubject($subject)
+    #[Override] public function setSubject($subject)
     {
         $this->subject = $subject;
         return $this;
@@ -26,6 +28,7 @@ class CreateTableDecorator extends CreateTable implements PlatformDecoratorInter
     /**
      * @return array
      */
+    #[\Override]
     protected function processTable(?PlatformInterface $adapterPlatform = null)
     {
         $table = ($this->isTemporary ? '#' : '') . ltrim($this->table, '#');

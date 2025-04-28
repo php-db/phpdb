@@ -6,6 +6,7 @@ use Laminas\Db\Adapter\Driver\StatementInterface;
 use Laminas\Db\Adapter\Exception;
 use Laminas\Db\Adapter\ParameterContainer;
 use Laminas\Db\Adapter\Profiler;
+use Override;
 use PDOException;
 use PDOStatement;
 
@@ -51,15 +52,17 @@ class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
     public function setDriver(Pdo $driver)
     {
         $this->driver = $driver;
+
         return $this;
     }
 
     /**
      * @return $this Provides a fluent interface
      */
-    public function setProfiler(Profiler\ProfilerInterface $profiler)
+    #[Override] public function setProfiler(Profiler\ProfilerInterface $profiler)
     {
         $this->profiler = $profiler;
+
         return $this;
     }
 
@@ -71,6 +74,7 @@ class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
     public function initialize(\PDO $connectionResource)
     {
         $this->pdo = $connectionResource;
+
         return $this;
     }
 
@@ -82,6 +86,7 @@ class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
     public function setResource(PDOStatement $pdoStatement)
     {
         $this->resource = $pdoStatement;
+
         return $this;
     }
 
@@ -90,6 +95,7 @@ class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
      *
      * @return PDOStatement
      */
+    #[Override]
     public function getResource()
     {
         return $this->resource;
@@ -101,9 +107,11 @@ class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
      * @param string $sql
      * @return $this Provides a fluent interface
      */
+    #[Override]
     public function setSql($sql)
     {
         $this->sql = $sql;
+
         return $this;
     }
 
@@ -112,6 +120,7 @@ class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
      *
      * @return string
      */
+    #[Override]
     public function getSql()
     {
         return $this->sql;
@@ -120,15 +129,18 @@ class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
     /**
      * @return $this Provides a fluent interface
      */
+    #[Override]
     public function setParameterContainer(ParameterContainer $parameterContainer)
     {
         $this->parameterContainer = $parameterContainer;
+
         return $this;
     }
 
     /**
      * @return ParameterContainer
      */
+    #[Override]
     public function getParameterContainer()
     {
         return $this->parameterContainer;
@@ -136,11 +148,10 @@ class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
 
     /**
      * @param string $sql
-     *
      * @throws Exception\RuntimeException
-     *
      * @return void
      */
+    #[Override]
     public function prepare($sql = null)
     {
         if ($this->isPrepared) {
@@ -164,6 +175,7 @@ class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
     /**
      * @return bool
      */
+    #[Override]
     public function isPrepared()
     {
         return $this->isPrepared;
@@ -174,6 +186,7 @@ class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
      * @throws Exception\InvalidQueryException
      * @return Result
      */
+    #[Override]
     public function execute($parameters = null)
     {
         if (! $this->isPrepared) {

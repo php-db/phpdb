@@ -2,6 +2,8 @@
 
 namespace Laminas\Db\Adapter;
 
+use Override;
+
 class StatementContainer implements StatementContainerInterface
 {
     /** @var string */
@@ -25,7 +27,7 @@ class StatementContainer implements StatementContainerInterface
      * @param string $sql
      * @return $this Provides a fluent interface
      */
-    public function setSql($sql)
+    #[Override] public function setSql($sql)
     {
         $this->sql = $sql;
         return $this;
@@ -34,7 +36,7 @@ class StatementContainer implements StatementContainerInterface
     /**
      * @return string
      */
-    public function getSql()
+    #[Override] public function getSql()
     {
         return $this->sql;
     }
@@ -42,7 +44,7 @@ class StatementContainer implements StatementContainerInterface
     /**
      * @return $this Provides a fluent interface
      */
-    public function setParameterContainer(ParameterContainer $parameterContainer)
+    #[Override] public function setParameterContainer(ParameterContainer $parameterContainer)
     {
         $this->parameterContainer = $parameterContainer;
         return $this;
@@ -51,7 +53,7 @@ class StatementContainer implements StatementContainerInterface
     /**
      * @return null|ParameterContainer
      */
-    public function getParameterContainer()
+    #[Override] public function getParameterContainer()
     {
         return $this->parameterContainer;
     }

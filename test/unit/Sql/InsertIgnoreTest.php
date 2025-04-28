@@ -263,12 +263,14 @@ class InsertIgnoreTest extends TestCase
     // @codingStandardsIgnoreStart
     public function test__isset(): void
     {
-        // @codingStandardsIgnoreEnd
+        /** @psalm-suppress UndefinedMagicPropertyAssignment */
         $this->insert->foo = 'bar';
-        self::assertTrue(isset($this->insert->foo));
 
+        self::assertEquals('bar', $this->insert->foo);
+
+        /** @psalm-suppress UndefinedMagicPropertyAssignment */
         $this->insert->foo = null;
-        self::assertTrue(isset($this->insert->foo));
+        self::assertEquals(null, $this->insert->foo);
     }
 
     // @codingStandardsIgnoreStart

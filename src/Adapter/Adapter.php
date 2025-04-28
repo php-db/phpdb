@@ -5,6 +5,8 @@ namespace Laminas\Db\Adapter;
 use Exception as PhpException;
 use Laminas\Db\ResultSet;
 
+use Override;
+
 use function in_array;
 use function is_array;
 use function is_bool;
@@ -60,7 +62,7 @@ class Adapter implements AdapterInterface, Profiler\ProfilerAwareInterface
 
         if (is_array($driver)) {
             $parameters = $driver;
-            if ($profiler === null && isset($parameters['profiler'])) {
+            if (!$profiler instanceof \Laminas\Db\Adapter\Profiler\ProfilerInterface && isset($parameters['profiler'])) {
                 $profiler = $this->createProfiler($parameters);
             }
             $driver = $this->createDriver($parameters);
@@ -73,14 +75,14 @@ class Adapter implements AdapterInterface, Profiler\ProfilerAwareInterface
         $driver->checkEnvironment();
         $this->driver = $driver;
 
-        if ($platform === null) {
+        if (!$platform instanceof \Laminas\Db\Adapter\Platform\PlatformInterface) {
             $platform = $this->createPlatform($parameters);
         }
 
         $this->platform                = $platform;
         $this->queryResultSetPrototype = $queryResultPrototype ?: new ResultSet\ResultSet();
 
-        if ($profiler) {
+        if ($profiler instanceof \Laminas\Db\Adapter\Profiler\ProfilerInterface) {
             $this->setProfiler($profiler);
         }
     }
@@ -88,7 +90,7 @@ class Adapter implements AdapterInterface, Profiler\ProfilerAwareInterface
     /**
      * @return $this Provides a fluent interface
      */
-    public function setProfiler(Profiler\ProfilerInterface $profiler): self
+    #[Override] public function setProfiler(Profiler\ProfilerInterface $profiler): self
     {
         $this->profiler = $profiler;
         if ($this->driver instanceof Profiler\ProfilerAwareInterface) {
@@ -105,7 +107,7 @@ class Adapter implements AdapterInterface, Profiler\ProfilerAwareInterface
     /**
      * @throws Exception\RuntimeException
      */
-    public function getDriver(): Driver\DriverInterface|array
+    #[Override] public function getDriver(): Driver\DriverInterface|array
     {
         if ($this->driver === null) {
             throw new Exception\RuntimeException('Driver has not been set or configured for this adapter.');
@@ -113,7 +115,7 @@ class Adapter implements AdapterInterface, Profiler\ProfilerAwareInterface
         return $this->driver;
     }
 
-    public function getPlatform(): ?Platform\PlatformInterface
+    #[Override] public function getPlatform(): ?Platform\PlatformInterface
     {
         return $this->platform;
     }
@@ -333,7 +335,7 @@ class Adapter implements AdapterInterface, Profiler\ProfilerAwareInterface
         }
 
         if (is_bool($parameters['profiler'])) {
-            return $parameters['profiler'] === true ? new Profiler\Profiler() : null;
+            return $parameters['profiler'] ? new Profiler\Profiler() : null;
         }
 
         throw new Exception\InvalidArgumentException(

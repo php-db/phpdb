@@ -8,6 +8,8 @@ use Laminas\Db\Adapter\Platform\PlatformInterface;
 use Laminas\Db\Sql\Platform\PlatformDecoratorInterface;
 use Laminas\Db\Sql\Select;
 
+use Override;
+
 use function array_shift;
 use function array_unshift;
 use function current;
@@ -21,7 +23,7 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
     protected $isSelectContainDistinct = false;
 
     /** @var Select */
-    protected $subject;
+    public $subject;
 
      /** @var bool */
     protected $supportsLimitOffset = false;
@@ -47,7 +49,7 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
      *
      * @return void
      */
-    public function setSubject($subject)
+    #[Override] public function setSubject($subject)
     {
         $this->subject = $subject;
     }
@@ -75,6 +77,7 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
      * @param null|string $alias
      * @return string
      */
+    #[\Override]
     protected function renderTable($table, $alias = null)
     {
         return $table . ' ' . $alias;
@@ -83,6 +86,7 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
     /**
      * @return void
      */
+    #[\Override]
     protected function localizeVariables()
     {
         parent::localizeVariables();
@@ -113,12 +117,12 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
         if ($this->supportsLimitOffset) {
             // Note: db2_prepare/db2_execute fails with positional parameters, for LIMIT & OFFSET
             $limit = (int) $this->limit;
-            if (! $limit) {
+            if ($limit === 0) {
                 return;
             }
 
             $offset = (int) $this->offset;
-            if ($offset) {
+            if ($offset !== 0) {
                 $sqls[] = sprintf('LIMIT %s OFFSET %s', $limit, $offset);
                 return;
             }
@@ -156,7 +160,7 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
             $this->setIsSelectContainDistinct(true);
         }
 
-        if ($parameterContainer) {
+        if ($parameterContainer instanceof \Laminas\Db\Adapter\ParameterContainer) {
             // create bottom part of query, with offset and limit using row_number
             $limitParamName  = $driver->formatParameterName('limit');
             $offsetParamName = $driver->formatParameterName('offset');
@@ -177,12 +181,7 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
 
             $parameterContainer->offsetSet('limit', (int) $this->limit + (int) $this->offset);
         } else {
-            if ((int) $this->offset > 0) {
-                $offset = (int) $this->offset + 1;
-            } else {
-                $offset = (int) $this->offset;
-            }
-
+            $offset = (int) $this->offset > 0 ? (int) $this->offset + 1 : (int) $this->offset;
             $sqls[] = sprintf(
             // @codingStandardsIgnoreStart
                 ') AS LAMINAS_IBMDB2_SERVER_LIMIT_OFFSET_EMULATION WHERE LAMINAS_IBMDB2_SERVER_LIMIT_OFFSET_EMULATION.LAMINAS_DB_ROWNUM BETWEEN %d AND %d',

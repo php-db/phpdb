@@ -6,6 +6,8 @@ use Laminas\Db\Adapter\Platform\PlatformInterface;
 use Laminas\Db\Sql\Ddl\AlterTable;
 use Laminas\Db\Sql\Platform\PlatformDecoratorInterface;
 
+use Override;
+
 use function count;
 use function range;
 use function str_replace;
@@ -19,7 +21,7 @@ use function uksort;
 class AlterTableDecorator extends AlterTable implements PlatformDecoratorInterface
 {
     /** @var AlterTable */
-    protected $subject;
+    public $subject;
 
     /** @var int[] */
     protected $columnOptionSortOrder = [
@@ -39,7 +41,7 @@ class AlterTableDecorator extends AlterTable implements PlatformDecoratorInterfa
      * @param AlterTable $subject
      * @return $this Provides a fluent interface
      */
-    public function setSubject($subject)
+    #[Override] public function setSubject($subject)
     {
         $this->subject = $subject;
 
@@ -61,14 +63,14 @@ class AlterTableDecorator extends AlterTable implements PlatformDecoratorInterfa
             if ($insertPos !== false) {
                 switch ($needle) {
                     case 'REFERENCES':
-                        $insertStart[2] = ! isset($insertStart[2]) ? $insertPos : $insertStart[2];
+                        $insertStart[2] = isset($insertStart[2]) ? $insertStart[2] : $insertPos;
                     // no break
                     case 'PRIMARY':
                     case 'UNIQUE':
-                        $insertStart[1] = ! isset($insertStart[1]) ? $insertPos : $insertStart[1];
+                        $insertStart[1] = isset($insertStart[1]) ? $insertStart[1] : $insertPos;
                     // no break
                     default:
-                        $insertStart[0] = ! isset($insertStart[0]) ? $insertPos : $insertStart[0];
+                        $insertStart[0] = isset($insertStart[0]) ? $insertStart[0] : $insertPos;
                 }
             }
         }
@@ -84,6 +86,7 @@ class AlterTableDecorator extends AlterTable implements PlatformDecoratorInterfa
      * @param PlatformInterface|null $adapterPlatform
      * @return array
      */
+    #[\Override]
     protected function processAddColumns(?PlatformInterface $adapterPlatform = null): array
     {
         $sqls = [];
@@ -135,7 +138,7 @@ class AlterTableDecorator extends AlterTable implements PlatformDecoratorInterfa
                         $j      = 2;
                 }
 
-                if ($insert) {
+                if ($insert !== '' && $insert !== '0') {
                     $j                = $j ?? 0;
                     $sql              = substr_replace($sql, $insert, $insertStart[$j], 0);
                     $insertStartCount = count($insertStart);
@@ -154,6 +157,7 @@ class AlterTableDecorator extends AlterTable implements PlatformDecoratorInterfa
      * @param PlatformInterface|null $adapterPlatform
      * @return array
      */
+    #[\Override]
     protected function processChangeColumns(?PlatformInterface $adapterPlatform = null): array
     {
         $sqls = [];
@@ -201,7 +205,7 @@ class AlterTableDecorator extends AlterTable implements PlatformDecoratorInterfa
                         break;
                 }
 
-                if ($insert) {
+                if ($insert !== '' && $insert !== '0') {
                     $j                = $j ?? 0;
                     $sql              = substr_replace($sql, $insert, $insertStart[$j], 0);
                     $insertStartCount = count($insertStart);

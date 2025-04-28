@@ -16,6 +16,8 @@ use Laminas\Db\Sql\Update;
 use Laminas\Db\Sql\Where;
 use Laminas\Db\TableGateway\Feature\EventFeatureEventsInterface;
 
+use Override;
+
 use function array_shift;
 use function array_values;
 use function count;
@@ -101,7 +103,7 @@ abstract class AbstractTableGateway implements TableGatewayInterface
      *
      * @return string
      */
-    public function getTable()
+    #[Override] public function getTable()
     {
         return $this->table;
     }
@@ -156,7 +158,7 @@ abstract class AbstractTableGateway implements TableGatewayInterface
      * @param Where|Closure|string|array $where
      * @return ResultSetInterface
      */
-    public function select($where = null)
+    #[Override] public function select($where = null)
     {
         if (! $this->isInitialized) {
             $this->initialize();
@@ -233,7 +235,7 @@ abstract class AbstractTableGateway implements TableGatewayInterface
      * @param  array $set
      * @return int
      */
-    public function insert($set)
+    #[Override] public function insert($set)
     {
         if (! $this->isInitialized) {
             $this->initialize();
@@ -292,7 +294,7 @@ abstract class AbstractTableGateway implements TableGatewayInterface
      * @param  null|array $joins
      * @return int
      */
-    public function update($set, $where = null, ?array $joins = null)
+    #[Override] public function update($set, $where = null, ?array $joins = null)
     {
         if (! $this->isInitialized) {
             $this->initialize();
@@ -358,7 +360,7 @@ abstract class AbstractTableGateway implements TableGatewayInterface
      * @param Where|Closure|string|array $where
      * @return int
      */
-    public function delete($where)
+    #[Override] public function delete($where)
     {
         if (! $this->isInitialized) {
             $this->initialize();
@@ -448,7 +450,7 @@ abstract class AbstractTableGateway implements TableGatewayInterface
      */
     public function __clone()
     {
-        $this->resultSetPrototype = isset($this->resultSetPrototype) ? clone $this->resultSetPrototype : null;
+        $this->resultSetPrototype = $this->resultSetPrototype !== null ? clone $this->resultSetPrototype : null;
         $this->sql                = clone $this->sql;
         if (is_object($this->table)) {
             $this->table = clone $this->table;

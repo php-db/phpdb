@@ -5,6 +5,7 @@ namespace Laminas\Db\Adapter;
 use Interop\Container\ContainerInterface;
 use Laminas\ServiceManager\FactoryInterface;
 use Laminas\ServiceManager\ServiceLocatorInterface;
+use Override;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 
@@ -20,7 +21,7 @@ class AdapterServiceFactory implements FactoryInterface
      * @throws NotFoundExceptionInterface
      * @return Adapter
      */
-    public function __invoke(ContainerInterface $container, $requestedName, ?array $options = null)
+    #[Override] public function __invoke(ContainerInterface $container, $requestedName, ?array $options = null)
     {
         $config = $container->get('config');
         return new Adapter($config['db']);
@@ -34,7 +35,7 @@ class AdapterServiceFactory implements FactoryInterface
      * @throws NotFoundExceptionInterface
      * @return Adapter
      */
-    public function createService(ServiceLocatorInterface $serviceLocator): Adapter
+    #[Override] public function createService(ServiceLocatorInterface $serviceLocator): Adapter
     {
         return $this($serviceLocator, Adapter::class);
     }

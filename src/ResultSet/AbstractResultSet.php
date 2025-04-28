@@ -8,6 +8,7 @@ use Iterator;
 use IteratorAggregate;
 use Laminas\Db\Adapter\Driver\ResultInterface;
 // phpcs:ignore SlevomatCodingStandard.Namespaces.UnusedUses.UnusedUse
+use Override;
 use ReturnTypeWillChange;
 
 use function count;
@@ -51,7 +52,7 @@ abstract class AbstractResultSet implements Iterator, ResultSetInterface
      * @throws \Exception
      * @return $this Provides a fluent interface
      */
-    public function initialize($dataSource)
+    #[Override] public function initialize($dataSource)
     {
         // reset buffering
         if (is_array($this->buffer)) {
@@ -110,10 +111,7 @@ abstract class AbstractResultSet implements Iterator, ResultSetInterface
     /** @return bool */
     public function isBuffered()
     {
-        if ($this->buffer === -1 || is_array($this->buffer)) {
-            return true;
-        }
-        return false;
+        return $this->buffer === -1 || is_array($this->buffer);
     }
 
     /**
@@ -131,7 +129,7 @@ abstract class AbstractResultSet implements Iterator, ResultSetInterface
      *
      * @return int
      */
-    public function getFieldCount(): int
+    #[Override] public function getFieldCount(): int
     {
         if (null !== $this->fieldCount) {
             return $this->fieldCount;
@@ -149,7 +147,7 @@ abstract class AbstractResultSet implements Iterator, ResultSetInterface
         }
 
         $row = $dataSource->current();
-        if (is_object($row) && $row instanceof Countable) {
+        if ($row instanceof Countable) {
             $this->fieldCount = $row->count();
             return $this->fieldCount;
         }
@@ -164,7 +162,7 @@ abstract class AbstractResultSet implements Iterator, ResultSetInterface
      *
      * @return void
      */
-    #[ReturnTypeWillChange]
+    #[Override] #[ReturnTypeWillChange]
     public function next()
     {
         if ($this->buffer === null) {
@@ -182,7 +180,7 @@ abstract class AbstractResultSet implements Iterator, ResultSetInterface
      *
      * @return int
      */
-    #[ReturnTypeWillChange]
+    #[Override] #[ReturnTypeWillChange]
     public function key()
     {
         return $this->position;
@@ -193,7 +191,7 @@ abstract class AbstractResultSet implements Iterator, ResultSetInterface
      *
      * @return array|null
      */
-    #[ReturnTypeWillChange]
+    #[Override] #[ReturnTypeWillChange]
     public function current()
     {
         if (-1 === $this->buffer) {
@@ -218,7 +216,7 @@ abstract class AbstractResultSet implements Iterator, ResultSetInterface
      *
      * @return bool
      */
-    #[ReturnTypeWillChange]
+    #[Override] #[ReturnTypeWillChange]
     public function valid()
     {
         if (is_array($this->buffer) && isset($this->buffer[$this->position])) {
@@ -226,10 +224,10 @@ abstract class AbstractResultSet implements Iterator, ResultSetInterface
         }
         if ($this->dataSource instanceof Iterator) {
             return $this->dataSource->valid();
-        } else {
-            $key = key($this->dataSource);
-            return $key !== null;
         }
+        $key = key($this->dataSource);
+
+        return $key !== null;
     }
 
     /**
@@ -237,7 +235,7 @@ abstract class AbstractResultSet implements Iterator, ResultSetInterface
      *
      * @return void
      */
-    #[ReturnTypeWillChange]
+    #[Override] #[ReturnTypeWillChange]
     public function rewind()
     {
         if (! is_array($this->buffer)) {
@@ -253,7 +251,7 @@ abstract class AbstractResultSet implements Iterator, ResultSetInterface
     /**
      * Countable: return count of rows
      */
-    #[ReturnTypeWillChange]
+    #[Override] #[ReturnTypeWillChange]
     public function count(): int|null
     {
         if ($this->count !== null) {

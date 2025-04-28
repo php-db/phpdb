@@ -6,6 +6,7 @@ use Laminas\Db\Adapter\Driver\DriverInterface;
 use Laminas\Db\Adapter\Driver\Pdo;
 use Laminas\Db\Adapter\Driver\Pgsql;
 use Laminas\Db\Adapter\Exception;
+use Override;
 use PgSql\Connection as PgSqlConnection;
 
 use function get_resource_type;
@@ -70,7 +71,7 @@ class Postgresql extends AbstractPlatform
     /**
      * {@inheritDoc}
      */
-    public function getName()
+    #[Override] public function getName()
     {
         return 'PostgreSQL';
     }
@@ -78,7 +79,7 @@ class Postgresql extends AbstractPlatform
     /**
      * {@inheritDoc}
      */
-    public function quoteIdentifierChain($identifierChain)
+    #[Override] public function quoteIdentifierChain($identifierChain)
     {
         return '"' . implode('"."', (array) str_replace('"', '""', $identifierChain)) . '"';
     }
@@ -86,7 +87,7 @@ class Postgresql extends AbstractPlatform
     /**
      * {@inheritDoc}
      */
-    public function quoteValue($value)
+    #[Override] public function quoteValue($value)
     {
         $quotedViaDriverValue = $this->quoteViaDriver($value);
 
@@ -99,7 +100,7 @@ class Postgresql extends AbstractPlatform
      * @param scalar $value
      * @return string
      */
-    public function quoteTrustedValue($value)
+    #[Override] public function quoteTrustedValue($value)
     {
         $quotedViaDriverValue = $this->quoteViaDriver($value);
 

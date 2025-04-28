@@ -22,7 +22,7 @@ class MasterSlaveFeature extends AbstractFeature
     public function __construct(AdapterInterface $slaveAdapter, ?Sql $slaveSql = null)
     {
         $this->slaveAdapter = $slaveAdapter;
-        if ($slaveSql) {
+        if ($slaveSql instanceof \Laminas\Db\Sql\Sql) {
             $this->slaveSql = $slaveSql;
         }
     }

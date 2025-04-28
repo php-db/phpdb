@@ -173,7 +173,7 @@ class Insert extends AbstractPreparableSql
         ?ParameterContainer $parameterContainer = null
     ) {
         if ($this->select) {
-            return;
+            return null;
         }
         if (! $this->columns) {
             throw new Exception\InvalidArgumentException('values or select should be present');
@@ -219,7 +219,7 @@ class Insert extends AbstractPreparableSql
         ?ParameterContainer $parameterContainer = null
     ) {
         if (! $this->select) {
-            return;
+            return null;
         }
         $selectSql = $this->processSubSelect($this->select, $platform, $driver, $parameterContainer);
 
@@ -229,7 +229,7 @@ class Insert extends AbstractPreparableSql
         return sprintf(
             $this->specifications[static::SPECIFICATION_SELECT],
             $this->resolveTable($this->table, $platform, $driver, $parameterContainer),
-            $columns ? "($columns)" : '',
+            $columns !== '' && $columns !== '0' ? "($columns)" : '',
             $selectSql
         );
     }

@@ -7,6 +7,8 @@ use Laminas\Db\Adapter\Driver\Feature\AbstractFeature;
 use Laminas\Db\Adapter\Exception;
 use Laminas\Db\Adapter\Profiler;
 
+use Override;
+
 use function extension_loaded;
 use function get_resource_type;
 use function is_array;
@@ -67,7 +69,7 @@ class Oci8 implements DriverInterface, Profiler\ProfilerAwareInterface
     /**
      * @return $this Provides a fluent interface
      */
-    public function setProfiler(Profiler\ProfilerInterface $profiler)
+    #[Override] public function setProfiler(Profiler\ProfilerInterface $profiler)
     {
         $this->profiler = $profiler;
         if ($this->connection instanceof Profiler\ProfilerAwareInterface) {
@@ -162,7 +164,7 @@ class Oci8 implements DriverInterface, Profiler\ProfilerAwareInterface
      * @param  string $nameFormat
      * @return string
      */
-    public function getDatabasePlatformName($nameFormat = self::NAME_FORMAT_CAMELCASE)
+    #[Override] public function getDatabasePlatformName($nameFormat = self::NAME_FORMAT_CAMELCASE)
     {
         return 'Oracle';
     }
@@ -172,7 +174,7 @@ class Oci8 implements DriverInterface, Profiler\ProfilerAwareInterface
      *
      * @return void
      */
-    public function checkEnvironment()
+    #[Override] public function checkEnvironment()
     {
         if (! extension_loaded('oci8')) {
             throw new Exception\RuntimeException(
@@ -184,7 +186,7 @@ class Oci8 implements DriverInterface, Profiler\ProfilerAwareInterface
     /**
      * @return Connection
      */
-    public function getConnection()
+    #[Override] public function getConnection()
     {
         return $this->connection;
     }
@@ -193,7 +195,7 @@ class Oci8 implements DriverInterface, Profiler\ProfilerAwareInterface
      * @param string $sqlOrResource
      * @return Statement
      */
-    public function createStatement($sqlOrResource = null)
+    #[Override] public function createStatement($sqlOrResource = null)
     {
         $statement = clone $this->statementPrototype;
         if (is_resource($sqlOrResource) && get_resource_type($sqlOrResource) === 'oci8 statement') {
@@ -219,7 +221,7 @@ class Oci8 implements DriverInterface, Profiler\ProfilerAwareInterface
      * @param  null     $context
      * @return Result
      */
-    public function createResult($resource, $context = null)
+    #[Override] public function createResult($resource, $context = null)
     {
         $result   = clone $this->resultPrototype;
         $rowCount = null;
@@ -234,7 +236,7 @@ class Oci8 implements DriverInterface, Profiler\ProfilerAwareInterface
     /**
      * @return string
      */
-    public function getPrepareType()
+    #[Override] public function getPrepareType()
     {
         return self::PARAMETERIZATION_NAMED;
     }
@@ -244,7 +246,7 @@ class Oci8 implements DriverInterface, Profiler\ProfilerAwareInterface
      * @param mixed  $type
      * @return string
      */
-    public function formatParameterName($name, $type = null)
+    #[Override] public function formatParameterName($name, $type = null)
     {
         return ':' . $name;
     }

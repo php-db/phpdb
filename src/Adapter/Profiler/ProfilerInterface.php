@@ -10,7 +10,7 @@ interface ProfilerInterface
      * @param string|StatementContainerInterface $target
      * @return mixed
      */
-    public function profilerStart($target);
+    public function profilerStart(string|StatementContainerInterface $target);
 
     public function profilerFinish();
 }

@@ -3,6 +3,7 @@
 namespace LaminasTest\Db\Adapter\Driver\Pdo;
 
 use Laminas\Db\Adapter\Driver\Pdo\Statement;
+use Override;
 use PDO;
 use PDOStatement;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -40,7 +41,7 @@ class StatementIntegrationTest extends TestCase
      * Tears down the fixture, for example, closes a network connection.
      * This method is called after a test is executed.
      */
-    protected function tearDown(): void
+    #[Override] protected function tearDown(): void
     {
     }
 

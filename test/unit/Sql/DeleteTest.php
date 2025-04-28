@@ -17,6 +17,7 @@ use Laminas\Db\Sql\TableIdentifier;
 use Laminas\Db\Sql\Where;
 use LaminasTest\Db\DeprecatedAssertionsTrait;
 use LaminasTest\Db\TestAsset\DeleteIgnore;
+use Override;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
@@ -45,7 +46,7 @@ class DeleteTest extends TestCase
      * Tears down the fixture, for example, closes a network connection.
      * This method is called after a test is executed.
      */
-    protected function tearDown(): void
+    #[Override] protected function tearDown(): void
     {
     }
 

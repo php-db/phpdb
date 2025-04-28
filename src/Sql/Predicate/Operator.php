@@ -120,11 +120,11 @@ class Operator extends AbstractExpression implements PredicateInterface
     #[\Override]
     public function getExpressionData(): ExpressionData
     {
-        if ($this->left === null) {
+        if (!$this->left instanceof \Laminas\Db\Sql\Argument) {
             throw new InvalidArgumentException('Left expression must be specified');
         }
 
-        if ($this->right === null) {
+        if (!$this->right instanceof \Laminas\Db\Sql\Argument) {
             throw new InvalidArgumentException('Right expression must be specified');
         }
 

@@ -4,6 +4,7 @@ namespace Laminas\Db\Sql;
 
 use Countable;
 use Iterator;
+use Override;
 use ReturnTypeWillChange;
 
 use function array_shift;
@@ -39,7 +40,7 @@ class Join implements Iterator, Countable
     /**
      * Current iterator position.
      */
-    private int $position;
+    private int $position = 0;
 
     /**
      * JOIN specifications
@@ -51,7 +52,6 @@ class Join implements Iterator, Countable
      */
     public function __construct()
     {
-        $this->position = 0;
     }
 
     /**
@@ -156,7 +156,7 @@ class Join implements Iterator, Countable
     /**
      * Get count of attached predicates
      */
-    #[ReturnTypeWillChange]
+    #[Override] #[ReturnTypeWillChange]
     public function count(): int
     {
         return count($this->joins);

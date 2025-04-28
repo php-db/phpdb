@@ -84,11 +84,11 @@ class Like extends AbstractExpression implements PredicateInterface
     #[\Override]
     public function getExpressionData(): ExpressionData
     {
-        if ($this->identifier === null) {
+        if (!$this->identifier instanceof \Laminas\Db\Sql\Argument) {
             throw new InvalidArgumentException('Identifier must be specified');
         }
 
-        if ($this->like === null) {
+        if (!$this->like instanceof \Laminas\Db\Sql\Argument) {
             throw new InvalidArgumentException('Like expression must be specified');
         }
 

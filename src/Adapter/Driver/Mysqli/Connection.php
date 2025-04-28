@@ -7,6 +7,8 @@ use Laminas\Db\Adapter\Driver\AbstractConnection;
 use Laminas\Db\Adapter\Exception;
 use Laminas\Db\Adapter\Exception\InvalidArgumentException;
 
+use Override;
+
 use function constant;
 use function defined;
 use function is_array;
@@ -58,7 +60,7 @@ class Connection extends AbstractConnection
      *
      * @return float|int|null|string
      */
-    public function getCurrentSchema(): float|int|string|null
+    #[Override] public function getCurrentSchema(): float|int|string|null
     {
         if (! $this->isConnected()) {
             $this->connect();
@@ -85,7 +87,7 @@ class Connection extends AbstractConnection
     /**
      * {@inheritDoc}
      */
-    public function connect()
+    #[Override] public function connect()
     {
         if ($this->resource instanceof \mysqli) {
             return $this;
@@ -182,7 +184,7 @@ class Connection extends AbstractConnection
     /**
      * {@inheritDoc}
      */
-    public function isConnected()
+    #[Override] public function isConnected()
     {
         return $this->resource instanceof \mysqli;
     }
@@ -192,7 +194,7 @@ class Connection extends AbstractConnection
      *
      * @return void
      */
-    public function disconnect()
+    #[Override] public function disconnect()
     {
         if ($this->resource instanceof \mysqli) {
             $this->resource->close();
@@ -203,7 +205,7 @@ class Connection extends AbstractConnection
     /**
      * {@inheritDoc}
      */
-    public function beginTransaction()
+    #[Override] public function beginTransaction()
     {
         if (! $this->isConnected()) {
             $this->connect();
@@ -218,7 +220,7 @@ class Connection extends AbstractConnection
     /**
      * {@inheritDoc}
      */
-    public function commit()
+    #[Override] public function commit()
     {
         if (! $this->isConnected()) {
             $this->connect();
@@ -234,7 +236,7 @@ class Connection extends AbstractConnection
     /**
      * {@inheritDoc}
      */
-    public function rollback()
+    #[Override] public function rollback()
     {
         if (! $this->isConnected()) {
             throw new Exception\RuntimeException('Must be connected before you can rollback.');
@@ -256,7 +258,7 @@ class Connection extends AbstractConnection
      *
      * @throws Exception\InvalidQueryException
      */
-    public function execute($sql)
+    #[Override] public function execute($sql)
     {
         if (! $this->isConnected()) {
             $this->connect();
@@ -279,7 +281,7 @@ class Connection extends AbstractConnection
     /**
      * {@inheritDoc}
      */
-    public function getLastGeneratedValue($name = null): int|string
+    #[Override] public function getLastGeneratedValue($name = null): int|string
     {
         return $this->resource->insert_id;
     }

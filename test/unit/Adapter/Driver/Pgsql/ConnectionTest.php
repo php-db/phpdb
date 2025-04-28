@@ -86,7 +86,7 @@ class ConnectionTest extends TestCase
      */
     public function testDisconnect(): void
     {
-        include_once 'pgsqlMockFunctions.php';
+        include_once __DIR__ . '/pgsqlMockFunctions.php';
         self::assertSame($this->connection, $this->connection->disconnect());
     }
 
