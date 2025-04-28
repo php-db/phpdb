@@ -22,7 +22,7 @@ use function next;
 use function reset;
 use function strpos;
 
-class ParameterContainer implements Iterator, ArrayAccess, Countable
+final class ParameterContainer implements Iterator, ArrayAccess, Countable
 {
     public const TYPE_AUTO    = 'auto';
     public const TYPE_NULL    = 'null';
@@ -208,7 +208,7 @@ class ParameterContainer implements Iterator, ArrayAccess, Countable
      * @param string|int $name
      * @param mixed $maxLength
      */
-    public function offsetSetMaxLength($name, $maxLength)
+    public function offsetSetMaxLength($name, $maxLength): void
     {
         if (is_int($name)) {
             $name = $this->positions[$name];
@@ -252,7 +252,10 @@ class ParameterContainer implements Iterator, ArrayAccess, Countable
      * Offset unset max length
      *
      * @param string|int $name
+     *
      * @throws Exception\InvalidArgumentException
+     *
+     * @return void
      */
     public function offsetUnsetMaxLength($name)
     {
@@ -281,7 +284,7 @@ class ParameterContainer implements Iterator, ArrayAccess, Countable
      * @param string|int $name
      * @param mixed $errata
      */
-    public function offsetSetErrata($name, $errata)
+    public function offsetSetErrata($name, $errata): void
     {
         if (is_int($name)) {
             $name = $this->positions[$name];
@@ -325,7 +328,10 @@ class ParameterContainer implements Iterator, ArrayAccess, Countable
      * Offset unset errata
      *
      * @param string|int $name
+     *
      * @throws Exception\InvalidArgumentException
+     *
+     * @return void
      */
     public function offsetUnsetErrata($name)
     {
@@ -430,35 +436,5 @@ class ParameterContainer implements Iterator, ArrayAccess, Countable
     public function rewind()
     {
         reset($this->data);
-    }
-
-    /**
-     * @param array|ParameterContainer $parameters
-     * @return $this Provides a fluent interface
-     * @throws Exception\InvalidArgumentException
-     */
-    public function merge($parameters)
-    {
-        if (! is_array($parameters) && ! $parameters instanceof ParameterContainer) {
-            throw new Exception\InvalidArgumentException(
-                '$parameters must be an array or an instance of ParameterContainer'
-            );
-        }
-
-        if (count($parameters) === 0) {
-            return $this;
-        }
-
-        if ($parameters instanceof ParameterContainer) {
-            $parameters = $parameters->getNamedArray();
-        }
-
-        foreach ($parameters as $key => $value) {
-            if (is_int($key)) {
-                $key = null;
-            }
-            $this->offsetSet($key, $value);
-        }
-        return $this;
     }
 }

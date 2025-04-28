@@ -2,7 +2,7 @@
 
 namespace Laminas\Db\Metadata\Object;
 
-class ConstraintObject
+final class ConstraintObject
 {
     /** @var string */
     protected $name;
@@ -63,7 +63,7 @@ class ConstraintObject
      *
      * @param string $name
      */
-    public function setName($name)
+    public function setName($name): void
     {
         $this->name = $name;
     }
@@ -83,7 +83,7 @@ class ConstraintObject
      *
      * @param string $schemaName
      */
-    public function setSchemaName($schemaName)
+    public function setSchemaName($schemaName): void
     {
         $this->schemaName = $schemaName;
     }
@@ -125,7 +125,7 @@ class ConstraintObject
      *
      * @param string $type
      */
-    public function setType($type)
+    public function setType($type): void
     {
         $this->type = $type;
     }

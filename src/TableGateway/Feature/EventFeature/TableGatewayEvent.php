@@ -6,7 +6,7 @@ use ArrayAccess;
 use Laminas\Db\TableGateway\AbstractTableGateway;
 use Laminas\EventManager\EventInterface;
 
-class TableGatewayEvent implements EventInterface
+final class TableGatewayEvent implements EventInterface
 {
     /** @var AbstractTableGateway */
     protected $target;

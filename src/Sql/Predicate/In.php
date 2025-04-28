@@ -91,7 +91,7 @@ class In extends AbstractExpression implements PredicateInterface
 
         $specification = vsprintf($this->specification, [
             $this->identifier->getSpecification(),
-            $this->valueSet->getSpecification()
+            $this->valueSet->getSpecification(),
         ]);
 
         return new ExpressionData(

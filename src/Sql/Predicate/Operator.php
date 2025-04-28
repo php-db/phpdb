@@ -11,7 +11,7 @@ use Laminas\Db\Sql\ExpressionData;
 use Laminas\Db\Sql\Select;
 use Override;
 
-class Operator extends AbstractExpression implements PredicateInterface
+final class Operator extends AbstractExpression implements PredicateInterface
 {
     public const OPERATOR_EQUAL_TO                 = '=';
     public const OP_EQ                             = '=';
@@ -26,17 +26,17 @@ class Operator extends AbstractExpression implements PredicateInterface
     public const OPERATOR_GREATER_THAN_OR_EQUAL_TO = '>=';
     public const OP_GTE                            = '>=';
 
-    protected ?Argument $left     = null;
-    protected ?Argument $right    = null;
-    protected string    $operator = self::OPERATOR_EQUAL_TO;
+    protected ?Argument $left  = null;
+    protected ?Argument $right = null;
+    protected string $operator = self::OPERATOR_EQUAL_TO;
 
     /**
      * Constructor
      */
     public function __construct(
-        null|string|int|float|array|Argument|Expression|Select $left = null,
+        null|bool|string|int|float|array|Argument|Expression|Select $left = null,
         string $operator = self::OPERATOR_EQUAL_TO,
-        null|string|int|float|array|Argument|Expression|Select $right = null
+        null|bool|string|int|float|array|Argument|Expression|Select $right = null
     ) {
         if ($left !== null) {
             $this->setLeft($left);
@@ -65,7 +65,7 @@ class Operator extends AbstractExpression implements PredicateInterface
      * @return $this Provides a fluent interface
      */
     public function setLeft(
-        null|string|int|float|array|Expression|Select|Argument $left,
+        null|bool|string|int|float|array|Expression|Select|Argument $left,
         ArgumentType $type = ArgumentType::Identifier
     ): static {
         $this->left = $left instanceof Argument ? $left : new Argument($left, $type);
@@ -107,7 +107,7 @@ class Operator extends AbstractExpression implements PredicateInterface
      * @return $this Provides a fluent interface
      */
     public function setRight(
-        null|string|int|float|array|Expression|Select|Argument $right,
+        null|bool|string|int|float|array|Expression|Select|Argument $right,
         ArgumentType $type = ArgumentType::Value
     ): static {
         $this->right = $right instanceof Argument ? $right : new Argument($right, $type);

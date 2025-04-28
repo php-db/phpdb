@@ -5,7 +5,7 @@ namespace Laminas\Db\TableGateway\Feature;
 use Laminas\Db\Adapter\Adapter;
 use Laminas\Db\TableGateway\Exception;
 
-class GlobalAdapterFeature extends AbstractFeature
+final class GlobalAdapterFeature extends AbstractFeature
 {
     /** @var Adapter[] */
     protected static $staticAdapters = [];
@@ -13,7 +13,7 @@ class GlobalAdapterFeature extends AbstractFeature
     /**
      * Set static adapter
      */
-    public static function setStaticAdapter(Adapter $adapter)
+    public static function setStaticAdapter(Adapter $adapter): void
     {
         $class = static::class;
 
@@ -49,7 +49,7 @@ class GlobalAdapterFeature extends AbstractFeature
     /**
      * after initialization, retrieve the original adapter as "master"
      */
-    public function preInitialize()
+    public function preInitialize(): void
     {
         $this->tableGateway->adapter = self::getStaticAdapter();
     }

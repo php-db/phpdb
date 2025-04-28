@@ -21,7 +21,7 @@ final class LiteralTest extends TestCase
 
     public function testGetExpressionData(): void
     {
-        $literal = new Literal('bar');
+        $literal        = new Literal('bar');
         $expressionData = $literal->getExpressionData();
 
         self::assertEquals(
@@ -37,7 +37,7 @@ final class LiteralTest extends TestCase
 
     public function testGetExpressionDataWillEscapePercent(): void
     {
-        $literal = new Literal('X LIKE "foo%"');
+        $literal        = new Literal('X LIKE "foo%"');
         $expressionData = $literal->getExpressionData();
 
         self::assertEquals(

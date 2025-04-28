@@ -20,7 +20,7 @@ final class BinaryTest extends TestCase
         self::assertEquals([
             Argument::identifier('foo'),
             Argument::literal('BINARY'),
-            Argument::literal('10000000')
+            Argument::literal('10000000'),
         ], $expressionData->getExpressionValues());
     }
 }

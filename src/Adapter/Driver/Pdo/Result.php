@@ -15,7 +15,7 @@ use function call_user_func;
 use function in_array;
 use function is_int;
 
-class Result implements Iterator, ResultInterface
+final class Result implements Iterator, ResultInterface
 {
     public const STATEMENT_MODE_SCROLLABLE = 'scrollable';
     public const STATEMENT_MODE_FORWARD    = 'forward';
@@ -116,7 +116,10 @@ class Result implements Iterator, ResultInterface
 
     /**
      * @param int $fetchMode
+     *
      * @throws Exception\InvalidArgumentException On invalid fetch mode.
+     *
+     * @return void
      */
     public function setFetchMode($fetchMode)
     {

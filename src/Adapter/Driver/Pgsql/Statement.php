@@ -17,7 +17,7 @@ use function pg_prepare;
 use function preg_replace_callback;
 use function sprintf;
 
-class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
+final class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
 {
     /** @var int */
     protected static $statementIndex = 0;
@@ -62,14 +62,6 @@ class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
     }
 
     /**
-     * @return null|Profiler\ProfilerInterface
-     */
-    public function getProfiler()
-    {
-        return $this->profiler;
-    }
-
-    /**
      * Initialize
      *
      * @param  resource $pgsql
@@ -99,7 +91,8 @@ class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
      *
      * @todo Implement this method
      * phpcs:ignore Squiz.Commenting.FunctionComment.InvalidNoReturn
-     * @return resource
+     *
+     * @return void
      */
     public function getResource()
     {
@@ -152,6 +145,8 @@ class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
      * Prepare
      *
      * @param string $sql
+     *
+     * @return void
      */
     public function prepare($sql = null)
     {

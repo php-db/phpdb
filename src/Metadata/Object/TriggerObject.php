@@ -4,7 +4,7 @@ namespace Laminas\Db\Metadata\Object;
 
 use DateTime;
 
-class TriggerObject
+final class TriggerObject
 {
     /** @var string */
     protected $name;
@@ -52,16 +52,6 @@ class TriggerObject
     protected $created;
 
     /**
-     * Get Name.
-     *
-     * @return string
-     */
-    public function getName()
-    {
-        return $this->name;
-    }
-
-    /**
      * Set Name.
      *
      * @param string $name
@@ -71,16 +61,6 @@ class TriggerObject
     {
         $this->name = $name;
         return $this;
-    }
-
-    /**
-     * Get Event Manipulation.
-     *
-     * @return string
-     */
-    public function getEventManipulation()
-    {
-        return $this->eventManipulation;
     }
 
     /**
@@ -96,16 +76,6 @@ class TriggerObject
     }
 
     /**
-     * Get Event Object Catalog.
-     *
-     * @return string
-     */
-    public function getEventObjectCatalog()
-    {
-        return $this->eventObjectCatalog;
-    }
-
-    /**
      * Set Event Object Catalog.
      *
      * @param string $eventObjectCatalog
@@ -115,16 +85,6 @@ class TriggerObject
     {
         $this->eventObjectCatalog = $eventObjectCatalog;
         return $this;
-    }
-
-    /**
-     * Get Event Object Schema.
-     *
-     * @return string
-     */
-    public function getEventObjectSchema()
-    {
-        return $this->eventObjectSchema;
     }
 
     /**
@@ -140,16 +100,6 @@ class TriggerObject
     }
 
     /**
-     * Get Event Object Table.
-     *
-     * @return string
-     */
-    public function getEventObjectTable()
-    {
-        return $this->eventObjectTable;
-    }
-
-    /**
      * Set Event Object Table.
      *
      * @param string $eventObjectTable
@@ -159,16 +109,6 @@ class TriggerObject
     {
         $this->eventObjectTable = $eventObjectTable;
         return $this;
-    }
-
-    /**
-     * Get Action Order.
-     *
-     * @return string
-     */
-    public function getActionOrder()
-    {
-        return $this->actionOrder;
     }
 
     /**
@@ -184,16 +124,6 @@ class TriggerObject
     }
 
     /**
-     * Get Action Condition.
-     *
-     * @return string
-     */
-    public function getActionCondition()
-    {
-        return $this->actionCondition;
-    }
-
-    /**
      * Set Action Condition.
      *
      * @param string $actionCondition
@@ -203,16 +133,6 @@ class TriggerObject
     {
         $this->actionCondition = $actionCondition;
         return $this;
-    }
-
-    /**
-     * Get Action Statement.
-     *
-     * @return string
-     */
-    public function getActionStatement()
-    {
-        return $this->actionStatement;
     }
 
     /**
@@ -228,16 +148,6 @@ class TriggerObject
     }
 
     /**
-     * Get Action Orientation.
-     *
-     * @return string
-     */
-    public function getActionOrientation()
-    {
-        return $this->actionOrientation;
-    }
-
-    /**
      * Set Action Orientation.
      *
      * @param string $actionOrientation
@@ -247,16 +157,6 @@ class TriggerObject
     {
         $this->actionOrientation = $actionOrientation;
         return $this;
-    }
-
-    /**
-     * Get Action Timing.
-     *
-     * @return string
-     */
-    public function getActionTiming()
-    {
-        return $this->actionTiming;
     }
 
     /**
@@ -272,16 +172,6 @@ class TriggerObject
     }
 
     /**
-     * Get Action Reference Old Table.
-     *
-     * @return string
-     */
-    public function getActionReferenceOldTable()
-    {
-        return $this->actionReferenceOldTable;
-    }
-
-    /**
      * Set Action Reference Old Table.
      *
      * @param string $actionReferenceOldTable
@@ -291,16 +181,6 @@ class TriggerObject
     {
         $this->actionReferenceOldTable = $actionReferenceOldTable;
         return $this;
-    }
-
-    /**
-     * Get Action Reference New Table.
-     *
-     * @return string
-     */
-    public function getActionReferenceNewTable()
-    {
-        return $this->actionReferenceNewTable;
     }
 
     /**
@@ -316,16 +196,6 @@ class TriggerObject
     }
 
     /**
-     * Get Action Reference Old Row.
-     *
-     * @return string
-     */
-    public function getActionReferenceOldRow()
-    {
-        return $this->actionReferenceOldRow;
-    }
-
-    /**
      * Set Action Reference Old Row.
      *
      * @param string $actionReferenceOldRow
@@ -338,16 +208,6 @@ class TriggerObject
     }
 
     /**
-     * Get Action Reference New Row.
-     *
-     * @return string
-     */
-    public function getActionReferenceNewRow()
-    {
-        return $this->actionReferenceNewRow;
-    }
-
-    /**
      * Set Action Reference New Row.
      *
      * @param string $actionReferenceNewRow
@@ -357,16 +217,6 @@ class TriggerObject
     {
         $this->actionReferenceNewRow = $actionReferenceNewRow;
         return $this;
-    }
-
-    /**
-     * Get Created.
-     *
-     * @return DateTime
-     */
-    public function getCreated()
-    {
-        return $this->created;
     }
 
     /**

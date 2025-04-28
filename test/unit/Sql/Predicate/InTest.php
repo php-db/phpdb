@@ -19,7 +19,7 @@ final class InTest extends TestCase
 
     public function testCanPassIdentifierAndValueSetToConstructor(): void
     {
-        $in = new In('foo.bar', [1, 2]);
+        $in         = new In('foo.bar', [1, 2]);
         $identifier = new Argument('foo.bar', ArgumentType::Identifier);
         $expression = new Argument([1, 2], ArgumentType::Value);
         self::assertEquals($identifier, $in->getIdentifier());
@@ -28,7 +28,7 @@ final class InTest extends TestCase
 
     public function testCanPassIdentifierAndEmptyValueSetToConstructor(): void
     {
-        $in = new In('foo.bar', []);
+        $in         = new In('foo.bar', []);
         $identifier = new Argument('foo.bar', ArgumentType::Identifier);
         $expression = new Argument([], ArgumentType::Value);
         $this->assertEquals($identifier, $in->getIdentifier());
@@ -74,21 +74,19 @@ final class InTest extends TestCase
         $expression2 = new Argument([
             [1 => ArgumentType::Literal],
             [2 => ArgumentType::Value],
-            [3 => ArgumentType::Literal]], ArgumentType::Value);
-        $expected = [
-            [
-                '%s IN (%s, %s, %s)',
-                [$expression1, $expression2],
-            ],
-        ];
-        $in->getExpressionData();
-        self::assertEquals($expected, $in->getExpressionData());
+            [3 => ArgumentType::Literal],
+        ], ArgumentType::Value);
+
+        $expressionData = $in->getExpressionData();
+
+        self::assertEquals('%s IN (%s, %s, %s)', $expressionData->getExpressionSpecification());
+        self::assertEquals([$expression1, $expression2], $expressionData->getExpressionValues());
     }
 
     public function testGetExpressionDataWithSubselect(): void
     {
-        $select   = new Select();
-        $in       = new In(new Argument('foo'), $select);
+        $select      = new Select();
+        $in          = new In(new Argument('foo'), $select);
         $expression1 = new Argument('foo', ArgumentType::Value);
         $expression2 = new Argument($select, ArgumentType::Select);
 
@@ -101,7 +99,7 @@ final class InTest extends TestCase
     public function testGetExpressionDataWithEmptyValues(): void
     {
         new Select();
-        $in       = new In('foo', []);
+        $in = new In('foo', []);
 
         $expressionData = $in->getExpressionData();
 
@@ -110,31 +108,27 @@ final class InTest extends TestCase
 
     public function testGetExpressionDataWithSubselectAndIdentifier(): void
     {
-        $select   = new Select();
-        $in       = new In(new Argument('foo'), $select);
+        $select      = new Select();
+        $in          = new In(new Argument('foo'), $select);
         $expression1 = new Argument('foo', ArgumentType::Value);
         $expression2 = new Argument($select, ArgumentType::Select);
-        $expected = [
-            [
-                '%s IN %s',
-                [$expression1, $expression2],
-            ],
-        ];
-        self::assertEquals($expected, $in->getExpressionData());
+
+        $expressionData = $in->getExpressionData();
+
+        self::assertEquals('%s IN %s', $expressionData->getExpressionSpecification());
+        self::assertEquals([$expression1, $expression2], $expressionData->getExpressionValues());
     }
 
     public function testGetExpressionDataWithSubselectAndArrayIdentifier(): void
     {
-        $select   = new Select();
-        $in       = new In(new Argument(['foo', 'bar']), $select);
+        $select      = new Select();
+        $in          = new In(new Argument(['foo', 'bar']), $select);
         $expression1 = new Argument(['foo', 'bar'], ArgumentType::Value);
         $expression2 = new Argument($select, ArgumentType::Select);
-        $expected = [
-            [
-                '(%s, %s) IN %s',
-                [$expression1, $expression2],
-            ],
-        ];
-        self::assertEquals($expected, $in->getExpressionData());
+
+        $expressionData = $in->getExpressionData();
+
+        self::assertEquals('(%s, %s) IN %s', $expressionData->getExpressionSpecification());
+        self::assertEquals([$expression1, $expression2], $expressionData->getExpressionValues());
     }
 }

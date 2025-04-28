@@ -21,15 +21,6 @@ interface MetadataInterface
     public function getTableNames($schema = null, $includeViews = false);
 
     /**
-     * Get tables.
-     *
-     * @param null|string $schema
-     * @param bool $includeViews
-     * @return Object\TableObject[]
-     */
-    public function getTables($schema = null, $includeViews = false);
-
-    /**
      * Get table
      *
      * @param string $tableName
@@ -37,31 +28,6 @@ interface MetadataInterface
      * @return Object\TableObject
      */
     public function getTable($tableName, $schema = null);
-
-    /**
-     * Get view names
-     *
-     * @param null|string $schema
-     * @return string[]
-     */
-    public function getViewNames($schema = null);
-
-    /**
-     * Get views
-     *
-     * @param null|string $schema
-     * @return Object\ViewObject[]
-     */
-    public function getViews($schema = null);
-
-    /**
-     * Get view
-     *
-     * @param string $viewName
-     * @param null|string $schema
-     * @return Object\ViewObject
-     */
-    public function getView($viewName, $schema = null);
 
     /**
      * Get column names

@@ -11,7 +11,7 @@ use function get_resource_type;
 use function is_resource;
 use function is_string;
 
-class IbmDb2 implements DriverInterface, Profiler\ProfilerAwareInterface
+final class IbmDb2 implements DriverInterface, Profiler\ProfilerAwareInterface
 {
     /** @var Connection */
     protected $connection;
@@ -52,14 +52,6 @@ class IbmDb2 implements DriverInterface, Profiler\ProfilerAwareInterface
             $this->statementPrototype->setProfiler($profiler);
         }
         return $this;
-    }
-
-    /**
-     * @return null|Profiler\ProfilerInterface
-     */
-    public function getProfiler()
-    {
-        return $this->profiler;
     }
 
     /**
@@ -175,16 +167,6 @@ class IbmDb2 implements DriverInterface, Profiler\ProfilerAwareInterface
     }
 
     /**
-     * Get prepare type
-     *
-     * @return string
-     */
-    public function getPrepareType()
-    {
-        return self::PARAMETERIZATION_POSITIONAL;
-    }
-
-    /**
      * Format parameter name
      *
      * @param string $name
@@ -194,15 +176,5 @@ class IbmDb2 implements DriverInterface, Profiler\ProfilerAwareInterface
     public function formatParameterName($name, $type = null)
     {
         return '?';
-    }
-
-    /**
-     * Get last generated value
-     *
-     * @return mixed
-     */
-    public function getLastGeneratedValue()
-    {
-        return $this->connection->getLastGeneratedValue();
     }
 }

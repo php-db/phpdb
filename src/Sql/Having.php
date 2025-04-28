@@ -2,6 +2,6 @@
 
 namespace Laminas\Db\Sql;
 
-class Having extends Predicate\Predicate
+final class Having extends Predicate\Predicate
 {
 }

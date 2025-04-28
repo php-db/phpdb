@@ -47,7 +47,6 @@ class Update extends AbstractPreparableSql
         self::SPECIFICATION_WHERE  => 'WHERE %1$s',
     ];
 
-    /** @var string|array|TableIdentifier */
     protected TableIdentifier|string|array $table = '';
 
     /** @var bool */
@@ -220,6 +219,9 @@ class Update extends AbstractPreparableSql
         );
     }
 
+    /**
+     * @return null|string
+     */
     protected function processWhere(
         PlatformInterface $platform,
         ?DriverInterface $driver = null,

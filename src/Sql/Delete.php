@@ -32,7 +32,6 @@ class Delete extends AbstractPreparableSql
         self::SPECIFICATION_WHERE  => 'WHERE %1$s',
     ];
 
-    /** @var string|array|TableIdentifier */
     protected TableIdentifier|string|array $table = '';
 
     /** @var bool */
@@ -70,7 +69,6 @@ class Delete extends AbstractPreparableSql
     }
 
     /**
-     * @param ?string $key
      * @return mixed
      */
     public function getRawState(?string $key = null)

@@ -48,13 +48,6 @@ interface DriverInterface
     public function createResult($resource);
 
     /**
-     * Get prepare type
-     *
-     * @return string
-     */
-    public function getPrepareType();
-
-    /**
      * Format parameter name
      *
      * @param string $name
@@ -62,11 +55,4 @@ interface DriverInterface
      * @return string
      */
     public function formatParameterName($name, $type = null);
-
-    /**
-     * Get last generated value
-     *
-     * @return mixed
-     */
-    public function getLastGeneratedValue();
 }

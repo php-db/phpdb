@@ -16,7 +16,7 @@ use function strtoupper;
 use const MYSQLI_CLIENT_SSL;
 use const MYSQLI_CLIENT_SSL_DONT_VERIFY_SERVER_CERT;
 
-class Connection extends AbstractConnection
+final class Connection extends AbstractConnection
 {
     /** @var Mysqli */
     protected $driver;
@@ -55,8 +55,10 @@ class Connection extends AbstractConnection
 
     /**
      * {@inheritDoc}
+     *
+     * @return float|int|null|string
      */
-    public function getCurrentSchema()
+    public function getCurrentSchema(): float|int|string|null
     {
         if (! $this->isConnected()) {
             $this->connect();
@@ -188,6 +190,8 @@ class Connection extends AbstractConnection
 
     /**
      * {@inheritDoc}
+     *
+     * @return void
      */
     public function disconnect()
     {
@@ -280,7 +284,7 @@ class Connection extends AbstractConnection
     /**
      * {@inheritDoc}
      */
-    public function getLastGeneratedValue($name = null)
+    public function getLastGeneratedValue($name = null): int|string|string|string|string|string|string
     {
         return $this->resource->insert_id;
     }

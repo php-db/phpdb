@@ -7,7 +7,7 @@ use Laminas\Db\Adapter\Exception;
 // phpcs:ignore SlevomatCodingStandard.Namespaces.UnusedUses.UnusedUse
 use ReturnTypeWillChange;
 
-class Result implements ResultInterface
+final class Result implements ResultInterface
 {
     /** @var resource */
     protected $resource;
@@ -139,9 +139,9 @@ class Result implements ResultInterface
     /**
      * Get affected rows
      *
-     * @return int
+     * @return false|int
      */
-    public function getAffectedRows()
+    public function getAffectedRows(): int|false
     {
         return db2_num_rows($this->resource);
     }
@@ -169,9 +169,9 @@ class Result implements ResultInterface
     /**
      * Get field count
      *
-     * @return int
+     * @return false|int
      */
-    public function getFieldCount()
+    public function getFieldCount(): int|false
     {
         return db2_num_fields($this->resource);
     }

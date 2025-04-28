@@ -61,6 +61,8 @@ class Connection extends AbstractConnection
 
     /**
      * {@inheritDoc}
+     *
+     * @return void
      */
     public function setConnectionParameters(array $connectionParameters)
     {

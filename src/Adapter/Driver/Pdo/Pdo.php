@@ -18,7 +18,7 @@ use function preg_match;
 use function sprintf;
 use function ucfirst;
 
-class Pdo implements DriverInterface, DriverFeatureInterface, Profiler\ProfilerAwareInterface
+final class Pdo implements DriverInterface, DriverFeatureInterface, Profiler\ProfilerAwareInterface
 {
     /**
      * @const
@@ -88,14 +88,6 @@ class Pdo implements DriverInterface, DriverFeatureInterface, Profiler\ProfilerA
     }
 
     /**
-     * @return null|Profiler\ProfilerInterface
-     */
-    public function getProfiler()
-    {
-        return $this->profiler;
-    }
-
-    /**
      * Register connection
      *
      * @return $this Provides a fluent interface
@@ -110,7 +102,7 @@ class Pdo implements DriverInterface, DriverFeatureInterface, Profiler\ProfilerA
     /**
      * Register statement prototype
      */
-    public function registerStatementPrototype(Statement $statementPrototype)
+    public function registerStatementPrototype(Statement $statementPrototype): void
     {
         $this->statementPrototype = $statementPrototype;
         $this->statementPrototype->setDriver($this);
@@ -119,7 +111,7 @@ class Pdo implements DriverInterface, DriverFeatureInterface, Profiler\ProfilerA
     /**
      * Register result prototype
      */
-    public function registerResultPrototype(Result $resultPrototype)
+    public function registerResultPrototype(Result $resultPrototype): void
     {
         $this->resultPrototype = $resultPrototype;
     }
@@ -218,6 +210,8 @@ class Pdo implements DriverInterface, DriverFeatureInterface, Profiler\ProfilerA
 
     /**
      * Check environment
+     *
+     * @return void
      */
     public function checkEnvironment()
     {
@@ -298,14 +292,6 @@ class Pdo implements DriverInterface, DriverFeatureInterface, Profiler\ProfilerA
     }
 
     /**
-     * @return string
-     */
-    public function getPrepareType()
-    {
-        return self::PARAMETERIZATION_NAMED;
-    }
-
-    /**
      * @param string $name
      * @param string|null $type
      * @return string
@@ -327,14 +313,5 @@ class Pdo implements DriverInterface, DriverFeatureInterface, Profiler\ProfilerA
         }
 
         return '?';
-    }
-
-    /**
-     * @param string|null $name
-     * @return string|null|false
-     */
-    public function getLastGeneratedValue($name = null)
-    {
-        return $this->connection->getLastGeneratedValue($name);
     }
 }

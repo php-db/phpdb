@@ -102,10 +102,13 @@ class CreateTable extends AbstractSql implements SqlInterface
     }
 
     /**
-     * @param  string|null $key
-     * @return array
+     * @param string|null $key
+     *
+     * @return ((Column\ColumnInterface|string)[]|Column\ColumnInterface|string)[]|string
+     *
+     * @psalm-return array<Column\ColumnInterface|array<Column\ColumnInterface|string>|string>|string
      */
-    public function getRawState($key = null)
+    public function getRawState($key = null): array|string
     {
         $rawState = [
             self::COLUMNS     => $this->columns,

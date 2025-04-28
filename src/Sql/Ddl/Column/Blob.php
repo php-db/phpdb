@@ -2,7 +2,7 @@
 
 namespace Laminas\Db\Sql\Ddl\Column;
 
-class Blob extends AbstractLengthColumn
+final class Blob extends AbstractLengthColumn
 {
     protected string $specification = '%s %s';
 

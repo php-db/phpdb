@@ -8,8 +8,7 @@ namespace Laminas\Db\Sql\Ddl\Column;
  * Cannot name a class "float" starting in PHP 7, as it's a reserved keyword;
  * hence, "floating", with a type of "FLOAT".
  */
-class Floating extends AbstractPrecisionColumn
+final class Floating extends AbstractPrecisionColumn
 {
-    /** @var string */
     protected string $type = 'FLOAT';
 }

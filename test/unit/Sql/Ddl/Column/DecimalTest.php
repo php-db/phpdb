@@ -20,7 +20,7 @@ final class DecimalTest extends TestCase
         self::assertEquals([
             Argument::identifier('foo'),
             Argument::literal('DECIMAL'),
-            Argument::literal('10,5')
+            Argument::literal('10,5'),
         ], $expressionData->getExpressionValues());
     }
 }

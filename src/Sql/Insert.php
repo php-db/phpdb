@@ -39,14 +39,13 @@ class Insert extends AbstractPreparableSql
         self::SPECIFICATION_SELECT => 'INSERT INTO %1$s %2$s %3$s',
     ];
 
-    /** @var string|array|TableIdentifier */
     protected TableIdentifier|string|array $table = '';
 
     /** @var string[] */
     protected $columns = [];
 
     /** @var array|Select */
-    protected $select;
+    protected null|array|Select $select = null;
 
     /**
      * Constructor
@@ -86,12 +85,11 @@ class Insert extends AbstractPreparableSql
     /**
      * Specify values to insert
      *
-     * @param  array|Select $values
-     * @param  string $flag one of VALUES_MERGE or VALUES_SET; defaults to VALUES_SET
-     * @return $this Provides a fluent interface
+     * @param string        $flag one of VALUES_MERGE or VALUES_SET; defaults to VALUES_SET
      * @throws Exception\InvalidArgumentException
+     * @return $this Provides a fluent interface
      */
-    public function values($values, $flag = self::VALUES_SET)
+    public function values(array|Select $values, string $flag = self::VALUES_SET): static
     {
         if ($values instanceof Select) {
             if ($flag === self::VALUES_MERGE) {
@@ -109,7 +107,7 @@ class Insert extends AbstractPreparableSql
             );
         }
 
-        if ($this->select && $flag === self::VALUES_MERGE) {
+        if ($this->select !== null && $flag === self::VALUES_MERGE) {
             throw new Exception\InvalidArgumentException(
                 'An array of values cannot be provided with the merge flag when a Laminas\Db\Sql\Select'
                 . ' instance already exists as the value source'
@@ -166,6 +164,9 @@ class Insert extends AbstractPreparableSql
         return isset($key) && array_key_exists($key, $rawState) ? $rawState[$key] : $rawState;
     }
 
+    /**
+     * @return null|string
+     */
     protected function processInsert(
         PlatformInterface $platform,
         ?DriverInterface $driver = null,
@@ -209,6 +210,9 @@ class Insert extends AbstractPreparableSql
         );
     }
 
+    /**
+     * @return null|string
+     */
     protected function processSelect(
         PlatformInterface $platform,
         ?DriverInterface $driver = null,

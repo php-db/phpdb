@@ -5,34 +5,25 @@ namespace Laminas\Db\Sql\Ddl\Column;
 use Laminas\Db\Sql\Argument;
 use Laminas\Db\Sql\ArgumentType;
 use Laminas\Db\Sql\Ddl\Constraint\ConstraintInterface;
-
 use Laminas\Db\Sql\ExpressionData;
-
 use Laminas\Db\Sql\ExpressionPart;
-
-use function array_merge;
+use Override;
 
 class Column implements ColumnInterface
 {
-    /** @var null|string|int */
     protected string|int|null $default;
 
-    /** @var bool */
     protected bool $isNullable = false;
 
-    /** @var string */
     protected string $name = '';
 
-    /** @var array */
     protected array $options = [];
 
     /** @var ConstraintInterface[] */
     protected array $constraints = [];
 
-    /** @var string */
     protected string $specification = '%s %s';
 
-    /** @var string */
     protected string $type = 'INTEGER';
 
     /**
@@ -141,7 +132,7 @@ class Column implements ColumnInterface
         return $this;
     }
 
-    #[\Override]
+    #[Override]
     public function getExpressionData(): ExpressionData
     {
         $expressionData = new ExpressionData();

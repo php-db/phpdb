@@ -322,15 +322,13 @@ final class PredicateTest extends TestCase
 
         $expressionData = $predicate->getExpressionData();
 
-        self::assertCount(7, $expressionData->getExpressionParts());
+        self::assertCount(5, $expressionData->getExpressionParts());
         self::assertEquals('%1$s IS NULL', $expressionData->getExpressionPart(0)->getSpecificationString());
         self::assertEquals($identifier1, $expressionData->getExpressionValues()[0]);
         self::assertEquals('AND', $expressionData->getExpressionPart(1)->getSpecificationString());
-        self::assertEquals('(', $expressionData->getExpressionPart(2)->getSpecificationString());
-        self::assertEquals('%1$s IS NOT NULL', $expressionData->getExpressionPart(3)->getSpecificationString());
-        self::assertEquals('AND', $expressionData->getExpressionPart(4)->getSpecificationString());
-        self::assertEquals('%s = %s', $expressionData->getExpressionPart(5)->getSpecificationString());
-        self::assertEquals(')', $expressionData->getExpressionPart(6)->getSpecificationString());
+        self::assertEquals('(%1$s IS NOT NULL', $expressionData->getExpressionPart(2)->getSpecificationString());
+        self::assertEquals('AND', $expressionData->getExpressionPart(3)->getSpecificationString());
+        self::assertEquals('%s = %s)', $expressionData->getExpressionPart(4)->getSpecificationString());
         self::assertEquals($identifier2, $expressionData->getExpressionValues()[1]);
         self::assertEquals($identifier3, $expressionData->getExpressionValues()[2]);
         self::assertEquals($expression3, $expressionData->getExpressionValues()[3]);
@@ -339,8 +337,8 @@ final class PredicateTest extends TestCase
     #[TestDox('Unit test: Test expression() is chainable and returns proper values')]
     public function testExpression(): void
     {
-        $predicate  = new Predicate();
-        $value = new Argument(0, ArgumentType::Value);
+        $predicate = new Predicate();
+        $value     = new Argument(0, ArgumentType::Value);
 
         // is chainable
         self::assertSame($predicate, $predicate->expression('foo = ?', 0));
@@ -384,7 +382,7 @@ final class PredicateTest extends TestCase
         // test literal() is backwards-compatible, and works with with parameters
         $predicate = new Predicate();
         $predicate->expression('foo = ?', 'bar');
-        $expression = new Argument('bar', ArgumentType::Value);
+        $expression     = new Argument('bar', ArgumentType::Value);
         $expressionData = $predicate->getExpressionData();
 
         // with parameter
@@ -394,7 +392,7 @@ final class PredicateTest extends TestCase
         // test literal() is backwards-compatible, and works with with parameters, even 0 which tests as false
         $predicate = new Predicate();
         $predicate->expression('foo = ?', 0);
-        $expression = new Argument(0, ArgumentType::Value);
+        $expression     = new Argument(0, ArgumentType::Value);
         $expressionData = $predicate->getExpressionData();
 
         // with parameter

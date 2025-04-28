@@ -14,7 +14,7 @@ use function array_unshift;
 use function current;
 use function strpos;
 
-class SelectDecorator extends Select implements PlatformDecoratorInterface
+final class SelectDecorator extends Select implements PlatformDecoratorInterface
 {
     protected Select $subject;
 

@@ -2,6 +2,6 @@
 
 namespace Laminas\Db\Adapter\Exception;
 
-class InvalidQueryException extends UnexpectedValueException implements ExceptionInterface
+final class InvalidQueryException extends UnexpectedValueException implements ExceptionInterface
 {
 }

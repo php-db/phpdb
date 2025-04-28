@@ -83,7 +83,7 @@ final class MasterSlaveFeatureTest extends TestCase
     public function testPostSelect(): void
     {
         $table = $this->getMockBuilder(TableGateway::class)->setConstructorArgs(['foo', $this->mockMasterAdapter, $this->feature])->onlyMethods([])->getMock();
-        $stmt = $this
+        $stmt  = $this
             ->mockSlaveAdapter
             ->getDriver()
             ->createStatement();

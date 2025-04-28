@@ -104,7 +104,6 @@ class ResultSet extends AbstractResultSet
         $data = parent::current();
 
         if ($this->returnType === self::TYPE_ARRAYOBJECT && is_array($data)) {
-            /** @var ArrayObject $ao */
             $ao = clone $this->arrayObjectPrototype;
             if ($ao instanceof ArrayObject || method_exists($ao, 'exchangeArray')) {
                 $ao->exchangeArray($data);

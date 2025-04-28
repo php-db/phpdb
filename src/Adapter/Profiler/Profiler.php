@@ -10,7 +10,7 @@ use function end;
 use function is_string;
 use function microtime;
 
-class Profiler implements ProfilerInterface
+final class Profiler implements ProfilerInterface
 {
     /** @var array */
     protected $profiles = [];

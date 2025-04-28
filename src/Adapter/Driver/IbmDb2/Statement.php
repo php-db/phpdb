@@ -17,7 +17,7 @@ use function set_error_handler;
 
 use const E_WARNING;
 
-class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
+final class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
 {
     /** @var resource */
     protected $db2;
@@ -69,14 +69,6 @@ class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
     }
 
     /**
-     * @return null|Profiler\ProfilerInterface
-     */
-    public function getProfiler()
-    {
-        return $this->profiler;
-    }
-
-    /**
      * Set sql
      *
      * @param null|string $sql
@@ -121,7 +113,10 @@ class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
 
     /**
      * @param resource $resource
+     *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
     public function setResource($resource)
     {

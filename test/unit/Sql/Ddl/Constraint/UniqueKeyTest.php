@@ -19,7 +19,7 @@ final class UniqueKeyTest extends TestCase
         self::assertEquals('CONSTRAINT %s UNIQUE (%s)', $expressionData->getExpressionSpecification());
         self::assertEquals([
             Argument::identifier('my_uk'),
-            Argument::identifier('foo')
+            Argument::identifier('foo'),
         ], $expressionData->getExpressionValues());
     }
 }

@@ -12,7 +12,7 @@ use function gettype;
 use function is_array;
 use function is_object;
 
-class HydratingResultSet extends AbstractResultSet
+final class HydratingResultSet extends AbstractResultSet
 {
     /** @var HydratorInterface */
     protected $hydrator;
@@ -55,9 +55,9 @@ class HydratingResultSet extends AbstractResultSet
     /**
      * Get the row object prototype
      *
-     * @return object
+     * @return null|object
      */
-    public function getObjectPrototype()
+    public function getObjectPrototype(): object|null
     {
         return $this->objectPrototype;
     }

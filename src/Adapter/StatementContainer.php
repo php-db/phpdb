@@ -2,7 +2,7 @@
 
 namespace Laminas\Db\Adapter;
 
-class StatementContainer implements StatementContainerInterface
+final class StatementContainer implements StatementContainerInterface
 {
     /** @var string */
     protected $sql = '';

@@ -19,7 +19,7 @@ final class TextTest extends TestCase
         self::assertEquals('%s %s NOT NULL', $expressionData->getExpressionSpecification());
         self::assertEquals([
             Argument::identifier('foo'),
-            Argument::literal('TEXT')
+            Argument::literal('TEXT'),
         ], $expressionData->getExpressionValues());
     }
 }

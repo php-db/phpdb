@@ -14,7 +14,7 @@ use function is_callable;
 use function is_int;
 use function is_resource;
 
-class Result implements Iterator, ResultInterface
+final class Result implements Iterator, ResultInterface
 {
     /** @var resource */
     protected $resource;
@@ -116,9 +116,9 @@ class Result implements Iterator, ResultInterface
     /**
      * Get affected rows
      *
-     * @return int
+     * @return false|int
      */
-    public function getAffectedRows()
+    public function getAffectedRows(): int|false
     {
         return oci_num_rows($this->resource);
     }
@@ -201,9 +201,9 @@ class Result implements Iterator, ResultInterface
     }
 
     /**
-     * @return int
+     * @return false|int
      */
-    public function getFieldCount()
+    public function getFieldCount(): int|false
     {
         return oci_num_fields($this->resource);
     }

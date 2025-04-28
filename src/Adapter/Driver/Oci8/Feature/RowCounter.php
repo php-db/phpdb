@@ -11,7 +11,7 @@ use function strtolower;
 /**
  * Class for count of results of a select
  */
-class RowCounter extends AbstractFeature
+final class RowCounter extends AbstractFeature
 {
     /**
      * @return string
@@ -59,7 +59,6 @@ class RowCounter extends AbstractFeature
      */
     public function getRowCountClosure($context)
     {
-        /** @var RowCounter $rowCounter */
         $rowCounter = $this;
         return function () use ($rowCounter, $context) {
             return $context instanceof Statement

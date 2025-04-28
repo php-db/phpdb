@@ -8,7 +8,7 @@ use Laminas\Db\Sql\Insert;
 
 use function array_search;
 
-class SequenceFeature extends AbstractFeature
+final class SequenceFeature extends AbstractFeature
 {
     /** @var string */
     protected $primaryKeyField;
@@ -51,7 +51,7 @@ class SequenceFeature extends AbstractFeature
         return $insert;
     }
 
-    public function postInsert(StatementInterface $statement, ResultInterface $result)
+    public function postInsert(StatementInterface $statement, ResultInterface $result): void
     {
         if ($this->sequenceValue !== null) {
             $this->tableGateway->lastInsertValue = $this->sequenceValue;

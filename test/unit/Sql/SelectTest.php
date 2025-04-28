@@ -350,7 +350,7 @@ final class SelectTest extends TestCase
     {
         $select = new Select();
         /** @var Where $where */
-        $where  = $select->getRawState('where');
+        $where = $select->getRawState('where');
 
         $select->where(function (Where $what) use ($where): void {
             self::assertSame($where, $what);

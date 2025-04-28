@@ -19,7 +19,7 @@ abstract class AbstractFeature extends AbstractTableGateway
         return static::class;
     }
 
-    public function setTableGateway(AbstractTableGateway $tableGateway)
+    public function setTableGateway(AbstractTableGateway $tableGateway): void
     {
         $this->tableGateway = $tableGateway;
     }

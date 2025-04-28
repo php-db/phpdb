@@ -14,7 +14,7 @@ use function sprintf;
 use function str_replace;
 use function strtolower;
 
-class Platform extends AbstractPlatform
+final class Platform extends AbstractPlatform
 {
     /** @var AdapterInterface */
     protected $adapter;
@@ -70,10 +70,7 @@ class Platform extends AbstractPlatform
         return $subject;
     }
 
-    /**
-     * @return array|PlatformDecoratorInterface[]
-     */
-    public function getDecorators()
+    public function getDecorators(): PlatformDecoratorInterface
     {
         $platformName = $this->resolvePlatformName($this->getDefaultPlatform());
         return $this->decorators[$platformName];
@@ -84,7 +81,7 @@ class Platform extends AbstractPlatform
      *
      * @throws Exception\RuntimeException
      */
-    public function prepareStatement(AdapterInterface $adapter, StatementContainerInterface $statementContainer)
+    public function prepareStatement(AdapterInterface $adapter, StatementContainerInterface $statementContainer): StatementContainerInterface
     {
         if (! $this->subject instanceof PreparableSqlInterface) {
             throw new Exception\RuntimeException(

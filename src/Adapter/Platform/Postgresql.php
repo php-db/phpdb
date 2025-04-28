@@ -15,7 +15,7 @@ use function is_resource;
 use function pg_escape_string;
 use function str_replace;
 
-class Postgresql extends AbstractPlatform
+final class Postgresql extends AbstractPlatform
 {
     /**
      * Overrides value from AbstractPlatform to use proper escaping for Postgres

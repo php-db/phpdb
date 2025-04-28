@@ -34,10 +34,7 @@ abstract class AbstractPrecisionColumn extends AbstractLengthColumn
         return $this->setLength($digits);
     }
 
-    /**
-     * @return int
-     */
-    public function getDigits()
+    public function getDigits(): int|null
     {
         return $this->getLength();
     }
@@ -62,8 +59,10 @@ abstract class AbstractPrecisionColumn extends AbstractLengthColumn
 
     /**
      * {@inheritDoc}
+     *
+     * @return int|null|string
      */
-    protected function getLengthExpression(): string
+    protected function getLengthExpression(): int|string|null
     {
         if ($this->decimal !== null) {
             return $this->length . ',' . $this->decimal;

@@ -2,7 +2,7 @@
 
 namespace Laminas\Db\Sql\Ddl\Constraint;
 
-class UniqueKey extends AbstractConstraint
+final class UniqueKey extends AbstractConstraint
 {
     protected string $specification = 'UNIQUE';
 }

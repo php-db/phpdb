@@ -8,19 +8,24 @@ use Laminas\Db\Adapter\Platform\PlatformInterface;
 use Laminas\Db\Sql\Platform\PlatformDecoratorInterface;
 use Laminas\Db\Sql\Select;
 
-class SelectDecorator extends Select implements PlatformDecoratorInterface
+final class SelectDecorator extends Select implements PlatformDecoratorInterface
 {
     /** @var Select */
     protected $subject;
 
     /**
      * @param Select $subject
+     *
+     * @return void
      */
     public function setSubject($subject)
     {
         $this->subject = $subject;
     }
 
+    /**
+     * @return void
+     */
     protected function localizeVariables()
     {
         parent::localizeVariables();

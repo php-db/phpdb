@@ -76,24 +76,10 @@ abstract class AbstractSource implements MetadataInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @return TableObject|ViewObject
      */
-    public function getTables($schema = null, $includeViews = false)
-    {
-        if ($schema === null) {
-            $schema = $this->defaultSchema;
-        }
-
-        $tables = [];
-        foreach ($this->getTableNames($schema, $includeViews) as $tableName) {
-            $tables[] = $this->getTable($tableName, $schema);
-        }
-        return $tables;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getTable($tableName, $schema = null)
+    public function getTable($tableName, $schema = null): ViewObject|TableObject
     {
         if ($schema === null) {
             $schema = $this->defaultSchema;
@@ -124,60 +110,6 @@ abstract class AbstractSource implements MetadataInterface
         $table->setColumns($this->getColumns($tableName, $schema));
         $table->setConstraints($this->getConstraints($tableName, $schema));
         return $table;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getViewNames($schema = null)
-    {
-        if ($schema === null) {
-            $schema = $this->defaultSchema;
-        }
-
-        $this->loadTableNameData($schema);
-
-        $viewNames = [];
-        foreach ($this->data['table_names'][$schema] as $tableName => $data) {
-            if ('VIEW' === $data['table_type']) {
-                $viewNames[] = $tableName;
-            }
-        }
-        return $viewNames;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getViews($schema = null)
-    {
-        if ($schema === null) {
-            $schema = $this->defaultSchema;
-        }
-
-        $views = [];
-        foreach ($this->getViewNames($schema) as $tableName) {
-            $views[] = $this->getTable($tableName, $schema);
-        }
-        return $views;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getView($viewName, $schema = null)
-    {
-        if ($schema === null) {
-            $schema = $this->defaultSchema;
-        }
-
-        $this->loadTableNameData($schema);
-
-        $tableNames = $this->data['table_names'][$schema];
-        if (isset($tableNames[$viewName]) && 'VIEW' === $tableNames[$viewName]['table_type']) {
-            return $this->getTable($viewName, $schema);
-        }
-        throw new Exception('View "' . $viewName . '" does not exist');
     }
 
     /**
@@ -451,6 +383,8 @@ abstract class AbstractSource implements MetadataInterface
 
     /**
      * Load schema data
+     *
+     * @return void
      */
     protected function loadSchemaData()
     {
@@ -460,6 +394,8 @@ abstract class AbstractSource implements MetadataInterface
      * Load table name data
      *
      * @param string $schema
+     *
+     * @return void
      */
     protected function loadTableNameData($schema)
     {
@@ -475,6 +411,8 @@ abstract class AbstractSource implements MetadataInterface
      *
      * @param string $table
      * @param string $schema
+     *
+     * @return void
      */
     protected function loadColumnData($table, $schema)
     {
@@ -490,6 +428,8 @@ abstract class AbstractSource implements MetadataInterface
      *
      * @param string $table
      * @param string $schema
+     *
+     * @return void
      */
     protected function loadConstraintData($table, $schema)
     {
@@ -504,6 +444,8 @@ abstract class AbstractSource implements MetadataInterface
      * Load constraint data keys
      *
      * @param string $schema
+     *
+     * @return void
      */
     protected function loadConstraintDataKeys($schema)
     {
@@ -519,6 +461,8 @@ abstract class AbstractSource implements MetadataInterface
      *
      * @param string $table
      * @param string $schema
+     *
+     * @return void
      */
     protected function loadConstraintReferences($table, $schema)
     {
@@ -533,6 +477,8 @@ abstract class AbstractSource implements MetadataInterface
      * Load trigger data
      *
      * @param string $schema
+     *
+     * @return void
      */
     protected function loadTriggerData($schema)
     {

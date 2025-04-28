@@ -13,7 +13,7 @@ use function count;
 use function current;
 use function is_array;
 
-class MetadataFeature extends AbstractFeature
+final class MetadataFeature extends AbstractFeature
 {
     /** @var MetadataInterface */
     protected $metadata;
@@ -32,6 +32,9 @@ class MetadataFeature extends AbstractFeature
         ];
     }
 
+    /**
+     * @return void
+     */
     public function postInitialize()
     {
         if ($this->metadata === null) {
@@ -67,7 +70,6 @@ class MetadataFeature extends AbstractFeature
         $pkc = null;
 
         foreach ($m->getConstraints($table, $schema) as $constraint) {
-            /** @var ConstraintObject $constraint */
             if ($constraint->getType() === 'PRIMARY KEY') {
                 $pkc = $constraint;
                 break;

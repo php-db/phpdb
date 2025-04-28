@@ -3,10 +3,13 @@
 namespace Laminas\Db\Sql\Ddl\Column;
 
 use Laminas\Db\Sql\ExpressionData;
+use Override;
+
+use function sprintf;
 
 class Integer extends Column
 {
-    #[\Override]
+    #[Override]
     public function getExpressionData(): ExpressionData
     {
         $expressionData = parent::getExpressionData();

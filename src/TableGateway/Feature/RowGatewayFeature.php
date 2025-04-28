@@ -11,7 +11,7 @@ use Laminas\Db\TableGateway\Feature\MetadataFeature;
 use function func_get_args;
 use function is_string;
 
-class RowGatewayFeature extends AbstractFeature
+final class RowGatewayFeature extends AbstractFeature
 {
     /** @var array */
     protected $constructorArguments = [];
@@ -21,6 +21,9 @@ class RowGatewayFeature extends AbstractFeature
         $this->constructorArguments = func_get_args();
     }
 
+    /**
+     * @return void
+     */
     public function postInitialize()
     {
         $args = $this->constructorArguments;

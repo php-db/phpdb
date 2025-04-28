@@ -2,7 +2,7 @@
 
 namespace Laminas\Db;
 
-class ConfigProvider
+final class ConfigProvider
 {
     /**
      * Retrieve laminas-db default configuration.

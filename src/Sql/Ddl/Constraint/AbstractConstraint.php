@@ -4,37 +4,27 @@ namespace Laminas\Db\Sql\Ddl\Constraint;
 
 use Laminas\Db\Sql\Argument;
 use Laminas\Db\Sql\ArgumentType;
-
 use Laminas\Db\Sql\ExpressionData;
 use Laminas\Db\Sql\ExpressionPart;
+use Override;
 
 use function array_fill;
-use function array_merge;
 use function count;
 use function implode;
 use function sprintf;
 
 abstract class AbstractConstraint implements ConstraintInterface
 {
-    /** @var string */
     protected string $columnSpecification = '(%s)';
 
-    /** @var string */
     protected string $namedSpecification = 'CONSTRAINT %s';
 
-    /** @var string */
     protected string $specification = '';
 
-    /** @var string */
     protected string $name = '';
 
-    /** @var array */
     protected array $columns = [];
 
-    /**
-     * @param array|string|null $columns
-     * @param string|null       $name
-     */
     public function __construct(null|array|string $columns = null, ?string $name = null)
     {
         if ($columns !== null) {
@@ -55,9 +45,6 @@ abstract class AbstractConstraint implements ConstraintInterface
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getName(): string
     {
         return $this->name;
@@ -93,7 +80,7 @@ abstract class AbstractConstraint implements ConstraintInterface
     /**
      * {@inheritDoc}
      */
-    #[\Override]
+    #[Override]
     public function getExpressionData(): ExpressionData
     {
         $expressionPart = new ExpressionPart();

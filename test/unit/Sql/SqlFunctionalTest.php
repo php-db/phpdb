@@ -535,11 +535,6 @@ final class SqlFunctionalTest extends TestCase
         return $res;
     }
 
-    /**
-     * @param PreparableSqlInterface|SqlInterface $sqlObject
-     * @param string                              $platform
-     * @param array|string                        $expected
-     */
     #[DataProvider('dataProvider')]
     public function test(PreparableSqlInterface|SqlInterface $sqlObject, string $platform, string|array $expected): void
     {

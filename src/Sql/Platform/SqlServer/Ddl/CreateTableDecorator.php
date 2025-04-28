@@ -8,7 +8,7 @@ use Laminas\Db\Sql\Platform\PlatformDecoratorInterface;
 
 use function ltrim;
 
-class CreateTableDecorator extends CreateTable implements PlatformDecoratorInterface
+final class CreateTableDecorator extends CreateTable implements PlatformDecoratorInterface
 {
     /** @var CreateTable */
     protected $subject;

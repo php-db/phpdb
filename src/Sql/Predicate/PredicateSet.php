@@ -7,7 +7,6 @@ use Countable;
 use Laminas\Db\Sql\Exception;
 use Laminas\Db\Sql\Expression;
 use Laminas\Db\Sql\ExpressionData;
-use Laminas\Db\Sql\ExpressionDataSet;
 use Laminas\Db\Sql\ExpressionPart;
 use Laminas\Db\Sql\Predicate\Expression as PredicateExpression;
 use ReturnTypeWillChange;
@@ -17,6 +16,7 @@ use function in_array;
 use function is_array;
 use function is_string;
 use function sprintf;
+use function str_contains;
 
 // phpcs:ignore SlevomatCodingStandard.Namespaces.UnusedUses.UnusedUse
 
@@ -28,13 +28,12 @@ class PredicateSet implements PredicateInterface, Countable
     public const OP_OR           = 'OR';
 
     protected string $defaultCombination = self::COMBINED_BY_AND;
-    protected array  $predicates         = [];
+    protected array $predicates          = [];
 
     /**
      * Constructor
      *
      * @param null|array $predicates
-     * @param string     $defaultCombination
      */
     public function __construct(?array $predicates = null, string $defaultCombination = self::COMBINED_BY_AND)
     {
@@ -72,8 +71,6 @@ class PredicateSet implements PredicateInterface, Countable
     /**
      * Add predicates to set
      *
-     * @param PredicateInterface|Closure|string|array $predicates
-     * @param string                                  $combination
      * @throws Exception\InvalidArgumentException
      * @return $this Provides a fluent interface
      */
@@ -142,8 +139,6 @@ class PredicateSet implements PredicateInterface, Countable
 
     /**
      * Return the predicates
-     *
-     * @return array
      */
     public function getPredicates(): array
     {
@@ -184,22 +179,17 @@ class PredicateSet implements PredicateInterface, Countable
 
         for ($i = 0, $count = count($this->predicates); $i < $count; $i++) {
             /** @var PredicateInterface $predicate */
-            $predicate               = $this->predicates[$i][1];
-            if ($predicate instanceof PredicateSet) {
-                 $expressionData->addExpressionPart('(');
-             }
+            $predicate = $this->predicates[$i][1];
 
-             $expressionData->addExpressionParts($predicate->getExpressionData()->getExpressionParts());
+            $expressionData->addExpressionParts(
+                $predicate->getExpressionData()->getExpressionParts(),
+                $predicate instanceof PredicateSet
+            );
 
-             if ($predicate instanceof PredicateSet) {
-                 $expressionData->addExpressionPart(')');
-             }
-
-             if (isset($this->predicates[$i + 1])) {
-                 $expressionPart = new ExpressionPart(sprintf('%s', (string) $this->predicates[$i + 1][0]));
-                 $expressionPart->setIsJoin(true);
-                 $expressionData->addExpressionPart($expressionPart);
-             }
+            if (isset($this->predicates[$i + 1])) {
+                $expressionPart = new ExpressionPart(sprintf('%s', (string) $this->predicates[$i + 1][0]));
+                $expressionData->addExpressionPart($expressionPart);
+            }
         }
 
         return $expressionData;
@@ -207,8 +197,6 @@ class PredicateSet implements PredicateInterface, Countable
 
     /**
      * Get count of attached predicates
-     *
-     * @return int
      */
     #[Override]
     #[ReturnTypeWillChange]

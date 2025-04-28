@@ -19,7 +19,7 @@ final class CheckTest extends TestCase
         self::assertEquals('CONSTRAINT %s CHECK (%s)', $expressionData->getExpressionSpecification());
         self::assertEquals([
             Argument::identifier('foo'),
-            Argument::literal('id>0')
+            Argument::literal('id>0'),
         ], $expressionData->getExpressionValues());
     }
 }

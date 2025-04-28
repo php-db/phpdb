@@ -90,7 +90,7 @@ final class ColumnTest extends TestCase
         self::assertEquals('%s %s NOT NULL', $expressionData->getExpressionSpecification());
         self::assertEquals([
             Argument::identifier('foo'),
-            Argument::literal('INTEGER')
+            Argument::literal('INTEGER'),
         ], $expressionData->getExpressionValues());
 
         $column->setNullable(true);
@@ -100,7 +100,7 @@ final class ColumnTest extends TestCase
         self::assertEquals('%s %s', $expressionData->getExpressionSpecification());
         self::assertEquals([
             Argument::identifier('foo'),
-            Argument::literal('INTEGER')
+            Argument::literal('INTEGER'),
         ], $expressionData->getExpressionValues());
 
         $column->setDefault('bar');
@@ -111,7 +111,7 @@ final class ColumnTest extends TestCase
         self::assertEquals([
             Argument::identifier('foo'),
             Argument::literal('INTEGER'),
-            Argument::value('bar')
+            Argument::value('bar'),
         ], $expressionData->getExpressionValues());
     }
 }

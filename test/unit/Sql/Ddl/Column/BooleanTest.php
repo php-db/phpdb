@@ -22,7 +22,7 @@ final class BooleanTest extends TestCase
         self::assertEquals('%s %s NOT NULL', $expressionData->getExpressionSpecification());
         self::assertEquals([
             Argument::identifier('foo'),
-            Argument::literal('BOOLEAN')
+            Argument::literal('BOOLEAN'),
         ], $expressionData->getExpressionValues());
     }
 

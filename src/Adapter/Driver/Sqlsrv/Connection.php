@@ -21,7 +21,7 @@ use function sqlsrv_query;
 use function sqlsrv_rollback;
 use function strtolower;
 
-class Connection extends AbstractConnection
+final class Connection extends AbstractConnection
 {
     /** @var Sqlsrv */
     protected $driver;
@@ -153,6 +153,8 @@ class Connection extends AbstractConnection
 
     /**
      * {@inheritDoc}
+     *
+     * @return void
      */
     public function disconnect()
     {
@@ -259,10 +261,9 @@ class Connection extends AbstractConnection
     /**
      * Prepare
      *
-     * @param  string $sql
-     * @return string
+     * @param string $sql
      */
-    public function prepare($sql)
+    public function prepare($sql): Statement
     {
         if (! $this->isConnected()) {
             $this->connect();

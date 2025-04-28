@@ -4,6 +4,7 @@ namespace Laminas\Db\Sql\Ddl\Column;
 
 use Laminas\Db\Sql\Argument;
 use Laminas\Db\Sql\ExpressionData;
+use Override;
 
 abstract class AbstractLengthColumn extends Column
 {
@@ -33,7 +34,7 @@ abstract class AbstractLengthColumn extends Column
         return $this;
     }
 
-    public function getLength(): int
+    public function getLength(): int|null
     {
         return $this->length;
     }
@@ -43,10 +44,7 @@ abstract class AbstractLengthColumn extends Column
         return (string) $this->length;
     }
 
-    /**
-     * @return ExpressionData
-     */
-    #[\Override]
+    #[Override]
     public function getExpressionData(): ExpressionData
     {
         $expressionData = parent::getExpressionData();

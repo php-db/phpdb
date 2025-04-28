@@ -2,7 +2,7 @@
 
 namespace Laminas\Db\Sql;
 
-class TableIdentifier
+final class TableIdentifier
 {
     protected string $table;
 
@@ -30,11 +30,6 @@ class TableIdentifier
     public function getTable(): string
     {
         return $this->table;
-    }
-
-    public function hasSchema(): bool
-    {
-        return $this->schema !== null;
     }
 
     public function getSchema(): ?string

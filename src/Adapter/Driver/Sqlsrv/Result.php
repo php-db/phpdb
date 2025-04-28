@@ -17,7 +17,7 @@ use const SQLSRV_FETCH_ASSOC;
 use const SQLSRV_SCROLL_FIRST;
 use const SQLSRV_SCROLL_NEXT;
 
-class Result implements Iterator, ResultInterface
+final class Result implements Iterator, ResultInterface
 {
     /** @var resource */
     protected $resource;
@@ -158,10 +158,10 @@ class Result implements Iterator, ResultInterface
     /**
      * Count
      *
-     * @return int
+     * @return false|int
      */
     #[ReturnTypeWillChange]
-    public function count()
+    public function count(): int|false
     {
         return sqlsrv_num_rows($this->resource);
     }
@@ -190,9 +190,9 @@ class Result implements Iterator, ResultInterface
     /**
      * Get affected rows
      *
-     * @return int
+     * @return false|int
      */
-    public function getAffectedRows()
+    public function getAffectedRows(): int|false
     {
         return sqlsrv_rows_affected($this->resource);
     }

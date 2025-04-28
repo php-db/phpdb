@@ -26,7 +26,7 @@ use const SQLT_BIN;
 use const SQLT_CHR;
 use const SQLT_INT;
 
-class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
+final class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
 {
     /** @var resource */
     protected $oci8;
@@ -264,7 +264,7 @@ class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
     /**
      * Bind parameters from container
      */
-    protected function bindParametersFromContainer()
+    protected function bindParametersFromContainer(): void
     {
         $parameters = $this->parameterContainer->getNamedArray();
 

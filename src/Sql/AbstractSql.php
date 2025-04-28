@@ -2,13 +2,12 @@
 
 namespace Laminas\Db\Sql;
 
-use http\Exception\InvalidArgumentException;
 use Laminas\Db\Adapter\Driver\DriverInterface;
 use Laminas\Db\Adapter\ParameterContainer;
 use Laminas\Db\Adapter\Platform\PlatformInterface;
 use Laminas\Db\Adapter\Platform\Sql92 as DefaultAdapterPlatform;
 use Laminas\Db\Sql\Platform\PlatformDecoratorInterface;
-
+use Override;
 use ValueError;
 
 use function count;
@@ -20,6 +19,7 @@ use function is_array;
 use function is_callable;
 use function is_object;
 use function is_string;
+use function join;
 use function key;
 use function preg_replace;
 use function rtrim;
@@ -38,13 +38,12 @@ abstract class AbstractSql implements SqlInterface
 
     protected array $processInfo = ['paramPrefix' => '', 'subselectCount' => 0];
 
-    /** @var array */
     protected array $instanceParameterIndex = [];
 
     /**
      * {@inheritDoc}
      */
-    #[\Override]
+    #[Override]
     public function getSqlString(?PlatformInterface $adapterPlatform = null): string
     {
         $adapterPlatform = $adapterPlatform ?: new DefaultAdapterPlatform();
@@ -52,12 +51,6 @@ abstract class AbstractSql implements SqlInterface
         return $this->buildSqlString($adapterPlatform);
     }
 
-    /**
-     * @param PlatformInterface       $platform
-     * @param DriverInterface|null    $driver
-     * @param ParameterContainer|null $parameterContainer
-     * @return string
-     */
     protected function buildSqlString(
         PlatformInterface $platform,
         ?DriverInterface $driver = null,
@@ -105,12 +98,6 @@ abstract class AbstractSql implements SqlInterface
 
     /**
      * @staticvar int $runtimeExpressionPrefix
-     * @param ExpressionInterface     $expression
-     * @param PlatformInterface       $platform
-     * @param DriverInterface|null    $driver
-     * @param ParameterContainer|null $parameterContainer
-     * @param string|null             $namedParameterPrefix
-     * @return string
      */
     protected function processExpression(
         ExpressionInterface $expression,
@@ -122,7 +109,7 @@ abstract class AbstractSql implements SqlInterface
         // static counter for the number of times this method was invoked across the PHP runtime
         static $runtimeExpressionPrefix = 0;
 
-        $namedParameterPrefix = ($namedParameterPrefix === null || $namedParameterPrefix === '')
+        $namedParameterPrefix = $namedParameterPrefix === null || $namedParameterPrefix === ''
             ? ''
             : $this->processInfo['paramPrefix'] . $namedParameterPrefix;
 
@@ -138,7 +125,7 @@ abstract class AbstractSql implements SqlInterface
 
         $expressionParamIndex = &$this->instanceParameterIndex[$namedParameterPrefix];
         $expressionData       = $expression->getExpressionData();
-        $sqlString            = '';
+        $sqlStrings           = [];
 
         foreach ($expressionData->getExpressionParts() as $expressionPart) {
             $specification    = $expressionPart->getSpecificationString(true);
@@ -155,10 +142,10 @@ abstract class AbstractSql implements SqlInterface
                     $parameterContainer,
                 );
             }
-            $sqlString .= vsprintf($specification, $values);
+            $sqlStrings[] = vsprintf($specification, $values);
         }
 
-        return $sqlString;
+        return join(" ", $sqlStrings);
     }
 
     protected function processExpressionValue(
@@ -170,9 +157,9 @@ abstract class AbstractSql implements SqlInterface
         ?DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null,
     ): ?string {
-        $value = $argument->getValue();
+        $argument->getValue();
 
-        return match($argument->getType()) {
+        return match ($argument->getType()) {
             ArgumentType::Select => $this->processExpressionOrSelect(
                 $argument,
                 $namedParameterPrefix,
@@ -183,7 +170,7 @@ abstract class AbstractSql implements SqlInterface
             ),
             ArgumentType::Identifier => $platform->quoteIdentifierInFragment($argument->getValueAsString()),
             ArgumentType::Literal => $argument->getValueAsString(),
-            ArgumentType::Value => ($parameterContainer) ?
+            ArgumentType::Value => $parameterContainer ?
                 $this->processExpressionParameterName(
                     $argument->getValue(),
                     $namedParameterPrefix,
@@ -219,7 +206,7 @@ abstract class AbstractSql implements SqlInterface
     }
 
     protected function processExpressionParameterName(
-        string $value,
+        int|float|string|bool $value,
         string $namedParameterPrefix,
         int &$expressionParamIndex,
         DriverInterface $driver,
@@ -333,17 +320,20 @@ abstract class AbstractSql implements SqlInterface
     }
 
     /**
-     * @param Join[] $joins
+     * @param Join $joins
+     *
      * @throws Exception\InvalidArgumentException For invalid JOIN table names.
-     * @return null|string[] Null if no joins present, array of JOIN statements
-     *     otherwise
+     *
+     * @return null|string[][][] Null if no joins present, array of JOIN statements otherwise
+     *
+     * @psalm-return list{array<list{0: string, 1: string, 2?: string,...}>}|null
      */
     protected function processJoin(
         Join $joins,
         PlatformInterface $platform,
         ?DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null
-    ): ?array {
+    ): array|null {
         if (! $joins->count()) {
             return null;
         }
@@ -351,7 +341,6 @@ abstract class AbstractSql implements SqlInterface
         // process joins
         $joinSpecArgArray = [];
         foreach ($joins->getJoins() as $j => $join) {
-            $joinName = null;
             $joinAs   = null;
 
             // table name
@@ -410,7 +399,6 @@ abstract class AbstractSql implements SqlInterface
 
     /**
      * @param null|array|ExpressionInterface|Select $column
-     * @param string|null                           $namedParameterPrefix
      * @return string
      */
     protected function resolveColumnValue(
@@ -480,6 +468,8 @@ abstract class AbstractSql implements SqlInterface
 
     /**
      * Copy variables from the subject into the local properties
+     *
+     * @return void
      */
     protected function localizeVariables()
     {

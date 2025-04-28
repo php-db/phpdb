@@ -2,7 +2,7 @@
 
 namespace Laminas\Db;
 
-class Module
+final class Module
 {
     /**
      * Retrieve default laminas-db configuration for laminas-mvc context.

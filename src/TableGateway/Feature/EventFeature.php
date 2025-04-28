@@ -16,7 +16,7 @@ use Laminas\EventManager\EventsCapableInterface;
 
 use function get_class;
 
-class EventFeature extends AbstractFeature implements
+final class EventFeature extends AbstractFeature implements
     EventFeatureEventsInterface,
     EventsCapableInterface
 {
@@ -53,10 +53,8 @@ class EventFeature extends AbstractFeature implements
 
     /**
      * Retrieve composed event instance
-     *
-     * @return EventFeature\TableGatewayEvent
      */
-    public function getEvent()
+    public function getEvent(): EventFeature\TableGatewayEvent|null
     {
         return $this->event;
     }

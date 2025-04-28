@@ -28,7 +28,7 @@ final class IntegerTest extends TestCase
         self::assertEquals('%s %s NOT NULL', $expressionData->getExpressionSpecification());
         self::assertEquals([
             Argument::identifier('foo'),
-            Argument::literal('INTEGER')
+            Argument::literal('INTEGER'),
         ], $expressionData->getExpressionValues());
 
         $column = new Integer('foo');
@@ -39,7 +39,7 @@ final class IntegerTest extends TestCase
         self::assertEquals('%s %s NOT NULL PRIMARY KEY', $expressionData->getExpressionSpecification());
         self::assertEquals([
             Argument::identifier('foo'),
-            Argument::literal('INTEGER')
+            Argument::literal('INTEGER'),
         ], $expressionData->getExpressionValues());
     }
 }

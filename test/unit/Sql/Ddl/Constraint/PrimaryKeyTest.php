@@ -18,7 +18,7 @@ final class PrimaryKeyTest extends TestCase
 
         self::assertEquals('PRIMARY KEY (%s)', $expressionData->getExpressionSpecification());
         self::assertEquals([
-            Argument::identifier('foo')
+            Argument::identifier('foo'),
         ], $expressionData->getExpressionValues());
     }
 }

@@ -12,7 +12,7 @@ use function array_unshift;
 use function call_user_func_array;
 use function is_array;
 
-class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
+final class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
 {
     /** @var \mysqli */
     protected $mysqli;
@@ -72,14 +72,6 @@ class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
     {
         $this->profiler = $profiler;
         return $this;
-    }
-
-    /**
-     * @return null|Profiler\ProfilerInterface
-     */
-    public function getProfiler()
-    {
-        return $this->profiler;
     }
 
     /**

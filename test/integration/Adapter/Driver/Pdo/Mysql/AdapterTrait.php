@@ -16,8 +16,10 @@ trait AdapterTrait
     #[Override]
     protected function setUp(): void
     {
-        if (! is_string(getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_MYSQL')) ||
-            strtolower((string) getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_MYSQL')) !== 'true') {
+        if (
+            ! is_string(getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_MYSQL')) ||
+            strtolower((string) getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_MYSQL')) !== 'true'
+        ) {
             $this->markTestSkipped('pdo_mysql integration tests are not enabled!');
         }
 

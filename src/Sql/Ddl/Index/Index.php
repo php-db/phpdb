@@ -5,20 +5,17 @@ namespace Laminas\Db\Sql\Ddl\Index;
 use Laminas\Db\Sql\Argument;
 use Laminas\Db\Sql\ArgumentType;
 use Laminas\Db\Sql\ExpressionData;
-
 use Laminas\Db\Sql\ExpressionPart;
+use Override;
 
-use function array_merge;
 use function count;
 use function implode;
 use function str_replace;
 
-class Index extends AbstractIndex
+final class Index extends AbstractIndex
 {
-    /** @var string */
     protected string $specification = 'INDEX %s(...)';
 
-    /** @var array */
     protected array $lengths;
 
     /**
@@ -32,10 +29,10 @@ class Index extends AbstractIndex
         $this->lengths = $lengths;
     }
 
-    #[\Override]
+    #[Override]
     public function getExpressionData(): ExpressionData
     {
-        $colCount     = count($this->columns);
+        $colCount = count($this->columns);
 
         $expressionPart = new ExpressionPart();
         $expressionPart

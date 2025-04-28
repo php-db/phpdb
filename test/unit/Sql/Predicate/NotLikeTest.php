@@ -46,7 +46,7 @@ final class NotLikeTest extends TestCase
 
     public function testGetExpressionData(): void
     {
-        $notLike = new NotLike('bar', 'Foo%');
+        $notLike    = new NotLike('bar', 'Foo%');
         $identifier = new Argument('bar', ArgumentType::Identifier);
         $expression = new Argument('Foo%', ArgumentType::Value);
 

@@ -46,7 +46,7 @@ final class AbstractLengthColumnTest extends TestCase
         self::assertEquals([
             Argument::identifier('foo'),
             Argument::literal('INTEGER'),
-            Argument::literal('4')
+            Argument::literal('4'),
         ], $expressionData->getExpressionValues());
     }
 }

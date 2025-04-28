@@ -16,7 +16,7 @@ use function preg_match;
 use function sprintf;
 use function strpos;
 
-class SelectDecorator extends Select implements PlatformDecoratorInterface
+final class SelectDecorator extends Select implements PlatformDecoratorInterface
 {
     /** @var bool */
     protected $isSelectContainDistinct = false;
@@ -38,13 +38,15 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
     /**
      * @param boolean $isSelectContainDistinct
      */
-    public function setIsSelectContainDistinct($isSelectContainDistinct)
+    public function setIsSelectContainDistinct($isSelectContainDistinct): void
     {
         $this->isSelectContainDistinct = $isSelectContainDistinct;
     }
 
     /**
      * @param Select $subject
+     *
+     * @return void
      */
     public function setSubject($subject)
     {
@@ -62,7 +64,7 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
     /**
      * @param bool $supportsLimitOffset
      */
-    public function setSupportsLimitOffset($supportsLimitOffset)
+    public function setSupportsLimitOffset($supportsLimitOffset): void
     {
         $this->supportsLimitOffset = $supportsLimitOffset;
     }
@@ -79,6 +81,9 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
         return $table . ' ' . $alias;
     }
 
+    /**
+     * @return void
+     */
     protected function localizeVariables()
     {
         parent::localizeVariables();
@@ -90,8 +95,10 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
     }
 
     /**
-     * @param  array              $sqls
-     * @param  array              $parameters
+     * @param array              $sqls
+     * @param array              $parameters
+     *
+     * @return void
      */
     protected function processLimitOffset(
         PlatformInterface $platform,

@@ -5,7 +5,7 @@ namespace Laminas\Db\TableGateway\Feature;
 use Laminas\Db\Adapter\AdapterInterface;
 use Laminas\Db\Sql\Sql;
 
-class MasterSlaveFeature extends AbstractFeature
+final class MasterSlaveFeature extends AbstractFeature
 {
     /** @var AdapterInterface */
     protected $slaveAdapter;
@@ -44,7 +44,7 @@ class MasterSlaveFeature extends AbstractFeature
     /**
      * after initialization, retrieve the original adapter as "master"
      */
-    public function postInitialize()
+    public function postInitialize(): void
     {
         $this->masterSql = $this->tableGateway->sql;
         if ($this->slaveSql === null) {
@@ -60,7 +60,7 @@ class MasterSlaveFeature extends AbstractFeature
      * preSelect()
      * Replace adapter with slave temporarily
      */
-    public function preSelect()
+    public function preSelect(): void
     {
         $this->tableGateway->sql = $this->slaveSql;
     }
@@ -69,7 +69,7 @@ class MasterSlaveFeature extends AbstractFeature
      * postSelect()
      * Ensure to return to the master adapter
      */
-    public function postSelect()
+    public function postSelect(): void
     {
         $this->tableGateway->sql = $this->masterSql;
     }

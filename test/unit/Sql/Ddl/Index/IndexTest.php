@@ -19,7 +19,7 @@ final class IndexTest extends TestCase
         self::assertEquals('INDEX %s(%s)', $expressionData->getExpressionSpecification());
         self::assertEquals([
             Argument::identifier('my_uk'),
-            Argument::identifier('foo')
+            Argument::identifier('foo'),
         ], $expressionData->getExpressionValues());
     }
 
@@ -33,7 +33,7 @@ final class IndexTest extends TestCase
         self::assertEquals([
             Argument::identifier('my_uk'),
             Argument::identifier('foo'),
-            Argument::identifier('bar')
+            Argument::identifier('bar'),
         ], $expressionData->getExpressionValues());
     }
 
@@ -47,7 +47,7 @@ final class IndexTest extends TestCase
         self::assertEquals([
             Argument::identifier('my_uk'),
             Argument::identifier('foo'),
-            Argument::identifier('bar')
+            Argument::identifier('bar'),
         ], $expressionData->getExpressionValues());
     }
 }

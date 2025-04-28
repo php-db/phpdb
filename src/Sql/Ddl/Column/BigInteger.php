@@ -2,8 +2,7 @@
 
 namespace Laminas\Db\Sql\Ddl\Column;
 
-class BigInteger extends Integer
+final class BigInteger extends Integer
 {
-    /** @var string */
     protected string $type = 'BIGINT';
 }

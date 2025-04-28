@@ -9,7 +9,7 @@ use Laminas\Db\Adapter\Profiler;
 use function extension_loaded;
 use function is_string;
 
-class Pgsql implements DriverInterface, Profiler\ProfilerAwareInterface
+final class Pgsql implements DriverInterface, Profiler\ProfilerAwareInterface
 {
     /** @var Connection */
     protected $connection;
@@ -62,14 +62,6 @@ class Pgsql implements DriverInterface, Profiler\ProfilerAwareInterface
             $this->statementPrototype->setProfiler($profiler);
         }
         return $this;
-    }
-
-    /**
-     * @return null|Profiler\ProfilerInterface
-     */
-    public function getProfiler()
-    {
-        return $this->profiler;
     }
 
     /**
@@ -191,16 +183,6 @@ class Pgsql implements DriverInterface, Profiler\ProfilerAwareInterface
     }
 
     /**
-     * Get prepare Type
-     *
-     * @return string
-     */
-    public function getPrepareType()
-    {
-        return self::PARAMETERIZATION_POSITIONAL;
-    }
-
-    /**
      * Format parameter name
      *
      * @param string $name
@@ -210,16 +192,5 @@ class Pgsql implements DriverInterface, Profiler\ProfilerAwareInterface
     public function formatParameterName($name, $type = null)
     {
         return '$#';
-    }
-
-    /**
-     * Get last generated value
-     *
-     * @param string $name
-     * @return mixed
-     */
-    public function getLastGeneratedValue($name = null)
-    {
-        return $this->connection->getLastGeneratedValue($name);
     }
 }

@@ -4,7 +4,6 @@ namespace LaminasTest\Db\Sql\Predicate;
 
 use Laminas\Db\Sql\Argument;
 use Laminas\Db\Sql\ArgumentType;
-use Laminas\Db\Sql\ExpressionInterface;
 use Laminas\Db\Sql\Predicate\NotBetween;
 use Override;
 use PHPUnit\Framework\Attributes\CoversMethod;
@@ -35,8 +34,8 @@ final class NotBetweenTest extends TestCase
             ->setMaxValue(19);
 
         $identifier = new Argument('foo.bar', ArgumentType::Identifier);
-        $minValue = new Argument(10, ArgumentType::Value);
-        $maxValue = new Argument(19, ArgumentType::Value);
+        $minValue   = new Argument(10, ArgumentType::Value);
+        $maxValue   = new Argument(19, ArgumentType::Value);
 
         $expressionData = $this->notBetween->getExpressionData();
 
@@ -49,8 +48,8 @@ final class NotBetweenTest extends TestCase
             ->setMaxValue(['foo.baz' => ArgumentType::Identifier]);
 
         $identifier = new Argument(10, ArgumentType::Value);
-        $minValue = new Argument('foo.bar', ArgumentType::Identifier);
-        $maxValue = new Argument('foo.baz', ArgumentType::Identifier);
+        $minValue   = new Argument('foo.bar', ArgumentType::Identifier);
+        $maxValue   = new Argument('foo.baz', ArgumentType::Identifier);
 
         $expressionData = $this->notBetween->getExpressionData();
 

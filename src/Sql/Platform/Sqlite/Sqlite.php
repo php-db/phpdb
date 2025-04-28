@@ -5,7 +5,7 @@ namespace Laminas\Db\Sql\Platform\Sqlite;
 use Laminas\Db\Sql\Platform\AbstractPlatform;
 use Laminas\Db\Sql\Select;
 
-class Sqlite extends AbstractPlatform
+final class Sqlite extends AbstractPlatform
 {
     /**
      * Constructor

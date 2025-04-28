@@ -38,6 +38,8 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
 
     /**
      * initialize()
+     *
+     * @return void
      */
     public function initialize()
     {
@@ -90,15 +92,6 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
         $this->primaryKeyData = null;
 
         return $this;
-    }
-
-    /**
-     * @param mixed $array
-     * @return AbstractRowGateway
-     */
-    public function exchangeArray($array)
-    {
-        return $this->populate($array, true);
     }
 
     /**
@@ -338,6 +331,8 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
 
     /**
      * @throws Exception\RuntimeException
+     *
+     * @return void
      */
     protected function processPrimaryKeyData()
     {

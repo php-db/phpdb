@@ -2,7 +2,7 @@
 
 namespace Laminas\Db\Metadata\Object;
 
-class ConstraintKeyObject
+final class ConstraintKeyObject
 {
     public const FK_CASCADE     = 'CASCADE';
     public const FK_SET_NULL    = 'SET NULL';
@@ -89,50 +89,6 @@ class ConstraintKeyObject
     }
 
     /**
-     * Get position in unique constraint
-     *
-     * @return bool
-     */
-    public function getPositionInUniqueConstraint()
-    {
-        return $this->positionInUniqueConstraint;
-    }
-
-    /**
-     * Set position in unique constraint
-     *
-     * @param  bool $positionInUniqueConstraint
-     * @return $this Provides a fluent interface
-     */
-    public function setPositionInUniqueConstraint($positionInUniqueConstraint)
-    {
-        $this->positionInUniqueConstraint = $positionInUniqueConstraint;
-        return $this;
-    }
-
-    /**
-     * Get referencred table schema
-     *
-     * @return string
-     */
-    public function getReferencedTableSchema()
-    {
-        return $this->referencedTableSchema;
-    }
-
-    /**
-     * Set referenced table schema
-     *
-     * @param string $referencedTableSchema
-     * @return $this Provides a fluent interface
-     */
-    public function setReferencedTableSchema($referencedTableSchema)
-    {
-        $this->referencedTableSchema = $referencedTableSchema;
-        return $this;
-    }
-
-    /**
      * Get referenced table name
      *
      * @return string
@@ -181,7 +137,7 @@ class ConstraintKeyObject
      *
      * @param string $foreignKeyUpdateRule
      */
-    public function setForeignKeyUpdateRule($foreignKeyUpdateRule)
+    public function setForeignKeyUpdateRule($foreignKeyUpdateRule): void
     {
         $this->foreignKeyUpdateRule = $foreignKeyUpdateRule;
     }
@@ -201,7 +157,7 @@ class ConstraintKeyObject
      *
      * @param string $foreignKeyDeleteRule
      */
-    public function setForeignKeyDeleteRule($foreignKeyDeleteRule)
+    public function setForeignKeyDeleteRule($foreignKeyDeleteRule): void
     {
         $this->foreignKeyDeleteRule = $foreignKeyDeleteRule;
     }

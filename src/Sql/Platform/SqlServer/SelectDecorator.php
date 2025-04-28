@@ -15,19 +15,24 @@ use function array_values;
 use function current;
 use function strpos;
 
-class SelectDecorator extends Select implements PlatformDecoratorInterface
+final class SelectDecorator extends Select implements PlatformDecoratorInterface
 {
     /** @var Select */
     protected $subject;
 
     /**
      * @param Select $subject
+     *
+     * @return void
      */
     public function setSubject($subject)
     {
         $this->subject = $subject;
     }
 
+    /**
+     * @return void
+     */
     protected function localizeVariables()
     {
         parent::localizeVariables();

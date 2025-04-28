@@ -102,7 +102,7 @@ final class ForeignKeyTest extends TestCase
             Argument::identifier('baz'),
             Argument::identifier('bam'),
             Argument::literal('CASCADE'),
-            Argument::literal('SET NULL')
+            Argument::literal('SET NULL'),
         ], $expressionData->getExpressionValues());
     }
 }

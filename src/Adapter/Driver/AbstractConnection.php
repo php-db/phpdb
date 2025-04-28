@@ -62,17 +62,9 @@ abstract class AbstractConnection implements ConnectionInterface, ProfilerAwareI
     }
 
     /**
-     * @return null|ProfilerInterface
-     */
-    public function getProfiler()
-    {
-        return $this->profiler;
-    }
-
-    /**
      * {@inheritDoc}
      *
-     * @return resource
+     * @return null|resource
      */
     public function getResource()
     {

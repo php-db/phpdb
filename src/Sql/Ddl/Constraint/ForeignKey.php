@@ -5,13 +5,14 @@ namespace Laminas\Db\Sql\Ddl\Constraint;
 use Laminas\Db\Sql\Argument;
 use Laminas\Db\Sql\ArgumentType;
 use Laminas\Db\Sql\ExpressionData;
+use Override;
 
 use function array_fill;
 use function count;
 use function implode;
 use function sprintf;
 
-class ForeignKey extends AbstractConstraint
+final class ForeignKey extends AbstractConstraint
 {
     protected string $onDeleteRule        = 'NO ACTION';
     protected string $onUpdateRule        = 'NO ACTION';
@@ -28,12 +29,7 @@ class ForeignKey extends AbstractConstraint
     ];
 
     /**
-     * @param string            $name
-     * @param string|array      $columns
-     * @param string            $referenceTable
      * @param string[]|string|null $referenceColumn
-     * @param string|null       $onDeleteRule
-     * @param string|null       $onUpdateRule
      */
     public function __construct(
         string $name,
@@ -60,16 +56,12 @@ class ForeignKey extends AbstractConstraint
         }
     }
 
-    /**
-     * @return string
-     */
     public function getReferenceTable(): string
     {
         return $this->referenceTable;
     }
 
     /**
-     * @param string $referenceTable
      * @return $this Provides a fluent interface
      */
     public function setReferenceTable(string $referenceTable): static
@@ -79,9 +71,6 @@ class ForeignKey extends AbstractConstraint
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function getReferenceColumn(): array
     {
         return $this->referenceColumn;
@@ -98,16 +87,12 @@ class ForeignKey extends AbstractConstraint
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getOnDeleteRule(): string
     {
         return $this->onDeleteRule;
     }
 
     /**
-     * @param string $onDeleteRule
      * @return $this Provides a fluent interface
      */
     public function setOnDeleteRule(string $onDeleteRule): static
@@ -117,16 +102,12 @@ class ForeignKey extends AbstractConstraint
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getOnUpdateRule(): string
     {
         return $this->onUpdateRule;
     }
 
     /**
-     * @param string $onUpdateRule
      * @return $this Provides a fluent interface
      */
     public function setOnUpdateRule(string $onUpdateRule): static
@@ -136,7 +117,7 @@ class ForeignKey extends AbstractConstraint
         return $this;
     }
 
-    #[\Override]
+    #[Override]
     public function getExpressionData(): ExpressionData
     {
         $colCount = count($this->referenceColumn);

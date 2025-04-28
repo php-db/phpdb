@@ -20,7 +20,7 @@ final class CharTest extends TestCase
         self::assertEquals([
             Argument::identifier('foo'),
             Argument::literal('CHAR'),
-            Argument::literal('20')
+            Argument::literal('20'),
         ], $expressionData->getExpressionValues());
     }
 }

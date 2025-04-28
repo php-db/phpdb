@@ -6,7 +6,7 @@ use Interop\Container\ContainerInterface;
 use Laminas\ServiceManager\FactoryInterface;
 use Laminas\ServiceManager\ServiceLocatorInterface;
 
-class AdapterServiceFactory implements FactoryInterface
+final class AdapterServiceFactory implements FactoryInterface
 {
     /**
      * Create db adapter service

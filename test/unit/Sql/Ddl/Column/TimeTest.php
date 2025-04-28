@@ -19,7 +19,7 @@ final class TimeTest extends TestCase
         self::assertEquals('%s %s NOT NULL', $expressionData->getExpressionSpecification());
         self::assertEquals([
             Argument::identifier('foo'),
-            Argument::literal('TIME')
+            Argument::literal('TIME'),
         ], $expressionData->getExpressionValues());
     }
 }

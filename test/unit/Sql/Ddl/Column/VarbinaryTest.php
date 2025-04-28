@@ -20,7 +20,7 @@ final class VarbinaryTest extends TestCase
         self::assertEquals([
             Argument::identifier('foo'),
             Argument::literal('VARBINARY'),
-            Argument::literal('20')
+            Argument::literal('20'),
         ], $expressionData->getExpressionValues());
     }
 }

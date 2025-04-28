@@ -2,8 +2,7 @@
 
 namespace Laminas\Db\Sql\Ddl\Column;
 
-class Time extends Column
+final class Time extends Column
 {
-    /** @var string */
     protected string $type = 'TIME';
 }

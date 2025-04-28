@@ -115,7 +115,7 @@ class Select extends AbstractPreparableSql
     protected bool $prefixColumnsWithTable = true;
 
     /** @var null|string|array|TableIdentifier */
-    protected $table = null;
+    protected $table;
 
     /** @var null|string|Expression */
     protected $quantifier;
@@ -239,7 +239,7 @@ class Select extends AbstractPreparableSql
      * Create join clause
      *
      * @param  string|array|TableIdentifier $name
-     * @param  string|Predicate\PredicateInterface $on
+     * @param  string|PredicateInterface $on
      * @param  string|array $columns
      * @param  string $type one of the JOIN_* constants
      * @return $this Provides a fluent interface

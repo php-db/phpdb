@@ -17,7 +17,7 @@ use function strtolower;
  * @property Driver\DriverInterface $driver
  * @property Platform\PlatformInterface $platform
  */
-class Adapter implements AdapterInterface, Profiler\ProfilerAwareInterface
+final class Adapter implements AdapterInterface, Profiler\ProfilerAwareInterface
 {
     /**
      * Query Mode Constants
@@ -201,26 +201,6 @@ class Adapter implements AdapterInterface, Profiler\ProfilerAwareInterface
         }
         $statement->setParameterContainer($initialParameters);
         return $statement;
-    }
-
-    public function getHelpers()
-    {
-        $functions = [];
-        $platform  = $this->platform;
-        foreach (func_get_args() as $arg) {
-            switch ($arg) {
-                case self::FUNCTION_QUOTE_IDENTIFIER:
-                    $functions[] = function ($value) use ($platform) {
-                        return $platform->quoteIdentifier($value);
-                    };
-                    break;
-                case self::FUNCTION_QUOTE_VALUE:
-                    $functions[] = function ($value) use ($platform) {
-                        return $platform->quoteValue($value);
-                    };
-                    break;
-            }
-        }
     }
 
     /**

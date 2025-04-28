@@ -18,7 +18,7 @@ use function trim;
 /**
  * Combine SQL statement - allows combining multiple select statements into one
  */
-class Combine extends AbstractPreparableSql
+final class Combine extends AbstractPreparableSql
 {
     public const COLUMNS           = 'columns';
     public const COMBINE           = 'combine';
@@ -125,8 +125,6 @@ class Combine extends AbstractPreparableSql
 
     /**
      * Build sql string
-     *
-     * @return string
      */
     protected function buildSqlString(
         PlatformInterface $platform,

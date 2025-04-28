@@ -11,7 +11,7 @@ use Laminas\Db\Sql\TableIdentifier;
 use function is_array;
 use function is_string;
 
-class TableGateway extends AbstractTableGateway
+final class TableGateway extends AbstractTableGateway
 {
     /**
      * Constructor

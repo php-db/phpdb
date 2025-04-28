@@ -16,8 +16,11 @@ use function strpos;
 use const CASE_LOWER;
 use const PREG_PATTERN_ORDER;
 
-class MysqlMetadata extends AbstractSource
+final class MysqlMetadata extends AbstractSource
 {
+    /**
+     * @return void
+     */
     protected function loadSchemaData()
     {
         if (isset($this->data['schemas'])) {
@@ -304,58 +307,6 @@ class MysqlMetadata extends AbstractSource
 
         $this->data['constraints'][$schema][$table] = $constraints;
         // phpcs:enable WebimpressCodingStandard.NamingConventions.ValidVariableName.NotCamelCaps
-    }
-
-    /**
-     * @param string $schema
-     * @return void
-     */
-    protected function loadConstraintDataNames($schema)
-    {
-        if (isset($this->data['constraint_names'][$schema])) {
-            return;
-        }
-
-        $this->prepareDataHierarchy('constraint_names', $schema);
-
-        $p = $this->adapter->getPlatform();
-
-        $isColumns = [
-            ['TC', 'TABLE_NAME'],
-            ['TC', 'CONSTRAINT_NAME'],
-            ['TC', 'CONSTRAINT_TYPE'],
-        ];
-
-        array_walk($isColumns, function (&$c) use ($p) {
-            $c = $p->quoteIdentifierChain($c);
-        });
-
-        $sql = 'SELECT ' . implode(', ', $isColumns)
-        . ' FROM ' . $p->quoteIdentifierChain(['INFORMATION_SCHEMA', 'TABLES']) . 'T'
-        . ' INNER JOIN ' . $p->quoteIdentifierChain(['INFORMATION_SCHEMA', 'TABLE_CONSTRAINTS']) . 'TC'
-        . ' ON ' . $p->quoteIdentifierChain(['T', 'TABLE_SCHEMA'])
-        . '  = ' . $p->quoteIdentifierChain(['TC', 'TABLE_SCHEMA'])
-        . ' AND ' . $p->quoteIdentifierChain(['T', 'TABLE_NAME'])
-        . '  = ' . $p->quoteIdentifierChain(['TC', 'TABLE_NAME'])
-        . ' WHERE ' . $p->quoteIdentifierChain(['T', 'TABLE_TYPE'])
-        . ' IN (\'BASE TABLE\', \'VIEW\')';
-
-        if ($schema !== self::DEFAULT_SCHEMA) {
-            $sql .= ' AND ' . $p->quoteIdentifierChain(['T', 'TABLE_SCHEMA'])
-            . ' = ' . $p->quoteTrustedValue($schema);
-        } else {
-            $sql .= ' AND ' . $p->quoteIdentifierChain(['T', 'TABLE_SCHEMA'])
-            . ' != \'INFORMATION_SCHEMA\'';
-        }
-
-        $results = $this->adapter->query($sql, Adapter::QUERY_MODE_EXECUTE);
-
-        $data = [];
-        foreach ($results->toArray() as $row) {
-            $data[] = array_change_key_case($row, CASE_LOWER);
-        }
-
-        $this->data['constraint_names'][$schema] = $data;
     }
 
     /**

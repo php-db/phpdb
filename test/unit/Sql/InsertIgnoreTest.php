@@ -19,6 +19,7 @@ use Override;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 use ReflectionException;
+use TypeError;
 
 final class InsertIgnoreTest extends TestCase
 {
@@ -72,8 +73,7 @@ final class InsertIgnoreTest extends TestCase
 
     public function testValuesThrowsExceptionWhenNotArrayOrSelect(): void
     {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('values() expects an array of values or Laminas\Db\Sql\Select instance');
+        $this->expectException(TypeError::class);
         $this->insert->values(5);
     }
 

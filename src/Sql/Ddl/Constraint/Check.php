@@ -6,12 +6,9 @@ use Laminas\Db\Sql\Argument;
 use Laminas\Db\Sql\ArgumentType;
 use Laminas\Db\Sql\ExpressionData;
 use Laminas\Db\Sql\ExpressionInterface;
-
 use Laminas\Db\Sql\ExpressionPart;
 
-use function array_unshift;
-
-class Check extends AbstractConstraint
+final class Check extends AbstractConstraint
 {
     /** @var string|ExpressionInterface */
     protected $expression;

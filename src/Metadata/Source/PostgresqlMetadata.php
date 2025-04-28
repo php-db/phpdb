@@ -14,8 +14,11 @@ use function key;
 
 use const CASE_LOWER;
 
-class PostgresqlMetadata extends AbstractSource
+final class PostgresqlMetadata extends AbstractSource
 {
+    /**
+     * @return void
+     */
     protected function loadSchemaData()
     {
         if (isset($this->data['schemas'])) {

@@ -2,7 +2,11 @@
 
 namespace Laminas\Db\Sql;
 
-class ExpressionPart
+use function implode;
+use function is_array;
+use function sprintf;
+
+final class ExpressionPart
 {
     /** @var string[] */
     protected array $specification = [];
@@ -26,9 +30,7 @@ class ExpressionPart
 
     public function getSpecificationString(bool $decorateString = false): string
     {
-        $specification = ($decorateString && $this->isJoin) ? ' %s ' : '%s';
-
-        return sprintf($specification, implode(' ', $this->specification));
+        return sprintf('%s', implode(' ', $this->specification));
     }
 
     public function getSpecificationValues(array $values = []): array
@@ -44,18 +46,6 @@ class ExpressionPart
         }
 
         return $values;
-    }
-
-    protected function getValueArray($value, $values = []): array
-    {
-        foreach ($this->values as $value) {
-            $values[] = $value->getValue();
-        }
-    }
-
-    public function getSpecification(): array
-    {
-        return $this->specification;
     }
 
     public function setSpecification(string $specification): static
@@ -92,18 +82,6 @@ class ExpressionPart
     public function addValue(Argument $value): static
     {
         $this->values[] = $value;
-
-        return $this;
-    }
-
-    public function isJoin(): bool
-    {
-        return $this->isJoin;
-    }
-
-    public function setIsJoin(bool $isJoin): ExpressionPart
-    {
-        $this->isJoin = $isJoin;
 
         return $this;
     }

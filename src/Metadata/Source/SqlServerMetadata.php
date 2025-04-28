@@ -13,8 +13,11 @@ use function key;
 
 use const CASE_LOWER;
 
-class SqlServerMetadata extends AbstractSource
+final class SqlServerMetadata extends AbstractSource
 {
+    /**
+     * @return void
+     */
     protected function loadSchemaData()
     {
         if (isset($this->data['schemas'])) {
@@ -102,9 +105,8 @@ class SqlServerMetadata extends AbstractSource
     /**
      * @param string $table
      * @param string $schema
-     * @return string
      */
-    protected function loadColumnData($table, $schema)
+    protected function loadColumnData($table, $schema): void
     {
         if (isset($this->data['columns'][$schema][$table])) {
             return;

@@ -15,7 +15,7 @@ use function array_fill;
 use function call_user_func_array;
 use function count;
 
-class Result implements
+final class Result implements
     Iterator,
     ResultInterface
 {
@@ -142,9 +142,11 @@ class Result implements
     /**
      * Get affected rows
      *
-     * @return int
+     * @return int|numeric-string
+     *
+     * @psalm-return int<-1, max>|numeric-string
      */
-    public function getAffectedRows()
+    public function getAffectedRows(): int|string
     {
         if ($this->resource instanceof mysqli || $this->resource instanceof mysqli_stmt) {
             return $this->resource->affected_rows;
@@ -195,7 +197,6 @@ class Result implements
                 $this->statementBindValues['keys'][] = $col->name;
             }
             $this->statementBindValues['values'] = array_fill(0, count($this->statementBindValues['keys']), null);
-            $refs                                = [];
             foreach ($this->statementBindValues['values'] as $i => &$f) {
                 $refs[$i] = &$f;
             }

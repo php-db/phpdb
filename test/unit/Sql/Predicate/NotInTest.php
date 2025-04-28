@@ -27,8 +27,8 @@ final class NotInTest extends TestCase
 
     public function testGetExpressionDataWithSubselect(): void
     {
-        $select   = new Select();
-        $in       = new NotIn('foo', $select);
+        $select = new Select();
+        $in     = new NotIn('foo', $select);
 
         $identifier = new Argument('foo', ArgumentType::Identifier);
         $expression = new Argument($select, ArgumentType::Select);
@@ -54,8 +54,8 @@ final class NotInTest extends TestCase
 
     public function testGetExpressionDataWithSubselectAndArrayIdentifier(): void
     {
-        $select   = new Select();
-        $in       = new NotIn(new Argument(['foo', 'bar'], ArgumentType::Identifier), $select);
+        $select = new Select();
+        $in     = new NotIn(new Argument(['foo', 'bar'], ArgumentType::Identifier), $select);
 
         $identifier = new Argument(['foo', 'bar'], ArgumentType::Identifier);
         $expression = new Argument($select, ArgumentType::Select);

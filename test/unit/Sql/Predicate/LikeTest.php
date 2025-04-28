@@ -18,7 +18,7 @@ final class LikeTest extends TestCase
 
     public function testConstructWithArgs(): void
     {
-        $like = new Like('bar', 'foo%');
+        $like       = new Like('bar', 'foo%');
         $identifier = new Argument('bar', ArgumentType::Identifier);
         $expression = new Argument('foo%', ArgumentType::Value);
         self::assertEquals($identifier, $like->getIdentifier());
@@ -43,7 +43,7 @@ final class LikeTest extends TestCase
 
     public function testGetExpressionData(): void
     {
-        $like = new Like('bar', 'Foo%');
+        $like       = new Like('bar', 'Foo%');
         $identifier = new Argument('bar', ArgumentType::Identifier);
         $expression = new Argument('Foo%', ArgumentType::Value);
 
@@ -52,7 +52,7 @@ final class LikeTest extends TestCase
         self::assertEquals('%1$s LIKE %2$s', $expressionData->getExpressionSpecification());
         self::assertEquals([$identifier, $expression], $expressionData->getExpressionValues());
 
-        $like = new Like(['Foo%' => ArgumentType::Value], ['bar' => ArgumentType::Identifier]);
+        $like       = new Like(['Foo%' => ArgumentType::Value], ['bar' => ArgumentType::Identifier]);
         $identifier = new Argument('Foo%', ArgumentType::Value);
         $expression = new Argument('bar', ArgumentType::Identifier);
 

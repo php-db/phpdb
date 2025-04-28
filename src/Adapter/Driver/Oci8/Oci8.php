@@ -15,7 +15,7 @@ use function is_array;
 use function is_resource;
 use function is_string;
 
-class Oci8 implements DriverInterface, Profiler\ProfilerAwareInterface
+final class Oci8 implements DriverInterface, Profiler\ProfilerAwareInterface
 {
     public const FEATURES_DEFAULT = 'default';
 
@@ -52,7 +52,6 @@ class Oci8 implements DriverInterface, Profiler\ProfilerAwareInterface
             $connection = new Connection($connection);
         }
 
-        $options = array_intersect_key(array_merge($this->options, $options), $this->options);
         $this->registerConnection($connection);
         $this->registerStatementPrototype($statementPrototype ?: new Statement());
         $this->registerResultPrototype($resultPrototype ?: new Result());
@@ -83,14 +82,6 @@ class Oci8 implements DriverInterface, Profiler\ProfilerAwareInterface
     }
 
     /**
-     * @return null|Profiler\ProfilerInterface
-     */
-    public function getProfiler()
-    {
-        return $this->profiler;
-    }
-
-    /**
      * Register connection
      *
      * @return $this Provides a fluent interface
@@ -115,14 +106,6 @@ class Oci8 implements DriverInterface, Profiler\ProfilerAwareInterface
     }
 
     /**
-     * @return null|Statement
-     */
-    public function getStatementPrototype()
-    {
-        return $this->statementPrototype;
-    }
-
-    /**
      * Register result prototype
      *
      * @return $this Provides a fluent interface
@@ -131,14 +114,6 @@ class Oci8 implements DriverInterface, Profiler\ProfilerAwareInterface
     {
         $this->resultPrototype = $resultPrototype;
         return $this;
-    }
-
-    /**
-     * @return null|Result
-     */
-    public function getResultPrototype()
-    {
-        return $this->resultPrototype;
     }
 
     /**
@@ -196,6 +171,8 @@ class Oci8 implements DriverInterface, Profiler\ProfilerAwareInterface
 
     /**
      * Check environment
+     *
+     * @return void
      */
     public function checkEnvironment()
     {
@@ -257,14 +234,6 @@ class Oci8 implements DriverInterface, Profiler\ProfilerAwareInterface
     }
 
     /**
-     * @return string
-     */
-    public function getPrepareType()
-    {
-        return self::PARAMETERIZATION_NAMED;
-    }
-
-    /**
      * @param string $name
      * @param mixed  $type
      * @return string
@@ -272,13 +241,5 @@ class Oci8 implements DriverInterface, Profiler\ProfilerAwareInterface
     public function formatParameterName($name, $type = null)
     {
         return ':' . $name;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getLastGeneratedValue()
-    {
-        return $this->getConnection()->getLastGeneratedValue();
     }
 }

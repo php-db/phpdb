@@ -16,7 +16,7 @@ use function substr_count;
 
 use const SQLSRV_PARAM_IN;
 
-class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
+final class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
 {
     /** @var resource */
     protected $sqlsrv;
@@ -75,14 +75,6 @@ class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
     }
 
     /**
-     * @return null|Profiler\ProfilerInterface
-     */
-    public function getProfiler()
-    {
-        return $this->profiler;
-    }
-
-    /**
      * One of two resource types will be provided here:
      * a) "SQL Server Connection" when a prepared statement needs to still be produced
      * b) "SQL Server Statement" when a prepared statement has been already produced
@@ -125,16 +117,6 @@ class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
     public function getParameterContainer()
     {
         return $this->parameterContainer;
-    }
-
-    /**
-     * @param resource $resource
-     * @return $this Provides a fluent interface
-     */
-    public function setResource($resource)
-    {
-        $this->resource = $resource;
-        return $this;
     }
 
     /**
@@ -260,22 +242,12 @@ class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
     /**
      * Bind parameters from container
      */
-    protected function bindParametersFromContainer()
+    protected function bindParametersFromContainer(): void
     {
         $values   = $this->parameterContainer->getPositionalArray();
         $position = 0;
         foreach ($values as $value) {
             $this->parameterReferences[$position++][0] = $value;
         }
-    }
-
-    public function setPrepareParams(array $prepareParams)
-    {
-        $this->prepareParams = $prepareParams;
-    }
-
-    public function setPrepareOptions(array $prepareOptions)
-    {
-        $this->prepareOptions = $prepareOptions;
     }
 }

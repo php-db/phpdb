@@ -6,7 +6,7 @@ use Laminas\Db\Sql\Ddl\CreateTable;
 use Laminas\Db\Sql\Platform\AbstractPlatform;
 use Laminas\Db\Sql\Select;
 
-class SqlServer extends AbstractPlatform
+final class SqlServer extends AbstractPlatform
 {
     public function __construct(?SelectDecorator $selectDecorator = null)
     {

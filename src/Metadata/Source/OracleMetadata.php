@@ -10,7 +10,7 @@ use function strtoupper;
 /**
  * Metadata source for Oracle
  */
-class OracleMetadata extends AbstractSource
+final class OracleMetadata extends AbstractSource
 {
     /** @var array */
     protected $constraintTypeMap = [
@@ -23,6 +23,8 @@ class OracleMetadata extends AbstractSource
      * {@inheritdoc}
      *
      * @see \Laminas\Db\Metadata\Source\AbstractSource::loadColumnData()
+     *
+     * @return null|static
      */
     protected function loadColumnData($table, $schema)
     {
@@ -92,6 +94,8 @@ class OracleMetadata extends AbstractSource
      * {@inheritdoc}
      *
      * @see \Laminas\Db\Metadata\Source\AbstractSource::loadConstraintData()
+     *
+     * @return null|static
      */
     protected function loadConstraintData($table, $schema)
     {
@@ -179,6 +183,8 @@ class OracleMetadata extends AbstractSource
      * {@inheritdoc}
      *
      * @see \Laminas\Db\Metadata\Source\AbstractSource::loadSchemaData()
+     *
+     * @return void
      */
     protected function loadSchemaData()
     {
@@ -202,6 +208,8 @@ class OracleMetadata extends AbstractSource
      * {@inheritdoc}
      *
      * @see \Laminas\Db\Metadata\Source\AbstractSource::loadTableNameData()
+     *
+     * @return static
      */
     protected function loadTableNameData($schema)
     {
@@ -246,6 +254,8 @@ class OracleMetadata extends AbstractSource
      * {@inheritdoc}
      *
      * @see \Laminas\Db\Metadata\Source\AbstractSource::loadTriggerData()
+     *
+     * @return void
      */
     protected function loadTriggerData($schema)
     {

@@ -2,8 +2,13 @@
 
 namespace Laminas\Db\Sql;
 
+use Override;
+
+use function array_slice;
 use function array_unique;
 use function count;
+use function func_get_args;
+use function func_num_args;
 use function is_array;
 use function preg_match_all;
 use function str_ireplace;
@@ -24,7 +29,7 @@ class Expression extends AbstractExpression
     /**
      * @todo Update documentation to show how parameters can be specifically typed
      */
-    public function __construct(string $expression = '', null|string|float|int|array|Argument|ExpressionInterface $parameters = [])
+    public function __construct(string $expression = '', null|bool|string|float|int|array|Argument|ExpressionInterface $parameters = [])
     {
         if ($expression !== '') {
             $this->setExpression($expression);
@@ -33,6 +38,7 @@ class Expression extends AbstractExpression
         if (func_num_args() > 2) {
             /**
              * @deprecated
+             *
              * @todo Make notes in documentation
              */
             $parameters = array_slice(func_get_args(), 1);
@@ -61,10 +67,12 @@ class Expression extends AbstractExpression
     /**
      * @throws Exception\InvalidArgumentException
      */
-    public function setParameters(null|string|float|int|array|ExpressionInterface|Argument $parameters = []): self {
+    public function setParameters(null|bool|string|float|int|array|ExpressionInterface|Argument $parameters = []): self
+    {
         if (func_num_args() > 1) {
             /**
              * @deprecated
+             *
              * @todo Make notes in documentation
              */
             $parameters = func_get_args();
@@ -74,11 +82,11 @@ class Expression extends AbstractExpression
             $parameters = [$parameters];
         }
 
-        /** @var null|string|float|int|array|ExpressionInterface|Argument $parameter */
+        /** @var null|bool|string|float|int|array|ExpressionInterface|Argument $parameter */
         foreach ($parameters as $key => $parameter) {
             if ($parameter instanceof ArgumentType) {
                 $parameter = new Argument($key, $parameter);
-            } elseif (! ($parameter instanceof Argument)) {
+            } elseif (! $parameter instanceof Argument) {
                 $parameter = new Argument($parameter);
             }
             $this->parameters[] = $parameter;
@@ -95,12 +103,12 @@ class Expression extends AbstractExpression
     /**
      * @throws Exception\RuntimeException
      */
-    #[\Override]
+    #[Override]
     public function getExpressionData(): ExpressionData
     {
         $parameters      = $this->parameters;
         $parametersCount = count($parameters);
-        $specification      = str_replace('%', '%%', $this->expression);
+        $specification   = str_replace('%', '%%', $this->expression);
 
         if ($parametersCount === 0) {
             $specification = str_ireplace(self::PLACEHOLDER, '', $specification);

@@ -38,28 +38,28 @@ final class BetweenTest extends TestCase
 
     public function testConstructorCanPassIdentifierMinimumAndMaximumValues(): void
     {
-        $between = new Between('foo.bar', 1, 300);
+        $between    = new Between('foo.bar', 1, 300);
         $identifier = new Argument('foo.bar', ArgumentType::Identifier);
-        $minValue = new Argument(1, ArgumentType::Value);
-        $maxValue = new Argument(300, ArgumentType::Value);
+        $minValue   = new Argument(1, ArgumentType::Value);
+        $maxValue   = new Argument(300, ArgumentType::Value);
 
         self::assertEquals($identifier, $between->getIdentifier());
         self::assertEquals($minValue, $between->getMinValue());
         self::assertEquals($maxValue, $between->getMaxValue());
 
-        $between = new Between('foo.bar', 0, 1);
+        $between    = new Between('foo.bar', 0, 1);
         $identifier = new Argument('foo.bar', ArgumentType::Identifier);
-        $minValue = new Argument(0, ArgumentType::Value);
-        $maxValue = new Argument(1, ArgumentType::Value);
+        $minValue   = new Argument(0, ArgumentType::Value);
+        $maxValue   = new Argument(1, ArgumentType::Value);
 
         self::assertEquals($identifier, $between->getIdentifier());
         self::assertEquals($minValue, $between->getMinValue());
         self::assertEquals($maxValue, $between->getMaxValue());
 
-        $between = new Between('foo.bar', -1, 0);
+        $between    = new Between('foo.bar', -1, 0);
         $identifier = new Argument('foo.bar', ArgumentType::Identifier);
-        $minValue = new Argument(-1, ArgumentType::Value);
-        $maxValue = new Argument(0, ArgumentType::Value);
+        $minValue   = new Argument(-1, ArgumentType::Value);
+        $maxValue   = new Argument(0, ArgumentType::Value);
 
         self::assertEquals($identifier, $between->getIdentifier());
         self::assertEquals($minValue, $between->getMinValue());
@@ -105,31 +105,27 @@ final class BetweenTest extends TestCase
                       ->setMaxValue(19);
 
         $identifier = new Argument('foo.bar', ArgumentType::Identifier);
-        $minValue = new Argument(10, ArgumentType::Value);
-        $maxValue = new Argument(19, ArgumentType::Value);
+        $minValue   = new Argument(10, ArgumentType::Value);
+        $maxValue   = new Argument(19, ArgumentType::Value);
 
-        $expected = [
-            [
-                $this->between->getSpecification(),
-                [$identifier, $minValue, $maxValue]
-            ],
-        ];
-        self::assertEquals($expected, $this->between->getExpressionData());
+        $expressionData = $this->between->getExpressionData();
+
+        // with parameter
+        self::assertEquals($this->between->getSpecification(), $expressionData->getExpressionSpecification());
+        self::assertEquals([$identifier, $minValue, $maxValue], $expressionData->getExpressionValues());
 
         $this->between->setIdentifier([10 => ArgumentType::Value])
                       ->setMinValue(['foo.bar' => ArgumentType::Identifier])
                       ->setMaxValue(['foo.baz' => ArgumentType::Identifier]);
 
         $identifier = new Argument(10, ArgumentType::Value);
-        $minValue = new Argument('foo.bar', ArgumentType::Identifier);
-        $maxValue = new Argument('foo.baz', ArgumentType::Identifier);
+        $minValue   = new Argument('foo.bar', ArgumentType::Identifier);
+        $maxValue   = new Argument('foo.baz', ArgumentType::Identifier);
 
-        $expected = [
-            [
-                $this->between->getSpecification(),
-                [$identifier, $minValue, $maxValue]
-            ],
-        ];
-        self::assertEquals($expected, $this->between->getExpressionData());
+        $expressionData = $this->between->getExpressionData();
+
+        // with parameter
+        self::assertEquals($this->between->getSpecification(), $expressionData->getExpressionSpecification());
+        self::assertEquals([$identifier, $minValue, $maxValue], $expressionData->getExpressionValues());
     }
 }

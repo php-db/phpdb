@@ -10,7 +10,7 @@ use function get_resource_type;
 use function is_array;
 use function is_resource;
 
-class Connection extends AbstractConnection
+final class Connection extends AbstractConnection
 {
     /** @var Oci8 */
     protected $driver;
@@ -147,6 +147,8 @@ class Connection extends AbstractConnection
 
     /**
      * {@inheritDoc}
+     *
+     * @return void
      */
     public function disconnect()
     {

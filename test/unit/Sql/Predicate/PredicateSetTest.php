@@ -15,8 +15,6 @@ use PHPUnit\Framework\TestCase;
 use ReflectionException;
 use TypeError;
 
-use function var_export;
-
 #[CoversMethod(PredicateSet::class, 'addPredicates')]
 final class PredicateSetTest extends TestCase
 {

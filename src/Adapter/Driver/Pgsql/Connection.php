@@ -26,7 +26,7 @@ use function urldecode;
 use const PGSQL_CONNECT_ASYNC;
 use const PGSQL_CONNECT_FORCE_NEW;
 
-class Connection extends AbstractConnection
+final class Connection extends AbstractConnection
 {
     /** @var Pgsql */
     protected $driver;
@@ -101,9 +101,9 @@ class Connection extends AbstractConnection
     /**
      * {@inheritDoc}
      *
-     * @return null|string
+     * @return false|null|string
      */
-    public function getCurrentSchema()
+    public function getCurrentSchema(): string|false|null
     {
         if (! $this->isConnected()) {
             $this->connect();
@@ -203,6 +203,8 @@ class Connection extends AbstractConnection
 
     /**
      * {@inheritDoc}
+     *
+     * @return null|static
      */
     public function commit()
     {
@@ -243,9 +245,8 @@ class Connection extends AbstractConnection
      * {@inheritDoc}
      *
      * @throws Exception\InvalidQueryException
-     * @return resource|ResultSetInterface
      */
-    public function execute($sql)
+    public function execute($sql): Result
     {
         if (! $this->isConnected()) {
             $this->connect();
@@ -272,9 +273,11 @@ class Connection extends AbstractConnection
     /**
      * {@inheritDoc}
      *
-     * @return string
+     * @return false|null|string
+     *
+     * @param null|string $name
      */
-    public function getLastGeneratedValue($name = null)
+    public function getLastGeneratedValue(string|null $name = null)
     {
         if ($name === null) {
             return;

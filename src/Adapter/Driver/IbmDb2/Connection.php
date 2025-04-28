@@ -16,7 +16,7 @@ use function sprintf;
 
 use const E_WARNING;
 
-class Connection extends AbstractConnection
+final class Connection extends AbstractConnection
 {
     /** @var IbmDb2 */
     protected $driver;
@@ -262,8 +262,10 @@ class Connection extends AbstractConnection
 
     /**
      * {@inheritDoc}
+     *
+     * @return null|string
      */
-    public function getLastGeneratedValue($name = null)
+    public function getLastGeneratedValue($name = null): string|null
     {
         return db2_last_insert_id($this->resource);
     }

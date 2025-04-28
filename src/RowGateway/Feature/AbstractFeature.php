@@ -22,13 +22,15 @@ abstract class AbstractFeature extends AbstractRowGateway
         return static::class;
     }
 
-    public function setRowGateway(AbstractRowGateway $rowGateway)
+    public function setRowGateway(AbstractRowGateway $rowGateway): void
     {
         $this->rowGateway = $rowGateway;
     }
 
     /**
      * @throws RuntimeException
+     *
+     * @return never
      */
     public function initialize()
     {

@@ -36,19 +36,9 @@ abstract class AbstractTableObject
     /**
      * Set columns
      */
-    public function setColumns(array $columns)
+    public function setColumns(array $columns): void
     {
         $this->columns = $columns;
-    }
-
-    /**
-     * Get columns
-     *
-     * @return array
-     */
-    public function getColumns()
-    {
-        return $this->columns;
     }
 
     /**
@@ -56,19 +46,9 @@ abstract class AbstractTableObject
      *
      * @param array $constraints
      */
-    public function setConstraints($constraints)
+    public function setConstraints($constraints): void
     {
         $this->constraints = $constraints;
-    }
-
-    /**
-     * Get constraints
-     *
-     * @return array
-     */
-    public function getConstraints()
-    {
-        return $this->constraints;
     }
 
     /**
@@ -76,18 +56,8 @@ abstract class AbstractTableObject
      *
      * @param string $name
      */
-    public function setName($name)
+    public function setName($name): void
     {
         $this->name = $name;
-    }
-
-    /**
-     * Get name
-     *
-     * @return string
-     */
-    public function getName()
-    {
-        return $this->name;
     }
 }

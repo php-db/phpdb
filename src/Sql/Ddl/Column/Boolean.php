@@ -2,9 +2,8 @@
 
 namespace Laminas\Db\Sql\Ddl\Column;
 
-class Boolean extends Column
+final class Boolean extends Column
 {
-    /** @var string */
     protected string $type = 'BOOLEAN';
 
     /**

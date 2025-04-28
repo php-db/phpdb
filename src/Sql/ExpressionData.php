@@ -4,12 +4,18 @@ namespace Laminas\Db\Sql;
 
 use Countable;
 use Iterator;
+use Override;
+
+use function array_map;
+use function array_merge;
+use function count;
+use function implode;
 
 /**
  * @template TKey of array-key
  * @implements Iterator<TKey,ExpressionData>
  */
-class ExpressionData implements Iterator, Countable
+final class ExpressionData implements Iterator, Countable
 {
     protected int $position = 0;
 
@@ -49,12 +55,25 @@ class ExpressionData implements Iterator, Countable
      * @param ExpressionPart[] $parts
      * @return $this Provides a fluent interface
      */
-    public function addExpressionParts(array $parts): static
+    public function addExpressionParts(array $parts, bool $hasBrackets = false): static
     {
-        foreach ($parts as $part) {
+        $partsCount = count($parts);
+
+        for ($partsIndex = 0; $partsIndex < $partsCount; $partsIndex++) {
+            $part = $parts[$partsIndex];
             if (! $part instanceof ExpressionPart) {
                 throw new Exception\InvalidArgumentException('Expression parts must be of type ExpressionPart');
             }
+
+            if ($hasBrackets) {
+                if ($partsIndex === 0) {
+                    $part->setSpecification('(' . $part->getSpecificationString());
+                }
+                if ($partsIndex === $partsCount - 1) {
+                    $part->setSpecification($part->getSpecificationString() . ')');
+                }
+            }
+
             $this->expressionParts[] = $part;
         }
 
@@ -88,37 +107,37 @@ class ExpressionData implements Iterator, Countable
         return array_merge(...array_map(fn (ExpressionPart $part) => $part->getValues(), $this->expressionParts));
     }
 
-    #[\Override]
+    #[Override]
     public function rewind(): void
     {
         $this->position = 0;
     }
 
-    #[\Override]
+    #[Override]
     public function current(): ExpressionPart
     {
         return $this->expressionParts[$this->position];
     }
 
-    #[\Override]
+    #[Override]
     public function key(): int
     {
         return $this->position;
     }
 
-    #[\Override]
+    #[Override]
     public function next(): void
     {
         ++$this->position;
     }
 
-    #[\Override]
+    #[Override]
     public function valid(): bool
     {
         return isset($this->expressionParts[$this->position]);
     }
 
-    #[\Override]
+    #[Override]
     public function count(): int
     {
         return count($this->expressionParts);

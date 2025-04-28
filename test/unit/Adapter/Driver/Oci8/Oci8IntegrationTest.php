@@ -9,7 +9,7 @@ use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Group;
 use stdClass;
 
-#[CoversMethod(Oci8::class, 'checkEnvironment')]
+final final final final final final #[CoversMethod(Oci8::class, 'checkEnvironment')]
 #[Group('integration')]
 #[Group('integration-oracle')]
 class Oci8IntegrationTest extends AbstractIntegrationTestCase

@@ -2,7 +2,7 @@
 
 namespace Laminas\Db\Adapter\Exception;
 
-class InvalidConnectionParametersException extends RuntimeException implements ExceptionInterface
+final class InvalidConnectionParametersException extends RuntimeException implements ExceptionInterface
 {
     /** @var int */
     protected $parameters;

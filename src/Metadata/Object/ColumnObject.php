@@ -4,7 +4,7 @@ namespace Laminas\Db\Metadata\Object;
 
 use function array_key_exists;
 
-class ColumnObject
+final class ColumnObject
 {
     /** @var string */
     protected $name;
@@ -64,7 +64,7 @@ class ColumnObject
      *
      * @param string $name
      */
-    public function setName($name)
+    public function setName($name): void
     {
         $this->name = $name;
     }
@@ -106,7 +106,7 @@ class ColumnObject
      *
      * @param string $schemaName
      */
-    public function setSchemaName($schemaName)
+    public function setSchemaName($schemaName): void
     {
         $this->schemaName = $schemaName;
     }

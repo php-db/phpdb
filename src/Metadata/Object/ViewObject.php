@@ -2,7 +2,7 @@
 
 namespace Laminas\Db\Metadata\Object;
 
-class ViewObject extends AbstractTableObject
+final class ViewObject extends AbstractTableObject
 {
     /** @var null|string */
     protected $viewDefinition;
@@ -14,14 +14,6 @@ class ViewObject extends AbstractTableObject
     protected $isUpdatable;
 
     /**
-     * @return string $viewDefinition
-     */
-    public function getViewDefinition()
-    {
-        return $this->viewDefinition;
-    }
-
-    /**
      * @param string $viewDefinition to set
      * @return $this Provides a fluent interface
      */
@@ -29,14 +21,6 @@ class ViewObject extends AbstractTableObject
     {
         $this->viewDefinition = $viewDefinition;
         return $this;
-    }
-
-    /**
-     * @return string $checkOption
-     */
-    public function getCheckOption()
-    {
-        return $this->checkOption;
     }
 
     /**
@@ -50,14 +34,6 @@ class ViewObject extends AbstractTableObject
     }
 
     /**
-     * @return bool $isUpdatable
-     */
-    public function getIsUpdatable()
-    {
-        return $this->isUpdatable;
-    }
-
-    /**
      * @param bool $isUpdatable to set
      * @return $this Provides a fluent interface
      */
@@ -65,11 +41,5 @@ class ViewObject extends AbstractTableObject
     {
         $this->isUpdatable = $isUpdatable;
         return $this;
-    }
-
-    /** @return bool */
-    public function isUpdatable()
-    {
-        return (bool) $this->isUpdatable;
     }
 }

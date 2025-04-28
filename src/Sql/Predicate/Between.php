@@ -143,7 +143,7 @@ class Between extends AbstractExpression implements PredicateInterface
             [
                 $this->identifier,
                 $this->minValue,
-                $this->maxValue
+                $this->maxValue,
             ]
         );
     }

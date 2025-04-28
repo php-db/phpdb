@@ -8,7 +8,7 @@ use Laminas\Db\TableGateway\TableGatewayInterface;
 use function call_user_func_array;
 use function method_exists;
 
-class FeatureSet
+final class FeatureSet
 {
     public const APPLY_HALT = 'halt';
 
@@ -110,25 +110,6 @@ class FeatureSet
      * @return mixed
      */
     public function callMagicGet($property)
-    {
-        return null;
-    }
-
-    /**
-     * @param string $property
-     * @return bool
-     */
-    public function canCallMagicSet($property)
-    {
-        return false;
-    }
-
-    /**
-     * @param string $property
-     * @param mixed $value
-     * @return mixed
-     */
-    public function callMagicSet($property, $value)
     {
         return null;
     }

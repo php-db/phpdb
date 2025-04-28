@@ -7,7 +7,7 @@ use Laminas\Db\RowGateway\AbstractRowGateway;
 use function call_user_func_array;
 use function method_exists;
 
-class FeatureSet
+final class FeatureSet
 {
     public const APPLY_HALT = 'halt';
 
@@ -37,22 +37,6 @@ class FeatureSet
             $feature->setRowGateway($this->rowGateway);
         }
         return $this;
-    }
-
-    /**
-     * @param string $featureClassName
-     * @return AbstractFeature
-     */
-    public function getFeatureByClassName($featureClassName)
-    {
-        $feature = false;
-        foreach ($this->features as $potentialFeature) {
-            if ($potentialFeature instanceof $featureClassName) {
-                $feature = $potentialFeature;
-                break;
-            }
-        }
-        return $feature;
     }
 
     /**
@@ -91,61 +75,5 @@ class FeatureSet
                 }
             }
         }
-    }
-
-    /**
-     * @param string $property
-     * @return bool
-     */
-    public function canCallMagicGet($property)
-    {
-        return false;
-    }
-
-    /**
-     * @param string $property
-     * @return mixed
-     */
-    public function callMagicGet($property)
-    {
-        return null;
-    }
-
-    /**
-     * @param string $property
-     * @return bool
-     */
-    public function canCallMagicSet($property)
-    {
-        return false;
-    }
-
-    /**
-     * @param string $property
-     * @param mixed $value
-     * @return mixed
-     */
-    public function callMagicSet($property, $value)
-    {
-        return null;
-    }
-
-    /**
-     * @param string $method
-     * @return bool
-     */
-    public function canCallMagicCall($method)
-    {
-        return false;
-    }
-
-    /**
-     * @param string $method
-     * @param array $arguments
-     * @return mixed
-     */
-    public function callMagicCall($method, $arguments)
-    {
-        return null;
     }
 }

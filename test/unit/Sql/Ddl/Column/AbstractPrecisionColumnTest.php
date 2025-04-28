@@ -68,7 +68,7 @@ final class AbstractPrecisionColumnTest extends TestCase
         self::assertEquals([
             Argument::identifier('foo'),
             Argument::literal('INTEGER'),
-            Argument::literal('10,5')
+            Argument::literal('10,5'),
         ], $expressionData->getExpressionValues());
     }
 }

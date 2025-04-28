@@ -12,7 +12,7 @@ use function array_merge;
 use function extension_loaded;
 use function is_string;
 
-class Mysqli implements DriverInterface, Profiler\ProfilerAwareInterface
+final class Mysqli implements DriverInterface, Profiler\ProfilerAwareInterface
 {
     /** @var Connection */
     protected $connection;
@@ -69,14 +69,6 @@ class Mysqli implements DriverInterface, Profiler\ProfilerAwareInterface
     }
 
     /**
-     * @return null|Profiler\ProfilerInterface
-     */
-    public function getProfiler()
-    {
-        return $this->profiler;
-    }
-
-    /**
      * Register connection
      *
      * @return $this Provides a fluent interface
@@ -91,36 +83,18 @@ class Mysqli implements DriverInterface, Profiler\ProfilerAwareInterface
     /**
      * Register statement prototype
      */
-    public function registerStatementPrototype(Statement $statementPrototype)
+    public function registerStatementPrototype(Statement $statementPrototype): void
     {
         $this->statementPrototype = $statementPrototype;
         $this->statementPrototype->setDriver($this); // needs access to driver to createResult()
     }
 
     /**
-     * Get statement prototype
-     *
-     * @return null|Statement
-     */
-    public function getStatementPrototype()
-    {
-        return $this->statementPrototype;
-    }
-
-    /**
      * Register result prototype
      */
-    public function registerResultPrototype(Result $resultPrototype)
+    public function registerResultPrototype(Result $resultPrototype): void
     {
         $this->resultPrototype = $resultPrototype;
-    }
-
-    /**
-     * @return null|Result
-     */
-    public function getResultPrototype()
-    {
-        return $this->resultPrototype;
     }
 
     /**
@@ -208,16 +182,6 @@ class Mysqli implements DriverInterface, Profiler\ProfilerAwareInterface
     }
 
     /**
-     * Get prepare type
-     *
-     * @return string
-     */
-    public function getPrepareType()
-    {
-        return self::PARAMETERIZATION_POSITIONAL;
-    }
-
-    /**
      * Format parameter name
      *
      * @param string $name
@@ -227,15 +191,5 @@ class Mysqli implements DriverInterface, Profiler\ProfilerAwareInterface
     public function formatParameterName($name, $type = null)
     {
         return '?';
-    }
-
-    /**
-     * Get last generated value
-     *
-     * @return mixed
-     */
-    public function getLastGeneratedValue()
-    {
-        return $this->getConnection()->getLastGeneratedValue();
     }
 }

@@ -118,10 +118,8 @@ abstract class AbstractResultSet implements Iterator, ResultSetInterface
 
     /**
      * Get the data source used to create the result set
-     *
-     * @return null|Iterator
      */
-    public function getDataSource()
+    public function getDataSource(): Iterator|IteratorAggregate
     {
         return $this->dataSource;
     }
@@ -252,11 +250,9 @@ abstract class AbstractResultSet implements Iterator, ResultSetInterface
 
     /**
      * Countable: return count of rows
-     *
-     * @return int
      */
     #[ReturnTypeWillChange]
-    public function count()
+    public function count(): int|null
     {
         if ($this->count !== null) {
             return $this->count;

@@ -2,8 +2,7 @@
 
 namespace Laminas\Db\Sql\Ddl\Column;
 
-class Varbinary extends AbstractLengthColumn
+final class Varbinary extends AbstractLengthColumn
 {
-    /** @var string */
     protected string $type = 'VARBINARY';
 }

@@ -59,20 +59,11 @@ abstract class AbstractTableGateway implements TableGatewayInterface
     protected $lastInsertValue;
 
     /**
-     * @return bool
-     */
-    public function isInitialized()
-    {
-        return $this->isInitialized;
-    }
-
-    /**
      * Initialize
      *
      * @throws Exception\RuntimeException
-     * @return null
      */
-    public function initialize()
+    public function initialize(): void
     {
         if ($this->isInitialized) {
             return;
@@ -254,17 +245,6 @@ abstract class AbstractTableGateway implements TableGatewayInterface
     }
 
     /**
-     * @return int
-     */
-    public function insertWith(Insert $insert)
-    {
-        if (! $this->isInitialized) {
-            $this->initialize();
-        }
-        return $this->executeInsert($insert);
-    }
-
-    /**
      * @todo add $columns support
      * @return int
      * @throws Exception\RuntimeException
@@ -336,17 +316,6 @@ abstract class AbstractTableGateway implements TableGatewayInterface
     }
 
     /**
-     * @return int
-     */
-    public function updateWith(Update $update)
-    {
-        if (! $this->isInitialized) {
-            $this->initialize();
-        }
-        return $this->executeUpdate($update);
-    }
-
-    /**
      * @todo add $columns support
      * @return int
      * @throws Exception\RuntimeException
@@ -401,15 +370,6 @@ abstract class AbstractTableGateway implements TableGatewayInterface
         } else {
             $delete->where($where);
         }
-        return $this->executeDelete($delete);
-    }
-
-    /**
-     * @return int
-     */
-    public function deleteWith(Delete $delete)
-    {
-        $this->initialize();
         return $this->executeDelete($delete);
     }
 
@@ -482,38 +442,6 @@ abstract class AbstractTableGateway implements TableGatewayInterface
             return $this->featureSet->callMagicGet($property);
         }
         throw new Exception\InvalidArgumentException('Invalid magic property access in ' . self::class . '::__get()');
-    }
-
-    /**
-     * @param string $property
-     * @param mixed $value
-     * @return mixed
-     * @throws Exception\InvalidArgumentException
-     */
-    public function __set($property, $value)
-    {
-        if ($this->featureSet->canCallMagicSet($property)) {
-            return $this->featureSet->callMagicSet($property, $value);
-        }
-        throw new Exception\InvalidArgumentException('Invalid magic property access in ' . self::class . '::__set()');
-    }
-
-    /**
-     * @param string $method
-     * @param array $arguments
-     * @return mixed
-     * @throws Exception\InvalidArgumentException
-     */
-    public function __call($method, $arguments)
-    {
-        if ($this->featureSet->canCallMagicCall($method)) {
-            return $this->featureSet->callMagicCall($method, $arguments);
-        }
-        throw new Exception\InvalidArgumentException(sprintf(
-            'Invalid method (%s) called, caught by %s::__call()',
-            $method,
-            self::class
-        ));
     }
 
     /**

@@ -20,7 +20,7 @@ final class FloatingTest extends TestCase
         self::assertEquals([
             Argument::identifier('foo'),
             Argument::literal('FLOAT'),
-            Argument::literal('10,5')
+            Argument::literal('10,5'),
         ], $expressionData->getExpressionValues());
     }
 }

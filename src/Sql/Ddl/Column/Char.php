@@ -2,8 +2,7 @@
 
 namespace Laminas\Db\Sql\Ddl\Column;
 
-class Char extends AbstractLengthColumn
+final class Char extends AbstractLengthColumn
 {
-    /** @var string */
     protected string $type = 'CHAR';
 }

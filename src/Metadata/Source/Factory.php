@@ -9,7 +9,7 @@ use Laminas\Db\Metadata\MetadataInterface;
 /**
  * Source metadata factory.
  */
-class Factory
+final class Factory
 {
     /**
      * Create source from adapter

@@ -15,7 +15,7 @@ use function pg_fetch_assoc;
 use function pg_num_fields;
 use function pg_num_rows;
 
-class Result implements ResultInterface
+final class Result implements ResultInterface
 {
     /** @var resource */
     protected $resource;
@@ -164,6 +164,8 @@ class Result implements ResultInterface
 
     /**
      * Get resource
+     *
+     * @return void
      */
     public function getResource()
     {

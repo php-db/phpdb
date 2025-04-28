@@ -7,8 +7,6 @@ use Laminas\Db\Sql\ArgumentType;
 use Laminas\Db\Sql\Predicate\Operator;
 use PHPUnit\Framework\TestCase;
 
-use function var_export;
-
 final class OperatorTest extends TestCase
 {
     public function testEmptyConstructorYieldsNullLeftAndRightValues(): void
@@ -76,7 +74,7 @@ final class OperatorTest extends TestCase
             ->setOperator('>=')
             ->setRight('foo.bar', ArgumentType::Identifier);
 
-        $left = new Argument('foo', ArgumentType::Value);
+        $left  = new Argument('foo', ArgumentType::Value);
         $right = new Argument('foo.bar', ArgumentType::Identifier);
 
         $expressionData = $operator->getExpressionData();

@@ -18,8 +18,8 @@ use Laminas\Db\Sql\ExpressionInterface;
  */
 class Predicate extends PredicateSet
 {
-    private Predicate|null $unnest                       = null;
-    protected string|null  $nextPredicateCombineOperator = null;
+    private Predicate|null $unnest                      = null;
+    protected string|null $nextPredicateCombineOperator = null;
 
     protected function getNextPredicateCombineOperator(): string
     {
@@ -31,8 +31,6 @@ class Predicate extends PredicateSet
 
     /**
      * Begin nesting predicates
-     *
-     * @return Predicate
      */
     public function nest(): Predicate
     {

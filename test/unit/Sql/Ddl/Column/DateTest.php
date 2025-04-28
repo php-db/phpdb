@@ -19,7 +19,7 @@ final class DateTest extends TestCase
         self::assertEquals('%s %s NOT NULL', $expressionData->getExpressionSpecification());
         self::assertEquals([
             Argument::identifier('foo'),
-            Argument::literal('DATE')
+            Argument::literal('DATE'),
         ], $expressionData->getExpressionValues());
     }
 }

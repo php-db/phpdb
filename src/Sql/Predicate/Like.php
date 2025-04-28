@@ -97,7 +97,7 @@ class Like extends AbstractExpression implements PredicateInterface
             $this->getSpecification(),
             [
                 $this->identifier,
-                $this->like
+                $this->like,
             ]
         );
     }

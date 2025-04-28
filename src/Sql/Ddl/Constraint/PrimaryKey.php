@@ -2,7 +2,7 @@
 
 namespace Laminas\Db\Sql\Ddl\Constraint;
 
-class PrimaryKey extends AbstractConstraint
+final class PrimaryKey extends AbstractConstraint
 {
     protected string $specification = 'PRIMARY KEY';
 }

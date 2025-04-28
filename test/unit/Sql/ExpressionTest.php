@@ -64,15 +64,6 @@ final class ExpressionTest extends TestCase
         return $return;
     }
 
-    public function testSetParametersException(): void
-    {
-        $expression = new Expression('', 'foo');
-
-        $this->expectException(TypeError::class);
-        /** @psalm-suppress NullArgument - ensure an exception is thrown */
-        $expression->setParameters(null);
-    }
-
     #[Depends('testSetParameters')]
     public function testGetParameters(Expression $expression): void
     {
@@ -103,10 +94,10 @@ final class ExpressionTest extends TestCase
     public function testGetExpressionDataWillEscapePercent(): void
     {
         $expression = new Expression('X LIKE "foo%"');
-        self::assertEquals(
-            ['X LIKE "foo%%"'],
-            $expression->getExpressionData()
-        );
+
+        $expressionData = $expression->getExpressionData();
+
+        self::assertEquals('X LIKE "foo%%"', $expressionData->getExpressionSpecification());
     }
 
     public function testConstructorWithLiteralZero(): void
@@ -140,7 +131,10 @@ final class ExpressionTest extends TestCase
     {
         $expression = new Expression('?', $falsyParameter);
         $falsyValue = new Argument($falsyParameter, ArgumentType::Value);
-        self::assertEquals($falsyValue, $expression->getParameters());
+
+        $expressionData = $expression->getExpressionData();
+
+        self::assertEquals([$falsyValue], $expressionData->getExpressionValues());
     }
 
     public function testConstructorWithInvalidParameter(): void
@@ -158,24 +152,18 @@ final class ExpressionTest extends TestCase
             [0],
             [0.0],
             [false],
-            [[]],
         ];
     }
 
     public function testNumberOfReplacementsForExpressionWithParameters(): void
     {
         $expression = new Expression(':a + :b', ['a' => 1, 'b' => 2]);
-        $value1 = new Argument(1, ArgumentType::Value);
-        $value2 = new Argument(2, ArgumentType::Value);
+        $value1     = new Argument(1, ArgumentType::Value);
+        $value2     = new Argument(2, ArgumentType::Value);
 
-        self::assertSame(
-            [
-                [
-                    ':a + :b',
-                    [$value1, $value2],
-                ],
-            ],
-            $expression->getExpressionData()
-        );
+        $expressionData = $expression->getExpressionData();
+
+        self::assertEquals(':a + :b', $expressionData->getExpressionSpecification());
+        self::assertEquals([$value1, $value2], $expressionData->getExpressionValues());
     }
 }

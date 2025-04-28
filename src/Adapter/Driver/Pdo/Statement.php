@@ -14,7 +14,7 @@ use function is_array;
 use function is_bool;
 use function is_int;
 
-class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
+final class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
 {
     /** @var \PDO */
     protected $pdo;
@@ -61,14 +61,6 @@ class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
     {
         $this->profiler = $profiler;
         return $this;
-    }
-
-    /**
-     * @return null|Profiler\ProfilerInterface
-     */
-    public function getProfiler()
-    {
-        return $this->profiler;
     }
 
     /**
@@ -144,7 +136,10 @@ class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
 
     /**
      * @param string $sql
+     *
      * @throws Exception\RuntimeException
+     *
+     * @return void
      */
     public function prepare($sql = null)
     {
@@ -236,6 +231,8 @@ class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
 
     /**
      * Bind parameters from container
+     *
+     * @return void
      */
     protected function bindParametersFromContainer()
     {

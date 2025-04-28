@@ -20,7 +20,7 @@ final class VarcharTest extends TestCase
         self::assertEquals([
             Argument::identifier('foo'),
             Argument::literal('VARCHAR'),
-            Argument::literal('20')
+            Argument::literal('20'),
         ], $expressionData->getExpressionValues());
 
         $column->setDefault('bar');
@@ -32,7 +32,7 @@ final class VarcharTest extends TestCase
             Argument::identifier('foo'),
             Argument::literal('VARCHAR'),
             Argument::literal('20'),
-            Argument::value('bar')
-       ], $expressionData->getExpressionValues());
+            Argument::value('bar'),
+        ], $expressionData->getExpressionValues());
     }
 }

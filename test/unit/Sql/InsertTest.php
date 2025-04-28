@@ -21,6 +21,7 @@ use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 use ReflectionException;
+use TypeError;
 
 #[CoversMethod(Insert::class, 'into')]
 #[CoversMethod(Insert::class, 'columns')]
@@ -83,8 +84,7 @@ final class InsertTest extends TestCase
 
     public function testValuesThrowsExceptionWhenNotArrayOrSelect(): void
     {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('values() expects an array of values or Laminas\Db\Sql\Select instance');
+        $this->expectException(TypeError::class);
         /** @psalm-suppress InvalidArgument */
         $this->insert->values(5);
     }
