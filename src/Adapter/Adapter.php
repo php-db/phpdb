@@ -43,7 +43,7 @@ class Adapter implements AdapterInterface, Profiler\ProfilerAwareInterface
     /** @var Platform\PlatformInterface */
     protected $platform;
 
-    protected Profiler\ProfilerInterface $profiler;
+    protected ?Profiler\ProfilerInterface $profiler = null;
 
     protected ResultSet\ResultSetInterface $queryResultSetPrototype;
 
@@ -106,11 +106,8 @@ class Adapter implements AdapterInterface, Profiler\ProfilerAwareInterface
     /**
      * @throws Exception\RuntimeException
      */
-    public function getDriver(): Driver\DriverInterface|array
+    public function getDriver(): Driver\DriverInterface
     {
-        if ($this->driver === null) {
-            throw new Exception\RuntimeException('Driver has not been set or configured for this adapter.');
-        }
         return $this->driver;
     }
 
