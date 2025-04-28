@@ -7,6 +7,8 @@ use Laminas\Hydrator\ArraySerializable;
 use Laminas\Hydrator\ArraySerializableHydrator;
 use Laminas\Hydrator\HydratorInterface;
 
+use ReturnTypeWillChange;
+
 use function class_exists;
 use function gettype;
 use function is_array;
@@ -88,7 +90,7 @@ class HydratingResultSet extends AbstractResultSet
      *
      * @return object|null
      */
-    public function current()
+    #[ReturnTypeWillChange] public function current()
     {
         if ($this->buffer === null) {
             $this->buffer = -2; // implicitly disable buffering from here on

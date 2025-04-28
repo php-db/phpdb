@@ -13,7 +13,6 @@ use Laminas\Db\TableGateway\Feature\EventFeature;
 use Laminas\Db\TableGateway\Feature\EventFeatureEventsInterface;
 use Laminas\Db\TableGateway\TableGateway;
 use Laminas\EventManager\EventManager;
-use Override;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;

@@ -4,6 +4,8 @@ namespace Laminas\Db\ResultSet;
 
 use ArrayObject;
 
+use ReturnTypeWillChange;
+
 use function in_array;
 use function is_array;
 use function is_object;
@@ -99,7 +101,7 @@ class ResultSet extends AbstractResultSet
     /**
      * @return array|ArrayObject|null
      */
-    public function current()
+    #[ReturnTypeWillChange] public function current()
     {
         $data = parent::current();
 

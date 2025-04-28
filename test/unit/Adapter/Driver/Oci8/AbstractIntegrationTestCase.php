@@ -2,7 +2,6 @@
 
 namespace LaminasTest\Db\Adapter\Driver\Oci8;
 
-use Override;
 use PHPUnit\Framework\TestCase;
 
 use function extension_loaded;

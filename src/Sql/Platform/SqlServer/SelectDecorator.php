@@ -97,28 +97,22 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
             $limitParamName        = $driver->formatParameterName('limit');
             $offsetParamName       = $driver->formatParameterName('offset');
             $offsetForSumParamName = $driver->formatParameterName('offsetForSum');
-            array_push(
-                $sqls,
-                ') AS [LAMINAS_SQL_SERVER_LIMIT_OFFSET_EMULATION] WHERE [LAMINAS_SQL_SERVER_LIMIT_OFFSET_EMULATION].[__LAMINAS_ROW_NUMBER] BETWEEN '
+            $sqls[] = ') AS [LAMINAS_SQL_SERVER_LIMIT_OFFSET_EMULATION] WHERE [LAMINAS_SQL_SERVER_LIMIT_OFFSET_EMULATION].[__LAMINAS_ROW_NUMBER] BETWEEN '
                 . $offsetParamName
                 . '+1 AND '
                 . $limitParamName
                 . '+'
-                . $offsetForSumParamName
-            );
+                . $offsetForSumParamName;
             $parameterContainer->offsetSet('offset', $this->offset);
             $parameterContainer->offsetSet('limit', $this->limit);
             $parameterContainer->offsetSetReference('offsetForSum', 'offset');
         } else {
-            array_push(
-                $sqls,
-                ') AS [LAMINAS_SQL_SERVER_LIMIT_OFFSET_EMULATION] WHERE [LAMINAS_SQL_SERVER_LIMIT_OFFSET_EMULATION].[__LAMINAS_ROW_NUMBER] BETWEEN '
+            $sqls[] = ') AS [LAMINAS_SQL_SERVER_LIMIT_OFFSET_EMULATION] WHERE [LAMINAS_SQL_SERVER_LIMIT_OFFSET_EMULATION].[__LAMINAS_ROW_NUMBER] BETWEEN '
                 . (int) $this->offset
                 . '+1 AND '
                 . (int) $this->limit
                 . '+'
-                . (int) $this->offset
-            );
+                . (int) $this->offset;
         }
 
         // phpcs:enable Generic.Files.LineLength.TooLong

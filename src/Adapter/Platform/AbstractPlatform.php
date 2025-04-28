@@ -30,7 +30,7 @@ abstract class AbstractPlatform implements PlatformInterface
     /**
      * {@inheritDoc}
      */
-    public function quoteIdentifierInFragment($identifier, array $safeWords = [])
+    public function quoteIdentifierInFragment($identifier, array $additionalSafeWords = [])
     {
         if (! $this->quoteIdentifiers) {
             return $identifier;
@@ -38,7 +38,7 @@ abstract class AbstractPlatform implements PlatformInterface
 
         $safeWordsInt = ['*' => true, ' ' => true, '.' => true, 'as' => true];
 
-        foreach ($safeWords as $sWord) {
+        foreach ($additionalSafeWords as $sWord) {
             $safeWordsInt[strtolower($sWord)] = true;
         }
 

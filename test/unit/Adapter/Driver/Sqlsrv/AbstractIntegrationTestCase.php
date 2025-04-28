@@ -4,7 +4,6 @@
 
 namespace LaminasTest\Db\Adapter\Driver\Sqlsrv;
 
-use Override;
 use PHPUnit\Framework\TestCase;
 
 use function extension_loaded;

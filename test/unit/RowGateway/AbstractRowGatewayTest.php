@@ -12,7 +12,6 @@ use Laminas\Db\RowGateway\Exception\RuntimeException;
 use Laminas\Db\RowGateway\RowGateway;
 use Laminas\Db\Sql\Select;
 use Laminas\Db\Sql\Sql;
-use Override;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;

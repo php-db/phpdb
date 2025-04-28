@@ -2,7 +2,6 @@
 
 namespace LaminasIntegrationTest\Db\Adapter\Driver\Mysqli;
 
-use Override;
 use PHPUnit\Framework\Attributes\RequiresPhpExtension;
 
 use function extension_loaded;

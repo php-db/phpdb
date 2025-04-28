@@ -7,7 +7,6 @@ use Laminas\Db\Adapter\Exception as AdapterException;
 use Laminas\Db\Adapter\Exception\InvalidArgumentException;
 use Laminas\Db\Adapter\Exception\RuntimeException;
 use LaminasTest\Db\DeprecatedAssertionsTrait;
-use Override;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunInSeparateProcess;

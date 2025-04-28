@@ -2,11 +2,11 @@
 
 namespace LaminasTest\Db\Adapter\Driver\IbmDb2;
 
+use Laminas\Db\Adapter\Driver\DriverInterface;
 use Laminas\Db\Adapter\Driver\IbmDb2\Connection;
 use Laminas\Db\Adapter\Driver\IbmDb2\IbmDb2;
 use Laminas\Db\Adapter\Driver\IbmDb2\Result;
 use Laminas\Db\Adapter\Driver\IbmDb2\Statement;
-use Override;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Depends;
 use PHPUnit\Framework\MockObject\Exception;
@@ -72,7 +72,7 @@ class IbmDb2Test extends TestCase
     {
         $this->ibmdb2 = new IbmDb2([]);
         self::assertEquals('IbmDb2', $this->ibmdb2->getDatabasePlatformName());
-        self::assertEquals('IBM DB2', $this->ibmdb2->getDatabasePlatformName(IbmDb2::NAME_FORMAT_NATURAL));
+        self::assertEquals('IBM DB2', $this->ibmdb2->getDatabasePlatformName(DriverInterface::NAME_FORMAT_NATURAL));
     }
 
     #[Depends('testRegisterConnection')]

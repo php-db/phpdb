@@ -82,7 +82,7 @@ class CreateTableDecorator extends CreateTable implements PlatformDecoratorInter
     /**
      * {@inheritDoc}
      */
-    protected function processColumns(?PlatformInterface $platform = null)
+    protected function processColumns(?PlatformInterface $adapterPlatform = null)
     {
         if (! $this->columns) {
             return;
@@ -91,7 +91,7 @@ class CreateTableDecorator extends CreateTable implements PlatformDecoratorInter
         $sqls = [];
 
         foreach ($this->columns as $i => $column) {
-            $sql           = $this->processExpression($column, $platform);
+            $sql           = $this->processExpression($column, $adapterPlatform);
             $insertStart   = $this->getSqlInsertOffsets($sql);
             $columnOptions = $column->getOptions();
 
@@ -120,7 +120,7 @@ class CreateTableDecorator extends CreateTable implements PlatformDecoratorInter
                         $j      = 1;
                         break;
                     case 'comment':
-                        $insert = ' COMMENT ' . $platform->quoteValue($coValue);
+                        $insert = ' COMMENT ' . $adapterPlatform->quoteValue($coValue);
                         $j      = 2;
                         break;
                     case 'columnformat':

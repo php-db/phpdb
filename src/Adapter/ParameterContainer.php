@@ -72,29 +72,29 @@ class ParameterContainer implements Iterator, ArrayAccess, Countable
     /**
      * Offset exists
      *
-     * @param  string $name
+     * @param  string $offset
      * @return bool
      */
     #[ReturnTypeWillChange]
-    public function offsetExists($name)
+    public function offsetExists($offset)
     {
-        return isset($this->data[$name]);
+        return isset($this->data[$offset]);
     }
 
     /**
      * Offset get
      *
-     * @param  string $name
+     * @param  string $offset
      * @return mixed
      */
     #[ReturnTypeWillChange]
-    public function offsetGet($name)
+    public function offsetGet($offset)
     {
-        if (isset($this->data[$name])) {
-            return $this->data[$name];
+        if (isset($this->data[$offset])) {
+            return $this->data[$offset];
         }
 
-        $normalizedName = ltrim($name, ':');
+        $normalizedName = ltrim($offset, ':');
         if (
             isset($this->nameMapping[$normalizedName])
             && isset($this->data[$this->nameMapping[$normalizedName]])

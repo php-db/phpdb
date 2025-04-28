@@ -5,7 +5,6 @@ namespace Laminas\Db\Sql\Ddl\Constraint;
 use Laminas\Db\Sql\Argument;
 use Laminas\Db\Sql\ArgumentType;
 use Laminas\Db\Sql\ExpressionData;
-use Override;
 
 use function array_fill;
 use function count;

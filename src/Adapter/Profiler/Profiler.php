@@ -23,7 +23,7 @@ class Profiler implements ProfilerInterface
      * @return $this Provides a fluent interface
      * @throws InvalidArgumentException
      */
-    public function profilerStart($target)
+    public function profilerStart($target): mixed
     {
         $profileInformation = [
             'sql'        => '',

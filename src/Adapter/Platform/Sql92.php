@@ -18,7 +18,7 @@ class Sql92 extends AbstractPlatform
     /**
      * {@inheritDoc}
      */
-    public function quoteValue($value)
+    public function quoteValue($value): string
     {
         trigger_error(
             'Attempting to quote a value without specific driver level support'

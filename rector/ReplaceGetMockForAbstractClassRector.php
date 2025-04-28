@@ -41,11 +41,7 @@ class ReplaceGetMockForAbstractClassRector extends AbstractRector
 
     public function refactor(Node $node): ?Node
     {
-        if (! $this->isName($node->name, 'getMockForAbstractClass')) {
-            return null;
-        }
-
-        if (! $this->isName($node->var, 'this')) {
+        if (! $this->isName($node->name, 'getMockForAbstractClass') || ! $this->isName($node->var, 'this')) {
             return null;
         }
 

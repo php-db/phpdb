@@ -28,11 +28,7 @@ class AdapterServiceDelegator
     ) {
         $instance = $callback();
 
-        if (! $instance instanceof AdapterAwareInterface) {
-            return $instance;
-        }
-
-        if (! $container->has($this->adapterName)) {
+        if (! $instance instanceof AdapterAwareInterface || ! $container->has($this->adapterName)) {
             return $instance;
         }
 

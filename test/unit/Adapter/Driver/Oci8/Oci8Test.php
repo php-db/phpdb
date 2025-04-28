@@ -2,11 +2,11 @@
 
 namespace LaminasTest\Db\Adapter\Driver\Oci8;
 
+use Laminas\Db\Adapter\Driver\DriverInterface;
 use Laminas\Db\Adapter\Driver\Oci8\Connection;
 use Laminas\Db\Adapter\Driver\Oci8\Oci8;
 use Laminas\Db\Adapter\Driver\Oci8\Result;
 use Laminas\Db\Adapter\Driver\Oci8\Statement;
-use Override;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Depends;
 use PHPUnit\Framework\MockObject\Exception;
@@ -71,7 +71,7 @@ class Oci8Test extends TestCase
     {
         $this->oci8 = new Oci8([]);
         self::assertEquals('Oracle', $this->oci8->getDatabasePlatformName());
-        self::assertEquals('Oracle', $this->oci8->getDatabasePlatformName(Oci8::NAME_FORMAT_NATURAL));
+        self::assertEquals('Oracle', $this->oci8->getDatabasePlatformName(DriverInterface::NAME_FORMAT_NATURAL));
     }
 
     #[Depends('testRegisterConnection')]

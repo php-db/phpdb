@@ -9,7 +9,6 @@ use Laminas\Db\Adapter\Platform\Sql92;
 use Laminas\Db\ResultSet\ResultSet;
 use Laminas\Db\TableGateway\Feature\MasterSlaveFeature;
 use Laminas\Db\TableGateway\TableGateway;
-use Override;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;

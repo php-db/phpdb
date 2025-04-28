@@ -9,7 +9,6 @@ use Laminas\Db\Sql\Exception\InvalidArgumentException;
 use Laminas\Db\Sql\Expression;
 use Laminas\Db\Sql\ExpressionData;
 use Laminas\Db\Sql\Select;
-use Override;
 
 class Operator extends AbstractExpression implements PredicateInterface
 {

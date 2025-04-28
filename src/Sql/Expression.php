@@ -2,7 +2,6 @@
 
 namespace Laminas\Db\Sql;
 
-use Override;
 
 use function array_slice;
 use function array_unique;

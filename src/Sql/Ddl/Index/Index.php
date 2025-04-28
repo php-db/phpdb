@@ -6,7 +6,6 @@ use Laminas\Db\Sql\Argument;
 use Laminas\Db\Sql\ArgumentType;
 use Laminas\Db\Sql\ExpressionData;
 use Laminas\Db\Sql\ExpressionPart;
-use Override;
 
 use function count;
 use function implode;
@@ -29,7 +28,7 @@ class Index extends AbstractIndex
         $this->lengths = $lengths;
     }
 
-    #[Override]
+    #[\Laminas\Db\Sql\Ddl\Constraint\Override] #[Override]
     public function getExpressionData(): ExpressionData
     {
         $colCount = count($this->columns);

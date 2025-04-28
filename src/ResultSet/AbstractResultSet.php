@@ -131,7 +131,7 @@ abstract class AbstractResultSet implements Iterator, ResultSetInterface
      *
      * @return int
      */
-    public function getFieldCount()
+    public function getFieldCount(): int
     {
         if (null !== $this->fieldCount) {
             return $this->fieldCount;

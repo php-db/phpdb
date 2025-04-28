@@ -2,12 +2,12 @@
 
 namespace LaminasTest\Db\Adapter\Driver\Pgsql;
 
+use Laminas\Db\Adapter\Driver\DriverInterface;
 use Laminas\Db\Adapter\Driver\Pgsql\Connection;
 use Laminas\Db\Adapter\Driver\Pgsql\Pgsql;
 use Laminas\Db\Adapter\Driver\Pgsql\Result;
 use Laminas\Db\Adapter\Driver\Pgsql\Statement;
 use Laminas\Db\Adapter\Exception\RuntimeException;
-use Override;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Depends;
 use PHPUnit\Framework\MockObject\Exception;
@@ -85,7 +85,7 @@ class PgsqlTest extends TestCase
     {
         $this->pgsql = new Pgsql([]);
         self::assertEquals('Postgresql', $this->pgsql->getDatabasePlatformName());
-        self::assertEquals('PostgreSQL', $this->pgsql->getDatabasePlatformName(Pgsql::NAME_FORMAT_NATURAL));
+        self::assertEquals('PostgreSQL', $this->pgsql->getDatabasePlatformName(DriverInterface::NAME_FORMAT_NATURAL));
     }
 
     #[Depends('testRegisterConnection')]

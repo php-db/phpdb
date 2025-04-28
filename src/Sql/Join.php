@@ -4,7 +4,6 @@ namespace Laminas\Db\Sql;
 
 use Countable;
 use Iterator;
-use Override;
 use ReturnTypeWillChange;
 
 use function array_shift;

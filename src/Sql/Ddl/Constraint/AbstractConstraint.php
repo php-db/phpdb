@@ -6,7 +6,6 @@ use Laminas\Db\Sql\Argument;
 use Laminas\Db\Sql\ArgumentType;
 use Laminas\Db\Sql\ExpressionData;
 use Laminas\Db\Sql\ExpressionPart;
-use Override;
 
 use function array_fill;
 use function count;

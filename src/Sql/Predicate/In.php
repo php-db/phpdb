@@ -8,7 +8,6 @@ use Laminas\Db\Sql\ArgumentType;
 use Laminas\Db\Sql\Exception\InvalidArgumentException;
 use Laminas\Db\Sql\ExpressionData;
 use Laminas\Db\Sql\Select;
-use Override;
 
 use function vsprintf;
 

@@ -6,7 +6,6 @@ use Laminas\Db\Adapter\Driver\DriverInterface;
 use Laminas\Db\Adapter\Driver\Pdo\Pdo;
 use Laminas\Db\Adapter\Driver\Pdo\Result;
 use Laminas\Db\Exception\RuntimeException;
-use Override;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
@@ -44,11 +43,11 @@ class PdoTest extends TestCase
             ['123foo', null, ':123foo'],
             [1, null, '?'],
             ['1', null, '?'],
-            ['foo', Pdo::PARAMETERIZATION_NAMED, ':foo'],
-            ['foo_bar', Pdo::PARAMETERIZATION_NAMED, ':foo_bar'],
-            ['123foo', Pdo::PARAMETERIZATION_NAMED, ':123foo'],
-            [1, Pdo::PARAMETERIZATION_NAMED, ':1'],
-            ['1', Pdo::PARAMETERIZATION_NAMED, ':1'],
+            ['foo', DriverInterface::PARAMETERIZATION_NAMED, ':foo'],
+            ['foo_bar', DriverInterface::PARAMETERIZATION_NAMED, ':foo_bar'],
+            ['123foo', DriverInterface::PARAMETERIZATION_NAMED, ':123foo'],
+            [1, DriverInterface::PARAMETERIZATION_NAMED, ':1'],
+            ['1', DriverInterface::PARAMETERIZATION_NAMED, ':1'],
             [':foo', null, ':foo'],
         ];
     }

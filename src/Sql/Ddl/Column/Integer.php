@@ -3,7 +3,6 @@
 namespace Laminas\Db\Sql\Ddl\Column;
 
 use Laminas\Db\Sql\ExpressionData;
-use Override;
 
 use function sprintf;
 

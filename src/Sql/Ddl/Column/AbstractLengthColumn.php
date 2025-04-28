@@ -4,7 +4,6 @@ namespace Laminas\Db\Sql\Ddl\Column;
 
 use Laminas\Db\Sql\Argument;
 use Laminas\Db\Sql\ExpressionData;
-use Override;
 
 abstract class AbstractLengthColumn extends Column
 {

@@ -9,13 +9,13 @@ use Laminas\Db\Adapter\ParameterContainer;
 use Laminas\Db\Adapter\StatementContainer;
 use Laminas\Db\Sql\Exception\InvalidArgumentException;
 use Laminas\Db\Sql\Expression;
+use Laminas\Db\Sql\Insert;
 use Laminas\Db\Sql\InsertIgnore;
 use Laminas\Db\Sql\Select;
 use Laminas\Db\Sql\TableIdentifier;
 use LaminasTest\Db\DeprecatedAssertionsTrait;
 use LaminasTest\Db\TestAsset\Replace;
 use LaminasTest\Db\TestAsset\TrustingSql92Platform;
-use Override;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 use ReflectionException;
@@ -61,8 +61,8 @@ class InsertIgnoreTest extends TestCase
         self::assertEquals(['bar'], $this->insert->getRawState('values'));
 
         // test will merge cols and values of previously set stuff
-        $this->insert->values(['foo' => 'bax'], InsertIgnore::VALUES_MERGE);
-        $this->insert->values(['boom' => 'bam'], InsertIgnore::VALUES_MERGE);
+        $this->insert->values(['foo' => 'bax'], Insert::VALUES_MERGE);
+        $this->insert->values(['boom' => 'bam'], Insert::VALUES_MERGE);
         self::assertEquals(['foo', 'boom'], $this->insert->getRawState('columns'));
         self::assertEquals(['bax', 'bam'], $this->insert->getRawState('values'));
 
@@ -83,7 +83,7 @@ class InsertIgnoreTest extends TestCase
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('A Laminas\Db\Sql\Select instance cannot be provided with the merge flag');
-        $this->insert->values(new Select(), InsertIgnore::VALUES_MERGE);
+        $this->insert->values(new Select(), Insert::VALUES_MERGE);
     }
 
     public function testValuesThrowsExceptionWhenArrayMergeOverSelect(): void
@@ -95,7 +95,7 @@ class InsertIgnoreTest extends TestCase
             'An array of values cannot be provided with the merge flag when a Laminas\Db\Sql\Select instance already '
             . 'exists as the value source'
         );
-        $this->insert->values(['foo' => 'bar'], InsertIgnore::VALUES_MERGE);
+        $this->insert->values(['foo' => 'bar'], Insert::VALUES_MERGE);
     }
 
     /**
@@ -288,7 +288,7 @@ class InsertIgnoreTest extends TestCase
         $this->insert->into('foo')
             ->values(['bar' => 'baz', 'boo' => new Expression('NOW()'), 'bam' => null]);
         $this->insert->into('foo')
-            ->values(['qux' => 100], InsertIgnore::VALUES_MERGE);
+            ->values(['qux' => 100], Insert::VALUES_MERGE);
 
         self::assertEquals(
             'INSERT IGNORE INTO "foo" ("bar", "boo", "bam", "qux") VALUES (\'baz\', NOW(), NULL, \'100\')',

@@ -2,11 +2,11 @@
 
 namespace LaminasTest\Db\Adapter\Driver\Sqlsrv;
 
+use Laminas\Db\Adapter\Driver\DriverInterface;
 use Laminas\Db\Adapter\Driver\Sqlsrv\Connection;
 use Laminas\Db\Adapter\Driver\Sqlsrv\Result;
 use Laminas\Db\Adapter\Driver\Sqlsrv\Sqlsrv;
 use Laminas\Db\Adapter\Driver\Sqlsrv\Statement;
-use Override;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Depends;
 use PHPUnit\Framework\MockObject\Exception;
@@ -72,7 +72,7 @@ class SqlsrvTest extends TestCase
     {
         $this->sqlsrv = new Sqlsrv([]);
         self::assertEquals('SqlServer', $this->sqlsrv->getDatabasePlatformName());
-        self::assertEquals('SQLServer', $this->sqlsrv->getDatabasePlatformName(Sqlsrv::NAME_FORMAT_NATURAL));
+        self::assertEquals('SQLServer', $this->sqlsrv->getDatabasePlatformName(DriverInterface::NAME_FORMAT_NATURAL));
     }
 
     #[Depends('testRegisterConnection')]

@@ -120,18 +120,15 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
             $this->processInfo['subselectCount']++;
         } else {
             if ($this->limit === null) {
-                array_push($sqls, ') b ) WHERE b_rownum > (' . (int) $this->offset . ')');
+                $sqls[] = ') b ) WHERE b_rownum > (' . (int) $this->offset . ')';
             } else {
-                array_push(
-                    $sqls,
-                    ') b WHERE rownum <= ('
+                $sqls[] = ') b WHERE rownum <= ('
                     . (int) $this->offset
                     . '+'
                     . (int) $this->limit
                     . ')) WHERE b_rownum >= ('
                     . (int) $this->offset
-                    . ' + 1)'
-                );
+                    . ' + 1)';
             }
         }
 

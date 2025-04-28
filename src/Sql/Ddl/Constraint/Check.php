@@ -32,7 +32,7 @@ class Check extends AbstractConstraint
     /**
      * {@inheritDoc}
      */
-    public function getExpressionData(): ExpressionData
+    #[\Laminas\Db\Sql\Ddl\Constraint\Override] public function getExpressionData(): ExpressionData
     {
         $expressionPart = new ExpressionPart();
 

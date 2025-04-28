@@ -7,7 +7,6 @@ use Laminas\Db\Sql\ArgumentType;
 use Laminas\Db\Sql\Ddl\Constraint\ConstraintInterface;
 use Laminas\Db\Sql\ExpressionData;
 use Laminas\Db\Sql\ExpressionPart;
-use Override;
 
 class Column implements ColumnInterface
 {

@@ -4,7 +4,6 @@ namespace Laminas\Db\Sql;
 
 use Countable;
 use Iterator;
-use Override;
 
 use function array_map;
 use function array_merge;

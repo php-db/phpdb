@@ -3,7 +3,6 @@
 namespace LaminasTest\Db\Adapter;
 
 use Laminas\Db\Adapter\ParameterContainer;
-use Override;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\TestDox;
 use PHPUnit\Framework\TestCase;

@@ -2,7 +2,6 @@
 
 namespace LaminasTest\Db\Adapter\Driver\Pdo\TestAsset;
 
-use Override;
 use PDO;
 use PDOStatement;
 use PHPUnit\Framework\MockObject\MockObject;

@@ -7,7 +7,6 @@ use Laminas\Db\Sql\Argument;
 use Laminas\Db\Sql\ArgumentType;
 use Laminas\Db\Sql\Exception\InvalidArgumentException;
 use Laminas\Db\Sql\ExpressionData;
-use Override;
 
 class IsNull extends AbstractExpression implements PredicateInterface
 {

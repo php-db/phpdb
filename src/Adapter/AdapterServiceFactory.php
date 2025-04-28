@@ -25,8 +25,8 @@ class AdapterServiceFactory implements FactoryInterface
      *
      * @return Adapter
      */
-    public function createService(ServiceLocatorInterface $container)
+    public function createService(ServiceLocatorInterface $serviceLocator): Adapter
     {
-        return $this($container, Adapter::class);
+        return $this($serviceLocator, Adapter::class);
     }
 }

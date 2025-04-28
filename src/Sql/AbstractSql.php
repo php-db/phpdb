@@ -7,7 +7,6 @@ use Laminas\Db\Adapter\ParameterContainer;
 use Laminas\Db\Adapter\Platform\PlatformInterface;
 use Laminas\Db\Adapter\Platform\Sql92 as DefaultAdapterPlatform;
 use Laminas\Db\Sql\Platform\PlatformDecoratorInterface;
-use Override;
 use ValueError;
 
 use function count;

@@ -2,7 +2,6 @@
 
 namespace Laminas\Db\Sql;
 
-use Override;
 
 use function str_replace;
 

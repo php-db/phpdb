@@ -9,12 +9,10 @@ use Laminas\Db\ResultSet\AbstractResultSet;
 use Laminas\Db\ResultSet\Exception\InvalidArgumentException;
 use Laminas\Db\ResultSet\Exception\RuntimeException;
 use Laminas\Db\ResultSet\ResultSet;
-use Override;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
-use Random\RandomException;
 use SplStack;
 use stdClass;
 
@@ -183,7 +181,7 @@ class ResultSetIntegrationTest extends TestCase
     }
 
     /**
-     * @throws RandomException
+     * @throws Exception
      */
     public function testCountReturnsCountOfRows(): void
     {
@@ -194,7 +192,7 @@ class ResultSetIntegrationTest extends TestCase
     }
 
     /**
-     * @throws RandomException
+     * @throws Exception
      */
     public function testToArrayRaisesExceptionForRowsThatAreNotArraysOrArrayCastable(): void
     {

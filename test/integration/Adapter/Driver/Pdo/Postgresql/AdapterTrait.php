@@ -3,7 +3,6 @@
 namespace LaminasIntegrationTest\Db\Adapter\Driver\Pdo\Postgresql;
 
 use Laminas\Db\Adapter\Adapter;
-use Override;
 
 use function getenv;
 use function is_string;
