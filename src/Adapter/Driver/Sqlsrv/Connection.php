@@ -21,7 +21,7 @@ use function sqlsrv_query;
 use function sqlsrv_rollback;
 use function strtolower;
 
-final class Connection extends AbstractConnection
+class Connection extends AbstractConnection
 {
     /** @var Sqlsrv */
     protected $driver;

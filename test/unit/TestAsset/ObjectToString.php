@@ -4,7 +4,7 @@ namespace LaminasTest\Db\TestAsset;
 
 use Stringable;
 
-final class ObjectToString implements Stringable
+class ObjectToString implements Stringable
 {
     public function __construct(protected string $value)
     {

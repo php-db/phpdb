@@ -6,7 +6,7 @@ use Laminas\Db\Adapter\AdapterInterface;
 use Laminas\Db\Sql\Sql;
 use Laminas\Db\Sql\TableIdentifier;
 
-final class RowGateway extends AbstractRowGateway
+class RowGateway extends AbstractRowGateway
 {
     /**
      * Constructor

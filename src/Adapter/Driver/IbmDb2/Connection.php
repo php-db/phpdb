@@ -16,7 +16,7 @@ use function sprintf;
 
 use const E_WARNING;
 
-final class Connection extends AbstractConnection
+class Connection extends AbstractConnection
 {
     /** @var IbmDb2 */
     protected $driver;

@@ -12,7 +12,7 @@ use function array_merge;
 use function extension_loaded;
 use function is_string;
 
-final class Mysqli implements DriverInterface, Profiler\ProfilerAwareInterface
+class Mysqli implements DriverInterface, Profiler\ProfilerAwareInterface
 {
     /** @var Connection */
     protected $connection;
@@ -182,6 +182,16 @@ final class Mysqli implements DriverInterface, Profiler\ProfilerAwareInterface
     }
 
     /**
+     * Get prepare type
+     *
+     * @return string
+     */
+    public function getPrepareType()
+    {
+        return self::PARAMETERIZATION_POSITIONAL;
+    }
+
+    /**
      * Format parameter name
      *
      * @param string $name
@@ -191,5 +201,15 @@ final class Mysqli implements DriverInterface, Profiler\ProfilerAwareInterface
     public function formatParameterName($name, $type = null)
     {
         return '?';
+    }
+
+    /**
+     * Get last generated value
+     *
+     * @return mixed
+     */
+    public function getLastGeneratedValue()
+    {
+        return $this->getConnection()->getLastGeneratedValue();
     }
 }

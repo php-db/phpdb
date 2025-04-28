@@ -7,7 +7,7 @@ use Laminas\Db\Adapter\Exception;
 // phpcs:ignore SlevomatCodingStandard.Namespaces.UnusedUses.UnusedUse
 use ReturnTypeWillChange;
 
-final class Result implements ResultInterface
+class Result implements ResultInterface
 {
     /** @var resource */
     protected $resource;

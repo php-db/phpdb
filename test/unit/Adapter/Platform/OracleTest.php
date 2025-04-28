@@ -23,7 +23,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(Oracle::class, 'quoteValueList')]
 #[CoversMethod(Oracle::class, 'getIdentifierSeparator')]
 #[CoversMethod(Oracle::class, 'quoteIdentifierInFragment')]
-final class OracleTest extends TestCase
+class OracleTest extends TestCase
 {
     protected Oracle $platform;
 

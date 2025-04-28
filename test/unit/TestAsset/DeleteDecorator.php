@@ -4,7 +4,7 @@ namespace LaminasTest\Db\TestAsset;
 
 use Laminas\Db\Sql;
 
-final class DeleteDecorator extends Sql\Delete implements Sql\Platform\PlatformDecoratorInterface
+class DeleteDecorator extends Sql\Delete implements Sql\Platform\PlatformDecoratorInterface
 {
     protected ?object $subject;
 

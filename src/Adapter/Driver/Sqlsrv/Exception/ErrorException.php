@@ -6,7 +6,7 @@ use Laminas\Db\Adapter\Exception;
 
 use function sqlsrv_errors;
 
-final class ErrorException extends Exception\ErrorException implements ExceptionInterface
+class ErrorException extends Exception\ErrorException implements ExceptionInterface
 {
     /**
      * Errors

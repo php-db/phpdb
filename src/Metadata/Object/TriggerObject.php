@@ -4,7 +4,7 @@ namespace Laminas\Db\Metadata\Object;
 
 use DateTime;
 
-final class TriggerObject
+class TriggerObject
 {
     /** @var string */
     protected $name;

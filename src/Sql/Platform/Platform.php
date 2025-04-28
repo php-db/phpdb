@@ -14,7 +14,7 @@ use function sprintf;
 use function str_replace;
 use function strtolower;
 
-final class Platform extends AbstractPlatform
+class Platform extends AbstractPlatform
 {
     /** @var AdapterInterface */
     protected $adapter;

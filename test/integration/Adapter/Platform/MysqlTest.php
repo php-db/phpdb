@@ -14,7 +14,7 @@ use function getenv;
 
 #[Group('integration')]
 #[Group('integration-mysql')]
-final class MysqlTest extends TestCase
+class MysqlTest extends TestCase
 {
     /** @var array<string, resource|\PDO> */
     public array|\PDO $adapters = [];

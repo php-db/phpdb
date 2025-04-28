@@ -35,7 +35,7 @@ use ReflectionObject;
 #[CoversMethod(RowGateway::class, 'processPrimaryKeyData')]
 #[CoversMethod(RowGateway::class, 'count')]
 #[CoversMethod(RowGateway::class, 'toArray')]
-final class AbstractRowGatewayTest extends TestCase
+class AbstractRowGatewayTest extends TestCase
 {
     /** @var Adapter&MockObject */
     protected Adapter|MockObject $mockAdapter;

@@ -16,7 +16,7 @@ use PHPUnit\Framework\TestCase;
 use function extension_loaded;
 
 #[RequiresPhpExtension('pdo_sqlite')]
-final class SqliteMetadataTest extends TestCase
+class SqliteMetadataTest extends TestCase
 {
     protected SqliteMetadata $metadata;
 

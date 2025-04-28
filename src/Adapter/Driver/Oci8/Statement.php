@@ -26,7 +26,7 @@ use const SQLT_BIN;
 use const SQLT_CHR;
 use const SQLT_INT;
 
-final class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
+class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
 {
     /** @var resource */
     protected $oci8;

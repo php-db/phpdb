@@ -15,7 +15,7 @@ use function call_user_func;
 use function in_array;
 use function is_int;
 
-final class Result implements Iterator, ResultInterface
+class Result implements Iterator, ResultInterface
 {
     public const STATEMENT_MODE_SCROLLABLE = 'scrollable';
     public const STATEMENT_MODE_FORWARD    = 'forward';

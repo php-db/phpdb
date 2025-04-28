@@ -11,7 +11,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(Connection::class, 'setDriver')]
 #[CoversMethod(Connection::class, 'setConnectionParameters')]
 #[CoversMethod(Connection::class, 'getConnectionParameters')]
-final class ConnectionTest extends TestCase
+class ConnectionTest extends TestCase
 {
     protected Connection $connection;
 

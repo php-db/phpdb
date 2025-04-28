@@ -13,7 +13,7 @@ use Override;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-final class RowGatewayTest extends TestCase
+class RowGatewayTest extends TestCase
 {
     /** @var Adapter&MockObject */
     protected Adapter|MockObject $mockAdapter;

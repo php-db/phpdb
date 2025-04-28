@@ -12,7 +12,7 @@ use function array_unshift;
 use function call_user_func_array;
 use function is_array;
 
-final class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
+class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
 {
     /** @var \mysqli */
     protected $mysqli;

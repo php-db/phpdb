@@ -26,7 +26,7 @@ use PHPUnit\Framework\TestCase;
 /**
  * @psalm-type AliasedTable = array{alias: string|TableIdentifier}
  */
-final class TableGatewayTest extends TestCase
+class TableGatewayTest extends TestCase
 {
     protected Adapter&MockObject $mockAdapter;
 

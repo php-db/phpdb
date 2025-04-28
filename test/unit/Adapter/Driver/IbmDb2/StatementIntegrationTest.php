@@ -22,7 +22,7 @@ use function getenv;
 #[CoversMethod(Statement::class, 'execute')]
 #[Group('integration')]
 #[Group('integration-ibm_db2')]
-final class StatementIntegrationTest extends TestCase
+class StatementIntegrationTest extends TestCase
 {
     /** @var array<string, string> */
     protected string|array|false $variables = [

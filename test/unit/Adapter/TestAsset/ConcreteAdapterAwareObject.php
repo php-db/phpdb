@@ -6,7 +6,7 @@ use Laminas\Db\Adapter\AdapterAwareInterface;
 use Laminas\Db\Adapter\AdapterAwareTrait;
 use Laminas\Db\Adapter\AdapterInterface;
 
-final class ConcreteAdapterAwareObject implements AdapterAwareInterface
+class ConcreteAdapterAwareObject implements AdapterAwareInterface
 {
     use AdapterAwareTrait;
 

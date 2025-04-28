@@ -14,7 +14,7 @@ use function is_callable;
 use function is_int;
 use function is_resource;
 
-final class Result implements Iterator, ResultInterface
+class Result implements Iterator, ResultInterface
 {
     /** @var resource */
     protected $resource;

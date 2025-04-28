@@ -17,7 +17,7 @@ use function set_error_handler;
 
 use const E_WARNING;
 
-final class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
+class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
 {
     /** @var resource */
     protected $db2;

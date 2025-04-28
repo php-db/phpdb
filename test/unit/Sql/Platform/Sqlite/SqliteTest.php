@@ -13,7 +13,7 @@ use function current;
 use function key;
 
 #[CoversMethod(Sqlite::class, '__construct')]
-final class SqliteTest extends TestCase
+class SqliteTest extends TestCase
 {
     #[TestDox('unit test / object test: Test Sqlite constructor will register the decorator')]
     public function testConstructorRegistersSqliteDecorator(): void

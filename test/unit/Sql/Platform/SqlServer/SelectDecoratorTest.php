@@ -18,7 +18,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(SelectDecorator::class, 'prepareStatement')]
 #[CoversMethod(SelectDecorator::class, 'processLimitOffset')]
 #[CoversMethod(SelectDecorator::class, 'getSqlString')]
-final class SelectDecoratorTest extends TestCase
+class SelectDecoratorTest extends TestCase
 {
     /**
      * @param array<string, mixed> $expectedParams

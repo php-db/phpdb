@@ -14,7 +14,7 @@ use function is_array;
 use function is_bool;
 use function is_int;
 
-final class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
+class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
 {
     /** @var \PDO */
     protected $pdo;

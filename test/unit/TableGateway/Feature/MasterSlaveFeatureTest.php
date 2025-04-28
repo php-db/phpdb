@@ -14,7 +14,7 @@ use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-final class MasterSlaveFeatureTest extends TestCase
+class MasterSlaveFeatureTest extends TestCase
 {
     protected MockObject&AdapterInterface $mockMasterAdapter;
     protected MockObject&AdapterInterface $mockSlaveAdapter;

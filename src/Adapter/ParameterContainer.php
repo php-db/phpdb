@@ -22,7 +22,7 @@ use function next;
 use function reset;
 use function strpos;
 
-final class ParameterContainer implements Iterator, ArrayAccess, Countable
+class ParameterContainer implements Iterator, ArrayAccess, Countable
 {
     public const TYPE_AUTO    = 'auto';
     public const TYPE_NULL    = 'null';

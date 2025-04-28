@@ -15,7 +15,7 @@ use function is_array;
 use function is_resource;
 use function is_string;
 
-final class Oci8 implements DriverInterface, Profiler\ProfilerAwareInterface
+class Oci8 implements DriverInterface, Profiler\ProfilerAwareInterface
 {
     public const FEATURES_DEFAULT = 'default';
 
@@ -234,6 +234,14 @@ final class Oci8 implements DriverInterface, Profiler\ProfilerAwareInterface
     }
 
     /**
+     * @return string
+     */
+    public function getPrepareType()
+    {
+        return self::PARAMETERIZATION_NAMED;
+    }
+
+    /**
      * @param string $name
      * @param mixed  $type
      * @return string
@@ -241,5 +249,13 @@ final class Oci8 implements DriverInterface, Profiler\ProfilerAwareInterface
     public function formatParameterName($name, $type = null)
     {
         return ':' . $name;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getLastGeneratedValue()
+    {
+        return $this->getConnection()->getLastGeneratedValue();
     }
 }

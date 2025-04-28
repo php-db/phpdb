@@ -24,7 +24,7 @@ use TypeError;
 #[CoversMethod(Expression::class, 'setParameters')]
 #[CoversMethod(Expression::class, 'getParameters')]
 #[CoversMethod(Expression::class, 'getExpressionData')]
-final class ExpressionTest extends TestCase
+class ExpressionTest extends TestCase
 {
     /**
      * @return Expression

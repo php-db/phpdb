@@ -23,7 +23,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(Result::class, 'getGeneratedValue')]
 #[Group('integration')]
 #[Group('integration-ibm_db2')]
-final class ResultIntegrationTest extends TestCase
+class ResultIntegrationTest extends TestCase
 {
     protected Result $object;
 

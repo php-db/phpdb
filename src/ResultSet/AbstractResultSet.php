@@ -36,7 +36,7 @@ abstract class AbstractResultSet implements Iterator, ResultSetInterface
     protected $count;
 
     /** @var Iterator|IteratorAggregate|ResultInterface */
-    protected $dataSource;
+    protected $dataSource = null;
 
     /** @var int */
     protected $fieldCount;
@@ -118,8 +118,10 @@ abstract class AbstractResultSet implements Iterator, ResultSetInterface
 
     /**
      * Get the data source used to create the result set
+     *
+     * @return null|Iterator
      */
-    public function getDataSource(): Iterator|IteratorAggregate
+    public function getDataSource()
     {
         return $this->dataSource;
     }

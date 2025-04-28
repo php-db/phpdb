@@ -8,7 +8,7 @@ use Laminas\Db\Sql\Insert;
 
 use function array_search;
 
-final class SequenceFeature extends AbstractFeature
+class SequenceFeature extends AbstractFeature
 {
     /** @var string */
     protected $primaryKeyField;

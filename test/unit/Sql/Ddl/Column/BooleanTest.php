@@ -11,7 +11,7 @@ use PHPUnit\Framework\TestCase;
 
 #[CoversMethod(Boolean::class, 'getExpressionData')]
 #[CoversClass(Boolean::class)]
-final class BooleanTest extends TestCase
+class BooleanTest extends TestCase
 {
     public function testGetExpressionData(): void
     {

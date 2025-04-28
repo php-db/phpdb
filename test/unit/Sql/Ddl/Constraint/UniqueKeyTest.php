@@ -8,7 +8,7 @@ use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 
 #[CoversMethod(UniqueKey::class, 'getExpressionData')]
-final class UniqueKeyTest extends TestCase
+class UniqueKeyTest extends TestCase
 {
     public function testGetExpressionData(): void
     {

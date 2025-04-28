@@ -12,7 +12,7 @@ use PHPUnit\Framework\TestCase;
 
 #[CoversMethod(CreateTableDecorator::class, 'setSubject')]
 #[CoversMethod(CreateTableDecorator::class, 'getSqlString')]
-final class CreateTableDecoratorTest extends TestCase
+class CreateTableDecoratorTest extends TestCase
 {
     public function testSetSubject(): void
     {

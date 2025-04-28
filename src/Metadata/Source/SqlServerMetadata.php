@@ -13,7 +13,7 @@ use function key;
 
 use const CASE_LOWER;
 
-final class SqlServerMetadata extends AbstractSource
+class SqlServerMetadata extends AbstractSource
 {
     /**
      * @return void

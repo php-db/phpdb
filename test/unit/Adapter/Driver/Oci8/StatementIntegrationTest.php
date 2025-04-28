@@ -21,7 +21,7 @@ use function getenv;
 #[CoversMethod(Statement::class, 'execute')]
 #[Group('integration')]
 #[Group('integration-oracle')]
-final class StatementIntegrationTest extends TestCase
+class StatementIntegrationTest extends TestCase
 {
     /** @var array<string, string> */
     protected string|array|false $variables = [

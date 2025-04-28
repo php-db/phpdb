@@ -13,7 +13,7 @@ use function is_array;
  *
  * Allows configuring several database instances (such as writer and reader).
  */
-final class AdapterAbstractServiceFactory implements AbstractFactoryInterface
+class AdapterAbstractServiceFactory implements AbstractFactoryInterface
 {
     /** @var array */
     protected $config;

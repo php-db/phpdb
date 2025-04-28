@@ -32,7 +32,7 @@ use TypeError;
 #[CoversMethod(Insert::class, '__unset')]
 #[CoversMethod(Insert::class, '__isset')]
 #[CoversMethod(Insert::class, '__get')]
-final class InsertTest extends TestCase
+class InsertTest extends TestCase
 {
     use DeprecatedAssertionsTrait;
 

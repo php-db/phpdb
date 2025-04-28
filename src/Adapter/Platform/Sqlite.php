@@ -6,7 +6,7 @@ use Laminas\Db\Adapter\Driver\DriverInterface;
 use Laminas\Db\Adapter\Driver\Pdo;
 use Laminas\Db\Adapter\Exception;
 
-final class Sqlite extends AbstractPlatform
+class Sqlite extends AbstractPlatform
 {
     /** @var string[] */
     protected $quoteIdentifier = ['"', '"'];

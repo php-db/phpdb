@@ -8,7 +8,7 @@ use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 
 #[CoversMethod(Timestamp::class, 'getExpressionData')]
-final class TimestampTest extends TestCase
+class TimestampTest extends TestCase
 {
     public function testGetExpressionData(): void
     {

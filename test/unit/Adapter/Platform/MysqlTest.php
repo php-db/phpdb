@@ -17,7 +17,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(Mysql::class, 'quoteValueList')]
 #[CoversMethod(Mysql::class, 'getIdentifierSeparator')]
 #[CoversMethod(Mysql::class, 'quoteIdentifierInFragment')]
-final class MysqlTest extends TestCase
+class MysqlTest extends TestCase
 {
     protected Mysql $platform;
 

@@ -12,7 +12,7 @@ use function is_string;
 use function preg_match;
 use function strtoupper;
 
-final class SqliteMetadata extends AbstractSource
+class SqliteMetadata extends AbstractSource
 {
     /**
      * @return void

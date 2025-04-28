@@ -15,7 +15,7 @@ use function trigger_error;
 use const PREG_SPLIT_DELIM_CAPTURE;
 use const PREG_SPLIT_NO_EMPTY;
 
-final class IbmDb2 extends AbstractPlatform
+class IbmDb2 extends AbstractPlatform
 {
     /** @var string */
     protected $identifierSeparator = '.';

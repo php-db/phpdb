@@ -36,7 +36,7 @@ use function is_string;
  * @method CreateTable createTable(null|string|TableIdentifier $sqlString)
  * @method Column createColumn(null|string $sqlString)
  */
-final class SqlFunctionalTest extends TestCase
+class SqlFunctionalTest extends TestCase
 {
     protected static function dataProviderCommonProcessMethods(): array
     {

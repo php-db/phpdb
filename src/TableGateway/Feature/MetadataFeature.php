@@ -13,7 +13,7 @@ use function count;
 use function current;
 use function is_array;
 
-final class MetadataFeature extends AbstractFeature
+class MetadataFeature extends AbstractFeature
 {
     /** @var MetadataInterface */
     protected $metadata;

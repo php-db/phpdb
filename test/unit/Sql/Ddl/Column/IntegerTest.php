@@ -11,7 +11,7 @@ use PHPUnit\Framework\TestCase;
 
 #[CoversMethod(Integer::class, '__construct')]
 #[CoversMethod(Column::class, 'getExpressionData')]
-final class IntegerTest extends TestCase
+class IntegerTest extends TestCase
 {
     public function testObjectConstruction(): void
     {

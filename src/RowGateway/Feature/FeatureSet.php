@@ -7,7 +7,7 @@ use Laminas\Db\RowGateway\AbstractRowGateway;
 use function call_user_func_array;
 use function method_exists;
 
-final class FeatureSet
+class FeatureSet
 {
     public const APPLY_HALT = 'halt';
 

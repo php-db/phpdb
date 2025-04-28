@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(Profiler::class, 'profilerFinish')]
 #[CoversMethod(Profiler::class, 'getLastProfile')]
 #[CoversMethod(Profiler::class, 'getProfiles')]
-final class ProfilerTest extends TestCase
+class ProfilerTest extends TestCase
 {
     protected Profiler $profiler;
 

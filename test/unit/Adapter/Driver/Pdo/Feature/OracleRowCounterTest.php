@@ -18,7 +18,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(OracleRowCounter::class, 'getCountForStatement')]
 #[CoversMethod(OracleRowCounter::class, 'getCountForSql')]
 #[CoversMethod(OracleRowCounter::class, 'getRowCountClosure')]
-final class OracleRowCounterTest extends TestCase
+class OracleRowCounterTest extends TestCase
 {
     protected OracleRowCounter $rowCounter;
 
@@ -64,7 +64,7 @@ final class OracleRowCounterTest extends TestCase
      *
      * @return MockObject|Statement
      */
-    protected function getMockStatement(string $sql, int $returnValue): Statement|MockObject&Statement
+    protected function getMockStatement(string $sql, int $returnValue): MockObject&Statement
     {
         /** @var Statement|MockObject $statement */
         $statement = $this->getMockBuilder(Statement::class)

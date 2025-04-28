@@ -16,7 +16,7 @@ use Laminas\EventManager\EventsCapableInterface;
 
 use function get_class;
 
-final class EventFeature extends AbstractFeature implements
+class EventFeature extends AbstractFeature implements
     EventFeatureEventsInterface,
     EventsCapableInterface
 {

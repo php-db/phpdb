@@ -15,7 +15,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-final class FactoryTest extends TestCase
+class FactoryTest extends TestCase
 {
     /**
      * @param class-string $expectedReturnClass

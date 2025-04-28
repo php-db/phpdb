@@ -17,7 +17,7 @@ use function pg_connect;
 
 #[Group('integration')]
 #[Group('integration-postgres')]
-final class PostgresqlTest extends TestCase
+class PostgresqlTest extends TestCase
 {
     /** @var array<string, resource> */
     public array|\PDO $adapters = [];

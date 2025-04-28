@@ -18,7 +18,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(SqliteRowCounter::class, 'getCountForStatement')]
 #[CoversMethod(SqliteRowCounter::class, 'getCountForSql')]
 #[CoversMethod(SqliteRowCounter::class, 'getRowCountClosure')]
-final class SqliteRowCounterTest extends TestCase
+class SqliteRowCounterTest extends TestCase
 {
     protected SqliteRowCounter $rowCounter;
 
@@ -64,7 +64,7 @@ final class SqliteRowCounterTest extends TestCase
      *
      * @return MockObject|Statement
      */
-    protected function getMockStatement(string $sql, int $returnValue): Statement|MockObject&Statement
+    protected function getMockStatement(string $sql, int $returnValue): MockObject&Statement
     {
         /** @var Statement|MockObject $statement */
         $statement = $this->getMockBuilder(Statement::class)

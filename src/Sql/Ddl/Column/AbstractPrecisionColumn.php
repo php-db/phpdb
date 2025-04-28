@@ -59,10 +59,9 @@ abstract class AbstractPrecisionColumn extends AbstractLengthColumn
 
     /**
      * {@inheritDoc}
-     *
-     * @return int|null|string
+     * @return string
      */
-    protected function getLengthExpression(): int|string|null
+    protected function getLengthExpression(): string
     {
         if ($this->decimal !== null) {
             return $this->length . ',' . $this->decimal;

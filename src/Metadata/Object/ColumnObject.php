@@ -4,7 +4,7 @@ namespace Laminas\Db\Metadata\Object;
 
 use function array_key_exists;
 
-final class ColumnObject
+class ColumnObject
 {
     /** @var string */
     protected $name;

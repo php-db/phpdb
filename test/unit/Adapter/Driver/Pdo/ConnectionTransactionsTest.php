@@ -20,7 +20,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(Connection::class, 'inTransaction()')]
 #[CoversMethod(Connection::class, 'commit()')]
 #[CoversMethod(Connection::class, 'rollback()')]
-final class ConnectionTransactionsTest extends TestCase
+class ConnectionTransactionsTest extends TestCase
 {
     /** @var Wrapper */
     protected Wrapper|ConnectionWrapper $wrapper;

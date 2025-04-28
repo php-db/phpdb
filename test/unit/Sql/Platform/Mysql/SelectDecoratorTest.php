@@ -25,7 +25,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(SelectDecorator::class, 'processLimit')]
 #[CoversMethod(SelectDecorator::class, 'processOffset')]
 #[CoversMethod(SelectDecorator::class, 'getSqlString')]
-final class SelectDecoratorTest extends TestCase
+class SelectDecoratorTest extends TestCase
 {
     protected Adapter&MockObject $mockAdapter;
 

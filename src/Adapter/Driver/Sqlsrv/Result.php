@@ -17,7 +17,7 @@ use const SQLSRV_FETCH_ASSOC;
 use const SQLSRV_SCROLL_FIRST;
 use const SQLSRV_SCROLL_NEXT;
 
-final class Result implements Iterator, ResultInterface
+class Result implements Iterator, ResultInterface
 {
     /** @var resource */
     protected $resource;

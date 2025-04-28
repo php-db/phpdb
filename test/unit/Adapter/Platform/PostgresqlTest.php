@@ -17,7 +17,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(Postgresql::class, 'quoteValueList')]
 #[CoversMethod(Postgresql::class, 'getIdentifierSeparator')]
 #[CoversMethod(Postgresql::class, 'quoteIdentifierInFragment')]
-final class PostgresqlTest extends TestCase
+class PostgresqlTest extends TestCase
 {
     protected Postgresql $platform;
 

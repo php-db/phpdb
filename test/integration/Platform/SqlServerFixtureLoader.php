@@ -12,7 +12,7 @@ use function sqlsrv_connect;
 use function sqlsrv_errors;
 use function sqlsrv_query;
 
-final class SqlServerFixtureLoader implements FixtureLoader
+class SqlServerFixtureLoader implements FixtureLoader
 {
     private string $fixtureFilePrefix = __DIR__ . '/../TestFixtures/sqlsrv';
 

@@ -15,7 +15,7 @@ use function is_array;
 use function key;
 use function sprintf;
 
-final class Argument
+class Argument
 {
     public function __construct(
         protected null|bool|string|int|float|array|ExpressionInterface|SqlInterface $value = null,

@@ -2,7 +2,7 @@
 
 namespace Laminas\Db\Metadata\Object;
 
-final class ConstraintKeyObject
+class ConstraintKeyObject
 {
     public const FK_CASCADE     = 'CASCADE';
     public const FK_SET_NULL    = 'SET NULL';

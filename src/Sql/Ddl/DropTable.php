@@ -6,7 +6,7 @@ use Laminas\Db\Adapter\Platform\PlatformInterface;
 use Laminas\Db\Sql\AbstractSql;
 use Laminas\Db\Sql\TableIdentifier;
 
-final class DropTable extends AbstractSql implements SqlInterface
+class DropTable extends AbstractSql implements SqlInterface
 {
     public const TABLE = 'table';
 

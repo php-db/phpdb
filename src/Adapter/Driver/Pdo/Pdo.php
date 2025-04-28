@@ -18,7 +18,7 @@ use function preg_match;
 use function sprintf;
 use function ucfirst;
 
-final class Pdo implements DriverInterface, DriverFeatureInterface, Profiler\ProfilerAwareInterface
+class Pdo implements DriverInterface, DriverFeatureInterface, Profiler\ProfilerAwareInterface
 {
     /**
      * @const
@@ -289,6 +289,14 @@ final class Pdo implements DriverInterface, DriverFeatureInterface, Profiler\Pro
     public function getResultPrototype()
     {
         return $this->resultPrototype;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPrepareType()
+    {
+        return self::PARAMETERIZATION_NAMED;
     }
 
     /**

@@ -16,7 +16,7 @@ use function strtoupper;
 use function substr_replace;
 use function uksort;
 
-final class AlterTableDecorator extends AlterTable implements PlatformDecoratorInterface
+class AlterTableDecorator extends AlterTable implements PlatformDecoratorInterface
 {
     /** @var AlterTable */
     protected $subject;
@@ -83,7 +83,7 @@ final class AlterTableDecorator extends AlterTable implements PlatformDecoratorI
     /**
      * @return array
      */
-    protected function processAddColumns(?PlatformInterface $adapterPlatform = null)
+    protected function processAddColumns(?PlatformInterface $adapterPlatform = null): array
     {
         $sqls = [];
 
@@ -152,7 +152,7 @@ final class AlterTableDecorator extends AlterTable implements PlatformDecoratorI
     /**
      * @return array
      */
-    protected function processChangeColumns(?PlatformInterface $adapterPlatform = null)
+    protected function processChangeColumns(?PlatformInterface $adapterPlatform = null): array
     {
         $sqls = [];
         foreach ($this->changeColumns as $name => $column) {

@@ -16,7 +16,7 @@ use function strtoupper;
 use function substr_replace;
 use function uksort;
 
-final class CreateTableDecorator extends CreateTable implements PlatformDecoratorInterface
+class CreateTableDecorator extends CreateTable implements PlatformDecoratorInterface
 {
     /** @var CreateTable */
     protected $subject;

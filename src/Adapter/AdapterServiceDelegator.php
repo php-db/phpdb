@@ -4,7 +4,7 @@ namespace Laminas\Db\Adapter;
 
 use Psr\Container\ContainerInterface;
 
-final class AdapterServiceDelegator
+class AdapterServiceDelegator
 {
     /** @var string */
     private $adapterName;

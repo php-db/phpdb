@@ -8,7 +8,7 @@ use Laminas\Db\Sql\ExpressionData;
 use Laminas\Db\Sql\ExpressionInterface;
 use Laminas\Db\Sql\ExpressionPart;
 
-final class Check extends AbstractConstraint
+class Check extends AbstractConstraint
 {
     /** @var string|ExpressionInterface */
     protected $expression;

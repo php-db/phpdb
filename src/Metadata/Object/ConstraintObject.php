@@ -2,7 +2,7 @@
 
 namespace Laminas\Db\Metadata\Object;
 
-final class ConstraintObject
+class ConstraintObject
 {
     /** @var string */
     protected $name;

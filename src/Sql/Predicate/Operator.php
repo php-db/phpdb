@@ -11,7 +11,7 @@ use Laminas\Db\Sql\ExpressionData;
 use Laminas\Db\Sql\Select;
 use Override;
 
-final class Operator extends AbstractExpression implements PredicateInterface
+class Operator extends AbstractExpression implements PredicateInterface
 {
     public const OPERATOR_EQUAL_TO                 = '=';
     public const OP_EQ                             = '=';

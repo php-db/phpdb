@@ -21,7 +21,7 @@ use PHPUnit\Framework\Attributes\Group;
 #[CoversMethod(Connection::class, 'getLastGeneratedValue')]
 #[Group('integration')]
 #[Group('integration-oracle')]
-final class ConnectionIntegrationTest extends AbstractIntegrationTestCase
+class ConnectionIntegrationTest extends AbstractIntegrationTestCase
 {
     public function testGetCurrentSchema(): void
     {

@@ -10,11 +10,11 @@ use function getenv;
 use function print_r;
 use function sprintf;
 
-final class MysqlFixtureLoader implements FixtureLoader
+class MysqlFixtureLoader implements FixtureLoader
 {
     private string $fixtureFile = __DIR__ . '/../TestFixtures/mysql.sql';
 
-    private PDO $pdo;
+    private ?PDO $pdo;
 
     /**
      * @throws Exception

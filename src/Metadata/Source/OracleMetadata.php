@@ -10,7 +10,7 @@ use function strtoupper;
 /**
  * Metadata source for Oracle
  */
-final class OracleMetadata extends AbstractSource
+class OracleMetadata extends AbstractSource
 {
     /** @var array */
     protected $constraintTypeMap = [

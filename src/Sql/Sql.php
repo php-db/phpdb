@@ -8,7 +8,7 @@ use Laminas\Db\Adapter\StatementContainerInterface;
 
 use function sprintf;
 
-final class Sql
+class Sql
 {
     protected AdapterInterface $adapter;
 
@@ -46,7 +46,7 @@ final class Sql
         return $this;
     }
 
-    public function getTable(): array|string|TableIdentifier|null|string|TableIdentifier
+    public function getTable(): array|string|TableIdentifier|null
     {
         return $this->table;
     }

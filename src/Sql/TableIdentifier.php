@@ -2,7 +2,7 @@
 
 namespace Laminas\Db\Sql;
 
-final class TableIdentifier
+class TableIdentifier
 {
     protected string $table;
 

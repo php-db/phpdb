@@ -7,7 +7,7 @@ use Laminas\Db\Sql\ArgumentType;
 use Laminas\Db\Sql\Predicate\Operator;
 use PHPUnit\Framework\TestCase;
 
-final class OperatorTest extends TestCase
+class OperatorTest extends TestCase
 {
     public function testEmptyConstructorYieldsNullLeftAndRightValues(): void
     {

@@ -17,7 +17,7 @@ use function pg_prepare;
 use function preg_replace_callback;
 use function sprintf;
 
-final class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
+class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
 {
     /** @var int */
     protected static $statementIndex = 0;

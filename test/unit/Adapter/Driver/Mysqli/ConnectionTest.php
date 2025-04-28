@@ -18,7 +18,7 @@ use const MYSQLI_CLIENT_SSL_DONT_VERIFY_SERVER_CERT;
 #[CoversMethod(Connection::class, 'setDriver')]
 #[CoversMethod(Connection::class, 'setConnectionParameters')]
 #[CoversMethod(Connection::class, 'getConnectionParameters')]
-final class ConnectionTest extends TestCase
+class ConnectionTest extends TestCase
 {
     protected Connection $connection;
 

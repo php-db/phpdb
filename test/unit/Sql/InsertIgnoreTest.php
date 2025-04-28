@@ -21,7 +21,7 @@ use PHPUnit\Framework\TestCase;
 use ReflectionException;
 use TypeError;
 
-final class InsertIgnoreTest extends TestCase
+class InsertIgnoreTest extends TestCase
 {
     use DeprecatedAssertionsTrait;
 

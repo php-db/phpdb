@@ -16,7 +16,7 @@ use function preg_match;
 use function sprintf;
 use function strpos;
 
-final class SelectDecorator extends Select implements PlatformDecoratorInterface
+class SelectDecorator extends Select implements PlatformDecoratorInterface
 {
     /** @var bool */
     protected $isSelectContainDistinct = false;

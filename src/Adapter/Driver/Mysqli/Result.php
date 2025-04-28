@@ -15,7 +15,7 @@ use function array_fill;
 use function call_user_func_array;
 use function count;
 
-final class Result implements
+class Result implements
     Iterator,
     ResultInterface
 {

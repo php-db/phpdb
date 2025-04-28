@@ -16,7 +16,7 @@ use PHPUnit\Framework\TestCase;
 
 #[CoversMethod(Adapter::class, 'query')]
 #[CoversMethod(ResultSet::class, 'current')]
-final class QueryTest extends TestCase
+class QueryTest extends TestCase
 {
     use AdapterTrait;
     use BaseAdapterTrait;

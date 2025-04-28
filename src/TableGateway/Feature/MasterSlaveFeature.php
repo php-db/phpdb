@@ -5,7 +5,7 @@ namespace Laminas\Db\TableGateway\Feature;
 use Laminas\Db\Adapter\AdapterInterface;
 use Laminas\Db\Sql\Sql;
 
-final class MasterSlaveFeature extends AbstractFeature
+class MasterSlaveFeature extends AbstractFeature
 {
     /** @var AdapterInterface */
     protected $slaveAdapter;

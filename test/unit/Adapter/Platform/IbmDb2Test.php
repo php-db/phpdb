@@ -18,7 +18,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(IbmDb2::class, 'quoteValueList')]
 #[CoversMethod(IbmDb2::class, 'getIdentifierSeparator')]
 #[CoversMethod(IbmDb2::class, 'quoteIdentifierInFragment')]
-final class IbmDb2Test extends TestCase
+class IbmDb2Test extends TestCase
 {
     protected IbmDb2 $platform;
 

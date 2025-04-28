@@ -4,7 +4,7 @@ namespace LaminasTest\Db\TestAsset;
 
 use Laminas\Db\Sql;
 
-final class SelectDecorator extends Sql\Select implements Sql\Platform\PlatformDecoratorInterface
+class SelectDecorator extends Sql\Select implements Sql\Platform\PlatformDecoratorInterface
 {
     protected ?object $subject;
 

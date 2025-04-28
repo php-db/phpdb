@@ -2,6 +2,6 @@
 
 namespace Laminas\Db\Sql;
 
-final class Where extends Predicate\Predicate
+class Where extends Predicate\Predicate
 {
 }

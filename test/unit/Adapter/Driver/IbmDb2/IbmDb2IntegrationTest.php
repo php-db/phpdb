@@ -12,7 +12,7 @@ use stdClass;
 #[CoversMethod(IbmDb2::class, 'checkEnvironment')]
 #[Group('integration')]
 #[Group('integration-ibm_db2')]
-final class IbmDb2IntegrationTest extends AbstractIntegrationTestCase
+class IbmDb2IntegrationTest extends AbstractIntegrationTestCase
 {
     #[Group('integration-ibm_db2')]
     public function testCheckEnvironment(): void

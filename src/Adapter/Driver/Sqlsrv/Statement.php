@@ -16,7 +16,7 @@ use function substr_count;
 
 use const SQLSRV_PARAM_IN;
 
-final class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
+class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
 {
     /** @var resource */
     protected $sqlsrv;

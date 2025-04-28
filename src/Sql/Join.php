@@ -27,7 +27,7 @@ use function sprintf;
  * @implements Iterator
  * @implements Countable
  */
-final class Join implements Iterator, Countable
+class Join implements Iterator, Countable
 {
     public const JOIN_INNER       = 'inner';
     public const JOIN_OUTER       = 'outer';

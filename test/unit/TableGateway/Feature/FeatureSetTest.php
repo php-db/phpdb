@@ -24,7 +24,7 @@ use ReflectionClass;
 
 #[CoversMethod(FeatureSet::class, 'canCallMagicCall')]
 #[CoversMethod(FeatureSet::class, 'callMagicCall')]
-final class FeatureSetTest extends TestCase
+class FeatureSetTest extends TestCase
 {
     /**
      * @cover FeatureSet::addFeature

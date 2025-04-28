@@ -12,7 +12,7 @@ use PHPUnit\Framework\TestCase;
 
 #[CoversMethod(Connection::class, 'getResource')]
 #[CoversMethod(Connection::class, 'getDsn')]
-final class ConnectionTest extends TestCase
+class ConnectionTest extends TestCase
 {
     protected Connection $connection;
 

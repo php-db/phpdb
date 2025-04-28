@@ -8,7 +8,7 @@ use PHPUnit\Event\TestSuite\FinishedSubscriber;
 
 use function printf;
 
-final class IntegrationTestStoppedListener implements FinishedSubscriber
+class IntegrationTestStoppedListener implements FinishedSubscriber
 {
     /** @var FixtureLoader[] */
     private array $fixtureLoaders = [];

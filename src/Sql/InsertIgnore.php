@@ -2,7 +2,7 @@
 
 namespace Laminas\Db\Sql;
 
-final class InsertIgnore extends Insert
+class InsertIgnore extends Insert
 {
     /** @var array Specification array */
     protected array $specifications = [

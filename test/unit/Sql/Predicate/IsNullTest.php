@@ -7,7 +7,7 @@ use Laminas\Db\Sql\ArgumentType;
 use Laminas\Db\Sql\Predicate\IsNotNull;
 use PHPUnit\Framework\TestCase;
 
-final class IsNullTest extends TestCase
+class IsNullTest extends TestCase
 {
     public function testEmptyConstructorYieldsNullIdentifier(): void
     {

@@ -13,7 +13,7 @@ use PHPUnit\Framework\TestCase;
 
 #[CoversMethod(Pdo::class, 'getDatabasePlatformName')]
 #[CoversMethod(Pdo::class, 'getResultPrototype')]
-final class PdoTest extends TestCase
+class PdoTest extends TestCase
 {
     protected Pdo $pdo;
 

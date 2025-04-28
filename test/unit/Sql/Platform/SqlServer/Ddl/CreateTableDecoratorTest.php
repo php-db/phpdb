@@ -9,7 +9,7 @@ use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 
 #[CoversMethod(CreateTableDecorator::class, 'getSqlString')]
-final class CreateTableDecoratorTest extends TestCase
+class CreateTableDecoratorTest extends TestCase
 {
     public function testGetSqlString(): void
     {

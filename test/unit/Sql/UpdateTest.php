@@ -39,7 +39,7 @@ use TypeError;
 #[CoversMethod(Update::class, '__get')]
 #[CoversMethod(Update::class, '__clone')]
 #[CoversMethod(Update::class, 'join')]
-final class UpdateTest extends TestCase
+class UpdateTest extends TestCase
 {
     use DeprecatedAssertionsTrait;
 

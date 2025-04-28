@@ -16,7 +16,7 @@ use function strtoupper;
 use const MYSQLI_CLIENT_SSL;
 use const MYSQLI_CLIENT_SSL_DONT_VERIFY_SERVER_CERT;
 
-final class Connection extends AbstractConnection
+class Connection extends AbstractConnection
 {
     /** @var Mysqli */
     protected $driver;
@@ -284,7 +284,7 @@ final class Connection extends AbstractConnection
     /**
      * {@inheritDoc}
      */
-    public function getLastGeneratedValue($name = null): int|string|string|string|string|string|string
+    public function getLastGeneratedValue($name = null): int|string
     {
         return $this->resource->insert_id;
     }

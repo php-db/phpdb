@@ -20,7 +20,7 @@ use function class_exists;
 #[CoversMethod(HydratingResultSet::class, 'getHydrator')]
 #[CoversMethod(HydratingResultSet::class, 'current')]
 #[CoversMethod(HydratingResultSet::class, 'toArray')]
-final class HydratingResultSetTest extends TestCase
+class HydratingResultSetTest extends TestCase
 {
     private string $arraySerializableHydratorClass;
 

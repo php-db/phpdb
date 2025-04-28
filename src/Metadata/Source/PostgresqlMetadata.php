@@ -14,7 +14,7 @@ use function key;
 
 use const CASE_LOWER;
 
-final class PostgresqlMetadata extends AbstractSource
+class PostgresqlMetadata extends AbstractSource
 {
     /**
      * @return void

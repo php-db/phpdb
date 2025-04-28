@@ -7,7 +7,7 @@ use Laminas\Db\Sql\ArgumentType;
 use Laminas\Db\Sql\Predicate\Like;
 use PHPUnit\Framework\TestCase;
 
-final class LikeTest extends TestCase
+class LikeTest extends TestCase
 {
     public function testConstructEmptyArgs(): void
     {

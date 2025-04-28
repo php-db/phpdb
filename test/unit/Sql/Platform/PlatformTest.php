@@ -15,7 +15,7 @@ use ReflectionException;
 use ReflectionMethod;
 use ReflectionProperty;
 
-final class PlatformTest extends TestCase
+class PlatformTest extends TestCase
 {
     /**
      * @throws ReflectionException

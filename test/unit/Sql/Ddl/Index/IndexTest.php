@@ -8,7 +8,7 @@ use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 
 #[CoversMethod(Index::class, 'getExpressionData')]
-final class IndexTest extends TestCase
+class IndexTest extends TestCase
 {
     public function testGetExpressionData(): void
     {

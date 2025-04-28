@@ -23,7 +23,7 @@ use function unlink;
 #[CoversMethod(Sqlite::class, 'quoteValueList')]
 #[CoversMethod(Sqlite::class, 'getIdentifierSeparator')]
 #[CoversMethod(Sqlite::class, 'quoteIdentifierInFragment')]
-final class SqliteTest extends TestCase
+class SqliteTest extends TestCase
 {
     protected Sqlite $platform;
 

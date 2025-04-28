@@ -11,7 +11,7 @@ use function strtolower;
 /**
  * Class for count of results of a select
  */
-final class RowCounter extends AbstractFeature
+class RowCounter extends AbstractFeature
 {
     /**
      * @return string

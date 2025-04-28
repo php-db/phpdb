@@ -9,7 +9,7 @@ use Laminas\Db\TableGateway\TableGateway;
 use LaminasIntegrationTest\Db\Adapter\Driver\Pdo\AdapterTrait as BaseAdapterTrait;
 use PHPUnit\Framework\TestCase;
 
-final class TableGatewayTest extends TestCase
+class TableGatewayTest extends TestCase
 {
     use AdapterTrait;
     use BaseAdapterTrait;

@@ -19,7 +19,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(Between::class, 'setMaxValue')]
 #[CoversMethod(Between::class, 'setSpecification')]
 #[CoversMethod(Between::class, 'getExpressionData')]
-final class BetweenTest extends TestCase
+class BetweenTest extends TestCase
 {
     protected Between $between;
 

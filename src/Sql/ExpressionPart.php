@@ -6,7 +6,7 @@ use function implode;
 use function is_array;
 use function sprintf;
 
-final class ExpressionPart
+class ExpressionPart
 {
     /** @var string[] */
     protected array $specification = [];

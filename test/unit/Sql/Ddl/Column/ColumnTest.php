@@ -18,7 +18,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(Column::class, 'setOption')]
 #[CoversMethod(Column::class, 'getOptions')]
 #[CoversMethod(Column::class, 'getExpressionData')]
-final class ColumnTest extends TestCase
+class ColumnTest extends TestCase
 {
     public function testSetName(): Column
     {

@@ -13,7 +13,7 @@ use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
-final class ReplaceGetMockForAbstractClassRector extends AbstractRector
+class ReplaceGetMockForAbstractClassRector extends AbstractRector
 {
     public function __construct(
         private readonly ValueResolver $valueResolver

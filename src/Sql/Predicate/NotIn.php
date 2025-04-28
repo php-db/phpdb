@@ -2,7 +2,7 @@
 
 namespace Laminas\Db\Sql\Predicate;
 
-final class NotIn extends In
+class NotIn extends In
 {
     protected string $specification = '%s NOT IN %s';
 }

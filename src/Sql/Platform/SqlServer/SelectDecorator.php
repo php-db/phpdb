@@ -15,7 +15,7 @@ use function array_values;
 use function current;
 use function strpos;
 
-final class SelectDecorator extends Select implements PlatformDecoratorInterface
+class SelectDecorator extends Select implements PlatformDecoratorInterface
 {
     /** @var Select */
     protected $subject;

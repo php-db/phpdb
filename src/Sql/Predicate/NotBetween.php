@@ -2,7 +2,7 @@
 
 namespace Laminas\Db\Sql\Predicate;
 
-final class NotBetween extends Between
+class NotBetween extends Between
 {
     protected string $specification = '%1$s NOT BETWEEN %2$s AND %3$s';
 }

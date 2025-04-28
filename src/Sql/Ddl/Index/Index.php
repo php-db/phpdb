@@ -12,7 +12,7 @@ use function count;
 use function implode;
 use function str_replace;
 
-final class Index extends AbstractIndex
+class Index extends AbstractIndex
 {
     protected string $specification = 'INDEX %s(...)';
 

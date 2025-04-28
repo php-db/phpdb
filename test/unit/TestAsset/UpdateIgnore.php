@@ -10,7 +10,7 @@ use Laminas\Db\Sql\Update;
 /**
  * @psalm-return UpdateIgnore&static
  */
-final class UpdateIgnore extends Update
+class UpdateIgnore extends Update
 {
     /**
      * Override specification update for testing

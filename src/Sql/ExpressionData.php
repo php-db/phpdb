@@ -15,7 +15,7 @@ use function implode;
  * @template TKey of array-key
  * @implements Iterator<TKey,ExpressionData>
  */
-final class ExpressionData implements Iterator, Countable
+class ExpressionData implements Iterator, Countable
 {
     protected int $position = 0;
 

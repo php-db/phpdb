@@ -25,7 +25,7 @@ use function sqlsrv_connect;
 #[CoversMethod(Connection::class, 'getLastGeneratedValue')]
 #[Group('integration')]
 #[Group('integration-sqlserver')]
-final class ConnectionIntegrationTest extends AbstractIntegrationTestCase
+class ConnectionIntegrationTest extends AbstractIntegrationTestCase
 {
     public function testGetCurrentSchema(): void
     {

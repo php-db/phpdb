@@ -12,7 +12,7 @@ use function count;
 use function implode;
 use function sprintf;
 
-final class ForeignKey extends AbstractConstraint
+class ForeignKey extends AbstractConstraint
 {
     protected string $onDeleteRule        = 'NO ACTION';
     protected string $onUpdateRule        = 'NO ACTION';

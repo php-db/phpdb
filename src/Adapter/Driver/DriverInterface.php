@@ -48,6 +48,13 @@ interface DriverInterface
     public function createResult($resource);
 
     /**
+     * Get prepare type
+     *
+     * @return string
+     */
+    public function getPrepareType();
+
+    /**
      * Format parameter name
      *
      * @param string $name

@@ -11,7 +11,7 @@ use PHPUnit\Framework\TestCase;
 
 #[CoversMethod(NotBetween::class, 'getSpecification')]
 #[CoversMethod(NotBetween::class, 'getExpressionData')]
-final class NotBetweenTest extends TestCase
+class NotBetweenTest extends TestCase
 {
     protected NotBetween $notBetween;
 

@@ -18,7 +18,7 @@ use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-final class EventFeatureTest extends TestCase
+class EventFeatureTest extends TestCase
 {
     protected EventManager $eventManager;
 

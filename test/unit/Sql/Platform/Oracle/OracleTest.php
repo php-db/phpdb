@@ -13,7 +13,7 @@ use function current;
 use function key;
 
 #[CoversMethod(Oracle::class, '__construct')]
-final class OracleTest extends TestCase
+class OracleTest extends TestCase
 {
     #[TestDox('unit test / object test: Test Mysql object has Select proxy')]
     public function testConstruct(): void

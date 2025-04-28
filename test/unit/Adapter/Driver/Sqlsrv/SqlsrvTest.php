@@ -23,7 +23,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(Sqlsrv::class, 'formatParameterName')]
 #[CoversMethod(Sqlsrv::class, 'getLastGeneratedValue')]
 #[CoversMethod(Sqlsrv::class, 'getResultPrototype')]
-final class SqlsrvTest extends TestCase
+class SqlsrvTest extends TestCase
 {
     protected Sqlsrv $sqlsrv;
 

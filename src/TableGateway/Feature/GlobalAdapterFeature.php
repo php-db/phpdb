@@ -5,7 +5,7 @@ namespace Laminas\Db\TableGateway\Feature;
 use Laminas\Db\Adapter\Adapter;
 use Laminas\Db\TableGateway\Exception;
 
-final class GlobalAdapterFeature extends AbstractFeature
+class GlobalAdapterFeature extends AbstractFeature
 {
     /** @var Adapter[] */
     protected static $staticAdapters = [];

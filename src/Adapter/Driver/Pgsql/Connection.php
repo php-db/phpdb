@@ -26,7 +26,7 @@ use function urldecode;
 use const PGSQL_CONNECT_ASYNC;
 use const PGSQL_CONNECT_FORCE_NEW;
 
-final class Connection extends AbstractConnection
+class Connection extends AbstractConnection
 {
     /** @var Pgsql */
     protected $driver;
@@ -277,10 +277,10 @@ final class Connection extends AbstractConnection
      *
      * @param null|string $name
      */
-    public function getLastGeneratedValue(string|null $name = null)
+    public function getLastGeneratedValue($name = null): bool|string|null
     {
         if ($name === null) {
-            return;
+            return null;
         }
         $result = pg_query(
             $this->resource,

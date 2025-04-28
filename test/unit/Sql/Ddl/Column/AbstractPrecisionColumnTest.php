@@ -13,7 +13,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(AbstractPrecisionColumn::class, 'setDecimal')]
 #[CoversMethod(AbstractPrecisionColumn::class, 'getDecimal')]
 #[CoversMethod(AbstractPrecisionColumn::class, 'getExpressionData')]
-final class AbstractPrecisionColumnTest extends TestCase
+class AbstractPrecisionColumnTest extends TestCase
 {
     /**
      * @throws Exception

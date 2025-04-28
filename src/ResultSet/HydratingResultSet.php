@@ -12,7 +12,7 @@ use function gettype;
 use function is_array;
 use function is_object;
 
-final class HydratingResultSet extends AbstractResultSet
+class HydratingResultSet extends AbstractResultSet
 {
     /** @var HydratorInterface */
     protected $hydrator;

@@ -23,7 +23,7 @@ include __DIR__ . '/TestAsset/Db2Functions.php';
 #[CoversMethod(Statement::class, 'prepare')]
 #[CoversMethod(Statement::class, 'isPrepared')]
 #[CoversMethod(Statement::class, 'execute')]
-final class StatementTest extends TestCase
+class StatementTest extends TestCase
 {
     protected Statement $statement;
     protected int $currentErrorReporting;

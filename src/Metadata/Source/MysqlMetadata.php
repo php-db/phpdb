@@ -16,7 +16,7 @@ use function strpos;
 use const CASE_LOWER;
 use const PREG_PATTERN_ORDER;
 
-final class MysqlMetadata extends AbstractSource
+class MysqlMetadata extends AbstractSource
 {
     /**
      * @return void

@@ -8,7 +8,7 @@ use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 
 #[CoversMethod(Blob::class, 'getExpressionData')]
-final class BlobTest extends TestCase
+class BlobTest extends TestCase
 {
     public function testGetExpressionData(): void
     {

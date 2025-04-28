@@ -16,7 +16,7 @@ use ReflectionException;
 use TypeError;
 
 #[CoversMethod(PredicateSet::class, 'addPredicates')]
-final class PredicateSetTest extends TestCase
+class PredicateSetTest extends TestCase
 {
     use DeprecatedAssertionsTrait;
 

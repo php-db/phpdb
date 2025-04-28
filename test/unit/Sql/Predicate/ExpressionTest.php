@@ -9,7 +9,7 @@ use Laminas\Db\Sql\Predicate\IsNull;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 
-final class ExpressionTest extends TestCase
+class ExpressionTest extends TestCase
 {
     public function testEmptyConstructorYieldsEmptyLiteralAndParameter(): void
     {

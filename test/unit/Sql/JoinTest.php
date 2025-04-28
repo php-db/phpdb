@@ -14,7 +14,7 @@ use ReflectionException;
 #[CoversMethod(Join::class, 'join')]
 #[CoversMethod(Join::class, 'count')]
 #[CoversMethod(Join::class, 'reset')]
-final class JoinTest extends TestCase
+class JoinTest extends TestCase
 {
     use DeprecatedAssertionsTrait;
 

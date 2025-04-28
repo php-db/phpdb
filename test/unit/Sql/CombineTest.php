@@ -16,7 +16,7 @@ use Override;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-final class CombineTest extends TestCase
+class CombineTest extends TestCase
 {
     protected Combine $combine;
 

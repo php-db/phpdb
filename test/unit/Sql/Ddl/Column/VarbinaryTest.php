@@ -8,7 +8,7 @@ use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 
 #[CoversMethod(Varbinary::class, 'getExpressionData')]
-final class VarbinaryTest extends TestCase
+class VarbinaryTest extends TestCase
 {
     public function testGetExpressionData(): void
     {

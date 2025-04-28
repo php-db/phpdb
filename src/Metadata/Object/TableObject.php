@@ -2,6 +2,6 @@
 
 namespace Laminas\Db\Metadata\Object;
 
-final class TableObject extends AbstractTableObject
+class TableObject extends AbstractTableObject
 {
 }

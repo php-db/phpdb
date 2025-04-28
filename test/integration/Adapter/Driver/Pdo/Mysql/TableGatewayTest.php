@@ -16,7 +16,7 @@ use function count;
 #[CoversMethod(TableGateway::class, '__construct')]
 #[CoversMethod(TableGateway::class, 'select')]
 #[CoversMethod(TableGateway::class, 'insert')]
-final class TableGatewayTest extends TestCase
+class TableGatewayTest extends TestCase
 {
     use AdapterTrait;
     use BaseAdapterTrait;

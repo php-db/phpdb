@@ -5,7 +5,7 @@ namespace LaminasTest\Db\Sql\Predicate;
 use Laminas\Db\Sql\Predicate\Literal;
 use PHPUnit\Framework\TestCase;
 
-final class LiteralTest extends TestCase
+class LiteralTest extends TestCase
 {
     public function testSetLiteral(): void
     {

@@ -13,7 +13,7 @@ use function getenv;
 
 #[Group('integration')]
 #[Group('integration-sqlite')]
-final class SqliteTest extends TestCase
+class SqliteTest extends TestCase
 {
     /** @var array<string, resource|\PDO> */
     public array|\PDO $adapters = [];

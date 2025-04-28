@@ -10,7 +10,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use function implode;
 use function sprintf;
 
-final class SqliteMemoryPdo extends PDO
+class SqliteMemoryPdo extends PDO
 {
     protected MockObject&PDOStatement $mockStatement;
 

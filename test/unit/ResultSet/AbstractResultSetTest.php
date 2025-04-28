@@ -29,7 +29,7 @@ use function assert;
 #[CoversMethod(AbstractResultSet::class, 'rewind')]
 #[CoversMethod(AbstractResultSet::class, 'count')]
 #[CoversMethod(AbstractResultSet::class, 'toArray')]
-final class AbstractResultSetTest extends TestCase
+class AbstractResultSetTest extends TestCase
 {
     /** @var MockObject */
     protected AbstractResultSet|MockObject $resultSet;

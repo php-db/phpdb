@@ -10,7 +10,7 @@ use function getenv;
 use function print_r;
 use function sprintf;
 
-final class PgsqlFixtureLoader implements FixtureLoader
+class PgsqlFixtureLoader implements FixtureLoader
 {
     private string $fixtureFile = __DIR__ . '/../TestFixtures/pgsql.sql';
 

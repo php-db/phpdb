@@ -10,7 +10,7 @@ use function extension_loaded;
 use function is_resource;
 use function is_string;
 
-final class Sqlsrv implements DriverInterface, Profiler\ProfilerAwareInterface
+class Sqlsrv implements DriverInterface, Profiler\ProfilerAwareInterface
 {
     /** @var Connection */
     protected $connection;
@@ -171,6 +171,14 @@ final class Sqlsrv implements DriverInterface, Profiler\ProfilerAwareInterface
     }
 
     /**
+     * @return string
+     */
+    public function getPrepareType()
+    {
+        return self::PARAMETERIZATION_POSITIONAL;
+    }
+
+    /**
      * @param string $name
      * @param mixed  $type
      * @return string
@@ -178,5 +186,13 @@ final class Sqlsrv implements DriverInterface, Profiler\ProfilerAwareInterface
     public function formatParameterName($name, $type = null)
     {
         return '?';
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getLastGeneratedValue()
+    {
+        return $this->getConnection()->getLastGeneratedValue();
     }
 }

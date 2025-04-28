@@ -8,7 +8,7 @@ use Laminas\Db\Adapter\Platform\PlatformInterface;
 use Laminas\Db\Sql\Platform\PlatformDecoratorInterface;
 use Laminas\Db\Sql\Select;
 
-final class SelectDecorator extends Select implements PlatformDecoratorInterface
+class SelectDecorator extends Select implements PlatformDecoratorInterface
 {
     /** @var Select */
     protected $subject;

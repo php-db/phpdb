@@ -8,7 +8,7 @@ use Laminas\Db\Sql\Predicate\In;
 use Laminas\Db\Sql\Select;
 use PHPUnit\Framework\TestCase;
 
-final class InTest extends TestCase
+class InTest extends TestCase
 {
     public function testEmptyConstructorYieldsNullIdentifierAndValueSet(): void
     {

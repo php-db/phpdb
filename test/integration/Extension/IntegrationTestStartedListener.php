@@ -13,7 +13,7 @@ use PHPUnit\Event\TestSuite\StartedSubscriber;
 use function getenv;
 use function printf;
 
-final class IntegrationTestStartedListener implements StartedSubscriber
+class IntegrationTestStartedListener implements StartedSubscriber
 {
     /** @var FixtureLoader[] */
     private array $fixtureLoaders = [];

@@ -2,7 +2,7 @@
 
 namespace Laminas\Db\Metadata\Object;
 
-final class ViewObject extends AbstractTableObject
+class ViewObject extends AbstractTableObject
 {
     /** @var null|string */
     protected $viewDefinition;

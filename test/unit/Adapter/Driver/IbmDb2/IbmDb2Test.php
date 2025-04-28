@@ -23,7 +23,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(IbmDb2::class, 'formatParameterName')]
 #[CoversMethod(IbmDb2::class, 'getLastGeneratedValue')]
 #[CoversMethod(IbmDb2::class, 'getResultPrototype')]
-final class IbmDb2Test extends TestCase
+class IbmDb2Test extends TestCase
 {
     protected IbmDb2 $ibmdb2;
 

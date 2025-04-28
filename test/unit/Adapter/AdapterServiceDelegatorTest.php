@@ -17,7 +17,7 @@ use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use stdClass;
 
-final class AdapterServiceDelegatorTest extends TestCase
+class AdapterServiceDelegatorTest extends TestCase
 {
     /**
      * @throws Exception
