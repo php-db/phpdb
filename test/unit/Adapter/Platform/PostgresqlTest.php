@@ -120,8 +120,8 @@ final class PostgresqlTest extends TestCase
         //    'Attempting to quote a value in Laminas\Db\Adapter\Platform\Postgresql without extension/driver'
         //    . ' support can introduce security vulnerabilities in a production environment'
         //);
-        $fooOBar = $this->platform->quoteTrustedValue("Foo O'Bar");
-        self::assertEquals($fooOBar, $this->platform->quoteValueList("Foo O'Bar"));
+        $fooBar = $this->platform->quoteTrustedValue("Foo O'Bar");
+        self::assertEquals($fooBar, $this->platform->quoteValueList("Foo O'Bar"));
     }
 
     public function testGetIdentifierSeparator(): void

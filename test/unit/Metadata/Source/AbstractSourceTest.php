@@ -22,7 +22,11 @@ final class AbstractSourceTest extends TestCase
     #[Override]
     protected function setUp(): void
     {
-        $this->abstractSourceMock = $this->getMockBuilder(AbstractSource::class)->setConstructorArgs([])->onlyMethods([])->disableOriginalConstructor()->getMock();
+        $this->abstractSourceMock = $this->getMockBuilder(AbstractSource::class)
+            ->setConstructorArgs([])
+            ->onlyMethods([])
+            ->disableOriginalConstructor()
+            ->getMock();
     }
 
     /**

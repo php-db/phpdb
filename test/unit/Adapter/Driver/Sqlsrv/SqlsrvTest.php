@@ -42,7 +42,10 @@ final class SqlsrvTest extends TestCase
      */
     public function testRegisterConnection(): void
     {
-        $mockConnection = $this->getMockBuilder(Connection::class)->setConstructorArgs([[]])->onlyMethods(['setDriver'])->getMock();
+        $mockConnection = $this->getMockBuilder(Connection::class)
+            ->setConstructorArgs([[]])
+            ->onlyMethods(['setDriver'])
+            ->getMock();
         $mockConnection->expects($this->once())->method('setDriver')->with($this->equalTo($this->sqlsrv));
         self::assertSame($this->sqlsrv, $this->sqlsrv->registerConnection($mockConnection));
     }
@@ -53,7 +56,10 @@ final class SqlsrvTest extends TestCase
     public function testRegisterStatementPrototype(): void
     {
         $this->sqlsrv  = new Sqlsrv([]);
-        $mockStatement = $this->getMockBuilder(Statement::class)->setConstructorArgs([])->onlyMethods(['setDriver'])->getMock();
+        $mockStatement = $this->getMockBuilder(Statement::class)
+            ->setConstructorArgs([])
+            ->onlyMethods(['setDriver'])
+            ->getMock();
         $mockStatement->expects($this->once())->method('setDriver')->with($this->equalTo($this->sqlsrv));
         self::assertSame($this->sqlsrv, $this->sqlsrv->registerStatementPrototype($mockStatement));
     }

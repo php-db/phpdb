@@ -122,8 +122,12 @@ final class PlatformTest extends TestCase
         /** @var DriverInterface|MockObject $mockDriver */
         $mockDriver = $this->getMockBuilder(DriverInterface::class)->getMock();
 
-        $mockDriver->expects($this->any())->method('formatParameterName')->willReturn('?');
-        $mockDriver->expects($this->any())->method('createStatement')->willReturnCallback(fn() => new StatementContainer());
+        $mockDriver->expects($this->any())
+            ->method('formatParameterName')
+            ->willReturn('?');
+        $mockDriver->expects($this->any())
+            ->method('createStatement')
+            ->willReturnCallback(fn() => new StatementContainer());
 
         return new Adapter($mockDriver, $platform);
     }

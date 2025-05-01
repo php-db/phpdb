@@ -70,7 +70,6 @@ class Delete extends AbstractPreparableSql
     }
 
     /**
-     * @param ?string $key
      * @return mixed
      */
     public function getRawState(?string $key = null)

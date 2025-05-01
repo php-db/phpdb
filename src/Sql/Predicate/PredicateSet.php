@@ -133,8 +133,6 @@ class PredicateSet implements PredicateInterface, Countable
 
     /**
      * Return the predicates
-     *
-     * @return array
      */
     public function getPredicates(): array
     {

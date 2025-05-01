@@ -163,14 +163,14 @@ final class SqlTest extends TestCase
             $this->sql->buildSqlString($select)
         );
 
+        /** @var MockObject&StatementInterface $stmt */
         $stmt = $this
             ->mockAdapter
             ->getDriver()
             ->createStatement();
 
-        /** @var MockObject&StatementInterface $stmt */
         $stmt->expects($this->any())->method('setSql')
-                ->with($this->equalTo('SELECT "foo".* FROM "foo" OFFSET ?'));
+            ->with($this->equalTo('SELECT "foo".* FROM "foo" OFFSET ?'));
         $this->sql->prepareStatementForSqlObject($select);
 
         // Sql92
@@ -178,13 +178,14 @@ final class SqlTest extends TestCase
             'SELECT "foo".* FROM "foo" OFFSET \'10\'',
             $this->sql->buildSqlString($select, $adapterSql92)
         );
+
+        /** @var MockObject&StatementInterface $stmt */
         $stmt = $adapterSql92
             ->getDriver()
             ->createStatement();
 
-        /** @var MockObject&StatementInterface $stmt */
         $stmt->expects($this->any())->method('setSql')
-                ->with($this->equalTo('SELECT "foo".* FROM "foo" OFFSET ?'));
+            ->with($this->equalTo('SELECT "foo".* FROM "foo" OFFSET ?'));
         $this->sql->prepareStatementForSqlObject($select, null, $adapterSql92);
 
         // MySql
@@ -192,13 +193,14 @@ final class SqlTest extends TestCase
             'SELECT `foo`.* FROM `foo` LIMIT 18446744073709551615 OFFSET 10',
             $this->sql->buildSqlString($select, $adapterMySql)
         );
+
+        /** @var MockObject&StatementInterface $stmt */
         $stmt = $adapterMySql
             ->getDriver()
             ->createStatement();
 
-        /** @var MockObject&StatementInterface $stmt */
         $stmt->expects($this->any())->method('setSql')
-                ->with($this->equalTo('SELECT `foo`.* FROM `foo` LIMIT 18446744073709551615 OFFSET ?'));
+            ->with($this->equalTo('SELECT `foo`.* FROM `foo` LIMIT 18446744073709551615 OFFSET ?'));
         $this->sql->prepareStatementForSqlObject($select, null, $adapterMySql);
 
         // Oracle
@@ -214,7 +216,7 @@ final class SqlTest extends TestCase
         // @codingStandardsIgnoreStart
         /** @var MockObject&StatementInterface $stmt */
         $stmt->expects($this->any())->method('setSql')
-                ->with($this->equalTo('SELECT * FROM (SELECT b.*, rownum b_rownum FROM ( SELECT "foo".* FROM "foo" ) b ) WHERE b_rownum > (:offset)'));
+            ->with($this->equalTo('SELECT * FROM (SELECT b.*, rownum b_rownum FROM ( SELECT "foo".* FROM "foo" ) b ) WHERE b_rownum > (:offset)'));
         // @codingStandardsIgnoreEnd
         $this->sql->prepareStatementForSqlObject($select, null, $adapterOracle);
 
@@ -224,15 +226,15 @@ final class SqlTest extends TestCase
             $this->sql->buildSqlString($select, $adapterSqlServer)
         );
 
+        /** @var MockObject&StatementInterface $stmt */
         $stmt = $adapterSqlServer
             ->getDriver()
             ->createStatement();
 
-        /** @var MockObject&StatementInterface $stmt */
         $stmt->expects($this->any())->method('setSql')
-                ->with($this->stringContains(
-                    'WHERE [LAMINAS_SQL_SERVER_LIMIT_OFFSET_EMULATION].[__LAMINAS_ROW_NUMBER] BETWEEN ?+1 AND ?+?'
-                ));
+            ->with($this->stringContains(
+                'WHERE [LAMINAS_SQL_SERVER_LIMIT_OFFSET_EMULATION].[__LAMINAS_ROW_NUMBER] BETWEEN ?+1 AND ?+?'
+            ));
         $this->sql->prepareStatementForSqlObject($select, null, $adapterSqlServer);
     }
 

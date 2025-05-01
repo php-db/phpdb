@@ -155,8 +155,10 @@ final class TableGatewayTest extends TestCase
      */
     #[DataProvider('aliasedTables')]
     #[Group('7311')]
-    public function testInsertShouldResetTableToUnaliasedTable(array $tableValue, string|TableIdentifier $expected): void
-    {
+    public function testInsertShouldResetTableToUnaliasedTable(
+        array $tableValue,
+        string|TableIdentifier $expected
+    ): void {
         $insert = new Insert();
         $insert->into($tableValue);
 
@@ -218,8 +220,10 @@ final class TableGatewayTest extends TestCase
      * @param AliasedTable           $tableValue
      */
     #[DataProvider('aliasedTables')]
-    public function testUpdateShouldResetTableToUnaliasedTable(array $tableValue, string|TableIdentifier $expected): void
-    {
+    public function testUpdateShouldResetTableToUnaliasedTable(
+        array $tableValue,
+        string|TableIdentifier $expected
+    ): void {
         $update = new Update();
         $update->table($tableValue);
 
@@ -283,8 +287,10 @@ final class TableGatewayTest extends TestCase
      * @param AliasedTable           $tableValue
      */
     #[DataProvider('aliasedTables')]
-    public function testDeleteShouldResetTableToUnaliasedTable(array $tableValue, string|TableIdentifier $expected): void
-    {
+    public function testDeleteShouldResetTableToUnaliasedTable(
+        array $tableValue,
+        string|TableIdentifier $expected
+    ): void {
         $delete = new Delete();
         $delete->from($tableValue);
 
