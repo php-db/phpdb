@@ -252,7 +252,7 @@ class Connection extends AbstractConnection
 
     /**
      * @todo Get Last Generated Value in Connection (this might not apply)
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function getLastGeneratedValue($name = null)
     {

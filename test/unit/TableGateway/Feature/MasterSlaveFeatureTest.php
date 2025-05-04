@@ -47,7 +47,10 @@ final class MasterSlaveFeatureTest extends TestCase
      */
     public function testPostInitialize(): void
     {
-        $this->getMockBuilder(TableGateway::class)->setConstructorArgs(['foo', $this->mockMasterAdapter, $this->feature])->onlyMethods([])->getMock();
+        $this->getMockBuilder(TableGateway::class)
+            ->setConstructorArgs(['foo', $this->mockMasterAdapter, $this->feature])
+            ->onlyMethods([])
+            ->getMock();
         // postInitialize is run
         self::assertSame($this->mockSlaveAdapter, $this->feature->getSlaveSql()->getAdapter());
     }
@@ -64,12 +67,12 @@ final class MasterSlaveFeatureTest extends TestCase
             ->setConstructorArgs(['foo', $this->mockMasterAdapter, $this->feature])
             ->onlyMethods([])->getMock();
 
+        /** @var MockObject&StatementInterface $stmt */
         $stmt = $this
             ->mockSlaveAdapter
             ->getDriver()
             ->createStatement();
 
-        /** @var MockObject&StatementInterface $stmt */
         $stmt
             ->expects($this->once())
             ->method('execute')
@@ -82,17 +85,25 @@ final class MasterSlaveFeatureTest extends TestCase
      */
     public function testPostSelect(): void
     {
-        $table = $this->getMockBuilder(TableGateway::class)->setConstructorArgs(['foo', $this->mockMasterAdapter, $this->feature])->onlyMethods([])->getMock();
+        $table = $this->getMockBuilder(TableGateway::class)
+            ->setConstructorArgs(['foo', $this->mockMasterAdapter, $this->feature])
+            ->onlyMethods([])
+            ->getMock();
+
+        /** @var MockObject&StatementInterface $stmt */
         $stmt = $this
             ->mockSlaveAdapter
             ->getDriver()
             ->createStatement();
 
-        /** @var MockObject&StatementInterface $stmt */
         $stmt
             ->expects($this->once())
             ->method('execute')
-            ->willReturn($this->getMockBuilder(ResultSet::class)->onlyMethods([])->getMock());
+            ->willReturn(
+                $this->getMockBuilder(ResultSet::class)
+                    ->onlyMethods([])
+                    ->getMock()
+            );
 
         $masterSql = $table->getSql();
         $table->select('foo = bar');

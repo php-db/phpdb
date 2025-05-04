@@ -34,20 +34,28 @@ final class NotBetweenTest extends TestCase
             [
                 $this->notBetween->getSpecification(),
                 ['foo.bar', 10, 19],
-                [ExpressionInterface::TYPE_IDENTIFIER, ExpressionInterface::TYPE_VALUE, ExpressionInterface::TYPE_VALUE],
+                [
+                    ExpressionInterface::TYPE_IDENTIFIER,
+                    ExpressionInterface::TYPE_VALUE,
+                    ExpressionInterface::TYPE_VALUE,
+                ],
             ],
         ];
         self::assertEquals($expected, $this->notBetween->getExpressionData());
 
         $this->notBetween
-            ->setIdentifier(10)
+            ->setIdentifier([10 => ExpressionInterface::TYPE_VALUE])
             ->setMinValue(['foo.bar' => ExpressionInterface::TYPE_IDENTIFIER])
             ->setMaxValue(['foo.baz' => ExpressionInterface::TYPE_IDENTIFIER]);
         $expected = [
             [
                 $this->notBetween->getSpecification(),
                 [10, 'foo.bar', 'foo.baz'],
-                [ExpressionInterface::TYPE_VALUE, ExpressionInterface::TYPE_IDENTIFIER, ExpressionInterface::TYPE_IDENTIFIER],
+                [
+                    ExpressionInterface::TYPE_VALUE,
+                    ExpressionInterface::TYPE_IDENTIFIER,
+                    ExpressionInterface::TYPE_IDENTIFIER,
+                ],
             ],
         ];
         self::assertEquals($expected, $this->notBetween->getExpressionData());

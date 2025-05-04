@@ -273,7 +273,10 @@ final class EventFeatureTest extends TestCase
         $this->eventManager = new EventManager();
         $this->event        = new EventFeature\TableGatewayEvent();
         $this->feature      = new EventFeature($this->eventManager, $this->event);
-        $this->tableGateway = $this->getMockBuilder(TableGateway::class)->disableOriginalConstructor()->onlyMethods([])->getMock();
+        $this->tableGateway = $this->getMockBuilder(TableGateway::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods([])
+            ->getMock();
         $this->feature->setTableGateway($this->tableGateway);
 
         // typically runs before everything else

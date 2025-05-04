@@ -120,20 +120,20 @@ final class SqlFunctionalTest extends TestCase
             // Github issue https://github.com/zendframework/zend-db/issues/98
             'Select::processJoinNoJoinedColumns()' => [
                 'sqlObject' => self::select('my_table')
-                                    ->join(
-                                        'joined_table2',
-                                        'my_table.id = joined_table2.id',
-                                        []
-                                    )
-                                    ->join(
-                                        'joined_table3',
-                                        'my_table.id = joined_table3.id',
-                                        [Select::SQL_STAR]
-                                    )
-                                    ->columns([
-                                        'my_table_column',
-                                        'aliased_column' => new Expression('NOW()'),
-                                    ]),
+                    ->join(
+                        'joined_table2',
+                        'my_table.id = joined_table2.id',
+                        []
+                    )
+                    ->join(
+                        'joined_table3',
+                        'my_table.id = joined_table3.id',
+                        [Select::SQL_STAR]
+                    )
+                    ->columns([
+                        'my_table_column',
+                        'aliased_column' => new Expression('NOW()'),
+                    ]),
                 'expected'  => [
                     'sql92'     => [
                         'string' => 'SELECT "my_table"."my_table_column" AS "my_table_column", NOW() AS "aliased_column", "joined_table3".* FROM "my_table" INNER JOIN "joined_table2" ON "my_table"."id" = "joined_table2"."id" INNER JOIN "joined_table3" ON "my_table"."id" = "joined_table3"."id"',
@@ -151,7 +151,7 @@ final class SqlFunctionalTest extends TestCase
             ],
             'Select::processJoin()'                => [
                 'sqlObject' => self::select('a')
-                                    ->join(['b' => self::select('c')->where(['cc' => 10])], 'd=e')->where(['x' => 20]),
+                    ->join(['b' => self::select('c')->where(['cc' => 10])], 'd=e')->where(['x' => 20]),
                 'expected'  => [
                     'sql92'     => [
                         'string'     => 'SELECT "a".*, "b".* FROM "a" INNER JOIN (SELECT "c".* FROM "c" WHERE "cc" = \'10\') AS "b" ON "d"="e" WHERE "x" = \'20\'',
@@ -177,12 +177,12 @@ final class SqlFunctionalTest extends TestCase
             ],
             'Ddl::CreateTable::processColumns()'   => [
                 'sqlObject' => self::createTable('foo')
-                                    ->addColumn(self::createColumn('col1')
-                                        ->setOption('identity', true)
-                                        ->setOption('comment', 'Comment1'))
-                                    ->addColumn(self::createColumn('col2')
-                                        ->setOption('identity', true)
-                                        ->setOption('comment', 'Comment2')),
+                    ->addColumn(self::createColumn('col1')
+                        ->setOption('identity', true)
+                        ->setOption('comment', 'Comment1'))
+                    ->addColumn(self::createColumn('col2')
+                        ->setOption('identity', true)
+                        ->setOption('comment', 'Comment2')),
                 'expected'  => [
                     'sql92'     => "CREATE TABLE \"foo\" ( \n    \"col1\" INTEGER NOT NULL,\n    \"col2\" INTEGER NOT NULL \n)",
                     'MySql'     => "CREATE TABLE `foo` ( \n    `col1` INTEGER NOT NULL AUTO_INCREMENT COMMENT 'Comment1',\n    `col2` INTEGER NOT NULL AUTO_INCREMENT COMMENT 'Comment2' \n)",
@@ -204,7 +204,7 @@ final class SqlFunctionalTest extends TestCase
                     'a' => self::select([
                         'b' => self::select('c')->where(['cc' => 'CC']),
                     ])
-                            ->where(['bb' => 'BB']),
+                        ->where(['bb' => 'BB']),
                 ])
                     ->where(['aa' => 'AA']),
                 'expected'  => [
@@ -535,11 +535,6 @@ final class SqlFunctionalTest extends TestCase
         return $res;
     }
 
-    /**
-     * @param PreparableSqlInterface|SqlInterface $sqlObject
-     * @param string                              $platform
-     * @param array|string                        $expected
-     */
     #[DataProvider('dataProvider')]
     public function test(PreparableSqlInterface|SqlInterface $sqlObject, string $platform, string|array $expected): void
     {
@@ -610,8 +605,12 @@ final class SqlFunctionalTest extends TestCase
         };
 
         $mockDriver = $this->getMockBuilder(DriverInterface::class)->getMock();
-        $mockDriver->expects($this->any())->method('formatParameterName')->willReturn('?');
-        $mockDriver->expects($this->any())->method('createStatement')->willReturnCallback(fn() => new Adapter\StatementContainer());
+        $mockDriver->expects($this->any())
+            ->method('formatParameterName')
+            ->willReturn('?');
+        $mockDriver->expects($this->any())
+            ->method('createStatement')
+            ->willReturnCallback(fn() => new Adapter\StatementContainer());
 
         return new Adapter\Adapter($mockDriver, $platform);
     }
