@@ -9,11 +9,12 @@ use Laminas\Db\Adapter\Platform\Sql92;
 use Laminas\Db\ResultSet\ResultSet;
 use Laminas\Db\TableGateway\Feature\MasterSlaveFeature;
 use Laminas\Db\TableGateway\TableGateway;
+use Override;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-class MasterSlaveFeatureTest extends TestCase
+final class MasterSlaveFeatureTest extends TestCase
 {
     protected MockObject&AdapterInterface $mockMasterAdapter;
     protected MockObject&AdapterInterface $mockSlaveAdapter;
@@ -21,7 +22,7 @@ class MasterSlaveFeatureTest extends TestCase
     protected MasterSlaveFeature $feature;
     protected TableGateway&MockObject $table;
 
-    #[\Override]
+    #[Override]
     protected function setUp(): void
     {
         $this->mockMasterAdapter = $this->getMockBuilder(AdapterInterface::class)->onlyMethods([])->getMock();
@@ -46,7 +47,10 @@ class MasterSlaveFeatureTest extends TestCase
      */
     public function testPostInitialize(): void
     {
-        $this->getMockBuilder(TableGateway::class)->setConstructorArgs(['foo', $this->mockMasterAdapter, $this->feature])->onlyMethods([])->getMock();
+        $this->getMockBuilder(TableGateway::class)
+            ->setConstructorArgs(['foo', $this->mockMasterAdapter, $this->feature])
+            ->onlyMethods([])
+            ->getMock();
         // postInitialize is run
         self::assertSame($this->mockSlaveAdapter, $this->feature->getSlaveSql()->getAdapter());
     }
@@ -63,12 +67,12 @@ class MasterSlaveFeatureTest extends TestCase
             ->setConstructorArgs(['foo', $this->mockMasterAdapter, $this->feature])
             ->onlyMethods([])->getMock();
 
+        /** @var MockObject&StatementInterface $stmt */
         $stmt = $this
             ->mockSlaveAdapter
             ->getDriver()
             ->createStatement();
 
-        /** @var MockObject&StatementInterface $stmt */
         $stmt
             ->expects($this->once())
             ->method('execute')
@@ -81,17 +85,25 @@ class MasterSlaveFeatureTest extends TestCase
      */
     public function testPostSelect(): void
     {
-        $table = $this->getMockBuilder(TableGateway::class)->setConstructorArgs(['foo', $this->mockMasterAdapter, $this->feature])->onlyMethods([])->getMock();
-        $stmt  = $this
+        $table = $this->getMockBuilder(TableGateway::class)
+            ->setConstructorArgs(['foo', $this->mockMasterAdapter, $this->feature])
+            ->onlyMethods([])
+            ->getMock();
+
+        /** @var MockObject&StatementInterface $stmt */
+        $stmt = $this
             ->mockSlaveAdapter
             ->getDriver()
             ->createStatement();
 
-        /** @var MockObject&StatementInterface $stmt */
         $stmt
             ->expects($this->once())
             ->method('execute')
-            ->willReturn($this->getMockBuilder(ResultSet::class)->onlyMethods([])->getMock());
+            ->willReturn(
+                $this->getMockBuilder(ResultSet::class)
+                    ->onlyMethods([])
+                    ->getMock()
+            );
 
         $masterSql = $table->getSql();
         $table->select('foo = bar');

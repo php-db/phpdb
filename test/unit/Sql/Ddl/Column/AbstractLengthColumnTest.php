@@ -18,7 +18,10 @@ class AbstractLengthColumnTest extends TestCase
      */
     public function testSetLength(): void
     {
-        $column = $this->getMockBuilder(AbstractLengthColumn::class)->setConstructorArgs(['foo', 55])->onlyMethods([])->getMock();
+        $column = $this->getMockBuilder(AbstractLengthColumn::class)
+            ->setConstructorArgs(['foo', 55])
+            ->onlyMethods([])
+            ->getMock();
         self::assertEquals(55, $column->getLength());
         self::assertSame($column, $column->setLength(20));
         self::assertEquals(20, $column->getLength());
@@ -29,7 +32,10 @@ class AbstractLengthColumnTest extends TestCase
      */
     public function testGetLength(): void
     {
-        $column = $this->getMockBuilder(AbstractLengthColumn::class)->setConstructorArgs(['foo', 55])->onlyMethods([])->getMock();
+        $column = $this->getMockBuilder(AbstractLengthColumn::class)
+            ->setConstructorArgs(['foo', 55])
+            ->onlyMethods([])
+            ->getMock();
         self::assertEquals(55, $column->getLength());
     }
 
@@ -38,7 +44,10 @@ class AbstractLengthColumnTest extends TestCase
      */
     public function testGetExpressionData(): void
     {
-        $column = $this->getMockBuilder(AbstractLengthColumn::class)->setConstructorArgs(['foo', 4])->onlyMethods([])->getMock();
+        $column = $this->getMockBuilder(AbstractLengthColumn::class)
+            ->setConstructorArgs(['foo', 4])
+            ->onlyMethods([])
+            ->getMock();
 
         $expressionData = $column->getExpressionData();
 

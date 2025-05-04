@@ -5,16 +5,17 @@ namespace LaminasTest\Db\Sql\Predicate;
 use Laminas\Db\Sql\Argument;
 use Laminas\Db\Sql\ArgumentType;
 use Laminas\Db\Sql\Predicate\NotBetween;
+use Override;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 
 #[CoversMethod(NotBetween::class, 'getSpecification')]
 #[CoversMethod(NotBetween::class, 'getExpressionData')]
-class NotBetweenTest extends TestCase
+final class NotBetweenTest extends TestCase
 {
     protected NotBetween $notBetween;
 
-    #[\Override]
+    #[Override]
     protected function setUp(): void
     {
         $this->notBetween = new NotBetween();

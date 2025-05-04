@@ -55,7 +55,10 @@ class PgsqlTest extends TestCase
      */
     public function testRegisterConnection(): void
     {
-        $mockConnection = $this->getMockBuilder(Connection::class)->setConstructorArgs([[]])->onlyMethods(['setDriver'])->getMock();
+        $mockConnection = $this->getMockBuilder(Connection::class)
+                            ->setConstructorArgs([[]])
+                            ->onlyMethods(['setDriver'])
+                            ->getMock();
         $mockConnection->expects($this->once())->method('setDriver')->with($this->equalTo($this->pgsql));
         self::assertSame($this->pgsql, $this->pgsql->registerConnection($mockConnection));
     }
@@ -66,7 +69,10 @@ class PgsqlTest extends TestCase
     public function testRegisterStatementPrototype(): void
     {
         $this->pgsql   = new Pgsql([]);
-        $mockStatement = $this->getMockBuilder(Statement::class)->setConstructorArgs([])->onlyMethods(['setDriver'])->getMock();
+        $mockStatement = $this->getMockBuilder(Statement::class)
+                            ->setConstructorArgs([])
+                            ->onlyMethods(['setDriver'])
+                            ->getMock();
         $mockStatement->expects($this->once())->method('setDriver')->with($this->equalTo($this->pgsql));
         self::assertSame($this->pgsql, $this->pgsql->registerStatementPrototype($mockStatement));
     }
@@ -77,7 +83,10 @@ class PgsqlTest extends TestCase
     public function testRegisterResultPrototype(): void
     {
         $this->pgsql   = new Pgsql([]);
-        $mockStatement = $this->getMockBuilder(Result::class)->setConstructorArgs([])->onlyMethods([])->getMock();
+        $mockStatement = $this->getMockBuilder(Result::class)
+                            ->setConstructorArgs([])
+                            ->onlyMethods([])
+                            ->getMock();
         self::assertSame($this->pgsql, $this->pgsql->registerResultPrototype($mockStatement));
     }
 

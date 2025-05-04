@@ -20,7 +20,10 @@ class AbstractPrecisionColumnTest extends TestCase
      */
     public function testSetDigits(): void
     {
-        $column = $this->getMockBuilder(AbstractPrecisionColumn::class)->setConstructorArgs(['foo', 10])->onlyMethods([])->getMock();
+        $column = $this->getMockBuilder(AbstractPrecisionColumn::class)
+            ->setConstructorArgs(['foo', 10])
+            ->onlyMethods([])
+            ->getMock();
         self::assertEquals(10, $column->getDigits());
         self::assertSame($column, $column->setDigits(12));
         self::assertEquals(12, $column->getDigits());
@@ -31,7 +34,10 @@ class AbstractPrecisionColumnTest extends TestCase
      */
     public function testGetDigits(): void
     {
-        $column = $this->getMockBuilder(AbstractPrecisionColumn::class)->setConstructorArgs(['foo', 10])->onlyMethods([])->getMock();
+        $column = $this->getMockBuilder(AbstractPrecisionColumn::class)
+            ->setConstructorArgs(['foo', 10])
+            ->onlyMethods([])
+            ->getMock();
         self::assertEquals(10, $column->getDigits());
     }
 
@@ -40,7 +46,10 @@ class AbstractPrecisionColumnTest extends TestCase
      */
     public function testSetDecimal(): void
     {
-        $column = $this->getMockBuilder(AbstractPrecisionColumn::class)->setConstructorArgs(['foo', 10, 5])->onlyMethods([])->getMock();
+        $column = $this->getMockBuilder(AbstractPrecisionColumn::class)
+            ->setConstructorArgs(['foo', 10, 5])
+            ->onlyMethods([])
+            ->getMock();
         self::assertEquals(5, $column->getDecimal());
         self::assertSame($column, $column->setDecimal(2));
         self::assertEquals(2, $column->getDecimal());
@@ -51,7 +60,10 @@ class AbstractPrecisionColumnTest extends TestCase
      */
     public function testGetDecimal(): void
     {
-        $column = $this->getMockBuilder(AbstractPrecisionColumn::class)->setConstructorArgs(['foo', 10, 5])->onlyMethods([])->getMock();
+        $column = $this->getMockBuilder(AbstractPrecisionColumn::class)
+            ->setConstructorArgs(['foo', 10, 5])
+            ->onlyMethods([])
+            ->getMock();
         self::assertEquals(5, $column->getDecimal());
     }
 
@@ -60,7 +72,10 @@ class AbstractPrecisionColumnTest extends TestCase
      */
     public function testGetExpressionData(): void
     {
-        $column = $this->getMockBuilder(AbstractPrecisionColumn::class)->setConstructorArgs(['foo', 10, 5])->onlyMethods([])->getMock();
+        $column = $this->getMockBuilder(AbstractPrecisionColumn::class)
+            ->setConstructorArgs(['foo', 10, 5])
+            ->onlyMethods([])
+            ->getMock();
 
         $expressionData = $column->getExpressionData();
 

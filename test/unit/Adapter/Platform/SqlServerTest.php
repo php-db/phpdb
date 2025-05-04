@@ -69,7 +69,8 @@ class SqlServerTest extends TestCase
          */
         //$this->expectNotice();
         //$this->expectExceptionMessage(
-        //    'Attempting to quote a value in Laminas\Db\Adapter\Platform\SqlServer without extension/driver support can '
+        //    'Attempting to quote a value in Laminas\Db\Adapter\Platform\SqlServer '
+        //    . 'without extension/driver support can '
         //    . 'introduce security vulnerabilities in a production environment'
         //);
         $this->expectNotToPerformAssertions();
@@ -111,7 +112,8 @@ class SqlServerTest extends TestCase
          */
         //$this->expectError();
         //$this->expectExceptionMessage(
-        //    'Attempting to quote a value in Laminas\Db\Adapter\Platform\SqlServer without extension/driver support can '
+        //    'Attempting to quote a value in Laminas\Db\Adapter\Platform\SqlServer '
+        //    . 'without extension/driver support can '
         //    . 'introduce security vulnerabilities in a production environment'
         //);
         self::assertEquals("'Foo O''Bar'", $this->platform->quoteValueList("Foo O'Bar"));

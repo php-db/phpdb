@@ -42,7 +42,10 @@ class IbmDb2Test extends TestCase
      */
     public function testRegisterConnection(): void
     {
-        $mockConnection = $this->getMockBuilder(Connection::class)->setConstructorArgs([[]])->onlyMethods(['setDriver'])->getMock();
+        $mockConnection = $this->getMockBuilder(Connection::class)
+                            ->setConstructorArgs([[]])
+                            ->onlyMethods(['setDriver'])
+                            ->getMock();
         $mockConnection->expects($this->once())->method('setDriver')->with($this->equalTo($this->ibmdb2));
         self::assertSame($this->ibmdb2, $this->ibmdb2->registerConnection($mockConnection));
     }
@@ -53,7 +56,10 @@ class IbmDb2Test extends TestCase
     public function testRegisterStatementPrototype(): void
     {
         $this->ibmdb2  = new IbmDb2([]);
-        $mockStatement = $this->getMockBuilder(Statement::class)->setConstructorArgs([])->onlyMethods(['setDriver'])->getMock();
+        $mockStatement = $this->getMockBuilder(Statement::class)
+                            ->setConstructorArgs([])
+                            ->onlyMethods(['setDriver'])
+                            ->getMock();
         $mockStatement->expects($this->once())->method('setDriver')->with($this->equalTo($this->ibmdb2));
         self::assertSame($this->ibmdb2, $this->ibmdb2->registerStatementPrototype($mockStatement));
     }

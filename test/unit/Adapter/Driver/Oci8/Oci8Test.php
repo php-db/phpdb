@@ -41,7 +41,10 @@ class Oci8Test extends TestCase
      */
     public function testRegisterConnection(): void
     {
-        $mockConnection = $this->getMockBuilder(Connection::class)->setConstructorArgs([[]])->onlyMethods(['setDriver'])->getMock();
+        $mockConnection = $this->getMockBuilder(Connection::class)
+            ->setConstructorArgs([[]])
+            ->onlyMethods(['setDriver'])
+            ->getMock();
         $mockConnection->expects($this->once())->method('setDriver')->with($this->equalTo($this->oci8));
         self::assertSame($this->oci8, $this->oci8->registerConnection($mockConnection));
     }
@@ -52,7 +55,10 @@ class Oci8Test extends TestCase
     public function testRegisterStatementPrototype(): void
     {
         $this->oci8    = new Oci8([]);
-        $mockStatement = $this->getMockBuilder(Statement::class)->setConstructorArgs([])->onlyMethods(['setDriver'])->getMock();
+        $mockStatement = $this->getMockBuilder(Statement::class)
+            ->setConstructorArgs([])
+            ->onlyMethods(['setDriver'])
+            ->getMock();
         $mockStatement->expects($this->once())->method('setDriver')->with($this->equalTo($this->oci8));
         self::assertSame($this->oci8, $this->oci8->registerStatementPrototype($mockStatement));
     }
@@ -63,7 +69,10 @@ class Oci8Test extends TestCase
     public function testRegisterResultPrototype(): void
     {
         $this->oci8    = new Oci8([]);
-        $mockStatement = $this->getMockBuilder(Result::class)->setConstructorArgs([])->onlyMethods([])->getMock();
+        $mockStatement = $this->getMockBuilder(Result::class)
+            ->setConstructorArgs([])
+            ->onlyMethods([])
+            ->getMock();
         self::assertSame($this->oci8, $this->oci8->registerResultPrototype($mockStatement));
     }
 

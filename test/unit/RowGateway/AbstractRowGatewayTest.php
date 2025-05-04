@@ -173,7 +173,10 @@ class AbstractRowGatewayTest extends TestCase
     {
         $this->rowGateway = $this->getMockBuilder(AbstractRowGateway::class)->onlyMethods([])->getMock();
 
-        $mockSql = $this->getMockBuilder(Sql::class)->setConstructorArgs([$this->mockAdapter])->onlyMethods([])->getMock();
+        $mockSql = $this->getMockBuilder(Sql::class)
+                    ->setConstructorArgs([$this->mockAdapter])
+                    ->onlyMethods([])
+                    ->getMock();
 
         $rgPropertyValues = [
             'primaryKeyColumn' => ['one', 'two'],
