@@ -2,7 +2,7 @@
 
 namespace Laminas\Db\Adapter;
 
-use Laminas\ServiceManager\AbstractFactoryInterface;
+use Laminas\ServiceManager\Factory\AbstractFactoryInterface;
 use Laminas\ServiceManager\ServiceLocatorInterface;
 use Psr\Container\ContainerInterface;
 
@@ -37,18 +37,6 @@ class AdapterAbstractServiceFactory implements AbstractFactoryInterface
     }
 
     /**
-     * Determine if we can create a service with name (SM v2 compatibility)
-     *
-     * @param string $name
-     * @param string $requestedName
-     * @return bool
-     */
-    public function canCreateServiceWithName(ServiceLocatorInterface $serviceLocator, $name, $requestedName)
-    {
-        return $this->canCreate($serviceLocator, $requestedName);
-    }
-
-    /**
      * Create a DB adapter
      *
      * @param  string $requestedName
@@ -58,18 +46,6 @@ class AdapterAbstractServiceFactory implements AbstractFactoryInterface
     {
         $config = $this->getConfig($container);
         return new Adapter($config[$requestedName]);
-    }
-
-    /**
-     * Create service with name
-     *
-     * @param string $name
-     * @param string $requestedName
-     * @return Adapter
-     */
-    public function createServiceWithName(ServiceLocatorInterface $serviceLocator, $name, $requestedName)
-    {
-        return $this($serviceLocator, $requestedName);
     }
 
     /**

@@ -24,19 +24,26 @@ class Platform extends AbstractPlatform
 
     public function __construct(AdapterInterface $adapter)
     {
-        $this->defaultPlatform = $adapter->getPlatform();
+        // todo: sat-migration this all seems redundant
+        $this->defaultPlatform           = $adapter->getPlatform();
+        $platformName                    = $this->resolvePlatformName($adapter);
+        $this->decorators[$platformName] = $this->defaultPlatform->getSqlPlatformDecorator();
 
-        $mySqlPlatform     = new Mysql\Mysql();
-        $sqlServerPlatform = new SqlServer\SqlServer();
-        $oraclePlatform    = new Oracle\Oracle();
-        $ibmDb2Platform    = new IbmDb2\IbmDb2();
-        $sqlitePlatform    = new Sqlite\Sqlite();
+        /**
+         * todo: sat-migration
+         * The following is deprecated and will be removed during cleanup
+         */
+        // $mySqlPlatform     = new Mysql\Mysql();
+        // $sqlServerPlatform = new SqlServer\SqlServer();
+        // $oraclePlatform    = new Oracle\Oracle();
+        // $ibmDb2Platform    = new IbmDb2\IbmDb2();
+        // $sqlitePlatform    = new Sqlite\Sqlite();
 
-        $this->decorators['mysql']     = $mySqlPlatform->getDecorators();
-        $this->decorators['sqlserver'] = $sqlServerPlatform->getDecorators();
-        $this->decorators['oracle']    = $oraclePlatform->getDecorators();
-        $this->decorators['ibmdb2']    = $ibmDb2Platform->getDecorators();
-        $this->decorators['sqlite']    = $sqlitePlatform->getDecorators();
+        // $this->decorators['mysql']     = $mySqlPlatform->getDecorators();
+        // $this->decorators['sqlserver'] = $sqlServerPlatform->getDecorators();
+        // $this->decorators['oracle']    = $oraclePlatform->getDecorators();
+        // $this->decorators['ibmdb2']    = $ibmDb2Platform->getDecorators();
+        // $this->decorators['sqlite']    = $sqlitePlatform->getDecorators();
     }
 
     /**

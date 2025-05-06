@@ -2,7 +2,7 @@
 
 namespace Laminas\Db\Adapter\Driver\Pdo;
 
-use Laminas\Db\Adapter\Driver\DriverInterface;
+use Laminas\Db\Adapter\Driver\PdoDriverInterface;
 use Laminas\Db\Adapter\Driver\Feature\AbstractFeature;
 use Laminas\Db\Adapter\Driver\Feature\DriverFeatureInterface;
 use Laminas\Db\Adapter\Exception;
@@ -18,7 +18,7 @@ use function preg_match;
 use function sprintf;
 use function ucfirst;
 
-class Pdo implements DriverInterface, DriverFeatureInterface, Profiler\ProfilerAwareInterface
+abstract class AbstractPdo implements PdoDriverInterface, DriverFeatureInterface, Profiler\ProfilerAwareInterface
 {
     /**
      * @const
@@ -100,12 +100,12 @@ class Pdo implements DriverInterface, DriverFeatureInterface, Profiler\ProfilerA
      *
      * @return $this Provides a fluent interface
      */
-    public function registerConnection(Connection $connection)
-    {
-        $this->connection = $connection;
-        $this->connection->setDriver($this);
-        return $this;
-    }
+    // public function registerConnection(Connection $connection)
+    // {
+    //     $this->connection = $connection;
+    //     $this->connection->setDriver($this);
+    //     return $this;
+    // }
 
     /**
      * Register statement prototype
@@ -146,21 +146,21 @@ class Pdo implements DriverInterface, DriverFeatureInterface, Profiler\ProfilerA
      *
      * @return $this Provides a fluent interface
      */
-    public function setupDefaultFeatures()
-    {
-        $driverName = $this->connection->getDriverName();
-        if ($driverName === 'sqlite') {
-            $this->addFeature(null, new Feature\SqliteRowCounter());
-            return $this;
-        }
+    // public function setupDefaultFeatures()
+    // {
+    //     $driverName = $this->connection->getDriverName();
+    //     if ($driverName === 'sqlite') {
+    //         $this->addFeature(null, new Feature\SqliteRowCounter());
+    //         return $this;
+    //     }
 
-        if ($driverName === 'oci') {
-            $this->addFeature(null, new Feature\OracleRowCounter());
-            return $this;
-        }
+    //     if ($driverName === 'oci') {
+    //         $this->addFeature(null, new Feature\OracleRowCounter());
+    //         return $this;
+    //     }
 
-        return $this;
-    }
+    //     return $this;
+    // }
 
     /**
      * Get feature
@@ -182,39 +182,39 @@ class Pdo implements DriverInterface, DriverFeatureInterface, Profiler\ProfilerA
      * @param  string $nameFormat
      * @return string
      */
-    public function getDatabasePlatformName($nameFormat = self::NAME_FORMAT_CAMELCASE)
-    {
-        $name = $this->getConnection()->getDriverName();
-        if ($nameFormat === self::NAME_FORMAT_CAMELCASE) {
-            switch ($name) {
-                case 'pgsql':
-                    return 'Postgresql';
-                case 'oci':
-                    return 'Oracle';
-                case 'dblib':
-                case 'sqlsrv':
-                    return 'SqlServer';
-                default:
-                    return ucfirst($name);
-            }
-        } else {
-            switch ($name) {
-                case 'sqlite':
-                    return 'SQLite';
-                case 'mysql':
-                    return 'MySQL';
-                case 'pgsql':
-                    return 'PostgreSQL';
-                case 'oci':
-                    return 'Oracle';
-                case 'dblib':
-                case 'sqlsrv':
-                    return 'SQLServer';
-                default:
-                    return ucfirst($name);
-            }
-        }
-    }
+    // public function getDatabasePlatformName($nameFormat = self::NAME_FORMAT_CAMELCASE)
+    // {
+    //     $name = $this->getConnection()->getDriverName();
+    //     if ($nameFormat === self::NAME_FORMAT_CAMELCASE) {
+    //         switch ($name) {
+    //             case 'pgsql':
+    //                 return 'Postgresql';
+    //             case 'oci':
+    //                 return 'Oracle';
+    //             case 'dblib':
+    //             case 'sqlsrv':
+    //                 return 'SqlServer';
+    //             default:
+    //                 return ucfirst($name);
+    //         }
+    //     } else {
+    //         switch ($name) {
+    //             case 'sqlite':
+    //                 return 'SQLite';
+    //             case 'mysql':
+    //                 return 'MySQL';
+    //             case 'pgsql':
+    //                 return 'PostgreSQL';
+    //             case 'oci':
+    //                 return 'Oracle';
+    //             case 'dblib':
+    //             case 'sqlsrv':
+    //                 return 'SQLServer';
+    //             default:
+    //                 return ucfirst($name);
+    //         }
+    //     }
+    // }
 
     /**
      * Check environment

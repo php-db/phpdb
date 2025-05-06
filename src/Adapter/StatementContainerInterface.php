@@ -10,14 +10,14 @@ interface StatementContainerInterface
      * @param null|string $sql
      * @return static
      */
-    public function setSql($sql);
+    public function setSql($sql): static;
 
     /**
      * Get sql
      *
      * @return null|string
      */
-    public function getSql();
+    public function getSql(): ?string;
 
     /**
      * Set parameter container

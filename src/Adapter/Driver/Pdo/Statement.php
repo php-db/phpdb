@@ -2,6 +2,7 @@
 
 namespace Laminas\Db\Adapter\Driver\Pdo;
 
+use Laminas\Db\Adapter\Driver\PdoDriverInterface;
 use Laminas\Db\Adapter\Driver\StatementInterface;
 use Laminas\Db\Adapter\Exception;
 use Laminas\Db\Adapter\ParameterContainer;
@@ -48,7 +49,7 @@ class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
      *
      * @return $this Provides a fluent interface
      */
-    public function setDriver(Pdo $driver)
+    public function setDriver(PdoDriverInterface $driver): self
     {
         $this->driver = $driver;
         return $this;
@@ -57,7 +58,7 @@ class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
     /**
      * @return $this Provides a fluent interface
      */
-    public function setProfiler(Profiler\ProfilerInterface $profiler)
+    public function setProfiler(Profiler\ProfilerInterface $profiler): self
     {
         $this->profiler = $profiler;
         return $this;
@@ -66,7 +67,7 @@ class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
     /**
      * @return null|Profiler\ProfilerInterface
      */
-    public function getProfiler()
+    public function getProfiler(): ?Profiler\ProfilerInterface
     {
         return $this->profiler;
     }
@@ -109,7 +110,7 @@ class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
      * @param string $sql
      * @return $this Provides a fluent interface
      */
-    public function setSql($sql)
+    public function setSql($sql): static
     {
         $this->sql = $sql;
         return $this;
@@ -120,7 +121,7 @@ class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
      *
      * @return string
      */
-    public function getSql()
+    public function getSql(): ?string
     {
         return $this->sql;
     }
@@ -146,7 +147,7 @@ class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
      * @param string $sql
      * @throws Exception\RuntimeException
      */
-    public function prepare($sql = null)
+    public function prepare(?string $sql = null): ?static
     {
         if ($this->isPrepared) {
             throw new Exception\RuntimeException('This statement has been prepared already');
@@ -164,6 +165,8 @@ class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
         }
 
         $this->isPrepared = true;
+
+        return $this;
     }
 
     /**

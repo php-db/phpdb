@@ -19,7 +19,7 @@ interface StatementInterface extends StatementContainerInterface
      *
      * @param string $sql
      */
-    public function prepare(?string $sql = null): ?self;
+    public function prepare(?string $sql = null): ?static;
 
     /**
      * Check if is prepared

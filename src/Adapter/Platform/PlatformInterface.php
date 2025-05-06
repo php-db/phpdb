@@ -1,6 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Laminas\Db\Adapter\Platform;
+
+use Laminas\Db\Sql\Platform\PlatformDecoratorInterface;
 
 interface PlatformInterface
 {
@@ -10,6 +14,12 @@ interface PlatformInterface
      * @return string
      */
     public function getName();
+
+    /**
+     * todo: sat-migration document
+     * Get Sql platform decorator
+     */public function getSqlPlatformDecorator(): PlatformDecoratorInterface;
+
 
     /**
      * Get quote identifier symbol

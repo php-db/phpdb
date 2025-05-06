@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Laminas\Db\Adapter;
 
 /**
@@ -8,7 +10,7 @@ namespace Laminas\Db\Adapter;
  */
 interface AdapterInterface
 {
-        /**
+    /**
      * Query Mode Constants
      */
     public const QUERY_MODE_EXECUTE = 'execute';
