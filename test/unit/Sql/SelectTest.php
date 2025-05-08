@@ -674,7 +674,7 @@ final class SelectTest extends TestCase
 
         $select->prepareStatement($mockAdapter, $mockStatement);
 
-        if ($expectedParameters) {
+        if ($expectedParameters !== []) {
             self::assertEquals($expectedParameters, $parameterContainer->getNamedArray());
         }
     }
