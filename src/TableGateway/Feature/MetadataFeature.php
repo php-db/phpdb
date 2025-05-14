@@ -5,7 +5,6 @@ namespace Laminas\Db\TableGateway\Feature;
 use Laminas\Db\Metadata\MetadataInterface;
 use Laminas\Db\Metadata\Object\ConstraintObject;
 use Laminas\Db\Metadata\Object\TableObject;
-use Laminas\Db\Metadata\Source\Factory as SourceFactory;
 use Laminas\Db\Sql\TableIdentifier;
 use Laminas\Db\TableGateway\Exception;
 
@@ -15,17 +14,12 @@ use function is_array;
 
 class MetadataFeature extends AbstractFeature
 {
-    /** @var MetadataInterface */
-    protected $metadata;
-
     /**
      * Constructor
      */
-    public function __construct(?MetadataInterface $metadata = null)
-    {
-        if ($metadata) {
-            $this->metadata = $metadata;
-        }
+    public function __construct(
+        protected MetadataInterface $metadata
+    ) {
         $this->sharedData['metadata'] = [
             'primaryKey' => null,
             'columns'    => [],
@@ -34,10 +28,6 @@ class MetadataFeature extends AbstractFeature
 
     public function postInitialize()
     {
-        if ($this->metadata === null) {
-            $this->metadata = SourceFactory::createSourceFromAdapter($this->tableGateway->adapter);
-        }
-
         // localize variable for brevity
         $t = $this->tableGateway;
         $m = $this->metadata;

@@ -2,7 +2,7 @@
 
 namespace LaminasTest\Db\Adapter;
 
-use Laminas\Db\Adapter\Adapter;
+use Laminas\Db\Adapter\AdapterInterface;
 use Laminas\Db\Adapter\AdapterAbstractServiceFactory;
 use Laminas\ServiceManager\Config;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
@@ -67,7 +67,7 @@ final class AdapterAbstractServiceFactoryTest extends TestCase
     public function testValidService(string $service): void
     {
         $actual = $this->serviceManager->get($service);
-        self::assertInstanceOf(Adapter::class, $actual);
+        self::assertInstanceOf(AdapterInterface::class, $actual);
     }
 
     /**

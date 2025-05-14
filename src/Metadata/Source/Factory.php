@@ -16,6 +16,7 @@ class Factory
      *
      * @return MetadataInterface
      * @throws InvalidArgumentException If adapter platform name not recognized.
+     * @deprecated to be removed in 3.0.0
      */
     public static function createSourceFromAdapter(AdapterInterface $adapter)
     {
