@@ -5,6 +5,7 @@ namespace Laminas\Db\Adapter\Driver;
 /**
  *
  * @property $driver
+ * @property $resource
  */
 interface ConnectionInterface
 {

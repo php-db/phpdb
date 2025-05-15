@@ -19,8 +19,8 @@ abstract class AbstractPdoConnection extends AbstractConnection
 {
     protected PdoDriverInterface $driver;
 
-    /** @var \PDO */
-    protected \PDO $resource;
+    /** @var ?\PDO $resource */
+    protected $resource;
 
     /** @var string */
     protected ?string $dsn;
