@@ -2,77 +2,54 @@
 
 namespace Laminas\Db\Adapter\Driver;
 
+/**
+ *
+ * @property $driver
+ */
 interface ConnectionInterface
 {
     /**
      * Get current schema
      *
-     * @return string
+     * todo: narrow this to string|false when version bumps to PHP 8.2 minimum
      */
-    public function getCurrentSchema();
+    public function getCurrentSchema(): string|bool;
 
     /**
      * Get resource
      *
-     * @return mixed
+     * @return resource
      */
     public function getResource();
 
-    /**
-     * Connect
-     *
-     * @return ConnectionInterface
-     */
-    public function connect();
+    /** Connect */
+    public function connect(): static;
 
-    /**
-     * Is connected
-     *
-     * @return bool
-     */
-    public function isConnected();
+    /** Is connected */
+    public function isConnected(): bool;
 
-    /**
-     * Disconnect
-     *
-     * @return ConnectionInterface
-     */
-    public function disconnect();
+    /** Disconnect */
+    public function disconnect(): static;
 
-    /**
-     * Begin transaction
-     *
-     * @return ConnectionInterface
-     */
-    public function beginTransaction();
+    /** Begin transaction */
+    public function beginTransaction(): static;
 
-    /**
-     * Commit
-     *
-     * @return ConnectionInterface
-     */
-    public function commit();
+    /** Commit */
+    public function commit(): static;
 
-    /**
-     * Rollback
-     *
-     * @return ConnectionInterface
-     */
-    public function rollback();
+    /** Rollback */
+    public function rollback(): static;
 
-    /**
-     * Execute
-     *
-     * @param  string $sql
-     * @return ResultInterface
-     */
-    public function execute($sql);
+    /** Execute */
+    public function execute(string $sql): ResultInterface;
 
     /**
      * Get last generated id
      *
-     * @param  null $name Ignored
-     * @return int
+     * @param null $name Ignored (this is not ignored for PDO), imagine that...
+     *
+     * todo: narrow this to string|int|bool
+     * until version bumps to PHP 8.2 minimum then narrow to string|int|false
      */
-    public function getLastGeneratedValue($name = null);
+    public function getLastGeneratedValue($name = null): string|int|bool|null;
 }

@@ -3,35 +3,32 @@
 namespace Laminas\Db\Adapter\Driver\Pdo;
 
 use Laminas\Db\Adapter\Driver\AbstractConnection;
+use Laminas\Db\Adapter\Driver\PdoDriverInterface;
+use Laminas\Db\Adapter\Driver\ResultInterface;
 use Laminas\Db\Adapter\Exception;
 use Laminas\Db\Adapter\Exception\RuntimeException;
-use PDOException;
-use PDOStatement;
+use Override;
 
-use function array_diff_key;
-use function implode;
 use function is_array;
-use function is_int;
 use function str_replace;
 use function strpos;
 use function strtolower;
 use function substr;
 
-class AbstractPdoConnection extends AbstractConnection
+abstract class AbstractPdoConnection extends AbstractConnection
 {
-    /** @var Pdo */
-    protected $driver;
+    protected PdoDriverInterface $driver;
 
     /** @var \PDO */
-    protected $resource;
+    protected \PDO $resource;
 
     /** @var string */
-    protected $dsn;
+    protected ?string $dsn;
 
     /**
      * Constructor
      *
-     * @param  array|\PDO|null                    $connectionParameters
+     * @param  array|\PDO|null $connectionParameters
      * @throws Exception\InvalidArgumentException
      */
     public function __construct($connectionParameters = null)
@@ -42,27 +39,20 @@ class AbstractPdoConnection extends AbstractConnection
             $this->setResource($connectionParameters);
         } elseif (null !== $connectionParameters) {
             throw new Exception\InvalidArgumentException(
-                '$connection must be an array of parameters, a PDO object or null'
+                '$connection must be an array of parameters, a \PDO object or null'
             );
         }
     }
 
-    /**
-     * Set driver
-     *
-     * @return $this Provides a fluent interface
-     */
-    public function setDriver(Pdo $driver)
+    public function setDriver(PdoDriverInterface $driver): static
     {
         $this->driver = $driver;
 
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function setConnectionParameters(array $connectionParameters)
+    #[Override]
+    public function setConnectionParameters(array $connectionParameters): static
     {
         $this->connectionParameters = $connectionParameters;
         if (isset($connectionParameters['dsn'])) {
@@ -79,15 +69,16 @@ class AbstractPdoConnection extends AbstractConnection
                 3
             ));
         }
+
+        return $this;
     }
 
     /**
      * Get the dsn string for this connection
      *
      * @throws RuntimeException
-     * @return string
      */
-    public function getDsn()
+    public function getDsn(): string
     {
         if (! $this->dsn) {
             throw new Exception\RuntimeException(
@@ -99,7 +90,7 @@ class AbstractPdoConnection extends AbstractConnection
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     // public function getCurrentSchema()
     // {
@@ -132,12 +123,8 @@ class AbstractPdoConnection extends AbstractConnection
     //     return false;
     // }
 
-    /**
-     * Set resource
-     *
-     * @return $this Provides a fluent interface
-     */
-    public function setResource(\PDO $resource)
+    /** Set resource */
+    public function setResource(\PDO $resource): static
     {
         $this->resource   = $resource;
         $this->driverName = strtolower($this->resource->getAttribute(\PDO::ATTR_DRIVER_NAME));
@@ -146,7 +133,7 @@ class AbstractPdoConnection extends AbstractConnection
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      *
      * @throws Exception\InvalidConnectionParametersException
      * @throws Exception\RuntimeException
@@ -283,18 +270,14 @@ class AbstractPdoConnection extends AbstractConnection
     //     return $this;
     // }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function isConnected()
+    /** @inheritDoc */
+    public function isConnected(): bool
     {
         return $this->resource instanceof \PDO;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function beginTransaction()
+    /** @inheritDoc */
+    public function beginTransaction(): static
     {
         if (! $this->isConnected()) {
             $this->connect();
@@ -310,10 +293,8 @@ class AbstractPdoConnection extends AbstractConnection
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function commit()
+    /** @inheritDoc */
+    public function commit(): static
     {
         if (! $this->isConnected()) {
             $this->connect();
@@ -336,11 +317,11 @@ class AbstractPdoConnection extends AbstractConnection
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      *
      * @throws Exception\RuntimeException
      */
-    public function rollback()
+    public function rollback(): static
     {
         if (! $this->isConnected()) {
             throw new Exception\RuntimeException('Must be connected before you can rollback');
@@ -359,11 +340,11 @@ class AbstractPdoConnection extends AbstractConnection
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      *
      * @throws Exception\InvalidQueryException
      */
-    public function execute($sql)
+    public function execute($sql): ResultInterface
     {
         if (! $this->isConnected()) {
             $this->connect();
@@ -387,13 +368,8 @@ class AbstractPdoConnection extends AbstractConnection
         return $this->driver->createResult($resultResource, $sql);
     }
 
-    /**
-     * Prepare
-     *
-     * @param  string    $sql
-     * @return Statement
-     */
-    public function prepare(string $sql)
+    /** Prepare a statement */
+    public function prepare(string $sql): Statement
     {
         if (! $this->isConnected()) {
             $this->connect();

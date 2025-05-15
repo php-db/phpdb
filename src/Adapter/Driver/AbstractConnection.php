@@ -4,35 +4,26 @@ namespace Laminas\Db\Adapter\Driver;
 
 use Laminas\Db\Adapter\Profiler\ProfilerAwareInterface;
 use Laminas\Db\Adapter\Profiler\ProfilerInterface;
+use Override;
 
 abstract class AbstractConnection implements ConnectionInterface, ProfilerAwareInterface
 {
-    /** @var array */
-    protected $connectionParameters = [];
+    protected array $connectionParameters = [];
 
-    /** @var string|null */
-    protected $driverName;
+    protected ?string $driverName;
 
-    /** @var boolean */
-    protected $inTransaction = false;
+    protected bool $inTransaction = false;
 
-    /**
-     * Nested transactions count.
-     *
-     * @var integer
-     */
-    protected $nestedTransactionsCount = 0;
+    /** Nested transactions count. */
+    protected int $nestedTransactionsCount = 0;
 
-    /** @var ProfilerInterface|null */
-    protected $profiler;
+    protected ?ProfilerInterface $profiler;
 
     /** @var resource|null */
     protected $resource;
 
-    /**
-     * {@inheritDoc}
-     */
-    public function disconnect()
+    #[Override]
+    public function disconnect(): static
     {
         if ($this->isConnected()) {
             $this->resource = null;
@@ -41,39 +32,24 @@ abstract class AbstractConnection implements ConnectionInterface, ProfilerAwareI
         return $this;
     }
 
-    /**
-     * Get connection parameters
-     *
-     * @return array
-     */
-    public function getConnectionParameters()
+    /** Get connection parameters */
+    public function getConnectionParameters(): array
     {
         return $this->connectionParameters;
     }
 
-    /**
-     * Get driver name
-     *
-     * @return null|string
-     */
-    public function getDriverName()
+    /** Get driver name */
+    public function getDriverName(): ?string
     {
         return $this->driverName;
     }
 
-    /**
-     * @return null|ProfilerInterface
-     */
-    public function getProfiler()
+    public function getProfiler(): ?ProfilerInterface
     {
         return $this->profiler;
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @return resource
-     */
+    #[Override]
     public function getResource()
     {
         if (! $this->isConnected()) {
@@ -83,32 +59,22 @@ abstract class AbstractConnection implements ConnectionInterface, ProfilerAwareI
         return $this->resource;
     }
 
-    /**
-     * Checks whether the connection is in transaction state.
-     *
-     * @return boolean
-     */
-    public function inTransaction()
+    /** Checks whether the connection is in transaction state. */
+    public function inTransaction(): bool
     {
         return $this->inTransaction;
     }
 
-    /**
-     * @return $this Provides a fluent interface
-     */
-    public function setConnectionParameters(array $connectionParameters)
+    public function setConnectionParameters(array $connectionParameters): static
     {
         $this->connectionParameters = $connectionParameters;
 
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @return $this Provides a fluent interface
-     */
-    public function setProfiler(ProfilerInterface $profiler)
+    /** @inheritDoc */
+    #[Override]
+    public function setProfiler(ProfilerInterface $profiler): static
     {
         $this->profiler = $profiler;
 
