@@ -17,7 +17,7 @@ abstract class AbstractConnection implements ConnectionInterface, ProfilerAwareI
     /** Nested transactions count. */
     protected int $nestedTransactionsCount = 0;
 
-    protected ?ProfilerInterface $profiler;
+    protected ?ProfilerInterface $profiler = null;
 
     /** @var resource|null */
     protected $resource;
