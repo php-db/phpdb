@@ -4,10 +4,6 @@ namespace Laminas\Db\Adapter;
 
 interface AdapterAwareInterface
 {
-    /**
-     * Set db adapter
-     *
-     * @return AdapterAwareInterface
-     */
-    public function setDbAdapter(AdapterInterface $adapter);
+    /** Set db adapter */
+    public function setDbAdapter(AdapterInterface $adapter): static;
 }
