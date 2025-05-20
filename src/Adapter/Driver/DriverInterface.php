@@ -15,7 +15,7 @@ interface DriverInterface
      * @param string $nameFormat
      * @return string
      */
-    public function getDatabasePlatformName($nameFormat = DriverInterface::NAME_FORMAT_CAMELCASE);
+    public function getDatabasePlatformName($nameFormat = DriverInterface::NAME_FORMAT_CAMELCASE): string;
 
     /**
      * Check environment
