@@ -3,6 +3,7 @@
 namespace Laminas\Db\Adapter\Driver\Pdo;
 
 use Laminas\Db\Adapter\Driver\PdoDriverInterface;
+use Laminas\Db\Adapter\Driver\ResultInterface;
 use Laminas\Db\Adapter\Driver\StatementInterface;
 use Laminas\Db\Adapter\Exception;
 use Laminas\Db\Adapter\ParameterContainer;
@@ -147,7 +148,7 @@ class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
      * @param string $sql
      * @throws Exception\RuntimeException
      */
-    public function prepare(?string $sql = null): ?static
+    public function prepare(?string $sql = null): StatementInterface
     {
         if ($this->isPrepared) {
             throw new Exception\RuntimeException('This statement has been prepared already');
@@ -169,20 +170,13 @@ class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function isPrepared()
+    public function isPrepared(): bool
     {
         return $this->isPrepared;
     }
 
-    /**
-     * @param null|array|ParameterContainer $parameters
-     * @throws Exception\InvalidQueryException
-     * @return Result
-     */
-    public function execute($parameters = null)
+    /** @throws Exception\InvalidQueryException */
+    public function execute(null|array|ParameterContainer $parameters = null): ResultInterface
     {
         if (! $this->isPrepared) {
             $this->prepare();

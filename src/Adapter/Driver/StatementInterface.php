@@ -14,25 +14,12 @@ interface StatementInterface extends StatementContainerInterface
      */
     public function getResource();
 
-    /**
-     * Prepare sql
-     *
-     * @param string $sql
-     */
-    public function prepare(?string $sql = null): ?static;
+    /** Prepare sql */
+    public function prepare(?string $sql = null): StatementInterface;
 
-    /**
-     * Check if is prepared
-     *
-     * @return bool
-     */
-    public function isPrepared();
+    /** Check if is prepared */
+    public function isPrepared(): bool;
 
-    /**
-     * Execute
-     *
-     * @param null|array|ParameterContainer $parameters
-     * @return ResultInterface
-     */
-    public function execute($parameters = null);
+    /** Execute */
+    public function execute(null|array|ParameterContainer $parameters = null): ResultInterface;
 }

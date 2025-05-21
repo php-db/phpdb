@@ -5,6 +5,7 @@ namespace Laminas\Db\Adapter\Driver\Pdo;
 use Laminas\Db\Adapter\Driver\AbstractConnection;
 use Laminas\Db\Adapter\Driver\PdoDriverInterface;
 use Laminas\Db\Adapter\Driver\ResultInterface;
+use Laminas\Db\Adapter\Driver\StatementInterface;
 use Laminas\Db\Adapter\Exception;
 use Laminas\Db\Adapter\Exception\RuntimeException;
 use Override;
@@ -369,7 +370,7 @@ abstract class AbstractPdoConnection extends AbstractConnection
     }
 
     /** Prepare a statement */
-    public function prepare(string $sql): Statement
+    public function prepare(?string $sql = null): StatementInterface
     {
         if (! $this->isConnected()) {
             $this->connect();
