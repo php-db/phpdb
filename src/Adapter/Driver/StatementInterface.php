@@ -21,5 +21,5 @@ interface StatementInterface extends StatementContainerInterface
     public function isPrepared(): bool;
 
     /** Execute */
-    public function execute(null|array|ParameterContainer $parameters = null): ResultInterface;
+    public function execute(null|array|ParameterContainer $parameters = null): ?ResultInterface;
 }
