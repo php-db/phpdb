@@ -176,7 +176,7 @@ class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
     }
 
     /** @throws Exception\InvalidQueryException */
-    public function execute(null|array|ParameterContainer $parameters = null): ResultInterface
+    public function execute(null|array|ParameterContainer $parameters = null): ?ResultInterface
     {
         if (! $this->isPrepared) {
             $this->prepare();
