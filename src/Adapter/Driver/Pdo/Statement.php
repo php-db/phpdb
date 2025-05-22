@@ -2,7 +2,8 @@
 
 namespace Laminas\Db\Adapter\Driver\Pdo;
 
-use Laminas\Db\Adapter\Driver\DriverInterface;
+use Laminas\Db\Adapter\Driver\PdoDriverInterface;
+use Laminas\Db\Adapter\Driver\PdoStatementInterface;
 use Laminas\Db\Adapter\Driver\ResultInterface;
 use Laminas\Db\Adapter\Driver\StatementInterface;
 use Laminas\Db\Adapter\Exception;
@@ -18,7 +19,7 @@ use function is_array;
 use function is_bool;
 use function is_int;
 
-class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
+class Statement implements StatementInterface, PdoStatementInterface, Profiler\ProfilerAwareInterface
 {
     /** @var PDO */
     protected $pdo;
@@ -53,7 +54,7 @@ class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
      * @return $this Provides a fluent interface
      */
     #[Override]
-    public function setDriver(DriverInterface $driver): static
+    public function setDriver(PdoDriverInterface $driver): static
     {
         $this->driver = $driver;
         return $this;

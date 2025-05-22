@@ -2,9 +2,7 @@
 
 namespace Laminas\Db\Adapter;
 
-use _PHPStan_ac6dae9b0\Nette\DI\Config\Adapter;
 use Laminas\ServiceManager\Factory\AbstractFactoryInterface;
-use Laminas\ServiceManager\ServiceLocatorInterface;
 use Override;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
@@ -29,7 +27,7 @@ abstract class AdapterAbstractServiceFactory implements AbstractFactoryInterface
      * @param  string $requestedName
      * @return bool
      */
-    public function canCreate(ContainerInterface $container, $requestedName)
+    public function canCreate(ContainerInterface $container, $requestedName): bool
     {
         $config = $this->getConfig($container);
         if (empty($config)) {
