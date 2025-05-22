@@ -27,7 +27,7 @@ class Statement implements StatementInterface, PdoStatementInterface, Profiler\P
     /** @var Profiler\ProfilerInterface */
     protected $profiler;
 
-    /** @var DriverInterface */
+    /** @var \Laminas\Db\Adapter\Driver\PdoDriverInterface */
     protected $driver;
 
     /** @var string */
