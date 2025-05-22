@@ -2,11 +2,15 @@
 
 namespace Laminas\Db\Adapter\Driver\Pdo;
 
-use Laminas\Db\Adapter\Driver\PdoDriverInterface;
+use Laminas\Db\Adapter\Driver\ConnectionInterface;
 use Laminas\Db\Adapter\Driver\Feature\AbstractFeature;
 use Laminas\Db\Adapter\Driver\Feature\DriverFeatureInterface;
+use Laminas\Db\Adapter\Driver\PdoDriverInterface;
+use Laminas\Db\Adapter\Driver\ResultInterface;
+use Laminas\Db\Adapter\Driver\StatementInterface;
 use Laminas\Db\Adapter\Exception;
 use Laminas\Db\Adapter\Profiler;
+use PDO;
 use PDOStatement;
 
 use function extension_loaded;
@@ -16,7 +20,6 @@ use function is_string;
 use function ltrim;
 use function preg_match;
 use function sprintf;
-use function ucfirst;
 
 abstract class AbstractPdo implements PdoDriverInterface, DriverFeatureInterface, Profiler\ProfilerAwareInterface
 {
@@ -25,7 +28,7 @@ abstract class AbstractPdo implements PdoDriverInterface, DriverFeatureInterface
      */
     public const FEATURES_DEFAULT = 'default';
 
-    /** @var Connection */
+    /** @var ConnectionInterface */
     protected $connection;
 
     /** @var Statement */
@@ -45,19 +48,15 @@ abstract class AbstractPdo implements PdoDriverInterface, DriverFeatureInterface
     public $profiler;
 
     /**
-     * @param array|Connection|\PDO $connection
+     * @param array|ConnectionInterface|PDO $connection
      * @param string $features
      */
     public function __construct(
-        $connection,
-        ?Statement $statementPrototype = null,
-        ?Result $resultPrototype = null,
+        ConnectionInterface|PDO $connection,
+        ?StatementInterface $statementPrototype = null,
+        ?ResultInterface $resultPrototype = null,
         $features = self::FEATURES_DEFAULT
     ) {
-        if (! $connection instanceof Connection) {
-            $connection = new Connection($connection);
-        }
-
         $this->registerConnection($connection);
         $this->registerStatementPrototype($statementPrototype ?: new Statement());
         $this->registerResultPrototype($resultPrototype ?: new Result());
@@ -100,26 +99,20 @@ abstract class AbstractPdo implements PdoDriverInterface, DriverFeatureInterface
      *
      * @return $this Provides a fluent interface
      */
-    // public function registerConnection(Connection $connection)
-    // {
-    //     $this->connection = $connection;
-    //     $this->connection->setDriver($this);
-    //     return $this;
-    // }
+    abstract public function registerConnection(ConnectionInterface|PDO $connection): static;
 
     /**
      * Register statement prototype
      */
-    public function registerStatementPrototype(Statement $statementPrototype)
+    public function registerStatementPrototype(StatementInterface $statementPrototype)
     {
-        $this->statementPrototype = $statementPrototype;
-        $this->statementPrototype->setDriver($this);
+        $this->statementPrototype = $statementPrototype->setDriver($this);
     }
 
     /**
      * Register result prototype
      */
-    public function registerResultPrototype(Result $resultPrototype)
+    public function registerResultPrototype(ResultInterface $resultPrototype)
     {
         $this->resultPrototype = $resultPrototype;
     }

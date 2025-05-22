@@ -2,12 +2,14 @@
 
 namespace Laminas\Db\Adapter\Driver\Pdo;
 
-use Laminas\Db\Adapter\Driver\PdoDriverInterface;
+use Laminas\Db\Adapter\Driver\DriverInterface;
 use Laminas\Db\Adapter\Driver\ResultInterface;
 use Laminas\Db\Adapter\Driver\StatementInterface;
 use Laminas\Db\Adapter\Exception;
 use Laminas\Db\Adapter\ParameterContainer;
 use Laminas\Db\Adapter\Profiler;
+use Override;
+use PDO;
 use PDOException;
 use PDOStatement;
 
@@ -18,13 +20,13 @@ use function is_int;
 
 class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
 {
-    /** @var \PDO */
+    /** @var PDO */
     protected $pdo;
 
     /** @var Profiler\ProfilerInterface */
     protected $profiler;
 
-    /** @var Pdo */
+    /** @var DriverInterface */
     protected $driver;
 
     /** @var string */
@@ -50,7 +52,8 @@ class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
      *
      * @return $this Provides a fluent interface
      */
-    public function setDriver(PdoDriverInterface $driver): self
+    #[Override]
+    public function setDriver(DriverInterface $driver): static
     {
         $this->driver = $driver;
         return $this;
@@ -59,15 +62,13 @@ class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
     /**
      * @return $this Provides a fluent interface
      */
-    public function setProfiler(Profiler\ProfilerInterface $profiler): self
+    #[Override]
+    public function setProfiler(Profiler\ProfilerInterface $profiler): static
     {
         $this->profiler = $profiler;
         return $this;
     }
 
-    /**
-     * @return null|Profiler\ProfilerInterface
-     */
     public function getProfiler(): ?Profiler\ProfilerInterface
     {
         return $this->profiler;
@@ -78,7 +79,7 @@ class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
      *
      * @return $this Provides a fluent interface
      */
-    public function initialize(\PDO $connectionResource)
+    public function initialize(PDO $connectionResource)
     {
         $this->pdo = $connectionResource;
         return $this;

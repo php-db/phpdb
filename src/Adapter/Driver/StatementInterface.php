@@ -7,6 +7,8 @@ use Laminas\Db\Adapter\StatementContainerInterface;
 
 interface StatementInterface extends StatementContainerInterface
 {
+    public function setDriver(DriverInterface $driver): static;
+
     /**
      * Get resource
      *

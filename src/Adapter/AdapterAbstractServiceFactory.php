@@ -2,9 +2,14 @@
 
 namespace Laminas\Db\Adapter;
 
+use _PHPStan_ac6dae9b0\Nette\DI\Config\Adapter;
 use Laminas\ServiceManager\Factory\AbstractFactoryInterface;
 use Laminas\ServiceManager\ServiceLocatorInterface;
+use Override;
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
+
+use Psr\Container\NotFoundExceptionInterface;
 
 use function is_array;
 
@@ -13,7 +18,7 @@ use function is_array;
  *
  * Allows configuring several database instances (such as writer and reader).
  */
-class AdapterAbstractServiceFactory implements AbstractFactoryInterface
+abstract class AdapterAbstractServiceFactory implements AbstractFactoryInterface
 {
     /** @var array */
     protected $config;
@@ -39,14 +44,15 @@ class AdapterAbstractServiceFactory implements AbstractFactoryInterface
     /**
      * Create a DB adapter
      *
-     * @param  string $requestedName
-     * @return Adapter
+     * @param string $requestedName
+     * @return AdapterInterface
      */
-    public function __invoke(ContainerInterface $container, $requestedName, ?array $options = null)
-    {
-        $config = $this->getConfig($container);
-        return new Adapter($config[$requestedName]);
-    }
+    #[Override]
+    abstract public function __invoke(
+        ContainerInterface $container,
+        string $requestedName,
+        ?array $options = null
+    ): AdapterInterface;
 
     /**
      * Get db configuration, if any
@@ -84,5 +90,29 @@ class AdapterAbstractServiceFactory implements AbstractFactoryInterface
 
         $this->config = $config['adapters'];
         return $this->config;
+    }
+
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
+    protected function createProfiler(ContainerInterface $container, array $parameters): ?Profiler\ProfilerInterface
+    {
+        $profilerInstance = $parameters['profiler'] ?? null;
+
+        if ($profilerInstance !== null) {
+            if ($profilerInstance === true) {
+                $profilerInstance = Profiler\Profiler::class;
+            }
+            if (is_string($profilerInstance) && $container->has($profilerInstance)) {
+                $profilerInstance = $container->build($profilerInstance);
+            }
+            if (! $profilerInstance instanceof Profiler\ProfilerInterface) {
+                throw new Exception\InvalidArgumentException('Profiler must implement ProfilerInterface');
+            }
+            return $profilerInstance;
+        }
+
+        return null;
     }
 }
