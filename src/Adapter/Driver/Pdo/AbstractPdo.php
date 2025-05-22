@@ -2,80 +2,40 @@
 
 namespace Laminas\Db\Adapter\Driver\Pdo;
 
-use Laminas\Db\Adapter\Driver\PdoDriverInterface;
+use Laminas\Db\Adapter\Driver\ConnectionInterface;
 use Laminas\Db\Adapter\Driver\Feature\AbstractFeature;
 use Laminas\Db\Adapter\Driver\Feature\DriverFeatureInterface;
+use Laminas\Db\Adapter\Driver\PdoDriverAwareInterface;
+use Laminas\Db\Adapter\Driver\PdoDriverInterface;
+use Laminas\Db\Adapter\Driver\ResultInterface;
+use Laminas\Db\Adapter\Driver\StatementInterface;
 use Laminas\Db\Adapter\Exception;
 use Laminas\Db\Adapter\Profiler;
 use PDOStatement;
 
 use function extension_loaded;
-use function is_array;
 use function is_numeric;
 use function is_string;
 use function ltrim;
 use function preg_match;
 use function sprintf;
-use function ucfirst;
 
 abstract class AbstractPdo implements PdoDriverInterface, DriverFeatureInterface, Profiler\ProfilerAwareInterface
 {
-    /**
-     * @const
-     */
     public const FEATURES_DEFAULT = 'default';
 
-    /** @var Connection */
-    protected $connection;
+    protected ConnectionInterface $connection;
 
-    /** @var Statement */
-    protected $statementPrototype;
+    protected StatementInterface&PdoDriverAwareInterface $statementPrototype;
 
-    /** @var Result */
-    protected $resultPrototype;
+    protected ResultInterface $resultPrototype;
 
-    /** @var array */
-    protected $features = [];
+    protected array $features = [];
 
-    /**
-     * @internal
-     *
-     * @var Profiler\ProfilerInterface
-     */
-    public $profiler;
+    /** @internal */
+    public Profiler\ProfilerInterface $profiler;
 
-    /**
-     * @param array|Connection|\PDO $connection
-     * @param string $features
-     */
-    public function __construct(
-        $connection,
-        ?Statement $statementPrototype = null,
-        ?Result $resultPrototype = null,
-        $features = self::FEATURES_DEFAULT
-    ) {
-        if (! $connection instanceof Connection) {
-            $connection = new Connection($connection);
-        }
-
-        $this->registerConnection($connection);
-        $this->registerStatementPrototype($statementPrototype ?: new Statement());
-        $this->registerResultPrototype($resultPrototype ?: new Result());
-        if (is_array($features)) {
-            foreach ($features as $name => $feature) {
-                $this->addFeature($name, $feature);
-            }
-        } elseif ($features instanceof AbstractFeature) {
-            $this->addFeature($features->getName(), $features);
-        } elseif ($features === self::FEATURES_DEFAULT) {
-            $this->setupDefaultFeatures();
-        }
-    }
-
-    /**
-     * @return $this Provides a fluent interface
-     */
-    public function setProfiler(Profiler\ProfilerInterface $profiler)
+    public function setProfiler(Profiler\ProfilerInterface $profiler): static
     {
         $this->profiler = $profiler;
         if ($this->connection instanceof Profiler\ProfilerAwareInterface) {
@@ -87,25 +47,10 @@ abstract class AbstractPdo implements PdoDriverInterface, DriverFeatureInterface
         return $this;
     }
 
-    /**
-     * @return null|Profiler\ProfilerInterface
-     */
-    public function getProfiler()
+    public function getProfiler(): ?Profiler\ProfilerInterface
     {
         return $this->profiler;
     }
-
-    /**
-     * Register connection
-     *
-     * @return $this Provides a fluent interface
-     */
-    // public function registerConnection(Connection $connection)
-    // {
-    //     $this->connection = $connection;
-    //     $this->connection->setDriver($this);
-    //     return $this;
-    // }
 
     /**
      * Register statement prototype
@@ -219,29 +164,27 @@ abstract class AbstractPdo implements PdoDriverInterface, DriverFeatureInterface
     /**
      * Check environment
      */
-    public function checkEnvironment()
+    public function checkEnvironment(): bool
     {
         if (! extension_loaded('PDO')) {
             throw new Exception\RuntimeException(
                 'The PDO extension is required for this adapter but the extension is not loaded'
             );
         }
+        return true;
     }
 
-    /**
-     * @return Connection
-     */
-    public function getConnection()
+    public function getConnection(): ConnectionInterface
     {
         return $this->connection;
     }
 
     /**
      * @param string|PDOStatement $sqlOrResource
-     * @return Statement
      */
-    public function createStatement($sqlOrResource = null)
+    public function createStatement($sqlOrResource = null): StatementInterface
     {
+        /** @var Statement */
         $statement = clone $this->statementPrototype;
         if ($sqlOrResource instanceof PDOStatement) {
             $statement->setResource($sqlOrResource);
@@ -252,7 +195,9 @@ abstract class AbstractPdo implements PdoDriverInterface, DriverFeatureInterface
             if (! $this->connection->isConnected()) {
                 $this->connection->connect();
             }
-            $statement->initialize($this->connection->getResource());
+            /** @var \PDO */
+            $resource = $this->connection->getResource();
+            $statement->initialize($resource);
         }
         return $statement;
     }
@@ -262,32 +207,32 @@ abstract class AbstractPdo implements PdoDriverInterface, DriverFeatureInterface
      * @param mixed $context
      * @return Result
      */
-    public function createResult($resource, $context = null)
-    {
-        $result   = clone $this->resultPrototype;
-        $rowCount = null;
+    // public function createResult($resource, $context = null): ResultInterface
+    // {
+    //     $result   = clone $this->resultPrototype;
+    //     $rowCount = null;
 
-        // special feature, sqlite PDO counter
-        if (
-            $this->connection->getDriverName() === 'sqlite'
-            && ($sqliteRowCounter = $this->getFeature('SqliteRowCounter'))
-            && $resource->columnCount() > 0
-        ) {
-            $rowCount = $sqliteRowCounter->getRowCountClosure($context);
-        }
+    //     // special feature, sqlite PDO counter
+    //     if (
+    //         $this->connection->getDriverName() === 'sqlite'
+    //         && ($sqliteRowCounter = $this->getFeature('SqliteRowCounter'))
+    //         && $resource->columnCount() > 0
+    //     ) {
+    //         $rowCount = $sqliteRowCounter->getRowCountClosure($context);
+    //     }
 
-        // special feature, oracle PDO counter
-        if (
-            $this->connection->getDriverName() === 'oci'
-            && ($oracleRowCounter = $this->getFeature('OracleRowCounter'))
-            && $resource->columnCount() > 0
-        ) {
-            $rowCount = $oracleRowCounter->getRowCountClosure($context);
-        }
+    //     // special feature, oracle PDO counter
+    //     if (
+    //         $this->connection->getDriverName() === 'oci'
+    //         && ($oracleRowCounter = $this->getFeature('OracleRowCounter'))
+    //         && $resource->columnCount() > 0
+    //     ) {
+    //         $rowCount = $oracleRowCounter->getRowCountClosure($context);
+    //     }
 
-        $result->initialize($resource, $this->connection->getLastGeneratedValue(), $rowCount);
-        return $result;
-    }
+    //     $result->initialize($resource, $this->connection->getLastGeneratedValue(), $rowCount);
+    //     return $result;
+    // }
 
     /**
      * @return Result
@@ -300,17 +245,12 @@ abstract class AbstractPdo implements PdoDriverInterface, DriverFeatureInterface
     /**
      * @return string
      */
-    public function getPrepareType()
+    public function getPrepareType(): string
     {
         return self::PARAMETERIZATION_NAMED;
     }
 
-    /**
-     * @param string $name
-     * @param string|null $type
-     * @return string
-     */
-    public function formatParameterName($name, $type = null)
+    public function formatParameterName(string $name, ?string $type = null): string
     {
         if ($type === null && ! is_numeric($name) || $type === self::PARAMETERIZATION_NAMED) {
             $name = ltrim($name, ':');
@@ -329,11 +269,7 @@ abstract class AbstractPdo implements PdoDriverInterface, DriverFeatureInterface
         return '?';
     }
 
-    /**
-     * @param string|null $name
-     * @return string|null|false
-     */
-    public function getLastGeneratedValue($name = null)
+    public function getLastGeneratedValue(?string $name = null): int|string|null|false
     {
         return $this->connection->getLastGeneratedValue($name);
     }

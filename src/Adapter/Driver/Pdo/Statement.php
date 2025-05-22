@@ -2,12 +2,14 @@
 
 namespace Laminas\Db\Adapter\Driver\Pdo;
 
+use Laminas\Db\Adapter\Driver\PdoDriverAwareInterface;
 use Laminas\Db\Adapter\Driver\PdoDriverInterface;
 use Laminas\Db\Adapter\Driver\ResultInterface;
 use Laminas\Db\Adapter\Driver\StatementInterface;
 use Laminas\Db\Adapter\Exception;
 use Laminas\Db\Adapter\ParameterContainer;
 use Laminas\Db\Adapter\Profiler;
+use PDO;
 use PDOException;
 use PDOStatement;
 
@@ -16,138 +18,88 @@ use function is_array;
 use function is_bool;
 use function is_int;
 
-class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
+class Statement implements StatementInterface, PdoDriverAwareInterface, Profiler\ProfilerAwareInterface
 {
-    /** @var \PDO */
-    protected $pdo;
+    protected PDO $pdo;
 
-    /** @var Profiler\ProfilerInterface */
-    protected $profiler;
+    protected Profiler\ProfilerInterface $profiler;
 
-    /** @var Pdo */
-    protected $driver;
+    protected PdoDriverInterface $driver;
 
-    /** @var string */
-    protected $sql = '';
+    protected string $sql = '';
 
-    /** @var bool */
-    protected $isQuery;
+    protected bool $isQuery;
 
-    /** @var ParameterContainer */
-    protected $parameterContainer;
+    protected ParameterContainer $parameterContainer;
 
-    /** @var bool */
-    protected $parametersBound = false;
+    protected bool $parametersBound = false;
 
-    /** @var PDOStatement */
-    protected $resource;
+    protected ?PDOStatement $resource;
 
-    /** @var bool */
-    protected $isPrepared = false;
+    protected bool $isPrepared = false;
 
-    /**
-     * Set driver
-     *
-     * @return $this Provides a fluent interface
-     */
-    public function setDriver(PdoDriverInterface $driver): self
+    public function setDriver(PdoDriverInterface $driver): static
     {
         $this->driver = $driver;
         return $this;
     }
 
-    /**
-     * @return $this Provides a fluent interface
-     */
-    public function setProfiler(Profiler\ProfilerInterface $profiler): self
+    public function setProfiler(Profiler\ProfilerInterface $profiler): static
     {
         $this->profiler = $profiler;
         return $this;
     }
 
-    /**
-     * @return null|Profiler\ProfilerInterface
-     */
     public function getProfiler(): ?Profiler\ProfilerInterface
     {
         return $this->profiler;
     }
 
-    /**
-     * Initialize
-     *
-     * @return $this Provides a fluent interface
-     */
-    public function initialize(\PDO $connectionResource)
+    /** Initialize */
+    public function initialize(PDO $connectionResource): static
     {
         $this->pdo = $connectionResource;
         return $this;
     }
 
-    /**
-     * Set resource
-     *
-     * @return $this Provides a fluent interface
-     */
-    public function setResource(PDOStatement $pdoStatement)
+    /** Set resource */
+    public function setResource(PDOStatement $pdoStatement): static
     {
         $this->resource = $pdoStatement;
         return $this;
     }
 
-    /**
-     * Get resource
-     *
-     * @return mixed
-     */
-    public function getResource()
+    /** Get resource */
+    public function getResource(): ?PDOStatement
     {
         return $this->resource;
     }
 
-    /**
-     * Set sql
-     *
-     * @param string $sql
-     * @return $this Provides a fluent interface
-     */
-    public function setSql($sql): static
+    /** Set sql */
+    public function setSql(?string $sql): static
     {
         $this->sql = $sql;
         return $this;
     }
 
-    /**
-     * Get sql
-     *
-     * @return string
-     */
+    /** Get sql */
     public function getSql(): ?string
     {
         return $this->sql;
     }
 
-    /**
-     * @return $this Provides a fluent interface
-     */
-    public function setParameterContainer(ParameterContainer $parameterContainer)
+    public function setParameterContainer(ParameterContainer $parameterContainer): static
     {
         $this->parameterContainer = $parameterContainer;
         return $this;
     }
 
-    /**
-     * @return ParameterContainer
-     */
-    public function getParameterContainer()
+    public function getParameterContainer(): ?ParameterContainer
     {
         return $this->parameterContainer;
     }
 
-    /**
-     * @param string $sql
-     * @throws Exception\RuntimeException
-     */
+    /** @throws Exception\RuntimeException */
     public function prepare(?string $sql = null): StatementInterface
     {
         if ($this->isPrepared) {
@@ -231,10 +183,8 @@ class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
         return $this->driver->createResult($this->resource, $this);
     }
 
-    /**
-     * Bind parameters from container
-     */
-    protected function bindParametersFromContainer()
+    /** Bind parameters from container */
+    protected function bindParametersFromContainer(): void
     {
         if ($this->parametersBound) {
             return;
@@ -269,12 +219,8 @@ class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
         }
     }
 
-    /**
-     * Perform a deep clone
-     *
-     * @return void
-     */
-    public function __clone()
+    /** Perform a deep clone */
+    public function __clone(): void
     {
         $this->isPrepared      = false;
         $this->parametersBound = false;
