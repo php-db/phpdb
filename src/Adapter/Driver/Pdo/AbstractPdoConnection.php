@@ -1,14 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Laminas\Db\Adapter\Driver\Pdo;
 
 use Laminas\Db\Adapter\Driver\AbstractConnection;
+use Laminas\Db\Adapter\Driver\ConnectionInterface;
+use Laminas\Db\Adapter\Driver\PdoDriverAwareInterface;
 use Laminas\Db\Adapter\Driver\PdoDriverInterface;
 use Laminas\Db\Adapter\Driver\ResultInterface;
 use Laminas\Db\Adapter\Driver\StatementInterface;
 use Laminas\Db\Adapter\Exception;
 use Laminas\Db\Adapter\Exception\RuntimeException;
 use Override;
+use PDO;
 
 use function is_array;
 use function str_replace;
@@ -16,11 +21,11 @@ use function strpos;
 use function strtolower;
 use function substr;
 
-abstract class AbstractPdoConnection extends AbstractConnection
+abstract class AbstractPdoConnection extends AbstractConnection implements PdoDriverAwareInterface
 {
     protected PdoDriverInterface $driver;
 
-    /** @var ?\PDO $resource */
+    /** @var ?PDO $resource */
     protected $resource;
 
     /** @var string */
@@ -29,14 +34,14 @@ abstract class AbstractPdoConnection extends AbstractConnection
     /**
      * Constructor
      *
-     * @param  array|\PDO|null $connectionParameters
+     * @param  array|PDO|null $connectionParameters
      * @throws Exception\InvalidArgumentException
      */
     public function __construct($connectionParameters = null)
     {
         if (is_array($connectionParameters)) {
             $this->setConnectionParameters($connectionParameters);
-        } elseif ($connectionParameters instanceof \PDO) {
+        } elseif ($connectionParameters instanceof PDO) {
             $this->setResource($connectionParameters);
         } elseif (null !== $connectionParameters) {
             throw new Exception\InvalidArgumentException(
@@ -45,7 +50,7 @@ abstract class AbstractPdoConnection extends AbstractConnection
         }
     }
 
-    public function setDriver(PdoDriverInterface $driver): static
+    public function setDriver(PdoDriverInterface $driver): PdoDriverAwareInterface
     {
         $this->driver = $driver;
 
@@ -125,10 +130,10 @@ abstract class AbstractPdoConnection extends AbstractConnection
     // }
 
     /** Set resource */
-    public function setResource(\PDO $resource): static
+    public function setResource(PDO $resource): static
     {
         $this->resource   = $resource;
-        $this->driverName = strtolower($this->resource->getAttribute(\PDO::ATTR_DRIVER_NAME));
+        $this->driverName = strtolower($this->resource->getAttribute(PDO::ATTR_DRIVER_NAME));
 
         return $this;
     }
@@ -274,11 +279,11 @@ abstract class AbstractPdoConnection extends AbstractConnection
     /** @inheritDoc */
     public function isConnected(): bool
     {
-        return $this->resource instanceof \PDO;
+        return $this->resource instanceof PDO;
     }
 
     /** @inheritDoc */
-    public function beginTransaction(): static
+    public function beginTransaction(): ConnectionInterface
     {
         if (! $this->isConnected()) {
             $this->connect();
@@ -295,7 +300,7 @@ abstract class AbstractPdoConnection extends AbstractConnection
     }
 
     /** @inheritDoc */
-    public function commit(): static
+    public function commit(): ConnectionInterface
     {
         if (! $this->isConnected()) {
             $this->connect();
@@ -322,7 +327,7 @@ abstract class AbstractPdoConnection extends AbstractConnection
      *
      * @throws Exception\RuntimeException
      */
-    public function rollback(): static
+    public function rollback(): ConnectionInterface
     {
         if (! $this->isConnected()) {
             throw new Exception\RuntimeException('Must be connected before you can rollback');
@@ -345,7 +350,7 @@ abstract class AbstractPdoConnection extends AbstractConnection
      *
      * @throws Exception\InvalidQueryException
      */
-    public function execute($sql): ResultInterface
+    public function execute($sql): ?ResultInterface
     {
         if (! $this->isConnected()) {
             $this->connect();

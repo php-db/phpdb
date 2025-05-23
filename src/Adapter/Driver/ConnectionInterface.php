@@ -1,12 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Laminas\Db\Adapter\Driver;
 
-/**
- *
- * @property $driver
- * @property $resource
- */
 interface ConnectionInterface
 {
     /**
@@ -24,25 +21,25 @@ interface ConnectionInterface
     public function getResource();
 
     /** Connect */
-    public function connect(): static;
+    public function connect(): ConnectionInterface;
 
     /** Is connected */
     public function isConnected(): bool;
 
     /** Disconnect */
-    public function disconnect(): static;
+    public function disconnect(): ConnectionInterface;
 
     /** Begin transaction */
-    public function beginTransaction(): static;
+    public function beginTransaction(): ConnectionInterface;
 
     /** Commit */
-    public function commit(): static;
+    public function commit(): ConnectionInterface;
 
     /** Rollback */
-    public function rollback(): static;
+    public function rollback(): ConnectionInterface;
 
     /** Execute */
-    public function execute(string $sql): ResultInterface;
+    public function execute(string $sql): ?ResultInterface;
 
     /**
      * Get last generated id
