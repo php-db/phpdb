@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Laminas\Db\Adapter\Driver\Pdo;
 
 use Laminas\Db\Adapter\Driver\ConnectionInterface;
@@ -10,7 +12,8 @@ use Laminas\Db\Adapter\Driver\PdoDriverInterface;
 use Laminas\Db\Adapter\Driver\ResultInterface;
 use Laminas\Db\Adapter\Driver\StatementInterface;
 use Laminas\Db\Adapter\Exception;
-use Laminas\Db\Adapter\Profiler;
+use Laminas\Db\Adapter\Profiler\ProfilerAwareInterface;
+use Laminas\Db\Adapter\Profiler\ProfilerInterface;
 use PDOStatement;
 
 use function extension_loaded;
@@ -20,7 +23,7 @@ use function ltrim;
 use function preg_match;
 use function sprintf;
 
-abstract class AbstractPdo implements PdoDriverInterface, DriverFeatureInterface, Profiler\ProfilerAwareInterface
+abstract class AbstractPdo implements PdoDriverInterface, DriverFeatureInterface, ProfilerAwareInterface
 {
     public const FEATURES_DEFAULT = 'default';
 
@@ -33,21 +36,21 @@ abstract class AbstractPdo implements PdoDriverInterface, DriverFeatureInterface
     protected array $features = [];
 
     /** @internal */
-    public Profiler\ProfilerInterface $profiler;
+    public ?ProfilerInterface $profiler;
 
-    public function setProfiler(Profiler\ProfilerInterface $profiler): static
+    public function setProfiler(ProfilerInterface $profiler): ProfilerAwareInterface
     {
         $this->profiler = $profiler;
-        if ($this->connection instanceof Profiler\ProfilerAwareInterface) {
+        if ($this->connection instanceof ProfilerAwareInterface) {
             $this->connection->setProfiler($profiler);
         }
-        if ($this->statementPrototype instanceof Profiler\ProfilerAwareInterface) {
+        if ($this->statementPrototype instanceof ProfilerAwareInterface) {
             $this->statementPrototype->setProfiler($profiler);
         }
         return $this;
     }
 
-    public function getProfiler(): ?Profiler\ProfilerInterface
+    public function getProfiler(): ?ProfilerInterface
     {
         return $this->profiler;
     }
@@ -55,7 +58,7 @@ abstract class AbstractPdo implements PdoDriverInterface, DriverFeatureInterface
     /**
      * Register statement prototype
      */
-    public function registerStatementPrototype(Statement $statementPrototype)
+    public function registerStatementPrototype(StatementInterface $statementPrototype)
     {
         $this->statementPrototype = $statementPrototype;
         $this->statementPrototype->setDriver($this);
@@ -64,13 +67,15 @@ abstract class AbstractPdo implements PdoDriverInterface, DriverFeatureInterface
     /**
      * Register result prototype
      */
-    public function registerResultPrototype(Result $resultPrototype)
+    public function registerResultPrototype(ResultInterface $resultPrototype)
     {
         $this->resultPrototype = $resultPrototype;
     }
 
     /**
      * Add feature
+     *
+     * todo: needs improvement
      *
      * @param string $name
      * @param AbstractFeature $feature
@@ -180,6 +185,7 @@ abstract class AbstractPdo implements PdoDriverInterface, DriverFeatureInterface
     }
 
     /**
+     * todo: this needs improved
      * @param string|PDOStatement $sqlOrResource
      */
     public function createStatement($sqlOrResource = null): StatementInterface
@@ -234,17 +240,11 @@ abstract class AbstractPdo implements PdoDriverInterface, DriverFeatureInterface
     //     return $result;
     // }
 
-    /**
-     * @return Result
-     */
-    public function getResultPrototype()
+    public function getResultPrototype(): ?ResultInterface
     {
         return $this->resultPrototype;
     }
 
-    /**
-     * @return string
-     */
     public function getPrepareType(): string
     {
         return self::PARAMETERIZATION_NAMED;
