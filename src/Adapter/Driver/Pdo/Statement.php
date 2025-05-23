@@ -2,8 +2,8 @@
 
 namespace Laminas\Db\Adapter\Driver\Pdo;
 
+use Laminas\Db\Adapter\Driver\PdoDriverAwareInterface;
 use Laminas\Db\Adapter\Driver\PdoDriverInterface;
-use Laminas\Db\Adapter\Driver\PdoStatementInterface;
 use Laminas\Db\Adapter\Driver\ResultInterface;
 use Laminas\Db\Adapter\Driver\StatementInterface;
 use Laminas\Db\Adapter\Exception;
@@ -19,7 +19,7 @@ use function is_array;
 use function is_bool;
 use function is_int;
 
-class Statement implements StatementInterface, PdoStatementInterface, Profiler\ProfilerAwareInterface
+class Statement implements StatementInterface, PdoDriverAwareInterface, Profiler\ProfilerAwareInterface
 {
     /** @var PDO */
     protected $pdo;
@@ -27,7 +27,7 @@ class Statement implements StatementInterface, PdoStatementInterface, Profiler\P
     /** @var Profiler\ProfilerInterface */
     protected $profiler;
 
-    /** @var \Laminas\Db\Adapter\Driver\PdoDriverInterface */
+    /** @var PdoDriverInterface */
     protected $driver;
 
     /** @var string */
@@ -57,7 +57,13 @@ class Statement implements StatementInterface, PdoStatementInterface, Profiler\P
     public function setDriver(PdoDriverInterface $driver): static
     {
         $this->driver = $driver;
+
         return $this;
+    }
+
+    public function getProfiler(): ?Profiler\ProfilerInterface
+    {
+        return $this->profiler;
     }
 
     /**
@@ -67,12 +73,8 @@ class Statement implements StatementInterface, PdoStatementInterface, Profiler\P
     public function setProfiler(Profiler\ProfilerInterface $profiler): static
     {
         $this->profiler = $profiler;
-        return $this;
-    }
 
-    public function getProfiler(): ?Profiler\ProfilerInterface
-    {
-        return $this->profiler;
+        return $this;
     }
 
     /**
@@ -83,17 +85,7 @@ class Statement implements StatementInterface, PdoStatementInterface, Profiler\P
     public function initialize(PDO $connectionResource)
     {
         $this->pdo = $connectionResource;
-        return $this;
-    }
 
-    /**
-     * Set resource
-     *
-     * @return $this Provides a fluent interface
-     */
-    public function setResource(PDOStatement $pdoStatement)
-    {
-        $this->resource = $pdoStatement;
         return $this;
     }
 
@@ -108,6 +100,71 @@ class Statement implements StatementInterface, PdoStatementInterface, Profiler\P
     }
 
     /**
+     * Set resource
+     *
+     * @return $this Provides a fluent interface
+     */
+    public function setResource(PDOStatement $pdoStatement)
+    {
+        $this->resource = $pdoStatement;
+
+        return $this;
+    }
+
+    /**
+     * Perform a deep clone
+     *
+     * @return void
+     */
+    public function __clone()
+    {
+        $this->isPrepared      = false;
+        $this->parametersBound = false;
+        $this->resource        = null;
+        if ($this->parameterContainer) {
+            $this->parameterContainer = clone $this->parameterContainer;
+        }
+    }
+
+    /**
+     * Bind parameters from container
+     */
+    protected function bindParametersFromContainer()
+    {
+        if ($this->parametersBound) {
+            return;
+        }
+
+        $parameters = $this->parameterContainer->getNamedArray();
+        foreach ($parameters as $name => &$value) {
+            if (is_bool($value)) {
+                $type = PDO::PARAM_BOOL;
+            } elseif (is_int($value)) {
+                $type = PDO::PARAM_INT;
+            } else {
+                $type = PDO::PARAM_STR;
+            }
+            if ($this->parameterContainer->offsetHasErrata($name)) {
+                switch ($this->parameterContainer->offsetGetErrata($name)) {
+                    case ParameterContainer::TYPE_INTEGER:
+                        $type = PDO::PARAM_INT;
+                        break;
+                    case ParameterContainer::TYPE_NULL:
+                        $type = PDO::PARAM_NULL;
+                        break;
+                    case ParameterContainer::TYPE_LOB:
+                        $type = PDO::PARAM_LOB;
+                        break;
+                }
+            }
+
+            // parameter is named or positional, value is reference
+            $parameter = is_int($name) ? $name + 1 : $this->driver->formatParameterName($name);
+            $this->resource->bindParam($parameter, $value, $type);
+        }
+    }
+
+    /**
      * Set sql
      *
      * @param string $sql
@@ -116,6 +173,7 @@ class Statement implements StatementInterface, PdoStatementInterface, Profiler\P
     public function setSql($sql): static
     {
         $this->sql = $sql;
+
         return $this;
     }
 
@@ -135,6 +193,7 @@ class Statement implements StatementInterface, PdoStatementInterface, Profiler\P
     public function setParameterContainer(ParameterContainer $parameterContainer)
     {
         $this->parameterContainer = $parameterContainer;
+
         return $this;
     }
 
@@ -231,58 +290,5 @@ class Statement implements StatementInterface, PdoStatementInterface, Profiler\P
         }
 
         return $this->driver->createResult($this->resource, $this);
-    }
-
-    /**
-     * Bind parameters from container
-     */
-    protected function bindParametersFromContainer()
-    {
-        if ($this->parametersBound) {
-            return;
-        }
-
-        $parameters = $this->parameterContainer->getNamedArray();
-        foreach ($parameters as $name => &$value) {
-            if (is_bool($value)) {
-                $type = \PDO::PARAM_BOOL;
-            } elseif (is_int($value)) {
-                $type = \PDO::PARAM_INT;
-            } else {
-                $type = \PDO::PARAM_STR;
-            }
-            if ($this->parameterContainer->offsetHasErrata($name)) {
-                switch ($this->parameterContainer->offsetGetErrata($name)) {
-                    case ParameterContainer::TYPE_INTEGER:
-                        $type = \PDO::PARAM_INT;
-                        break;
-                    case ParameterContainer::TYPE_NULL:
-                        $type = \PDO::PARAM_NULL;
-                        break;
-                    case ParameterContainer::TYPE_LOB:
-                        $type = \PDO::PARAM_LOB;
-                        break;
-                }
-            }
-
-            // parameter is named or positional, value is reference
-            $parameter = is_int($name) ? $name + 1 : $this->driver->formatParameterName($name);
-            $this->resource->bindParam($parameter, $value, $type);
-        }
-    }
-
-    /**
-     * Perform a deep clone
-     *
-     * @return void
-     */
-    public function __clone()
-    {
-        $this->isPrepared      = false;
-        $this->parametersBound = false;
-        $this->resource        = null;
-        if ($this->parameterContainer) {
-            $this->parameterContainer = clone $this->parameterContainer;
-        }
     }
 }
