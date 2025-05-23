@@ -82,7 +82,7 @@ abstract class AdapterAbstractServiceFactory implements AbstractFactoryInterface
             ! isset($config['adapters'])
             || ! is_array($config['adapters'])
         ) {
-            $this->config = [];
+            $this->config = $config;
             return $this->config;
         }
 

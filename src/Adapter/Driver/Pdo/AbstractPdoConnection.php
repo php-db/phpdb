@@ -10,8 +10,11 @@ use Laminas\Db\Adapter\Driver\StatementInterface;
 use Laminas\Db\Adapter\Exception;
 use Laminas\Db\Adapter\Exception\RuntimeException;
 use Override;
+use PDO;
 
 use function is_array;
+use function is_string;
+use function str_contains;
 use function str_replace;
 use function strpos;
 use function strtolower;
@@ -21,23 +24,22 @@ abstract class AbstractPdoConnection extends AbstractConnection
 {
     protected PdoDriverInterface $driver;
 
-    /** @var ?\PDO $resource */
+    /** @var ?PDO $resource */
     protected $resource;
 
-    /** @var string */
     protected ?string $dsn;
 
     /**
      * Constructor
      *
-     * @param  array|\PDO|null $connectionParameters
+     * @param  array|PDO|null $connectionParameters
      * @throws Exception\InvalidArgumentException
      */
     public function __construct($connectionParameters = null)
     {
         if (is_array($connectionParameters)) {
             $this->setConnectionParameters($connectionParameters);
-        } elseif ($connectionParameters instanceof \PDO) {
+        } elseif ($connectionParameters instanceof PDO) {
             $this->setResource($connectionParameters);
         } elseif (null !== $connectionParameters) {
             throw new Exception\InvalidArgumentException(
@@ -136,17 +138,16 @@ abstract class AbstractPdoConnection extends AbstractConnection
     // }
 
     /** Set resource */
-    public function setResource(\PDO $resource): static
+    public function setResource(PDO $resource): static
     {
         $this->resource   = $resource;
-        $this->driverName = strtolower($this->resource->getAttribute(\PDO::ATTR_DRIVER_NAME));
+        $this->driverName = strtolower($this->resource->getAttribute(PDO::ATTR_DRIVER_NAME));
 
         return $this;
     }
 
     /**
      * @inheritDoc
-     *
      * @throws Exception\InvalidConnectionParametersException
      * @throws Exception\RuntimeException
      */
@@ -285,7 +286,7 @@ abstract class AbstractPdoConnection extends AbstractConnection
     /** @inheritDoc */
     public function isConnected(): bool
     {
-        return $this->resource instanceof \PDO;
+        return $this->resource instanceof PDO;
     }
 
     /** @inheritDoc */
@@ -330,7 +331,6 @@ abstract class AbstractPdoConnection extends AbstractConnection
 
     /**
      * @inheritDoc
-     *
      * @throws Exception\RuntimeException
      */
     public function rollback(): static
@@ -353,7 +353,6 @@ abstract class AbstractPdoConnection extends AbstractConnection
 
     /**
      * @inheritDoc
-     *
      * @throws Exception\InvalidQueryException
      */
     public function execute($sql): ResultInterface
