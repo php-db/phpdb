@@ -3,6 +3,7 @@
 namespace Laminas\Db\Adapter\Driver\Pdo;
 
 use Laminas\Db\Adapter\Driver\AbstractConnection;
+use Laminas\Db\Adapter\Driver\DriverInterface;
 use Laminas\Db\Adapter\Driver\PdoDriverInterface;
 use Laminas\Db\Adapter\Driver\ResultInterface;
 use Laminas\Db\Adapter\Driver\StatementInterface;
@@ -56,22 +57,32 @@ abstract class AbstractPdoConnection extends AbstractConnection
     public function setConnectionParameters(array $connectionParameters): static
     {
         $this->connectionParameters = $connectionParameters;
+
         if (isset($connectionParameters['dsn'])) {
-            $this->driverName = substr(
-                $connectionParameters['dsn'],
-                0,
-                strpos($connectionParameters['dsn'], ':')
-            );
+            $driverName = $this->getDriverNameFromParameter($connectionParameters['dsn']);
         } elseif (isset($connectionParameters['pdodriver'])) {
-            $this->driverName = strtolower($connectionParameters['pdodriver']);
+            $driverName = $this->getDriverNameFromParameter($connectionParameters['pdodriver']);
         } elseif (isset($connectionParameters['driver'])) {
-            $this->driverName = strtolower(substr(
-                str_replace(['-', '_', ' '], '', $connectionParameters['driver']),
-                3
-            ));
+            $driverName = $this->getDriverNameFromParameter($connectionParameters['driver']);
         }
 
+        $this->driverName = strtolower($driverName);
+
         return $this;
+    }
+
+    protected function getDriverNameFromParameter(mixed $parameter): string
+    {
+        if ($parameter instanceof DriverInterface) {
+            return $parameter->getDatabasePlatformName();
+        } elseif (is_string($parameter)) {
+            if (str_contains($parameter, ':')) {
+                return substr($parameter, 0, strpos($parameter, ':'));
+            }
+            return substr(str_replace(['-', '_', ' '], '', $parameter), 3);
+        }
+
+        return '';
     }
 
     /**
