@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Laminas\Db\Adapter\Driver\Pdo;
 
 use Laminas\Db\Adapter\Driver\PdoDriverAwareInterface;
@@ -8,7 +10,9 @@ use Laminas\Db\Adapter\Driver\ResultInterface;
 use Laminas\Db\Adapter\Driver\StatementInterface;
 use Laminas\Db\Adapter\Exception;
 use Laminas\Db\Adapter\ParameterContainer;
-use Laminas\Db\Adapter\Profiler;
+use Laminas\Db\Adapter\Profiler\ProfilerAwareInterface;
+use Laminas\Db\Adapter\Profiler\ProfilerInterface;
+use Laminas\Db\Adapter\StatementContainerInterface;
 use PDO;
 use PDOException;
 use PDOStatement;
@@ -18,11 +22,11 @@ use function is_array;
 use function is_bool;
 use function is_int;
 
-class Statement implements StatementInterface, PdoDriverAwareInterface, Profiler\ProfilerAwareInterface
+class Statement implements StatementInterface, PdoDriverAwareInterface, ProfilerAwareInterface
 {
     protected PDO $pdo;
 
-    protected Profiler\ProfilerInterface $profiler;
+    protected ?ProfilerInterface $profiler = null;
 
     protected PdoDriverInterface $driver;
 
@@ -30,27 +34,27 @@ class Statement implements StatementInterface, PdoDriverAwareInterface, Profiler
 
     protected bool $isQuery;
 
-    protected ParameterContainer $parameterContainer;
+    protected ?ParameterContainer $parameterContainer = null;
 
     protected bool $parametersBound = false;
 
-    protected ?PDOStatement $resource;
+    protected PDOStatement|false|null $resource;
 
     protected bool $isPrepared = false;
 
-    public function setDriver(PdoDriverInterface $driver): static
+    public function setDriver(PdoDriverInterface $driver): PdoDriverAwareInterface
     {
         $this->driver = $driver;
         return $this;
     }
 
-    public function setProfiler(Profiler\ProfilerInterface $profiler): static
+    public function setProfiler(ProfilerInterface $profiler): ProfilerAwareInterface
     {
         $this->profiler = $profiler;
         return $this;
     }
 
-    public function getProfiler(): ?Profiler\ProfilerInterface
+    public function getProfiler(): ?ProfilerInterface
     {
         return $this->profiler;
     }
@@ -76,7 +80,7 @@ class Statement implements StatementInterface, PdoDriverAwareInterface, Profiler
     }
 
     /** Set sql */
-    public function setSql(?string $sql): static
+    public function setSql(?string $sql): StatementContainerInterface
     {
         $this->sql = $sql;
         return $this;
@@ -88,7 +92,7 @@ class Statement implements StatementInterface, PdoDriverAwareInterface, Profiler
         return $this->sql;
     }
 
-    public function setParameterContainer(ParameterContainer $parameterContainer): static
+    public function setParameterContainer(ParameterContainer $parameterContainer): StatementContainerInterface
     {
         $this->parameterContainer = $parameterContainer;
         return $this;
@@ -153,16 +157,13 @@ class Statement implements StatementInterface, PdoDriverAwareInterface, Profiler
         }
         /** END Standard ParameterContainer Merging Block */
 
-        if ($this->profiler) {
-            $this->profiler->profilerStart($this);
-        }
+        $this->profiler?->profilerStart($this);
 
         try {
             $this->resource->execute();
         } catch (PDOException $e) {
-            if ($this->profiler) {
-                $this->profiler->profilerFinish();
-            }
+
+            $this->profiler?->profilerFinish();
 
             $code = $e->getCode();
             if (! is_int($code)) {
@@ -176,9 +177,7 @@ class Statement implements StatementInterface, PdoDriverAwareInterface, Profiler
             );
         }
 
-        if ($this->profiler) {
-            $this->profiler->profilerFinish();
-        }
+        $this->profiler?->profilerFinish();
 
         return $this->driver->createResult($this->resource, $this);
     }
@@ -193,22 +192,22 @@ class Statement implements StatementInterface, PdoDriverAwareInterface, Profiler
         $parameters = $this->parameterContainer->getNamedArray();
         foreach ($parameters as $name => &$value) {
             if (is_bool($value)) {
-                $type = \PDO::PARAM_BOOL;
+                $type = PDO::PARAM_BOOL;
             } elseif (is_int($value)) {
-                $type = \PDO::PARAM_INT;
+                $type = PDO::PARAM_INT;
             } else {
-                $type = \PDO::PARAM_STR;
+                $type = PDO::PARAM_STR;
             }
             if ($this->parameterContainer->offsetHasErrata($name)) {
                 switch ($this->parameterContainer->offsetGetErrata($name)) {
                     case ParameterContainer::TYPE_INTEGER:
-                        $type = \PDO::PARAM_INT;
+                        $type = PDO::PARAM_INT;
                         break;
                     case ParameterContainer::TYPE_NULL:
-                        $type = \PDO::PARAM_NULL;
+                        $type = PDO::PARAM_NULL;
                         break;
                     case ParameterContainer::TYPE_LOB:
-                        $type = \PDO::PARAM_LOB;
+                        $type = PDO::PARAM_LOB;
                         break;
                 }
             }

@@ -1,17 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Laminas\Db\Adapter;
 
 interface StatementContainerInterface
 {
     /** Set sql */
-    public function setSql(?string $sql): static;
+    public function setSql(?string $sql): StatementContainerInterface;
 
     /** Get sql */
     public function getSql(): ?string;
 
     /** Set parameter container */
-    public function setParameterContainer(ParameterContainer $parameterContainer): static;
+    public function setParameterContainer(ParameterContainer $parameterContainer): StatementContainerInterface;
 
     /** Get parameter container */
     public function getParameterContainer(): ?ParameterContainer;

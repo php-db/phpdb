@@ -7,5 +7,5 @@ namespace Laminas\Db\Adapter\Driver;
 interface PdoDriverAwareInterface
 {
     /** Implementation should provide a fluent interface */
-    public function setDriver(PdoDriverInterface $driver): static;
+    public function setDriver(PdoDriverInterface $driver): PdoDriverAwareInterface;
 }

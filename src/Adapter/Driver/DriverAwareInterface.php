@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Laminas\Db\Adapter\Driver;
 
-interface DriveAwareInterface
+interface DriverAwareInterface
 {
     /** Implementation should provide a fluent interface */
-    public function setDriver(DriverInterface $driver): static;
+    public function setDriver(DriverInterface $driver): DriverAwareInterface;
 }
