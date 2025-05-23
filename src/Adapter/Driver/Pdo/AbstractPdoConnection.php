@@ -55,20 +55,18 @@ abstract class AbstractPdoConnection extends AbstractConnection
         return $this;
     }
 
-    #[Override]
+     #[Override]
     public function setConnectionParameters(array $connectionParameters): static
     {
         $this->connectionParameters = $connectionParameters;
 
         if (isset($connectionParameters['dsn'])) {
-            $driverName = $this->getDriverNameFromParameter($connectionParameters['dsn']);
+            $this->driverName = strtolower($this->getDriverNameFromParameter($connectionParameters['dsn']));
         } elseif (isset($connectionParameters['pdodriver'])) {
-            $driverName = $this->getDriverNameFromParameter($connectionParameters['pdodriver']);
+            $this->driverName = strtolower($this->getDriverNameFromParameter($connectionParameters['pdodriver']));
         } elseif (isset($connectionParameters['driver'])) {
-            $driverName = $this->getDriverNameFromParameter($connectionParameters['driver']);
+            $this->driverName = strtolower($this->getDriverNameFromParameter($connectionParameters['driver']));
         }
-
-        $this->driverName = strtolower($driverName);
 
         return $this;
     }
