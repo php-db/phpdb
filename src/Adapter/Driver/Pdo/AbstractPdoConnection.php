@@ -23,7 +23,7 @@ use function substr;
 
 abstract class AbstractPdoConnection extends AbstractConnection implements PdoDriverAwareInterface
 {
-    protected PdoDriverInterface $driver;
+    protected ?PdoDriverInterface $driver = null;
 
     /** @var ?PDO $resource */
     protected $resource;
@@ -34,11 +34,11 @@ abstract class AbstractPdoConnection extends AbstractConnection implements PdoDr
     /**
      * Constructor
      *
-     * @param  array|PDO|null $connectionParameters
      * @throws Exception\InvalidArgumentException
      */
-    public function __construct($connectionParameters = null)
-    {
+    public function __construct(
+        array|PDO|null $connectionParameters = null
+    ){
         if (is_array($connectionParameters)) {
             $this->setConnectionParameters($connectionParameters);
         } elseif ($connectionParameters instanceof PDO) {
