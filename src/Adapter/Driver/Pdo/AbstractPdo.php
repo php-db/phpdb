@@ -17,6 +17,7 @@ use Laminas\Db\Adapter\Profiler\ProfilerInterface;
 use PDOStatement;
 
 use function extension_loaded;
+use function is_int;
 use function is_numeric;
 use function is_string;
 use function ltrim;
@@ -253,6 +254,11 @@ abstract class AbstractPdo implements PdoDriverInterface, DriverFeatureInterface
     public function formatParameterName(string|int $name, ?string $type = null): string
     {
         if ($type === null && ! is_numeric($name) || $type === self::PARAMETERIZATION_NAMED) {
+            // temporary fix for passing $name as int with type self::PARAMETERIZATION_NAMED
+            if (is_int($name) && $type === self::PARAMETERIZATION_NAMED) {
+                $name = (string) $name;
+            }
+            // end temporary fix
             $name = ltrim($name, ':');
             // @see https://bugs.php.net/bug.php?id=43130
             if (preg_match('/[^a-zA-Z0-9_]/', $name)) {
