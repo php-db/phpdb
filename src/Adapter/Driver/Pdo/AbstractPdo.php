@@ -250,7 +250,7 @@ abstract class AbstractPdo implements PdoDriverInterface, DriverFeatureInterface
         return self::PARAMETERIZATION_NAMED;
     }
 
-    public function formatParameterName(string $name, ?string $type = null): string
+    public function formatParameterName(string|int $name, ?string $type = null): string
     {
         if ($type === null && ! is_numeric($name) || $type === self::PARAMETERIZATION_NAMED) {
             $name = ltrim($name, ':');
