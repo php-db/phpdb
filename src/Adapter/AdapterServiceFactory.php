@@ -19,14 +19,4 @@ class AdapterServiceFactory implements FactoryInterface
         $config = $container->get('config');
         return new Adapter($config['db']);
     }
-
-    /**
-     * Create db adapter service (v2)
-     *
-     * @return Adapter
-     */
-    public function createService(ServiceLocatorInterface $container)
-    {
-        return $this($container, Adapter::class);
-    }
 }

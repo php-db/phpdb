@@ -1,39 +1,46 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Laminas\Db\Adapter;
 
+use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use Psr\Container\ContainerInterface;
+
+use function sprintf;
 
 class AdapterServiceDelegator
 {
-    /** @var string */
-    private $adapterName;
-
-    public function __construct(string $adapterName = AdapterInterface::class)
-    {
-        $this->adapterName = $adapterName;
-    }
+    public function __construct(
+        protected readonly string $adapterName = AdapterInterface::class
+    ) {}
 
     public static function __set_state(array $state): self
     {
         return new self($state['adapterName'] ?? AdapterInterface::class);
     }
 
-    /** @return AdapterInterface */
     public function __invoke(
         ContainerInterface $container,
         string $name,
         callable $callback,
         ?array $options = null
-    ) {
+    ): AdapterAwareInterface {
         $instance = $callback();
 
         if (! $instance instanceof AdapterAwareInterface) {
-            return $instance;
+            throw new Exception\RuntimeException(sprintf(
+                'Delegated service "%s" must implement %s',
+                $name,
+                AdapterAwareInterface::class
+            ));
         }
 
         if (! $container->has($this->adapterName)) {
-            return $instance;
+            throw new ServiceNotFoundException(sprintf(
+                'Service "%s" not found in container',
+                $this->adapterName
+            ));
         }
 
         $databaseAdapter = $container->get($this->adapterName);

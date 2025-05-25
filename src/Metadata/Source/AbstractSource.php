@@ -20,21 +20,17 @@ abstract class AbstractSource implements MetadataInterface
 {
     public const DEFAULT_SCHEMA = '__DEFAULT_SCHEMA__';
 
-    /** @var Adapter */
-    protected $adapter;
-
     /** @var string */
     protected $defaultSchema;
 
-    /** @var array */
-    protected $data = [];
+    protected array $data = [];
 
     /**
      * Constructor
      */
-    public function __construct(AdapterInterface $adapter)
-    {
-        $this->adapter       = $adapter;
+    public function __construct(
+        protected AdapterInterface $adapter
+        ) {
         $this->defaultSchema = $adapter->getCurrentSchema() ?: self::DEFAULT_SCHEMA;
     }
 
