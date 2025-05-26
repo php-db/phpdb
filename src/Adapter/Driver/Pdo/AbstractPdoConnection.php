@@ -28,7 +28,6 @@ abstract class AbstractPdoConnection extends AbstractConnection implements PdoDr
     /** @var ?PDO $resource */
     protected $resource;
 
-    /** @var string */
     protected ?string $dsn;
 
     /**
@@ -140,7 +139,6 @@ abstract class AbstractPdoConnection extends AbstractConnection implements PdoDr
 
     /**
      * @inheritDoc
-     *
      * @throws Exception\InvalidConnectionParametersException
      * @throws Exception\RuntimeException
      */
@@ -324,7 +322,6 @@ abstract class AbstractPdoConnection extends AbstractConnection implements PdoDr
 
     /**
      * @inheritDoc
-     *
      * @throws Exception\RuntimeException
      */
     public function rollback(): ConnectionInterface
@@ -347,7 +344,6 @@ abstract class AbstractPdoConnection extends AbstractConnection implements PdoDr
 
     /**
      * @inheritDoc
-     *
      * @throws Exception\InvalidQueryException
      */
     public function execute($sql): ?ResultInterface

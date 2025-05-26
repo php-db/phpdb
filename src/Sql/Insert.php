@@ -33,27 +33,25 @@ class Insert extends AbstractPreparableSql
     /**#@-*/
 
     /** @var string[]|array[] $specifications */
-    protected $specifications = [
-        self::SPECIFICATION_INSERT => 'INSERT INTO %1$s (%2$s) VALUES (%3$s)',
-        self::SPECIFICATION_SELECT => 'INSERT INTO %1$s %2$s %3$s',
-    ];
+    protected array $specifications = [];
 
-    /** @var string|array|TableIdentifier */
     protected TableIdentifier|string|array $table = '';
 
     /** @var string[] */
-    protected $columns = [];
+    protected array $columns = [];
 
-    /** @var array|Select */
-    protected $select;
+    protected array|Select $select;
 
     /**
      * Constructor
-     *
-     * @param  null|string|TableIdentifier $table
      */
-    public function __construct($table = null)
+    public function __construct(null|string|TableIdentifier $table = null)
     {
+        $this->specifications = [
+            self::SPECIFICATION_INSERT => 'INSERT INTO %1$s (%2$s) VALUES (%3$s)',
+            self::SPECIFICATION_SELECT => 'INSERT INTO %1$s %2$s %3$s',
+        ];
+
         if ($table) {
             $this->into($table);
         }
@@ -62,10 +60,9 @@ class Insert extends AbstractPreparableSql
     /**
      * Create INTO clause
      *
-     * @param  string|array|TableIdentifier $table
      * @return $this Provides a fluent interface
      */
-    public function into($table): static
+    public function into(string|array|TableIdentifier $table): static
     {
         $this->table = $table;
         return $this;
@@ -76,7 +73,7 @@ class Insert extends AbstractPreparableSql
      *
      * @return $this Provides a fluent interface
      */
-    public function columns(array $columns)
+    public function columns(array $columns): self
     {
         $this->columns = array_flip($columns);
         return $this;
@@ -85,12 +82,11 @@ class Insert extends AbstractPreparableSql
     /**
      * Specify values to insert
      *
-     * @param  array|Select $values
      * @param  string $flag one of VALUES_MERGE or VALUES_SET; defaults to VALUES_SET
      * @return $this Provides a fluent interface
      * @throws Exception\InvalidArgumentException
      */
-    public function values($values, $flag = self::VALUES_SET)
+    public function values(array|Select $values, string $flag = self::VALUES_SET)
     {
         if ($values instanceof Select) {
             if ($flag === self::VALUES_MERGE) {
@@ -111,7 +107,7 @@ class Insert extends AbstractPreparableSql
         if ($this->select && $flag === self::VALUES_MERGE) {
             throw new Exception\InvalidArgumentException(
                 'An array of values cannot be provided with the merge flag when a Laminas\Db\Sql\Select'
-                . ' instance already exists as the value source'
+                    . ' instance already exists as the value source'
             );
         }
 
@@ -134,7 +130,7 @@ class Insert extends AbstractPreparableSql
      *
      * @return bool
      */
-    private function isAssocativeArray(array $array)
+    private function isAssocativeArray(array $array): bool
     {
         return array_keys($array) !== range(0, count($array) - 1);
     }
@@ -151,11 +147,8 @@ class Insert extends AbstractPreparableSql
 
     /**
      * Get raw state
-     *
-     * @param string $key
-     * @return mixed
      */
-    public function getRawState($key = null)
+    public function getRawState(string|null $key = null): mixed
     {
         $rawState = [
             'table'   => $this->table,
@@ -167,8 +160,8 @@ class Insert extends AbstractPreparableSql
 
     protected function processInsert(
         PlatformInterface $platform,
-        ?Driver\DriverInterface $driver = null,
-        ?ParameterContainer $parameterContainer = null
+        Driver\DriverInterface|null $driver = null,
+        ParameterContainer|null $parameterContainer = null
     ) {
         if ($this->select) {
             return;
@@ -210,8 +203,8 @@ class Insert extends AbstractPreparableSql
 
     protected function processSelect(
         PlatformInterface $platform,
-        ?Driver\DriverInterface $driver = null,
-        ?ParameterContainer $parameterContainer = null
+        Driver\DriverInterface|null $driver = null,
+        ParameterContainer|null $parameterContainer = null
     ) {
         if (! $this->select) {
             return;
@@ -234,11 +227,10 @@ class Insert extends AbstractPreparableSql
      *
      * Proxies to values, using VALUES_MERGE strategy
      *
-     * @param  string $name
      * @param  mixed $value
      * @return $this Provides a fluent interface
      */
-    public function __set($name, $value)
+    public function __set(string $name, $value)
     {
         $this->columns[$name] = $value;
         return $this;
@@ -249,11 +241,9 @@ class Insert extends AbstractPreparableSql
      *
      * Proxies to values and columns
      *
-     * @param  string $name
      * @throws Exception\InvalidArgumentException
-     * @return void
      */
-    public function __unset($name)
+    public function __unset(string $name): void
     {
         if (! array_key_exists($name, $this->columns)) {
             throw new Exception\InvalidArgumentException(
@@ -268,11 +258,8 @@ class Insert extends AbstractPreparableSql
      * Overloading: variable isset
      *
      * Proxies to columns; does a column of that name exist?
-     *
-     * @param  string $name
-     * @return bool
      */
-    public function __isset($name)
+    public function __isset(string $name): bool
     {
         return array_key_exists($name, $this->columns);
     }
@@ -282,11 +269,10 @@ class Insert extends AbstractPreparableSql
      *
      * Retrieves value by column name
      *
-     * @param  string $name
      * @throws Exception\InvalidArgumentException
      * @return mixed
      */
-    public function __get($name)
+    public function __get(string $name)
     {
         if (! array_key_exists($name, $this->columns)) {
             throw new Exception\InvalidArgumentException(

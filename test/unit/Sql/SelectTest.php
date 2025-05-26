@@ -2,7 +2,7 @@
 
 namespace LaminasTest\Db\Sql;
 
-use Laminas\Db\Adapter\Adapter;
+use Laminas\Db\Adapter\AbstractAdapter as Adapter;
 use Laminas\Db\Adapter\Driver\DriverInterface;
 use Laminas\Db\Adapter\Driver\StatementInterface;
 use Laminas\Db\Adapter\ParameterContainer;
@@ -768,7 +768,7 @@ final class SelectTest extends TestCase
         $select0 = new Select();
         $select0->from('foo');
         $sqlPrep0       = // same
-        $sqlStr0        = 'SELECT "foo".* FROM "foo"';
+            $sqlStr0        = 'SELECT "foo".* FROM "foo"';
         $internalTests0 = [
             'processSelect' => [[['"foo".*']], '"foo"'],
         ];
@@ -777,7 +777,7 @@ final class SelectTest extends TestCase
         $select1 = new Select();
         $select1->from(new TableIdentifier('foo', 'bar'));
         $sqlPrep1       = // same
-        $sqlStr1        = 'SELECT "bar"."foo".* FROM "bar"."foo"';
+            $sqlStr1        = 'SELECT "bar"."foo".* FROM "bar"."foo"';
         $internalTests1 = [
             'processSelect' => [[['"bar"."foo".*']], '"bar"."foo"'],
         ];
@@ -786,7 +786,7 @@ final class SelectTest extends TestCase
         $select2 = new Select();
         $select2->from(['f' => 'foo']);
         $sqlPrep2       = // same
-        $sqlStr2        = 'SELECT "f".* FROM "foo" AS "f"';
+            $sqlStr2        = 'SELECT "f".* FROM "foo" AS "f"';
         $internalTests2 = [
             'processSelect' => [[['"f".*']], '"foo" AS "f"'],
         ];
@@ -795,7 +795,7 @@ final class SelectTest extends TestCase
         $select3 = new Select();
         $select3->from(['f' => new TableIdentifier('foo')]);
         $sqlPrep3       = // same
-        $sqlStr3        = 'SELECT "f".* FROM "foo" AS "f"';
+            $sqlStr3        = 'SELECT "f".* FROM "foo" AS "f"';
         $internalTests3 = [
             'processSelect' => [[['"f".*']], '"foo" AS "f"'],
         ];
@@ -804,7 +804,7 @@ final class SelectTest extends TestCase
         $select4 = new Select();
         $select4->from('foo')->columns(['bar', 'baz']);
         $sqlPrep4       = // same
-        $sqlStr4        = 'SELECT "foo"."bar" AS "bar", "foo"."baz" AS "baz" FROM "foo"';
+            $sqlStr4        = 'SELECT "foo"."bar" AS "bar", "foo"."baz" AS "baz" FROM "foo"';
         $internalTests4 = [
             'processSelect' => [[['"foo"."bar"', '"bar"'], ['"foo"."baz"', '"baz"']], '"foo"'],
         ];
@@ -813,7 +813,7 @@ final class SelectTest extends TestCase
         $select5 = new Select();
         $select5->from('foo')->columns(['bar' => 'baz']);
         $sqlPrep5       = // same
-        $sqlStr5        = 'SELECT "foo"."baz" AS "bar" FROM "foo"';
+            $sqlStr5        = 'SELECT "foo"."baz" AS "bar" FROM "foo"';
         $internalTests5 = [
             'processSelect' => [[['"foo"."baz"', '"bar"']], '"foo"'],
         ];
@@ -822,7 +822,7 @@ final class SelectTest extends TestCase
         $select6 = new Select();
         $select6->from('foo')->columns(['bar' => 'baz', 'bam']);
         $sqlPrep6       = // same
-        $sqlStr6        = 'SELECT "foo"."baz" AS "bar", "foo"."bam" AS "bam" FROM "foo"';
+            $sqlStr6        = 'SELECT "foo"."baz" AS "bar", "foo"."bam" AS "bam" FROM "foo"';
         $internalTests6 = [
             'processSelect' => [[['"foo"."baz"', '"bar"'], ['"foo"."bam"', '"bam"']], '"foo"'],
         ];
@@ -831,7 +831,7 @@ final class SelectTest extends TestCase
         $select7 = new Select();
         $select7->from('foo')->columns(['bar' => new Expression('COUNT(some_column)')]);
         $sqlPrep7       = // same
-        $sqlStr7        = 'SELECT COUNT(some_column) AS "bar" FROM "foo"';
+            $sqlStr7        = 'SELECT COUNT(some_column) AS "bar" FROM "foo"';
         $internalTests7 = [
             'processSelect' => [[['COUNT(some_column)', '"bar"']], '"foo"'],
         ];
@@ -840,7 +840,7 @@ final class SelectTest extends TestCase
         $select8 = new Select();
         $select8->from('foo')->columns([new Expression('COUNT(some_column) AS bar')]);
         $sqlPrep8       = // same
-        $sqlStr8        = 'SELECT COUNT(some_column) AS bar FROM "foo"';
+            $sqlStr8        = 'SELECT COUNT(some_column) AS bar FROM "foo"';
         $internalTests8 = [
             'processSelect' => [[['COUNT(some_column) AS bar']], '"foo"'],
         ];

@@ -2,7 +2,7 @@
 
 namespace LaminasTest\Db\Sql;
 
-use Laminas\Db\Adapter\Adapter;
+use Laminas\Db\Adapter\AbstractAdapter as Adapter;
 use Laminas\Db\Adapter\Driver\DriverInterface;
 use Laminas\Db\Adapter\Driver\StatementInterface;
 use Laminas\Db\Adapter\ParameterContainer;
@@ -282,8 +282,8 @@ final class UpdateTest extends TestCase
     {
         $update1 = clone $this->update;
         $update1->table('foo')
-                ->set(['bar' => 'baz'])
-                ->where('x = y');
+            ->set(['bar' => 'baz'])
+            ->where('x = y');
 
         $update2 = clone $this->update;
         $update2->table('foo')
@@ -368,7 +368,7 @@ final class UpdateTest extends TestCase
 
         self::assertEquals(
             'UPDATE "Document" INNER JOIN "User" ON "User"."UserId" = "Document"."UserId" '
-            . 'LEFT JOIN "Category" ON "Category"."CategoryId" = "Document"."CategoryId" SET "x" = \'y\'',
+                . 'LEFT JOIN "Category" ON "Category"."CategoryId" = "Document"."CategoryId" SET "x" = \'y\'',
             $this->update->getSqlString(new TrustingSql92Platform())
         );
     }
@@ -394,7 +394,7 @@ final class UpdateTest extends TestCase
 
         self::assertEquals(
             'UPDATE "Document" INNER JOIN "User" ON "User"."UserId" = "Document"."UserId" '
-            . 'LEFT JOIN "Category" ON "Category"."CategoryId" = "Document"."CategoryId" SET "Documents"."x" = \'y\'',
+                . 'LEFT JOIN "Category" ON "Category"."CategoryId" = "Document"."CategoryId" SET "Documents"."x" = \'y\'',
             $this->update->getSqlString(new TrustingSql92Platform())
         );
     }

@@ -12,14 +12,14 @@ abstract class AbstractConnection implements ConnectionInterface, ProfilerAwareI
 {
     protected array $connectionParameters = [];
 
-    protected ?string $driverName;
+    protected string|null $driverName;
 
     protected bool $inTransaction = false;
 
     /** Nested transactions count. */
     protected int $nestedTransactionsCount = 0;
 
-    protected ?ProfilerInterface $profiler = null;
+    protected ProfilerInterface|null $profiler = null;
 
     /** @var resource|null */
     protected $resource;
@@ -41,12 +41,12 @@ abstract class AbstractConnection implements ConnectionInterface, ProfilerAwareI
     }
 
     /** Get driver name */
-    public function getDriverName(): ?string
+    public function getDriverName(): string|null
     {
         return $this->driverName;
     }
 
-    public function getProfiler(): ?ProfilerInterface
+    public function getProfiler(): ProfilerInterface|null
     {
         return $this->profiler;
     }

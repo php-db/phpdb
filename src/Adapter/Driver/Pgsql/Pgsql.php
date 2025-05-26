@@ -2,9 +2,13 @@
 
 namespace Laminas\Db\Adapter\Driver\Pgsql;
 
+use Laminas\Db\Adapter\Driver\ConnectionInterface;
 use Laminas\Db\Adapter\Driver\DriverInterface;
+use Laminas\Db\Adapter\Driver\ResultInterface;
+use Laminas\Db\Adapter\Driver\StatementInterface;
 use Laminas\Db\Adapter\Exception;
 use Laminas\Db\Adapter\Profiler;
+use Laminas\Db\Adapter\Profiler\ProfilerAwareInterface;
 
 use function extension_loaded;
 use function is_string;
@@ -52,7 +56,7 @@ class Pgsql implements DriverInterface, Profiler\ProfilerAwareInterface
     /**
      * @return $this Provides a fluent interface
      */
-    public function setProfiler(Profiler\ProfilerInterface $profiler)
+    public function setProfiler(Profiler\ProfilerInterface $profiler): ProfilerAwareInterface
     {
         $this->profiler = $profiler;
         if ($this->connection instanceof Profiler\ProfilerAwareInterface) {
@@ -77,7 +81,7 @@ class Pgsql implements DriverInterface, Profiler\ProfilerAwareInterface
      *
      * @return $this Provides a fluent interface
      */
-    public function registerConnection(Connection $connection)
+    public function registerConnection(ConnectionInterface $connection): DriverInterface
     {
         $this->connection = $connection;
         $this->connection->setDriver($this);
@@ -113,7 +117,7 @@ class Pgsql implements DriverInterface, Profiler\ProfilerAwareInterface
      * @param string $nameFormat
      * @return string
      */
-    public function getDatabasePlatformName($nameFormat = self::NAME_FORMAT_CAMELCASE)
+    public function getDatabasePlatformName($nameFormat = self::NAME_FORMAT_CAMELCASE): string
     {
         if ($nameFormat === self::NAME_FORMAT_CAMELCASE) {
             return 'Postgresql';
@@ -128,13 +132,15 @@ class Pgsql implements DriverInterface, Profiler\ProfilerAwareInterface
      * @throws Exception\RuntimeException
      * @return void
      */
-    public function checkEnvironment()
+    public function checkEnvironment(): bool
     {
         if (! extension_loaded('pgsql')) {
             throw new Exception\RuntimeException(
                 'The PostgreSQL (pgsql) extension is required for this adapter but the extension is not loaded'
             );
         }
+
+        return true;
     }
 
     /**
@@ -142,7 +148,7 @@ class Pgsql implements DriverInterface, Profiler\ProfilerAwareInterface
      *
      * @return Connection
      */
-    public function getConnection()
+    public function getConnection(): ConnectionInterface
     {
         return $this->connection;
     }
@@ -153,7 +159,7 @@ class Pgsql implements DriverInterface, Profiler\ProfilerAwareInterface
      * @param string|null $sqlOrResource
      * @return Statement
      */
-    public function createStatement($sqlOrResource = null)
+    public function createStatement($sqlOrResource = null): StatementInterface
     {
         $statement = clone $this->statementPrototype;
 
@@ -175,7 +181,7 @@ class Pgsql implements DriverInterface, Profiler\ProfilerAwareInterface
      * @param resource $resource
      * @return Result
      */
-    public function createResult($resource)
+    public function createResult($resource): ResultInterface
     {
         $result = clone $this->resultPrototype;
         $result->initialize($resource, $this->connection->getLastGeneratedValue());
@@ -195,7 +201,7 @@ class Pgsql implements DriverInterface, Profiler\ProfilerAwareInterface
      *
      * @return string
      */
-    public function getPrepareType()
+    public function getPrepareType(): string
     {
         return self::PARAMETERIZATION_POSITIONAL;
     }
@@ -207,7 +213,7 @@ class Pgsql implements DriverInterface, Profiler\ProfilerAwareInterface
      * @param mixed  $type
      * @return string
      */
-    public function formatParameterName($name, $type = null)
+    public function formatParameterName($name, $type = null): string
     {
         return '$#';
     }
@@ -218,7 +224,7 @@ class Pgsql implements DriverInterface, Profiler\ProfilerAwareInterface
      * @param string $name
      * @return mixed
      */
-    public function getLastGeneratedValue($name = null)
+    public function getLastGeneratedValue($name = null): int|string|null|false
     {
         return $this->connection->getLastGeneratedValue($name);
     }

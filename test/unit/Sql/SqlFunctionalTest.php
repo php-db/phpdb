@@ -2,7 +2,7 @@
 
 namespace LaminasTest\Db\Sql;
 
-use Laminas\Db\Adapter;
+use Laminas\Db\AbstractAdapter as Adapter;
 use Laminas\Db\Adapter\Driver\DriverInterface;
 use Laminas\Db\Adapter\Driver\StatementInterface;
 use Laminas\Db\Adapter\ParameterContainer;

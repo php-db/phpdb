@@ -63,12 +63,12 @@
             "@cs-check",
             "@test"
         ],
-        "cs-check": "phpcs",
+        "cs-check": "php -d xdebug.mode=off vendor/bin/phpcs",
         "cs-fix": "phpcbf",
-        "test": "phpunit --colors=always --testsuite \"unit test\"",
+        "test": "php -d xdebug.mode=off vendor/bin/phpunit --colors=always --testsuite \"unit test\"",
         "test-coverage": "phpunit --colors=always --coverage-clover clover.xml",
         "test-integration": "phpunit --colors=always --testsuite \"integration test\"",
-        "static-analysis": "psalm --shepherd --stats",
+        "static-analysis": "php -d xdebug.mode=off vendor/bin/psalm",
         "upload-coverage": "coveralls -v"
     },
     "conflict": {

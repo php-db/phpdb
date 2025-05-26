@@ -34,12 +34,11 @@ abstract class AbstractPdo implements PdoDriverInterface, DriverFeatureInterface
 
     //protected ResultInterface $resultPrototype;
 
-   // protected array $features = [];
+    // protected array $features = [];
 
-    /** @internal */
-    public ?ProfilerInterface $profiler;
+    public ProfilerInterface|null $profiler;
 
-        /**
+    /**
      * @param  $connection
      * @param string $features
      */
@@ -80,7 +79,7 @@ abstract class AbstractPdo implements PdoDriverInterface, DriverFeatureInterface
         return $this;
     }
 
-    public function getProfiler(): ?ProfilerInterface
+    public function getProfiler(): ProfilerInterface|null
     {
         return $this->profiler;
     }
@@ -107,11 +106,9 @@ abstract class AbstractPdo implements PdoDriverInterface, DriverFeatureInterface
      *
      * todo: needs improvement
      *
-     * @param string $name
-     * @param AbstractFeature $feature
      * @return $this Provides a fluent interface
      */
-    public function addFeature($name, $feature)
+    public function addFeature(string $name, AbstractFeature $feature): self
     {
         if ($feature instanceof AbstractFeature) {
             $name = $feature->getName(); // overwrite the name, just in case
@@ -144,11 +141,8 @@ abstract class AbstractPdo implements PdoDriverInterface, DriverFeatureInterface
 
     /**
      * Get feature
-     *
-     * @param string $name
-     * @return AbstractFeature|false
      */
-    public function getFeature($name)
+    public function getFeature(string $name): AbstractFeature|false
     {
         if (isset($this->features[$name])) {
             return $this->features[$name];
@@ -270,7 +264,7 @@ abstract class AbstractPdo implements PdoDriverInterface, DriverFeatureInterface
     //     return $result;
     // }
 
-    public function getResultPrototype(): ?ResultInterface
+    public function getResultPrototype(): ResultInterface|null
     {
         return $this->resultPrototype;
     }
@@ -280,7 +274,7 @@ abstract class AbstractPdo implements PdoDriverInterface, DriverFeatureInterface
         return self::PARAMETERIZATION_NAMED;
     }
 
-    public function formatParameterName(string|int $name, ?string $type = null): string
+    public function formatParameterName(string|int $name, string|null $type = null): string
     {
         if ($type === null && ! is_numeric($name) || $type === self::PARAMETERIZATION_NAMED) {
             // proposed fix for passing $name as int with type self::PARAMETERIZATION_NAMED
@@ -293,8 +287,8 @@ abstract class AbstractPdo implements PdoDriverInterface, DriverFeatureInterface
             if (preg_match('/[^a-zA-Z0-9_]/', $name)) {
                 throw new Exception\RuntimeException(sprintf(
                     'The PDO param %s contains invalid characters.'
-                    . ' Only alphabetic characters, digits, and underscores (_)'
-                    . ' are allowed.',
+                        . ' Only alphabetic characters, digits, and underscores (_)'
+                        . ' are allowed.',
                     $name
                 ));
             }
@@ -304,7 +298,7 @@ abstract class AbstractPdo implements PdoDriverInterface, DriverFeatureInterface
         return '?';
     }
 
-    public function getLastGeneratedValue(?string $name = null): int|string|null|false
+    public function getLastGeneratedValue(string|null $name = null): int|string|null|false
     {
         return $this->connection->getLastGeneratedValue($name);
     }
