@@ -28,16 +28,45 @@ abstract class AbstractPdo implements PdoDriverInterface, DriverFeatureInterface
 {
     public const FEATURES_DEFAULT = 'default';
 
-    protected ConnectionInterface $connection;
+    //protected ConnectionInterface $connection;
 
-    protected StatementInterface&PdoDriverAwareInterface $statementPrototype;
+    // protected StatementInterface&PdoDriverAwareInterface $statementPrototype;
 
-    protected ResultInterface $resultPrototype;
+    //protected ResultInterface $resultPrototype;
 
-    protected array $features = [];
+   // protected array $features = [];
 
     /** @internal */
     public ?ProfilerInterface $profiler;
+
+        /**
+     * @param  $connection
+     * @param string $features
+     */
+    public function __construct(
+        protected AbstractPdoConnection|\PDO $connection,
+        protected StatementInterface&PdoDriverAwareInterface $statementPrototype,
+        protected ResultInterface $resultPrototype,
+        protected array|string $features = [self::FEATURES_DEFAULT]
+    ) {
+        if (! $connection instanceof Connection) { // needs factory
+            $connection = new Connection($connection);
+        }
+
+        //$this->registerConnection($connection);
+        //$this->registerStatementPrototype($statementPrototype ?: new Statement());
+        //$this->registerResultPrototype($resultPrototype ?: new Result());
+
+        if (is_array($features)) {
+            foreach ($features as $name => $feature) {
+                $this->addFeature($name, $feature);
+            }
+        } elseif ($features instanceof AbstractFeature) {
+            $this->addFeature($features->getName(), $features);
+        } elseif ($features === self::FEATURES_DEFAULT) {
+            $this->setupDefaultFeatures();
+        }
+    }
 
     public function setProfiler(ProfilerInterface $profiler): ProfilerAwareInterface
     {
@@ -59,7 +88,7 @@ abstract class AbstractPdo implements PdoDriverInterface, DriverFeatureInterface
     /**
      * Register statement prototype
      */
-    public function registerStatementPrototype(StatementInterface $statementPrototype)
+    public function registerStatementPrototype(StatementInterface&PdoDriverAwareInterface $statementPrototype)
     {
         $this->statementPrototype = $statementPrototype;
         $this->statementPrototype->setDriver($this);

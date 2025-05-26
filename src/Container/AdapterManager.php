@@ -44,40 +44,23 @@ final class AdapterManager extends AbstractPluginManager
     #[Override]
     public function validate(mixed $instance): void
     {
-        if ($instance instanceof AdapterInterface) {
+        if (is_array($instance)) {
+            // If the instance is an array, we assume it's a configuration array
+            // and do not validate it as a service instance.
             return;
         }
-
-        if ($instance instanceof Driver\DriverInterface) {
-            return;
-        }
-
-        if ($instance instanceof Driver\ConnectionInterface) {
-            return;
-        }
-
-        if ($instance instanceof Platform\PlatformInterface) {
-            return;
-        }
-
-        if ($instance instanceof Profiler\ProfilerInterface) {
-            return;
-        }
-
-        if ($instance instanceof Metadata\MetadataInterface) {
-            return;
-        }
-
-        throw new Exception\RuntimeException(sprintf(
-            'AdapterManager expects an instance of %s, %s, %s, %s, or %s; received %s',
-            AdapterInterface::class,
-            Driver\DriverInterface::class,
-            Driver\ConnectionInterface::class,
-            Platform\PlatformInterface::class,
-            Profiler\ProfilerInterface::class,
-            Metadata\MetadataInterface::class,
-            get_debug_type($instance)
-        ));
+        $validate = match(true) {
+            $instance instanceof AdapterInterface,
+            $instance instanceof Driver\DriverInterface,
+            $instance instanceof Driver\ConnectionInterface,
+            $instance instanceof Platform\PlatformInterface,
+            $instance instanceof Profiler\ProfilerInterface,
+            $instance instanceof Metadata\MetadataInterface => true,
+            default => throw new Exception\RuntimeException(sprintf(
+                'AdapterManager can not create an instance of %s',
+                get_debug_type($instance)
+            )),
+        };
     }
 }
 

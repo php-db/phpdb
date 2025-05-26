@@ -18,6 +18,9 @@ final class AdapterManagerFactory
         return new AdapterManager(
             $container,
             [
+                'aliases' => [
+                    'db' => ConfigInterface::class,
+                ],
                 'services' => [
                     ConfigInterface::class => $dbConfig,
                 ],
