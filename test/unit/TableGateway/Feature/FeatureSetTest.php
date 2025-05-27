@@ -2,7 +2,7 @@
 
 namespace LaminasTest\Db\TableGateway\Feature;
 
-use Laminas\Db\Adapter\Adapter;
+use Laminas\Db\Adapter\AbstractAdapter as Adapter;
 use Laminas\Db\Adapter\AdapterInterface;
 use Laminas\Db\Adapter\Driver\DriverInterface;
 use Laminas\Db\Adapter\Driver\Pgsql\Result;

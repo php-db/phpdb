@@ -2,7 +2,7 @@
 
 namespace LaminasTest\Db\TableGateway\Feature;
 
-use Laminas\Db\Adapter\Adapter;
+use Laminas\Db\Adapter\AbstractAdapter as Adapter;
 use Laminas\Db\Adapter\Driver\ResultInterface;
 use Laminas\Db\Adapter\Driver\StatementInterface;
 use Laminas\Db\Adapter\Platform\PlatformInterface;

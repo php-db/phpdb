@@ -6,15 +6,11 @@ namespace Laminas\Db\Adapter;
 
 interface StatementContainerInterface
 {
-    /** Set sql */
-    public function setSql(?string $sql): StatementContainerInterface;
+    public function setSql(string|null $sql): static;
 
-    /** Get sql */
-    public function getSql(): ?string;
+    public function getSql(): string|null;
 
-    /** Set parameter container */
-    public function setParameterContainer(ParameterContainer $parameterContainer): StatementContainerInterface;
+    public function setParameterContainer(ParameterContainer $parameterContainer): static;
 
-    /** Get parameter container */
-    public function getParameterContainer(): ?ParameterContainer;
+    public function getParameterContainer(): ParameterContainer|null;
 }

@@ -2,8 +2,8 @@
 
 namespace LaminasTest\Db\Adapter;
 
-use Laminas\Db\Adapter\AdapterInterface;
 use Laminas\Db\Adapter\AdapterAbstractServiceFactory;
+use Laminas\Db\Adapter\AdapterInterface;
 use Laminas\ServiceManager\Config;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use Laminas\ServiceManager\ServiceManager;

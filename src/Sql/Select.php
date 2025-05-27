@@ -71,7 +71,7 @@ class Select extends AbstractPreparableSql
     /**#@-*/
 
     /** @var string[]|array[] $specifications */
-    protected $specifications = [
+    protected array $specifications = [
         'statementStart' => '%1$s',
         self::SELECT     => [
             'SELECT %1$s FROM %2$s'      => [
@@ -204,7 +204,7 @@ class Select extends AbstractPreparableSql
         if (! is_string($quantifier) && ! $quantifier instanceof ExpressionInterface) {
             throw new Exception\InvalidArgumentException(
                 'Quantifier must be one of DISTINCT, ALL, or some platform specific object implementing '
-                . 'ExpressionInterface'
+                    . 'ExpressionInterface'
             );
         }
         $this->quantifier = $quantifier;
@@ -558,8 +558,8 @@ class Select extends AbstractPreparableSql
             foreach ($join['columns'] as $jKey => $jColumn) {
                 $jColumns   = [];
                 $jFromTable = is_scalar($jColumn)
-                            ? $joinName . $platform->getIdentifierSeparator()
-                            : '';
+                    ? $joinName . $platform->getIdentifierSeparator()
+                    : '';
                 $jColumns[] = $this->resolveColumnValue(
                     [
                         'column'       => $jColumn,
@@ -582,8 +582,8 @@ class Select extends AbstractPreparableSql
 
         if ($this->quantifier) {
             $quantifier = $this->quantifier instanceof ExpressionInterface
-                    ? $this->processExpression($this->quantifier, $platform, $driver, $parameterContainer, 'quantifier')
-                    : $this->quantifier;
+                ? $this->processExpression($this->quantifier, $platform, $driver, $parameterContainer, 'quantifier')
+                : $this->quantifier;
         }
 
         if (! isset($table)) {

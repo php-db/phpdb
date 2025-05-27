@@ -3,6 +3,8 @@
 namespace Laminas\Db\Adapter\Driver\IbmDb2;
 
 use Laminas\Db\Adapter\Driver\AbstractConnection;
+use Laminas\Db\Adapter\Driver\ConnectionInterface;
+use Laminas\Db\Adapter\Driver\ResultInterface;
 use Laminas\Db\Adapter\Exception;
 
 use function get_resource_type;
@@ -83,7 +85,7 @@ class Connection extends AbstractConnection
     /**
      * {@inheritDoc}
      */
-    public function getCurrentSchema()
+    public function getCurrentSchema(): string|bool
     {
         if (! $this->isConnected()) {
             $this->connect();
@@ -97,7 +99,7 @@ class Connection extends AbstractConnection
     /**
      * {@inheritDoc}
      */
-    public function connect()
+    public function connect(): ConnectionInterface
     {
         if (is_resource($this->resource)) {
             return $this;
@@ -139,7 +141,7 @@ class Connection extends AbstractConnection
     /**
      * {@inheritDoc}
      */
-    public function isConnected()
+    public function isConnected(): bool
     {
         return $this->resource !== null;
     }
@@ -147,7 +149,7 @@ class Connection extends AbstractConnection
     /**
      * {@inheritDoc}
      */
-    public function disconnect()
+    public function disconnect(): ConnectionInterface
     {
         if ($this->resource) {
             db2_close($this->resource);
@@ -160,7 +162,7 @@ class Connection extends AbstractConnection
     /**
      * {@inheritDoc}
      */
-    public function beginTransaction()
+    public function beginTransaction(): ConnectionInterface
     {
         if ($this->isI5() && ! ini_get('ibm_db2.i5_allow_commit')) {
             throw new Exception\RuntimeException(
@@ -182,7 +184,7 @@ class Connection extends AbstractConnection
     /**
      * {@inheritDoc}
      */
-    public function commit()
+    public function commit(): ConnectionInterface
     {
         if (! $this->isConnected()) {
             $this->connect();
@@ -207,7 +209,7 @@ class Connection extends AbstractConnection
      * @return $this Provides a fluent interface
      * @throws Exception\RuntimeException
      */
-    public function rollback()
+    public function rollback(): static
     {
         if (! $this->isConnected()) {
             throw new Exception\RuntimeException('Must be connected before you can rollback.');
@@ -233,7 +235,7 @@ class Connection extends AbstractConnection
     /**
      * {@inheritDoc}
      */
-    public function execute($sql)
+    public function execute($sql): ResultInterface|null
     {
         if (! $this->isConnected()) {
             $this->connect();
@@ -243,8 +245,7 @@ class Connection extends AbstractConnection
             $this->profiler->profilerStart($sql);
         }
 
-        set_error_handler(function () {
-        }, E_WARNING); // suppress warnings
+        set_error_handler(function () {}, E_WARNING); // suppress warnings
         $resultResource = db2_exec($this->resource, $sql);
         restore_error_handler();
 
@@ -263,7 +264,7 @@ class Connection extends AbstractConnection
     /**
      * {@inheritDoc}
      */
-    public function getLastGeneratedValue($name = null)
+    public function getLastGeneratedValue($name = null): string|int|bool|null
     {
         return db2_last_insert_id($this->resource);
     }

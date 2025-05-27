@@ -14,19 +14,15 @@ use function is_array;
 
 class MetadataFeature extends AbstractFeature
 {
-    /**
-     * Constructor
-     */
-    public function __construct(
-        protected MetadataInterface $metadata
-    ) {
+    public function __construct(protected MetadataInterface $metadata)
+    {
         $this->sharedData['metadata'] = [
             'primaryKey' => null,
             'columns'    => [],
         ];
     }
 
-    public function postInitialize()
+    public function postInitialize(): void
     {
         // localize variable for brevity
         $t = $this->tableGateway;

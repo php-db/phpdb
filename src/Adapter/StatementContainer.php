@@ -10,10 +10,7 @@ class StatementContainer implements StatementContainerInterface
     /** @var ParameterContainer */
     protected $parameterContainer;
 
-    /**
-     * @param string|null $sql
-     */
-    public function __construct($sql = null, ?ParameterContainer $parameterContainer = null)
+    public function __construct(string|null $sql = null, ?ParameterContainer $parameterContainer = null)
     {
         if ($sql) {
             $this->setSql($sql);
@@ -21,37 +18,24 @@ class StatementContainer implements StatementContainerInterface
         $this->parameterContainer = $parameterContainer ?: new ParameterContainer();
     }
 
-    /**
-     * @param string $sql
-     * @return $this Provides a fluent interface
-     */
-    public function setSql($sql)
+    public function setSql(string|null $sql): static
     {
         $this->sql = $sql;
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getSql()
+    public function getSql(): string|null
     {
         return $this->sql;
     }
 
-    /**
-     * @return $this Provides a fluent interface
-     */
-    public function setParameterContainer(ParameterContainer $parameterContainer)
+    public function setParameterContainer(ParameterContainer $parameterContainer): static
     {
         $this->parameterContainer = $parameterContainer;
         return $this;
     }
 
-    /**
-     * @return null|ParameterContainer
-     */
-    public function getParameterContainer()
+    public function getParameterContainer(): ParameterContainer|null
     {
         return $this->parameterContainer;
     }

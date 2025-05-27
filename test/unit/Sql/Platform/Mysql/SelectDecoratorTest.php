@@ -2,7 +2,7 @@
 
 namespace LaminasTest\Db\Sql\Platform\Mysql;
 
-use Laminas\Db\Adapter\Adapter;
+use Laminas\Db\Adapter\AbstractAdapter as Adapter;
 use Laminas\Db\Adapter\Driver\DriverInterface;
 use Laminas\Db\Adapter\Driver\Mysqli\Statement;
 use Laminas\Db\Adapter\Driver\Pdo\Connection;
@@ -76,8 +76,8 @@ final class SelectDecoratorTest extends TestCase
         $newStatement     = new Statement();
         $driver           = new Pdo(new Connection());
         $mockAdapter      = $this->getMockBuilder(Adapter::class)
-                            ->setConstructorArgs([$driver, new TrustingMysqlPlatform()])
-                            ->getMock();
+            ->setConstructorArgs([$driver, new TrustingMysqlPlatform()])
+            ->getMock();
         $trustingPlatform = new TrustingMysqlPlatform();
         $mockAdapter->expects($this->any())->method('getPlatform')->willReturn($trustingPlatform);
         $mockAdapter->expects($this->any())->method('getDriver')->willReturn($driver);
@@ -159,8 +159,8 @@ final class SelectDecoratorTest extends TestCase
             "SELECT (SELECT count(foo1.id) AS `cnt` FROM `foo1` LIMIT ? OFFSET ?) AS `res`"
             . " FROM `foo` LIMIT ? OFFSET ?";
         $expectedPrepareObjectSql3 =
-        "SELECT (SELECT count(foo1.id) AS `cnt` FROM `foo1` LIMIT :subselect1limit OFFSET :subselect1offset) AS `res`"
-        . " FROM `foo` LIMIT :limit OFFSET :offset";
+            "SELECT (SELECT count(foo1.id) AS `cnt` FROM `foo1` LIMIT :subselect1limit OFFSET :subselect1offset) AS `res`"
+            . " FROM `foo` LIMIT :limit OFFSET :offset";
         $expectedParams3           = [
             'subselect1limit'  => 100,
             'subselect1offset' => 500,

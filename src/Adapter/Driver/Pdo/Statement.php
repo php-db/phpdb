@@ -26,7 +26,7 @@ class Statement implements StatementInterface, PdoDriverAwareInterface, Profiler
 {
     protected PDO $pdo;
 
-    protected ?ProfilerInterface $profiler = null;
+    protected ProfilerInterface|null $profiler = null;
 
     protected PdoDriverInterface $driver;
 
@@ -34,7 +34,7 @@ class Statement implements StatementInterface, PdoDriverAwareInterface, Profiler
 
     protected bool $isQuery;
 
-    protected ?ParameterContainer $parameterContainer = null;
+    protected ParameterContainer|null $parameterContainer = null;
 
     protected bool $parametersBound = false;
 
@@ -59,52 +59,52 @@ class Statement implements StatementInterface, PdoDriverAwareInterface, Profiler
         return $this->profiler;
     }
 
-    /** Initialize */
     public function initialize(PDO $connectionResource): static
     {
         $this->pdo = $connectionResource;
         return $this;
     }
 
-    /** Set resource */
     public function setResource(PDOStatement $pdoStatement): static
     {
         $this->resource = $pdoStatement;
         return $this;
     }
 
-    /** Get resource */
-    public function getResource(): ?PDOStatement
+    public function getResource(): PDOStatement|null
     {
         return $this->resource;
     }
 
-    /** Set sql */
-    public function setSql(?string $sql): StatementContainerInterface
+    public function setSql(string|null $sql): static
     {
         $this->sql = $sql;
         return $this;
     }
 
-    /** Get sql */
-    public function getSql(): ?string
+    public function getSql(): string|null
     {
         return $this->sql;
     }
 
-    public function setParameterContainer(ParameterContainer $parameterContainer): StatementContainerInterface
+    /**
+     * @return $this Provides a fluent interface
+     */
+    public function setParameterContainer(ParameterContainer $parameterContainer): self
     {
         $this->parameterContainer = $parameterContainer;
         return $this;
     }
 
-    public function getParameterContainer(): ?ParameterContainer
+    public function getParameterContainer(): ParameterContainer|null
     {
         return $this->parameterContainer;
     }
 
-    /** @throws Exception\RuntimeException */
-    public function prepare(?string $sql = null): StatementInterface
+    /**
+     * @throws Exception\RuntimeException
+     */
+    public function prepare(string|null $sql = null): static|null
     {
         if ($this->isPrepared) {
             throw new Exception\RuntimeException('This statement has been prepared already');
@@ -131,8 +131,10 @@ class Statement implements StatementInterface, PdoDriverAwareInterface, Profiler
         return $this->isPrepared;
     }
 
-    /** @throws Exception\InvalidQueryException */
-    public function execute(null|array|ParameterContainer $parameters = null): ?ResultInterface
+    /**
+     * @throws Exception\InvalidQueryException
+     */
+    public function execute(ParameterContainer|array|null $parameters = null): ResultInterface|null
     {
         if (! $this->isPrepared) {
             $this->prepare();
@@ -182,7 +184,9 @@ class Statement implements StatementInterface, PdoDriverAwareInterface, Profiler
         return $this->driver->createResult($this->resource, $this);
     }
 
-    /** Bind parameters from container */
+    /**
+     * Bind parameters from container
+     */
     protected function bindParametersFromContainer(): void
     {
         if ($this->parametersBound) {
@@ -198,6 +202,7 @@ class Statement implements StatementInterface, PdoDriverAwareInterface, Profiler
             } else {
                 $type = PDO::PARAM_STR;
             }
+
             if ($this->parameterContainer->offsetHasErrata($name)) {
                 switch ($this->parameterContainer->offsetGetErrata($name)) {
                     case ParameterContainer::TYPE_INTEGER:

@@ -28,7 +28,6 @@ interface AdapterInterface
 
     public const VALUE_QUOTE_SEPARATOR = 'quoteSeparator';
 
-
     /**
      * @return Driver\DriverInterface
      */
