@@ -10,6 +10,7 @@ use Laminas\Db\Adapter\Platform;
 use Laminas\Db\Adapter\Profiler;
 use Laminas\Db\Adapter\Exception;
 use Laminas\Db\Metadata;
+use Laminas\Db\ResultSet\ResultSetInterface;
 use Laminas\ServiceManager\AbstractPluginManager;
 use Override;
 use Psr\Container\ContainerInterface;
@@ -44,6 +45,7 @@ final class AdapterManager extends AbstractPluginManager
             $instance instanceof Driver\ConnectionInterface,
             $instance instanceof Platform\PlatformInterface,
             $instance instanceof Profiler\ProfilerInterface,
+            $instance instanceof ResultSetInterface,
             $instance instanceof Metadata\MetadataInterface => true,
             default => throw new Exception\RuntimeException(sprintf(
                 'AdapterManager can not create an instance of %s',
