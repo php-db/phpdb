@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Laminas\Db\Container;
 
+use Laminas\Db\Adapter;
+
 final class ConfigProvider
 {
     public function __invoke(): array
@@ -17,7 +19,8 @@ final class ConfigProvider
     {
         return [
             'factories' => [
-                AdapterManager::class => AdapterManagerFactory::class,
+                Adapter\AdapterInterface::class => Adapter\AdapterServiceFactory::class,
+                AdapterManager::class           => AdapterManagerFactory::class,
             ],
         ];
     }

@@ -1,22 +1,21 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Laminas\Db\Adapter;
 
-use Interop\Container\ContainerInterface;
-use Laminas\ServiceManager\FactoryInterface;
-use Laminas\ServiceManager\ServiceLocatorInterface;
+use Laminas\Db\Container\AdapterManager;
+use Psr\Container\ContainerInterface;
 
-class AdapterServiceFactory implements FactoryInterface
+final class AdapterServiceFactory
 {
     /**
-     * Create db adapter service
-     *
-     * @param string $requestedName
-     * @return Adapter
+     * Create db AdapterInterface instance
+     * This is now managed by the AdapterManager
+     * Satellite packages now delegate the creation context of the AdapterManager
      */
-    public function __invoke(ContainerInterface $container, $requestedName, ?array $options = null)
-    {
-        $config = $container->get('config');
-        return new Adapter($config['db']);
+    public function __invoke(ContainerInterface $container): AdapterInterface {
+        $adapterManager = $container->get(AdapterManager::class);
+        return $adapterManager->get(AdapterInterface::class);
     }
 }
