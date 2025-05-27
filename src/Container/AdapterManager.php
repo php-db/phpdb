@@ -14,23 +14,11 @@ use Laminas\ServiceManager\AbstractPluginManager;
 use Override;
 use Psr\Container\ContainerInterface;
 
-use function array_replace_recursive;
 use function get_debug_type;
 use function sprintf;
 
 final class AdapterManager extends AbstractPluginManager
 {
-
-    // private const CONFIG = [
-    //     'factories' => [
-    //         Driver\DriverInterface::class => Driver\DriverServiceDelegator::class,
-    //         Driver\ConnectionInterface::class => Driver\ConnectionServiceDelegator::class,
-    //         Platform\PlatformInterface::class => Platform\PlatformServiceDelegator::class,
-    //         Profiler\ProfilerInterface::class => Profiler\ProfilerServiceDelegator::class,
-    //         Metadata\MetadataInterface::class => Metadata\MetadataServiceDelegator::class,
-    //     ],
-    // ];
-
     public function __construct(
         ContainerInterface $container,
         array $config = [],
@@ -53,6 +41,7 @@ final class AdapterManager extends AbstractPluginManager
             $instance instanceof AdapterInterface,
             $instance instanceof Driver\DriverInterface,
             $instance instanceof Driver\ConnectionInterface,
+            $instance instanceof Driver\ResultInterface,
             $instance instanceof Platform\PlatformInterface,
             $instance instanceof Profiler\ProfilerInterface,
             $instance instanceof Metadata\MetadataInterface => true,
