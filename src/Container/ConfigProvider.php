@@ -21,7 +21,7 @@ final class ConfigProvider
         return [
             'factories' => [
                 AdapterInterface::class => AdapterServiceFactory::class,
-                AdapterManager::class => AdapterManagerFactory::class,
+                AdapterManager::class   => AdapterManagerFactory::class,
             ],
         ];
     }
