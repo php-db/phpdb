@@ -8,51 +8,26 @@ use Laminas\Db\ResultSet;
 use function func_get_args;
 use function in_array;
 use function is_array;
-use function is_bool;
 use function is_string;
-use function str_starts_with;
 use function strtolower;
 
-/**
- * @property Driver\DriverInterface $driver
- * @property Platform\PlatformInterface $platform
- */
-abstract class AbstractAdapter implements AdapterInterface, Profiler\ProfilerAwareInterface, SchemaAwareInterface
+class Adapter implements AdapterInterface, Profiler\ProfilerAwareInterface, SchemaAwareInterface
 {
     /**
      * @throws Exception\InvalidArgumentException
      */
     public function __construct(
-        protected Driver\DriverInterface|array $driver,
-        protected ?Platform\PlatformInterface $platform = null,
-        protected ?ResultSet\ResultSetInterface $queryResultSetPrototype = null,
+        protected readonly Driver\DriverInterface $driver,
+        protected readonly Platform\PlatformInterface $platform,
+        protected readonly ResultSet\ResultSetInterface $queryResultSetPrototype,
         protected ?Profiler\ProfilerInterface $profiler = null
     ) {
-        // first argument can be an array of parameters
-        $parameters = [];
-
-        if (is_array($this->driver)) {
-            $parameters = $this->driver;
-            if ($this->profiler === null && isset($parameters['profiler'])) {
-                $profiler = $this->createProfiler($parameters);
-            }
-            $this->driver = $this->createDriver($parameters);
-        }
-
-        $this->driver->checkEnvironment();
-
-        $this->platform = $this->platform ?? $this->createPlatform($parameters);
-        $this->queryResultSetPrototype = $this->queryResultSetPrototype ?? new ResultSet\ResultSet();
-
         if ($profiler) {
             $this->setProfiler($profiler);
         }
     }
 
-    /**
-     * @return $this Provides a fluent interface
-     */
-    public function setProfiler(Profiler\ProfilerInterface $profiler): self
+    public function setProfiler(Profiler\ProfilerInterface $profiler): Profiler\ProfilerAwareInterface
     {
         $this->profiler = $profiler;
         if ($this->driver instanceof Profiler\ProfilerAwareInterface) {
@@ -66,18 +41,12 @@ abstract class AbstractAdapter implements AdapterInterface, Profiler\ProfilerAwa
         return $this->profiler;
     }
 
-    /**
-     * @throws Exception\RuntimeException
-     */
-    public function getDriver(): Driver\DriverInterface|array
+    public function getDriver(): Driver\DriverInterface
     {
-        if ($this->driver === null) {
-            throw new Exception\RuntimeException('Driver has not been set or configured for this adapter.');
-        }
         return $this->driver;
     }
 
-    public function getPlatform(): ?Platform\PlatformInterface
+    public function getPlatform(): Platform\PlatformInterface
     {
         return $this->platform;
     }
@@ -310,18 +279,18 @@ abstract class AbstractAdapter implements AdapterInterface, Profiler\ProfilerAwa
     //     }
     // }
 
-    protected function createProfiler(array $parameters): ?Profiler\ProfilerInterface
-    {
-        if ($parameters['profiler'] instanceof Profiler\ProfilerInterface) {
-            return $parameters['profiler'];
-        }
+    // protected function createProfiler(array $parameters): ?Profiler\ProfilerInterface
+    // {
+    //     if ($parameters['profiler'] instanceof Profiler\ProfilerInterface) {
+    //         return $parameters['profiler'];
+    //     }
 
-        if (is_bool($parameters['profiler'])) {
-            return $parameters['profiler'] === true ? new Profiler\Profiler() : null;
-        }
+    //     if (is_bool($parameters['profiler'])) {
+    //         return $parameters['profiler'] === true ? new Profiler\Profiler() : null;
+    //     }
 
-        throw new Exception\InvalidArgumentException(
-            '"profiler" parameter must be an instance of ProfilerInterface or a boolean'
-        );
-    }
+    //     throw new Exception\InvalidArgumentException(
+    //         '"profiler" parameter must be an instance of ProfilerInterface or a boolean'
+    //     );
+    // }
 }

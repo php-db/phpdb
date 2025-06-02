@@ -10,87 +10,66 @@ interface PlatformInterface
 {
     /**
      * Get name
-     *
-     * @return string
      */
-    public function getName();
+    public function getName(): string;
 
     /**
      * todo: sat-migration document
      * Get Sql platform decorator
-     */public function getSqlPlatformDecorator(): PlatformDecoratorInterface;
+     */
+    public function getSqlPlatformDecorator(): PlatformDecoratorInterface;
 
 
     /**
      * Get quote identifier symbol
-     *
-     * @return string
      */
-    public function getQuoteIdentifierSymbol();
+    public function getQuoteIdentifierSymbol(): string;
 
     /**
      * Quote identifier
-     *
-     * @param  string $identifier
-     * @return string
      */
-    public function quoteIdentifier($identifier);
+    public function quoteIdentifier(string $identifier): string;
 
     /**
      * Quote identifier chain
      *
      * @param string|string[] $identifierChain
-     * @return string
      */
-    public function quoteIdentifierChain($identifierChain);
+    public function quoteIdentifierChain(array|string $identifierChain): string;
 
     /**
      * Get quote value symbol
-     *
-     * @return string
      */
-    public function getQuoteValueSymbol();
+    public function getQuoteValueSymbol(): string;
 
     /**
      * Quote value
      *
      * Will throw a notice when used in a workflow that can be considered "unsafe"
-     *
-     * @param  string $value
-     * @return string
      */
-    public function quoteValue($value);
+    public function quoteValue(string $value): string;
 
     /**
      * Quote Trusted Value
      *
      * The ability to quote values without notices
-     *
-     * @param scalar $value
-     * @return string
      */
-    public function quoteTrustedValue($value);
+    public function quoteTrustedValue(int|float|string|bool $value): string;
 
     /**
      * Quote value list
      *
      * @param string|string[] $valueList
-     * @return string
      */
-    public function quoteValueList($valueList);
+    public function quoteValueList(array|string $valueList): string;
 
     /**
      * Get identifier separator
-     *
-     * @return string
      */
-    public function getIdentifierSeparator();
+    public function getIdentifierSeparator(): string;
 
     /**
      * Quote identifier in fragment
-     *
-     * @param  string $identifier
-     * @return string
      */
-    public function quoteIdentifierInFragment($identifier, array $additionalSafeWords = []);
+    public function quoteIdentifierInFragment(string $identifier, array $additionalSafeWords = []): string;
 }
