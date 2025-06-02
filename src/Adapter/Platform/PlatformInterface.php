@@ -54,7 +54,7 @@ interface PlatformInterface
      *
      * The ability to quote values without notices
      */
-    public function quoteTrustedValue(int|float|string|bool $value): string;
+    public function quoteTrustedValue(int|float|string|bool $value): ?string;
 
     /**
      * Quote value list

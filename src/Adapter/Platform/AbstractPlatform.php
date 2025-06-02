@@ -115,7 +115,7 @@ abstract class AbstractPlatform implements PlatformInterface
     /**
      * {@inheritDoc}
      */
-    public function quoteTrustedValue(int|float|string|bool $value): string
+    public function quoteTrustedValue(int|float|string|bool $value): ?string
     {
         return '\'' . addcslashes((string) $value, "\x00\n\r\\'\"\x1a") . '\'';
     }
