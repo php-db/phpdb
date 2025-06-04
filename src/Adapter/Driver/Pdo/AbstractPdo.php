@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Laminas\Db\Adapter\Driver\Pdo;
 
 use Laminas\Db\Adapter\Driver\ConnectionInterface;
+use Laminas\Db\Adapter\Driver\DriverAwareInterface;
 use Laminas\Db\Adapter\Driver\Feature\AbstractFeature;
 use Laminas\Db\Adapter\Driver\Feature\DriverFeatureInterface;
 use Laminas\Db\Adapter\Driver\PdoDriverAwareInterface;
@@ -28,34 +29,23 @@ abstract class AbstractPdo implements PdoDriverInterface, DriverFeatureInterface
 {
     public const FEATURES_DEFAULT = 'default';
 
-    //protected ConnectionInterface $connection;
-
-    // protected StatementInterface&PdoDriverAwareInterface $statementPrototype;
-
-    //protected ResultInterface $resultPrototype;
-
-   // protected array $features = [];
-
     /** @internal */
     public ?ProfilerInterface $profiler;
 
-        /**
-     * @param  $connection
-     * @param string $features
-     */
     public function __construct(
-        protected AbstractPdoConnection|\PDO $connection,
-        protected StatementInterface&PdoDriverAwareInterface $statementPrototype,
-        protected ResultInterface $resultPrototype,
-        protected array|string $features = [self::FEATURES_DEFAULT]
+        protected readonly AbstractPdoConnection|\PDO $connection,
+        protected readonly StatementInterface&PdoDriverAwareInterface $statementPrototype,
+        protected readonly ResultInterface $resultPrototype,
+        protected array|string $features = self::FEATURES_DEFAULT
     ) {
-        if (! $connection instanceof Connection) { // needs factory
-            $connection = new Connection($connection);
+
+        if ($this->connection instanceof DriverAwareInterface) {
+            $this->connection->setDriver($this);
         }
 
-        //$this->registerConnection($connection);
-        //$this->registerStatementPrototype($statementPrototype ?: new Statement());
-        //$this->registerResultPrototype($resultPrototype ?: new Result());
+        if ($this->statementPrototype instanceof DriverAwareInterface) {
+            $this->statementPrototype->setDriver($this);
+        }
 
         if (is_array($features)) {
             foreach ($features as $name => $feature) {
@@ -87,6 +77,8 @@ abstract class AbstractPdo implements PdoDriverInterface, DriverFeatureInterface
 
     /**
      * Register statement prototype
+     *
+     * @deprecated since 3.0.0
      */
     public function registerStatementPrototype(StatementInterface&PdoDriverAwareInterface $statementPrototype)
     {
@@ -96,6 +88,8 @@ abstract class AbstractPdo implements PdoDriverInterface, DriverFeatureInterface
 
     /**
      * Register result prototype
+     *
+     * @deprecated since 3.0.0
      */
     public function registerResultPrototype(ResultInterface $resultPrototype)
     {

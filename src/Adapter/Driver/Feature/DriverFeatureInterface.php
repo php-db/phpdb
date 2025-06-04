@@ -6,25 +6,20 @@ interface DriverFeatureInterface
 {
     /**
      * Setup the default features for Pdo
-     *
-     * @return DriverFeatureInterface
      */
-    public function setupDefaultFeatures();
+    public function setupDefaultFeatures(): DriverFeatureInterface;
 
     /**
      * Add feature
      *
-     * @param string $name
-     * @param mixed $feature
-     * @return DriverFeatureInterface
+     * todo: narrow down the type of $feature
      */
-    public function addFeature($name, $feature);
+    public function addFeature(string $name, mixed $feature): DriverFeatureInterface;
 
     /**
      * Get feature
      *
-     * @param string $name
-     * @return mixed|false
+     * todo: narrow return type if possible
      */
-    public function getFeature($name);
+    public function getFeature(string $name): mixed;
 }
