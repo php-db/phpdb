@@ -14,14 +14,6 @@ use function strtolower;
 class RowCounter extends AbstractFeature
 {
     /**
-     * @return string
-     */
-    public function getName()
-    {
-        return 'RowCounter';
-    }
-
-    /**
      * @return null|int
      */
     public function getCountForStatement(Statement $statement)

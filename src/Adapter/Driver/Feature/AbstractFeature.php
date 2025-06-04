@@ -1,28 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Laminas\Db\Adapter\Driver\Feature;
 
 use Laminas\Db\Adapter\Driver\DriverInterface;
 
-abstract class AbstractFeature
+abstract class AbstractFeature implements DriverFeatureInterface
 {
-    /** @var DriverInterface */
-    protected $driver;
+    protected DriverInterface $driver;
 
     /**
-     * Set driver
-     *
-     * @return void
+     * Set the driver
      */
-    public function setDriver(DriverInterface $driver)
+    public function setDriver(DriverInterface $driver): void
     {
         $this->driver = $driver;
     }
-
-    /**
-     * Get name
-     *
-     * @return string
-     */
-    abstract public function getName();
 }
