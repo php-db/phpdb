@@ -1,17 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Laminas\Db\Adapter\Driver\Feature;
 
+use Laminas\Db\Adapter\Driver\DriverInterface;
+
+/**
+ *
+ * @property array<class-string, DriverInterface> $features
+ */
 interface DriverFeatureProviderInterface
 {
-    public const DEFAULT_FEATURES = [];
-
     /**
-     * Setup the default features for Pdo
-     * @deprecated since 3.0.0, use addFeature() instead
+     * Add features
+     *
+     * @param DriverFeatureInterface[] $features
      */
-    public function setupDefaultFeatures(): DriverFeatureProviderInterface;
-
     public function addFeatures(array $features): DriverFeatureProviderInterface;
 
     /**

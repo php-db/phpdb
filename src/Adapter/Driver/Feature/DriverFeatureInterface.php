@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace Laminas\Db\Adapter\Driver\Feature;
 
-use Laminas\Db\Adapter\Driver\DriverInterface;
+use Laminas\Db\Adapter\Driver\DriverAwareInterface;
 
-interface DriverFeatureInterface
-{
-    public function setDriver(DriverInterface $driver): void;
-}
+interface DriverFeatureInterface extends DriverAwareInterface {}

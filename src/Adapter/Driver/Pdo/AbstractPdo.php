@@ -33,7 +33,7 @@ abstract class AbstractPdo implements PdoDriverInterface, ProfilerAwareInterface
         protected readonly AbstractPdoConnection|\PDO $connection,
         protected readonly StatementInterface&PdoDriverAwareInterface $statementPrototype,
         protected readonly ResultInterface $resultPrototype,
-        protected array $features = []
+        array $features = [],
     ) {
 
         if ($this->connection instanceof DriverAwareInterface) {
@@ -44,19 +44,9 @@ abstract class AbstractPdo implements PdoDriverInterface, ProfilerAwareInterface
             $this->statementPrototype->setDriver($this);
         }
 
-        if ($this instanceof DriverFeatureProviderInterface) {
-            $this->addFeatures(static::DEFAULT_FEATURES);
+        if ($features !== [] && $this instanceof DriverFeatureProviderInterface) {
+            $this->addFeatures($features);
         }
-
-        // if (is_array($features)) {
-        //     foreach ($features as $name => $feature) {
-        //         $this->addFeature($name, $feature);
-        //     }
-        // } elseif ($features instanceof AbstractFeature) {
-        //     $this->addFeature($features->getName(), $features);
-        // } elseif ($features === self::FEATURES_DEFAULT) {
-        //     $this->setupDefaultFeatures();
-        // }
     }
 
     public function setProfiler(ProfilerInterface $profiler): ProfilerAwareInterface
