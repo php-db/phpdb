@@ -12,16 +12,9 @@ use Laminas\Db\Adapter\Driver\DriverInterface;
  */
 interface DriverFeatureProviderInterface
 {
-    /**
-     * Add features
-     *
-     * @param DriverFeatureInterface[] $features
-     */
+    /** @param DriverFeatureInterface[] $features */
     public function addFeatures(array $features): DriverFeatureProviderInterface;
 
-    /**
-     * Add feature
-     */
     public function addFeature(DriverFeatureInterface $feature): DriverFeatureProviderInterface;
 
     /**

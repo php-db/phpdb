@@ -16,13 +16,11 @@ use Laminas\Db\Adapter\Exception\RuntimeException;
 trait DriverFeatureProviderTrait
 {
     /**
+     *
      * @var array<class-string, DriverFeatureInterface>
      */
     protected array $features = [];
 
-    /**
-     * Add feature
-     */
     public function addFeature(DriverFeatureInterface $feature): DriverFeatureProviderInterface
     {
         if (! $this instanceof DriverInterface) {
@@ -46,32 +44,8 @@ trait DriverFeatureProviderTrait
         return $this;
     }
 
-    /**
-     * Get feature
-     */
     public function getFeature(string $name): DriverFeatureInterface|bool
     {
         return $this->features[$name] ?? false;
-    }
-
-    /**
-     * Setup the default features for Pdo
-     *
-     * @deprecated since 3.0.0, use addFeatures() instead
-     */
-    public function setupDefaultFeatures(): DriverFeatureProviderInterface
-    {
-        // $driverName = $this->connection->getDriverName();
-        // if ($driverName === 'sqlite') {
-        //     $this->addFeature(null, new Feature\SqliteRowCounter());
-        //     return $this;
-        // }
-
-        // if ($driverName === 'oci') {
-        //     $this->addFeature(null, new Feature\OracleRowCounter());
-        //     return $this;
-        // }
-
-        return $this;
     }
 }

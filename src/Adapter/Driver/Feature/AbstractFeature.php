@@ -10,9 +10,6 @@ abstract class AbstractFeature implements DriverFeatureInterface
 {
     protected DriverInterface $driver;
 
-    /**
-     * Set the driver
-     */
     public function setDriver(DriverInterface $driver): DriverFeatureInterface
     {
         $this->driver = $driver;
