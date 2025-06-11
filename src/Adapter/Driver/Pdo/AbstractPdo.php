@@ -6,8 +6,7 @@ namespace Laminas\Db\Adapter\Driver\Pdo;
 
 use Laminas\Db\Adapter\Driver\ConnectionInterface;
 use Laminas\Db\Adapter\Driver\DriverAwareInterface;
-use Laminas\Db\Adapter\Driver\Feature\AbstractFeature;
-use Laminas\Db\Adapter\Driver\Feature\DriverFeatureInterface;
+use Laminas\Db\Adapter\Driver\Feature\DriverFeatureProviderInterface;
 use Laminas\Db\Adapter\Driver\PdoDriverAwareInterface;
 use Laminas\Db\Adapter\Driver\PdoDriverInterface;
 use Laminas\Db\Adapter\Driver\ResultInterface;
@@ -25,10 +24,8 @@ use function ltrim;
 use function preg_match;
 use function sprintf;
 
-abstract class AbstractPdo implements PdoDriverInterface, DriverFeatureInterface, ProfilerAwareInterface
+abstract class AbstractPdo implements PdoDriverInterface, ProfilerAwareInterface
 {
-    public const FEATURES_DEFAULT = 'default';
-
     /** @internal */
     public ?ProfilerInterface $profiler;
 
@@ -36,7 +33,7 @@ abstract class AbstractPdo implements PdoDriverInterface, DriverFeatureInterface
         protected readonly AbstractPdoConnection|\PDO $connection,
         protected readonly StatementInterface&PdoDriverAwareInterface $statementPrototype,
         protected readonly ResultInterface $resultPrototype,
-        protected array|string $features = self::FEATURES_DEFAULT
+        array $features = [],
     ) {
 
         if ($this->connection instanceof DriverAwareInterface) {
@@ -47,14 +44,8 @@ abstract class AbstractPdo implements PdoDriverInterface, DriverFeatureInterface
             $this->statementPrototype->setDriver($this);
         }
 
-        if (is_array($features)) {
-            foreach ($features as $name => $feature) {
-                $this->addFeature($name, $feature);
-            }
-        } elseif ($features instanceof AbstractFeature) {
-            $this->addFeature($features->getName(), $features);
-        } elseif ($features === self::FEATURES_DEFAULT) {
-            $this->setupDefaultFeatures();
+        if ($features !== [] && $this instanceof DriverFeatureProviderInterface) {
+            $this->addFeatures($features);
         }
     }
 
@@ -94,60 +85,6 @@ abstract class AbstractPdo implements PdoDriverInterface, DriverFeatureInterface
     public function registerResultPrototype(ResultInterface $resultPrototype)
     {
         $this->resultPrototype = $resultPrototype;
-    }
-
-    /**
-     * Add feature
-     *
-     * todo: needs improvement
-     *
-     * @param string $name
-     * @param AbstractFeature $feature
-     * @return $this Provides a fluent interface
-     */
-    public function addFeature($name, $feature)
-    {
-        if ($feature instanceof AbstractFeature) {
-            $name = $feature->getName(); // overwrite the name, just in case
-            $feature->setDriver($this);
-        }
-        $this->features[$name] = $feature;
-        return $this;
-    }
-
-    /**
-     * Setup the default features for Pdo
-     *
-     * @return $this Provides a fluent interface
-     */
-    // public function setupDefaultFeatures()
-    // {
-    //     $driverName = $this->connection->getDriverName();
-    //     if ($driverName === 'sqlite') {
-    //         $this->addFeature(null, new Feature\SqliteRowCounter());
-    //         return $this;
-    //     }
-
-    //     if ($driverName === 'oci') {
-    //         $this->addFeature(null, new Feature\OracleRowCounter());
-    //         return $this;
-    //     }
-
-    //     return $this;
-    // }
-
-    /**
-     * Get feature
-     *
-     * @param string $name
-     * @return AbstractFeature|false
-     */
-    public function getFeature($name)
-    {
-        if (isset($this->features[$name])) {
-            return $this->features[$name];
-        }
-        return false;
     }
 
     /**

@@ -46,7 +46,7 @@ class Oci8 implements DriverInterface, Profiler\ProfilerAwareInterface
         ?Statement $statementPrototype = null,
         ?Result $resultPrototype = null,
         array $options = [],
-        $features = self::FEATURES_DEFAULT
+        $features = [new Feature\RowCounter()]
     ) {
         if (! $connection instanceof Connection) {
             $connection = new Connection($connection);
