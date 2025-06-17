@@ -36,11 +36,11 @@ abstract class AbstractPdo implements PdoDriverInterface, ProfilerAwareInterface
         array $features = [],
     ) {
 
-        if ($this->connection instanceof DriverAwareInterface) {
+        if ($this->connection instanceof PdoDriverAwareInterface) {
             $this->connection->setDriver($this);
         }
 
-        if ($this->statementPrototype instanceof DriverAwareInterface) {
+        if ($this->statementPrototype instanceof PdoDriverAwareInterface) {
             $this->statementPrototype->setDriver($this);
         }
 
