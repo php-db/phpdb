@@ -6,6 +6,7 @@ namespace Laminas\Db\Adapter\Driver\Pdo;
 
 use Laminas\Db\Adapter\Driver\AbstractConnection;
 use Laminas\Db\Adapter\Driver\ConnectionInterface;
+use Laminas\Db\Adapter\Driver\PdoConnectionInterface;
 use Laminas\Db\Adapter\Driver\PdoDriverAwareInterface;
 use Laminas\Db\Adapter\Driver\PdoDriverInterface;
 use Laminas\Db\Adapter\Driver\ResultInterface;
@@ -21,15 +22,14 @@ use function strpos;
 use function strtolower;
 use function substr;
 
-abstract class AbstractPdoConnection extends AbstractConnection implements PdoDriverAwareInterface
+abstract class AbstractPdoConnection extends AbstractConnection implements PdoConnectionInterface, PdoDriverAwareInterface
 {
     protected ?PdoDriverInterface $driver = null;
 
+    protected ?string $dsn;
+
     /** @var ?PDO $resource */
     protected $resource;
-
-    /** @var string */
-    protected ?string $dsn;
 
     /**
      * Constructor
@@ -86,7 +86,7 @@ abstract class AbstractPdoConnection extends AbstractConnection implements PdoDr
      * @throws RuntimeException
      */
     #[Override]
-    public function getDsn(): string
+    public final function getDsn(): string
     {
         if (! $this->dsn) {
             throw new Exception\RuntimeException(

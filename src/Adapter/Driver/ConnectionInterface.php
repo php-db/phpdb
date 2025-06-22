@@ -20,8 +20,6 @@ interface ConnectionInterface extends SchemaAwareInterface
 
     public function getConnectionParameters(): array;
 
-    public function getDsn(): string;
-
     /**
      * Get last generated id
      *
