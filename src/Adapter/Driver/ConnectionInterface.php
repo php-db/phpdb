@@ -8,6 +8,30 @@ use Laminas\Db\Adapter\SchemaAwareInterface;
 
 interface ConnectionInterface extends SchemaAwareInterface
 {
+    public function beginTransaction(): ConnectionInterface;
+
+    public function connect(): ConnectionInterface;
+
+    public function commit(): ConnectionInterface;
+
+    public function disconnect(): ConnectionInterface;
+
+    public function execute(string $sql): ?ResultInterface;
+
+    public function getConnectionParameters(): array;
+
+    public function getDsn(): string;
+
+    /**
+     * Get last generated id
+     *
+     * @param null $name Ignored (this is not ignored for PDO), imagine that...
+     *
+     * todo: narrow this to string|int|bool|null
+     * until version bumps to PHP 8.2 minimum then narrow to string|int|false
+     */
+    public function getLastGeneratedValue($name = null): string|int|bool|null;
+
     /**
      * Get resource
      *
@@ -15,34 +39,12 @@ interface ConnectionInterface extends SchemaAwareInterface
      */
     public function getResource();
 
-    /** Connect */
-    public function connect(): ConnectionInterface;
+    /** Checks whether the connection is in transaction state. */
+    public function inTransaction(): bool;
 
-    /** Is connected */
     public function isConnected(): bool;
 
-    /** Disconnect */
-    public function disconnect(): ConnectionInterface;
-
-    /** Begin transaction */
-    public function beginTransaction(): ConnectionInterface;
-
-    /** Commit */
-    public function commit(): ConnectionInterface;
-
-    /** Rollback */
     public function rollback(): ConnectionInterface;
 
-    /** Execute */
-    public function execute(string $sql): ?ResultInterface;
-
-    /**
-     * Get last generated id
-     *
-     * @param null $name Ignored (this is not ignored for PDO), imagine that...
-     *
-     * todo: narrow this to string|int|bool
-     * until version bumps to PHP 8.2 minimum then narrow to string|int|false
-     */
-    public function getLastGeneratedValue($name = null): string|int|bool|null;
+    public function setConnectionParameters(array $connectionParameters): ConnectionInterface;
 }

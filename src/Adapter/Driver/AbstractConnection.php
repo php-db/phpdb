@@ -35,6 +35,7 @@ abstract class AbstractConnection implements ConnectionInterface, ProfilerAwareI
     }
 
     /** Get connection parameters */
+    #[Override]
     public function getConnectionParameters(): array
     {
         return $this->connectionParameters;
@@ -45,6 +46,7 @@ abstract class AbstractConnection implements ConnectionInterface, ProfilerAwareI
     {
         return $this->driverName;
     }
+
 
     public function getProfiler(): ?ProfilerInterface
     {
@@ -62,6 +64,7 @@ abstract class AbstractConnection implements ConnectionInterface, ProfilerAwareI
     }
 
     /** Checks whether the connection is in transaction state. */
+    #[Override]
     public function inTransaction(): bool
     {
         return $this->inTransaction;

@@ -50,6 +50,7 @@ abstract class AbstractPdoConnection extends AbstractConnection implements PdoDr
         }
     }
 
+    #[Override]
     public function setDriver(PdoDriverInterface $driver): PdoDriverAwareInterface
     {
         $this->driver = $driver;
@@ -84,6 +85,7 @@ abstract class AbstractPdoConnection extends AbstractConnection implements PdoDr
      *
      * @throws RuntimeException
      */
+    #[Override]
     public function getDsn(): string
     {
         if (! $this->dsn) {
@@ -129,7 +131,6 @@ abstract class AbstractPdoConnection extends AbstractConnection implements PdoDr
     //     return false;
     // }
 
-    /** Set resource */
     public function setResource(PDO $resource): static
     {
         $this->resource   = $resource;
