@@ -18,7 +18,6 @@
         </testsuite>
     </testsuites>
 
-
     <php>
         <!-- Note: the following is a FULL list of ALL POSSIBLE constants
             currently in use in Laminas for ALL COMPONENTS; you should choose the
@@ -34,12 +33,14 @@
         <env name="TESTS_LAMINAS_DB_ADAPTER_DRIVER_MYSQL_USERNAME" value="user"/>
         <env name="TESTS_LAMINAS_DB_ADAPTER_DRIVER_MYSQL_PASSWORD" value="password"/>
         <env name="TESTS_LAMINAS_DB_ADAPTER_DRIVER_MYSQL_DATABASE" value="laminasdb_test"/>
-        <env name="TESTS_LAMINAS_DB_ADAPTER_DRIVER_PGSQL" value="false"/>
+
+        <!-- <env name="TESTS_LAMINAS_DB_ADAPTER_DRIVER_PGSQL" value="false"/>
         <env name="TESTS_LAMINAS_DB_ADAPTER_DRIVER_PGSQL_HOSTNAME" value="postgresql"/>
         <env name="TESTS_LAMINAS_DB_ADAPTER_DRIVER_PGSQL_USERNAME" value="postgres"/>
         <env name="TESTS_LAMINAS_DB_ADAPTER_DRIVER_PGSQL_PASSWORD" value="postgres"/>
-        <env name="TESTS_LAMINAS_DB_ADAPTER_DRIVER_PGSQL_DATABASE" value="laminasdb_test"/>
-        <env name="TESTS_LAMINAS_DB_ADAPTER_DRIVER_SQLITE_MEMORY" value="false"/>
+        <env name="TESTS_LAMINAS_DB_ADAPTER_DRIVER_PGSQL_DATABASE" value="laminasdb_test"/> -->
+
+        <!-- <env name="TESTS_LAMINAS_DB_ADAPTER_DRIVER_SQLITE_MEMORY" value="false"/> -->
         <!--
         <env name="TESTS_LAMINAS_DB_ADAPTER_DRIVER_SQLSRV" value="false"/>
         <env name="TESTS_LAMINAS_DB_ADAPTER_DRIVER_SQLSRV_HOSTNAME" value="192.168.20.20"/>

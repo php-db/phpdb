@@ -1,9 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Laminas\Db\Adapter\Exception;
 
 use Laminas\Db\Exception;
 
-interface ExceptionInterface extends Exception\ExceptionInterface
-{
-}
+interface ExceptionInterface extends Exception\ExceptionInterface {}
