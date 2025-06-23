@@ -6,6 +6,7 @@ use Closure;
 use Iterator;
 use Laminas\Db\Adapter\Driver\ResultInterface;
 use Laminas\Db\Adapter\Exception;
+use Override;
 use PDO;
 use PDOStatement;
 // phpcs:ignore SlevomatCodingStandard.Namespaces.UnusedUses.UnusedUse
@@ -20,8 +21,7 @@ class Result implements Iterator, ResultInterface
     public const STATEMENT_MODE_SCROLLABLE = 'scrollable';
     public const STATEMENT_MODE_FORWARD    = 'forward';
 
-    /** @var string */
-    protected $statementMode = self::STATEMENT_MODE_FORWARD;
+    protected string $statementMode = self::STATEMENT_MODE_FORWARD;
 
     /** @var int */
     protected $fetchMode = PDO::FETCH_ASSOC;
@@ -86,11 +86,10 @@ class Result implements Iterator, ResultInterface
     /**
      * Initialize
      *
-     * @param  mixed        $generatedValue
-     * @param  int          $rowCount
-     * @return $this Provides a fluent interface
+     * @param  mixed $generatedValue
+     * @param  int   $rowCount
      */
-    public function initialize(PDOStatement $resource, $generatedValue, $rowCount = null)
+    public function initialize(PDOStatement $resource, $generatedValue, $rowCount = null): ResultInterface&Result
     {
         $this->resource       = $resource;
         $this->generatedValue = $generatedValue;
@@ -100,25 +99,26 @@ class Result implements Iterator, ResultInterface
     }
 
     /**
-     * @return void
+     * {@inheritdoc}
      */
-    public function buffer()
+    #[Override]
+    public function buffer(): void
     {
     }
 
     /**
-     * @return bool|null
+     * {@inheritdoc}
      */
-    public function isBuffered()
+    #[Override]
+    public function isBuffered(): bool
     {
         return false;
     }
 
     /**
-     * @param int $fetchMode
      * @throws Exception\InvalidArgumentException On invalid fetch mode.
      */
-    public function setFetchMode($fetchMode)
+    public function setFetchMode(int $fetchMode): void
     {
         if (! in_array($fetchMode, self::VALID_FETCH_MODES, true)) {
             throw new Exception\InvalidArgumentException(
@@ -129,12 +129,25 @@ class Result implements Iterator, ResultInterface
         $this->fetchMode = (int) $fetchMode;
     }
 
-    /**
-     * @return int
-     */
-    public function getFetchMode()
+    public function getFetchMode(): int
     {
         return $this->fetchMode;
+    }
+
+    public function setStatementMode(string $statementMode = self::STATEMENT_MODE_FORWARD): void
+    {
+        if (! in_array($statementMode, [self::STATEMENT_MODE_SCROLLABLE, self::STATEMENT_MODE_FORWARD], true)) {
+            throw new Exception\InvalidArgumentException(
+                'The statement mode must be one of the defined constants.'
+            );
+        }
+
+        $this->statementMode = $statementMode;
+    }
+
+    public function getStatementMode(): string
+    {
+        return $this->statementMode;
     }
 
     /**
@@ -142,6 +155,7 @@ class Result implements Iterator, ResultInterface
      *
      * @return mixed
      */
+    #[Override]
     public function getResource()
     {
         return $this->resource;
@@ -153,6 +167,7 @@ class Result implements Iterator, ResultInterface
      * @return mixed
      */
     #[ReturnTypeWillChange]
+    #[Override]
     public function current()
     {
         if ($this->currentComplete) {
@@ -170,6 +185,7 @@ class Result implements Iterator, ResultInterface
      * @return mixed
      */
     #[ReturnTypeWillChange]
+    #[Override]
     public function next()
     {
         $this->currentData     = $this->resource->fetch($this->fetchMode);
@@ -184,6 +200,7 @@ class Result implements Iterator, ResultInterface
      * @return mixed
      */
     #[ReturnTypeWillChange]
+    #[Override]
     public function key()
     {
         return $this->position;
@@ -194,6 +211,7 @@ class Result implements Iterator, ResultInterface
      * @return void
      */
     #[ReturnTypeWillChange]
+    #[Override]
     public function rewind()
     {
         if ($this->statementMode === self::STATEMENT_MODE_FORWARD && $this->position > 0) {
@@ -214,6 +232,7 @@ class Result implements Iterator, ResultInterface
      * @return bool
      */
     #[ReturnTypeWillChange]
+    #[Override]
     public function valid()
     {
         return $this->currentData !== false;
@@ -225,6 +244,7 @@ class Result implements Iterator, ResultInterface
      * @return int
      */
     #[ReturnTypeWillChange]
+    #[Override]
     public function count()
     {
         if (is_int($this->rowCount)) {
@@ -239,29 +259,28 @@ class Result implements Iterator, ResultInterface
     }
 
     /**
-     * @return int
+     * {@inheritdoc}
      */
-    public function getFieldCount()
+    #[Override]
+    public function getFieldCount(): int
     {
         return $this->resource->columnCount();
     }
 
     /**
-     * Is query result
-     *
-     * @return bool
+     * {@inheritdoc}
      */
-    public function isQueryResult()
+    #[Override]
+    public function isQueryResult(): bool
     {
         return $this->resource->columnCount() > 0;
     }
 
     /**
-     * Get affected rows
-     *
-     * @return int
+     * {@inheritdoc}
      */
-    public function getAffectedRows()
+    #[Override]
+    public function getAffectedRows(): int
     {
         return $this->resource->rowCount();
     }
