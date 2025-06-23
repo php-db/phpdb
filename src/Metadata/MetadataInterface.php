@@ -1,147 +1,82 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Laminas\Db\Metadata;
+
+use Laminas\Db\Metadata\Object\ColumnObject;
+use Laminas\Db\Metadata\Object\ConstraintKeyObject;
+use Laminas\Db\Metadata\Object\ConstraintObject;
+use Laminas\Db\Metadata\Object\TableObject;
+use Laminas\Db\Metadata\Object\TriggerObject;
+use Laminas\Db\Metadata\Object\ViewObject;
+use Symfony\Component\Console\Helper\Table;
 
 interface MetadataInterface
 {
     /**
-     * Get schemas.
-     *
      * @return string[]
      */
-    public function getSchemas();
+    public function getSchemas(): array;
 
     /**
-     * Get table names.
-     *
-     * @param null|string $schema
-     * @param bool $includeViews
      * @return string[]
      */
-    public function getTableNames($schema = null, $includeViews = false);
+    public function getTableNames(?string $schema = null, bool $includeViews = false): array;
 
     /**
-     * Get tables.
-     *
-     * @param null|string $schema
-     * @param bool $includeViews
-     * @return Object\TableObject[]
+     * @return TableObject[]
      */
-    public function getTables($schema = null, $includeViews = false);
+    public function getTables(?string $schema = null, bool $includeViews = false): array;
+
+    public function getTable(string $tableName, ?string $schema = null): TableObject;
 
     /**
-     * Get table
-     *
-     * @param string $tableName
-     * @param null|string $schema
-     * @return Object\TableObject
-     */
-    public function getTable($tableName, $schema = null);
-
-    /**
-     * Get view names
-     *
-     * @param null|string $schema
      * @return string[]
      */
-    public function getViewNames($schema = null);
+    public function getViewNames(?string $schema = null): array;
 
     /**
-     * Get views
-     *
-     * @param null|string $schema
-     * @return Object\ViewObject[]
+     * @return ViewObject[]
      */
-    public function getViews($schema = null);
+    public function getViews(?string $schema = null): array;
+
+    public function getView(string $viewName, ?string $schema = null): ViewObject|TableObject;
+
+    public function getColumnNames(string $table, ?string $schema = null): array;
 
     /**
-     * Get view
-     *
-     * @param string $viewName
-     * @param null|string $schema
-     * @return Object\ViewObject
+     * @return ColumnObject[]
      */
-    public function getView($viewName, $schema = null);
+    public function getColumns(string $table, ?string $schema = null): array;
+
+    public function getColumn(string $columnName, string $table, ?string $schema = null): ColumnObject;
 
     /**
-     * Get column names
-     *
-     * @param string $table
-     * @param null|string $schema
+     * @return ConstraintObject[]
+     */
+    public function getConstraints(string $table, ?string $schema = null): array;
+
+    public function getConstraint(
+        string $constraintName,
+        string $table,
+        ?string $schema = null
+    ): ConstraintObject;
+
+    /**
+     * @return ConstraintKeyObject[]
+     */
+    public function getConstraintKeys(string $constraint, string $table, ?string $schema = null): array;
+
+    /**
      * @return string[]
      */
-    public function getColumnNames($table, $schema = null);
+    public function getTriggerNames(?string $schema = null): array;
 
     /**
-     * Get columns
-     *
-     * @param string $table
-     * @param null|string $schema
-     * @return Object\ColumnObject[]
+     * @return TriggerObject[]
      */
-    public function getColumns($table, $schema = null);
+    public function getTriggers(?string $schema = null): array;
 
-    /**
-     * Get column
-     *
-     * @param string $columnName
-     * @param string $table
-     * @param null|string $schema
-     * @return Object\ColumnObject
-     */
-    public function getColumn($columnName, $table, $schema = null);
-
-    /**
-     * Get constraints
-     *
-     * @param string $table
-     * @param null|string $schema
-     * @return Object\ConstraintObject[]
-     */
-    public function getConstraints($table, $schema = null);
-
-    /**
-     * Get constraint
-     *
-     * @param string $constraintName
-     * @param string $table
-     * @param null|string $schema
-     * @return Object\ConstraintObject
-     */
-    public function getConstraint($constraintName, $table, $schema = null);
-
-    /**
-     * Get constraint keys
-     *
-     * @param string $constraint
-     * @param string $table
-     * @param null|string $schema
-     * @return Object\ConstraintKeyObject[]
-     */
-    public function getConstraintKeys($constraint, $table, $schema = null);
-
-    /**
-     * Get trigger names
-     *
-     * @param null|string $schema
-     * @return string[]
-     */
-    public function getTriggerNames($schema = null);
-
-    /**
-     * Get triggers
-     *
-     * @param null|string $schema
-     * @return Object\TriggerObject[]
-     */
-    public function getTriggers($schema = null);
-
-    /**
-     * Get trigger
-     *
-     * @param string $triggerName
-     * @param null|string $schema
-     * @return Object\TriggerObject
-     */
-    public function getTrigger($triggerName, $schema = null);
+    public function getTrigger(string $triggerName, ?string $schema = null): TriggerObject;
 }
