@@ -5,15 +5,16 @@ declare(strict_types=1);
 namespace Laminas\Db\Adapter\Driver\Pdo;
 
 use Laminas\Db\Adapter\Driver\ConnectionInterface;
-use Laminas\Db\Adapter\Driver\DriverAwareInterface;
 use Laminas\Db\Adapter\Driver\Feature\DriverFeatureProviderInterface;
 use Laminas\Db\Adapter\Driver\PdoDriverAwareInterface;
 use Laminas\Db\Adapter\Driver\PdoDriverInterface;
 use Laminas\Db\Adapter\Driver\ResultInterface;
 use Laminas\Db\Adapter\Driver\StatementInterface;
 use Laminas\Db\Adapter\Exception;
+use Override;
 use Laminas\Db\Adapter\Profiler\ProfilerAwareInterface;
 use Laminas\Db\Adapter\Profiler\ProfilerInterface;
+use PDO;
 use PDOStatement;
 
 use function extension_loaded;
@@ -27,13 +28,13 @@ use function sprintf;
 abstract class AbstractPdo implements PdoDriverInterface, ProfilerAwareInterface
 {
     /** @internal */
-    public ?ProfilerInterface $profiler;
+    protected ?ProfilerInterface $profiler;
 
     public function __construct(
-        protected readonly AbstractPdoConnection|\PDO $connection,
+        protected readonly AbstractPdoConnection|PDO $connection,
         protected readonly StatementInterface&PdoDriverAwareInterface $statementPrototype,
         protected readonly ResultInterface $resultPrototype,
-        array $features = [],
+        protected array $features = [],
     ) {
 
         if ($this->connection instanceof PdoDriverAwareInterface) {
@@ -49,6 +50,7 @@ abstract class AbstractPdo implements PdoDriverInterface, ProfilerAwareInterface
         }
     }
 
+    #[Override]
     public function setProfiler(ProfilerInterface $profiler): ProfilerAwareInterface
     {
         $this->profiler = $profiler;
@@ -64,27 +66,6 @@ abstract class AbstractPdo implements PdoDriverInterface, ProfilerAwareInterface
     public function getProfiler(): ?ProfilerInterface
     {
         return $this->profiler;
-    }
-
-    /**
-     * Register statement prototype
-     *
-     * @deprecated since 3.0.0
-     */
-    public function registerStatementPrototype(StatementInterface&PdoDriverAwareInterface $statementPrototype)
-    {
-        $this->statementPrototype = $statementPrototype;
-        $this->statementPrototype->setDriver($this);
-    }
-
-    /**
-     * Register result prototype
-     *
-     * @deprecated since 3.0.0
-     */
-    public function registerResultPrototype(ResultInterface $resultPrototype)
-    {
-        $this->resultPrototype = $resultPrototype;
     }
 
     /**
@@ -130,6 +111,7 @@ abstract class AbstractPdo implements PdoDriverInterface, ProfilerAwareInterface
     /**
      * Check environment
      */
+    #[Override]
     public function checkEnvironment(): bool
     {
         if (! extension_loaded('PDO')) {
@@ -140,6 +122,7 @@ abstract class AbstractPdo implements PdoDriverInterface, ProfilerAwareInterface
         return true;
     }
 
+    #[Override]
     public function getConnection(): ConnectionInterface
     {
         return $this->connection;
@@ -147,8 +130,9 @@ abstract class AbstractPdo implements PdoDriverInterface, ProfilerAwareInterface
 
     /**
      * todo: this needs improved
-     * @param string|PDOStatement $sqlOrResource
+     * @param PDOStatement|string $sqlOrResource
      */
+    #[Override]
     public function createStatement($sqlOrResource = null): StatementInterface
     {
         /** @var Statement */
@@ -206,6 +190,7 @@ abstract class AbstractPdo implements PdoDriverInterface, ProfilerAwareInterface
         return $this->resultPrototype;
     }
 
+    #[Override]
     public function getPrepareType(): string
     {
         return self::PARAMETERIZATION_NAMED;

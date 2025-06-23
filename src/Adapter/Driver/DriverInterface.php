@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Laminas\Db\Adapter\Driver;
 
 use Laminas\Db\Exception;
@@ -21,6 +23,9 @@ interface DriverInterface
      */
     public function checkEnvironment(): bool;
 
+    /**
+     * @deprecated as of 3.0.0; use constructor injection instead
+     */
     public function registerConnection(ConnectionInterface $connection): DriverInterface;
 
     /** Get connection */
@@ -29,7 +34,7 @@ interface DriverInterface
     /**
      * Create statement
      *
-     * @param string|resource $sqlOrResource
+     * @param resource|string $sqlOrResource
      */
     public function createStatement($sqlOrResource = null): StatementInterface;
 

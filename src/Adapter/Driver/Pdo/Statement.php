@@ -34,13 +34,16 @@ class Statement implements StatementInterface, PdoDriverAwareInterface, Profiler
 
     protected bool $isQuery;
 
-    protected ?ParameterContainer $parameterContainer = null;
-
     protected bool $parametersBound = false;
 
     protected PDOStatement|false|null $resource;
 
     protected bool $isPrepared = false;
+
+    public function __construct(
+        protected ParameterContainer $parameterContainer = new ParameterContainer()
+    ) {
+    }
 
     public function setDriver(PdoDriverInterface $driver): PdoDriverAwareInterface
     {

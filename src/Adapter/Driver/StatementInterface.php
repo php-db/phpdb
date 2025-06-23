@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Laminas\Db\Adapter\Driver;
 
 use Laminas\Db\Adapter\ParameterContainer;
@@ -21,5 +23,5 @@ interface StatementInterface extends StatementContainerInterface
     public function isPrepared(): bool;
 
     /** Execute */
-    public function execute(null|array|ParameterContainer $parameters = null): ?ResultInterface;
+    public function execute(ParameterContainer|array|null $parameters = null): ?ResultInterface;
 }

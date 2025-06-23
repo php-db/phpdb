@@ -6,4 +6,6 @@ namespace Laminas\Db\Adapter\Exception;
 
 use Laminas\Db\Exception;
 
-interface ExceptionInterface extends Exception\ExceptionInterface {}
+interface ExceptionInterface extends Exception\ExceptionInterface
+{
+}
