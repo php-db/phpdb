@@ -41,7 +41,8 @@ class Statement implements StatementInterface, PdoDriverAwareInterface, Profiler
     protected bool $isPrepared = false;
 
     public function __construct(
-        protected ParameterContainer $parameterContainer = new ParameterContainer()
+        protected ParameterContainer $parameterContainer = new ParameterContainer(),
+        protected array $options = [],
     ) {
     }
 
