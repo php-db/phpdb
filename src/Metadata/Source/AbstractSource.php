@@ -3,6 +3,7 @@
 namespace Laminas\Db\Metadata\Source;
 
 use Exception;
+use Laminas\Db\Adapter\Adapter;
 use Laminas\Db\Adapter\AdapterInterface;
 use Laminas\Db\Adapter\SchemaAwareInterface;
 use Laminas\Db\Metadata\MetadataInterface;
@@ -30,7 +31,7 @@ abstract class AbstractSource implements MetadataInterface
      * Constructor
      */
     public function __construct(
-        protected AdapterInterface&SchemaAwareInterface $adapter
+        protected AdapterInterface&Adapter&SchemaAwareInterface $adapter
         ) {
         $this->defaultSchema = $adapter->getCurrentSchema() ?: self::DEFAULT_SCHEMA;
     }
