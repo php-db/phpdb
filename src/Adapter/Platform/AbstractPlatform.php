@@ -1,6 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Laminas\Db\Adapter\Platform;
+
+use Override;
 
 use function addcslashes;
 use function array_map;
@@ -30,6 +34,7 @@ abstract class AbstractPlatform implements PlatformInterface
     /**
      * {@inheritDoc}
      */
+    #[Override]
     public function quoteIdentifierInFragment(string $identifier, array $safeWords = []): string
     {
         if (! $this->quoteIdentifiers) {
@@ -65,6 +70,7 @@ abstract class AbstractPlatform implements PlatformInterface
     /**
      * {@inheritDoc}
      */
+    #[Override]
     public function quoteIdentifier(string $identifier): string
     {
         if (! $this->quoteIdentifiers) {
@@ -79,6 +85,7 @@ abstract class AbstractPlatform implements PlatformInterface
     /**
      * {@inheritDoc}
      */
+    #[Override]
     public function quoteIdentifierChain(array|string $identifierChain): string
     {
         return '"' . implode('"."', (array) str_replace('"', '\\"', $identifierChain)) . '"';
@@ -87,6 +94,7 @@ abstract class AbstractPlatform implements PlatformInterface
     /**
      * {@inheritDoc}
      */
+    #[Override]
     public function getQuoteIdentifierSymbol(): string
     {
         return $this->quoteIdentifier[0];
@@ -95,6 +103,7 @@ abstract class AbstractPlatform implements PlatformInterface
     /**
      * {@inheritDoc}
      */
+    #[Override]
     public function getQuoteValueSymbol(): string
     {
         return '\'';
@@ -103,6 +112,7 @@ abstract class AbstractPlatform implements PlatformInterface
     /**
      * {@inheritDoc}
      */
+    #[Override]
     public function quoteValue(string $value): string
     {
         trigger_error(
@@ -115,6 +125,7 @@ abstract class AbstractPlatform implements PlatformInterface
     /**
      * {@inheritDoc}
      */
+    #[Override]
     public function quoteTrustedValue(int|float|string|bool $value): ?string
     {
         return '\'' . addcslashes((string) $value, "\x00\n\r\\'\"\x1a") . '\'';
@@ -123,6 +134,7 @@ abstract class AbstractPlatform implements PlatformInterface
     /**
      * {@inheritDoc}
      */
+    #[Override]
     public function quoteValueList(array|string $valueList): string
     {
         return implode(', ', array_map([$this, 'quoteValue'], (array) $valueList));
@@ -131,6 +143,7 @@ abstract class AbstractPlatform implements PlatformInterface
     /**
      * {@inheritDoc}
      */
+    #[Override]
     public function getIdentifierSeparator(): string
     {
         return '.';
