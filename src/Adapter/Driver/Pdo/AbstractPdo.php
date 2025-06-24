@@ -11,6 +11,7 @@ use Laminas\Db\Adapter\Driver\PdoDriverInterface;
 use Laminas\Db\Adapter\Driver\ResultInterface;
 use Laminas\Db\Adapter\Driver\StatementInterface;
 use Laminas\Db\Adapter\Exception;
+use Laminas\Db\Adapter\Exception\RuntimeException;
 use Override;
 use Laminas\Db\Adapter\Profiler\ProfilerAwareInterface;
 use Laminas\Db\Adapter\Profiler\ProfilerInterface;
@@ -190,12 +191,19 @@ abstract class AbstractPdo implements PdoDriverInterface, ProfilerAwareInterface
         return $this->resultPrototype;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     #[Override]
     public function getPrepareType(): string
     {
         return self::PARAMETERIZATION_NAMED;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    #[Override]
     public function formatParameterName(string|int $name, ?string $type = null): string
     {
         if ($type === null && ! is_numeric($name) || $type === self::PARAMETERIZATION_NAMED) {
@@ -220,7 +228,11 @@ abstract class AbstractPdo implements PdoDriverInterface, ProfilerAwareInterface
         return '?';
     }
 
-    public function getLastGeneratedValue(?string $name = null): int|string|null|false
+    /**
+     * {@inheritDoc}
+     */
+    #[Override]
+    public function getLastGeneratedValue(?string $name = null): int|string|bool|null
     {
         return $this->connection->getLastGeneratedValue($name);
     }

@@ -51,6 +51,10 @@ interface DriverInterface
     /** Format parameter name */
     public function formatParameterName(string $name, ?string $type = null): string;
 
-    /** Get last generated value */
-    public function getLastGeneratedValue(): int|string|null|false;
+    /**
+     * Get last generated value
+     *
+     * todo: narrow this to int|string|false|null once 8.2 is minimum
+     * */
+    public function getLastGeneratedValue(): int|string|bool|null;
 }
