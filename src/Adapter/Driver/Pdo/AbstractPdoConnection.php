@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Laminas\Db\Adapter\Driver\Pdo;
 
+use Dba\Connection;
 use Laminas\Db\Adapter\Driver\AbstractConnection;
 use Laminas\Db\Adapter\Driver\ConnectionInterface;
 use Laminas\Db\Adapter\Driver\PdoConnectionInterface;
@@ -59,23 +60,9 @@ abstract class AbstractPdoConnection extends AbstractConnection implements PdoCo
     }
 
     #[Override]
-    public function setConnectionParameters(array $connectionParameters): static
+    public function setConnectionParameters(array $connectionParameters): ConnectionInterface
     {
         $this->connectionParameters = $connectionParameters;
-        if (isset($connectionParameters['dsn'])) {
-            $this->driverName = substr(
-                $connectionParameters['dsn'],
-                0,
-                strpos($connectionParameters['dsn'], ':')
-            );
-        } elseif (isset($connectionParameters['pdodriver'])) {
-            $this->driverName = strtolower($connectionParameters['pdodriver']);
-        } elseif (isset($connectionParameters['driver'])) {
-            $this->driverName = strtolower(substr(
-                str_replace(['-', '_', ' '], '', $connectionParameters['driver']),
-                3
-            ));
-        }
 
         return $this;
     }

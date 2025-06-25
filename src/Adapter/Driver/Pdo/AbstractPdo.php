@@ -35,7 +35,7 @@ abstract class AbstractPdo implements PdoDriverInterface, ProfilerAwareInterface
         protected readonly AbstractPdoConnection|PDO $connection,
         protected readonly StatementInterface&PdoDriverAwareInterface $statementPrototype,
         protected readonly ResultInterface $resultPrototype,
-        protected array $features = [],
+        array $features = [],
     ) {
 
         if ($this->connection instanceof PdoDriverAwareInterface) {
@@ -46,6 +46,7 @@ abstract class AbstractPdo implements PdoDriverInterface, ProfilerAwareInterface
             $this->statementPrototype->setDriver($this);
         }
 
+        // $features is not constructor promoted because $this->features is defined in the trait
         if ($features !== [] && $this instanceof DriverFeatureProviderInterface) {
             $this->addFeatures($features);
         }

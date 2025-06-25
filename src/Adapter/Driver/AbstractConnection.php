@@ -70,7 +70,7 @@ abstract class AbstractConnection implements ConnectionInterface, ProfilerAwareI
         return $this->inTransaction;
     }
 
-    public function setConnectionParameters(array $connectionParameters): static
+    public function setConnectionParameters(array $connectionParameters): ConnectionInterface
     {
         $this->connectionParameters = $connectionParameters;
 
