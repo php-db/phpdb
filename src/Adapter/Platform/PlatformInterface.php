@@ -17,7 +17,7 @@ interface PlatformInterface
      * todo: sat-migration document
      * Get Sql platform decorator
      */
-    public function getSqlPlatformDecorator(): PlatformDecoratorInterface;
+    //public function getSqlPlatformDecorator(): PlatformDecoratorInterface;
 
 
     /**

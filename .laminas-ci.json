@@ -1,6 +1,5 @@
 {
     "extensions": [
-        "pdo-mysql",
         "pdo-pgsql",
         "pdo-sqlite",
         "mysqli",
