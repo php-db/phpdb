@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Laminas\Db\Adapter;
+namespace PhpDb\Adapter;
 
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use Psr\Container\ContainerInterface;

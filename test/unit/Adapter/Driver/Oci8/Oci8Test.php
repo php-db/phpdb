@@ -1,11 +1,11 @@
 <?php
 
-namespace LaminasTest\Db\Adapter\Driver\Oci8;
+namespace PhpDbTest\Adapter\Driver\Oci8;
 
-use Laminas\Db\Adapter\Driver\Oci8\Connection;
-use Laminas\Db\Adapter\Driver\Oci8\Oci8;
-use Laminas\Db\Adapter\Driver\Oci8\Result;
-use Laminas\Db\Adapter\Driver\Oci8\Statement;
+use PhpDb\Adapter\Driver\Oci8\Connection;
+use PhpDb\Adapter\Driver\Oci8\Oci8;
+use PhpDb\Adapter\Driver\Oci8\Result;
+use PhpDb\Adapter\Driver\Oci8\Statement;
 use Override;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Depends;

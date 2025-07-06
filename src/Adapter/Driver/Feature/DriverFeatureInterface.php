@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-namespace Laminas\Db\Adapter\Driver\Feature;
+namespace PhpDb\Adapter\Driver\Feature;
 
-use Laminas\Db\Adapter\Driver\DriverAwareInterface;
+use PhpDb\Adapter\Driver\DriverAwareInterface;
 
 interface DriverFeatureInterface extends DriverAwareInterface {}

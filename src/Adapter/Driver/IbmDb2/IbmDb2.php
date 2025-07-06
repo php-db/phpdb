@@ -1,10 +1,10 @@
 <?php
 
-namespace Laminas\Db\Adapter\Driver\IbmDb2;
+namespace PhpDb\Adapter\Driver\IbmDb2;
 
-use Laminas\Db\Adapter\Driver\DriverInterface;
-use Laminas\Db\Adapter\Exception;
-use Laminas\Db\Adapter\Profiler;
+use PhpDb\Adapter\Driver\DriverInterface;
+use PhpDb\Adapter\Exception;
+use PhpDb\Adapter\Profiler;
 
 use function extension_loaded;
 use function get_resource_type;

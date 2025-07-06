@@ -1,9 +1,9 @@
 <?php
 
-namespace LaminasTest\Db\Adapter\Driver\Pdo;
+namespace PhpDbTest\Adapter\Driver\Pdo;
 
-use Laminas\Db\Adapter\Driver\Pdo\Result;
-use Laminas\Db\Adapter\Exception\InvalidArgumentException;
+use PhpDb\Adapter\Driver\Pdo\Result;
+use PhpDb\Adapter\Exception\InvalidArgumentException;
 use PDO;
 use PDOStatement;
 use PHPUnit\Framework\Attributes\CoversMethod;

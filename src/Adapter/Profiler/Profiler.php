@@ -1,10 +1,10 @@
 <?php
 
-namespace Laminas\Db\Adapter\Profiler;
+namespace PhpDb\Adapter\Profiler;
 
-use Laminas\Db\Adapter\Exception;
-use Laminas\Db\Adapter\Exception\InvalidArgumentException;
-use Laminas\Db\Adapter\StatementContainerInterface;
+use PhpDb\Adapter\Exception;
+use PhpDb\Adapter\Exception\InvalidArgumentException;
+use PhpDb\Adapter\StatementContainerInterface;
 
 use function end;
 use function is_string;

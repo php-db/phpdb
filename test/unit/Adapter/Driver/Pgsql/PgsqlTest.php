@@ -1,12 +1,12 @@
 <?php
 
-namespace LaminasTest\Db\Adapter\Driver\Pgsql;
+namespace PhpDbTest\Adapter\Driver\Pgsql;
 
-use Laminas\Db\Adapter\Driver\Pgsql\Connection;
-use Laminas\Db\Adapter\Driver\Pgsql\Pgsql;
-use Laminas\Db\Adapter\Driver\Pgsql\Result;
-use Laminas\Db\Adapter\Driver\Pgsql\Statement;
-use Laminas\Db\Adapter\Exception\RuntimeException;
+use PhpDb\Adapter\Driver\Pgsql\Connection;
+use PhpDb\Adapter\Driver\Pgsql\Pgsql;
+use PhpDb\Adapter\Driver\Pgsql\Result;
+use PhpDb\Adapter\Driver\Pgsql\Statement;
+use PhpDb\Adapter\Exception\RuntimeException;
 use Override;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Depends;

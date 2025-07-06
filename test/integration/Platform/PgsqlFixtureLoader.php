@@ -1,6 +1,6 @@
 <?php
 
-namespace LaminasIntegrationTest\Db\Platform;
+namespace PhpDbIntegrationTest\Platform;
 
 use Exception;
 use PDO;

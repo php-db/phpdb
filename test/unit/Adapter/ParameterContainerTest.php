@@ -1,8 +1,8 @@
 <?php
 
-namespace LaminasTest\Db\Adapter;
+namespace PhpDbTest\Adapter;
 
-use Laminas\Db\Adapter\ParameterContainer;
+use PhpDb\Adapter\ParameterContainer;
 use Override;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\TestDox;

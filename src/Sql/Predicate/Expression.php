@@ -1,8 +1,8 @@
 <?php
 
-namespace Laminas\Db\Sql\Predicate;
+namespace PhpDb\Sql\Predicate;
 
-use Laminas\Db\Sql\Expression as BaseExpression;
+use PhpDb\Sql\Expression as BaseExpression;
 
 use function array_slice;
 use function func_get_args;

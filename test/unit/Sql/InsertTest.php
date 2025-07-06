@@ -1,20 +1,20 @@
 <?php
 
-namespace LaminasTest\Db\Sql;
+namespace PhpDbTest\Sql;
 
-use Laminas\Db\Adapter\Adapter;
-use Laminas\Db\Adapter\Driver\DriverInterface;
-use Laminas\Db\Adapter\Driver\StatementInterface;
-use Laminas\Db\Adapter\ParameterContainer;
-use Laminas\Db\Adapter\StatementContainer;
-use Laminas\Db\Sql\Exception\InvalidArgumentException;
-use Laminas\Db\Sql\Expression;
-use Laminas\Db\Sql\Insert;
-use Laminas\Db\Sql\Select;
-use Laminas\Db\Sql\TableIdentifier;
-use LaminasTest\Db\DeprecatedAssertionsTrait;
-use LaminasTest\Db\TestAsset\Replace;
-use LaminasTest\Db\TestAsset\TrustingSql92Platform;
+use PhpDb\Adapter\Adapter;
+use PhpDb\Adapter\Driver\DriverInterface;
+use PhpDb\Adapter\Driver\StatementInterface;
+use PhpDb\Adapter\ParameterContainer;
+use PhpDb\Adapter\StatementContainer;
+use PhpDb\Sql\Exception\InvalidArgumentException;
+use PhpDb\Sql\Expression;
+use PhpDb\Sql\Insert;
+use PhpDb\Sql\Select;
+use PhpDb\Sql\TableIdentifier;
+use PhpDbTest\DeprecatedAssertionsTrait;
+use PhpDbTest\TestAsset\Replace;
+use PhpDbTest\TestAsset\TrustingSql92Platform;
 use Override;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\CoversNothing;
@@ -84,7 +84,7 @@ final class InsertTest extends TestCase
     public function testValuesThrowsExceptionWhenNotArrayOrSelect(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('values() expects an array of values or Laminas\Db\Sql\Select instance');
+        $this->expectExceptionMessage('values() expects an array of values or PhpDb\Sql\Select instance');
         /** @psalm-suppress InvalidArgument */
         $this->insert->values(5);
     }
@@ -94,7 +94,7 @@ final class InsertTest extends TestCase
         $this->insert->values(['foo' => 'bar']);
 
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('A Laminas\Db\Sql\Select instance cannot be provided with the merge flag');
+        $this->expectExceptionMessage('A PhpDb\Sql\Select instance cannot be provided with the merge flag');
         $this->insert->values(new Select(), Insert::VALUES_MERGE);
     }
 
@@ -104,7 +104,7 @@ final class InsertTest extends TestCase
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
-            'An array of values cannot be provided with the merge flag when a Laminas\Db\Sql\Select instance already '
+            'An array of values cannot be provided with the merge flag when a PhpDb\Sql\Select instance already '
             . 'exists as the value source'
         );
         $this->insert->values(['foo' => 'bar'], Insert::VALUES_MERGE);

@@ -1,15 +1,15 @@
 <?php
 
-namespace LaminasTest\Db\Sql\Platform\Sqlite;
+namespace PhpDbTest\Sql\Platform\Sqlite;
 
-use Laminas\Db\Adapter\Adapter;
-use Laminas\Db\Adapter\Driver\DriverInterface;
-use Laminas\Db\Adapter\Driver\StatementInterface;
-use Laminas\Db\Adapter\ParameterContainer;
-use Laminas\Db\Adapter\Platform\Sqlite as SqlitePlatform;
-use Laminas\Db\Sql\Expression;
-use Laminas\Db\Sql\Platform\Sqlite\SelectDecorator;
-use Laminas\Db\Sql\Select;
+use PhpDb\Adapter\Adapter;
+use PhpDb\Adapter\Driver\DriverInterface;
+use PhpDb\Adapter\Driver\StatementInterface;
+use PhpDb\Adapter\ParameterContainer;
+use PhpDb\Adapter\Platform\Sqlite as SqlitePlatform;
+use PhpDb\Sql\Expression;
+use PhpDb\Sql\Platform\Sqlite\SelectDecorator;
+use PhpDb\Sql\Select;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\TestDox;

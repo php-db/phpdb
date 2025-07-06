@@ -1,10 +1,10 @@
 <?php
 
-namespace Laminas\Db\Adapter\Driver\Pgsql;
+namespace PhpDb\Adapter\Driver\Pgsql;
 
-use Laminas\Db\Adapter\Driver\DriverInterface;
-use Laminas\Db\Adapter\Exception;
-use Laminas\Db\Adapter\Profiler;
+use PhpDb\Adapter\Driver\DriverInterface;
+use PhpDb\Adapter\Exception;
+use PhpDb\Adapter\Profiler;
 
 use function extension_loaded;
 use function is_string;

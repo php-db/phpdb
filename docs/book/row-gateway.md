@@ -1,6 +1,6 @@
 # Row Gateways
 
-`Laminas\Db\RowGateway` is a sub-component of laminas-db that implements the Row Data
+`PhpDb\RowGateway` is a sub-component of laminas-db that implements the Row Data
 Gateway pattern described in the book [Patterns of Enterprise Application
 Architecture](http://www.martinfowler.com/books/eaa.html). Row Data Gateways
 model individual rows of a database table, and provide methods such as `save()`
@@ -12,7 +12,7 @@ table.
 `RowGatewayInterface` defines the methods `save()` and `delete()`:
 
 ```php
-namespace Laminas\Db\RowGateway;
+namespace PhpDb\RowGateway;
 
 interface RowGatewayInterface
 {
@@ -24,13 +24,13 @@ interface RowGatewayInterface
 ## Quick start
 
 `RowGateway` is generally used in conjunction with objects that produce
-`Laminas\Db\ResultSet`s, though it may also be used standalone.  To use it
+`PhpDb\ResultSet`s, though it may also be used standalone.  To use it
 standalone, you need an `Adapter` instance and a set of data to work with.
 
 The following demonstrates a basic use case.
 
 ```php
-use Laminas\Db\RowGateway\RowGateway;
+use PhpDb\RowGateway\RowGateway;
 
 // Query the database:
 $resultSet = $adapter->query('SELECT * FROM `user` WHERE `id` = ?', [2]);
@@ -58,8 +58,8 @@ In that paradigm, `select()` operations will produce a `ResultSet` that iterates
 As an example:
 
 ```php
-use Laminas\Db\TableGateway\Feature\RowGatewayFeature;
-use Laminas\Db\TableGateway\TableGateway;
+use PhpDb\TableGateway\Feature\RowGatewayFeature;
+use PhpDb\TableGateway\TableGateway;
 
 $table = new TableGateway('artist', $adapter, new RowGatewayFeature('id'));
 $results = $table->select(['id' => 2]);
@@ -78,9 +78,9 @@ pattern), pass a prototype object implementing the `RowGatewayInterface` to the
 `RowGatewayFeature` constructor instead of a primary key:
 
 ```php
-use Laminas\Db\TableGateway\Feature\RowGatewayFeature;
-use Laminas\Db\TableGateway\TableGateway;
-use Laminas\Db\RowGateway\RowGatewayInterface;
+use PhpDb\TableGateway\Feature\RowGatewayFeature;
+use PhpDb\TableGateway\TableGateway;
+use PhpDb\RowGateway\RowGatewayInterface;
 
 class Artist implements RowGatewayInterface
 {

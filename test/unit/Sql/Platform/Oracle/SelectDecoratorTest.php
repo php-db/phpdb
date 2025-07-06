@@ -1,21 +1,21 @@
 <?php
 
-namespace LaminasTest\Db\Sql\Platform\Oracle;
+namespace PhpDbTest\Sql\Platform\Oracle;
 
-use Laminas\Db\Adapter\Adapter;
-use Laminas\Db\Adapter\Driver\DriverInterface;
-use Laminas\Db\Adapter\Driver\StatementInterface;
-use Laminas\Db\Adapter\ParameterContainer;
-use Laminas\Db\Adapter\Platform\Oracle as OraclePlatform;
-use Laminas\Db\Sql\Platform\Oracle\SelectDecorator;
-use Laminas\Db\Sql\Select;
+use PhpDb\Adapter\Adapter;
+use PhpDb\Adapter\Driver\DriverInterface;
+use PhpDb\Adapter\Driver\StatementInterface;
+use PhpDb\Adapter\ParameterContainer;
+use PhpDb\Adapter\Platform\Oracle as OraclePlatform;
+use PhpDb\Sql\Platform\Oracle\SelectDecorator;
+use PhpDb\Sql\Select;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\TestDox;
 use PHPUnit\Framework\TestCase;
 
-#[CoversMethod(\Laminas\Db\Sql\Platform\SqlServer\SelectDecorator::class, 'prepareStatement')]
-#[CoversMethod(\Laminas\Db\Sql\Platform\SqlServer\SelectDecorator::class, 'processLimitOffset')]
+#[CoversMethod(\PhpDb\Sql\Platform\SqlServer\SelectDecorator::class, 'prepareStatement')]
+#[CoversMethod(\PhpDb\Sql\Platform\SqlServer\SelectDecorator::class, 'processLimitOffset')]
 #[CoversMethod(SelectDecorator::class, 'getSqlString')]
 final class SelectDecoratorTest extends TestCase
 {

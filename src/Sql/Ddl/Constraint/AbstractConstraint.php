@@ -1,6 +1,6 @@
 <?php
 
-namespace Laminas\Db\Sql\Ddl\Constraint;
+namespace PhpDb\Sql\Ddl\Constraint;
 
 use function array_fill;
 use function array_merge;

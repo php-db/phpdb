@@ -1,10 +1,10 @@
 <?php
 
-namespace LaminasTest\Db\Sql\Ddl\Column;
+namespace PhpDbTest\Sql\Ddl\Column;
 
-use Laminas\Db\Sql\Ddl\Column\Column;
-use Laminas\Db\Sql\Ddl\Column\Integer;
-use Laminas\Db\Sql\Ddl\Constraint\PrimaryKey;
+use PhpDb\Sql\Ddl\Column\Column;
+use PhpDb\Sql\Ddl\Column\Integer;
+use PhpDb\Sql\Ddl\Constraint\PrimaryKey;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 

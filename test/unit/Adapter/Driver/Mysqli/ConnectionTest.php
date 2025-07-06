@@ -1,10 +1,10 @@
 <?php
 
-namespace LaminasTest\Db\Adapter\Driver\Mysqli;
+namespace PhpDbTest\Adapter\Driver\Mysqli;
 
-use Laminas\Db\Adapter\Driver\Mysqli\Connection;
-use Laminas\Db\Adapter\Driver\Mysqli\Mysqli;
-use Laminas\Db\Adapter\Exception\RuntimeException;
+use PhpDb\Adapter\Driver\Mysqli\Connection;
+use PhpDb\Adapter\Driver\Mysqli\Mysqli;
+use PhpDb\Adapter\Exception\RuntimeException;
 use Override;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -29,7 +29,7 @@ final class ConnectionTest extends TestCase
     #[Override]
     protected function setUp(): void
     {
-        if (! getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_MYSQL')) {
+        if (! getenv('TESTS_PHPDB_ADAPTER_DRIVER_MYSQL')) {
             $this->markTestSkipped('Mysqli test disabled');
         }
         $this->connection = new Connection([]);

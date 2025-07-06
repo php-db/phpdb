@@ -1,9 +1,9 @@
 <?php
 
-namespace LaminasTest\Db\Sql\Ddl;
+namespace PhpDbTest\Sql\Ddl;
 
-use Laminas\Db\Sql\Ddl\DropTable;
-use Laminas\Db\Sql\TableIdentifier;
+use PhpDb\Sql\Ddl\DropTable;
+use PhpDb\Sql\TableIdentifier;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 

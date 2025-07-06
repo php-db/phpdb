@@ -1,8 +1,8 @@
 <?php
 
-namespace Laminas\Db\Sql\Ddl\Constraint;
+namespace PhpDb\Sql\Ddl\Constraint;
 
-use Laminas\Db\Sql\ExpressionInterface;
+use PhpDb\Sql\ExpressionInterface;
 
 use function array_unshift;
 

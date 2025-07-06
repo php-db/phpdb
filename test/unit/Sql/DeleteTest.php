@@ -1,21 +1,21 @@
 <?php
 
-namespace LaminasTest\Db\Sql;
+namespace PhpDbTest\Sql;
 
-use Laminas\Db\Adapter\Adapter;
-use Laminas\Db\Adapter\Driver\DriverInterface;
-use Laminas\Db\Adapter\Driver\StatementInterface;
-use Laminas\Db\Sql\Delete;
-use Laminas\Db\Sql\Predicate\Expression;
-use Laminas\Db\Sql\Predicate\In;
-use Laminas\Db\Sql\Predicate\IsNotNull;
-use Laminas\Db\Sql\Predicate\IsNull;
-use Laminas\Db\Sql\Predicate\Literal;
-use Laminas\Db\Sql\Predicate\Operator;
-use Laminas\Db\Sql\TableIdentifier;
-use Laminas\Db\Sql\Where;
-use LaminasTest\Db\DeprecatedAssertionsTrait;
-use LaminasTest\Db\TestAsset\DeleteIgnore;
+use PhpDb\Adapter\Adapter;
+use PhpDb\Adapter\Driver\DriverInterface;
+use PhpDb\Adapter\Driver\StatementInterface;
+use PhpDb\Sql\Delete;
+use PhpDb\Sql\Predicate\Expression;
+use PhpDb\Sql\Predicate\In;
+use PhpDb\Sql\Predicate\IsNotNull;
+use PhpDb\Sql\Predicate\IsNull;
+use PhpDb\Sql\Predicate\Literal;
+use PhpDb\Sql\Predicate\Operator;
+use PhpDb\Sql\TableIdentifier;
+use PhpDb\Sql\Where;
+use PhpDbTest\DeprecatedAssertionsTrait;
+use PhpDbTest\TestAsset\DeleteIgnore;
 use Override;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\CoversNothing;

@@ -1,13 +1,13 @@
 <?php
 
-namespace LaminasTest\Db\Sql\Ddl;
+namespace PhpDbTest\Sql\Ddl;
 
-use Laminas\Db\Sql\Ddl\Column\Column;
-use Laminas\Db\Sql\Ddl\Column\ColumnInterface;
-use Laminas\Db\Sql\Ddl\Constraint;
-use Laminas\Db\Sql\Ddl\Constraint\ConstraintInterface;
-use Laminas\Db\Sql\Ddl\CreateTable;
-use Laminas\Db\Sql\TableIdentifier;
+use PhpDb\Sql\Ddl\Column\Column;
+use PhpDb\Sql\Ddl\Column\ColumnInterface;
+use PhpDb\Sql\Ddl\Constraint;
+use PhpDb\Sql\Ddl\Constraint\ConstraintInterface;
+use PhpDb\Sql\Ddl\CreateTable;
+use PhpDb\Sql\TableIdentifier;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Depends;
 use PHPUnit\Framework\TestCase;

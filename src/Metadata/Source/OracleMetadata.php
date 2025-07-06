@@ -1,8 +1,8 @@
 <?php
 
-namespace Laminas\Db\Metadata\Source;
+namespace PhpDb\Metadata\Source;
 
-use Laminas\Db\Adapter\Adapter;
+use PhpDb\Adapter\Adapter;
 
 use function implode;
 use function strtoupper;
@@ -22,7 +22,7 @@ class OracleMetadata extends AbstractSource
     /**
      * {@inheritdoc}
      *
-     * @see \Laminas\Db\Metadata\Source\AbstractSource::loadColumnData()
+     * @see \PhpDb\Metadata\Source\AbstractSource::loadColumnData()
      */
     protected function loadColumnData($table, $schema)
     {
@@ -91,7 +91,7 @@ class OracleMetadata extends AbstractSource
     /**
      * {@inheritdoc}
      *
-     * @see \Laminas\Db\Metadata\Source\AbstractSource::loadConstraintData()
+     * @see \PhpDb\Metadata\Source\AbstractSource::loadConstraintData()
      */
     protected function loadConstraintData($table, $schema)
     {
@@ -178,7 +178,7 @@ class OracleMetadata extends AbstractSource
     /**
      * {@inheritdoc}
      *
-     * @see \Laminas\Db\Metadata\Source\AbstractSource::loadSchemaData()
+     * @see \PhpDb\Metadata\Source\AbstractSource::loadSchemaData()
      */
     protected function loadSchemaData()
     {
@@ -201,7 +201,7 @@ class OracleMetadata extends AbstractSource
     /**
      * {@inheritdoc}
      *
-     * @see \Laminas\Db\Metadata\Source\AbstractSource::loadTableNameData()
+     * @see \PhpDb\Metadata\Source\AbstractSource::loadTableNameData()
      */
     protected function loadTableNameData($schema)
     {
@@ -245,7 +245,7 @@ class OracleMetadata extends AbstractSource
      *
      * {@inheritdoc}
      *
-     * @see \Laminas\Db\Metadata\Source\AbstractSource::loadTriggerData()
+     * @see \PhpDb\Metadata\Source\AbstractSource::loadTriggerData()
      */
     protected function loadTriggerData($schema)
     {

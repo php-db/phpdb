@@ -1,6 +1,6 @@
 <?php
 
-namespace Laminas\Db\Adapter\Platform;
+namespace PhpDb\Adapter\Platform;
 
 use function db2_escape_string;
 use function function_exists;

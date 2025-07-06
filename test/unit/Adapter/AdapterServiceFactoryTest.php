@@ -1,9 +1,9 @@
 <?php
 
-namespace LaminasTest\Db\Adapter;
+namespace PhpDbTest\Adapter;
 
-use Laminas\Db\Adapter\Adapter;
-use Laminas\Db\Adapter\AdapterServiceFactory;
+use PhpDb\Adapter\Adapter;
+use PhpDb\Adapter\AdapterServiceFactory;
 use Laminas\ServiceManager\ServiceLocatorInterface;
 use Override;
 use PHPUnit\Framework\MockObject\Exception;

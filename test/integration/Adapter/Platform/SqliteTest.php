@@ -1,9 +1,9 @@
 <?php
 
-namespace LaminasIntegrationTest\Db\Adapter\Platform;
+namespace PhpDbIntegrationTest\Adapter\Platform;
 
-use Laminas\Db\Adapter\Driver\Pdo;
-use Laminas\Db\Adapter\Platform\Sqlite;
+use PhpDb\Adapter\Driver\Pdo;
+use PhpDb\Adapter\Platform\Sqlite;
 use Override;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;

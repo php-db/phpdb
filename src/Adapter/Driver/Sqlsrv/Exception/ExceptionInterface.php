@@ -1,8 +1,8 @@
 <?php
 
-namespace Laminas\Db\Adapter\Driver\Sqlsrv\Exception;
+namespace PhpDb\Adapter\Driver\Sqlsrv\Exception;
 
-use Laminas\Db\Adapter\Exception;
+use PhpDb\Adapter\Exception;
 
 interface ExceptionInterface extends Exception\ExceptionInterface
 {

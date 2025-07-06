@@ -1,9 +1,9 @@
 <?php
 
-namespace LaminasTest\Db\Sql\Predicate;
+namespace PhpDbTest\Sql\Predicate;
 
-use Laminas\Db\Sql\Predicate\Expression;
-use Laminas\Db\Sql\Predicate\IsNull;
+use PhpDb\Sql\Predicate\Expression;
+use PhpDb\Sql\Predicate\IsNull;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 

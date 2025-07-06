@@ -1,12 +1,12 @@
 <?php
 
-namespace Laminas\Db\Sql\Platform\Sqlite;
+namespace PhpDb\Sql\Platform\Sqlite;
 
-use Laminas\Db\Adapter\Driver\DriverInterface;
-use Laminas\Db\Adapter\ParameterContainer;
-use Laminas\Db\Adapter\Platform\PlatformInterface;
-use Laminas\Db\Sql\Platform\PlatformDecoratorInterface;
-use Laminas\Db\Sql\Select;
+use PhpDb\Adapter\Driver\DriverInterface;
+use PhpDb\Adapter\ParameterContainer;
+use PhpDb\Adapter\Platform\PlatformInterface;
+use PhpDb\Sql\Platform\PlatformDecoratorInterface;
+use PhpDb\Sql\Select;
 
 class SelectDecorator extends Select implements PlatformDecoratorInterface
 {

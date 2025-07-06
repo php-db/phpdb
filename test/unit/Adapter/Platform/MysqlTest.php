@@ -1,8 +1,8 @@
 <?php
 
-namespace LaminasTest\Db\Adapter\Platform;
+namespace PhpDbTest\Adapter\Platform;
 
-use Laminas\Db\Adapter\Platform\Mysql;
+use PhpDb\Adapter\Platform\Mysql;
 use Override;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
@@ -74,7 +74,7 @@ final class MysqlTest extends TestCase
          */
         //$this->expectNotice();
         //$this->expectExceptionMessage(
-        //    'Attempting to quote a value in Laminas\Db\Adapter\Platform\Mysql without extension/driver support can '
+        //    'Attempting to quote a value in PhpDb\Adapter\Platform\Mysql without extension/driver support can '
         //    . 'introduce security vulnerabilities in a production environment'
         //);
         $this->expectNotToPerformAssertions();
@@ -118,7 +118,7 @@ final class MysqlTest extends TestCase
          */
         //$this->expectError();
         //$this->expectExceptionMessage(
-        //    'Attempting to quote a value in Laminas\Db\Adapter\Platform\Mysql without extension/driver support can '
+        //    'Attempting to quote a value in PhpDb\Adapter\Platform\Mysql without extension/driver support can '
         //    . 'introduce security vulnerabilities in a production environment'
         //);
         self::assertEquals("'Foo O\\'Bar'", $this->platform->quoteValueList("Foo O'Bar"));

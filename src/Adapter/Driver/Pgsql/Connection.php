@@ -1,10 +1,10 @@
 <?php
 
-namespace Laminas\Db\Adapter\Driver\Pgsql;
+namespace PhpDb\Adapter\Driver\Pgsql;
 
-use Laminas\Db\Adapter\Driver\AbstractConnection;
-use Laminas\Db\Adapter\Exception;
-use Laminas\Db\ResultSet\ResultSetInterface;
+use PhpDb\Adapter\Driver\AbstractConnection;
+use PhpDb\Adapter\Exception;
+use PhpDb\ResultSet\ResultSetInterface;
 use PgSql\Connection as PgSqlConnection;
 
 use function array_filter;

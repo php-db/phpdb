@@ -1,12 +1,12 @@
 <?php
 
-namespace Laminas\Db\Adapter\Platform;
+namespace PhpDb\Adapter\Platform;
 
-use Laminas\Db\Adapter\Driver\DriverInterface;
-use Laminas\Db\Adapter\Driver\Pdo;
-use Laminas\Db\Adapter\Driver\Sqlsrv\Sqlsrv;
-use Laminas\Db\Adapter\Exception;
-use Laminas\Db\Adapter\Exception\InvalidArgumentException;
+use PhpDb\Adapter\Driver\DriverInterface;
+use PhpDb\Adapter\Driver\Pdo;
+use PhpDb\Adapter\Driver\Sqlsrv\Sqlsrv;
+use PhpDb\Adapter\Exception;
+use PhpDb\Adapter\Exception\InvalidArgumentException;
 
 use function addcslashes;
 use function implode;
@@ -30,7 +30,7 @@ class SqlServer extends AbstractPlatform
     protected $resource;
 
     /**
-     * @param null|Sqlsrv|\Laminas\Db\Adapter\Driver\Pdo\Pdo|resource|\PDO $driver
+     * @param null|Sqlsrv|\PhpDb\Adapter\Driver\Pdo\Pdo|resource|\PDO $driver
      */
     public function __construct($driver = null)
     {
@@ -40,13 +40,13 @@ class SqlServer extends AbstractPlatform
     }
 
     /**
-     * @param Sqlsrv|\Laminas\Db\Adapter\Driver\Pdo\Pdo|resource|\PDO $driver
+     * @param Sqlsrv|\PhpDb\Adapter\Driver\Pdo\Pdo|resource|\PDO $driver
      * @return $this Provides a fluent interface
      * @throws InvalidArgumentException
      */
     public function setDriver($driver)
     {
-        // handle Laminas\Db drivers
+        // handle PhpDb drivers
         if (
             ($driver instanceof Pdo\Pdo && in_array($driver->getDatabasePlatformName(), ['SqlServer', 'Dblib']))
             || ($driver instanceof \PDO && in_array($driver->getAttribute(\PDO::ATTR_DRIVER_NAME), ['sqlsrv', 'dblib']))
@@ -56,7 +56,7 @@ class SqlServer extends AbstractPlatform
         }
 
         throw new Exception\InvalidArgumentException(
-            '$driver must be a Sqlsrv PDO Laminas\Db\Adapter\Driver or Sqlsrv PDO instance'
+            '$driver must be a Sqlsrv PDO PhpDb\Adapter\Driver or Sqlsrv PDO instance'
         );
     }
 

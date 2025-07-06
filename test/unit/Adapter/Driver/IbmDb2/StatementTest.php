@@ -1,11 +1,11 @@
 <?php
 
-namespace LaminasTest\Db\Adapter\Driver\IbmDb2;
+namespace PhpDbTest\Adapter\Driver\IbmDb2;
 
-use Laminas\Db\Adapter\Driver\IbmDb2\IbmDb2;
-use Laminas\Db\Adapter\Driver\IbmDb2\Statement;
-use Laminas\Db\Adapter\Exception\RuntimeException;
-use Laminas\Db\Adapter\ParameterContainer;
+use PhpDb\Adapter\Driver\IbmDb2\IbmDb2;
+use PhpDb\Adapter\Driver\IbmDb2\Statement;
+use PhpDb\Adapter\Exception\RuntimeException;
+use PhpDb\Adapter\ParameterContainer;
 use Override;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;

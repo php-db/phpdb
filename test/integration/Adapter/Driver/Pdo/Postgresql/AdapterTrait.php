@@ -1,8 +1,8 @@
 <?php
 
-namespace LaminasIntegrationTest\Db\Adapter\Driver\Pdo\Postgresql;
+namespace PhpDbIntegrationTest\Adapter\Driver\Pdo\Postgresql;
 
-use Laminas\Db\Adapter\Adapter;
+use PhpDb\Adapter\Adapter;
 use Override;
 
 use function getenv;

@@ -1,9 +1,9 @@
 <?php
 
-namespace Laminas\Db\Adapter;
+namespace PhpDb\Adapter;
 
 use Exception as PhpException;
-use Laminas\Db\ResultSet;
+use PhpDb\ResultSet;
 
 use function func_get_args;
 use function in_array;

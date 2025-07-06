@@ -1,8 +1,8 @@
 <?php
 
-namespace LaminasTest\Db\Sql\Predicate;
+namespace PhpDbTest\Sql\Predicate;
 
-use Laminas\Db\Sql\Predicate\Between;
+use PhpDb\Sql\Predicate\Between;
 use Override;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;

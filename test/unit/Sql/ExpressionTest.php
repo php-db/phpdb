@@ -1,9 +1,9 @@
 <?php
 
-namespace LaminasTest\Db\Sql;
+namespace PhpDbTest\Sql;
 
-use Laminas\Db\Sql\Exception\InvalidArgumentException;
-use Laminas\Db\Sql\Expression;
+use PhpDb\Sql\Exception\InvalidArgumentException;
+use PhpDb\Sql\Expression;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Depends;

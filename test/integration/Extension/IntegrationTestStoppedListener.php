@@ -1,8 +1,8 @@
 <?php
 
-namespace LaminasIntegrationTest\Db\Extension;
+namespace PhpDbIntegrationTest\Extension;
 
-use LaminasIntegrationTest\Db\Platform\FixtureLoader;
+use PhpDbIntegrationTest\Platform\FixtureLoader;
 use PHPUnit\Event\TestSuite\Finished;
 use PHPUnit\Event\TestSuite\FinishedSubscriber;
 

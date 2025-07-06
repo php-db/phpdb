@@ -1,8 +1,8 @@
 <?php
 
-namespace LaminasTest\Db\TestAsset;
+namespace PhpDbTest\TestAsset;
 
-use Laminas\Db\Adapter\Platform\Mysql;
+use PhpDb\Adapter\Platform\Mysql;
 
 final class TrustingMysqlPlatform extends Mysql
 {

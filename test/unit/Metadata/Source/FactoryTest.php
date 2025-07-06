@@ -1,16 +1,16 @@
 <?php
 
-namespace LaminasTest\Db\Metadata\Source;
+namespace PhpDbTest\Metadata\Source;
 
-use Laminas\Db\Adapter\Adapter;
-use Laminas\Db\Adapter\Platform\PlatformInterface;
-use Laminas\Db\Metadata\MetadataInterface;
-use Laminas\Db\Metadata\Source\Factory;
-use Laminas\Db\Metadata\Source\MysqlMetadata;
-use Laminas\Db\Metadata\Source\OracleMetadata;
-use Laminas\Db\Metadata\Source\PostgresqlMetadata;
-use Laminas\Db\Metadata\Source\SqliteMetadata;
-use Laminas\Db\Metadata\Source\SqlServerMetadata;
+use PhpDb\Adapter\Adapter;
+use PhpDb\Adapter\Platform\PlatformInterface;
+use PhpDb\Metadata\MetadataInterface;
+use PhpDb\Metadata\Source\Factory;
+use PhpDb\Metadata\Source\MysqlMetadata;
+use PhpDb\Metadata\Source\OracleMetadata;
+use PhpDb\Metadata\Source\PostgresqlMetadata;
+use PhpDb\Metadata\Source\SqliteMetadata;
+use PhpDb\Metadata\Source\SqlServerMetadata;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;

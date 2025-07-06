@@ -5593,7 +5593,7 @@
     </InvalidPropertyAssignmentValue>
     <RiskyTruthyFalsyComparison>
       <code><![CDATA[! getenv($value)]]></code>
-      <code><![CDATA[! getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_MYSQL')]]></code>
+      <code><![CDATA[! getenv('TESTS_PHPDB_ADAPTER_DRIVER_MYSQL')]]></code>
       <code><![CDATA[getenv($value)]]></code>
     </RiskyTruthyFalsyComparison>
   </file>
@@ -5616,7 +5616,7 @@
       <code><![CDATA[$adapter]]></code>
     </MissingConstructor>
     <RiskyTruthyFalsyComparison>
-      <code><![CDATA[! getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_MYSQL')]]></code>
+      <code><![CDATA[! getenv('TESTS_PHPDB_ADAPTER_DRIVER_MYSQL')]]></code>
     </RiskyTruthyFalsyComparison>
   </file>
   <file src="test/integration/Adapter/Driver/Pdo/Mysql/QueryTest.php">
@@ -5750,22 +5750,22 @@
       <code><![CDATA[testQuoteValueWithPdoMysql]]></code>
     </MissingReturnType>
     <PossiblyFalseArgument>
-      <code><![CDATA[getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_MYSQL_DATABASE')]]></code>
-      <code><![CDATA[getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_MYSQL_HOSTNAME')]]></code>
-      <code><![CDATA[getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_MYSQL_PASSWORD')]]></code>
-      <code><![CDATA[getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_MYSQL_PASSWORD')]]></code>
-      <code><![CDATA[getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_MYSQL_USERNAME')]]></code>
-      <code><![CDATA[getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_MYSQL_USERNAME')]]></code>
+      <code><![CDATA[getenv('TESTS_PHPDB_ADAPTER_DRIVER_MYSQL_DATABASE')]]></code>
+      <code><![CDATA[getenv('TESTS_PHPDB_ADAPTER_DRIVER_MYSQL_HOSTNAME')]]></code>
+      <code><![CDATA[getenv('TESTS_PHPDB_ADAPTER_DRIVER_MYSQL_PASSWORD')]]></code>
+      <code><![CDATA[getenv('TESTS_PHPDB_ADAPTER_DRIVER_MYSQL_PASSWORD')]]></code>
+      <code><![CDATA[getenv('TESTS_PHPDB_ADAPTER_DRIVER_MYSQL_USERNAME')]]></code>
+      <code><![CDATA[getenv('TESTS_PHPDB_ADAPTER_DRIVER_MYSQL_USERNAME')]]></code>
     </PossiblyFalseArgument>
     <PossiblyFalseOperand>
-      <code><![CDATA[getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_MYSQL_DATABASE')]]></code>
-      <code><![CDATA[getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_MYSQL_HOSTNAME')]]></code>
+      <code><![CDATA[getenv('TESTS_PHPDB_ADAPTER_DRIVER_MYSQL_DATABASE')]]></code>
+      <code><![CDATA[getenv('TESTS_PHPDB_ADAPTER_DRIVER_MYSQL_HOSTNAME')]]></code>
     </PossiblyFalseOperand>
     <RedundantConditionGivenDocblockType>
       <code><![CDATA[$this->adapters['mysqli'] instanceof \Mysqli]]></code>
     </RedundantConditionGivenDocblockType>
     <RiskyTruthyFalsyComparison>
-      <code><![CDATA[! getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_MYSQL')]]></code>
+      <code><![CDATA[! getenv('TESTS_PHPDB_ADAPTER_DRIVER_MYSQL')]]></code>
     </RiskyTruthyFalsyComparison>
   </file>
   <file src="test/integration/Adapter/Platform/PostgresqlTest.php">
@@ -5861,23 +5861,23 @@
     </MissingConstructor>
     <PossiblyFalseArgument>
       <code><![CDATA[file_get_contents($this->fixtureFile)]]></code>
-      <code><![CDATA[getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_MYSQL_DATABASE')]]></code>
-      <code><![CDATA[getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_MYSQL_DATABASE')]]></code>
-      <code><![CDATA[getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_MYSQL_DATABASE')]]></code>
-      <code><![CDATA[getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_MYSQL_DATABASE')]]></code>
-      <code><![CDATA[getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_MYSQL_PASSWORD')]]></code>
-      <code><![CDATA[getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_MYSQL_USERNAME')]]></code>
+      <code><![CDATA[getenv('TESTS_PHPDB_ADAPTER_DRIVER_MYSQL_DATABASE')]]></code>
+      <code><![CDATA[getenv('TESTS_PHPDB_ADAPTER_DRIVER_MYSQL_DATABASE')]]></code>
+      <code><![CDATA[getenv('TESTS_PHPDB_ADAPTER_DRIVER_MYSQL_DATABASE')]]></code>
+      <code><![CDATA[getenv('TESTS_PHPDB_ADAPTER_DRIVER_MYSQL_DATABASE')]]></code>
+      <code><![CDATA[getenv('TESTS_PHPDB_ADAPTER_DRIVER_MYSQL_PASSWORD')]]></code>
+      <code><![CDATA[getenv('TESTS_PHPDB_ADAPTER_DRIVER_MYSQL_USERNAME')]]></code>
     </PossiblyFalseArgument>
     <PossiblyFalseOperand>
-      <code><![CDATA[getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_MYSQL_DATABASE')]]></code>
-      <code><![CDATA[getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_MYSQL_HOSTNAME')]]></code>
-      <code><![CDATA[getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_MYSQL_PORT')]]></code>
+      <code><![CDATA[getenv('TESTS_PHPDB_ADAPTER_DRIVER_MYSQL_DATABASE')]]></code>
+      <code><![CDATA[getenv('TESTS_PHPDB_ADAPTER_DRIVER_MYSQL_HOSTNAME')]]></code>
+      <code><![CDATA[getenv('TESTS_PHPDB_ADAPTER_DRIVER_MYSQL_PORT')]]></code>
     </PossiblyFalseOperand>
     <PossiblyNullPropertyAssignmentValue>
       <code><![CDATA[null]]></code>
     </PossiblyNullPropertyAssignmentValue>
     <RiskyTruthyFalsyComparison>
-      <code><![CDATA[getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_MYSQL_PORT')]]></code>
+      <code><![CDATA[getenv('TESTS_PHPDB_ADAPTER_DRIVER_MYSQL_PORT')]]></code>
     </RiskyTruthyFalsyComparison>
   </file>
   <file src="test/integration/Platform/PgsqlFixtureLoader.php">
@@ -6187,7 +6187,7 @@
       <code><![CDATA[testSslConnectionNoVerify]]></code>
     </MissingReturnType>
     <RiskyTruthyFalsyComparison>
-      <code><![CDATA[! getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_MYSQL')]]></code>
+      <code><![CDATA[! getenv('TESTS_PHPDB_ADAPTER_DRIVER_MYSQL')]]></code>
     </RiskyTruthyFalsyComparison>
     <UndefinedInterfaceMethod>
       <code><![CDATA[connect]]></code>

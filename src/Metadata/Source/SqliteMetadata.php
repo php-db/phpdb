@@ -1,9 +1,9 @@
 <?php
 
-namespace Laminas\Db\Metadata\Source;
+namespace PhpDb\Metadata\Source;
 
-use Laminas\Db\Adapter\Adapter;
-use Laminas\Db\ResultSet\ResultSetInterface;
+use PhpDb\Adapter\Adapter;
+use PhpDb\ResultSet\ResultSetInterface;
 
 use function array_merge;
 use function implode;

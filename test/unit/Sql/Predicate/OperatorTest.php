@@ -1,8 +1,8 @@
 <?php
 
-namespace LaminasTest\Db\Sql\Predicate;
+namespace PhpDbTest\Sql\Predicate;
 
-use Laminas\Db\Sql\Predicate\Operator;
+use PhpDb\Sql\Predicate\Operator;
 use PHPUnit\Framework\TestCase;
 
 use function var_export;

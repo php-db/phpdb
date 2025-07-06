@@ -1,14 +1,14 @@
 <?php
 
-namespace LaminasTest\Db\TableGateway\Feature;
+namespace PhpDbTest\TableGateway\Feature;
 
-use Laminas\Db\Adapter\AdapterInterface;
-use Laminas\Db\Adapter\Driver\DriverInterface;
-use Laminas\Db\Adapter\Driver\StatementInterface;
-use Laminas\Db\Adapter\Platform\Sql92;
-use Laminas\Db\ResultSet\ResultSet;
-use Laminas\Db\TableGateway\Feature\MasterSlaveFeature;
-use Laminas\Db\TableGateway\TableGateway;
+use PhpDb\Adapter\AdapterInterface;
+use PhpDb\Adapter\Driver\DriverInterface;
+use PhpDb\Adapter\Driver\StatementInterface;
+use PhpDb\Adapter\Platform\Sql92;
+use PhpDb\ResultSet\ResultSet;
+use PhpDb\TableGateway\Feature\MasterSlaveFeature;
+use PhpDb\TableGateway\TableGateway;
 use Override;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;

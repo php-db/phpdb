@@ -18,8 +18,8 @@
 >
 > You trust us enough to use our software. We ask that you trust us to say the truth on this. We need your help. Go out and protest this unnecessary war. Stop the bloodshed. Say "stop the war!"
 
-`Laminas\Db` is a component that abstract the access to a Database using an object
-oriented API to build the queries. `Laminas\Db` consumes different storage adapters
+`PhpDb` is a component that abstract the access to a Database using an object
+oriented API to build the queries. `PhpDb` consumes different storage adapters
 to access different database vendors such as MySQL, PostgreSQL, Oracle, IBM DB2,
 Microsoft Sql Server, PDO, etc.
 
@@ -62,15 +62,15 @@ You should see output similar to the following:
 ```bash
 docker compose ps
 NAME                      IMAGE                                            COMMAND                SERVICE      CREATED       STATUS       PORTS
-laminas-db-mysql-1        docker.io/library/laminas-db-mysql:latest        "mysqld"               mysql        7 hours ago   Up 7 hours   
-laminas-db-php-1          docker.io/library/laminas-db-php:latest          "apache2-foreground"   php          7 hours ago   Up 7 hours   
+laminas-db-mysql-1        docker.io/library/laminas-db-mysql:latest        "mysqld"               mysql        7 hours ago   Up 7 hours
+laminas-db-php-1          docker.io/library/laminas-db-php:latest          "apache2-foreground"   php          7 hours ago   Up 7 hours
 laminas-db-postgresql-1   docker.io/library/laminas-db-postgresql:latest   "postgres"             postgresql   7 hours ago   Up 7 hours
 ```
 
 If you see three containers listed, then they're all running, and you are ready to run the test suite.
 So, copy `phpunit.xml.dist` to `phpunit.xml`, and change the following environment variable to "true" to enable the three databases:
 
-- TESTS_LAMINAS_DB_ADAPTER_DRIVER_MYSQL
+- TESTS_PHPDB_ADAPTER_DRIVER_MYSQL
 - TESTS_LAMINAS_DB_ADAPTER_DRIVER_PGSQL
 - TESTS_LAMINAS_DB_ADAPTER_DRIVER_SQLITE_MEMORY
 

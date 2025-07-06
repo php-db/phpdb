@@ -1,20 +1,20 @@
 <?php
 
-namespace LaminasTest\Db\TableGateway;
+namespace PhpDbTest\TableGateway;
 
-use Laminas\Db\Adapter\Adapter;
-use Laminas\Db\Adapter\Driver\ConnectionInterface;
-use Laminas\Db\Adapter\Driver\DriverInterface;
-use Laminas\Db\Adapter\Driver\ResultInterface;
-use Laminas\Db\Adapter\Driver\StatementInterface;
-use Laminas\Db\ResultSet\ResultSet;
-use Laminas\Db\Sql;
-use Laminas\Db\Sql\Delete;
-use Laminas\Db\Sql\Insert;
-use Laminas\Db\Sql\Select;
-use Laminas\Db\Sql\Update;
-use Laminas\Db\TableGateway\AbstractTableGateway;
-use Laminas\Db\TableGateway\Feature\FeatureSet;
+use PhpDb\Adapter\Adapter;
+use PhpDb\Adapter\Driver\ConnectionInterface;
+use PhpDb\Adapter\Driver\DriverInterface;
+use PhpDb\Adapter\Driver\ResultInterface;
+use PhpDb\Adapter\Driver\StatementInterface;
+use PhpDb\ResultSet\ResultSet;
+use PhpDb\Sql;
+use PhpDb\Sql\Delete;
+use PhpDb\Sql\Insert;
+use PhpDb\Sql\Select;
+use PhpDb\Sql\Update;
+use PhpDb\TableGateway\AbstractTableGateway;
+use PhpDb\TableGateway\Feature\FeatureSet;
 use Override;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\MockObject\MockObject;

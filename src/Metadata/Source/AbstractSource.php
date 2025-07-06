@@ -1,18 +1,18 @@
 <?php
 
-namespace Laminas\Db\Metadata\Source;
+namespace PhpDb\Metadata\Source;
 
 use Exception;
-use Laminas\Db\Adapter\Adapter;
-use Laminas\Db\Adapter\AdapterInterface;
-use Laminas\Db\Adapter\SchemaAwareInterface;
-use Laminas\Db\Metadata\MetadataInterface;
-use Laminas\Db\Metadata\Object\ColumnObject;
-use Laminas\Db\Metadata\Object\ConstraintKeyObject;
-use Laminas\Db\Metadata\Object\ConstraintObject;
-use Laminas\Db\Metadata\Object\TableObject;
-use Laminas\Db\Metadata\Object\TriggerObject;
-use Laminas\Db\Metadata\Object\ViewObject;
+use PhpDb\Adapter\Adapter;
+use PhpDb\Adapter\AdapterInterface;
+use PhpDb\Adapter\SchemaAwareInterface;
+use PhpDb\Metadata\MetadataInterface;
+use PhpDb\Metadata\Object\ColumnObject;
+use PhpDb\Metadata\Object\ConstraintKeyObject;
+use PhpDb\Metadata\Object\ConstraintObject;
+use PhpDb\Metadata\Object\TableObject;
+use PhpDb\Metadata\Object\TriggerObject;
+use PhpDb\Metadata\Object\ViewObject;
 use Override;
 
 use function array_keys;

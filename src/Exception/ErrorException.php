@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Laminas\Db\Exception;
+namespace PhpDb\Exception;
 
 use Exception;
 

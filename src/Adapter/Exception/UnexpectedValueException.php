@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Laminas\Db\Adapter\Exception;
+namespace PhpDb\Adapter\Exception;
 
-use Laminas\Db\Exception;
+use PhpDb\Exception;
 
 class UnexpectedValueException extends Exception\UnexpectedValueException implements ExceptionInterface
 {

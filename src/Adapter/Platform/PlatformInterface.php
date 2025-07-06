@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Laminas\Db\Adapter\Platform;
+namespace PhpDb\Adapter\Platform;
 
 
-use Laminas\Db\Sql\Platform\PlatformDecoratorInterface;
+use PhpDb\Sql\Platform\PlatformDecoratorInterface;
 
 interface PlatformInterface
 {
@@ -17,8 +17,8 @@ interface PlatformInterface
     /**
      * Get Sql platform decorator
      *
-     * Returns a Laminas\Db\Sql\Platform\* instance
-     * Laminas\Db\Sql\Platform\AbstractPlatform implements this interface
+     * Returns a PhpDb\Sql\Platform\* instance
+     * PhpDb\Sql\Platform\AbstractPlatform implements this interface
      */
     public function getSqlPlatformDecorator(): PlatformDecoratorInterface;
 

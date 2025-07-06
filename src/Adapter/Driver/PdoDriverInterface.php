@@ -2,6 +2,6 @@
 
 declare(strict_types=1);
 
-namespace Laminas\Db\Adapter\Driver;
+namespace PhpDb\Adapter\Driver;
 
 interface PdoDriverInterface extends DriverInterface {}

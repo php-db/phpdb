@@ -1,9 +1,9 @@
 <?php
 
-namespace LaminasTest\Db\ResultSet;
+namespace PhpDbTest\ResultSet;
 
 use ArrayIterator;
-use Laminas\Db\ResultSet\HydratingResultSet;
+use PhpDb\ResultSet\HydratingResultSet;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 

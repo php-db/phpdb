@@ -1,6 +1,6 @@
 <?php
 
-namespace Laminas\Db\TableGateway\Feature;
+namespace PhpDb\TableGateway\Feature;
 
 /**
  * EventFeature event constants.

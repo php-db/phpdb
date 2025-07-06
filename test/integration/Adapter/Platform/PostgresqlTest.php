@@ -1,10 +1,10 @@
 <?php
 
-namespace LaminasIntegrationTest\Db\Adapter\Platform;
+namespace PhpDbIntegrationTest\Adapter\Platform;
 
-use Laminas\Db\Adapter\Driver\Pdo;
-use Laminas\Db\Adapter\Driver\Pgsql;
-use Laminas\Db\Adapter\Platform\Postgresql;
+use PhpDb\Adapter\Driver\Pdo;
+use PhpDb\Adapter\Driver\Pgsql;
+use PhpDb\Adapter\Platform\Postgresql;
 use Override;
 use PgSql\Connection as PgSqlConnection;
 use PHPUnit\Framework\Attributes\Group;

@@ -1,11 +1,11 @@
 <?php
 
-namespace LaminasTest\Db\Sql;
+namespace PhpDbTest\Sql;
 
 use InvalidArgumentException;
-use Laminas\Db\Sql\Join;
-use Laminas\Db\Sql\Select;
-use LaminasTest\Db\DeprecatedAssertionsTrait;
+use PhpDb\Sql\Join;
+use PhpDb\Sql\Select;
+use PhpDbTest\DeprecatedAssertionsTrait;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\TestDox;
 use PHPUnit\Framework\TestCase;

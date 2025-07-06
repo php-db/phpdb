@@ -1,6 +1,6 @@
 <?php
 
-namespace Laminas\Db\Adapter;
+namespace PhpDb\Adapter;
 
 trait AdapterAwareTrait
 {

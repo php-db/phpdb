@@ -1,18 +1,18 @@
 <?php
 
-namespace LaminasTest\Db\Adapter\Driver\Pdo;
+namespace PhpDbTest\Adapter\Driver\Pdo;
 
-use Laminas\Db\Adapter\Driver\AbstractConnection;
-use Laminas\Db\Adapter\Driver\Pdo\Connection;
-use Laminas\Db\Adapter\Exception\RuntimeException;
-use LaminasTest\Db\TestAsset\ConnectionWrapper;
+use PhpDb\Adapter\Driver\AbstractConnection;
+use PhpDb\Adapter\Driver\Pdo\Connection;
+use PhpDb\Adapter\Exception\RuntimeException;
+use PhpDbTest\TestAsset\ConnectionWrapper;
 use Override;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Tests for {@see \Laminas\Db\Adapter\Driver\Pdo\Connection} transaction support
+ * Tests for {@see \PhpDb\Adapter\Driver\Pdo\Connection} transaction support
  */
 #[CoversClass(Connection::class)]
 #[CoversClass(AbstractConnection::class)]

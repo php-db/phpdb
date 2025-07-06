@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Laminas\Db\Metadata;
+namespace PhpDb\Metadata;
 
-use Laminas\Db\Metadata\Object\ColumnObject;
-use Laminas\Db\Metadata\Object\ConstraintKeyObject;
-use Laminas\Db\Metadata\Object\ConstraintObject;
-use Laminas\Db\Metadata\Object\TableObject;
-use Laminas\Db\Metadata\Object\TriggerObject;
-use Laminas\Db\Metadata\Object\ViewObject;
+use PhpDb\Metadata\Object\ColumnObject;
+use PhpDb\Metadata\Object\ConstraintKeyObject;
+use PhpDb\Metadata\Object\ConstraintObject;
+use PhpDb\Metadata\Object\TableObject;
+use PhpDb\Metadata\Object\TriggerObject;
+use PhpDb\Metadata\Object\ViewObject;
 use Symfony\Component\Console\Helper\Table;
 
 interface MetadataInterface

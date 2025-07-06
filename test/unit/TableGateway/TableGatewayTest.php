@@ -1,22 +1,22 @@
 <?php
 
-namespace LaminasTest\Db\TableGateway;
+namespace PhpDbTest\TableGateway;
 
-use Laminas\Db\Adapter\Adapter;
-use Laminas\Db\Adapter\Driver\ConnectionInterface;
-use Laminas\Db\Adapter\Driver\DriverInterface;
-use Laminas\Db\Adapter\Driver\ResultInterface;
-use Laminas\Db\Adapter\Driver\StatementInterface;
-use Laminas\Db\ResultSet\ResultSet;
-use Laminas\Db\Sql\Delete;
-use Laminas\Db\Sql\Insert;
-use Laminas\Db\Sql\Sql;
-use Laminas\Db\Sql\TableIdentifier;
-use Laminas\Db\Sql\Update;
-use Laminas\Db\TableGateway\Exception\InvalidArgumentException;
-use Laminas\Db\TableGateway\Feature;
-use Laminas\Db\TableGateway\Feature\FeatureSet;
-use Laminas\Db\TableGateway\TableGateway;
+use PhpDb\Adapter\Adapter;
+use PhpDb\Adapter\Driver\ConnectionInterface;
+use PhpDb\Adapter\Driver\DriverInterface;
+use PhpDb\Adapter\Driver\ResultInterface;
+use PhpDb\Adapter\Driver\StatementInterface;
+use PhpDb\ResultSet\ResultSet;
+use PhpDb\Sql\Delete;
+use PhpDb\Sql\Insert;
+use PhpDb\Sql\Sql;
+use PhpDb\Sql\TableIdentifier;
+use PhpDb\Sql\Update;
+use PhpDb\TableGateway\Exception\InvalidArgumentException;
+use PhpDb\TableGateway\Feature;
+use PhpDb\TableGateway\Feature\FeatureSet;
+use PhpDb\TableGateway\TableGateway;
 use Override;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
@@ -83,7 +83,7 @@ final class TableGatewayTest extends TestCase
 
         // constructor expects exception
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Table name must be a string or an instance of Laminas\Db\Sql\TableIdentifier');
+        $this->expectExceptionMessage('Table name must be a string or an instance of PhpDb\Sql\TableIdentifier');
         /** @psalm-suppress NullArgument - Testing incorrect constructor */
         new TableGateway(
             null,

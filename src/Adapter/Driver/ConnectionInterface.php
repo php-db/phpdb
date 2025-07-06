@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Laminas\Db\Adapter\Driver;
+namespace PhpDb\Adapter\Driver;
 
-use Laminas\Db\Adapter\SchemaAwareInterface;
+use PhpDb\Adapter\SchemaAwareInterface;
 
 interface ConnectionInterface extends SchemaAwareInterface
 {

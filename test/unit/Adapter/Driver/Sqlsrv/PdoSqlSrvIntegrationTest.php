@@ -1,8 +1,8 @@
 <?php
 
-namespace LaminasTest\Db\Adapter\Driver\Sqlsrv;
+namespace PhpDbTest\Adapter\Driver\Sqlsrv;
 
-use Laminas\Db\Adapter\Driver\Pdo\Pdo;
+use PhpDb\Adapter\Driver\Pdo\Pdo;
 use PHPUnit\Framework\Attributes\Group;
 
 #[Group('integration')]

@@ -1,9 +1,9 @@
 <?php
 
-namespace Laminas\Db\Adapter\Driver\Pgsql;
+namespace PhpDb\Adapter\Driver\Pgsql;
 
-use Laminas\Db\Adapter\Driver\ResultInterface;
-use Laminas\Db\Adapter\Exception;
+use PhpDb\Adapter\Driver\ResultInterface;
+use PhpDb\Adapter\Exception;
 use PgSql\Result as PgSqlResult;
 // phpcs:ignore SlevomatCodingStandard.Namespaces.UnusedUses.UnusedUse
 use ReturnTypeWillChange;

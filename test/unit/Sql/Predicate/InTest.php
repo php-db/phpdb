@@ -1,9 +1,9 @@
 <?php
 
-namespace LaminasTest\Db\Sql\Predicate;
+namespace PhpDbTest\Sql\Predicate;
 
-use Laminas\Db\Sql\Predicate\In;
-use Laminas\Db\Sql\Select;
+use PhpDb\Sql\Predicate\In;
+use PhpDb\Sql\Select;
 use PHPUnit\Framework\TestCase;
 
 final class InTest extends TestCase

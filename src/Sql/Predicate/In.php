@@ -1,10 +1,10 @@
 <?php
 
-namespace Laminas\Db\Sql\Predicate;
+namespace PhpDb\Sql\Predicate;
 
-use Laminas\Db\Sql\AbstractExpression;
-use Laminas\Db\Sql\Exception;
-use Laminas\Db\Sql\Select;
+use PhpDb\Sql\AbstractExpression;
+use PhpDb\Sql\Exception;
+use PhpDb\Sql\Select;
 
 use function array_fill;
 use function count;
@@ -77,7 +77,7 @@ class In extends AbstractExpression implements PredicateInterface
     {
         if (! is_array($valueSet) && ! $valueSet instanceof Select) {
             throw new Exception\InvalidArgumentException(
-                '$valueSet must be either an array or a Laminas\Db\Sql\Select object, ' . gettype($valueSet) . ' given'
+                '$valueSet must be either an array or a PhpDb\Sql\Select object, ' . gettype($valueSet) . ' given'
             );
         }
         $this->valueSet = $valueSet;

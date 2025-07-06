@@ -1,8 +1,8 @@
 <?php
 
-namespace LaminasTest\Db\Sql;
+namespace PhpDbTest\Sql;
 
-use Laminas\Db\Sql\Literal;
+use PhpDb\Sql\Literal;
 use PHPUnit\Framework\TestCase;
 
 final class LiteralTest extends TestCase

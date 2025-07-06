@@ -1,9 +1,9 @@
 <?php
 
-namespace Laminas\Db\TableGateway\Feature;
+namespace PhpDb\TableGateway\Feature;
 
-use Laminas\Db\Adapter\Adapter;
-use Laminas\Db\TableGateway\Exception;
+use PhpDb\Adapter\Adapter;
+use PhpDb\TableGateway\Exception;
 
 class GlobalAdapterFeature extends AbstractFeature
 {

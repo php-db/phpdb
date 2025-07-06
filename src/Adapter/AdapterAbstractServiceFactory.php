@@ -1,6 +1,6 @@
 <?php
 
-namespace Laminas\Db\Adapter;
+namespace PhpDb\Adapter;
 
 use Laminas\ServiceManager\Factory\AbstractFactoryInterface;
 use Laminas\ServiceManager\ServiceLocatorInterface;

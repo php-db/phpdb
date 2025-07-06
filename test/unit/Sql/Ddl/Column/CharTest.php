@@ -1,8 +1,8 @@
 <?php
 
-namespace LaminasTest\Db\Sql\Ddl\Column;
+namespace PhpDbTest\Sql\Ddl\Column;
 
-use Laminas\Db\Sql\Ddl\Column\Char;
+use PhpDb\Sql\Ddl\Column\Char;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 

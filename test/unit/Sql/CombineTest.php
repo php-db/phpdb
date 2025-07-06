@@ -1,17 +1,17 @@
 <?php
 
-namespace LaminasTest\Db\Sql;
+namespace PhpDbTest\Sql;
 
-use Laminas\Db\Adapter\Adapter;
-use Laminas\Db\Adapter\Driver\DriverInterface;
-use Laminas\Db\Adapter\Driver\StatementInterface;
-use Laminas\Db\Adapter\ParameterContainer;
-use Laminas\Db\Adapter\StatementContainer;
-use Laminas\Db\Adapter\StatementContainerInterface;
-use Laminas\Db\Sql\Combine;
-use Laminas\Db\Sql\Exception\InvalidArgumentException;
-use Laminas\Db\Sql\Predicate\Expression;
-use Laminas\Db\Sql\Select;
+use PhpDb\Adapter\Adapter;
+use PhpDb\Adapter\Driver\DriverInterface;
+use PhpDb\Adapter\Driver\StatementInterface;
+use PhpDb\Adapter\ParameterContainer;
+use PhpDb\Adapter\StatementContainer;
+use PhpDb\Adapter\StatementContainerInterface;
+use PhpDb\Sql\Combine;
+use PhpDb\Sql\Exception\InvalidArgumentException;
+use PhpDb\Sql\Predicate\Expression;
+use PhpDb\Sql\Select;
 use Override;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;

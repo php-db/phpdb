@@ -1,8 +1,8 @@
 <?php
 
-namespace LaminasTest\Db\Adapter\Platform;
+namespace PhpDbTest\Adapter\Platform;
 
-use Laminas\Db\Adapter\Platform\Sql92;
+use PhpDb\Adapter\Platform\Sql92;
 use Override;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;

@@ -1,9 +1,9 @@
 <?php
 
-namespace Laminas\Db\Sql\Predicate;
+namespace PhpDb\Sql\Predicate;
 
-use Laminas\Db\Sql\Exception\RuntimeException;
-use Laminas\Db\Sql\Select;
+use PhpDb\Sql\Exception\RuntimeException;
+use PhpDb\Sql\Select;
 
 use function func_get_arg;
 use function func_num_args;

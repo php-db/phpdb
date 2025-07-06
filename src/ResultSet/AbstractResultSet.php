@@ -1,12 +1,12 @@
 <?php
 
-namespace Laminas\Db\ResultSet;
+namespace PhpDb\ResultSet;
 
 use ArrayIterator;
 use Countable;
 use Iterator;
 use IteratorAggregate;
-use Laminas\Db\Adapter\Driver\ResultInterface;
+use PhpDb\Adapter\Driver\ResultInterface;
 // phpcs:ignore SlevomatCodingStandard.Namespaces.UnusedUses.UnusedUse
 use ReturnTypeWillChange;
 

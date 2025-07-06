@@ -1,9 +1,9 @@
 <?php
 
-namespace Laminas\Db\Adapter\Driver\Oci8\Feature;
+namespace PhpDb\Adapter\Driver\Oci8\Feature;
 
-use Laminas\Db\Adapter\Driver\Feature\AbstractFeature;
-use Laminas\Db\Adapter\Driver\Oci8\Statement;
+use PhpDb\Adapter\Driver\Feature\AbstractFeature;
+use PhpDb\Adapter\Driver\Oci8\Statement;
 
 use function stripos;
 use function strtolower;

@@ -1,10 +1,10 @@
 <?php
 
-namespace Laminas\Db\Adapter\Driver\Pdo\Feature;
+namespace PhpDb\Adapter\Driver\Pdo\Feature;
 
 use Closure;
-use Laminas\Db\Adapter\Driver\Feature\AbstractFeature;
-use Laminas\Db\Adapter\Driver\Pdo;
+use PhpDb\Adapter\Driver\Feature\AbstractFeature;
+use PhpDb\Adapter\Driver\Pdo;
 
 use function stripos;
 

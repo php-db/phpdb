@@ -1,6 +1,6 @@
 <?php
 
-namespace LaminasIntegrationTest\Db\Platform;
+namespace PhpDbIntegrationTest\Platform;
 
 use Exception;
 
@@ -31,7 +31,7 @@ final class SqlServerFixtureLoader implements FixtureLoader
                 <<<'SQL'
                     IF NOT EXISTS(SELECT * FROM sys.databases WHERE name = '%s')
                     BEGIN
-                        CREATE DATABASE [%s] 
+                        CREATE DATABASE [%s]
                     END
                     SQL,
                 getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_SQLSRV_DATABASE'),

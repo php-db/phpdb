@@ -1,12 +1,12 @@
 <?php
 
-namespace LaminasIntegrationTest\Db\Extension;
+namespace PhpDbIntegrationTest\Extension;
 
 use Exception;
-use LaminasIntegrationTest\Db\Platform\FixtureLoader;
-use LaminasIntegrationTest\Db\Platform\MysqlFixtureLoader;
-use LaminasIntegrationTest\Db\Platform\PgsqlFixtureLoader;
-use LaminasIntegrationTest\Db\Platform\SqlServerFixtureLoader;
+use PhpDbIntegrationTest\Platform\FixtureLoader;
+use PhpDbIntegrationTest\Platform\MysqlFixtureLoader;
+use PhpDbIntegrationTest\Platform\PgsqlFixtureLoader;
+use PhpDbIntegrationTest\Platform\SqlServerFixtureLoader;
 use PHPUnit\Event\TestSuite\Started;
 use PHPUnit\Event\TestSuite\StartedSubscriber;
 

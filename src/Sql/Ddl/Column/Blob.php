@@ -1,6 +1,6 @@
 <?php
 
-namespace Laminas\Db\Sql\Ddl\Column;
+namespace PhpDb\Sql\Ddl\Column;
 
 class Blob extends AbstractLengthColumn
 {

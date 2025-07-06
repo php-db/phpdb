@@ -1,8 +1,8 @@
 <?php
 
-namespace Laminas\Db\ResultSet\Exception;
+namespace PhpDb\ResultSet\Exception;
 
-use Laminas\Db\Exception;
+use PhpDb\Exception;
 
 interface ExceptionInterface extends Exception\ExceptionInterface
 {

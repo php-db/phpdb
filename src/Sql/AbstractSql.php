@@ -1,12 +1,12 @@
 <?php
 
-namespace Laminas\Db\Sql;
+namespace PhpDb\Sql;
 
-use Laminas\Db\Adapter\Driver\DriverInterface;
-use Laminas\Db\Adapter\ParameterContainer;
-use Laminas\Db\Adapter\Platform\PlatformInterface;
-use Laminas\Db\Adapter\Platform\Sql92 as DefaultAdapterPlatform;
-use Laminas\Db\Sql\Platform\PlatformDecoratorInterface;
+use PhpDb\Adapter\Driver\DriverInterface;
+use PhpDb\Adapter\ParameterContainer;
+use PhpDb\Adapter\Platform\PlatformInterface;
+use PhpDb\Adapter\Platform\Sql92 as DefaultAdapterPlatform;
+use PhpDb\Sql\Platform\PlatformDecoratorInterface;
 
 use function count;
 use function current;

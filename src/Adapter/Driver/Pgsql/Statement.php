@@ -1,11 +1,11 @@
 <?php
 
-namespace Laminas\Db\Adapter\Driver\Pgsql;
+namespace PhpDb\Adapter\Driver\Pgsql;
 
-use Laminas\Db\Adapter\Driver\StatementInterface;
-use Laminas\Db\Adapter\Exception;
-use Laminas\Db\Adapter\ParameterContainer;
-use Laminas\Db\Adapter\Profiler;
+use PhpDb\Adapter\Driver\StatementInterface;
+use PhpDb\Adapter\Exception;
+use PhpDb\Adapter\ParameterContainer;
+use PhpDb\Adapter\Profiler;
 use PgSql\Connection as PgSqlConnection;
 
 use function get_resource_type;

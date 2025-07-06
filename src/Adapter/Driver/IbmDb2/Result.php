@@ -1,9 +1,9 @@
 <?php
 
-namespace Laminas\Db\Adapter\Driver\IbmDb2;
+namespace PhpDb\Adapter\Driver\IbmDb2;
 
-use Laminas\Db\Adapter\Driver\ResultInterface;
-use Laminas\Db\Adapter\Exception;
+use PhpDb\Adapter\Driver\ResultInterface;
+use PhpDb\Adapter\Exception;
 // phpcs:ignore SlevomatCodingStandard.Namespaces.UnusedUses.UnusedUse
 use ReturnTypeWillChange;
 

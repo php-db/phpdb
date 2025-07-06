@@ -1,12 +1,12 @@
 <?php
 
-namespace Laminas\Db\TableGateway;
+namespace PhpDb\TableGateway;
 
-use Laminas\Db\Adapter\AdapterInterface;
-use Laminas\Db\ResultSet\ResultSet;
-use Laminas\Db\ResultSet\ResultSetInterface;
-use Laminas\Db\Sql\Sql;
-use Laminas\Db\Sql\TableIdentifier;
+use PhpDb\Adapter\AdapterInterface;
+use PhpDb\ResultSet\ResultSet;
+use PhpDb\ResultSet\ResultSetInterface;
+use PhpDb\Sql\Sql;
+use PhpDb\Sql\TableIdentifier;
 
 use function is_array;
 use function is_string;
@@ -30,7 +30,7 @@ class TableGateway extends AbstractTableGateway
         // table
         if (! (is_string($table) || $table instanceof TableIdentifier || is_array($table))) {
             throw new Exception\InvalidArgumentException(
-                'Table name must be a string or an instance of Laminas\Db\Sql\TableIdentifier'
+                'Table name must be a string or an instance of PhpDb\Sql\TableIdentifier'
             );
         }
         $this->table = $table;

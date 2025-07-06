@@ -1,6 +1,6 @@
 <?php
 
-namespace Laminas\Db\Sql\Platform;
+namespace PhpDb\Sql\Platform;
 
 interface PlatformDecoratorInterface
 {

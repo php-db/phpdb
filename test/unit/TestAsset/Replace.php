@@ -1,11 +1,11 @@
 <?php
 
-namespace LaminasTest\Db\TestAsset;
+namespace PhpDbTest\TestAsset;
 
-use Laminas\Db\Adapter\Driver\DriverInterface;
-use Laminas\Db\Adapter\ParameterContainer;
-use Laminas\Db\Adapter\Platform\PlatformInterface;
-use Laminas\Db\Sql\Insert;
+use PhpDb\Adapter\Driver\DriverInterface;
+use PhpDb\Adapter\ParameterContainer;
+use PhpDb\Adapter\Platform\PlatformInterface;
+use PhpDb\Sql\Insert;
 
 final class Replace extends Insert
 {

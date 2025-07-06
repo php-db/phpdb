@@ -1,12 +1,12 @@
 <?php
 
-namespace LaminasTest\Db\Sql\Platform\Mysql\Ddl;
+namespace PhpDbTest\Sql\Platform\Mysql\Ddl;
 
-use Laminas\Db\Adapter\Platform\Mysql;
-use Laminas\Db\Sql\Ddl\Column\Column;
-use Laminas\Db\Sql\Ddl\Constraint\PrimaryKey;
-use Laminas\Db\Sql\Ddl\CreateTable;
-use Laminas\Db\Sql\Platform\Mysql\Ddl\CreateTableDecorator;
+use PhpDb\Adapter\Platform\Mysql;
+use PhpDb\Sql\Ddl\Column\Column;
+use PhpDb\Sql\Ddl\Constraint\PrimaryKey;
+use PhpDb\Sql\Ddl\CreateTable;
+use PhpDb\Sql\Platform\Mysql\Ddl\CreateTableDecorator;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 

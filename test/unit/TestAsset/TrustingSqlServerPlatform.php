@@ -1,8 +1,8 @@
 <?php
 
-namespace LaminasTest\Db\TestAsset;
+namespace PhpDbTest\TestAsset;
 
-use Laminas\Db\Adapter\Platform\SqlServer;
+use PhpDb\Adapter\Platform\SqlServer;
 
 final class TrustingSqlServerPlatform extends SqlServer
 {

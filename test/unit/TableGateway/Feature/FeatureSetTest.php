@@ -1,21 +1,21 @@
 <?php
 
-namespace LaminasTest\Db\TableGateway\Feature;
+namespace PhpDbTest\TableGateway\Feature;
 
-use Laminas\Db\Adapter\Adapter;
-use Laminas\Db\Adapter\AdapterInterface;
-use Laminas\Db\Adapter\Driver\DriverInterface;
-use Laminas\Db\Adapter\Driver\Pgsql\Result;
-use Laminas\Db\Adapter\Driver\StatementInterface;
-use Laminas\Db\Adapter\Platform\Postgresql;
-use Laminas\Db\Adapter\Platform\Sql92;
-use Laminas\Db\Metadata\MetadataInterface;
-use Laminas\Db\Metadata\Object\ConstraintObject;
-use Laminas\Db\TableGateway\AbstractTableGateway;
-use Laminas\Db\TableGateway\Feature\FeatureSet;
-use Laminas\Db\TableGateway\Feature\MasterSlaveFeature;
-use Laminas\Db\TableGateway\Feature\MetadataFeature;
-use Laminas\Db\TableGateway\Feature\SequenceFeature;
+use PhpDb\Adapter\Adapter;
+use PhpDb\Adapter\AdapterInterface;
+use PhpDb\Adapter\Driver\DriverInterface;
+use PhpDb\Adapter\Driver\Pgsql\Result;
+use PhpDb\Adapter\Driver\StatementInterface;
+use PhpDb\Adapter\Platform\Postgresql;
+use PhpDb\Adapter\Platform\Sql92;
+use PhpDb\Metadata\MetadataInterface;
+use PhpDb\Metadata\Object\ConstraintObject;
+use PhpDb\TableGateway\AbstractTableGateway;
+use PhpDb\TableGateway\Feature\FeatureSet;
+use PhpDb\TableGateway\Feature\MasterSlaveFeature;
+use PhpDb\TableGateway\Feature\MetadataFeature;
+use PhpDb\TableGateway\Feature\SequenceFeature;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\MockObject\Exception;

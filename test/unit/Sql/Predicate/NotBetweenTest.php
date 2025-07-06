@@ -1,9 +1,9 @@
 <?php
 
-namespace LaminasTest\Db\Sql\Predicate;
+namespace PhpDbTest\Sql\Predicate;
 
-use Laminas\Db\Sql\ExpressionInterface;
-use Laminas\Db\Sql\Predicate\NotBetween;
+use PhpDb\Sql\ExpressionInterface;
+use PhpDb\Sql\Predicate\NotBetween;
 use Override;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;

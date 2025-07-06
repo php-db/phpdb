@@ -1,9 +1,9 @@
 <?php
 
-namespace Laminas\Db\Sql\Platform\Oracle;
+namespace PhpDb\Sql\Platform\Oracle;
 
-use Laminas\Db\Sql\Platform\AbstractPlatform;
-use Laminas\Db\Sql\Select;
+use PhpDb\Sql\Platform\AbstractPlatform;
+use PhpDb\Sql\Select;
 
 class Oracle extends AbstractPlatform
 {

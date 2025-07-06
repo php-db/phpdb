@@ -1,12 +1,12 @@
 <?php
 
-namespace Laminas\Db\TableGateway\Feature;
+namespace PhpDb\TableGateway\Feature;
 
-use Laminas\Db\Metadata\MetadataInterface;
-use Laminas\Db\Metadata\Object\ConstraintObject;
-use Laminas\Db\Metadata\Object\TableObject;
-use Laminas\Db\Sql\TableIdentifier;
-use Laminas\Db\TableGateway\Exception;
+use PhpDb\Metadata\MetadataInterface;
+use PhpDb\Metadata\Object\ConstraintObject;
+use PhpDb\Metadata\Object\TableObject;
+use PhpDb\Sql\TableIdentifier;
+use PhpDb\TableGateway\Exception;
 
 use function count;
 use function current;

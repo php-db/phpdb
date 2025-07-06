@@ -1,8 +1,8 @@
 <?php
 
-namespace LaminasTest\Db\TestAsset;
+namespace PhpDbTest\TestAsset;
 
-use Laminas\Db\ResultSet\ResultSet;
+use PhpDb\ResultSet\ResultSet;
 
 final class TemporaryResultSet extends ResultSet
 {

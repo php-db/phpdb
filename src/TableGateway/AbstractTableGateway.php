@@ -1,20 +1,20 @@
 <?php
 
-namespace Laminas\Db\TableGateway;
+namespace PhpDb\TableGateway;
 
 use Closure;
-use Laminas\Db\Adapter\AdapterInterface;
-use Laminas\Db\ResultSet\ResultSet;
-use Laminas\Db\ResultSet\ResultSetInterface;
-use Laminas\Db\Sql\Delete;
-use Laminas\Db\Sql\Insert;
-use Laminas\Db\Sql\Join;
-use Laminas\Db\Sql\Select;
-use Laminas\Db\Sql\Sql;
-use Laminas\Db\Sql\TableIdentifier;
-use Laminas\Db\Sql\Update;
-use Laminas\Db\Sql\Where;
-use Laminas\Db\TableGateway\Feature\EventFeatureEventsInterface;
+use PhpDb\Adapter\AdapterInterface;
+use PhpDb\ResultSet\ResultSet;
+use PhpDb\ResultSet\ResultSetInterface;
+use PhpDb\Sql\Delete;
+use PhpDb\Sql\Insert;
+use PhpDb\Sql\Join;
+use PhpDb\Sql\Select;
+use PhpDb\Sql\Sql;
+use PhpDb\Sql\TableIdentifier;
+use PhpDb\Sql\Update;
+use PhpDb\Sql\Where;
+use PhpDb\TableGateway\Feature\EventFeatureEventsInterface;
 
 use function array_shift;
 use function array_values;

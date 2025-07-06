@@ -1,11 +1,11 @@
 <?php
 
-namespace Laminas\Db\RowGateway;
+namespace PhpDb\RowGateway;
 
 use ArrayAccess;
 use Countable;
-use Laminas\Db\Sql\Sql;
-use Laminas\Db\Sql\TableIdentifier;
+use PhpDb\Sql\Sql;
+use PhpDb\Sql\TableIdentifier;
 // phpcs:ignore SlevomatCodingStandard.Namespaces.UnusedUses.UnusedUse
 use ReturnTypeWillChange;
 

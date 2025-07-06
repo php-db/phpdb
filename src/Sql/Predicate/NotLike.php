@@ -1,6 +1,6 @@
 <?php
 
-namespace Laminas\Db\Sql\Predicate;
+namespace PhpDb\Sql\Predicate;
 
 class NotLike extends Like
 {

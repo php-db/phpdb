@@ -1,6 +1,6 @@
 <?php
 
-namespace LaminasTest\Db\Adapter\Driver\Pdo\TestAsset;
+namespace PhpDbTest\Adapter\Driver\Pdo\TestAsset;
 
 use Exception;
 use PDO;

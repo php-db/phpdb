@@ -1,8 +1,8 @@
 <?php
 
-namespace LaminasTest\Db\Sql\Predicate;
+namespace PhpDbTest\Sql\Predicate;
 
-use Laminas\Db\Sql\Predicate\Like;
+use PhpDb\Sql\Predicate\Like;
 use PHPUnit\Framework\TestCase;
 
 final class LikeTest extends TestCase

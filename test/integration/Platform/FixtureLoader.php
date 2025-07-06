@@ -1,6 +1,6 @@
 <?php
 
-namespace LaminasIntegrationTest\Db\Platform;
+namespace PhpDbIntegrationTest\Platform;
 
 // phpcs:ignore WebimpressCodingStandard.NamingConventions.Interface.Suffix
 interface FixtureLoader

@@ -1,6 +1,6 @@
 <?php
 
-namespace Laminas\Db\Adapter\Platform;
+namespace PhpDb\Adapter\Platform;
 
 use function addcslashes;
 use function trigger_error;

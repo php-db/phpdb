@@ -1,9 +1,9 @@
 <?php
 
-namespace Laminas\Db\TableGateway\Feature;
+namespace PhpDb\TableGateway\Feature;
 
-use Laminas\Db\Adapter\AdapterInterface;
-use Laminas\Db\Sql\Sql;
+use PhpDb\Adapter\AdapterInterface;
+use PhpDb\Sql\Sql;
 
 class MasterSlaveFeature extends AbstractFeature
 {

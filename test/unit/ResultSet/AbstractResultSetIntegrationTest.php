@@ -1,9 +1,9 @@
 <?php
 
-namespace LaminasTest\Db\ResultSet;
+namespace PhpDbTest\ResultSet;
 
-use Laminas\Db\Adapter\Driver\ResultInterface;
-use Laminas\Db\ResultSet\AbstractResultSet;
+use PhpDb\Adapter\Driver\ResultInterface;
+use PhpDb\ResultSet\AbstractResultSet;
 use Override;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\MockObject\Exception;

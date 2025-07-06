@@ -1,9 +1,9 @@
 <?php
 
-namespace LaminasTest\Db\Sql\Predicate;
+namespace PhpDbTest\Sql\Predicate;
 
-use Laminas\Db\Sql\Predicate\NotIn;
-use Laminas\Db\Sql\Select;
+use PhpDb\Sql\Predicate\NotIn;
+use PhpDb\Sql\Select;
 use PHPUnit\Framework\TestCase;
 
 final class NotInTest extends TestCase

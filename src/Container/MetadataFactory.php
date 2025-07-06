@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Laminas\Db\Container;
+namespace PhpDb\Container;
 
-use Laminas\Db\Adapter\AdapterInterface;
-use Laminas\Db\Metadata\MetadataInterface;
+use PhpDb\Adapter\AdapterInterface;
+use PhpDb\Metadata\MetadataInterface;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use Psr\Container\ContainerInterface;

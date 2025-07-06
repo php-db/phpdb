@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Laminas\Db\Container;
+namespace PhpDb\Container;
 
-use Laminas\Db\Adapter\AdapterInterface;
-use Laminas\Db\Adapter\AdapterServiceFactory;
+use PhpDb\Adapter\AdapterInterface;
+use PhpDb\Adapter\AdapterServiceFactory;
 
 final class ConfigProvider
 {

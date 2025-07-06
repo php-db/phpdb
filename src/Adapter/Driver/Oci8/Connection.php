@@ -1,10 +1,10 @@
 <?php
 
-namespace Laminas\Db\Adapter\Driver\Oci8;
+namespace PhpDb\Adapter\Driver\Oci8;
 
-use Laminas\Db\Adapter\Driver\AbstractConnection;
-use Laminas\Db\Adapter\Exception;
-use Laminas\Db\Adapter\Exception\InvalidArgumentException;
+use PhpDb\Adapter\Driver\AbstractConnection;
+use PhpDb\Adapter\Exception;
+use PhpDb\Adapter\Exception\InvalidArgumentException;
 
 use function get_resource_type;
 use function is_array;

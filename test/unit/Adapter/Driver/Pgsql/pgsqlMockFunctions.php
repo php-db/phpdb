@@ -1,6 +1,6 @@
 <?php
 
-namespace Laminas\Db\Adapter\Driver\Pgsql;
+namespace PhpDb\Adapter\Driver\Pgsql;
 
 /**
  * Closes a PostgreSQL connection

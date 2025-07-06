@@ -1,8 +1,8 @@
 <?php
 
-namespace Laminas\Db\Sql\Predicate;
+namespace PhpDb\Sql\Predicate;
 
-use Laminas\Db\Sql\AbstractExpression;
+use PhpDb\Sql\AbstractExpression;
 
 class IsNull extends AbstractExpression implements PredicateInterface
 {

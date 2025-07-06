@@ -1,10 +1,10 @@
 <?php
 
-namespace Laminas\Db\TableGateway\Feature;
+namespace PhpDb\TableGateway\Feature;
 
-use Laminas\Db\Adapter\Driver\ResultInterface;
-use Laminas\Db\Adapter\Driver\StatementInterface;
-use Laminas\Db\Sql\Insert;
+use PhpDb\Adapter\Driver\ResultInterface;
+use PhpDb\Adapter\Driver\StatementInterface;
+use PhpDb\Sql\Insert;
 
 use function array_search;
 

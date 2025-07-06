@@ -1,8 +1,8 @@
 <?php
 
-namespace LaminasTest\Db\Sql\Ddl\Column;
+namespace PhpDbTest\Sql\Ddl\Column;
 
-use Laminas\Db\Sql\Ddl\Column\AbstractPrecisionColumn;
+use PhpDb\Sql\Ddl\Column\AbstractPrecisionColumn;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;

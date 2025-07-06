@@ -1,6 +1,6 @@
 <?php
 
-namespace LaminasIntegrationTest\Db\Extension;
+namespace PhpDbIntegrationTest\Extension;
 
 use PHPUnit\Runner\Extension\Extension;
 use PHPUnit\Runner\Extension\Facade;

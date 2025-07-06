@@ -1,8 +1,8 @@
 <?php
 
-namespace Laminas\Db\Sql\Ddl\Index;
+namespace PhpDb\Sql\Ddl\Index;
 
-use Laminas\Db\Sql\Ddl\Constraint\AbstractConstraint;
+use PhpDb\Sql\Ddl\Constraint\AbstractConstraint;
 
 abstract class AbstractIndex extends AbstractConstraint
 {

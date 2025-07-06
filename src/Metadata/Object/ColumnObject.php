@@ -1,6 +1,6 @@
 <?php
 
-namespace Laminas\Db\Metadata\Object;
+namespace PhpDb\Metadata\Object;
 
 use function array_key_exists;
 

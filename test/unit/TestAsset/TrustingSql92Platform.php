@@ -1,8 +1,8 @@
 <?php
 
-namespace LaminasTest\Db\TestAsset;
+namespace PhpDbTest\TestAsset;
 
-use Laminas\Db\Adapter\Platform\Sql92;
+use PhpDb\Adapter\Platform\Sql92;
 
 final class TrustingSql92Platform extends Sql92
 {

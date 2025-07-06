@@ -1,8 +1,8 @@
 <?php
 
-namespace LaminasTest\Db\TestAsset;
+namespace PhpDbTest\TestAsset;
 
-use Laminas\Db\Sql;
+use PhpDb\Sql;
 
 final class UpdateDecorator extends Sql\Update implements Sql\Platform\PlatformDecoratorInterface
 {

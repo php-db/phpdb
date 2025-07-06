@@ -1,8 +1,8 @@
 <?php
 
-namespace LaminasTest\Db\Sql\Ddl\Constraint;
+namespace PhpDbTest\Sql\Ddl\Constraint;
 
-use Laminas\Db\Sql\Ddl\Constraint\AbstractConstraint;
+use PhpDb\Sql\Ddl\Constraint\AbstractConstraint;
 use Override;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\MockObject\Exception;

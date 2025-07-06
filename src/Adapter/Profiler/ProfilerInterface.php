@@ -1,8 +1,8 @@
 <?php
 
-namespace Laminas\Db\Adapter\Profiler;
+namespace PhpDb\Adapter\Profiler;
 
-use Laminas\Db\Adapter\StatementContainerInterface;
+use PhpDb\Adapter\StatementContainerInterface;
 
 interface ProfilerInterface
 {

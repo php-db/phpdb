@@ -1,8 +1,8 @@
 <?php
 
-namespace Laminas\Db\TableGateway\Exception;
+namespace PhpDb\TableGateway\Exception;
 
-use Laminas\Db\Exception;
+use PhpDb\Exception;
 
 class RuntimeException extends Exception\InvalidArgumentException implements ExceptionInterface
 {

@@ -1,10 +1,10 @@
 <?php
 
-namespace LaminasTest\Db\Adapter\Platform;
+namespace PhpDbTest\Adapter\Platform;
 
-use Laminas\Db\Adapter\Driver\Oci8\Oci8;
-use Laminas\Db\Adapter\Exception\InvalidArgumentException;
-use Laminas\Db\Adapter\Platform\Oracle;
+use PhpDb\Adapter\Driver\Oci8\Oci8;
+use PhpDb\Adapter\Exception\InvalidArgumentException;
+use PhpDb\Adapter\Platform\Oracle;
 use Override;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\MockObject\Exception;
@@ -70,7 +70,7 @@ final class OracleTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
-            '$driver must be a Oci8 or Oracle PDO Laminas\Db\Adapter\Driver, Oci8 instance, or Oci PDO instance'
+            '$driver must be a Oci8 or Oracle PDO PhpDb\Adapter\Driver, Oci8 instance, or Oci PDO instance'
         );
         /** @psalm-suppress NullArgument - ensure an exception is thrown */
         $this->platform->setDriver(null);
@@ -123,7 +123,7 @@ final class OracleTest extends TestCase
          */
         //$this->expectNotice();
         //$this->expectExceptionMessage(
-        //    'Attempting to quote a value in Laminas\Db\Adapter\Platform\Oracle without '
+        //    'Attempting to quote a value in PhpDb\Adapter\Platform\Oracle without '
         //    . 'extension/driver support can introduce security vulnerabilities in a production environment'
         //);
         $this->expectNotToPerformAssertions();
@@ -167,7 +167,7 @@ final class OracleTest extends TestCase
          */
         //$this->expectError();
         //$this->expectExceptionMessage(
-        //    'Attempting to quote a value in Laminas\Db\Adapter\Platform\Oracle without '
+        //    'Attempting to quote a value in PhpDb\Adapter\Platform\Oracle without '
         //    . 'extension/driver support can introduce security vulnerabilities in a production environment'
         //);
         self::assertEquals("'Foo O''Bar'", $this->platform->quoteValueList("Foo O'Bar"));

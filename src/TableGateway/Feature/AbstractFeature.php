@@ -1,9 +1,9 @@
 <?php
 
-namespace Laminas\Db\TableGateway\Feature;
+namespace PhpDb\TableGateway\Feature;
 
-use Laminas\Db\TableGateway\AbstractTableGateway;
-use Laminas\Db\TableGateway\Exception;
+use PhpDb\TableGateway\AbstractTableGateway;
+use PhpDb\TableGateway\Exception;
 
 abstract class AbstractFeature extends AbstractTableGateway
 {

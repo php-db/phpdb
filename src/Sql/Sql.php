@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Laminas\Db\Sql;
+namespace PhpDb\Sql;
 
-use Laminas\Db\Adapter\AdapterInterface;
-use Laminas\Db\Adapter\Driver\StatementInterface;
-use Laminas\Db\Adapter\StatementContainerInterface;
+use PhpDb\Adapter\AdapterInterface;
+use PhpDb\Adapter\Driver\StatementInterface;
+use PhpDb\Adapter\StatementContainerInterface;
 
 use function sprintf;
 

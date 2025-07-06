@@ -1,14 +1,14 @@
 <?php
 
-namespace LaminasTest\Db\RowGateway;
+namespace PhpDbTest\RowGateway;
 
-use Laminas\Db\Adapter\Adapter;
-use Laminas\Db\Adapter\Driver\ConnectionInterface;
-use Laminas\Db\Adapter\Driver\DriverInterface;
-use Laminas\Db\Adapter\Driver\ResultInterface;
-use Laminas\Db\Adapter\Driver\StatementInterface;
-use Laminas\Db\RowGateway\Exception\RuntimeException;
-use Laminas\Db\RowGateway\RowGateway;
+use PhpDb\Adapter\Adapter;
+use PhpDb\Adapter\Driver\ConnectionInterface;
+use PhpDb\Adapter\Driver\DriverInterface;
+use PhpDb\Adapter\Driver\ResultInterface;
+use PhpDb\Adapter\Driver\StatementInterface;
+use PhpDb\RowGateway\Exception\RuntimeException;
+use PhpDb\RowGateway\RowGateway;
 use Override;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Laminas\Db\Adapter;
+namespace PhpDb\Adapter;
 
-use Laminas\Db\Adapter\AdapterInterface;
-use Laminas\Db\Container\AdapterManager;
+use PhpDb\Adapter\AdapterInterface;
+use PhpDb\Container\AdapterManager;
 use Psr\Container\ContainerInterface;
 
 final class AdapterServiceFactory

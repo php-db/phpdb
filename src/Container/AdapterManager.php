@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Laminas\Db\Container;
+namespace PhpDb\Container;
 
 use Laminas\ServiceManager\AbstractPluginManager;
 use Override;

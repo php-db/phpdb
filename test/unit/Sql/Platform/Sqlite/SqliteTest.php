@@ -1,10 +1,10 @@
 <?php
 
-namespace LaminasTest\Db\Sql\Platform\Sqlite;
+namespace PhpDbTest\Sql\Platform\Sqlite;
 
-use Laminas\Db\Sql\Platform\Sqlite\SelectDecorator;
-use Laminas\Db\Sql\Platform\Sqlite\Sqlite;
-use Laminas\Db\Sql\Select;
+use PhpDb\Sql\Platform\Sqlite\SelectDecorator;
+use PhpDb\Sql\Platform\Sqlite\Sqlite;
+use PhpDb\Sql\Select;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\TestDox;
 use PHPUnit\Framework\TestCase;

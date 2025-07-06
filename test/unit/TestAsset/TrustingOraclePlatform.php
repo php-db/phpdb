@@ -1,8 +1,8 @@
 <?php
 
-namespace LaminasTest\Db\TestAsset;
+namespace PhpDbTest\TestAsset;
 
-use Laminas\Db\Adapter\Platform\Oracle;
+use PhpDb\Adapter\Platform\Oracle;
 
 final class TrustingOraclePlatform extends Oracle
 {

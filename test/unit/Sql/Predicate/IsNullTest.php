@@ -1,8 +1,8 @@
 <?php
 
-namespace LaminasTest\Db\Sql\Predicate;
+namespace PhpDbTest\Sql\Predicate;
 
-use Laminas\Db\Sql\Predicate\IsNotNull;
+use PhpDb\Sql\Predicate\IsNotNull;
 use PHPUnit\Framework\TestCase;
 
 final class IsNullTest extends TestCase

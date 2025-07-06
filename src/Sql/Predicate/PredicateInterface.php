@@ -1,8 +1,8 @@
 <?php
 
-namespace Laminas\Db\Sql\Predicate;
+namespace PhpDb\Sql\Predicate;
 
-use Laminas\Db\Sql\ExpressionInterface;
+use PhpDb\Sql\ExpressionInterface;
 
 interface PredicateInterface extends ExpressionInterface
 {

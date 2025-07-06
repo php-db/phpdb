@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Laminas\Db\Adapter\Driver;
+namespace PhpDb\Adapter\Driver;
 
-use Laminas\Db\Exception;
+use PhpDb\Exception;
 
 interface DriverInterface
 {

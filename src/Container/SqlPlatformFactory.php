@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Laminas\Db\Container;
+namespace PhpDb\Container;
 
-use Laminas\Db\Adapter\AdapterInterface;
-use Laminas\Db\Sql\Platform\Platform;
-use Laminas\Db\Sql\Platform\PlatformDecoratorInterface;
-use Laminas\Db\Sql\SqlInterface;
-use Laminas\Db\Sql\PreparableSqlInterface;
+use PhpDb\Adapter\AdapterInterface;
+use PhpDb\Sql\Platform\Platform;
+use PhpDb\Sql\Platform\PlatformDecoratorInterface;
+use PhpDb\Sql\SqlInterface;
+use PhpDb\Sql\PreparableSqlInterface;
 use Psr\Container\ContainerInterface;
 
 final class SqlPlatformFactory

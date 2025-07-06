@@ -1,8 +1,8 @@
 <?php
 
-namespace LaminasIntegrationTest\Db\Adapter\Platform;
+namespace PhpDbIntegrationTest\Adapter\Platform;
 
-use Laminas\Db\Adapter\Platform\SqlServer;
+use PhpDb\Adapter\Platform\SqlServer;
 use Override;
 use PDO;
 use PHPUnit\Framework\Attributes\Group;

@@ -1,9 +1,9 @@
 <?php
 
-namespace Laminas\Db\Sql\Platform\IbmDb2;
+namespace PhpDb\Sql\Platform\IbmDb2;
 
-use Laminas\Db\Sql\Platform\AbstractPlatform;
-use Laminas\Db\Sql\Select;
+use PhpDb\Sql\Platform\AbstractPlatform;
+use PhpDb\Sql\Select;
 
 class IbmDb2 extends AbstractPlatform
 {

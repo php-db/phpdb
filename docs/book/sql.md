@@ -1,32 +1,32 @@
 # SQL Abstraction
 
-`Laminas\Db\Sql` is a SQL abstraction layer for building platform-specific SQL
-queries via an object-oriented API. The end result of a `Laminas\Db\Sql` object
+`PhpDb\Sql` is a SQL abstraction layer for building platform-specific SQL
+queries via an object-oriented API. The end result of a `PhpDb\Sql` object
 will be to either produce a `Statement` and `ParameterContainer` that
 represents the target query, or a full string that can be directly executed
-against the database platform. To achieve this, `Laminas\Db\Sql` objects require a
-`Laminas\Db\Adapter\Adapter` object in order to produce the desired results.
+against the database platform. To achieve this, `PhpDb\Sql` objects require a
+`PhpDb\Adapter\Adapter` object in order to produce the desired results.
 
 ## Quick start
 
 There are four primary tasks associated with interacting with a database
 defined by Data Manipulation Language (DML): selecting, inserting, updating,
 and deleting. As such, there are four primary classes that developers can
-interact with in order to build queries in the `Laminas\Db\Sql` namespace:
+interact with in order to build queries in the `PhpDb\Sql` namespace:
 `Select`, `Insert`, `Update`, and `Delete`.
 
 Since these four tasks are so closely related and generally used together
-within the same application, the `Laminas\Db\Sql\Sql` class helps you create them
+within the same application, the `PhpDb\Sql\Sql` class helps you create them
 and produce the result you are attempting to achieve.
 
 ```php
-use Laminas\Db\Sql\Sql;
+use PhpDb\Sql\Sql;
 
 $sql    = new Sql($adapter);
-$select = $sql->select(); // returns a Laminas\Db\Sql\Select instance
-$insert = $sql->insert(); // returns a Laminas\Db\Sql\Insert instance
-$update = $sql->update(); // returns a Laminas\Db\Sql\Update instance
-$delete = $sql->delete(); // returns a Laminas\Db\Sql\Delete instance
+$select = $sql->select(); // returns a PhpDb\Sql\Select instance
+$insert = $sql->insert(); // returns a PhpDb\Sql\Insert instance
+$update = $sql->update(); // returns a PhpDb\Sql\Update instance
+$delete = $sql->delete(); // returns a PhpDb\Sql\Delete instance
 ```
 
 As a developer, you can now interact with these objects, as described in the
@@ -36,7 +36,7 @@ values, they are ready to either be prepared or executed.
 To prepare (using a Select object):
 
 ```php
-use Laminas\Db\Sql\Sql;
+use PhpDb\Sql\Sql;
 
 $sql    = new Sql($adapter);
 $select = $sql->select();
@@ -50,7 +50,7 @@ $results = $statement->execute();
 To execute (using a Select object)
 
 ```php
-use Laminas\Db\Sql\Sql;
+use PhpDb\Sql\Sql;
 
 $sql    = new Sql($adapter);
 $select = $sql->select();
@@ -66,7 +66,7 @@ obtaining a `Select`, `Insert`, `Update`, or `Delete` instance, the object will 
 seeded with the table:
 
 ```php
-use Laminas\Db\Sql\Sql;
+use PhpDb\Sql\Sql;
 
 $sql    = new Sql($adapter, 'foo');
 $select = $sql->select();
@@ -94,12 +94,12 @@ to execute.
 
 ## Select
 
-`Laminas\Db\Sql\Select` presents a unified API for building platform-specific SQL
+`PhpDb\Sql\Select` presents a unified API for building platform-specific SQL
 SELECT queries. Instances may be created and consumed without
-`Laminas\Db\Sql\Sql`:
+`PhpDb\Sql\Sql`:
 
 ```php
-use Laminas\Db\Sql\Select;
+use PhpDb\Sql\Select;
 
 $select = new Select();
 // or, to produce a $select bound to a specific table
@@ -170,7 +170,7 @@ $select->columns([
 // Sql function call on the column
 // (produces CONCAT_WS('/', 'bar', 'bax') AS 'foo')
 $select->columns([
-    'foo' => new \Laminas\Db\Sql\Expression("CONCAT_WS('/', 'bar', 'bax')")
+    'foo' => new \PhpDb\Sql\Expression("CONCAT_WS('/', 'bar', 'bax')")
 ]);
 ```
 
@@ -194,7 +194,7 @@ $select
 
 ### where(), having()
 
-`Laminas\Db\Sql\Select` provides bit of flexibility as it regards to what kind of
+`PhpDb\Sql\Select` provides bit of flexibility as it regards to what kind of
 parameters are acceptable when calling `where()` or `having()`. The method
 signature is listed as:
 
@@ -209,8 +209,8 @@ signature is listed as:
 public function where($predicate, $combination = Predicate\PredicateSet::OP_AND);
 ```
 
-If you provide a `Laminas\Db\Sql\Where` instance to `where()` or a
-`Laminas\Db\Sql\Having` instance to `having()`, any previous internal instances
+If you provide a `PhpDb\Sql\Where` instance to `where()` or a
+`PhpDb\Sql\Having` instance to `having()`, any previous internal instances
 will be replaced completely. When either instance is processed, this object will
 be iterated to produce the WHERE or HAVING section of the SELECT statement.
 
@@ -225,7 +225,7 @@ $select->where(function (Where $where) {
 ```
 
 If you provide a *string*, this string will be used to create a
-`Laminas\Db\Sql\Predicate\Expression` instance, and its contents will be applied
+`PhpDb\Sql\Predicate\Expression` instance, and its contents will be applied
 as-is, with no quoting:
 
 ```php
@@ -264,7 +264,7 @@ As an example:
 $select->from('foo')->where([
     'c1' => null,
     'c2' => [1, 2, 3],
-    new \Laminas\Db\Sql\Predicate\IsNotNull('c3'),
+    new \PhpDb\Sql\Predicate\IsNotNull('c3'),
 ]);
 ```
 
@@ -347,7 +347,7 @@ $insert->values([
 ```
 
 To merge values with previous calls, provide the appropriate flag:
-`Laminas\Db\Sql\Insert::VALUES_MERGE`
+`PhpDb\Sql\Insert::VALUES_MERGE`
 
 ```php
 $insert->values(['col_2' => 'value2'], $insert::VALUES_MERGE);
@@ -416,16 +416,16 @@ quoted.
 In the `Where`/`Having` API, a distinction is made between what elements are
 considered identifiers (`TYPE_IDENTIFIER`) and which are values (`TYPE_VALUE`).
 There is also a special use case type for literal values (`TYPE_LITERAL`). All
-element types are expressed via the `Laminas\Db\Sql\ExpressionInterface`
+element types are expressed via the `PhpDb\Sql\ExpressionInterface`
 interface.
 
 > ### Literals
 >
-> In Laminas 2.1, an actual `Literal` type was added. `Laminas\Db\Sql` now makes the
+> In Laminas 2.1, an actual `Literal` type was added. `PhpDb\Sql` now makes the
 > distinction that literals will not have any parameters that need
 > interpolating, while `Expression` objects *might* have parameters that need
 > interpolating. In cases where there are parameters in an `Expression`,
-> `Laminas\Db\Sql\AbstractSql` will do its best to identify placeholders when the
+> `PhpDb\Sql\AbstractSql` will do its best to identify placeholders when the
 > `Expression` is processed during statement creation. In short, if you don't
 > have parameters, use `Literal` objects.
 

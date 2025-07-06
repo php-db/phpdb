@@ -1,9 +1,9 @@
 <?php
 
-namespace LaminasTest\Db\Sql\Predicate;
+namespace PhpDbTest\Sql\Predicate;
 
-use Laminas\Db\Sql\Predicate\Like;
-use Laminas\Db\Sql\Predicate\NotLike;
+use PhpDb\Sql\Predicate\Like;
+use PhpDb\Sql\Predicate\NotLike;
 use PHPUnit\Framework\TestCase;
 
 final class NotLikeTest extends TestCase

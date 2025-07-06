@@ -1,11 +1,11 @@
 <?php
 
-namespace Laminas\Db\Adapter\Platform;
+namespace PhpDb\Adapter\Platform;
 
-use Laminas\Db\Adapter\Driver\DriverInterface;
-use Laminas\Db\Adapter\Driver\Oci8\Oci8;
-use Laminas\Db\Adapter\Driver\Pdo\Pdo;
-use Laminas\Db\Adapter\Exception\InvalidArgumentException;
+use PhpDb\Adapter\Driver\DriverInterface;
+use PhpDb\Adapter\Driver\Oci8\Oci8;
+use PhpDb\Adapter\Driver\Pdo\Pdo;
+use PhpDb\Adapter\Exception\InvalidArgumentException;
 
 use function addcslashes;
 use function get_resource_type;
@@ -55,7 +55,7 @@ class Oracle extends AbstractPlatform
         }
 
         throw new InvalidArgumentException(
-            '$driver must be a Oci8 or Oracle PDO Laminas\Db\Adapter\Driver, '
+            '$driver must be a Oci8 or Oracle PDO PhpDb\Adapter\Driver, '
             . 'Oci8 instance, or Oci PDO instance'
         );
     }

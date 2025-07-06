@@ -1,10 +1,10 @@
 <?php
 
-namespace Laminas\Db\Sql\Predicate;
+namespace PhpDb\Sql\Predicate;
 
 use Closure;
 use Countable;
-use Laminas\Db\Sql\Exception;
+use PhpDb\Sql\Exception;
 // phpcs:ignore SlevomatCodingStandard.Namespaces.UnusedUses.UnusedUse
 use ReturnTypeWillChange;
 

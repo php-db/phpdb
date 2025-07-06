@@ -23,16 +23,16 @@
     </testsuites>
 
     <listeners>
-        <listener class="LaminasIntegrationTest\Db\IntegrationTestListener" file="./test/integration/IntegrationTestListener.php"/>
+        <listener class="PhpDbIntegrationTest\IntegrationTestListener" file="./test/integration/IntegrationTestListener.php"/>
     </listeners>
 
     <php>
         <!-- Integration Test Variables -->
-        <env name="TESTS_LAMINAS_DB_ADAPTER_DRIVER_MYSQL" value="true" />
-        <env name="TESTS_LAMINAS_DB_ADAPTER_DRIVER_MYSQL_HOSTNAME" value="mysql" />
-        <env name="TESTS_LAMINAS_DB_ADAPTER_DRIVER_MYSQL_USERNAME" value="gha" />
-        <env name="TESTS_LAMINAS_DB_ADAPTER_DRIVER_MYSQL_PASSWORD" value="password" />
-        <env name="TESTS_LAMINAS_DB_ADAPTER_DRIVER_MYSQL_DATABASE" value="laminasdb_test" />
+        <env name="TESTS_PHPDB_ADAPTER_DRIVER_MYSQL" value="true" />
+        <env name="TESTS_PHPDB_ADAPTER_DRIVER_MYSQL_HOSTNAME" value="mysql" />
+        <env name="TESTS_PHPDB_ADAPTER_DRIVER_MYSQL_USERNAME" value="gha" />
+        <env name="TESTS_PHPDB_ADAPTER_DRIVER_MYSQL_PASSWORD" value="password" />
+        <env name="TESTS_PHPDB_ADAPTER_DRIVER_MYSQL_DATABASE" value="laminasdb_test" />
 
         <env name="TESTS_LAMINAS_DB_ADAPTER_DRIVER_SQLSRV" value="true" />
         <env name="TESTS_LAMINAS_DB_ADAPTER_DRIVER_SQLSRV_HOSTNAME" value="mssql" />

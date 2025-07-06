@@ -1,24 +1,23 @@
 {
-    "name": "laminas/laminas-db",
+    "name": "php-db/phpdb",
     "description": "Database abstraction layer, SQL abstraction, result set abstraction, and RowDataGateway and TableDataGateway implementations",
     "license": "BSD-3-Clause",
     "keywords": [
         "laminas",
+        "mezzio",
+        "php-db",
         "db"
     ],
-    "homepage": "https://laminas.dev",
+    "homepage": "https://php-db.dev",
     "support": {
-        "docs": "https://docs.laminas.dev/laminas-db/",
-        "issues": "https://github.com/laminas/laminas-db/issues",
-        "source": "https://github.com/laminas/laminas-db",
-        "rss": "https://github.com/laminas/laminas-db/releases.atom",
-        "chat": "https://laminas.dev/chat",
-        "forum": "https://discourse.laminas.dev"
+        "docs": "https://docs.php-db.dev/",
+        "issues": "https://github.com/php-db/phpdb/issues",
+        "source": "https://github.com/php-db/phpdb"
     },
     "config": {
         "sort-packages": true,
         "platform": {
-            "php": "8.3.99"
+            "php": "8.2.99"
         },
         "allow-plugins": {
             "dealerdirect/phpcodesniffer-composer-installer": true
@@ -26,7 +25,7 @@
     },
         "extra": {
         "laminas": {
-            "config-provider": "Laminas\\Db\\Container\\ConfigProvider"
+            "config-provider": "PhpDb\\Container\\ConfigProvider"
         }
     },
     "require": {
@@ -48,14 +47,14 @@
     },
     "autoload": {
         "psr-4": {
-            "Laminas\\Db\\": "src/",
+            "PhpDb\\": "src/",
             "CustomRule\\PHPUnit\\": "rector/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "LaminasTest\\Db\\": "test/unit/",
-            "LaminasIntegrationTest\\Db\\": "test/integration/"
+            "PhpDbTest\\": "test/unit/",
+            "PhpDbIntegrationTest\\": "test/integration/"
         }
     },
     "scripts": {
@@ -72,6 +71,7 @@
         "upload-coverage": "coveralls -v"
     },
     "conflict": {
-        "zendframework/zend-db": "*"
+        "zendframework/zend-db": "*",
+        "laminas/laminas-db": "*"
     }
 }

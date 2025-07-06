@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Laminas\Db\Adapter\Driver\Feature;
+namespace PhpDb\Adapter\Driver\Feature;
 
-use Laminas\Db\Adapter\Driver\DriverInterface;
-use Laminas\Db\Adapter\Exception\RuntimeException;
+use PhpDb\Adapter\Driver\DriverInterface;
+use PhpDb\Adapter\Exception\RuntimeException;
 
 /**
  * Trait implementation of DriverFeatureProviderInterface.

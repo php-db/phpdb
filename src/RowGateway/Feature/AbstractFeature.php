@@ -1,10 +1,10 @@
 <?php
 
-namespace Laminas\Db\RowGateway\Feature;
+namespace PhpDb\RowGateway\Feature;
 
-use Laminas\Db\RowGateway\AbstractRowGateway;
-use Laminas\Db\RowGateway\Exception;
-use Laminas\Db\RowGateway\Exception\RuntimeException;
+use PhpDb\RowGateway\AbstractRowGateway;
+use PhpDb\RowGateway\Exception;
+use PhpDb\RowGateway\Exception\RuntimeException;
 
 abstract class AbstractFeature extends AbstractRowGateway
 {

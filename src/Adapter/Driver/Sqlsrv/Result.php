@@ -1,9 +1,9 @@
 <?php
 
-namespace Laminas\Db\Adapter\Driver\Sqlsrv;
+namespace PhpDb\Adapter\Driver\Sqlsrv;
 
 use Iterator;
-use Laminas\Db\Adapter\Driver\ResultInterface;
+use PhpDb\Adapter\Driver\ResultInterface;
 // phpcs:ignore SlevomatCodingStandard.Namespaces.UnusedUses.UnusedUse
 use ReturnTypeWillChange;
 

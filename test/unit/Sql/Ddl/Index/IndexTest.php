@@ -1,8 +1,8 @@
 <?php
 
-namespace LaminasTest\Db\Sql\Ddl\Index;
+namespace PhpDbTest\Sql\Ddl\Index;
 
-use Laminas\Db\Sql\Ddl\Index\Index;
+use PhpDb\Sql\Ddl\Index\Index;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 

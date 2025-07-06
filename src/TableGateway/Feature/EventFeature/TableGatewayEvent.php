@@ -1,9 +1,9 @@
 <?php
 
-namespace Laminas\Db\TableGateway\Feature\EventFeature;
+namespace PhpDb\TableGateway\Feature\EventFeature;
 
 use ArrayAccess;
-use Laminas\Db\TableGateway\AbstractTableGateway;
+use PhpDb\TableGateway\AbstractTableGateway;
 use Laminas\EventManager\EventInterface;
 
 class TableGatewayEvent implements EventInterface

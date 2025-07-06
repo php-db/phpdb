@@ -1,8 +1,8 @@
 <?php
 
-namespace Laminas\Db\Sql\Ddl\Column;
+namespace PhpDb\Sql\Ddl\Column;
 
-use Laminas\Db\Sql\Ddl\Constraint\ConstraintInterface;
+use PhpDb\Sql\Ddl\Constraint\ConstraintInterface;
 
 use function array_merge;
 

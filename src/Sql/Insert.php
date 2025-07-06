@@ -1,10 +1,10 @@
 <?php
 
-namespace Laminas\Db\Sql;
+namespace PhpDb\Sql;
 
-use Laminas\Db\Adapter\Driver;
-use Laminas\Db\Adapter\ParameterContainer;
-use Laminas\Db\Adapter\Platform\PlatformInterface;
+use PhpDb\Adapter\Driver;
+use PhpDb\Adapter\ParameterContainer;
+use PhpDb\Adapter\Platform\PlatformInterface;
 
 use function array_combine;
 use function array_flip;
@@ -95,7 +95,7 @@ class Insert extends AbstractPreparableSql
         if ($values instanceof Select) {
             if ($flag === self::VALUES_MERGE) {
                 throw new Exception\InvalidArgumentException(
-                    'A Laminas\Db\Sql\Select instance cannot be provided with the merge flag'
+                    'A PhpDb\Sql\Select instance cannot be provided with the merge flag'
                 );
             }
             $this->select = $values;
@@ -104,13 +104,13 @@ class Insert extends AbstractPreparableSql
 
         if (! is_array($values)) {
             throw new Exception\InvalidArgumentException(
-                'values() expects an array of values or Laminas\Db\Sql\Select instance'
+                'values() expects an array of values or PhpDb\Sql\Select instance'
             );
         }
 
         if ($this->select && $flag === self::VALUES_MERGE) {
             throw new Exception\InvalidArgumentException(
-                'An array of values cannot be provided with the merge flag when a Laminas\Db\Sql\Select'
+                'An array of values cannot be provided with the merge flag when a PhpDb\Sql\Select'
                 . ' instance already exists as the value source'
             );
         }

@@ -1,6 +1,6 @@
 <?php
 
-namespace LaminasTest\Db;
+namespace PhpDbTest;
 
 use PHPUnit\Framework\Assert;
 use ReflectionException;

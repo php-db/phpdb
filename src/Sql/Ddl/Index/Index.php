@@ -1,6 +1,6 @@
 <?php
 
-namespace Laminas\Db\Sql\Ddl\Index;
+namespace PhpDb\Sql\Ddl\Index;
 
 use function array_merge;
 use function count;

@@ -1,9 +1,9 @@
 <?php
 
-namespace Laminas\Db\Sql\Predicate;
+namespace PhpDb\Sql\Predicate;
 
-use Laminas\Db\Sql\AbstractExpression;
-use Laminas\Db\Sql\Exception;
+use PhpDb\Sql\AbstractExpression;
+use PhpDb\Sql\Exception;
 
 use function in_array;
 use function is_array;

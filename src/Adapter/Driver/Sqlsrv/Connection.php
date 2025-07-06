@@ -1,11 +1,11 @@
 <?php
 
-namespace Laminas\Db\Adapter\Driver\Sqlsrv;
+namespace PhpDb\Adapter\Driver\Sqlsrv;
 
-use Laminas\Db\Adapter\Driver\AbstractConnection;
-use Laminas\Db\Adapter\Driver\Sqlsrv\Exception\ErrorException;
-use Laminas\Db\Adapter\Exception;
-use Laminas\Db\Adapter\Exception\InvalidArgumentException;
+use PhpDb\Adapter\Driver\AbstractConnection;
+use PhpDb\Adapter\Driver\Sqlsrv\Exception\ErrorException;
+use PhpDb\Adapter\Exception;
+use PhpDb\Adapter\Exception\InvalidArgumentException;
 
 use function array_merge;
 use function get_resource_type;

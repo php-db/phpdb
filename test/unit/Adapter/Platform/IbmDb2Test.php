@@ -1,8 +1,8 @@
 <?php
 
-namespace LaminasTest\Db\Adapter\Platform;
+namespace PhpDbTest\Adapter\Platform;
 
-use Laminas\Db\Adapter\Platform\IbmDb2;
+use PhpDb\Adapter\Platform\IbmDb2;
 use Override;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\RequiresFunction;
@@ -78,7 +78,7 @@ final class IbmDb2Test extends TestCase
         //if (! function_exists('db2_escape_string')) {
             //$this->expectNotice();
             //$this->expectExceptionMessage(
-            //    'Attempting to quote a value in Laminas\Db\Adapter\Platform\IbmDb2 without extension/driver'
+            //    'Attempting to quote a value in PhpDb\Adapter\Platform\IbmDb2 without extension/driver'
             //    . ' support can introduce security vulnerabilities in a production environment'
             //);
         //}

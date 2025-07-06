@@ -1,13 +1,13 @@
 <?php
 
-namespace LaminasTest\Db\Metadata\Source;
+namespace PhpDbTest\Metadata\Source;
 
 use Exception;
-use Laminas\Db\Adapter\Adapter;
-use Laminas\Db\Metadata\Object\ConstraintKeyObject;
-use Laminas\Db\Metadata\Object\ConstraintObject;
-use Laminas\Db\Metadata\Object\TriggerObject;
-use Laminas\Db\Metadata\Source\SqliteMetadata;
+use PhpDb\Adapter\Adapter;
+use PhpDb\Metadata\Object\ConstraintKeyObject;
+use PhpDb\Metadata\Object\ConstraintObject;
+use PhpDb\Metadata\Object\TriggerObject;
+use PhpDb\Metadata\Source\SqliteMetadata;
 use Override;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RequiresPhpExtension;

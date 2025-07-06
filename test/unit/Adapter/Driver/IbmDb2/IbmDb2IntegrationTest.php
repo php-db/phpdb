@@ -1,10 +1,10 @@
 <?php
 
-namespace LaminasTest\Db\Adapter\Driver\IbmDb2;
+namespace PhpDbTest\Adapter\Driver\IbmDb2;
 
-use Laminas\Db\Adapter\Driver\IbmDb2\IbmDb2;
-use Laminas\Db\Adapter\Driver\IbmDb2\Statement;
-use Laminas\Db\Adapter\Exception\InvalidArgumentException;
+use PhpDb\Adapter\Driver\IbmDb2\IbmDb2;
+use PhpDb\Adapter\Driver\IbmDb2\Statement;
+use PhpDb\Adapter\Exception\InvalidArgumentException;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Group;
 use stdClass;

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Laminas\Db\Adapter\Platform;
+namespace PhpDb\Adapter\Platform;
 
 use Override;
 

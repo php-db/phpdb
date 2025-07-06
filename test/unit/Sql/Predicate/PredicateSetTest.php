@@ -1,16 +1,16 @@
 <?php
 
-namespace LaminasTest\Db\Sql\Predicate;
+namespace PhpDbTest\Sql\Predicate;
 
-use Laminas\Db\Sql\Exception\InvalidArgumentException;
-use Laminas\Db\Sql\Predicate\Expression;
-use Laminas\Db\Sql\Predicate\In;
-use Laminas\Db\Sql\Predicate\IsNotNull;
-use Laminas\Db\Sql\Predicate\IsNull;
-use Laminas\Db\Sql\Predicate\Literal;
-use Laminas\Db\Sql\Predicate\Operator;
-use Laminas\Db\Sql\Predicate\PredicateSet;
-use LaminasTest\Db\DeprecatedAssertionsTrait;
+use PhpDb\Sql\Exception\InvalidArgumentException;
+use PhpDb\Sql\Predicate\Expression;
+use PhpDb\Sql\Predicate\In;
+use PhpDb\Sql\Predicate\IsNotNull;
+use PhpDb\Sql\Predicate\IsNull;
+use PhpDb\Sql\Predicate\Literal;
+use PhpDb\Sql\Predicate\Operator;
+use PhpDb\Sql\Predicate\PredicateSet;
+use PhpDbTest\DeprecatedAssertionsTrait;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 use ReflectionException;

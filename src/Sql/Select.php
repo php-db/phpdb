@@ -1,12 +1,12 @@
 <?php
 
-namespace Laminas\Db\Sql;
+namespace PhpDb\Sql;
 
 use Closure;
-use Laminas\Db\Adapter\Driver\DriverInterface;
-use Laminas\Db\Adapter\ParameterContainer;
-use Laminas\Db\Adapter\Platform\PlatformInterface;
-use Laminas\Db\Sql\Predicate\PredicateInterface;
+use PhpDb\Adapter\Driver\DriverInterface;
+use PhpDb\Adapter\ParameterContainer;
+use PhpDb\Adapter\Platform\PlatformInterface;
+use PhpDb\Sql\Predicate\PredicateInterface;
 
 use function array_key_exists;
 use function count;

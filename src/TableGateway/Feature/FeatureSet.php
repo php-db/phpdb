@@ -1,9 +1,9 @@
 <?php
 
-namespace Laminas\Db\TableGateway\Feature;
+namespace PhpDb\TableGateway\Feature;
 
-use Laminas\Db\TableGateway\AbstractTableGateway;
-use Laminas\Db\TableGateway\TableGatewayInterface;
+use PhpDb\TableGateway\AbstractTableGateway;
+use PhpDb\TableGateway\TableGatewayInterface;
 
 use function call_user_func_array;
 use function method_exists;

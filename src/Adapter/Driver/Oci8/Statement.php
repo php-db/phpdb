@@ -1,11 +1,11 @@
 <?php
 
-namespace Laminas\Db\Adapter\Driver\Oci8;
+namespace PhpDb\Adapter\Driver\Oci8;
 
-use Laminas\Db\Adapter\Driver\StatementInterface;
-use Laminas\Db\Adapter\Exception;
-use Laminas\Db\Adapter\ParameterContainer;
-use Laminas\Db\Adapter\Profiler;
+use PhpDb\Adapter\Driver\StatementInterface;
+use PhpDb\Adapter\Exception;
+use PhpDb\Adapter\ParameterContainer;
+use PhpDb\Adapter\Profiler;
 
 use function is_array;
 use function is_string;

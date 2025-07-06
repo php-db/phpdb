@@ -1,9 +1,9 @@
 <?php
 
-namespace Laminas\Db\Sql;
+namespace PhpDb\Sql;
 
-use Laminas\Db\Sql\ExpressionInterface;
-use Laminas\Db\Sql\SqlInterface;
+use PhpDb\Sql\ExpressionInterface;
+use PhpDb\Sql\SqlInterface;
 
 use function current;
 use function gettype;
