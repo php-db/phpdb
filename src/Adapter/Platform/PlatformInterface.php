@@ -15,12 +15,12 @@ interface PlatformInterface
     public function getName(): string;
 
     /**
-     * todo: sat-migration document
-     * NOTE: This method is probably ill named and may be updated during pgsql migration
      * Get Sql platform decorator
+     *
+     * Returns a Laminas\Db\Sql\Platform\* instance
+     * Laminas\Db\Sql\Platform\AbstractPlatform implements this interface
      */
     public function getSqlPlatformDecorator(): PlatformDecoratorInterface;
-
 
     /**
      * Get quote identifier symbol

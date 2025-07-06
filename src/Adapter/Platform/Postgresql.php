@@ -1,11 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Laminas\Db\Adapter\Platform;
 
 use Laminas\Db\Adapter\Driver\DriverInterface;
 use Laminas\Db\Adapter\Driver\Pdo;
 use Laminas\Db\Adapter\Driver\Pgsql;
 use Laminas\Db\Adapter\Exception;
+use Laminas\Db\Sql\Platform\PlatformDecoratorInterface;
 use PgSql\Connection as PgSqlConnection;
 
 use function get_resource_type;
@@ -41,6 +44,11 @@ class Postgresql extends AbstractPlatform
         if ($driver) {
             $this->setDriver($driver);
         }
+    }
+
+    public function getSqlPlatformDecorator(): PlatformDecoratorInterface
+    {
+
     }
 
     /**
