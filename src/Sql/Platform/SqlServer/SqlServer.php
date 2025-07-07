@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDb\Sql\Platform\SqlServer;
 
 use PhpDb\Sql\Ddl\CreateTable;

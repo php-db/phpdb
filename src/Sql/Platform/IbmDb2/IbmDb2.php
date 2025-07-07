@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDb\Sql\Platform\IbmDb2;
 
 use PhpDb\Sql\Platform\AbstractPlatform;

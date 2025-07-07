@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDb\Sql\Platform\SqlServer;
 
 use PhpDb\Adapter\Driver\DriverInterface;
@@ -92,6 +94,7 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
             $limitParamName        = $driver->formatParameterName('limit');
             $offsetParamName       = $driver->formatParameterName('offset');
             $offsetForSumParamName = $driver->formatParameterName('offsetForSum');
+            // todo: Track down LAMINAS_SQL_SERVER_LIMIT_OFFSET_EMULATION and replace with PHPDB_SQL_SERVER_LIMIT_OFFSET_EMULATION
             array_push(
                 $sqls,
                 ') AS [LAMINAS_SQL_SERVER_LIMIT_OFFSET_EMULATION] WHERE [LAMINAS_SQL_SERVER_LIMIT_OFFSET_EMULATION].[__LAMINAS_ROW_NUMBER] BETWEEN '

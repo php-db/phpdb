@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDb\Sql\Platform\Oracle;
 
 use PhpDb\Adapter\Driver\DriverInterface;
