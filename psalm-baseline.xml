@@ -5720,7 +5720,7 @@
   <file src="test/integration/Adapter/Driver/Pdo/Postgresql/AdapterTrait.php">
     <InvalidFalsableReturnType/>
     <RiskyTruthyFalsyComparison>
-      <code><![CDATA[! getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_PGSQL')]]></code>
+      <code><![CDATA[! getenv('TESTS_PHPDB_ADAPTER_DRIVER_PGSQL')]]></code>
     </RiskyTruthyFalsyComparison>
   </file>
   <file src="test/integration/Adapter/Driver/Pdo/Postgresql/TableGatewayTest.php">
@@ -5785,16 +5785,16 @@
       <code><![CDATA[testQuoteValueWithPgsql]]></code>
     </MissingReturnType>
     <PossiblyFalseArgument>
-      <code><![CDATA[getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_PGSQL_PASSWORD')]]></code>
-      <code><![CDATA[getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_PGSQL_USERNAME')]]></code>
+      <code><![CDATA[getenv('TESTS_PHPDB_ADAPTER_DRIVER_PGSQL_PASSWORD')]]></code>
+      <code><![CDATA[getenv('TESTS_PHPDB_ADAPTER_DRIVER_PGSQL_USERNAME')]]></code>
     </PossiblyFalseArgument>
     <PossiblyFalseOperand>
-      <code><![CDATA[getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_PGSQL_DATABASE')]]></code>
-      <code><![CDATA[getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_PGSQL_DATABASE')]]></code>
-      <code><![CDATA[getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_PGSQL_HOSTNAME')]]></code>
-      <code><![CDATA[getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_PGSQL_HOSTNAME')]]></code>
-      <code><![CDATA[getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_PGSQL_PASSWORD')]]></code>
-      <code><![CDATA[getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_PGSQL_USERNAME')]]></code>
+      <code><![CDATA[getenv('TESTS_PHPDB_ADAPTER_DRIVER_PGSQL_DATABASE')]]></code>
+      <code><![CDATA[getenv('TESTS_PHPDB_ADAPTER_DRIVER_PGSQL_DATABASE')]]></code>
+      <code><![CDATA[getenv('TESTS_PHPDB_ADAPTER_DRIVER_PGSQL_HOSTNAME')]]></code>
+      <code><![CDATA[getenv('TESTS_PHPDB_ADAPTER_DRIVER_PGSQL_HOSTNAME')]]></code>
+      <code><![CDATA[getenv('TESTS_PHPDB_ADAPTER_DRIVER_PGSQL_PASSWORD')]]></code>
+      <code><![CDATA[getenv('TESTS_PHPDB_ADAPTER_DRIVER_PGSQL_USERNAME')]]></code>
     </PossiblyFalseOperand>
     <PossiblyInvalidArgument>
       <code><![CDATA[$this->adapters['pgsql']]]></code>
@@ -5805,7 +5805,7 @@
       <code><![CDATA[$this->adapters['pgsql'] instanceof PgSqlConnection]]></code>
     </RedundantConditionGivenDocblockType>
     <RiskyTruthyFalsyComparison>
-      <code><![CDATA[! getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_PGSQL')]]></code>
+      <code><![CDATA[! getenv('TESTS_PHPDB_ADAPTER_DRIVER_PGSQL')]]></code>
     </RiskyTruthyFalsyComparison>
   </file>
   <file src="test/integration/Adapter/Platform/SqlServerTest.php">
@@ -5823,15 +5823,15 @@
       <code><![CDATA[testQuoteValueWithSqlServer]]></code>
     </MissingReturnType>
     <PossiblyFalseArgument>
-      <code><![CDATA[getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_SQLSRV_HOSTNAME')]]></code>
-      <code><![CDATA[getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_SQLSRV_PASSWORD')]]></code>
-      <code><![CDATA[getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_SQLSRV_USERNAME')]]></code>
+      <code><![CDATA[getenv('TESTS_PHPDB_ADAPTER_DRIVER_SQLSRV_HOSTNAME')]]></code>
+      <code><![CDATA[getenv('TESTS_PHPDB_ADAPTER_DRIVER_SQLSRV_PASSWORD')]]></code>
+      <code><![CDATA[getenv('TESTS_PHPDB_ADAPTER_DRIVER_SQLSRV_USERNAME')]]></code>
     </PossiblyFalseArgument>
     <PossiblyFalseOperand>
-      <code><![CDATA[getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_SQLSRV_HOSTNAME')]]></code>
+      <code><![CDATA[getenv('TESTS_PHPDB_ADAPTER_DRIVER_SQLSRV_HOSTNAME')]]></code>
     </PossiblyFalseOperand>
     <RiskyTruthyFalsyComparison>
-      <code><![CDATA[! getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_SQLSRV')]]></code>
+      <code><![CDATA[! getenv('TESTS_PHPDB_ADAPTER_DRIVER_SQLSRV')]]></code>
       <code><![CDATA[$database]]></code>
     </RiskyTruthyFalsyComparison>
   </file>
@@ -5843,7 +5843,7 @@
       <code><![CDATA[testQuoteValueWithPdoSqlite]]></code>
     </MissingReturnType>
     <RiskyTruthyFalsyComparison>
-      <code><![CDATA[! getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_SQLITE_MEMORY')]]></code>
+      <code><![CDATA[! getenv('TESTS_PHPDB_ADAPTER_DRIVER_SQLITE_MEMORY')]]></code>
     </RiskyTruthyFalsyComparison>
   </file>
   <file src="test/integration/Platform/FixtureLoader.php">
@@ -5889,16 +5889,16 @@
     </MissingConstructor>
     <PossiblyFalseArgument>
       <code><![CDATA[file_get_contents($this->fixtureFile)]]></code>
-      <code><![CDATA[getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_PGSQL_DATABASE')]]></code>
-      <code><![CDATA[getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_PGSQL_DATABASE')]]></code>
-      <code><![CDATA[getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_PGSQL_DATABASE')]]></code>
-      <code><![CDATA[getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_PGSQL_DATABASE')]]></code>
-      <code><![CDATA[getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_PGSQL_PASSWORD')]]></code>
-      <code><![CDATA[getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_PGSQL_USERNAME')]]></code>
+      <code><![CDATA[getenv('TESTS_PHPDB_ADAPTER_DRIVER_PGSQL_DATABASE')]]></code>
+      <code><![CDATA[getenv('TESTS_PHPDB_ADAPTER_DRIVER_PGSQL_DATABASE')]]></code>
+      <code><![CDATA[getenv('TESTS_PHPDB_ADAPTER_DRIVER_PGSQL_DATABASE')]]></code>
+      <code><![CDATA[getenv('TESTS_PHPDB_ADAPTER_DRIVER_PGSQL_DATABASE')]]></code>
+      <code><![CDATA[getenv('TESTS_PHPDB_ADAPTER_DRIVER_PGSQL_PASSWORD')]]></code>
+      <code><![CDATA[getenv('TESTS_PHPDB_ADAPTER_DRIVER_PGSQL_USERNAME')]]></code>
     </PossiblyFalseArgument>
     <PossiblyFalseOperand>
-      <code><![CDATA[getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_PGSQL_DATABASE')]]></code>
-      <code><![CDATA[getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_PGSQL_HOSTNAME')]]></code>
+      <code><![CDATA[getenv('TESTS_PHPDB_ADAPTER_DRIVER_PGSQL_DATABASE')]]></code>
+      <code><![CDATA[getenv('TESTS_PHPDB_ADAPTER_DRIVER_PGSQL_HOSTNAME')]]></code>
     </PossiblyFalseOperand>
     <PossiblyNullPropertyAssignmentValue>
       <code><![CDATA[null]]></code>
@@ -5913,25 +5913,25 @@
     </MissingConstructor>
     <PossiblyFalseArgument>
       <code><![CDATA[file_get_contents($fixtureFile)]]></code>
-      <code><![CDATA[getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_SQLSRV_DATABASE')]]></code>
-      <code><![CDATA[getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_SQLSRV_DATABASE')]]></code>
-      <code><![CDATA[getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_SQLSRV_DATABASE')]]></code>
-      <code><![CDATA[getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_SQLSRV_DATABASE')]]></code>
-      <code><![CDATA[getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_SQLSRV_DATABASE')]]></code>
-      <code><![CDATA[getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_SQLSRV_DATABASE')]]></code>
-      <code><![CDATA[getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_SQLSRV_DATABASE')]]></code>
-      <code><![CDATA[getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_SQLSRV_DATABASE')]]></code>
-      <code><![CDATA[getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_SQLSRV_HOSTNAME')]]></code>
+      <code><![CDATA[getenv('TESTS_PHPDB_ADAPTER_DRIVER_SQLSRV_DATABASE')]]></code>
+      <code><![CDATA[getenv('TESTS_PHPDB_ADAPTER_DRIVER_SQLSRV_DATABASE')]]></code>
+      <code><![CDATA[getenv('TESTS_PHPDB_ADAPTER_DRIVER_SQLSRV_DATABASE')]]></code>
+      <code><![CDATA[getenv('TESTS_PHPDB_ADAPTER_DRIVER_SQLSRV_DATABASE')]]></code>
+      <code><![CDATA[getenv('TESTS_PHPDB_ADAPTER_DRIVER_SQLSRV_DATABASE')]]></code>
+      <code><![CDATA[getenv('TESTS_PHPDB_ADAPTER_DRIVER_SQLSRV_DATABASE')]]></code>
+      <code><![CDATA[getenv('TESTS_PHPDB_ADAPTER_DRIVER_SQLSRV_DATABASE')]]></code>
+      <code><![CDATA[getenv('TESTS_PHPDB_ADAPTER_DRIVER_SQLSRV_DATABASE')]]></code>
+      <code><![CDATA[getenv('TESTS_PHPDB_ADAPTER_DRIVER_SQLSRV_HOSTNAME')]]></code>
     </PossiblyFalseArgument>
     <PossiblyFalseOperand>
-      <code><![CDATA[getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_SQLSRV_DATABASE')]]></code>
+      <code><![CDATA[getenv('TESTS_PHPDB_ADAPTER_DRIVER_SQLSRV_DATABASE')]]></code>
     </PossiblyFalseOperand>
     <PossiblyFalsePropertyAssignmentValue>
       <code><![CDATA[sqlsrv_connect(
-            getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_SQLSRV_HOSTNAME'),
+            getenv('TESTS_PHPDB_ADAPTER_DRIVER_SQLSRV_HOSTNAME'),
             [
-                'UID'                    => getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_SQLSRV_USERNAME'),
-                'PWD'                    => getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_SQLSRV_PASSWORD'),
+                'UID'                    => getenv('TESTS_PHPDB_ADAPTER_DRIVER_SQLSRV_USERNAME'),
+                'PWD'                    => getenv('TESTS_PHPDB_ADAPTER_DRIVER_SQLSRV_PASSWORD'),
                 'TrustServerCertificate' => 1,
             ]
         )]]></code>

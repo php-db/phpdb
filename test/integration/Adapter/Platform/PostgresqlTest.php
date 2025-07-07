@@ -25,23 +25,23 @@ final class PostgresqlTest extends TestCase
     #[Override]
     protected function setUp(): void
     {
-        if (! getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_PGSQL')) {
+        if (! getenv('TESTS_PHPDB_ADAPTER_DRIVER_PGSQL')) {
             $this->markTestSkipped(self::class . ' integration tests are not enabled!');
         }
         if (extension_loaded('pgsql')) {
             $this->adapters['pgsql'] = pg_connect(
-                'host=' . getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_PGSQL_HOSTNAME')
-                    . ' dbname=' . getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_PGSQL_DATABASE')
-                    . ' user=' . getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_PGSQL_USERNAME')
-                    . ' password=' . getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_PGSQL_PASSWORD')
+                'host=' . getenv('TESTS_PHPDB_ADAPTER_DRIVER_PGSQL_HOSTNAME')
+                    . ' dbname=' . getenv('TESTS_PHPDB_ADAPTER_DRIVER_PGSQL_DATABASE')
+                    . ' user=' . getenv('TESTS_PHPDB_ADAPTER_DRIVER_PGSQL_USERNAME')
+                    . ' password=' . getenv('TESTS_PHPDB_ADAPTER_DRIVER_PGSQL_PASSWORD')
             );
         }
         if (extension_loaded('pdo')) {
             $this->adapters['pdo_pgsql'] = new \PDO(
-                'pgsql:host=' . getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_PGSQL_HOSTNAME') . ';dbname='
-                . getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_PGSQL_DATABASE'),
-                getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_PGSQL_USERNAME'),
-                getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_PGSQL_PASSWORD')
+                'pgsql:host=' . getenv('TESTS_PHPDB_ADAPTER_DRIVER_PGSQL_HOSTNAME') . ';dbname='
+                . getenv('TESTS_PHPDB_ADAPTER_DRIVER_PGSQL_DATABASE'),
+                getenv('TESTS_PHPDB_ADAPTER_DRIVER_PGSQL_USERNAME'),
+                getenv('TESTS_PHPDB_ADAPTER_DRIVER_PGSQL_PASSWORD')
             );
         }
     }

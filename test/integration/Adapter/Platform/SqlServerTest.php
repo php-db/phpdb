@@ -24,19 +24,19 @@ final class SqlServerTest extends TestCase
     #[Override]
     protected function setUp(): void
     {
-        if (! getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_SQLSRV')) {
+        if (! getenv('TESTS_PHPDB_ADAPTER_DRIVER_SQLSRV')) {
             $this->markTestSkipped(self::class . ' integration tests are not enabled!');
         }
 
-        $database = getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_SQLSRV_DATABASE');
+        $database = getenv('TESTS_PHPDB_ADAPTER_DRIVER_SQLSRV_DATABASE');
         $database = $database === false ? null : $database;
 
         if (extension_loaded('sqlsrv')) {
             $this->adapters['sqlsrv'] = sqlsrv_connect(
-                getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_SQLSRV_HOSTNAME'),
+                getenv('TESTS_PHPDB_ADAPTER_DRIVER_SQLSRV_HOSTNAME'),
                 [
-                    'UID'                    => getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_SQLSRV_USERNAME'),
-                    'PWD'                    => getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_SQLSRV_PASSWORD'),
+                    'UID'                    => getenv('TESTS_PHPDB_ADAPTER_DRIVER_SQLSRV_USERNAME'),
+                    'PWD'                    => getenv('TESTS_PHPDB_ADAPTER_DRIVER_SQLSRV_PASSWORD'),
                     'Database'               => $database,
                     'TrustServerCertificate' => 1,
                 ]
@@ -49,10 +49,10 @@ final class SqlServerTest extends TestCase
         if (extension_loaded('pdo') && extension_loaded('pdo_sqlsrv')) {
             $this->adapters['pdo_sqlsrv'] = new PDO(
                 'sqlsrv:Server='
-                    . getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_SQLSRV_HOSTNAME')
+                    . getenv('TESTS_PHPDB_ADAPTER_DRIVER_SQLSRV_HOSTNAME')
                 . ';Database=' . ($database ?: '') . ';TrustServerCertificate=1',
-                getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_SQLSRV_USERNAME'),
-                getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_SQLSRV_PASSWORD')
+                getenv('TESTS_PHPDB_ADAPTER_DRIVER_SQLSRV_USERNAME'),
+                getenv('TESTS_PHPDB_ADAPTER_DRIVER_SQLSRV_PASSWORD')
             );
         }
     }

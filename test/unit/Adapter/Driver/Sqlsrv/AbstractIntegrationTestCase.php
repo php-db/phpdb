@@ -15,9 +15,9 @@ abstract class AbstractIntegrationTestCase extends TestCase
 {
     /** @var array<string, string> */
     protected array $variables = [
-        'hostname' => 'TESTS_LAMINAS_DB_ADAPTER_DRIVER_SQLSRV_HOSTNAME',
-        'username' => 'TESTS_LAMINAS_DB_ADAPTER_DRIVER_SQLSRV_USERNAME',
-        'password' => 'TESTS_LAMINAS_DB_ADAPTER_DRIVER_SQLSRV_PASSWORD',
+        'hostname' => 'TESTS_PHPDB_ADAPTER_DRIVER_SQLSRV_HOSTNAME',
+        'username' => 'TESTS_PHPDB_ADAPTER_DRIVER_SQLSRV_USERNAME',
+        'password' => 'TESTS_PHPDB_ADAPTER_DRIVER_SQLSRV_PASSWORD',
     ];
 
     /** @var array<string, resource> */
@@ -30,7 +30,7 @@ abstract class AbstractIntegrationTestCase extends TestCase
     #[Override]
     protected function setUp(): void
     {
-        if (! getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_SQLSRV')) {
+        if (! getenv('TESTS_PHPDB_ADAPTER_DRIVER_SQLSRV')) {
             $this->markTestSkipped('SQLSRV tests are not enabled');
         }
         foreach ($this->variables as $name => $value) {
@@ -48,10 +48,10 @@ abstract class AbstractIntegrationTestCase extends TestCase
         }
 
         $this->adapters['sqlsrv'] = sqlsrv_connect(
-            getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_SQLSRV_HOSTNAME'),
+            getenv('TESTS_PHPDB_ADAPTER_DRIVER_SQLSRV_HOSTNAME'),
             [
-                'UID'                    => getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_SQLSRV_USERNAME'),
-                'PWD'                    => getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_SQLSRV_PASSWORD'),
+                'UID'                    => getenv('TESTS_PHPDB_ADAPTER_DRIVER_SQLSRV_USERNAME'),
+                'PWD'                    => getenv('TESTS_PHPDB_ADAPTER_DRIVER_SQLSRV_PASSWORD'),
                 'TrustServerCertificate' => 1,
             ]
         );
