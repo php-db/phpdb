@@ -10,7 +10,6 @@ use PhpDb\Metadata\Object\ConstraintObject;
 use PhpDb\Metadata\Object\TableObject;
 use PhpDb\Metadata\Object\TriggerObject;
 use PhpDb\Metadata\Object\ViewObject;
-use Symfony\Component\Console\Helper\Table;
 
 interface MetadataInterface
 {

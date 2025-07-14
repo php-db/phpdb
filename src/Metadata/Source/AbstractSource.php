@@ -32,7 +32,7 @@ abstract class AbstractSource implements MetadataInterface
      * Constructor
      */
     public function __construct(
-        protected AdapterInterface&Adapter&SchemaAwareInterface $adapter
+        protected AdapterInterface&SchemaAwareInterface $adapter
         ) {
         $this->defaultSchema = $adapter->getCurrentSchema() ?: self::DEFAULT_SCHEMA;
     }
