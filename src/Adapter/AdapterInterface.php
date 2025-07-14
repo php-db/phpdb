@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace PhpDb\Adapter;
 
+use PhpDb\ResultSet;
+
 /**
  * @property Driver\DriverInterface $driver
  * @property Platform\PlatformInterface $platform
@@ -28,7 +30,6 @@ interface AdapterInterface
 
     public const VALUE_QUOTE_SEPARATOR = 'quoteSeparator';
 
-
     /**
      * @return Driver\DriverInterface
      */
@@ -38,4 +39,10 @@ interface AdapterInterface
      * @return Platform\PlatformInterface
      */
     public function getPlatform();
+
+    public function query(
+        string $sql,
+        ParameterContainer|array|string $parametersOrQueryMode = self::QUERY_MODE_PREPARE,
+        ?ResultSet\ResultSetInterface $resultPrototype = null
+    ): Driver\StatementInterface|ResultSet\ResultSet|Driver\ResultInterface;
 }
