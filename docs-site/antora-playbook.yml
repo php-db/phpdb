@@ -1,0 +1,12 @@
+site:
+  title: The laminas-db documentation
+  start_page: laminas-db-documentation::index.adoc
+content:
+  sources:
+  - url: ../
+    branches: HEAD
+    start_path: docs-site
+ui:
+  bundle:
+    url: https://gitlab.com/antora/antora-ui-default/-/jobs/artifacts/HEAD/raw/build/ui-bundle.zip?job=bundle-stable
+    snapshot: true

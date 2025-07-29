@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>SQL Abstraction :: The laminas-db documentation</title>
+    <meta name="generator" content="Antora 3.1.10">
+    <link rel="stylesheet" href="../_/css/site.css">
+    <script>var uiRootPath = '../_'</script>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="..">The laminas-db documentation</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Products</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="#">Product A</a>
+            <a class="navbar-item" href="#">Product B</a>
+            <a class="navbar-item" href="#">Product C</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Services</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="#">Service A</a>
+            <a class="navbar-item" href="#">Service B</a>
+            <a class="navbar-item" href="#">Service C</a>
+          </div>
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="button is-primary" href="#">Download</a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="laminas-db-documentation" data-version="">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="index.html">The laminas-db documentation</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="index.html">Welcome to the documentation</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="adapter.html">Adapter</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">The laminas-db documentation</span>
+    <span class="version">default</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <a class="title" href="index.html">The laminas-db documentation</a>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="index.html">default</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="index.html">The laminas-db documentation</a></li>
+    <li><a href="sql.md.html">SQL Abstraction</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/settermjd/Workspace/PHP/axleus/laminas-db//docs-site/modules/ROOT/pages/sql.md.adoc">Edit this Page</a></div>
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">SQL Abstraction</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>Laminas\Db\Sql</code> is a SQL abstraction layer for building platform-specific SQL queries via an object-oriented API.
+The end result of a <code>Laminas\Db\Sql</code> object will be to either produce a <code>Statement</code> and <code>ParameterContainer</code> that represents the target query, or a full string that can be directly executed against the database platform.
+To achieve this, <code>Laminas\Db\Sql</code> objects require a <code>Laminas\Db\Adapter\Adapter</code> object in order to produce the desired results.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_quick_start"><a class="anchor" href="#_quick_start"></a>Quick start</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>There are four primary tasks associated with interacting with a database defined by Data Manipulation Language (DML): selecting, inserting, updating, and deleting.
+As such, there are four primary classes that developers can interact with in order to build queries in the <code>Laminas\Db\Sql</code> namespace: <code>Select</code>, <code>Insert</code>, <code>Update</code>, and <code>Delete</code>.</p>
+</div>
+<div class="paragraph">
+<p>Since these four tasks are so closely related and generally used together within the same application, the <code>Laminas\Db\Sql\Sql</code> class helps you create them and produce the result you are attempting to achieve.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-php hljs" data-lang="php">use Laminas\Db\Sql\Sql;
+
+$sql    = new Sql($adapter);
+$select = $sql-&gt;select(); // returns a Laminas\Db\Sql\Select instance
+$insert = $sql-&gt;insert(); // returns a Laminas\Db\Sql\Insert instance
+$update = $sql-&gt;update(); // returns a Laminas\Db\Sql\Update instance
+$delete = $sql-&gt;delete(); // returns a Laminas\Db\Sql\Delete instance</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>As a developer, you can now interact with these objects, as described in the sections below, to customize each query.
+Once they have been populated with values, they are ready to either be prepared or executed.</p>
+</div>
+<div class="paragraph">
+<p>To prepare (using a Select object):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-php hljs" data-lang="php">use Laminas\Db\Sql\Sql;
+
+$sql    = new Sql($adapter);
+$select = $sql-&gt;select();
+$select-&gt;from('foo');
+$select-&gt;where(['id' =&gt; 2]);
+
+$statement = $sql-&gt;prepareStatementForSqlObject($select);
+$results = $statement-&gt;execute();</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To execute (using a Select object)</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-php hljs" data-lang="php">use Laminas\Db\Sql\Sql;
+
+$sql    = new Sql($adapter);
+$select = $sql-&gt;select();
+$select-&gt;from('foo');
+$select-&gt;where(['id' =&gt; 2]);
+
+$selectString = $sql-&gt;buildSqlString($select);
+$results = $adapter-&gt;query($selectString, $adapter::QUERY_MODE_EXECUTE);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><code>Laminas\\Db\\Sql\\Sql</code> objects can also be bound to a particular table so that in obtaining a <code>Select</code>, <code>Insert</code>, <code>Update</code>, or <code>Delete</code> instance, the object will be seeded with the table:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-php hljs" data-lang="php">use Laminas\Db\Sql\Sql;
+
+$sql    = new Sql($adapter, 'foo');
+$select = $sql-&gt;select();
+$select-&gt;where(['id' =&gt; 2]); // $select already has from('foo') applied</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_common_interfaces_for_sql_implementations"><a class="anchor" href="#_common_interfaces_for_sql_implementations"></a>Common interfaces for SQL implementations</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Each of these objects implements the following two interfaces:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-php hljs" data-lang="php">interface PreparableSqlInterface
+{
+     public function prepareStatement(Adapter $adapter, StatementInterface $statement) : void;
+}
+
+interface SqlInterface
+{
+     public function getSqlString(PlatformInterface $adapterPlatform = null) : string;
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Use these functions to produce either (a) a prepared statement, or (b) a string to execute.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_select"><a class="anchor" href="#_select"></a>Select</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>Laminas\Db\Sql\Select</code> presents a unified API for building platform-specific SQL SELECT queries.
+Instances may be created and consumed without <code>Laminas\Db\Sql\Sql</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-php hljs" data-lang="php">use Laminas\Db\Sql\Select;
+
+$select = new Select();
+// or, to produce a $select bound to a specific table
+$select = new Select('foo');</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If a table is provided to the <code>Select</code> object, then <code>from()</code> cannot be called later to change the name of the table.</p>
+</div>
+<div class="paragraph">
+<p>Once you have a valid <code>Select</code> object, the following API can be used to further specify various select statement parts:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-php hljs" data-lang="php">class Select extends AbstractSql implements SqlInterface, PreparableSqlInterface
+{
+    const JOIN_INNER = 'inner';
+    const JOIN_OUTER = 'outer';
+    const JOIN_FULL_OUTER  = 'full outer';
+    const JOIN_LEFT = 'left';
+    const JOIN_RIGHT = 'right';
+    const SQL_STAR = '*';
+    const ORDER_ASCENDING = 'ASC';
+    const ORDER_DESCENDING = 'DESC';
+
+    public $where; // @param Where $where
+
+    public function __construct(string|array|TableIdentifier $table = null);
+    public function from(string|array|TableIdentifier $table) : self;
+    public function columns(array $columns, bool $prefixColumnsWithTable = true) : self;
+    public function join(string|array|TableIdentifier $name, string $on, string|array $columns = self::SQL_STAR, string $type = self::JOIN_INNER) : self;
+    public function where(Where|callable|string|array|PredicateInterface $predicate, string $combination = Predicate\PredicateSet::OP_AND) : self;
+    public function group(string|array $group);
+    public function having(Having|callable|string|array $predicate, string $combination = Predicate\PredicateSet::OP_AND) : self;
+    public function order(string|array $order) : self;
+    public function limit(int $limit) : self;
+    public function offset(int $offset) : self;
+}</code></pre>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_from"><a class="anchor" href="#_from"></a>from()</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-php hljs" data-lang="php">// As a string:
+$select-&gt;from('foo');
+
+// As an array to specify an alias
+// (produces SELECT "t".* FROM "table" AS "t")
+$select-&gt;from(['t' =&gt; 'table']);
+
+// Using a Sql\TableIdentifier:
+// (same output as above)
+$select-&gt;from(['t' =&gt; new TableIdentifier('table')]);</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_columns"><a class="anchor" href="#_columns"></a>columns()</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-php hljs" data-lang="php">// As an array of names
+$select-&gt;columns(['foo', 'bar']);
+
+// As an associative array with aliases as the keys
+// (produces 'bar' AS 'foo', 'bax' AS 'baz')
+$select-&gt;columns([
+    'foo' =&gt; 'bar',
+    'baz' =&gt; 'bax'
+]);
+
+// Sql function call on the column
+// (produces CONCAT_WS('/', 'bar', 'bax') AS 'foo')
+$select-&gt;columns([
+    'foo' =&gt; new \Laminas\Db\Sql\Expression("CONCAT_WS('/', 'bar', 'bax')")
+]);</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_join"><a class="anchor" href="#_join"></a>join()</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-php hljs" data-lang="php">$select-&gt;join(
+    'foo',              // table name
+    'id = bar.id',      // expression to join on (will be quoted by platform object before insertion),
+    ['bar', 'baz'],     // (optional) list of columns, same requirements as columns() above
+    $select::JOIN_OUTER // (optional), one of inner, outer, full outer, left, right also represented by constants in the API
+);
+
+$select
+    -&gt;from(['f' =&gt; 'foo'])     // base table
+    -&gt;join(
+        ['b' =&gt; 'bar'],        // join table with alias
+        'f.foo_id = b.foo_id'  // join expression
+    );</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_where_having"><a class="anchor" href="#_where_having"></a>where(), having()</h3>
+<div class="paragraph">
+<p><code>Laminas\Db\Sql\Select</code> provides bit of flexibility as it regards to what kind of parameters are acceptable when calling <code>where()</code> or <code>having()</code>.
+The method signature is listed as:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-php hljs" data-lang="php">/**
+ * Create where clause
+ *
+ * @param  Where|callable|string|array $predicate
+ * @param  string $combination One of the OP_* constants from Predicate\PredicateSet
+ * @return Select
+ */
+public function where($predicate, $combination = Predicate\PredicateSet::OP_AND);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If you provide a <code>Laminas\Db\Sql\Where</code> instance to <code>where()</code> or a <code>Laminas\Db\Sql\Having</code> instance to <code>having()</code>, any previous internal instances will be replaced completely.
+When either instance is processed, this object will be iterated to produce the WHERE or HAVING section of the SELECT statement.</p>
+</div>
+<div class="paragraph">
+<p>If you provide a PHP callable to <code>where()</code> or <code>having()</code>, this function will be called with the <code>Select</code>'s <code>Where</code>/<code>Having</code> instance as the only parameter.
+This enables code like the following:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-php hljs" data-lang="php">$select-&gt;where(function (Where $where) {
+    $where-&gt;like('username', 'ralph%');
+});</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If you provide a <em>string</em>, this string will be used to create a <code>Laminas\Db\Sql\Predicate\Expression</code> instance, and its contents will be applied as-is, with no quoting:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-php hljs" data-lang="php">// SELECT "foo".* FROM "foo" WHERE x = 5
+$select-&gt;from('foo')-&gt;where('x = 5');</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If you provide an array with integer indices, the value can be one of:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>a string;
+this will be used to build a <code>Predicate\Expression</code>.</p>
+</li>
+<li>
+<p>any object implementing <code>Predicate\PredicateInterface</code>.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>In either case, the instances are pushed onto the <code>Where</code> stack with the <code>$combination</code> provided (defaulting to <code>AND</code>).</p>
+</div>
+<div class="paragraph">
+<p>As an example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-php hljs" data-lang="php">// SELECT "foo".* FROM "foo" WHERE x = 5 AND y = z
+$select-&gt;from('foo')-&gt;where(['x = 5', 'y = z']);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If you provide an associative array with string keys, any value with a string key will be cast as follows:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">PHP value</th>
+<th class="tableblock halign-left valign-top">Predicate type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>null</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Predicate\IsNull</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>array</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Predicate\In</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>string</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Predicate\Operator</code>, where the key is the identifier.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>As an example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-php hljs" data-lang="php">// SELECT "foo".* FROM "foo" WHERE "c1" IS NULL AND "c2" IN (?, ?, ?) AND "c3" IS NOT NULL
+$select-&gt;from('foo')-&gt;where([
+    'c1' =&gt; null,
+    'c2' =&gt; [1, 2, 3],
+    new \Laminas\Db\Sql\Predicate\IsNotNull('c3'),
+]);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>As another example of complex queries with nested conditions e.g.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-sql hljs" data-lang="sql">SELECT * WHERE (column1 is null or column1 = 2) AND (column2 = 3)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>you need to use the <code>nest()</code> and <code>unnest()</code> methods, as follows:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-php hljs" data-lang="php">$select-&gt;where-&gt;nest() // bracket opened
+    -&gt;isNull('column1')
+    -&gt;or
+    -&gt;equalTo('column1', '2')
+    -&gt;unnest();  // bracket closed
+    -&gt;equalTo('column2', '3');</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_order"><a class="anchor" href="#_order"></a>order()</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-php hljs" data-lang="php">$select = new Select;
+$select-&gt;order('id DESC'); // produces 'id' DESC
+
+$select = new Select;
+$select
+    -&gt;order('id DESC')
+    -&gt;order('name ASC, age DESC'); // produces 'id' DESC, 'name' ASC, 'age' DESC
+
+$select = new Select;
+$select-&gt;order(['name ASC', 'age DESC']); // produces 'name' ASC, 'age' DESC</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_limit_and_offset"><a class="anchor" href="#_limit_and_offset"></a>limit() and offset()</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-php hljs" data-lang="php">$select = new Select;
+$select-&gt;limit(5);   // always takes an integer/numeric
+$select-&gt;offset(10); // similarly takes an integer/numeric</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_insert"><a class="anchor" href="#_insert"></a>Insert</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The Insert API:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-php hljs" data-lang="php">class Insert implements SqlInterface, PreparableSqlInterface
+{
+    const VALUES_MERGE = 'merge';
+    const VALUES_SET   = 'set';
+
+    public function __construct(string|TableIdentifier $table = null);
+    public function into(string|TableIdentifier $table) : self;
+    public function columns(array $columns) : self;
+    public function values(array $values, string $flag = self::VALUES_SET) : self;
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>As with <code>Select</code>, the table may be provided during instantiation or via the <code>into()</code> method.</p>
+</div>
+<div class="sect2">
+<h3 id="_columns_2"><a class="anchor" href="#_columns_2"></a>columns()</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-php hljs" data-lang="php">$insert-&gt;columns(['foo', 'bar']); // set the valid columns</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_values"><a class="anchor" href="#_values"></a>values()</h3>
+<div class="paragraph">
+<p>The default behavior of values is to set the values.
+Successive calls will not preserve values from previous calls.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-php hljs" data-lang="php">$insert-&gt;values([
+    'col_1' =&gt; 'value1',
+    'col_2' =&gt; 'value2',
+]);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To merge values with previous calls, provide the appropriate flag: <code>Laminas\Db\Sql\Insert::VALUES_MERGE</code></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-php hljs" data-lang="php">$insert-&gt;values(['col_2' =&gt; 'value2'], $insert::VALUES_MERGE);</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_update"><a class="anchor" href="#_update"></a>Update</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-php hljs" data-lang="php">class Update
+{
+    const VALUES_MERGE = 'merge';
+    const VALUES_SET   = 'set';
+
+    public $where; // @param Where $where
+    public function __construct(string|TableIdentifier $table = null);
+    public function table(string|TableIdentifier $table) : self;
+    public function set(array $values, string $flag = self::VALUES_SET) : self;
+    public function where(Where|callable|string|array|PredicateInterface $predicate, string $combination = Predicate\PredicateSet::OP_AND) : self;
+}</code></pre>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_set"><a class="anchor" href="#_set"></a>set()</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-php hljs" data-lang="php">$update-&gt;set(['foo' =&gt; 'bar', 'baz' =&gt; 'bax']);</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_where"><a class="anchor" href="#_where"></a>where()</h3>
+<div class="paragraph">
+<p>See the <a href="#where-and-having">section on Where and Having</a>.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_delete"><a class="anchor" href="#_delete"></a>Delete</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-php hljs" data-lang="php">class Delete
+{
+    public $where; // @param Where $where
+
+    public function __construct(string|TableIdentifier $table = null);
+    public function from(string|TableIdentifier $table);
+    public function where(Where|callable|string|array|PredicateInterface $predicate, string $combination = Predicate\PredicateSet::OP_AND) : self;
+}</code></pre>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_where_2"><a class="anchor" href="#_where_2"></a>where()</h3>
+<div class="paragraph">
+<p>See the <a href="#where-and-having">section on Where and Having</a>.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_where_and_having"><a class="anchor" href="#_where_and_having"></a>Where and Having</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In the following, we will talk about <code>Where</code>;
+note, however, that <code>Having</code> utilizes the same API.</p>
+</div>
+<div class="paragraph">
+<p>Effectively, <code>Where</code> and <code>Having</code> extend from the same base object, a <code>Predicate</code> (and <code>PredicateSet</code>).
+All of the parts that make up a WHERE or HAVING clause that are AND&#8217;ed or OR&#8217;d together are called <em>predicates</em>.
+The full set of predicates is called a <code>PredicateSet</code>.
+A <code>Predicate</code> generally contains the values (and identifiers) separate from the fragment they belong to until the last possible moment when the statement is either prepared (parameteritized) or executed.
+In parameterization, the parameters will be replaced with their proper placeholder (a named or positional parameter), and the values stored inside an <code>Adapter\ParameterContainer</code>.
+When executed, the values will be interpolated into the fragments they belong to and properly quoted.</p>
+</div>
+<div class="paragraph">
+<p>In the <code>Where</code>/<code>Having</code> API, a distinction is made between what elements are considered identifiers (<code>TYPE_IDENTIFIER</code>) and which are values (<code>TYPE_VALUE</code>).
+There is also a special use case type for literal values (<code>TYPE_LITERAL</code>).
+All element types are expressed via the <code>Laminas\Db\Sql\ExpressionInterface</code> interface.</p>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>=== Literals</p>
+</div>
+<div class="paragraph">
+<p>In Laminas 2.1, an actual <code>Literal</code> type was added.
+<code>Laminas\Db\Sql</code> now makes the distinction that literals will not have any parameters that need interpolating, while <code>Expression</code> objects <em>might</em> have parameters that need interpolating.
+In cases where there are parameters in an <code>Expression</code>, <code>Laminas\Db\Sql\AbstractSql</code> will do its best to identify placeholders when the <code>Expression</code> is processed during statement creation.
+In short, if you don&#8217;t have parameters, use <code>Literal</code> objects.</p>
+</div>
+</blockquote>
+</div>
+<div class="paragraph">
+<p>The <code>Where</code> and <code>Having</code> API is that of <code>Predicate</code> and <code>PredicateSet</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-php hljs" data-lang="php">// Where &amp; Having extend Predicate:
+class Predicate extends PredicateSet
+{
+    public $and;
+    public $or;
+    public $AND;
+    public $OR;
+    public $NEST;
+    public $UNNEST;
+
+    public function nest() : Predicate;
+    public function setUnnest(Predicate $predicate) : void;
+    public function unnest() : Predicate;
+    public function equalTo(
+        int|float|bool|string $left,
+        int|float|bool|string $right,
+        string $leftType = self::TYPE_IDENTIFIER,
+        string $rightType = self::TYPE_VALUE
+    ) : self;
+    public function notEqualTo(
+        int|float|bool|string $left,
+        int|float|bool|string $right,
+        string $leftType = self::TYPE_IDENTIFIER,
+        string $rightType = self::TYPE_VALUE
+    ) : self;
+    public function lessThan(
+        int|float|bool|string $left,
+        int|float|bool|string $right,
+        string $leftType = self::TYPE_IDENTIFIER,
+        string $rightType = self::TYPE_VALUE
+    ) : self;
+    public function greaterThan(
+        int|float|bool|string $left,
+        int|float|bool|string $right,
+        string $leftType = self::TYPE_IDENTIFIER,
+        string $rightType = self::TYPE_VALUE
+    ) : self;
+    public function lessThanOrEqualTo(
+        int|float|bool|string $left,
+        int|float|bool|string $right,
+        string $leftType = self::TYPE_IDENTIFIER,
+        string $rightType = self::TYPE_VALUE
+    ) : self;
+    public function greaterThanOrEqualTo(
+        int|float|bool|string $left,
+        int|float|bool|string $right,
+        string $leftType = self::TYPE_IDENTIFIER,
+        string $rightType = self::TYPE_VALUE
+    ) : self;
+    public function like(string $identifier, string $like) : self;
+    public function notLike(string $identifier, string $notLike) : self;
+    public function literal(string $literal) : self;
+    public function expression(string $expression, array $parameters = null) : self;
+    public function isNull(string $identifier) : self;
+    public function isNotNull(string $identifier) : self;
+    public function in(string $identifier, array $valueSet = []) : self;
+    public function notIn(string $identifier, array $valueSet = []) : self;
+    public function between(
+        string $identifier,
+        int|float|string $minValue,
+        int|float|string $maxValue
+    ) : self;
+    public function notBetween(
+        string $identifier,
+        int|float|string $minValue,
+        int|float|string $maxValue
+    ) : self;
+    public function predicate(PredicateInterface $predicate) : self;
+
+    // Inherited From PredicateSet
+
+    public function addPredicate(PredicateInterface $predicate, $combination = null) : self;
+    public function getPredicates() PredicateInterface[];
+    public function orPredicate(PredicateInterface $predicate) : self;
+    public function andPredicate(PredicateInterface $predicate) : self;
+    public function getExpressionData() : array;
+    public function count() : int;
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Each method in the API will produce a corresponding <code>Predicate</code> object of a similarly named type, as described below.</p>
+</div>
+<div class="sect2">
+<h3 id="_equalto_lessthan_greaterthan_lessthanorequalto_greaterthanorequalto"><a class="anchor" href="#_equalto_lessthan_greaterthan_lessthanorequalto_greaterthanorequalto"></a>equalTo(), lessThan(), greaterThan(), lessThanOrEqualTo(), greaterThanOrEqualTo()</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-php hljs" data-lang="php">$where-&gt;equalTo('id', 5);
+
+// The above is equivalent to:
+$where-&gt;addPredicate(
+    new Predicate\Operator($left, Operator::OPERATOR_EQUAL_TO, $right, $leftType, $rightType)
+);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Operators use the following API:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-php hljs" data-lang="php">class Operator implements PredicateInterface
+{
+    const OPERATOR_EQUAL_TO                  = '=';
+    const OP_EQ                              = '=';
+    const OPERATOR_NOT_EQUAL_TO              = '!=';
+    const OP_NE                              = '!=';
+    const OPERATOR_LESS_THAN                 = '&lt;';
+    const OP_LT                              = '&lt;';
+    const OPERATOR_LESS_THAN_OR_EQUAL_TO     = '&lt;=';
+    const OP_LTE                             = '&lt;=';
+    const OPERATOR_GREATER_THAN              = '&gt;';
+    const OP_GT                              = '&gt;';
+    const OPERATOR_GREATER_THAN_OR_EQUAL_TO  = '&gt;=';
+    const OP_GTE                             = '&gt;=';
+
+    public function __construct(
+        int|float|bool|string $left = null,
+        string $operator = self::OPERATOR_EQUAL_TO,
+        int|float|bool|string $right = null,
+        string $leftType = self::TYPE_IDENTIFIER,
+        string $rightType = self::TYPE_VALUE
+    );
+    public function setLeft(int|float|bool|string $left);
+    public function getLeft() : int|float|bool|string;
+    public function setLeftType(string $type) : self;
+    public function getLeftType() : string;
+    public function setOperator(string $operator);
+    public function getOperator() : string;
+    public function setRight(int|float|bool|string $value) : self;
+    public function getRight() : int|float|bool|string;
+    public function setRightType(string $type) : self;
+    public function getRightType() : string;
+    public function getExpressionData() : array;
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_likeidentifier_like_notlikeidentifier_notlike"><a class="anchor" href="#_likeidentifier_like_notlikeidentifier_notlike"></a>like($identifier, $like), notLike($identifier, $notLike)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-php hljs" data-lang="php">$where-&gt;like($identifier, $like):
+
+// The above is equivalent to:
+$where-&gt;addPredicate(
+    new Predicate\Like($identifier, $like)
+);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The following is the <code>Like</code> API:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-php hljs" data-lang="php">class Like implements PredicateInterface
+{
+    public function __construct(string $identifier = null, string $like = null);
+    public function setIdentifier(string $identifier) : self;
+    public function getIdentifier() : string;
+    public function setLike(string $like) : self;
+    public function getLike() : string;
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_literalliteral"><a class="anchor" href="#_literalliteral"></a>literal($literal)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-php hljs" data-lang="php">$where-&gt;literal($literal);
+
+// The above is equivalent to:
+$where-&gt;addPredicate(
+    new Predicate\Literal($literal)
+);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The following is the <code>Literal</code> API:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-php hljs" data-lang="php">class Literal implements ExpressionInterface, PredicateInterface
+{
+    const PLACEHOLDER = '?';
+    public function __construct(string $literal = '');
+    public function setLiteral(string $literal) : self;
+    public function getLiteral() : string;
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_expressionexpression_parameter"><a class="anchor" href="#_expressionexpression_parameter"></a>expression($expression, $parameter)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-php hljs" data-lang="php">$where-&gt;expression($expression, $parameter);
+
+// The above is equivalent to:
+$where-&gt;addPredicate(
+    new Predicate\Expression($expression, $parameter)
+);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The following is the <code>Expression</code> API:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-php hljs" data-lang="php">class Expression implements ExpressionInterface, PredicateInterface
+{
+    const PLACEHOLDER = '?';
+
+    public function __construct(
+        string $expression = null,
+        int|float|bool|string|array $valueParameter = null
+        /* [, $valueParameter, ...  ] */
+    );
+    public function setExpression(string $expression) : self;
+    public function getExpression() : string;
+    public function setParameters(int|float|bool|string|array $parameters) : self;
+    public function getParameters() : array;
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Expression parameters can be supplied either as a single scalar, an array of values, or as an array of value/types for more granular escaping.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-php hljs" data-lang="php">$select
+    -&gt;from('foo')
+    -&gt;columns([
+        new Expression(
+            '(COUNT(?) + ?) AS ?',
+            [
+                ['some_column' =&gt; ExpressionInterface::TYPE_IDENTIFIER],
+                [5 =&gt; ExpressionInterface::TYPE_VALUE],
+                ['bar' =&gt; ExpressionInterface::TYPE_IDENTIFIER],
+            ],
+        ),
+    ]);
+
+// Produces SELECT (COUNT("some_column") + '5') AS "bar" FROM "foo"</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_isnullidentifier"><a class="anchor" href="#_isnullidentifier"></a>isNull($identifier)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-php hljs" data-lang="php">$where-&gt;isNull($identifier);
+
+// The above is equivalent to:
+$where-&gt;addPredicate(
+    new Predicate\IsNull($identifier)
+);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The following is the <code>IsNull</code> API:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-php hljs" data-lang="php">class IsNull implements PredicateInterface
+{
+    public function __construct(string $identifier = null);
+    public function setIdentifier(string $identifier) : self;
+    public function getIdentifier() : string;
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_isnotnullidentifier"><a class="anchor" href="#_isnotnullidentifier"></a>isNotNull($identifier)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-php hljs" data-lang="php">$where-&gt;isNotNull($identifier);
+
+// The above is equivalent to:
+$where-&gt;addPredicate(
+    new Predicate\IsNotNull($identifier)
+);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The following is the <code>IsNotNull</code> API:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-php hljs" data-lang="php">class IsNotNull implements PredicateInterface
+{
+    public function __construct(string $identifier = null);
+    public function setIdentifier(string $identifier) : self;
+    public function getIdentifier() : string;
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_inidentifier_valueset_notinidentifier_valueset"><a class="anchor" href="#_inidentifier_valueset_notinidentifier_valueset"></a>in($identifier, $valueSet), notIn($identifier, $valueSet)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-php hljs" data-lang="php">$where-&gt;in($identifier, $valueSet);
+
+// The above is equivalent to:
+$where-&gt;addPredicate(
+    new Predicate\In($identifier, $valueSet)
+);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The following is the <code>In</code> API:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-php hljs" data-lang="php">class In implements PredicateInterface
+{
+    public function __construct(
+        string|array $identifier = null,
+        array|Select $valueSet = null
+    );
+    public function setIdentifier(string|array $identifier) : self;
+    public function getIdentifier() : string|array;
+    public function setValueSet(array|Select $valueSet) : self;
+    public function getValueSet() : array|Select;
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_betweenidentifier_minvalue_maxvalue_notbetweenidentifier_minvalue_maxvalue"><a class="anchor" href="#_betweenidentifier_minvalue_maxvalue_notbetweenidentifier_minvalue_maxvalue"></a>between($identifier, $minValue, $maxValue), notBetween($identifier, $minValue, $maxValue)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-php hljs" data-lang="php">$where-&gt;between($identifier, $minValue, $maxValue);
+
+// The above is equivalent to:
+$where-&gt;addPredicate(
+    new Predicate\Between($identifier, $minValue, $maxValue)
+);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The following is the <code>Between</code> API:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-php hljs" data-lang="php">class Between implements PredicateInterface
+{
+    public function __construct(
+        string $identifier = null,
+        int|float|string $minValue = null,
+        int|float|string $maxValue = null
+    );
+    public function setIdentifier(string $identifier) : self;
+    public function getIdentifier() : string;
+    public function setMinValue(int|float|string $minValue) : self;
+    public function getMinValue() : int|float|string;
+    public function setMaxValue(int|float|string $maxValue) : self;
+    public function getMaxValue() : int|float|string;
+    public function setSpecification(string $specification);
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script id="site-script" src="../_/js/site.js" data-ui-root-path="../_"></script>
+<script async src="../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

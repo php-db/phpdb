@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Usage in a laminas-mvc Application :: The laminas-db documentation</title>
+    <meta name="generator" content="Antora 3.1.10">
+    <link rel="stylesheet" href="../../_/css/site.css">
+    <script>var uiRootPath = '../../_'</script>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="../..">The laminas-db documentation</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Products</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="#">Product A</a>
+            <a class="navbar-item" href="#">Product B</a>
+            <a class="navbar-item" href="#">Product C</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Services</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="#">Service A</a>
+            <a class="navbar-item" href="#">Service B</a>
+            <a class="navbar-item" href="#">Service C</a>
+          </div>
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="button is-primary" href="#">Download</a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="laminas-db-documentation" data-version="">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../index.html">The laminas-db documentation</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../index.html">What is laminas-db?</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../getting-started.html">Getting Started</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../adapter.html">Adapters</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../adapters/adapter-aware-trait.html">Adapter-aware Trait</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../metadata.html">Metadata</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../result-set.html">Result Sets</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../row-gateway.html">Row Gateways</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../table-gateway.html">Table Gateways</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../sql.html">SQL Abstraction</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../sql-ddl.html">DDL Abstraction</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">The laminas-db documentation</span>
+    <span class="version">default</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <a class="title" href="../index.html">The laminas-db documentation</a>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">default</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">The laminas-db documentation</a></li>
+    <li><a href="usage-in-a-laminas-mvc-application.html">Usage in a laminas-mvc Application</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/settermjd/Workspace/PHP/axleus/laminas-db//docs-site/modules/ROOT/pages/application-integration/usage-in-a-laminas-mvc-application.adoc">Edit this Page</a></div>
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Usage in a laminas-mvc Application</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>The minimal installation for a laminas-mvc based application doesn&#8217;t include any database features.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_when_installing_the_laminas_mvc_skeleton_application"><a class="anchor" href="#_when_installing_the_laminas_mvc_skeleton_application"></a>When installing the Laminas MVC Skeleton Application</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>While <code>Composer</code> is <a href="https://docs.laminas.dev/laminas-mvc/quick-start/#install-the-laminas-mvc-skeleton-application">installing the MVC Application</a>, you can add the <code>laminas-db</code> package while prompted.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_adding_to_an_existing_laminas_mvc_skeleton_application"><a class="anchor" href="#_adding_to_an_existing_laminas_mvc_skeleton_application"></a>Adding to an existing Laminas MVC Skeleton Application</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>If the MVC application is already created, then use Composer to <a href="../index.html" class="xref page">add the laminas-db</a> package.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_the_abstract_factory"><a class="anchor" href="#_the_abstract_factory"></a>The Abstract Factory</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Now that the laminas-db package is installed, the abstract factory <code>Laminas\Db\Adapter\AdapterAbstractServiceFactory</code> is available to be used with the service configuration.</p>
+</div>
+<div class="sect2">
+<h3 id="_configuring_the_adapter"><a class="anchor" href="#_configuring_the_adapter"></a>Configuring the adapter</h3>
+<div class="paragraph">
+<p>The abstract factory expects the configuration key <code>db</code> in order to create a <code>Laminas\Db\Adapter\Adapter</code> instance.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_working_with_a_sqlite_database"><a class="anchor" href="#_working_with_a_sqlite_database"></a>Working with a Sqlite database</h3>
+<div class="paragraph">
+<p>Sqlite is a lightweight option to have the application working with a database.</p>
+</div>
+<div class="paragraph">
+<p>Here is an example of the configuration array for a sqlite database.
+Assuming the sqlite file path is <code>data/sample.sqlite</code>, the following configuration will produce the adapter:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-php hljs" data-lang="php">return [
+    'db' =&gt; [
+        'driver' =&gt; 'Pdo',
+        'adapters' =&gt; [
+            sqliteAdapter::class =&gt; [
+                'driver' =&gt; 'Pdo',
+                'dsn' =&gt; 'sqlite:data/sample.sqlite',
+            ],
+        ],
+    ],
+];</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The <code>data/</code> filepath for the sqlite file is the default <code>data/</code> directory from the Laminas MVC application.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_working_with_a_mysql_database"><a class="anchor" href="#_working_with_a_mysql_database"></a>Working with a MySQL database</h3>
+<div class="paragraph">
+<p>Unlike a sqlite database, the MySQL database adapter requires a MySQL server.</p>
+</div>
+<div class="paragraph">
+<p>Here is an example of a configuration array for a MySQL database.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-php hljs" data-lang="php">return [
+    'db' =&gt; [
+        'driver' =&gt; 'Pdo',
+        'adapters' =&gt; [
+            mysqlAdapter::class =&gt; [
+                'driver' =&gt; 'Pdo',
+                'dsn' =&gt; 'mysql:dbname=your_database_name;host=your_mysql_host;charset=utf8',
+                'username' =&gt; 'your_mysql_username',
+                'password' =&gt; 'your_mysql_password',
+                'driver_options' =&gt; [
+                    PDO::MYSQL_ATTR_INIT_COMMAND =&gt; 'SET NAMES \'UTF8\''
+                ],
+            ],
+        ],
+    ],
+];</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_working_with_the_adapter"><a class="anchor" href="#_working_with_the_adapter"></a>Working with the adapter</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Once you have configured an adapter, as in the above examples, you now have a <code>Laminas\Db\Adapter\Adapter</code> available to your application.</p>
+</div>
+<div class="paragraph">
+<p>A factory for a class that consumes an adapter can pull the adapter by the name used in configuration.
+As an example, for the sqlite database configured earlier, we could write the following:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-php hljs" data-lang="php">use sqliteAdapter ;
+
+$adapter = $container-&gt;get(sqliteAdapter::class) ;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>For the MySQL Database configured earlier:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-php hljs" data-lang="php">use mysqlAdapter ;
+
+$adapter = $container-&gt;get(mysqlAdapter::class) ;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You can read more about the <a href="../adapter.html" class="xref page">adapter in the adapter chapter of the documentation</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_running_with_docker"><a class="anchor" href="#_running_with_docker"></a>Running with Docker</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>When working with a MySQL database and when running the application with Docker, some files need to be added or adjusted.</p>
+</div>
+<div class="sect2">
+<h3 id="_adding_the_mysql_extension_to_the_php_container"><a class="anchor" href="#_adding_the_mysql_extension_to_the_php_container"></a>Adding the MySQL extension to the PHP container</h3>
+<div class="paragraph">
+<p>Change the <code>Dockerfile</code> to add the PDO MySQL extension to PHP.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-Dockerfile hljs" data-lang="Dockerfile">FROM php:7.3-apache
+
+RUN apt-get update \
+ &amp;&amp; apt-get install -y git zlib1g-dev libzip-dev \
+ &amp;&amp; docker-php-ext-install zip pdo_mysql \
+ &amp;&amp; a2enmod rewrite \
+ &amp;&amp; sed -i 's!/var/www/html!/var/www/public!g' /etc/apache2/sites-available/000-default.conf \
+ &amp;&amp; mv /var/www/html /var/www/public \
+ &amp;&amp; curl -sS https://getcomposer.org/installer \
+  | php -- --install-dir=/usr/local/bin --filename=composer
+
+WORKDIR /var/www</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_adding_the_mysql_container"><a class="anchor" href="#_adding_the_mysql_container"></a>Adding the mysql container</h3>
+<div class="paragraph">
+<p>Change the <code>docker-compose.yml</code> file to add a new container for mysql.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">  mysql:
+    image: mysql
+    ports:
+     - 3306:3306
+    command:
+      --default-authentication-plugin=mysql_native_password
+    volumes:
+     - ./.data/db:/var/lib/mysql
+     - ./.docker/mysql/:/docker-entrypoint-initdb.d/
+    environment:
+     - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Though it is not the topic to explain how to write a <code>docker-compose.yml</code> file, a few details need to be highlighted :</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The name of the container is <code>mysql</code>.</p>
+</li>
+<li>
+<p>MySQL database files will be stored in the directory <code>/.data/db/</code>.</p>
+</li>
+<li>
+<p>SQL schemas will need to be added to the <code>/.docker/mysql/</code> directory so that Docker will be able to build and populate the database(s).</p>
+</li>
+<li>
+<p>The mysql docker image is using the <code>$MYSQL_ROOT_PASSWORD</code> environment variable to set the mysql root password.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_link_the_containers"><a class="anchor" href="#_link_the_containers"></a>Link the containers</h3>
+<div class="paragraph">
+<p>Now link the mysql container and the laminas container so that the application knows where to find the mysql server.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">  laminas:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+     - 8080:80
+    volumes:
+     - .:/var/www
+    links:
+     - mysql:mysql</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_adding_phpmyadmin"><a class="anchor" href="#_adding_phpmyadmin"></a>Adding phpMyAdmin</h3>
+<div class="paragraph">
+<p>Optionnally, you can also add a container for phpMyAdmin.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    ports:
+     - 8081:80
+    environment:
+     - PMA_HOST=${PMA_HOST}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The image uses the <code>$PMA_HOST</code> environment variable to set the host of the mysql server.
+The expected value is the name of the mysql container.</p>
+</div>
+<div class="paragraph">
+<p>Putting everything together:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">version: "2.1"
+services:
+  laminas:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+     - 8080:80
+    volumes:
+     - .:/var/www
+    links:
+     - mysql:mysql
+  mysql:
+    image: mysql
+    ports:
+     - 3306:3306
+    command:
+      --default-authentication-plugin=mysql_native_password
+    volumes:
+     - ./.data/db:/var/lib/mysql
+     - ./.docker/mysql/:/docker-entrypoint-initdb.d/
+    environment:
+     - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    ports:
+     - 8081:80
+    environment:
+     - PMA_HOST=${PMA_HOST}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_defining_credentials"><a class="anchor" href="#_defining_credentials"></a>Defining credentials</h3>
+<div class="paragraph">
+<p>The <code>docker-compose.yml</code> file uses ENV variables to define the credentials.</p>
+</div>
+<div class="paragraph">
+<p>Docker will read the ENV variables from a <code>.env</code> file.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-env hljs" data-lang="env">MYSQL_ROOT_PASSWORD=rootpassword
+PMA_HOST=mysql</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_initiating_the_database_schemas"><a class="anchor" href="#_initiating_the_database_schemas"></a>Initiating the database schemas</h3>
+<div class="paragraph">
+<p>At build, if the <code>/.data/db</code> directory is missing, Docker will create the mysql database with any <code>.sql</code> files found in the <code>.docker/mysql/</code> directory.
+(These are the files with the <code>CREATE DATABASE</code>, <code>USE (database)</code>, and <code>CREATE TABLE, INSERT INTO</code> directives defined earlier in this document).
+If multiple <code>.sql</code> files are present, it is a good idea to safely order the list because Docker will read the files in ascending order.</p>
+</div>
+</div>
+</div>
+</div>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script id="site-script" src="../../_/js/site.js" data-ui-root-path="../../_"></script>
+<script async src="../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

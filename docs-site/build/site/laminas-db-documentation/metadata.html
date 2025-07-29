@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>RDBMS Metadata :: The laminas-db documentation</title>
+    <meta name="generator" content="Antora 3.1.10">
+    <link rel="stylesheet" href="../_/css/site.css">
+    <script>var uiRootPath = '../_'</script>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="..">The laminas-db documentation</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Products</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="#">Product A</a>
+            <a class="navbar-item" href="#">Product B</a>
+            <a class="navbar-item" href="#">Product C</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Services</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="#">Service A</a>
+            <a class="navbar-item" href="#">Service B</a>
+            <a class="navbar-item" href="#">Service C</a>
+          </div>
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="button is-primary" href="#">Download</a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="laminas-db-documentation" data-version="">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="index.html">The laminas-db documentation</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="index.html">What is laminas-db?</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="getting-started.html">Getting Started</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="adapter.html">Adapters</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="adapters/adapter-aware-trait.html">Adapter-aware Trait</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="metadata.html">Metadata</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="result-set.html">Result Sets</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="row-gateway.html">Row Gateways</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="table-gateway.html">Table Gateways</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="sql.html">SQL Abstraction</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="sql-ddl.html">DDL Abstraction</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">The laminas-db documentation</span>
+    <span class="version">default</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <a class="title" href="index.html">The laminas-db documentation</a>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="index.html">default</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="index.html">The laminas-db documentation</a></li>
+    <li><a href="index.html">What is laminas-db?</a></li>
+    <li><a href="metadata.html">Metadata</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/settermjd/Workspace/PHP/axleus/laminas-db//docs-site/modules/ROOT/pages/metadata.adoc">Edit this Page</a></div>
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">RDBMS Metadata</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>Laminas\Db\Metadata</code> is as sub-component of laminas-db that makes it possible to get metadata information about tables, columns, constraints, triggers, and other information from a database in a standardized way.
+The primary interface for <code>Metadata</code> is:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-php hljs" data-lang="php">namespace Laminas\Db\Metadata;
+
+interface MetadataInterface
+{
+    public function getSchemas();
+
+    public function getTableNames(string $schema = null, bool $includeViews = false) : string[];
+    public function getTables(string $schema = null, bool $includeViews = false) : Object\TableObject[];
+    public function getTable(string $tableName, string $schema = null) : Object\TableObject;
+
+    public function getViewNames(string $schema = null) : string[];
+    public function getViews(string $schema = null) : Object\ViewObject[];
+    public function getView(string $viewName, string $schema = null) : Object\ViewObject;
+
+    public function getColumnNames(string string $table, $schema = null) : string[];
+    public function getColumns(string $table, string $schema = null) : Object\ColumnObject[];
+    public function getColumn(string $columnName, string $table, string $schema = null) Object\ColumnObject;
+
+    public function getConstraints(string $table, $string schema = null) : Object\ConstraintObject[];
+    public function getConstraint(string $constraintName, string $table, string $schema = null) : Object\ConstraintObject;
+    public function getConstraintKeys(string $constraint, string $table, string $schema = null) : Object\ConstraintKeyObject[];
+
+    public function getTriggerNames(string $schema = null) : string[];
+    public function getTriggers(string $schema = null) : Object\TriggerObject[];
+    public function getTrigger(string $triggerName, string $schema = null) : Object\TriggerObject;
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_basic_usage"><a class="anchor" href="#_basic_usage"></a>Basic Usage</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Usage of <code>Laminas\Db\Metadata</code> involves:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Constructing a <code>Laminas\Db\Metadata\Metadata</code> instance with an <code>Adapter</code>.</p>
+</li>
+<li>
+<p>Choosing a strategy for retrieving metadata, based on the database platform used.
+In most cases, information will come from querying the <code>INFORMATION_SCHEMA</code> tables for the currently accessible schema.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The <code>Metadata::get*Names()</code> methods will return arrays of strings, while the other methods will return value objects specific to the type queried.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-php hljs" data-lang="php">$metadata = new Laminas\Db\Metadata\Metadata($adapter);
+
+// get the table names
+$tableNames = $metadata-&gt;getTableNames();
+
+foreach ($tableNames as $tableName) {
+    echo 'In Table ' . $tableName . PHP_EOL;
+
+    $table = $metadata-&gt;getTable($tableName);
+
+    echo '    With columns: ' . PHP_EOL;
+    foreach ($table-&gt;getColumns() as $column) {
+        echo '        ' . $column-&gt;getName()
+            . ' -&gt; ' . $column-&gt;getDataType()
+            . PHP_EOL;
+    }
+
+    echo PHP_EOL;
+    echo '    With constraints: ' . PHP_EOL;
+
+    foreach ($metadata-&gt;getConstraints($tableName) as $constraint) {
+        echo '        ' . $constraint-&gt;getName()
+            . ' -&gt; ' . $constraint-&gt;getType()
+            . PHP_EOL;
+
+        if (! $constraint-&gt;hasColumns()) {
+            continue;
+        }
+
+        echo '            column: ' . implode(', ', $constraint-&gt;getColumns());
+        if ($constraint-&gt;isForeignKey()) {
+            $fkCols = [];
+            foreach ($constraint-&gt;getReferencedColumns() as $refColumn) {
+                $fkCols[] = $constraint-&gt;getReferencedTableName() . '.' . $refColumn;
+            }
+            echo ' =&gt; ' . implode(', ', $fkCols);
+        }
+
+        echo PHP_EOL;
+    }
+
+    echo '----' . PHP_EOL;
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_metadata_value_objects"><a class="anchor" href="#_metadata_value_objects"></a>Metadata value objects</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Metadata returns value objects that provide an interface to help developers better explore the metadata.
+Below is the API for the various value objects:</p>
+</div>
+<div class="sect2">
+<h3 id="_tableobject"><a class="anchor" href="#_tableobject"></a>TableObject</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-php hljs" data-lang="php">class Laminas\Db\Metadata\Object\TableObject
+{
+    public function __construct($name);
+    public function setColumns(array $columns);
+    public function getColumns();
+    public function setConstraints($constraints);
+    public function getConstraints();
+    public function setName($name);
+    public function getName();
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_columnobject"><a class="anchor" href="#_columnobject"></a>ColumnObject</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-php hljs" data-lang="php">class Laminas\Db\Metadata\Object\ColumnObject
+{
+    public function __construct($name, $tableName, $schemaName = null);
+    public function setName($name);
+    public function getName();
+    public function getTableName();
+    public function setTableName($tableName);
+    public function setSchemaName($schemaName);
+    public function getSchemaName();
+    public function getOrdinalPosition();
+    public function setOrdinalPosition($ordinalPosition);
+    public function getColumnDefault();
+    public function setColumnDefault($columnDefault);
+    public function getIsNullable();
+    public function setIsNullable($isNullable);
+    public function isNullable();
+    public function getDataType();
+    public function setDataType($dataType);
+    public function getCharacterMaximumLength();
+    public function setCharacterMaximumLength($characterMaximumLength);
+    public function getCharacterOctetLength();
+    public function setCharacterOctetLength($characterOctetLength);
+    public function getNumericPrecision();
+    public function setNumericPrecision($numericPrecision);
+    public function getNumericScale();
+    public function setNumericScale($numericScale);
+    public function getNumericUnsigned();
+    public function setNumericUnsigned($numericUnsigned);
+    public function isNumericUnsigned();
+    public function getErratas();
+    public function setErratas(array $erratas);
+    public function getErrata($errataName);
+    public function setErrata($errataName, $errataValue);
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_constraintobject"><a class="anchor" href="#_constraintobject"></a>ConstraintObject</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-php hljs" data-lang="php">class Laminas\Db\Metadata\Object\ConstraintObject
+{
+    public function __construct($name, $tableName, $schemaName = null);
+    public function setName($name);
+    public function getName();
+    public function setSchemaName($schemaName);
+    public function getSchemaName();
+    public function getTableName();
+    public function setTableName($tableName);
+    public function setType($type);
+    public function getType();
+    public function hasColumns();
+    public function getColumns();
+    public function setColumns(array $columns);
+    public function getReferencedTableSchema();
+    public function setReferencedTableSchema($referencedTableSchema);
+    public function getReferencedTableName();
+    public function setReferencedTableName($referencedTableName);
+    public function getReferencedColumns();
+    public function setReferencedColumns(array $referencedColumns);
+    public function getMatchOption();
+    public function setMatchOption($matchOption);
+    public function getUpdateRule();
+    public function setUpdateRule($updateRule);
+    public function getDeleteRule();
+    public function setDeleteRule($deleteRule);
+    public function getCheckClause();
+    public function setCheckClause($checkClause);
+    public function isPrimaryKey();
+    public function isUnique();
+    public function isForeignKey();
+    public function isCheck();
+
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_triggerobject"><a class="anchor" href="#_triggerobject"></a>TriggerObject</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-php hljs" data-lang="php">class Laminas\Db\Metadata\Object\TriggerObject
+{
+    public function getName();
+    public function setName($name);
+    public function getEventManipulation();
+    public function setEventManipulation($eventManipulation);
+    public function getEventObjectCatalog();
+    public function setEventObjectCatalog($eventObjectCatalog);
+    public function getEventObjectSchema();
+    public function setEventObjectSchema($eventObjectSchema);
+    public function getEventObjectTable();
+    public function setEventObjectTable($eventObjectTable);
+    public function getActionOrder();
+    public function setActionOrder($actionOrder);
+    public function getActionCondition();
+    public function setActionCondition($actionCondition);
+    public function getActionStatement();
+    public function setActionStatement($actionStatement);
+    public function getActionOrientation();
+    public function setActionOrientation($actionOrientation);
+    public function getActionTiming();
+    public function setActionTiming($actionTiming);
+    public function getActionReferenceOldTable();
+    public function setActionReferenceOldTable($actionReferenceOldTable);
+    public function getActionReferenceNewTable();
+    public function setActionReferenceNewTable($actionReferenceNewTable);
+    public function getActionReferenceOldRow();
+    public function setActionReferenceOldRow($actionReferenceOldRow);
+    public function getActionReferenceNewRow();
+    public function setActionReferenceNewRow($actionReferenceNewRow);
+    public function getCreated();
+    public function setCreated($created);
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script id="site-script" src="../_/js/site.js" data-ui-root-path="../_"></script>
+<script async src="../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

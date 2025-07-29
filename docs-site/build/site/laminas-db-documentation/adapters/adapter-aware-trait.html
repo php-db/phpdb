@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>AdapterAwareTrait :: The laminas-db documentation</title>
+    <meta name="generator" content="Antora 3.1.10">
+    <link rel="stylesheet" href="../../_/css/site.css">
+    <script>var uiRootPath = '../../_'</script>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="../..">The laminas-db documentation</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Products</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="#">Product A</a>
+            <a class="navbar-item" href="#">Product B</a>
+            <a class="navbar-item" href="#">Product C</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Services</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="#">Service A</a>
+            <a class="navbar-item" href="#">Service B</a>
+            <a class="navbar-item" href="#">Service C</a>
+          </div>
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="button is-primary" href="#">Download</a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="laminas-db-documentation" data-version="">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../index.html">The laminas-db documentation</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../index.html">What is laminas-db?</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../getting-started.html">Getting Started</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../adapter.html">Adapters</a>
+<ul class="nav-list">
+  <li class="nav-item is-current-page" data-depth="3">
+    <a class="nav-link" href="adapter-aware-trait.html">Adapter-aware Trait</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../metadata.html">Metadata</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../result-set.html">Result Sets</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../row-gateway.html">Row Gateways</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../table-gateway.html">Table Gateways</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../sql.html">SQL Abstraction</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../sql-ddl.html">DDL Abstraction</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">The laminas-db documentation</span>
+    <span class="version">default</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <a class="title" href="../index.html">The laminas-db documentation</a>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">default</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">The laminas-db documentation</a></li>
+    <li><a href="../index.html">What is laminas-db?</a></li>
+    <li><a href="../adapter.html">Adapters</a></li>
+    <li><a href="adapter-aware-trait.html">Adapter-aware Trait</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/settermjd/Workspace/PHP/axleus/laminas-db//docs-site/modules/ROOT/pages/adapters/adapter-aware-trait.adoc">Edit this Page</a></div>
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">AdapterAwareTrait</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>The trait <code>Laminas\Db\Adapter\AdapterAwareTrait</code>, which provides implementation for <code>Laminas\Db\Adapter\AdapterAwareInterface</code>, and allowed removal of duplicated implementations in several components of Laminas or in custom applications.</p>
+</div>
+<div class="paragraph">
+<p>The interface defines only the method <code>setDbAdapter()</code> with one parameter for an instance of <code>Laminas\Db\Adapter\Adapter</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-php hljs" data-lang="php">public function setDbAdapter(\Laminas\Db\Adapter\Adapter $adapter) : self;</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_basic_usage"><a class="anchor" href="#_basic_usage"></a>Basic Usage</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_create_class_and_add_trait"><a class="anchor" href="#_create_class_and_add_trait"></a>Create Class and Add Trait</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-php hljs" data-lang="php">use Laminas\Db\Adapter\AdapterAwareTrait;
+use Laminas\Db\Adapter\AdapterAwareInterface;
+
+class Example implements AdapterAwareInterface
+{
+    use AdapterAwareTrait;
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_create_and_set_adapter"><a class="anchor" href="#_create_and_set_adapter"></a>Create and Set Adapter</h3>
+<div class="paragraph">
+<p><a href="../adapter.md#creating-an-adapter-using-configuration">Create a database adapter</a> and set the adapter to the instance of the <code>Example</code> class:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-php hljs" data-lang="php">$adapter = new Laminas\Db\Adapter\Adapter([
+    'driver'   =&gt; 'Pdo_Sqlite',
+    'database' =&gt; 'path/to/sqlite.db',
+]);
+
+$example = new Example();
+$example-&gt;setAdapter($adapter);</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_adapterservicedelegator"><a class="anchor" href="#_adapterservicedelegator"></a>AdapterServiceDelegator</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The <a href="https://docs.laminas.dev/laminas-servicemanager/delegators/">delegator</a> <code>Laminas\Db\Adapter\AdapterServiceDelegator</code> can be used to set a database adapter via the <a href="https://docs.laminas.dev/laminas-servicemanager/quick-start/">service manager of laminas-servicemanager</a>.</p>
+</div>
+<div class="paragraph">
+<p>The delegator tries to fetch a database adapter via the name <code>Laminas\Db\Adapter\AdapterInterface</code> from the service container and sets the adapter to the requested service.
+The adapter itself must be an instance of <code>Laminas\Db\Adapter\Adapter</code>.</p>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>=== Integration for Mezzio and laminas-mvc based Applications</p>
+</div>
+<div class="paragraph">
+<p>In a Mezzio or laminas-mvc based application the database adapter is already registered during the installation with the laminas-component-installer.</p>
+</div>
+</blockquote>
+</div>
+<div class="sect2">
+<h3 id="_create_class_and_use_trait"><a class="anchor" href="#_create_class_and_use_trait"></a>Create Class and Use Trait</h3>
+<div class="paragraph">
+<p>Create a class and add the trait <code>AdapterAwareTrait</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-php hljs" data-lang="php">use Laminas\Db\Adapter\Adapter;
+use Laminas\Db\Adapter\AdapterInterface;
+
+class Example implements AdapterAwareInterface
+{
+    use AdapterAwareTrait;
+
+    public function getAdapter() : ?Adapter
+    {
+        return $this-&gt;adapter;
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>(A getter method is also added for demonstration.)</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_create_and_configure_service_manager"><a class="anchor" href="#_create_and_configure_service_manager"></a>Create and Configure Service Manager</h3>
+<div class="paragraph">
+<p>Create and <a href="https://docs.laminas.dev/laminas-servicemanager/configuring-the-service-manager/">configured the service manager</a>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-php hljs" data-lang="php">use Interop\Container\ContainerInterface;
+use Laminas\Db\Adapter\AdapterInterface;
+use Laminas\Db\Adapter\AdapterServiceDelegator;
+use Laminas\Db\Adapter\AdapterAwareTrait;
+use Laminas\Db\Adapter\AdapterAwareInterface;
+
+$serviceManager = new Laminas\ServiceManager\ServiceManager([
+    'factories' =&gt; [
+        // Database adapter
+        AdapterInterface::class =&gt; static function(ContainerInterface $container) {
+            return new Laminas\Db\Adapter\Adapter([
+                'driver'   =&gt; 'Pdo_Sqlite',
+                'database' =&gt; 'path/to/sqlite.db',
+            ]);
+        }
+    ],
+    'invokables' =&gt; [
+        // Example class
+        Example::class =&gt; Example::class,
+    ],
+    'delegators' =&gt; [
+        // Delegator for Example class to set the adapter
+        Example::class =&gt; [
+            AdapterServiceDelegator::class,
+        ],
+    ],
+]);</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_get_instance_of_class"><a class="anchor" href="#_get_instance_of_class"></a>Get Instance of Class</h3>
+<div class="paragraph">
+<p><a href="https://docs.laminas.dev/laminas-servicemanager/quick-start/#3-retrieving-objects">Retrieving an instance</a> of the <code>Example</code> class with a database adapter:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-php hljs" data-lang="php">/** @var Example $example */
+$example = $serviceManager-&gt;get(Example::class);
+
+var_dump($example-&gt;getAdapter() instanceof Laminas\Db\Adapter\Adapter); // true</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_concrete_implementations"><a class="anchor" href="#_concrete_implementations"></a>Concrete Implementations</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The validators <a href="https://docs.laminas.dev/laminas-validator/validators/db/"><code>Db\RecordExists</code> and <code>Db\NoRecordExists</code></a> implements the trait and the plugin manager of <a href="https://docs.laminas.dev/laminas-validator/">laminas-validator</a> includes the delegator to set the database adapter for both validators.</p>
+</div>
+</div>
+</div>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script id="site-script" src="../../_/js/site.js" data-ui-root-path="../../_"></script>
+<script async src="../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

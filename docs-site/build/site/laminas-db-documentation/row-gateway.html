@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Row Data Gateway :: The laminas-db documentation</title>
+    <meta name="generator" content="Antora 3.1.10">
+    <link rel="stylesheet" href="../_/css/site.css">
+    <script>var uiRootPath = '../_'</script>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="..">The laminas-db documentation</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Products</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="#">Product A</a>
+            <a class="navbar-item" href="#">Product B</a>
+            <a class="navbar-item" href="#">Product C</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Services</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="#">Service A</a>
+            <a class="navbar-item" href="#">Service B</a>
+            <a class="navbar-item" href="#">Service C</a>
+          </div>
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="button is-primary" href="#">Download</a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="laminas-db-documentation" data-version="">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="index.html">The laminas-db documentation</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="index.html">What is laminas-db?</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="getting-started.html">Getting Started</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="adapter.html">Adapters</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="adapters/adapter-aware-trait.html">Adapter-aware Trait</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="metadata.html">Metadata</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="result-set.html">Result Sets</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="row-gateway.html">Row Gateways</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="table-gateway.html">Table Gateways</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="sql.html">SQL Abstraction</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="sql-ddl.html">DDL Abstraction</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">The laminas-db documentation</span>
+    <span class="version">default</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <a class="title" href="index.html">The laminas-db documentation</a>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="index.html">default</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="index.html">The laminas-db documentation</a></li>
+    <li><a href="index.html">What is laminas-db?</a></li>
+    <li><a href="row-gateway.html">Row Gateways</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/settermjd/Workspace/PHP/axleus/laminas-db//docs-site/modules/ROOT/pages/row-gateway.adoc">Edit this Page</a></div>
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Row Data Gateway</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>The Row Gateway component is a sub-component of laminas-db that implements the Row Data Gateway pattern described in the book <a href="http://www.martinfowler.com/books/eaa.html">Patterns of Enterprise Application Architecture</a>.
+Row Data Gateways model individual rows of a database table, and provide methods such as <code>save()</code> and <code>delete()</code> that persist the row to the database.
+Likewise, after a row from the database is retrieved, it can then be manipulated and `save()&#8217;d back to the database in the same position (row), or it can be `delete()&#8217;d from the table.</p>
+</div>
+<div class="paragraph">
+<p><code>RowGatewayInterface</code> defines the methods <code>save()</code> and <code>delete()</code>:</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_quick_start"><a class="anchor" href="#_quick_start"></a>Quick start</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>RowGateway</code> is generally used in conjunction with objects that produce <code>Laminas\Db\ResultSet&#8217;s, though it may also be used standalone.
+To use it standalone, you need an `Adapter</code> instance and a set of data to work with.</p>
+</div>
+<div class="paragraph">
+<p>The following demonstrates a basic use case.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-php hljs" data-lang="php">use Laminas\Db\RowGateway\RowGateway;
+
+// Query the database:
+$resultSet = $adapter-&gt;query('SELECT * FROM `user` WHERE `id` = ?', [2]);
+
+// Get array of data:
+$rowData = $resultSet-&gt;current()-&gt;getArrayCopy();
+
+// Create a row gateway:
+$rowGateway = new RowGateway('id', 'my_table', $adapter);
+$rowGateway-&gt;populate($rowData, true);
+
+// Manipulate the row and persist it:
+$rowGateway-&gt;first_name = 'New Name';
+$rowGateway-&gt;save();
+
+// Or delete this row:
+$rowGateway-&gt;delete();</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The workflow described above is greatly simplified when <code>RowGateway</code> is used in conjunction with the <a href="table-gateway.md#tablegateway-features">TableGateway RowGatewayFeature</a>.
+In that paradigm, <code>select()</code> operations will produce a <code>ResultSet</code> that iterates <code>RowGateway</code> instances.</p>
+</div>
+<div class="paragraph">
+<p>As an example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-php hljs" data-lang="php">use Laminas\Db\TableGateway\Feature\RowGatewayFeature;
+use Laminas\Db\TableGateway\TableGateway;
+
+$table = new TableGateway('artist', $adapter, new RowGatewayFeature('id'));
+$results = $table-&gt;select(['id' =&gt; 2]);
+
+$artistRow = $results-&gt;current();
+$artistRow-&gt;name = 'New Name';
+$artistRow-&gt;save();</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_it_supports_activerecord_style_objects"><a class="anchor" href="#_it_supports_activerecord_style_objects"></a>It supports ActiveRecord-style objects</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>If you wish to have custom behaviour in your <code>RowGateway</code> objects &mdash;
+essentially making them behave similarly to the <a href="http://www.martinfowler.com/eaaCatalog/activeRecord.html">ActiveRecord</a> pattern), pass a prototype object implementing the <code>RowGatewayInterface</code> to the <code>RowGatewayFeature</code> constructor instead of a primary key:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-php hljs" data-lang="php">use Laminas\Db\TableGateway\Feature\RowGatewayFeature;
+use Laminas\Db\TableGateway\TableGateway;
+use Laminas\Db\RowGateway\RowGatewayInterface;
+
+class Artist implements RowGatewayInterface
+{
+    protected $adapter;
+
+    public function __construct($adapter)
+    {
+       $this-&gt;adapter = $adapter;
+    }
+
+    // ... save() and delete() implementations
+}
+
+$table = new TableGateway('artist', $adapter, new RowGatewayFeature(new Artist($adapter)));</code></pre>
+</div>
+</div>
+</div>
+</div>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script id="site-script" src="../_/js/site.js" data-ui-root-path="../_"></script>
+<script async src="../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

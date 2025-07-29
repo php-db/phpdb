@@ -1,0 +1,11 @@
+== Getting started
+
+Assuming that you have https://getcomposer.org[Composer] installed globally, run the following command in your project directory to install laminas-db:
+
+[source,bash]
+----
+composer require laminas/laminas-db
+----
+
+=== Configuring laminas-db
+

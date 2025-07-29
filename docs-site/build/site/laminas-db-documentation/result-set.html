@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Result Sets :: The laminas-db documentation</title>
+    <meta name="generator" content="Antora 3.1.10">
+    <link rel="stylesheet" href="../_/css/site.css">
+    <script>var uiRootPath = '../_'</script>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="..">The laminas-db documentation</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Products</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="#">Product A</a>
+            <a class="navbar-item" href="#">Product B</a>
+            <a class="navbar-item" href="#">Product C</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Services</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="#">Service A</a>
+            <a class="navbar-item" href="#">Service B</a>
+            <a class="navbar-item" href="#">Service C</a>
+          </div>
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="button is-primary" href="#">Download</a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="laminas-db-documentation" data-version="">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="index.html">The laminas-db documentation</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="index.html">What is laminas-db?</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="getting-started.html">Getting Started</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="adapter.html">Adapters</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="adapters/adapter-aware-trait.html">Adapter-aware Trait</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="metadata.html">Metadata</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="result-set.html">Result Sets</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="row-gateway.html">Row Gateways</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="table-gateway.html">Table Gateways</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="sql.html">SQL Abstraction</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="sql-ddl.html">DDL Abstraction</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">The laminas-db documentation</span>
+    <span class="version">default</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <a class="title" href="index.html">The laminas-db documentation</a>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="index.html">default</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="index.html">The laminas-db documentation</a></li>
+    <li><a href="index.html">What is laminas-db?</a></li>
+    <li><a href="result-set.html">Result Sets</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/settermjd/Workspace/PHP/axleus/laminas-db//docs-site/modules/ROOT/pages/result-set.adoc">Edit this Page</a></div>
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Result Sets</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>Laminas\Db\ResultSet</code> is a sub-component of laminas-db for abstracting the iteration of results returned from queries producing rowsets.
+While data sources for this can be anything that is iterable, generally these will be populated from <code>Laminas\Db\Adapter\Driver\ResultInterface</code> instances.</p>
+</div>
+<div class="paragraph">
+<p>Result sets must implement the <code>Laminas\Db\ResultSet\ResultSetInterface</code>, and all sub-components of laminas-db that return a result set as part of their API will assume an instance of a <code>ResultSetInterface</code> should be returned.
+In most cases, the prototype pattern will be used by consuming object to clone a prototype of a <code>ResultSet</code> and return a specialized <code>ResultSet</code> with a specific data source injected.
+<code>ResultSetInterface</code> is defined as follows:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-php hljs" data-lang="php">use Countable;
+use Traversable;
+
+interface ResultSetInterface extends Traversable, Countable
+{
+    public function initialize(mixed $dataSource) : void;
+    public function getFieldCount() : int;
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_quick_start"><a class="anchor" href="#_quick_start"></a>Quick start</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>Laminas\Db\ResultSet\ResultSet</code> is the most basic form of a <code>ResultSet</code> object that will expose each row as either an <code>ArrayObject</code>-like object or an array of row data.
+By default, <code>Laminas\Db\Adapter\Adapter</code> will use a prototypical <code>Laminas\Db\ResultSet\ResultSet</code> object for iterating when using the <code>Laminas\Db\Adapter\Adapter::query()</code> method.</p>
+</div>
+<div class="paragraph">
+<p>The following is an example workflow similar to what one might find inside <code>Laminas\Db\Adapter\Adapter::query()</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-php hljs" data-lang="php">use Laminas\Db\Adapter\Driver\ResultInterface;
+use Laminas\Db\ResultSet\ResultSet;
+
+$statement = $driver-&gt;createStatement('SELECT * FROM users');
+$statement-&gt;prepare();
+$result = $statement-&gt;execute($parameters);
+
+if ($result instanceof ResultInterface &amp;&amp; $result-&gt;isQueryResult()) {
+    $resultSet = new ResultSet;
+    $resultSet-&gt;initialize($result);
+
+    foreach ($resultSet as $row) {
+        echo $row-&gt;my_column . PHP_EOL;
+    }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_laminasdbresultsetresultset_and_laminasdbresultsetabstractresultset"><a class="anchor" href="#_laminasdbresultsetresultset_and_laminasdbresultsetabstractresultset"></a>Laminas\Db\ResultSet\ResultSet and Laminas\Db\ResultSet\AbstractResultSet</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>For most purposes, either an instance of <code>Laminas\Db\ResultSet\ResultSet</code> or a derivative of <code>Laminas\Db\ResultSet\AbstractResultSet</code> will be used.
+The implementation of the <code>AbstractResultSet</code> offers the following core functionality:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-php hljs" data-lang="php">namespace Laminas\Db\ResultSet;
+
+use Iterator;
+
+abstract class AbstractResultSet implements Iterator, ResultSetInterface
+{
+    public function initialize(array|Iterator|IteratorAggregate|ResultInterface $dataSource) : self;
+    public function getDataSource() : Iterator|IteratorAggregate|ResultInterface;
+    public function getFieldCount() : int;
+
+    /** Iterator */
+    public function next() : mixed;
+    public function key() : string|int;
+    public function current() : mixed;
+    public function valid() : bool;
+    public function rewind() : void;
+
+    /** countable */
+    public function count() : int;
+
+    /** get rows as array */
+    public function toArray() : array;
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_laminasdbresultsethydratingresultset"><a class="anchor" href="#_laminasdbresultsethydratingresultset"></a>Laminas\Db\ResultSet\HydratingResultSet</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>Laminas\Db\ResultSet\HydratingResultSet</code> is a more flexible <code>ResultSet</code> object that allows the developer to choose an appropriate "hydration strategy" for getting row data into a target object.
+While iterating over results, <code>HydratingResultSet</code> will take a prototype of a target object and clone it once for each row.
+The <code>HydratingResultSet</code> will then hydrate that clone with the row data.</p>
+</div>
+<div class="paragraph">
+<p>The <code>HydratingResultSet</code> depends on <a href="https://docs.laminas.dev/laminas-hydrator">laminas-hydrator</a>, which you will need to install:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ composer require laminas/laminas-hydrator</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In the example below, rows from the database will be iterated, and during iteration, <code>HydratingResultSet</code> will use the <code>Reflection</code> based hydrator to inject the row data directly into the protected members of the cloned <code>UserEntity</code> object:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-php hljs" data-lang="php">use Laminas\Db\Adapter\Driver\ResultInterface;
+use Laminas\Db\ResultSet\HydratingResultSet;
+use Laminas\Hydrator\Reflection as ReflectionHydrator;
+
+class UserEntity
+{
+    protected $first_name;
+    protected $last_name;
+
+    public function getFirstName()
+    {
+        return $this-&gt;first_name;
+    }
+
+    public function getLastName()
+    {
+        return $this-&gt;last_name;
+    }
+
+    public function setFirstName($firstName)
+    {
+        $this-&gt;first_name = $firstName;
+    }
+
+    public function setLastName($lastName)
+    {
+        $this-&gt;last_name = $lastName;
+    }
+}
+
+$statement = $driver-&gt;createStatement($sql);
+$statement-&gt;prepare($parameters);
+$result = $statement-&gt;execute();
+
+if ($result instanceof ResultInterface &amp;&amp; $result-&gt;isQueryResult()) {
+    $resultSet = new HydratingResultSet(new ReflectionHydrator, new UserEntity);
+    $resultSet-&gt;initialize($result);
+
+    foreach ($resultSet as $user) {
+        echo $user-&gt;getFirstName() . ' ' . $user-&gt;getLastName() . PHP_EOL;
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>For more information, see the <a href="https://docs.laminas.dev/laminas-hydrator/">laminas-hydrator</a> documentation to get a better sense of the different strategies that can be employed in order to populate a target object.</p>
+</div>
+</div>
+</div>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script id="site-script" src="../_/js/site.js" data-ui-root-path="../_"></script>
+<script async src="../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

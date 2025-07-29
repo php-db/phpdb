@@ -1,0 +1,5 @@
+name: laminas-db-documentation
+version: ~
+title: The laminas-db documentation
+nav:
+  - modules/ROOT/nav.adoc
