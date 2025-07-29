@@ -28,7 +28,7 @@ interface MetadataInterface
      */
     public function getTables(?string $schema = null, bool $includeViews = false): array;
 
-    public function getTable(string $tableName, ?string $schema = null): TableObject;
+    public function getTable(string $tableName, ?string $schema = null): TableObject|ViewObject;
 
     /**
      * @return string[]
