@@ -62,13 +62,10 @@ abstract class AbstractSource implements MetadataInterface
     /** @psalm-var MetadataData */
     protected array $data = [];
 
-    /**
-     * Constructor
-     */
     public function __construct(
         protected AdapterInterface&SchemaAwareInterface $adapter
         ) {
-        $this->defaultSchema = $adapter->getCurrentSchema() ?: self::DEFAULT_SCHEMA;
+        $this->defaultSchema = $this->adapter->getCurrentSchema() ?: self::DEFAULT_SCHEMA;
     }
 
     /**
