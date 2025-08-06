@@ -88,5 +88,26 @@ $ docker compose exec php composer test-integration
 - File issues at https://github.com/laminas/laminas-db/issues
 - Documentation is at https://docs.laminas.dev/laminas-db/
 
+## Working on the documentation
+
+To work on the documentation, you need to have basic familiarity with both [the AsciiDoc file format][asciidoc] and with [the Antora SSG (Static Site Generator)][antora].
+
+> [!NOTE]
+> Learning AsciiDoc sometimes concerns people, as there is the need to learn something new and we’re all pretty busy alread.
+> However, if you’re familiar with Markdown, and you likely are, then there’s precious little that you’ll have to learn.
+> AsciiDoc understands just about all Markdown.
+> So, you could write Markdown and not have to learn AsciiDoc.
+
+But, you don’t need to know all that much:
+
+- The AsciiDoc files that contain the documentation are stored in _docs-site/modules/ROOT/pages_.
+- The supporting images for the documentation are stored in _docs-site/modules/ROOT/images_.
+- You put code examples, if you want to store them separately, in _docs-site/modules/ROOT/examples_.
+- To rebuild the docs, from the docs-site directory, run `npx antora antora-playbook.yml`.
+  You’ll then find the generated documentation in docs-site/build/site/.
+  Open _index.html_ in that directory in your browser of choice to start reading the documentation.
+
+[antora]: https://docs.antora.org/antora/latest/
+[asciidoc]: https://docs.antora.org/antora/latest/
 [docker-compose]: https://docs.docker.com/compose/intro/features-uses/
 [deploy-with-docker-compose]: https://deploywithdockercompose.com
