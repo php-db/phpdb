@@ -3,7 +3,7 @@
 namespace PhpDb\Metadata\Source;
 
 use Exception;
-use PhpDb\Adapter\Adapter;
+use Override;
 use PhpDb\Adapter\AdapterInterface;
 use PhpDb\Adapter\SchemaAwareInterface;
 use PhpDb\Metadata\MetadataInterface;
@@ -13,12 +13,45 @@ use PhpDb\Metadata\Object\ConstraintObject;
 use PhpDb\Metadata\Object\TableObject;
 use PhpDb\Metadata\Object\TriggerObject;
 use PhpDb\Metadata\Object\ViewObject;
-use Override;
 
 use function array_keys;
 use function func_get_args;
 use function str_replace;
 
+/**
+ * AbstractSource
+ *
+ * @psalm-type MetadataTableNames = array<string, array{
+ *     table_type: string,
+ *     view_definition?: string,
+ *     check_option?: string,
+ *     is_updatable?: bool,
+ * }>
+ *
+ * @psalm-type MetadataColumn = array<string, array{
+ *   ordinal_position: int,
+ *   column_default: mixed,
+ *   is_nullable: bool,
+ *   data_type: string,
+ *   character_maximum_length?: int,
+ *   character_octet_length?: int,
+ *   numeric_precision?: int,
+ *   numeric_scale?: int,
+ *   numeric_unsigned?: bool,
+ *   erratas?: array<string, mixed>,
+ * }>
+ *
+ * @psalm-type MetadataColumns = array<string, ...array<string, MetadataColumn>>
+ *
+ * @psalm-type MetadataData = array{
+ *      schemas?: ,
+ *      table_names?: MetadataTableNames,
+ *      columns?: MetadataColumns,
+ *      triggers?: ,
+ *      ...
+ * }
+ *
+ */
 abstract class AbstractSource implements MetadataInterface
 {
     public const DEFAULT_SCHEMA = '__DEFAULT_SCHEMA__';
@@ -26,15 +59,13 @@ abstract class AbstractSource implements MetadataInterface
     /** @var string */
     protected $defaultSchema;
 
+    /** @psalm-var MetadataData */
     protected array $data = [];
 
-    /**
-     * Constructor
-     */
     public function __construct(
         protected AdapterInterface&SchemaAwareInterface $adapter
         ) {
-        $this->defaultSchema = $adapter->getCurrentSchema() ?: self::DEFAULT_SCHEMA;
+        $this->defaultSchema = $this->adapter->getCurrentSchema() ?: self::DEFAULT_SCHEMA;
     }
 
     /**
@@ -94,7 +125,7 @@ abstract class AbstractSource implements MetadataInterface
      * {@inheritdoc}
      */
     #[Override]
-    public function getTable(string $tableName, ?string $schema = null): TableObject
+    public function getTable(string $tableName, ?string $schema = null): TableObject|ViewObject
     {
         if ($schema === null) {
             $schema = $this->defaultSchema;
