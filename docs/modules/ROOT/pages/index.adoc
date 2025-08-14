@@ -55,11 +55,12 @@ $select->columns(['first_name', 'last_name', 'email_address']);
 $select->where(['dob' >= "2006.04.05"]);
 ----
 
-In the above example, you can see an example of instantiating a Select object that queries the "users" table for the required columns, where the Where clause is defined using a plain PHP associative array. 
+In the above example, you can see an example of instantiating a `Select` object that queries the "users" table for the required columns, where https://www.geeksforgeeks.org/sql/sql-where-clause/[the where clause] is defined using a plain PHP associative array. 
 
-However, we could get a little fancier by defining the where clause using a Where object instead, as in the following example.
+// Eventually, link `Where` to the relevant section of the docs
+However, we could get a little fancier by defining the where clause using a `Where` object instead, as in the following example.
 
-[source,sql]
+[source,php]
 ----
 use Laminas\Db\Sql\Sql;
 
@@ -70,12 +71,12 @@ $select->columns(['first_name', 'last_name', 'email_address']);
 $select->where(['dob' >= "2006.04.05"]);
 ----
 
-While these two examples are quite simplistic, they hint well at what is possible with the library.
+While these two examples are quite simplistic, they hint at what is possible with the library.
 
 === Clear code. No magic
 
 There's nothing magic about how laminas-db works.
-It only runs the queries that you ask it to run, as you asked it to run them.
+It only runs the queries that you ask it to run, as *you* asked it to run them.
 It doesn't add extra columns to your queries.
 It doesn't run nested queries without your knowledge.
 It doesn't attempt to be smart on your behalf.
@@ -86,20 +87,21 @@ But, at all times, you know what's going on.
 === It's community-driven
 
 Since its inception, laminas-db has been an open source, community driven and lead project.
-It was designed and developed by developers for developers, to be a programmatic way of building and running SQL queries, against a range of database vendors.
+It was designed and developed *by* developers *for* developers, to be a programmatic way of building and running SQL queries, against a range of database vendors.
+
 Given that, you can view its entire history on GitHub, and contribute to it, as and when you find a bug or missing feature that you want to implement.
 You're able to influence its direction.
 You don't need to wait for it to come to you.
 
 == laminas-db's architecture
 
-=== It all starts with Laminas\Db\Adapter\Adapter
+=== Laminas\Db\Adapter\Adapter
 
-`Laminas\Db\Adapter\Adapter` is laminas-db's central object.
+It all starts with `Laminas\Db\Adapter\Adapter`, which is laminas-db's central object.
 It is responsible for adapting any code written in or for laminas-db to the targeted PHP extensions and vendor databases; these are:
 
 .The list of officially supported drivers
-[cols="1,1",%autowidth,stripes=even,options="header"]
+[cols="25h,~",%autowidth,stripes=even,options="header"]
 |===
 |Database
 |PHP Extension/Driver
@@ -126,3 +128,7 @@ It is responsible for adapting any code written in or for laminas-db to the targ
 It creates an abstraction layer for the PHP extensions in the `Driver` sub-namespace of `Laminas\Db\Adapter`.
 It also creates a lightweight "Platform" abstraction layer, for the various idiosyncrasies that each vendor-specific platform might have in its SQL/RDBMS implementation, separate from the driver implementations.
 
+=== \Laminas\Db\Adapter\Platform\AbstractPlatform
+
+The Platform abstraction layer is based on AbstractPlatform.
+It’s from this class that a vendor-specific abstraction is created.

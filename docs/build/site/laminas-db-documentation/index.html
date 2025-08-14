@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>What is laminas-db? :: The laminas-db documentation</title>
-    <meta name="generator" content="Antora 3.1.10">
+    <meta name="generator" content="Antora 3.1.12">
     <link rel="stylesheet" href="../_/css/site.css">
     <script>var uiRootPath = '../_'</script>
   </head>
@@ -148,7 +148,7 @@ It avoids the need for you to hand-craft SQL, letting you build objects that con
 <p>The project provides database, SQL, and result set abstraction layers, a <a href="https://martinfowler.com/eaaCatalog/rowDataGateway.html">Row data gateway</a> and <a href="https://www.martinfowler.com/eaaCatalog/tableDataGateway.html">Table data gateway</a> implementation, plus so much more.</p>
 </div>
 <div class="paragraph">
-<p>Before we dive deeper let&#8217;s quickly consider six reasons why laminas-db is an excellent choice for your project.</p>
+<p>Before we dive deeper let&#8217;s quickly consider four solid reasons why laminas-db is an excellent choice for your project.</p>
 </div>
 </div>
 </div>
@@ -207,14 +207,14 @@ $select-&gt;where(['dob' &gt;= "2006.04.05"]);</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>In the above example, you can see an example of instantiating a Select object that queries the "users" table for the required columns, where the Where clause is defined using a plain PHP associative array.</p>
+<p>In the above example, you can see an example of instantiating a <code>Select</code> object that queries the "users" table for the required columns, where <a href="https://www.geeksforgeeks.org/sql/sql-where-clause/">the where clause</a> is defined using a plain PHP associative array.</p>
 </div>
 <div class="paragraph">
-<p>However, we could get a little fancier by defining the where clause using a Where object instead, as in the following example.</p>
+<p>However, we could get a little fancier by defining the where clause using a <code>Where</code> object instead, as in the following example.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-sql hljs" data-lang="sql">use Laminas\Db\Sql\Sql;
+<pre class="highlightjs highlight"><code class="language-php hljs" data-lang="php">use Laminas\Db\Sql\Sql;
 
 $sql    = new Sql($adapter);
 $select = $sql-&gt;select();
@@ -224,14 +224,14 @@ $select-&gt;where(['dob' &gt;= "2006.04.05"]);</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>While these two examples are quite simplistic, they hint well at what is possible with the library.</p>
+<p>While these two examples are quite simplistic, they hint at what is possible with the library.</p>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_clear_code_no_magic"><a class="anchor" href="#_clear_code_no_magic"></a>Clear code. No magic</h3>
 <div class="paragraph">
 <p>There&#8217;s nothing magic about how laminas-db works.
-It only runs the queries that you ask it to run, as you asked it to run them.
+It only runs the queries that you ask it to run, as <strong>you</strong> asked it to run them.
 It doesn&#8217;t add extra columns to your queries.
 It doesn&#8217;t run nested queries without your knowledge.
 It doesn&#8217;t attempt to be smart on your behalf.</p>
@@ -245,8 +245,10 @@ But, at all times, you know what&#8217;s going on.</p>
 <h3 id="_its_community_driven"><a class="anchor" href="#_its_community_driven"></a>It&#8217;s community-driven</h3>
 <div class="paragraph">
 <p>Since its inception, laminas-db has been an open source, community driven and lead project.
-It was designed and developed by developers for developers, to be a programmatic way of building and running SQL queries, against a range of database vendors.
-Given that, you can view its entire history on GitHub, and contribute to it, as and when you find a bug or missing feature that you want to implement.
+It was designed and developed <strong>by</strong> developers <strong>for</strong> developers, to be a programmatic way of building and running SQL queries, against a range of database vendors.</p>
+</div>
+<div class="paragraph">
+<p>Given that, you can view its entire history on GitHub, and contribute to it, as and when you find a bug or missing feature that you want to implement.
 You&#8217;re able to influence its direction.
 You don&#8217;t need to wait for it to come to you.</p>
 </div>
@@ -257,16 +259,16 @@ You don&#8217;t need to wait for it to come to you.</p>
 <h2 id="_laminas_dbs_architecture"><a class="anchor" href="#_laminas_dbs_architecture"></a>laminas-db&#8217;s architecture</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_it_all_starts_with_laminasdbadapteradapter"><a class="anchor" href="#_it_all_starts_with_laminasdbadapteradapter"></a>It all starts with Laminas\Db\Adapter\Adapter</h3>
+<h3 id="_laminasdbadapteradapter"><a class="anchor" href="#_laminasdbadapteradapter"></a>Laminas\Db\Adapter\Adapter</h3>
 <div class="paragraph">
-<p><code>Laminas\Db\Adapter\Adapter</code> is laminas-db&#8217;s central object.
+<p>It all starts with <code>Laminas\Db\Adapter\Adapter</code>, which is laminas-db&#8217;s central object.
 It is responsible for adapting any code written in or for laminas-db to the targeted PHP extensions and vendor databases; these are:</p>
 </div>
 <table class="tableblock frame-all grid-all stripes-even stretch">
 <caption class="title">Table 1. The list of officially supported drivers</caption>
 <colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
+<col style="width: 25%;">
+<col>
 </colgroup>
 <thead>
 <tr>
@@ -276,27 +278,27 @@ It is responsible for adapting any code written in or for laminas-db to the targ
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">IBM Db2</p></td>
+<th class="tableblock halign-left valign-top"><p class="tableblock">IBM Db2</p></th>
 <td class="tableblock halign-left valign-top"><p class="tableblock">The <a href="https://www.php.net/manual/en/intro.ibm-db2.php">ext/ibm_db2 driver</a></p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">MySQL</p></td>
+<th class="tableblock halign-left valign-top"><p class="tableblock">MySQL</p></th>
 <td class="tableblock halign-left valign-top"><p class="tableblock">The <a href="https://www.php.net/manual/en/intro.mysqli.php">ext/mysqli driver</a> and the <a href="https://www.php.net/manual/en/ref.pdo-mysql.php">Pdo_Mysql PDO extension</a></p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Oracle</p></td>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Oracle</p></th>
 <td class="tableblock halign-left valign-top"><p class="tableblock">The <a href="https://www.php.net/manual/en/intro.oci8.php">ext/oci8 driver</a></p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">PostgreSQL</p></td>
+<th class="tableblock halign-left valign-top"><p class="tableblock">PostgreSQL</p></th>
 <td class="tableblock halign-left valign-top"><p class="tableblock">The <a href="https://www.php.net/manual/en/intro.pgsql.php">ext/pgsql driver</a> and the <a href="https://www.php.net/manual/en/ref.pdo-pgsql.php">Pdo_Pgsql PDO extension</a></p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Microsoft SQLServer</p></td>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Microsoft SQLServer</p></th>
 <td class="tableblock halign-left valign-top"><p class="tableblock">The <a href="https://www.php.net/manual/en/intro.sqlsrv.php">ext/sqlsrv driver</a></p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">SQLite</p></td>
+<th class="tableblock halign-left valign-top"><p class="tableblock">SQLite</p></th>
 <td class="tableblock halign-left valign-top"><p class="tableblock">The <a href="https://www.php.net/manual/en/ref.pdo-sqlite.php">Pdo_Sqlite PDO extension</a></p></td>
 </tr>
 </tbody>
@@ -304,6 +306,13 @@ It is responsible for adapting any code written in or for laminas-db to the targ
 <div class="paragraph">
 <p>It creates an abstraction layer for the PHP extensions in the <code>Driver</code> sub-namespace of <code>Laminas\Db\Adapter</code>.
 It also creates a lightweight "Platform" abstraction layer, for the various idiosyncrasies that each vendor-specific platform might have in its SQL/RDBMS implementation, separate from the driver implementations.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_laminasdbadapterplatformabstractplatform"><a class="anchor" href="#_laminasdbadapterplatformabstractplatform"></a>\Laminas\Db\Adapter\Platform\AbstractPlatform</h3>
+<div class="paragraph">
+<p>The Platform abstraction layer is based on AbstractPlatform.
+It’s from this class that a vendor-specific abstraction is created.</p>
 </div>
 </div>
 </div>
