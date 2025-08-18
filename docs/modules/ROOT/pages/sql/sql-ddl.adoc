@@ -1,4 +1,4 @@
-= DDL Abstraction
+= DDL (Data Definition Language) Abstraction
 
 `Laminas\Db\Sql\Ddl` is a sub-component of `Laminas\Db\Sql` allowing creation of DDL (Data Definition Language) SQL statements.
 When combined with a platform specific `Laminas\Db\Sql\Sql` object, DDL objects are capable of producing platform-specific `CREATE TABLE` statements, with specialized data types, constraints, and indexes for a database/schema.

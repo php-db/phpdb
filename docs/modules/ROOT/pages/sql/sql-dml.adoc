@@ -1,0 +1,544 @@
+= DML (Data Manipulation Language) Abstraction
+:sql-select: https://en.wikipedia.org/wiki/Select_(SQL)
+:select-table-name: users
+:select-table-alias: u
+:concat_ws-function: https://www.geeksforgeeks.org/postgresql/postgresql-concat_ws-function/
+
+There are four primary tasks associated with interacting with a database defined by DML: 
+
+* xref:_select_queries[Selecting]
+* xref:_insert_queries[Inserting]
+* xref:_update_queries[Updating]
+* xref:_delete_queries[Deleting]
+
+As such, there are four primary classes that developers can use to build queries in the {project-name} namespace: `Select`, `Insert`, `Update`, and `Delete`.
+
+Since these four tasks are so closely related and generally used together within the same application, the `Laminas\Db\Sql\Sql` class helps you create them and produce four accompanying objects that directly model the four respective operations:
+
+- `\Laminas\Db\Sql\Select`
+- `\Laminas\Db\Sql\Insert`
+- `\Laminas\Db\Sql\Update`
+- `\Laminas\Db\Sql\Delete`
+
+You can see an example of how to instantiate them in the follow example:
+
+[source,php]
+----
+use Laminas\Db\Sql\Sql;
+
+/** @param \Laminas\Db\Adapter\Adapter $adapter */
+$sql = new Sql($adapter);
+
+// Returns a Laminas\Db\Sql\Select instance
+$select = $sql->select(); 
+
+// Returns a Laminas\Db\Sql\Insert instance
+$insert = $sql->insert(); 
+
+// Returns a Laminas\Db\Sql\Update instance
+$update = $sql->update(); 
+
+// Returns a Laminas\Db\Sql\Delete instance
+$delete = $sql->delete(); 
+----
+
+As a developer, you can now interact with these objects, as described in the sections below, to customize each query.
+Then, once they have been populated with values, they are ready to either be prepared or executed, as you can see in the two examples below.
+
+// Need to figure out the difference between calling execute and query.
+== Creating and executing a prepared statement
+
+[source,php,subs="attributes+"]
+----
+use Laminas\Db\Sql\Sql;
+
+$sql    = new Sql($adapter);
+$select = $sql->select();
+$select->from('{select-table-name}');
+$select->where(['id' => 1]);
+
+$statement = $sql->prepareStatementForSqlObject($select);
+$results = $statement->execute();
+----
+
+To execute (using a Select object)
+
+[source,php,subs="attributes+"]
+----
+use Laminas\Db\Sql\Sql;
+
+$sql    = new Sql($adapter);
+$select = $sql->select();
+$select->from('{select-table-name}');
+$select->where(['id' => 1]);
+
+$selectString = $sql->buildSqlString($select);
+$results = $adapter->query($selectString, $adapter::QUERY_MODE_EXECUTE);
+----
+
+== Binding objects to tables
+
+When instantiating `Sql` objects, you can choose to bind it to a particular table, as in the following example. 
+When you do, the `Select`, `Insert`, `Update`, or `Delete` instance retrieved from it it will also be bound to that table.
+
+[source,php,subs="attributes+"]
+----
+use Laminas\Db\Sql\Sql;
+
+$sql    = new Sql($adapter, '{select-table-name}');
+$select = $sql->select();
+$select->where(['id' => 1]); // $select already has from('{select-table-name}') applied
+----
+
+== Select Queries
+
+The `Laminas\Db\Sql\Select` class allows you to build platform-specific {sql-select}[SQL select queries].
+These can be instantiated using a `Sql` object, as seen earlier, or directly, as in the examples below.
+
+[source,php,subs="attributes+"]
+----
+use Laminas\Db\Sql\Select;
+
+// This Select object is not bound to a table
+$select = new Select();
+
+// This Select object is bound to the "{select-table-name}" table
+$select = new Select('{select-table-name}');
+----
+
+[IMPORTANT]
+====
+If a table name is provided to the `Select` object's constructor, the table name cannot be changed.
+====
+
+=== Binding objects to tables
+
+If a `Select` object is not bound to a table at initialization, there a number of ways to do so once constructed.
+
+[source,php,subs="attributes+"]
+----
+// Set the table name with the "from" method
+$select->from('{select-table-name}');
+
+// Set the table name with the "from" method along with a table alias
+$select->from(['f' => '{select-table-name}']);
+
+// Set the table name using a Sql\TableIdentifier:
+$select->from(['f' => new TableIdentifier('{select-table-name}')]);
+----
+
+The above three examples produce the following SQL queries:
+
+[source,sql,subs="attributes+"]
+----
+SELECT * FROM "{select-table-name}";
+
+SELECT "{select-table-alias}".* FROM "{select-table-name}" AS "{select-table-alias}";
+
+SELECT "{select-table-alias}".* FROM "{select-table-name}" AS "{select-table-alias}";
+----
+
+=== Specifying the columns returned
+
+It's unlikely that you want to return every column in the selected table, which is the default.
+So, to specify the list of columns, provide them as an array to `Select`'s `column()` method.
+
+[source,php,subs="attributes+"]
+----
+$select->columns([
+    'foo', 
+    'bar'
+]);
+----
+
+However, you may also want to alias one or more of the columns.
+To do that, provide an associative array instead.
+Each element's key will be the alias and its value will be the column name to return.
+
+[source,php,subs="attributes+"]
+----
+$select->columns([
+    'foo' => 'bar',
+    'baz' => 'bax'
+]);
+----
+
+Assuming that we're querying the "{select-table-name}" table, as before, the above object will produce the following SQL:
+
+[source,sql,subs="attributes+"]
+----
+SELECT 'bar' AS 'foo', 'bax' AS 'baz'
+FROM {select-table-name}
+----
+
+==== Calling database functions
+
+Sometimes, a column needs to be the result of a native database function (or series of functions).
+In these cases, you can't pass the function call as a string value in the array to the `columns()` method.
+Rather, you need to use a `\Laminas\Db\Sql\Expression` to specify the column value.
+
+For example, let's say that you need to call {concat_ws-function}[the CONCAT_WS function], which adds two or more expressions together with a separator.
+Here's how you'd do so:
+
+[source,php,subs="attributes+"]
+----
+use \Laminas\Db\Sql\Expression;
+
+$select->columns([
+    'foo' => new \Laminas\Db\Sql\Expression("CONCAT_WS('/', 'bar', 'bax')")
+]);
+----
+
+Here's the SQL that would be generated:
+
+[source,sql,subs="attributes+"]
+----
+use \Laminas\Db\Sql\Expression;
+
+SELECT CONCAT_WS('/', 'bar', 'bax') AS 'foo'
+FROM {select-table-name}
+----
+
+=== Joining tables to one another
+
+[source,php,subs="attributes+"]
+----
+$select->join(
+    'foo',              // table name
+    'id = bar.id',      // expression to join on (will be quoted by platform object before insertion),
+    ['bar', 'baz'],     // (optional) list of columns, same requirements as columns() above
+    $select::JOIN_OUTER // (optional), one of inner, outer, full outer, left, right also represented by constants in the API
+);
+
+$select
+    ->from(['u' => '{select-table-name}'])     // base table
+    ->join(
+        ['b' => 'bar'],        // join table with alias
+        'f.foo_id = b.foo_id'  // join expression
+    );
+----
+
+=== Building where and having clauses
+
+`Laminas\Db\Sql\Select` provides bit of flexibility as it regards to what kind of parameters are acceptable when calling `where()` or `having()`.
+
+If you provide a `Laminas\Db\Sql\Where` instance to `where()` or a `Laminas\Db\Sql\Having` instance to `having()`, any previous internal instances will be replaced completely.
+When either instance is processed, this object will be iterated to produce the WHERE or HAVING section of the SELECT statement.
+
+If you provide a PHP callable to `where()` or `having()`, this function will be called with the ``Select``'s `Where`/`Having` instance as the only parameter.
+This enables code like the following:
+
+[source,php,subs="attributes+"]
+----
+$select->where(function (Where $where) {
+    $where->like('username', 'ralph%');
+});
+----
+
+If you provide a _string_, this string will be used to create a `Laminas\Db\Sql\Predicate\Expression` instance, and its contents will be applied as-is, with no quoting:
+
+[source,php,subs="attributes+"]
+----
+// SELECT "foo".* FROM "foo" WHERE x = 4
+$select->from('foo')->where('x = 4');
+----
+
+If you provide an array with integer indices, the value can be one of:
+
+* a string;
+this will be used to build a `Predicate\Expression`.
+* any object implementing `Predicate\PredicateInterface`.
+
+In either case, the instances are pushed onto the `Where` stack with the `$combination` provided (defaulting to `AND`).
+
+As an example:
+
+[source,php,subs="attributes+"]
+----
+// SELECT "foo".* FROM "foo" WHERE x = 4 AND y = z
+$select->from('foo')->where(['x = 4', 'y = z']);
+----
+
+If you provide an associative array with string keys, any value with a string key will be cast as follows:
+
+|===
+| PHP value | Predicate type
+
+| `null`
+| `Predicate\IsNull`
+
+| `array`
+| `Predicate\In`
+
+| `string`
+| `Predicate\Operator`, where the key is the identifier.
+|===
+
+As an example:
+
+[source,php,subs="attributes+"]
+----
+// SELECT "foo".* FROM "foo" WHERE "c0" IS NULL AND "c2" IN (?, ?, ?) AND "c3" IS NOT NULL
+$select->from('foo')->where([
+    'c0' => null,
+    'c1' => [1, 2, 3],
+    new \Laminas\Db\Sql\Predicate\IsNotNull('c2'),
+]);
+----
+
+As another example of complex queries with nested conditions e.g.
+
+[source,sql,subs="attributes+"]
+----
+SELECT * WHERE (column0 is null or column1 = 2) AND (column2 = 3)
+----
+
+you need to use the `nest()` and `unnest()` methods, as follows:
+
+[source,php,subs="attributes+"]
+----
+$select->where->nest() // bracket opened
+    ->isNull('column0')
+    ->or
+    ->equalTo('column0', '2')
+    ->unnest();  // bracket closed
+    ->equalTo('column1', '3');
+----
+
+=== Setting the sort order
+
+[source,php,subs="attributes+"]
+----
+$select = new Select;
+$select->order('id DESC'); // produces 'id' DESC
+
+$select = new Select;
+$select
+    ->order('id DESC')
+    ->order('name ASC, age DESC'); // produces 'id' DESC, 'name' ASC, 'age' DESC
+
+$select = new Select;
+$select->order(['name ASC', 'age DESC']); // produces 'name' ASC, 'age' DESC
+----
+
+=== Setting query limits and offsets
+
+[source,php,subs="attributes+"]
+----
+$select = new Select;
+$select->limit(4);   // always takes an integer/numeric
+$select->offset(9); // similarly takes an integer/numeric
+----
+
+== Insert Queries
+
+The Insert API:
+
+[source,php,subs="attributes+"]
+----
+class Insert implements SqlInterface, PreparableSqlInterface
+{
+    const VALUES_MERGE = 'merge';
+    const VALUES_SET   = 'set';
+
+    public function __construct(string|TableIdentifier $table = null);
+    public function into(string|TableIdentifier $table) : self;
+    public function columns(array $columns) : self;
+    public function values(array $values, string $flag = self::VALUES_SET) : self;
+}
+----
+
+As with `Select`, the table may be provided during instantiation or via the `into()` method.
+
+=== columns()
+
+[source,php,subs="attributes+"]
+----
+$insert->columns(['foo', 'bar']); // set the valid columns
+----
+
+=== values()
+
+The default behavior of values is to set the values.
+Successive calls will not preserve values from previous calls.
+
+[source,php,subs="attributes+"]
+----
+$insert->values([
+    'col_0' => 'value1',
+    'col_1' => 'value2',
+]);
+----
+
+To merge values with previous calls, provide the appropriate flag: `Laminas\Db\Sql\Insert::VALUES_MERGE`
+
+[source,php,subs="attributes+"]
+----
+$insert->values(['col_1' => 'value2'], $insert::VALUES_MERGE);
+----
+
+== Update Queries
+
+=== set()
+
+[source,php,subs="attributes+"]
+----
+$update->set(['foo' => 'bar', 'baz' => 'bax']);
+----
+
+=== where()
+
+See the <<where-and-having,section on Where and Having>>.
+
+== Delete Queries
+
+=== where()
+
+See the <<where-and-having,section on Where and Having>>.
+
+== Building sophisticated where and having clauses
+
+[NOTE]
+====
+In the following, we will talk about `Where`; note, however, that `Having` utilizes the same API.
+====
+
+Effectively, the `Where` and `Having` classes extend from the same base object, `Predicate` and `PredicateSet`.
+All of the parts that make up a where or having clause that are AND'ed or OR'd together are called _predicates_.
+Then, the full set of predicates is called a `PredicateSet`.
+
+A `Predicate` generally contains the values (and identifiers) separate from the fragment they belong to until the last possible moment when the statement is either prepared (parameterized) or executed.
+In parameterization, the parameters are replaced with their proper placeholder (a named or positional parameter), and the values stored inside an `Adapter\ParameterContainer`.
+When executed, the values will be interpolated into the fragments they belong to and properly quoted.
+
+In the `Where`/`Having` API, a distinction is made between what elements are considered identifiers (`TYPE_IDENTIFIER`) and which are values (`TYPE_VALUE`).
+There is also a special use case type for literal values (`TYPE_LITERAL`).
+All element types are expressed via the `Laminas\Db\Sql\ExpressionInterface` interface.
+
+[NOTE]
+.Literals
+====
+In Laminas 1.1, an actual `Literal` type was added.
+`Laminas\Db\Sql` now makes the distinction that literals will not have any parameters that need interpolating, while `Expression` objects _might_ have parameters that need interpolating.
+In cases where there are parameters in an `Expression`, `Laminas\Db\Sql\AbstractSql` will do its best to identify placeholders when the `Expression` is processed during statement creation.
+In short, if you don't have parameters, use `Literal` objects.
+====
+
+The `Where` and `Having` API is that of `Predicate` and `PredicateSet`.
+Each method in the API will produce a corresponding `Predicate` object of a similarly named type, as described below.
+
+=== equalTo(), lessThan(), greaterThan(), lessThanOrEqualTo(), greaterThanOrEqualTo()
+
+[source,php,subs="attributes+"]
+----
+$where->equalTo('id', 4);
+
+// The above is equivalent to:
+$where->addPredicate(
+    new Predicate\Operator($left, Operator::OPERATOR_EQUAL_TO, $right, $leftType, $rightType)
+);
+----
+
+=== like($identifier, $like), notLike($identifier, $notLike)
+
+[source,php,subs="attributes+"]
+----
+$where->like($identifier, $like):
+
+// The above is equivalent to:
+$where->addPredicate(
+    new Predicate\Like($identifier, $like)
+);
+----
+
+=== literal($literal)
+
+[source,php,subs="attributes+"]
+----
+$where->literal($literal);
+
+// The above is equivalent to:
+$where->addPredicate(
+    new Predicate\Literal($literal)
+);
+----
+
+=== expression($expression, $parameter)
+
+[source,php,subs="attributes+"]
+----
+$where->expression($expression, $parameter);
+
+// The above is equivalent to:
+$where->addPredicate(
+    new Predicate\Expression($expression, $parameter)
+);
+----
+
+Expression parameters can be supplied either as a single scalar, an array of values, or as an array of value/types for more granular escaping.
+
+[source,php,subs="attributes+"]
+----
+$select
+    ->from('foo')
+    ->columns([
+        new Expression(
+            '(COUNT(?) + ?) AS ?',
+            [
+                ['some_column' => ExpressionInterface::TYPE_IDENTIFIER],
+                [4 => ExpressionInterface::TYPE_VALUE],
+                ['bar' => ExpressionInterface::TYPE_IDENTIFIER],
+            ],
+        ),
+    ]);
+
+// Produces SELECT (COUNT("some_column") + '4') AS "bar" FROM "foo"
+----
+
+=== isNull($identifier)
+
+[source,php,subs="attributes+"]
+----
+$where->isNull($identifier);
+
+// The above is equivalent to:
+$where->addPredicate(
+    new Predicate\IsNull($identifier)
+);
+----
+
+=== isNotNull($identifier)
+
+[source,php,subs="attributes+"]
+----
+$where->isNotNull($identifier);
+
+// The above is equivalent to:
+$where->addPredicate(
+    new Predicate\IsNotNull($identifier)
+);
+----
+
+=== in($identifier, $valueSet), notIn($identifier, $valueSet)
+
+[source,php,subs="attributes+"]
+----
+$where->in($identifier, $valueSet);
+
+// The above is equivalent to:
+$where->addPredicate(
+    new Predicate\In($identifier, $valueSet)
+);
+----
+
+=== between($identifier, $minValue, $maxValue), notBetween($identifier, $minValue, $maxValue)
+
+[source,php,subs="attributes+"]
+----
+$where->between($identifier, $minValue, $maxValue);
+
+// The above is equivalent to:
+$where->addPredicate(
+    new Predicate\Between($identifier, $minValue, $maxValue)
+);
+----
