@@ -2,10 +2,7 @@
 
 declare(strict_types=1);
 
-namespace PhpDb\Container;
-
-use PhpDb\Adapter\AdapterInterface;
-use PhpDb\Adapter\AdapterServiceFactory;
+namespace PhpDb;
 
 final class ConfigProvider
 {
@@ -20,8 +17,8 @@ final class ConfigProvider
     {
         return [
             'factories' => [
-                AdapterInterface::class => AdapterServiceFactory::class,
-                AdapterManager::class   => AdapterManagerFactory::class,
+                Adapter\AdapterInterface::class => Container\AdapterServiceFactory::class,
+                Container\AdapterManager::class => Container\AdapterManagerFactory::class,
             ],
         ];
     }

@@ -1,9 +1,14 @@
 <?php
 
-namespace PhpDb\Adapter;
+declare(strict_types=1);
+
+namespace PhpDb\Container;
 
 use Laminas\ServiceManager\Factory\AbstractFactoryInterface;
-use Laminas\ServiceManager\ServiceLocatorInterface;
+use PhpDb\Adapter\Adapter;
+use PhpDb\Adapter\AdapterInterface;
+use PhpDb\Adapter\Platform\PlatformInterface;
+use PhpDb\ResultSet\ResultSetInterface;
 use Psr\Container\ContainerInterface;
 
 use function is_array;
@@ -20,11 +25,8 @@ class AdapterAbstractServiceFactory implements AbstractFactoryInterface
 
     /**
      * Can we create an adapter by the requested name?
-     *
-     * @param  string $requestedName
-     * @return bool
      */
-    public function canCreate(ContainerInterface $container, $requestedName)
+    public function canCreate(ContainerInterface $container, string $requestedName): bool
     {
         $config = $this->getConfig($container);
         if (empty($config)) {
@@ -38,14 +40,20 @@ class AdapterAbstractServiceFactory implements AbstractFactoryInterface
 
     /**
      * Create a DB adapter
-     *
-     * @param  string $requestedName
-     * @return Adapter
      */
-    public function __invoke(ContainerInterface $container, $requestedName, ?array $options = null)
+    public function __invoke(ContainerInterface $container, string $requestedName, ?array $options = null): AdapterInterface
     {
-        $config = $this->getConfig($container);
-        return new Adapter($config[$requestedName]);
+        $manager         = $container->get(AdapterManager::class);
+        $driverFactory   = ($manager->get('DriverFactoryFactory'))($container, $requestedName);
+        $driverInstance  = $driverFactory::createFromConfig($container, $requestedName);
+        $platformFactory = ($manager->get('PlatformFactoryFactory'))();
+
+        //$config = $this->getConfig($container);
+        return new Adapter(
+            $driverInstance,
+            $platformFactory::fromDriver($driverInstance),
+            $manager->get(ResultSetInterface::class),
+        );
     }
 
     /**

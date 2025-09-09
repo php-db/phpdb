@@ -2,9 +2,12 @@
 
 declare(strict_types=1);
 
-namespace PhpDb\Adapter;
+namespace PhpDb\Container;
 
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
+use PhpDb\Adapter\AdapterInterface;
+use PhpDb\Adapter\AdapterAwareInterface;
+use PhpDb\Exception;
 use Psr\Container\ContainerInterface;
 
 use function sprintf;
