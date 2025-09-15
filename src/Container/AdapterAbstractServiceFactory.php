@@ -7,7 +7,6 @@ namespace PhpDb\Container;
 use Laminas\ServiceManager\Factory\AbstractFactoryInterface;
 use PhpDb\Adapter\Adapter;
 use PhpDb\Adapter\AdapterInterface;
-use PhpDb\Adapter\Platform\PlatformInterface;
 use PhpDb\ResultSet\ResultSetInterface;
 use Psr\Container\ContainerInterface;
 
@@ -44,9 +43,9 @@ class AdapterAbstractServiceFactory implements AbstractFactoryInterface
     public function __invoke(ContainerInterface $container, string $requestedName, ?array $options = null): AdapterInterface
     {
         $manager         = $container->get(AdapterManager::class);
-        $driverFactory   = ($manager->get('DriverFactoryFactory'))($container, $requestedName);
+        $driverFactory   = ($manager->get(DriverInterfaceFactoryFactoryInterface::class))($container, $requestedName);
         $driverInstance  = $driverFactory::createFromConfig($container, $requestedName);
-        $platformFactory = ($manager->get('PlatformFactoryFactory'))();
+        $platformFactory = ($manager->get(PlatformInterfaceFactoryFactoryInterface::class))();
 
         //$config = $this->getConfig($container);
         return new Adapter(
