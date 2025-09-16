@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace PhpDb\Adapter;
+namespace PhpDb\Container;
 
 use PhpDb\Adapter\AdapterInterface;
 use PhpDb\Container\AdapterManager;
