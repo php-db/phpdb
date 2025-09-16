@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Database abstraction layer, SQL abstraction, result set abstraction, and RowDataGateway and TableDataGateway implementations"> 
+
+    
+    
+    <meta name="docsearch:version" content="latest">
+    <meta name="docsearch:language" content="en">
+    <meta name="docsearch:component" content="laminas-db">
+
+    <link rel="canonical" href="https://docs.laminas.dev/phpdb/application-integration/usage-in-a-laminas-mvc-application/">
+    <link rel="shortcut icon" href="https://docs.laminas.dev/img/trademark-laminas-foundation-rgb.svg">
+
+    <title>Integrating in a Laminas MVC application - laminas-db - Laminas Docs</title>
+
+    <link rel="stylesheet" href="https://docs.laminas.dev/css/styles.css">
+    
+</head>
+<body id="page-top" class="components" data-spy="scroll" data-target=".toc" data-offset="20">
+
+    
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container">
+        
+        <a class="logo-link navbar-brand" href="https://getlaminas.org/" data-tooltip data-placement="bottom" title="Go to the Laminas homepage">
+            <img src="https://docs.laminas.dev/img/laminas-foundation-white.svg" height="28" alt="Laminas">
+        </a>
+        <a class="navbar-title" href="https://docs.laminas.dev/" data-tooltip data-placement="bottom" title="Go to the Laminas Documentation">
+            Documentation
+        </a>
+
+        
+        <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+            
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <div class="dropdown sub-project-selector">
+                        <a class="dropdown-toggle nav-link" data-toggle="dropdown" aria-expanded="false">
+                            All Docs
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <a href="https://docs.mezzio.dev/" class="dropdown-item">
+                                <div class="row align-items-center">
+                                    <div class="col-md-4 col-sm-12">
+                                        <img src="https://docs.laminas.dev/img/laminas-mezzio-rgb.svg">
+                                    </div>
+                                    <div class="col-md-8 col-sm-12">
+                                        <strong>Mezzio</strong><br>
+                                        PSR-15 Middleware in Minutes
+                                    </div>
+                                </div>
+                            </a>
+                            <a href="https://docs.laminas.dev/components/" class="dropdown-item">
+                                <div class="row align-items-center">
+                                    <div class="col-md-4 col-sm-12">
+                                        <img src="https://docs.laminas.dev/img/laminas-components-rgb.svg">
+                                    </div>
+                                    <div class="col-md-8 col-sm-12">
+                                        <strong>Components</strong><br>
+                                        Components for Enterprise Applications
+                                    </div>
+                                </div>
+                            </a>
+                            <a href="https://docs.laminas.dev/mvc" class="dropdown-item">
+                                <div class="row align-items-center">
+                                    <div class="col-md-4 col-sm-12">
+                                        <img src="https://docs.laminas.dev/img/laminas-mvc-rgb.svg">
+                                    </div>
+                                    <div class="col-md-8 col-sm-12">
+                                        <strong>MVC</strong><br>
+                                        MVC for Enterprise Applications
+                                    </div>
+                                </div>
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item dropdown-item--secondardy" href="https://docs.laminas.dev/migration/">
+                                <div class="row align-items-center">
+                                    <div class="col-md-8 offset-md-4 col-sm-12">
+                                        Migration to Laminas
+                                    </div>
+                                </div>
+                            </a>
+                            <a class="dropdown-item dropdown-item--secondardy" href="https://docs.laminas.dev/tutorials/">
+                                <div class="row align-items-center">
+                                    <div class="col-md-8 offset-md-4 col-sm-12">
+                                        Tutorials
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a href="https://getlaminas.org/participate" class="nav-link">Community</a>
+                </li>
+            </ul>
+
+            
+            
+                <div class="d-block d-sm-none">
+                    
+    <div class="subnavigation hidden-print">
+        <h4 class="subnavigation__title">
+            <a href="../..">
+                
+                
+    laminas-db
+
+            </a>
+        </h4>
+
+        <h5 class="subnavigation__subtitle">Table of Contents</h5>
+
+        <ul class="subnavigation__list">
+            
+
+                
+                
+
+                    
+                    
+                        
+                            <li class="subnavigation__list-item">
+                                <span class="subnavigation__headline">Adapters</span>
+                                <ul class="subnavigation__list">
+                                    
+                                        
+    <li class="subnavigation__list-item ">
+        <a href="../../adapter/" class="subnavigation__link">Introduction</a>
+    </li>
+
+                                    
+                                        
+    <li class="subnavigation__list-item ">
+        <a href="../../adapters/adapter-aware-trait/" class="subnavigation__link">AdapterAwareTrait</a>
+    </li>
+
+                                    
+                                </ul>
+                            </li>
+                        
+                    
+                
+            
+
+                
+                
+
+                    
+                    
+                        
+                            <li class="subnavigation__list-item ">
+                                <a href="../../result-set/" class="subnavigation__link">Result Sets</a>
+                            </li>
+                        
+                    
+                
+            
+
+                
+                
+
+                    
+                    
+                        
+                            <li class="subnavigation__list-item ">
+                                <a href="../../sql/" class="subnavigation__link">SQL Abstraction</a>
+                            </li>
+                        
+                    
+                
+            
+
+                
+                
+
+                    
+                    
+                        
+                            <li class="subnavigation__list-item ">
+                                <a href="../../sql-ddl/" class="subnavigation__link">DDL Abstraction</a>
+                            </li>
+                        
+                    
+                
+            
+
+                
+                
+
+                    
+                    
+                        
+                            <li class="subnavigation__list-item ">
+                                <a href="../../table-gateway/" class="subnavigation__link">Table Gateways</a>
+                            </li>
+                        
+                    
+                
+            
+
+                
+                
+
+                    
+                    
+                        
+                            <li class="subnavigation__list-item ">
+                                <a href="../../row-gateway/" class="subnavigation__link">Row Gateways</a>
+                            </li>
+                        
+                    
+                
+            
+
+                
+                
+
+                    
+                    
+                        
+                            <li class="subnavigation__list-item ">
+                                <a href="../../metadata/" class="subnavigation__link">RDBMS Metadata</a>
+                            </li>
+                        
+                    
+                
+            
+
+                
+                
+
+                    
+                    
+                        
+                            <li class="subnavigation__list-item">
+                                <span class="subnavigation__headline">Application Integration</span>
+                                <ul class="subnavigation__list">
+                                    
+                                        
+    <li class="subnavigation__list-item subnavigation__list-item--active">
+        <a href="./" class="subnavigation__link">Integrating in a Laminas MVC application</a>
+    </li>
+
+                                    
+                                </ul>
+                            </li>
+                        
+                    
+                
+            
+        </ul>
+    </div>
+
+                </div>
+            
+
+            
+            <div class="d-block d-sm-none">
+                <div class="component-selector">
+    
+    <h5 class="component-selector__subtitle">Find documentation…</h5>
+    <select class="form-control component-selector__control">
+        <option value="/">Overview</option>
+        <optgroup label="Components"></optgroup>
+    </select>
+</div>
+            </div>
+        </div>
+    </div>
+</nav>
+
+    
+    <header class="header">
+    <div class="container">
+        <div class="row">
+
+            
+            <div class="col-8">
+                <h1 class="header__title">
+                    Components
+
+                    
+                        <small class="header__subtitle">
+                            
+                            
+    laminas-db
+
+                        </small>
+                    
+                </h1>
+            </div>
+
+            
+            <div class="col-4 text-right">
+                
+                    
+
+                    <a href="#" class="header__link header__link--search" data-toggle="modal" data-target="#mkdocs_search_modal" title="Open search">
+                        <i class="fa fa-search"></i> Search
+                    </a>
+                    <a href="https://github.com/laminas/laminas-db" class="header__link header__link--github" title="Go to repository of laminas-db">
+                        <i class="fab fa-github"></i> GitHub
+                    </a>
+                
+            </div>
+        </div>
+    </div>
+</header>
+
+    
+    <div class="container">
+        <div class="row">
+            <div class="col-md-9 col-sm-12 content" role="main">
+                
+                
+                    
+    
+
+    
+    
+        <div class="toc">
+            <h6 class="toc__headline">On this page</h6>
+            <ul class="toc__list">
+                
+                    <li class="toc__entry">
+                        <a href="#when-installing-the-laminas-mvc-skeleton-application" class="toc__link nav-link">When installing the Laminas MVC Skeleton Application</a>
+                    </li>
+                
+                    <li class="toc__entry">
+                        <a href="#adding-to-an-existing-laminas-mvc-skeleton-application" class="toc__link nav-link">Adding to an existing Laminas MVC Skeleton Application</a>
+                    </li>
+                
+                    <li class="toc__entry">
+                        <a href="#the-abstract-factory" class="toc__link nav-link">The Abstract Factory</a>
+                    </li>
+                
+                    <li class="toc__entry">
+                        <a href="#working-with-the-adapter" class="toc__link nav-link">Working with the adapter</a>
+                    </li>
+                
+                    <li class="toc__entry">
+                        <a href="#running-with-docker" class="toc__link nav-link">Running with Docker</a>
+                    </li>
+                
+            </ul>
+        </div>
+    
+
+                
+
+                
+                    <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        
+            <li class="breadcrumb-item"><a href="https://docs.laminas.dev/">Overview</a></li>
+            <li class="breadcrumb-item"><a href="https://docs.laminas.dev/components/">Components</a></li>
+
+            
+                <li class="breadcrumb-item">
+                    <a href="../..">
+                        
+    laminas-db
+
+                    </a>
+                </li>
+
+                
+                    
+                        
+                        
+                            <li class="breadcrumb-item">Application Integration</li>
+                        
+                    
+                
+
+                <li class="breadcrumb-item active" aria-current="page">Integrating in a Laminas MVC application</li>
+            
+        
+    </ol>
+</nav>
+
+
+
+
+
+
+    
+    
+        <h2 class="chapter__headline">Application Integration</h2>
+    
+
+    <h1 id="usage-in-a-laminas-mvc-application">Usage in a laminas-mvc Application</h1>
+<p>The minimal installation for a laminas-mvc based application doesn't include any database features.</p>
+<h2 id="when-installing-the-laminas-mvc-skeleton-application">When installing the Laminas MVC Skeleton Application</h2>
+<p>While <code>Composer</code> is <a href="https://docs.laminas.dev/laminas-mvc/quick-start/#install-the-laminas-mvc-skeleton-application">installing the MVC Application</a>, you can add the <code>laminas-db</code> package while prompted.</p>
+<h2 id="adding-to-an-existing-laminas-mvc-skeleton-application">Adding to an existing Laminas MVC Skeleton Application</h2>
+<p>If the MVC application is already created, then use Composer to <a href="../../">add the laminas-db</a> package.</p>
+<h2 id="the-abstract-factory">The Abstract Factory</h2>
+<p>Now that the laminas-db package is installed, the abstract factory <code>PhpDb\Adapter\AdapterAbstractServiceFactory</code> is available to be used with the service configuration.</p>
+<h3 id="configuring-the-adapter">Configuring the adapter</h3>
+<p>The abstract factory expects the configuration key <code>db</code> in order to create a <code>PhpDb\Adapter\Adapter</code> instance.</p>
+<h3 id="working-with-a-sqlite-database">Working with a Sqlite database</h3>
+<p>Sqlite is a lightweight option to have the application working with a database.</p>
+<p>Here is an example of the configuration array for a sqlite database.
+Assuming the sqlite file path is <code>data/sample.sqlite</code>, the following configuration will produce the adapter:</p>
+<pre class="highlight"><code class="language-php">return [
+    'db' =&gt; [
+        'driver' =&gt; 'Pdo',
+        'adapters' =&gt; [
+            sqliteAdapter::class =&gt; [
+                'driver' =&gt; 'Pdo',
+                'dsn' =&gt; 'sqlite:data/sample.sqlite',
+            ],
+        ],
+    ],
+];</code></pre>
+<p>The <code>data/</code> filepath for the sqlite file is the default <code>data/</code> directory from the Laminas MVC application.</p>
+<h3 id="working-with-a-mysql-database">Working with a MySQL database</h3>
+<p>Unlike a sqlite database, the MySQL database adapter requires a MySQL server.</p>
+<p>Here is an example of a configuration array for a MySQL database.</p>
+<pre class="highlight"><code class="language-php">return [
+    'db' =&gt; [
+        'driver' =&gt; 'Pdo',
+        'adapters' =&gt; [
+            mysqlAdapter::class =&gt; [
+                'driver' =&gt; 'Pdo',
+                'dsn' =&gt; 'mysql:dbname=your_database_name;host=your_mysql_host;charset=utf8',
+                'username' =&gt; 'your_mysql_username',
+                'password' =&gt; 'your_mysql_password',
+                'driver_options' =&gt; [
+                    PDO::MYSQL_ATTR_INIT_COMMAND =&gt; 'SET NAMES \'UTF8\''
+                ],
+            ],
+        ],
+    ],
+];</code></pre>
+<h2 id="working-with-the-adapter">Working with the adapter</h2>
+<p>Once you have configured an adapter, as in the above examples, you now have a <code>PhpDb\Adapter\Adapter</code> available to your application.</p>
+<p>A factory for a class that consumes an adapter can pull the adapter by the name used in configuration.
+As an example, for the sqlite database configured earlier, we could write the following:</p>
+<pre class="highlight"><code class="language-php">use sqliteAdapter ;
+
+$adapter = $container-&gt;get(sqliteAdapter::class) ;</code></pre>
+<p>For the MySQL Database configured earlier:</p>
+<pre class="highlight"><code class="language-php">use mysqlAdapter ;
+
+$adapter = $container-&gt;get(mysqlAdapter::class) ;</code></pre>
+<p>You can read more about the <a href="../../adapter/">adapter in the adapter chapter of the documentation</a>.</p>
+<h2 id="running-with-docker">Running with Docker</h2>
+<p>When working with a MySQL database and when running the application with Docker, some files need to be added or adjusted.</p>
+<h3 id="adding-the-mysql-extension-to-the-php-container">Adding the MySQL extension to the PHP container</h3>
+<p>Change the <code>Dockerfile</code> to add the PDO MySQL extension to PHP.</p>
+<pre class="highlight"><code class="language-Dockerfile">FROM php:7.3-apache
+
+RUN apt-get update \
+ &amp;&amp; apt-get install -y git zlib1g-dev libzip-dev \
+ &amp;&amp; docker-php-ext-install zip pdo_mysql \
+ &amp;&amp; a2enmod rewrite \
+ &amp;&amp; sed -i 's!/var/www/html!/var/www/public!g' /etc/apache2/sites-available/000-default.conf \
+ &amp;&amp; mv /var/www/html /var/www/public \
+ &amp;&amp; curl -sS https://getcomposer.org/installer \
+  | php -- --install-dir=/usr/local/bin --filename=composer
+
+WORKDIR /var/www</code></pre>
+<h3 id="adding-the-mysql-container">Adding the mysql container</h3>
+<p>Change the <code>docker-compose.yml</code> file to add a new container for mysql.</p>
+<pre class="highlight"><code class="language-yaml">  mysql:
+    image: mysql
+    ports:
+     - 3306:3306
+    command:
+      --default-authentication-plugin=mysql_native_password
+    volumes:
+     - ./.data/db:/var/lib/mysql
+     - ./.docker/mysql/:/docker-entrypoint-initdb.d/
+    environment:
+     - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}</code></pre>
+<p>Though it is not the topic to explain how to write a <code>docker-compose.yml</code> file, a few details need to be highlighted :</p>
+<ul>
+<li>The name of the container is <code>mysql</code>.</li>
+<li>MySQL database files will be stored in the directory <code>/.data/db/</code>.</li>
+<li>SQL schemas will need to be added to the <code>/.docker/mysql/</code> directory so that Docker will be able to build and populate the database(s).</li>
+<li>The mysql docker image is using the <code>$MYSQL_ROOT_PASSWORD</code> environment variable to set the mysql root password.</li>
+</ul>
+<h3 id="link-the-containers">Link the containers</h3>
+<p>Now link the mysql container and the laminas container so that the application knows where to find the mysql server.</p>
+<pre class="highlight"><code class="language-yaml">  laminas:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+     - 8080:80
+    volumes:
+     - .:/var/www
+    links:
+     - mysql:mysql</code></pre>
+<h3 id="adding-phpmyadmin">Adding phpMyAdmin</h3>
+<p>Optionnally, you can also add a container for phpMyAdmin.</p>
+<pre class="highlight"><code class="language-yaml">  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    ports:
+     - 8081:80
+    environment:
+     - PMA_HOST=${PMA_HOST}</code></pre>
+<p>The image uses the <code>$PMA_HOST</code> environment variable to set the host of the mysql server.
+The expected value is the name of the mysql container.</p>
+<p>Putting everything together:</p>
+<pre class="highlight"><code class="language-yaml">version: "2.1"
+services:
+  laminas:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+     - 8080:80
+    volumes:
+     - .:/var/www
+    links:
+     - mysql:mysql
+  mysql:
+    image: mysql
+    ports:
+     - 3306:3306
+    command:
+      --default-authentication-plugin=mysql_native_password
+    volumes:
+     - ./.data/db:/var/lib/mysql
+     - ./.docker/mysql/:/docker-entrypoint-initdb.d/
+    environment:
+     - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    ports:
+     - 8081:80
+    environment:
+     - PMA_HOST=${PMA_HOST}</code></pre>
+<h3 id="defining-credentials">Defining credentials</h3>
+<p>The <code>docker-compose.yml</code> file uses ENV variables to define the credentials.</p>
+<p>Docker will read the ENV variables from a <code>.env</code> file.</p>
+<pre class="highlight"><code class="language-env">MYSQL_ROOT_PASSWORD=rootpassword
+PMA_HOST=mysql</code></pre>
+<h3 id="initiating-the-database-schemas">Initiating the database schemas</h3>
+<p>At build, if the <code>/.data/db</code> directory is missing, Docker will create the mysql database with any <code>.sql</code> files found in the <code>.docker/mysql/</code> directory.
+(These are the files with the <code>CREATE DATABASE</code>, <code>USE (database)</code>, and <code>CREATE TABLE, INSERT INTO</code> directives defined earlier in this document).
+If multiple <code>.sql</code> files are present, it is a good idea to safely order the list because Docker will read the files in ascending order.</p>
+
+
+
+
+    <nav>
+    <ul class="page-nav hidden-print">
+
+        
+        <li class="page-nav__item">
+            
+                <a rel="prev" class="page-nav__link page-nav__link--prev" href="../../metadata/">
+                    <small class="page-nav__label">Previous</small>
+                    <i class="fa fa-chevron-left"></i>
+                    RDBMS Metadata
+                </a>
+            
+        </li>
+
+        
+        <li class="page-nav__item">
+            
+        </li>
+    </ul>
+</nav>
+
+
+
+                
+            </div>
+            <div class="col-md-3 col-sm-12 sidebar">
+                <div class="donation-banner">
+    <a href="https://getlaminas.org/support/">
+        <h2>Donate</h2>
+        <p>Support Laminas Developers Directly</p>
+        <img src="https://funding.communitybridge.org/assets/cb-f-horizontal-white.svg">
+    </a>
+</div>
+
+                
+                    <div class="component-selector">
+    
+    <h5 class="component-selector__subtitle">Find documentation…</h5>
+    <select class="form-control component-selector__control">
+        <option value="/">Overview</option>
+        <optgroup label="Components"></optgroup>
+    </select>
+</div>
+                    
+    <div class="subnavigation hidden-print">
+        <h4 class="subnavigation__title">
+            <a href="../..">
+                
+                
+    laminas-db
+
+            </a>
+        </h4>
+
+        <h5 class="subnavigation__subtitle">Table of Contents</h5>
+
+        <ul class="subnavigation__list">
+            
+
+                
+                
+
+                    
+                    
+                        
+                            <li class="subnavigation__list-item">
+                                <span class="subnavigation__headline">Adapters</span>
+                                <ul class="subnavigation__list">
+                                    
+                                        
+    <li class="subnavigation__list-item ">
+        <a href="../../adapter/" class="subnavigation__link">Introduction</a>
+    </li>
+
+                                    
+                                        
+    <li class="subnavigation__list-item ">
+        <a href="../../adapters/adapter-aware-trait/" class="subnavigation__link">AdapterAwareTrait</a>
+    </li>
+
+                                    
+                                </ul>
+                            </li>
+                        
+                    
+                
+            
+
+                
+                
+
+                    
+                    
+                        
+                            <li class="subnavigation__list-item ">
+                                <a href="../../result-set/" class="subnavigation__link">Result Sets</a>
+                            </li>
+                        
+                    
+                
+            
+
+                
+                
+
+                    
+                    
+                        
+                            <li class="subnavigation__list-item ">
+                                <a href="../../sql/" class="subnavigation__link">SQL Abstraction</a>
+                            </li>
+                        
+                    
+                
+            
+
+                
+                
+
+                    
+                    
+                        
+                            <li class="subnavigation__list-item ">
+                                <a href="../../sql-ddl/" class="subnavigation__link">DDL Abstraction</a>
+                            </li>
+                        
+                    
+                
+            
+
+                
+                
+
+                    
+                    
+                        
+                            <li class="subnavigation__list-item ">
+                                <a href="../../table-gateway/" class="subnavigation__link">Table Gateways</a>
+                            </li>
+                        
+                    
+                
+            
+
+                
+                
+
+                    
+                    
+                        
+                            <li class="subnavigation__list-item ">
+                                <a href="../../row-gateway/" class="subnavigation__link">Row Gateways</a>
+                            </li>
+                        
+                    
+                
+            
+
+                
+                
+
+                    
+                    
+                        
+                            <li class="subnavigation__list-item ">
+                                <a href="../../metadata/" class="subnavigation__link">RDBMS Metadata</a>
+                            </li>
+                        
+                    
+                
+            
+
+                
+                
+
+                    
+                    
+                        
+                            <li class="subnavigation__list-item">
+                                <span class="subnavigation__headline">Application Integration</span>
+                                <ul class="subnavigation__list">
+                                    
+                                        
+    <li class="subnavigation__list-item subnavigation__list-item--active">
+        <a href="./" class="subnavigation__link">Integrating in a Laminas MVC application</a>
+    </li>
+
+                                    
+                                </ul>
+                            </li>
+                        
+                    
+                
+            
+        </ul>
+    </div>
+
+                    
+                
+            </div>
+        </div>
+    </div>
+
+    
+    <footer class="footer">
+    <div class="container">
+
+        
+        <div class="row">
+            <div class="col-md-12 text-center">
+                <a class="footer__button" href="#page-top"><i class="fa fa-chevron-up" aria-hidden="true"></i></a>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <h5>Laminas</h5>
+                <ul>
+                    <li>Laminas Project <a href="https://getlaminas.org/">The new foundation for the community-supported, open source continuation of Zend Framework</a></li>
+                    <li>Laminas Components and MVC <a href="https://docs.laminas.dev/">Components and MVC for enterprise applications</a></li>
+                    <li>Mezzio <a href="https://docs.mezzio.dev/">PSR-15 middleware in minutes</a></li>
+                    <li>Maintenance Overview <a href="https://getlaminas.org/packages-maintenance-status/">Current maintenance status of Laminas &amp; Mezzio packages</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="row">
+
+                    
+                    <div class="col-md-4">
+                        <h4 class="footer__headline">Support</h4>
+                        <ul class="support__list">
+                            <li class="support__list-item">
+                                <a href="https://discourse.laminas.dev" class="support__link" title="Forum"><i class="fa fa-comments"></i></a>
+                            </li>
+                            <li class="support__list-item">
+                                <a href="https://laminas.dev/chat" class="support__link" title="Chat"><i class="fab fa-slack"></i></a>
+                            </li>
+                            <li class="support__list-item">
+                                <a href="https://github.com/laminas" class="support__link" title="Github"><i class="fab fa-github"></i></a>
+                            </li>
+                            <li class="support__list-item">
+                                <a href="https://phpc.social/@getlaminas" class="support__link" title="Mastodon"><i class="fab fa-mastodon"></i></a>
+                            </li>
+                            <li class="support__list-item">
+                                <a href="https://getlaminas.org/blog/rss.xml" class="support__link" title="Blog feed"><i class="fa fa-rss"></i></a>
+                            </li>
+                            <li class="support__list-item">
+                                <a href="https://getlaminas.org/security/feed" class="support__link" title="Security feed"><i class="fa fa-rss-square"></i></a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    
+                    <div class="col-md-4">
+                        <h4 class="footer__headline">License</h4>
+                        <p>
+                            Code licensed under <a
+                                href="https://github.com/laminas/laminas-db/blob/-/LICENSE.md">BSD 3-Clause</a>.
+                        </p>
+                    </div>
+
+                    
+                    <div class="col-md-4">
+                        <h4 class="footer__headline">Copyright</h4>
+                        <p>
+                            <!--Built with love by the Laminas team with the help of our
+                            <a href="https://github.com/laminas/laminas-db/graphs/contributors">contributors</a>.<br>-->
+                            &copy; 2025 <a href="https://getlaminas.org/">Laminas Project</a> a Series of LF Projects, LLC.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+
+    <script>
+        let base_url = '../..',
+            project  = "components",
+            siteName = 'laminas-db';
+    </script>
+    <script src="https://docs.laminas.dev/js/scripts.js"></script>
+    
+        <script src="../../search/main.js"></script>
+    
+
+    
+    <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Search</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    <span class="sr-only">Close</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form role="form">
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Search in laminas-db" id="mkdocs-search-query">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results"></div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+
+
+</html>
