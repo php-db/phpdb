@@ -496,9 +496,8 @@ abstract class AbstractSource implements MetadataInterface
     /**
      * Load schema data
      */
-    protected function loadSchemaData()
-    {
-    }
+    abstract protected function loadSchemaData(): void;
+
 
     /**
      * Load table name data
