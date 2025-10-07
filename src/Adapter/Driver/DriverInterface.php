@@ -23,11 +23,6 @@ interface DriverInterface
      */
     public function checkEnvironment(): bool;
 
-    /**
-     * @deprecated as of 3.0.0; use constructor injection instead
-     */
-    //public function registerConnection(ConnectionInterface $connection): DriverInterface;
-
     /** Get connection */
     public function getConnection(): ConnectionInterface;
 
