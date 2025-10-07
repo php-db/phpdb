@@ -1,0 +1,22 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Laminas\ServiceManager\Factory;
+
+use Psr\Container\ContainerInterface;
+
+/**
+ * PHPStan stub for Laminas\ServiceManager\Factory\InvokableFactory
+ * This is a type alias to help PHPStan understand the class in the PhpCmd\CmdBus namespace context.
+ */
+final class InvokableFactory implements FactoryInterface
+{
+    /**
+     * @param array<mixed>|null $options
+     */
+    public function __invoke(ContainerInterface $container, string $requestedName, ?array $options = null): mixed
+    {
+        return null === $options ? new $requestedName() : new $requestedName($options);
+    }
+}
