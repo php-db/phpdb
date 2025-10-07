@@ -24,7 +24,7 @@ class Sql
     ) {
         $this->adapter     = $adapter;
         $this->table       = $table;
-        $this->sqlPlatform = new Platform\Platform($adapter);
+        $this->sqlPlatform = new Platform\Platform($adapter->getPlatform());
     }
 
     public function getAdapter(): ?AdapterInterface
