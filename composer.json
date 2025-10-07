@@ -25,21 +25,21 @@
     },
         "extra": {
         "laminas": {
-            "config-provider": "PhpDb\\Container\\ConfigProvider"
+            "config-provider": "PhpDb\\ConfigProvider"
         }
     },
     "require": {
-        "php": "~8.1.0 || ~8.2.0 || ~8.3.0 || ~8.4.0",
+        "php": "~8.2.0 || ~8.3.0 || ~8.4.0",
         "laminas/laminas-servicemanager": "^4.0.0",
         "laminas/laminas-stdlib": "^3.20.0"
     },
     "require-dev": {
         "laminas/laminas-coding-standard": "^3.0.1",
         "laminas/laminas-eventmanager": "^3.14.0",
-        "phpunit/phpunit": "^11.5.12",
-        "psalm/plugin-phpunit": "^0.19.2",
-        "rector/rector": "^2.0",
-        "vimeo/psalm": "^6.8.8"
+        "phpstan/phpstan": "^2.1",
+        "phpstan/phpstan-phpunit": "^2.0",
+        "phpunit/phpunit": "^11.5.15",
+        "rector/rector": "^2.0"
     },
     "suggest": {
         "laminas/laminas-eventmanager": "Laminas\\EventManager component",
@@ -60,14 +60,15 @@
     "scripts": {
         "check": [
             "@cs-check",
-            "@test"
+            "@static-analysis"
         ],
         "cs-check": "phpcs",
         "cs-fix": "phpcbf",
         "test": "phpunit --colors=always --testsuite \"unit test\"",
         "test-coverage": "phpunit --colors=always --coverage-clover clover.xml",
         "test-integration": "phpunit --colors=always --testsuite \"integration test\"",
-        "static-analysis": "psalm --shepherd --stats",
+        "static-analysis": "vendor/bin/phpstan analyse --memory-limit=256M",
+        "sa-generate-baseline": "vendor/bin/phpstan analyse --memory-limit=256M --generate-baseline",
         "upload-coverage": "coveralls -v"
     },
     "conflict": {

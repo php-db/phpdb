@@ -1,0 +1,19 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Laminas\ServiceManager\Initializer;
+
+use Psr\Container\ContainerInterface;
+
+/**
+ * PHPStan stub for Laminas\ServiceManager\Initializer\InitializerInterface
+ * This is a type alias to help PHPStan understand the interface in the PhpCmd\CmdBus namespace context.
+ */
+interface InitializerInterface
+{
+    /**
+     * Initialize the given instance
+     */
+    public function __invoke(ContainerInterface $container, mixed $instance): void;
+}
