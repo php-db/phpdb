@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PhpDb\Adapter\Driver\Pdo;
 
+use Override;
 use PhpDb\Adapter\Driver\PdoDriverAwareInterface;
 use PhpDb\Adapter\Driver\PdoDriverInterface;
 use PhpDb\Adapter\Driver\ResultInterface;
@@ -46,12 +47,14 @@ class Statement implements StatementInterface, PdoDriverAwareInterface, Profiler
     ) {
     }
 
+    #[Override]
     public function setDriver(PdoDriverInterface $driver): PdoDriverAwareInterface
     {
         $this->driver = $driver;
         return $this;
     }
 
+    #[Override]
     public function setProfiler(ProfilerInterface $profiler): ProfilerAwareInterface
     {
         $this->profiler = $profiler;
@@ -64,26 +67,28 @@ class Statement implements StatementInterface, PdoDriverAwareInterface, Profiler
     }
 
     /** Initialize */
-    public function initialize(PDO $connectionResource): static
+    public function initialize(PDO $connectionResource): StatementInterface
     {
         $this->pdo = $connectionResource;
         return $this;
     }
 
     /** Set resource */
-    public function setResource(PDOStatement $pdoStatement): static
+    public function setResource(PDOStatement $pdoStatement): StatementInterface
     {
         $this->resource = $pdoStatement;
         return $this;
     }
 
     /** Get resource */
+    #[Override]
     public function getResource(): ?PDOStatement
     {
         return $this->resource;
     }
 
     /** Set sql */
+    #[Override]
     public function setSql(?string $sql): StatementContainerInterface
     {
         $this->sql = $sql;
@@ -91,23 +96,27 @@ class Statement implements StatementInterface, PdoDriverAwareInterface, Profiler
     }
 
     /** Get sql */
+    #[Override]
     public function getSql(): ?string
     {
         return $this->sql;
     }
 
+    #[Override]
     public function setParameterContainer(ParameterContainer $parameterContainer): StatementContainerInterface
     {
         $this->parameterContainer = $parameterContainer;
         return $this;
     }
 
+    #[Override]
     public function getParameterContainer(): ?ParameterContainer
     {
         return $this->parameterContainer;
     }
 
     /** @throws Exception\RuntimeException */
+    #[Override]
     public function prepare(?string $sql = null): StatementInterface
     {
         if ($this->isPrepared) {
@@ -130,12 +139,14 @@ class Statement implements StatementInterface, PdoDriverAwareInterface, Profiler
         return $this;
     }
 
+    #[Override]
     public function isPrepared(): bool
     {
         return $this->isPrepared;
     }
 
     /** @throws Exception\InvalidQueryException */
+    #[Override]
     public function execute(null|array|ParameterContainer $parameters = null): ?ResultInterface
     {
         if (! $this->isPrepared) {

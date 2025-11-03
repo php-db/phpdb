@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace PhpDb\Adapter\Driver\Pdo;
 
-use Dba\Connection;
+use Override;
 use PhpDb\Adapter\Driver\AbstractConnection;
 use PhpDb\Adapter\Driver\ConnectionInterface;
 use PhpDb\Adapter\Driver\PdoConnectionInterface;
@@ -14,14 +14,10 @@ use PhpDb\Adapter\Driver\ResultInterface;
 use PhpDb\Adapter\Driver\StatementInterface;
 use PhpDb\Adapter\Exception;
 use PhpDb\Adapter\Exception\RuntimeException;
-use Override;
 use PDO;
 
 use function is_array;
-use function str_replace;
-use function strpos;
 use function strtolower;
-use function substr;
 
 abstract class AbstractPdoConnection extends AbstractConnection implements PdoConnectionInterface, PdoDriverAwareInterface
 {
@@ -84,40 +80,7 @@ abstract class AbstractPdoConnection extends AbstractConnection implements PdoCo
         return $this->dsn;
     }
 
-    /**
-     * @inheritDoc
-     */
-    // public function getCurrentSchema()
-    // {
-    //     if (! $this->isConnected()) {
-    //         $this->connect();
-    //     }
-
-    //     switch ($this->driverName) {
-    //         case 'mysql':
-    //             $sql = 'SELECT DATABASE()';
-    //             break;
-    //         case 'sqlite':
-    //             return 'main';
-    //         case 'sqlsrv':
-    //         case 'dblib':
-    //             $sql = 'SELECT SCHEMA_NAME()';
-    //             break;
-    //         case 'pgsql':
-    //         default:
-    //             $sql = 'SELECT CURRENT_SCHEMA';
-    //             break;
-    //     }
-
-    //     /** @var PDOStatement $result */
-    //     $result = $this->resource->query($sql);
-    //     if ($result instanceof PDOStatement) {
-    //         return $result->fetchColumn();
-    //     }
-
-    //     return false;
-    // }
-
+    /** @inheritDoc */
     public function setResource(PDO $resource): PdoConnectionInterface
     {
         $this->resource   = $resource;
@@ -127,12 +90,14 @@ abstract class AbstractPdoConnection extends AbstractConnection implements PdoCo
     }
 
     /** @inheritDoc */
+    #[Override]
     public function isConnected(): bool
     {
         return $this->resource instanceof PDO;
     }
 
     /** @inheritDoc */
+    #[Override]
     public function beginTransaction(): ConnectionInterface
     {
         if (! $this->isConnected()) {
@@ -150,6 +115,7 @@ abstract class AbstractPdoConnection extends AbstractConnection implements PdoCo
     }
 
     /** @inheritDoc */
+    #[Override]
     public function commit(): ConnectionInterface
     {
         if (! $this->isConnected()) {
@@ -177,6 +143,7 @@ abstract class AbstractPdoConnection extends AbstractConnection implements PdoCo
      *
      * @throws Exception\RuntimeException
      */
+    #[Override]
     public function rollback(): ConnectionInterface
     {
         if (! $this->isConnected()) {
@@ -200,6 +167,7 @@ abstract class AbstractPdoConnection extends AbstractConnection implements PdoCo
      *
      * @throws Exception\InvalidQueryException
      */
+    #[Override]
     public function execute($sql): ?ResultInterface
     {
         if (! $this->isConnected()) {
@@ -233,28 +201,4 @@ abstract class AbstractPdoConnection extends AbstractConnection implements PdoCo
 
         return $this->driver->createStatement($sql);
     }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param  string            $name
-     * @return string|null|false
-     */
-    // public function getLastGeneratedValue($name = null)
-    // {
-    //     if (
-    //         $name === null
-    //         && ($this->driverName === 'pgsql' || $this->driverName === 'firebird')
-    //     ) {
-    //         return;
-    //     }
-
-    //     try {
-    //         return $this->resource->lastInsertId($name);
-    //     } catch (\Exception $e) {
-    //         // do nothing
-    //     }
-
-    //     return false;
-    // }
 }

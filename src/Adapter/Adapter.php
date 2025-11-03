@@ -1,8 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDb\Adapter;
 
 use Exception as PhpException;
+use Override;
 use PhpDb\ResultSet;
 
 use function func_get_args;
@@ -27,6 +30,7 @@ class Adapter implements AdapterInterface, Profiler\ProfilerAwareInterface, Sche
         }
     }
 
+    #[Override]
     public function setProfiler(Profiler\ProfilerInterface $profiler): Profiler\ProfilerAwareInterface
     {
         $this->profiler = $profiler;
@@ -36,26 +40,31 @@ class Adapter implements AdapterInterface, Profiler\ProfilerAwareInterface, Sche
         return $this;
     }
 
-    public function getProfiler(): ?Profiler\ProfilerInterface
-    {
-        return $this->profiler;
-    }
-
+    #[Override]
     public function getDriver(): Driver\DriverInterface
     {
         return $this->driver;
     }
 
+    #[Override]
     public function getPlatform(): Platform\PlatformInterface
     {
         return $this->platform;
     }
 
+    #[Override]
+    public function getProfiler(): ?Profiler\ProfilerInterface
+    {
+        return $this->profiler;
+    }
+
+    #[Override]
     public function getQueryResultSetPrototype(): ResultSet\ResultSetInterface
     {
         return $this->queryResultSetPrototype;
     }
 
+    #[Override]
     public function getCurrentSchema(): string
     {
         return $this->driver->getConnection()->getCurrentSchema();
@@ -67,6 +76,7 @@ class Adapter implements AdapterInterface, Profiler\ProfilerAwareInterface, Sche
      * @throws Exception\InvalidArgumentException
      * @throws PhpException
      */
+    #[Override]
     public function query(
         string $sql,
         ParameterContainer|array|string $parametersOrQueryMode = self::QUERY_MODE_PREPARE,
@@ -119,6 +129,7 @@ class Adapter implements AdapterInterface, Profiler\ProfilerAwareInterface, Sche
     /**
      * Create statement
      */
+    #[Override]
     public function createStatement(
         ?string $initialSql = null,
         ParameterContainer|array|null $initialParameters = null
@@ -135,6 +146,9 @@ class Adapter implements AdapterInterface, Profiler\ProfilerAwareInterface, Sche
         return $statement;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function getHelpers()
     {
         $functions = [];
@@ -155,11 +169,8 @@ class Adapter implements AdapterInterface, Profiler\ProfilerAwareInterface, Sche
         }
     }
 
-    /**
-     * @throws Exception\InvalidArgumentException
-     * @return Driver\DriverInterface|Platform\PlatformInterface
-     */
-    public function __get(string $name)
+    /** @throws Exception\InvalidArgumentException */
+    public function __get(string $name): Driver\DriverInterface|Platform\PlatformInterface
     {
         return match (strtolower($name)) {
             'driver'   => $this->driver,
@@ -167,130 +178,4 @@ class Adapter implements AdapterInterface, Profiler\ProfilerAwareInterface, Sche
             default    => throw new Exception\InvalidArgumentException('Invalid magic property on adapter'),
         };
     }
-
-    // protected function createDriver(array $parameters): Driver\DriverInterface
-    // {
-    //     if (! isset($parameters['driver'])) {
-    //         throw new Exception\InvalidArgumentException(
-    //             __FUNCTION__ . ' expects a "driver" key to be present inside the parameters'
-    //         );
-    //     }
-
-    //     if ($parameters['driver'] instanceof Driver\DriverInterface) {
-    //         return $parameters['driver'];
-    //     }
-
-    //     if (! is_string($parameters['driver'])) {
-    //         throw new Exception\InvalidArgumentException(
-    //             __FUNCTION__ . ' expects a "driver" to be a string or instance of DriverInterface'
-    //         );
-    //     }
-
-    //     $options = [];
-    //     if (isset($parameters['options'])) {
-    //         $options = (array) $parameters['options'];
-    //         unset($parameters['options']);
-    //     }
-
-    //     $driverName = strtolower($parameters['driver']);
-    //     switch ($driverName) {
-    //         case 'mysqli':
-    //             $driver = new Driver\Mysqli\Mysqli($parameters, null, null, $options);
-    //             break;
-    //         case 'sqlsrv':
-    //             $driver = new Driver\Sqlsrv\Sqlsrv($parameters);
-    //             break;
-    //         case 'oci8':
-    //             $driver = new Driver\Oci8\Oci8($parameters);
-    //             break;
-    //         case 'pgsql':
-    //             $driver = new Driver\Pgsql\Pgsql($parameters);
-    //             break;
-    //         case 'ibmdb2':
-    //             $driver = new Driver\IbmDb2\IbmDb2($parameters);
-    //             break;
-    //         case 'pdo':
-    //         default:
-    //             if ($driverName === 'pdo' || str_starts_with($driverName, 'pdo')) {
-    //                 $driver = new Driver\Pdo\Pdo($parameters);
-    //             }
-    //     }
-
-    //     if (! isset($driver) || ! $driver instanceof Driver\DriverInterface) {
-    //         throw new Exception\InvalidArgumentException('DriverInterface expected');
-    //     }
-
-    //     return $driver;
-    // }
-
-    // protected function createPlatform(array $parameters): Platform\PlatformInterface
-    // {
-    //     if (isset($parameters['platform'])) {
-    //         $platformName = $parameters['platform'];
-    //     } elseif ($this->driver instanceof Driver\DriverInterface) {
-    //         $platformName = $this->driver->getDatabasePlatformName();
-    //     } else {
-    //         throw new Exception\InvalidArgumentException(
-    //             'A platform could not be determined from the provided configuration'
-    //         );
-    //     }
-
-    //     // currently only supported by the IbmDb2 & Oracle concrete implementations
-    //     $options = $parameters['platform_options'] ?? [];
-
-    //     switch ($platformName) {
-    //         case 'Mysql':
-    //             // mysqli or pdo_mysql driver
-    //             if ($this->driver instanceof Driver\Mysqli\Mysqli || $this->driver instanceof Driver\Pdo\Pdo) {
-    //                 $driver = $this->driver;
-    //             } else {
-    //                 $driver = null;
-    //             }
-    //             return new Platform\Mysql($driver);
-    //         case 'SqlServer':
-    //             // PDO is only supported driver for quoting values in this platform
-    //             return new Platform\SqlServer($this->driver instanceof Driver\Pdo\Pdo ? $this->driver : null);
-    //         case 'Oracle':
-    //             if ($this->driver instanceof Driver\Oci8\Oci8 || $this->driver instanceof Driver\Pdo\Pdo) {
-    //                 $driver = $this->driver;
-    //             } else {
-    //                 $driver = null;
-    //             }
-    //             return new Platform\Oracle($options, $driver);
-    //         case 'Sqlite':
-    //             // PDO is only supported driver for quoting values in this platform
-    //             if ($this->driver instanceof Driver\Pdo\Pdo) {
-    //                 return new Platform\Sqlite($this->driver);
-    //             }
-    //             return new Platform\Sqlite(null);
-    //         case 'Postgresql':
-    //             // pgsql or pdo postgres driver
-    //             if ($this->driver instanceof Driver\Pgsql\Pgsql || $this->driver instanceof Driver\Pdo\Pdo) {
-    //                 $driver = $this->driver;
-    //             } else {
-    //                 $driver = null;
-    //             }
-    //             return new Platform\Postgresql($driver);
-    //         case 'IbmDb2':
-    //             // ibm_db2 driver escaping does not need an action connection
-    //             return new Platform\IbmDb2($options);
-    //         default:
-    //             return new Platform\Sql92();
-    //     }
-    // }
-
-    // protected function createProfiler(array $parameters): ?Profiler\ProfilerInterface
-    // {
-    //     if ($parameters['profiler'] instanceof Profiler\ProfilerInterface) {
-    //         return $parameters['profiler'];
-    //     }
-
-    //     if (is_bool($parameters['profiler'])) {
-    //         return $parameters['profiler'] === true ? new Profiler\Profiler() : null;
-    //     }
-
-    //     throw new Exception\InvalidArgumentException(
-    //         '"profiler" parameter must be an instance of ProfilerInterface or a boolean'
-    //     );
-    // }
 }

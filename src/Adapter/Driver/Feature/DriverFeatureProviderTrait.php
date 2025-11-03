@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PhpDb\Adapter\Driver\Feature;
 
+use Override;
 use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\Exception\RuntimeException;
 
@@ -21,6 +22,7 @@ trait DriverFeatureProviderTrait
      */
     protected array $features = [];
 
+    #[Override]
     public function addFeature(DriverFeatureInterface $feature): DriverFeatureProviderInterface
     {
         if (! $this instanceof DriverInterface) {
@@ -36,6 +38,7 @@ trait DriverFeatureProviderTrait
         return $this;
     }
 
+    #[Override]
     public function addFeatures(array $features): DriverFeatureProviderInterface
     {
         foreach ($features as $feature) {
@@ -44,7 +47,8 @@ trait DriverFeatureProviderTrait
         return $this;
     }
 
-    public function getFeature(string $name): DriverFeatureInterface|bool
+    #[Override]
+    public function getFeature(string $name): DriverFeatureInterface|false
     {
         return $this->features[$name] ?? false;
     }

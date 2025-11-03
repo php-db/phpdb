@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace PhpDb\Adapter\Driver;
 
+use Override;
 use PhpDb\Adapter\Profiler\ProfilerAwareInterface;
 use PhpDb\Adapter\Profiler\ProfilerInterface;
-use Override;
 
 abstract class AbstractConnection implements ConnectionInterface, ProfilerAwareInterface
 {

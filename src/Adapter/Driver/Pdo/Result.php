@@ -288,6 +288,7 @@ class Result implements Iterator, ResultInterface
     /**
      * @return mixed|null
      */
+    #[Override]
     public function getGeneratedValue()
     {
         return $this->generatedValue;
