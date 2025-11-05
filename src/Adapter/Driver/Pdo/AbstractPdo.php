@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PhpDb\Adapter\Driver\Pdo;
 
+use Override;
 use PhpDb\Adapter\Driver\ConnectionInterface;
 use PhpDb\Adapter\Driver\Feature\DriverFeatureProviderInterface;
 use PhpDb\Adapter\Driver\PdoDriverAwareInterface;
@@ -11,8 +12,6 @@ use PhpDb\Adapter\Driver\PdoDriverInterface;
 use PhpDb\Adapter\Driver\ResultInterface;
 use PhpDb\Adapter\Driver\StatementInterface;
 use PhpDb\Adapter\Exception;
-use PhpDb\Adapter\Exception\RuntimeException;
-use Override;
 use PhpDb\Adapter\Profiler\ProfilerAwareInterface;
 use PhpDb\Adapter\Profiler\ProfilerInterface;
 use PDO;
@@ -71,46 +70,6 @@ abstract class AbstractPdo implements PdoDriverInterface, ProfilerAwareInterface
     }
 
     /**
-     * Get database platform name
-     *
-     * @param  string $nameFormat
-     * @return string
-     */
-    // public function getDatabasePlatformName($nameFormat = self::NAME_FORMAT_CAMELCASE)
-    // {
-    //     $name = $this->getConnection()->getDriverName();
-    //     if ($nameFormat === self::NAME_FORMAT_CAMELCASE) {
-    //         switch ($name) {
-    //             case 'pgsql':
-    //                 return 'Postgresql';
-    //             case 'oci':
-    //                 return 'Oracle';
-    //             case 'dblib':
-    //             case 'sqlsrv':
-    //                 return 'SqlServer';
-    //             default:
-    //                 return ucfirst($name);
-    //         }
-    //     } else {
-    //         switch ($name) {
-    //             case 'sqlite':
-    //                 return 'SQLite';
-    //             case 'mysql':
-    //                 return 'MySQL';
-    //             case 'pgsql':
-    //                 return 'PostgreSQL';
-    //             case 'oci':
-    //                 return 'Oracle';
-    //             case 'dblib':
-    //             case 'sqlsrv':
-    //                 return 'SQLServer';
-    //             default:
-    //                 return ucfirst($name);
-    //         }
-    //     }
-    // }
-
-    /**
      * Check environment
      */
     #[Override]
@@ -156,37 +115,8 @@ abstract class AbstractPdo implements PdoDriverInterface, ProfilerAwareInterface
     }
 
     /**
-     * @param resource $resource
-     * @param mixed $context
-     * @return Result
+     * {@inheritDoc}
      */
-    // public function createResult($resource, $context = null): ResultInterface
-    // {
-    //     $result   = clone $this->resultPrototype;
-    //     $rowCount = null;
-
-    //     // special feature, sqlite PDO counter
-    //     if (
-    //         $this->connection->getDriverName() === 'sqlite'
-    //         && ($sqliteRowCounter = $this->getFeature('SqliteRowCounter'))
-    //         && $resource->columnCount() > 0
-    //     ) {
-    //         $rowCount = $sqliteRowCounter->getRowCountClosure($context);
-    //     }
-
-    //     // special feature, oracle PDO counter
-    //     if (
-    //         $this->connection->getDriverName() === 'oci'
-    //         && ($oracleRowCounter = $this->getFeature('OracleRowCounter'))
-    //         && $resource->columnCount() > 0
-    //     ) {
-    //         $rowCount = $oracleRowCounter->getRowCountClosure($context);
-    //     }
-
-    //     $result->initialize($resource, $this->connection->getLastGeneratedValue(), $rowCount);
-    //     return $result;
-    // }
-
     public function getResultPrototype(): ?ResultInterface
     {
         return $this->resultPrototype;

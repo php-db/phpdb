@@ -17,10 +17,6 @@ interface DriverFeatureProviderInterface
 
     public function addFeature(DriverFeatureInterface $feature): DriverFeatureProviderInterface;
 
-    /**
-     * Get feature
-     *
-     * todo: narrow to DriverFeatureInterface|false once PHP 8.2 is the minimum version
-     */
-    public function getFeature(string $name): DriverFeatureInterface|bool;
+    /** Get feature by class FQCN. */
+    public function getFeature(string $name): DriverFeatureInterface|false;
 }

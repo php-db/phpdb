@@ -30,19 +30,28 @@ interface AdapterInterface
 
     public const VALUE_QUOTE_SEPARATOR = 'quoteSeparator';
 
-    /**
-     * @return Driver\DriverInterface
-     */
-    public function getDriver();
+    public function getDriver(): Driver\DriverInterface;
 
-    /**
-     * @return Platform\PlatformInterface
-     */
-    public function getPlatform();
+    public function getPlatform(): Platform\PlatformInterface;
+
+    public function getProfiler(): ?Profiler\ProfilerInterface;
+
+    public function getQueryResultSetPrototype(): ResultSet\ResultSetInterface;
+
+    public function createStatement(
+        ?string $initialSql = null,
+        ParameterContainer|array|null $initialParameters = null
+    ): Driver\StatementInterface;
 
     public function query(
         string $sql,
         ParameterContainer|array|string $parametersOrQueryMode = self::QUERY_MODE_PREPARE,
         ?ResultSet\ResultSetInterface $resultPrototype = null
     ): Driver\StatementInterface|ResultSet\ResultSet|Driver\ResultInterface;
+
+    /**
+     *
+     * @todo 0.3.x track down this usage!!!
+     */
+    public function getHelpers();
 }
