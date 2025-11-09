@@ -65,7 +65,7 @@ class Adapter implements AdapterInterface, Profiler\ProfilerAwareInterface, Sche
     }
 
     #[Override]
-    public function getCurrentSchema(): string
+    public function getCurrentSchema(): string|false
     {
         return $this->driver->getConnection()->getCurrentSchema();
     }
