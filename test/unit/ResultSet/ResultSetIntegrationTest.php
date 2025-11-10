@@ -4,12 +4,11 @@ namespace PhpDbTest\ResultSet;
 
 use ArrayIterator;
 use ArrayObject;
+use Override;
 use PhpDb\Adapter\Driver\ResultInterface;
 use PhpDb\ResultSet\AbstractResultSet;
-use PhpDb\ResultSet\Exception\InvalidArgumentException;
 use PhpDb\ResultSet\Exception\RuntimeException;
 use PhpDb\ResultSet\ResultSet;
-use Override;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\Exception;
@@ -17,6 +16,7 @@ use PHPUnit\Framework\TestCase;
 use Random\RandomException;
 use SplStack;
 use stdClass;
+use TypeError;
 
 use function is_array;
 use function random_int;
@@ -79,7 +79,7 @@ final class ResultSetIntegrationTest extends TestCase
     #[DataProvider('invalidReturnTypes')]
     public function testSettingInvalidReturnTypeRaisesException(mixed $type): void
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(TypeError::class);
         new ResultSet(ResultSet::TYPE_ARRAYOBJECT, $type);
     }
 
@@ -133,7 +133,7 @@ final class ResultSetIntegrationTest extends TestCase
             // this is valid
             return;
         }
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(TypeError::class);
         $this->resultSet->initialize($dataSource);
     }
 

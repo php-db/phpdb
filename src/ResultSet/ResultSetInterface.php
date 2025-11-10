@@ -3,26 +3,19 @@
 namespace PhpDb\ResultSet;
 
 use Countable;
-use Traversable;
+use Iterator;
 
-interface ResultSetInterface extends Traversable, Countable
+interface ResultSetInterface extends Iterator, Countable
 {
     /**
-     * Can be anything traversable|array
-     *
-     * @abstract
-     * @param iterable $dataSource
-     * @return mixed
+     * Can be anything iterable|array
      */
-    public function initialize($dataSource);
+    public function initialize(iterable $dataSource): ResultSetInterface;
 
     /**
      * Field terminology is more correct as information coming back
      * from the database might be a column, and/or the result of an
      * operation or intersection of some data
-     *
-     * @abstract
-     * @return mixed
      */
-    public function getFieldCount();
+    public function getFieldCount(): mixed;
 }
