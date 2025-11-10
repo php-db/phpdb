@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace PhpDb\Adapter\Driver\Pdo;
 
 use Override;
+use PDO;
 use PhpDb\Adapter\Driver\AbstractConnection;
 use PhpDb\Adapter\Driver\ConnectionInterface;
 use PhpDb\Adapter\Driver\PdoConnectionInterface;
@@ -14,12 +15,13 @@ use PhpDb\Adapter\Driver\ResultInterface;
 use PhpDb\Adapter\Driver\StatementInterface;
 use PhpDb\Adapter\Exception;
 use PhpDb\Adapter\Exception\RuntimeException;
-use PDO;
 
 use function is_array;
 use function strtolower;
 
-abstract class AbstractPdoConnection extends AbstractConnection implements PdoConnectionInterface, PdoDriverAwareInterface
+abstract class AbstractPdoConnection extends AbstractConnection implements
+    PdoConnectionInterface,
+    PdoDriverAwareInterface
 {
     protected ?PdoDriverInterface $driver = null;
 
@@ -35,7 +37,7 @@ abstract class AbstractPdoConnection extends AbstractConnection implements PdoCo
      */
     public function __construct(
         array|PDO|null $connectionParameters = null
-    ){
+    ) {
         if (is_array($connectionParameters)) {
             $this->setConnectionParameters($connectionParameters);
         } elseif ($connectionParameters instanceof PDO) {
@@ -69,7 +71,7 @@ abstract class AbstractPdoConnection extends AbstractConnection implements PdoCo
      * @throws RuntimeException
      */
     #[Override]
-    public final function getDsn(): string
+    final public function getDsn(): string
     {
         if (! $this->dsn) {
             throw new Exception\RuntimeException(
@@ -140,7 +142,6 @@ abstract class AbstractPdoConnection extends AbstractConnection implements PdoCo
 
     /**
      * @inheritDoc
-     *
      * @throws Exception\RuntimeException
      */
     #[Override]
@@ -164,7 +165,6 @@ abstract class AbstractPdoConnection extends AbstractConnection implements PdoCo
 
     /**
      * @inheritDoc
-     *
      * @throws Exception\InvalidQueryException
      */
     #[Override]

@@ -2,10 +2,10 @@
 
 namespace PhpDbTest\Adapter;
 
-use PhpDb\Adapter\Adapter;
-use PhpDb\Adapter\AdapterServiceFactory;
 use Laminas\ServiceManager\ServiceLocatorInterface;
 use Override;
+use PhpDb\Adapter\Adapter;
+use PhpDb\Adapter\AdapterServiceFactory;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;

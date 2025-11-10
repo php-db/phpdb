@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace PhpDb\Adapter\Platform;
 
-
 use PhpDb\Sql\Platform\PlatformDecoratorInterface;
 
 interface PlatformInterface

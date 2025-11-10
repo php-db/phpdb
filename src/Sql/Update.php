@@ -3,11 +3,11 @@
 namespace PhpDb\Sql;
 
 use Closure;
+use Laminas\Stdlib\PriorityList;
 use PhpDb\Adapter\Driver;
 use PhpDb\Adapter\ParameterContainer;
 use PhpDb\Adapter\Platform\PlatformInterface;
 use PhpDb\Sql\Predicate\PredicateInterface;
-use Laminas\Stdlib\PriorityList;
 
 use function array_key_exists;
 use function implode;

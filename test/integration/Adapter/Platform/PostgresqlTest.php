@@ -2,11 +2,11 @@
 
 namespace PhpDbIntegrationTest\Adapter\Platform;
 
+use Override;
+use PgSql\Connection as PgSqlConnection;
 use PhpDb\Adapter\Driver\Pdo;
 use PhpDb\Adapter\Driver\Pgsql;
 use PhpDb\Adapter\Platform\Postgresql;
-use Override;
-use PgSql\Connection as PgSqlConnection;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 

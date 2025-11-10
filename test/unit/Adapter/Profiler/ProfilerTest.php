@@ -2,11 +2,11 @@
 
 namespace PhpDbTest\Adapter\Profiler;
 
+use Override;
 use PhpDb\Adapter\Exception\InvalidArgumentException;
 use PhpDb\Adapter\Exception\RuntimeException;
 use PhpDb\Adapter\Profiler\Profiler;
 use PhpDb\Adapter\StatementContainer;
-use Override;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 

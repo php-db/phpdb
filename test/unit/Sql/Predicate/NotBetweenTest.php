@@ -2,9 +2,9 @@
 
 namespace PhpDbTest\Sql\Predicate;
 
+use Override;
 use PhpDb\Sql\ExpressionInterface;
 use PhpDb\Sql\Predicate\NotBetween;
-use Override;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 

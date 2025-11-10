@@ -2,13 +2,13 @@
 
 namespace PhpDbTest\TableGateway\Feature;
 
+use Override;
 use PhpDb\Adapter\Adapter;
 use PhpDb\Adapter\Driver\ResultInterface;
 use PhpDb\Adapter\Driver\StatementInterface;
 use PhpDb\Adapter\Platform\PlatformInterface;
 use PhpDb\TableGateway\Feature\SequenceFeature;
 use PhpDb\TableGateway\TableGateway;
-use Override;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;

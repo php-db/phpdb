@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace PhpDb\TableGateway\Feature\EventFeature;
 
 use ArrayAccess;
-use PhpDb\TableGateway\AbstractTableGateway;
 use Laminas\EventManager\EventInterface;
+use PhpDb\TableGateway\AbstractTableGateway;
 
 class TableGatewayEvent implements EventInterface
 {

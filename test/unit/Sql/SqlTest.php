@@ -2,6 +2,7 @@
 
 namespace PhpDbTest\Sql;
 
+use Override;
 use PhpDb\Adapter\Adapter;
 use PhpDb\Adapter\Driver\ConnectionInterface;
 use PhpDb\Adapter\Driver\DriverInterface;
@@ -14,7 +15,6 @@ use PhpDb\Sql\Select;
 use PhpDb\Sql\Sql;
 use PhpDb\Sql\Update;
 use PhpDbTest\TestAsset;
-use Override;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\MockObject\Exception;

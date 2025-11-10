@@ -2,6 +2,7 @@
 
 namespace PhpDbTest\Sql;
 
+use Override;
 use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\ParameterContainer;
 use PhpDb\Adapter\StatementContainer;
@@ -11,7 +12,6 @@ use PhpDb\Sql\ExpressionInterface;
 use PhpDb\Sql\Predicate;
 use PhpDb\Sql\Select;
 use PhpDbTest\TestAsset\TrustingSql92Platform;
-use Override;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\MockObject\Exception;

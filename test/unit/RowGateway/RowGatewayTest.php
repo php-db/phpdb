@@ -2,6 +2,7 @@
 
 namespace PhpDbTest\RowGateway;
 
+use Override;
 use PhpDb\Adapter\Adapter;
 use PhpDb\Adapter\Driver\ConnectionInterface;
 use PhpDb\Adapter\Driver\DriverInterface;
@@ -9,7 +10,6 @@ use PhpDb\Adapter\Driver\ResultInterface;
 use PhpDb\Adapter\Driver\StatementInterface;
 use PhpDb\RowGateway\Exception\RuntimeException;
 use PhpDb\RowGateway\RowGateway;
-use Override;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 

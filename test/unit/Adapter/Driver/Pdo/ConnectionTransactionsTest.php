@@ -2,24 +2,25 @@
 
 namespace PhpDbTest\Adapter\Driver\Pdo;
 
+use Override;
 use PhpDb\Adapter\Driver\AbstractConnection;
-use PhpDb\Adapter\Driver\Pdo\Connection;
+use PhpDb\Adapter\Driver\ConnectionInterface;
+use PhpDb\Adapter\Driver\Pdo\AbstractPdoConnection;
 use PhpDb\Adapter\Exception\RuntimeException;
 use PhpDbTest\TestAsset\ConnectionWrapper;
-use Override;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Tests for {@see \PhpDb\Adapter\Driver\Pdo\Connection} transaction support
+ * Tests for {@see \PhpDb\Adapter\Driver\Pdo\AbstractPdoConnection} transaction support
  */
-#[CoversClass(Connection::class)]
+#[CoversClass(AbstractPdoConnection::class)]
 #[CoversClass(AbstractConnection::class)]
-#[CoversMethod(Connection::class, 'beginTransaction()')]
-#[CoversMethod(Connection::class, 'inTransaction()')]
-#[CoversMethod(Connection::class, 'commit()')]
-#[CoversMethod(Connection::class, 'rollback()')]
+#[CoversMethod(AbstractPdoConnection::class, 'beginTransaction()')]
+#[CoversMethod(AbstractConnection::class, 'inTransaction()')]
+#[CoversMethod(AbstractPdoConnection::class, 'commit()')]
+#[CoversMethod(AbstractPdoConnection::class, 'rollback()')]
 final class ConnectionTransactionsTest extends TestCase
 {
     /** @var Wrapper */
@@ -36,7 +37,7 @@ final class ConnectionTransactionsTest extends TestCase
 
     public function testBeginTransactionReturnsInstanceOfConnection(): void
     {
-        self::assertInstanceOf(Connection::class, $this->wrapper->beginTransaction());
+        self::assertInstanceOf(ConnectionInterface::class, $this->wrapper->beginTransaction());
     }
 
     public function testBeginTransactionSetsInTransactionAtTrue(): void
@@ -48,7 +49,7 @@ final class ConnectionTransactionsTest extends TestCase
     public function testCommitReturnsInstanceOfConnection(): void
     {
         $this->wrapper->beginTransaction();
-        self::assertInstanceOf(Connection::class, $this->wrapper->commit());
+        self::assertInstanceOf(ConnectionInterface::class, $this->wrapper->commit());
     }
 
     public function testCommitSetsInTransactionAtFalse(): void
@@ -63,7 +64,7 @@ final class ConnectionTransactionsTest extends TestCase
      */
     public function testCommitWithoutBeginReturnsInstanceOfConnection(): void
     {
-        self::assertInstanceOf(Connection::class, $this->wrapper->commit());
+        self::assertInstanceOf(ConnectionInterface::class, $this->wrapper->commit());
     }
 
     public function testNestedTransactionsCommit(): void
@@ -127,7 +128,7 @@ final class ConnectionTransactionsTest extends TestCase
     public function testRollbackReturnsInstanceOfConnection(): void
     {
         $this->wrapper->beginTransaction();
-        self::assertInstanceOf(Connection::class, $this->wrapper->rollback());
+        self::assertInstanceOf(ConnectionInterface::class, $this->wrapper->rollback());
     }
 
     public function testRollbackSetsInTransactionAtFalse(): void

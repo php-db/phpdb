@@ -2,12 +2,12 @@
 
 namespace PhpDbTest\Adapter;
 
-use PhpDb\Adapter\AdapterInterface;
-use PhpDb\Adapter\AdapterAbstractServiceFactory;
 use Laminas\ServiceManager\Config;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use Laminas\ServiceManager\ServiceManager;
 use Override;
+use PhpDb\Adapter\AdapterAbstractServiceFactory;
+use PhpDb\Adapter\AdapterInterface;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\RequiresPhpExtension;
 use PHPUnit\Framework\TestCase;

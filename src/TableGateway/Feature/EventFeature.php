@@ -2,6 +2,9 @@
 
 namespace PhpDb\TableGateway\Feature;
 
+use Laminas\EventManager\EventManager;
+use Laminas\EventManager\EventManagerInterface;
+use Laminas\EventManager\EventsCapableInterface;
 use PhpDb\Adapter\Driver\ResultInterface;
 use PhpDb\Adapter\Driver\StatementInterface;
 use PhpDb\ResultSet\ResultSetInterface;
@@ -10,9 +13,6 @@ use PhpDb\Sql\Insert;
 use PhpDb\Sql\Select;
 use PhpDb\Sql\Update;
 use PhpDb\TableGateway\TableGateway;
-use Laminas\EventManager\EventManager;
-use Laminas\EventManager\EventManagerInterface;
-use Laminas\EventManager\EventsCapableInterface;
 
 use function get_class;
 

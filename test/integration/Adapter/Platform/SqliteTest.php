@@ -2,9 +2,9 @@
 
 namespace PhpDbIntegrationTest\Adapter\Platform;
 
+use Override;
 use PhpDb\Adapter\Driver\Pdo;
 use PhpDb\Adapter\Platform\Sqlite;
-use Override;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 

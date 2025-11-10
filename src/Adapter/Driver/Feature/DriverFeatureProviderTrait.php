@@ -8,6 +8,8 @@ use Override;
 use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\Exception\RuntimeException;
 
+use function sprintf;
+
 /**
  * Trait implementation of DriverFeatureProviderInterface.
  *
@@ -16,10 +18,7 @@ use PhpDb\Adapter\Exception\RuntimeException;
  */
 trait DriverFeatureProviderTrait
 {
-    /**
-     *
-     * @var array<class-string, DriverFeatureInterface>
-     */
+    /** @var array<class-string, DriverFeatureInterface> */
     protected array $features = [];
 
     #[Override]

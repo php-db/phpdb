@@ -2,8 +2,8 @@
 
 namespace PhpDbTest\Sql\Ddl\Constraint;
 
-use PhpDb\Sql\Ddl\Constraint\AbstractConstraint;
 use Override;
+use PhpDb\Sql\Ddl\Constraint\AbstractConstraint;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;

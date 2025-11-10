@@ -47,12 +47,14 @@ abstract class AbstractConnection implements ConnectionInterface, ProfilerAwareI
         return $this->driverName;
     }
 
-
     public function getProfiler(): ?ProfilerInterface
     {
         return $this->profiler;
     }
 
+    /**
+     * @return resource|null
+     */
     #[Override]
     public function getResource()
     {

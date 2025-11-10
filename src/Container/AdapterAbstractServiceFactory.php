@@ -40,8 +40,11 @@ class AdapterAbstractServiceFactory implements AbstractFactoryInterface
     /**
      * Create a DB adapter
      */
-    public function __invoke(ContainerInterface $container, string $requestedName, ?array $options = null): AdapterInterface
-    {
+    public function __invoke(
+        ContainerInterface $container,
+        string $requestedName,
+        ?array $options = null
+    ): AdapterInterface {
         $manager         = $container->get(AdapterManager::class);
         $driverFactory   = ($manager->get(DriverInterfaceFactoryFactoryInterface::class))($container, $requestedName);
         $driverInstance  = $driverFactory::createFromConfig($container, $requestedName);

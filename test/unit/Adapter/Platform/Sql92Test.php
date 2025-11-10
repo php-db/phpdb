@@ -2,8 +2,8 @@
 
 namespace PhpDbTest\Adapter\Platform;
 
-use PhpDb\Adapter\Platform\Sql92;
 use Override;
+use PhpDb\Adapter\Platform\Sql92;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 

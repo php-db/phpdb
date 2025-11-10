@@ -2,9 +2,9 @@
 
 namespace PhpDbIntegrationTest\Adapter\Platform;
 
-use PhpDb\Adapter\Platform\SqlServer;
 use Override;
 use PDO;
+use PhpDb\Adapter\Platform\SqlServer;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 

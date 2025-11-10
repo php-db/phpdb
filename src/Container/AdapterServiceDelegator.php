@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace PhpDb\Container;
 
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
-use PhpDb\Adapter\AdapterInterface;
 use PhpDb\Adapter\AdapterAwareInterface;
+use PhpDb\Adapter\AdapterInterface;
 use PhpDb\Exception;
 use Psr\Container\ContainerInterface;
 
@@ -16,7 +16,8 @@ class AdapterServiceDelegator
 {
     public function __construct(
         protected readonly string $adapterName = AdapterInterface::class
-    ) {}
+    ) {
+    }
 
     public static function __set_state(array $state): self
     {
