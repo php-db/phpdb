@@ -30,7 +30,7 @@ abstract class AbstractResultSet implements ResultSetInterface
      * if null, default state - nothing, but can buffer until iteration started
      * if array, already buffering
      */
-    protected mixed $buffer;
+    protected mixed $buffer = null;
 
     protected ?int $count = null;
 

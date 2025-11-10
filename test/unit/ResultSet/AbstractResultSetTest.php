@@ -15,6 +15,8 @@ use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
+use TypeError;
+
 use function assert;
 
 #[CoversMethod(AbstractResultSet::class, 'initialize')]
@@ -54,10 +56,7 @@ final class AbstractResultSetTest extends TestCase
             ['id' => 3, 'name' => 'three'],
         ]));
 
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage(
-            'DataSource provided is not an array, nor does it implement Iterator or IteratorAggregate'
-        );
+        $this->expectException(TypeError::class);
         $resultSet->initialize('foo');
     }
 

@@ -18,6 +18,8 @@ use Random\RandomException;
 use SplStack;
 use stdClass;
 
+use TypeError;
+
 use function is_array;
 use function random_int;
 use function var_export;
@@ -79,7 +81,7 @@ final class ResultSetIntegrationTest extends TestCase
     #[DataProvider('invalidReturnTypes')]
     public function testSettingInvalidReturnTypeRaisesException(mixed $type): void
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(TypeError::class);
         new ResultSet(ResultSet::TYPE_ARRAYOBJECT, $type);
     }
 
@@ -133,7 +135,7 @@ final class ResultSetIntegrationTest extends TestCase
             // this is valid
             return;
         }
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(TypeError::class);
         $this->resultSet->initialize($dataSource);
     }
 
