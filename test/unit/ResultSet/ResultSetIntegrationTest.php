@@ -7,7 +7,6 @@ use ArrayObject;
 use Override;
 use PhpDb\Adapter\Driver\ResultInterface;
 use PhpDb\ResultSet\AbstractResultSet;
-use PhpDb\ResultSet\Exception\InvalidArgumentException;
 use PhpDb\ResultSet\Exception\RuntimeException;
 use PhpDb\ResultSet\ResultSet;
 use PHPUnit\Framework\Attributes\CoversMethod;
@@ -17,7 +16,6 @@ use PHPUnit\Framework\TestCase;
 use Random\RandomException;
 use SplStack;
 use stdClass;
-
 use TypeError;
 
 use function is_array;
