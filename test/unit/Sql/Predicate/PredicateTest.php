@@ -3,12 +3,12 @@
 namespace PhpDbTest\Sql\Predicate;
 
 use ErrorException;
+use Laminas\Stdlib\ErrorHandler;
 use PhpDb\Adapter\Platform\Sql92;
 use PhpDb\Sql\Expression;
 use PhpDb\Sql\ExpressionInterface;
 use PhpDb\Sql\Predicate\Predicate;
 use PhpDb\Sql\Select;
-use Laminas\Stdlib\ErrorHandler;
 use PHPUnit\Framework\Attributes\TestDox;
 use PHPUnit\Framework\TestCase;
 

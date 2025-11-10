@@ -2,6 +2,7 @@
 
 namespace PhpDbTest\Sql;
 
+use Override;
 use PhpDb\Adapter\Adapter;
 use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\Driver\StatementInterface;
@@ -12,7 +13,6 @@ use PhpDb\Sql\Combine;
 use PhpDb\Sql\Exception\InvalidArgumentException;
 use PhpDb\Sql\Predicate\Expression;
 use PhpDb\Sql\Select;
-use Override;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 

@@ -2,8 +2,8 @@
 
 namespace PhpDbIntegrationTest\Adapter\Driver\Pdo\Postgresql;
 
-use PhpDb\Adapter\Adapter;
 use Override;
+use PhpDb\Adapter\Adapter;
 
 use function getenv;
 use function is_string;

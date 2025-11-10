@@ -14,5 +14,8 @@ interface ProfilerInterface
      */
     public function profilerStart($target);
 
+    /**
+     * @return $this
+     */
     public function profilerFinish();
 }

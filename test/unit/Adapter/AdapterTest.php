@@ -2,6 +2,7 @@
 
 namespace PhpDbTest\Adapter;
 
+use Override;
 use PhpDb\Adapter\Adapter;
 use PhpDb\Adapter\Driver\ConnectionInterface;
 use PhpDb\Adapter\Driver\DriverInterface;
@@ -24,7 +25,6 @@ use PhpDb\Adapter\Profiler;
 use PhpDb\ResultSet\ResultSet;
 use PhpDb\ResultSet\ResultSetInterface;
 use PhpDbTest\TestAsset\TemporaryResultSet;
-use Override;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\TestDox;

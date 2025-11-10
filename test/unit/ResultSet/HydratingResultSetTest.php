@@ -2,12 +2,12 @@
 
 namespace PhpDbTest\ResultSet;
 
-use PhpDb\ResultSet\HydratingResultSet;
 use Laminas\Hydrator\ArraySerializable;
 use Laminas\Hydrator\ArraySerializableHydrator;
 use Laminas\Hydrator\ClassMethods;
 use Laminas\Hydrator\ClassMethodsHydrator;
 use Override;
+use PhpDb\ResultSet\HydratingResultSet;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 use stdClass;

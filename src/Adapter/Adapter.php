@@ -167,6 +167,7 @@ class Adapter implements AdapterInterface, Profiler\ProfilerAwareInterface, Sche
                     break;
             }
         }
+        return $functions;
     }
 
     /** @throws Exception\InvalidArgumentException */

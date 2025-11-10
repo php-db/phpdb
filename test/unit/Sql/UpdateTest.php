@@ -2,6 +2,7 @@
 
 namespace PhpDbTest\Sql;
 
+use Override;
 use PhpDb\Adapter\Adapter;
 use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\Driver\StatementInterface;
@@ -21,7 +22,6 @@ use PhpDb\Sql\Where;
 use PhpDbTest\DeprecatedAssertionsTrait;
 use PhpDbTest\TestAsset\TrustingSql92Platform;
 use PhpDbTest\TestAsset\UpdateIgnore;
-use Override;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\Group;

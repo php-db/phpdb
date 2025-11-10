@@ -2,6 +2,7 @@
 
 namespace PhpDbTest\Sql;
 
+use Override;
 use PhpDb\Adapter\Adapter;
 use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\Driver\StatementInterface;
@@ -16,7 +17,6 @@ use PhpDb\Sql\TableIdentifier;
 use PhpDb\Sql\Where;
 use PhpDbTest\DeprecatedAssertionsTrait;
 use PhpDbTest\TestAsset\DeleteIgnore;
-use Override;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;

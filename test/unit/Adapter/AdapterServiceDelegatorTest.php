@@ -2,13 +2,13 @@
 
 namespace PhpDbTest\Adapter;
 
+use Laminas\ServiceManager\AbstractPluginManager;
+use Laminas\ServiceManager\ServiceManager;
 use PhpDb\Adapter\Adapter;
 use PhpDb\Adapter\AdapterAwareInterface;
 use PhpDb\Adapter\AdapterInterface;
 use PhpDb\Adapter\AdapterServiceDelegator;
 use PhpDb\Adapter\Driver\DriverInterface;
-use Laminas\ServiceManager\AbstractPluginManager;
-use Laminas\ServiceManager\ServiceManager;
 use PhpDbTest\Adapter\TestAsset\ConcreteAdapterAwareObject;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
@@ -217,6 +217,9 @@ final class AdapterServiceDelegatorTest extends TestCase
 
         /** @var AbstractPluginManager $pluginManager */
         $pluginManager = new class ($container, $pluginManagerConfig) extends AbstractPluginManager {
+            public function validate(mixed $instance): void
+            {
+            }
         };
 
         $options = [

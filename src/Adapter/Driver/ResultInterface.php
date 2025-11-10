@@ -6,7 +6,6 @@ namespace PhpDb\Adapter\Driver;
 
 use Countable;
 use Iterator;
-use Override;
 
 interface ResultInterface extends
     Countable,

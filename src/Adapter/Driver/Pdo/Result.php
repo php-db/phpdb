@@ -4,11 +4,11 @@ namespace PhpDb\Adapter\Driver\Pdo;
 
 use Closure;
 use Iterator;
-use PhpDb\Adapter\Driver\ResultInterface;
-use PhpDb\Adapter\Exception;
 use Override;
 use PDO;
 use PDOStatement;
+use PhpDb\Adapter\Driver\ResultInterface;
+use PhpDb\Adapter\Exception;
 // phpcs:ignore SlevomatCodingStandard.Namespaces.UnusedUses.UnusedUse
 use ReturnTypeWillChange;
 

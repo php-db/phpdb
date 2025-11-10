@@ -3,9 +3,9 @@
 namespace PhpDbTest\Adapter\Driver\Pdo;
 
 use Exception;
+use Override;
 use PhpDb\Adapter\Driver\Pdo\Connection;
 use PhpDb\Adapter\Exception\InvalidConnectionParametersException;
-use Override;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;

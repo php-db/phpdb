@@ -27,7 +27,6 @@ use function str_replace;
  *     check_option?: string,
  *     is_updatable?: bool,
  * }>
- *
  * @psalm-type MetadataColumn = array<string, array{
  *   ordinal_position: int,
  *   column_default: mixed,
@@ -40,9 +39,7 @@ use function str_replace;
  *   numeric_unsigned?: bool,
  *   erratas?: array<string, mixed>,
  * }>
- *
  * @psalm-type MetadataColumns = array<string, ...array<string, MetadataColumn>>
- *
  * @psalm-type MetadataData = array{
  *      schemas?: ,
  *      table_names?: MetadataTableNames,
@@ -50,7 +47,6 @@ use function str_replace;
  *      triggers?: ,
  *      ...
  * }
- *
  */
 abstract class AbstractSource implements MetadataInterface
 {
@@ -64,7 +60,7 @@ abstract class AbstractSource implements MetadataInterface
 
     public function __construct(
         protected AdapterInterface&SchemaAwareInterface $adapter
-        ) {
+    ) {
         $this->defaultSchema = $this->adapter->getCurrentSchema() ?: self::DEFAULT_SCHEMA;
     }
 
@@ -497,7 +493,6 @@ abstract class AbstractSource implements MetadataInterface
      * Load schema data
      */
     abstract protected function loadSchemaData(): void;
-
 
     /**
      * Load table name data

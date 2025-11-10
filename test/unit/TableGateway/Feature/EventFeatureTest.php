@@ -2,6 +2,8 @@
 
 namespace PhpDbTest\TableGateway\Feature;
 
+use Laminas\EventManager\EventManager;
+use Override;
 use PhpDb\Adapter\Driver\ResultInterface;
 use PhpDb\Adapter\Driver\StatementInterface;
 use PhpDb\ResultSet\ResultSet;
@@ -12,8 +14,6 @@ use PhpDb\Sql\Update;
 use PhpDb\TableGateway\Feature\EventFeature;
 use PhpDb\TableGateway\Feature\EventFeatureEventsInterface;
 use PhpDb\TableGateway\TableGateway;
-use Laminas\EventManager\EventManager;
-use Override;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;

@@ -50,8 +50,8 @@ interface AdapterInterface
     ): Driver\StatementInterface|ResultSet\ResultSet|Driver\ResultInterface;
 
     /**
-     *
      * @todo 0.3.x track down this usage!!!
+     * @return array
      */
     public function getHelpers();
 }

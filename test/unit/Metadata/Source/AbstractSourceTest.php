@@ -2,9 +2,9 @@
 
 namespace PhpDbTest\Metadata\Source;
 
+use Override;
 use PhpDb\Metadata\Object\ConstraintKeyObject;
 use PhpDb\Metadata\Source\AbstractSource;
-use Override;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;

@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace PhpDb\Adapter\Driver\Pdo;
 
 use Override;
+use PDO;
+use PDOStatement;
 use PhpDb\Adapter\Driver\ConnectionInterface;
 use PhpDb\Adapter\Driver\Feature\DriverFeatureProviderInterface;
 use PhpDb\Adapter\Driver\PdoDriverAwareInterface;
@@ -14,8 +16,6 @@ use PhpDb\Adapter\Driver\StatementInterface;
 use PhpDb\Adapter\Exception;
 use PhpDb\Adapter\Profiler\ProfilerAwareInterface;
 use PhpDb\Adapter\Profiler\ProfilerInterface;
-use PDO;
-use PDOStatement;
 
 use function extension_loaded;
 use function is_int;
@@ -36,7 +36,6 @@ abstract class AbstractPdo implements PdoDriverInterface, ProfilerAwareInterface
         protected readonly ResultInterface $resultPrototype,
         array $features = [],
     ) {
-
         if ($this->connection instanceof PdoDriverAwareInterface) {
             $this->connection->setDriver($this);
         }
@@ -91,12 +90,13 @@ abstract class AbstractPdo implements PdoDriverInterface, ProfilerAwareInterface
 
     /**
      * todo: this needs improved
+     *
      * @param PDOStatement|string $sqlOrResource
      */
     #[Override]
     public function createStatement($sqlOrResource = null): StatementInterface
     {
-        /** @var Statement */
+        /** @var Statement $statement */
         $statement = clone $this->statementPrototype;
         if ($sqlOrResource instanceof PDOStatement) {
             $statement->setResource($sqlOrResource);
@@ -107,7 +107,7 @@ abstract class AbstractPdo implements PdoDriverInterface, ProfilerAwareInterface
             if (! $this->connection->isConnected()) {
                 $this->connection->connect();
             }
-            /** @var \PDO */
+            /** @var PDO $resource */
             $resource = $this->connection->getResource();
             $statement->initialize($resource);
         }

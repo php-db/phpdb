@@ -2,6 +2,7 @@
 
 namespace PhpDbTest\TableGateway;
 
+use Override;
 use PhpDb\Adapter\Adapter;
 use PhpDb\Adapter\Driver\ConnectionInterface;
 use PhpDb\Adapter\Driver\DriverInterface;
@@ -17,7 +18,6 @@ use PhpDb\TableGateway\Exception\InvalidArgumentException;
 use PhpDb\TableGateway\Feature;
 use PhpDb\TableGateway\Feature\FeatureSet;
 use PhpDb\TableGateway\TableGateway;
-use Override;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\MockObject\MockObject;

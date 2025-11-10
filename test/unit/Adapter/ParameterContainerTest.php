@@ -2,8 +2,8 @@
 
 namespace PhpDbTest\Adapter;
 
-use PhpDb\Adapter\ParameterContainer;
 use Override;
+use PhpDb\Adapter\ParameterContainer;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\TestDox;
 use PHPUnit\Framework\TestCase;

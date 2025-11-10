@@ -2,10 +2,10 @@
 
 namespace PhpDbTest\Adapter\Driver\Pdo;
 
-use PhpDb\Adapter\Driver\Pdo\Statement;
 use Override;
 use PDO;
 use PDOStatement;
+use PhpDb\Adapter\Driver\Pdo\Statement;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 

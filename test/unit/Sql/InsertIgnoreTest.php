@@ -2,6 +2,7 @@
 
 namespace PhpDbTest\Sql;
 
+use Override;
 use PhpDb\Adapter\Adapter;
 use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\Driver\StatementInterface;
@@ -15,7 +16,6 @@ use PhpDb\Sql\TableIdentifier;
 use PhpDbTest\DeprecatedAssertionsTrait;
 use PhpDbTest\TestAsset\Replace;
 use PhpDbTest\TestAsset\TrustingSql92Platform;
-use Override;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 use ReflectionException;

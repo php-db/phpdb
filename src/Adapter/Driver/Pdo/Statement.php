@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace PhpDb\Adapter\Driver\Pdo;
 
 use Override;
+use PDO;
+use PDOException;
+use PDOStatement;
 use PhpDb\Adapter\Driver\PdoDriverAwareInterface;
 use PhpDb\Adapter\Driver\PdoDriverInterface;
 use PhpDb\Adapter\Driver\ResultInterface;
@@ -14,9 +17,6 @@ use PhpDb\Adapter\ParameterContainer;
 use PhpDb\Adapter\Profiler\ProfilerAwareInterface;
 use PhpDb\Adapter\Profiler\ProfilerInterface;
 use PhpDb\Adapter\StatementContainerInterface;
-use PDO;
-use PDOException;
-use PDOStatement;
 
 use function implode;
 use function is_array;
@@ -177,7 +177,6 @@ class Statement implements StatementInterface, PdoDriverAwareInterface, Profiler
         try {
             $this->resource->execute();
         } catch (PDOException $e) {
-
             $this->profiler?->profilerFinish();
 
             $code = $e->getCode();

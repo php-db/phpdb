@@ -2,8 +2,8 @@
 
 namespace PhpDbTest\Sql\Predicate;
 
-use PhpDb\Sql\Predicate\Between;
 use Override;
+use PhpDb\Sql\Predicate\Between;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 

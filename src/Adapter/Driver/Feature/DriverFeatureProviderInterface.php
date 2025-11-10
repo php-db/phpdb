@@ -7,7 +7,6 @@ namespace PhpDb\Adapter\Driver\Feature;
 use PhpDb\Adapter\Driver\DriverInterface;
 
 /**
- *
  * @property array<class-string, DriverInterface> $features
  */
 interface DriverFeatureProviderInterface

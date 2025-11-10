@@ -23,7 +23,5 @@ final class AdapterManager extends AbstractPluginManager
     #[Override]
     public function validate(mixed $instance): void
     {
-        return;
     }
 }
-

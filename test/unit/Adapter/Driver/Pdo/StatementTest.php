@@ -2,12 +2,12 @@
 
 namespace PhpDbTest\Adapter\Driver\Pdo;
 
+use Override;
 use PhpDb\Adapter\Driver\Pdo\Connection;
 use PhpDb\Adapter\Driver\Pdo\Pdo;
 use PhpDb\Adapter\Driver\Pdo\Result;
 use PhpDb\Adapter\Driver\Pdo\Statement;
 use PhpDb\Adapter\ParameterContainer;
-use Override;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 

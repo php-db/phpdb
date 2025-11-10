@@ -4,7 +4,6 @@ namespace PhpDbIntegrationTest\Extension;
 
 use Exception;
 use PhpDbIntegrationTest\Platform\FixtureLoader;
-use PhpDbIntegrationTest\Platform\MysqlFixtureLoader;
 use PhpDbIntegrationTest\Platform\PgsqlFixtureLoader;
 use PhpDbIntegrationTest\Platform\SqlServerFixtureLoader;
 use PHPUnit\Event\TestSuite\Started;
