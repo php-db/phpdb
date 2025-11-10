@@ -4,16 +4,11 @@ namespace PhpDb\Adapter;
 
 class StatementContainer implements StatementContainerInterface
 {
-    /** @var string */
-    protected $sql = '';
+    protected string $sql = '';
 
-    /** @var ParameterContainer */
-    protected $parameterContainer;
+    protected ParameterContainer $parameterContainer;
 
-    /**
-     * @param string|null $sql
-     */
-    public function __construct($sql = null, ?ParameterContainer $parameterContainer = null)
+    public function __construct(?string $sql = null, ?ParameterContainer $parameterContainer = null)
     {
         if ($sql) {
             $this->setSql($sql);
@@ -25,16 +20,13 @@ class StatementContainer implements StatementContainerInterface
      * @param string $sql
      * @return $this Provides a fluent interface
      */
-    public function setSql($sql)
+    public function setSql($sql): StatementContainerInterface
     {
         $this->sql = $sql;
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getSql()
+    public function getSql(): ?string
     {
         return $this->sql;
     }
@@ -42,16 +34,13 @@ class StatementContainer implements StatementContainerInterface
     /**
      * @return $this Provides a fluent interface
      */
-    public function setParameterContainer(ParameterContainer $parameterContainer)
+    public function setParameterContainer(ParameterContainer $parameterContainer): StatementContainerInterface
     {
         $this->parameterContainer = $parameterContainer;
         return $this;
     }
 
-    /**
-     * @return null|ParameterContainer
-     */
-    public function getParameterContainer()
+    public function getParameterContainer(): ?ParameterContainer
     {
         return $this->parameterContainer;
     }
