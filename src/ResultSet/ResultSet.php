@@ -25,21 +25,17 @@ class ResultSet extends AbstractResultSet
 
     /**
      * Return type to use when returning an object from the set
-     *
-     * @var ResultSet::TYPE_ARRAYOBJECT|ResultSet::TYPE_ARRAY
      */
-    protected mixed $returnType = self::TYPE_ARRAYOBJECT;
+    protected string $returnType = self::TYPE_ARRAYOBJECT;
 
     /**
      * Constructor
      */
     public function __construct(string $returnType = self::TYPE_ARRAYOBJECT, ?ArrayObject $arrayObjectPrototype = null)
     {
-        if (in_array($returnType, $this->allowedReturnTypes, true)) {
-            $this->returnType = $returnType;
-        } else {
-            $this->returnType = self::TYPE_ARRAYOBJECT;
-        }
+        $this->returnType = in_array($returnType, $this->allowedReturnTypes, true) ?
+            $returnType : self::TYPE_ARRAYOBJECT;
+
         if ($this->returnType === self::TYPE_ARRAYOBJECT) {
             $this->setArrayObjectPrototype($arrayObjectPrototype ?: new ArrayObject([], ArrayObject::ARRAY_AS_PROPS));
         }
