@@ -59,8 +59,7 @@ class HydratingResultSet extends AbstractResultSet
         return  $this->setRowPrototype($objectPrototype);
     }
 
-    /** {@inheritDoc} */
-    #[Override]
+    /** @deprecated use getRowPrototype() */
     public function getObjectPrototype(): ?object
     {
         return $this->getRowPrototype();
