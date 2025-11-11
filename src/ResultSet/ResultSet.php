@@ -1,79 +1,41 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDb\ResultSet;
 
 use ArrayObject;
 
-use function in_array;
 use function is_array;
-use function method_exists;
 
 class ResultSet extends AbstractResultSet
 {
+    /** @deprecated use ResultSetReturnType */
     public const TYPE_ARRAYOBJECT = 'arrayobject';
     public const TYPE_ARRAY       = 'array';
 
-    /**
-     * Allowed return types
-     */
-    protected array $allowedReturnTypes = [
-        self::TYPE_ARRAYOBJECT,
-        self::TYPE_ARRAY,
-    ];
-
-    protected ArrayObject $arrayObjectPrototype;
-
-    /**
-     * Return type to use when returning an object from the set
-     */
-    protected string $returnType = self::TYPE_ARRAYOBJECT;
-
-    /**
-     * Constructor
-     */
-    public function __construct(string $returnType = self::TYPE_ARRAYOBJECT, ?ArrayObject $arrayObjectPrototype = null)
-    {
-        $this->returnType = in_array($returnType, $this->allowedReturnTypes, true) ?
-            $returnType : self::TYPE_ARRAYOBJECT;
-
-        if ($this->returnType === self::TYPE_ARRAYOBJECT) {
-            $this->setArrayObjectPrototype($arrayObjectPrototype ?: new ArrayObject([], ArrayObject::ARRAY_AS_PROPS));
+    public function __construct(
+        private ResultSetReturnType|string $returnType = ResultSetReturnType::ArrayObject,
+        private ArrayObject $objectPrototype = new ArrayObject([], ArrayObject::ARRAY_AS_PROPS)
+    ) {
+        if (is_string($this->returnType)) {
+            $this->returnType = ResultSetReturnType::from($this->returnType);
         }
     }
 
-    /**
-     * Set the row object prototype
-     *
-     * @throws Exception\InvalidArgumentException
-     * @return $this Provides a fluent interface
-     */
-    public function setArrayObjectPrototype(ArrayObject $arrayObjectPrototype): static
+    /** {@inheritDoc} */
+    #[Override]
+    public function setObjectPrototype(ArrayObject $objectPrototype): ResultSetInterface
     {
-        if (! method_exists($arrayObjectPrototype, 'exchangeArray')) {
-            throw new Exception\InvalidArgumentException(
-                'Object must at least implement exchangeArray'
-            );
-        }
-        $this->arrayObjectPrototype = $arrayObjectPrototype;
+        $this->objectPrototype = $objectPrototype;
         return $this;
     }
 
-    public function setObjectPrototype(ArrayObject $objectPrototype): static
+    /** {@inheritDoc} */
+    #[Override]
+    public function getObjectPrototype(): ArrayObject
     {
-        if (! $objectPrototype instanceof ArrayObject) {
-            throw new Exception\InvalidArgumentException(
-                'Object prototype must be an instance of ArrayObject'
-            );
-        }
-        return $this->setArrayObjectPrototype($objectPrototype);
-    }
-
-    /**
-     * Get the row object prototype
-     */
-    public function getArrayObjectPrototype(): ArrayObject
-    {
-        return $this->arrayObjectPrototype;
+        return $this->objectPrototype;
     }
 
     /**
@@ -84,18 +46,38 @@ class ResultSet extends AbstractResultSet
         return $this->returnType;
     }
 
-    public function current(): array|object|null
+    /**
+     * Iterator: get current item
+     */
+    #[Override]
+    public function current(): array|ArrayObject|null
     {
         $data = parent::current();
 
-        if ($this->returnType === self::TYPE_ARRAYOBJECT && is_array($data)) {
-            $ao = clone $this->arrayObjectPrototype;
-            if ($ao instanceof ArrayObject || method_exists($ao, 'exchangeArray')) {
-                $ao->exchangeArray($data);
-            }
+        if ($this->returnType === ResultSetReturnType::ArrayObject && is_array($data)) {
+            $ao = clone $this->objectPrototype;
+            $ao->exchangeArray($data);
             return $ao;
         }
 
         return $data;
+    }
+
+    /**
+     * Set the row object prototype
+     *
+     * @deprecated use setObjectPrototype()
+     */
+    public function setArrayObjectPrototype(ArrayObject $arrayObjectPrototype): ResultSetInterface
+    {
+        return $this->setObjectPrototype($arrayObjectPrototype);
+    }
+
+    /**
+     * @deprecated use getObjectPrototype()
+     */
+    public function getArrayObjectPrototype(): ArrayObject
+    {
+        return $this->getObjectPrototype();
     }
 }

@@ -1,54 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDb\ResultSet;
 
 use ArrayObject;
 use Laminas\Hydrator\ArraySerializableHydrator;
 use Laminas\Hydrator\HydratorInterface;
+use Override;
 
-use function gettype;
 use function is_array;
-use function is_object;
 
 class HydratingResultSet extends AbstractResultSet
 {
-    protected HydratorInterface $hydrator;
-
-    protected ?object $objectPrototype;
-
-    /**
-     * Constructor
-     */
-    public function __construct(?HydratorInterface $hydrator = null, ?object $objectPrototype = null)
-    {
-        $defaultHydratorClass = ArraySerializableHydrator::class;
-        $this->setHydrator($hydrator ?: new $defaultHydratorClass());
-        $this->setObjectPrototype($objectPrototype ?: new ArrayObject());
-    }
-
-    /**
-     * Set the row object prototype
-     *
-     * @throws Exception\InvalidArgumentException
-     * @return $this Provides a fluent interface
-     */
-    public function setObjectPrototype(object $objectPrototype): static
-    {
-        if (! is_object($objectPrototype)) {
-            throw new Exception\InvalidArgumentException(
-                'An object must be set as the object prototype, a ' . gettype($objectPrototype) . ' was provided.'
-            );
-        }
-        $this->objectPrototype = $objectPrototype;
-        return $this;
-    }
-
-    /**
-     * Get the row object prototype
-     */
-    public function getObjectPrototype(): ?object
-    {
-        return $this->objectPrototype;
+    public function __construct(
+        private HydratorInterface $hydrator = new ArraySerializableHydrator(),
+        private object $objectPrototype     = new ArrayObject()
+    ) {
     }
 
     /**
@@ -56,7 +24,7 @@ class HydratingResultSet extends AbstractResultSet
      *
      * @return $this Provides a fluent interface
      */
-    public function setHydrator(HydratorInterface $hydrator): static
+    public function setHydrator(HydratorInterface $hydrator): ResultSetInterface
     {
         $this->hydrator = $hydrator;
         return $this;
@@ -69,10 +37,25 @@ class HydratingResultSet extends AbstractResultSet
     {
         return $this->hydrator;
     }
+    /** {@inheritDoc} */
+    #[Override]
+    public function setObjectPrototype(object $objectPrototype): ResultSetInterface
+    {
+        $this->objectPrototype = $objectPrototype;
+        return $this;
+    }
+
+    /** {@inheritDoc} */
+    #[Override]
+    public function getObjectPrototype(): ?object
+    {
+        return $this->objectPrototype;
+    }
 
     /**
      * Iterator: get current item
      */
+    #[Override]
     public function current(): ?object
     {
         if ($this->buffer === null) {
@@ -95,6 +78,7 @@ class HydratingResultSet extends AbstractResultSet
      *
      * @throws Exception\RuntimeException If any row is not castable to an array.
      */
+    #[Override]
     public function toArray(): array
     {
         $return = [];
