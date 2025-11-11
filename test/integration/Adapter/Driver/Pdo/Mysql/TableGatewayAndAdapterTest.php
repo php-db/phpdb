@@ -3,7 +3,7 @@
 namespace LaminasIntegrationTest\Db\Adapter\Driver\Pdo\Mysql;
 
 use Exception;
-use Laminas\Db\TableGateway\TableGateway;
+use PhpDb\TableGateway\TableGateway;
 use LaminasIntegrationTest\Db\Adapter\Driver\Pdo\AdapterTrait as BaseAdapterTrait;
 use Override;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -13,7 +13,7 @@ use function array_fill;
 
 /**
  * Usually mysql has 151 max connections by default.
- * Set up a test where executed Laminas\Db\Adapter\Adapter::query and then using table gateway to fetch a row
+ * Set up a test where executed PhpDb\Adapter\Adapter::query and then using table gateway to fetch a row
  * On tear down disconnected from the database and set the driver adapter on null
  * Running many tests ended up in consuming all mysql connections and not releasing them
  */

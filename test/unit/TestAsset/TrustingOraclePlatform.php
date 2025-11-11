@@ -2,7 +2,7 @@
 
 namespace LaminasTest\Db\TestAsset;
 
-use Laminas\Db\Adapter\Platform\Oracle;
+use PhpDb\Adapter\Platform\Oracle;
 use Override;
 
 class TrustingOraclePlatform extends Oracle

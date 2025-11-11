@@ -1,10 +1,10 @@
 <?php
 
-namespace Laminas\Db\Adapter\Platform;
+namespace PhpDb\Adapter\Platform;
 
-use Laminas\Db\Adapter\Driver\DriverInterface;
-use Laminas\Db\Adapter\Driver\Pdo;
-use Laminas\Db\Adapter\Exception;
+use PhpDb\Adapter\Driver\DriverInterface;
+use PhpDb\Adapter\Driver\Pdo;
+use PhpDb\Adapter\Exception;
 use Override;
 
 class Sqlite extends AbstractPlatform
@@ -50,7 +50,7 @@ class Sqlite extends AbstractPlatform
         }
 
         throw new Exception\InvalidArgumentException(
-            '$driver must be a Sqlite PDO Laminas\Db\Adapter\Driver, Sqlite PDO instance'
+            '$driver must be a Sqlite PDO PhpDb\Adapter\Driver, Sqlite PDO instance'
         );
     }
 

@@ -1,10 +1,10 @@
 <?php
 
-namespace Laminas\Db\Sql\Predicate;
+namespace PhpDb\Sql\Predicate;
 
-use Laminas\Db\Sql\Argument;
-use Laminas\Db\Sql\Exception\RuntimeException;
-use Laminas\Db\Sql\ExpressionInterface;
+use PhpDb\Sql\Argument;
+use PhpDb\Sql\Exception\RuntimeException;
+use PhpDb\Sql\ExpressionInterface;
 
 /**
  * @property Predicate $and

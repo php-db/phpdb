@@ -1,10 +1,10 @@
 <?php
 
-namespace Laminas\Db\Sql\Ddl;
+namespace PhpDb\Sql\Ddl;
 
-use Laminas\Db\Adapter\Platform\PlatformInterface;
-use Laminas\Db\Sql\AbstractSql;
-use Laminas\Db\Sql\TableIdentifier;
+use PhpDb\Adapter\Platform\PlatformInterface;
+use PhpDb\Sql\AbstractSql;
+use PhpDb\Sql\TableIdentifier;
 
 class DropTable extends AbstractSql implements SqlInterface
 {

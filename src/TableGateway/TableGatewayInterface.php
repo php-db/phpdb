@@ -1,10 +1,10 @@
 <?php
 
-namespace Laminas\Db\TableGateway;
+namespace PhpDb\TableGateway;
 
 use Closure;
-use Laminas\Db\ResultSet\ResultSetInterface;
-use Laminas\Db\Sql\Where;
+use PhpDb\ResultSet\ResultSetInterface;
+use PhpDb\Sql\Where;
 
 interface TableGatewayInterface
 {

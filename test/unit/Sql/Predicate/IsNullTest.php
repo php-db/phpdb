@@ -2,9 +2,9 @@
 
 namespace LaminasTest\Db\Sql\Predicate;
 
-use Laminas\Db\Sql\Argument;
-use Laminas\Db\Sql\ArgumentType;
-use Laminas\Db\Sql\Predicate\IsNotNull;
+use PhpDb\Sql\Argument;
+use PhpDb\Sql\ArgumentType;
+use PhpDb\Sql\Predicate\IsNotNull;
 use PHPUnit\Framework\TestCase;
 
 class IsNullTest extends TestCase

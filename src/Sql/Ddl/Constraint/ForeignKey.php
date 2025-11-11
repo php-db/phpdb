@@ -1,10 +1,10 @@
 <?php
 
-namespace Laminas\Db\Sql\Ddl\Constraint;
+namespace PhpDb\Sql\Ddl\Constraint;
 
-use Laminas\Db\Sql\Argument;
-use Laminas\Db\Sql\ArgumentType;
-use Laminas\Db\Sql\ExpressionData;
+use PhpDb\Sql\Argument;
+use PhpDb\Sql\ArgumentType;
+use PhpDb\Sql\ExpressionData;
 
 use function array_fill;
 use function count;

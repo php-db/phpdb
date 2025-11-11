@@ -1,12 +1,12 @@
 <?php
 
-namespace Laminas\Db\Adapter\Driver\Pdo;
+namespace PhpDb\Adapter\Driver\Pdo;
 
-use Laminas\Db\Adapter\Driver\DriverInterface;
-use Laminas\Db\Adapter\Driver\Feature\AbstractFeature;
-use Laminas\Db\Adapter\Driver\Feature\DriverFeatureInterface;
-use Laminas\Db\Adapter\Exception;
-use Laminas\Db\Adapter\Profiler;
+use PhpDb\Adapter\Driver\DriverInterface;
+use PhpDb\Adapter\Driver\Feature\AbstractFeature;
+use PhpDb\Adapter\Driver\Feature\DriverFeatureInterface;
+use PhpDb\Adapter\Exception;
+use PhpDb\Adapter\Profiler;
 use Override;
 use PDOStatement;
 

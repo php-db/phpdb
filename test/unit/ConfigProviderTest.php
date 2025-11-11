@@ -2,8 +2,8 @@
 
 namespace LaminasTest\Db;
 
-use Laminas\Db\Adapter;
-use Laminas\Db\ConfigProvider;
+use PhpDb\Adapter;
+use PhpDb\ConfigProvider;
 use PHPUnit\Framework\Attributes\Depends;
 use PHPUnit\Framework\TestCase;
 

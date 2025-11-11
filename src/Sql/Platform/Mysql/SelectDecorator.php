@@ -1,12 +1,12 @@
 <?php
 
-namespace Laminas\Db\Sql\Platform\Mysql;
+namespace PhpDb\Sql\Platform\Mysql;
 
-use Laminas\Db\Adapter\Driver\DriverInterface;
-use Laminas\Db\Adapter\ParameterContainer;
-use Laminas\Db\Adapter\Platform\PlatformInterface;
-use Laminas\Db\Sql\Platform\PlatformDecoratorInterface;
-use Laminas\Db\Sql\Select;
+use PhpDb\Adapter\Driver\DriverInterface;
+use PhpDb\Adapter\ParameterContainer;
+use PhpDb\Adapter\Platform\PlatformInterface;
+use PhpDb\Sql\Platform\PlatformDecoratorInterface;
+use PhpDb\Sql\Select;
 use Override;
 
 class SelectDecorator extends Select implements PlatformDecoratorInterface
@@ -49,7 +49,7 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
         if ($this->limit === null) {
             return null;
         }
-        if ($parameterContainer instanceof \Laminas\Db\Adapter\ParameterContainer) {
+        if ($parameterContainer instanceof \PhpDb\Adapter\ParameterContainer) {
             $paramPrefix = $this->processInfo['paramPrefix'];
             $parameterContainer->offsetSet($paramPrefix . 'limit', $this->limit, ParameterContainer::TYPE_INTEGER);
             return [$driver->formatParameterName($paramPrefix . 'limit')];
@@ -67,7 +67,7 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
         if ($this->offset === null) {
             return null;
         }
-        if ($parameterContainer instanceof \Laminas\Db\Adapter\ParameterContainer) {
+        if ($parameterContainer instanceof \PhpDb\Adapter\ParameterContainer) {
             $paramPrefix = $this->processInfo['paramPrefix'];
             $parameterContainer->offsetSet($paramPrefix . 'offset', $this->offset, ParameterContainer::TYPE_INTEGER);
             return [$driver->formatParameterName($paramPrefix . 'offset')];

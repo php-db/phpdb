@@ -2,10 +2,10 @@
 
 namespace LaminasTest\Db\Adapter\Profiler;
 
-use Laminas\Db\Adapter\Exception\InvalidArgumentException;
-use Laminas\Db\Adapter\Exception\RuntimeException;
-use Laminas\Db\Adapter\Profiler\Profiler;
-use Laminas\Db\Adapter\StatementContainer;
+use PhpDb\Adapter\Exception\InvalidArgumentException;
+use PhpDb\Adapter\Exception\RuntimeException;
+use PhpDb\Adapter\Profiler\Profiler;
+use PhpDb\Adapter\StatementContainer;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 use stdClass;

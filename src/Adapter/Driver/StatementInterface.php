@@ -1,9 +1,9 @@
 <?php
 
-namespace Laminas\Db\Adapter\Driver;
+namespace PhpDb\Adapter\Driver;
 
-use Laminas\Db\Adapter\ParameterContainer;
-use Laminas\Db\Adapter\StatementContainerInterface;
+use PhpDb\Adapter\ParameterContainer;
+use PhpDb\Adapter\StatementContainerInterface;
 
 interface StatementInterface extends StatementContainerInterface
 {

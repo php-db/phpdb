@@ -2,7 +2,7 @@
 
 namespace LaminasIntegrationTest\Db\Adapter\Driver\Pdo;
 
-use Laminas\Db\Adapter\AdapterInterface;
+use PhpDb\Adapter\AdapterInterface;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 

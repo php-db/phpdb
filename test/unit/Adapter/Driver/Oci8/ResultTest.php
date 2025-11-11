@@ -2,7 +2,7 @@
 
 namespace LaminasTest\Db\Adapter\Driver\Oci8;
 
-use Laminas\Db\Adapter\Driver\Oci8\Result;
+use PhpDb\Adapter\Driver\Oci8\Result;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;

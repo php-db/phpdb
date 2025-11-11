@@ -1,11 +1,11 @@
 <?php
 
-namespace Laminas\Db\Adapter\Driver\Pdo;
+namespace PhpDb\Adapter\Driver\Pdo;
 
 use Closure;
 use Iterator;
-use Laminas\Db\Adapter\Driver\ResultInterface;
-use Laminas\Db\Adapter\Exception;
+use PhpDb\Adapter\Driver\ResultInterface;
+use PhpDb\Adapter\Exception;
 use Override;
 use PDO;
 use PDOStatement;

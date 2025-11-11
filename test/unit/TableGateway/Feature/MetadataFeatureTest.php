@@ -2,12 +2,12 @@
 
 namespace LaminasTest\Db\TableGateway\Feature;
 
-use Laminas\Db\Metadata\MetadataInterface;
-use Laminas\Db\Metadata\Object\ConstraintObject;
-use Laminas\Db\Metadata\Object\TableObject;
-use Laminas\Db\Metadata\Object\ViewObject;
-use Laminas\Db\TableGateway\AbstractTableGateway;
-use Laminas\Db\TableGateway\Feature\MetadataFeature;
+use PhpDb\Metadata\MetadataInterface;
+use PhpDb\Metadata\Object\ConstraintObject;
+use PhpDb\Metadata\Object\TableObject;
+use PhpDb\Metadata\Object\ViewObject;
+use PhpDb\TableGateway\AbstractTableGateway;
+use PhpDb\TableGateway\Feature\MetadataFeature;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;

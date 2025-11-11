@@ -2,7 +2,7 @@
 
 namespace LaminasTest\Db\TestAsset;
 
-use Laminas\Db\Sql;
+use PhpDb\Sql;
 use Override;
 
 class SelectDecorator extends Sql\Select implements Sql\Platform\PlatformDecoratorInterface

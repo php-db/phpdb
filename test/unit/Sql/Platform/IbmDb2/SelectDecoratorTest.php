@@ -2,22 +2,22 @@
 
 namespace LaminasTest\Db\Sql\Platform\IbmDb2;
 
-use Laminas\Db\Adapter\Adapter;
-use Laminas\Db\Adapter\Driver\DriverInterface;
-use Laminas\Db\Adapter\Driver\StatementInterface;
-use Laminas\Db\Adapter\ParameterContainer;
-use Laminas\Db\Adapter\Platform\IbmDb2 as IbmDb2Platform;
-use Laminas\Db\Sql\Expression;
-use Laminas\Db\Sql\Platform\IbmDb2\SelectDecorator;
-use Laminas\Db\Sql\Select;
-use Laminas\Db\Sql\Where;
+use PhpDb\Adapter\Adapter;
+use PhpDb\Adapter\Driver\DriverInterface;
+use PhpDb\Adapter\Driver\StatementInterface;
+use PhpDb\Adapter\ParameterContainer;
+use PhpDb\Adapter\Platform\IbmDb2 as IbmDb2Platform;
+use PhpDb\Sql\Expression;
+use PhpDb\Sql\Platform\IbmDb2\SelectDecorator;
+use PhpDb\Sql\Select;
+use PhpDb\Sql\Where;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\TestDox;
 use PHPUnit\Framework\TestCase;
 
-#[CoversMethod(\Laminas\Db\Sql\Platform\SqlServer\SelectDecorator::class, 'prepareStatement')]
-#[CoversMethod(\Laminas\Db\Sql\Platform\SqlServer\SelectDecorator::class, 'processLimitOffset')]
+#[CoversMethod(\PhpDb\Sql\Platform\SqlServer\SelectDecorator::class, 'prepareStatement')]
+#[CoversMethod(\PhpDb\Sql\Platform\SqlServer\SelectDecorator::class, 'processLimitOffset')]
 #[CoversMethod(SelectDecorator::class, 'getSqlString')]
 class SelectDecoratorTest extends TestCase
 {

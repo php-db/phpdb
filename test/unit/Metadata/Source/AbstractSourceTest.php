@@ -2,8 +2,8 @@
 
 namespace LaminasTest\Db\Metadata\Source;
 
-use Laminas\Db\Metadata\Object\ConstraintKeyObject;
-use Laminas\Db\Metadata\Source\AbstractSource;
+use PhpDb\Metadata\Object\ConstraintKeyObject;
+use PhpDb\Metadata\Source\AbstractSource;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;

@@ -2,7 +2,7 @@
 
 namespace LaminasTest\Db\Adapter\Driver\Pdo;
 
-use Laminas\Db\Adapter\Driver\Pdo\Statement;
+use PhpDb\Adapter\Driver\Pdo\Statement;
 use Override;
 use PDO;
 use PDOStatement;
@@ -23,7 +23,7 @@ class StatementIntegrationTest extends TestCase
     #[\Override]
     protected function setUp(): void
     {
-        $driver = $this->getMockBuilder(\Laminas\Db\Adapter\Driver\Pdo\Pdo::class)
+        $driver = $this->getMockBuilder(\PhpDb\Adapter\Driver\Pdo\Pdo::class)
             ->onlyMethods(['createResult'])
             ->disableOriginalConstructor()
             ->getMock();

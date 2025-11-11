@@ -1,9 +1,9 @@
 <?php
 
-namespace Laminas\Db\TableGateway\Feature;
+namespace PhpDb\TableGateway\Feature;
 
-use Laminas\Db\Adapter\AdapterInterface;
-use Laminas\Db\Sql\Sql;
+use PhpDb\Adapter\AdapterInterface;
+use PhpDb\Sql\Sql;
 
 class MasterSlaveFeature extends AbstractFeature
 {
@@ -22,7 +22,7 @@ class MasterSlaveFeature extends AbstractFeature
     public function __construct(AdapterInterface $slaveAdapter, ?Sql $slaveSql = null)
     {
         $this->slaveAdapter = $slaveAdapter;
-        if ($slaveSql instanceof \Laminas\Db\Sql\Sql) {
+        if ($slaveSql instanceof \PhpDb\Sql\Sql) {
             $this->slaveSql = $slaveSql;
         }
     }

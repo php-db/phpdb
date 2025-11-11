@@ -2,7 +2,7 @@
 
 namespace LaminasTest\Db\TestAsset;
 
-use Laminas\Db\Sql;
+use PhpDb\Sql;
 use Override;
 
 class UpdateDecorator extends Sql\Update implements Sql\Platform\PlatformDecoratorInterface

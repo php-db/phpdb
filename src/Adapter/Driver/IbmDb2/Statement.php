@@ -1,13 +1,13 @@
 <?php
 
-namespace Laminas\Db\Adapter\Driver\IbmDb2;
+namespace PhpDb\Adapter\Driver\IbmDb2;
 
 use ErrorException;
-use Laminas\Db\Adapter\Driver\StatementInterface;
-use Laminas\Db\Adapter\Exception;
-use Laminas\Db\Adapter\Exception\InvalidArgumentException;
-use Laminas\Db\Adapter\ParameterContainer;
-use Laminas\Db\Adapter\Profiler;
+use PhpDb\Adapter\Driver\StatementInterface;
+use PhpDb\Adapter\Exception;
+use PhpDb\Adapter\Exception\InvalidArgumentException;
+use PhpDb\Adapter\ParameterContainer;
+use PhpDb\Adapter\Profiler;
 
 use Override;
 

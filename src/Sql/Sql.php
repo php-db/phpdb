@@ -1,10 +1,10 @@
 <?php
 
-namespace Laminas\Db\Sql;
+namespace PhpDb\Sql;
 
-use Laminas\Db\Adapter\AdapterInterface;
-use Laminas\Db\Adapter\Driver\StatementInterface;
-use Laminas\Db\Adapter\StatementContainerInterface;
+use PhpDb\Adapter\AdapterInterface;
+use PhpDb\Adapter\Driver\StatementInterface;
+use PhpDb\Adapter\StatementContainerInterface;
 
 use function sprintf;
 
@@ -123,6 +123,6 @@ class Sql
         return $this
             ->sqlPlatform
             ->setSubject($sqlObject)
-            ->getSqlString($adapter instanceof \Laminas\Db\Adapter\AdapterInterface ? $adapter->getPlatform() : $this->adapter->getPlatform());
+            ->getSqlString($adapter instanceof \PhpDb\Adapter\AdapterInterface ? $adapter->getPlatform() : $this->adapter->getPlatform());
     }
 }

@@ -1,12 +1,12 @@
 <?php
 
-namespace Laminas\Db\TableGateway\Feature;
+namespace PhpDb\TableGateway\Feature;
 
-use Laminas\Db\Metadata\MetadataInterface;
-use Laminas\Db\Metadata\Object\TableObject;
-use Laminas\Db\Metadata\Source\Factory as SourceFactory;
-use Laminas\Db\Sql\TableIdentifier;
-use Laminas\Db\TableGateway\Exception;
+use PhpDb\Metadata\MetadataInterface;
+use PhpDb\Metadata\Object\TableObject;
+use PhpDb\Metadata\Source\Factory as SourceFactory;
+use PhpDb\Sql\TableIdentifier;
+use PhpDb\TableGateway\Exception;
 
 use function count;
 use function current;
@@ -22,7 +22,7 @@ class MetadataFeature extends AbstractFeature
      */
     public function __construct(?MetadataInterface $metadata = null)
     {
-        if ($metadata instanceof \Laminas\Db\Metadata\MetadataInterface) {
+        if ($metadata instanceof \PhpDb\Metadata\MetadataInterface) {
             $this->metadata = $metadata;
         }
         $this->sharedData['metadata'] = [

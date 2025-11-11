@@ -1,12 +1,12 @@
 <?php
 
-namespace Laminas\Db\Sql;
+namespace PhpDb\Sql;
 
 use Closure;
-use Laminas\Db\Adapter\Driver\DriverInterface;
-use Laminas\Db\Adapter\ParameterContainer;
-use Laminas\Db\Adapter\Platform\PlatformInterface;
-use Laminas\Db\Sql\Predicate\PredicateInterface;
+use PhpDb\Adapter\Driver\DriverInterface;
+use PhpDb\Adapter\ParameterContainer;
+use PhpDb\Adapter\Platform\PlatformInterface;
+use PhpDb\Sql\Predicate\PredicateInterface;
 
 use function array_key_exists;
 use function count;
@@ -691,7 +691,7 @@ class Select extends AbstractPreparableSql
         if ($this->limit === null) {
             return null;
         }
-        if ($parameterContainer instanceof \Laminas\Db\Adapter\ParameterContainer) {
+        if ($parameterContainer instanceof \PhpDb\Adapter\ParameterContainer) {
             $paramPrefix = $this->processInfo['paramPrefix'];
             $parameterContainer->offsetSet($paramPrefix . 'limit', $this->limit, ParameterContainer::TYPE_INTEGER);
             return [$driver->formatParameterName($paramPrefix . 'limit')];
@@ -707,7 +707,7 @@ class Select extends AbstractPreparableSql
         if ($this->offset === null) {
             return null;
         }
-        if ($parameterContainer instanceof \Laminas\Db\Adapter\ParameterContainer) {
+        if ($parameterContainer instanceof \PhpDb\Adapter\ParameterContainer) {
             $paramPrefix = $this->processInfo['paramPrefix'];
             $parameterContainer->offsetSet($paramPrefix . 'offset', $this->offset, ParameterContainer::TYPE_INTEGER);
             return [$driver->formatParameterName($paramPrefix . 'offset')];

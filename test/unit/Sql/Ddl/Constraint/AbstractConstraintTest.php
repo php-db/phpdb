@@ -2,7 +2,7 @@
 
 namespace LaminasTest\Db\Sql\Ddl\Constraint;
 
-use Laminas\Db\Sql\Ddl\Constraint\AbstractConstraint;
+use PhpDb\Sql\Ddl\Constraint\AbstractConstraint;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;

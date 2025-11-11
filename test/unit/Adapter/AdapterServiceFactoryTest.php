@@ -2,8 +2,8 @@
 
 namespace LaminasTest\Db\Adapter;
 
-use Laminas\Db\Adapter\Adapter;
-use Laminas\Db\Adapter\AdapterServiceFactory;
+use PhpDb\Adapter\Adapter;
+use PhpDb\Adapter\AdapterServiceFactory;
 use Laminas\ServiceManager\ServiceLocatorInterface;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;

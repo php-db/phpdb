@@ -1,12 +1,12 @@
 <?php
 
-namespace Laminas\Db\Adapter\Platform;
+namespace PhpDb\Adapter\Platform;
 
-use Laminas\Db\Adapter\Driver\DriverInterface;
-use Laminas\Db\Adapter\Driver\Mysqli;
-use Laminas\Db\Adapter\Driver\Pdo;
-use Laminas\Db\Adapter\Exception;
-use Laminas\Db\Adapter\Exception\InvalidArgumentException;
+use PhpDb\Adapter\Driver\DriverInterface;
+use PhpDb\Adapter\Driver\Mysqli;
+use PhpDb\Adapter\Driver\Pdo;
+use PhpDb\Adapter\Exception;
+use PhpDb\Adapter\Exception\InvalidArgumentException;
 
 use Override;
 
@@ -52,7 +52,7 @@ class Mysql extends AbstractPlatform
      */
     public function setDriver($driver)
     {
-        // handle Laminas\Db drivers
+        // handle PhpDb drivers
         if (
             $driver instanceof Mysqli\Mysqli
             || ($driver instanceof Pdo\Pdo && $driver->getDatabasePlatformName() === 'Mysql')
@@ -64,7 +64,7 @@ class Mysql extends AbstractPlatform
         }
 
         throw new Exception\InvalidArgumentException(
-            '$driver must be a Mysqli or Mysql PDO Laminas\Db\Adapter\Driver, Mysqli instance or MySQL PDO instance'
+            '$driver must be a Mysqli or Mysql PDO PhpDb\Adapter\Driver, Mysqli instance or MySQL PDO instance'
         );
     }
 

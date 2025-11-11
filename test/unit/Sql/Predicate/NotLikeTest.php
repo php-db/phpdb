@@ -2,10 +2,10 @@
 
 namespace LaminasTest\Db\Sql\Predicate;
 
-use Laminas\Db\Sql\Argument;
-use Laminas\Db\Sql\ArgumentType;
-use Laminas\Db\Sql\Predicate\Like;
-use Laminas\Db\Sql\Predicate\NotLike;
+use PhpDb\Sql\Argument;
+use PhpDb\Sql\ArgumentType;
+use PhpDb\Sql\Predicate\Like;
+use PhpDb\Sql\Predicate\NotLike;
 use PHPUnit\Framework\TestCase;
 
 class NotLikeTest extends TestCase

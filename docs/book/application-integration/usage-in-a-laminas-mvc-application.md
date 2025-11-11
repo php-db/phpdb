@@ -12,11 +12,11 @@ If the MVC application is already created, then use Composer to [add the laminas
 
 ## The Abstract Factory
 
-Now that the laminas-db package is installed, the abstract factory `Laminas\Db\Adapter\AdapterAbstractServiceFactory` is available to be used with the service configuration.
+Now that the laminas-db package is installed, the abstract factory `PhpDb\Adapter\AdapterAbstractServiceFactory` is available to be used with the service configuration.
 
 ### Configuring the adapter
 
-The abstract factory expects the configuration key `db` in order to create a `Laminas\Db\Adapter\Adapter` instance.
+The abstract factory expects the configuration key `db` in order to create a `PhpDb\Adapter\Adapter` instance.
 
 ### Working with a Sqlite database
 
@@ -68,7 +68,7 @@ return [
 
 ## Working with the adapter
 
-Once you have configured an adapter, as in the above examples, you now have a `Laminas\Db\Adapter\Adapter` available to your application.
+Once you have configured an adapter, as in the above examples, you now have a `PhpDb\Adapter\Adapter` available to your application.
 
 A factory for a class that consumes an adapter can pull the adapter by the name used in configuration.
 As an example, for the sqlite database configured earlier, we could write the following:

@@ -1,11 +1,11 @@
 <?php
 
-namespace Laminas\Db\TableGateway\Feature;
+namespace PhpDb\TableGateway\Feature;
 
-use Laminas\Db\ResultSet\ResultSet;
-use Laminas\Db\RowGateway\RowGateway;
-use Laminas\Db\RowGateway\RowGatewayInterface;
-use Laminas\Db\TableGateway\Exception;
+use PhpDb\ResultSet\ResultSet;
+use PhpDb\RowGateway\RowGateway;
+use PhpDb\RowGateway\RowGatewayInterface;
+use PhpDb\TableGateway\Exception;
 
 use function func_get_args;
 use function is_string;

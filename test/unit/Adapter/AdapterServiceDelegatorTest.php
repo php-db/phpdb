@@ -2,11 +2,11 @@
 
 namespace LaminasTest\Db\Adapter;
 
-use Laminas\Db\Adapter\Adapter;
-use Laminas\Db\Adapter\AdapterAwareInterface;
-use Laminas\Db\Adapter\AdapterInterface;
-use Laminas\Db\Adapter\AdapterServiceDelegator;
-use Laminas\Db\Adapter\Driver\DriverInterface;
+use PhpDb\Adapter\Adapter;
+use PhpDb\Adapter\AdapterAwareInterface;
+use PhpDb\Adapter\AdapterInterface;
+use PhpDb\Adapter\AdapterServiceDelegator;
+use PhpDb\Adapter\Driver\DriverInterface;
 use Laminas\ServiceManager\AbstractPluginManager;
 use Laminas\ServiceManager\ServiceManager;
 use LaminasTest\Db\Adapter\TestAsset\ConcreteAdapterAwareObject;

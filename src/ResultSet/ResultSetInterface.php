@@ -1,6 +1,6 @@
 <?php
 
-namespace Laminas\Db\ResultSet;
+namespace PhpDb\ResultSet;
 
 use Countable;
 use Traversable;

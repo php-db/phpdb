@@ -1,12 +1,12 @@
 <?php
 
-namespace Laminas\Db\Adapter\Platform;
+namespace PhpDb\Adapter\Platform;
 
-use Laminas\Db\Adapter\Driver\DriverInterface;
-use Laminas\Db\Adapter\Driver\Pdo;
-use Laminas\Db\Adapter\Driver\Sqlsrv\Sqlsrv;
-use Laminas\Db\Adapter\Exception;
-use Laminas\Db\Adapter\Exception\InvalidArgumentException;
+use PhpDb\Adapter\Driver\DriverInterface;
+use PhpDb\Adapter\Driver\Pdo;
+use PhpDb\Adapter\Driver\Sqlsrv\Sqlsrv;
+use PhpDb\Adapter\Exception;
+use PhpDb\Adapter\Exception\InvalidArgumentException;
 
 use Override;
 
@@ -48,7 +48,7 @@ class SqlServer extends AbstractPlatform
      */
     public function setDriver($driver)
     {
-        // handle Laminas\Db drivers
+        // handle PhpDb drivers
         if (
             ($driver instanceof Pdo\Pdo && in_array($driver->getDatabasePlatformName(), ['SqlServer', 'Dblib']))
             || ($driver instanceof \PDO && in_array($driver->getAttribute(\PDO::ATTR_DRIVER_NAME), ['sqlsrv', 'dblib']))
@@ -58,7 +58,7 @@ class SqlServer extends AbstractPlatform
         }
 
         throw new Exception\InvalidArgumentException(
-            '$driver must be a Sqlsrv PDO Laminas\Db\Adapter\Driver or Sqlsrv PDO instance'
+            '$driver must be a Sqlsrv PDO PhpDb\Adapter\Driver or Sqlsrv PDO instance'
         );
     }
 

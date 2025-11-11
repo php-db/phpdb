@@ -1,9 +1,9 @@
 <?php
 
-namespace Laminas\Db\Sql\Ddl\Column;
+namespace PhpDb\Sql\Ddl\Column;
 
-use Laminas\Db\Sql\Argument;
-use Laminas\Db\Sql\ExpressionData;
+use PhpDb\Sql\Argument;
+use PhpDb\Sql\ExpressionData;
 
 abstract class AbstractLengthColumn extends Column
 {

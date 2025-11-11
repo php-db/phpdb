@@ -1,8 +1,8 @@
 <?php
 
-namespace Laminas\Db\Sql\Exception;
+namespace PhpDb\Sql\Exception;
 
-use Laminas\Db\Exception;
+use PhpDb\Exception;
 
 class InvalidArgumentException extends Exception\InvalidArgumentException implements ExceptionInterface
 {

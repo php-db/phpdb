@@ -2,7 +2,7 @@
 
 namespace LaminasTest\Db\Adapter\Platform;
 
-use Laminas\Db\Adapter\Platform\Postgresql;
+use PhpDb\Adapter\Platform\Postgresql;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 
@@ -72,7 +72,7 @@ class PostgresqlTest extends TestCase
          */
         //$this->expectNotice();
         //$this->expectExceptionMessage(
-        //    'Attempting to quote a value in Laminas\Db\Adapter\Platform\Postgresql without extension/driver'
+        //    'Attempting to quote a value in PhpDb\Adapter\Platform\Postgresql without extension/driver'
         //    . ' support can introduce security vulnerabilities in a production environment'
         //);
         $this->expectNotToPerformAssertions();
@@ -116,7 +116,7 @@ class PostgresqlTest extends TestCase
          */
         //$this->expectError();
         //$this->expectExceptionMessage(
-        //    'Attempting to quote a value in Laminas\Db\Adapter\Platform\Postgresql without extension/driver'
+        //    'Attempting to quote a value in PhpDb\Adapter\Platform\Postgresql without extension/driver'
         //    . ' support can introduce security vulnerabilities in a production environment'
         //);
         $fooBar = $this->platform->quoteTrustedValue("Foo O'Bar");

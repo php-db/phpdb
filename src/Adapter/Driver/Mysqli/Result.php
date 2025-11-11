@@ -1,10 +1,10 @@
 <?php
 
-namespace Laminas\Db\Adapter\Driver\Mysqli;
+namespace PhpDb\Adapter\Driver\Mysqli;
 
 use Iterator;
-use Laminas\Db\Adapter\Driver\ResultInterface;
-use Laminas\Db\Adapter\Exception;
+use PhpDb\Adapter\Driver\ResultInterface;
+use PhpDb\Adapter\Exception;
 use mysqli;
 use mysqli_result;
 use mysqli_stmt;

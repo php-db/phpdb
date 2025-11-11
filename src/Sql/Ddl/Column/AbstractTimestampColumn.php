@@ -1,10 +1,10 @@
 <?php
 
-namespace Laminas\Db\Sql\Ddl\Column;
+namespace PhpDb\Sql\Ddl\Column;
 
-use Laminas\Db\Sql\Argument;
-use Laminas\Db\Sql\ArgumentType;
-use Laminas\Db\Sql\ExpressionData;
+use PhpDb\Sql\Argument;
+use PhpDb\Sql\ArgumentType;
+use PhpDb\Sql\ExpressionData;
 
 /**
  * @see doc section http://dev.mysql.com/doc/refman/5.6/en/timestamp-initialization.html

@@ -1,9 +1,9 @@
 <?php
 
-namespace Laminas\Db\Adapter\Driver\IbmDb2;
+namespace PhpDb\Adapter\Driver\IbmDb2;
 
-use Laminas\Db\Adapter\Driver\AbstractConnection;
-use Laminas\Db\Adapter\Exception;
+use PhpDb\Adapter\Driver\AbstractConnection;
+use PhpDb\Adapter\Exception;
 
 use Override;
 

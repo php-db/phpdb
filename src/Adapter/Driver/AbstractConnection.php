@@ -1,9 +1,9 @@
 <?php
 
-namespace Laminas\Db\Adapter\Driver;
+namespace PhpDb\Adapter\Driver;
 
-use Laminas\Db\Adapter\Profiler\ProfilerAwareInterface;
-use Laminas\Db\Adapter\Profiler\ProfilerInterface;
+use PhpDb\Adapter\Profiler\ProfilerAwareInterface;
+use PhpDb\Adapter\Profiler\ProfilerInterface;
 use Override;
 
 abstract class AbstractConnection implements ConnectionInterface, ProfilerAwareInterface

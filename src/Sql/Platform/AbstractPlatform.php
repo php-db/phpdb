@@ -1,13 +1,13 @@
 <?php
 
-namespace Laminas\Db\Sql\Platform;
+namespace PhpDb\Sql\Platform;
 
-use Laminas\Db\Adapter\AdapterInterface;
-use Laminas\Db\Adapter\Platform\PlatformInterface;
-use Laminas\Db\Adapter\StatementContainerInterface;
-use Laminas\Db\Sql\Exception;
-use Laminas\Db\Sql\PreparableSqlInterface;
-use Laminas\Db\Sql\SqlInterface;
+use PhpDb\Adapter\AdapterInterface;
+use PhpDb\Adapter\Platform\PlatformInterface;
+use PhpDb\Adapter\StatementContainerInterface;
+use PhpDb\Sql\Exception;
+use PhpDb\Sql\PreparableSqlInterface;
+use PhpDb\Sql\SqlInterface;
 use Override;
 
 class AbstractPlatform implements PlatformDecoratorInterface, PreparableSqlInterface, SqlInterface
@@ -71,7 +71,7 @@ class AbstractPlatform implements PlatformDecoratorInterface, PreparableSqlInter
     {
         if (! $this->subject instanceof PreparableSqlInterface) {
             throw new Exception\RuntimeException(
-                'The subject does not appear to implement Laminas\Db\Sql\PreparableSqlInterface, thus calling '
+                'The subject does not appear to implement PhpDb\Sql\PreparableSqlInterface, thus calling '
                 . 'prepareStatement() has no effect'
             );
         }
@@ -90,7 +90,7 @@ class AbstractPlatform implements PlatformDecoratorInterface, PreparableSqlInter
     {
         if (! $this->subject instanceof SqlInterface) {
             throw new Exception\RuntimeException(
-                'The subject does not appear to implement Laminas\Db\Sql\SqlInterface, thus calling '
+                'The subject does not appear to implement PhpDb\Sql\SqlInterface, thus calling '
                 . 'prepareStatement() has no effect'
             );
         }

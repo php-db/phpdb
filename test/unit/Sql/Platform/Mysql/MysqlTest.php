@@ -2,9 +2,9 @@
 
 namespace LaminasTest\Db\Sql\Platform\Mysql;
 
-use Laminas\Db\Sql\Platform\Mysql\Mysql;
-use Laminas\Db\Sql\Platform\Mysql\SelectDecorator;
-use Laminas\Db\Sql\Select;
+use PhpDb\Sql\Platform\Mysql\Mysql;
+use PhpDb\Sql\Platform\Mysql\SelectDecorator;
+use PhpDb\Sql\Select;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\TestDox;
 use PHPUnit\Framework\TestCase;

@@ -2,12 +2,12 @@
 
 namespace LaminasTest\Db\TableGateway\Feature;
 
-use Laminas\Db\Adapter\Adapter;
-use Laminas\Db\Adapter\Driver\ResultInterface;
-use Laminas\Db\Adapter\Driver\StatementInterface;
-use Laminas\Db\Adapter\Platform\PlatformInterface;
-use Laminas\Db\TableGateway\Feature\SequenceFeature;
-use Laminas\Db\TableGateway\TableGateway;
+use PhpDb\Adapter\Adapter;
+use PhpDb\Adapter\Driver\ResultInterface;
+use PhpDb\Adapter\Driver\StatementInterface;
+use PhpDb\Adapter\Platform\PlatformInterface;
+use PhpDb\TableGateway\Feature\SequenceFeature;
+use PhpDb\TableGateway\TableGateway;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;

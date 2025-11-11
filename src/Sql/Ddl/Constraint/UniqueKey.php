@@ -1,6 +1,6 @@
 <?php
 
-namespace Laminas\Db\Sql\Ddl\Constraint;
+namespace PhpDb\Sql\Ddl\Constraint;
 
 class UniqueKey extends AbstractConstraint
 {

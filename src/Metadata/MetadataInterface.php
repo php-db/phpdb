@@ -1,6 +1,6 @@
 <?php
 
-namespace Laminas\Db\Metadata;
+namespace PhpDb\Metadata;
 
 interface MetadataInterface
 {

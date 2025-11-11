@@ -2,15 +2,15 @@
 
 namespace LaminasTest\Db\Sql;
 
-use Laminas\Db\Adapter\Driver\DriverInterface;
-use Laminas\Db\Adapter\ParameterContainer;
-use Laminas\Db\Adapter\StatementContainer;
-use Laminas\Db\Sql\AbstractSql;
-use Laminas\Db\Sql\ArgumentType;
-use Laminas\Db\Sql\Expression;
-use Laminas\Db\Sql\ExpressionInterface;
-use Laminas\Db\Sql\Predicate;
-use Laminas\Db\Sql\Select;
+use PhpDb\Adapter\Driver\DriverInterface;
+use PhpDb\Adapter\ParameterContainer;
+use PhpDb\Adapter\StatementContainer;
+use PhpDb\Sql\AbstractSql;
+use PhpDb\Sql\ArgumentType;
+use PhpDb\Sql\Expression;
+use PhpDb\Sql\ExpressionInterface;
+use PhpDb\Sql\Predicate;
+use PhpDb\Sql\Select;
 use LaminasTest\Db\TestAsset\TrustingSql92Platform;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Group;

@@ -2,11 +2,11 @@
 
 namespace LaminasTest\Db\Adapter\Driver\Pdo\Feature;
 
-use Laminas\Db\Adapter\Driver\ConnectionInterface;
-use Laminas\Db\Adapter\Driver\Pdo\Feature\SqliteRowCounter;
-use Laminas\Db\Adapter\Driver\Pdo\Pdo;
-use Laminas\Db\Adapter\Driver\Pdo\Statement;
-use Laminas\Db\Adapter\Driver\ResultInterface;
+use PhpDb\Adapter\Driver\ConnectionInterface;
+use PhpDb\Adapter\Driver\Pdo\Feature\SqliteRowCounter;
+use PhpDb\Adapter\Driver\Pdo\Pdo;
+use PhpDb\Adapter\Driver\Pdo\Statement;
+use PhpDb\Adapter\Driver\ResultInterface;
 use PDO as PDOConnection;
 use PDOStatement;
 use PHPUnit\Framework\Attributes\CoversMethod;

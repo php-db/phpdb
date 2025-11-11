@@ -2,12 +2,12 @@
 
 namespace LaminasTest\Db\Sql\Ddl;
 
-use Laminas\Db\Sql\Ddl\AlterTable;
-use Laminas\Db\Sql\Ddl\Column;
-use Laminas\Db\Sql\Ddl\Column\ColumnInterface;
-use Laminas\Db\Sql\Ddl\Constraint;
-use Laminas\Db\Sql\Ddl\Constraint\ConstraintInterface;
-use Laminas\Db\Sql\TableIdentifier;
+use PhpDb\Sql\Ddl\AlterTable;
+use PhpDb\Sql\Ddl\Column;
+use PhpDb\Sql\Ddl\Column\ColumnInterface;
+use PhpDb\Sql\Ddl\Constraint;
+use PhpDb\Sql\Ddl\Constraint\ConstraintInterface;
+use PhpDb\Sql\TableIdentifier;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 

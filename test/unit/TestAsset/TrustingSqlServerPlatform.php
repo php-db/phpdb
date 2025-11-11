@@ -2,7 +2,7 @@
 
 namespace LaminasTest\Db\TestAsset;
 
-use Laminas\Db\Adapter\Platform\SqlServer;
+use PhpDb\Adapter\Platform\SqlServer;
 use Override;
 
 class TrustingSqlServerPlatform extends SqlServer

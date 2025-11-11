@@ -1,8 +1,8 @@
 <?php
 
-namespace Laminas\Db\Adapter\Exception;
+namespace PhpDb\Adapter\Exception;
 
-use Laminas\Db\Exception;
+use PhpDb\Exception;
 
 class ErrorException extends Exception\ErrorException implements ExceptionInterface
 {

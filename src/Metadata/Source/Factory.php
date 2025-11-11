@@ -1,10 +1,10 @@
 <?php
 
-namespace Laminas\Db\Metadata\Source;
+namespace PhpDb\Metadata\Source;
 
-use Laminas\Db\Adapter\Adapter;
-use Laminas\Db\Exception\InvalidArgumentException;
-use Laminas\Db\Metadata\MetadataInterface;
+use PhpDb\Adapter\Adapter;
+use PhpDb\Exception\InvalidArgumentException;
+use PhpDb\Metadata\MetadataInterface;
 
 /**
  * Source metadata factory.

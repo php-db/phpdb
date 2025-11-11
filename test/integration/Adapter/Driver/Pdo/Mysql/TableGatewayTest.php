@@ -2,9 +2,9 @@
 
 namespace LaminasIntegrationTest\Db\Adapter\Driver\Pdo\Mysql;
 
-use Laminas\Db\Sql\TableIdentifier;
-use Laminas\Db\TableGateway\Feature\MetadataFeature;
-use Laminas\Db\TableGateway\TableGateway;
+use PhpDb\Sql\TableIdentifier;
+use PhpDb\TableGateway\Feature\MetadataFeature;
+use PhpDb\TableGateway\TableGateway;
 use LaminasIntegrationTest\Db\Adapter\Driver\Pdo\AdapterTrait as BaseAdapterTrait;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\DataProvider;

@@ -2,9 +2,9 @@
 
 namespace LaminasTest\Db\Sql\Platform\SqlServer\Ddl;
 
-use Laminas\Db\Sql\Ddl\Column\Column;
-use Laminas\Db\Sql\Ddl\CreateTable;
-use Laminas\Db\Sql\Platform\SqlServer\Ddl\CreateTableDecorator;
+use PhpDb\Sql\Ddl\Column\Column;
+use PhpDb\Sql\Ddl\CreateTable;
+use PhpDb\Sql\Platform\SqlServer\Ddl\CreateTableDecorator;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 

@@ -2,10 +2,10 @@
 
 namespace LaminasTest\Db\Adapter\Driver\Sqlsrv;
 
-use Laminas\Db\Adapter\Driver\Sqlsrv\Connection;
-use Laminas\Db\Adapter\Driver\Sqlsrv\Result;
-use Laminas\Db\Adapter\Driver\Sqlsrv\Sqlsrv;
-use Laminas\Db\Adapter\Driver\Sqlsrv\Statement;
+use PhpDb\Adapter\Driver\Sqlsrv\Connection;
+use PhpDb\Adapter\Driver\Sqlsrv\Result;
+use PhpDb\Adapter\Driver\Sqlsrv\Sqlsrv;
+use PhpDb\Adapter\Driver\Sqlsrv\Statement;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Group;
 

@@ -2,7 +2,7 @@
 
 namespace LaminasIntegrationTest\Db\Adapter\Driver\Pdo;
 
-use Laminas\Db\Adapter\AdapterInterface;
+use PhpDb\Adapter\AdapterInterface;
 use Override;
 
 trait AdapterTrait

@@ -1,6 +1,6 @@
 <?php
 
-namespace Laminas\Db\Adapter\Exception;
+namespace PhpDb\Adapter\Exception;
 
 class InvalidConnectionParametersException extends RuntimeException implements ExceptionInterface
 {

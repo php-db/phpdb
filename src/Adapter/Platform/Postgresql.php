@@ -1,11 +1,11 @@
 <?php
 
-namespace Laminas\Db\Adapter\Platform;
+namespace PhpDb\Adapter\Platform;
 
-use Laminas\Db\Adapter\Driver\DriverInterface;
-use Laminas\Db\Adapter\Driver\Pdo;
-use Laminas\Db\Adapter\Driver\Pgsql;
-use Laminas\Db\Adapter\Exception;
+use PhpDb\Adapter\Driver\DriverInterface;
+use PhpDb\Adapter\Driver\Pdo;
+use PhpDb\Adapter\Driver\Pgsql;
+use PhpDb\Adapter\Exception;
 use Override;
 use PgSql\Connection as PgSqlConnection;
 
@@ -63,7 +63,7 @@ class Postgresql extends AbstractPlatform
         }
 
         throw new Exception\InvalidArgumentException(
-            '$driver must be a Pgsql or Postgresql PDO Laminas\Db\Adapter\Driver, pgsql link resource'
+            '$driver must be a Pgsql or Postgresql PDO PhpDb\Adapter\Driver, pgsql link resource'
             . ' or Postgresql PDO instance'
         );
     }

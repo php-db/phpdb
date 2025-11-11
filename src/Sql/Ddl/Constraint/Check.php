@@ -1,12 +1,12 @@
 <?php
 
-namespace Laminas\Db\Sql\Ddl\Constraint;
+namespace PhpDb\Sql\Ddl\Constraint;
 
-use Laminas\Db\Sql\Argument;
-use Laminas\Db\Sql\ArgumentType;
-use Laminas\Db\Sql\ExpressionData;
-use Laminas\Db\Sql\ExpressionInterface;
-use Laminas\Db\Sql\ExpressionPart;
+use PhpDb\Sql\Argument;
+use PhpDb\Sql\ArgumentType;
+use PhpDb\Sql\ExpressionData;
+use PhpDb\Sql\ExpressionInterface;
+use PhpDb\Sql\ExpressionPart;
 
 class Check extends AbstractConstraint
 {

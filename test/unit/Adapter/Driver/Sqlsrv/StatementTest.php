@@ -2,9 +2,9 @@
 
 namespace LaminasTest\Db\Adapter\Driver\Sqlsrv;
 
-use Laminas\Db\Adapter\Driver\Sqlsrv\Sqlsrv;
-use Laminas\Db\Adapter\Driver\Sqlsrv\Statement;
-use Laminas\Db\Adapter\ParameterContainer;
+use PhpDb\Adapter\Driver\Sqlsrv\Sqlsrv;
+use PhpDb\Adapter\Driver\Sqlsrv\Statement;
+use PhpDb\Adapter\ParameterContainer;
 use Override;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;

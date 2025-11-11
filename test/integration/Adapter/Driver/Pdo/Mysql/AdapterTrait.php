@@ -2,7 +2,7 @@
 
 namespace LaminasIntegrationTest\Db\Adapter\Driver\Pdo\Mysql;
 
-use Laminas\Db\Adapter\Adapter;
+use PhpDb\Adapter\Adapter;
 
 use function getenv;
 use function is_string;

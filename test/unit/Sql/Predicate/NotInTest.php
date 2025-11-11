@@ -2,10 +2,10 @@
 
 namespace LaminasTest\Db\Sql\Predicate;
 
-use Laminas\Db\Sql\Argument;
-use Laminas\Db\Sql\ArgumentType;
-use Laminas\Db\Sql\Predicate\NotIn;
-use Laminas\Db\Sql\Select;
+use PhpDb\Sql\Argument;
+use PhpDb\Sql\ArgumentType;
+use PhpDb\Sql\Predicate\NotIn;
+use PhpDb\Sql\Select;
 use PHPUnit\Framework\TestCase;
 
 class NotInTest extends TestCase

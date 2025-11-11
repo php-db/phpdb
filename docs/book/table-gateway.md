@@ -5,10 +5,10 @@ database table; its methods mirror the most common table operations. In code,
 the interface resembles:
 
 ```php
-namespace Laminas\Db\TableGateway;
+namespace PhpDb\TableGateway;
 
-use Laminas\Db\ResultSet\ResultSetInterface;
-use Laminas\Db\Sql\Where;
+use PhpDb\ResultSet\ResultSetInterface;
+use PhpDb\Sql\Where;
 
 interface TableGatewayInterface
 {
@@ -28,7 +28,7 @@ There are two primary implementations of the `TableGatewayInterface`,
 `AbstractTableGateway` and `TableGateway`. The `AbstractTableGateway` is an
 abstract basic implementation that provides functionality for `select()`,
 `insert()`, `update()`, `delete()`, as well as an additional API for doing
-these same kinds of tasks with explicit `Laminas\Db\Sql` objects: `selectWith()`,
+these same kinds of tasks with explicit `PhpDb\Sql` objects: `selectWith()`,
 `insertWith()`, `updateWith()`, and `deleteWith()`. In addition,
 AbstractTableGateway also implements a "Feature" API, that allows for expanding
 the behaviors of the base `TableGateway` implementation without having to
@@ -39,17 +39,17 @@ order to be consumed and utilized to its fullest.
 
 ## Quick start
 
-The following example uses `Laminas\Db\TableGateway\TableGateway`, which defines
+The following example uses `PhpDb\TableGateway\TableGateway`, which defines
 the following API:
 
 ```php
-namespace Laminas\Db\TableGateway;
+namespace PhpDb\TableGateway;
 
-use Laminas\Db\Adapter\AdapterInterface;
-use Laminas\Db\ResultSet\ResultSet;
-use Laminas\Db\ResultSet\ResultSetInterface;
-use Laminas\Db\Sql;
-use Laminas\Db\Sql\TableIdentifier;
+use PhpDb\Adapter\AdapterInterface;
+use PhpDb\ResultSet\ResultSet;
+use PhpDb\ResultSet\ResultSetInterface;
+use PhpDb\Sql;
+use PhpDb\Sql\TableIdentifier;
 
 class TableGateway extends AbstractTableGateway
 {
@@ -101,7 +101,7 @@ the populated `Adapter`'s `Result` (the datasource) will be returned and ready
 for iteration.
 
 ```php
-use Laminas\Db\TableGateway\TableGateway;
+use PhpDb\TableGateway\TableGateway;
 
 $projectTable = new TableGateway('project', $adapter);
 $rowset = $projectTable->select(['type' => 'PHP']);
@@ -120,12 +120,12 @@ var_dump($artistRow);
 ```
 
 The `select()` method takes the same arguments as
-`Laminas\Db\Sql\Select::where()`; arguments will be passed to the `Select`
+`PhpDb\Sql\Select::where()`; arguments will be passed to the `Select`
 instance used to build the SELECT query. This means the following is possible:
 
 ```php
-use Laminas\Db\TableGateway\TableGateway;
-use Laminas\Db\Sql\Select;
+use PhpDb\TableGateway\TableGateway;
+use PhpDb\Sql\Select;
 
 $artistTable = new TableGateway('artist', $adapter);
 
@@ -158,8 +158,8 @@ There are a number of features built-in and shipped with laminas-db:
   you are extending the `AbstractTableGateway` implementation:
 
     ```php
-    use Laminas\Db\TableGateway\AbstractTableGateway;
-    use Laminas\Db\TableGateway\Feature;
+    use PhpDb\TableGateway\AbstractTableGateway;
+    use PhpDb\TableGateway\Feature;
 
     class MyTableGateway extends AbstractTableGateway
     {
@@ -173,7 +173,7 @@ There are a number of features built-in and shipped with laminas-db:
     }
 
     // elsewhere in code, in a bootstrap
-    Laminas\Db\TableGateway\Feature\GlobalAdapterFeature::setStaticAdapter($adapter);
+    PhpDb\TableGateway\Feature\GlobalAdapterFeature::setStaticAdapter($adapter);
 
     // in a controller, or model somewhere
     $table = new MyTableGateway(); // adapter is statically loaded
@@ -227,28 +227,28 @@ listed.
 - `preInitialize` (no parameters)
 - `postInitialize` (no parameters)
 - `preSelect`, with the following parameters:
-  - `select`, with type `Laminas\Db\Sql\Select`
+  - `select`, with type `PhpDb\Sql\Select`
 - `postSelect`, with the following parameters:
-  - `statement`, with type `Laminas\Db\Adapter\Driver\StatementInterface`
-  - `result`, with type `Laminas\Db\Adapter\Driver\ResultInterface`
-  - `resultSet`, with type `Laminas\Db\ResultSet\ResultSetInterface`
+  - `statement`, with type `PhpDb\Adapter\Driver\StatementInterface`
+  - `result`, with type `PhpDb\Adapter\Driver\ResultInterface`
+  - `resultSet`, with type `PhpDb\ResultSet\ResultSetInterface`
 - `preInsert`, with the following parameters:
-  - `insert`, with type `Laminas\Db\Sql\Insert`
+  - `insert`, with type `PhpDb\Sql\Insert`
 - `postInsert`, with the following parameters:
-  - `statement` with type `Laminas\Db\Adapter\Driver\StatementInterface`
-  - `result` with type `Laminas\Db\Adapter\Driver\ResultInterface`
+  - `statement` with type `PhpDb\Adapter\Driver\StatementInterface`
+  - `result` with type `PhpDb\Adapter\Driver\ResultInterface`
 - `preUpdate`, with the following parameters:
-  - `update`, with type `Laminas\Db\Sql\Update`
+  - `update`, with type `PhpDb\Sql\Update`
 - `postUpdate`, with the following parameters:
-  - `statement`, with type `Laminas\Db\Adapter\Driver\StatementInterface`
-  - `result`, with type `Laminas\Db\Adapter\Driver\ResultInterface`
+  - `statement`, with type `PhpDb\Adapter\Driver\StatementInterface`
+  - `result`, with type `PhpDb\Adapter\Driver\ResultInterface`
 - `preDelete`, with the following parameters:
-  - `delete`, with type `Laminas\Db\Sql\Delete`
+  - `delete`, with type `PhpDb\Sql\Delete`
 - `postDelete`, with the following parameters:
-  - `statement`, with type `Laminas\Db\Adapter\Driver\StatementInterface`
-  - `result`, with type `Laminas\Db\Adapter\Driver\ResultInterface`
+  - `statement`, with type `PhpDb\Adapter\Driver\StatementInterface`
+  - `result`, with type `PhpDb\Adapter\Driver\ResultInterface`
 
-Listeners receive a `Laminas\Db\TableGateway\Feature\EventFeature\TableGatewayEvent`
+Listeners receive a `PhpDb\TableGateway\Feature\EventFeature\TableGatewayEvent`
 instance as an argument. Within the listener, you can retrieve a parameter by
 name from the event using the following syntax:
 
@@ -259,8 +259,8 @@ $parameter = $event->getParam($paramName);
 As an example, you might attach a listener on the `postInsert` event as follows:
 
 ```php
-use Laminas\Db\Adapter\Driver\ResultInterface;
-use Laminas\Db\TableGateway\Feature\EventFeature\TableGatewayEvent;
+use PhpDb\Adapter\Driver\ResultInterface;
+use PhpDb\TableGateway\Feature\EventFeature\TableGatewayEvent;
 use Laminas\EventManager\EventManager;
 
 /** @var EventManager $eventManager */

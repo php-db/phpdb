@@ -1,13 +1,13 @@
 <?php
 
-namespace Laminas\Db\Sql\Predicate;
+namespace PhpDb\Sql\Predicate;
 
-use Laminas\Db\Sql\AbstractExpression;
-use Laminas\Db\Sql\Argument;
-use Laminas\Db\Sql\ArgumentType;
-use Laminas\Db\Sql\Exception\InvalidArgumentException;
-use Laminas\Db\Sql\ExpressionData;
-use Laminas\Db\Sql\Select;
+use PhpDb\Sql\AbstractExpression;
+use PhpDb\Sql\Argument;
+use PhpDb\Sql\ArgumentType;
+use PhpDb\Sql\Exception\InvalidArgumentException;
+use PhpDb\Sql\ExpressionData;
+use PhpDb\Sql\Select;
 
 use function vsprintf;
 
@@ -80,11 +80,11 @@ class In extends AbstractExpression implements PredicateInterface
     #[\Override]
     public function getExpressionData(): ExpressionData
     {
-        if (!$this->identifier instanceof \Laminas\Db\Sql\Argument) {
+        if (!$this->identifier instanceof \PhpDb\Sql\Argument) {
             throw new InvalidArgumentException('Identifier must be specified');
         }
 
-        if (!$this->valueSet instanceof \Laminas\Db\Sql\Argument) {
+        if (!$this->valueSet instanceof \PhpDb\Sql\Argument) {
             throw new InvalidArgumentException('Value set must be provided for IN predicate');
         }
 

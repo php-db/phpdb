@@ -2,9 +2,9 @@
 
 namespace LaminasTest\Db\Adapter\Driver\Oci8;
 
-use Laminas\Db\Adapter\Driver\Oci8\Oci8;
-use Laminas\Db\Adapter\Driver\Oci8\Statement;
-use Laminas\Db\Adapter\Exception\InvalidArgumentException;
+use PhpDb\Adapter\Driver\Oci8\Oci8;
+use PhpDb\Adapter\Driver\Oci8\Statement;
+use PhpDb\Adapter\Exception\InvalidArgumentException;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Group;
 use stdClass;

@@ -1,12 +1,12 @@
 <?php
 
-namespace Laminas\Db\Sql\Platform\IbmDb2;
+namespace PhpDb\Sql\Platform\IbmDb2;
 
-use Laminas\Db\Adapter\Driver\DriverInterface;
-use Laminas\Db\Adapter\ParameterContainer;
-use Laminas\Db\Adapter\Platform\PlatformInterface;
-use Laminas\Db\Sql\Platform\PlatformDecoratorInterface;
-use Laminas\Db\Sql\Select;
+use PhpDb\Adapter\Driver\DriverInterface;
+use PhpDb\Adapter\ParameterContainer;
+use PhpDb\Adapter\Platform\PlatformInterface;
+use PhpDb\Sql\Platform\PlatformDecoratorInterface;
+use PhpDb\Sql\Select;
 
 use Override;
 
@@ -160,7 +160,7 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
             $this->setIsSelectContainDistinct(true);
         }
 
-        if ($parameterContainer instanceof \Laminas\Db\Adapter\ParameterContainer) {
+        if ($parameterContainer instanceof \PhpDb\Adapter\ParameterContainer) {
             // create bottom part of query, with offset and limit using row_number
             $limitParamName  = $driver->formatParameterName('limit');
             $offsetParamName = $driver->formatParameterName('offset');

@@ -2,7 +2,7 @@
 
 namespace LaminasTest\Db\ResultSet;
 
-use Laminas\Db\ResultSet\HydratingResultSet;
+use PhpDb\ResultSet\HydratingResultSet;
 use Laminas\Hydrator\ArraySerializable;
 use Laminas\Hydrator\ArraySerializableHydrator;
 use Laminas\Hydrator\ClassMethods;

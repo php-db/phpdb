@@ -2,10 +2,10 @@
 
 namespace LaminasTest\Db\Sql\Predicate;
 
-use Laminas\Db\Sql\Argument;
-use Laminas\Db\Sql\ArgumentType;
-use Laminas\Db\Sql\Predicate\Expression;
-use Laminas\Db\Sql\Predicate\IsNull;
+use PhpDb\Sql\Argument;
+use PhpDb\Sql\ArgumentType;
+use PhpDb\Sql\Predicate\Expression;
+use PhpDb\Sql\Predicate\IsNull;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 

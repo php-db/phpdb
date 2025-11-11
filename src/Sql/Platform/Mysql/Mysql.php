@@ -1,11 +1,11 @@
 <?php
 
-namespace Laminas\Db\Sql\Platform\Mysql;
+namespace PhpDb\Sql\Platform\Mysql;
 
-use Laminas\Db\Sql\Ddl\AlterTable;
-use Laminas\Db\Sql\Ddl\CreateTable;
-use Laminas\Db\Sql\Platform\AbstractPlatform;
-use Laminas\Db\Sql\Select;
+use PhpDb\Sql\Ddl\AlterTable;
+use PhpDb\Sql\Ddl\CreateTable;
+use PhpDb\Sql\Platform\AbstractPlatform;
+use PhpDb\Sql\Select;
 
 class Mysql extends AbstractPlatform
 {

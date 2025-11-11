@@ -1,8 +1,8 @@
 <?php
 
-namespace Laminas\Db\RowGateway\Feature;
+namespace PhpDb\RowGateway\Feature;
 
-use Laminas\Db\RowGateway\AbstractRowGateway;
+use PhpDb\RowGateway\AbstractRowGateway;
 
 use function call_user_func_array;
 use function method_exists;

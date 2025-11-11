@@ -2,10 +2,10 @@
 
 namespace LaminasTest\Db\Adapter\Driver\Pdo;
 
-use Laminas\Db\Adapter\Driver\Pdo\Connection;
-use Laminas\Db\Adapter\Driver\Pdo\Pdo;
-use Laminas\Db\Adapter\Driver\Pdo\Result;
-use Laminas\Db\Adapter\Driver\Pdo\Statement;
+use PhpDb\Adapter\Driver\Pdo\Connection;
+use PhpDb\Adapter\Driver\Pdo\Pdo;
+use PhpDb\Adapter\Driver\Pdo\Result;
+use PhpDb\Adapter\Driver\Pdo\Statement;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;

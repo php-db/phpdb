@@ -2,7 +2,7 @@
 
 namespace LaminasTest\Db\TestAsset;
 
-use Laminas\Db\Adapter\Driver\Pdo\Connection;
+use PhpDb\Adapter\Driver\Pdo\Connection;
 
 /**
  * Test asset class used only by {@see \LaminasTest\Db\Adapter\Driver\Pdo\ConnectionTransactionsTest}

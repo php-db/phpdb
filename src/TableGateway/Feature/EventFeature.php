@@ -1,15 +1,15 @@
 <?php
 
-namespace Laminas\Db\TableGateway\Feature;
+namespace PhpDb\TableGateway\Feature;
 
-use Laminas\Db\Adapter\Driver\ResultInterface;
-use Laminas\Db\Adapter\Driver\StatementInterface;
-use Laminas\Db\ResultSet\ResultSetInterface;
-use Laminas\Db\Sql\Delete;
-use Laminas\Db\Sql\Insert;
-use Laminas\Db\Sql\Select;
-use Laminas\Db\Sql\Update;
-use Laminas\Db\TableGateway\TableGateway;
+use PhpDb\Adapter\Driver\ResultInterface;
+use PhpDb\Adapter\Driver\StatementInterface;
+use PhpDb\ResultSet\ResultSetInterface;
+use PhpDb\Sql\Delete;
+use PhpDb\Sql\Insert;
+use PhpDb\Sql\Select;
+use PhpDb\Sql\Update;
+use PhpDb\TableGateway\TableGateway;
 use Laminas\EventManager\EventManager;
 use Laminas\EventManager\EventManagerInterface;
 use Laminas\EventManager\EventsCapableInterface;

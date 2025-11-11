@@ -2,7 +2,7 @@
 
 namespace LaminasTest\Db\Sql\Predicate;
 
-use Laminas\Db\Sql\Predicate\Literal;
+use PhpDb\Sql\Predicate\Literal;
 use PHPUnit\Framework\TestCase;
 
 class LiteralTest extends TestCase

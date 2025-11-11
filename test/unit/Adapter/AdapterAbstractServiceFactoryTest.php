@@ -2,8 +2,8 @@
 
 namespace LaminasTest\Db\Adapter;
 
-use Laminas\Db\Adapter\Adapter;
-use Laminas\Db\Adapter\AdapterAbstractServiceFactory;
+use PhpDb\Adapter\Adapter;
+use PhpDb\Adapter\AdapterAbstractServiceFactory;
 use Laminas\ServiceManager\Config;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use Laminas\ServiceManager\ServiceManager;
@@ -31,10 +31,10 @@ class AdapterAbstractServiceFactoryTest extends TestCase
         $this->serviceManager->setService('config', [
             'db' => [
                 'adapters' => [
-                    'Laminas\Db\Adapter\Writer' => [
+                    'PhpDb\Adapter\Writer' => [
                         'driver' => 'mysqli',
                     ],
-                    'Laminas\Db\Adapter\Reader' => [
+                    'PhpDb\Adapter\Reader' => [
                         'driver' => 'mysqli',
                     ],
                 ],
@@ -45,15 +45,15 @@ class AdapterAbstractServiceFactoryTest extends TestCase
     public static function providerValidService(): array
     {
         return [
-            ['Laminas\Db\Adapter\Writer'],
-            ['Laminas\Db\Adapter\Reader'],
+            ['PhpDb\Adapter\Writer'],
+            ['PhpDb\Adapter\Reader'],
         ];
     }
 
     public static function providerInvalidService(): array
     {
         return [
-            ['Laminas\Db\Adapter\Unknown'],
+            ['PhpDb\Adapter\Unknown'],
         ];
     }
 

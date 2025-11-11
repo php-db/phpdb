@@ -2,10 +2,10 @@
 
 namespace LaminasTest\Db\Adapter;
 
-use Laminas\Db\Adapter\Adapter;
-use Laminas\Db\Adapter\AdapterAwareTrait;
-use Laminas\Db\Adapter\Driver\DriverInterface;
-use Laminas\Db\Adapter\Platform\PlatformInterface;
+use PhpDb\Adapter\Adapter;
+use PhpDb\Adapter\AdapterAwareTrait;
+use PhpDb\Adapter\Driver\DriverInterface;
+use PhpDb\Adapter\Platform\PlatformInterface;
 use LaminasTest\Db\DeprecatedAssertionsTrait;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;

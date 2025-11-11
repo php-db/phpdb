@@ -2,8 +2,8 @@
 
 namespace LaminasTest\Db\Sql;
 
-use Laminas\Db\Sql\Exception\InvalidArgumentException;
-use Laminas\Db\Sql\TableIdentifier;
+use PhpDb\Sql\Exception\InvalidArgumentException;
+use PhpDb\Sql\TableIdentifier;
 use LaminasTest\Db\TestAsset\ObjectToString;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;

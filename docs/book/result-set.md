@@ -1,11 +1,11 @@
 # Result Sets
 
-`Laminas\Db\ResultSet` is a sub-component of laminas-db for abstracting the iteration
+`PhpDb\ResultSet` is a sub-component of laminas-db for abstracting the iteration
 of results returned from queries producing rowsets. While data sources for this
 can be anything that is iterable, generally these will be populated from
-`Laminas\Db\Adapter\Driver\ResultInterface` instances.
+`PhpDb\Adapter\Driver\ResultInterface` instances.
 
-Result sets must implement the `Laminas\Db\ResultSet\ResultSetInterface`, and all
+Result sets must implement the `PhpDb\ResultSet\ResultSetInterface`, and all
 sub-components of laminas-db that return a result set as part of their API will
 assume an instance of a `ResultSetInterface` should be returned. In most cases,
 the prototype pattern will be used by consuming object to clone a prototype of
@@ -25,18 +25,18 @@ interface ResultSetInterface extends Traversable, Countable
 
 ## Quick start
 
-`Laminas\Db\ResultSet\ResultSet` is the most basic form of a `ResultSet` object
+`PhpDb\ResultSet\ResultSet` is the most basic form of a `ResultSet` object
 that will expose each row as either an `ArrayObject`-like object or an array of
-row data. By default, `Laminas\Db\Adapter\Adapter` will use a prototypical
-`Laminas\Db\ResultSet\ResultSet` object for iterating when using the
-`Laminas\Db\Adapter\Adapter::query()` method.
+row data. By default, `PhpDb\Adapter\Adapter` will use a prototypical
+`PhpDb\ResultSet\ResultSet` object for iterating when using the
+`PhpDb\Adapter\Adapter::query()` method.
 
 The following is an example workflow similar to what one might find inside
-`Laminas\Db\Adapter\Adapter::query()`:
+`PhpDb\Adapter\Adapter::query()`:
 
 ```php
-use Laminas\Db\Adapter\Driver\ResultInterface;
-use Laminas\Db\ResultSet\ResultSet;
+use PhpDb\Adapter\Driver\ResultInterface;
+use PhpDb\ResultSet\ResultSet;
 
 $statement = $driver->createStatement('SELECT * FROM users');
 $statement->prepare();
@@ -54,13 +54,13 @@ if ($result instanceof ResultInterface && $result->isQueryResult()) {
 
 ## Laminas\\Db\\ResultSet\\ResultSet and Laminas\\Db\\ResultSet\\AbstractResultSet
 
-For most purposes, either an instance of `Laminas\Db\ResultSet\ResultSet` or a
-derivative of `Laminas\Db\ResultSet\AbstractResultSet` will be used. The
+For most purposes, either an instance of `PhpDb\ResultSet\ResultSet` or a
+derivative of `PhpDb\ResultSet\AbstractResultSet` will be used. The
 implementation of the `AbstractResultSet` offers the following core
 functionality:
 
 ```php
-namespace Laminas\Db\ResultSet;
+namespace PhpDb\ResultSet;
 
 use Iterator;
 
@@ -87,7 +87,7 @@ abstract class AbstractResultSet implements Iterator, ResultSetInterface
 
 ## Laminas\\Db\\ResultSet\\HydratingResultSet
 
-`Laminas\Db\ResultSet\HydratingResultSet` is a more flexible `ResultSet` object
+`PhpDb\ResultSet\HydratingResultSet` is a more flexible `ResultSet` object
 that allows the developer to choose an appropriate "hydration strategy" for
 getting row data into a target object.  While iterating over results,
 `HydratingResultSet` will take a prototype of a target object and clone it once
@@ -108,8 +108,8 @@ inject the row data directly into the protected members of the cloned
 `UserEntity` object:
 
 ```php
-use Laminas\Db\Adapter\Driver\ResultInterface;
-use Laminas\Db\ResultSet\HydratingResultSet;
+use PhpDb\Adapter\Driver\ResultInterface;
+use PhpDb\ResultSet\HydratingResultSet;
 use Laminas\Hydrator\Reflection as ReflectionHydrator;
 
 class UserEntity

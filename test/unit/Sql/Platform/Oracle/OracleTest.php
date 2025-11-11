@@ -2,9 +2,9 @@
 
 namespace LaminasTest\Db\Sql\Platform\Oracle;
 
-use Laminas\Db\Sql\Platform\Oracle\Oracle;
-use Laminas\Db\Sql\Platform\Oracle\SelectDecorator;
-use Laminas\Db\Sql\Select;
+use PhpDb\Sql\Platform\Oracle\Oracle;
+use PhpDb\Sql\Platform\Oracle\SelectDecorator;
+use PhpDb\Sql\Select;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\TestDox;
 use PHPUnit\Framework\TestCase;

@@ -2,7 +2,7 @@
 
 namespace LaminasIntegrationTest\Db\Adapter\Driver\Mysqli;
 
-use Laminas\Db\Adapter\Driver\Mysqli\Connection;
+use PhpDb\Adapter\Driver\Mysqli\Connection;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 

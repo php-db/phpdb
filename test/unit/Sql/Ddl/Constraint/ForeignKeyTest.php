@@ -2,8 +2,8 @@
 
 namespace LaminasTest\Db\Sql\Ddl\Constraint;
 
-use Laminas\Db\Sql\Argument;
-use Laminas\Db\Sql\Ddl\Constraint\ForeignKey;
+use PhpDb\Sql\Argument;
+use PhpDb\Sql\Ddl\Constraint\ForeignKey;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Depends;
 use PHPUnit\Framework\TestCase;

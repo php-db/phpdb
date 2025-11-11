@@ -1,12 +1,12 @@
 <?php
 
-namespace Laminas\Db\Sql\Ddl\Column;
+namespace PhpDb\Sql\Ddl\Column;
 
-use Laminas\Db\Sql\Argument;
-use Laminas\Db\Sql\ArgumentType;
-use Laminas\Db\Sql\Ddl\Constraint\ConstraintInterface;
-use Laminas\Db\Sql\ExpressionData;
-use Laminas\Db\Sql\ExpressionPart;
+use PhpDb\Sql\Argument;
+use PhpDb\Sql\ArgumentType;
+use PhpDb\Sql\Ddl\Constraint\ConstraintInterface;
+use PhpDb\Sql\ExpressionData;
+use PhpDb\Sql\ExpressionPart;
 use Override;
 
 class Column implements ColumnInterface

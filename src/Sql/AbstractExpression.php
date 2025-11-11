@@ -1,6 +1,6 @@
 <?php
 
-namespace Laminas\Db\Sql;
+namespace PhpDb\Sql;
 
 abstract class AbstractExpression implements ExpressionInterface
 {

@@ -2,8 +2,8 @@
 
 namespace LaminasTest\Db\Sql\Ddl\Column;
 
-use Laminas\Db\Sql\Argument;
-use Laminas\Db\Sql\Ddl\Column\Varchar;
+use PhpDb\Sql\Argument;
+use PhpDb\Sql\Ddl\Column\Varchar;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 

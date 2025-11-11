@@ -2,8 +2,8 @@
 
 namespace LaminasTest\Db\Adapter\Platform;
 
-use Laminas\Db\Adapter\Driver\Pdo\Pdo;
-use Laminas\Db\Adapter\Platform\SqlServer;
+use PhpDb\Adapter\Driver\Pdo\Pdo;
+use PhpDb\Adapter\Platform\SqlServer;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 
@@ -69,7 +69,7 @@ class SqlServerTest extends TestCase
          */
         //$this->expectNotice();
         //$this->expectExceptionMessage(
-        //    'Attempting to quote a value in Laminas\Db\Adapter\Platform\SqlServer '
+        //    'Attempting to quote a value in PhpDb\Adapter\Platform\SqlServer '
         //    . 'without extension/driver support can '
         //    . 'introduce security vulnerabilities in a production environment'
         //);
@@ -112,7 +112,7 @@ class SqlServerTest extends TestCase
          */
         //$this->expectError();
         //$this->expectExceptionMessage(
-        //    'Attempting to quote a value in Laminas\Db\Adapter\Platform\SqlServer '
+        //    'Attempting to quote a value in PhpDb\Adapter\Platform\SqlServer '
         //    . 'without extension/driver support can '
         //    . 'introduce security vulnerabilities in a production environment'
         //);

@@ -1,6 +1,6 @@
 <?php
 
-namespace Laminas\Db\RowGateway;
+namespace PhpDb\RowGateway;
 
 interface RowGatewayInterface
 {

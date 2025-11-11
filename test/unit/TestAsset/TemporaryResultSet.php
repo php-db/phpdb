@@ -2,7 +2,7 @@
 
 namespace LaminasTest\Db\TestAsset;
 
-use Laminas\Db\ResultSet\ResultSet;
+use PhpDb\ResultSet\ResultSet;
 
 class TemporaryResultSet extends ResultSet
 {

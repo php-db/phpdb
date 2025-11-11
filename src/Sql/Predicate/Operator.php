@@ -1,14 +1,14 @@
 <?php
 
-namespace Laminas\Db\Sql\Predicate;
+namespace PhpDb\Sql\Predicate;
 
-use Laminas\Db\Sql\AbstractExpression;
-use Laminas\Db\Sql\Argument;
-use Laminas\Db\Sql\ArgumentType;
-use Laminas\Db\Sql\Exception\InvalidArgumentException;
-use Laminas\Db\Sql\Expression;
-use Laminas\Db\Sql\ExpressionData;
-use Laminas\Db\Sql\Select;
+use PhpDb\Sql\AbstractExpression;
+use PhpDb\Sql\Argument;
+use PhpDb\Sql\ArgumentType;
+use PhpDb\Sql\Exception\InvalidArgumentException;
+use PhpDb\Sql\Expression;
+use PhpDb\Sql\ExpressionData;
+use PhpDb\Sql\Select;
 
 class Operator extends AbstractExpression implements PredicateInterface
 {
@@ -120,11 +120,11 @@ class Operator extends AbstractExpression implements PredicateInterface
     #[\Override]
     public function getExpressionData(): ExpressionData
     {
-        if (!$this->left instanceof \Laminas\Db\Sql\Argument) {
+        if (!$this->left instanceof \PhpDb\Sql\Argument) {
             throw new InvalidArgumentException('Left expression must be specified');
         }
 
-        if (!$this->right instanceof \Laminas\Db\Sql\Argument) {
+        if (!$this->right instanceof \PhpDb\Sql\Argument) {
             throw new InvalidArgumentException('Right expression must be specified');
         }
 

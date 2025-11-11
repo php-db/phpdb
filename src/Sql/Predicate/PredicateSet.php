@@ -1,14 +1,14 @@
 <?php
 
-namespace Laminas\Db\Sql\Predicate;
+namespace PhpDb\Sql\Predicate;
 
 use Closure;
 use Countable;
-use Laminas\Db\Sql\Exception;
-use Laminas\Db\Sql\Expression;
-use Laminas\Db\Sql\ExpressionData;
-use Laminas\Db\Sql\ExpressionPart;
-use Laminas\Db\Sql\Predicate\Expression as PredicateExpression;
+use PhpDb\Sql\Exception;
+use PhpDb\Sql\Expression;
+use PhpDb\Sql\ExpressionData;
+use PhpDb\Sql\ExpressionPart;
+use PhpDb\Sql\Predicate\Expression as PredicateExpression;
 use ReturnTypeWillChange;
 
 use function count;

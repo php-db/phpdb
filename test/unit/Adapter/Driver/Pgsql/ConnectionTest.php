@@ -2,10 +2,10 @@
 
 namespace LaminasTest\Db\Adapter\Driver\Pgsql;
 
-use Laminas\Db\Adapter\Driver\Pgsql\Connection;
-use Laminas\Db\Adapter\Exception as AdapterException;
-use Laminas\Db\Adapter\Exception\InvalidArgumentException;
-use Laminas\Db\Adapter\Exception\RuntimeException;
+use PhpDb\Adapter\Driver\Pgsql\Connection;
+use PhpDb\Adapter\Exception as AdapterException;
+use PhpDb\Adapter\Exception\InvalidArgumentException;
+use PhpDb\Adapter\Exception\RuntimeException;
 use LaminasTest\Db\DeprecatedAssertionsTrait;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Group;
@@ -53,7 +53,7 @@ class ConnectionTest extends TestCase
             $this->fail('should throw');
         } catch (AdapterException\RuntimeException $exc) {
             $this->assertSame(
-                'Laminas\Db\Adapter\Driver\Pgsql\Connection::connect: Unable to connect to database',
+                'PhpDb\Adapter\Driver\Pgsql\Connection::connect: Unable to connect to database',
                 $exc->getMessage()
             );
         }

@@ -2,7 +2,7 @@
 
 namespace LaminasTest\Db\TestAsset;
 
-use Laminas\Db\Adapter\Platform\Mysql;
+use PhpDb\Adapter\Platform\Mysql;
 use Override;
 
 class TrustingMysqlPlatform extends Mysql

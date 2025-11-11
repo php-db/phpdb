@@ -1,8 +1,8 @@
 <?php
 
-namespace Laminas\Db\Sql\Ddl\Column;
+namespace PhpDb\Sql\Ddl\Column;
 
-use Laminas\Db\Sql\ExpressionInterface;
+use PhpDb\Sql\ExpressionInterface;
 
 /**
  * Interface ColumnInterface describes the protocol on how Column objects interact

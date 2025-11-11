@@ -1,6 +1,6 @@
 <?php
 
-namespace Laminas\Db\Adapter\Driver\Feature;
+namespace PhpDb\Adapter\Driver\Feature;
 
 interface DriverFeatureInterface
 {

@@ -2,23 +2,23 @@
 
 namespace LaminasTest\Db\Sql;
 
-use Laminas\Db\Adapter;
-use Laminas\Db\Adapter\Driver\DriverInterface;
-use Laminas\Db\Adapter\Driver\StatementInterface;
-use Laminas\Db\Adapter\ParameterContainer;
-use Laminas\Db\Adapter\StatementContainer;
-use Laminas\Db\Sql;
-use Laminas\Db\Sql\Ddl\Column\Column;
-use Laminas\Db\Sql\Ddl\CreateTable;
-use Laminas\Db\Sql\Delete;
-use Laminas\Db\Sql\Expression;
-use Laminas\Db\Sql\Insert;
-use Laminas\Db\Sql\Platform\PlatformDecoratorInterface;
-use Laminas\Db\Sql\PreparableSqlInterface;
-use Laminas\Db\Sql\Select;
-use Laminas\Db\Sql\SqlInterface;
-use Laminas\Db\Sql\TableIdentifier;
-use Laminas\Db\Sql\Update;
+use PhpDb\Adapter;
+use PhpDb\Adapter\Driver\DriverInterface;
+use PhpDb\Adapter\Driver\StatementInterface;
+use PhpDb\Adapter\ParameterContainer;
+use PhpDb\Adapter\StatementContainer;
+use PhpDb\Sql;
+use PhpDb\Sql\Ddl\Column\Column;
+use PhpDb\Sql\Ddl\CreateTable;
+use PhpDb\Sql\Delete;
+use PhpDb\Sql\Expression;
+use PhpDb\Sql\Insert;
+use PhpDb\Sql\Platform\PlatformDecoratorInterface;
+use PhpDb\Sql\PreparableSqlInterface;
+use PhpDb\Sql\Select;
+use PhpDb\Sql\SqlInterface;
+use PhpDb\Sql\TableIdentifier;
+use PhpDb\Sql\Update;
 use LaminasTest\Db\TestAsset;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -379,29 +379,29 @@ class SqlFunctionalTest extends TestCase
                 'expected'  => array(
                     'sql92'     => array(
                         'decorators' => array(
-                            'Laminas\Db\Sql\Insert' => new TestAsset\InsertDecorator, // Decorator for root sqlObject
-                            'Laminas\Db\Sql\Select' => array('Laminas\Db\Sql\Platform\Mysql\SelectDecorator', '{=SELECT_Sql92=}')
+                            'PhpDb\Sql\Insert' => new TestAsset\InsertDecorator, // Decorator for root sqlObject
+                            'PhpDb\Sql\Select' => array('PhpDb\Sql\Platform\Mysql\SelectDecorator', '{=SELECT_Sql92=}')
                         ),
                         'string' => 'INSERT INTO "foo"  {=SELECT_Sql92=}',
                     ),
                     'MySql'     => array(
                         'decorators' => array(
-                            'Laminas\Db\Sql\Insert' => new TestAsset\InsertDecorator, // Decorator for root sqlObject
-                            'Laminas\Db\Sql\Select' => array('Laminas\Db\Sql\Platform\Mysql\SelectDecorator', '{=SELECT_MySql=}')
+                            'PhpDb\Sql\Insert' => new TestAsset\InsertDecorator, // Decorator for root sqlObject
+                            'PhpDb\Sql\Select' => array('PhpDb\Sql\Platform\Mysql\SelectDecorator', '{=SELECT_MySql=}')
                         ),
                         'string' => 'INSERT INTO `foo`  {=SELECT_MySql=}',
                     ),
                     'Oracle'    => array(
                         'decorators' => array(
-                            'Laminas\Db\Sql\Insert' => new TestAsset\InsertDecorator, // Decorator for root sqlObject
-                            'Laminas\Db\Sql\Select' => array('Laminas\Db\Sql\Platform\Oracle\SelectDecorator', '{=SELECT_Oracle=}')
+                            'PhpDb\Sql\Insert' => new TestAsset\InsertDecorator, // Decorator for root sqlObject
+                            'PhpDb\Sql\Select' => array('PhpDb\Sql\Platform\Oracle\SelectDecorator', '{=SELECT_Oracle=}')
                         ),
                         'string' => 'INSERT INTO "foo"  {=SELECT_Oracle=}',
                     ),
                     'SqlServer' => array(
                         'decorators' => array(
-                            'Laminas\Db\Sql\Insert' => new TestAsset\InsertDecorator, // Decorator for root sqlObject
-                            'Laminas\Db\Sql\Select' => array('Laminas\Db\Sql\Platform\SqlServer\SelectDecorator', '{=SELECT_SqlServer=}')
+                            'PhpDb\Sql\Insert' => new TestAsset\InsertDecorator, // Decorator for root sqlObject
+                            'PhpDb\Sql\Select' => array('PhpDb\Sql\Platform\SqlServer\SelectDecorator', '{=SELECT_SqlServer=}')
                         ),
                         'string' => 'INSERT INTO [foo]  {=SELECT_SqlServer=}',
                     ),
@@ -412,29 +412,29 @@ class SqlFunctionalTest extends TestCase
                 'expected'  => array(
                     'sql92'     => array(
                         'decorators' => array(
-                            'Laminas\Db\Sql\Delete' => new TestAsset\DeleteDecorator,
-                            'Laminas\Db\Sql\Select' => array('Laminas\Db\Sql\Platform\Mysql\SelectDecorator', '{=SELECT_Sql92=}')
+                            'PhpDb\Sql\Delete' => new TestAsset\DeleteDecorator,
+                            'PhpDb\Sql\Select' => array('PhpDb\Sql\Platform\Mysql\SelectDecorator', '{=SELECT_Sql92=}')
                         ),
                         'string' => 'DELETE FROM "foo" WHERE "x" = ({=SELECT_Sql92=})',
                     ),
                     'MySql'     => array(
                         'decorators' => array(
-                            'Laminas\Db\Sql\Delete' => new TestAsset\DeleteDecorator,
-                            'Laminas\Db\Sql\Select' => array('Laminas\Db\Sql\Platform\Mysql\SelectDecorator', '{=SELECT_MySql=}')
+                            'PhpDb\Sql\Delete' => new TestAsset\DeleteDecorator,
+                            'PhpDb\Sql\Select' => array('PhpDb\Sql\Platform\Mysql\SelectDecorator', '{=SELECT_MySql=}')
                         ),
                         'string' => 'DELETE FROM `foo` WHERE `x` = ({=SELECT_MySql=})',
                     ),
                     'Oracle'    => array(
                         'decorators' => array(
-                            'Laminas\Db\Sql\Delete' => new TestAsset\DeleteDecorator,
-                            'Laminas\Db\Sql\Select' => array('Laminas\Db\Sql\Platform\Oracle\SelectDecorator', '{=SELECT_Oracle=}')
+                            'PhpDb\Sql\Delete' => new TestAsset\DeleteDecorator,
+                            'PhpDb\Sql\Select' => array('PhpDb\Sql\Platform\Oracle\SelectDecorator', '{=SELECT_Oracle=}')
                         ),
                         'string' => 'DELETE FROM "foo" WHERE "x" = ({=SELECT_Oracle=})',
                     ),
                     'SqlServer' => array(
                         'decorators' => array(
-                            'Laminas\Db\Sql\Delete' => new TestAsset\DeleteDecorator,
-                            'Laminas\Db\Sql\Select' => array('Laminas\Db\Sql\Platform\SqlServer\SelectDecorator', '{=SELECT_SqlServer=}')
+                            'PhpDb\Sql\Delete' => new TestAsset\DeleteDecorator,
+                            'PhpDb\Sql\Select' => array('PhpDb\Sql\Platform\SqlServer\SelectDecorator', '{=SELECT_SqlServer=}')
                         ),
                         'string' => 'DELETE FROM [foo] WHERE [x] = ({=SELECT_SqlServer=})',
                     ),
@@ -445,29 +445,29 @@ class SqlFunctionalTest extends TestCase
                 'expected'  => array(
                     'sql92'     => array(
                         'decorators' => array(
-                            'Laminas\Db\Sql\Update' => new TestAsset\UpdateDecorator,
-                            'Laminas\Db\Sql\Select' => array('Laminas\Db\Sql\Platform\Mysql\SelectDecorator', '{=SELECT_Sql92=}')
+                            'PhpDb\Sql\Update' => new TestAsset\UpdateDecorator,
+                            'PhpDb\Sql\Select' => array('PhpDb\Sql\Platform\Mysql\SelectDecorator', '{=SELECT_Sql92=}')
                         ),
                         'string' => 'UPDATE "foo" SET  WHERE "x" = ({=SELECT_Sql92=})',
                     ),
                     'MySql'     => array(
                         'decorators' => array(
-                            'Laminas\Db\Sql\Update' => new TestAsset\UpdateDecorator,
-                            'Laminas\Db\Sql\Select' => array('Laminas\Db\Sql\Platform\Mysql\SelectDecorator', '{=SELECT_MySql=}')
+                            'PhpDb\Sql\Update' => new TestAsset\UpdateDecorator,
+                            'PhpDb\Sql\Select' => array('PhpDb\Sql\Platform\Mysql\SelectDecorator', '{=SELECT_MySql=}')
                         ),
                         'string' => 'UPDATE `foo` SET  WHERE `x` = ({=SELECT_MySql=})',
                     ),
                     'Oracle'    => array(
                         'decorators' => array(
-                            'Laminas\Db\Sql\Update' => new TestAsset\UpdateDecorator,
-                            'Laminas\Db\Sql\Select' => array('Laminas\Db\Sql\Platform\Oracle\SelectDecorator', '{=SELECT_Oracle=}')
+                            'PhpDb\Sql\Update' => new TestAsset\UpdateDecorator,
+                            'PhpDb\Sql\Select' => array('PhpDb\Sql\Platform\Oracle\SelectDecorator', '{=SELECT_Oracle=}')
                         ),
                         'string' => 'UPDATE "foo" SET  WHERE "x" = ({=SELECT_Oracle=})',
                     ),
                     'SqlServer' => array(
                         'decorators' => array(
-                            'Laminas\Db\Sql\Update' => new TestAsset\UpdateDecorator,
-                            'Laminas\Db\Sql\Select' => array('Laminas\Db\Sql\Platform\SqlServer\SelectDecorator', '{=SELECT_SqlServer=}')
+                            'PhpDb\Sql\Update' => new TestAsset\UpdateDecorator,
+                            'PhpDb\Sql\Select' => array('PhpDb\Sql\Platform\SqlServer\SelectDecorator', '{=SELECT_SqlServer=}')
                         ),
                         'string' => 'UPDATE [foo] SET  WHERE [x] = ({=SELECT_SqlServer=})',
                     ),
@@ -478,29 +478,29 @@ class SqlFunctionalTest extends TestCase
                 'expected'  => array(
                     'sql92'     => array(
                         'decorators' => array(
-                            'Laminas\Db\Sql\Expression' => new TestAsset\DecorableExpression,
-                            'Laminas\Db\Sql\Select'     => array('Laminas\Db\Sql\Platform\Mysql\SelectDecorator', '{=SELECT_Sql92=}')
+                            'PhpDb\Sql\Expression' => new TestAsset\DecorableExpression,
+                            'PhpDb\Sql\Select'     => array('PhpDb\Sql\Platform\Mysql\SelectDecorator', '{=SELECT_Sql92=}')
                         ),
                         'string'     => 'UPDATE "foo" SET  WHERE "x" = {decorate-({=SELECT_Sql92=})-decorate}',
                     ),
                     'MySql'     => array(
                         'decorators' => array(
-                            'Laminas\Db\Sql\Expression' => new TestAsset\DecorableExpression,
-                            'Laminas\Db\Sql\Select'     => array('Laminas\Db\Sql\Platform\Mysql\SelectDecorator', '{=SELECT_MySql=}')
+                            'PhpDb\Sql\Expression' => new TestAsset\DecorableExpression,
+                            'PhpDb\Sql\Select'     => array('PhpDb\Sql\Platform\Mysql\SelectDecorator', '{=SELECT_MySql=}')
                         ),
                         'string'     => 'UPDATE `foo` SET  WHERE `x` = {decorate-({=SELECT_MySql=})-decorate}',
                     ),
                     'Oracle'    => array(
                         'decorators' => array(
-                            'Laminas\Db\Sql\Expression' => new TestAsset\DecorableExpression,
-                            'Laminas\Db\Sql\Select'     => array('Laminas\Db\Sql\Platform\Oracle\SelectDecorator', '{=SELECT_Oracle=}')
+                            'PhpDb\Sql\Expression' => new TestAsset\DecorableExpression,
+                            'PhpDb\Sql\Select'     => array('PhpDb\Sql\Platform\Oracle\SelectDecorator', '{=SELECT_Oracle=}')
                         ),
                         'string'     => 'UPDATE "foo" SET  WHERE "x" = {decorate-({=SELECT_Oracle=})-decorate}',
                     ),
                     'SqlServer' => array(
                         'decorators' => array(
-                            'Laminas\Db\Sql\Expression' => new TestAsset\DecorableExpression,
-                            'Laminas\Db\Sql\Select'     => array('Laminas\Db\Sql\Platform\SqlServer\SelectDecorator', '{=SELECT_SqlServer=}')
+                            'PhpDb\Sql\Expression' => new TestAsset\DecorableExpression,
+                            'PhpDb\Sql\Select'     => array('PhpDb\Sql\Platform\SqlServer\SelectDecorator', '{=SELECT_SqlServer=}')
                         ),
                         'string'     => 'UPDATE [foo] SET  WHERE [x] = {decorate-({=SELECT_SqlServer=})-decorate}',
                     ),

@@ -2,9 +2,9 @@
 
 namespace LaminasTest\Db\Sql\Platform\SqlServer;
 
-use Laminas\Db\Sql\Platform\SqlServer\SelectDecorator;
-use Laminas\Db\Sql\Platform\SqlServer\SqlServer;
-use Laminas\Db\Sql\Select;
+use PhpDb\Sql\Platform\SqlServer\SelectDecorator;
+use PhpDb\Sql\Platform\SqlServer\SqlServer;
+use PhpDb\Sql\Select;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\TestDox;
 use PHPUnit\Framework\TestCase;

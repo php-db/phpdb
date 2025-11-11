@@ -18,8 +18,8 @@
 >
 > You trust us enough to use our software. We ask that you trust us to say the truth on this. We need your help. Go out and protest this unnecessary war. Stop the bloodshed. Say "stop the war!"
 
-`Laminas\Db` is a component that abstract the access to a Database using an object
-oriented API to build the queries. `Laminas\Db` consumes different storage adapters
+`PhpDb` is a component that abstract the access to a Database using an object
+oriented API to build the queries. `PhpDb` consumes different storage adapters
 to access different database vendors such as MySQL, PostgreSQL, Oracle, IBM DB2,
 Microsoft Sql Server, PDO, etc.
 

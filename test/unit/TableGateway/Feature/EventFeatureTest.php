@@ -2,16 +2,16 @@
 
 namespace LaminasTest\Db\TableGateway\Feature;
 
-use Laminas\Db\Adapter\Driver\ResultInterface;
-use Laminas\Db\Adapter\Driver\StatementInterface;
-use Laminas\Db\ResultSet\ResultSet;
-use Laminas\Db\Sql\Delete;
-use Laminas\Db\Sql\Insert;
-use Laminas\Db\Sql\Select;
-use Laminas\Db\Sql\Update;
-use Laminas\Db\TableGateway\Feature\EventFeature;
-use Laminas\Db\TableGateway\Feature\EventFeatureEventsInterface;
-use Laminas\Db\TableGateway\TableGateway;
+use PhpDb\Adapter\Driver\ResultInterface;
+use PhpDb\Adapter\Driver\StatementInterface;
+use PhpDb\ResultSet\ResultSet;
+use PhpDb\Sql\Delete;
+use PhpDb\Sql\Insert;
+use PhpDb\Sql\Select;
+use PhpDb\Sql\Update;
+use PhpDb\TableGateway\Feature\EventFeature;
+use PhpDb\TableGateway\Feature\EventFeatureEventsInterface;
+use PhpDb\TableGateway\TableGateway;
 use Laminas\EventManager\EventManager;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;

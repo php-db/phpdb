@@ -2,10 +2,10 @@
 
 namespace LaminasTest\Db\Metadata\Source;
 
-use Laminas\Db\Adapter\Adapter;
-use Laminas\Db\Adapter\Driver\Oci8\Statement;
-use Laminas\Db\Metadata\Object\ConstraintObject;
-use Laminas\Db\Metadata\Source\OracleMetadata;
+use PhpDb\Adapter\Adapter;
+use PhpDb\Adapter\Driver\Oci8\Statement;
+use PhpDb\Metadata\Object\ConstraintObject;
+use PhpDb\Metadata\Source\OracleMetadata;
 use LaminasTest\Db\Adapter\Driver\Oci8\AbstractIntegrationTestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\RequiresPhpExtension;

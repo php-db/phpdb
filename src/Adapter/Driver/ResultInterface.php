@@ -1,6 +1,6 @@
 <?php
 
-namespace Laminas\Db\Adapter\Driver;
+namespace PhpDb\Adapter\Driver;
 
 use Countable;
 use Iterator;

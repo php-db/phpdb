@@ -2,21 +2,21 @@
 
 namespace LaminasTest\Db\Sql;
 
-use Laminas\Db\Adapter\Adapter;
-use Laminas\Db\Adapter\Driver\DriverInterface;
-use Laminas\Db\Adapter\Driver\StatementInterface;
-use Laminas\Db\Adapter\ParameterContainer;
-use Laminas\Db\Sql\Expression;
-use Laminas\Db\Sql\Join;
-use Laminas\Db\Sql\Predicate\In;
-use Laminas\Db\Sql\Predicate\IsNotNull;
-use Laminas\Db\Sql\Predicate\IsNull;
-use Laminas\Db\Sql\Predicate\Literal;
-use Laminas\Db\Sql\Predicate\Operator;
-use Laminas\Db\Sql\Predicate\PredicateSet;
-use Laminas\Db\Sql\TableIdentifier;
-use Laminas\Db\Sql\Update;
-use Laminas\Db\Sql\Where;
+use PhpDb\Adapter\Adapter;
+use PhpDb\Adapter\Driver\DriverInterface;
+use PhpDb\Adapter\Driver\StatementInterface;
+use PhpDb\Adapter\ParameterContainer;
+use PhpDb\Sql\Expression;
+use PhpDb\Sql\Join;
+use PhpDb\Sql\Predicate\In;
+use PhpDb\Sql\Predicate\IsNotNull;
+use PhpDb\Sql\Predicate\IsNull;
+use PhpDb\Sql\Predicate\Literal;
+use PhpDb\Sql\Predicate\Operator;
+use PhpDb\Sql\Predicate\PredicateSet;
+use PhpDb\Sql\TableIdentifier;
+use PhpDb\Sql\Update;
+use PhpDb\Sql\Where;
 use LaminasTest\Db\DeprecatedAssertionsTrait;
 use LaminasTest\Db\TestAsset\TrustingSql92Platform;
 use LaminasTest\Db\TestAsset\UpdateIgnore;
@@ -122,7 +122,7 @@ class UpdateTest extends TestCase
         self::assertInstanceOf(Literal::class, $predicates[0][1] ?? null);
 
         self::assertEquals('AND', $predicates[1][0] ?? '');
-        self::assertInstanceOf(\Laminas\Db\Sql\Predicate\Expression::class, $predicates[1][1] ?? null);
+        self::assertInstanceOf(\PhpDb\Sql\Predicate\Expression::class, $predicates[1][1] ?? null);
 
         self::assertEquals('AND', $predicates[2][0] ?? '');
         self::assertInstanceOf(Operator::class, $predicates[2][1] ?? null);

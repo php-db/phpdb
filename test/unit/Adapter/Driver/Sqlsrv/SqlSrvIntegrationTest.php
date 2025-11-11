@@ -2,9 +2,9 @@
 
 namespace LaminasTest\Db\Adapter\Driver\Sqlsrv;
 
-use Laminas\Db\Adapter\Driver\Sqlsrv\Sqlsrv;
-use Laminas\Db\Adapter\Driver\Sqlsrv\Statement;
-use Laminas\Db\Adapter\Exception\InvalidArgumentException;
+use PhpDb\Adapter\Driver\Sqlsrv\Sqlsrv;
+use PhpDb\Adapter\Driver\Sqlsrv\Statement;
+use PhpDb\Adapter\Exception\InvalidArgumentException;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Group;
 use stdClass;
@@ -14,8 +14,8 @@ use stdClass;
 #[Group('integration-sqlserver')]
 class SqlSrvIntegrationTest extends AbstractIntegrationTestCase
 {
-    /** @var \Laminas\Db\Adapter\Driver\Sqlsrv\Sqlsrv */
-    private \Laminas\Db\Adapter\Driver\Sqlsrv\Sqlsrv $driver;
+    /** @var \PhpDb\Adapter\Driver\Sqlsrv\Sqlsrv */
+    private \PhpDb\Adapter\Driver\Sqlsrv\Sqlsrv $driver;
 
     /** @var resource SQL Server Connection */
     private $resource;

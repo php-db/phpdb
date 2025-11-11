@@ -2,9 +2,9 @@
 
 namespace LaminasTest\Db\Adapter\TestAsset;
 
-use Laminas\Db\Adapter\AdapterAwareInterface;
-use Laminas\Db\Adapter\AdapterAwareTrait;
-use Laminas\Db\Adapter\AdapterInterface;
+use PhpDb\Adapter\AdapterAwareInterface;
+use PhpDb\Adapter\AdapterAwareTrait;
+use PhpDb\Adapter\AdapterInterface;
 
 class ConcreteAdapterAwareObject implements AdapterAwareInterface
 {

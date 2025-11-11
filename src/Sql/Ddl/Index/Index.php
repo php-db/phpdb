@@ -1,11 +1,11 @@
 <?php
 
-namespace Laminas\Db\Sql\Ddl\Index;
+namespace PhpDb\Sql\Ddl\Index;
 
-use Laminas\Db\Sql\Argument;
-use Laminas\Db\Sql\ArgumentType;
-use Laminas\Db\Sql\ExpressionData;
-use Laminas\Db\Sql\ExpressionPart;
+use PhpDb\Sql\Argument;
+use PhpDb\Sql\ArgumentType;
+use PhpDb\Sql\ExpressionData;
+use PhpDb\Sql\ExpressionPart;
 
 use function count;
 use function implode;
@@ -28,7 +28,7 @@ class Index extends AbstractIndex
         $this->lengths = $lengths;
     }
 
-    #[\Laminas\Db\Sql\Ddl\Constraint\Override] #[\Override]
+    #[\PhpDb\Sql\Ddl\Constraint\Override] #[\Override]
     public function getExpressionData(): ExpressionData
     {
         $colCount = count($this->columns);

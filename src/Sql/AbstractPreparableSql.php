@@ -1,10 +1,10 @@
 <?php
 
-namespace Laminas\Db\Sql;
+namespace PhpDb\Sql;
 
-use Laminas\Db\Adapter\AdapterInterface;
-use Laminas\Db\Adapter\ParameterContainer;
-use Laminas\Db\Adapter\StatementContainerInterface;
+use PhpDb\Adapter\AdapterInterface;
+use PhpDb\Adapter\ParameterContainer;
+use PhpDb\Adapter\StatementContainerInterface;
 use Override;
 
 abstract class AbstractPreparableSql extends AbstractSql implements PreparableSqlInterface

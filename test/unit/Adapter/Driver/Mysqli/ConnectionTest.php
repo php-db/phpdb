@@ -2,9 +2,9 @@
 
 namespace LaminasTest\Db\Adapter\Driver\Mysqli;
 
-use Laminas\Db\Adapter\Driver\Mysqli\Connection;
-use Laminas\Db\Adapter\Driver\Mysqli\Mysqli;
-use Laminas\Db\Adapter\Exception\RuntimeException;
+use PhpDb\Adapter\Driver\Mysqli\Connection;
+use PhpDb\Adapter\Driver\Mysqli\Mysqli;
+use PhpDb\Adapter\Exception\RuntimeException;
 use Override;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\MockObject\MockObject;

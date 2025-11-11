@@ -1,12 +1,12 @@
 <?php
 
-namespace Laminas\Db\Sql\Platform\Oracle;
+namespace PhpDb\Sql\Platform\Oracle;
 
-use Laminas\Db\Adapter\Driver\DriverInterface;
-use Laminas\Db\Adapter\ParameterContainer;
-use Laminas\Db\Adapter\Platform\PlatformInterface;
-use Laminas\Db\Sql\Platform\PlatformDecoratorInterface;
-use Laminas\Db\Sql\Select;
+use PhpDb\Adapter\Driver\DriverInterface;
+use PhpDb\Adapter\ParameterContainer;
+use PhpDb\Adapter\Platform\PlatformInterface;
+use PhpDb\Sql\Platform\PlatformDecoratorInterface;
+use PhpDb\Sql\Select;
 
 use Override;
 
@@ -88,7 +88,7 @@ class SelectDecorator extends Select implements PlatformDecoratorInterface
             'SELECT %1$s FROM (SELECT b.%1$s, rownum b_rownum FROM (' => current($this->specifications[self::SELECT]),
         ], $selectParameters));
 
-        if ($parameterContainer instanceof \Laminas\Db\Adapter\ParameterContainer) {
+        if ($parameterContainer instanceof \PhpDb\Adapter\ParameterContainer) {
             $number = $this->processInfo['subselectCount'] ?: '';
             if ($this->limit === null) {
                 $sqls[] = ') b ) WHERE b_rownum > (:offset' . $number . ')';

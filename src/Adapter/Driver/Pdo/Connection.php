@@ -1,10 +1,10 @@
 <?php
 
-namespace Laminas\Db\Adapter\Driver\Pdo;
+namespace PhpDb\Adapter\Driver\Pdo;
 
-use Laminas\Db\Adapter\Driver\AbstractConnection;
-use Laminas\Db\Adapter\Exception;
-use Laminas\Db\Adapter\Exception\RuntimeException;
+use PhpDb\Adapter\Driver\AbstractConnection;
+use PhpDb\Adapter\Exception;
+use PhpDb\Adapter\Exception\RuntimeException;
 use Override;
 use PDOException;
 use PDOStatement;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Laminas\Db;
+namespace PhpDb;
 
 class Module
 {

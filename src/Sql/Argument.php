@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Laminas\Db\Sql;
+namespace PhpDb\Sql;
 
 use InvalidArgumentException;
 

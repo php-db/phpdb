@@ -1,9 +1,9 @@
 <?php
 
-namespace Laminas\Db\Adapter;
+namespace PhpDb\Adapter;
 
 use Exception as PhpException;
-use Laminas\Db\ResultSet;
+use PhpDb\ResultSet;
 
 use Override;
 
@@ -62,7 +62,7 @@ class Adapter implements AdapterInterface, Profiler\ProfilerAwareInterface
 
         if (is_array($driver)) {
             $parameters = $driver;
-            if (!$profiler instanceof \Laminas\Db\Adapter\Profiler\ProfilerInterface && isset($parameters['profiler'])) {
+            if (!$profiler instanceof \PhpDb\Adapter\Profiler\ProfilerInterface && isset($parameters['profiler'])) {
                 $profiler = $this->createProfiler($parameters);
             }
             $driver = $this->createDriver($parameters);
@@ -75,14 +75,14 @@ class Adapter implements AdapterInterface, Profiler\ProfilerAwareInterface
         $driver->checkEnvironment();
         $this->driver = $driver;
 
-        if (!$platform instanceof \Laminas\Db\Adapter\Platform\PlatformInterface) {
+        if (!$platform instanceof \PhpDb\Adapter\Platform\PlatformInterface) {
             $platform = $this->createPlatform($parameters);
         }
 
         $this->platform                = $platform;
         $this->queryResultSetPrototype = $queryResultPrototype ?: new ResultSet\ResultSet();
 
-        if ($profiler instanceof \Laminas\Db\Adapter\Profiler\ProfilerInterface) {
+        if ($profiler instanceof \PhpDb\Adapter\Profiler\ProfilerInterface) {
             $this->setProfiler($profiler);
         }
     }

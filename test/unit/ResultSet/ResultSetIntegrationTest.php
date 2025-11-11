@@ -4,11 +4,11 @@ namespace LaminasTest\Db\ResultSet;
 
 use ArrayIterator;
 use ArrayObject;
-use Laminas\Db\Adapter\Driver\ResultInterface;
-use Laminas\Db\ResultSet\AbstractResultSet;
-use Laminas\Db\ResultSet\Exception\InvalidArgumentException;
-use Laminas\Db\ResultSet\Exception\RuntimeException;
-use Laminas\Db\ResultSet\ResultSet;
+use PhpDb\Adapter\Driver\ResultInterface;
+use PhpDb\ResultSet\AbstractResultSet;
+use PhpDb\ResultSet\Exception\InvalidArgumentException;
+use PhpDb\ResultSet\Exception\RuntimeException;
+use PhpDb\ResultSet\ResultSet;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;

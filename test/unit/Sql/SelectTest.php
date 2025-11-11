@@ -2,26 +2,26 @@
 
 namespace LaminasTest\Db\Sql;
 
-use Laminas\Db\Adapter\Adapter;
-use Laminas\Db\Adapter\Driver\DriverInterface;
-use Laminas\Db\Adapter\Driver\StatementInterface;
-use Laminas\Db\Adapter\ParameterContainer;
-use Laminas\Db\Adapter\Platform\Sql92;
-use Laminas\Db\Sql\Argument;
-use Laminas\Db\Sql\ArgumentType;
-use Laminas\Db\Sql\Exception\InvalidArgumentException;
-use Laminas\Db\Sql\Expression;
-use Laminas\Db\Sql\ExpressionInterface;
-use Laminas\Db\Sql\Having;
-use Laminas\Db\Sql\Join;
-use Laminas\Db\Sql\Predicate;
-use Laminas\Db\Sql\Predicate\In;
-use Laminas\Db\Sql\Predicate\IsNotNull;
-use Laminas\Db\Sql\Predicate\Literal;
-use Laminas\Db\Sql\Predicate\Operator;
-use Laminas\Db\Sql\Select;
-use Laminas\Db\Sql\TableIdentifier;
-use Laminas\Db\Sql\Where;
+use PhpDb\Adapter\Adapter;
+use PhpDb\Adapter\Driver\DriverInterface;
+use PhpDb\Adapter\Driver\StatementInterface;
+use PhpDb\Adapter\ParameterContainer;
+use PhpDb\Adapter\Platform\Sql92;
+use PhpDb\Sql\Argument;
+use PhpDb\Sql\ArgumentType;
+use PhpDb\Sql\Exception\InvalidArgumentException;
+use PhpDb\Sql\Expression;
+use PhpDb\Sql\ExpressionInterface;
+use PhpDb\Sql\Having;
+use PhpDb\Sql\Join;
+use PhpDb\Sql\Predicate;
+use PhpDb\Sql\Predicate\In;
+use PhpDb\Sql\Predicate\IsNotNull;
+use PhpDb\Sql\Predicate\Literal;
+use PhpDb\Sql\Predicate\Operator;
+use PhpDb\Sql\Select;
+use PhpDb\Sql\TableIdentifier;
+use PhpDb\Sql\Where;
 use LaminasTest\Db\TestAsset\TrustingSql92Platform;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -464,7 +464,7 @@ final class SelectTest extends TestCase
     {
         $select = new Select();
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Laminas\Db\Sql\Select::limit expects parameter to be numeric');
+        $this->expectExceptionMessage('PhpDb\Sql\Select::limit expects parameter to be numeric');
         $select->limit('foobar');
     }
 
@@ -490,7 +490,7 @@ final class SelectTest extends TestCase
     {
         $select = new Select();
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Laminas\Db\Sql\Select::offset expects parameter to be numeric');
+        $this->expectExceptionMessage('PhpDb\Sql\Select::offset expects parameter to be numeric');
         $select->offset('foobar');
     }
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Laminas\Db\Sql;
+namespace PhpDb\Sql;
 
 use function implode;
 use function is_array;

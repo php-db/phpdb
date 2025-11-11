@@ -2,12 +2,12 @@
 
 namespace LaminasTest\Db\Adapter\Driver\Pgsql;
 
-use Laminas\Db\Adapter\Driver\DriverInterface;
-use Laminas\Db\Adapter\Driver\Pgsql\Connection;
-use Laminas\Db\Adapter\Driver\Pgsql\Pgsql;
-use Laminas\Db\Adapter\Driver\Pgsql\Result;
-use Laminas\Db\Adapter\Driver\Pgsql\Statement;
-use Laminas\Db\Adapter\Exception\RuntimeException;
+use PhpDb\Adapter\Driver\DriverInterface;
+use PhpDb\Adapter\Driver\Pgsql\Connection;
+use PhpDb\Adapter\Driver\Pgsql\Pgsql;
+use PhpDb\Adapter\Driver\Pgsql\Result;
+use PhpDb\Adapter\Driver\Pgsql\Statement;
+use PhpDb\Adapter\Exception\RuntimeException;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Depends;
 use PHPUnit\Framework\MockObject\Exception;

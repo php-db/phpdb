@@ -2,9 +2,9 @@
 
 namespace LaminasIntegrationTest\Db\Adapter\Platform;
 
-use Laminas\Db\Adapter\Driver\Mysqli;
-use Laminas\Db\Adapter\Driver\Pdo;
-use Laminas\Db\Adapter\Platform\Mysql;
+use PhpDb\Adapter\Driver\Mysqli;
+use PhpDb\Adapter\Driver\Pdo;
+use PhpDb\Adapter\Platform\Mysql;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 

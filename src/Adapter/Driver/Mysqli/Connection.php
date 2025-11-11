@@ -1,11 +1,11 @@
 <?php
 
-namespace Laminas\Db\Adapter\Driver\Mysqli;
+namespace PhpDb\Adapter\Driver\Mysqli;
 
 use Exception as GenericException;
-use Laminas\Db\Adapter\Driver\AbstractConnection;
-use Laminas\Db\Adapter\Exception;
-use Laminas\Db\Adapter\Exception\InvalidArgumentException;
+use PhpDb\Adapter\Driver\AbstractConnection;
+use PhpDb\Adapter\Exception;
+use PhpDb\Adapter\Exception\InvalidArgumentException;
 
 use Override;
 

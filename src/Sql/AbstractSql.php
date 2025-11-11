@@ -1,12 +1,12 @@
 <?php
 
-namespace Laminas\Db\Sql;
+namespace PhpDb\Sql;
 
-use Laminas\Db\Adapter\Driver\DriverInterface;
-use Laminas\Db\Adapter\ParameterContainer;
-use Laminas\Db\Adapter\Platform\PlatformInterface;
-use Laminas\Db\Adapter\Platform\Sql92 as DefaultAdapterPlatform;
-use Laminas\Db\Sql\Platform\PlatformDecoratorInterface;
+use PhpDb\Adapter\Driver\DriverInterface;
+use PhpDb\Adapter\ParameterContainer;
+use PhpDb\Adapter\Platform\PlatformInterface;
+use PhpDb\Adapter\Platform\Sql92 as DefaultAdapterPlatform;
+use PhpDb\Sql\Platform\PlatformDecoratorInterface;
 use ValueError;
 
 use function count;
@@ -170,7 +170,7 @@ abstract class AbstractSql implements SqlInterface
             ),
             ArgumentType::Identifier => $platform->quoteIdentifierInFragment($argument->getValueAsString()),
             ArgumentType::Literal => $argument->getValueAsString(),
-            ArgumentType::Value => $parameterContainer instanceof \Laminas\Db\Adapter\ParameterContainer ?
+            ArgumentType::Value => $parameterContainer instanceof \PhpDb\Adapter\ParameterContainer ?
                 $this->processExpressionParameterName(
                     $argument->getValue(),
                     $namedParameterPrefix,
@@ -300,7 +300,7 @@ abstract class AbstractSql implements SqlInterface
             $decorator = $subselect;
         }
 
-        if ($parameterContainer instanceof \Laminas\Db\Adapter\ParameterContainer) {
+        if ($parameterContainer instanceof \PhpDb\Adapter\ParameterContainer) {
             // Track subselect prefix and count for parameters
             $processInfoContext = $decorator instanceof PlatformDecoratorInterface ? $subselect : $decorator;
             $this->processInfo['subselectCount']++;

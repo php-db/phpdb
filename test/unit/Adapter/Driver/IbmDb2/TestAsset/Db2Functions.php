@@ -1,6 +1,6 @@
 <?php
 
-namespace Laminas\Db\Adapter\Driver\IbmDb2;
+namespace PhpDb\Adapter\Driver\IbmDb2;
 
 use function is_string;
 use function trigger_error;

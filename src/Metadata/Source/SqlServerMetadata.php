@@ -1,9 +1,9 @@
 <?php
 
-namespace Laminas\Db\Metadata\Source;
+namespace PhpDb\Metadata\Source;
 
 use DateTime;
-use Laminas\Db\Adapter\Adapter;
+use PhpDb\Adapter\Adapter;
 
 use Override;
 

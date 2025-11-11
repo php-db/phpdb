@@ -2,10 +2,10 @@
 
 namespace LaminasTest\Db\Sql\Predicate;
 
-use Laminas\Db\Sql\Argument;
-use Laminas\Db\Sql\ArgumentType;
-use Laminas\Db\Sql\Predicate\In;
-use Laminas\Db\Sql\Select;
+use PhpDb\Sql\Argument;
+use PhpDb\Sql\ArgumentType;
+use PhpDb\Sql\Predicate\In;
+use PhpDb\Sql\Select;
 use PHPUnit\Framework\TestCase;
 
 class InTest extends TestCase

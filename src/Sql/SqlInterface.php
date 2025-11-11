@@ -1,8 +1,8 @@
 <?php
 
-namespace Laminas\Db\Sql;
+namespace PhpDb\Sql;
 
-use Laminas\Db\Adapter\Platform\PlatformInterface;
+use PhpDb\Adapter\Platform\PlatformInterface;
 
 interface SqlInterface
 {

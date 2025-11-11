@@ -1,10 +1,10 @@
 <?php
 
-namespace Laminas\Db\RowGateway;
+namespace PhpDb\RowGateway;
 
-use Laminas\Db\Adapter\AdapterInterface;
-use Laminas\Db\Sql\Sql;
-use Laminas\Db\Sql\TableIdentifier;
+use PhpDb\Adapter\AdapterInterface;
+use PhpDb\Sql\Sql;
+use PhpDb\Sql\TableIdentifier;
 
 class RowGateway extends AbstractRowGateway
 {

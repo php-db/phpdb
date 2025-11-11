@@ -1,6 +1,6 @@
 <?php
 
-namespace Laminas\Db\Exception;
+namespace PhpDb\Exception;
 
 class RuntimeException extends \RuntimeException implements ExceptionInterface
 {

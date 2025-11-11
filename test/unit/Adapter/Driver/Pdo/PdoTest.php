@@ -2,10 +2,10 @@
 
 namespace LaminasTest\Db\Adapter\Driver\Pdo;
 
-use Laminas\Db\Adapter\Driver\DriverInterface;
-use Laminas\Db\Adapter\Driver\Pdo\Pdo;
-use Laminas\Db\Adapter\Driver\Pdo\Result;
-use Laminas\Db\Exception\RuntimeException;
+use PhpDb\Adapter\Driver\DriverInterface;
+use PhpDb\Adapter\Driver\Pdo\Pdo;
+use PhpDb\Adapter\Driver\Pdo\Result;
+use PhpDb\Exception\RuntimeException;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;

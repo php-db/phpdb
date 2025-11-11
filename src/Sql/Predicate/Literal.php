@@ -1,8 +1,8 @@
 <?php
 
-namespace Laminas\Db\Sql\Predicate;
+namespace PhpDb\Sql\Predicate;
 
-use Laminas\Db\Sql\Literal as BaseLiteral;
+use PhpDb\Sql\Literal as BaseLiteral;
 
 class Literal extends BaseLiteral implements PredicateInterface
 {

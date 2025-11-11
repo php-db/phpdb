@@ -1,8 +1,8 @@
 <?php
 
-namespace Laminas\Db\Sql\Ddl;
+namespace PhpDb\Sql\Ddl;
 
-use Laminas\Db\Sql\SqlInterface as BaseSqlInterface;
+use PhpDb\Sql\SqlInterface as BaseSqlInterface;
 
 interface SqlInterface extends BaseSqlInterface
 {

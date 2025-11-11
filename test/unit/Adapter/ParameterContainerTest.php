@@ -2,7 +2,7 @@
 
 namespace LaminasTest\Db\Adapter;
 
-use Laminas\Db\Adapter\ParameterContainer;
+use PhpDb\Adapter\ParameterContainer;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\TestDox;
 use PHPUnit\Framework\TestCase;

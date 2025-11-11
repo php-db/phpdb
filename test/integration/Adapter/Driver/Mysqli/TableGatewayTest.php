@@ -2,8 +2,8 @@
 
 namespace LaminasIntegrationTest\Db\Adapter\Driver\Mysqli;
 
-use Laminas\Db\Adapter\Adapter;
-use Laminas\Db\TableGateway\TableGateway;
+use PhpDb\Adapter\Adapter;
+use PhpDb\TableGateway\TableGateway;
 use PHPUnit\Framework\TestCase;
 
 class TableGatewayTest extends TestCase

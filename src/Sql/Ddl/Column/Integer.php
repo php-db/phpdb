@@ -1,8 +1,8 @@
 <?php
 
-namespace Laminas\Db\Sql\Ddl\Column;
+namespace PhpDb\Sql\Ddl\Column;
 
-use Laminas\Db\Sql\ExpressionData;
+use PhpDb\Sql\ExpressionData;
 
 use function sprintf;
 

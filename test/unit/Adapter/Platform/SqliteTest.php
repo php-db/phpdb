@@ -2,8 +2,8 @@
 
 namespace LaminasTest\Db\Adapter\Platform;
 
-use Laminas\Db\Adapter\Driver\Pdo\Pdo;
-use Laminas\Db\Adapter\Platform\Sqlite;
+use PhpDb\Adapter\Driver\Pdo\Pdo;
+use PhpDb\Adapter\Platform\Sqlite;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 
@@ -70,7 +70,7 @@ class SqliteTest extends TestCase
          */
         //$this->expectNotice();
         //$this->expectExceptionMessage(
-        //    'Attempting to quote a value in Laminas\Db\Adapter\Platform\Sqlite without extension/driver support can '
+        //    'Attempting to quote a value in PhpDb\Adapter\Platform\Sqlite without extension/driver support can '
         //    . 'introduce security vulnerabilities in a production environment'
         //);
         $this->expectNotToPerformAssertions();
@@ -114,7 +114,7 @@ class SqliteTest extends TestCase
          */
         //$this->expectError();
         //$this->expectExceptionMessage(
-        //    'Attempting to quote a value in Laminas\Db\Adapter\Platform\Sqlite without extension/driver support can '
+        //    'Attempting to quote a value in PhpDb\Adapter\Platform\Sqlite without extension/driver support can '
         //    . 'introduce security vulnerabilities in a production environment'
         //);
         self::assertEquals("'Foo O\\'Bar'", $this->platform->quoteValueList("Foo O'Bar"));
