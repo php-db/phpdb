@@ -1,9 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDbTest\Sql;
 
 use Override;
-use PhpDb\Adapter\Adapter;
 use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\Driver\StatementInterface;
 use PhpDb\Adapter\ParameterContainer;
@@ -13,6 +14,7 @@ use PhpDb\Sql\Expression;
 use PhpDb\Sql\Insert;
 use PhpDb\Sql\Select;
 use PhpDb\Sql\TableIdentifier;
+use PhpDbTest\AdapterTestTrait;
 use PhpDbTest\DeprecatedAssertionsTrait;
 use PhpDbTest\TestAsset\Replace;
 use PhpDbTest\TestAsset\TrustingSql92Platform;
@@ -21,6 +23,7 @@ use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 use ReflectionException;
+use TypeError;
 
 #[CoversMethod(Insert::class, 'into')]
 #[CoversMethod(Insert::class, 'columns')]
@@ -33,6 +36,7 @@ use ReflectionException;
 #[CoversMethod(Insert::class, '__get')]
 final class InsertTest extends TestCase
 {
+    use AdapterTestTrait;
     use DeprecatedAssertionsTrait;
 
     protected Insert $insert;
@@ -83,8 +87,7 @@ final class InsertTest extends TestCase
 
     public function testValuesThrowsExceptionWhenNotArrayOrSelect(): void
     {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('values() expects an array of values or PhpDb\Sql\Select instance');
+        $this->expectException(TypeError::class);
         /** @psalm-suppress InvalidArgument */
         $this->insert->values(5);
     }
@@ -125,10 +128,7 @@ final class InsertTest extends TestCase
         $mockDriver = $this->getMockBuilder(DriverInterface::class)->getMock();
         $mockDriver->expects($this->any())->method('getPrepareType')->willReturn('positional');
         $mockDriver->expects($this->any())->method('formatParameterName')->willReturn('?');
-        $mockAdapter = $this->getMockBuilder(Adapter::class)
-            ->onlyMethods([])
-            ->setConstructorArgs([$mockDriver])
-            ->getMock();
+        $mockAdapter = $this->createMockAdapter($mockDriver);
 
         $mockStatement = $this->getMockBuilder(StatementInterface::class)->getMock();
         $pContainer    = new ParameterContainer([]);
@@ -147,10 +147,7 @@ final class InsertTest extends TestCase
         $mockDriver   = $this->getMockBuilder(DriverInterface::class)->getMock();
         $mockDriver->expects($this->any())->method('getPrepareType')->willReturn('positional');
         $mockDriver->expects($this->any())->method('formatParameterName')->willReturn('?');
-        $mockAdapter = $this->getMockBuilder(Adapter::class)
-            ->onlyMethods([])
-            ->setConstructorArgs([$mockDriver])
-            ->getMock();
+        $mockAdapter = $this->createMockAdapter($mockDriver);
 
         $mockStatement = $this->getMockBuilder(StatementInterface::class)->getMock();
         $pContainer    = new ParameterContainer([]);
@@ -170,10 +167,7 @@ final class InsertTest extends TestCase
         $mockDriver = $this->getMockBuilder(DriverInterface::class)->getMock();
         $mockDriver->expects($this->any())->method('getPrepareType')->willReturn('positional');
         $mockDriver->expects($this->any())->method('formatParameterName')->willReturn('?');
-        $mockAdapter = $this->getMockBuilder(Adapter::class)
-            ->onlyMethods([])
-            ->setConstructorArgs([$mockDriver])
-            ->getMock();
+        $mockAdapter = $this->createMockAdapter($mockDriver);
 
         $mockStatement = new StatementContainer();
 
@@ -328,10 +322,7 @@ final class InsertTest extends TestCase
         $mockDriver = $this->getMockBuilder(DriverInterface::class)->getMock();
         $mockDriver->expects($this->any())->method('getPrepareType')->willReturn('positional');
         $mockDriver->expects($this->any())->method('formatParameterName')->willReturn('?');
-        $mockAdapter = $this->getMockBuilder(Adapter::class)
-            ->onlyMethods([])
-            ->setConstructorArgs([$mockDriver])
-            ->getMock();
+        $mockAdapter = $this->createMockAdapter($mockDriver);
 
         $mockStatement = $this->getMockBuilder(StatementInterface::class)->getMock();
         $pContainer    = new ParameterContainer([]);
@@ -351,10 +342,7 @@ final class InsertTest extends TestCase
         $mockDriver = $this->getMockBuilder(DriverInterface::class)->getMock();
         $mockDriver->expects($this->any())->method('getPrepareType')->willReturn('positional');
         $mockDriver->expects($this->any())->method('formatParameterName')->willReturn('?');
-        $mockAdapter = $this->getMockBuilder(Adapter::class)
-            ->onlyMethods([])
-            ->setConstructorArgs([$mockDriver])
-            ->getMock();
+        $mockAdapter = $this->createMockAdapter($mockDriver);
 
         $mockStatement = $this->getMockBuilder(StatementInterface::class)->getMock();
         $pContainer    = new ParameterContainer([]);

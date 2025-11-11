@@ -1,14 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDb\Sql\Ddl\Column;
 
+use Override;
 use PhpDb\Sql\ExpressionData;
 
 use function sprintf;
 
 class Integer extends Column
 {
-    #[\Override]
+    #[Override]
     public function getExpressionData(): ExpressionData
     {
         $expressionData = parent::getExpressionData();

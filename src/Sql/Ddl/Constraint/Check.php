@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDb\Sql\Ddl\Constraint;
 
+use Override;
 use PhpDb\Sql\Argument;
 use PhpDb\Sql\ArgumentType;
 use PhpDb\Sql\ExpressionData;
@@ -32,7 +35,7 @@ class Check extends AbstractConstraint
     /**
      * {@inheritDoc}
      */
-    #[\Override] public function getExpressionData(): ExpressionData
+    #[Override] public function getExpressionData(): ExpressionData
     {
         $expressionPart = new ExpressionPart();
 

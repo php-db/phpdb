@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDb\Sql\Ddl\Column;
 
+use Override;
 use PhpDb\Sql\Argument;
 use PhpDb\Sql\ExpressionData;
 
@@ -16,8 +19,13 @@ abstract class AbstractLengthColumn extends Column
      *
      * @param int $length
      */
-    public function __construct(string $name, ?int $length = null, $nullable = false, $default = null, array $options = [])
-    {
+    public function __construct(
+        string $name,
+        ?int $length = null,
+        $nullable = false,
+        $default = null,
+        array $options = []
+    ) {
         $this->setLength($length);
 
         parent::__construct($name, $nullable, $default, $options);
@@ -43,7 +51,7 @@ abstract class AbstractLengthColumn extends Column
         return (string) $this->length;
     }
 
-    #[\Override]
+    #[Override]
     public function getExpressionData(): ExpressionData
     {
         $expressionData = parent::getExpressionData();

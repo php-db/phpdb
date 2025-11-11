@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDb\Sql\Ddl\Column;
 
+use Override;
 use PhpDb\Sql\Argument;
 use PhpDb\Sql\ArgumentType;
 use PhpDb\Sql\ExpressionData;
@@ -11,7 +14,7 @@ use PhpDb\Sql\ExpressionData;
  */
 abstract class AbstractTimestampColumn extends Column
 {
-    #[\Override]
+    #[Override]
     public function getExpressionData(): ExpressionData
     {
         $expressionData = parent::getExpressionData();

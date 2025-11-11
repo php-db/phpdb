@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDbTest\Sql;
 
 use PhpDb\Sql\Argument;
@@ -122,7 +124,10 @@ final class ExpressionTest extends TestCase
 
         $expressionData = $expression->getExpressionData();
 
-        self::assertEquals('uf.user_id = :user_id OR uf.friend_id = :user_id', $expressionData->getExpressionSpecification());
+        self::assertEquals(
+            'uf.user_id = :user_id OR uf.friend_id = :user_id',
+            $expressionData->getExpressionSpecification()
+        );
         self::assertEquals([$value], $expressionData->getExpressionValues());
     }
 

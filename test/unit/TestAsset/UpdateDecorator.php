@@ -6,7 +6,8 @@ use PhpDb\Sql;
 
 final class UpdateDecorator extends Sql\Update implements Sql\Platform\PlatformDecoratorInterface
 {
-    protected ?object $subject;
+    /** @var object|null */
+    public $subject;
 
     /**
      * @param null|object $subject

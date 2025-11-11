@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDb\Sql\Predicate;
 
+use Override;
 use PhpDb\Sql\AbstractExpression;
 use PhpDb\Sql\Argument;
 use PhpDb\Sql\ArgumentType;
@@ -117,14 +120,14 @@ class Operator extends AbstractExpression implements PredicateInterface
     /**
      * Get predicate parts for where statement
      */
-    #[\Override]
+    #[Override]
     public function getExpressionData(): ExpressionData
     {
-        if (!$this->left instanceof \PhpDb\Sql\Argument) {
+        if (! $this->left instanceof Argument) {
             throw new InvalidArgumentException('Left expression must be specified');
         }
 
-        if (!$this->right instanceof \PhpDb\Sql\Argument) {
+        if (! $this->right instanceof Argument) {
             throw new InvalidArgumentException('Right expression must be specified');
         }
 

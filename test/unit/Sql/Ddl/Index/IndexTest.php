@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDbTest\Sql\Ddl\Index;
 
 use PhpDb\Sql\Argument;

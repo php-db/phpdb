@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDbTest\Sql;
 
 use Override;
@@ -13,11 +15,14 @@ use PhpDb\Sql\Combine;
 use PhpDb\Sql\Exception\InvalidArgumentException;
 use PhpDb\Sql\Predicate\Expression;
 use PhpDb\Sql\Select;
+use PhpDbTest\AdapterTestTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 final class CombineTest extends TestCase
 {
+    use AdapterTestTrait;
+
     protected Combine $combine;
 
     /**
@@ -34,6 +39,7 @@ final class CombineTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
 
+        /** @noinspection PhpParamsInspection */
         $this->combine->combine('foo');
     }
 
@@ -93,7 +99,7 @@ final class CombineTest extends TestCase
 
     public function testGetSqlStringEmpty(): void
     {
-        self::assertNull($this->combine->getSqlString());
+        self::assertEmpty($this->combine->getSqlString());
     }
 
     public function testPrepareStatementWithModifier(): void
@@ -198,9 +204,6 @@ final class CombineTest extends TestCase
         $mockDriver->expects($this->any())->method('formatParameterName')->willReturn('?');
         $mockDriver->expects($this->any())->method('createStatement')->willReturn($mockStatement);
 
-        return $this->getMockBuilder(Adapter::class)
-            ->onlyMethods([])
-            ->setConstructorArgs([$mockDriver])
-            ->getMock();
+        return $this->createMockAdapter($mockDriver);
     }
 }

@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDb\Sql\Predicate;
 
+use Override;
 use PhpDb\Sql\AbstractExpression;
 use PhpDb\Sql\Argument;
 use PhpDb\Sql\ArgumentType;
@@ -67,10 +70,10 @@ class IsNull extends AbstractExpression implements PredicateInterface
     /**
      * Get parts for where statement
      */
-    #[\Override]
+    #[Override]
     public function getExpressionData(): ExpressionData
     {
-        if (!$this->identifier instanceof \PhpDb\Sql\Argument) {
+        if (! $this->identifier instanceof Argument) {
             throw new InvalidArgumentException('Identifier must be specified');
         }
 

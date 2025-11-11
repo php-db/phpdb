@@ -1,9 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDb\Sql\Ddl\Index;
 
 use PhpDb\Sql\Argument;
 use PhpDb\Sql\ArgumentType;
+use PhpDb\Sql\Ddl\Constraint\Override;
 use PhpDb\Sql\ExpressionData;
 use PhpDb\Sql\ExpressionPart;
 
@@ -28,7 +31,7 @@ class Index extends AbstractIndex
         $this->lengths = $lengths;
     }
 
-    #[\PhpDb\Sql\Ddl\Constraint\Override] #[\Override]
+    #[Override] #[\Override]
     public function getExpressionData(): ExpressionData
     {
         $colCount = count($this->columns);

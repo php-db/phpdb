@@ -4,10 +4,10 @@ namespace PhpDb\RowGateway;
 
 use ArrayAccess;
 use Countable;
-use PhpDb\Sql\Sql;
-use PhpDb\Sql\TableIdentifier;
 // phpcs:ignore SlevomatCodingStandard.Namespaces.UnusedUses.UnusedUse
 use Override;
+use PhpDb\Sql\Sql;
+use PhpDb\Sql\TableIdentifier;
 use ReturnTypeWillChange;
 
 use function array_key_exists;
@@ -331,7 +331,6 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
 
     /**
      * @throws Exception\RuntimeException
-     *
      * @return void
      */
     protected function processPrimaryKeyData()

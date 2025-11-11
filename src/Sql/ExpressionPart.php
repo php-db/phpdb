@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDb\Sql;
 
 use function implode;
 use function is_array;
-use function sprintf;
 
 class ExpressionPart
 {

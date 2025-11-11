@@ -1,13 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDb\Sql\Ddl\Column;
 
+use Override;
 use PhpDb\Sql\Argument;
 use PhpDb\Sql\ArgumentType;
 use PhpDb\Sql\Ddl\Constraint\ConstraintInterface;
 use PhpDb\Sql\ExpressionData;
 use PhpDb\Sql\ExpressionPart;
-use Override;
 
 class Column implements ColumnInterface
 {
@@ -30,7 +32,6 @@ class Column implements ColumnInterface
      * @param null|string $name
      * @param bool        $nullable
      * @param mixed|null  $default
-     * @param array       $options
      */
     public function __construct($name = null, $nullable = false, $default = null, array $options = [])
     {
@@ -132,7 +133,7 @@ class Column implements ColumnInterface
         return $this;
     }
 
-    #[\Override]
+    #[Override]
     public function getExpressionData(): ExpressionData
     {
         $expressionData = new ExpressionData();

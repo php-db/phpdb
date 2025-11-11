@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDb\Sql;
 
 use Countable;
@@ -57,7 +59,7 @@ class Join implements Iterator, Countable
     /**
      * Rewind iterator.
      */
-    #[\Override]
+    #[Override]
     #[ReturnTypeWillChange]
     public function rewind(): void
     {
@@ -67,7 +69,7 @@ class Join implements Iterator, Countable
     /**
      * Return current join specification.
      */
-    #[\Override]
+    #[Override]
     #[ReturnTypeWillChange]
     public function current(): array
     {
@@ -77,7 +79,7 @@ class Join implements Iterator, Countable
     /**
      * Return the current iterator index.
      */
-    #[\Override]
+    #[Override]
     #[ReturnTypeWillChange]
     public function key(): int
     {
@@ -87,7 +89,7 @@ class Join implements Iterator, Countable
     /**
      * Advance to the next JOIN specification.
      */
-    #[\Override]
+    #[Override]
     #[ReturnTypeWillChange]
     public function next(): void
     {
@@ -97,7 +99,7 @@ class Join implements Iterator, Countable
     /**
      * Is the iterator at a valid position?
      */
-    #[\Override]
+    #[Override]
     #[ReturnTypeWillChange]
     public function valid(): bool
     {

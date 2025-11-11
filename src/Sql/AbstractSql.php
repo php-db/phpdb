@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDb\Sql;
 
+use Override;
 use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\ParameterContainer;
 use PhpDb\Adapter\Platform\PlatformInterface;
@@ -18,7 +21,6 @@ use function is_array;
 use function is_callable;
 use function is_object;
 use function is_string;
-use function join;
 use function key;
 use function preg_replace;
 use function rtrim;
@@ -28,6 +30,7 @@ use function vsprintf;
 
 abstract class AbstractSql implements SqlInterface
 {
+    /** @var object|null */
     public $subject;
     /**
      * Specifications for Sql String generation
@@ -43,7 +46,7 @@ abstract class AbstractSql implements SqlInterface
     /**
      * {@inheritDoc}
      */
-    #[\Override]
+    #[Override]
     public function getSqlString(?PlatformInterface $adapterPlatform = null): string
     {
         $adapterPlatform = $adapterPlatform ?: new DefaultAdapterPlatform();
@@ -170,7 +173,7 @@ abstract class AbstractSql implements SqlInterface
             ),
             ArgumentType::Identifier => $platform->quoteIdentifierInFragment($argument->getValueAsString()),
             ArgumentType::Literal => $argument->getValueAsString(),
-            ArgumentType::Value => $parameterContainer instanceof \PhpDb\Adapter\ParameterContainer ?
+            ArgumentType::Value => $parameterContainer instanceof ParameterContainer ?
                 $this->processExpressionParameterName(
                     $argument->getValue(),
                     $namedParameterPrefix,
@@ -193,7 +196,9 @@ abstract class AbstractSql implements SqlInterface
         $value = $argument->getValue();
 
         return match (true) {
-            $value instanceof Select => '(' . $this->processSubSelect($value, $platform, $driver, $parameterContainer) . ')',
+            $value instanceof Select => '('
+                . $this->processSubSelect($value, $platform, $driver, $parameterContainer)
+                . ')',
             $value instanceof ExpressionInterface => $this->processExpression(
                 $value,
                 $platform,
@@ -300,7 +305,7 @@ abstract class AbstractSql implements SqlInterface
             $decorator = $subselect;
         }
 
-        if ($parameterContainer instanceof \PhpDb\Adapter\ParameterContainer) {
+        if ($parameterContainer instanceof ParameterContainer) {
             // Track subselect prefix and count for parameters
             $processInfoContext = $decorator instanceof PlatformDecoratorInterface ? $subselect : $decorator;
             $this->processInfo['subselectCount']++;
@@ -320,10 +325,6 @@ abstract class AbstractSql implements SqlInterface
     }
 
     /**
-     * @param Join                    $joins
-     * @param PlatformInterface       $platform
-     * @param DriverInterface|null    $driver
-     * @param ParameterContainer|null $parameterContainer
      * @return null|string[][][] Null if no joins present, array of JOIN statements otherwise
      */
     protected function processJoin(
@@ -339,7 +340,7 @@ abstract class AbstractSql implements SqlInterface
         // process joins
         $joinSpecArgArray = [];
         foreach ($joins->getJoins() as $j => $join) {
-            $joinAs   = null;
+            $joinAs = null;
 
             // table name
             if (is_array($join['name'])) {

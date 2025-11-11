@@ -1,12 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDbTest\Sql\Platform;
 
 use PhpDb\Adapter\Adapter;
 use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\StatementContainer;
 use PhpDb\ResultSet\ResultSet;
-use PhpDb\Sql\Exception\RuntimeException;
 use PhpDb\Sql\Platform\Platform;
 use PhpDbTest\TestAsset;
 use PHPUnit\Framework\Attributes\Group;
@@ -14,7 +15,6 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use ReflectionException;
 use ReflectionMethod;
-use ReflectionProperty;
 
 class PlatformTest extends TestCase
 {
@@ -61,7 +61,9 @@ class PlatformTest extends TestCase
     #[Group('6890')]
     public function testAbstractPlatformCrashesGracefullyOnMissingDefaultPlatform(): void
     {
-        $this->markTestSkipped('Cannot modify readonly properties in Adapter - test is incompatible with readonly properties');
+        $this->markTestSkipped(
+            'Cannot modify readonly properties in Adapter - test is incompatible with readonly properties'
+        );
     }
 
     /**
@@ -70,7 +72,9 @@ class PlatformTest extends TestCase
     #[Group('6890')]
     public function testAbstractPlatformCrashesGracefullyOnMissingDefaultPlatformWithGetDecorators(): void
     {
-        $this->markTestSkipped('Cannot modify readonly properties in Adapter - test is incompatible with readonly properties');
+        $this->markTestSkipped(
+            'Cannot modify readonly properties in Adapter - test is incompatible with readonly properties'
+        );
     }
 
     protected function resolveAdapter(string $platformName): Adapter

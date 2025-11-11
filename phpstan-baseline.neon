@@ -211,60 +211,6 @@ parameters:
 			path: src/RowGateway/AbstractRowGateway.php
 
 		-
-			message: '#^Access to an undefined property \$this\(PhpDb\\Sql\\AbstractSql\)&PhpDb\\Sql\\Platform\\PlatformDecoratorInterface\:\:\$subject\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Sql/AbstractSql.php
-
-		-
-			message: '#^Call to function is_string\(\) with string will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: src/Sql/AbstractSql.php
-
-		-
-			message: '#^Cannot assign offset ''subselectCount'' to string\.$#'
-			identifier: offsetAssign.dimType
-			count: 1
-			path: src/Sql/AbstractSql.php
-
-		-
-			message: '#^Method PhpDb\\Sql\\AbstractSql\:\:processJoin\(\) should return array\<string\>\|null but empty return statement found\.$#'
-			identifier: return.empty
-			count: 1
-			path: src/Sql/AbstractSql.php
-
-		-
-			message: '#^Method PhpDb\\Sql\\AbstractSql\:\:processJoin\(\) should return array\<string\>\|null but returns array\<int, array\<list\<string\>\>\>\.$#'
-			identifier: return.type
-			count: 1
-			path: src/Sql/AbstractSql.php
-
-		-
-			message: '#^Offset ''paramPrefix'' does not exist on string\.$#'
-			identifier: offsetAccess.notFound
-			count: 2
-			path: src/Sql/AbstractSql.php
-
-		-
-			message: '#^Offset ''subselectCount'' does not exist on string\.$#'
-			identifier: offsetAccess.notFound
-			count: 2
-			path: src/Sql/AbstractSql.php
-
-		-
-			message: '#^PHPDoc tag @param for parameter \$joins with type array\<PhpDb\\Sql\\Join\> is incompatible with native type PhpDb\\Sql\\Join\.$#'
-			identifier: parameter.phpDocType
-			count: 1
-			path: src/Sql/AbstractSql.php
-
-		-
-			message: '#^Property PhpDb\\Sql\\AbstractSql\:\:\$processInfo \(string\) does not accept default value of type array\<string, int\|string\>\.$#'
-			identifier: property.defaultValue
-			count: 1
-			path: src/Sql/AbstractSql.php
-
-		-
 			message: '#^Strict comparison using \!\=\= between mixed and null will always evaluate to true\.$#'
 			identifier: notIdentical.alwaysTrue
 			count: 1
@@ -283,55 +229,7 @@ parameters:
 			path: src/Sql/Combine.php
 
 		-
-			message: '#^Method PhpDb\\Sql\\Combine\:\:buildSqlString\(\) should return string but empty return statement found\.$#'
-			identifier: return.empty
-			count: 1
-			path: src/Sql/Combine.php
-
-		-
-			message: '#^Method PhpDb\\Sql\\Ddl\\AlterTable\:\:processAddColumns\(\) should return array\<string\> but returns array\<int, list\<string\>\>\.$#'
-			identifier: return.type
-			count: 1
-			path: src/Sql/Ddl/AlterTable.php
-
-		-
-			message: '#^Method PhpDb\\Sql\\Ddl\\AlterTable\:\:processAddConstraints\(\) should return array\<string\> but returns array\<int, list\<string\>\>\.$#'
-			identifier: return.type
-			count: 1
-			path: src/Sql/Ddl/AlterTable.php
-
-		-
-			message: '#^Method PhpDb\\Sql\\Ddl\\AlterTable\:\:processChangeColumns\(\) should return array\<string\> but returns array\<int, list\<array\<int, string\>\>\>\.$#'
-			identifier: return.type
-			count: 1
-			path: src/Sql/Ddl/AlterTable.php
-
-		-
-			message: '#^Method PhpDb\\Sql\\Ddl\\AlterTable\:\:processDropColumns\(\) should return array\<string\> but returns array\<int, list\<string\>\>\.$#'
-			identifier: return.type
-			count: 1
-			path: src/Sql/Ddl/AlterTable.php
-
-		-
-			message: '#^Method PhpDb\\Sql\\Ddl\\AlterTable\:\:processDropConstraints\(\) should return array\<string\> but returns array\<int, list\<string\>\>\.$#'
-			identifier: return.type
-			count: 1
-			path: src/Sql/Ddl/AlterTable.php
-
-		-
-			message: '#^Method PhpDb\\Sql\\Ddl\\AlterTable\:\:processDropIndexes\(\) should return array\<string\> but returns array\<int, list\<string\>\>\.$#'
-			identifier: return.type
-			count: 1
-			path: src/Sql/Ddl/AlterTable.php
-
-		-
-			message: '#^PHPDoc type array of property PhpDb\\Sql\\Ddl\\AlterTable\:\:\$specifications is not covariant with PHPDoc type array\<array\|string\> of overridden property PhpDb\\Sql\\AbstractSql\:\:\$specifications\.$#'
-			identifier: property.phpDocType
-			count: 1
-			path: src/Sql/Ddl/AlterTable.php
-
-		-
-			message: '#^Method PhpDb\\Sql\\Ddl\\Column\\AbstractPrecisionColumn\:\:getLengthExpression\(\) should return string but returns int\.$#'
+			message: '#^Method PhpDb\\Sql\\Ddl\\Column\\AbstractPrecisionColumn\:\:getLengthExpression\(\) should return string but returns int\|null\.$#'
 			identifier: return.type
 			count: 1
 			path: src/Sql/Ddl/Column/AbstractPrecisionColumn.php
@@ -343,46 +241,34 @@ parameters:
 			path: src/Sql/Ddl/Column/Column.php
 
 		-
-			message: '#^Method PhpDb\\Sql\\Ddl\\CreateTable\:\:processColumns\(\) should return array\<array\<string\>\>\|null but empty return statement found\.$#'
-			identifier: return.empty
+			message: '#^Method PhpDb\\Sql\\Ddl\\CreateTable\:\:processCombinedby\(\) should return array\|string but returns null\.$#'
+			identifier: return.type
 			count: 1
 			path: src/Sql/Ddl/CreateTable.php
 
 		-
-			message: '#^Method PhpDb\\Sql\\Ddl\\CreateTable\:\:processCombinedby\(\) should return array\|string but return statement is missing\.$#'
-			identifier: return.missing
+			message: '#^Attribute class PhpDb\\Sql\\Ddl\\Constraint\\Override does not exist\.$#'
+			identifier: attribute.notFound
 			count: 1
-			path: src/Sql/Ddl/CreateTable.php
+			path: src/Sql/Ddl/Index/Index.php
 
 		-
-			message: '#^Method PhpDb\\Sql\\Ddl\\CreateTable\:\:processConstraints\(\) should return array\<array\<string\>\>\|null but empty return statement found\.$#'
-			identifier: return.empty
+			message: '#^Return type \(PhpDb\\Sql\\ExpressionPart\) of method PhpDb\\Sql\\ExpressionData\:\:current\(\) should be compatible with return type \(PhpDb\\Sql\\ExpressionData\) of method Iterator\<TKey of \(int\|string\),PhpDb\\Sql\\ExpressionData\>\:\:current\(\)$#'
+			identifier: method.childReturnType
 			count: 1
-			path: src/Sql/Ddl/CreateTable.php
-
-		-
-			message: '#^PHPDoc type array of property PhpDb\\Sql\\Ddl\\DropTable\:\:\$specifications is not covariant with PHPDoc type array\<array\|string\> of overridden property PhpDb\\Sql\\AbstractSql\:\:\$specifications\.$#'
-			identifier: property.phpDocType
-			count: 1
-			path: src/Sql/Ddl/DropTable.php
-
-		-
-			message: '#^Method PhpDb\\Sql\\Delete\:\:__get\(\) should return PhpDb\\Sql\\Where\|null but return statement is missing\.$#'
-			identifier: return.missing
-			count: 1
-			path: src/Sql/Delete.php
-
-		-
-			message: '#^Method PhpDb\\Sql\\Delete\:\:processWhere\(\) should return string\|null but empty return statement found\.$#'
-			identifier: return.empty
-			count: 1
-			path: src/Sql/Delete.php
+			path: src/Sql/ExpressionData.php
 
 		-
 			message: '#^Call to function is_array\(\) with array will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
-			path: src/Sql/Expression.php
+			path: src/Sql/Insert.php
+
+		-
+			message: '#^Class PhpDb\\Adapter\\Driver\\Pdo\\Pdo not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: src/Sql/Insert.php
 
 		-
 			message: '#^Method PhpDb\\Sql\\Insert\:\:__set\(\) with return type void returns \$this\(PhpDb\\Sql\\Insert\) but should not return anything\.$#'
@@ -395,6 +281,18 @@ parameters:
 			identifier: property.phpDocType
 			count: 1
 			path: src/Sql/InsertIgnore.php
+
+		-
+			message: '#^PHPDoc tag @implements has invalid value \(Countable\)\: Unexpected token "\\n ", expected ''\<'' at offset 419 on line 12$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: src/Sql/Join.php
+
+		-
+			message: '#^PHPDoc tag @implements has invalid value \(Iterator\)\: Unexpected token "\\n \* ", expected ''\<'' at offset 394 on line 11$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: src/Sql/Join.php
 
 		-
 			message: '#^Instanceof between PhpDb\\Sql\\PreparableSqlInterface\|PhpDb\\Sql\\SqlInterface and mixed results in an error\.$#'
@@ -433,16 +331,10 @@ parameters:
 			path: src/Sql/Platform/Platform.php
 
 		-
-			message: '#^Property PhpDb\\Sql\\Predicate\\IsNull\:\:\$identifier has unknown class PhpDb\\Sql\\Predicate\\nuill as its type\.$#'
-			identifier: class.notFound
+			message: '#^Call to function is_array\(\) with array will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
 			count: 1
-			path: src/Sql/Predicate/IsNull.php
-
-		-
-			message: '#^Method PhpDb\\Sql\\Predicate\\Predicate\:\:__get\(\) should return \$this\(PhpDb\\Sql\\Predicate\\Predicate\) but returns PhpDb\\Sql\\Predicate\\Predicate\.$#'
-			identifier: return.type
-			count: 2
-			path: src/Sql/Predicate/Predicate.php
+			path: src/Sql/Predicate/PredicateSet.php
 
 		-
 			message: '#^Cannot call method addPredicates\(\) on array\|string\.$#'
@@ -481,12 +373,6 @@ parameters:
 			path: src/Sql/Select.php
 
 		-
-			message: '#^Offset ''paramPrefix'' does not exist on string\.$#'
-			identifier: offsetAccess.notFound
-			count: 2
-			path: src/Sql/Select.php
-
-		-
 			message: '#^Property PhpDb\\Sql\\Select\:\:\$having \(array\|string\|null\) does not accept PhpDb\\Sql\\Having\.$#'
 			identifier: assign.propertyType
 			count: 3
@@ -511,9 +397,27 @@ parameters:
 			path: src/Sql/Sql.php
 
 		-
+			message: '#^Class PhpDb\\Adapter\\Driver\\Pdo\\Pdo not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: src/Sql/Update.php
+
+		-
 			message: '#^Call to an undefined method PhpDb\\Adapter\\StatementContainerInterface\:\:execute\(\)\.$#'
 			identifier: method.notFound
 			count: 4
+			path: src/TableGateway/AbstractTableGateway.php
+
+		-
+			message: '#^Call to an undefined method PhpDb\\TableGateway\\Feature\\FeatureSet\:\:callMagicSet\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: src/TableGateway/AbstractTableGateway.php
+
+		-
+			message: '#^Call to an undefined method PhpDb\\TableGateway\\Feature\\FeatureSet\:\:canCallMagicSet\(\)\.$#'
+			identifier: method.notFound
+			count: 1
 			path: src/TableGateway/AbstractTableGateway.php
 
 		-
@@ -583,14 +487,14 @@ parameters:
 			path: src/TableGateway/Feature/MasterSlaveFeature.php
 
 		-
-			message: '#^Method PhpDb\\TableGateway\\Feature\\SequenceFeature\:\:lastSequenceId\(\) should return int but empty return statement found\.$#'
-			identifier: return.empty
+			message: '#^Method PhpDb\\TableGateway\\Feature\\SequenceFeature\:\:lastSequenceId\(\) should return int but returns null\.$#'
+			identifier: return.type
 			count: 1
 			path: src/TableGateway/Feature/SequenceFeature.php
 
 		-
-			message: '#^Method PhpDb\\TableGateway\\Feature\\SequenceFeature\:\:nextSequenceId\(\) should return int but empty return statement found\.$#'
-			identifier: return.empty
+			message: '#^Method PhpDb\\TableGateway\\Feature\\SequenceFeature\:\:nextSequenceId\(\) should return int but returns null\.$#'
+			identifier: return.type
 			count: 1
 			path: src/TableGateway/Feature/SequenceFeature.php
 
@@ -1219,32 +1123,14 @@ parameters:
 			path: test/unit/Sql/InsertTest.php
 
 		-
-			message: '#^Class PhpDb\\Adapter\\Adapter constructor invoked with 2 parameters, 3\-4 required\.$#'
-			identifier: arguments.count
-			count: 1
-			path: test/unit/Sql/Platform/PlatformTest.php
-
-		-
 			message: '#^PHPDoc tag @var with type PhpDb\\Adapter\\Driver\\DriverInterface\|PHPUnit\\Framework\\MockObject\\MockObject is not subtype of native type PHPUnit\\Framework\\MockObject\\MockObject\.$#'
 			identifier: varTag.nativeType
 			count: 1
 			path: test/unit/Sql/Platform/PlatformTest.php
 
 		-
-			message: '#^Class PhpDb\\Adapter\\Adapter constructor invoked with 2 parameters, 3\-4 required\.$#'
-			identifier: arguments.count
-			count: 1
-			path: test/unit/Sql/SqlFunctionalTest.php
-
-		-
 			message: '#^Instanceof between PhpDb\\Sql\\Platform\\PlatformDecoratorInterface and PhpDb\\Sql\\Platform\\PlatformDecoratorInterface will always evaluate to true\.$#'
 			identifier: instanceof.alwaysTrue
-			count: 1
-			path: test/unit/Sql/SqlFunctionalTest.php
-
-		-
-			message: '#^Method PhpDbTest\\Sql\\SqlFunctionalTest\:\:resolveDecorator\(\) never returns null so it can be removed from the return type\.$#'
-			identifier: return.unusedType
 			count: 1
 			path: test/unit/Sql/SqlFunctionalTest.php
 
@@ -1289,12 +1175,6 @@ parameters:
 			identifier: deadCode.unreachable
 			count: 1
 			path: test/unit/Sql/SqlFunctionalTest.php
-
-		-
-			message: '#^Class PhpDb\\Adapter\\Adapter constructor invoked with 2 parameters, 3\-4 required\.$#'
-			identifier: arguments.count
-			count: 1
-			path: test/unit/Sql/SqlTest.php
 
 		-
 			message: '#^Expression "\$this\-\>mockUpdate" on a separate line does not do anything\.$#'

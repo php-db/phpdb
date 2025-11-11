@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDb\Sql\Ddl\Column;
 
 use Override;
@@ -61,7 +63,6 @@ abstract class AbstractPrecisionColumn extends AbstractLengthColumn
 
     /**
      * {}
-     * @return string
      */
     #[Override] protected function getLengthExpression(): string
     {

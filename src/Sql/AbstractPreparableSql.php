@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDb\Sql;
 
+use Override;
 use PhpDb\Adapter\AdapterInterface;
 use PhpDb\Adapter\ParameterContainer;
 use PhpDb\Adapter\StatementContainerInterface;
-use Override;
 
 abstract class AbstractPreparableSql extends AbstractSql implements PreparableSqlInterface
 {
@@ -14,8 +16,11 @@ abstract class AbstractPreparableSql extends AbstractSql implements PreparableSq
      *
      * @return StatementContainerInterface
      */
-    #[Override] public function prepareStatement(AdapterInterface $adapter, StatementContainerInterface $statementContainer): StatementContainerInterface
-    {
+    #[Override]
+    public function prepareStatement(
+        AdapterInterface $adapter,
+        StatementContainerInterface $statementContainer
+    ): StatementContainerInterface {
         $parameterContainer = $statementContainer->getParameterContainer();
 
         if (! $parameterContainer instanceof ParameterContainer) {

@@ -1,13 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDb\Sql\Ddl\Constraint;
 
+use Override;
 use PhpDb\Sql\Argument;
 use PhpDb\Sql\ArgumentType;
 use PhpDb\Sql\ExpressionData;
 use PhpDb\Sql\ExpressionPart;
-
-use Override;
 
 use function array_fill;
 use function count;
@@ -81,7 +82,7 @@ abstract class AbstractConstraint implements ConstraintInterface
     /**
      * {}
      */
-    #[\Override]
+    #[Override]
     public function getExpressionData(): ExpressionData
     {
         $expressionPart = new ExpressionPart();

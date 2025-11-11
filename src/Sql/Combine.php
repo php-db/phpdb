@@ -1,12 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDb\Sql;
 
+use Override;
 use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\ParameterContainer;
 use PhpDb\Adapter\Platform\PlatformInterface;
 
 use function array_key_exists;
+use function array_keys;
 use function array_merge;
 use function gettype;
 use function is_array;
@@ -126,7 +130,7 @@ class Combine extends AbstractPreparableSql
     /**
      * Build sql string
      */
-    #[\Override]
+    #[Override]
     protected function buildSqlString(
         PlatformInterface $platform,
         ?DriverInterface $driver = null,

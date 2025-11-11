@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDbTest\Sql\Ddl\Constraint;
 
 use PhpDb\Sql\Argument;

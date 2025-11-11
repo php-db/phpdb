@@ -1,8 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDbTest\Sql;
 
-use PhpDb\Adapter\Adapter;
 use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\Driver\StatementInterface;
 use PhpDb\Adapter\ParameterContainer;
@@ -22,6 +23,7 @@ use PhpDb\Sql\Predicate\Operator;
 use PhpDb\Sql\Select;
 use PhpDb\Sql\TableIdentifier;
 use PhpDb\Sql\Where;
+use PhpDbTest\AdapterTestTrait;
 use PhpDbTest\TestAsset\TrustingSql92Platform;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -62,6 +64,8 @@ use ReflectionObject;
 #[CoversMethod(Select::class, 'processCombine')]
 final class SelectTest extends TestCase
 {
+    use AdapterTestTrait;
+
     public function testConstruct(): void
     {
         $select = new Select('foo');
@@ -658,10 +662,7 @@ final class SelectTest extends TestCase
             ->method('formatParameterName')
             ->willReturnCallback(fn(string $name) => $useNamedParameters ? ':' . $name : '?');
 
-        $mockAdapter = $this->getMockBuilder(Adapter::class)
-            ->onlyMethods([])
-            ->setConstructorArgs([$mockDriver])
-            ->getMock();
+        $mockAdapter = $this->createMockAdapter($mockDriver);
 
         $parameterContainer = new ParameterContainer();
 

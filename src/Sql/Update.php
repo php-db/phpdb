@@ -1,14 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDb\Sql;
 
 use Closure;
+use Laminas\Stdlib\PriorityList;
 use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\Driver\Pdo\Pdo;
 use PhpDb\Adapter\ParameterContainer;
 use PhpDb\Adapter\Platform\PlatformInterface;
 use PhpDb\Sql\Predicate\PredicateInterface;
-use Laminas\Stdlib\PriorityList;
+use PhpDb\Sql\Where;
 
 use function array_key_exists;
 use function implode;
@@ -236,7 +239,7 @@ class Update extends AbstractPreparableSql
         );
     }
 
-    /** @return \string[][][]|null */
+    /** @return string[][][]|null */
     protected function processJoins(
         PlatformInterface $platform,
         ?DriverInterface $driver = null,
@@ -250,7 +253,7 @@ class Update extends AbstractPreparableSql
      * Proxies to "where" only
      *
      * @param  string $name
-     * @return string|null|\PhpDb\Sql\Where
+     * @return string|null|Where
      */
     public function __get($name)
     {

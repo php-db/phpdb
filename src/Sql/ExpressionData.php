@@ -1,9 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDb\Sql;
 
 use Countable;
 use Iterator;
+use Override;
 
 use function array_map;
 use function array_merge;
@@ -98,7 +101,10 @@ class ExpressionData implements Iterator, Countable
 
     public function getExpressionSpecification(): string
     {
-        return implode(' ', array_map(fn (ExpressionPart $part) => $part->getSpecificationString(), $this->expressionParts));
+        return implode(
+            ' ',
+            array_map(fn (ExpressionPart $part) => $part->getSpecificationString(), $this->expressionParts)
+        );
     }
 
     public function getExpressionValues(): array
@@ -106,37 +112,37 @@ class ExpressionData implements Iterator, Countable
         return array_merge(...array_map(fn (ExpressionPart $part) => $part->getValues(), $this->expressionParts));
     }
 
-    #[\Override]
+    #[Override]
     public function rewind(): void
     {
         $this->position = 0;
     }
 
-    #[\Override]
+    #[Override]
     public function current(): ExpressionPart
     {
         return $this->expressionParts[$this->position];
     }
 
-    #[\Override]
+    #[Override]
     public function key(): int
     {
         return $this->position;
     }
 
-    #[\Override]
+    #[Override]
     public function next(): void
     {
         ++$this->position;
     }
 
-    #[\Override]
+    #[Override]
     public function valid(): bool
     {
         return isset($this->expressionParts[$this->position]);
     }
 
-    #[\Override]
+    #[Override]
     public function count(): int
     {
         return count($this->expressionParts);

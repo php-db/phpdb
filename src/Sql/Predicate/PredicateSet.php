@@ -1,9 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDb\Sql\Predicate;
 
 use Closure;
 use Countable;
+use Override;
 use PhpDb\Sql\Exception;
 use PhpDb\Sql\Expression;
 use PhpDb\Sql\ExpressionData;
@@ -34,7 +37,6 @@ class PredicateSet implements PredicateInterface, Countable
      * Constructor
      *
      * @param null|array $predicates
-     * @param string     $defaultCombination
      */
     public function __construct(?array $predicates = null, string $defaultCombination = self::COMBINED_BY_AND)
     {
@@ -173,7 +175,7 @@ class PredicateSet implements PredicateInterface, Countable
     /**
      * Get predicate parts for where statement
      */
-    #[\Override]
+    #[Override]
     public function getExpressionData(): ExpressionData
     {
         $expressionData = new ExpressionData();
@@ -199,7 +201,7 @@ class PredicateSet implements PredicateInterface, Countable
     /**
      * Get count of attached predicates
      */
-    #[\Override]
+    #[Override]
     #[ReturnTypeWillChange]
     public function count(): int
     {

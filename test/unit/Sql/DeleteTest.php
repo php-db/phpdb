@@ -1,9 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDbTest\Sql;
 
 use Override;
-use PhpDb\Adapter\Adapter;
 use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\Driver\StatementInterface;
 use PhpDb\Sql\Delete;
@@ -15,6 +16,7 @@ use PhpDb\Sql\Predicate\Literal;
 use PhpDb\Sql\Predicate\Operator;
 use PhpDb\Sql\TableIdentifier;
 use PhpDb\Sql\Where;
+use PhpDbTest\AdapterTestTrait;
 use PhpDbTest\DeprecatedAssertionsTrait;
 use PhpDbTest\TestAsset\DeleteIgnore;
 use PHPUnit\Framework\Attributes\CoversMethod;
@@ -27,6 +29,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(Delete::class, 'getSqlString')]
 final class DeleteTest extends TestCase
 {
+    use AdapterTestTrait;
     use DeprecatedAssertionsTrait;
 
     protected Delete $delete;
@@ -114,10 +117,7 @@ final class DeleteTest extends TestCase
     public function testPrepareStatement(): void
     {
         $mockDriver  = $this->getMockBuilder(DriverInterface::class)->getMock();
-        $mockAdapter = $this->getMockBuilder(Adapter::class)
-            ->onlyMethods([])
-            ->setConstructorArgs([$mockDriver])
-            ->getMock();
+        $mockAdapter = $this->createMockAdapter($mockDriver);
 
         $mockStatement = $this->getMockBuilder(StatementInterface::class)->getMock();
         $mockStatement->expects($this->once())
@@ -132,10 +132,7 @@ final class DeleteTest extends TestCase
         // with TableIdentifier
         $this->delete = new Delete();
         $mockDriver   = $this->getMockBuilder(DriverInterface::class)->getMock();
-        $mockAdapter  = $this->getMockBuilder(Adapter::class)
-            ->onlyMethods([])
-            ->setConstructorArgs([$mockDriver])
-            ->getMock();
+        $mockAdapter  = $this->createMockAdapter($mockDriver);
 
         $mockStatement = $this->getMockBuilder(StatementInterface::class)->getMock();
         $mockStatement->expects($this->once())
@@ -167,10 +164,7 @@ final class DeleteTest extends TestCase
         $deleteIgnore = new DeleteIgnore();
 
         $mockDriver  = $this->getMockBuilder(DriverInterface::class)->getMock();
-        $mockAdapter = $this->getMockBuilder(Adapter::class)
-            ->onlyMethods([])
-            ->setConstructorArgs([$mockDriver])
-            ->getMock();
+        $mockAdapter = $this->createMockAdapter($mockDriver);
 
         $mockStatement = $this->getMockBuilder(StatementInterface::class)->getMock();
         $mockStatement->expects($this->once())
@@ -186,10 +180,7 @@ final class DeleteTest extends TestCase
         $deleteIgnore = new DeleteIgnore();
 
         $mockDriver  = $this->getMockBuilder(DriverInterface::class)->getMock();
-        $mockAdapter = $this->getMockBuilder(Adapter::class)
-            ->onlyMethods([])
-            ->setConstructorArgs([$mockDriver])
-            ->getMock();
+        $mockAdapter = $this->createMockAdapter($mockDriver);
 
         $mockStatement = $this->getMockBuilder(StatementInterface::class)->getMock();
         $mockStatement->expects($this->once())

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDb\Sql\Ddl;
 
 use PhpDb\Adapter\Platform\PlatformInterface;
@@ -187,7 +189,6 @@ class AlterTable extends AbstractSql implements SqlInterface
 
     /**
      * @return string[][]
-     *
      * @psalm-return list{list{0?: string,...}}
      */
     protected function processAddColumns(?PlatformInterface $adapterPlatform = null): array
@@ -202,7 +203,6 @@ class AlterTable extends AbstractSql implements SqlInterface
 
     /**
      * @return string[][][]
-     *
      * @psalm-return list{list{0?: list{string, string},...}}
      */
     protected function processChangeColumns(?PlatformInterface $adapterPlatform = null): array
@@ -220,7 +220,6 @@ class AlterTable extends AbstractSql implements SqlInterface
 
     /**
      * @return string[][]
-     *
      * @psalm-return list{list{0?: string,...}}
      */
     protected function processDropColumns(?PlatformInterface $adapterPlatform = null): array
@@ -235,7 +234,6 @@ class AlterTable extends AbstractSql implements SqlInterface
 
     /**
      * @return string[][]
-     *
      * @psalm-return list{list{0?: string,...}}
      */
     protected function processAddConstraints(?PlatformInterface $adapterPlatform = null): array
@@ -250,7 +248,6 @@ class AlterTable extends AbstractSql implements SqlInterface
 
     /**
      * @return string[][]
-     *
      * @psalm-return list{list{0?: string,...}}
      */
     protected function processDropConstraints(?PlatformInterface $adapterPlatform = null): array
@@ -265,7 +262,6 @@ class AlterTable extends AbstractSql implements SqlInterface
 
     /**
      * @return string[][]
-     *
      * @psalm-return list{list{0?: string,...}}
      */
     protected function processDropIndexes(?PlatformInterface $adapterPlatform = null): array

@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDb\Sql\Predicate;
 
+use Override;
 use PhpDb\Sql\AbstractExpression;
 use PhpDb\Sql\Argument;
 use PhpDb\Sql\ArgumentType;
@@ -77,14 +80,14 @@ class In extends AbstractExpression implements PredicateInterface
     /**
      * Return array of parts for where statement
      */
-    #[\Override]
+    #[Override]
     public function getExpressionData(): ExpressionData
     {
-        if (!$this->identifier instanceof \PhpDb\Sql\Argument) {
+        if (! $this->identifier instanceof Argument) {
             throw new InvalidArgumentException('Identifier must be specified');
         }
 
-        if (!$this->valueSet instanceof \PhpDb\Sql\Argument) {
+        if (! $this->valueSet instanceof Argument) {
             throw new InvalidArgumentException('Value set must be provided for IN predicate');
         }
 

@@ -1,13 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDbTest\Sql\Predicate;
 
 use PhpDb\Sql\Argument;
 use PhpDb\Sql\ArgumentType;
 use PhpDb\Sql\Predicate\Operator;
 use PHPUnit\Framework\TestCase;
-
-use function var_export;
 
 final class OperatorTest extends TestCase
 {

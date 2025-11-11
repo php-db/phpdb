@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDb\Sql\Ddl\Constraint;
 
+use Override;
 use PhpDb\Sql\Argument;
 use PhpDb\Sql\ArgumentType;
 use PhpDb\Sql\ExpressionData;
@@ -116,7 +119,7 @@ class ForeignKey extends AbstractConstraint
         return $this;
     }
 
-    #[\Override]
+    #[Override]
     public function getExpressionData(): ExpressionData
     {
         $colCount = count($this->referenceColumn);

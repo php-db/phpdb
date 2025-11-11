@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDb\Sql\Predicate;
 
+use Override;
 use PhpDb\Sql\AbstractExpression;
 use PhpDb\Sql\Argument;
 use PhpDb\Sql\ArgumentType;
@@ -64,8 +67,10 @@ class Between extends AbstractExpression implements PredicateInterface
      *
      * @return $this Provides a fluent interface
      */
-    public function setMinValue(null|string|int|float|array|Argument $value, ArgumentType $type = ArgumentType::Value): static
-    {
+    public function setMinValue(
+        null|string|int|float|array|Argument $value,
+        ArgumentType $type = ArgumentType::Value
+    ): static {
         $this->minValue = $value instanceof Argument ? $value : new Argument($value, $type);
 
         return $this;
@@ -84,8 +89,10 @@ class Between extends AbstractExpression implements PredicateInterface
      *
      * @return $this Provides a fluent interface
      */
-    public function setMaxValue(null|string|int|float|array|Argument $value, ArgumentType $type = ArgumentType::Value): static
-    {
+    public function setMaxValue(
+        null|string|int|float|array|Argument $value,
+        ArgumentType $type = ArgumentType::Value
+    ): static {
         $this->maxValue = $value instanceof Argument ? $value : new Argument($value, $type);
 
         return $this;
@@ -122,18 +129,18 @@ class Between extends AbstractExpression implements PredicateInterface
     /**
      * Return "where" parts
      */
-    #[\Override]
+    #[Override]
     public function getExpressionData(): ExpressionData
     {
-        if (!$this->identifier instanceof \PhpDb\Sql\Argument) {
+        if (! $this->identifier instanceof Argument) {
             throw new InvalidArgumentException('Identifier must be specified');
         }
 
-        if (!$this->minValue instanceof \PhpDb\Sql\Argument) {
+        if (! $this->minValue instanceof Argument) {
             throw new InvalidArgumentException('minValue must be specified');
         }
 
-        if (!$this->maxValue instanceof \PhpDb\Sql\Argument) {
+        if (! $this->maxValue instanceof Argument) {
             throw new InvalidArgumentException('maxValue must be specified');
         }
 

@@ -1,13 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDbTest\Sql;
 
 use Override;
-use PhpDb\Adapter\Adapter;
 use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\Driver\StatementInterface;
 use PhpDb\Adapter\ParameterContainer;
-use PhpDb\Sql\Exception\InvalidArgumentException;
 use PhpDb\Sql\Expression;
 use PhpDb\Sql\Join;
 use PhpDb\Sql\Predicate\In;
@@ -19,6 +19,7 @@ use PhpDb\Sql\Predicate\PredicateSet;
 use PhpDb\Sql\TableIdentifier;
 use PhpDb\Sql\Update;
 use PhpDb\Sql\Where;
+use PhpDbTest\AdapterTestTrait;
 use PhpDbTest\DeprecatedAssertionsTrait;
 use PhpDbTest\TestAsset\TrustingSql92Platform;
 use PhpDbTest\TestAsset\UpdateIgnore;
@@ -28,6 +29,7 @@ use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\TestDox;
 use PHPUnit\Framework\TestCase;
 use ReflectionException;
+use TypeError;
 
 #[CoversMethod(Update::class, 'table')]
 #[CoversMethod(Update::class, '__construct')]
@@ -41,6 +43,7 @@ use ReflectionException;
 #[CoversMethod(Update::class, 'join')]
 final class UpdateTest extends TestCase
 {
+    use AdapterTestTrait;
     use DeprecatedAssertionsTrait;
 
     protected Update $update;
@@ -148,8 +151,7 @@ final class UpdateTest extends TestCase
             self::assertSame($where, $what);
         });
 
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Predicate cannot be null');
+        $this->expectException(TypeError::class);
         /** @psalm-suppress NullArgument - Ensure exception is thrown */
         $this->update->where(null);
     }
@@ -184,10 +186,7 @@ final class UpdateTest extends TestCase
         $mockDriver = $this->getMockBuilder(DriverInterface::class)->getMock();
         $mockDriver->expects($this->any())->method('getPrepareType')->willReturn('positional');
         $mockDriver->expects($this->any())->method('formatParameterName')->willReturn('?');
-        $mockAdapter = $this->getMockBuilder(Adapter::class)
-            ->onlyMethods([])
-            ->setConstructorArgs([$mockDriver])
-            ->getMock();
+        $mockAdapter = $this->createMockAdapter($mockDriver);
 
         $mockStatement = $this->getMockBuilder(StatementInterface::class)->getMock();
         $pContainer    = new ParameterContainer([]);
@@ -208,10 +207,7 @@ final class UpdateTest extends TestCase
         $mockDriver   = $this->getMockBuilder(DriverInterface::class)->getMock();
         $mockDriver->expects($this->any())->method('getPrepareType')->willReturn('positional');
         $mockDriver->expects($this->any())->method('formatParameterName')->willReturn('?');
-        $mockAdapter = $this->getMockBuilder(Adapter::class)
-            ->onlyMethods([])
-            ->setConstructorArgs([$mockDriver])
-            ->getMock();
+        $mockAdapter = $this->createMockAdapter($mockDriver);
 
         $mockStatement = $this->getMockBuilder(StatementInterface::class)->getMock();
         $pContainer    = new ParameterContainer([]);
@@ -305,10 +301,7 @@ final class UpdateTest extends TestCase
         $mockDriver = $this->getMockBuilder(DriverInterface::class)->getMock();
         $mockDriver->expects($this->any())->method('getPrepareType')->willReturn('positional');
         $mockDriver->expects($this->any())->method('formatParameterName')->willReturn('?');
-        $mockAdapter = $this->getMockBuilder(Adapter::class)
-            ->onlyMethods([])
-            ->setConstructorArgs([$mockDriver])
-            ->getMock();
+        $mockAdapter = $this->createMockAdapter($mockDriver);
 
         $mockStatement = $this->getMockBuilder(StatementInterface::class)->getMock();
         $pContainer    = new ParameterContainer([]);

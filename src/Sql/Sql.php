@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDb\Sql;
 
 use PhpDb\Adapter\AdapterInterface;
@@ -123,6 +125,8 @@ class Sql
         return $this
             ->sqlPlatform
             ->setSubject($sqlObject)
-            ->getSqlString($adapter instanceof \PhpDb\Adapter\AdapterInterface ? $adapter->getPlatform() : $this->adapter->getPlatform());
+            ->getSqlString(
+                $adapter instanceof AdapterInterface ? $adapter->getPlatform() : $this->adapter->getPlatform()
+            );
     }
 }

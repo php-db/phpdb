@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDb\Sql;
 
+use Override;
 
 use function array_slice;
 use function array_unique;
@@ -28,8 +31,10 @@ class Expression extends AbstractExpression
     /**
      * @todo Update documentation to show how parameters can be specifically typed
      */
-    public function __construct(string $expression = '', null|bool|string|float|int|array|Argument|ExpressionInterface $parameters = [])
-    {
+    public function __construct(
+        string $expression = '',
+        null|bool|string|float|int|array|Argument|ExpressionInterface $parameters = []
+    ) {
         if ($expression !== '') {
             $this->setExpression($expression);
         }
@@ -102,7 +107,7 @@ class Expression extends AbstractExpression
     /**
      * @throws Exception\RuntimeException
      */
-    #[\Override]
+    #[Override]
     public function getExpressionData(): ExpressionData
     {
         $parameters      = $this->parameters;

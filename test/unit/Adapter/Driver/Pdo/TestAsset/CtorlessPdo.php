@@ -2,6 +2,7 @@
 
 namespace PhpDbTest\Adapter\Driver\Pdo\TestAsset;
 
+use Override;
 use PDO;
 use PDOStatement;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -15,7 +16,7 @@ class CtorlessPdo extends PDO
     /**
      * @param array<array-key, mixed> $options
      */
-    #[\Override]
+    #[Override]
     public function prepare(string $query, $options = null): PDOStatement
     {
         return $this->mockStatement;

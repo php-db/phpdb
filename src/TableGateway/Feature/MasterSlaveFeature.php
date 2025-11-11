@@ -22,7 +22,7 @@ class MasterSlaveFeature extends AbstractFeature
     public function __construct(AdapterInterface $slaveAdapter, ?Sql $slaveSql = null)
     {
         $this->slaveAdapter = $slaveAdapter;
-        if ($slaveSql instanceof \PhpDb\Sql\Sql) {
+        if ($slaveSql instanceof Sql) {
             $this->slaveSql = $slaveSql;
         }
     }

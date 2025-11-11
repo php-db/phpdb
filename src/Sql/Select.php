@@ -1,8 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDb\Sql;
 
 use Closure;
+use Override;
 use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\ParameterContainer;
 use PhpDb\Adapter\Platform\PlatformInterface;
@@ -11,6 +14,7 @@ use PhpDb\Sql\Predicate\PredicateInterface;
 use function array_key_exists;
 use function count;
 use function current;
+use function explode;
 use function gettype;
 use function is_array;
 use function is_int;
@@ -22,6 +26,7 @@ use function key;
 use function method_exists;
 use function preg_split;
 use function sprintf;
+use function str_contains;
 use function strcasecmp;
 use function stripos;
 use function strtolower;
@@ -590,7 +595,7 @@ class Select extends AbstractPreparableSql
         }
     }
 
-    /** @return \string[][][]|null */
+    /** @return string[][][]|null */
     protected function processJoins(
         PlatformInterface $platform,
         ?DriverInterface $driver = null,
@@ -691,7 +696,7 @@ class Select extends AbstractPreparableSql
         if ($this->limit === null) {
             return null;
         }
-        if ($parameterContainer instanceof \PhpDb\Adapter\ParameterContainer) {
+        if ($parameterContainer instanceof ParameterContainer) {
             $paramPrefix = $this->processInfo['paramPrefix'];
             $parameterContainer->offsetSet($paramPrefix . 'limit', $this->limit, ParameterContainer::TYPE_INTEGER);
             return [$driver->formatParameterName($paramPrefix . 'limit')];
@@ -707,7 +712,7 @@ class Select extends AbstractPreparableSql
         if ($this->offset === null) {
             return null;
         }
-        if ($parameterContainer instanceof \PhpDb\Adapter\ParameterContainer) {
+        if ($parameterContainer instanceof ParameterContainer) {
             $paramPrefix = $this->processInfo['paramPrefix'];
             $parameterContainer->offsetSet($paramPrefix . 'offset', $this->offset, ParameterContainer::TYPE_INTEGER);
             return [$driver->formatParameterName($paramPrefix . 'offset')];
@@ -771,7 +776,7 @@ class Select extends AbstractPreparableSql
      * @param string|TableIdentifier|Select $table
      * @return array
      */
-    #[\Override]
+    #[Override]
     protected function resolveTable(
         $table,
         PlatformInterface $platform,

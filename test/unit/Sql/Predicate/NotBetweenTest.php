@@ -1,11 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDbTest\Sql\Predicate;
 
 use Override;
 use PhpDb\Sql\Argument;
 use PhpDb\Sql\ArgumentType;
-use PhpDb\Sql\ExpressionInterface;
 use PhpDb\Sql\Predicate\NotBetween;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;

@@ -26,7 +26,7 @@ class Platform extends AbstractPlatform
 
     public function __construct(AdapterInterface $adapter)
     {
-        $this->adapter = $adapter;
+        $this->adapter         = $adapter;
         $this->defaultPlatform = $adapter->getPlatform();
         // Note: SQL platform decorators initialization removed during refactoring
         // Decorators can be set manually via setTypeDecorator() if needed

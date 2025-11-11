@@ -6,7 +6,8 @@ use PhpDb\Sql;
 
 final class DeleteDecorator extends Sql\Delete implements Sql\Platform\PlatformDecoratorInterface
 {
-    protected ?object $subject;
+    /** @var object|null */
+    public $subject;
 
     /**
      * @param null|object $subject

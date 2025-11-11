@@ -20,6 +20,7 @@ use function key;
 use function ltrim;
 use function next;
 use function reset;
+use function str_starts_with;
 
 class ParameterContainer implements Iterator, ArrayAccess, Countable
 {
@@ -251,9 +252,7 @@ class ParameterContainer implements Iterator, ArrayAccess, Countable
      * Offset unset max length
      *
      * @param string|int $name
-     *
      * @throws Exception\InvalidArgumentException
-     *
      * @return void
      */
     public function offsetUnsetMaxLength($name)
@@ -327,9 +326,7 @@ class ParameterContainer implements Iterator, ArrayAccess, Countable
      * Offset unset errata
      *
      * @param string|int $name
-     *
      * @throws Exception\InvalidArgumentException
-     *
      * @return void
      */
     public function offsetUnsetErrata($name)

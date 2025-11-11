@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDb\Sql\Predicate;
 
+use Override;
 use PhpDb\Sql\AbstractExpression;
 use PhpDb\Sql\Argument;
 use PhpDb\Sql\ArgumentType;
@@ -81,14 +84,14 @@ class Like extends AbstractExpression implements PredicateInterface
         return $this->specification;
     }
 
-    #[\Override]
+    #[Override]
     public function getExpressionData(): ExpressionData
     {
-        if (!$this->identifier instanceof \PhpDb\Sql\Argument) {
+        if (! $this->identifier instanceof Argument) {
             throw new InvalidArgumentException('Identifier must be specified');
         }
 
-        if (!$this->like instanceof \PhpDb\Sql\Argument) {
+        if (! $this->like instanceof Argument) {
             throw new InvalidArgumentException('Like expression must be specified');
         }
 

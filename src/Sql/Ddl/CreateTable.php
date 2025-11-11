@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDb\Sql\Ddl;
 
 use PhpDb\Adapter\Platform\PlatformInterface;
@@ -103,9 +105,7 @@ class CreateTable extends AbstractSql implements SqlInterface
 
     /**
      * @param string|null $key
-     *
      * @return ((Column\ColumnInterface|string)[]|Column\ColumnInterface|string)[]|string
-     *
      * @psalm-return array<Column\ColumnInterface|array<Column\ColumnInterface|string>|string>|string
      */
     public function getRawState($key = null): array|string
