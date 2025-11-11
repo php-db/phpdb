@@ -13,44 +13,10 @@ use function is_array;
 
 class HydratingResultSet extends AbstractResultSet
 {
-    protected HydratorInterface $hydrator;
-
-    protected ?object $objectPrototype;
-
-    /**
-     * Constructor
-     */
-    public function __construct(?HydratorInterface $hydrator = null, ?object $objectPrototype = null)
-    {
-        $defaultHydratorClass = ArraySerializableHydrator::class;
-        $this->setHydrator($hydrator ?: new $defaultHydratorClass());
-        $this->setObjectPrototype($objectPrototype ?: new ArrayObject());
-    }
-
-    /**
-     * Set the row object prototype
-     *
-     * @throws Exception\InvalidArgumentException
-     * @return $this Provides a fluent interface
-     */
-    public function setObjectPrototype(object $objectPrototype): static
-    {
-        if (! is_object($objectPrototype)) {
-            throw new Exception\InvalidArgumentException(
-                'An object must be set as the object prototype, a ' . gettype($objectPrototype) . ' was provided.'
-            );
-        }
-
-        $this->objectPrototype = $objectPrototype;
-        return $this;
-    }
-
-    /**
-     * Get the row object prototype
-     */
-    public function getObjectPrototype(): ?object
-    {
-        return $this->objectPrototype;
+    public function __construct(
+        private HydratorInterface $hydrator = new ArraySerializableHydrator(),
+        private object $rowPrototype     = new ArrayObject()
+    ) {
     }
 
     /**
@@ -71,19 +37,33 @@ class HydratingResultSet extends AbstractResultSet
     {
         return $this->hydrator;
     }
+
     /** {@inheritDoc} */
     #[Override]
+    public function setRowPrototype(ArrayObject $rowPrototype): ResultSetInterface
+    {
+        $this->rowPrototype = $rowPrototype;
+        return $this;
+    }
+
+    /** {@inheritDoc} */
+    #[Override]
+    public function getRowPrototype(): ?object
+    {
+        return $this->rowPrototype;
+    }
+
+    /** @deprecated use setRowPrototype() */
     public function setObjectPrototype(object $objectPrototype): ResultSetInterface
     {
-        $this->objectPrototype = $objectPrototype;
-        return $this;
+        return  $this->setRowPrototype($objectPrototype);
     }
 
     /** {@inheritDoc} */
     #[Override]
     public function getObjectPrototype(): ?object
     {
-        return $this->objectPrototype;
+        return $this->getRowPrototype();
     }
 
     /**
@@ -97,7 +77,6 @@ class HydratingResultSet extends AbstractResultSet
         } elseif (is_array($this->buffer) && isset($this->buffer[$this->position])) {
             return $this->buffer[$this->position];
         }
-
         $data    = $this->dataSource->current();
         $current = is_array($data) ? $this->hydrator->hydrate($data, clone $this->objectPrototype) : null;
 
@@ -120,7 +99,6 @@ class HydratingResultSet extends AbstractResultSet
         foreach ($this as $row) {
             $return[] = $this->hydrator->extract($row);
         }
-
         return $return;
     }
 }

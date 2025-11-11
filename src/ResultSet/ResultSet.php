@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace PhpDb\ResultSet;
 
 use ArrayObject;
+use Override;
 
 use function is_array;
 
@@ -12,12 +13,11 @@ class ResultSet extends AbstractResultSet
 {
     /** @deprecated use ResultSetReturnType */
     public const TYPE_ARRAYOBJECT = 'arrayobject';
-
-    public const TYPE_ARRAY = 'array';
+    public const TYPE_ARRAY       = 'array';
 
     public function __construct(
         private ResultSetReturnType|string $returnType = ResultSetReturnType::ArrayObject,
-        private ArrayObject $objectPrototype = new ArrayObject([], ArrayObject::ARRAY_AS_PROPS)
+        private ?ArrayObject $objectPrototype = new ArrayObject([], ArrayObject::ARRAY_AS_PROPS)
     ) {
         if (is_string($this->returnType)) {
             $this->returnType = ResultSetReturnType::from($this->returnType);
@@ -26,21 +26,15 @@ class ResultSet extends AbstractResultSet
 
     /** {@inheritDoc} */
     #[Override]
-    public function setObjectPrototype(ArrayObject $objectPrototype): ResultSetInterface
+    public function setRowPrototype(ArrayObject $rowPrototype): ResultSetInterface
     {
-        if (! method_exists($arrayObjectPrototype, 'exchangeArray')) {
-            throw new Exception\InvalidArgumentException(
-                'Object must at least implement exchangeArray'
-            );
-        }
-
-        $this->arrayObjectPrototype = $arrayObjectPrototype;
+        $this->objectPrototype = $rowPrototype;
         return $this;
     }
 
     /** {@inheritDoc} */
     #[Override]
-    public function getObjectPrototype(): ArrayObject
+    public function getRowPrototype(): ArrayObject
     {
         return $this->objectPrototype;
     }
@@ -61,10 +55,9 @@ class ResultSet extends AbstractResultSet
     {
         $data = parent::current();
 
-        if ($this->returnType === self::TYPE_ARRAYOBJECT && is_array($data)) {
-            $ao = clone $this->arrayObjectPrototype;
+        if ($this->returnType === ResultSetReturnType::ArrayObject && is_array($data)) {
+            $ao = clone $this->objectPrototype;
             $ao->exchangeArray($data);
-
             return $ao;
         }
 
@@ -78,7 +71,7 @@ class ResultSet extends AbstractResultSet
      */
     public function setArrayObjectPrototype(ArrayObject $arrayObjectPrototype): ResultSetInterface
     {
-        return $this->setObjectPrototype($arrayObjectPrototype);
+        return $this->setRowPrototype($arrayObjectPrototype);
     }
 
     /**
@@ -86,6 +79,6 @@ class ResultSet extends AbstractResultSet
      */
     public function getArrayObjectPrototype(): ArrayObject
     {
-        return $this->getObjectPrototype();
+        return $this->getRowPrototype();
     }
 }
