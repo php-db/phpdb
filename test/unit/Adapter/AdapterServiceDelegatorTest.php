@@ -229,8 +229,7 @@ final class AdapterServiceDelegatorTest extends TestCase
 
         /** @var ConcreteAdapterAwareObject $result */
         $result = $pluginManager->get(
-            ConcreteAdapterAwareObject::class,
-            $options
+            ConcreteAdapterAwareObject::class
         );
 
         $this->assertInstanceOf(

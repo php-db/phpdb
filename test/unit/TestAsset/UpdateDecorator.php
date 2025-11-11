@@ -13,7 +13,7 @@ final class UpdateDecorator extends Sql\Update implements Sql\Platform\PlatformD
      * @param null|object $subject
      * @return $this Provides a fluent interface
      */
-    public function setSubject($subject): static
+    public function setSubject($subject): UpdateDecorator
     {
         $this->subject = $subject;
         return $this;

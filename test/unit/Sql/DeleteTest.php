@@ -14,6 +14,7 @@ use PhpDb\Sql\Predicate\IsNotNull;
 use PhpDb\Sql\Predicate\IsNull;
 use PhpDb\Sql\Predicate\Literal;
 use PhpDb\Sql\Predicate\Operator;
+use PhpDb\Sql\Predicate\PredicateSet;
 use PhpDb\Sql\TableIdentifier;
 use PhpDb\Sql\Where;
 use PhpDbTest\AdapterTestTrait;
@@ -70,7 +71,7 @@ final class DeleteTest extends TestCase
         $this->delete->where('x = y');
         $this->delete->where(['foo > ?' => 5]);
         $this->delete->where(['id' => 2]);
-        $this->delete->where(['a = b'], Where::OP_OR);
+        $this->delete->where(['a = b'], PredicateSet::OP_OR);
         $this->delete->where(['c1' => null]);
         $this->delete->where(['c2' => [1, 2, 3]]);
         $this->delete->where([new IsNotNull('c3')]);

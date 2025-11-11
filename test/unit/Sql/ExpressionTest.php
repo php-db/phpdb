@@ -43,7 +43,7 @@ final class ExpressionTest extends TestCase
     {
         $expression = new Expression();
         $this->expectException(TypeError::class);
-        /** @psalm-suppress NullArgument - ensure an exception is thrown */
+        /** @noinspection PhpStrictTypeCheckingInspection */
         $expression->setExpression(null);
 
         $expression = new Expression();

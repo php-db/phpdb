@@ -11,6 +11,7 @@ use PhpDb\Adapter\ParameterContainer;
 use PhpDb\Adapter\StatementContainer;
 use PhpDb\Sql\Exception\InvalidArgumentException;
 use PhpDb\Sql\Expression;
+use PhpDb\Sql\Insert;
 use PhpDb\Sql\InsertIgnore;
 use PhpDb\Sql\Select;
 use PhpDb\Sql\TableIdentifier;
@@ -64,8 +65,8 @@ final class InsertIgnoreTest extends TestCase
         self::assertEquals(['bar'], $this->insert->getRawState('values'));
 
         // test will merge cols and values of previously set stuff
-        $this->insert->values(['foo' => 'bax'], InsertIgnore::VALUES_MERGE);
-        $this->insert->values(['boom' => 'bam'], InsertIgnore::VALUES_MERGE);
+        $this->insert->values(['foo' => 'bax'], Insert::VALUES_MERGE);
+        $this->insert->values(['boom' => 'bam'], Insert::VALUES_MERGE);
         self::assertEquals(['foo', 'boom'], $this->insert->getRawState('columns'));
         self::assertEquals(['bax', 'bam'], $this->insert->getRawState('values'));
 
@@ -86,7 +87,7 @@ final class InsertIgnoreTest extends TestCase
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('A PhpDb\Sql\Select instance cannot be provided with the merge flag');
-        $this->insert->values(new Select(), InsertIgnore::VALUES_MERGE);
+        $this->insert->values(new Select(), Insert::VALUES_MERGE);
     }
 
     public function testValuesThrowsExceptionWhenArrayMergeOverSelect(): void
@@ -98,7 +99,7 @@ final class InsertIgnoreTest extends TestCase
             'An array of values cannot be provided with the merge flag when a PhpDb\Sql\Select instance already '
             . 'exists as the value source'
         );
-        $this->insert->values(['foo' => 'bar'], InsertIgnore::VALUES_MERGE);
+        $this->insert->values(['foo' => 'bar'], Insert::VALUES_MERGE);
     }
 
     /**
@@ -282,7 +283,7 @@ final class InsertIgnoreTest extends TestCase
         $this->insert->into('foo')
             ->values(['bar' => 'baz', 'boo' => new Expression('NOW()'), 'bam' => null]);
         $this->insert->into('foo')
-            ->values(['qux' => 100], InsertIgnore::VALUES_MERGE);
+            ->values(['qux' => 100], Insert::VALUES_MERGE);
 
         self::assertEquals(
             'INSERT IGNORE INTO "foo" ("bar", "boo", "bam", "qux") VALUES (\'baz\', NOW(), NULL, \'100\')',

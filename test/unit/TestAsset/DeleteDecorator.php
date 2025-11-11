@@ -13,7 +13,7 @@ final class DeleteDecorator extends Sql\Delete implements Sql\Platform\PlatformD
      * @param null|object $subject
      * @return $this Provides a fluent interface
      */
-    public function setSubject($subject): static
+    public function setSubject($subject): DeleteDecorator
     {
         $this->subject = $subject;
         return $this;

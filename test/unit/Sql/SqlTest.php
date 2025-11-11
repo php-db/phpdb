@@ -82,7 +82,7 @@ final class SqlTest extends TestCase
         self::assertSame('foo', $sql->getTable());
 
         $this->expectException(TypeError::class);
-        /** @psalm-suppress NullArgument - ensure an exception is thrown */
+        /** @noinspection PhpStrictTypeCheckingInspection */
         $sql->setTable(null);
     }
 

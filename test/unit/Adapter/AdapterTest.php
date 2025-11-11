@@ -4,6 +4,7 @@ namespace PhpDbTest\Adapter;
 
 use Override;
 use PhpDb\Adapter\Adapter;
+use PhpDb\Adapter\AdapterInterface;
 use PhpDb\Adapter\Driver\ConnectionInterface;
 use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\Driver\Mysqli\Mysqli;
@@ -282,7 +283,7 @@ final class AdapterTest extends TestCase
         $result = $this->getMockBuilder(ResultInterface::class)->getMock();
         $this->mockConnection->expects($this->any())->method('execute')->with($sql)->willReturn($result);
 
-        $r = $this->adapter->query($sql, Adapter::QUERY_MODE_EXECUTE);
+        $r = $this->adapter->query($sql, AdapterInterface::QUERY_MODE_EXECUTE);
         self::assertSame($result, $r);
     }
 
@@ -298,10 +299,10 @@ final class AdapterTest extends TestCase
         $this->mockConnection->expects($this->any())->method('execute')->with($sql)->willReturn($result);
         $result->expects($this->any())->method('isQueryResult')->willReturn(true);
 
-        $r = $this->adapter->query($sql, Adapter::QUERY_MODE_EXECUTE);
+        $r = $this->adapter->query($sql, AdapterInterface::QUERY_MODE_EXECUTE);
         self::assertInstanceOf(ResultSet::class, $r);
 
-        $r = $this->adapter->query($sql, Adapter::QUERY_MODE_EXECUTE, new TemporaryResultSet());
+        $r = $this->adapter->query($sql, AdapterInterface::QUERY_MODE_EXECUTE, new TemporaryResultSet());
         self::assertInstanceOf(TemporaryResultSet::class, $r);
     }
 

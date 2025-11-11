@@ -153,7 +153,7 @@ final class PredicateSetTest extends TestCase
         });
 
         $this->expectException(TypeError::class);
-        /** @psalm-suppress NullArgument - ensure an exception is thrown */
+        /** @noinspection PhpStrictTypeCheckingInspection */
         $predicateSet->addPredicates(null);
     }
 }

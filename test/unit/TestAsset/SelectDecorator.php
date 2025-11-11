@@ -10,7 +10,7 @@ final class SelectDecorator extends Sql\Select implements Sql\Platform\PlatformD
      * @param null|object $subject
      * @return $this Provides a fluent interface
      */
-    public function setSubject($subject): static
+    public function setSubject($subject): SelectDecorator
     {
         $this->subject = $subject;
         return $this;
