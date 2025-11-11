@@ -2,6 +2,7 @@
 
 namespace PhpDb\ResultSet;
 
+use ArrayObject;
 use Countable;
 use Iterator;
 
@@ -18,4 +19,6 @@ interface ResultSetInterface extends Iterator, Countable
      * operation or intersection of some data
      */
     public function getFieldCount(): mixed;
+
+    public function setObjectPrototype(ArrayObject $ObjectPrototype): ResultSetInterface;
 }
