@@ -58,6 +58,16 @@ class ResultSet extends AbstractResultSet
         return $this;
     }
 
+    public function setObjectPrototype(ArrayObject $objectPrototype): static
+    {
+        if (! $objectPrototype instanceof ArrayObject) {
+            throw new Exception\InvalidArgumentException(
+                'Object prototype must be an instance of ArrayObject'
+            );
+        }
+        return $this->setArrayObjectPrototype($objectPrototype);
+    }
+
     /**
      * Get the row object prototype
      */
