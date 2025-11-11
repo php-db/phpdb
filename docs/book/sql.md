@@ -61,7 +61,7 @@ $selectString = $sql->buildSqlString($select);
 $results = $adapter->query($selectString, $adapter::QUERY_MODE_EXECUTE);
 ```
 
-`Laminas\\Db\\Sql\\Sql` objects can also be bound to a particular table so that in
+`PhpDb\\Sql\\Sql` objects can also be bound to a particular table so that in
 obtaining a `Select`, `Insert`, `Update`, or `Delete` instance, the object will be
 seeded with the table:
 
@@ -419,15 +419,78 @@ There is also a special use case type for literal values (`TYPE_LITERAL`). All
 element types are expressed via the `PhpDb\Sql\ExpressionInterface`
 interface.
 
+> **Note:** The `TYPE_*` constants are legacy constants maintained for backward
+> compatibility. New code should use the `ArgumentType` enum and `Argument`
+> class for type-safe argument handling (see the section below).
+
+### Arguments and Argument Types
+
+`PhpDb\Sql` provides the `Argument` class along with the `ArgumentType` enum
+for type-safe specification of SQL values. This provides a modern,
+object-oriented alternative to using raw values or the legacy type constants.
+
+The `ArgumentType` enum defines four types:
+
+- `ArgumentType::Identifier` - For column names, table names, and other identifiers that should be quoted
+- `ArgumentType::Value` - For values that should be parameterized or properly escaped (default)
+- `ArgumentType::Literal` - For literal SQL fragments that should not be quoted or escaped
+- `ArgumentType::Select` - For subqueries (automatically detected when using Expression or SqlInterface objects)
+
+```php
+use PhpDb\Sql\Argument;
+use PhpDb\Sql\ArgumentType;
+
+// Using the constructor with explicit type
+$arg = new Argument('column_name', ArgumentType::Identifier);
+
+// Using static factory methods (recommended)
+$valueArg = Argument::value(123);           // Value type
+$identifierArg = Argument::identifier('id'); // Identifier type
+$literalArg = Argument::literal('NOW()');   // Literal SQL
+
+// Using array notation for type specification
+$arg = new Argument(['column_name' => ArgumentType::Identifier]);
+
+// Arrays of values are also supported
+$arg = new Argument([1, 2, 3], ArgumentType::Value);
+```
+
+The `Argument` class is particularly useful when working with expressions
+where you need to explicitly control how values are treated:
+
+```php
+use PhpDb\Sql\Expression;
+use PhpDb\Sql\Argument;
+
+// Without Argument - relies on positional type inference
+$expression = new Expression(
+    'CONCAT(?, ?, ?)',
+    [
+        ['column1' => ExpressionInterface::TYPE_IDENTIFIER],
+        ['-' => ExpressionInterface::TYPE_VALUE],
+        ['column2' => ExpressionInterface::TYPE_IDENTIFIER]
+    ]
+);
+
+// With Argument - more explicit and readable
+$expression = new Expression(
+    'CONCAT(?, ?, ?)',
+    [
+        Argument::identifier('column1'),
+        Argument::value('-'),
+        Argument::identifier('column2')
+    ]
+);
+```
+
 > ### Literals
 >
-> In Laminas 2.1, an actual `Literal` type was added. `PhpDb\Sql` now makes the
-> distinction that literals will not have any parameters that need
-> interpolating, while `Expression` objects *might* have parameters that need
-> interpolating. In cases where there are parameters in an `Expression`,
+> `PhpDb\Sql` makes the distinction that literals will not have any parameters
+> that need interpolating, while `Expression` objects *might* have parameters
+> that need interpolating. In cases where there are parameters in an `Expression`,
 > `PhpDb\Sql\AbstractSql` will do its best to identify placeholders when the
 > `Expression` is processed during statement creation. In short, if you don't
-> have parameters, use `Literal` objects.
+> have parameters, use `Literal` objects or `Argument::literal()`.
 
 The `Where` and `Having` API is that of `Predicate` and `PredicateSet`:
 
