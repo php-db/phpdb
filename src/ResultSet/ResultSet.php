@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace PhpDb\ResultSet;
 
 use ArrayObject;
+use Override;
 
 use function is_array;
 
@@ -16,7 +17,7 @@ class ResultSet extends AbstractResultSet
 
     public function __construct(
         private ResultSetReturnType|string $returnType = ResultSetReturnType::ArrayObject,
-        private ArrayObject $objectPrototype = new ArrayObject([], ArrayObject::ARRAY_AS_PROPS)
+        private ?ArrayObject $objectPrototype = new ArrayObject([], ArrayObject::ARRAY_AS_PROPS)
     ) {
         if (is_string($this->returnType)) {
             $this->returnType = ResultSetReturnType::from($this->returnType);
@@ -25,15 +26,15 @@ class ResultSet extends AbstractResultSet
 
     /** {@inheritDoc} */
     #[Override]
-    public function setObjectPrototype(ArrayObject $objectPrototype): ResultSetInterface
+    public function setRowPrototype(ArrayObject $rowPrototype): ResultSetInterface
     {
-        $this->objectPrototype = $objectPrototype;
+        $this->objectPrototype = $rowPrototype;
         return $this;
     }
 
     /** {@inheritDoc} */
     #[Override]
-    public function getObjectPrototype(): ArrayObject
+    public function getRowPrototype(): ArrayObject
     {
         return $this->objectPrototype;
     }
@@ -70,7 +71,7 @@ class ResultSet extends AbstractResultSet
      */
     public function setArrayObjectPrototype(ArrayObject $arrayObjectPrototype): ResultSetInterface
     {
-        return $this->setObjectPrototype($arrayObjectPrototype);
+        return $this->setRowPrototype($arrayObjectPrototype);
     }
 
     /**
@@ -78,6 +79,6 @@ class ResultSet extends AbstractResultSet
      */
     public function getArrayObjectPrototype(): ArrayObject
     {
-        return $this->getObjectPrototype();
+        return $this->getRowPrototype();
     }
 }

@@ -15,7 +15,7 @@ class HydratingResultSet extends AbstractResultSet
 {
     public function __construct(
         private HydratorInterface $hydrator = new ArraySerializableHydrator(),
-        private object $objectPrototype     = new ArrayObject()
+        private object $rowPrototype     = new ArrayObject()
     ) {
     }
 
@@ -37,19 +37,33 @@ class HydratingResultSet extends AbstractResultSet
     {
         return $this->hydrator;
     }
+
     /** {@inheritDoc} */
     #[Override]
+    public function setRowPrototype(ArrayObject $rowPrototype): ResultSetInterface
+    {
+        $this->rowPrototype = $rowPrototype;
+        return $this;
+    }
+
+    /** {@inheritDoc} */
+    #[Override]
+    public function getRowPrototype(): ?object
+    {
+        return $this->rowPrototype;
+    }
+
+    /** @deprecated use setRowPrototype() */
     public function setObjectPrototype(object $objectPrototype): ResultSetInterface
     {
-        $this->objectPrototype = $objectPrototype;
-        return $this;
+        return  $this->setRowPrototype($objectPrototype);
     }
 
     /** {@inheritDoc} */
     #[Override]
     public function getObjectPrototype(): ?object
     {
-        return $this->objectPrototype;
+        return $this->getRowPrototype();
     }
 
     /**
