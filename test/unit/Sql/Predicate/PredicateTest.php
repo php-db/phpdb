@@ -5,6 +5,7 @@ namespace PhpDbTest\Sql\Predicate;
 use ErrorException;
 use Laminas\Stdlib\ErrorHandler;
 use PhpDb\Adapter\Platform\Sql92;
+use PhpDb\Sql\ArgumentType;
 use PhpDb\Sql\Expression;
 use PhpDb\Sql\ExpressionInterface;
 use PhpDb\Sql\Predicate\Predicate;
@@ -253,7 +254,7 @@ final class PredicateTest extends TestCase
         self::assertSame($predicate, $predicate->expression('foo = ?', 0));
         // with parameter
         self::assertEquals(
-            [['foo = %s', [0], [ExpressionInterface::TYPE_VALUE]]],
+            [['foo = %s', [0], [ArgumentType::Value]]],
             $predicate->getExpressionData()
         );
     }
@@ -293,7 +294,7 @@ final class PredicateTest extends TestCase
         $predicate->expression('foo = ?', 'bar');
         // with parameter
         self::assertEquals(
-            [['foo = %s', ['bar'], [ExpressionInterface::TYPE_VALUE]]],
+            [['foo = %s', ['bar'], [ArgumentType::Value]]],
             $predicate->getExpressionData()
         );
 
@@ -302,7 +303,7 @@ final class PredicateTest extends TestCase
         $predicate->expression('foo = ?', 0);
         // with parameter
         self::assertEquals(
-            [['foo = %s', [0], [ExpressionInterface::TYPE_VALUE]]],
+            [['foo = %s', [0], [ArgumentType::Value]]],
             $predicate->getExpressionData()
         );
     }

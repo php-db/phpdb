@@ -3,6 +3,7 @@
 namespace PhpDbTest\Sql\Predicate;
 
 use Override;
+use PhpDb\Sql\ArgumentType;
 use PhpDb\Sql\ExpressionInterface;
 use PhpDb\Sql\Predicate\NotBetween;
 use PHPUnit\Framework\Attributes\CoversMethod;
@@ -35,26 +36,26 @@ final class NotBetweenTest extends TestCase
                 $this->notBetween->getSpecification(),
                 ['foo.bar', 10, 19],
                 [
-                    ExpressionInterface::TYPE_IDENTIFIER,
-                    ExpressionInterface::TYPE_VALUE,
-                    ExpressionInterface::TYPE_VALUE,
+                    ArgumentType::Identifier,
+                    ArgumentType::Value,
+                    ArgumentType::Value,
                 ],
             ],
         ];
         self::assertEquals($expected, $this->notBetween->getExpressionData());
 
         $this->notBetween
-            ->setIdentifier([10 => ExpressionInterface::TYPE_VALUE])
-            ->setMinValue(['foo.bar' => ExpressionInterface::TYPE_IDENTIFIER])
-            ->setMaxValue(['foo.baz' => ExpressionInterface::TYPE_IDENTIFIER]);
+            ->setIdentifier([10 => ArgumentType::Value])
+            ->setMinValue(['foo.bar' => ArgumentType::Identifier])
+            ->setMaxValue(['foo.baz' => ArgumentType::Identifier]);
         $expected = [
             [
                 $this->notBetween->getSpecification(),
                 [10, 'foo.bar', 'foo.baz'],
                 [
-                    ExpressionInterface::TYPE_VALUE,
-                    ExpressionInterface::TYPE_IDENTIFIER,
-                    ExpressionInterface::TYPE_IDENTIFIER,
+                    ArgumentType::Value,
+                    ArgumentType::Identifier,
+                    ArgumentType::Identifier,
                 ],
             ],
         ];
