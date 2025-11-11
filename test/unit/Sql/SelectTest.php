@@ -263,6 +263,11 @@ final class SelectTest extends TestCase
         $select = new Select();
         $select->where(['name' => 'Ralph', 'age' => 33]);
 
+        $identifier1 = new Argument('name', ArgumentType::Identifier);
+        $expression1 = new Argument('Ralph', ArgumentType::Value);
+        $identifier2 = new Argument('age', ArgumentType::Identifier);
+        $expression2 = new Argument(33, ArgumentType::Value);
+
         /** @var Where $where */
         $where      = $select->getRawState('where');
         $predicates = $where->getPredicates();
@@ -272,13 +277,13 @@ final class SelectTest extends TestCase
 
         self::assertInstanceOf(Operator::class, $predicates[0][1]);
         self::assertEquals(Predicate\PredicateSet::OP_AND, $predicates[0][0]);
-        self::assertEquals('name', $predicates[0][1]->getLeft());
-        self::assertEquals('Ralph', $predicates[0][1]->getRight());
+        self::assertEquals($identifier1, $predicates[0][1]->getLeft());
+        self::assertEquals($expression1, $predicates[0][1]->getRight());
 
         self::assertInstanceOf(Operator::class, $predicates[1][1]);
         self::assertEquals(Predicate\PredicateSet::OP_AND, $predicates[1][0]);
-        self::assertEquals('age', $predicates[1][1]->getLeft());
-        self::assertEquals(33, $predicates[1][1]->getRight());
+        self::assertEquals($identifier2, $predicates[1][1]->getLeft());
+        self::assertEquals($expression2, $predicates[1][1]->getRight());
 
         $select = new Select();
         $select->where(['x = y']);
