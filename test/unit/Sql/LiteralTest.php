@@ -1,6 +1,6 @@
 <?php
 
-namespace LaminasTest\Db\Sql;
+namespace PhpDbTest\Sql;
 
 use PhpDb\Sql\Literal;
 use PHPUnit\Framework\TestCase;

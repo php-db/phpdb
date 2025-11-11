@@ -1,12 +1,12 @@
 <?php
 
-namespace LaminasTest\Db\Metadata\Source;
+namespace PhpDbTest\Metadata\Source;
 
 use PhpDb\Adapter\Adapter;
 use PhpDb\Adapter\Driver\Oci8\Statement;
 use PhpDb\Metadata\Object\ConstraintObject;
 use PhpDb\Metadata\Source\OracleMetadata;
-use LaminasTest\Db\Adapter\Driver\Oci8\AbstractIntegrationTestCase;
+use PhpDbTest\Adapter\Driver\Oci8\AbstractIntegrationTestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\RequiresPhpExtension;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -25,7 +25,7 @@ class OracleMetadataTestCase extends AbstractIntegrationTestCase
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
-    #[\LaminasTest\Db\Adapter\Driver\Oci8\Override] #[\Override]
+    #[\PhpDbTest\Adapter\Driver\Oci8\Override] #[\Override]
     protected function setUp(): void
     {
         if (! extension_loaded('oci8')) {

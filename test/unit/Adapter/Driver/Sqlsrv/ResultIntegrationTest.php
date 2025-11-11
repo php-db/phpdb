@@ -1,6 +1,6 @@
 <?php
 
-namespace LaminasTest\Db\Adapter\Driver\Sqlsrv;
+namespace PhpDbTest\Adapter\Driver\Sqlsrv;
 
 use PhpDb\Adapter\Driver\Sqlsrv\Result;
 use Override;

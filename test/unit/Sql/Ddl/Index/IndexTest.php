@@ -1,6 +1,6 @@
 <?php
 
-namespace LaminasTest\Db\Sql\Ddl\Index;
+namespace PhpDbTest\Sql\Ddl\Index;
 
 use PhpDb\Sql\Argument;
 use PhpDb\Sql\Ddl\Index\Index;

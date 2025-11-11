@@ -1,6 +1,6 @@
 <?php
 
-namespace LaminasTest\Db\Sql\Platform\Oracle;
+namespace PhpDbTest\Sql\Platform\Oracle;
 
 use PhpDb\Adapter\Adapter;
 use PhpDb\Adapter\Driver\DriverInterface;

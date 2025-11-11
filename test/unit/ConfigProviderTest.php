@@ -1,6 +1,6 @@
 <?php
 
-namespace LaminasTest\Db;
+namespace PhpDbTest;
 
 use PhpDb\Adapter;
 use PhpDb\ConfigProvider;

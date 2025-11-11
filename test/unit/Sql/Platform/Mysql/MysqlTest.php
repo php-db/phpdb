@@ -1,6 +1,6 @@
 <?php
 
-namespace LaminasTest\Db\Sql\Platform\Mysql;
+namespace PhpDbTest\Sql\Platform\Mysql;
 
 use PhpDb\Sql\Platform\Mysql\Mysql;
 use PhpDb\Sql\Platform\Mysql\SelectDecorator;

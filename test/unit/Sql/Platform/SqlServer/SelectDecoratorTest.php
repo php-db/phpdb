@@ -1,6 +1,6 @@
 <?php
 
-namespace LaminasTest\Db\Sql\Platform\SqlServer;
+namespace PhpDbTest\Sql\Platform\SqlServer;
 
 use PhpDb\Adapter\Adapter;
 use PhpDb\Adapter\Driver\DriverInterface;

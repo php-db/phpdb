@@ -1,6 +1,6 @@
 <?php
 
-namespace LaminasTest\Db\Sql\Ddl\Column;
+namespace PhpDbTest\Sql\Ddl\Column;
 
 use PhpDb\Sql\Argument;
 use PhpDb\Sql\Ddl\Column\Blob;

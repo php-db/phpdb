@@ -1,6 +1,6 @@
 <?php
 
-namespace LaminasTest\Db\Metadata\Source;
+namespace PhpDbTest\Metadata\Source;
 
 use PhpDb\Metadata\Object\ConstraintKeyObject;
 use PhpDb\Metadata\Source\AbstractSource;

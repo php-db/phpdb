@@ -1,6 +1,6 @@
 <?php
 
-namespace LaminasTest\Db\Sql\Platform\Sqlite;
+namespace PhpDbTest\Sql\Platform\Sqlite;
 
 use PhpDb\Sql\Platform\Sqlite\SelectDecorator;
 use PhpDb\Sql\Platform\Sqlite\Sqlite;

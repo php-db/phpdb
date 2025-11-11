@@ -1,6 +1,6 @@
 <?php
 
-namespace LaminasTest\Db\Sql;
+namespace PhpDbTest\Sql;
 
 use PhpDb\Adapter\Adapter;
 use PhpDb\Adapter\Driver\DriverInterface;
@@ -12,9 +12,9 @@ use PhpDb\Sql\Expression;
 use PhpDb\Sql\Insert;
 use PhpDb\Sql\Select;
 use PhpDb\Sql\TableIdentifier;
-use LaminasTest\Db\DeprecatedAssertionsTrait;
-use LaminasTest\Db\TestAsset\Replace;
-use LaminasTest\Db\TestAsset\TrustingSql92Platform;
+use PhpDbTest\DeprecatedAssertionsTrait;
+use PhpDbTest\TestAsset\Replace;
+use PhpDbTest\TestAsset\TrustingSql92Platform;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\Group;

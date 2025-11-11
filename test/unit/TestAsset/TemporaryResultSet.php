@@ -1,6 +1,6 @@
 <?php
 
-namespace LaminasTest\Db\TestAsset;
+namespace PhpDbTest\TestAsset;
 
 use PhpDb\ResultSet\ResultSet;
 

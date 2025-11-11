@@ -1,6 +1,6 @@
 <?php
 
-namespace LaminasTest\Db\Adapter\Platform;
+namespace PhpDbTest\Adapter\Platform;
 
 use PhpDb\Adapter\Platform\Postgresql;
 use PHPUnit\Framework\Attributes\CoversMethod;

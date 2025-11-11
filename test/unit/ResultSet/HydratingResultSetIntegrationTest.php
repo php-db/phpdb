@@ -1,6 +1,6 @@
 <?php
 
-namespace LaminasTest\Db\ResultSet;
+namespace PhpDbTest\ResultSet;
 
 use ArrayIterator;
 use PhpDb\ResultSet\HydratingResultSet;

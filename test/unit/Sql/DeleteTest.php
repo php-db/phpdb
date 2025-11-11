@@ -1,6 +1,6 @@
 <?php
 
-namespace LaminasTest\Db\Sql;
+namespace PhpDbTest\Sql;
 
 use PhpDb\Adapter\Adapter;
 use PhpDb\Adapter\Driver\DriverInterface;
@@ -15,8 +15,8 @@ use PhpDb\Sql\Predicate\Operator;
 use PhpDb\Sql\Predicate\PredicateSet;
 use PhpDb\Sql\TableIdentifier;
 use PhpDb\Sql\Where;
-use LaminasTest\Db\DeprecatedAssertionsTrait;
-use LaminasTest\Db\TestAsset\DeleteIgnore;
+use PhpDbTest\DeprecatedAssertionsTrait;
+use PhpDbTest\TestAsset\DeleteIgnore;
 use Override;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\CoversNothing;

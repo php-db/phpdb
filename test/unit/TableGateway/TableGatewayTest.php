@@ -1,6 +1,6 @@
 <?php
 
-namespace LaminasTest\Db\TableGateway;
+namespace PhpDbTest\TableGateway;
 
 use PhpDb\Adapter\Adapter;
 use PhpDb\Adapter\Driver\ConnectionInterface;

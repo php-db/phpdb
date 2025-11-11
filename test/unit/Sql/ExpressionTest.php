@@ -1,6 +1,6 @@
 <?php
 
-namespace LaminasTest\Db\Sql;
+namespace PhpDbTest\Sql;
 
 use PhpDb\Sql\Argument;
 use PhpDb\Sql\ArgumentType;

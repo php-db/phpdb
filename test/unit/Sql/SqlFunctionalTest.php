@@ -1,6 +1,6 @@
 <?php
 
-namespace LaminasTest\Db\Sql;
+namespace PhpDbTest\Sql;
 
 use PhpDb\Adapter;
 use PhpDb\Adapter\Driver\DriverInterface;
@@ -19,7 +19,7 @@ use PhpDb\Sql\Select;
 use PhpDb\Sql\SqlInterface;
 use PhpDb\Sql\TableIdentifier;
 use PhpDb\Sql\Update;
-use LaminasTest\Db\TestAsset;
+use PhpDbTest\TestAsset;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;

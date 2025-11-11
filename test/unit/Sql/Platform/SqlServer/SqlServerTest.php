@@ -1,6 +1,6 @@
 <?php
 
-namespace LaminasTest\Db\Sql\Platform\SqlServer;
+namespace PhpDbTest\Sql\Platform\SqlServer;
 
 use PhpDb\Sql\Platform\SqlServer\SelectDecorator;
 use PhpDb\Sql\Platform\SqlServer\SqlServer;

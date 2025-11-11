@@ -1,6 +1,6 @@
 <?php
 
-namespace LaminasTest\Db\Sql\Ddl\Constraint;
+namespace PhpDbTest\Sql\Ddl\Constraint;
 
 use PhpDb\Sql\Ddl\Constraint\AbstractConstraint;
 use PHPUnit\Framework\Attributes\CoversMethod;

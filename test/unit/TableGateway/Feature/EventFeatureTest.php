@@ -1,6 +1,6 @@
 <?php
 
-namespace LaminasTest\Db\TableGateway\Feature;
+namespace PhpDbTest\TableGateway\Feature;
 
 use PhpDb\Adapter\Driver\ResultInterface;
 use PhpDb\Adapter\Driver\StatementInterface;

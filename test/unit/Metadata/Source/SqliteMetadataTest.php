@@ -1,6 +1,6 @@
 <?php
 
-namespace LaminasTest\Db\Metadata\Source;
+namespace PhpDbTest\Metadata\Source;
 
 use Exception;
 use PhpDb\Adapter\Adapter;

@@ -1,6 +1,6 @@
 <?php
 
-namespace LaminasTest\Db\Adapter\Platform;
+namespace PhpDbTest\Adapter\Platform;
 
 use PhpDb\Adapter\Platform\Sql92;
 use PHPUnit\Framework\Attributes\CoversMethod;

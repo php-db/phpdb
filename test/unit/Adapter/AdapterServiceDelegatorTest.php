@@ -1,6 +1,6 @@
 <?php
 
-namespace LaminasTest\Db\Adapter;
+namespace PhpDbTest\Adapter;
 
 use PhpDb\Adapter\Adapter;
 use PhpDb\Adapter\AdapterAwareInterface;
@@ -9,7 +9,7 @@ use PhpDb\Adapter\AdapterServiceDelegator;
 use PhpDb\Adapter\Driver\DriverInterface;
 use Laminas\ServiceManager\AbstractPluginManager;
 use Laminas\ServiceManager\ServiceManager;
-use LaminasTest\Db\Adapter\TestAsset\ConcreteAdapterAwareObject;
+use PhpDbTest\Adapter\TestAsset\ConcreteAdapterAwareObject;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerExceptionInterface;

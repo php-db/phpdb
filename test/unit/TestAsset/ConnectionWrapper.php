@@ -1,11 +1,11 @@
 <?php
 
-namespace LaminasTest\Db\TestAsset;
+namespace PhpDbTest\TestAsset;
 
 use PhpDb\Adapter\Driver\Pdo\Connection;
 
 /**
- * Test asset class used only by {@see \LaminasTest\Db\Adapter\Driver\Pdo\ConnectionTransactionsTest}
+ * Test asset class used only by {@see \PhpDbTest\Adapter\Driver\Pdo\ConnectionTransactionsTest}
  */
 class ConnectionWrapper extends Connection
 {

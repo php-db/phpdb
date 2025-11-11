@@ -1,6 +1,6 @@
 <?php
 
-namespace LaminasTest\Db\Adapter\Driver\IbmDb2;
+namespace PhpDbTest\Adapter\Driver\IbmDb2;
 
 use PhpDb\Adapter\Driver\IbmDb2\IbmDb2;
 use PhpDb\Adapter\Driver\IbmDb2\Statement;

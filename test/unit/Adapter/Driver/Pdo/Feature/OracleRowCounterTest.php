@@ -1,6 +1,6 @@
 <?php
 
-namespace LaminasTest\Db\Adapter\Driver\Pdo\Feature;
+namespace PhpDbTest\Adapter\Driver\Pdo\Feature;
 
 use PhpDb\Adapter\Driver\ConnectionInterface;
 use PhpDb\Adapter\Driver\Pdo\Feature\OracleRowCounter;

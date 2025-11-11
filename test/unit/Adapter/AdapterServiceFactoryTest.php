@@ -1,6 +1,6 @@
 <?php
 
-namespace LaminasTest\Db\Adapter;
+namespace PhpDbTest\Adapter;
 
 use PhpDb\Adapter\Adapter;
 use PhpDb\Adapter\AdapterServiceFactory;

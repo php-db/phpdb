@@ -1,6 +1,6 @@
 <?php
 
-namespace LaminasTest\Db\Sql\Predicate;
+namespace PhpDbTest\Sql\Predicate;
 
 use PhpDb\Sql\Predicate\Expression;
 use PhpDb\Sql\Predicate\In;
@@ -9,7 +9,7 @@ use PhpDb\Sql\Predicate\IsNull;
 use PhpDb\Sql\Predicate\Literal;
 use PhpDb\Sql\Predicate\Operator;
 use PhpDb\Sql\Predicate\PredicateSet;
-use LaminasTest\Db\DeprecatedAssertionsTrait;
+use PhpDbTest\DeprecatedAssertionsTrait;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 use ReflectionException;

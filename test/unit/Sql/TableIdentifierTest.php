@@ -1,10 +1,10 @@
 <?php
 
-namespace LaminasTest\Db\Sql;
+namespace PhpDbTest\Sql;
 
 use PhpDb\Sql\Exception\InvalidArgumentException;
 use PhpDb\Sql\TableIdentifier;
-use LaminasTest\Db\TestAsset\ObjectToString;
+use PhpDbTest\TestAsset\ObjectToString;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;

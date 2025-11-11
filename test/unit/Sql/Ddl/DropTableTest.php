@@ -1,6 +1,6 @@
 <?php
 
-namespace LaminasTest\Db\Sql\Ddl;
+namespace PhpDbTest\Sql\Ddl;
 
 use PhpDb\Sql\Ddl\DropTable;
 use PhpDb\Sql\TableIdentifier;

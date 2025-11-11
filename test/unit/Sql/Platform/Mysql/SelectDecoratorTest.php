@@ -1,6 +1,6 @@
 <?php
 
-namespace LaminasTest\Db\Sql\Platform\Mysql;
+namespace PhpDbTest\Sql\Platform\Mysql;
 
 use PhpDb\Adapter\Adapter;
 use PhpDb\Adapter\Driver\DriverInterface;
@@ -14,7 +14,7 @@ use PhpDb\Sql\Expression;
 use PhpDb\Sql\Platform\Mysql\SelectDecorator;
 use PhpDb\Sql\Select;
 use PhpDb\Sql\Sql;
-use LaminasTest\Db\TestAsset\TrustingMysqlPlatform;
+use PhpDbTest\TestAsset\TrustingMysqlPlatform;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\TestDox;

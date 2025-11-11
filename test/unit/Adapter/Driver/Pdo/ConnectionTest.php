@@ -1,6 +1,6 @@
 <?php
 
-namespace LaminasTest\Db\Adapter\Driver\Pdo;
+namespace PhpDbTest\Adapter\Driver\Pdo;
 
 use Exception;
 use PhpDb\Adapter\Driver\Pdo\Connection;

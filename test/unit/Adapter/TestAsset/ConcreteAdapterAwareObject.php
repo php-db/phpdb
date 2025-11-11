@@ -1,6 +1,6 @@
 <?php
 
-namespace LaminasTest\Db\Adapter\TestAsset;
+namespace PhpDbTest\Adapter\TestAsset;
 
 use PhpDb\Adapter\AdapterAwareInterface;
 use PhpDb\Adapter\AdapterAwareTrait;

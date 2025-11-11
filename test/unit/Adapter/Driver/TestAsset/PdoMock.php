@@ -1,6 +1,6 @@
 <?php
 
-namespace LaminasTest\Db\Adapter\Driver\TestAsset;
+namespace PhpDbTest\Adapter\Driver\TestAsset;
 
 use Override;
 use PDO;

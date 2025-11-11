@@ -1,6 +1,6 @@
 <?php
 
-namespace LaminasTest\Db\Sql\Predicate;
+namespace PhpDbTest\Sql\Predicate;
 
 use PhpDb\Sql\Predicate\Literal;
 use PHPUnit\Framework\TestCase;

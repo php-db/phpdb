@@ -1,6 +1,6 @@
 <?php
 
-namespace LaminasTest\Db\Adapter\Driver\Pdo;
+namespace PhpDbTest\Adapter\Driver\Pdo;
 
 use PhpDb\Adapter\Driver\Pdo\Result;
 use PhpDb\Adapter\Exception\InvalidArgumentException;

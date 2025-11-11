@@ -1,13 +1,13 @@
 <?php
 
-namespace LaminasTest\Db\Sql\Platform;
+namespace PhpDbTest\Sql\Platform;
 
 use PhpDb\Adapter\Adapter;
 use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\StatementContainer;
 use PhpDb\Sql\Exception\RuntimeException;
 use PhpDb\Sql\Platform\Platform;
-use LaminasTest\Db\TestAsset;
+use PhpDbTest\TestAsset;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;

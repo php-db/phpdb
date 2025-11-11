@@ -1,6 +1,6 @@
 <?php
 
-namespace LaminasTest\Db\Adapter\Driver\Pgsql;
+namespace PhpDbTest\Adapter\Driver\Pgsql;
 
 use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\Driver\Pgsql\Connection;

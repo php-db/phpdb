@@ -1,6 +1,6 @@
 <?php
 
-namespace LaminasTest\Db\Sql\Platform\SqlServer\Ddl;
+namespace PhpDbTest\Sql\Platform\SqlServer\Ddl;
 
 use PhpDb\Sql\Ddl\Column\Column;
 use PhpDb\Sql\Ddl\CreateTable;

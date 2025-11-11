@@ -1,6 +1,6 @@
 <?php
 
-namespace LaminasTest\Db\Adapter;
+namespace PhpDbTest\Adapter;
 
 use PhpDb\Adapter\ParameterContainer;
 use PHPUnit\Framework\Attributes\CoversMethod;

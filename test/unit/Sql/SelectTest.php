@@ -1,6 +1,6 @@
 <?php
 
-namespace LaminasTest\Db\Sql;
+namespace PhpDbTest\Sql;
 
 use PhpDb\Adapter\Adapter;
 use PhpDb\Adapter\Driver\DriverInterface;
@@ -22,7 +22,7 @@ use PhpDb\Sql\Predicate\Operator;
 use PhpDb\Sql\Select;
 use PhpDb\Sql\TableIdentifier;
 use PhpDb\Sql\Where;
-use LaminasTest\Db\TestAsset\TrustingSql92Platform;
+use PhpDbTest\TestAsset\TrustingSql92Platform;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Depends;

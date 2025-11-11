@@ -1,6 +1,6 @@
 <?php
 
-namespace LaminasTest\Db\TableGateway\Feature;
+namespace PhpDbTest\TableGateway\Feature;
 
 use PhpDb\Metadata\MetadataInterface;
 use PhpDb\Metadata\Object\ConstraintObject;

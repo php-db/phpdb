@@ -1,11 +1,11 @@
 <?php
 
-namespace LaminasTest\Db\Adapter\Driver\Pdo;
+namespace PhpDbTest\Adapter\Driver\Pdo;
 
 use PhpDb\Adapter\Driver\AbstractConnection;
 use PhpDb\Adapter\Driver\Pdo\Connection;
 use PhpDb\Adapter\Exception\RuntimeException;
-use LaminasTest\Db\TestAsset\ConnectionWrapper;
+use PhpDbTest\TestAsset\ConnectionWrapper;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;

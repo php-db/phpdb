@@ -1,6 +1,6 @@
 <?php
 
-namespace LaminasTest\Db\ResultSet;
+namespace PhpDbTest\ResultSet;
 
 use PhpDb\Adapter\Driver\ResultInterface;
 use PhpDb\ResultSet\AbstractResultSet;

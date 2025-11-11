@@ -1,6 +1,6 @@
 <?php
 
-namespace LaminasTest\Db\TestAsset;
+namespace PhpDbTest\TestAsset;
 
 use PhpDb\Adapter\Platform\Sql92;
 use Override;

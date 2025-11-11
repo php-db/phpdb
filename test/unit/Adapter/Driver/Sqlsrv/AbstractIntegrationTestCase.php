@@ -2,7 +2,7 @@
 
 /** @noinspection PhpComposerExtensionStubsInspection */
 
-namespace LaminasTest\Db\Adapter\Driver\Sqlsrv;
+namespace PhpDbTest\Adapter\Driver\Sqlsrv;
 
 use PHPUnit\Framework\TestCase;
 

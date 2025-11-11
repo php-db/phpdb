@@ -1,12 +1,12 @@
 <?php
 
-namespace LaminasTest\Db\Adapter;
+namespace PhpDbTest\Adapter;
 
 use PhpDb\Adapter\Adapter;
 use PhpDb\Adapter\AdapterAwareTrait;
 use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\Platform\PlatformInterface;
-use LaminasTest\Db\DeprecatedAssertionsTrait;
+use PhpDbTest\DeprecatedAssertionsTrait;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
 use ReflectionException;

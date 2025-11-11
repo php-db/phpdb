@@ -1,6 +1,6 @@
 <?php
 
-namespace LaminasTest\Db\Adapter\Driver\Sqlsrv;
+namespace PhpDbTest\Adapter\Driver\Sqlsrv;
 
 use PhpDb\Adapter\Driver\Pdo\Pdo;
 use PHPUnit\Framework\Attributes\Group;

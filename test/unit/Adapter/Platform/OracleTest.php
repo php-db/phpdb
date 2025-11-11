@@ -1,6 +1,6 @@
 <?php
 
-namespace LaminasTest\Db\Adapter\Platform;
+namespace PhpDbTest\Adapter\Platform;
 
 use PhpDb\Adapter\Driver\Oci8\Oci8;
 use PhpDb\Adapter\Exception\InvalidArgumentException;

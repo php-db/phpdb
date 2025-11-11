@@ -1,6 +1,6 @@
 <?php
 
-namespace LaminasTest\Db\Sql\Platform\Oracle;
+namespace PhpDbTest\Sql\Platform\Oracle;
 
 use PhpDb\Sql\Platform\Oracle\Oracle;
 use PhpDb\Sql\Platform\Oracle\SelectDecorator;

@@ -1,6 +1,6 @@
 <?php
 
-namespace LaminasTest\Db\RowGateway;
+namespace PhpDbTest\RowGateway;
 
 use PhpDb\Adapter\Adapter;
 use PhpDb\Adapter\Driver\ConnectionInterface;

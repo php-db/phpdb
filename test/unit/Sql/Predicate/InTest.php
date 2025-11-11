@@ -1,6 +1,6 @@
 <?php
 
-namespace LaminasTest\Db\Sql\Predicate;
+namespace PhpDbTest\Sql\Predicate;
 
 use PhpDb\Sql\Argument;
 use PhpDb\Sql\ArgumentType;

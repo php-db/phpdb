@@ -1,6 +1,6 @@
 <?php
 
-namespace LaminasTest\Db\Sql\Platform\Mysql\Ddl;
+namespace PhpDbTest\Sql\Platform\Mysql\Ddl;
 
 use PhpDb\Adapter\Platform\Mysql;
 use PhpDb\Sql\Ddl\Column\Column;

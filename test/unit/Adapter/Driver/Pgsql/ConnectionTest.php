@@ -1,12 +1,12 @@
 <?php
 
-namespace LaminasTest\Db\Adapter\Driver\Pgsql;
+namespace PhpDbTest\Adapter\Driver\Pgsql;
 
 use PhpDb\Adapter\Driver\Pgsql\Connection;
 use PhpDb\Adapter\Exception as AdapterException;
 use PhpDb\Adapter\Exception\InvalidArgumentException;
 use PhpDb\Adapter\Exception\RuntimeException;
-use LaminasTest\Db\DeprecatedAssertionsTrait;
+use PhpDbTest\DeprecatedAssertionsTrait;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunInSeparateProcess;

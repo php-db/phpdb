@@ -1,6 +1,6 @@
 <?php
 
-namespace LaminasTest\Db\Adapter\Driver\Oci8;
+namespace PhpDbTest\Adapter\Driver\Oci8;
 
 use PHPUnit\Framework\TestCase;
 

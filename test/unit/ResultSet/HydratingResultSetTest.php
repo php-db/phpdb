@@ -1,6 +1,6 @@
 <?php
 
-namespace LaminasTest\Db\ResultSet;
+namespace PhpDbTest\ResultSet;
 
 use PhpDb\ResultSet\HydratingResultSet;
 use Laminas\Hydrator\ArraySerializable;

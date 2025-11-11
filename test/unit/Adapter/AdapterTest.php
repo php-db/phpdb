@@ -1,6 +1,6 @@
 <?php
 
-namespace LaminasTest\Db\Adapter;
+namespace PhpDbTest\Adapter;
 
 use PhpDb\Adapter\Adapter;
 use PhpDb\Adapter\Driver\ConnectionInterface;
@@ -23,7 +23,7 @@ use PhpDb\Adapter\Platform\SqlServer;
 use PhpDb\Adapter\Profiler;
 use PhpDb\ResultSet\ResultSet;
 use PhpDb\ResultSet\ResultSetInterface;
-use LaminasTest\Db\TestAsset\TemporaryResultSet;
+use PhpDbTest\TestAsset\TemporaryResultSet;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\TestDox;

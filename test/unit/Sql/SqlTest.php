@@ -1,6 +1,6 @@
 <?php
 
-namespace LaminasTest\Db\Sql;
+namespace PhpDbTest\Sql;
 
 use PhpDb\Adapter\Adapter;
 use PhpDb\Adapter\Driver\ConnectionInterface;
@@ -13,7 +13,7 @@ use PhpDb\Sql\Insert;
 use PhpDb\Sql\Select;
 use PhpDb\Sql\Sql;
 use PhpDb\Sql\Update;
-use LaminasTest\Db\TestAsset;
+use PhpDbTest\TestAsset;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\MockObject\Exception;

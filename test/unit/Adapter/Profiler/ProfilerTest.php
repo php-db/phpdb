@@ -1,6 +1,6 @@
 <?php
 
-namespace LaminasTest\Db\Adapter\Profiler;
+namespace PhpDbTest\Adapter\Profiler;
 
 use PhpDb\Adapter\Exception\InvalidArgumentException;
 use PhpDb\Adapter\Exception\RuntimeException;

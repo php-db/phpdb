@@ -1,6 +1,6 @@
 <?php
 
-namespace LaminasTest\Db\Adapter\Driver\Oci8\Feature;
+namespace PhpDbTest\Adapter\Driver\Oci8\Feature;
 
 use Closure;
 use PhpDb\Adapter\Driver\ConnectionInterface;
