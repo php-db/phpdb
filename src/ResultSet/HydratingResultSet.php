@@ -15,7 +15,7 @@ class HydratingResultSet extends AbstractResultSet
 {
     public function __construct(
         private HydratorInterface $hydrator = new ArraySerializableHydrator(),
-        private object $rowPrototype     = new ArrayObject()
+        private ?object $rowPrototype       = new ArrayObject()
     ) {
     }
 
@@ -77,7 +77,7 @@ class HydratingResultSet extends AbstractResultSet
             return $this->buffer[$this->position];
         }
         $data    = $this->dataSource->current();
-        $current = is_array($data) ? $this->hydrator->hydrate($data, clone $this->objectPrototype) : null;
+        $current = is_array($data) ? $this->hydrator->hydrate($data, clone $this->rowPrototype) : null;
 
         if (is_array($this->buffer)) {
             $this->buffer[$this->position] = $current;
