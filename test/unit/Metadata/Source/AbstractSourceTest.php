@@ -24,7 +24,7 @@ final class AbstractSourceTest extends TestCase
     {
         $this->abstractSourceMock = $this->getMockBuilder(AbstractSource::class)
             ->setConstructorArgs([])
-            ->onlyMethods([])
+            ->onlyMethods(['loadSchemaData'])
             ->disableOriginalConstructor()
             ->getMock();
     }
