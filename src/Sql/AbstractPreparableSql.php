@@ -5,6 +5,7 @@ namespace PhpDb\Sql;
 use PhpDb\Adapter\AdapterInterface;
 use PhpDb\Adapter\ParameterContainer;
 use PhpDb\Adapter\StatementContainerInterface;
+use Override;
 
 abstract class AbstractPreparableSql extends AbstractSql implements PreparableSqlInterface
 {
@@ -13,15 +14,13 @@ abstract class AbstractPreparableSql extends AbstractSql implements PreparableSq
      *
      * @return StatementContainerInterface
      */
-    public function prepareStatement(AdapterInterface $adapter, StatementContainerInterface $statementContainer)
+    #[Override] public function prepareStatement(AdapterInterface $adapter, StatementContainerInterface $statementContainer): StatementContainerInterface
     {
-        // todo: parameterContainer is not instanceof ParameterContainer when
-        // Mysqli is used?
         $parameterContainer = $statementContainer->getParameterContainer();
 
         if (! $parameterContainer instanceof ParameterContainer) {
             $parameterContainer = new ParameterContainer();
-            // todo: setting empty parameter container with mapped parameters and mysqli adapter
+
             $statementContainer->setParameterContainer($parameterContainer);
         }
 
