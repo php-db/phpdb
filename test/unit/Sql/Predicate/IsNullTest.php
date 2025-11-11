@@ -2,6 +2,8 @@
 
 namespace PhpDbTest\Sql\Predicate;
 
+use PhpDb\Sql\Argument;
+use PhpDb\Sql\ArgumentType;
 use PhpDb\Sql\Predicate\IsNotNull;
 use PHPUnit\Framework\TestCase;
 
@@ -22,15 +24,17 @@ final class IsNullTest extends TestCase
     public function testCanPassIdentifierToConstructor(): void
     {
         new IsNotNull();
-        $isnull = new IsNotNull('foo.bar');
-        self::assertEquals('foo.bar', $isnull->getIdentifier());
+        $isnull     = new IsNotNull('foo.bar');
+        $identifier = new Argument('foo.bar', ArgumentType::Identifier);
+        self::assertEquals($identifier, $isnull->getIdentifier());
     }
 
     public function testIdentifierIsMutable(): void
     {
         $isNotNull = new IsNotNull();
         $isNotNull->setIdentifier('foo.bar');
-        self::assertEquals('foo.bar', $isNotNull->getIdentifier());
+        $identifier = new Argument('foo.bar', ArgumentType::Identifier);
+        self::assertEquals($identifier, $isNotNull->getIdentifier());
     }
 
     public function testSpecificationIsMutable(): void
@@ -44,13 +48,11 @@ final class IsNullTest extends TestCase
     {
         $isNotNull = new IsNotNull();
         $isNotNull->setIdentifier('foo.bar');
-        $expected = [
-            [
-                $isNotNull->getSpecification(),
-                ['foo.bar'],
-                [IsNotNull::TYPE_IDENTIFIER],
-            ],
-        ];
-        self::assertEquals($expected, $isNotNull->getExpressionData());
+        $identifier = new Argument('foo.bar', ArgumentType::Identifier);
+
+        $expressionData = $isNotNull->getExpressionData();
+
+        self::assertEquals($isNotNull->getSpecification(), $expressionData->getExpressionSpecification());
+        self::assertEquals([$identifier], $expressionData->getExpressionValues());
     }
 }

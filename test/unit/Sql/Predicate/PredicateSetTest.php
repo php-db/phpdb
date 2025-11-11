@@ -2,7 +2,6 @@
 
 namespace PhpDbTest\Sql\Predicate;
 
-use PhpDb\Sql\Exception\InvalidArgumentException;
 use PhpDb\Sql\Predicate\Expression;
 use PhpDb\Sql\Predicate\In;
 use PhpDb\Sql\Predicate\IsNotNull;
@@ -14,8 +13,7 @@ use PhpDbTest\DeprecatedAssertionsTrait;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 use ReflectionException;
-
-use function var_export;
+use TypeError;
 
 #[CoversMethod(PredicateSet::class, 'addPredicates')]
 final class PredicateSetTest extends TestCase
@@ -31,66 +29,75 @@ final class PredicateSetTest extends TestCase
     public function testCombinationIsAndByDefault(): void
     {
         $predicateSet = new PredicateSet();
-        $predicateSet->addPredicate(new IsNull('foo'))
-                  ->addPredicate(new IsNull('bar'));
-        $parts = $predicateSet->getExpressionData();
-        self::assertCount(3, $parts);
+        $predicateSet
+            ->addPredicate(new IsNull('foo'))
+            ->addPredicate(new IsNull('bar'));
 
-        self::assertStringContainsString('AND', (string) $parts[1]);
-        self::assertStringNotContainsString('OR', (string) $parts[1]);
+        $expressionData = $predicateSet->getExpressionData();
+
+        self::assertCount(3, $expressionData->getExpressionParts());
+        self::assertStringContainsString('AND', $expressionData->getExpressionSpecification());
+        self::assertStringNotContainsString('OR', $expressionData->getExpressionSpecification());
     }
 
     public function testCanPassPredicatesAndDefaultCombinationViaConstructor(): void
     {
         new PredicateSet();
-        $set   = new PredicateSet([
+        $predicateSet = new PredicateSet([
             new IsNull('foo'),
             new IsNull('bar'),
         ], 'OR');
-        $parts = $set->getExpressionData();
-        self::assertCount(3, $parts);
-        self::assertStringContainsString('OR', (string) $parts[1]);
-        self::assertStringNotContainsString('AND', (string) $parts[1]);
+
+        $expressionData = $predicateSet->getExpressionData();
+
+        self::assertCount(3, $expressionData->getExpressionParts());
+        self::assertStringContainsString('OR', $expressionData->getExpressionSpecification());
+        self::assertStringNotContainsString('AND', $expressionData->getExpressionSpecification());
     }
 
     public function testCanPassBothPredicateAndCombinationToAddPredicate(): void
     {
         $predicateSet = new PredicateSet();
-        $predicateSet->addPredicate(new IsNull('foo'), 'OR')
-                  ->addPredicate(new IsNull('bar'), 'AND')
-                  ->addPredicate(new IsNull('baz'), 'OR')
-                  ->addPredicate(new IsNull('bat'), 'AND');
-        $parts = $predicateSet->getExpressionData();
-        self::assertCount(7, $parts);
+        $predicateSet
+            ->addPredicate(new IsNull('foo'), 'OR')
+            ->addPredicate(new IsNull('bar'), 'AND')
+            ->addPredicate(new IsNull('baz'), 'OR')
+            ->addPredicate(new IsNull('bat'), 'AND');
 
-        self::assertStringNotContainsString('OR', (string) $parts[1], var_export($parts, true));
-        self::assertStringContainsString('AND', (string) $parts[1]);
+        $expressionData = $predicateSet->getExpressionData();
 
-        self::assertStringContainsString('OR', (string) $parts[3]);
-        self::assertStringNotContainsString('AND', (string) $parts[3]);
+        self::assertCount(7, $expressionData);
 
-        self::assertStringNotContainsString('OR', (string) $parts[5]);
-        self::assertStringContainsString('AND', (string) $parts[5]);
+        self::assertStringNotContainsString('OR', $expressionData->getExpressionPart(1)->getSpecificationString());
+        self::assertStringContainsString('AND', $expressionData->getExpressionPart(1)->getSpecificationString());
+
+        self::assertStringContainsString('OR', $expressionData->getExpressionPart(3)->getSpecificationString());
+        self::assertStringNotContainsString('AND', $expressionData->getExpressionPart(3)->getSpecificationString());
+
+        self::assertStringNotContainsString('OR', $expressionData->getExpressionPart(5)->getSpecificationString());
+        self::assertStringContainsString('AND', $expressionData->getExpressionPart(5)->getSpecificationString());
     }
 
     public function testCanUseOrPredicateAndAndPredicateMethods(): void
     {
         $predicateSet = new PredicateSet();
         $predicateSet->orPredicate(new IsNull('foo'))
-                  ->andPredicate(new IsNull('bar'))
-                  ->orPredicate(new IsNull('baz'))
-                  ->andPredicate(new IsNull('bat'));
-        $parts = $predicateSet->getExpressionData();
-        self::assertCount(7, $parts);
+                     ->andPredicate(new IsNull('bar'))
+                     ->orPredicate(new IsNull('baz'))
+                     ->andPredicate(new IsNull('bat'));
 
-        self::assertStringNotContainsString('OR', (string) $parts[1], var_export($parts, true));
-        self::assertStringContainsString('AND', (string) $parts[1]);
+        $expressionData = $predicateSet->getExpressionData();
 
-        self::assertStringContainsString('OR', (string) $parts[3]);
-        self::assertStringNotContainsString('AND', (string) $parts[3]);
+        self::assertCount(7, $expressionData);
 
-        self::assertStringNotContainsString('OR', (string) $parts[5]);
-        self::assertStringContainsString('AND', (string) $parts[5]);
+        self::assertStringNotContainsString('OR', $expressionData->getExpressionPart(1)->getSpecificationString());
+        self::assertStringContainsString('AND', $expressionData->getExpressionPart(1)->getSpecificationString());
+
+        self::assertStringContainsString('OR', $expressionData->getExpressionPart(3)->getSpecificationString());
+        self::assertStringNotContainsString('AND', $expressionData->getExpressionPart(3)->getSpecificationString());
+
+        self::assertStringNotContainsString('OR', $expressionData->getExpressionPart(5)->getSpecificationString());
+        self::assertStringContainsString('AND', $expressionData->getExpressionPart(5)->getSpecificationString());
     }
 
     /**
@@ -143,8 +150,7 @@ final class PredicateSetTest extends TestCase
             self::assertSame($predicateSet, $what);
         });
 
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Predicate cannot be null');
+        $this->expectException(TypeError::class);
         /** @psalm-suppress NullArgument - ensure an exception is thrown */
         $predicateSet->addPredicates(null);
     }

@@ -7,6 +7,7 @@ use PhpDb\Adapter\ParameterContainer;
 use PhpDb\Adapter\Platform\PlatformInterface;
 use PhpDb\Adapter\Platform\Sql92 as DefaultAdapterPlatform;
 use PhpDb\Sql\Platform\PlatformDecoratorInterface;
+use ValueError;
 
 use function count;
 use function current;
@@ -17,6 +18,7 @@ use function is_array;
 use function is_callable;
 use function is_object;
 use function is_string;
+use function join;
 use function key;
 use function preg_replace;
 use function rtrim;
@@ -26,36 +28,34 @@ use function vsprintf;
 
 abstract class AbstractSql implements SqlInterface
 {
+    public $subject;
     /**
      * Specifications for Sql String generation
      *
      * @var string[]|array[]
      */
-    protected $specifications = [];
+    protected array $specifications = [];
 
-    /** @var string */
-    protected $processInfo = ['paramPrefix' => '', 'subselectCount' => 0];
+    protected array $processInfo = ['paramPrefix' => '', 'subselectCount' => 0];
 
-    /** @var array */
-    protected $instanceParameterIndex = [];
+    protected array $instanceParameterIndex = [];
 
     /**
      * {@inheritDoc}
      */
-    public function getSqlString(?PlatformInterface $adapterPlatform = null)
+    #[\Override]
+    public function getSqlString(?PlatformInterface $adapterPlatform = null): string
     {
         $adapterPlatform = $adapterPlatform ?: new DefaultAdapterPlatform();
+
         return $this->buildSqlString($adapterPlatform);
     }
 
-    /**
-     * @return string
-     */
     protected function buildSqlString(
         PlatformInterface $platform,
         ?DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null
-    ) {
+    ): string {
         $this->localizeVariables();
 
         $sqls       = [];
@@ -72,7 +72,6 @@ abstract class AbstractSql implements SqlInterface
 
             if ($specification && is_array($parameters[$name])) {
                 $sqls[$name] = $this->createSqlFromSpecificationAndParameters($specification, $parameters[$name]);
-
                 continue;
             }
 
@@ -87,10 +86,10 @@ abstract class AbstractSql implements SqlInterface
     /**
      * Render table with alias in from/join parts
      *
-     * @todo move TableIdentifier concatenation here
      * @param string $table
      * @param string $alias
      * @return string
+     * @todo move TableIdentifier concatenation here
      */
     protected function renderTable($table, $alias = null)
     {
@@ -171,7 +170,7 @@ abstract class AbstractSql implements SqlInterface
             ),
             ArgumentType::Identifier => $platform->quoteIdentifierInFragment($argument->getValueAsString()),
             ArgumentType::Literal => $argument->getValueAsString(),
-            ArgumentType::Value => $parameterContainer instanceof ParameterContainer ?
+            ArgumentType::Value => $parameterContainer instanceof \PhpDb\Adapter\ParameterContainer ?
                 $this->processExpressionParameterName(
                     $argument->getValue(),
                     $namedParameterPrefix,
@@ -301,7 +300,7 @@ abstract class AbstractSql implements SqlInterface
             $decorator = $subselect;
         }
 
-        if ($parameterContainer instanceof ParameterContainer) {
+        if ($parameterContainer instanceof \PhpDb\Adapter\ParameterContainer) {
             // Track subselect prefix and count for parameters
             $processInfoContext = $decorator instanceof PlatformDecoratorInterface ? $subselect : $decorator;
             $this->processInfo['subselectCount']++;

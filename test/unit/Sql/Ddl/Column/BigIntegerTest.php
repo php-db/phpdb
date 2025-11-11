@@ -2,6 +2,7 @@
 
 namespace PhpDbTest\Sql\Ddl\Column;
 
+use PhpDb\Sql\Argument;
 use PhpDb\Sql\Ddl\Column\BigInteger;
 use PhpDb\Sql\Ddl\Column\Column;
 use PHPUnit\Framework\Attributes\CoversMethod;
@@ -19,10 +20,20 @@ final class BigIntegerTest extends TestCase
 
     public function testGetExpressionData(): void
     {
-        $column = new BigInteger('foo');
+        $column         = new BigInteger('foo');
+        $expressionData = $column->getExpressionData();
+
         self::assertEquals(
-            [['%s %s NOT NULL', ['foo', 'BIGINT'], [$column::TYPE_IDENTIFIER, $column::TYPE_LITERAL]]],
-            $column->getExpressionData()
+            '%s %s NOT NULL',
+            $expressionData->getExpressionSpecification()
+        );
+
+        self::assertEquals(
+            [
+                Argument::Identifier('foo'),
+                Argument::Literal('BIGINT'),
+            ],
+            $expressionData->getExpressionValues()
         );
     }
 }

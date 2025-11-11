@@ -47,7 +47,7 @@ final class SqlTest extends TestCase
         $mockResult = $this->createMock(ResultInterface::class);
 
         $mockStatement = $this->createMock(StatementInterface::class);
-        $mockStatement->expects($this->any())->method('execute')->willReturn($mockResult::class);
+        $mockStatement->expects($this->any())->method('execute')->willReturn($mockResult);
 
         $mockConnection = $this->getMockBuilder(ConnectionInterface::class)->onlyMethods([])->getMock();
 
@@ -62,6 +62,7 @@ final class SqlTest extends TestCase
             ->setConstructorArgs([
                 $mockDriver,
                 new TestAsset\TrustingSql92Platform(),
+                new TestAsset\TemporaryResultSet(),
             ])
             ->getMock();
 
@@ -256,12 +257,12 @@ final class SqlTest extends TestCase
         $mockResult = $this->createMock(ResultInterface::class);
 
         $mockStatement = $this->createMock(StatementInterface::class);
-        $mockStatement->expects($this->any())->method('execute')->willReturn($mockResult::class);
+        $mockStatement->expects($this->any())->method('execute')->willReturn($mockResult);
 
         $mockDriver = $this->getMockBuilder(DriverInterface::class)->onlyMethods([])->getMock();
         $mockDriver->expects($this->any())->method('formatParameterName')->willReturn('?');
         $mockDriver->expects($this->any())->method('createStatement')->willReturn($mockStatement);
 
-        return new Adapter($mockDriver, $platform);
+        return new Adapter($mockDriver, $platform, new TestAsset\TemporaryResultSet());
     }
 }

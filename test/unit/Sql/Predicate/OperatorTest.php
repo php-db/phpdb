@@ -2,6 +2,8 @@
 
 namespace PhpDbTest\Sql\Predicate;
 
+use PhpDb\Sql\Argument;
+use PhpDb\Sql\ArgumentType;
 use PhpDb\Sql\Predicate\Operator;
 use PHPUnit\Framework\TestCase;
 
@@ -20,56 +22,42 @@ final class OperatorTest extends TestCase
     {
         $operator = new Operator();
         self::assertEquals(Operator::OP_EQ, $operator->getOperator());
-        self::assertEquals(Operator::TYPE_IDENTIFIER, $operator->getLeftType());
-        self::assertEquals(Operator::TYPE_VALUE, $operator->getRightType());
     }
 
     public function testCanPassAllValuesToConstructor(): void
     {
-        $operator = new Operator('bar', '>=', 'foo.bar', Operator::TYPE_VALUE, Operator::TYPE_IDENTIFIER);
+        $operator = new Operator('bar', '>=', 'foo.bar');
         self::assertEquals(Operator::OP_GTE, $operator->getOperator());
-        self::assertEquals('bar', $operator->getLeft());
-        self::assertEquals('foo.bar', $operator->getRight());
-        self::assertEquals(Operator::TYPE_VALUE, $operator->getLeftType());
-        self::assertEquals(Operator::TYPE_IDENTIFIER, $operator->getRightType());
+        self::assertEquals(new Argument('bar', ArgumentType::Identifier), $operator->getLeft());
+        self::assertEquals(new Argument('foo.bar', ArgumentType::Value), $operator->getRight());
 
-        $operator = new Operator(['bar' => Operator::TYPE_VALUE], '>=', ['foo.bar' => Operator::TYPE_IDENTIFIER]);
+        $operator = new Operator(['bar' => ArgumentType::Value], '>=', ['foo.bar' => ArgumentType::Identifier]);
         self::assertEquals(Operator::OP_GTE, $operator->getOperator());
-        self::assertEquals(['bar' => Operator::TYPE_VALUE], $operator->getLeft());
-        self::assertEquals(['foo.bar' => Operator::TYPE_IDENTIFIER], $operator->getRight());
-        self::assertEquals(Operator::TYPE_VALUE, $operator->getLeftType());
-        self::assertEquals(Operator::TYPE_IDENTIFIER, $operator->getRightType());
+        self::assertEquals(new Argument('bar', ArgumentType::Value), $operator->getLeft());
+        self::assertEquals(new Argument('foo.bar', ArgumentType::Identifier), $operator->getRight());
 
         $operator = new Operator('bar', '>=', 0);
-        self::assertEquals(0, $operator->getRight());
+        self::assertEquals(new Argument(0, ArgumentType::Value), $operator->getRight());
     }
 
     public function testLeftIsMutable(): void
     {
         $operator = new Operator();
         $operator->setLeft('foo.bar');
-        self::assertEquals('foo.bar', $operator->getLeft());
+        self::assertEquals(new Argument('foo.bar', ArgumentType::Identifier), $operator->getLeft());
     }
 
     public function testRightIsMutable(): void
     {
         $operator = new Operator();
+
         $operator->setRight('bar');
-        self::assertEquals('bar', $operator->getRight());
-    }
+        $expression = new Argument('bar', ArgumentType::Value);
+        self::assertEquals($expression, $operator->getRight());
 
-    public function testLeftTypeIsMutable(): void
-    {
-        $operator = new Operator();
-        $operator->setLeftType(Operator::TYPE_VALUE);
-        self::assertEquals(Operator::TYPE_VALUE, $operator->getLeftType());
-    }
-
-    public function testRightTypeIsMutable(): void
-    {
-        $operator = new Operator();
-        $operator->setRightType(Operator::TYPE_IDENTIFIER);
-        self::assertEquals(Operator::TYPE_IDENTIFIER, $operator->getRightType());
+        $operator->setRight('bar', ArgumentType::Identifier);
+        $expression = new Argument('bar', ArgumentType::Identifier);
+        self::assertEquals($expression, $operator->getRight());
     }
 
     public function testOperatorIsMutable(): void
@@ -82,19 +70,17 @@ final class OperatorTest extends TestCase
     public function testRetrievingWherePartsReturnsSpecificationArrayOfLeftAndRightAndArrayOfTypes(): void
     {
         $operator = new Operator();
-        $operator->setLeft('foo')
+        $operator
+            ->setLeft('foo', ArgumentType::Value)
             ->setOperator('>=')
-            ->setRight('foo.bar')
-            ->setLeftType(Operator::TYPE_VALUE)
-            ->setRightType(Operator::TYPE_IDENTIFIER);
-        $expected = [
-            [
-                '%s >= %s',
-                ['foo', 'foo.bar'],
-                [Operator::TYPE_VALUE, Operator::TYPE_IDENTIFIER],
-            ],
-        ];
-        $test     = $operator->getExpressionData();
-        self::assertEquals($expected, $test, var_export($test, true));
+            ->setRight('foo.bar', ArgumentType::Identifier);
+
+        $left  = new Argument('foo', ArgumentType::Value);
+        $right = new Argument('foo.bar', ArgumentType::Identifier);
+
+        $expressionData = $operator->getExpressionData();
+
+        self::assertEquals('%s >= %s', $expressionData->getExpressionSpecification());
+        self::assertEquals([$left, $right], $expressionData->getExpressionValues());
     }
 }

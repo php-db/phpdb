@@ -610,9 +610,32 @@ class SqlFunctionalTest extends TestCase
             ->willReturn('?');
         $mockDriver->expects($this->any())
             ->method('createStatement')
-            ->willReturnCallback(fn() => new Adapter\StatementContainer());
+            ->willReturnCallback(function () {
+                $container = new Adapter\StatementContainer();
+                // Create a mock statement that delegates to the container for SQL/params
+                $mockStatement = $this->createMock(StatementInterface::class);
+                $mockStatement->expects($this->any())
+                    ->method('setSql')
+                    ->willReturnCallback(function ($sql) use ($container, $mockStatement) {
+                        $container->setSql($sql);
+                        return $mockStatement;
+                    });
+                $mockStatement->expects($this->any())
+                    ->method('getSql')
+                    ->willReturnCallback(fn() => $container->getSql());
+                $mockStatement->expects($this->any())
+                    ->method('setParameterContainer')
+                    ->willReturnCallback(function ($params) use ($container, $mockStatement) {
+                        $container->setParameterContainer($params);
+                        return $mockStatement;
+                    });
+                $mockStatement->expects($this->any())
+                    ->method('getParameterContainer')
+                    ->willReturnCallback(fn() => $container->getParameterContainer());
+                return $mockStatement;
+            });
 
-        return new Adapter\Adapter($mockDriver, $platform);
+        return new Adapter\Adapter($mockDriver, $platform, new TestAsset\TemporaryResultSet());
     }
 
     protected static function select(string|array|null $sqlString): Sql\Select

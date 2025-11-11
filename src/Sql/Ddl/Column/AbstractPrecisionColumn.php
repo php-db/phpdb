@@ -2,10 +2,11 @@
 
 namespace PhpDb\Sql\Ddl\Column;
 
+use Override;
+
 abstract class AbstractPrecisionColumn extends AbstractLengthColumn
 {
-    /** @var int|null */
-    protected $decimal;
+    protected ?int $decimal;
 
     /**
      * {@inheritDoc}
@@ -35,21 +36,17 @@ abstract class AbstractPrecisionColumn extends AbstractLengthColumn
         return $this->setLength($digits);
     }
 
-    /**
-     * @return int
-     */
-    public function getDigits()
+    public function getDigits(): int|null
     {
         return $this->getLength();
     }
 
     /**
-     * @param int|null $decimal
      * @return $this Provides a fluent interface
      */
-    public function setDecimal($decimal)
+    public function setDecimal(?int $decimal)
     {
-        $this->decimal = null === $decimal ? null : (int) $decimal;
+        $this->decimal = $decimal;
 
         return $this;
     }
@@ -63,9 +60,10 @@ abstract class AbstractPrecisionColumn extends AbstractLengthColumn
     }
 
     /**
-     * {@inheritDoc}
+     * {}
+     * @return string
      */
-    protected function getLengthExpression()
+    #[Override] protected function getLengthExpression(): string
     {
         if ($this->decimal !== null) {
             return $this->length . ',' . $this->decimal;

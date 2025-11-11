@@ -2,20 +2,21 @@
 
 namespace PhpDb\Sql\Ddl\Column;
 
+use Override;
+
 class Boolean extends Column
 {
-    /** @var string */
-    protected $type = 'BOOLEAN';
+    protected string $type = 'BOOLEAN';
+
+    /**
+     * {}
+     */
+    protected bool $isNullable = false;
 
     /**
      * {@inheritDoc}
      */
-    protected $isNullable = false;
-
-    /**
-     * {@inheritDoc}
-     */
-    public function setNullable($nullable)
+    #[Override] public function setNullable($nullable)
     {
         return parent::setNullable(false);
     }

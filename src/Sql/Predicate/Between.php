@@ -3,31 +3,30 @@
 namespace PhpDb\Sql\Predicate;
 
 use PhpDb\Sql\AbstractExpression;
+use PhpDb\Sql\Argument;
+use PhpDb\Sql\ArgumentType;
+use PhpDb\Sql\Exception\InvalidArgumentException;
+use PhpDb\Sql\ExpressionData;
 
 class Between extends AbstractExpression implements PredicateInterface
 {
-    /** @var string */
-    protected $specification = '%1$s BETWEEN %2$s AND %3$s';
+    protected string $specification = '%1$s BETWEEN %2$s AND %3$s';
 
-    /** @var string */
-    protected $identifier;
+    protected ?Argument $identifier = null;
 
-    /** @var null|int */
-    protected $minValue;
+    protected ?Argument $minValue = null;
 
-    /** @var null|int */
-    protected $maxValue;
+    protected ?Argument $maxValue = null;
 
     /**
      * Constructor
-     *
-     * @param  string $identifier
-     * @param  int|float|string $minValue
-     * @param  int|float|string $maxValue
      */
-    public function __construct($identifier = null, $minValue = null, $maxValue = null)
-    {
-        if ($identifier) {
+    public function __construct(
+        null|float|int|string|array|Argument $identifier = null,
+        null|float|int|string|array|Argument $minValue = null,
+        null|float|int|string|array|Argument $maxValue = null
+    ) {
+        if ($identifier !== null) {
             $this->setIdentifier($identifier);
         }
         if ($minValue !== null) {
@@ -41,43 +40,41 @@ class Between extends AbstractExpression implements PredicateInterface
     /**
      * Set identifier for comparison
      *
-     * @param  string $identifier
      * @return $this Provides a fluent interface
      */
-    public function setIdentifier($identifier)
-    {
-        $this->identifier = $identifier;
+    public function setIdentifier(
+        null|string|int|float|array|Argument $value,
+        ArgumentType $type = ArgumentType::Identifier
+    ): static {
+        $this->identifier = $value instanceof Argument ? $value : new Argument($value, $type);
+
         return $this;
     }
 
     /**
-     * Get identifier of comparison
-     *
-     * @return null|string
+     * Get argument of comparison
      */
-    public function getIdentifier()
+    public function getIdentifier(): ?Argument
     {
         return $this->identifier;
     }
 
     /**
-     * Set minimum boundary for comparison
+     * Set minimum value or column for comparison
      *
-     * @param  int|float|string $minValue
      * @return $this Provides a fluent interface
      */
-    public function setMinValue($minValue)
+    public function setMinValue(null|string|int|float|array|Argument $value, ArgumentType $type = ArgumentType::Value): static
     {
-        $this->minValue = $minValue;
+        $this->minValue = $value instanceof Argument ? $value : new Argument($value, $type);
+
         return $this;
     }
 
     /**
-     * Get minimum boundary for comparison
-     *
-     * @return null|int|float|string
+     * Get minimum value or column for comparison
      */
-    public function getMinValue()
+    public function getMinValue(): ?Argument
     {
         return $this->minValue;
     }
@@ -85,21 +82,19 @@ class Between extends AbstractExpression implements PredicateInterface
     /**
      * Set maximum boundary for comparison
      *
-     * @param  int|float|string $maxValue
      * @return $this Provides a fluent interface
      */
-    public function setMaxValue($maxValue)
+    public function setMaxValue(null|string|int|float|array|Argument $value, ArgumentType $type = ArgumentType::Value): static
     {
-        $this->maxValue = $maxValue;
+        $this->maxValue = $value instanceof Argument ? $value : new Argument($value, $type);
+
         return $this;
     }
 
     /**
-     * Get maximum boundary for comparison
-     *
-     * @return null|int|float|string
+     * Get maximum value or column for comparison
      */
-    public function getMaxValue()
+    public function getMaxValue(): ?Argument
     {
         return $this->maxValue;
     }
@@ -107,41 +102,48 @@ class Between extends AbstractExpression implements PredicateInterface
     /**
      * Set specification string to use in forming SQL predicate
      *
-     * @param  string $specification
      * @return $this Provides a fluent interface
      */
-    public function setSpecification($specification)
+    public function setSpecification(string $specification): static
     {
         $this->specification = $specification;
+
         return $this;
     }
 
     /**
      * Get specification string to use in forming SQL predicate
-     *
-     * @return string
      */
-    public function getSpecification()
+    public function getSpecification(): string
     {
         return $this->specification;
     }
 
     /**
      * Return "where" parts
-     *
-     * @return array
      */
-    public function getExpressionData()
+    #[\Override]
+    public function getExpressionData(): ExpressionData
     {
-        [$values[], $types[]] = $this->normalizeArgument($this->identifier, self::TYPE_IDENTIFIER);
-        [$values[], $types[]] = $this->normalizeArgument($this->minValue, self::TYPE_VALUE);
-        [$values[], $types[]] = $this->normalizeArgument($this->maxValue, self::TYPE_VALUE);
-        return [
+        if (!$this->identifier instanceof \PhpDb\Sql\Argument) {
+            throw new InvalidArgumentException('Identifier must be specified');
+        }
+
+        if (!$this->minValue instanceof \PhpDb\Sql\Argument) {
+            throw new InvalidArgumentException('minValue must be specified');
+        }
+
+        if (!$this->maxValue instanceof \PhpDb\Sql\Argument) {
+            throw new InvalidArgumentException('maxValue must be specified');
+        }
+
+        return new ExpressionData(
+            $this->getSpecification(),
             [
-                $this->getSpecification(),
-                $values,
-                $types,
-            ],
-        ];
+                $this->identifier,
+                $this->minValue,
+                $this->maxValue,
+            ]
+        );
     }
 }

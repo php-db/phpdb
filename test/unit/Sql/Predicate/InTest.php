@@ -2,6 +2,8 @@
 
 namespace PhpDbTest\Sql\Predicate;
 
+use PhpDb\Sql\Argument;
+use PhpDb\Sql\ArgumentType;
 use PhpDb\Sql\Predicate\In;
 use PhpDb\Sql\Select;
 use PHPUnit\Framework\TestCase;
@@ -17,30 +19,36 @@ final class InTest extends TestCase
 
     public function testCanPassIdentifierAndValueSetToConstructor(): void
     {
-        $in = new In('foo.bar', [1, 2]);
-        self::assertEquals('foo.bar', $in->getIdentifier());
-        self::assertEquals([1, 2], $in->getValueSet());
+        $in         = new In('foo.bar', [1, 2]);
+        $identifier = new Argument('foo.bar', ArgumentType::Identifier);
+        $expression = new Argument([1, 2], ArgumentType::Value);
+        self::assertEquals($identifier, $in->getIdentifier());
+        self::assertEquals($expression, $in->getValueSet());
     }
 
     public function testCanPassIdentifierAndEmptyValueSetToConstructor(): void
     {
-        $in = new In('foo.bar', []);
-        $this->assertEquals('foo.bar', $in->getIdentifier());
-        $this->assertEquals([], $in->getValueSet());
+        $in         = new In('foo.bar', []);
+        $identifier = new Argument('foo.bar', ArgumentType::Identifier);
+        $expression = new Argument([], ArgumentType::Value);
+        $this->assertEquals($identifier, $in->getIdentifier());
+        $this->assertEquals($expression, $in->getValueSet());
     }
 
     public function testIdentifierIsMutable(): void
     {
         $in = new In();
         $in->setIdentifier('foo.bar');
-        self::assertEquals('foo.bar', $in->getIdentifier());
+        $identifier = new Argument('foo.bar', ArgumentType::Identifier);
+        self::assertEquals($identifier, $in->getIdentifier());
     }
 
     public function testValueSetIsMutable(): void
     {
         $in = new In();
         $in->setValueSet([1, 2]);
-        self::assertEquals([1, 2], $in->getValueSet());
+        $expression = new Argument([1, 2], ArgumentType::Value);
+        self::assertEquals($expression, $in->getValueSet());
     }
 
     public function testRetrievingWherePartsReturnsSpecificationArrayOfIdentifierAndValuesAndArrayOfTypes(): void
@@ -48,85 +56,79 @@ final class InTest extends TestCase
         $in = new In();
         $in->setIdentifier('foo.bar')
             ->setValueSet([1, 2, 3]);
-        $expected = [
-            [
-                '%s IN (%s, %s, %s)',
-                ['foo.bar', 1, 2, 3],
-                [In::TYPE_IDENTIFIER, In::TYPE_VALUE, In::TYPE_VALUE, In::TYPE_VALUE],
-            ],
-        ];
-        self::assertEquals($expected, $in->getExpressionData());
+        $expression1 = new Argument('foo.bar', ArgumentType::Identifier);
+        $expression2 = new Argument([1, 2, 3], ArgumentType::Value);
+
+        $expressionData = $in->getExpressionData();
+
+        self::assertEquals('%s IN (%s, %s, %s)', $expressionData->getExpressionSpecification());
+        self::assertEquals([$expression1, $expression2], $expressionData->getExpressionValues());
 
         $in->setIdentifier('foo.bar')
             ->setValueSet([
-                [1 => In::TYPE_LITERAL],
-                [2 => In::TYPE_VALUE],
-                [3 => In::TYPE_LITERAL],
+                [1 => ArgumentType::Literal],
+                [2 => ArgumentType::Value],
+                [3 => ArgumentType::Literal],
             ]);
-        $expected = [
-            [
-                '%s IN (%s, %s, %s)',
-                ['foo.bar', 1, 2, 3],
-                [In::TYPE_IDENTIFIER, In::TYPE_LITERAL, In::TYPE_VALUE, In::TYPE_LITERAL],
-            ],
-        ];
-        $in->getExpressionData();
-        self::assertEquals($expected, $in->getExpressionData());
+        $expression1 = new Argument('foo.bar', ArgumentType::Identifier);
+        $expression2 = new Argument([
+            [1 => ArgumentType::Literal],
+            [2 => ArgumentType::Value],
+            [3 => ArgumentType::Literal],
+        ], ArgumentType::Value);
+
+        $expressionData = $in->getExpressionData();
+
+        self::assertEquals('%s IN (%s, %s, %s)', $expressionData->getExpressionSpecification());
+        self::assertEquals([$expression1, $expression2], $expressionData->getExpressionValues());
     }
 
     public function testGetExpressionDataWithSubselect(): void
     {
-        $select   = new Select();
-        $in       = new In('foo', $select);
-        $expected = [
-            [
-                '%s IN %s',
-                ['foo', $select],
-                [$in::TYPE_IDENTIFIER, $in::TYPE_VALUE],
-            ],
-        ];
-        self::assertEquals($expected, $in->getExpressionData());
+        $select      = new Select();
+        $in          = new In(new Argument('foo'), $select);
+        $expression1 = new Argument('foo', ArgumentType::Value);
+        $expression2 = new Argument($select, ArgumentType::Select);
+
+        $expressionData = $in->getExpressionData();
+
+        self::assertEquals('%s IN %s', $expressionData->getExpressionSpecification());
+        self::assertEquals([$expression1, $expression2], $expressionData->getExpressionValues());
     }
 
     public function testGetExpressionDataWithEmptyValues(): void
     {
         new Select();
-        $in       = new In('foo', []);
-        $expected = [
-            [
-                '%s IN (NULL)',
-                ['foo'],
-                [$in::TYPE_IDENTIFIER],
-            ],
-        ];
-        $this->assertEquals($expected, $in->getExpressionData());
+        $in = new In('foo', []);
+
+        $expressionData = $in->getExpressionData();
+
+        self::assertEquals('%s IN (NULL)', $expressionData->getExpressionSpecification());
     }
 
     public function testGetExpressionDataWithSubselectAndIdentifier(): void
     {
-        $select   = new Select();
-        $in       = new In('foo', $select);
-        $expected = [
-            [
-                '%s IN %s',
-                ['foo', $select],
-                [$in::TYPE_IDENTIFIER, $in::TYPE_VALUE],
-            ],
-        ];
-        self::assertEquals($expected, $in->getExpressionData());
+        $select      = new Select();
+        $in          = new In(new Argument('foo'), $select);
+        $expression1 = new Argument('foo', ArgumentType::Value);
+        $expression2 = new Argument($select, ArgumentType::Select);
+
+        $expressionData = $in->getExpressionData();
+
+        self::assertEquals('%s IN %s', $expressionData->getExpressionSpecification());
+        self::assertEquals([$expression1, $expression2], $expressionData->getExpressionValues());
     }
 
     public function testGetExpressionDataWithSubselectAndArrayIdentifier(): void
     {
-        $select   = new Select();
-        $in       = new In(['foo', 'bar'], $select);
-        $expected = [
-            [
-                '(%s, %s) IN %s',
-                ['foo', 'bar', $select],
-                [$in::TYPE_IDENTIFIER, $in::TYPE_IDENTIFIER, $in::TYPE_VALUE],
-            ],
-        ];
-        self::assertEquals($expected, $in->getExpressionData());
+        $select      = new Select();
+        $in          = new In(new Argument(['foo', 'bar']), $select);
+        $expression1 = new Argument(['foo', 'bar'], ArgumentType::Value);
+        $expression2 = new Argument($select, ArgumentType::Select);
+
+        $expressionData = $in->getExpressionData();
+
+        self::assertEquals('(%s, %s) IN %s', $expressionData->getExpressionSpecification());
+        self::assertEquals([$expression1, $expression2], $expressionData->getExpressionValues());
     }
 }

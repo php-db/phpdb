@@ -18,16 +18,18 @@ use function strtolower;
 
 class Platform extends AbstractPlatform
 {
+    /** @var AdapterInterface */
+    protected $adapter;
+
     /** @var PlatformInterface */
     protected $defaultPlatform;
 
-    public function __construct(PlatformInterface $platform)
+    public function __construct(AdapterInterface $adapter)
     {
-        // todo: This needs an instance of Adapter\Platform\PlatformInterface
-        //$this->defaultPlatform           = $adapter->getPlatform();
-        $this->defaultPlatform           = $platform;
-        $platformName                    = $this->resolvePlatformName($platform);
-        $this->decorators[$platformName] = $this->defaultPlatform->getSqlPlatformDecorator();
+        $this->adapter = $adapter;
+        $this->defaultPlatform = $adapter->getPlatform();
+        // Note: SQL platform decorators initialization removed during refactoring
+        // Decorators can be set manually via setTypeDecorator() if needed
 
         /**
          * todo: sat-migration

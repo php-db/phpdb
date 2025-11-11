@@ -2,6 +2,7 @@
 
 namespace PhpDbTest\Sql\Ddl\Column;
 
+use PhpDb\Sql\Argument;
 use PhpDb\Sql\Ddl\Column\Varchar;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
@@ -12,21 +13,26 @@ final class VarcharTest extends TestCase
     public function testGetExpressionData(): void
     {
         $column = new Varchar('foo', 20);
-        self::assertEquals(
-            [['%s %s NOT NULL', ['foo', 'VARCHAR(20)'], [$column::TYPE_IDENTIFIER, $column::TYPE_LITERAL]]],
-            $column->getExpressionData()
-        );
+
+        $expressionData = $column->getExpressionData();
+
+        self::assertEquals('%s %s(%s) NOT NULL', $expressionData->getExpressionSpecification());
+        self::assertEquals([
+            Argument::identifier('foo'),
+            Argument::literal('VARCHAR'),
+            Argument::literal('20'),
+        ], $expressionData->getExpressionValues());
 
         $column->setDefault('bar');
-        self::assertEquals(
-            [
-                [
-                    '%s %s NOT NULL DEFAULT %s',
-                    ['foo', 'VARCHAR(20)', 'bar'],
-                    [$column::TYPE_IDENTIFIER, $column::TYPE_LITERAL, $column::TYPE_VALUE],
-                ],
-            ],
-            $column->getExpressionData()
-        );
+
+        $expressionData = $column->getExpressionData();
+
+        self::assertEquals('%s %s(%s) NOT NULL DEFAULT %s', $expressionData->getExpressionSpecification());
+        self::assertEquals([
+            Argument::identifier('foo'),
+            Argument::literal('VARCHAR'),
+            Argument::literal('20'),
+            Argument::value('bar'),
+        ], $expressionData->getExpressionValues());
     }
 }

@@ -2,6 +2,8 @@
 
 namespace PhpDbTest\Sql\Predicate;
 
+use PhpDb\Sql\Argument;
+use PhpDb\Sql\ArgumentType;
 use PhpDb\Sql\Predicate\Like;
 use PhpDb\Sql\Predicate\NotLike;
 use PHPUnit\Framework\TestCase;
@@ -18,34 +20,31 @@ final class NotLikeTest extends TestCase
     public function testConstructWithArgs(): void
     {
         $notLike = new NotLike('bar', 'Foo%');
-        self::assertEquals('bar', $notLike->getIdentifier());
-        self::assertEquals('Foo%', $notLike->getLike());
+        self::assertEquals(new Argument('bar', ArgumentType::Identifier), $notLike->getIdentifier());
+        self::assertEquals(new Argument('Foo%', ArgumentType::Value), $notLike->getLike());
     }
 
     public function testAccessorsMutators(): void
     {
         $notLike = new NotLike();
         $notLike->setIdentifier('bar');
-        self::assertEquals('bar', $notLike->getIdentifier());
+        self::assertEquals(new Argument('bar', ArgumentType::Identifier), $notLike->getIdentifier());
         $notLike->setLike('foo%');
-        self::assertEquals('foo%', $notLike->getLike());
+        self::assertEquals(new Argument('foo%', ArgumentType::Value), $notLike->getLike());
         $notLike->setSpecification('target = target');
         self::assertEquals('target = target', $notLike->getSpecification());
     }
 
     public function testGetExpressionData(): void
     {
-        $notLike = new NotLike('bar', 'Foo%');
-        self::assertEquals(
-            [
-                [
-                    '%1$s NOT LIKE %2$s',
-                    ['bar', 'Foo%'],
-                    [$notLike::TYPE_IDENTIFIER, $notLike::TYPE_VALUE],
-                ],
-            ],
-            $notLike->getExpressionData()
-        );
+        $notLike    = new NotLike('bar', 'Foo%');
+        $identifier = new Argument('bar', ArgumentType::Identifier);
+        $expression = new Argument('Foo%', ArgumentType::Value);
+
+        $expressionData = $notLike->getExpressionData();
+
+        self::assertEquals('%1$s NOT LIKE %2$s', $expressionData->getExpressionSpecification());
+        self::assertEquals([$identifier, $expression], $expressionData->getExpressionValues());
     }
 
     public function testInstanceOfPerSetters(): void

@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace PhpDb\Sql;
 
 use PhpDb\Adapter\AdapterInterface;
@@ -24,7 +22,7 @@ class Sql
     ) {
         $this->adapter     = $adapter;
         $this->table       = $table;
-        $this->sqlPlatform = new Platform\Platform($adapter->getPlatform());
+        $this->sqlPlatform = new Platform\Platform($adapter);
     }
 
     public function getAdapter(): ?AdapterInterface
@@ -48,7 +46,7 @@ class Sql
         return $this;
     }
 
-    public function getTable(): array|string|TableIdentifier
+    public function getTable(): array|string|TableIdentifier|null
     {
         return $this->table;
     }
@@ -125,6 +123,6 @@ class Sql
         return $this
             ->sqlPlatform
             ->setSubject($sqlObject)
-            ->getSqlString($adapter ? $adapter->getPlatform() : $this->adapter->getPlatform());
+            ->getSqlString($adapter instanceof \PhpDb\Adapter\AdapterInterface ? $adapter->getPlatform() : $this->adapter->getPlatform());
     }
 }

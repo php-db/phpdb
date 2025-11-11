@@ -2,7 +2,8 @@
 
 namespace PhpDb\Sql;
 
-use PhpDb\Adapter\Driver;
+use PhpDb\Adapter\Driver\DriverInterface;
+use PhpDb\Adapter\Driver\Pdo\Pdo;
 use PhpDb\Adapter\ParameterContainer;
 use PhpDb\Adapter\Platform\PlatformInterface;
 
@@ -33,19 +34,18 @@ class Insert extends AbstractPreparableSql
     /**#@-*/
 
     /** @var string[]|array[] $specifications */
-    protected $specifications = [
+    protected array $specifications = [
         self::SPECIFICATION_INSERT => 'INSERT INTO %1$s (%2$s) VALUES (%3$s)',
         self::SPECIFICATION_SELECT => 'INSERT INTO %1$s %2$s %3$s',
     ];
 
-    /** @var string|array|TableIdentifier */
     protected TableIdentifier|string|array $table = '';
 
     /** @var string[] */
     protected $columns = [];
 
-    /** @var array|Select */
-    protected $select;
+    /** @var array|Select|null */
+    protected null|array|Select $select = null;
 
     /**
      * Constructor
@@ -85,12 +85,11 @@ class Insert extends AbstractPreparableSql
     /**
      * Specify values to insert
      *
-     * @param  array|Select $values
-     * @param  string $flag one of VALUES_MERGE or VALUES_SET; defaults to VALUES_SET
-     * @return $this Provides a fluent interface
+     * @param string        $flag one of VALUES_MERGE or VALUES_SET; defaults to VALUES_SET
      * @throws Exception\InvalidArgumentException
+     * @return $this Provides a fluent interface
      */
-    public function values($values, $flag = self::VALUES_SET)
+    public function values(array|Select $values, string $flag = self::VALUES_SET): static
     {
         if ($values instanceof Select) {
             if ($flag === self::VALUES_MERGE) {
@@ -108,7 +107,7 @@ class Insert extends AbstractPreparableSql
             );
         }
 
-        if ($this->select && $flag === self::VALUES_MERGE) {
+        if ($this->select !== null && $flag === self::VALUES_MERGE) {
             throw new Exception\InvalidArgumentException(
                 'An array of values cannot be provided with the merge flag when a PhpDb\Sql\Select'
                 . ' instance already exists as the value source'
@@ -165,13 +164,16 @@ class Insert extends AbstractPreparableSql
         return isset($key) && array_key_exists($key, $rawState) ? $rawState[$key] : $rawState;
     }
 
+    /**
+     * @return null|string
+     */
     protected function processInsert(
         PlatformInterface $platform,
-        ?Driver\DriverInterface $driver = null,
+        ?DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null
     ) {
         if ($this->select) {
-            return;
+            return null;
         }
         if (! $this->columns) {
             throw new Exception\InvalidArgumentException('values or select should be present');
@@ -186,7 +188,7 @@ class Insert extends AbstractPreparableSql
             if (is_scalar($value) && $parameterContainer) {
                 // use incremental value instead of column name for PDO
                 // @see https://github.com/zendframework/zend-db/issues/35
-                if ($driver instanceof Driver\PdoDriverInterface) {
+                if ($driver instanceof Pdo) {
                     $column = 'c_' . $i++;
                 }
                 $values[] = $driver->formatParameterName($column);
@@ -208,13 +210,16 @@ class Insert extends AbstractPreparableSql
         );
     }
 
+    /**
+     * @return null|string
+     */
     protected function processSelect(
         PlatformInterface $platform,
-        ?Driver\DriverInterface $driver = null,
+        ?DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null
     ) {
         if (! $this->select) {
-            return;
+            return null;
         }
         $selectSql = $this->processSubSelect($this->select, $platform, $driver, $parameterContainer);
 
@@ -224,7 +229,7 @@ class Insert extends AbstractPreparableSql
         return sprintf(
             $this->specifications[static::SPECIFICATION_SELECT],
             $this->resolveTable($this->table, $platform, $driver, $parameterContainer),
-            $columns ? "($columns)" : "",
+            $columns !== '' && $columns !== '0' ? "($columns)" : '',
             $selectSql
         );
     }
@@ -279,12 +284,11 @@ class Insert extends AbstractPreparableSql
 
     /**
      * Overloading: variable retrieval
-     *
      * Retrieves value by column name
      *
      * @param  string $name
      * @throws Exception\InvalidArgumentException
-     * @return mixed
+     * @return string
      */
     public function __get($name)
     {

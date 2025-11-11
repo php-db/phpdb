@@ -2,6 +2,7 @@
 
 namespace PhpDbTest\Sql\Ddl\Column;
 
+use PhpDb\Sql\Argument;
 use PhpDb\Sql\Ddl\Column\AbstractPrecisionColumn;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\MockObject\Exception;
@@ -76,9 +77,13 @@ final class AbstractPrecisionColumnTest extends TestCase
             ->onlyMethods([])
             ->getMock();
 
-        self::assertEquals(
-            [['%s %s NOT NULL', ['foo', 'INTEGER(10,5)'], [$column::TYPE_IDENTIFIER, $column::TYPE_LITERAL]]],
-            $column->getExpressionData()
-        );
+        $expressionData = $column->getExpressionData();
+
+        self::assertEquals('%s %s(%s) NOT NULL', $expressionData->getExpressionSpecification());
+        self::assertEquals([
+            Argument::identifier('foo'),
+            Argument::literal('INTEGER'),
+            Argument::literal('10,5'),
+        ], $expressionData->getExpressionValues());
     }
 }
