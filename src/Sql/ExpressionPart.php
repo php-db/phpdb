@@ -7,6 +7,13 @@ namespace PhpDb\Sql;
 use function implode;
 use function is_array;
 
+/**
+ * Represents a single part of an SQL expression with its specification and values.
+ *
+ * Encapsulates a specification string fragment and associated argument values
+ * that together form a portion of an SQL expression. Multiple parts can be
+ * combined through ExpressionData to construct complete SQL expressions.
+ */
 class ExpressionPart
 {
     /** @var string[] */
@@ -17,7 +24,10 @@ class ExpressionPart
 
     protected bool $isJoin = false;
 
-    /** @param Argument[] $values */
+    /**
+     * @param string|null $specification Format string for this expression part
+     * @param Argument[]|null $values Argument values for this part
+     */
     public function __construct(?string $specification = null, ?array $values = null)
     {
         if ($specification !== null) {
@@ -29,11 +39,22 @@ class ExpressionPart
         }
     }
 
+    /**
+     * Returns the specification as a joined string.
+     *
+     * @param bool $decorateString Reserved for future use
+     */
     public function getSpecificationString(bool $decorateString = false): string
     {
         return implode(' ', $this->specification);
     }
 
+    /**
+     * Returns flattened argument values, expanding arrays into individual arguments.
+     *
+     * @param Argument[] $values Accumulator for collecting values
+     * @return Argument[]
+     */
     public function getSpecificationValues(array $values = []): array
     {
         foreach ($this->values as $value) {
@@ -49,6 +70,9 @@ class ExpressionPart
         return $values;
     }
 
+    /**
+     * Replaces the specification string, clearing any existing specification.
+     */
     public function setSpecification(string $specification): static
     {
         $this->specification = [];
@@ -57,6 +81,9 @@ class ExpressionPart
         return $this;
     }
 
+    /**
+     * Appends to the specification string.
+     */
     public function addSpecification(string $specification): static
     {
         $this->specification[] = $specification;
@@ -64,13 +91,21 @@ class ExpressionPart
         return $this;
     }
 
-    /** @return Argument[] */
+    /**
+     * Returns the argument values for this part.
+     *
+     * @return Argument[]
+     */
     public function getValues(): array
     {
         return $this->values;
     }
 
-    /** @param Argument[] $values */
+    /**
+     * Replaces all argument values with the provided array.
+     *
+     * @param Argument[] $values
+     */
     public function setValues(array $values): static
     {
         foreach ($values as $value) {
@@ -80,6 +115,9 @@ class ExpressionPart
         return $this;
     }
 
+    /**
+     * Adds a single argument value.
+     */
     public function addValue(Argument $value): static
     {
         $this->values[] = $value;
