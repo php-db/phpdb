@@ -22,8 +22,6 @@ interface ResultSetInterface extends Iterator, Countable
      */
     public function getFieldCount(): mixed;
 
-<<<<<<< HEAD
-<<<<<<< HEAD
     /**
      * Set the row object prototype
      *
@@ -36,10 +34,4 @@ interface ResultSetInterface extends Iterator, Countable
      * Get the row object prototype
      */
     public function getRowPrototype(): ?object;
-=======
-    public function setObjectPrototype(ArrayObject $ObjectPrototype): ResultSetInterface;
->>>>>>> 2457778f (Add setObjectPrototype to ResultSetInterface)
-=======
-    public function setObjectPrototype(object $ObjectPrototype): ResultSetInterface;
->>>>>>> fde113e5 (Signed-off-by: Joey Smith <jsmith@webinertia.net>)
 }

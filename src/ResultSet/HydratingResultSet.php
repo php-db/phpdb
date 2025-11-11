@@ -7,10 +7,9 @@ namespace PhpDb\ResultSet;
 use ArrayObject;
 use Laminas\Hydrator\ArraySerializableHydrator;
 use Laminas\Hydrator\HydratorInterface;
+use Override;
 
-use function gettype;
 use function is_array;
-use function is_object;
 
 class HydratingResultSet extends AbstractResultSet
 {
@@ -59,7 +58,7 @@ class HydratingResultSet extends AbstractResultSet
      *
      * @return $this Provides a fluent interface
      */
-    public function setHydrator(HydratorInterface $hydrator): static
+    public function setHydrator(HydratorInterface $hydrator): ResultSetInterface
     {
         $this->hydrator = $hydrator;
         return $this;
@@ -72,10 +71,25 @@ class HydratingResultSet extends AbstractResultSet
     {
         return $this->hydrator;
     }
+    /** {@inheritDoc} */
+    #[Override]
+    public function setObjectPrototype(object $objectPrototype): ResultSetInterface
+    {
+        $this->objectPrototype = $objectPrototype;
+        return $this;
+    }
+
+    /** {@inheritDoc} */
+    #[Override]
+    public function getObjectPrototype(): ?object
+    {
+        return $this->objectPrototype;
+    }
 
     /**
      * Iterator: get current item
      */
+    #[Override]
     public function current(): ?object
     {
         if ($this->buffer === null) {
@@ -99,6 +113,7 @@ class HydratingResultSet extends AbstractResultSet
      *
      * @throws Exception\RuntimeException If any row is not castable to an array.
      */
+    #[Override]
     public function toArray(): array
     {
         $return = [];
