@@ -7,6 +7,7 @@ use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\Driver\StatementInterface;
 use PhpDb\Adapter\ParameterContainer;
 use PhpDb\Adapter\Platform\Sql92;
+use PhpDb\Sql\Argument;
 use PhpDb\Sql\ArgumentType;
 use PhpDb\Sql\Exception\InvalidArgumentException;
 use PhpDb\Sql\Expression;
@@ -245,12 +246,14 @@ final class SelectTest extends TestCase
         /** @var Where $where */
         $where      = $select->getRawState('where');
         $predicates = $where->getPredicates();
+        $expression = new Argument(5, ArgumentType::Value);
+
         self::assertCount(1, $predicates);
         self::assertIsArray($predicates[0]);
         self::assertInstanceOf(Predicate\Expression::class, $predicates[0][1]);
         self::assertEquals(Predicate\PredicateSet::OP_AND, $predicates[0][0]);
         self::assertEquals('foo > ?', $predicates[0][1]->getExpression());
-        self::assertEquals([5], $predicates[0][1]->getParameters());
+        self::assertEquals([$expression], $predicates[0][1]->getParameters());
     }
 
     #[TestDox('unit test: Test where() will accept any array with string key (without ?) to be used
