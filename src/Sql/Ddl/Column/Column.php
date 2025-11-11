@@ -2,35 +2,38 @@
 
 namespace PhpDb\Sql\Ddl\Column;
 
-use PhpDb\Sql\Argument;
-use PhpDb\Sql\ArgumentType;
 use PhpDb\Sql\Ddl\Constraint\ConstraintInterface;
-use PhpDb\Sql\ExpressionData;
-use PhpDb\Sql\ExpressionPart;
-use Override;
+
+use function array_merge;
 
 class Column implements ColumnInterface
 {
-    protected string|int|null $default;
+    /** @var null|string|int */
+    protected $default;
 
-    protected bool $isNullable = false;
+    /** @var bool */
+    protected $isNullable = false;
 
-    protected string $name = '';
+    /** @var string */
+    protected $name = '';
 
-    protected array $options = [];
+    /** @var array */
+    protected $options = [];
 
     /** @var ConstraintInterface[] */
-    protected array $constraints = [];
+    protected $constraints = [];
 
-    protected string $specification = '%s %s';
+    /** @var string */
+    protected $specification = '%s %s';
 
-    protected string $type = 'INTEGER';
+    /** @var string */
+    protected $type = 'INTEGER';
 
     /**
      * @param null|string $name
      * @param bool        $nullable
      * @param mixed|null  $default
-     * @param array       $options
+     * @param mixed[]     $options
      */
     public function __construct($name = null, $nullable = false, $default = null, array $options = [])
     {
@@ -53,7 +56,7 @@ class Column implements ColumnInterface
     /**
      * @return null|string
      */
-    #[Override] public function getName()
+    public function getName()
     {
         return $this->name;
     }
@@ -71,7 +74,7 @@ class Column implements ColumnInterface
     /**
      * @return bool
      */
-    #[Override] public function isNullable()
+    public function isNullable()
     {
         return $this->isNullable;
     }
@@ -89,7 +92,7 @@ class Column implements ColumnInterface
     /**
      * @return null|string|int
      */
-    #[Override] public function getDefault()
+    public function getDefault()
     {
         return $this->default;
     }
@@ -117,7 +120,7 @@ class Column implements ColumnInterface
     /**
      * @return array
      */
-    #[Override] public function getOptions()
+    public function getOptions()
     {
         return $this->options;
     }
@@ -132,35 +135,42 @@ class Column implements ColumnInterface
         return $this;
     }
 
-    #[\Override]
-    public function getExpressionData(): ExpressionData
+    /**
+     * @return array
+     */
+    public function getExpressionData()
     {
-        $expressionData = new ExpressionData();
+        $spec = $this->specification;
 
-        $expressionPart = new ExpressionPart();
-        $expressionPart->setSpecification($this->specification);
-        $expressionPart->setValues([
-            new Argument($this->name, ArgumentType::Identifier),
-            new Argument($this->type, ArgumentType::Literal),
-        ]);
+        $params   = [];
+        $params[] = $this->name;
+        $params[] = $this->type;
 
-        if ($this->isNullable === false) {
-            $expressionPart->addSpecification('NOT NULL');
+        $types = [self::TYPE_IDENTIFIER, self::TYPE_LITERAL];
+
+        if (! $this->isNullable) {
+            $spec .= ' NOT NULL';
         }
-
-        $expressionData->addExpressionPart($expressionPart);
 
         if ($this->default !== null) {
-            $expressionPart = new ExpressionPart();
-            $expressionPart->addSpecification('DEFAULT %s');
-            $expressionPart->addValue(new Argument($this->default, ArgumentType::Value));
-            $expressionData->addExpressionPart($expressionPart);
+            $spec    .= ' DEFAULT %s';
+            $params[] = $this->default;
+            $types[]  = self::TYPE_VALUE;
         }
+
+        $data = [
+            [
+                $spec,
+                $params,
+                $types,
+            ],
+        ];
 
         foreach ($this->constraints as $constraint) {
-            $expressionData->addExpressionParts($constraint->getExpressionData()->getExpressionParts());
+            $data[] = ' ';
+            $data   = array_merge($data, $constraint->getExpressionData());
         }
 
-        return $expressionData;
+        return $data;
     }
 }

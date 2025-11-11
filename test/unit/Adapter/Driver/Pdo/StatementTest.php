@@ -2,12 +2,12 @@
 
 namespace PhpDbTest\Adapter\Driver\Pdo;
 
+use Override;
 use PhpDb\Adapter\Driver\Pdo\Connection;
 use PhpDb\Adapter\Driver\Pdo\Pdo;
 use PhpDb\Adapter\Driver\Pdo\Result;
 use PhpDb\Adapter\Driver\Pdo\Statement;
 use PhpDb\Adapter\ParameterContainer;
-use Override;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 
@@ -20,7 +20,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(Statement::class, 'prepare')]
 #[CoversMethod(Statement::class, 'isPrepared')]
 #[CoversMethod(Statement::class, 'execute')]
-class StatementTest extends TestCase
+final class StatementTest extends TestCase
 {
     protected Statement $statement;
 
@@ -28,7 +28,7 @@ class StatementTest extends TestCase
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
-    #[\Override]
+    #[Override]
     protected function setUp(): void
     {
         $this->statement = new Statement();
@@ -38,7 +38,7 @@ class StatementTest extends TestCase
      * Tears down the fixture, for example, closes a network connection.
      * This method is called after a test is executed.
      */
-    #[Override] protected function tearDown(): void
+    protected function tearDown(): void
     {
     }
 

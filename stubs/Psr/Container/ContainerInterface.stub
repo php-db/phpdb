@@ -1,0 +1,22 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Psr\Container;
+
+/**
+ * PHPStan stub for Psr\Container\ContainerInterface
+ * This is a type alias to help PHPStan understand the interface in the PhpCmd\CmdBus namespace context.
+ */
+interface ContainerInterface
+{
+    /**
+     * Finds an entry of the container by its identifier and returns it.
+     */
+    public function get(string $id): mixed;
+
+    /**
+     * Returns true if the container can return an entry for the given identifier.
+     */
+    public function has(string $id): bool;
+}

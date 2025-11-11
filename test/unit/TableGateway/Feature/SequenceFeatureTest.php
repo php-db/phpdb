@@ -2,6 +2,7 @@
 
 namespace PhpDbTest\TableGateway\Feature;
 
+use Override;
 use PhpDb\Adapter\Adapter;
 use PhpDb\Adapter\Driver\ResultInterface;
 use PhpDb\Adapter\Driver\StatementInterface;
@@ -12,7 +13,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
 
-class SequenceFeatureTest extends TestCase
+final class SequenceFeatureTest extends TestCase
 {
     protected SequenceFeature $feature;
 
@@ -24,7 +25,7 @@ class SequenceFeatureTest extends TestCase
     /** @var string  sequence name */
     protected static string $sequenceName = 'table_sequence';
 
-    #[\Override]
+    #[Override]
     protected function setUp(): void
     {
         $this->feature = new SequenceFeature($this->primaryKeyField, self::$sequenceName);

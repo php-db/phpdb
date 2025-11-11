@@ -2,6 +2,7 @@
 
 namespace PhpDbTest\Metadata\Source;
 
+use Override;
 use PhpDb\Metadata\Object\ConstraintKeyObject;
 use PhpDb\Metadata\Source\AbstractSource;
 use PHPUnit\Framework\MockObject\Exception;
@@ -10,15 +11,15 @@ use PHPUnit\Framework\TestCase;
 use ReflectionException;
 use ReflectionProperty;
 
-class AbstractSourceTest extends TestCase
+final class AbstractSourceTest extends TestCase
 {
-    /** @var AbstractSource|MockObject */
+    /** @var AbstractSource */
     protected MockObject|AbstractSource $abstractSourceMock;
 
     /**
      * @throws Exception
      */
-    #[\Override]
+    #[Override]
     protected function setUp(): void
     {
         $this->abstractSourceMock = $this->getMockBuilder(AbstractSource::class)

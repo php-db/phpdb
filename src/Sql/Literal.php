@@ -2,7 +2,6 @@
 
 namespace PhpDb\Sql;
 
-
 use function str_replace;
 
 class Literal implements ExpressionInterface
@@ -36,9 +35,17 @@ class Literal implements ExpressionInterface
         return $this->literal;
     }
 
-    #[\Override]
-    public function getExpressionData(): ExpressionData
+    /**
+     * @return array
+     */
+    public function getExpressionData()
     {
-        return new ExpressionData(str_replace('%', '%%', $this->literal));
+        return [
+            [
+                str_replace('%', '%%', $this->literal),
+                [],
+                [],
+            ],
+        ];
     }
 }

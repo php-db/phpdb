@@ -1,35 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDb\Adapter;
 
 interface StatementContainerInterface
 {
-    /**
-     * Set sql
-     *
-     * @param null|string $sql
-     * @return static
-     */
-    public function setSql($sql);
+    /** Set sql */
+    public function setSql(?string $sql): StatementContainerInterface;
 
-    /**
-     * Get sql
-     *
-     * @return null|string
-     */
-    public function getSql();
+    /** Get sql */
+    public function getSql(): ?string;
 
-    /**
-     * Set parameter container
-     *
-     * @return static
-     */
-    public function setParameterContainer(ParameterContainer $parameterContainer);
+    /** Set parameter container */
+    public function setParameterContainer(ParameterContainer $parameterContainer): StatementContainerInterface;
 
-    /**
-     * Get parameter container
-     *
-     * @return null|ParameterContainer
-     */
-    public function getParameterContainer();
+    /** Get parameter container */
+    public function getParameterContainer(): ?ParameterContainer;
 }

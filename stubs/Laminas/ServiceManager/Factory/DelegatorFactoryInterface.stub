@@ -1,0 +1,27 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Laminas\ServiceManager\Factory;
+
+use Psr\Container\ContainerInterface;
+
+/**
+ * PHPStan stub for Laminas\ServiceManager\Factory\DelegatorFactoryInterface
+ * This is a type alias to help PHPStan understand the interface in the PhpCmd\CmdBus namespace context.
+ */
+interface DelegatorFactoryInterface
+{
+    /**
+     * A factory that creates delegates of a given service
+     *
+     * @param callable():mixed $callback
+     * @param array<mixed>|null $options
+     */
+    public function __invoke(
+        ContainerInterface $container,
+        string $name,
+        callable $callback,
+        ?array $options = null
+    ): mixed;
+}

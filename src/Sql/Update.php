@@ -3,12 +3,11 @@
 namespace PhpDb\Sql;
 
 use Closure;
-use PhpDb\Adapter\Driver\DriverInterface;
-use PhpDb\Adapter\Driver\Pdo\Pdo;
+use Laminas\Stdlib\PriorityList;
+use PhpDb\Adapter\Driver;
 use PhpDb\Adapter\ParameterContainer;
 use PhpDb\Adapter\Platform\PlatformInterface;
 use PhpDb\Sql\Predicate\PredicateInterface;
-use Laminas\Stdlib\PriorityList;
 
 use function array_key_exists;
 use function implode;
@@ -36,7 +35,7 @@ class Update extends AbstractPreparableSql
     /**@#-**/
 
     /** @var array<string, string>|array<string, array> */
-    protected array $specifications = [
+    protected $specifications = [
         self::SPECIFICATION_UPDATE => 'UPDATE %1$s',
         self::SPECIFICATION_JOIN   => [
             '%1$s' => [
@@ -47,6 +46,7 @@ class Update extends AbstractPreparableSql
         self::SPECIFICATION_WHERE  => 'WHERE %1$s',
     ];
 
+    /** @var string|array|TableIdentifier */
     protected TableIdentifier|string|array $table = '';
 
     /** @var bool */
@@ -165,7 +165,7 @@ class Update extends AbstractPreparableSql
     /** @return string */
     protected function processUpdate(
         PlatformInterface $platform,
-        ?DriverInterface $driver = null,
+        ?Driver\DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null
     ) {
         return sprintf(
@@ -177,7 +177,7 @@ class Update extends AbstractPreparableSql
     /** @return string */
     protected function processSet(
         PlatformInterface $platform,
-        ?DriverInterface $driver = null,
+        ?Driver\DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null
     ) {
         $setSql = [];
@@ -198,7 +198,7 @@ class Update extends AbstractPreparableSql
             if (is_scalar($value) && $parameterContainer) {
                 // use incremental value instead of column name for PDO
                 // @see https://github.com/zendframework/zend-db/issues/35
-                if ($driver instanceof Pdo) {
+                if ($driver instanceof Driver\PdoDriverInterface) {
                     $column = 'c_' . $i++;
                 }
                 $setSql[] = $prefix . $driver->formatParameterName($column);
@@ -219,16 +219,13 @@ class Update extends AbstractPreparableSql
         );
     }
 
-    /**
-     * @return null|string
-     */
     protected function processWhere(
         PlatformInterface $platform,
-        ?DriverInterface $driver = null,
+        ?Driver\DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null
     ) {
         if ($this->where->count() === 0) {
-            return null;
+            return;
         }
         return sprintf(
             $this->specifications[static::SPECIFICATION_WHERE],
@@ -236,10 +233,10 @@ class Update extends AbstractPreparableSql
         );
     }
 
-    /** @return \string[][][]|null */
+    /** @return null|string[] */
     protected function processJoins(
         PlatformInterface $platform,
-        ?DriverInterface $driver = null,
+        ?Driver\DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null
     ) {
         return $this->processJoin($this->joins, $platform, $driver, $parameterContainer);
@@ -247,17 +244,17 @@ class Update extends AbstractPreparableSql
 
     /**
      * Variable overloading
+     *
      * Proxies to "where" only
      *
      * @param  string $name
-     * @return string|null|\PhpDb\Sql\Where
+     * @return mixed
      */
     public function __get($name)
     {
         if (strtolower($name) === 'where') {
             return $this->where;
         }
-        return null;
     }
 
     /**

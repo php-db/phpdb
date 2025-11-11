@@ -1,10 +1,8 @@
 <?php
 
-namespace LaminasIntegrationTest\Db\Platform;
+namespace PhpDbIntegrationTest\Platform;
 
 use Exception;
-
-use Override;
 
 use function file_get_contents;
 use function getenv;
@@ -14,7 +12,7 @@ use function sqlsrv_connect;
 use function sqlsrv_errors;
 use function sqlsrv_query;
 
-class SqlServerFixtureLoader implements FixtureLoader
+final class SqlServerFixtureLoader implements FixtureLoader
 {
     private string $fixtureFilePrefix = __DIR__ . '/../TestFixtures/sqlsrv';
 
@@ -24,7 +22,7 @@ class SqlServerFixtureLoader implements FixtureLoader
     /**
      * @throws Exception
      */
-    #[Override] public function createDatabase(): void
+    public function createDatabase(): void
     {
         $this->connect();
 
@@ -33,22 +31,22 @@ class SqlServerFixtureLoader implements FixtureLoader
                 <<<'SQL'
                     IF NOT EXISTS(SELECT * FROM sys.databases WHERE name = '%s')
                     BEGIN
-                        CREATE DATABASE [%s] 
+                        CREATE DATABASE [%s]
                     END
                     SQL,
-                getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_SQLSRV_DATABASE'),
-                getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_SQLSRV_DATABASE')
+                getenv('TESTS_PHPDB_ADAPTER_DRIVER_SQLSRV_DATABASE'),
+                getenv('TESTS_PHPDB_ADAPTER_DRIVER_SQLSRV_DATABASE')
             ))
         ) {
             throw new Exception(sprintf(
-                'I cannot create the MSSQL %s database: %s',
-                getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_SQLSRV_DATABASE'),
+                "I cannot create the MSSQL %s database: %s",
+                getenv('TESTS_PHPDB_ADAPTER_DRIVER_SQLSRV_DATABASE'),
                 print_r(sqlsrv_errors(), true)
             ));
         }
 
         // phpcs:disable Squiz.PHP.NonExecutableCode.Unreachable
-        sqlsrv_query($this->connection, 'USE ' . getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_SQLSRV_DATABASE'));
+        sqlsrv_query($this->connection, 'USE ' . getenv('TESTS_PHPDB_ADAPTER_DRIVER_SQLSRV_DATABASE'));
 
         $fixtures = [
             'tables'   => $this->fixtureFilePrefix . '.sql',
@@ -59,9 +57,9 @@ class SqlServerFixtureLoader implements FixtureLoader
         foreach ($fixtures as $name => $fixtureFile) {
             if (false === sqlsrv_query($this->connection, file_get_contents($fixtureFile))) {
                 throw new Exception(sprintf(
-                    'I cannot create the %s for %s database. Check the %s file. %s ',
+                    "I cannot create the %s for %s database. Check the %s file. %s ",
                     $name,
-                    getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_SQLSRV_DATABASE'),
+                    getenv('TESTS_PHPDB_ADAPTER_DRIVER_SQLSRV_DATABASE'),
                     $fixtureFile,
                     print_r(sqlsrv_errors(), true)
                 ));
@@ -75,25 +73,25 @@ class SqlServerFixtureLoader implements FixtureLoader
     /**
      * @throws Exception
      */
-    #[Override] public function dropDatabase(): void
+    public function dropDatabase(): void
     {
         $this->connect();
 
-        sqlsrv_query($this->connection, 'USE master');
+        sqlsrv_query($this->connection, "USE master");
         sqlsrv_query($this->connection, sprintf(
-            'ALTER DATABASE %s SET SINGLE_USER WITH ROLLBACK IMMEDIATE',
-            getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_SQLSRV_DATABASE')
+            "ALTER DATABASE %s SET SINGLE_USER WITH ROLLBACK IMMEDIATE",
+            getenv('TESTS_PHPDB_ADAPTER_DRIVER_SQLSRV_DATABASE')
         ));
 
         if (
             false === sqlsrv_query($this->connection, sprintf(
-                'DROP DATABASE %s',
-                getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_SQLSRV_DATABASE')
+                "DROP DATABASE %s",
+                getenv('TESTS_PHPDB_ADAPTER_DRIVER_SQLSRV_DATABASE')
             ))
         ) {
             throw new Exception(sprintf(
-                'Unable to drop database %s. %s',
-                getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_SQLSRV_DATABASE'),
+                "Unable to drop database %s. %s",
+                getenv('TESTS_PHPDB_ADAPTER_DRIVER_SQLSRV_DATABASE'),
                 print_r(sqlsrv_errors(), true)
             ));
         }
@@ -107,18 +105,18 @@ class SqlServerFixtureLoader implements FixtureLoader
     protected function connect(): void
     {
         $this->connection = sqlsrv_connect(
-            getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_SQLSRV_HOSTNAME'),
+            getenv('TESTS_PHPDB_ADAPTER_DRIVER_SQLSRV_HOSTNAME'),
             [
-                'UID'                    => getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_SQLSRV_USERNAME'),
-                'PWD'                    => getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_SQLSRV_PASSWORD'),
+                'UID'                    => getenv('TESTS_PHPDB_ADAPTER_DRIVER_SQLSRV_USERNAME'),
+                'PWD'                    => getenv('TESTS_PHPDB_ADAPTER_DRIVER_SQLSRV_PASSWORD'),
                 'TrustServerCertificate' => 1,
             ]
         );
 
         if (false === $this->connection) {
             throw new Exception(sprintf(
-                'Unable to connect %s. %s',
-                getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_SQLSRV_DATABASE'),
+                "Unable to connect %s. %s",
+                getenv('TESTS_PHPDB_ADAPTER_DRIVER_SQLSRV_DATABASE'),
                 print_r(sqlsrv_errors(), true)
             ));
         }

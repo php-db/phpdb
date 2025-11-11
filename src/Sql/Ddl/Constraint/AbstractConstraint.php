@@ -2,59 +2,65 @@
 
 namespace PhpDb\Sql\Ddl\Constraint;
 
-use PhpDb\Sql\Argument;
-use PhpDb\Sql\ArgumentType;
-use PhpDb\Sql\ExpressionData;
-use PhpDb\Sql\ExpressionPart;
-
-use Override;
-
 use function array_fill;
+use function array_merge;
 use function count;
 use function implode;
 use function sprintf;
 
 abstract class AbstractConstraint implements ConstraintInterface
 {
-    protected string $columnSpecification = '(%s)';
+    /** @var string */
+    protected $columnSpecification = ' (%s)';
 
-    protected string $namedSpecification = 'CONSTRAINT %s';
+    /** @var string */
+    protected $namedSpecification = 'CONSTRAINT %s ';
 
-    protected string $specification = '';
+    /** @var string */
+    protected $specification = '';
 
-    protected string $name = '';
+    /** @var string */
+    protected $name = '';
 
-    protected array $columns = [];
+    /** @var array */
+    protected $columns = [];
 
-    public function __construct(null|array|string $columns = null, ?string $name = null)
+    /**
+     * @param null|string|array $columns
+     * @param null|string $name
+     */
+    public function __construct($columns = null, $name = null)
     {
-        if ($columns !== null) {
+        if ($columns) {
             $this->setColumns($columns);
         }
 
-        if ($name !== null) {
-            $this->setName($name);
-        }
+        $this->setName($name);
     }
 
     /**
+     * @param  string $name
      * @return $this Provides a fluent interface
      */
-    public function setName(string $name): static
+    public function setName($name)
     {
-        $this->name = $name;
+        $this->name = (string) $name;
         return $this;
     }
 
-    public function getName(): string
+    /**
+     * @return string
+     */
+    public function getName()
     {
         return $this->name;
     }
 
     /**
+     * @param  null|string|array $columns
      * @return $this Provides a fluent interface
      */
-    public function setColumns(string|array $columns): static
+    public function setColumns($columns)
     {
         $this->columns = (array) $columns;
 
@@ -62,49 +68,54 @@ abstract class AbstractConstraint implements ConstraintInterface
     }
 
     /**
+     * @param  string $column
      * @return $this Provides a fluent interface
      */
-    public function addColumn(string $column): static
+    public function addColumn($column)
     {
         $this->columns[] = $column;
         return $this;
     }
 
     /**
-     * {}
+     * {@inheritDoc}
      */
-    #[Override] public function getColumns(): array
+    public function getColumns()
     {
         return $this->columns;
     }
 
     /**
-     * {}
+     * {@inheritDoc}
      */
-    #[\Override]
-    public function getExpressionData(): ExpressionData
+    public function getExpressionData()
     {
-        $expressionPart = new ExpressionPart();
+        $colCount     = count($this->columns);
+        $newSpecTypes = [];
+        $values       = [];
+        $newSpec      = '';
 
-        if ($this->name !== '') {
-            $expressionPart->addSpecification($this->namedSpecification);
-            $expressionPart->addValue(new Argument($this->name, ArgumentType::Identifier));
+        if ($this->name) {
+            $newSpec       .= $this->namedSpecification;
+            $values[]       = $this->name;
+            $newSpecTypes[] = self::TYPE_IDENTIFIER;
         }
 
-        if ($this->specification !== '') {
-            $expressionPart->addSpecification($this->specification);
+        $newSpec .= $this->specification;
+
+        if ($colCount) {
+            $values       = array_merge($values, $this->columns);
+            $newSpecParts = array_fill(0, $colCount, '%s');
+            $newSpecTypes = array_merge($newSpecTypes, array_fill(0, $colCount, self::TYPE_IDENTIFIER));
+            $newSpec     .= sprintf($this->columnSpecification, implode(', ', $newSpecParts));
         }
 
-        $columnCount = count($this->columns);
-        if ($columnCount !== 0) {
-            $columnSpecification = array_fill(0, $columnCount, '%s');
-            $columnSpecification = sprintf($this->columnSpecification, implode(', ', $columnSpecification));
-            $expressionPart->addSpecification($columnSpecification);
-            for ($i = 0; $i < $columnCount; $i++) {
-                $expressionPart->addValue(new Argument($this->columns[$i], ArgumentType::Identifier));
-            }
-        }
-
-        return new ExpressionData($expressionPart);
+        return [
+            [
+                $newSpec,
+                $values,
+                $newSpecTypes,
+            ],
+        ];
     }
 }

@@ -2,16 +2,20 @@
 
 namespace PhpDbTest\TestAsset;
 
-use PhpDb\Adapter\Platform\Mysql;
-use Override;
+use PhpDb\Adapter\Platform\Sql92;
 
-class TrustingMysqlPlatform extends Mysql
+final class TrustingMysqlPlatform extends Sql92
 {
     /**
      * @param string $value
      */
-    #[Override] public function quoteValue($value): string
+    public function quoteValue($value): string
     {
-        return $this->quoteTrustedValue($value);
+        return "'" . $value . "'";
+    }
+
+    public function getName(): string
+    {
+        return 'mysql';
     }
 }

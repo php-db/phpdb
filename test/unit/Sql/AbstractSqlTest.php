@@ -2,11 +2,11 @@
 
 namespace PhpDbTest\Sql;
 
+use Override;
 use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\ParameterContainer;
 use PhpDb\Adapter\StatementContainer;
 use PhpDb\Sql\AbstractSql;
-use PhpDb\Sql\ArgumentType;
 use PhpDb\Sql\Expression;
 use PhpDb\Sql\ExpressionInterface;
 use PhpDb\Sql\Predicate;
@@ -27,7 +27,7 @@ use function preg_match;
 use function uniqid;
 
 #[CoversMethod(AbstractSql::class, 'processExpression')]
-class AbstractSqlTest extends TestCase
+final class AbstractSqlTest extends TestCase
 {
     protected AbstractSql&MockObject $abstractSql;
 
@@ -36,7 +36,7 @@ class AbstractSqlTest extends TestCase
     /**
      * @throws Exception
      */
-    #[\Override]
+    #[Override]
     protected function setUp(): void
     {
         $this->abstractSql = $this->getMockBuilder(AbstractSql::class)->onlyMethods([])->getMock();
@@ -57,7 +57,7 @@ class AbstractSqlTest extends TestCase
      */
     public function testProcessExpressionWithoutParameterContainer(): void
     {
-        $expression   = new Expression('? > ? AND y < ?', ['x' => ArgumentType::Identifier], 5, 10);
+        $expression   = new Expression('? > ? AND y < ?', [['x' => ExpressionInterface::TYPE_IDENTIFIER], 5, 10]);
         $sqlAndParams = $this->invokeProcessExpressionMethod($expression);
 
         self::assertEquals("\"x\" > '5' AND y < '10'", $sqlAndParams);
@@ -69,7 +69,7 @@ class AbstractSqlTest extends TestCase
     public function testProcessExpressionWithParameterContainerAndParameterizationTypeNamed(): void
     {
         $parameterContainer = new ParameterContainer();
-        $expression         = new Expression('? > ? AND y < ?', ['x' => ArgumentType::Identifier], 5, 10);
+        $expression         = new Expression('? > ? AND y < ?', [['x' => ExpressionInterface::TYPE_IDENTIFIER], 5, 10]);
         $sqlAndParams       = $this->invokeProcessExpressionMethod($expression, $parameterContainer);
 
         $parameters = $parameterContainer->getNamedArray();

@@ -2,8 +2,6 @@
 
 namespace PhpDbTest\Sql;
 
-use PhpDb\Sql\Argument;
-use PhpDb\Sql\ArgumentType;
 use PhpDb\Sql\Exception\InvalidArgumentException;
 use PhpDb\Sql\Expression;
 use PHPUnit\Framework\Attributes\CoversMethod;
@@ -24,7 +22,7 @@ use TypeError;
 #[CoversMethod(Expression::class, 'setParameters')]
 #[CoversMethod(Expression::class, 'getParameters')]
 #[CoversMethod(Expression::class, 'getExpressionData')]
-class ExpressionTest extends TestCase
+final class ExpressionTest extends TestCase
 {
     /**
      * @return Expression
@@ -64,10 +62,19 @@ class ExpressionTest extends TestCase
         return $return;
     }
 
+    public function testSetParametersException(): void
+    {
+        $expression = new Expression('', 'foo');
+
+        $this->expectException(TypeError::class);
+        /** @psalm-suppress NullArgument - ensure an exception is thrown */
+        $expression->setParameters(null);
+    }
+
     #[Depends('testSetParameters')]
     public function testGetParameters(Expression $expression): void
     {
-        self::assertEquals([Argument::value('foo')], $expression->getParameters());
+        self::assertEquals('foo', $expression->getParameters());
     }
 
     public function testGetExpressionData(): void
@@ -75,29 +82,30 @@ class ExpressionTest extends TestCase
         $expression = new Expression(
             'X SAME AS ? AND Y = ? BUT LITERALLY ?',
             [
-                ['foo' => ArgumentType::Identifier],
-                [5 => ArgumentType::Value],
-                ['FUNC(FF%X)' => ArgumentType::Literal],
+                ['foo' => Expression::TYPE_IDENTIFIER],
+                [5 => Expression::TYPE_VALUE],
+                ['FUNC(FF%X)' => Expression::TYPE_LITERAL],
             ]
         );
 
-        $expressionData = $expression->getExpressionData();
+        $expected = [
+            [
+                'X SAME AS %s AND Y = %s BUT LITERALLY %s',
+                ['foo', 5, 'FUNC(FF%X)'],
+                [Expression::TYPE_IDENTIFIER, Expression::TYPE_VALUE, Expression::TYPE_LITERAL],
+            ],
+        ];
 
-        self::assertEquals('X SAME AS %s AND Y = %s BUT LITERALLY %s', $expressionData->getExpressionSpecification());
-        self::assertEquals([
-            Argument::identifier('foo'),
-            Argument::value(5),
-            Argument::literal('FUNC(FF%X)'),
-        ], $expressionData->getExpressionValues());
+        self::assertEquals($expected, $expression->getExpressionData());
     }
 
     public function testGetExpressionDataWillEscapePercent(): void
     {
         $expression = new Expression('X LIKE "foo%"');
-
-        $expressionData = $expression->getExpressionData();
-
-        self::assertEquals('X LIKE "foo%%"', $expressionData->getExpressionSpecification());
+        self::assertEquals(
+            ['X LIKE "foo%%"'],
+            $expression->getExpressionData()
+        );
     }
 
     public function testConstructorWithLiteralZero(): void
@@ -118,23 +126,24 @@ class ExpressionTest extends TestCase
     public function testNumberOfReplacementsConsidersWhenSameVariableIsUsedManyTimes(): void
     {
         $expression = new Expression('uf.user_id = :user_id OR uf.friend_id = :user_id', ['user_id' => 1]);
-        $value      = new Argument(1, ArgumentType::Value);
 
-        $expressionData = $expression->getExpressionData();
-
-        self::assertEquals('uf.user_id = :user_id OR uf.friend_id = :user_id', $expressionData->getExpressionSpecification());
-        self::assertEquals([$value], $expressionData->getExpressionValues());
+        self::assertSame(
+            [
+                [
+                    'uf.user_id = :user_id OR uf.friend_id = :user_id',
+                    [1],
+                    ['value'],
+                ],
+            ],
+            $expression->getExpressionData()
+        );
     }
 
     #[DataProvider('falsyExpressionParametersProvider')]
     public function testConstructorWithFalsyValidParameters(mixed $falsyParameter): void
     {
         $expression = new Expression('?', $falsyParameter);
-        $falsyValue = new Argument($falsyParameter, ArgumentType::Value);
-
-        $expressionData = $expression->getExpressionData();
-
-        self::assertEquals([$falsyValue], $expressionData->getExpressionValues());
+        self::assertSame($falsyParameter, $expression->getParameters());
     }
 
     public function testConstructorWithInvalidParameter(): void
@@ -152,18 +161,23 @@ class ExpressionTest extends TestCase
             [0],
             [0.0],
             [false],
+            [[]],
         ];
     }
 
     public function testNumberOfReplacementsForExpressionWithParameters(): void
     {
         $expression = new Expression(':a + :b', ['a' => 1, 'b' => 2]);
-        $value1     = new Argument(1, ArgumentType::Value);
-        $value2     = new Argument(2, ArgumentType::Value);
 
-        $expressionData = $expression->getExpressionData();
-
-        self::assertEquals(':a + :b', $expressionData->getExpressionSpecification());
-        self::assertEquals([$value1, $value2], $expressionData->getExpressionValues());
+        self::assertSame(
+            [
+                [
+                    ':a + :b',
+                    [1, 2],
+                    ['value', 'value'],
+                ],
+            ],
+            $expression->getExpressionData()
+        );
     }
 }

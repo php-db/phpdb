@@ -1,24 +1,23 @@
 <?php
 
-namespace LaminasIntegrationTest\Db\Extension;
+namespace PhpDbIntegrationTest\Extension;
 
-use LaminasIntegrationTest\Db\Platform\FixtureLoader;
-use Override;
+use PhpDbIntegrationTest\Platform\FixtureLoader;
 use PHPUnit\Event\TestSuite\Finished;
 use PHPUnit\Event\TestSuite\FinishedSubscriber;
 
 use function printf;
 
-class IntegrationTestStoppedListener implements FinishedSubscriber
+final class IntegrationTestStoppedListener implements FinishedSubscriber
 {
     /** @var FixtureLoader[] */
     private array $fixtureLoaders = [];
 
-    #[Override] public function notify(Finished $event): void
+    public function notify(Finished $event): void
     {
         if (
             $event->testSuite()->name() !== 'integration test'
-            || $this->fixtureLoaders === []
+            || empty($this->fixtureLoaders)
         ) {
             return;
         }

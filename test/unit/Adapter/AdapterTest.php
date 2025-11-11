@@ -2,6 +2,7 @@
 
 namespace PhpDbTest\Adapter;
 
+use Override;
 use PhpDb\Adapter\Adapter;
 use PhpDb\Adapter\Driver\ConnectionInterface;
 use PhpDb\Adapter\Driver\DriverInterface;
@@ -44,7 +45,7 @@ use function extension_loaded;
 #[CoversMethod(Adapter::class, 'query')]
 #[CoversMethod(Adapter::class, 'createStatement')]
 #[CoversMethod(Adapter::class, '__get')]
-class AdapterTest extends TestCase
+final class AdapterTest extends TestCase
 {
     protected DriverInterface&MockObject $mockDriver;
 
@@ -59,7 +60,7 @@ class AdapterTest extends TestCase
     /**
      * @throws Exception
      */
-    #[\Override]
+    #[Override]
     protected function setUp(): void
     {
         $this->mockDriver     = $this->createMock(DriverInterface::class);

@@ -2,7 +2,7 @@
 
 namespace PhpDb\Metadata\Source;
 
-use PhpDb\Adapter\Adapter;
+use PhpDb\Adapter\AdapterInterface;
 use PhpDb\Exception\InvalidArgumentException;
 use PhpDb\Metadata\MetadataInterface;
 
@@ -14,20 +14,28 @@ class Factory
     /**
      * Create source from adapter
      *
+     * @deprecated to be removed in 3.0.0
+     *
      * @return MetadataInterface
      * @throws InvalidArgumentException If adapter platform name not recognized.
      */
-    public static function createSourceFromAdapter(Adapter $adapter)
+    public static function createSourceFromAdapter(AdapterInterface $adapter)
     {
         $platformName = $adapter->getPlatform()->getName();
 
-        return match ($platformName) {
-            'MySQL' => new MysqlMetadata($adapter),
-            'SQLServer' => new SqlServerMetadata($adapter),
-            'SQLite' => new SqliteMetadata($adapter),
-            'PostgreSQL' => new PostgresqlMetadata($adapter),
-            'Oracle' => new OracleMetadata($adapter),
-            default => throw new InvalidArgumentException("Unknown adapter platform '{$platformName}'"),
-        };
+        switch ($platformName) {
+            case 'MySQL':
+                return new MysqlMetadata($adapter);
+            case 'SQLServer':
+                return new SqlServerMetadata($adapter);
+            case 'SQLite':
+                return new SqliteMetadata($adapter);
+            case 'PostgreSQL':
+                return new PostgresqlMetadata($adapter);
+            case 'Oracle':
+                return new OracleMetadata($adapter);
+            default:
+                throw new InvalidArgumentException("Unknown adapter platform '{$platformName}'");
+        }
     }
 }

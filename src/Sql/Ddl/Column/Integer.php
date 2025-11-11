@@ -2,24 +2,20 @@
 
 namespace PhpDb\Sql\Ddl\Column;
 
-use PhpDb\Sql\ExpressionData;
-
-use function sprintf;
-
 class Integer extends Column
 {
-    #[\Override]
-    public function getExpressionData(): ExpressionData
+    /**
+     * @return array
+     */
+    public function getExpressionData()
     {
-        $expressionData = parent::getExpressionData();
-        $options        = $this->getOptions();
+        $data    = parent::getExpressionData();
+        $options = $this->getOptions();
 
         if (isset($options['length'])) {
-            $expressionData
-                ->getExpressionPart(0)
-                ->addSpecification(sprintf('(%s)', $options['length']));
+            $data[0][1][1] .= '(' . $options['length'] . ')';
         }
 
-        return $expressionData;
+        return $data;
     }
 }

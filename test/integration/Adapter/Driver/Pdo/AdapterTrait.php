@@ -1,9 +1,8 @@
 <?php
 
-namespace LaminasIntegrationTest\Db\Adapter\Driver\Pdo;
+namespace PhpDbIntegrationTest\Adapter\Driver\Pdo;
 
 use PhpDb\Adapter\AdapterInterface;
-use Override;
 
 trait AdapterTrait
 {

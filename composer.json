@@ -1,80 +1,79 @@
 {
-    "name": "laminas/laminas-db",
+    "name": "php-db/phpdb",
     "description": "Database abstraction layer, SQL abstraction, result set abstraction, and RowDataGateway and TableDataGateway implementations",
     "license": "BSD-3-Clause",
     "keywords": [
         "laminas",
+        "mezzio",
+        "php-db",
         "db"
     ],
-    "homepage": "https://laminas.dev",
+    "homepage": "https://php-db.dev",
     "support": {
-        "docs": "https://docs.laminas.dev/laminas-db/",
-        "issues": "https://github.com/laminas/laminas-db/issues",
-        "source": "https://github.com/laminas/laminas-db",
-        "rss": "https://github.com/laminas/laminas-db/releases.atom",
-        "chat": "https://laminas.dev/chat",
-        "forum": "https://discourse.laminas.dev"
+        "docs": "https://docs.php-db.dev/",
+        "issues": "https://github.com/php-db/phpdb/issues",
+        "source": "https://github.com/php-db/phpdb"
     },
     "config": {
         "sort-packages": true,
         "platform": {
-            "php": "8.3.99"
+            "php": "8.2.99"
         },
         "allow-plugins": {
             "dealerdirect/phpcodesniffer-composer-installer": true
         }
     },
-    "extra": {
+        "extra": {
         "laminas": {
-            "component": "Laminas\\Db",
-            "config-provider": "Laminas\\Db\\ConfigProvider"
+            "config-provider": "PhpDb\\ConfigProvider"
         }
     },
     "require": {
-        "php": "~8.3.0 || ~8.4.0",
+        "php": "~8.2.0 || ~8.3.0 || ~8.4.0 || ~8.5.0",
+        "laminas/laminas-servicemanager": "^4.0.0",
         "laminas/laminas-stdlib": "^3.20.0"
     },
     "require-dev": {
         "laminas/laminas-coding-standard": "^3.0.1",
         "laminas/laminas-eventmanager": "^3.14.0",
-        "laminas/laminas-hydrator": "^4.16.0",
-        "laminas/laminas-servicemanager": "^3.23.0",
-        "phpunit/phpunit": "^11.5.12",
-        "psalm/plugin-phpunit": "^0.19.2",
-        "rector/rector": "^2.0",
-        "vimeo/psalm": "^6.8.8"
+        "laminas/laminas-hydrator": "^4.6.0",
+        "phpstan/phpstan": "^2.1",
+        "phpstan/phpstan-phpunit": "^2.0",
+        "phpunit/phpunit": "^11.5.15",
+        "rector/rector": "^2.0"
     },
     "suggest": {
         "laminas/laminas-eventmanager": "Laminas\\EventManager component",
-        "laminas/laminas-hydrator": "(^3.2 || ^4.3) Laminas\\Hydrator component for using HydratingResultSets",
-        "laminas/laminas-servicemanager": "Laminas\\ServiceManager component"
+        "laminas/laminas-hydrator": "(^5.0.0) Laminas\\Hydrator component for using HydratingResultSets"
     },
     "autoload": {
         "psr-4": {
-            "Laminas\\Db\\": "src/",
+            "PhpDb\\": "src/",
             "CustomRule\\PHPUnit\\": "rector/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "LaminasTest\\Db\\": "test/unit/",
-            "LaminasIntegrationTest\\Db\\": "test/integration/"
+            "PhpDbTest\\": "test/unit/",
+            "PhpDbIntegrationTest\\": "test/integration/"
         }
     },
     "scripts": {
         "check": [
             "@cs-check",
-            "@test"
+            "@static-analysis"
         ],
         "cs-check": "phpcs",
         "cs-fix": "phpcbf",
         "test": "phpunit --colors=always --testsuite \"unit test\"",
         "test-coverage": "phpunit --colors=always --coverage-clover clover.xml",
         "test-integration": "phpunit --colors=always --testsuite \"integration test\"",
-        "static-analysis": "psalm --shepherd --stats",
+        "static-analysis": "vendor/bin/phpstan analyse --memory-limit=256M",
+        "sa-generate-baseline": "vendor/bin/phpstan analyse --memory-limit=256M --generate-baseline",
         "upload-coverage": "coveralls -v"
     },
     "conflict": {
-        "zendframework/zend-db": "*"
+        "zendframework/zend-db": "*",
+        "laminas/laminas-db": "*"
     }
 }

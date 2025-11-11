@@ -2,6 +2,7 @@
 
 namespace PhpDbTest\Sql;
 
+use Override;
 use PhpDb\Adapter\Adapter;
 use PhpDb\Adapter\Driver\ConnectionInterface;
 use PhpDb\Adapter\Driver\DriverInterface;
@@ -27,7 +28,7 @@ use TypeError;
 #[CoversMethod(Sql::class, 'update')]
 #[CoversMethod(Sql::class, 'delete')]
 #[CoversMethod(Sql::class, 'prepareStatementForSqlObject')]
-class SqlTest extends TestCase
+final class SqlTest extends TestCase
 {
     protected MockObject&Adapter $mockAdapter;
 
@@ -39,7 +40,7 @@ class SqlTest extends TestCase
     /**
      * @throws Exception
      */
-    #[\Override]
+    #[Override]
     protected function setUp(): void
     {
         // mock the adapter, driver, and parts

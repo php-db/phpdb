@@ -2,10 +2,12 @@
 
 namespace PhpDbTest\Sql;
 
+use Override;
 use PhpDb\Adapter\Adapter;
 use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\Driver\StatementInterface;
 use PhpDb\Adapter\ParameterContainer;
+use PhpDb\Sql\Exception\InvalidArgumentException;
 use PhpDb\Sql\Expression;
 use PhpDb\Sql\Join;
 use PhpDb\Sql\Predicate\In;
@@ -26,7 +28,6 @@ use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\TestDox;
 use PHPUnit\Framework\TestCase;
 use ReflectionException;
-use TypeError;
 
 #[CoversMethod(Update::class, 'table')]
 #[CoversMethod(Update::class, '__construct')]
@@ -38,7 +39,7 @@ use TypeError;
 #[CoversMethod(Update::class, '__get')]
 #[CoversMethod(Update::class, '__clone')]
 #[CoversMethod(Update::class, 'join')]
-class UpdateTest extends TestCase
+final class UpdateTest extends TestCase
 {
     use DeprecatedAssertionsTrait;
 
@@ -48,7 +49,7 @@ class UpdateTest extends TestCase
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
-    #[\Override]
+    #[Override]
     protected function setUp(): void
     {
         $this->update = new Update();
@@ -147,7 +148,8 @@ class UpdateTest extends TestCase
             self::assertSame($where, $what);
         });
 
-        $this->expectException(TypeError::class);
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Predicate cannot be null');
         /** @psalm-suppress NullArgument - Ensure exception is thrown */
         $this->update->where(null);
     }

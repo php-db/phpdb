@@ -2,6 +2,7 @@
 
 namespace PhpDbTest\Sql;
 
+use Override;
 use PhpDb\Adapter\Adapter;
 use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\Driver\StatementInterface;
@@ -9,7 +10,6 @@ use PhpDb\Adapter\ParameterContainer;
 use PhpDb\Adapter\StatementContainer;
 use PhpDb\Sql\Exception\InvalidArgumentException;
 use PhpDb\Sql\Expression;
-use PhpDb\Sql\Insert;
 use PhpDb\Sql\InsertIgnore;
 use PhpDb\Sql\Select;
 use PhpDb\Sql\TableIdentifier;
@@ -19,9 +19,8 @@ use PhpDbTest\TestAsset\TrustingSql92Platform;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 use ReflectionException;
-use TypeError;
 
-class InsertIgnoreTest extends TestCase
+final class InsertIgnoreTest extends TestCase
 {
     use DeprecatedAssertionsTrait;
 
@@ -31,7 +30,7 @@ class InsertIgnoreTest extends TestCase
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
-    #[\Override]
+    #[Override]
     protected function setUp(): void
     {
         $this->insert = new InsertIgnore();
@@ -61,8 +60,8 @@ class InsertIgnoreTest extends TestCase
         self::assertEquals(['bar'], $this->insert->getRawState('values'));
 
         // test will merge cols and values of previously set stuff
-        $this->insert->values(['foo' => 'bax'], Insert::VALUES_MERGE);
-        $this->insert->values(['boom' => 'bam'], Insert::VALUES_MERGE);
+        $this->insert->values(['foo' => 'bax'], InsertIgnore::VALUES_MERGE);
+        $this->insert->values(['boom' => 'bam'], InsertIgnore::VALUES_MERGE);
         self::assertEquals(['foo', 'boom'], $this->insert->getRawState('columns'));
         self::assertEquals(['bax', 'bam'], $this->insert->getRawState('values'));
 
@@ -73,7 +72,8 @@ class InsertIgnoreTest extends TestCase
 
     public function testValuesThrowsExceptionWhenNotArrayOrSelect(): void
     {
-        $this->expectException(TypeError::class);
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('values() expects an array of values or PhpDb\Sql\Select instance');
         $this->insert->values(5);
     }
 
@@ -83,7 +83,7 @@ class InsertIgnoreTest extends TestCase
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('A PhpDb\Sql\Select instance cannot be provided with the merge flag');
-        $this->insert->values(new Select(), Insert::VALUES_MERGE);
+        $this->insert->values(new Select(), InsertIgnore::VALUES_MERGE);
     }
 
     public function testValuesThrowsExceptionWhenArrayMergeOverSelect(): void
@@ -95,7 +95,7 @@ class InsertIgnoreTest extends TestCase
             'An array of values cannot be provided with the merge flag when a PhpDb\Sql\Select instance already '
             . 'exists as the value source'
         );
-        $this->insert->values(['foo' => 'bar'], Insert::VALUES_MERGE);
+        $this->insert->values(['foo' => 'bar'], InsertIgnore::VALUES_MERGE);
     }
 
     /**
@@ -263,14 +263,12 @@ class InsertIgnoreTest extends TestCase
     // @codingStandardsIgnoreStart
     public function test__isset(): void
     {
-        /** @psalm-suppress UndefinedMagicPropertyAssignment */
+        // @codingStandardsIgnoreEnd
         $this->insert->foo = 'bar';
+        self::assertTrue(isset($this->insert->foo));
 
-        self::assertEquals('bar', $this->insert->foo);
-
-        /** @psalm-suppress UndefinedMagicPropertyAssignment */
         $this->insert->foo = null;
-        self::assertEquals(null, $this->insert->foo);
+        self::assertTrue(isset($this->insert->foo));
     }
 
     // @codingStandardsIgnoreStart
@@ -290,7 +288,7 @@ class InsertIgnoreTest extends TestCase
         $this->insert->into('foo')
             ->values(['bar' => 'baz', 'boo' => new Expression('NOW()'), 'bam' => null]);
         $this->insert->into('foo')
-            ->values(['qux' => 100], Insert::VALUES_MERGE);
+            ->values(['qux' => 100], InsertIgnore::VALUES_MERGE);
 
         self::assertEquals(
             'INSERT IGNORE INTO "foo" ("bar", "boo", "bam", "qux") VALUES (\'baz\', NOW(), NULL, \'100\')',

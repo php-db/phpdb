@@ -3,17 +3,15 @@
 namespace PhpDbTest\TestAsset;
 
 use PhpDb\Sql;
-use Override;
 
-class DeleteDecorator extends Sql\Delete implements Sql\Platform\PlatformDecoratorInterface
+final class DeleteDecorator extends Sql\Delete implements Sql\Platform\PlatformDecoratorInterface
 {
-    protected $subject;
+    protected ?object $subject;
 
     /**
      * @param null|object $subject
      * @return $this Provides a fluent interface
      */
-    #[Override]
     public function setSubject($subject): static
     {
         $this->subject = $subject;

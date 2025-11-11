@@ -2,6 +2,7 @@
 
 namespace PhpDbTest\Sql;
 
+use Override;
 use PhpDb\Adapter\Adapter;
 use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\Driver\StatementInterface;
@@ -12,12 +13,10 @@ use PhpDb\Sql\Predicate\IsNotNull;
 use PhpDb\Sql\Predicate\IsNull;
 use PhpDb\Sql\Predicate\Literal;
 use PhpDb\Sql\Predicate\Operator;
-use PhpDb\Sql\Predicate\PredicateSet;
 use PhpDb\Sql\TableIdentifier;
 use PhpDb\Sql\Where;
 use PhpDbTest\DeprecatedAssertionsTrait;
 use PhpDbTest\TestAsset\DeleteIgnore;
-use Override;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
@@ -26,7 +25,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(Delete::class, 'where')]
 #[CoversMethod(Delete::class, 'prepareStatement')]
 #[CoversMethod(Delete::class, 'getSqlString')]
-class DeleteTest extends TestCase
+final class DeleteTest extends TestCase
 {
     use DeprecatedAssertionsTrait;
 
@@ -36,7 +35,7 @@ class DeleteTest extends TestCase
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
-    #[\Override]
+    #[Override]
     protected function setUp(): void
     {
         $this->delete = new Delete();
@@ -46,7 +45,7 @@ class DeleteTest extends TestCase
      * Tears down the fixture, for example, closes a network connection.
      * This method is called after a test is executed.
      */
-    #[Override] protected function tearDown(): void
+    protected function tearDown(): void
     {
     }
 
@@ -68,7 +67,7 @@ class DeleteTest extends TestCase
         $this->delete->where('x = y');
         $this->delete->where(['foo > ?' => 5]);
         $this->delete->where(['id' => 2]);
-        $this->delete->where(['a = b'], PredicateSet::OP_OR);
+        $this->delete->where(['a = b'], Where::OP_OR);
         $this->delete->where(['c1' => null]);
         $this->delete->where(['c2' => [1, 2, 3]]);
         $this->delete->where([new IsNotNull('c3')]);

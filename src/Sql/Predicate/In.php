@@ -3,28 +3,39 @@
 namespace PhpDb\Sql\Predicate;
 
 use PhpDb\Sql\AbstractExpression;
-use PhpDb\Sql\Argument;
-use PhpDb\Sql\ArgumentType;
-use PhpDb\Sql\Exception\InvalidArgumentException;
-use PhpDb\Sql\ExpressionData;
+use PhpDb\Sql\Exception;
 use PhpDb\Sql\Select;
 
+use function array_fill;
+use function count;
+use function gettype;
+use function implode;
+use function is_array;
 use function vsprintf;
 
 class In extends AbstractExpression implements PredicateInterface
 {
-    protected ?Argument $identifier = null;
-    protected ?Argument $valueSet   = null;
-    protected string $specification = '%s IN %s';
+    /** @var null|string|array */
+    protected $identifier;
+
+    /** @var null|array|Select */
+    protected $valueSet;
+
+    /** @var string */
+    protected $specification = '%s IN %s';
+
+    /** @var string */
+    protected $valueSpecSpecification = '%%s IN (%s)';
 
     /**
      * Constructor
+     *
+     * @param null|string|array $identifier
+     * @param null|array|Select $valueSet
      */
-    public function __construct(
-        null|float|int|string|array|Argument $identifier = null,
-        null|array|Select|Argument $valueSet = null
-    ) {
-        if ($identifier !== null) {
+    public function __construct($identifier = null, $valueSet = null)
+    {
+        if ($identifier) {
             $this->setIdentifier($identifier);
         }
         if ($valueSet !== null) {
@@ -35,21 +46,22 @@ class In extends AbstractExpression implements PredicateInterface
     /**
      * Set identifier for comparison
      *
+     * @param  string|array $identifier
      * @return $this Provides a fluent interface
      */
-    public function setIdentifier(
-        null|string|int|float|array|Argument $value,
-        ArgumentType $type = ArgumentType::Identifier
-    ): static {
-        $this->identifier = $value instanceof Argument ? $value : new Argument($value, $type);
+    public function setIdentifier($identifier)
+    {
+        $this->identifier = $identifier;
 
         return $this;
     }
 
     /**
      * Get identifier of comparison
+     *
+     * @return null|string|array
      */
-    public function getIdentifier(): ?Argument
+    public function getIdentifier()
     {
         return $this->identifier;
     }
@@ -57,48 +69,83 @@ class In extends AbstractExpression implements PredicateInterface
     /**
      * Set set of values for IN comparison
      *
+     * @param  array|Select                       $valueSet
      * @return $this Provides a fluent interface
+     * @throws Exception\InvalidArgumentException
      */
-    public function setValueSet(array|Select|Argument $valueSet): static
+    public function setValueSet($valueSet)
     {
-        $this->valueSet = $valueSet instanceof Argument ? $valueSet : new Argument($valueSet);
+        if (! is_array($valueSet) && ! $valueSet instanceof Select) {
+            throw new Exception\InvalidArgumentException(
+                '$valueSet must be either an array or a PhpDb\Sql\Select object, ' . gettype($valueSet) . ' given'
+            );
+        }
+        $this->valueSet = $valueSet;
 
         return $this;
     }
 
     /**
      * Gets set of values in IN comparison
+     *
+     * @return array|Select
      */
-    public function getValueSet(): ?Argument
+    public function getValueSet()
     {
         return $this->valueSet;
     }
 
     /**
      * Return array of parts for where statement
+     *
+     * @return array
      */
-    #[\Override]
-    public function getExpressionData(): ExpressionData
+    public function getExpressionData()
     {
-        if (!$this->identifier instanceof \PhpDb\Sql\Argument) {
-            throw new InvalidArgumentException('Identifier must be specified');
+        $identifier   = $this->getIdentifier();
+        $values       = $this->getValueSet();
+        $replacements = [];
+
+        if (is_array($identifier)) {
+            $countIdentifier        = count($identifier);
+            $identifierSpecFragment = '(' . implode(', ', array_fill(0, $countIdentifier, '%s')) . ')';
+            $types                  = array_fill(0, $countIdentifier, self::TYPE_IDENTIFIER);
+            $replacements           = $identifier;
+        } else {
+            $identifierSpecFragment = '%s';
+            $replacements[]         = $identifier;
+            $types                  = [self::TYPE_IDENTIFIER];
         }
 
-        if (!$this->valueSet instanceof \PhpDb\Sql\Argument) {
-            throw new InvalidArgumentException('Value set must be provided for IN predicate');
+        if ($values instanceof Select) {
+            $specification  = vsprintf(
+                $this->specification,
+                [$identifierSpecFragment, '%s']
+            );
+            $replacements[] = $values;
+            $types[]        = self::TYPE_VALUE;
+        } else {
+            foreach ($values as $argument) {
+                [$replacements[], $types[]] = $this->normalizeArgument($argument, self::TYPE_VALUE);
+            }
+            $countValues       = count($values);
+            $valuePlaceholders = $countValues > 0 ? array_fill(0, $countValues, '%s') : [];
+            $inValueList       = implode(', ', $valuePlaceholders);
+            if ('' === $inValueList) {
+                $inValueList = 'NULL';
+            }
+            $specification = vsprintf(
+                $this->specification,
+                [$identifierSpecFragment, '(' . $inValueList . ')']
+            );
         }
 
-        $specification = vsprintf($this->specification, [
-            $this->identifier->getSpecification(),
-            $this->valueSet->getSpecification(),
-        ]);
-
-        return new ExpressionData(
-            $specification,
+        return [
             [
-                $this->identifier,
-                $this->valueSet,
-            ]
-        );
+                $specification,
+                $replacements,
+                $types,
+            ],
+        ];
     }
 }

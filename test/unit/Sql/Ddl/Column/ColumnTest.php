@@ -2,7 +2,6 @@
 
 namespace PhpDbTest\Sql\Ddl\Column;
 
-use PhpDb\Sql\Argument;
 use PhpDb\Sql\Ddl\Column\Column;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Depends;
@@ -18,7 +17,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(Column::class, 'setOption')]
 #[CoversMethod(Column::class, 'getOptions')]
 #[CoversMethod(Column::class, 'getExpressionData')]
-class ColumnTest extends TestCase
+final class ColumnTest extends TestCase
 {
     public function testSetName(): Column
     {
@@ -84,34 +83,27 @@ class ColumnTest extends TestCase
     {
         $column = new Column();
         $column->setName('foo');
-
-        $expressionData = $column->getExpressionData();
-
-        self::assertEquals('%s %s NOT NULL', $expressionData->getExpressionSpecification());
-        self::assertEquals([
-            Argument::identifier('foo'),
-            Argument::literal('INTEGER'),
-        ], $expressionData->getExpressionValues());
+        self::assertEquals(
+            [['%s %s NOT NULL', ['foo', 'INTEGER'], [$column::TYPE_IDENTIFIER, $column::TYPE_LITERAL]]],
+            $column->getExpressionData()
+        );
 
         $column->setNullable(true);
-
-        $expressionData = $column->getExpressionData();
-
-        self::assertEquals('%s %s', $expressionData->getExpressionSpecification());
-        self::assertEquals([
-            Argument::identifier('foo'),
-            Argument::literal('INTEGER'),
-        ], $expressionData->getExpressionValues());
+        self::assertEquals(
+            [['%s %s', ['foo', 'INTEGER'], [$column::TYPE_IDENTIFIER, $column::TYPE_LITERAL]]],
+            $column->getExpressionData()
+        );
 
         $column->setDefault('bar');
-
-        $expressionData = $column->getExpressionData();
-
-        self::assertEquals('%s %s DEFAULT %s', $expressionData->getExpressionSpecification());
-        self::assertEquals([
-            Argument::identifier('foo'),
-            Argument::literal('INTEGER'),
-            Argument::value('bar'),
-        ], $expressionData->getExpressionValues());
+        self::assertEquals(
+            [
+                [
+                    '%s %s DEFAULT %s',
+                    ['foo', 'INTEGER', 'bar'],
+                    [$column::TYPE_IDENTIFIER, $column::TYPE_LITERAL, $column::TYPE_VALUE],
+                ],
+            ],
+            $column->getExpressionData()
+        );
     }
 }

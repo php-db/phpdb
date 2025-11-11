@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDb\Adapter\Platform;
 
 use Override;
@@ -32,7 +34,8 @@ abstract class AbstractPlatform implements PlatformInterface
     /**
      * {@inheritDoc}
      */
-    #[Override] public function quoteIdentifierInFragment($identifier, array $additionalSafeWords = [])
+    #[Override]
+    public function quoteIdentifierInFragment(string $identifier, array $safeWords = []): string
     {
         if (! $this->quoteIdentifiers) {
             return $identifier;
@@ -40,7 +43,7 @@ abstract class AbstractPlatform implements PlatformInterface
 
         $safeWordsInt = ['*' => true, ' ' => true, '.' => true, 'as' => true];
 
-        foreach ($additionalSafeWords as $sWord) {
+        foreach ($safeWords as $sWord) {
             $safeWordsInt[strtolower($sWord)] = true;
         }
 
@@ -67,7 +70,8 @@ abstract class AbstractPlatform implements PlatformInterface
     /**
      * {@inheritDoc}
      */
-    #[Override] public function quoteIdentifier($identifier)
+    #[Override]
+    public function quoteIdentifier(string $identifier): string
     {
         if (! $this->quoteIdentifiers) {
             return $identifier;
@@ -81,7 +85,8 @@ abstract class AbstractPlatform implements PlatformInterface
     /**
      * {@inheritDoc}
      */
-    #[Override] public function quoteIdentifierChain($identifierChain)
+    #[Override]
+    public function quoteIdentifierChain(array|string $identifierChain): string
     {
         return '"' . implode('"."', (array) str_replace('"', '\\"', $identifierChain)) . '"';
     }
@@ -89,7 +94,8 @@ abstract class AbstractPlatform implements PlatformInterface
     /**
      * {@inheritDoc}
      */
-    #[Override] public function getQuoteIdentifierSymbol()
+    #[Override]
+    public function getQuoteIdentifierSymbol(): string
     {
         return $this->quoteIdentifier[0];
     }
@@ -97,7 +103,8 @@ abstract class AbstractPlatform implements PlatformInterface
     /**
      * {@inheritDoc}
      */
-    #[Override] public function getQuoteValueSymbol()
+    #[Override]
+    public function getQuoteValueSymbol(): string
     {
         return '\'';
     }
@@ -105,19 +112,21 @@ abstract class AbstractPlatform implements PlatformInterface
     /**
      * {@inheritDoc}
      */
-    #[Override] public function quoteValue($value)
+    #[Override]
+    public function quoteValue(string $value): string
     {
         trigger_error(
             'Attempting to quote a value in ' . static::class
             . ' without extension/driver support can introduce security vulnerabilities in a production environment'
         );
-        return '\'' . addcslashes((string) $value, "\x00\n\r\\'\"\x1a") . '\'';
+        return '\'' . addcslashes($value, "\x00\n\r\\'\"\x1a") . '\'';
     }
 
     /**
      * {@inheritDoc}
      */
-    #[Override] public function quoteTrustedValue($value)
+    #[Override]
+    public function quoteTrustedValue(int|float|string|bool $value): ?string
     {
         return '\'' . addcslashes((string) $value, "\x00\n\r\\'\"\x1a") . '\'';
     }
@@ -125,7 +134,8 @@ abstract class AbstractPlatform implements PlatformInterface
     /**
      * {@inheritDoc}
      */
-    #[Override] public function quoteValueList($valueList)
+    #[Override]
+    public function quoteValueList(array|string $valueList): string
     {
         return implode(', ', array_map([$this, 'quoteValue'], (array) $valueList));
     }
@@ -133,7 +143,8 @@ abstract class AbstractPlatform implements PlatformInterface
     /**
      * {@inheritDoc}
      */
-    #[Override] public function getIdentifierSeparator()
+    #[Override]
+    public function getIdentifierSeparator(): string
     {
         return '.';
     }

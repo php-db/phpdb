@@ -2,6 +2,8 @@
 
 namespace PhpDbTest\TableGateway\Feature;
 
+use Laminas\EventManager\EventManager;
+use Override;
 use PhpDb\Adapter\Driver\ResultInterface;
 use PhpDb\Adapter\Driver\StatementInterface;
 use PhpDb\ResultSet\ResultSet;
@@ -12,12 +14,11 @@ use PhpDb\Sql\Update;
 use PhpDb\TableGateway\Feature\EventFeature;
 use PhpDb\TableGateway\Feature\EventFeatureEventsInterface;
 use PhpDb\TableGateway\TableGateway;
-use Laminas\EventManager\EventManager;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-class EventFeatureTest extends TestCase
+final class EventFeatureTest extends TestCase
 {
     protected EventManager $eventManager;
 
@@ -266,7 +267,7 @@ class EventFeatureTest extends TestCase
     /**
      * @throws Exception
      */
-    #[\Override]
+    #[Override]
     protected function setUp(): void
     {
         $this->eventManager = new EventManager();

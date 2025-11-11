@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDb\Adapter\Driver;
 
 use PhpDb\Adapter\ParameterContainer;
@@ -14,25 +16,12 @@ interface StatementInterface extends StatementContainerInterface
      */
     public function getResource();
 
-    /**
-     * Prepare sql
-     *
-     * @param string $sql
-     */
-    public function prepare($sql = null);
+    /** Prepare sql */
+    public function prepare(?string $sql = null): StatementInterface;
 
-    /**
-     * Check if is prepared
-     *
-     * @return bool
-     */
-    public function isPrepared();
+    /** Check if is prepared */
+    public function isPrepared(): bool;
 
-    /**
-     * Execute
-     *
-     * @param null|array|ParameterContainer $parameters
-     * @return ResultInterface
-     */
-    public function execute($parameters = null);
+    /** Execute */
+    public function execute(ParameterContainer|array|null $parameters = null): ?ResultInterface;
 }

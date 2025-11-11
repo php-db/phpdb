@@ -1,0 +1,19 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Laminas\ServiceManager\Factory;
+
+use Psr\Container\ContainerInterface;
+
+/**
+ * PHPStan stub for Laminas\ServiceManager\Factory\AbstractFactoryInterface
+ * This is a type alias to help PHPStan understand the interface in the PhpCmd\CmdBus namespace context.
+ */
+interface AbstractFactoryInterface extends FactoryInterface
+{
+    /**
+     * Can the factory create an instance for the service?
+     */
+    public function canCreate(ContainerInterface $container, string $requestedName): bool;
+}

@@ -2,6 +2,7 @@
 
 namespace PhpDbTest\ResultSet;
 
+use Override;
 use PhpDb\Adapter\Driver\ResultInterface;
 use PhpDb\ResultSet\AbstractResultSet;
 use PHPUnit\Framework\Attributes\CoversMethod;
@@ -10,7 +11,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 #[CoversMethod(AbstractResultSet::class, 'current')]
-class AbstractResultSetIntegrationTest extends TestCase
+final class AbstractResultSetIntegrationTest extends TestCase
 {
     protected AbstractResultSet|MockObject $resultSet;
 
@@ -20,7 +21,7 @@ class AbstractResultSetIntegrationTest extends TestCase
      *
      * @throws Exception
      */
-    #[\Override]
+    #[Override]
     protected function setUp(): void
     {
         $this->resultSet = $this->getMockBuilder(AbstractResultSet::class)->onlyMethods([])->getMock();

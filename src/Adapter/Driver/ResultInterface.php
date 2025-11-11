@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDb\Adapter\Driver;
 
 use Countable;
@@ -11,31 +13,23 @@ interface ResultInterface extends
 {
     /**
      * Force buffering
-     *
-     * @return void
      */
-    public function buffer();
+    public function buffer(): void;
 
     /**
      * Check if is buffered
-     *
-     * @return bool|null
      */
-    public function isBuffered();
+    public function isBuffered(): ?bool;
 
     /**
      * Is query result?
-     *
-     * @return bool
      */
-    public function isQueryResult();
+    public function isQueryResult(): bool;
 
     /**
      * Get affected rows
-     *
-     * @return int
      */
-    public function getAffectedRows();
+    public function getAffectedRows(): int;
 
     /**
      * Get generated value
@@ -53,8 +47,6 @@ interface ResultInterface extends
 
     /**
      * Get field count
-     *
-     * @return int
      */
-    public function getFieldCount();
+    public function getFieldCount(): int;
 }

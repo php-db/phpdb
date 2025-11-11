@@ -2,10 +2,10 @@
 
 namespace PhpDbTest\Adapter\Driver\Pdo;
 
-use PhpDb\Adapter\Driver\Pdo\Result;
-use PhpDb\Adapter\Exception\InvalidArgumentException;
 use PDO;
 use PDOStatement;
+use PhpDb\Adapter\Driver\Pdo\Result;
+use PhpDb\Adapter\Exception\InvalidArgumentException;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
@@ -16,7 +16,7 @@ use function uniqid;
 
 #[CoversMethod(Result::class, 'current')]
 #[Group('result-pdo')]
-class ResultTest extends TestCase
+final class ResultTest extends TestCase
 {
     /**
      * Tests current method returns same data on consecutive calls.

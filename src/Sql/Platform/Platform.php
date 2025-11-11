@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDb\Sql\Platform;
 
 use PhpDb\Adapter\AdapterInterface;
@@ -9,8 +11,6 @@ use PhpDb\Sql\Exception;
 use PhpDb\Sql\PreparableSqlInterface;
 use PhpDb\Sql\SqlInterface;
 
-use Override;
-
 use function is_a;
 use function sprintf;
 use function str_replace;
@@ -18,34 +18,39 @@ use function strtolower;
 
 class Platform extends AbstractPlatform
 {
-    /** @var AdapterInterface */
-    protected $adapter;
-
-    /** @var PlatformInterface|null */
+    /** @var PlatformInterface */
     protected $defaultPlatform;
 
-    public function __construct(AdapterInterface $adapter)
+    public function __construct(PlatformInterface $platform)
     {
-        $this->defaultPlatform = $adapter->getPlatform();
+        // todo: This needs an instance of Adapter\Platform\PlatformInterface
+        //$this->defaultPlatform           = $adapter->getPlatform();
+        $this->defaultPlatform           = $platform;
+        $platformName                    = $this->resolvePlatformName($platform);
+        $this->decorators[$platformName] = $this->defaultPlatform->getSqlPlatformDecorator();
 
-        $mySqlPlatform     = new Mysql\Mysql();
-        $sqlServerPlatform = new SqlServer\SqlServer();
-        $oraclePlatform    = new Oracle\Oracle();
-        $ibmDb2Platform    = new IbmDb2\IbmDb2();
-        $sqlitePlatform    = new Sqlite\Sqlite();
+        /**
+         * todo: sat-migration
+         * The following is deprecated and will be removed during cleanup
+         */
+        // $mySqlPlatform     = new Mysql\Mysql();
+        // $sqlServerPlatform = new SqlServer\SqlServer();
+        // $oraclePlatform    = new Oracle\Oracle();
+        // $ibmDb2Platform    = new IbmDb2\IbmDb2();
+        // $sqlitePlatform    = new Sqlite\Sqlite();
 
-        $this->decorators['mysql']     = $mySqlPlatform->getDecorators();
-        $this->decorators['sqlserver'] = $sqlServerPlatform->getDecorators();
-        $this->decorators['oracle']    = $oraclePlatform->getDecorators();
-        $this->decorators['ibmdb2']    = $ibmDb2Platform->getDecorators();
-        $this->decorators['sqlite']    = $sqlitePlatform->getDecorators();
+        // $this->decorators['mysql']     = $mySqlPlatform->getDecorators();
+        // $this->decorators['sqlserver'] = $sqlServerPlatform->getDecorators();
+        // $this->decorators['oracle']    = $oraclePlatform->getDecorators();
+        // $this->decorators['ibmdb2']    = $ibmDb2Platform->getDecorators();
+        // $this->decorators['sqlite']    = $sqlitePlatform->getDecorators();
     }
 
     /**
      * @param string                             $type
      * @param AdapterInterface|PlatformInterface $adapterOrPlatform
      */
-    #[Override] public function setTypeDecorator($type, PlatformDecoratorInterface $decorator, $adapterOrPlatform = null)
+    public function setTypeDecorator($type, PlatformDecoratorInterface $decorator, $adapterOrPlatform = null)
     {
         $platformName                           = $this->resolvePlatformName($adapterOrPlatform);
         $this->decorators[$platformName][$type] = $decorator;
@@ -56,7 +61,7 @@ class Platform extends AbstractPlatform
      * @param AdapterInterface|PlatformInterface|null $adapterOrPlatform
      * @return PlatformDecoratorInterface|PreparableSqlInterface|SqlInterface
      */
-    #[Override] public function getTypeDecorator($subject, $adapterOrPlatform = null)
+    public function getTypeDecorator($subject, $adapterOrPlatform = null)
     {
         $platformName = $this->resolvePlatformName($adapterOrPlatform);
 
@@ -72,7 +77,10 @@ class Platform extends AbstractPlatform
         return $subject;
     }
 
-    #[Override] public function getDecorators(): PlatformDecoratorInterface
+    /**
+     * @return array|PlatformDecoratorInterface[]
+     */
+    public function getDecorators()
     {
         $platformName = $this->resolvePlatformName($this->getDefaultPlatform());
         return $this->decorators[$platformName];
@@ -83,7 +91,7 @@ class Platform extends AbstractPlatform
      *
      * @throws Exception\RuntimeException
      */
-    #[Override] public function prepareStatement(AdapterInterface $adapter, StatementContainerInterface $statementContainer): StatementContainerInterface
+    public function prepareStatement(AdapterInterface $adapter, StatementContainerInterface $statementContainer)
     {
         if (! $this->subject instanceof PreparableSqlInterface) {
             throw new Exception\RuntimeException(
@@ -102,7 +110,7 @@ class Platform extends AbstractPlatform
      *
      * @throws Exception\RuntimeException
      */
-    #[Override] public function getSqlString(?PlatformInterface $adapterPlatform = null)
+    public function getSqlString(?PlatformInterface $adapterPlatform = null)
     {
         if (! $this->subject instanceof SqlInterface) {
             throw new Exception\RuntimeException(

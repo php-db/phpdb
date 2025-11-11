@@ -1,28 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDb\Adapter\Driver\Feature;
 
+use Override;
 use PhpDb\Adapter\Driver\DriverInterface;
 
-abstract class AbstractFeature
+abstract class AbstractFeature implements DriverFeatureInterface
 {
-    /** @var DriverInterface */
-    protected $driver;
+    protected DriverInterface $driver;
 
-    /**
-     * Set driver
-     *
-     * @return void
-     */
-    public function setDriver(DriverInterface $driver)
+    #[Override]
+    public function setDriver(DriverInterface $driver): DriverFeatureInterface
     {
         $this->driver = $driver;
+        return $this;
     }
-
-    /**
-     * Get name
-     *
-     * @return string
-     */
-    abstract public function getName();
 }

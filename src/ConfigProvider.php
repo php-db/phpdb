@@ -1,37 +1,24 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDb;
 
-class ConfigProvider
+final class ConfigProvider
 {
-    /**
-     * Retrieve laminas-db default configuration.
-     *
-     * @return array
-     */
-    public function __invoke()
+    public function __invoke(): array
     {
         return [
-            'dependencies' => $this->getDependencyConfig(),
+            'dependencies' => $this->getDependencies(),
         ];
     }
 
-    /**
-     * Retrieve laminas-db default dependency configuration.
-     *
-     * @return array
-     */
-    public function getDependencyConfig()
+    public function getDependencies(): array
     {
         return [
-            'abstract_factories' => [
-                Adapter\AdapterAbstractServiceFactory::class,
-            ],
-            'factories'          => [
-                Adapter\AdapterInterface::class => Adapter\AdapterServiceFactory::class,
-            ],
-            'aliases'            => [
-                Adapter\Adapter::class => Adapter\AdapterInterface::class,
+            'factories' => [
+                Adapter\AdapterInterface::class => Container\AdapterServiceFactory::class,
+                Container\AdapterManager::class => Container\AdapterManagerFactory::class,
             ],
         ];
     }

@@ -2,24 +2,25 @@
 
 namespace PhpDbTest\Sql\Ddl\Constraint;
 
-use PhpDb\Sql\Argument;
 use PhpDb\Sql\Ddl\Constraint\UniqueKey;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 
 #[CoversMethod(UniqueKey::class, 'getExpressionData')]
-class UniqueKeyTest extends TestCase
+final class UniqueKeyTest extends TestCase
 {
     public function testGetExpressionData(): void
     {
         $uk = new UniqueKey('foo', 'my_uk');
-
-        $expressionData = $uk->getExpressionData();
-
-        self::assertEquals('CONSTRAINT %s UNIQUE (%s)', $expressionData->getExpressionSpecification());
-        self::assertEquals([
-            Argument::identifier('my_uk'),
-            Argument::identifier('foo'),
-        ], $expressionData->getExpressionValues());
+        self::assertEquals(
+            [
+                [
+                    'CONSTRAINT %s UNIQUE (%s)',
+                    ['my_uk', 'foo'],
+                    [$uk::TYPE_IDENTIFIER, $uk::TYPE_IDENTIFIER],
+                ],
+            ],
+            $uk->getExpressionData()
+        );
     }
 }

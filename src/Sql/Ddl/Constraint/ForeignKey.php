@@ -2,147 +2,172 @@
 
 namespace PhpDb\Sql\Ddl\Constraint;
 
-use PhpDb\Sql\Argument;
-use PhpDb\Sql\ArgumentType;
-use PhpDb\Sql\ExpressionData;
-
 use function array_fill;
+use function array_merge;
 use function count;
 use function implode;
 use function sprintf;
 
 class ForeignKey extends AbstractConstraint
 {
-    protected string $onDeleteRule        = 'NO ACTION';
-    protected string $onUpdateRule        = 'NO ACTION';
-    protected string $referenceTable      = '';
-    protected string $columnSpecification = 'FOREIGN KEY (%s)';
+    /** @var string */
+    protected $onDeleteRule = 'NO ACTION';
+
+    /** @var string */
+    protected $onUpdateRule = 'NO ACTION';
 
     /** @var string[] */
-    protected array $referenceColumn = [];
+    protected $referenceColumn = [];
+
+    /** @var string */
+    protected $referenceTable = '';
+
+    /**
+     * {@inheritDoc}
+     */
+    protected $columnSpecification = 'FOREIGN KEY (%s) ';
 
     /** @var string[] */
-    protected array $referenceSpecification = [
-        'REFERENCES %s',
+    protected $referenceSpecification = [
+        'REFERENCES %s ',
         'ON DELETE %s ON UPDATE %s',
     ];
 
     /**
-     * @param string[]|string|null $referenceColumn
+     * @param null|string       $name
+     * @param null|string|array $columns
+     * @param string            $referenceTable
+     * @param null|string|array $referenceColumn
+     * @param null|string       $onDeleteRule
+     * @param null|string       $onUpdateRule
      */
     public function __construct(
-        string $name,
-        string|array $columns,
-        string $referenceTable,
-        array|string|null $referenceColumn,
-        null|string $onDeleteRule = null,
-        null|string $onUpdateRule = null
+        $name,
+        $columns,
+        $referenceTable,
+        $referenceColumn,
+        $onDeleteRule = null,
+        $onUpdateRule = null
     ) {
-        parent::__construct($columns, $name);
-
+        $this->setName($name);
+        $this->setColumns($columns);
         $this->setReferenceTable($referenceTable);
+        $this->setReferenceColumn($referenceColumn);
 
-        if ($referenceColumn !== null) {
-            $this->setReferenceColumn($referenceColumn);
-        }
-
-        if ($onDeleteRule !== null) {
+        if ($onDeleteRule) {
             $this->setOnDeleteRule($onDeleteRule);
         }
 
-        if ($onUpdateRule !== null) {
+        if ($onUpdateRule) {
             $this->setOnUpdateRule($onUpdateRule);
         }
     }
 
-    public function getReferenceTable(): string
+    /**
+     * @param  string $referenceTable
+     * @return $this Provides a fluent interface
+     */
+    public function setReferenceTable($referenceTable)
+    {
+        $this->referenceTable = (string) $referenceTable;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getReferenceTable()
     {
         return $this->referenceTable;
     }
 
     /**
+     * @param  null|string|array $referenceColumn
      * @return $this Provides a fluent interface
      */
-    public function setReferenceTable(string $referenceTable): static
-    {
-        $this->referenceTable = $referenceTable;
-
-        return $this;
-    }
-
-    public function getReferenceColumn(): array
-    {
-        return $this->referenceColumn;
-    }
-
-    /**
-     * @param string[]|string $referenceColumn
-     * @return $this Provides a fluent interface
-     */
-    public function setReferenceColumn(array|string $referenceColumn): static
+    public function setReferenceColumn($referenceColumn)
     {
         $this->referenceColumn = (array) $referenceColumn;
 
         return $this;
     }
 
-    public function getOnDeleteRule(): string
+    /**
+     * @return array
+     */
+    public function getReferenceColumn()
+    {
+        return $this->referenceColumn;
+    }
+
+    /**
+     * @param  string $onDeleteRule
+     * @return $this Provides a fluent interface
+     */
+    public function setOnDeleteRule($onDeleteRule)
+    {
+        $this->onDeleteRule = (string) $onDeleteRule;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getOnDeleteRule()
     {
         return $this->onDeleteRule;
     }
 
     /**
+     * @param  string $onUpdateRule
      * @return $this Provides a fluent interface
      */
-    public function setOnDeleteRule(string $onDeleteRule): static
+    public function setOnUpdateRule($onUpdateRule)
     {
-        $this->onDeleteRule = $onDeleteRule;
+        $this->onUpdateRule = (string) $onUpdateRule;
 
         return $this;
     }
 
-    public function getOnUpdateRule(): string
+    /**
+     * @return string
+     */
+    public function getOnUpdateRule()
     {
         return $this->onUpdateRule;
     }
 
     /**
-     * @return $this Provides a fluent interface
+     * @return array
      */
-    public function setOnUpdateRule(string $onUpdateRule): static
+    public function getExpressionData()
     {
-        $this->onUpdateRule = $onUpdateRule;
+        $data         = parent::getExpressionData();
+        $colCount     = count($this->referenceColumn);
+        $newSpecTypes = [self::TYPE_IDENTIFIER];
+        $values       = [$this->referenceTable];
 
-        return $this;
-    }
+        $data[0][0] .= $this->referenceSpecification[0];
 
-    #[\Override]
-    public function getExpressionData(): ExpressionData
-    {
-        $colCount = count($this->referenceColumn);
+        if ($colCount) {
+            $values       = array_merge($values, $this->referenceColumn);
+            $newSpecParts = array_fill(0, $colCount, '%s');
+            $newSpecTypes = array_merge($newSpecTypes, array_fill(0, $colCount, self::TYPE_IDENTIFIER));
 
-        $expressionData = parent::getExpressionData();
-
-        $expressionPart = $expressionData->getExpressionPart(0);
-        $expressionPart
-            ->addSpecification($this->referenceSpecification[0])
-            ->addValue(new Argument($this->referenceTable, ArgumentType::Identifier));
-
-        if ($colCount !== 0) {
-            $expressionPart->addSpecification(sprintf(
-                '(%s)',
-                implode(', ', array_fill(0, $colCount, '%s'))
-            ));
-            foreach ($this->referenceColumn as $column) {
-                $expressionPart->addValue(new Argument($column, ArgumentType::Identifier));
-            }
+            $data[0][0] .= sprintf('(%s) ', implode(', ', $newSpecParts));
         }
 
-        $expressionPart
-            ->addSpecification($this->referenceSpecification[1])
-            ->addValue(new Argument($this->onDeleteRule, ArgumentType::Literal))
-            ->addValue(new Argument($this->onUpdateRule, ArgumentType::Literal));
+        $data[0][0] .= $this->referenceSpecification[1];
 
-        return $expressionData;
+        $values[]       = $this->onDeleteRule;
+        $values[]       = $this->onUpdateRule;
+        $newSpecTypes[] = self::TYPE_LITERAL;
+        $newSpecTypes[] = self::TYPE_LITERAL;
+
+        $data[0][1] = array_merge($data[0][1], $values);
+        $data[0][2] = array_merge($data[0][2], $newSpecTypes);
+
+        return $data;
     }
 }

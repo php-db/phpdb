@@ -1,6 +1,6 @@
 <?php
 
-namespace LaminasIntegrationTest\Db\Adapter\Driver\Pdo;
+namespace PhpDbIntegrationTest\Adapter\Driver\Pdo;
 
 use PhpDb\Adapter\AdapterInterface;
 use PHPUnit\Framework\Attributes\CoversMethod;

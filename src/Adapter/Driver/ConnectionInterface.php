@@ -1,78 +1,48 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDb\Adapter\Driver;
 
-interface ConnectionInterface
+use PhpDb\Adapter\SchemaAwareInterface;
+
+interface ConnectionInterface extends SchemaAwareInterface
 {
-    /**
-     * Get current schema
-     *
-     * @return string
-     */
-    public function getCurrentSchema();
+    public function beginTransaction(): ConnectionInterface;
 
-    /**
-     * Get resource
-     *
-     * @return mixed
-     */
-    public function getResource();
+    public function connect(): ConnectionInterface;
 
-    /**
-     * Connect
-     *
-     * @return ConnectionInterface
-     */
-    public function connect();
+    public function commit(): ConnectionInterface;
 
-    /**
-     * Is connected
-     *
-     * @return bool
-     */
-    public function isConnected();
+    public function disconnect(): ConnectionInterface;
 
-    /**
-     * Disconnect
-     *
-     * @return ConnectionInterface
-     */
-    public function disconnect();
+    public function execute(string $sql): ?ResultInterface;
 
-    /**
-     * Begin transaction
-     *
-     * @return ConnectionInterface
-     */
-    public function beginTransaction();
-
-    /**
-     * Commit
-     *
-     * @return ConnectionInterface
-     */
-    public function commit();
-
-    /**
-     * Rollback
-     *
-     * @return ConnectionInterface
-     */
-    public function rollback();
-
-    /**
-     * Execute
-     *
-     * @param  string $sql
-     * @return ResultInterface
-     */
-    public function execute($sql);
+    public function getConnectionParameters(): array;
 
     /**
      * Get last generated id
      *
-     * @param  null $name Ignored
-     * @return int
+     * @param null $name Ignored (this is not ignored for PDO), imagine that...
+     *
+     * todo: narrow this to string|int|bool|null
+     * until version bumps to PHP 8.2 minimum then narrow to string|int|false
      */
-    public function getLastGeneratedValue($name = null);
+    public function getLastGeneratedValue($name = null): string|int|bool|null;
+
+    /**
+     * Get resource
+     *
+     * @return resource
+     */
+    public function getResource();
+
+    /** Checks whether the connection is in transaction state. */
+    public function inTransaction(): bool;
+
+    public function isConnected(): bool;
+
+    public function rollback(): ConnectionInterface;
+
+    public function setConnectionParameters(array $connectionParameters): ConnectionInterface;
 }

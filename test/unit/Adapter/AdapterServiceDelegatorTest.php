@@ -2,13 +2,13 @@
 
 namespace PhpDbTest\Adapter;
 
+use Laminas\ServiceManager\AbstractPluginManager;
+use Laminas\ServiceManager\ServiceManager;
 use PhpDb\Adapter\Adapter;
 use PhpDb\Adapter\AdapterAwareInterface;
 use PhpDb\Adapter\AdapterInterface;
 use PhpDb\Adapter\AdapterServiceDelegator;
 use PhpDb\Adapter\Driver\DriverInterface;
-use Laminas\ServiceManager\AbstractPluginManager;
-use Laminas\ServiceManager\ServiceManager;
 use PhpDbTest\Adapter\TestAsset\ConcreteAdapterAwareObject;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
@@ -17,12 +17,10 @@ use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use stdClass;
 
-class AdapterServiceDelegatorTest extends TestCase
+final class AdapterServiceDelegatorTest extends TestCase
 {
     /**
-     * @throws ContainerExceptionInterface
      * @throws Exception
-     * @throws NotFoundExceptionInterface
      */
     public function testSetAdapterShouldBeCalledForExistingAdapter(): void
     {
@@ -36,7 +34,7 @@ class AdapterServiceDelegatorTest extends TestCase
             ->expects(self::once())
             ->method('get')
             ->with(AdapterInterface::class)
-            ->willReturn($this->createMock(AdapterInterface::class));
+            ->willReturn($this->createMock(Adapter::class));
 
         $callback = static fn(): ConcreteAdapterAwareObject => new ConcreteAdapterAwareObject();
 
@@ -54,9 +52,7 @@ class AdapterServiceDelegatorTest extends TestCase
     }
 
     /**
-     * @throws ContainerExceptionInterface
      * @throws Exception
-     * @throws NotFoundExceptionInterface
      */
     public function testSetAdapterShouldBeCalledForOnlyConcreteAdapter(): void
     {
@@ -72,7 +68,7 @@ class AdapterServiceDelegatorTest extends TestCase
             ->expects(self::once())
             ->method('get')
             ->with(AdapterInterface::class)
-            ->willReturn($this->createMock(ConcreteAdapterAwareObject::class));
+            ->willReturn($this->createMock(AdapterInterface::class));
 
         $callback = static fn(): ConcreteAdapterAwareObject => new ConcreteAdapterAwareObject();
 
@@ -87,9 +83,7 @@ class AdapterServiceDelegatorTest extends TestCase
     }
 
     /**
-     * @throws ContainerExceptionInterface
      * @throws Exception
-     * @throws NotFoundExceptionInterface
      */
     public function testSetAdapterShouldNotBeCalledForMissingAdapter(): void
     {
@@ -116,9 +110,7 @@ class AdapterServiceDelegatorTest extends TestCase
     }
 
     /**
-     * @throws ContainerExceptionInterface
      * @throws Exception
-     * @throws NotFoundExceptionInterface
      */
     public function testSetAdapterShouldNotBeCalledForWrongClassInstance(): void
     {
@@ -225,6 +217,9 @@ class AdapterServiceDelegatorTest extends TestCase
 
         /** @var AbstractPluginManager $pluginManager */
         $pluginManager = new class ($container, $pluginManagerConfig) extends AbstractPluginManager {
+            public function validate(mixed $instance): void
+            {
+            }
         };
 
         $options = [

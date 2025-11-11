@@ -2,6 +2,7 @@
 
 namespace PhpDbTest\Adapter;
 
+use Override;
 use PhpDb\Adapter\ParameterContainer;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\TestDox;
@@ -29,7 +30,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(ParameterContainer::class, 'key')]
 #[CoversMethod(ParameterContainer::class, 'valid')]
 #[CoversMethod(ParameterContainer::class, 'rewind')]
-class ParameterContainerTest extends TestCase
+final class ParameterContainerTest extends TestCase
 {
     protected ParameterContainer $parameterContainer;
 
@@ -37,7 +38,7 @@ class ParameterContainerTest extends TestCase
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
-    #[\Override]
+    #[Override]
     protected function setUp(): void
     {
         $this->parameterContainer = new ParameterContainer(['foo' => 'bar']);

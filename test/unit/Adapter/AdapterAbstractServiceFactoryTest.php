@@ -2,11 +2,12 @@
 
 namespace PhpDbTest\Adapter;
 
-use PhpDb\Adapter\Adapter;
-use PhpDb\Adapter\AdapterAbstractServiceFactory;
 use Laminas\ServiceManager\Config;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use Laminas\ServiceManager\ServiceManager;
+use Override;
+use PhpDb\Adapter\AdapterAbstractServiceFactory;
+use PhpDb\Adapter\AdapterInterface;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\RequiresPhpExtension;
 use PHPUnit\Framework\TestCase;
@@ -14,11 +15,11 @@ use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 
-class AdapterAbstractServiceFactoryTest extends TestCase
+final class AdapterAbstractServiceFactoryTest extends TestCase
 {
     private ServiceManager|ContainerInterface $serviceManager;
 
-    #[\Override]
+    #[Override]
     protected function setUp(): void
     {
         $this->serviceManager = new ServiceManager();
@@ -66,7 +67,7 @@ class AdapterAbstractServiceFactoryTest extends TestCase
     public function testValidService(string $service): void
     {
         $actual = $this->serviceManager->get($service);
-        self::assertInstanceOf(Adapter::class, $actual);
+        self::assertInstanceOf(AdapterInterface::class, $actual);
     }
 
     /**

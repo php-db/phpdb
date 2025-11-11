@@ -2,6 +2,7 @@
 
 namespace PhpDbTest\TableGateway;
 
+use Override;
 use PhpDb\Adapter\Adapter;
 use PhpDb\Adapter\Driver\ConnectionInterface;
 use PhpDb\Adapter\Driver\DriverInterface;
@@ -25,11 +26,11 @@ use PHPUnit\Framework\TestCase;
 /**
  * @psalm-type AliasedTable = array{alias: string|TableIdentifier}
  */
-class TableGatewayTest extends TestCase
+final class TableGatewayTest extends TestCase
 {
     protected Adapter&MockObject $mockAdapter;
 
-    #[\Override]
+    #[Override]
     protected function setUp(): void
     {
         // mock the adapter, driver, and parts

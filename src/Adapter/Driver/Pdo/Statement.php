@@ -1,158 +1,123 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDb\Adapter\Driver\Pdo;
 
+use Override;
+use PDO;
+use PDOException;
+use PDOStatement;
+use PhpDb\Adapter\Driver\PdoDriverAwareInterface;
+use PhpDb\Adapter\Driver\PdoDriverInterface;
+use PhpDb\Adapter\Driver\ResultInterface;
 use PhpDb\Adapter\Driver\StatementInterface;
 use PhpDb\Adapter\Exception;
 use PhpDb\Adapter\ParameterContainer;
-use PhpDb\Adapter\Profiler;
-use Override;
-use PDOException;
-use PDOStatement;
+use PhpDb\Adapter\Profiler\ProfilerAwareInterface;
+use PhpDb\Adapter\Profiler\ProfilerInterface;
+use PhpDb\Adapter\StatementContainerInterface;
 
 use function implode;
 use function is_array;
 use function is_bool;
 use function is_int;
 
-class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
+class Statement implements StatementInterface, PdoDriverAwareInterface, ProfilerAwareInterface
 {
-    /** @var \PDO */
-    protected $pdo;
+    protected PDO $pdo;
 
-    /** @var Profiler\ProfilerInterface */
-    protected $profiler;
+    protected ?ProfilerInterface $profiler = null;
 
-    /** @var Pdo */
-    protected $driver;
+    protected PdoDriverInterface $driver;
 
-    /** @var string */
-    protected $sql = '';
+    protected string $sql = '';
 
-    /** @var bool */
-    protected $isQuery;
+    protected bool $isQuery;
 
-    /** @var ParameterContainer */
-    protected $parameterContainer;
+    protected bool $parametersBound = false;
 
-    /** @var bool */
-    protected $parametersBound = false;
+    protected PDOStatement|false|null $resource;
 
-    /** @var PDOStatement */
-    protected $resource;
+    protected bool $isPrepared = false;
 
-    /** @var bool */
-    protected $isPrepared = false;
+    public function __construct(
+        protected ParameterContainer $parameterContainer = new ParameterContainer(),
+        protected array $options = [],
+    ) {
+    }
 
-    /**
-     * Set driver
-     *
-     * @return $this Provides a fluent interface
-     */
-    public function setDriver(Pdo $driver)
+    #[Override]
+    public function setDriver(PdoDriverInterface $driver): PdoDriverAwareInterface
     {
         $this->driver = $driver;
-
         return $this;
     }
 
-    /**
-     * @return $this Provides a fluent interface
-     */
-    #[Override] public function setProfiler(Profiler\ProfilerInterface $profiler)
+    #[Override]
+    public function setProfiler(ProfilerInterface $profiler): ProfilerAwareInterface
     {
         $this->profiler = $profiler;
-
         return $this;
     }
 
-    /**
-     * Initialize
-     *
-     * @return $this Provides a fluent interface
-     */
-    public function initialize(\PDO $connectionResource)
+    public function getProfiler(): ?ProfilerInterface
+    {
+        return $this->profiler;
+    }
+
+    /** Initialize */
+    public function initialize(PDO $connectionResource): StatementInterface
     {
         $this->pdo = $connectionResource;
-
         return $this;
     }
 
-    /**
-     * Set resource
-     *
-     * @return $this Provides a fluent interface
-     */
-    public function setResource(PDOStatement $pdoStatement)
+    /** Set resource */
+    public function setResource(PDOStatement $pdoStatement): StatementInterface
     {
         $this->resource = $pdoStatement;
-
         return $this;
     }
 
-    /**
-     * Get resource
-     *
-     * @return PDOStatement
-     */
+    /** Get resource */
     #[Override]
-    public function getResource()
+    public function getResource(): ?PDOStatement
     {
         return $this->resource;
     }
 
-    /**
-     * Set sql
-     *
-     * @param string $sql
-     * @return $this Provides a fluent interface
-     */
+    /** Set sql */
     #[Override]
-    public function setSql($sql)
+    public function setSql(?string $sql): StatementContainerInterface
     {
         $this->sql = $sql;
-
         return $this;
     }
 
-    /**
-     * Get sql
-     *
-     * @return string
-     */
+    /** Get sql */
     #[Override]
-    public function getSql()
+    public function getSql(): ?string
     {
         return $this->sql;
     }
 
-    /**
-     * @return $this Provides a fluent interface
-     */
     #[Override]
-    public function setParameterContainer(ParameterContainer $parameterContainer)
+    public function setParameterContainer(ParameterContainer $parameterContainer): StatementContainerInterface
     {
         $this->parameterContainer = $parameterContainer;
-
         return $this;
     }
 
-    /**
-     * @return ParameterContainer
-     */
     #[Override]
-    public function getParameterContainer()
+    public function getParameterContainer(): ?ParameterContainer
     {
         return $this->parameterContainer;
     }
 
-    /**
-     * @param string $sql
-     * @throws Exception\RuntimeException
-     * @return void
-     */
+    /** @throws Exception\RuntimeException */
     #[Override]
-    public function prepare($sql = null)
+    public function prepare(?string $sql = null): StatementInterface
     {
         if ($this->isPrepared) {
             throw new Exception\RuntimeException('This statement has been prepared already');
@@ -170,24 +135,19 @@ class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
         }
 
         $this->isPrepared = true;
+
+        return $this;
     }
 
-    /**
-     * @return bool
-     */
     #[Override]
-    public function isPrepared()
+    public function isPrepared(): bool
     {
         return $this->isPrepared;
     }
 
-    /**
-     * @param null|array|ParameterContainer $parameters
-     * @throws Exception\InvalidQueryException
-     * @return Result
-     */
+    /** @throws Exception\InvalidQueryException */
     #[Override]
-    public function execute($parameters = null)
+    public function execute(null|array|ParameterContainer $parameters = null): ?ResultInterface
     {
         if (! $this->isPrepared) {
             $this->prepare();
@@ -236,12 +196,8 @@ class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
         return $this->driver->createResult($this->resource, $this);
     }
 
-    /**
-     * Bind parameters from container
-     *
-     * @return void
-     */
-    protected function bindParametersFromContainer()
+    /** Bind parameters from container */
+    protected function bindParametersFromContainer(): void
     {
         if ($this->parametersBound) {
             return;
@@ -250,22 +206,22 @@ class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
         $parameters = $this->parameterContainer->getNamedArray();
         foreach ($parameters as $name => &$value) {
             if (is_bool($value)) {
-                $type = \PDO::PARAM_BOOL;
+                $type = PDO::PARAM_BOOL;
             } elseif (is_int($value)) {
-                $type = \PDO::PARAM_INT;
+                $type = PDO::PARAM_INT;
             } else {
-                $type = \PDO::PARAM_STR;
+                $type = PDO::PARAM_STR;
             }
             if ($this->parameterContainer->offsetHasErrata($name)) {
                 switch ($this->parameterContainer->offsetGetErrata($name)) {
                     case ParameterContainer::TYPE_INTEGER:
-                        $type = \PDO::PARAM_INT;
+                        $type = PDO::PARAM_INT;
                         break;
                     case ParameterContainer::TYPE_NULL:
-                        $type = \PDO::PARAM_NULL;
+                        $type = PDO::PARAM_NULL;
                         break;
                     case ParameterContainer::TYPE_LOB:
-                        $type = \PDO::PARAM_LOB;
+                        $type = PDO::PARAM_LOB;
                         break;
                 }
             }
@@ -276,12 +232,8 @@ class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
         }
     }
 
-    /**
-     * Perform a deep clone
-     *
-     * @return void
-     */
-    public function __clone()
+    /** Perform a deep clone */
+    public function __clone(): void
     {
         $this->isPrepared      = false;
         $this->parametersBound = false;

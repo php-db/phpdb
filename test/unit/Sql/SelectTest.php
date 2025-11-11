@@ -7,8 +7,6 @@ use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\Driver\StatementInterface;
 use PhpDb\Adapter\ParameterContainer;
 use PhpDb\Adapter\Platform\Sql92;
-use PhpDb\Sql\Argument;
-use PhpDb\Sql\ArgumentType;
 use PhpDb\Sql\Exception\InvalidArgumentException;
 use PhpDb\Sql\Expression;
 use PhpDb\Sql\ExpressionInterface;
@@ -246,14 +244,12 @@ final class SelectTest extends TestCase
         /** @var Where $where */
         $where      = $select->getRawState('where');
         $predicates = $where->getPredicates();
-        $expression = new Argument(5, ArgumentType::Value);
-
         self::assertCount(1, $predicates);
         self::assertIsArray($predicates[0]);
         self::assertInstanceOf(Predicate\Expression::class, $predicates[0][1]);
         self::assertEquals(Predicate\PredicateSet::OP_AND, $predicates[0][0]);
         self::assertEquals('foo > ?', $predicates[0][1]->getExpression());
-        self::assertEquals([$expression], $predicates[0][1]->getParameters());
+        self::assertEquals([5], $predicates[0][1]->getParameters());
     }
 
     #[TestDox('unit test: Test where() will accept any array with string key (without ?) to be used
@@ -262,11 +258,6 @@ final class SelectTest extends TestCase
     {
         $select = new Select();
         $select->where(['name' => 'Ralph', 'age' => 33]);
-
-        $identifier1 = new Argument('name', ArgumentType::Identifier);
-        $expression1 = new Argument('Ralph', ArgumentType::Value);
-        $identifier2 = new Argument('age', ArgumentType::Identifier);
-        $expression2 = new Argument(33, ArgumentType::Value);
 
         /** @var Where $where */
         $where      = $select->getRawState('where');
@@ -277,13 +268,13 @@ final class SelectTest extends TestCase
 
         self::assertInstanceOf(Operator::class, $predicates[0][1]);
         self::assertEquals(Predicate\PredicateSet::OP_AND, $predicates[0][0]);
-        self::assertEquals($identifier1, $predicates[0][1]->getLeft());
-        self::assertEquals($expression1, $predicates[0][1]->getRight());
+        self::assertEquals('name', $predicates[0][1]->getLeft());
+        self::assertEquals('Ralph', $predicates[0][1]->getRight());
 
         self::assertInstanceOf(Operator::class, $predicates[1][1]);
         self::assertEquals(Predicate\PredicateSet::OP_AND, $predicates[1][0]);
-        self::assertEquals($identifier2, $predicates[1][1]->getLeft());
-        self::assertEquals($expression2, $predicates[1][1]->getRight());
+        self::assertEquals('age', $predicates[1][1]->getLeft());
+        self::assertEquals(33, $predicates[1][1]->getRight());
 
         $select = new Select();
         $select->where(['x = y']);
@@ -319,7 +310,6 @@ final class SelectTest extends TestCase
         /** @var Where $where */
         $where      = $select->getRawState('where');
         $predicates = $where->getPredicates();
-
         self::assertCount(1, $predicates);
         self::assertIsArray($predicates[0]);
         self::assertInstanceOf(Literal::class, $predicates[0][1]);
@@ -337,7 +327,6 @@ final class SelectTest extends TestCase
         /** @var Where $where */
         $where      = $select->getRawState('where');
         $predicates = $where->getPredicates();
-
         self::assertCount(1, $predicates);
         self::assertIsArray($predicates[0]);
         self::assertInstanceOf(Literal::class, $predicates[0][1]);
@@ -674,7 +663,7 @@ final class SelectTest extends TestCase
 
         $select->prepareStatement($mockAdapter, $mockStatement);
 
-        if ($expectedParameters !== []) {
+        if ($expectedParameters) {
             self::assertEquals($expectedParameters, $parameterContainer->getNamedArray());
         }
     }
@@ -686,11 +675,9 @@ final class SelectTest extends TestCase
         $select->from(new TableIdentifier('foo'));
         $select->join(new TableIdentifier('bar'), 'foo.id = bar.fooid');
 
-        $sqlString = $select->getSqlString(new TrustingSql92Platform());
-
         self::assertEquals(
             'SELECT "foo".*, "bar".* FROM "foo" INNER JOIN "bar" ON "foo"."id" = "bar"."fooid"',
-            $sqlString
+            $select->getSqlString(new TrustingSql92Platform())
         );
     }
 
@@ -732,9 +719,14 @@ final class SelectTest extends TestCase
     #[DataProvider('providerData')]
     #[TestDox('unit test: Text process*() methods will return proper array when internally called,
                     part of extension API')]
-    public function testProcessMethods(Select $select, mixed $unused, mixed $unused2, mixed $unused3, array $internalTests)
-    {
-        if ($internalTests === []) {
+    public function testProcessMethods(
+        Select $select,
+        mixed $unused,
+        mixed $unused2,
+        mixed $unused3,
+        array $internalTests
+    ) {
+        if (! $internalTests) {
             $this->expectNotToPerformAssertions();
             return;
         }
@@ -859,9 +851,11 @@ final class SelectTest extends TestCase
             [
                 new Expression(
                     '(COUNT(?) + ?) AS ?',
-                    ['some_column' => ArgumentType::Identifier],
-                    [5 => ArgumentType::Value],
-                    ['bar' => ArgumentType::Identifier],
+                    [
+                        ['some_column' => ExpressionInterface::TYPE_IDENTIFIER],
+                        [5 => ExpressionInterface::TYPE_VALUE],
+                        ['bar' => ExpressionInterface::TYPE_IDENTIFIER],
+                    ],
                 ),
             ]
         );
@@ -963,7 +957,7 @@ final class SelectTest extends TestCase
         ];
 
         $select19 = new Select();
-        $select19->from('foo')->group(new Expression('DAY(?)', ['col1' => ArgumentType::Identifier]));
+        $select19->from('foo')->group(new Expression('DAY(?)', [['col1' => ExpressionInterface::TYPE_IDENTIFIER]]));
         $sqlPrep19       = // same
             $sqlStr19    = 'SELECT "foo".* FROM "foo" GROUP BY DAY("col1")';
         $internalTests19 = [
@@ -1118,7 +1112,7 @@ final class SelectTest extends TestCase
         // @author Demian Katz
         $select34 = new Select();
         $select34->from('table')->order([
-            new Expression('isnull(?) DESC', ['name' => ArgumentType::Identifier]),
+            new Expression('isnull(?) DESC', [['name' => ExpressionInterface::TYPE_IDENTIFIER]]),
             'name',
         ]);
         $sqlPrep34       = 'SELECT "table".* FROM "table" ORDER BY isnull("name") DESC, "name" ASC';
@@ -1130,7 +1124,7 @@ final class SelectTest extends TestCase
         // join with Expression object in COLUMNS part (Laminas-514)
         // @co-author Koen Pieters (kpieters)
         $select35 = new Select();
-        $select35->from('foo')->columns([])->join('bar', 'm = n', ['thecount' => new Expression('COUNT(*)')]);
+        $select35->from('foo')->columns([])->join('bar', 'm = n', ['thecount' => new Expression("COUNT(*)")]);
         $sqlPrep35       = // same
             $sqlStr35    = 'SELECT COUNT(*) AS "thecount" FROM "foo" INNER JOIN "bar" ON "m" = "n"';
         $internalTests35 = [
@@ -1171,7 +1165,7 @@ final class SelectTest extends TestCase
         // Test TableIdentifier In Joins
         $select38 = new Select();
         $select38->from('foo')->columns([])
-            ->join(new TableIdentifier('bar', 'baz'), 'm = n', ['thecount' => new Expression('COUNT(*)')]);
+            ->join(new TableIdentifier('bar', 'baz'), 'm = n', ['thecount' => new Expression("COUNT(*)")]);
         $sqlPrep38       = // same
             $sqlStr38    = 'SELECT COUNT(*) AS "thecount" FROM "foo" INNER JOIN "baz"."bar" ON "m" = "n"';
         $internalTests38 = [
@@ -1221,7 +1215,7 @@ final class SelectTest extends TestCase
         ];
 
         $select42 = new Select();
-        $select42->from('foo')->quantifier(new Expression('TOP ?', 10));
+        $select42->from('foo')->quantifier(new Expression('TOP ?', [10]));
         $sqlPrep42       = 'SELECT TOP ? "foo".* FROM "foo"';
         $sqlStr42        = 'SELECT TOP \'10\' "foo".* FROM "foo"';
         $internalTests42 = [
@@ -1249,7 +1243,7 @@ final class SelectTest extends TestCase
 
         // limit with offset
         $select45 = new Select();
-        $select45->from('foo')->limit('5')->offset('10');
+        $select45->from('foo')->limit("5")->offset("10");
         $sqlPrep45       = 'SELECT "foo".* FROM "foo" LIMIT ? OFFSET ?';
         $sqlStr45        = 'SELECT "foo".* FROM "foo" LIMIT \'5\' OFFSET \'10\'';
         $params45        = ['limit' => 5, 'offset' => 10];
@@ -1272,7 +1266,7 @@ final class SelectTest extends TestCase
 
         // limit with big offset and limit
         $select47 = new Select();
-        $select47->from('foo')->limit('10000000000000000000')->offset('10000000000000000000');
+        $select47->from('foo')->limit("10000000000000000000")->offset("10000000000000000000");
         $sqlPrep47       = 'SELECT "foo".* FROM "foo" LIMIT ? OFFSET ?';
         $sqlStr47        = 'SELECT "foo".* FROM "foo" LIMIT \'10000000000000000000\' OFFSET \'10000000000000000000\'';
         $params47        = ['limit' => 10000000000000000000, 'offset' => 10000000000000000000];

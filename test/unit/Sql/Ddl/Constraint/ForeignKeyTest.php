@@ -2,7 +2,6 @@
 
 namespace PhpDbTest\Sql\Ddl\Constraint;
 
-use PhpDb\Sql\Argument;
 use PhpDb\Sql\Ddl\Constraint\ForeignKey;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Depends;
@@ -19,7 +18,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(ForeignKey::class, 'setOnUpdateRule')]
 #[CoversMethod(ForeignKey::class, 'getOnUpdateRule')]
 #[CoversMethod(ForeignKey::class, 'getExpressionData')]
-class ForeignKeyTest extends TestCase
+final class ForeignKeyTest extends TestCase
 {
     public function testSetName(): ForeignKey
     {
@@ -89,20 +88,22 @@ class ForeignKeyTest extends TestCase
     public function testGetExpressionData(): void
     {
         $fk = new ForeignKey('foo', 'bar', 'baz', 'bam', 'CASCADE', 'SET NULL');
-
-        $expressionData = $fk->getExpressionData();
-
         self::assertEquals(
-            'CONSTRAINT %s FOREIGN KEY (%s) REFERENCES %s (%s) ON DELETE %s ON UPDATE %s',
-            $expressionData->getExpressionSpecification()
+            [
+                [
+                    'CONSTRAINT %s FOREIGN KEY (%s) REFERENCES %s (%s) ON DELETE %s ON UPDATE %s',
+                    ['foo', 'bar', 'baz', 'bam', 'CASCADE', 'SET NULL'],
+                    [
+                        $fk::TYPE_IDENTIFIER,
+                        $fk::TYPE_IDENTIFIER,
+                        $fk::TYPE_IDENTIFIER,
+                        $fk::TYPE_IDENTIFIER,
+                        $fk::TYPE_LITERAL,
+                        $fk::TYPE_LITERAL,
+                    ],
+                ],
+            ],
+            $fk->getExpressionData()
         );
-        self::assertEquals([
-            Argument::identifier('foo'),
-            Argument::identifier('bar'),
-            Argument::identifier('baz'),
-            Argument::identifier('bam'),
-            Argument::literal('CASCADE'),
-            Argument::literal('SET NULL'),
-        ], $expressionData->getExpressionValues());
     }
 }

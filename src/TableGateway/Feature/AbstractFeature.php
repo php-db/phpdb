@@ -4,7 +4,6 @@ namespace PhpDb\TableGateway\Feature;
 
 use PhpDb\TableGateway\AbstractTableGateway;
 use PhpDb\TableGateway\Exception;
-use Override;
 
 abstract class AbstractFeature extends AbstractTableGateway
 {
@@ -20,12 +19,12 @@ abstract class AbstractFeature extends AbstractTableGateway
         return static::class;
     }
 
-    public function setTableGateway(AbstractTableGateway $tableGateway): void
+    public function setTableGateway(AbstractTableGateway $tableGateway)
     {
         $this->tableGateway = $tableGateway;
     }
 
-    #[Override] public function initialize(): void
+    public function initialize()
     {
         throw new Exception\RuntimeException('This method is not intended to be called on this object.');
     }

@@ -2,6 +2,7 @@
 
 namespace PhpDbTest\Sql;
 
+use Override;
 use PhpDb\Adapter\Adapter;
 use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\Driver\StatementInterface;
@@ -20,7 +21,6 @@ use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 use ReflectionException;
-use TypeError;
 
 #[CoversMethod(Insert::class, 'into')]
 #[CoversMethod(Insert::class, 'columns')]
@@ -31,7 +31,7 @@ use TypeError;
 #[CoversMethod(Insert::class, '__unset')]
 #[CoversMethod(Insert::class, '__isset')]
 #[CoversMethod(Insert::class, '__get')]
-class InsertTest extends TestCase
+final class InsertTest extends TestCase
 {
     use DeprecatedAssertionsTrait;
 
@@ -41,7 +41,7 @@ class InsertTest extends TestCase
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
-    #[\Override]
+    #[Override]
     protected function setUp(): void
     {
         $this->insert = new Insert();
@@ -83,7 +83,8 @@ class InsertTest extends TestCase
 
     public function testValuesThrowsExceptionWhenNotArrayOrSelect(): void
     {
-        $this->expectException(TypeError::class);
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('values() expects an array of values or PhpDb\Sql\Select instance');
         /** @psalm-suppress InvalidArgument */
         $this->insert->values(5);
     }
@@ -280,14 +281,16 @@ class InsertTest extends TestCase
     // @codingStandardsIgnoreStart
     public function test__isset(): void
     {
+        // @codingStandardsIgnoreEnd
         /** @psalm-suppress UndefinedMagicPropertyAssignment */
         $this->insert->foo = 'bar';
-
-        self::assertEquals('bar', $this->insert->foo);
+        /** @psalm-suppress RedundantCondition */
+        self::assertTrue(isset($this->insert->foo));
 
         /** @psalm-suppress UndefinedMagicPropertyAssignment */
         $this->insert->foo = null;
-        self::assertEquals(null, $this->insert->foo);
+        /** @psalm-suppress TypeDoesNotContainType */
+        self::assertTrue(isset($this->insert->foo));
     }
 
     // @codingStandardsIgnoreStart

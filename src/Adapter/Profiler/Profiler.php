@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDb\Adapter\Profiler;
 
 use PhpDb\Adapter\Exception;
@@ -7,22 +9,26 @@ use PhpDb\Adapter\Exception\InvalidArgumentException;
 use PhpDb\Adapter\StatementContainerInterface;
 
 use function end;
+use function is_string;
 use function microtime;
 
 class Profiler implements ProfilerInterface
 {
-    protected array $profiles     = [];
-    protected int   $currentIndex = 0;
+    /** @var array */
+    protected $profiles = [];
+
+    /** @var null */
+    protected $currentIndex = 0;
 
     /**
      * @param string|StatementContainerInterface $target
-     * @throws InvalidArgumentException
      * @return $this Provides a fluent interface
+     * @throws InvalidArgumentException
      */
-    #[\Override]
-    public function profilerStart(StatementContainerInterface|string $target): static
+    public function profilerStart($target)
     {
         $profileInformation = [
+            'sql'        => '',
             'parameters' => null,
             'start'      => microtime(true),
             'end'        => null,
@@ -31,8 +37,12 @@ class Profiler implements ProfilerInterface
         if ($target instanceof StatementContainerInterface) {
             $profileInformation['sql']        = $target->getSql();
             $profileInformation['parameters'] = clone $target->getParameterContainer();
-        } else {
+        } elseif (is_string($target)) {
             $profileInformation['sql'] = $target;
+        } else {
+            throw new Exception\InvalidArgumentException(
+                __FUNCTION__ . ' takes either a StatementContainer or a string'
+            );
         }
 
         $this->profiles[$this->currentIndex] = $profileInformation;
@@ -43,8 +53,7 @@ class Profiler implements ProfilerInterface
     /**
      * @return $this Provides a fluent interface
      */
-    #[\Override]
-    public function profilerFinish(): static
+    public function profilerFinish()
     {
         if (! isset($this->profiles[$this->currentIndex])) {
             throw new Exception\RuntimeException(
@@ -55,14 +64,13 @@ class Profiler implements ProfilerInterface
         $current['end']    = microtime(true);
         $current['elapse'] = $current['end'] - $current['start'];
         $this->currentIndex++;
-
         return $this;
     }
 
     /**
      * @return array|null
      */
-    public function getLastProfile(): ?array
+    public function getLastProfile()
     {
         return end($this->profiles);
     }
@@ -70,7 +78,7 @@ class Profiler implements ProfilerInterface
     /**
      * @return array
      */
-    public function getProfiles(): array
+    public function getProfiles()
     {
         return $this->profiles;
     }

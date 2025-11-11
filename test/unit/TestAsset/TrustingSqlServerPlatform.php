@@ -2,16 +2,20 @@
 
 namespace PhpDbTest\TestAsset;
 
-use PhpDb\Adapter\Platform\SqlServer;
-use Override;
+use PhpDb\Adapter\Platform\Sql92;
 
-class TrustingSqlServerPlatform extends SqlServer
+final class TrustingSqlServerPlatform extends Sql92
 {
     /**
      * @param string $value
      */
-    #[Override] public function quoteValue($value): string
+    public function quoteValue($value): string
     {
-        return $this->quoteTrustedValue($value);
+        return "'" . $value . "'";
+    }
+
+    public function getName(): string
+    {
+        return 'sqlserver';
     }
 }

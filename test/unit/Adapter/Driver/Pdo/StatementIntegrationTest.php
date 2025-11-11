@@ -2,25 +2,25 @@
 
 namespace PhpDbTest\Adapter\Driver\Pdo;
 
-use PhpDb\Adapter\Driver\Pdo\Statement;
 use Override;
 use PDO;
 use PDOStatement;
+use PhpDb\Adapter\Driver\Pdo\Statement;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-class StatementIntegrationTest extends TestCase
+final class StatementIntegrationTest extends TestCase
 {
     protected Statement $statement;
 
-    /** @var PDOStatement|MockObject */
+    /** @var MockObject */
     protected PDOStatement|MockObject $pdoStatementMock;
 
     /**
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
-    #[\Override]
+    #[Override]
     protected function setUp(): void
     {
         $driver = $this->getMockBuilder(\PhpDb\Adapter\Driver\Pdo\Pdo::class)
@@ -41,7 +41,7 @@ class StatementIntegrationTest extends TestCase
      * Tears down the fixture, for example, closes a network connection.
      * This method is called after a test is executed.
      */
-    #[Override] protected function tearDown(): void
+    protected function tearDown(): void
     {
     }
 

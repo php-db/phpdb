@@ -2,20 +2,19 @@
 
 namespace PhpDbTest\Adapter\Profiler;
 
+use Override;
 use PhpDb\Adapter\Exception\InvalidArgumentException;
 use PhpDb\Adapter\Exception\RuntimeException;
 use PhpDb\Adapter\Profiler\Profiler;
 use PhpDb\Adapter\StatementContainer;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
-use stdClass;
-use TypeError;
 
 #[CoversMethod(Profiler::class, 'profilerStart')]
 #[CoversMethod(Profiler::class, 'profilerFinish')]
 #[CoversMethod(Profiler::class, 'getLastProfile')]
 #[CoversMethod(Profiler::class, 'getProfiles')]
-class ProfilerTest extends TestCase
+final class ProfilerTest extends TestCase
 {
     protected Profiler $profiler;
 
@@ -23,7 +22,7 @@ class ProfilerTest extends TestCase
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
-    #[\Override]
+    #[Override]
     protected function setUp(): void
     {
         $this->profiler = new Profiler();
@@ -36,8 +35,9 @@ class ProfilerTest extends TestCase
         $ret = $this->profiler->profilerStart(new StatementContainer());
         self::assertSame($this->profiler, $ret);
 
-        $this->expectException(TypeError::class);
-        $this->profiler->profilerStart(new stdClass());;
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('profilerStart takes either a StatementContainer or a string');
+        $this->profiler->profilerStart(5);
     }
 
     public function testProfilerFinish(): void

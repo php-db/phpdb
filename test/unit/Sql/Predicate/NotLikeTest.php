@@ -2,13 +2,11 @@
 
 namespace PhpDbTest\Sql\Predicate;
 
-use PhpDb\Sql\Argument;
-use PhpDb\Sql\ArgumentType;
 use PhpDb\Sql\Predicate\Like;
 use PhpDb\Sql\Predicate\NotLike;
 use PHPUnit\Framework\TestCase;
 
-class NotLikeTest extends TestCase
+final class NotLikeTest extends TestCase
 {
     public function testConstructEmptyArgs(): void
     {
@@ -20,40 +18,34 @@ class NotLikeTest extends TestCase
     public function testConstructWithArgs(): void
     {
         $notLike = new NotLike('bar', 'Foo%');
-
-        $identifier = new Argument('bar', ArgumentType::Identifier);
-        self::assertEquals($identifier, $notLike->getIdentifier());
-
-        $expression = new Argument('Foo%', ArgumentType::Value);
-        self::assertEquals($expression, $notLike->getLike());
+        self::assertEquals('bar', $notLike->getIdentifier());
+        self::assertEquals('Foo%', $notLike->getLike());
     }
 
     public function testAccessorsMutators(): void
     {
         $notLike = new NotLike();
-
         $notLike->setIdentifier('bar');
-        $identifier = new Argument('bar', ArgumentType::Identifier);
-        self::assertEquals($identifier, $notLike->getIdentifier());
-
+        self::assertEquals('bar', $notLike->getIdentifier());
         $notLike->setLike('foo%');
-        $expression = new Argument('foo%', ArgumentType::Value);
-        self::assertEquals($expression, $notLike->getLike());
-
+        self::assertEquals('foo%', $notLike->getLike());
         $notLike->setSpecification('target = target');
         self::assertEquals('target = target', $notLike->getSpecification());
     }
 
     public function testGetExpressionData(): void
     {
-        $notLike    = new NotLike('bar', 'Foo%');
-        $identifier = new Argument('bar', ArgumentType::Identifier);
-        $expression = new Argument('Foo%', ArgumentType::Value);
-
-        $expressionData = $notLike->getExpressionData();
-
-        self::assertEquals('%1$s NOT LIKE %2$s', $expressionData->getExpressionSpecification());
-        self::assertEquals([$identifier, $expression], $expressionData->getExpressionValues());
+        $notLike = new NotLike('bar', 'Foo%');
+        self::assertEquals(
+            [
+                [
+                    '%1$s NOT LIKE %2$s',
+                    ['bar', 'Foo%'],
+                    [$notLike::TYPE_IDENTIFIER, $notLike::TYPE_VALUE],
+                ],
+            ],
+            $notLike->getExpressionData()
+        );
     }
 
     public function testInstanceOfPerSetters(): void

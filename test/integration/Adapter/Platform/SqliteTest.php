@@ -1,7 +1,8 @@
 <?php
 
-namespace LaminasIntegrationTest\Db\Adapter\Platform;
+namespace PhpDbIntegrationTest\Adapter\Platform;
 
+use Override;
 use PhpDb\Adapter\Driver\Pdo;
 use PhpDb\Adapter\Platform\Sqlite;
 use PHPUnit\Framework\Attributes\Group;
@@ -12,15 +13,15 @@ use function getenv;
 
 #[Group('integration')]
 #[Group('integration-sqlite')]
-class SqliteTest extends TestCase
+final class SqliteTest extends TestCase
 {
     /** @var array<string, resource|\PDO> */
     public array|\PDO $adapters = [];
 
-    #[\Override]
+    #[Override]
     protected function setUp(): void
     {
-        if (! getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_SQLITE_MEMORY')) {
+        if (! getenv('TESTS_PHPDB_ADAPTER_DRIVER_SQLITE_MEMORY')) {
             $this->markTestSkipped(self::class . ' integration tests are not enabled!');
         }
         if (extension_loaded('pdo')) {

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDb\Adapter\Profiler;
 
 use PhpDb\Adapter\StatementContainerInterface;
@@ -10,7 +12,10 @@ interface ProfilerInterface
      * @param string|StatementContainerInterface $target
      * @return mixed
      */
-    public function profilerStart(string|StatementContainerInterface $target);
+    public function profilerStart($target);
 
+    /**
+     * @return $this
+     */
     public function profilerFinish();
 }

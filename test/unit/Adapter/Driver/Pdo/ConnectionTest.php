@@ -3,6 +3,7 @@
 namespace PhpDbTest\Adapter\Driver\Pdo;
 
 use Exception;
+use Override;
 use PhpDb\Adapter\Driver\Pdo\Connection;
 use PhpDb\Adapter\Exception\InvalidConnectionParametersException;
 use PHPUnit\Framework\Attributes\CoversMethod;
@@ -11,7 +12,7 @@ use PHPUnit\Framework\TestCase;
 
 #[CoversMethod(Connection::class, 'getResource')]
 #[CoversMethod(Connection::class, 'getDsn')]
-class ConnectionTest extends TestCase
+final class ConnectionTest extends TestCase
 {
     protected Connection $connection;
 
@@ -19,7 +20,7 @@ class ConnectionTest extends TestCase
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
-    #[\Override]
+    #[Override]
     protected function setUp(): void
     {
         $this->connection = new Connection();
@@ -39,7 +40,7 @@ class ConnectionTest extends TestCase
      */
     public function testGetDsn(): void
     {
-        $dsn = 'sqlite::memory:';
+        $dsn = "sqlite::memory:";
         $this->connection->setConnectionParameters(['dsn' => $dsn]);
         try {
             $this->connection->connect();

@@ -6,6 +6,7 @@ use PhpDb\ResultSet\ResultSet;
 use PhpDb\RowGateway\RowGateway;
 use PhpDb\RowGateway\RowGatewayInterface;
 use PhpDb\TableGateway\Exception;
+use PhpDb\TableGateway\Feature\MetadataFeature;
 
 use function func_get_args;
 use function is_string;
@@ -20,9 +21,6 @@ class RowGatewayFeature extends AbstractFeature
         $this->constructorArguments = func_get_args();
     }
 
-    /**
-     * @return void
-     */
     public function postInitialize()
     {
         $args = $this->constructorArguments;

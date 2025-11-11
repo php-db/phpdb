@@ -2,6 +2,7 @@
 
 namespace PhpDbTest\TableGateway\Feature;
 
+use Override;
 use PhpDb\Adapter\AdapterInterface;
 use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\Driver\StatementInterface;
@@ -9,7 +10,6 @@ use PhpDb\Adapter\Platform\Sql92;
 use PhpDb\ResultSet\ResultSet;
 use PhpDb\TableGateway\Feature\MasterSlaveFeature;
 use PhpDb\TableGateway\TableGateway;
-use Override;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;

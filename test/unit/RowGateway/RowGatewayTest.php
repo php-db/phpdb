@@ -2,6 +2,7 @@
 
 namespace PhpDbTest\RowGateway;
 
+use Override;
 use PhpDb\Adapter\Adapter;
 use PhpDb\Adapter\Driver\ConnectionInterface;
 use PhpDb\Adapter\Driver\DriverInterface;
@@ -12,16 +13,16 @@ use PhpDb\RowGateway\RowGateway;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-class RowGatewayTest extends TestCase
+final class RowGatewayTest extends TestCase
 {
-    /** @var Adapter|MockObject */
+    /** @var Adapter&MockObject */
     protected Adapter|MockObject $mockAdapter;
 
     protected RowGateway $rowGateway;
 
-    /** @var MockObject|ResultInterface */
+    /** @var ResultInterface&MockObject */
     protected ResultInterface|MockObject $mockResult;
-    #[\Override]
+    #[Override]
     protected function setUp(): void
     {
         // mock the adapter, driver, and parts

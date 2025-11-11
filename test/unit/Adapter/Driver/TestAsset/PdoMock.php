@@ -1,26 +1,27 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDbTest\Adapter\Driver\TestAsset;
 
-use Override;
 use PDO;
 use ReturnTypeWillChange;
 
 /**
  * Stub class
  */
-class PdoMock extends PDO
+final class PdoMock extends PDO
 {
     public function __construct()
     {
     }
 
-    #[Override] public function beginTransaction(): bool
+    public function beginTransaction(): bool
     {
         return true;
     }
 
-    #[Override] public function commit(): bool
+    public function commit(): bool
     {
         return true;
     }
@@ -29,13 +30,13 @@ class PdoMock extends PDO
      * @param string $attribute
      * @return null
      */
-    #[Override] #[ReturnTypeWillChange]
+    #[ReturnTypeWillChange]
     public function getAttribute($attribute)
     {
         return null;
     }
 
-    #[Override] public function rollBack(): bool
+    public function rollBack(): bool
     {
         return true;
     }

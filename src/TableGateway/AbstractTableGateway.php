@@ -16,8 +16,6 @@ use PhpDb\Sql\Update;
 use PhpDb\Sql\Where;
 use PhpDb\TableGateway\Feature\EventFeatureEventsInterface;
 
-use Override;
-
 use function array_shift;
 use function array_values;
 use function count;
@@ -26,6 +24,7 @@ use function is_array;
 use function is_object;
 use function is_string;
 use function reset;
+use function sprintf;
 use function strtolower;
 
 /**
@@ -60,11 +59,20 @@ abstract class AbstractTableGateway implements TableGatewayInterface
     protected $lastInsertValue;
 
     /**
+     * @return bool
+     */
+    public function isInitialized()
+    {
+        return $this->isInitialized;
+    }
+
+    /**
      * Initialize
      *
      * @throws Exception\RuntimeException
+     * @return null
      */
-    public function initialize(): void
+    public function initialize()
     {
         if ($this->isInitialized) {
             return;
@@ -103,7 +111,7 @@ abstract class AbstractTableGateway implements TableGatewayInterface
      *
      * @return string
      */
-    #[Override] public function getTable()
+    public function getTable()
     {
         return $this->table;
     }
@@ -158,7 +166,7 @@ abstract class AbstractTableGateway implements TableGatewayInterface
      * @param Where|Closure|string|array $where
      * @return ResultSetInterface
      */
-    #[Override] public function select($where = null)
+    public function select($where = null)
     {
         if (! $this->isInitialized) {
             $this->initialize();
@@ -235,13 +243,24 @@ abstract class AbstractTableGateway implements TableGatewayInterface
      * @param  array $set
      * @return int
      */
-    #[Override] public function insert($set)
+    public function insert($set)
     {
         if (! $this->isInitialized) {
             $this->initialize();
         }
         $insert = $this->sql->insert();
         $insert->values($set);
+        return $this->executeInsert($insert);
+    }
+
+    /**
+     * @return int
+     */
+    public function insertWith(Insert $insert)
+    {
+        if (! $this->isInitialized) {
+            $this->initialize();
+        }
         return $this->executeInsert($insert);
     }
 
@@ -294,7 +313,7 @@ abstract class AbstractTableGateway implements TableGatewayInterface
      * @param  null|array $joins
      * @return int
      */
-    #[Override] public function update($set, $where = null, ?array $joins = null)
+    public function update($set, $where = null, ?array $joins = null)
     {
         if (! $this->isInitialized) {
             $this->initialize();
@@ -313,6 +332,17 @@ abstract class AbstractTableGateway implements TableGatewayInterface
             }
         }
 
+        return $this->executeUpdate($update);
+    }
+
+    /**
+     * @return int
+     */
+    public function updateWith(Update $update)
+    {
+        if (! $this->isInitialized) {
+            $this->initialize();
+        }
         return $this->executeUpdate($update);
     }
 
@@ -360,7 +390,7 @@ abstract class AbstractTableGateway implements TableGatewayInterface
      * @param Where|Closure|string|array $where
      * @return int
      */
-    #[Override] public function delete($where)
+    public function delete($where)
     {
         if (! $this->isInitialized) {
             $this->initialize();
@@ -371,6 +401,15 @@ abstract class AbstractTableGateway implements TableGatewayInterface
         } else {
             $delete->where($where);
         }
+        return $this->executeDelete($delete);
+    }
+
+    /**
+     * @return int
+     */
+    public function deleteWith(Delete $delete)
+    {
+        $this->initialize();
         return $this->executeDelete($delete);
     }
 
@@ -446,11 +485,43 @@ abstract class AbstractTableGateway implements TableGatewayInterface
     }
 
     /**
+     * @param string $property
+     * @param mixed $value
+     * @return mixed
+     * @throws Exception\InvalidArgumentException
+     */
+    public function __set($property, $value)
+    {
+        if ($this->featureSet->canCallMagicSet($property)) {
+            return $this->featureSet->callMagicSet($property, $value);
+        }
+        throw new Exception\InvalidArgumentException('Invalid magic property access in ' . self::class . '::__set()');
+    }
+
+    /**
+     * @param string $method
+     * @param array $arguments
+     * @return mixed
+     * @throws Exception\InvalidArgumentException
+     */
+    public function __call($method, $arguments)
+    {
+        if ($this->featureSet->canCallMagicCall($method)) {
+            return $this->featureSet->callMagicCall($method, $arguments);
+        }
+        throw new Exception\InvalidArgumentException(sprintf(
+            'Invalid method (%s) called, caught by %s::__call()',
+            $method,
+            self::class
+        ));
+    }
+
+    /**
      * __clone
      */
     public function __clone()
     {
-        $this->resultSetPrototype = $this->resultSetPrototype !== null ? clone $this->resultSetPrototype : null;
+        $this->resultSetPrototype = isset($this->resultSetPrototype) ? clone $this->resultSetPrototype : null;
         $this->sql                = clone $this->sql;
         if (is_object($this->table)) {
             $this->table = clone $this->table;
@@ -459,7 +530,7 @@ abstract class AbstractTableGateway implements TableGatewayInterface
             && count($this->table) === 1
             && is_object(reset($this->table))
         ) {
-            foreach ($this->table as &$tableObject) {
+            foreach ($this->table as $alias => &$tableObject) {
                 $tableObject = clone $tableObject;
             }
         }

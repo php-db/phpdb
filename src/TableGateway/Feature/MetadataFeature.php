@@ -3,8 +3,8 @@
 namespace PhpDb\TableGateway\Feature;
 
 use PhpDb\Metadata\MetadataInterface;
+use PhpDb\Metadata\Object\ConstraintObject;
 use PhpDb\Metadata\Object\TableObject;
-use PhpDb\Metadata\Source\Factory as SourceFactory;
 use PhpDb\Sql\TableIdentifier;
 use PhpDb\TableGateway\Exception;
 
@@ -14,33 +14,20 @@ use function is_array;
 
 class MetadataFeature extends AbstractFeature
 {
-    /** @var MetadataInterface */
-    protected $metadata;
-
     /**
      * Constructor
      */
-    public function __construct(?MetadataInterface $metadata = null)
-    {
-        if ($metadata instanceof \PhpDb\Metadata\MetadataInterface) {
-            $this->metadata = $metadata;
-        }
+    public function __construct(
+        protected MetadataInterface $metadata
+    ) {
         $this->sharedData['metadata'] = [
             'primaryKey' => null,
             'columns'    => [],
         ];
     }
 
-    /**
-     * @throws \Exception
-     * @return void
-     */
     public function postInitialize()
     {
-        if ($this->metadata === null) {
-            $this->metadata = SourceFactory::createSourceFromAdapter($this->tableGateway->adapter);
-        }
-
         // localize variable for brevity
         $t = $this->tableGateway;
         $m = $this->metadata;
@@ -70,6 +57,7 @@ class MetadataFeature extends AbstractFeature
         $pkc = null;
 
         foreach ($m->getConstraints($table, $schema) as $constraint) {
+            /** @var ConstraintObject $constraint */
             if ($constraint->getType() === 'PRIMARY KEY') {
                 $pkc = $constraint;
                 break;
@@ -81,7 +69,11 @@ class MetadataFeature extends AbstractFeature
         }
 
         $pkcColumns = $pkc->getColumns();
-        $primaryKey = count($pkcColumns) === 1 ? $pkcColumns[0] : $pkcColumns;
+        if (count($pkcColumns) === 1) {
+            $primaryKey = $pkcColumns[0];
+        } else {
+            $primaryKey = $pkcColumns;
+        }
 
         $this->sharedData['metadata']['primaryKey'] = $primaryKey;
     }

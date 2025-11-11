@@ -1,6 +1,6 @@
 <?php
 
-namespace LaminasIntegrationTest\Db\Extension;
+namespace PhpDbIntegrationTest\Extension;
 
 use Override;
 use PHPUnit\Runner\Extension\Extension;

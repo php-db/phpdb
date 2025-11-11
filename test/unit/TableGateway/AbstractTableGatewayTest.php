@@ -2,6 +2,7 @@
 
 namespace PhpDbTest\TableGateway;
 
+use Override;
 use PhpDb\Adapter\Adapter;
 use PhpDb\Adapter\Driver\ConnectionInterface;
 use PhpDb\Adapter\Driver\DriverInterface;
@@ -39,7 +40,7 @@ use ReflectionClass;
 #[CoversMethod(AbstractTableGateway::class, 'getLastInsertValue')]
 #[CoversMethod(AbstractTableGateway::class, '__get')]
 #[CoversMethod(AbstractTableGateway::class, '__clone')]
-class AbstractTableGatewayTest extends TestCase
+final class AbstractTableGatewayTest extends TestCase
 {
     protected MockObject&Adapter $mockAdapter;
     protected MockObject&Sql\Sql $mockSql;
@@ -54,7 +55,7 @@ class AbstractTableGatewayTest extends TestCase
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
-    #[\Override]
+    #[Override]
     protected function setUp(): void
     {
         // mock the adapter, driver, and parts

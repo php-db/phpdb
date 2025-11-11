@@ -1,11 +1,17 @@
 {
     "extensions": [
-        "pdo-mysql",
-        "pdo-pgsql",
         "pdo-sqlite",
-        "mysqli",
-        "pgsql",
         "sqlite3",
         "sqlsrv"
+    ],
+    "additional_checks": [
+        {
+            "name": "PhpStan",
+            "job": {
+                "php": "8.2",
+                "dependencies": "latest",
+                "command": "composer require --dev phpstan/phpstan && vendor/bin/phpstan analyse"
+            }
+        }
     ]
 }

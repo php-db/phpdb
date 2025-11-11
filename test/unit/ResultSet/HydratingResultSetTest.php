@@ -2,11 +2,12 @@
 
 namespace PhpDbTest\ResultSet;
 
-use PhpDb\ResultSet\HydratingResultSet;
 use Laminas\Hydrator\ArraySerializable;
 use Laminas\Hydrator\ArraySerializableHydrator;
 use Laminas\Hydrator\ClassMethods;
 use Laminas\Hydrator\ClassMethodsHydrator;
+use Override;
+use PhpDb\ResultSet\HydratingResultSet;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 use stdClass;
@@ -19,13 +20,13 @@ use function class_exists;
 #[CoversMethod(HydratingResultSet::class, 'getHydrator')]
 #[CoversMethod(HydratingResultSet::class, 'current')]
 #[CoversMethod(HydratingResultSet::class, 'toArray')]
-class HydratingResultSetTest extends TestCase
+final class HydratingResultSetTest extends TestCase
 {
     private string $arraySerializableHydratorClass;
 
     private string $classMethodsHydratorClass;
 
-    #[\Override]
+    #[Override]
     protected function setUp(): void
     {
         $this->arraySerializableHydratorClass = class_exists(ArraySerializableHydrator::class)

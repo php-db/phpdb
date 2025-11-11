@@ -2,11 +2,9 @@
 
 namespace PhpDb\Sql\Ddl\Constraint;
 
-use PhpDb\Sql\Argument;
-use PhpDb\Sql\ArgumentType;
-use PhpDb\Sql\ExpressionData;
 use PhpDb\Sql\ExpressionInterface;
-use PhpDb\Sql\ExpressionPart;
+
+use function array_unshift;
 
 class Check extends AbstractConstraint
 {
@@ -14,9 +12,9 @@ class Check extends AbstractConstraint
     protected $expression;
 
     /**
-     * {}
+     * {@inheritDoc}
      */
-    protected string $specification = 'CHECK (%s)';
+    protected $specification = 'CHECK (%s)';
 
     /**
      * @param string|ExpressionInterface $expression
@@ -24,28 +22,32 @@ class Check extends AbstractConstraint
      */
     public function __construct($expression, $name)
     {
-        parent::__construct(null, $name);
-
         $this->expression = $expression;
+        $this->name       = $name;
     }
 
     /**
      * {@inheritDoc}
      */
-    #[\Override] public function getExpressionData(): ExpressionData
+    public function getExpressionData()
     {
-        $expressionPart = new ExpressionPart();
+        $newSpecTypes = [self::TYPE_LITERAL];
+        $values       = [$this->expression];
+        $newSpec      = '';
 
-        if ($this->name !== '') {
-            $expressionPart->addSpecification($this->namedSpecification);
-            $expressionPart->addValue(new Argument($this->name, ArgumentType::Identifier));
+        if ($this->name) {
+            $newSpec .= $this->namedSpecification;
+
+            array_unshift($values, $this->name);
+            array_unshift($newSpecTypes, self::TYPE_IDENTIFIER);
         }
 
-        if ($this->expression !== '') {
-            $expressionPart->addSpecification($this->specification);
-            $expressionPart->addValue(new Argument($this->expression, ArgumentType::Literal));
-        }
-
-        return new ExpressionData($expressionPart);
+        return [
+            [
+                $newSpec . $this->specification,
+                $values,
+                $newSpecTypes,
+            ],
+        ];
     }
 }

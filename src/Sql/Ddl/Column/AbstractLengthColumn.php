@@ -2,21 +2,17 @@
 
 namespace PhpDb\Sql\Ddl\Column;
 
-use PhpDb\Sql\Argument;
-use PhpDb\Sql\ExpressionData;
-
 abstract class AbstractLengthColumn extends Column
 {
-    protected string $specification = '%s %s(%s)';
-
-    protected ?int $length = null;
+    /** @var int */
+    protected $length;
 
     /**
      * {@inheritDoc}
      *
      * @param int $length
      */
-    public function __construct(string $name, ?int $length = null, $nullable = false, $default = null, array $options = [])
+    public function __construct($name, $length = null, $nullable = false, $default = null, array $options = [])
     {
         $this->setLength($length);
 
@@ -24,36 +20,43 @@ abstract class AbstractLengthColumn extends Column
     }
 
     /**
+     * @param  int $length
      * @return $this Provides a fluent interface
      */
-    public function setLength(?int $length = 0): static
+    public function setLength($length)
     {
-        $this->length = $length;
+        $this->length = (int) $length;
 
         return $this;
     }
 
-    public function getLength(): int|null
+    /**
+     * @return int
+     */
+    public function getLength()
     {
         return $this->length;
     }
 
-    protected function getLengthExpression(): string
+    /**
+     * @return string
+     */
+    protected function getLengthExpression()
     {
         return (string) $this->length;
     }
 
-    #[\Override]
-    public function getExpressionData(): ExpressionData
+    /**
+     * @return array
+     */
+    public function getExpressionData()
     {
-        $expressionData = parent::getExpressionData();
+        $data = parent::getExpressionData();
 
-        if ($this->getLengthExpression() !== '' && $this->getLengthExpression() !== '0') {
-            $expressionData
-                ->getExpressionPart(0)
-                ->addValue(Argument::Literal($this->getLengthExpression()));
+        if ($this->getLengthExpression()) {
+            $data[0][1][1] .= '(' . $this->getLengthExpression() . ')';
         }
 
-        return $expressionData;
+        return $data;
     }
 }

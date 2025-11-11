@@ -1,20 +1,18 @@
 <?php
 
-namespace LaminasIntegrationTest\Db\Extension;
+namespace PhpDbIntegrationTest\Extension;
 
 use Exception;
-use LaminasIntegrationTest\Db\Platform\FixtureLoader;
-use LaminasIntegrationTest\Db\Platform\MysqlFixtureLoader;
-use LaminasIntegrationTest\Db\Platform\PgsqlFixtureLoader;
-use LaminasIntegrationTest\Db\Platform\SqlServerFixtureLoader;
-use Override;
+use PhpDbIntegrationTest\Platform\FixtureLoader;
+use PhpDbIntegrationTest\Platform\PgsqlFixtureLoader;
+use PhpDbIntegrationTest\Platform\SqlServerFixtureLoader;
 use PHPUnit\Event\TestSuite\Started;
 use PHPUnit\Event\TestSuite\StartedSubscriber;
 
 use function getenv;
 use function printf;
 
-class IntegrationTestStartedListener implements StartedSubscriber
+final class IntegrationTestStartedListener implements StartedSubscriber
 {
     /** @var FixtureLoader[] */
     private array $fixtureLoaders = [];
@@ -22,14 +20,10 @@ class IntegrationTestStartedListener implements StartedSubscriber
     /**
      * @throws Exception
      */
-    #[Override] public function notify(Started $event): void
+    public function notify(Started $event): void
     {
         if ($event->testSuite()->name() !== 'integration test') {
             return;
-        }
-
-        if (getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_MYSQL')) {
-            $this->fixtureLoaders[] = new MysqlFixtureLoader();
         }
 
         if (getenv('TESTS_LAMINAS_DB_ADAPTER_DRIVER_PGSQL')) {
@@ -40,7 +34,7 @@ class IntegrationTestStartedListener implements StartedSubscriber
             $this->fixtureLoaders[] = new SqlServerFixtureLoader();
         }
 
-        if ($this->fixtureLoaders === []) {
+        if (empty($this->fixtureLoaders)) {
             return;
         }
 

@@ -3,17 +3,16 @@
 namespace PhpDbTest\TestAsset;
 
 use PhpDb\Sql;
-use Override;
 
-class SelectDecorator extends Sql\Select implements Sql\Platform\PlatformDecoratorInterface
+final class SelectDecorator extends Sql\Select implements Sql\Platform\PlatformDecoratorInterface
 {
-    public $subject;
+    protected ?object $subject;
 
     /**
      * @param null|object $subject
      * @return $this Provides a fluent interface
      */
-    #[Override] public function setSubject($subject): static
+    public function setSubject($subject): static
     {
         $this->subject = $subject;
         return $this;

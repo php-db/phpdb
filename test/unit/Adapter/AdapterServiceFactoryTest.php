@@ -2,16 +2,17 @@
 
 namespace PhpDbTest\Adapter;
 
+use Laminas\ServiceManager\ServiceLocatorInterface;
+use Override;
 use PhpDb\Adapter\Adapter;
 use PhpDb\Adapter\AdapterServiceFactory;
-use Laminas\ServiceManager\ServiceLocatorInterface;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 use function extension_loaded;
 
-class AdapterServiceFactoryTest extends TestCase
+final class AdapterServiceFactoryTest extends TestCase
 {
     private ServiceLocatorInterface&MockObject $services;
 
@@ -20,7 +21,7 @@ class AdapterServiceFactoryTest extends TestCase
     /**
      * @throws Exception
      */
-    #[\Override]
+    #[Override]
     protected function setUp(): void
     {
         if (! extension_loaded('pdo_sqlite')) {

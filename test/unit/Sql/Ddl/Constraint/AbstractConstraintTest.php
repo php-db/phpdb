@@ -2,6 +2,7 @@
 
 namespace PhpDbTest\Sql\Ddl\Constraint;
 
+use Override;
 use PhpDb\Sql\Ddl\Constraint\AbstractConstraint;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\MockObject\Exception;
@@ -11,15 +12,15 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(AbstractConstraint::class, 'setColumns')]
 #[CoversMethod(AbstractConstraint::class, 'addColumn')]
 #[CoversMethod(AbstractConstraint::class, 'getColumns')]
-class AbstractConstraintTest extends TestCase
+final class AbstractConstraintTest extends TestCase
 {
-    /** @var AbstractConstraint|MockObject */
+    /** @var AbstractConstraint */
     protected AbstractConstraint|MockObject $ac;
 
     /**
      * @throws Exception
      */
-    #[\Override]
+    #[Override]
     protected function setUp(): void
     {
         $this->ac = $this->getMockBuilder(AbstractConstraint::class)->onlyMethods([])->getMock();

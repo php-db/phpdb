@@ -2,6 +2,7 @@
 
 namespace PhpDbTest\Adapter\Platform;
 
+use Override;
 use PhpDb\Adapter\Platform\Sql92;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
@@ -16,7 +17,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(Sql92::class, 'quoteValueList')]
 #[CoversMethod(Sql92::class, 'getIdentifierSeparator')]
 #[CoversMethod(Sql92::class, 'quoteIdentifierInFragment')]
-class Sql92Test extends TestCase
+final class Sql92Test extends TestCase
 {
     protected Sql92 $platform;
 
@@ -24,7 +25,7 @@ class Sql92Test extends TestCase
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
-    #[\Override]
+    #[Override]
     protected function setUp(): void
     {
         $this->platform = new Sql92();

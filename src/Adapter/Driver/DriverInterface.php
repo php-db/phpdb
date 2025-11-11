@@ -1,6 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDb\Adapter\Driver;
+
+use PhpDb\Exception;
 
 interface DriverInterface
 {
@@ -9,57 +13,43 @@ interface DriverInterface
     public const NAME_FORMAT_CAMELCASE       = 'camelCase';
     public const NAME_FORMAT_NATURAL         = 'natural';
 
-    /**
-     * Get database platform name
-     *
-     * @param string $nameFormat
-     * @return string
-     */
-    public function getDatabasePlatformName($nameFormat = self::NAME_FORMAT_CAMELCASE);
+    /** Get database platform name */
+    public function getDatabasePlatformName(string $nameFormat = DriverInterface::NAME_FORMAT_CAMELCASE): string;
 
     /**
      * Check environment
      *
-     * @return bool
+     * @throws Exception\RuntimeException
      */
-    public function checkEnvironment();
+    public function checkEnvironment(): bool;
 
-    /**
-     * Get connection
-     *
-     * @return ConnectionInterface
-     */
-    public function getConnection();
+    /** Get connection */
+    public function getConnection(): ConnectionInterface;
 
     /**
      * Create statement
      *
-     * @param string|resource $sqlOrResource
-     * @return StatementInterface
+     * @param resource|string $sqlOrResource
      */
-    public function createStatement($sqlOrResource = null);
+    public function createStatement($sqlOrResource = null): StatementInterface;
 
     /**
      * Create result
      *
      * @param resource $resource
-     * @return ResultInterface
      */
-    public function createResult($resource);
+    public function createResult($resource): ResultInterface;
+
+    /** Get prepare type */
+    public function getPrepareType(): string;
+
+    /** Format parameter name */
+    public function formatParameterName(string $name, ?string $type = null): string;
 
     /**
-     * Get prepare type
+     * Get last generated value
      *
-     * @return string
-     */
-    public function getPrepareType();
-
-    /**
-     * Format parameter name
-     *
-     * @param string $name
-     * @param mixed  $type
-     * @return string
-     */
-    public function formatParameterName($name, $type = null);
+     * todo: narrow this to int|string|false|null once 8.2 is minimum
+     * */
+    public function getLastGeneratedValue(): int|string|bool|null;
 }

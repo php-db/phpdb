@@ -2,6 +2,7 @@
 
 namespace PhpDbTest\Sql;
 
+use Override;
 use PhpDb\Adapter\Adapter;
 use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\Driver\StatementInterface;
@@ -15,7 +16,7 @@ use PhpDb\Sql\Select;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-class CombineTest extends TestCase
+final class CombineTest extends TestCase
 {
     protected Combine $combine;
 
@@ -23,7 +24,7 @@ class CombineTest extends TestCase
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
-    #[\Override]
+    #[Override]
     protected function setUp(): void
     {
         $this->combine = new Combine();
@@ -92,7 +93,7 @@ class CombineTest extends TestCase
 
     public function testGetSqlStringEmpty(): void
     {
-        self::assertEmpty($this->combine->getSqlString());
+        self::assertNull($this->combine->getSqlString());
     }
 
     public function testPrepareStatementWithModifier(): void
