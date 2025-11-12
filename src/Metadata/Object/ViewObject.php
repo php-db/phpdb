@@ -14,6 +14,14 @@ class ViewObject extends AbstractTableObject
     protected $isUpdatable;
 
     /**
+     * @return null|string
+     */
+    public function getViewDefinition()
+    {
+        return $this->viewDefinition;
+    }
+
+    /**
      * @param string $viewDefinition to set
      * @return $this Provides a fluent interface
      */
@@ -24,6 +32,14 @@ class ViewObject extends AbstractTableObject
     }
 
     /**
+     * @return null|string
+     */
+    public function getCheckOption()
+    {
+        return $this->checkOption;
+    }
+
+    /**
      * @param string $checkOption to set
      * @return $this Provides a fluent interface
      */
@@ -31,6 +47,22 @@ class ViewObject extends AbstractTableObject
     {
         $this->checkOption = $checkOption;
         return $this;
+    }
+
+    /**
+     * @return null|bool
+     */
+    public function getIsUpdatable()
+    {
+        return $this->isUpdatable;
+    }
+
+    /**
+     * @return null|bool
+     */
+    public function isUpdatable()
+    {
+        return $this->isUpdatable;
     }
 
     /**

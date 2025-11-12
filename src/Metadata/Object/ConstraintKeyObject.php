@@ -89,6 +89,50 @@ class ConstraintKeyObject
     }
 
     /**
+     * Get position in unique constraint
+     *
+     * @return bool
+     */
+    public function getPositionInUniqueConstraint()
+    {
+        return $this->positionInUniqueConstraint;
+    }
+
+    /**
+     * Set position in unique constraint
+     *
+     * @param  bool $positionInUniqueConstraint
+     * @return $this Provides a fluent interface
+     */
+    public function setPositionInUniqueConstraint($positionInUniqueConstraint)
+    {
+        $this->positionInUniqueConstraint = $positionInUniqueConstraint;
+        return $this;
+    }
+
+    /**
+     * Get referenced table schema
+     *
+     * @return string
+     */
+    public function getReferencedTableSchema()
+    {
+        return $this->referencedTableSchema;
+    }
+
+    /**
+     * Set referenced table schema
+     *
+     * @param  string $referencedTableSchema
+     * @return $this Provides a fluent interface
+     */
+    public function setReferencedTableSchema($referencedTableSchema)
+    {
+        $this->referencedTableSchema = $referencedTableSchema;
+        return $this;
+    }
+
+    /**
      * Get referenced table name
      *
      * @return string

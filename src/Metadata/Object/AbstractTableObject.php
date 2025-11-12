@@ -42,6 +42,16 @@ abstract class AbstractTableObject
     }
 
     /**
+     * Get columns
+     *
+     * @return array
+     */
+    public function getColumns()
+    {
+        return $this->columns;
+    }
+
+    /**
      * Set constraints
      *
      * @param array $constraints
@@ -52,6 +62,16 @@ abstract class AbstractTableObject
     }
 
     /**
+     * Get constraints
+     *
+     * @return array
+     */
+    public function getConstraints()
+    {
+        return $this->constraints;
+    }
+
+    /**
      * Set name
      *
      * @param string $name
@@ -59,5 +79,15 @@ abstract class AbstractTableObject
     public function setName($name): void
     {
         $this->name = $name;
+    }
+
+    /**
+     * Get name
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
     }
 }
