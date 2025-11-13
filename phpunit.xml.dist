@@ -25,8 +25,6 @@
             <!-- Tests with Adapter constructor signature changes -->
             <exclude>./test/unit/Adapter/AdapterTest.php</exclude>
             <exclude>./test/unit/Adapter/AdapterAwareTraitTest.php</exclude>
-            <!-- Tests with missing metadata classes -->
-            <exclude>./test/unit/Metadata/Source</exclude>
             <!-- TableGateway and RowGateway tests with Adapter constructor issues -->
             <exclude>./test/unit/TableGateway</exclude>
             <exclude>./test/unit/RowGateway</exclude>

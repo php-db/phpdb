@@ -398,4 +398,83 @@ final class UpdateTest extends TestCase
         $return = $this->update->join('baz', 'foo.fooId = baz.fooId', Join::JOIN_LEFT);
         self::assertSame($this->update, $return);
     }
+
+    public function testSetWithNonStringKeyThrowsException(): void
+    {
+        $this->expectException(\PhpDb\Sql\Exception\InvalidArgumentException::class);
+        $this->expectExceptionMessage('set() expects a string for the value key');
+
+        /** @psalm-suppress InvalidArgument - Testing invalid argument handling */
+        $this->update->set([0 => 'value']);
+    }
+
+    public function testSetWithMergeFlag(): void
+    {
+        $this->update->set(['foo' => 'bar']);
+        $this->update->set(['baz' => 'qux'], Update::VALUES_MERGE);
+
+        $set = $this->update->getRawState('set');
+        self::assertEquals(['foo' => 'bar', 'baz' => 'qux'], $set);
+    }
+
+    public function testSetWithNumericPriority(): void
+    {
+        $this->update->set(['three' => 'c'], 30);
+        $this->update->set(['one' => 'a'], 10);
+        $this->update->set(['two' => 'b'], 20);
+
+        $set = $this->update->getRawState('set');
+        self::assertEquals(['one' => 'a', 'two' => 'b', 'three' => 'c'], $set);
+    }
+
+    public function testConstructWithTableIdentifier(): void
+    {
+        $tableIdentifier = new TableIdentifier('foo', 'bar');
+        $update = new Update($tableIdentifier);
+
+        self::assertEquals($tableIdentifier, $update->getRawState('table'));
+    }
+
+    public function testGetSqlStringWithEmptyWhere(): void
+    {
+        $this->update->table('foo')
+            ->set(['bar' => 'baz']);
+
+        self::assertEquals(
+            'UPDATE "foo" SET "bar" = \'baz\'',
+            $this->update->getSqlString(new TrustingSql92Platform())
+        );
+    }
+
+    public function testGetRawStateReturnsAllState(): void
+    {
+        $this->update->table('foo')
+            ->set(['bar' => 'baz'])
+            ->where('x = y');
+
+        $rawState = $this->update->getRawState();
+
+        self::assertIsArray($rawState);
+        self::assertArrayHasKey('table', $rawState);
+        self::assertArrayHasKey('set', $rawState);
+        self::assertArrayHasKey('where', $rawState);
+        self::assertArrayHasKey('emptyWhereProtection', $rawState);
+        self::assertArrayHasKey('joins', $rawState);
+
+        self::assertEquals('foo', $rawState['table']);
+        self::assertEquals(['bar' => 'baz'], $rawState['set']);
+        self::assertInstanceOf(Where::class, $rawState['where']);
+        self::assertInstanceOf(Join::class, $rawState['joins']);
+        self::assertTrue($rawState['emptyWhereProtection']);
+    }
+
+    public function testJoinWithTableIdentifier(): void
+    {
+        $this->update->table('foo')
+            ->set(['x' => 'y'])
+            ->join(new TableIdentifier('bar', 'schema'), 'foo.id = bar.foo_id');
+
+        $sql = $this->update->getSqlString(new TrustingSql92Platform());
+        self::assertStringContainsString('JOIN "schema"."bar"', $sql);
+    }
 }

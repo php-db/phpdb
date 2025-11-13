@@ -209,4 +209,65 @@ final class DeleteTest extends TestCase
             ->where('x = y');
         self::assertEquals('DELETE IGNORE FROM "sch"."foo" WHERE x = y', $deleteIgnore->getSqlString());
     }
+
+    public function testGetRawState(): void
+    {
+        $this->delete->from('foo')
+            ->where('x = y');
+
+        $rawState = $this->delete->getRawState();
+
+        self::assertIsArray($rawState);
+        self::assertArrayHasKey('table', $rawState);
+        self::assertArrayHasKey('where', $rawState);
+        self::assertArrayHasKey('emptyWhereProtection', $rawState);
+        self::assertArrayHasKey('set', $rawState);
+
+        self::assertEquals('foo', $rawState['table']);
+        self::assertInstanceOf(Where::class, $rawState['where']);
+        self::assertTrue($rawState['emptyWhereProtection']);
+        self::assertEquals([], $rawState['set']);
+    }
+
+    public function testGetRawStateWithKey(): void
+    {
+        $this->delete->from('foo');
+
+        self::assertEquals('foo', $this->delete->getRawState('table'));
+        self::assertInstanceOf(Where::class, $this->delete->getRawState('where'));
+        self::assertTrue($this->delete->getRawState('emptyWhereProtection'));
+        self::assertEquals([], $this->delete->getRawState('set'));
+    }
+
+    public function testMagicGetReturnsWhereClause(): void
+    {
+        $where = $this->delete->where;
+        self::assertInstanceOf(Where::class, $where);
+    }
+
+    public function testMagicGetReturnsNullForUnknownProperty(): void
+    {
+        self::assertNull($this->delete->unknown);
+        self::assertNull($this->delete->table);
+    }
+
+    public function testConstructorWithTable(): void
+    {
+        $delete = new Delete('foo');
+        self::assertEquals('foo', $delete->getRawState('table'));
+    }
+
+    public function testConstructorWithTableIdentifier(): void
+    {
+        $tableIdentifier = new TableIdentifier('foo', 'bar');
+        $delete = new Delete($tableIdentifier);
+        self::assertEquals($tableIdentifier, $delete->getRawState('table'));
+    }
+
+    public function testGetSqlStringWithEmptyWhere(): void
+    {
+        $this->delete->from('foo');
+        // Empty where should not add WHERE clause
+        self::assertEquals('DELETE FROM "foo"', $this->delete->getSqlString());
+    }
 }

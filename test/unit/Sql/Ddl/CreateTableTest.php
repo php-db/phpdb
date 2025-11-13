@@ -153,4 +153,128 @@ class CreateTableTest extends TestCase
         $ct->addColumn(new Column('baz'));
         self::assertEquals("CREATE TABLE \"foo\".\"bar\" ( \n    \"baz\" INTEGER NOT NULL \n)", $ct->getSqlString());
     }
+
+    public function testConstructorWithTableIdentifier(): void
+    {
+        $tableId = new TableIdentifier('bar', 'foo');
+        $ct = new CreateTable($tableId);
+
+        $rawState = $ct->getRawState();
+        self::assertSame($tableId, $rawState[CreateTable::TABLE]);
+    }
+
+    public function testConstructorWithTemporaryFlag(): void
+    {
+        $ct = new CreateTable('test', true);
+        self::assertTrue($ct->isTemporary());
+        self::assertEquals('test', $ct->getRawState(CreateTable::TABLE));
+
+        $ct2 = new CreateTable('test', false);
+        self::assertFalse($ct2->isTemporary());
+    }
+
+    public function testGetRawStateReturnsAllState(): void
+    {
+        $ct = new CreateTable('users');
+        $col = $this->getMockBuilder(ColumnInterface::class)->getMock();
+        $con = $this->getMockBuilder(ConstraintInterface::class)->getMock();
+
+        $ct->addColumn($col);
+        $ct->addConstraint($con);
+
+        $rawState = $ct->getRawState();
+
+        self::assertIsArray($rawState);
+        self::assertArrayHasKey(CreateTable::TABLE, $rawState);
+        self::assertArrayHasKey(CreateTable::COLUMNS, $rawState);
+        self::assertArrayHasKey(CreateTable::CONSTRAINTS, $rawState);
+
+        self::assertEquals('users', $rawState[CreateTable::TABLE]);
+        self::assertEquals([$col], $rawState[CreateTable::COLUMNS]);
+        self::assertEquals([$con], $rawState[CreateTable::CONSTRAINTS]);
+    }
+
+    public function testGetRawStateWithInvalidKey(): void
+    {
+        $ct = new CreateTable('test');
+        $ct->addColumn($this->getMockBuilder(ColumnInterface::class)->getMock());
+
+        // Non-existent key should return full array
+        $rawState = $ct->getRawState('invalid_key');
+        self::assertIsArray($rawState);
+        self::assertArrayHasKey(CreateTable::TABLE, $rawState);
+    }
+
+    public function testChainedOperations(): void
+    {
+        $ct = new CreateTable();
+        $col1 = $this->getMockBuilder(ColumnInterface::class)->getMock();
+        $col2 = $this->getMockBuilder(ColumnInterface::class)->getMock();
+        $con = $this->getMockBuilder(ConstraintInterface::class)->getMock();
+
+        $result = $ct->setTable('products')
+            ->setTemporary(true)
+            ->addColumn($col1)
+            ->addColumn($col2)
+            ->addConstraint($con);
+
+        self::assertSame($ct, $result);
+        self::assertEquals('products', $ct->getRawState(CreateTable::TABLE));
+        self::assertTrue($ct->isTemporary());
+        self::assertCount(2, $ct->getRawState(CreateTable::COLUMNS));
+        self::assertCount(1, $ct->getRawState(CreateTable::CONSTRAINTS));
+    }
+
+    public function testMultipleColumns(): void
+    {
+        $ct = new CreateTable('users');
+        $ct->addColumn(new Column('id'));
+        $ct->addColumn(new Column('name'));
+        $ct->addColumn(new Column('email'));
+
+        $columns = $ct->getRawState(CreateTable::COLUMNS);
+        self::assertCount(3, $columns);
+
+        $sql = $ct->getSqlString();
+        self::assertStringContainsString('"id"', $sql);
+        self::assertStringContainsString('"name"', $sql);
+        self::assertStringContainsString('"email"', $sql);
+    }
+
+    public function testMultipleConstraints(): void
+    {
+        $ct = new CreateTable('orders');
+        $ct->addConstraint(new Constraint\PrimaryKey('id'));
+        $ct->addConstraint(new Constraint\UniqueKey('order_number'));
+
+        $constraints = $ct->getRawState(CreateTable::CONSTRAINTS);
+        self::assertCount(2, $constraints);
+
+        $sql = $ct->getSqlString();
+        self::assertStringContainsString('PRIMARY KEY', $sql);
+        self::assertStringContainsString('UNIQUE', $sql);
+    }
+
+    public function testEmptyTableConstruction(): void
+    {
+        $ct = new CreateTable();
+        self::assertEquals('', $ct->getRawState(CreateTable::TABLE));
+        self::assertFalse($ct->isTemporary());
+        self::assertEmpty($ct->getRawState(CreateTable::COLUMNS));
+        self::assertEmpty($ct->getRawState(CreateTable::CONSTRAINTS));
+    }
+
+    public function testSetTableAfterConstruction(): void
+    {
+        $ct = new CreateTable();
+        self::assertEquals('', $ct->getRawState(CreateTable::TABLE));
+
+        $ct->setTable('new_table');
+        self::assertEquals('new_table', $ct->getRawState(CreateTable::TABLE));
+
+        // Test that setTable is chainable
+        $result = $ct->setTable('another_table');
+        self::assertSame($ct, $result);
+        self::assertEquals('another_table', $ct->getRawState(CreateTable::TABLE));
+    }
 }
