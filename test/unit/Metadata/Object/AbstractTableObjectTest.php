@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDbTest\Metadata\Object;
 
 use PhpDb\Metadata\Object\AbstractTableObject;
@@ -11,7 +13,7 @@ final class AbstractTableObjectTest extends TestCase
 {
     private function createConcreteTableObject(?string $name): AbstractTableObject
     {
-        return new class($name) extends AbstractTableObject {
+        return new class ($name) extends AbstractTableObject {
         };
     }
 
@@ -46,7 +48,7 @@ final class AbstractTableObjectTest extends TestCase
 
     public function testSetColumnsAndGetColumns(): void
     {
-        $table = $this->createConcreteTableObject('table');
+        $table   = $this->createConcreteTableObject('table');
         $columns = [
             new ColumnObject('id', 'table', 'schema'),
             new ColumnObject('name', 'table', 'schema'),
@@ -66,7 +68,7 @@ final class AbstractTableObjectTest extends TestCase
 
     public function testSetConstraintsAndGetConstraints(): void
     {
-        $table = $this->createConcreteTableObject('table');
+        $table       = $this->createConcreteTableObject('table');
         $constraints = [
             new ConstraintObject('pk_table', 'table', 'schema'),
             new ConstraintObject('fk_table', 'table', 'schema'),

@@ -28,7 +28,7 @@ class PlatformTest extends TestCase
 
         $reflectionMethod = new ReflectionMethod($platform, 'resolvePlatform');
 
-        /** @psalm-suppress UnusedMethodCall */
+        /** @noinspection PhpExpressionResultUnusedInspection */
         $reflectionMethod->setAccessible(true);
 
         self::assertEquals($adapter->getPlatform(), $reflectionMethod->invoke($platform, null));
@@ -43,7 +43,7 @@ class PlatformTest extends TestCase
 
         $reflectionMethod = new ReflectionMethod($platform, 'resolvePlatformName');
 
-        /** @psalm-suppress UnusedMethodCall */
+        /** @noinspection PhpExpressionResultUnusedInspection */
         $reflectionMethod->setAccessible(true);
 
         self::assertEquals('mysql', $reflectionMethod->invoke($platform, new TestAsset\TrustingMysqlPlatform()));
@@ -56,7 +56,6 @@ class PlatformTest extends TestCase
     }
 
     /**
-     * @throws ReflectionException
      */
     #[Group('6890')]
     public function testAbstractPlatformCrashesGracefullyOnMissingDefaultPlatform(): void
@@ -67,7 +66,6 @@ class PlatformTest extends TestCase
     }
 
     /**
-     * @throws ReflectionException
      */
     #[Group('6890')]
     public function testAbstractPlatformCrashesGracefullyOnMissingDefaultPlatformWithGetDecorators(): void

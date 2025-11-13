@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDbTest\Metadata\Object;
 
 use PhpDb\Metadata\Object\AbstractTableObject;
@@ -33,9 +35,9 @@ final class ViewObjectTest extends TestCase
 
     public function testSetViewDefinitionAndGetViewDefinitionWithFluentInterface(): void
     {
-        $view = new ViewObject('view');
+        $view       = new ViewObject('view');
         $definition = 'SELECT id, name FROM users WHERE active = 1';
-        $result = $view->setViewDefinition($definition);
+        $result     = $view->setViewDefinition($definition);
 
         self::assertSame($view, $result);
         self::assertSame($definition, $view->getViewDefinition());
@@ -52,7 +54,7 @@ final class ViewObjectTest extends TestCase
 
     public function testSetCheckOptionAndGetCheckOptionWithFluentInterface(): void
     {
-        $view = new ViewObject('view');
+        $view   = new ViewObject('view');
         $result = $view->setCheckOption('CASCADED');
 
         self::assertSame($view, $result);
@@ -70,7 +72,7 @@ final class ViewObjectTest extends TestCase
 
     public function testSetIsUpdatableAndGetIsUpdatableWithFluentInterface(): void
     {
-        $view = new ViewObject('view');
+        $view   = new ViewObject('view');
         $result = $view->setIsUpdatable(true);
 
         self::assertSame($view, $result);
@@ -118,7 +120,7 @@ final class ViewObjectTest extends TestCase
 
     public function testInheritedColumnsWork(): void
     {
-        $view = new ViewObject('user_summary');
+        $view    = new ViewObject('user_summary');
         $columns = [
             new ColumnObject('id', 'user_summary', 'public'),
             new ColumnObject('username', 'user_summary', 'public'),
@@ -131,7 +133,7 @@ final class ViewObjectTest extends TestCase
 
     public function testInheritedConstraintsWork(): void
     {
-        $view = new ViewObject('user_summary');
+        $view        = new ViewObject('user_summary');
         $constraints = [
             new ConstraintObject('uq_summary', 'user_summary', 'public'),
         ];

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDbTest\Metadata\Object;
 
 use PhpDb\Metadata\Object\ConstraintObject;
@@ -44,7 +46,7 @@ final class ConstraintObjectTest extends TestCase
     public function testSetTableNameAndGetTableNameWithFluentInterface(): void
     {
         $constraint = new ConstraintObject('name', 'initial_table', 'schema');
-        $result = $constraint->setTableName('new_table');
+        $result     = $constraint->setTableName('new_table');
 
         self::assertSame($constraint, $result);
         self::assertSame('new_table', $constraint->getTableName());
@@ -76,8 +78,8 @@ final class ConstraintObjectTest extends TestCase
     public function testSetColumnsAndGetColumnsWithFluentInterface(): void
     {
         $constraint = new ConstraintObject('name', 'table', 'schema');
-        $columns = ['column1', 'column2', 'column3'];
-        $result = $constraint->setColumns($columns);
+        $columns    = ['column1', 'column2', 'column3'];
+        $result     = $constraint->setColumns($columns);
 
         self::assertSame($constraint, $result);
         self::assertSame($columns, $constraint->getColumns());
@@ -96,7 +98,7 @@ final class ConstraintObjectTest extends TestCase
     public function testSetReferencedTableSchemaAndGetReferencedTableSchemaWithFluentInterface(): void
     {
         $constraint = new ConstraintObject('name', 'table', 'schema');
-        $result = $constraint->setReferencedTableSchema('ref_schema');
+        $result     = $constraint->setReferencedTableSchema('ref_schema');
 
         self::assertSame($constraint, $result);
         self::assertSame('ref_schema', $constraint->getReferencedTableSchema());
@@ -105,7 +107,7 @@ final class ConstraintObjectTest extends TestCase
     public function testSetReferencedTableNameAndGetReferencedTableNameWithFluentInterface(): void
     {
         $constraint = new ConstraintObject('name', 'table', 'schema');
-        $result = $constraint->setReferencedTableName('ref_table');
+        $result     = $constraint->setReferencedTableName('ref_table');
 
         self::assertSame($constraint, $result);
         self::assertSame('ref_table', $constraint->getReferencedTableName());
@@ -114,8 +116,8 @@ final class ConstraintObjectTest extends TestCase
     public function testSetReferencedColumnsAndGetReferencedColumnsWithFluentInterface(): void
     {
         $constraint = new ConstraintObject('name', 'table', 'schema');
-        $columns = ['ref_col1', 'ref_col2'];
-        $result = $constraint->setReferencedColumns($columns);
+        $columns    = ['ref_col1', 'ref_col2'];
+        $result     = $constraint->setReferencedColumns($columns);
 
         self::assertSame($constraint, $result);
         self::assertSame($columns, $constraint->getReferencedColumns());
@@ -124,7 +126,7 @@ final class ConstraintObjectTest extends TestCase
     public function testSetMatchOptionAndGetMatchOptionWithFluentInterface(): void
     {
         $constraint = new ConstraintObject('name', 'table', 'schema');
-        $result = $constraint->setMatchOption('FULL');
+        $result     = $constraint->setMatchOption('FULL');
 
         self::assertSame($constraint, $result);
         self::assertSame('FULL', $constraint->getMatchOption());
@@ -133,7 +135,7 @@ final class ConstraintObjectTest extends TestCase
     public function testSetUpdateRuleAndGetUpdateRuleWithFluentInterface(): void
     {
         $constraint = new ConstraintObject('name', 'table', 'schema');
-        $result = $constraint->setUpdateRule('CASCADE');
+        $result     = $constraint->setUpdateRule('CASCADE');
 
         self::assertSame($constraint, $result);
         self::assertSame('CASCADE', $constraint->getUpdateRule());
@@ -142,7 +144,7 @@ final class ConstraintObjectTest extends TestCase
     public function testSetDeleteRuleAndGetDeleteRuleWithFluentInterface(): void
     {
         $constraint = new ConstraintObject('name', 'table', 'schema');
-        $result = $constraint->setDeleteRule('RESTRICT');
+        $result     = $constraint->setDeleteRule('RESTRICT');
 
         self::assertSame($constraint, $result);
         self::assertSame('RESTRICT', $constraint->getDeleteRule());
@@ -151,7 +153,7 @@ final class ConstraintObjectTest extends TestCase
     public function testSetCheckClauseAndGetCheckClauseWithFluentInterface(): void
     {
         $constraint = new ConstraintObject('name', 'table', 'schema');
-        $result = $constraint->setCheckClause('age >= 18');
+        $result     = $constraint->setCheckClause('age >= 18');
 
         self::assertSame($constraint, $result);
         self::assertSame('age >= 18', $constraint->getCheckClause());

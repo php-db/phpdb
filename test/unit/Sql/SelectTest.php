@@ -182,7 +182,7 @@ final class SelectTest extends TestCase
         $sr = new ReflectionObject($select);
 
         $mr = $sr->getMethod('processJoins');
-        /** @psalm-suppress UnusedMethodCall */
+        /** @noinspection PhpExpressionResultUnusedInspection */
         $mr->setAccessible(true);
 
         $this->expectException(InvalidArgumentException::class);
@@ -408,7 +408,7 @@ final class SelectTest extends TestCase
         $select->order(new Expression('RAND()'));
         $sr     = new ReflectionObject($select);
         $method = $sr->getMethod('processOrder');
-        /** @psalm-suppress UnusedMethodCall */
+        /** @noinspection PhpExpressionResultUnusedInspection */
         $method->setAccessible(true);
         self::assertEquals(
             [[['RAND()']]],
@@ -425,7 +425,7 @@ final class SelectTest extends TestCase
         );
         $sr     = new ReflectionObject($select);
         $method = $sr->getMethod('processOrder');
-        /** @psalm-suppress UnusedMethodCall */
+        /** @noinspection PhpExpressionResultUnusedInspection */
         $method->setAccessible(true);
         self::assertEquals(
             [[['"rating" < \'10\'']]],
@@ -753,7 +753,7 @@ final class SelectTest extends TestCase
          */
         foreach ($internalTests as $method => $expected) {
             $mr = $sr->getMethod($method);
-            /** @psalm-suppress UnusedMethodCall */
+            /** @noinspection PhpExpressionResultUnusedInspection */
             $mr->setAccessible(true);
             /** @psalm-suppress MixedAssignment */
             $return = $mr->invokeArgs($select, [new Sql92(), $mockDriver, $parameterContainer]);

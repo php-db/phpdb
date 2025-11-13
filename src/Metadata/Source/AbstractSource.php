@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDb\Metadata\Source;
 
 use Exception;
@@ -118,7 +120,7 @@ abstract class AbstractSource implements MetadataInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {}
      */
     #[Override]
     public function getTable(string $tableName, ?string $schema = null): TableObject|ViewObject
@@ -193,7 +195,7 @@ abstract class AbstractSource implements MetadataInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {}
      */
     #[Override]
     public function getView(string $viewName, ?string $schema = null): ViewObject|TableObject
@@ -212,7 +214,7 @@ abstract class AbstractSource implements MetadataInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {}
      */
     #[Override]
     public function getColumnNames(string $table, ?string $schema = null): array
@@ -250,7 +252,7 @@ abstract class AbstractSource implements MetadataInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {}
      */
     #[Override]
     public function getColumn(string $columnName, string $table, ?string $schema = null): ColumnObject
@@ -321,7 +323,7 @@ abstract class AbstractSource implements MetadataInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {}
      */
     #[Override]
     public function getConstraint(
@@ -437,7 +439,7 @@ abstract class AbstractSource implements MetadataInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {}
      */
     #[Override]
     public function getTrigger(string $triggerName, ?string $schema = null): TriggerObject

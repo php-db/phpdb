@@ -194,7 +194,7 @@ final class AbstractSqlTest extends TestCase
         $namedParameterPrefix = null
     ): string|StatementContainer {
         $method = new ReflectionMethod($this->abstractSql, 'processExpression');
-        /** @psalm-suppress UnusedMethodCall */
+        /** @noinspection PhpExpressionResultUnusedInspection */
         $method->setAccessible(true);
         return $method->invoke(
             $this->abstractSql,

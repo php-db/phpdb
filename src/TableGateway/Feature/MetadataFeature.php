@@ -57,7 +57,6 @@ class MetadataFeature extends AbstractFeature
         $pkc = null;
 
         foreach ($m->getConstraints($table, $schema) as $constraint) {
-            /** @var ConstraintObject $constraint */
             if ($constraint->getType() === 'PRIMARY KEY') {
                 $pkc = $constraint;
                 break;

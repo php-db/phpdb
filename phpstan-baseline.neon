@@ -643,12 +643,6 @@ parameters:
 			path: test/unit/Adapter/AdapterServiceDelegatorTest.php
 
 		-
-			message: '#^Method Laminas\\ServiceManager\\AbstractPluginManager\<mixed\>\:\:get\(\) invoked with 2 parameters, 1 required\.$#'
-			identifier: arguments.count
-			count: 1
-			path: test/unit/Adapter/AdapterServiceDelegatorTest.php
-
-		-
 			message: '#^PHPDoc tag @var with type Laminas\\ServiceManager\\AbstractPluginManager is not subtype of native type Laminas\\ServiceManager\\AbstractPluginManager@anonymous/test/unit/Adapter/AdapterServiceDelegatorTest\.php\:219\.$#'
 			identifier: varTag.nativeType
 			count: 1
@@ -1025,36 +1019,6 @@ parameters:
 			identifier: class.notFound
 			count: 1
 			path: test/unit/ConfigProviderTest.php
-
-		-
-			message: '#^Class PhpDb\\Metadata\\Source\\MysqlMetadata not found\.$#'
-			identifier: class.notFound
-			count: 1
-			path: test/unit/Metadata/Source/FactoryTest.php
-
-		-
-			message: '#^Class PhpDb\\Metadata\\Source\\OracleMetadata not found\.$#'
-			identifier: class.notFound
-			count: 1
-			path: test/unit/Metadata/Source/FactoryTest.php
-
-		-
-			message: '#^Class PhpDb\\Metadata\\Source\\PostgresqlMetadata not found\.$#'
-			identifier: class.notFound
-			count: 1
-			path: test/unit/Metadata/Source/FactoryTest.php
-
-		-
-			message: '#^Class PhpDb\\Metadata\\Source\\SqlServerMetadata not found\.$#'
-			identifier: class.notFound
-			count: 1
-			path: test/unit/Metadata/Source/FactoryTest.php
-
-		-
-			message: '#^Class PhpDb\\Metadata\\Source\\SqliteMetadata not found\.$#'
-			identifier: class.notFound
-			count: 1
-			path: test/unit/Metadata/Source/FactoryTest.php
 
 		-
 			message: '#^Result of method PhpDb\\ResultSet\\AbstractResultSet\:\:next\(\) \(void\) is used\.$#'

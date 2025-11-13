@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDbTest\Metadata\Object;
 
 use PhpDb\Metadata\Object\ConstraintKeyObject;
@@ -26,7 +28,7 @@ final class ConstraintKeyObjectTest extends TestCase
     public function testSetColumnNameAndGetColumnNameWithFluentInterface(): void
     {
         $constraintKey = new ConstraintKeyObject('initial');
-        $result = $constraintKey->setColumnName('new_column');
+        $result        = $constraintKey->setColumnName('new_column');
 
         self::assertSame($constraintKey, $result);
         self::assertSame('new_column', $constraintKey->getColumnName());
@@ -35,7 +37,7 @@ final class ConstraintKeyObjectTest extends TestCase
     public function testSetOrdinalPositionAndGetOrdinalPositionWithFluentInterface(): void
     {
         $constraintKey = new ConstraintKeyObject('column');
-        $result = $constraintKey->setOrdinalPosition(3);
+        $result        = $constraintKey->setOrdinalPosition(3);
 
         self::assertSame($constraintKey, $result);
         self::assertSame(3, $constraintKey->getOrdinalPosition());
@@ -44,7 +46,7 @@ final class ConstraintKeyObjectTest extends TestCase
     public function testSetPositionInUniqueConstraintAndGetPositionInUniqueConstraintWithFluentInterface(): void
     {
         $constraintKey = new ConstraintKeyObject('column');
-        $result = $constraintKey->setPositionInUniqueConstraint(true);
+        $result        = $constraintKey->setPositionInUniqueConstraint(true);
 
         self::assertSame($constraintKey, $result);
         self::assertTrue($constraintKey->getPositionInUniqueConstraint());
@@ -53,7 +55,7 @@ final class ConstraintKeyObjectTest extends TestCase
     public function testSetReferencedTableSchemaAndGetReferencedTableSchemaWithFluentInterface(): void
     {
         $constraintKey = new ConstraintKeyObject('column');
-        $result = $constraintKey->setReferencedTableSchema('ref_schema');
+        $result        = $constraintKey->setReferencedTableSchema('ref_schema');
 
         self::assertSame($constraintKey, $result);
         self::assertSame('ref_schema', $constraintKey->getReferencedTableSchema());
@@ -62,7 +64,7 @@ final class ConstraintKeyObjectTest extends TestCase
     public function testSetReferencedTableNameAndGetReferencedTableNameWithFluentInterface(): void
     {
         $constraintKey = new ConstraintKeyObject('column');
-        $result = $constraintKey->setReferencedTableName('ref_table');
+        $result        = $constraintKey->setReferencedTableName('ref_table');
 
         self::assertSame($constraintKey, $result);
         self::assertSame('ref_table', $constraintKey->getReferencedTableName());
@@ -71,7 +73,7 @@ final class ConstraintKeyObjectTest extends TestCase
     public function testSetReferencedColumnNameAndGetReferencedColumnNameWithFluentInterface(): void
     {
         $constraintKey = new ConstraintKeyObject('column');
-        $result = $constraintKey->setReferencedColumnName('ref_column');
+        $result        = $constraintKey->setReferencedColumnName('ref_column');
 
         self::assertSame($constraintKey, $result);
         self::assertSame('ref_column', $constraintKey->getReferencedColumnName());

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDbTest\Metadata\Object;
 
 use DateTime;
@@ -11,7 +13,7 @@ final class TriggerObjectTest extends TestCase
     public function testSetNameAndGetNameWithFluentInterface(): void
     {
         $trigger = new TriggerObject();
-        $result = $trigger->setName('trigger_name');
+        $result  = $trigger->setName('trigger_name');
 
         self::assertSame($trigger, $result);
         self::assertSame('trigger_name', $trigger->getName());
@@ -20,7 +22,7 @@ final class TriggerObjectTest extends TestCase
     public function testSetEventManipulationAndGetEventManipulationWithFluentInterface(): void
     {
         $trigger = new TriggerObject();
-        $result = $trigger->setEventManipulation('INSERT');
+        $result  = $trigger->setEventManipulation('INSERT');
 
         self::assertSame($trigger, $result);
         self::assertSame('INSERT', $trigger->getEventManipulation());
@@ -29,7 +31,7 @@ final class TriggerObjectTest extends TestCase
     public function testSetEventObjectCatalogAndGetEventObjectCatalogWithFluentInterface(): void
     {
         $trigger = new TriggerObject();
-        $result = $trigger->setEventObjectCatalog('catalog_name');
+        $result  = $trigger->setEventObjectCatalog('catalog_name');
 
         self::assertSame($trigger, $result);
         self::assertSame('catalog_name', $trigger->getEventObjectCatalog());
@@ -38,7 +40,7 @@ final class TriggerObjectTest extends TestCase
     public function testSetEventObjectSchemaAndGetEventObjectSchemaWithFluentInterface(): void
     {
         $trigger = new TriggerObject();
-        $result = $trigger->setEventObjectSchema('schema_name');
+        $result  = $trigger->setEventObjectSchema('schema_name');
 
         self::assertSame($trigger, $result);
         self::assertSame('schema_name', $trigger->getEventObjectSchema());
@@ -47,7 +49,7 @@ final class TriggerObjectTest extends TestCase
     public function testSetEventObjectTableAndGetEventObjectTableWithFluentInterface(): void
     {
         $trigger = new TriggerObject();
-        $result = $trigger->setEventObjectTable('table_name');
+        $result  = $trigger->setEventObjectTable('table_name');
 
         self::assertSame($trigger, $result);
         self::assertSame('table_name', $trigger->getEventObjectTable());
@@ -56,7 +58,7 @@ final class TriggerObjectTest extends TestCase
     public function testSetActionOrderAndGetActionOrderWithFluentInterface(): void
     {
         $trigger = new TriggerObject();
-        $result = $trigger->setActionOrder('1');
+        $result  = $trigger->setActionOrder('1');
 
         self::assertSame($trigger, $result);
         self::assertSame('1', $trigger->getActionOrder());
@@ -65,7 +67,7 @@ final class TriggerObjectTest extends TestCase
     public function testSetActionConditionAndGetActionConditionWithFluentInterface(): void
     {
         $trigger = new TriggerObject();
-        $result = $trigger->setActionCondition('WHEN (NEW.amount > 100)');
+        $result  = $trigger->setActionCondition('WHEN (NEW.amount > 100)');
 
         self::assertSame($trigger, $result);
         self::assertSame('WHEN (NEW.amount > 100)', $trigger->getActionCondition());
@@ -74,7 +76,7 @@ final class TriggerObjectTest extends TestCase
     public function testSetActionStatementAndGetActionStatementWithFluentInterface(): void
     {
         $trigger = new TriggerObject();
-        $result = $trigger->setActionStatement('BEGIN ... END');
+        $result  = $trigger->setActionStatement('BEGIN ... END');
 
         self::assertSame($trigger, $result);
         self::assertSame('BEGIN ... END', $trigger->getActionStatement());
@@ -83,7 +85,7 @@ final class TriggerObjectTest extends TestCase
     public function testSetActionOrientationAndGetActionOrientationWithFluentInterface(): void
     {
         $trigger = new TriggerObject();
-        $result = $trigger->setActionOrientation('ROW');
+        $result  = $trigger->setActionOrientation('ROW');
 
         self::assertSame($trigger, $result);
         self::assertSame('ROW', $trigger->getActionOrientation());
@@ -92,7 +94,7 @@ final class TriggerObjectTest extends TestCase
     public function testSetActionTimingAndGetActionTimingWithFluentInterface(): void
     {
         $trigger = new TriggerObject();
-        $result = $trigger->setActionTiming('BEFORE');
+        $result  = $trigger->setActionTiming('BEFORE');
 
         self::assertSame($trigger, $result);
         self::assertSame('BEFORE', $trigger->getActionTiming());
@@ -101,7 +103,7 @@ final class TriggerObjectTest extends TestCase
     public function testSetActionReferenceOldTableAndGetActionReferenceOldTableWithFluentInterface(): void
     {
         $trigger = new TriggerObject();
-        $result = $trigger->setActionReferenceOldTable('old_table');
+        $result  = $trigger->setActionReferenceOldTable('old_table');
 
         self::assertSame($trigger, $result);
         self::assertSame('old_table', $trigger->getActionReferenceOldTable());
@@ -110,7 +112,7 @@ final class TriggerObjectTest extends TestCase
     public function testSetActionReferenceNewTableAndGetActionReferenceNewTableWithFluentInterface(): void
     {
         $trigger = new TriggerObject();
-        $result = $trigger->setActionReferenceNewTable('new_table');
+        $result  = $trigger->setActionReferenceNewTable('new_table');
 
         self::assertSame($trigger, $result);
         self::assertSame('new_table', $trigger->getActionReferenceNewTable());
@@ -119,7 +121,7 @@ final class TriggerObjectTest extends TestCase
     public function testSetActionReferenceOldRowAndGetActionReferenceOldRowWithFluentInterface(): void
     {
         $trigger = new TriggerObject();
-        $result = $trigger->setActionReferenceOldRow('OLD');
+        $result  = $trigger->setActionReferenceOldRow('OLD');
 
         self::assertSame($trigger, $result);
         self::assertSame('OLD', $trigger->getActionReferenceOldRow());
@@ -128,7 +130,7 @@ final class TriggerObjectTest extends TestCase
     public function testSetActionReferenceNewRowAndGetActionReferenceNewRowWithFluentInterface(): void
     {
         $trigger = new TriggerObject();
-        $result = $trigger->setActionReferenceNewRow('NEW');
+        $result  = $trigger->setActionReferenceNewRow('NEW');
 
         self::assertSame($trigger, $result);
         self::assertSame('NEW', $trigger->getActionReferenceNewRow());
@@ -136,9 +138,9 @@ final class TriggerObjectTest extends TestCase
 
     public function testSetCreatedAndGetCreatedWithFluentInterface(): void
     {
-        $trigger = new TriggerObject();
+        $trigger  = new TriggerObject();
         $dateTime = new DateTime('2025-01-01 12:00:00');
-        $result = $trigger->setCreated($dateTime);
+        $result   = $trigger->setCreated($dateTime);
 
         self::assertSame($trigger, $result);
         self::assertSame($dateTime, $trigger->getCreated());
@@ -146,7 +148,7 @@ final class TriggerObjectTest extends TestCase
 
     public function testSetCreatedWithDifferentDateTime(): void
     {
-        $trigger = new TriggerObject();
+        $trigger   = new TriggerObject();
         $dateTime1 = new DateTime('2025-01-01 12:00:00');
         $dateTime2 = new DateTime('2025-12-31 23:59:59');
 

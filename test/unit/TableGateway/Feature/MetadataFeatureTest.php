@@ -64,7 +64,7 @@ class MetadataFeatureTest extends TestCase
         $feature->postInitialize();
 
         $r = new ReflectionProperty(MetadataFeature::class, 'sharedData');
-        /** @psalm-suppress UnusedMethodCall */
+        /** @noinspection PhpExpressionResultUnusedInspection */
         $r->setAccessible(true);
         $sharedData = $r->getValue($feature);
 
@@ -73,7 +73,7 @@ class MetadataFeatureTest extends TestCase
             isset($sharedData['metadata']['primaryKey']),
             'Shared data must have metadata entry for primary key'
         );
-        self::assertSame($sharedData['metadata']['primaryKey'], 'id');
+        self::assertSame('id', $sharedData['metadata']['primaryKey']);
     }
 
     /**
@@ -101,7 +101,7 @@ class MetadataFeatureTest extends TestCase
         $feature->postInitialize();
 
         $r = new ReflectionProperty(MetadataFeature::class, 'sharedData');
-        /** @psalm-suppress UnusedMethodCall */
+        /** @noinspection PhpExpressionResultUnusedInspection */
         $r->setAccessible(true);
         $sharedData = $r->getValue($feature);
 

@@ -80,7 +80,7 @@ class Platform extends AbstractPlatform
     }
 
     /**
-     * @return array|PlatformDecoratorInterface[]
+     * @return PlatformDecoratorInterface
      */
     public function getDecorators()
     {

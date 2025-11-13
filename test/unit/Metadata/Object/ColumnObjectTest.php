@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDbTest\Metadata\Object;
 
 use PhpDb\Metadata\Object\ColumnObject;
@@ -194,13 +196,13 @@ final class ColumnObjectTest extends TestCase
 
     public function testSetErratasWithArrayAndGetErratas(): void
     {
-        $column = new ColumnObject('column', 'table', 'schema');
+        $column  = new ColumnObject('column', 'table', 'schema');
         $erratas = [
             'key1' => 'value1',
             'key2' => 'value2',
             'key3' => 'value3',
         ];
-        $result = $column->setErratas($erratas);
+        $result  = $column->setErratas($erratas);
 
         self::assertSame($column, $result);
         self::assertSame($erratas, $column->getErratas());
@@ -208,7 +210,7 @@ final class ColumnObjectTest extends TestCase
 
     public function testSetErratasIteratesCorrectly(): void
     {
-        $column = new ColumnObject('column', 'table', 'schema');
+        $column  = new ColumnObject('column', 'table', 'schema');
         $erratas = [
             'key1' => 'value1',
             'key2' => 'value2',

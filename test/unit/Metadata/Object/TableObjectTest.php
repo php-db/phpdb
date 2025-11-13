@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDbTest\Metadata\Object;
 
 use PhpDb\Metadata\Object\AbstractTableObject;
@@ -41,7 +43,7 @@ final class TableObjectTest extends TestCase
 
     public function testInheritedSetColumnsWorks(): void
     {
-        $table = new TableObject('users');
+        $table   = new TableObject('users');
         $columns = [
             new ColumnObject('id', 'users', 'public'),
             new ColumnObject('name', 'users', 'public'),
@@ -54,7 +56,7 @@ final class TableObjectTest extends TestCase
 
     public function testInheritedSetConstraintsWorks(): void
     {
-        $table = new TableObject('users');
+        $table       = new TableObject('users');
         $constraints = [
             new ConstraintObject('pk_users', 'users', 'public'),
         ];

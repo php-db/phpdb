@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDbTest\Metadata\Source;
 
 use Exception;
@@ -16,20 +18,25 @@ use PhpDb\Metadata\Source\AbstractSource;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use ReflectionException;
+use ReflectionMethod;
 use ReflectionProperty;
 
 final class AbstractSourceTest extends TestCase
 {
-    /** @var AbstractSource&MockObject */
     protected MockObject|AbstractSource $abstractSourceMock;
 
-    /** @var AdapterInterface&SchemaAwareInterface&MockObject */
+    /** @var MockObject */
     protected MockObject $adapterMock;
 
     #[Override]
     protected function setUp(): void
     {
-        $this->adapterMock = $this->createMockForIntersectionOfInterfaces([AdapterInterface::class, SchemaAwareInterface::class]);
+        /** @var AdapterInterface&SchemaAwareInterface&MockObject $adapterMock */
+        $adapterMock              = $this->createMockForIntersectionOfInterfaces([
+            AdapterInterface::class,
+            SchemaAwareInterface::class,
+        ]);
+        $this->adapterMock        = $adapterMock;
         $this->abstractSourceMock = $this->getMockBuilder(AbstractSource::class)
             ->setConstructorArgs([$this->adapterMock])
             ->onlyMethods([
@@ -39,14 +46,18 @@ final class AbstractSourceTest extends TestCase
                 'loadConstraintData',
                 'loadConstraintDataKeys',
                 'loadConstraintReferences',
-                'loadTriggerData'
+                'loadTriggerData',
             ])
             ->getMock();
     }
 
+    /**
+     * @throws ReflectionException
+     */
     private function setMockData(array $data): void
     {
         $refProp = new ReflectionProperty($this->abstractSourceMock, 'data');
+        /** @noinspection PhpExpressionResultUnusedInspection */
         $refProp->setAccessible(true);
         $refProp->setValue($this->abstractSourceMock, $data);
     }
@@ -54,6 +65,7 @@ final class AbstractSourceTest extends TestCase
     private function getMockData(): array
     {
         $refProp = new ReflectionProperty($this->abstractSourceMock, 'data');
+        /** @noinspection PhpExpressionResultUnusedInspection */
         $refProp->setAccessible(true);
         return $refProp->getValue($this->abstractSourceMock);
     }
@@ -69,6 +81,7 @@ final class AbstractSourceTest extends TestCase
             ->getMock();
 
         $refProp = new ReflectionProperty($source, 'defaultSchema');
+        /** @noinspection PhpExpressionResultUnusedInspection */
         $refProp->setAccessible(true);
 
         self::assertSame('my_schema', $refProp->getValue($source));
@@ -85,13 +98,15 @@ final class AbstractSourceTest extends TestCase
             ->getMock();
 
         $refProp = new ReflectionProperty($source, 'defaultSchema');
+        /** @noinspection PhpExpressionResultUnusedInspection */
         $refProp->setAccessible(true);
 
         self::assertSame(AbstractSource::DEFAULT_SCHEMA, $refProp->getValue($source));
     }
 
-    // ========== Schema Methods ==========
-
+    /**
+     * Schema Methods
+     */
     public function testGetSchemasCallsLoadSchemaData(): void
     {
         $this->abstractSourceMock->expects($this->once())
@@ -104,18 +119,20 @@ final class AbstractSourceTest extends TestCase
         self::assertSame(['schema1', 'schema2'], $schemas);
     }
 
-    // ========== Table Name Methods ==========
-
+    /**
+     * Table Name Methods
+     */
     public function testGetTableNamesWithNullSchemaUsesDefault(): void
     {
         $refProp = new ReflectionProperty($this->abstractSourceMock, 'defaultSchema');
+        /** @noinspection PhpExpressionResultUnusedInspection */
         $refProp->setAccessible(true);
         $refProp->setValue($this->abstractSourceMock, 'default_schema');
 
         $this->setMockData([
             'table_names' => [
                 'default_schema' => [
-                    'users' => ['table_type' => 'BASE TABLE'],
+                    'users'  => ['table_type' => 'BASE TABLE'],
                     'orders' => ['table_type' => 'BASE TABLE'],
                 ],
             ],
@@ -126,6 +143,9 @@ final class AbstractSourceTest extends TestCase
         self::assertSame(['users', 'orders'], $tableNames);
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public function testGetTableNamesWithSpecificSchema(): void
     {
         $this->setMockData([
@@ -141,19 +161,22 @@ final class AbstractSourceTest extends TestCase
         self::assertSame(['products'], $tableNames);
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public function testGetTableNamesExcludesViewsByDefault(): void
     {
         $this->setMockData([
             'table_names' => [
                 'public' => [
-                    'users' => ['table_type' => 'BASE TABLE'],
+                    'users'        => ['table_type' => 'BASE TABLE'],
                     'user_summary' => ['table_type' => 'VIEW'],
-                    'orders' => ['table_type' => 'BASE TABLE'],
+                    'orders'       => ['table_type' => 'BASE TABLE'],
                 ],
             ],
         ]);
 
-        $tableNames = $this->abstractSourceMock->getTableNames('public', false);
+        $tableNames = $this->abstractSourceMock->getTableNames('public');
 
         self::assertSame(['users', 'orders'], $tableNames);
     }
@@ -163,7 +186,7 @@ final class AbstractSourceTest extends TestCase
         $this->setMockData([
             'table_names' => [
                 'public' => [
-                    'users' => ['table_type' => 'BASE TABLE'],
+                    'users'        => ['table_type' => 'BASE TABLE'],
                     'user_summary' => ['table_type' => 'VIEW'],
                 ],
             ],
@@ -174,26 +197,27 @@ final class AbstractSourceTest extends TestCase
         self::assertSame(['users', 'user_summary'], $tableNames);
     }
 
-    // ========== Table Object Methods ==========
-
+    /**
+     * Table Object Methods
+     */
     public function testGetTables(): void
     {
         $this->setMockData([
             'table_names' => [
                 'public' => [
-                    'users' => ['table_type' => 'BASE TABLE'],
+                    'users'  => ['table_type' => 'BASE TABLE'],
                     'orders' => ['table_type' => 'BASE TABLE'],
                 ],
             ],
-            'columns' => [
+            'columns'     => [
                 'public' => [
-                    'users' => [],
+                    'users'  => [],
                     'orders' => [],
                 ],
             ],
             'constraints' => [
                 'public' => [
-                    'users' => [],
+                    'users'  => [],
                     'orders' => [],
                 ],
             ],
@@ -206,6 +230,9 @@ final class AbstractSourceTest extends TestCase
         self::assertInstanceOf(TableObject::class, $tables[1]);
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public function testGetTableForBaseTable(): void
     {
         $this->setMockData([
@@ -214,7 +241,7 @@ final class AbstractSourceTest extends TestCase
                     'users' => ['table_type' => 'BASE TABLE'],
                 ],
             ],
-            'columns' => [
+            'columns'     => [
                 'public' => [
                     'users' => [],
                 ],
@@ -232,20 +259,23 @@ final class AbstractSourceTest extends TestCase
         self::assertSame('users', $table->getName());
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public function testGetTableForView(): void
     {
         $this->setMockData([
             'table_names' => [
                 'public' => [
                     'user_summary' => [
-                        'table_type' => 'VIEW',
+                        'table_type'      => 'VIEW',
                         'view_definition' => 'SELECT id, name FROM users',
-                        'check_option' => 'CASCADED',
-                        'is_updatable' => false,
+                        'check_option'    => 'CASCADED',
+                        'is_updatable'    => false,
                     ],
                 ],
             ],
-            'columns' => [
+            'columns'     => [
                 'public' => [
                     'user_summary' => [],
                 ],
@@ -296,15 +326,16 @@ final class AbstractSourceTest extends TestCase
         $this->abstractSourceMock->getTable('special_table', 'public');
     }
 
-    // ========== View Methods ==========
-
+    /**
+     * View Methods
+     */
     public function testGetViewNames(): void
     {
         $this->setMockData([
             'table_names' => [
                 'public' => [
-                    'users' => ['table_type' => 'BASE TABLE'],
-                    'user_summary' => ['table_type' => 'VIEW'],
+                    'users'         => ['table_type' => 'BASE TABLE'],
+                    'user_summary'  => ['table_type' => 'VIEW'],
                     'order_summary' => ['table_type' => 'VIEW'],
                 ],
             ],
@@ -321,14 +352,14 @@ final class AbstractSourceTest extends TestCase
             'table_names' => [
                 'public' => [
                     'view1' => [
-                        'table_type' => 'VIEW',
+                        'table_type'      => 'VIEW',
                         'view_definition' => 'SELECT * FROM table1',
-                        'check_option' => null,
-                        'is_updatable' => true,
+                        'check_option'    => null,
+                        'is_updatable'    => true,
                     ],
                 ],
             ],
-            'columns' => [
+            'columns'     => [
                 'public' => [
                     'view1' => [],
                 ],
@@ -352,14 +383,14 @@ final class AbstractSourceTest extends TestCase
             'table_names' => [
                 'public' => [
                     'my_view' => [
-                        'table_type' => 'VIEW',
+                        'table_type'      => 'VIEW',
                         'view_definition' => 'SELECT * FROM users',
-                        'check_option' => 'LOCAL',
-                        'is_updatable' => true,
+                        'check_option'    => 'LOCAL',
+                        'is_updatable'    => true,
                     ],
                 ],
             ],
-            'columns' => [
+            'columns'     => [
                 'public' => [
                     'my_view' => [],
                 ],
@@ -407,17 +438,18 @@ final class AbstractSourceTest extends TestCase
         $this->abstractSourceMock->getView('users', 'public');
     }
 
-    // ========== Column Methods ==========
-
+    /**
+     * Column Methods
+     */
     public function testGetColumnNames(): void
     {
         $this->setMockData([
             'columns' => [
                 'public' => [
                     'users' => [
-                        'id' => [],
+                        'id'       => [],
                         'username' => [],
-                        'email' => [],
+                        'email'    => [],
                     ],
                 ],
             ],
@@ -449,16 +481,16 @@ final class AbstractSourceTest extends TestCase
                 'public' => [
                     'users' => [
                         'id' => [
-                            'ordinal_position' => 1,
-                            'column_default' => null,
-                            'is_nullable' => false,
-                            'data_type' => 'INT',
+                            'ordinal_position'         => 1,
+                            'column_default'           => null,
+                            'is_nullable'              => false,
+                            'data_type'                => 'INT',
                             'character_maximum_length' => null,
-                            'character_octet_length' => null,
-                            'numeric_precision' => 10,
-                            'numeric_scale' => 0,
-                            'numeric_unsigned' => true,
-                            'erratas' => [],
+                            'character_octet_length'   => null,
+                            'numeric_precision'        => 10,
+                            'numeric_scale'            => 0,
+                            'numeric_unsigned'         => true,
+                            'erratas'                  => [],
                         ],
                     ],
                 ],
@@ -479,16 +511,16 @@ final class AbstractSourceTest extends TestCase
                 'public' => [
                     'users' => [
                         'username' => [
-                            'ordinal_position' => 2,
-                            'column_default' => '',
-                            'is_nullable' => false,
-                            'data_type' => 'VARCHAR',
+                            'ordinal_position'         => 2,
+                            'column_default'           => '',
+                            'is_nullable'              => false,
+                            'data_type'                => 'VARCHAR',
                             'character_maximum_length' => 255,
-                            'character_octet_length' => 1024,
-                            'numeric_precision' => null,
-                            'numeric_scale' => null,
-                            'numeric_unsigned' => null,
-                            'erratas' => ['collation' => 'utf8_general_ci'],
+                            'character_octet_length'   => 1024,
+                            'numeric_precision'        => null,
+                            'numeric_scale'            => null,
+                            'numeric_unsigned'         => null,
+                            'erratas'                  => ['collation' => 'utf8_general_ci'],
                         ],
                     ],
                 ],
@@ -529,21 +561,22 @@ final class AbstractSourceTest extends TestCase
         $this->abstractSourceMock->getColumn('non_existent', 'users', 'public');
     }
 
-    // ========== Constraint Methods ==========
-
+    /**
+     * Constraint Methods
+     */
     public function testGetConstraints(): void
     {
         $this->setMockData([
             'constraints' => [
                 'public' => [
                     'users' => [
-                        'pk_users' => [
+                        'pk_users'       => [
                             'constraint_type' => 'PRIMARY KEY',
-                            'columns' => ['id'],
+                            'columns'         => ['id'],
                         ],
                         'uq_users_email' => [
                             'constraint_type' => 'UNIQUE',
-                            'columns' => ['email'],
+                            'columns'         => ['email'],
                         ],
                     ],
                 ],
@@ -564,14 +597,14 @@ final class AbstractSourceTest extends TestCase
                 'public' => [
                     'orders' => [
                         'fk_orders_user' => [
-                            'constraint_type' => 'FOREIGN KEY',
-                            'columns' => ['user_id'],
+                            'constraint_type'         => 'FOREIGN KEY',
+                            'columns'                 => ['user_id'],
                             'referenced_table_schema' => 'public',
-                            'referenced_table_name' => 'users',
-                            'referenced_columns' => ['id'],
-                            'match_option' => 'SIMPLE',
-                            'update_rule' => 'CASCADE',
-                            'delete_rule' => 'RESTRICT',
+                            'referenced_table_name'   => 'users',
+                            'referenced_columns'      => ['id'],
+                            'match_option'            => 'SIMPLE',
+                            'update_rule'             => 'CASCADE',
+                            'delete_rule'             => 'RESTRICT',
                         ],
                     ],
                 ],
@@ -602,7 +635,7 @@ final class AbstractSourceTest extends TestCase
                     'users' => [
                         'chk_age' => [
                             'constraint_type' => 'CHECK',
-                            'check_clause' => 'age >= 18',
+                            'check_clause'    => 'age >= 18',
                         ],
                     ],
                 ],
@@ -631,9 +664,9 @@ final class AbstractSourceTest extends TestCase
         $this->abstractSourceMock->getConstraint('non_existent', 'users', 'public');
     }
 
-    // ========== Constraint Key Methods ==========
-
     /**
+     * Constraint Key Methods
+     *
      * @throws ReflectionException
      */
     public function testGetConstraintKeys(): void
@@ -685,26 +718,26 @@ final class AbstractSourceTest extends TestCase
             'constraint_references' => [
                 'public' => [
                     [
-                        'constraint_name' => 'fk_composite',
-                        'update_rule' => 'CASCADE',
-                        'delete_rule' => 'RESTRICT',
-                        'referenced_table_name' => 'ref_table',
+                        'constraint_name'        => 'fk_composite',
+                        'update_rule'            => 'CASCADE',
+                        'delete_rule'            => 'RESTRICT',
+                        'referenced_table_name'  => 'ref_table',
                         'referenced_column_name' => 'ref_col',
                     ],
                 ],
             ],
-            'constraint_keys' => [
+            'constraint_keys'       => [
                 'public' => [
                     [
-                        'table_name' => 'my_table',
-                        'constraint_name' => 'fk_composite',
-                        'column_name' => 'col1',
+                        'table_name'       => 'my_table',
+                        'constraint_name'  => 'fk_composite',
+                        'column_name'      => 'col1',
                         'ordinal_position' => 1,
                     ],
                     [
-                        'table_name' => 'my_table',
-                        'constraint_name' => 'fk_composite',
-                        'column_name' => 'col2',
+                        'table_name'       => 'my_table',
+                        'constraint_name'  => 'fk_composite',
+                        'column_name'      => 'col2',
                         'ordinal_position' => 2,
                     ],
                 ],
@@ -725,12 +758,12 @@ final class AbstractSourceTest extends TestCase
             'constraint_references' => [
                 'public' => [],
             ],
-            'constraint_keys' => [
+            'constraint_keys'       => [
                 'public' => [
                     [
-                        'table_name' => 'users',
-                        'constraint_name' => 'pk_users',
-                        'column_name' => 'id',
+                        'table_name'       => 'users',
+                        'constraint_name'  => 'pk_users',
+                        'column_name'      => 'id',
                         'ordinal_position' => 1,
                     ],
                 ],
@@ -745,14 +778,15 @@ final class AbstractSourceTest extends TestCase
         self::assertNull($keys[0]->getReferencedTableName());
     }
 
-    // ========== Trigger Methods ==========
-
+    /**
+     * Trigger Methods
+     */
     public function testGetTriggerNames(): void
     {
         $this->setMockData([
             'triggers' => [
                 'public' => [
-                    'audit_trigger' => [],
+                    'audit_trigger'    => [],
                     'update_timestamp' => [],
                 ],
             ],
@@ -769,20 +803,20 @@ final class AbstractSourceTest extends TestCase
             'triggers' => [
                 'public' => [
                     'trigger1' => [
-                        'event_manipulation' => 'INSERT',
-                        'event_object_catalog' => 'catalog',
-                        'event_object_schema' => 'public',
-                        'event_object_table' => 'users',
-                        'action_order' => '1',
-                        'action_condition' => null,
-                        'action_statement' => 'BEGIN ... END',
-                        'action_orientation' => 'ROW',
-                        'action_timing' => 'BEFORE',
+                        'event_manipulation'         => 'INSERT',
+                        'event_object_catalog'       => 'catalog',
+                        'event_object_schema'        => 'public',
+                        'event_object_table'         => 'users',
+                        'action_order'               => '1',
+                        'action_condition'           => null,
+                        'action_statement'           => 'BEGIN ... END',
+                        'action_orientation'         => 'ROW',
+                        'action_timing'              => 'BEFORE',
                         'action_reference_old_table' => null,
                         'action_reference_new_table' => null,
-                        'action_reference_old_row' => 'OLD',
-                        'action_reference_new_row' => 'NEW',
-                        'created' => null,
+                        'action_reference_old_row'   => 'OLD',
+                        'action_reference_new_row'   => 'NEW',
+                        'created'                    => null,
                     ],
                 ],
             ],
@@ -800,20 +834,20 @@ final class AbstractSourceTest extends TestCase
             'triggers' => [
                 'public' => [
                     'my_trigger' => [
-                        'event_manipulation' => 'UPDATE',
-                        'event_object_catalog' => 'main',
-                        'event_object_schema' => 'public',
-                        'event_object_table' => 'orders',
-                        'action_order' => '1',
-                        'action_condition' => 'WHEN (NEW.status != OLD.status)',
-                        'action_statement' => 'EXECUTE PROCEDURE log_change()',
-                        'action_orientation' => 'ROW',
-                        'action_timing' => 'AFTER',
+                        'event_manipulation'         => 'UPDATE',
+                        'event_object_catalog'       => 'main',
+                        'event_object_schema'        => 'public',
+                        'event_object_table'         => 'orders',
+                        'action_order'               => '1',
+                        'action_condition'           => 'WHEN (NEW.status != OLD.status)',
+                        'action_statement'           => 'EXECUTE PROCEDURE log_change()',
+                        'action_orientation'         => 'ROW',
+                        'action_timing'              => 'AFTER',
                         'action_reference_old_table' => 'old_table',
                         'action_reference_new_table' => 'new_table',
-                        'action_reference_old_row' => 'OLD',
-                        'action_reference_new_row' => 'NEW',
-                        'created' => null,
+                        'action_reference_old_row'   => 'OLD',
+                        'action_reference_new_row'   => 'NEW',
+                        'created'                    => null,
                     ],
                 ],
             ],
@@ -853,8 +887,9 @@ final class AbstractSourceTest extends TestCase
         $this->abstractSourceMock->getTrigger('non_existent', 'public');
     }
 
-    // ========== Helper Methods ==========
-
+    /**
+     * Helper Methods
+     */
     public function testPrepareDataHierarchyWithSingleKey(): void
     {
         $source = $this->getMockBuilder(AbstractSource::class)
@@ -862,11 +897,13 @@ final class AbstractSourceTest extends TestCase
             ->onlyMethods(['loadSchemaData'])
             ->getMock();
 
-        $method = new \ReflectionMethod($source, 'prepareDataHierarchy');
+        $method = new ReflectionMethod($source, 'prepareDataHierarchy');
+        /** @noinspection PhpExpressionResultUnusedInspection */
         $method->setAccessible(true);
         $method->invoke($source, 'test_key');
 
         $refProp = new ReflectionProperty($source, 'data');
+        /** @noinspection PhpExpressionResultUnusedInspection */
         $refProp->setAccessible(true);
         $data = $refProp->getValue($source);
 
@@ -880,11 +917,13 @@ final class AbstractSourceTest extends TestCase
             ->onlyMethods(['loadSchemaData'])
             ->getMock();
 
-        $method = new \ReflectionMethod($source, 'prepareDataHierarchy');
+        $method = new ReflectionMethod($source, 'prepareDataHierarchy');
+        /** @noinspection PhpExpressionResultUnusedInspection */
         $method->setAccessible(true);
         $method->invoke($source, 'level1', 'level2', 'level3');
 
         $refProp = new ReflectionProperty($source, 'data');
+        /** @noinspection PhpExpressionResultUnusedInspection */
         $refProp->setAccessible(true);
         $data = $refProp->getValue($source);
 
@@ -901,7 +940,8 @@ final class AbstractSourceTest extends TestCase
             ],
         ]);
 
-        $method = new \ReflectionMethod($this->abstractSourceMock, 'loadTableNameData');
+        $method = new ReflectionMethod($this->abstractSourceMock, 'loadTableNameData');
+        /** @noinspection PhpExpressionResultUnusedInspection */
         $method->setAccessible(true);
         $method->invoke($this->abstractSourceMock, 'public');
 
@@ -919,7 +959,8 @@ final class AbstractSourceTest extends TestCase
             ],
         ]);
 
-        $method = new \ReflectionMethod($this->abstractSourceMock, 'loadColumnData');
+        $method = new ReflectionMethod($this->abstractSourceMock, 'loadColumnData');
+        /** @noinspection PhpExpressionResultUnusedInspection */
         $method->setAccessible(true);
         $method->invoke($this->abstractSourceMock, 'users', 'public');
 
@@ -935,7 +976,8 @@ final class AbstractSourceTest extends TestCase
             ],
         ]);
 
-        $method = new \ReflectionMethod($this->abstractSourceMock, 'loadConstraintData');
+        $method = new ReflectionMethod($this->abstractSourceMock, 'loadConstraintData');
+        /** @noinspection PhpExpressionResultUnusedInspection */
         $method->setAccessible(true);
         $method->invoke($this->abstractSourceMock, 'table', 'public');
 
@@ -951,7 +993,8 @@ final class AbstractSourceTest extends TestCase
             ],
         ]);
 
-        $method = new \ReflectionMethod($this->abstractSourceMock, 'loadConstraintDataKeys');
+        $method = new ReflectionMethod($this->abstractSourceMock, 'loadConstraintDataKeys');
+        /** @noinspection PhpExpressionResultUnusedInspection */
         $method->setAccessible(true);
         $method->invoke($this->abstractSourceMock, 'public');
 
@@ -967,7 +1010,8 @@ final class AbstractSourceTest extends TestCase
             ],
         ]);
 
-        $method = new \ReflectionMethod($this->abstractSourceMock, 'loadConstraintReferences');
+        $method = new ReflectionMethod($this->abstractSourceMock, 'loadConstraintReferences');
+        /** @noinspection PhpExpressionResultUnusedInspection */
         $method->setAccessible(true);
         $method->invoke($this->abstractSourceMock, 'table', 'public');
 
@@ -983,7 +1027,8 @@ final class AbstractSourceTest extends TestCase
             ],
         ]);
 
-        $method = new \ReflectionMethod($this->abstractSourceMock, 'loadTriggerData');
+        $method = new ReflectionMethod($this->abstractSourceMock, 'loadTriggerData');
+        /** @noinspection PhpExpressionResultUnusedInspection */
         $method->setAccessible(true);
         $method->invoke($this->abstractSourceMock, 'public');
 
