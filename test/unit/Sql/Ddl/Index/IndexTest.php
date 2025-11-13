@@ -9,6 +9,7 @@ use PhpDb\Sql\Ddl\Index\Index;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 
+#[CoversMethod(Index::class, '__construct')]
 #[CoversMethod(Index::class, 'getExpressionData')]
 final class IndexTest extends TestCase
 {

@@ -13,6 +13,13 @@ use PHPUnit\Framework\Attributes\TestDox;
 use PHPUnit\Framework\TestCase;
 use ReflectionException;
 
+#[CoversMethod(Join::class, '__construct')]
+#[CoversMethod(Join::class, 'rewind')]
+#[CoversMethod(Join::class, 'current')]
+#[CoversMethod(Join::class, 'key')]
+#[CoversMethod(Join::class, 'next')]
+#[CoversMethod(Join::class, 'valid')]
+#[CoversMethod(Join::class, 'getJoins')]
 #[CoversMethod(Join::class, 'join')]
 #[CoversMethod(Join::class, 'count')]
 #[CoversMethod(Join::class, 'reset')]

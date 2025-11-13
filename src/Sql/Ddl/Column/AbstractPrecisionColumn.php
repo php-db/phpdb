@@ -67,6 +67,6 @@ abstract class AbstractPrecisionColumn extends AbstractLengthColumn
             return $this->length . ',' . $this->decimal;
         }
 
-        return $this->length;
+        return (string) $this->length;
     }
 }

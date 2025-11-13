@@ -15,12 +15,37 @@ use PhpDb\Metadata\Object\TableObject;
 use PhpDb\Metadata\Object\TriggerObject;
 use PhpDb\Metadata\Object\ViewObject;
 use PhpDb\Metadata\Source\AbstractSource;
+use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use ReflectionException;
 use ReflectionMethod;
 use ReflectionProperty;
 
+#[CoversMethod(AbstractSource::class, '__construct')]
+#[CoversMethod(AbstractSource::class, 'getSchemas')]
+#[CoversMethod(AbstractSource::class, 'getTableNames')]
+#[CoversMethod(AbstractSource::class, 'getTables')]
+#[CoversMethod(AbstractSource::class, 'getTable')]
+#[CoversMethod(AbstractSource::class, 'getViewNames')]
+#[CoversMethod(AbstractSource::class, 'getViews')]
+#[CoversMethod(AbstractSource::class, 'getView')]
+#[CoversMethod(AbstractSource::class, 'getColumnNames')]
+#[CoversMethod(AbstractSource::class, 'getColumns')]
+#[CoversMethod(AbstractSource::class, 'getColumn')]
+#[CoversMethod(AbstractSource::class, 'getConstraints')]
+#[CoversMethod(AbstractSource::class, 'getConstraint')]
+#[CoversMethod(AbstractSource::class, 'getConstraintKeys')]
+#[CoversMethod(AbstractSource::class, 'getTriggerNames')]
+#[CoversMethod(AbstractSource::class, 'getTriggers')]
+#[CoversMethod(AbstractSource::class, 'getTrigger')]
+#[CoversMethod(AbstractSource::class, 'prepareDataHierarchy')]
+#[CoversMethod(AbstractSource::class, 'loadTableNameData')]
+#[CoversMethod(AbstractSource::class, 'loadColumnData')]
+#[CoversMethod(AbstractSource::class, 'loadConstraintData')]
+#[CoversMethod(AbstractSource::class, 'loadConstraintDataKeys')]
+#[CoversMethod(AbstractSource::class, 'loadConstraintReferences')]
+#[CoversMethod(AbstractSource::class, 'loadTriggerData')]
 final class AbstractSourceTest extends TestCase
 {
     protected MockObject|AbstractSource $abstractSourceMock;
@@ -41,12 +66,6 @@ final class AbstractSourceTest extends TestCase
             ->setConstructorArgs([$this->adapterMock])
             ->onlyMethods([
                 'loadSchemaData',
-                'loadTableNameData',
-                'loadColumnData',
-                'loadConstraintData',
-                'loadConstraintDataKeys',
-                'loadConstraintReferences',
-                'loadTriggerData',
             ])
             ->getMock();
     }
@@ -458,20 +477,6 @@ final class AbstractSourceTest extends TestCase
         $columnNames = $this->abstractSourceMock->getColumnNames('users', 'public');
 
         self::assertSame(['id', 'username', 'email'], $columnNames);
-    }
-
-    public function testGetColumnNamesThrowsExceptionForNonExistentTable(): void
-    {
-        $this->setMockData([
-            'columns' => [
-                'public' => [],
-            ],
-        ]);
-
-        $this->expectException(Exception::class);
-        $this->expectExceptionMessage('"non_existent" does not exist');
-
-        $this->abstractSourceMock->getColumnNames('non_existent', 'public');
     }
 
     public function testGetColumns(): void

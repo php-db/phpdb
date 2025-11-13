@@ -158,7 +158,8 @@ class Join implements Iterator, Countable
     /**
      * Get count of attached predicates
      */
-    #[Override] #[ReturnTypeWillChange]
+    #[Override]
+    #[ReturnTypeWillChange]
     public function count(): int
     {
         return count($this->joins);

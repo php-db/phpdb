@@ -10,6 +10,7 @@ use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Depends;
 use PHPUnit\Framework\TestCase;
 
+#[CoversMethod(Column::class, '__construct')]
 #[CoversMethod(Column::class, 'setName')]
 #[CoversMethod(Column::class, 'getName')]
 #[CoversMethod(Column::class, 'setNullable')]
@@ -19,9 +20,19 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(Column::class, 'setOptions')]
 #[CoversMethod(Column::class, 'setOption')]
 #[CoversMethod(Column::class, 'getOptions')]
+#[CoversMethod(Column::class, 'addConstraint')]
 #[CoversMethod(Column::class, 'getExpressionData')]
 final class ColumnTest extends TestCase
 {
+    public function testConstructor(): void
+    {
+        $column = new Column('test_col', true, 'default_val', ['option1' => 'value1']);
+        self::assertEquals('test_col', $column->getName());
+        self::assertTrue($column->isNullable());
+        self::assertEquals('default_val', $column->getDefault());
+        self::assertEquals(['option1' => 'value1'], $column->getOptions());
+    }
+
     public function testSetName(): Column
     {
         $column = new Column();

@@ -17,7 +17,14 @@ use PHPUnit\Framework\TestCase;
 use ReflectionException;
 use TypeError;
 
+#[CoversMethod(PredicateSet::class, '__construct')]
+#[CoversMethod(PredicateSet::class, 'addPredicate')]
 #[CoversMethod(PredicateSet::class, 'addPredicates')]
+#[CoversMethod(PredicateSet::class, 'getPredicates')]
+#[CoversMethod(PredicateSet::class, 'orPredicate')]
+#[CoversMethod(PredicateSet::class, 'andPredicate')]
+#[CoversMethod(PredicateSet::class, 'getExpressionData')]
+#[CoversMethod(PredicateSet::class, 'count')]
 final class PredicateSetTest extends TestCase
 {
     use DeprecatedAssertionsTrait;

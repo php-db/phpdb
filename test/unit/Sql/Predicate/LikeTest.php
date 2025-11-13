@@ -6,9 +6,19 @@ namespace PhpDbTest\Sql\Predicate;
 
 use PhpDb\Sql\Argument;
 use PhpDb\Sql\ArgumentType;
+use PhpDb\Sql\Exception\InvalidArgumentException;
 use PhpDb\Sql\Predicate\Like;
+use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 
+#[CoversMethod(Like::class, '__construct')]
+#[CoversMethod(Like::class, 'setIdentifier')]
+#[CoversMethod(Like::class, 'getIdentifier')]
+#[CoversMethod(Like::class, 'setLike')]
+#[CoversMethod(Like::class, 'getLike')]
+#[CoversMethod(Like::class, 'setSpecification')]
+#[CoversMethod(Like::class, 'getSpecification')]
+#[CoversMethod(Like::class, 'getExpressionData')]
 final class LikeTest extends TestCase
 {
     public function testConstructEmptyArgs(): void
@@ -62,5 +72,25 @@ final class LikeTest extends TestCase
         self::assertInstanceOf(Like::class, $like->setIdentifier('bar'));
         self::assertInstanceOf(Like::class, $like->setSpecification('%1$s LIKE %2$s'));
         self::assertInstanceOf(Like::class, $like->setLike('foo%'));
+    }
+
+    public function testGetExpressionDataThrowsExceptionWhenIdentifierNotSet(): void
+    {
+        $like = new Like();
+        $like->setLike('foo%');
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Identifier must be specified');
+        $like->getExpressionData();
+    }
+
+    public function testGetExpressionDataThrowsExceptionWhenLikeNotSet(): void
+    {
+        $like = new Like();
+        $like->setIdentifier('bar');
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Like expression must be specified');
+        $like->getExpressionData();
     }
 }

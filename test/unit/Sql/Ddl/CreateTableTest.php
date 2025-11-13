@@ -24,6 +24,11 @@ use function array_pop;
 #[CoversMethod(CreateTable::class, 'addColumn')]
 #[CoversMethod(CreateTable::class, 'addConstraint')]
 #[CoversMethod(CreateTable::class, 'getSqlString')]
+#[CoversMethod(CreateTable::class, 'processTable')]
+#[CoversMethod(CreateTable::class, 'processColumns')]
+#[CoversMethod(CreateTable::class, 'processCombinedby')]
+#[CoversMethod(CreateTable::class, 'processConstraints')]
+#[CoversMethod(CreateTable::class, 'processStatementEnd')]
 class CreateTableTest extends TestCase
 {
     /**

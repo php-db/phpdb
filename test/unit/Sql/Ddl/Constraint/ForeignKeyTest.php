@@ -5,11 +5,20 @@ declare(strict_types=1);
 namespace PhpDbTest\Sql\Ddl\Constraint;
 
 use PhpDb\Sql\Argument;
+use PhpDb\Sql\Ddl\Constraint\AbstractConstraint;
 use PhpDb\Sql\Ddl\Constraint\ForeignKey;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Depends;
 use PHPUnit\Framework\TestCase;
 
+#[CoversMethod(AbstractConstraint::class, '__construct')]
+#[CoversMethod(AbstractConstraint::class, 'setName')]
+#[CoversMethod(AbstractConstraint::class, 'getName')]
+#[CoversMethod(AbstractConstraint::class, 'setColumns')]
+#[CoversMethod(AbstractConstraint::class, 'addColumn')]
+#[CoversMethod(AbstractConstraint::class, 'getColumns')]
+#[CoversMethod(AbstractConstraint::class, 'getExpressionData')]
+#[CoversMethod(ForeignKey::class, '__construct')]
 #[CoversMethod(ForeignKey::class, 'setName')]
 #[CoversMethod(ForeignKey::class, 'getName')]
 #[CoversMethod(ForeignKey::class, 'setReferenceTable')]

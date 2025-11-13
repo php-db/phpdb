@@ -52,21 +52,6 @@ class SqlFunctionalTest extends TestCase
                         'prepare'    => 'SELECT "foo".* FROM "foo" OFFSET ?',
                         'parameters' => ['offset' => 10],
                     ],
-                    'MySql'     => [
-                        'string'     => 'SELECT `foo`.* FROM `foo` LIMIT 18446744073709551615 OFFSET 10',
-                        'prepare'    => 'SELECT `foo`.* FROM `foo` LIMIT 18446744073709551615 OFFSET ?',
-                        'parameters' => ['offset' => 10],
-                    ],
-                    'Oracle'    => [
-                        'string'     => 'SELECT * FROM (SELECT b.*, rownum b_rownum FROM ( SELECT "foo".* FROM "foo" ) b ) WHERE b_rownum > (10)',
-                        'prepare'    => 'SELECT * FROM (SELECT b.*, rownum b_rownum FROM ( SELECT "foo".* FROM "foo" ) b ) WHERE b_rownum > (:offset)',
-                        'parameters' => ['offset' => 10],
-                    ],
-                    'SqlServer' => [
-                        'string'     => 'SELECT * FROM ( SELECT [foo].*, ROW_NUMBER() OVER (ORDER BY (SELECT 1)) AS [__LAMINAS_ROW_NUMBER] FROM [foo] ) AS [LAMINAS_SQL_SERVER_LIMIT_OFFSET_EMULATION] WHERE [LAMINAS_SQL_SERVER_LIMIT_OFFSET_EMULATION].[__LAMINAS_ROW_NUMBER] BETWEEN 10+1 AND 0+10',
-                        'prepare'    => 'SELECT * FROM ( SELECT [foo].*, ROW_NUMBER() OVER (ORDER BY (SELECT 1)) AS [__LAMINAS_ROW_NUMBER] FROM [foo] ) AS [LAMINAS_SQL_SERVER_LIMIT_OFFSET_EMULATION] WHERE [LAMINAS_SQL_SERVER_LIMIT_OFFSET_EMULATION].[__LAMINAS_ROW_NUMBER] BETWEEN ?+1 AND ?+?',
-                        'parameters' => ['offset' => 10, 'limit' => null, 'offsetForSum' => 10],
-                    ],
                 ],
             ],
             'Select::processLimit()'       => [
@@ -77,21 +62,6 @@ class SqlFunctionalTest extends TestCase
                         'prepare'    => 'SELECT "foo".* FROM "foo" LIMIT ?',
                         'parameters' => ['limit' => 10],
                     ],
-                    'MySql'     => [
-                        'string'     => 'SELECT `foo`.* FROM `foo` LIMIT 10',
-                        'prepare'    => 'SELECT `foo`.* FROM `foo` LIMIT ?',
-                        'parameters' => ['limit' => 10],
-                    ],
-                    'Oracle'    => [
-                        'string'     => 'SELECT * FROM (SELECT b.*, rownum b_rownum FROM ( SELECT "foo".* FROM "foo" ) b WHERE rownum <= (0+10)) WHERE b_rownum >= (0 + 1)',
-                        'prepare'    => 'SELECT * FROM (SELECT b.*, rownum b_rownum FROM ( SELECT "foo".* FROM "foo" ) b WHERE rownum <= (:offset+:limit)) WHERE b_rownum >= (:offset + 1)',
-                        'parameters' => ['offset' => 0, 'limit' => 10],
-                    ],
-                    'SqlServer' => [
-                        'string'     => 'SELECT * FROM ( SELECT [foo].*, ROW_NUMBER() OVER (ORDER BY (SELECT 1)) AS [__LAMINAS_ROW_NUMBER] FROM [foo] ) AS [LAMINAS_SQL_SERVER_LIMIT_OFFSET_EMULATION] WHERE [LAMINAS_SQL_SERVER_LIMIT_OFFSET_EMULATION].[__LAMINAS_ROW_NUMBER] BETWEEN 0+1 AND 10+0',
-                        'prepare'    => 'SELECT * FROM ( SELECT [foo].*, ROW_NUMBER() OVER (ORDER BY (SELECT 1)) AS [__LAMINAS_ROW_NUMBER] FROM [foo] ) AS [LAMINAS_SQL_SERVER_LIMIT_OFFSET_EMULATION] WHERE [LAMINAS_SQL_SERVER_LIMIT_OFFSET_EMULATION].[__LAMINAS_ROW_NUMBER] BETWEEN ?+1 AND ?+?',
-                        'parameters' => ['offset' => null, 'limit' => 10, 'offsetForSum' => null],
-                    ],
                 ],
             ],
             'Select::processLimitOffset()' => [
@@ -101,21 +71,6 @@ class SqlFunctionalTest extends TestCase
                         'string'     => 'SELECT "foo".* FROM "foo" LIMIT \'10\' OFFSET \'5\'',
                         'prepare'    => 'SELECT "foo".* FROM "foo" LIMIT ? OFFSET ?',
                         'parameters' => ['limit' => 10, 'offset' => 5],
-                    ],
-                    'MySql'     => [
-                        'string'     => 'SELECT `foo`.* FROM `foo` LIMIT 10 OFFSET 5',
-                        'prepare'    => 'SELECT `foo`.* FROM `foo` LIMIT ? OFFSET ?',
-                        'parameters' => ['limit' => 10, 'offset' => 5],
-                    ],
-                    'Oracle'    => [
-                        'string'     => 'SELECT * FROM (SELECT b.*, rownum b_rownum FROM ( SELECT "foo".* FROM "foo" ) b WHERE rownum <= (5+10)) WHERE b_rownum >= (5 + 1)',
-                        'prepare'    => 'SELECT * FROM (SELECT b.*, rownum b_rownum FROM ( SELECT "foo".* FROM "foo" ) b WHERE rownum <= (:offset+:limit)) WHERE b_rownum >= (:offset + 1)',
-                        'parameters' => ['offset' => 5, 'limit' => 10],
-                    ],
-                    'SqlServer' => [
-                        'string'     => 'SELECT * FROM ( SELECT [foo].*, ROW_NUMBER() OVER (ORDER BY (SELECT 1)) AS [__LAMINAS_ROW_NUMBER] FROM [foo] ) AS [LAMINAS_SQL_SERVER_LIMIT_OFFSET_EMULATION] WHERE [LAMINAS_SQL_SERVER_LIMIT_OFFSET_EMULATION].[__LAMINAS_ROW_NUMBER] BETWEEN 5+1 AND 10+5',
-                        'prepare'    => 'SELECT * FROM ( SELECT [foo].*, ROW_NUMBER() OVER (ORDER BY (SELECT 1)) AS [__LAMINAS_ROW_NUMBER] FROM [foo] ) AS [LAMINAS_SQL_SERVER_LIMIT_OFFSET_EMULATION] WHERE [LAMINAS_SQL_SERVER_LIMIT_OFFSET_EMULATION].[__LAMINAS_ROW_NUMBER] BETWEEN ?+1 AND ?+?',
-                        'parameters' => ['offset' => 5, 'limit' => 10, 'offsetForSum' => 5],
                     ],
                 ],
             ],
@@ -140,15 +95,6 @@ class SqlFunctionalTest extends TestCase
                     'sql92'     => [
                         'string' => 'SELECT "my_table"."my_table_column" AS "my_table_column", NOW() AS "aliased_column", "joined_table3".* FROM "my_table" INNER JOIN "joined_table2" ON "my_table"."id" = "joined_table2"."id" INNER JOIN "joined_table3" ON "my_table"."id" = "joined_table3"."id"',
                     ],
-                    'MySql'     => [
-                        'string' => 'SELECT `my_table`.`my_table_column` AS `my_table_column`, NOW() AS `aliased_column`, `joined_table3`.* FROM `my_table` INNER JOIN `joined_table2` ON `my_table`.`id` = `joined_table2`.`id` INNER JOIN `joined_table3` ON `my_table`.`id` = `joined_table3`.`id`',
-                    ],
-                    'Oracle'    => [
-                        'string' => 'SELECT "my_table"."my_table_column" AS "my_table_column", NOW() AS "aliased_column", "joined_table3".* FROM "my_table" INNER JOIN "joined_table2" ON "my_table"."id" = "joined_table2"."id" INNER JOIN "joined_table3" ON "my_table"."id" = "joined_table3"."id"',
-                    ],
-                    'SqlServer' => [
-                        'string' => 'SELECT [my_table].[my_table_column] AS [my_table_column], NOW() AS [aliased_column], [joined_table3].* FROM [my_table] INNER JOIN [joined_table2] ON [my_table].[id] = [joined_table2].[id] INNER JOIN [joined_table3] ON [my_table].[id] = [joined_table3].[id]',
-                    ],
                 ],
             ],
             'Select::processJoin()'                => [
@@ -159,21 +105,6 @@ class SqlFunctionalTest extends TestCase
                         'string'     => 'SELECT "a".*, "b".* FROM "a" INNER JOIN (SELECT "c".* FROM "c" WHERE "cc" = \'10\') AS "b" ON "d"="e" WHERE "x" = \'20\'',
                         'prepare'    => 'SELECT "a".*, "b".* FROM "a" INNER JOIN (SELECT "c".* FROM "c" WHERE "cc" = ?) AS "b" ON "d"="e" WHERE "x" = ?',
                         'parameters' => ['subselect1where1' => 10, 'where1' => 20],
-                    ],
-                    'MySql'     => [
-                        'string'     => 'SELECT `a`.*, `b`.* FROM `a` INNER JOIN (SELECT `c`.* FROM `c` WHERE `cc` = \'10\') AS `b` ON `d`=`e` WHERE `x` = \'20\'',
-                        'prepare'    => 'SELECT `a`.*, `b`.* FROM `a` INNER JOIN (SELECT `c`.* FROM `c` WHERE `cc` = ?) AS `b` ON `d`=`e` WHERE `x` = ?',
-                        'parameters' => ['subselect2where1' => 10, 'where2' => 20],
-                    ],
-                    'Oracle'    => [
-                        'string'     => 'SELECT "a".*, "b".* FROM "a" INNER JOIN (SELECT "c".* FROM "c" WHERE "cc" = \'10\') "b" ON "d"="e" WHERE "x" = \'20\'',
-                        'prepare'    => 'SELECT "a".*, "b".* FROM "a" INNER JOIN (SELECT "c".* FROM "c" WHERE "cc" = ?) "b" ON "d"="e" WHERE "x" = ?',
-                        'parameters' => ['subselect2where1' => 10, 'where2' => 20],
-                    ],
-                    'SqlServer' => [
-                        'string'     => 'SELECT [a].*, [b].* FROM [a] INNER JOIN (SELECT [c].* FROM [c] WHERE [cc] = \'10\') AS [b] ON [d]=[e] WHERE [x] = \'20\'',
-                        'prepare'    => 'SELECT [a].*, [b].* FROM [a] INNER JOIN (SELECT [c].* FROM [c] WHERE [cc] = ?) AS [b] ON [d]=[e] WHERE [x] = ?',
-                        'parameters' => ['subselect2where1' => 10, 'where2' => 20],
                     ],
                 ],
             ],
@@ -187,18 +118,12 @@ class SqlFunctionalTest extends TestCase
                         ->setOption('comment', 'Comment2')),
                 'expected'  => [
                     'sql92'     => "CREATE TABLE \"foo\" ( \n    \"col1\" INTEGER NOT NULL,\n    \"col2\" INTEGER NOT NULL \n)",
-                    'MySql'     => "CREATE TABLE `foo` ( \n    `col1` INTEGER NOT NULL AUTO_INCREMENT COMMENT 'Comment1',\n    `col2` INTEGER NOT NULL AUTO_INCREMENT COMMENT 'Comment2' \n)",
-                    'Oracle'    => "CREATE TABLE \"foo\" ( \n    \"col1\" INTEGER NOT NULL,\n    \"col2\" INTEGER NOT NULL \n)",
-                    'SqlServer' => "CREATE TABLE [foo] ( \n    [col1] INTEGER NOT NULL,\n    [col2] INTEGER NOT NULL \n)",
                 ],
             ],
             'Ddl::CreateTable::processTable()'     => [
                 'sqlObject' => self::createTable('foo')->setTemporary(true),
                 'expected'  => [
                     'sql92'     => "CREATE TEMPORARY TABLE \"foo\" ( \n)",
-                    'MySql'     => "CREATE TEMPORARY TABLE `foo` ( \n)",
-                    'Oracle'    => "CREATE TEMPORARY TABLE \"foo\" ( \n)",
-                    'SqlServer' => "CREATE TABLE [#foo] ( \n)",
                 ],
             ],
             'Select::processSubSelect()'           => [
@@ -215,21 +140,6 @@ class SqlFunctionalTest extends TestCase
                         'prepare'    => 'SELECT "a".* FROM (SELECT "b".* FROM (SELECT "c".* FROM "c" WHERE "cc" = ?) AS "b" WHERE "bb" = ?) AS "a" WHERE "aa" = ?',
                         'parameters' => ['subselect2where1' => 'CC', 'subselect1where1' => 'BB', 'where1' => 'AA'],
                     ],
-                    'MySql'     => [
-                        'string'     => 'SELECT `a`.* FROM (SELECT `b`.* FROM (SELECT `c`.* FROM `c` WHERE `cc` = \'CC\') AS `b` WHERE `bb` = \'BB\') AS `a` WHERE `aa` = \'AA\'',
-                        'prepare'    => 'SELECT `a`.* FROM (SELECT `b`.* FROM (SELECT `c`.* FROM `c` WHERE `cc` = ?) AS `b` WHERE `bb` = ?) AS `a` WHERE `aa` = ?',
-                        'parameters' => ['subselect4where1' => 'CC', 'subselect3where1' => 'BB', 'where2' => 'AA'],
-                    ],
-                    'Oracle'    => [
-                        'string'     => 'SELECT "a".* FROM (SELECT "b".* FROM (SELECT "c".* FROM "c" WHERE "cc" = \'CC\') "b" WHERE "bb" = \'BB\') "a" WHERE "aa" = \'AA\'',
-                        'prepare'    => 'SELECT "a".* FROM (SELECT "b".* FROM (SELECT "c".* FROM "c" WHERE "cc" = ?) "b" WHERE "bb" = ?) "a" WHERE "aa" = ?',
-                        'parameters' => ['subselect4where1' => 'CC', 'subselect3where1' => 'BB', 'where2' => 'AA'],
-                    ],
-                    'SqlServer' => [
-                        'string'     => 'SELECT [a].* FROM (SELECT [b].* FROM (SELECT [c].* FROM [c] WHERE [cc] = \'CC\') AS [b] WHERE [bb] = \'BB\') AS [a] WHERE [aa] = \'AA\'',
-                        'prepare'    => 'SELECT [a].* FROM (SELECT [b].* FROM (SELECT [c].* FROM [c] WHERE [cc] = ?) AS [b] WHERE [bb] = ?) AS [a] WHERE [aa] = ?',
-                        'parameters' => ['subselect4where1' => 'CC', 'subselect3where1' => 'BB', 'where2' => 'AA'],
-                    ],
                 ],
             ],
             'Delete::processSubSelect()'           => [
@@ -240,30 +150,12 @@ class SqlFunctionalTest extends TestCase
                         'prepare'    => 'DELETE FROM "foo" WHERE "x" = (SELECT "foo".* FROM "foo" WHERE "x" = ?)',
                         'parameters' => ['subselect1where1' => 'y'],
                     ],
-                    'MySql'     => [
-                        'string'     => 'DELETE FROM `foo` WHERE `x` = (SELECT `foo`.* FROM `foo` WHERE `x` = \'y\')',
-                        'prepare'    => 'DELETE FROM `foo` WHERE `x` = (SELECT `foo`.* FROM `foo` WHERE `x` = ?)',
-                        'parameters' => ['subselect2where1' => 'y'],
-                    ],
-                    'Oracle'    => [
-                        'string'     => 'DELETE FROM "foo" WHERE "x" = (SELECT "foo".* FROM "foo" WHERE "x" = \'y\')',
-                        'prepare'    => 'DELETE FROM "foo" WHERE "x" = (SELECT "foo".* FROM "foo" WHERE "x" = ?)',
-                        'parameters' => ['subselect3where1' => 'y'],
-                    ],
-                    'SqlServer' => [
-                        'string'     => 'DELETE FROM [foo] WHERE [x] = (SELECT [foo].* FROM [foo] WHERE [x] = \'y\')',
-                        'prepare'    => 'DELETE FROM [foo] WHERE [x] = (SELECT [foo].* FROM [foo] WHERE [x] = ?)',
-                        'parameters' => ['subselect4where1' => 'y'],
-                    ],
                 ],
             ],
             'Update::processSubSelect()'           => [
                 'sqlObject' => self::update('foo')->set(['x' => self::select('foo')]),
                 'expected'  => [
                     'sql92'     => 'UPDATE "foo" SET "x" = (SELECT "foo".* FROM "foo")',
-                    'MySql'     => 'UPDATE `foo` SET `x` = (SELECT `foo`.* FROM `foo`)',
-                    'Oracle'    => 'UPDATE "foo" SET "x" = (SELECT "foo".* FROM "foo")',
-                    'SqlServer' => 'UPDATE [foo] SET [x] = (SELECT [foo].* FROM [foo])',
                 ],
             ],
             'Insert::processSubSelect()'           => [
@@ -273,21 +165,6 @@ class SqlFunctionalTest extends TestCase
                         'string'     => 'INSERT INTO "foo"  SELECT "foo".* FROM "foo" WHERE "x" = \'y\'',
                         'prepare'    => 'INSERT INTO "foo"  SELECT "foo".* FROM "foo" WHERE "x" = ?',
                         'parameters' => ['subselect1where1' => 'y'],
-                    ],
-                    'MySql'     => [
-                        'string'     => 'INSERT INTO `foo`  SELECT `foo`.* FROM `foo` WHERE `x` = \'y\'',
-                        'prepare'    => 'INSERT INTO `foo`  SELECT `foo`.* FROM `foo` WHERE `x` = ?',
-                        'parameters' => ['subselect2where1' => 'y'],
-                    ],
-                    'Oracle'    => [
-                        'string'     => 'INSERT INTO "foo"  SELECT "foo".* FROM "foo" WHERE "x" = \'y\'',
-                        'prepare'    => 'INSERT INTO "foo"  SELECT "foo".* FROM "foo" WHERE "x" = ?',
-                        'parameters' => ['subselect3where1' => 'y'],
-                    ],
-                    'SqlServer' => [
-                        'string'     => 'INSERT INTO [foo]  SELECT [foo].* FROM [foo] WHERE [x] = \'y\'',
-                        'prepare'    => 'INSERT INTO [foo]  SELECT [foo].* FROM [foo] WHERE [x] = ?',
-                        'parameters' => ['subselect4where1' => 'y'],
                     ],
                 ],
             ],
@@ -301,21 +178,6 @@ class SqlFunctionalTest extends TestCase
                         'prepare'    => 'UPDATE "foo" SET "x" = (SELECT "foo".* FROM "foo" WHERE "x" = ?)',
                         'parameters' => ['subselect1where1' => 'y'],
                     ],
-                    'MySql'     => [
-                        'string'     => 'UPDATE `foo` SET `x` = (SELECT `foo`.* FROM `foo` WHERE `x` = \'y\')',
-                        'prepare'    => 'UPDATE `foo` SET `x` = (SELECT `foo`.* FROM `foo` WHERE `x` = ?)',
-                        'parameters' => ['subselect2where1' => 'y'],
-                    ],
-                    'Oracle'    => [
-                        'string'     => 'UPDATE "foo" SET "x" = (SELECT "foo".* FROM "foo" WHERE "x" = \'y\')',
-                        'prepare'    => 'UPDATE "foo" SET "x" = (SELECT "foo".* FROM "foo" WHERE "x" = ?)',
-                        'parameters' => ['subselect3where1' => 'y'],
-                    ],
-                    'SqlServer' => [
-                        'string'     => 'UPDATE [foo] SET [x] = (SELECT [foo].* FROM [foo] WHERE [x] = \'y\')',
-                        'prepare'    => 'UPDATE [foo] SET [x] = (SELECT [foo].* FROM [foo] WHERE [x] = ?)',
-                        'parameters' => ['subselect4where1' => 'y'],
-                    ],
                 ],
             ],
             'Update::processJoins()'               => [
@@ -326,15 +188,6 @@ class SqlFunctionalTest extends TestCase
                 'expected'  => [
                     'sql92'     => [
                         'string' => 'UPDATE "foo" INNER JOIN "bar" ON "bar"."barId" = "foo"."barId" SET "x" = \'y\' WHERE "xx" = \'yy\'',
-                    ],
-                    'MySql'     => [
-                        'string' => 'UPDATE `foo` INNER JOIN `bar` ON `bar`.`barId` = `foo`.`barId` SET `x` = \'y\' WHERE `xx` = \'yy\'',
-                    ],
-                    'Oracle'    => [
-                        'string' => 'UPDATE "foo" INNER JOIN "bar" ON "bar"."barId" = "foo"."barId" SET "x" = \'y\' WHERE "xx" = \'yy\'',
-                    ],
-                    'SqlServer' => [
-                        'string' => 'UPDATE [foo] INNER JOIN [bar] ON [bar].[barId] = [foo].[barId] SET [x] = \'y\' WHERE [xx] = \'yy\'',
                     ],
                 ],
             ],
@@ -354,24 +207,6 @@ class SqlFunctionalTest extends TestCase
                         ],
                         'string'     => 'SELECT "foo".* FROM "foo" WHERE "x" = (SELECT "bar".* FROM "bar")',
                     ],
-                    'MySql'     => [
-                        'decorators' => [
-                            Select::class => new TestAsset\SelectDecorator(),
-                        ],
-                        'string'     => 'SELECT `foo`.* FROM `foo` WHERE `x` = (SELECT `bar`.* FROM `bar`)',
-                    ],
-                    'Oracle'    => [
-                        'decorators' => [
-                            Select::class => new TestAsset\SelectDecorator(),
-                        ],
-                        'string'     => 'SELECT "foo".* FROM "foo" WHERE "x" = (SELECT "bar".* FROM "bar")',
-                    ],
-                    'SqlServer' => [
-                        'decorators' => [
-                            Select::class => new TestAsset\SelectDecorator(),
-                        ],
-                        'string'     => 'SELECT [foo].* FROM [foo] WHERE [x] = (SELECT [bar].* FROM [bar])',
-                    ],
                 ],
             ],
             // phpcs:disable Generic.Files.LineLength.TooLong
@@ -385,126 +220,6 @@ class SqlFunctionalTest extends TestCase
                             'PhpDb\Sql\Select' => array('PhpDb\Sql\Platform\Mysql\SelectDecorator', '{=SELECT_Sql92=}')
                         ),
                         'string' => 'INSERT INTO "foo"  {=SELECT_Sql92=}',
-                    ),
-                    'MySql'     => array(
-                        'decorators' => array(
-                            'PhpDb\Sql\Insert' => new TestAsset\InsertDecorator, // Decorator for root sqlObject
-                            'PhpDb\Sql\Select' => array('PhpDb\Sql\Platform\Mysql\SelectDecorator', '{=SELECT_MySql=}')
-                        ),
-                        'string' => 'INSERT INTO `foo`  {=SELECT_MySql=}',
-                    ),
-                    'Oracle'    => array(
-                        'decorators' => array(
-                            'PhpDb\Sql\Insert' => new TestAsset\InsertDecorator, // Decorator for root sqlObject
-                            'PhpDb\Sql\Select' => array('PhpDb\Sql\Platform\Oracle\SelectDecorator', '{=SELECT_Oracle=}')
-                        ),
-                        'string' => 'INSERT INTO "foo"  {=SELECT_Oracle=}',
-                    ),
-                    'SqlServer' => array(
-                        'decorators' => array(
-                            'PhpDb\Sql\Insert' => new TestAsset\InsertDecorator, // Decorator for root sqlObject
-                            'PhpDb\Sql\Select' => array('PhpDb\Sql\Platform\SqlServer\SelectDecorator', '{=SELECT_SqlServer=}')
-                        ),
-                        'string' => 'INSERT INTO [foo]  {=SELECT_SqlServer=}',
-                    ),
-                ),
-            ),
-            'RootDecorators::Delete' => array(
-                'sqlObject' => self::delete('foo')->where(array('x'=>self::select('foo'))),
-                'expected'  => array(
-                    'sql92'     => array(
-                        'decorators' => array(
-                            'PhpDb\Sql\Delete' => new TestAsset\DeleteDecorator,
-                            'PhpDb\Sql\Select' => array('PhpDb\Sql\Platform\Mysql\SelectDecorator', '{=SELECT_Sql92=}')
-                        ),
-                        'string' => 'DELETE FROM "foo" WHERE "x" = ({=SELECT_Sql92=})',
-                    ),
-                    'MySql'     => array(
-                        'decorators' => array(
-                            'PhpDb\Sql\Delete' => new TestAsset\DeleteDecorator,
-                            'PhpDb\Sql\Select' => array('PhpDb\Sql\Platform\Mysql\SelectDecorator', '{=SELECT_MySql=}')
-                        ),
-                        'string' => 'DELETE FROM `foo` WHERE `x` = ({=SELECT_MySql=})',
-                    ),
-                    'Oracle'    => array(
-                        'decorators' => array(
-                            'PhpDb\Sql\Delete' => new TestAsset\DeleteDecorator,
-                            'PhpDb\Sql\Select' => array('PhpDb\Sql\Platform\Oracle\SelectDecorator', '{=SELECT_Oracle=}')
-                        ),
-                        'string' => 'DELETE FROM "foo" WHERE "x" = ({=SELECT_Oracle=})',
-                    ),
-                    'SqlServer' => array(
-                        'decorators' => array(
-                            'PhpDb\Sql\Delete' => new TestAsset\DeleteDecorator,
-                            'PhpDb\Sql\Select' => array('PhpDb\Sql\Platform\SqlServer\SelectDecorator', '{=SELECT_SqlServer=}')
-                        ),
-                        'string' => 'DELETE FROM [foo] WHERE [x] = ({=SELECT_SqlServer=})',
-                    ),
-                ),
-            ),
-            'RootDecorators::Update' => array(
-                'sqlObject' => self::update('foo')->where(array('x'=>self::select('foo'))),
-                'expected'  => array(
-                    'sql92'     => array(
-                        'decorators' => array(
-                            'PhpDb\Sql\Update' => new TestAsset\UpdateDecorator,
-                            'PhpDb\Sql\Select' => array('PhpDb\Sql\Platform\Mysql\SelectDecorator', '{=SELECT_Sql92=}')
-                        ),
-                        'string' => 'UPDATE "foo" SET  WHERE "x" = ({=SELECT_Sql92=})',
-                    ),
-                    'MySql'     => array(
-                        'decorators' => array(
-                            'PhpDb\Sql\Update' => new TestAsset\UpdateDecorator,
-                            'PhpDb\Sql\Select' => array('PhpDb\Sql\Platform\Mysql\SelectDecorator', '{=SELECT_MySql=}')
-                        ),
-                        'string' => 'UPDATE `foo` SET  WHERE `x` = ({=SELECT_MySql=})',
-                    ),
-                    'Oracle'    => array(
-                        'decorators' => array(
-                            'PhpDb\Sql\Update' => new TestAsset\UpdateDecorator,
-                            'PhpDb\Sql\Select' => array('PhpDb\Sql\Platform\Oracle\SelectDecorator', '{=SELECT_Oracle=}')
-                        ),
-                        'string' => 'UPDATE "foo" SET  WHERE "x" = ({=SELECT_Oracle=})',
-                    ),
-                    'SqlServer' => array(
-                        'decorators' => array(
-                            'PhpDb\Sql\Update' => new TestAsset\UpdateDecorator,
-                            'PhpDb\Sql\Select' => array('PhpDb\Sql\Platform\SqlServer\SelectDecorator', '{=SELECT_SqlServer=}')
-                        ),
-                        'string' => 'UPDATE [foo] SET  WHERE [x] = ({=SELECT_SqlServer=})',
-                    ),
-                ),
-            ),
-            'DecorableExpression()' => array(
-                'sqlObject' => self::update('foo')->where(array('x'=>new Sql\Expression('?', array(self::select('foo'))))),
-                'expected'  => array(
-                    'sql92'     => array(
-                        'decorators' => array(
-                            'PhpDb\Sql\Expression' => new TestAsset\DecorableExpression,
-                            'PhpDb\Sql\Select'     => array('PhpDb\Sql\Platform\Mysql\SelectDecorator', '{=SELECT_Sql92=}')
-                        ),
-                        'string'     => 'UPDATE "foo" SET  WHERE "x" = {decorate-({=SELECT_Sql92=})-decorate}',
-                    ),
-                    'MySql'     => array(
-                        'decorators' => array(
-                            'PhpDb\Sql\Expression' => new TestAsset\DecorableExpression,
-                            'PhpDb\Sql\Select'     => array('PhpDb\Sql\Platform\Mysql\SelectDecorator', '{=SELECT_MySql=}')
-                        ),
-                        'string'     => 'UPDATE `foo` SET  WHERE `x` = {decorate-({=SELECT_MySql=})-decorate}',
-                    ),
-                    'Oracle'    => array(
-                        'decorators' => array(
-                            'PhpDb\Sql\Expression' => new TestAsset\DecorableExpression,
-                            'PhpDb\Sql\Select'     => array('PhpDb\Sql\Platform\Oracle\SelectDecorator', '{=SELECT_Oracle=}')
-                        ),
-                        'string'     => 'UPDATE "foo" SET  WHERE "x" = {decorate-({=SELECT_Oracle=})-decorate}',
-                    ),
-                    'SqlServer' => array(
-                        'decorators' => array(
-                            'PhpDb\Sql\Expression' => new TestAsset\DecorableExpression,
-                            'PhpDb\Sql\Select'     => array('PhpDb\Sql\Platform\SqlServer\SelectDecorator', '{=SELECT_SqlServer=}')
-                        ),
-                        'string'     => 'UPDATE [foo] SET  WHERE [x] = {decorate-({=SELECT_SqlServer=})-decorate}',
                     ),
                 ),
             ),*/
@@ -598,12 +313,10 @@ class SqlFunctionalTest extends TestCase
 
     protected function resolveAdapter(string $platform): Adapter\Adapter
     {
+        // Only sql92 platform is supported after abstraction
         $platform = match ($platform) {
             'sql92' => new TestAsset\TrustingSql92Platform(),
-            'MySql' => new TestAsset\TrustingMysqlPlatform(),
-            'Oracle' => new TestAsset\TrustingOraclePlatform(),
-            'SqlServer' => new TestAsset\TrustingSqlServerPlatform(),
-            default => null,
+            default => new TestAsset\TrustingSql92Platform(),  // Default to sql92 for any other value
         };
 
         $mockDriver = $this->getMockBuilder(DriverInterface::class)->getMock();

@@ -6,10 +6,18 @@ namespace PhpDbTest\Sql\Predicate;
 
 use PhpDb\Sql\Argument;
 use PhpDb\Sql\ArgumentType;
+use PhpDb\Sql\Exception\InvalidArgumentException;
 use PhpDb\Sql\Predicate\In;
 use PhpDb\Sql\Select;
+use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 
+#[CoversMethod(In::class, '__construct')]
+#[CoversMethod(In::class, 'setIdentifier')]
+#[CoversMethod(In::class, 'getIdentifier')]
+#[CoversMethod(In::class, 'setValueSet')]
+#[CoversMethod(In::class, 'getValueSet')]
+#[CoversMethod(In::class, 'getExpressionData')]
 final class InTest extends TestCase
 {
     public function testEmptyConstructorYieldsNullIdentifierAndValueSet(): void
@@ -132,5 +140,25 @@ final class InTest extends TestCase
 
         self::assertEquals('(%s, %s) IN %s', $expressionData->getExpressionSpecification());
         self::assertEquals([$expression1, $expression2], $expressionData->getExpressionValues());
+    }
+
+    public function testGetExpressionDataThrowsExceptionWhenIdentifierNotSet(): void
+    {
+        $in = new In();
+        $in->setValueSet([1, 2]);
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Identifier must be specified');
+        $in->getExpressionData();
+    }
+
+    public function testGetExpressionDataThrowsExceptionWhenValueSetNotSet(): void
+    {
+        $in = new In();
+        $in->setIdentifier('foo');
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Value set must be provided for IN predicate');
+        $in->getExpressionData();
     }
 }

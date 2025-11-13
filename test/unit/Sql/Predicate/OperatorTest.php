@@ -6,9 +6,19 @@ namespace PhpDbTest\Sql\Predicate;
 
 use PhpDb\Sql\Argument;
 use PhpDb\Sql\ArgumentType;
+use PhpDb\Sql\Exception\InvalidArgumentException;
 use PhpDb\Sql\Predicate\Operator;
+use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 
+#[CoversMethod(Operator::class, '__construct')]
+#[CoversMethod(Operator::class, 'getLeft')]
+#[CoversMethod(Operator::class, 'setLeft')]
+#[CoversMethod(Operator::class, 'getOperator')]
+#[CoversMethod(Operator::class, 'setOperator')]
+#[CoversMethod(Operator::class, 'getRight')]
+#[CoversMethod(Operator::class, 'setRight')]
+#[CoversMethod(Operator::class, 'getExpressionData')]
 final class OperatorTest extends TestCase
 {
     public function testEmptyConstructorYieldsNullLeftAndRightValues(): void
@@ -82,5 +92,25 @@ final class OperatorTest extends TestCase
 
         self::assertEquals('%s >= %s', $expressionData->getExpressionSpecification());
         self::assertEquals([$left, $right], $expressionData->getExpressionValues());
+    }
+
+    public function testGetExpressionDataThrowsExceptionWhenLeftNotSet(): void
+    {
+        $operator = new Operator();
+        $operator->setRight('value');
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Left expression must be specified');
+        $operator->getExpressionData();
+    }
+
+    public function testGetExpressionDataThrowsExceptionWhenRightNotSet(): void
+    {
+        $operator = new Operator();
+        $operator->setLeft('left');
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Right expression must be specified');
+        $operator->getExpressionData();
     }
 }

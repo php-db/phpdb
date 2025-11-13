@@ -15,6 +15,7 @@ use PHPUnit\Framework\TestCase;
 
 use function str_replace;
 
+#[CoversMethod(AlterTable::class, '__construct')]
 #[CoversMethod(AlterTable::class, 'setTable')]
 #[CoversMethod(AlterTable::class, 'addColumn')]
 #[CoversMethod(AlterTable::class, 'changeColumn')]
@@ -22,7 +23,14 @@ use function str_replace;
 #[CoversMethod(AlterTable::class, 'dropConstraint')]
 #[CoversMethod(AlterTable::class, 'addConstraint')]
 #[CoversMethod(AlterTable::class, 'dropIndex')]
-#[CoversMethod(AlterTable::class, 'getSqlString')]
+#[CoversMethod(AlterTable::class, 'getRawState')]
+#[CoversMethod(AlterTable::class, 'processTable')]
+#[CoversMethod(AlterTable::class, 'processAddColumns')]
+#[CoversMethod(AlterTable::class, 'processChangeColumns')]
+#[CoversMethod(AlterTable::class, 'processDropColumns')]
+#[CoversMethod(AlterTable::class, 'processAddConstraints')]
+#[CoversMethod(AlterTable::class, 'processDropConstraints')]
+#[CoversMethod(AlterTable::class, 'processDropIndexes')]
 class AlterTableTest extends TestCase
 {
     public function testSetTable(): void
@@ -235,5 +243,106 @@ EOS;
 
         self::assertSame($at, $result);
         self::assertEquals('test', $at->getRawState(AlterTable::TABLE));
+    }
+
+    public function testChangeColumnGeneratesCorrectSql(): void
+    {
+        $at = new AlterTable('users');
+        $at->changeColumn('old_name', new Column\Varchar('new_name', 100));
+
+        $sql = $at->getSqlString();
+        self::assertStringContainsString('CHANGE COLUMN', $sql);
+        self::assertStringContainsString('"old_name"', $sql);
+        self::assertStringContainsString('"new_name"', $sql);
+        self::assertStringContainsString('VARCHAR(100)', $sql);
+    }
+
+    public function testMultipleChangeColumns(): void
+    {
+        $at = new AlterTable('products');
+        $at->changeColumn('price', new Column\Decimal('cost', 10, 2));
+        $at->changeColumn('name', new Column\Varchar('title', 200));
+
+        $sql = $at->getSqlString();
+        self::assertStringContainsString('CHANGE COLUMN "price" "cost"', $sql);
+        self::assertStringContainsString('CHANGE COLUMN "name" "title"', $sql);
+    }
+
+    public function testAddConstraintGeneratesCorrectSql(): void
+    {
+        $at = new AlterTable('orders');
+        $fk = new Constraint\ForeignKey('fk_user', 'user_id', 'users', 'id');
+        $at->addConstraint($fk);
+
+        $sql = $at->getSqlString();
+        self::assertStringContainsString('ADD CONSTRAINT', $sql);
+        self::assertStringContainsString('"fk_user"', $sql);
+        self::assertStringContainsString('FOREIGN KEY', $sql);
+    }
+
+    public function testMultipleConstraints(): void
+    {
+        $at = new AlterTable('orders');
+        $fk1 = new Constraint\ForeignKey('fk_user', 'user_id', 'users', 'id');
+        $fk2 = new Constraint\ForeignKey('fk_product', 'product_id', 'products', 'id');
+
+        $at->addConstraint($fk1);
+        $at->addConstraint($fk2);
+
+        $sql = $at->getSqlString();
+        self::assertStringContainsString('"fk_user"', $sql);
+        self::assertStringContainsString('"fk_product"', $sql);
+    }
+
+    public function testEmptyAlterTableGeneratesMinimalSql(): void
+    {
+        $at = new AlterTable('test_table');
+        $sql = $at->getSqlString();
+
+        // Should have ALTER TABLE but no operations
+        self::assertStringContainsString('ALTER TABLE "test_table"', $sql);
+    }
+
+    public function testMixedOperationsInCorrectOrder(): void
+    {
+        $at = new AlterTable('complex_table');
+
+        // Add operations in mixed order
+        $at->dropColumn('old_col');
+        $at->addColumn(new Column\Integer('new_col'));
+        $at->changeColumn('existing', new Column\Text('existing_text'));
+        $at->addConstraint(new Constraint\ForeignKey('fk_test', 'ref_id', 'refs', 'id'));
+        $at->dropConstraint('old_constraint');
+        $at->dropIndex('old_index');
+
+        $sql = $at->getSqlString();
+
+        // Verify all operations are present
+        self::assertStringContainsString('ADD COLUMN "new_col"', $sql);
+        self::assertStringContainsString('CHANGE COLUMN "existing"', $sql);
+        self::assertStringContainsString('DROP COLUMN "old_col"', $sql);
+        self::assertStringContainsString('ADD CONSTRAINT "fk_test"', $sql);
+        self::assertStringContainsString('DROP CONSTRAINT "old_constraint"', $sql);
+        self::assertStringContainsString('DROP INDEX "old_index"', $sql);
+    }
+
+    public function testGetRawStateWithInvalidKey(): void
+    {
+        $at = new AlterTable('test');
+        $result = $at->getRawState('invalid_key');
+
+        // Should return full array when key doesn't exist
+        self::assertIsArray($result);
+        self::assertArrayHasKey(AlterTable::TABLE, $result);
+    }
+
+    public function testTableIdentifierInChangeColumn(): void
+    {
+        $at = new AlterTable(new TableIdentifier('table', 'schema'));
+        $at->changeColumn('col1', new Column\Integer('col1_new'));
+
+        $sql = $at->getSqlString();
+        self::assertStringContainsString('"schema"."table"', $sql);
+        self::assertStringContainsString('CHANGE COLUMN "col1" "col1_new"', $sql);
     }
 }

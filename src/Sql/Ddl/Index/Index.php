@@ -31,7 +31,7 @@ class Index extends AbstractIndex
         $this->lengths = $lengths;
     }
 
-    #[Override] #[\Override]
+    #[Override]
     public function getExpressionData(): ExpressionData
     {
         $colCount = count($this->columns);

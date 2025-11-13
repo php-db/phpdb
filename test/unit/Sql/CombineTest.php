@@ -16,9 +16,18 @@ use PhpDb\Sql\Exception\InvalidArgumentException;
 use PhpDb\Sql\Predicate\Expression;
 use PhpDb\Sql\Select;
 use PhpDbTest\AdapterTestTrait;
+use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
+#[CoversMethod(Combine::class, '__construct')]
+#[CoversMethod(Combine::class, 'combine')]
+#[CoversMethod(Combine::class, 'union')]
+#[CoversMethod(Combine::class, 'except')]
+#[CoversMethod(Combine::class, 'intersect')]
+#[CoversMethod(Combine::class, 'buildSqlString')]
+#[CoversMethod(Combine::class, 'alignColumns')]
+#[CoversMethod(Combine::class, 'getRawState')]
 final class CombineTest extends TestCase
 {
     use AdapterTestTrait;

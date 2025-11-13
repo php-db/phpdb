@@ -25,9 +25,14 @@ use PHPUnit\Framework\TestCase;
 use ReflectionException;
 use TypeError;
 
+#[CoversMethod(Insert::class, '__construct')]
 #[CoversMethod(Insert::class, 'into')]
 #[CoversMethod(Insert::class, 'columns')]
 #[CoversMethod(Insert::class, 'values')]
+#[CoversMethod(Insert::class, 'select')]
+#[CoversMethod(Insert::class, 'getRawState')]
+#[CoversMethod(Insert::class, 'processInsert')]
+#[CoversMethod(Insert::class, 'processSelect')]
 #[CoversMethod(Insert::class, 'prepareStatement')]
 #[CoversMethod(Insert::class, 'getSqlString')]
 #[CoversMethod(Insert::class, '__set')]
@@ -314,6 +319,29 @@ final class InsertTest extends TestCase
         );
     }
 
+    public function testGetSqlStringThrowsExceptionWhenNoValuesOrSelect(): void
+    {
+        $this->insert->into('foo');
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('values or select should be present');
+        $this->insert->getSqlString(new TrustingSql92Platform());
+    }
+
+    public function test__unsetThrowsExceptionForNonExistentColumn(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('The key nonexistent was not found in this objects column list');
+        unset($this->insert->nonexistent);
+    }
+
+    public function test__getThrowsExceptionForNonExistentColumn(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('The key nonexistent was not found in this objects column list');
+        $value = $this->insert->nonexistent;
+    }
+
     #[CoversNothing]
     public function testSpecificationconstantsCouldBeOverridedByExtensionInPrepareStatement(): void
     {
@@ -378,5 +406,33 @@ final class InsertTest extends TestCase
             'REPLACE INTO "sch"."foo" ("bar", "boo", "bam") VALUES (\'baz\', NOW(), NULL)',
             $replace->getSqlString(new TrustingSql92Platform())
         );
+    }
+
+    public function testPrepareStatementCreatesParameterContainerWhenNotPresent(): void
+    {
+        $mockDriver = $this->getMockBuilder(DriverInterface::class)->getMock();
+        $mockDriver->expects($this->any())->method('getPrepareType')->willReturn('positional');
+        $mockDriver->expects($this->any())->method('formatParameterName')->willReturn('?');
+        $mockAdapter = $this->createMockAdapter($mockDriver);
+
+        $mockStatement = $this->getMockBuilder(StatementInterface::class)->getMock();
+        $mockStatement->expects($this->once())
+            ->method('getParameterContainer')
+            ->willReturn(null);
+        $mockStatement->expects($this->once())
+            ->method('setParameterContainer')
+            ->with($this->isInstanceOf(ParameterContainer::class))
+            ->willReturnSelf();
+        $mockStatement->expects($this->once())
+            ->method('setSql')
+            ->with($this->stringContains('INSERT INTO'))
+            ->willReturnSelf();
+
+        $this->insert->into('foo')
+            ->values(['bar' => 'baz']);
+
+        $result = $this->insert->prepareStatement($mockAdapter, $mockStatement);
+
+        self::assertSame($mockStatement, $result);
     }
 }

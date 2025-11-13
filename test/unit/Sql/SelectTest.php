@@ -36,24 +36,25 @@ use ReflectionObject;
 
 #[CoversMethod(Select::class, '__construct')]
 #[CoversMethod(Select::class, 'from')]
-#[CoversMethod(Select::class, 'getRawState')]
 #[CoversMethod(Select::class, 'quantifier')]
 #[CoversMethod(Select::class, 'columns')]
-#[CoversMethod(Select::class, 'isTableReadOnly')]
 #[CoversMethod(Select::class, 'join')]
-#[CoversMethod(Select::class, 'processJoins')]
 #[CoversMethod(Select::class, 'where')]
+#[CoversMethod(Select::class, 'group')]
+#[CoversMethod(Select::class, 'having')]
 #[CoversMethod(Select::class, 'order')]
 #[CoversMethod(Select::class, 'limit')]
 #[CoversMethod(Select::class, 'offset')]
-#[CoversMethod(Select::class, 'group')]
-#[CoversMethod(Select::class, 'having')]
 #[CoversMethod(Select::class, 'combine')]
 #[CoversMethod(Select::class, 'reset')]
+#[CoversMethod(Select::class, 'setSpecification')]
+#[CoversMethod(Select::class, 'getRawState')]
+#[CoversMethod(Select::class, 'isTableReadOnly')]
 #[CoversMethod(Select::class, 'prepareStatement')]
 #[CoversMethod(Select::class, 'getSqlString')]
 #[CoversMethod(Select::class, '__get')]
 #[CoversMethod(Select::class, '__clone')]
+#[CoversMethod(Select::class, 'processJoins')]
 #[CoversMethod(Select::class, 'processSelect')]
 #[CoversMethod(Select::class, 'processWhere')]
 #[CoversMethod(Select::class, 'processGroup')]
@@ -1445,5 +1446,50 @@ final class SelectTest extends TestCase
             [$select54, $sqlPrep54, [], $sqlStr54, $internalTests54, false],
         ];
         // phpcs:enable Generic.Files.LineLength.TooLong
+    }
+
+    public function testFromThrowsExceptionWhenTableReadOnly(): void
+    {
+        $select = new Select('foo'); // Creating with table makes it read-only
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Since this object was created with a table and/or schema in the constructor, it is read only.');
+        $select->from('bar');
+    }
+
+    public function testFromThrowsExceptionForInvalidTableType(): void
+    {
+        $select = new Select();
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('$table must be a string, array, or an instance of TableIdentifier');
+        $select->from(123);
+    }
+
+    public function testFromThrowsExceptionForInvalidArrayFormat(): void
+    {
+        $select = new Select();
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('from() expects $table as an array is a single element associative array');
+        $select->from(['foo', 'bar']); // Numeric array instead of associative
+    }
+
+    public function testSetSpecificationThrowsExceptionForInvalidName(): void
+    {
+        $select = new Select();
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Not a valid specification name.');
+        $select->setSpecification('invalid_spec', 'some spec');
+    }
+
+    public function test__getThrowsExceptionForInvalidProperty(): void
+    {
+        $select = new Select();
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Not a valid magic property for this object');
+        $value = $select->invalidProperty;
     }
 }

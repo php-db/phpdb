@@ -7,6 +7,7 @@ namespace PhpDbTest\Sql;
 use PhpDb\Sql\Argument;
 use PhpDb\Sql\ArgumentType;
 use PhpDb\Sql\Exception\InvalidArgumentException;
+use PhpDb\Sql\Exception\RuntimeException;
 use PhpDb\Sql\Expression;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -21,6 +22,7 @@ use TypeError;
  *
  * Expression is a value object with no dependencies/collaborators, therefore, no fixure needed
  */
+#[CoversMethod(Expression::class, '__construct')]
 #[CoversMethod(Expression::class, 'setExpression')]
 #[CoversMethod(Expression::class, 'getExpression')]
 #[CoversMethod(Expression::class, 'setParameters')]
@@ -170,5 +172,44 @@ final class ExpressionTest extends TestCase
 
         self::assertEquals(':a + :b', $expressionData->getExpressionSpecification());
         self::assertEquals([$value1, $value2], $expressionData->getExpressionValues());
+    }
+
+    public function testGetExpressionDataThrowsExceptionWhenParameterCountMismatch(): void
+    {
+        $expression = new Expression('? AND ?', [1]); // Two placeholders but only one parameter
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('The number of replacements in the expression does not match the number of parameters');
+        $expression->getExpressionData();
+    }
+
+    public function testConstructorWithMultipleArguments(): void
+    {
+        // Test deprecated multi-argument constructor
+        $expression = new Expression('? + ? - ?', 1, 2, 3);
+
+        $expressionData = $expression->getExpressionData();
+
+        self::assertEquals('%s + %s - %s', $expressionData->getExpressionSpecification());
+        self::assertEquals([
+            Argument::value(1),
+            Argument::value(2),
+            Argument::value(3),
+        ], $expressionData->getExpressionValues());
+    }
+
+    public function testSetParametersWithMultipleArguments(): void
+    {
+        // Test deprecated multi-argument setParameters
+        $expression = new Expression('? * ?');
+        $expression->setParameters(5, 10);
+
+        $expressionData = $expression->getExpressionData();
+
+        self::assertEquals('%s * %s', $expressionData->getExpressionSpecification());
+        self::assertEquals([
+            Argument::value(5),
+            Argument::value(10),
+        ], $expressionData->getExpressionValues());
     }
 }

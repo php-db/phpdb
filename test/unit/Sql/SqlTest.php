@@ -24,11 +24,17 @@ use PHPUnit\Framework\TestCase;
 use TypeError;
 
 #[CoversMethod(Sql::class, '__construct')]
+#[CoversMethod(Sql::class, 'getAdapter')]
+#[CoversMethod(Sql::class, 'hasTable')]
+#[CoversMethod(Sql::class, 'setTable')]
+#[CoversMethod(Sql::class, 'getTable')]
+#[CoversMethod(Sql::class, 'getSqlPlatform')]
 #[CoversMethod(Sql::class, 'select')]
 #[CoversMethod(Sql::class, 'insert')]
 #[CoversMethod(Sql::class, 'update')]
 #[CoversMethod(Sql::class, 'delete')]
 #[CoversMethod(Sql::class, 'prepareStatementForSqlObject')]
+#[CoversMethod(Sql::class, 'buildSqlString')]
 final class SqlTest extends TestCase
 {
     protected MockObject&Adapter $mockAdapter;
@@ -144,5 +150,12 @@ final class SqlTest extends TestCase
         $insert = $this->sql->insert()->columns(['foo'])->values(['foo' => 'bar']);
         $stmt   = $this->sql->prepareStatementForSqlObject($insert);
         self::assertInstanceOf(StatementInterface::class, $stmt);
+    }
+
+    public function testBuildSqlString(): void
+    {
+        $select = $this->sql->select()->where(['bar' => 'baz']);
+        $sqlString = $this->sql->buildSqlString($select);
+        self::assertEquals('SELECT "foo".* FROM "foo" WHERE "bar" = \'baz\'', $sqlString);
     }
 }

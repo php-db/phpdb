@@ -24,10 +24,13 @@ use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
+#[CoversMethod(Delete::class, '__construct')]
 #[CoversMethod(Delete::class, 'from')]
+#[CoversMethod(Delete::class, 'getRawState')]
 #[CoversMethod(Delete::class, 'where')]
-#[CoversMethod(Delete::class, 'prepareStatement')]
-#[CoversMethod(Delete::class, 'getSqlString')]
+#[CoversMethod(Delete::class, 'processDelete')]
+#[CoversMethod(Delete::class, 'processWhere')]
+#[CoversMethod(Delete::class, '__get')]
 final class DeleteTest extends TestCase
 {
     use AdapterTestTrait;

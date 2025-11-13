@@ -30,13 +30,20 @@
             <exclude>./test/unit/RowGateway</exclude>
             <!-- ConfigProvider test with missing methods -->
             <exclude>./test/unit/ConfigProviderTest.php</exclude>
-            <!-- Sql functional tests with Adapter constructor issues -->
-            <exclude>./test/unit/Sql/SqlFunctionalTest.php</exclude>
         </testsuite>
         <testsuite name="integration test">
             <directory>./test/integration</directory>
         </testsuite>
     </testsuites>
+
+    <coverage>
+        <report>
+            <text outputFile="php://stdout" showOnlySummary="false"/>
+        </report>
+        <include>
+            <directory suffix=".php">./src</directory>
+        </include>
+    </coverage>
 
     <php>
         <!-- Note: the following is a FULL list of ALL POSSIBLE constants

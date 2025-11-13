@@ -8,6 +8,7 @@ use Override;
 use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\Driver\StatementInterface;
 use PhpDb\Adapter\ParameterContainer;
+use PhpDb\Sql\AbstractPreparableSql;
 use PhpDb\Sql\Expression;
 use PhpDb\Sql\Join;
 use PhpDb\Sql\Predicate\In;
@@ -31,6 +32,7 @@ use PHPUnit\Framework\TestCase;
 use ReflectionException;
 use TypeError;
 
+#[CoversMethod(AbstractPreparableSql::class, 'prepareStatement')]
 #[CoversMethod(Update::class, 'table')]
 #[CoversMethod(Update::class, '__construct')]
 #[CoversMethod(Update::class, 'set')]
@@ -41,6 +43,10 @@ use TypeError;
 #[CoversMethod(Update::class, '__get')]
 #[CoversMethod(Update::class, '__clone')]
 #[CoversMethod(Update::class, 'join')]
+#[CoversMethod(Update::class, 'processUpdate')]
+#[CoversMethod(Update::class, 'processSet')]
+#[CoversMethod(Update::class, 'processWhere')]
+#[CoversMethod(Update::class, 'processJoins')]
 final class UpdateTest extends TestCase
 {
     use AdapterTestTrait;

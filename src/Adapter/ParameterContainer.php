@@ -87,7 +87,8 @@ class ParameterContainer implements Iterator, ArrayAccess, Countable
      * @param  string $name
      * @return mixed
      */
-    #[Override] #[ReturnTypeWillChange]
+    #[Override]
+    #[ReturnTypeWillChange]
     public function offsetGet($name)
     {
         if (isset($this->data[$name])) {
@@ -124,7 +125,8 @@ class ParameterContainer implements Iterator, ArrayAccess, Countable
      * @param mixed $maxLength
      * @throws Exception\InvalidArgumentException
      */
-    #[Override] #[ReturnTypeWillChange]
+    #[Override]
+    #[ReturnTypeWillChange]
     public function offsetSet($name, $value, $errata = null, $maxLength = null)
     {
         $position = false;

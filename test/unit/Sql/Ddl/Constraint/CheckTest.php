@@ -9,6 +9,7 @@ use PhpDb\Sql\Ddl\Constraint\Check;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 
+#[CoversMethod(Check::class, '__construct')]
 #[CoversMethod(Check::class, 'getExpressionData')]
 final class CheckTest extends TestCase
 {

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
+    bootstrap="vendor/autoload.php"
+    colors="true">
+
+    <extensions>
+        <bootstrap class="PhpDbIntegrationTest\Extension\ListenerExtension" />
+    </extensions>
+
+    <testsuites>
+        <testsuite name="Combined Tests">
+            <directory>./test/unit/Metadata</directory>
+            <directory>./test/unit/Sql</directory>
+        </testsuite>
+    </testsuites>
+
+    <source>
+        <include>
+            <directory suffix=".php">./src/Metadata</directory>
+            <directory suffix=".php">./src/Sql</directory>
+        </include>
+    </source>
+</phpunit>

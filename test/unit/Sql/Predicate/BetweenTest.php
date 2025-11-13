@@ -7,6 +7,7 @@ namespace PhpDbTest\Sql\Predicate;
 use Override;
 use PhpDb\Sql\Argument;
 use PhpDb\Sql\ArgumentType;
+use PhpDb\Sql\Exception\InvalidArgumentException;
 use PhpDb\Sql\Predicate\Between;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
@@ -112,5 +113,35 @@ final class BetweenTest extends TestCase
 
         self::assertEquals($this->between->getSpecification(), $expressionData->getExpressionSpecification());
         self::assertEquals([$identifier, $minValue, $maxValue], $expressionData->getExpressionValues());
+    }
+
+    public function testGetExpressionDataThrowsExceptionWhenIdentifierNotSet(): void
+    {
+        $between = new Between();
+        $between->setMinValue(1)->setMaxValue(10);
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Identifier must be specified');
+        $between->getExpressionData();
+    }
+
+    public function testGetExpressionDataThrowsExceptionWhenMinValueNotSet(): void
+    {
+        $between = new Between();
+        $between->setIdentifier('foo')->setMaxValue(10);
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('minValue must be specified');
+        $between->getExpressionData();
+    }
+
+    public function testGetExpressionDataThrowsExceptionWhenMaxValueNotSet(): void
+    {
+        $between = new Between();
+        $between->setIdentifier('foo')->setMinValue(1);
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('maxValue must be specified');
+        $between->getExpressionData();
     }
 }
