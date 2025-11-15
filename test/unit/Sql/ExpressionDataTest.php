@@ -11,6 +11,8 @@ use PhpDb\Sql\ExpressionPart;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 
+use function sleep;
+
 #[CoversMethod(ExpressionData::class, '__construct')]
 #[CoversMethod(ExpressionData::class, 'addExpressionPart')]
 #[CoversMethod(ExpressionData::class, 'addExpressionParts')]
@@ -245,7 +247,7 @@ final class ExpressionDataTest extends TestCase
         // Iterate once
         foreach ($expressionData as $part) {
             // Just iterate - suppress phpcs warning
-            $part;
+            sleep(0);
         }
 
         // Iterate again to ensure rewind works
