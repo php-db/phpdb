@@ -135,7 +135,7 @@ EOS;
     public function testConstructorWithTableIdentifier(): void
     {
         $tableId = new TableIdentifier('bar', 'foo');
-        $at = new AlterTable($tableId);
+        $at      = new AlterTable($tableId);
 
         // Get full raw state to avoid type issue with getRawState('table')
         $rawState = $at->getRawState();
@@ -150,7 +150,7 @@ EOS;
 
     public function testGetRawStateReturnsAllState(): void
     {
-        $at = new AlterTable('test');
+        $at      = new AlterTable('test');
         $colMock = $this->getMockBuilder(ColumnInterface::class)->getMock();
         $conMock = $this->getMockBuilder(ConstraintInterface::class)->getMock();
 
@@ -230,7 +230,7 @@ EOS;
 
     public function testChainedOperations(): void
     {
-        $at = new AlterTable();
+        $at  = new AlterTable();
         $col = $this->getMockBuilder(ColumnInterface::class)->getMock();
         $con = $this->getMockBuilder(ConstraintInterface::class)->getMock();
 
@@ -282,7 +282,7 @@ EOS;
 
     public function testMultipleConstraints(): void
     {
-        $at = new AlterTable('orders');
+        $at  = new AlterTable('orders');
         $fk1 = new Constraint\ForeignKey('fk_user', 'user_id', 'users', 'id');
         $fk2 = new Constraint\ForeignKey('fk_product', 'product_id', 'products', 'id');
 
@@ -296,7 +296,7 @@ EOS;
 
     public function testEmptyAlterTableGeneratesMinimalSql(): void
     {
-        $at = new AlterTable('test_table');
+        $at  = new AlterTable('test_table');
         $sql = $at->getSqlString();
 
         // Should have ALTER TABLE but no operations
@@ -328,7 +328,7 @@ EOS;
 
     public function testGetRawStateWithInvalidKey(): void
     {
-        $at = new AlterTable('test');
+        $at     = new AlterTable('test');
         $result = $at->getRawState('invalid_key');
 
         // Should return full array when key doesn't exist

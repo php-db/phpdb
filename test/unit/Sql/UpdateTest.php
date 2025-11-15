@@ -9,6 +9,7 @@ use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\Driver\StatementInterface;
 use PhpDb\Adapter\ParameterContainer;
 use PhpDb\Sql\AbstractPreparableSql;
+use PhpDb\Sql\Exception\InvalidArgumentException;
 use PhpDb\Sql\Expression;
 use PhpDb\Sql\Join;
 use PhpDb\Sql\Predicate\In;
@@ -407,7 +408,7 @@ final class UpdateTest extends TestCase
 
     public function testSetWithNonStringKeyThrowsException(): void
     {
-        $this->expectException(\PhpDb\Sql\Exception\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('set() expects a string for the value key');
 
         /** @psalm-suppress InvalidArgument - Testing invalid argument handling */
@@ -436,7 +437,7 @@ final class UpdateTest extends TestCase
     public function testConstructWithTableIdentifier(): void
     {
         $tableIdentifier = new TableIdentifier('foo', 'bar');
-        $update = new Update($tableIdentifier);
+        $update          = new Update($tableIdentifier);
 
         self::assertEquals($tableIdentifier, $update->getRawState('table'));
     }

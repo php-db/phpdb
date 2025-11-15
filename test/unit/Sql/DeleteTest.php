@@ -263,7 +263,7 @@ final class DeleteTest extends TestCase
     public function testConstructorWithTableIdentifier(): void
     {
         $tableIdentifier = new TableIdentifier('foo', 'bar');
-        $delete = new Delete($tableIdentifier);
+        $delete          = new Delete($tableIdentifier);
         self::assertEquals($tableIdentifier, $delete->getRawState('table'));
     }
 

@@ -47,7 +47,7 @@ class SqlFunctionalTest extends TestCase
             'Select::processOffset()'      => [
                 'sqlObject' => self::select('foo')->offset(10),
                 'expected'  => [
-                    'sql92'     => [
+                    'sql92' => [
                         'string'     => 'SELECT "foo".* FROM "foo" OFFSET \'10\'',
                         'prepare'    => 'SELECT "foo".* FROM "foo" OFFSET ?',
                         'parameters' => ['offset' => 10],
@@ -57,7 +57,7 @@ class SqlFunctionalTest extends TestCase
             'Select::processLimit()'       => [
                 'sqlObject' => self::select('foo')->limit(10),
                 'expected'  => [
-                    'sql92'     => [
+                    'sql92' => [
                         'string'     => 'SELECT "foo".* FROM "foo" LIMIT \'10\'',
                         'prepare'    => 'SELECT "foo".* FROM "foo" LIMIT ?',
                         'parameters' => ['limit' => 10],
@@ -67,7 +67,7 @@ class SqlFunctionalTest extends TestCase
             'Select::processLimitOffset()' => [
                 'sqlObject' => self::select('foo')->limit(10)->offset(5),
                 'expected'  => [
-                    'sql92'     => [
+                    'sql92' => [
                         'string'     => 'SELECT "foo".* FROM "foo" LIMIT \'10\' OFFSET \'5\'',
                         'prepare'    => 'SELECT "foo".* FROM "foo" LIMIT ? OFFSET ?',
                         'parameters' => ['limit' => 10, 'offset' => 5],
@@ -92,7 +92,7 @@ class SqlFunctionalTest extends TestCase
                         'aliased_column' => new Expression('NOW()'),
                     ]),
                 'expected'  => [
-                    'sql92'     => [
+                    'sql92' => [
                         'string' => 'SELECT "my_table"."my_table_column" AS "my_table_column", NOW() AS "aliased_column", "joined_table3".* FROM "my_table" INNER JOIN "joined_table2" ON "my_table"."id" = "joined_table2"."id" INNER JOIN "joined_table3" ON "my_table"."id" = "joined_table3"."id"',
                     ],
                 ],
@@ -101,7 +101,7 @@ class SqlFunctionalTest extends TestCase
                 'sqlObject' => self::select('a')
                     ->join(['b' => self::select('c')->where(['cc' => 10])], 'd=e')->where(['x' => 20]),
                 'expected'  => [
-                    'sql92'     => [
+                    'sql92' => [
                         'string'     => 'SELECT "a".*, "b".* FROM "a" INNER JOIN (SELECT "c".* FROM "c" WHERE "cc" = \'10\') AS "b" ON "d"="e" WHERE "x" = \'20\'',
                         'prepare'    => 'SELECT "a".*, "b".* FROM "a" INNER JOIN (SELECT "c".* FROM "c" WHERE "cc" = ?) AS "b" ON "d"="e" WHERE "x" = ?',
                         'parameters' => ['subselect1where1' => 10, 'where1' => 20],
@@ -117,13 +117,13 @@ class SqlFunctionalTest extends TestCase
                         ->setOption('identity', true)
                         ->setOption('comment', 'Comment2')),
                 'expected'  => [
-                    'sql92'     => "CREATE TABLE \"foo\" ( \n    \"col1\" INTEGER NOT NULL,\n    \"col2\" INTEGER NOT NULL \n)",
+                    'sql92' => "CREATE TABLE \"foo\" ( \n    \"col1\" INTEGER NOT NULL,\n    \"col2\" INTEGER NOT NULL \n)",
                 ],
             ],
             'Ddl::CreateTable::processTable()'     => [
                 'sqlObject' => self::createTable('foo')->setTemporary(true),
                 'expected'  => [
-                    'sql92'     => "CREATE TEMPORARY TABLE \"foo\" ( \n)",
+                    'sql92' => "CREATE TEMPORARY TABLE \"foo\" ( \n)",
                 ],
             ],
             'Select::processSubSelect()'           => [
@@ -135,7 +135,7 @@ class SqlFunctionalTest extends TestCase
                 ])
                     ->where(['aa' => 'AA']),
                 'expected'  => [
-                    'sql92'     => [
+                    'sql92' => [
                         'string'     => 'SELECT "a".* FROM (SELECT "b".* FROM (SELECT "c".* FROM "c" WHERE "cc" = \'CC\') AS "b" WHERE "bb" = \'BB\') AS "a" WHERE "aa" = \'AA\'',
                         'prepare'    => 'SELECT "a".* FROM (SELECT "b".* FROM (SELECT "c".* FROM "c" WHERE "cc" = ?) AS "b" WHERE "bb" = ?) AS "a" WHERE "aa" = ?',
                         'parameters' => ['subselect2where1' => 'CC', 'subselect1where1' => 'BB', 'where1' => 'AA'],
@@ -145,7 +145,7 @@ class SqlFunctionalTest extends TestCase
             'Delete::processSubSelect()'           => [
                 'sqlObject' => self::delete('foo')->where(['x' => self::select('foo')->where(['x' => 'y'])]),
                 'expected'  => [
-                    'sql92'     => [
+                    'sql92' => [
                         'string'     => 'DELETE FROM "foo" WHERE "x" = (SELECT "foo".* FROM "foo" WHERE "x" = \'y\')',
                         'prepare'    => 'DELETE FROM "foo" WHERE "x" = (SELECT "foo".* FROM "foo" WHERE "x" = ?)',
                         'parameters' => ['subselect1where1' => 'y'],
@@ -155,13 +155,13 @@ class SqlFunctionalTest extends TestCase
             'Update::processSubSelect()'           => [
                 'sqlObject' => self::update('foo')->set(['x' => self::select('foo')]),
                 'expected'  => [
-                    'sql92'     => 'UPDATE "foo" SET "x" = (SELECT "foo".* FROM "foo")',
+                    'sql92' => 'UPDATE "foo" SET "x" = (SELECT "foo".* FROM "foo")',
                 ],
             ],
             'Insert::processSubSelect()'           => [
                 'sqlObject' => self::insert('foo')->select(self::select('foo')->where(['x' => 'y'])),
                 'expected'  => [
-                    'sql92'     => [
+                    'sql92' => [
                         'string'     => 'INSERT INTO "foo"  SELECT "foo".* FROM "foo" WHERE "x" = \'y\'',
                         'prepare'    => 'INSERT INTO "foo"  SELECT "foo".* FROM "foo" WHERE "x" = ?',
                         'parameters' => ['subselect1where1' => 'y'],
@@ -173,7 +173,7 @@ class SqlFunctionalTest extends TestCase
                     ['x' => new Sql\Expression('?', [self::select('foo')->where(['x' => 'y'])])]
                 ),
                 'expected'  => [
-                    'sql92'     => [
+                    'sql92' => [
                         'string'     => 'UPDATE "foo" SET "x" = (SELECT "foo".* FROM "foo" WHERE "x" = \'y\')',
                         'prepare'    => 'UPDATE "foo" SET "x" = (SELECT "foo".* FROM "foo" WHERE "x" = ?)',
                         'parameters' => ['subselect1where1' => 'y'],
@@ -186,7 +186,7 @@ class SqlFunctionalTest extends TestCase
                     'bar.barId = foo.barId'
                 ),
                 'expected'  => [
-                    'sql92'     => [
+                    'sql92' => [
                         'string' => 'UPDATE "foo" INNER JOIN "bar" ON "bar"."barId" = "foo"."barId" SET "x" = \'y\' WHERE "xx" = \'yy\'',
                     ],
                 ],
@@ -201,7 +201,7 @@ class SqlFunctionalTest extends TestCase
             'RootDecorators::Select' => [
                 'sqlObject' => self::select('foo')->where(['x' => self::select('bar')]),
                 'expected'  => [
-                    'sql92'     => [
+                    'sql92' => [
                         'decorators' => [
                             Select::class => new TestAsset\SelectDecorator(),
                         ],
@@ -316,7 +316,7 @@ class SqlFunctionalTest extends TestCase
         // Only sql92 platform is supported after abstraction
         $platform = match ($platform) {
             'sql92' => new TestAsset\TrustingSql92Platform(),
-            default => new TestAsset\TrustingSql92Platform(),  // Default to sql92 for any other value
+            default => new TestAsset\TrustingSql92Platform(), // Default to sql92 for any other value
         };
 
         $mockDriver = $this->getMockBuilder(DriverInterface::class)->getMock();

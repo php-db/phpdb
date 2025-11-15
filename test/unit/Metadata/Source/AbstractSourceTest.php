@@ -50,7 +50,6 @@ final class AbstractSourceTest extends TestCase
 {
     protected MockObject|AbstractSource $abstractSourceMock;
 
-    /** @var MockObject */
     protected MockObject $adapterMock;
 
     #[Override]

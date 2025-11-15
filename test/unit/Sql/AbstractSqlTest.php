@@ -14,6 +14,7 @@ use PhpDb\Sql\Expression;
 use PhpDb\Sql\ExpressionInterface;
 use PhpDb\Sql\Predicate;
 use PhpDb\Sql\Select;
+use PhpDb\Sql\TableIdentifier;
 use PhpDbTest\TestAsset\TrustingSql92Platform;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Group;
@@ -23,6 +24,7 @@ use PHPUnit\Framework\TestCase;
 use ReflectionException;
 use ReflectionMethod;
 
+use function count;
 use function current;
 use function key;
 use function next;
@@ -249,9 +251,9 @@ final class AbstractSqlTest extends TestCase
         $result = $method->invoke(
             $this->abstractSql,
             [
-                'column' => 'id',
+                'column'       => 'id',
                 'isIdentifier' => true,
-                'fromTable' => 'table.',
+                'fromTable'    => 'table.',
             ],
             new TrustingSql92Platform(),
             $this->mockDriver,
@@ -268,7 +270,7 @@ final class AbstractSqlTest extends TestCase
      */
     public function testResolveTableWithTableIdentifierAndSchema(): void
     {
-        $table = new \PhpDb\Sql\TableIdentifier('users', 'public');
+        $table  = new TableIdentifier('users', 'public');
         $method = new ReflectionMethod($this->abstractSql, 'resolveTable');
         $method->setAccessible(true);
 
@@ -318,7 +320,7 @@ final class AbstractSqlTest extends TestCase
         $method->setAccessible(true);
 
         $parameterContainer = new ParameterContainer();
-        $result = $method->invoke(
+        $result             = $method->invoke(
             $this->abstractSql,
             $select,
             new TrustingSql92Platform(),

@@ -63,7 +63,7 @@ final class VarcharTest extends TestCase
         // The condition in getExpressionData checks: getLengthExpression() !== '' && !== '0'
         // Empty string fails the first check, so length value is NOT added
         // But specification still has (%s) placeholder - need to verify actual behavior
-        $spec = $expressionData->getExpressionSpecification();
+        $spec   = $expressionData->getExpressionSpecification();
         $values = $expressionData->getExpressionValues();
 
         // The specification format is defined in AbstractLengthColumn as '%s %s(%s)'

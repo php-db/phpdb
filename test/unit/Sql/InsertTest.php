@@ -328,14 +328,14 @@ final class InsertTest extends TestCase
         $this->insert->getSqlString(new TrustingSql92Platform());
     }
 
-    public function test__unsetThrowsExceptionForNonExistentColumn(): void
+    public function testUnsetThrowsExceptionForNonExistentColumn(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The key nonexistent was not found in this objects column list');
         unset($this->insert->nonexistent);
     }
 
-    public function test__getThrowsExceptionForNonExistentColumn(): void
+    public function testGetThrowsExceptionForNonExistentColumn(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The key nonexistent was not found in this objects column list');

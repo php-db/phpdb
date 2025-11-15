@@ -179,7 +179,9 @@ final class ExpressionTest extends TestCase
         $expression = new Expression('? AND ?', [1]); // Two placeholders but only one parameter
 
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('The number of replacements in the expression does not match the number of parameters');
+        $this->expectExceptionMessage(
+            'The number of replacements in the expression does not match the number of parameters'
+        );
         $expression->getExpressionData();
     }
 

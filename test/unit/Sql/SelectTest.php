@@ -1453,7 +1453,9 @@ final class SelectTest extends TestCase
         $select = new Select('foo'); // Creating with table makes it read-only
 
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Since this object was created with a table and/or schema in the constructor, it is read only.');
+        $this->expectExceptionMessage(
+            'Since this object was created with a table and/or schema in the constructor, it is read only.'
+        );
         $select->from('bar');
     }
 
@@ -1484,7 +1486,7 @@ final class SelectTest extends TestCase
         $select->setSpecification('invalid_spec', 'some spec');
     }
 
-    public function test__getThrowsExceptionForInvalidProperty(): void
+    public function testGetThrowsExceptionForInvalidProperty(): void
     {
         $select = new Select();
 

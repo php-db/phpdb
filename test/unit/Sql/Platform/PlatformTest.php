@@ -55,8 +55,6 @@ class PlatformTest extends TestCase
         self::assertEquals('sql92', $reflectionMethod->invoke($platform, new TestAsset\TrustingSql92Platform()));
     }
 
-    /**
-     */
     #[Group('6890')]
     public function testAbstractPlatformCrashesGracefullyOnMissingDefaultPlatform(): void
     {
@@ -65,8 +63,6 @@ class PlatformTest extends TestCase
         );
     }
 
-    /**
-     */
     #[Group('6890')]
     public function testAbstractPlatformCrashesGracefullyOnMissingDefaultPlatformWithGetDecorators(): void
     {

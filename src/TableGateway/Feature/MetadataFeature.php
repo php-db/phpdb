@@ -3,7 +3,6 @@
 namespace PhpDb\TableGateway\Feature;
 
 use PhpDb\Metadata\MetadataInterface;
-use PhpDb\Metadata\Object\ConstraintObject;
 use PhpDb\Metadata\Object\TableObject;
 use PhpDb\Sql\TableIdentifier;
 use PhpDb\TableGateway\Exception;

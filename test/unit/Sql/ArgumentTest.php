@@ -41,7 +41,7 @@ final class ArgumentTest extends TestCase
     public function testConstructorWithExpressionInterface(): void
     {
         $expression = new Expression('NOW()');
-        $argument = new Argument($expression);
+        $argument   = new Argument($expression);
 
         self::assertSame($expression, $argument->getValue());
         self::assertEquals(ArgumentType::Select, $argument->getType());
@@ -49,7 +49,7 @@ final class ArgumentTest extends TestCase
 
     public function testConstructorWithSqlInterface(): void
     {
-        $select = new Select();
+        $select   = new Select();
         $argument = new Argument($select);
 
         self::assertSame($select, $argument->getValue());
@@ -82,7 +82,7 @@ final class ArgumentTest extends TestCase
     public function testSetTypeWithArgumentType(): void
     {
         $argument = new Argument('test');
-        $result = $argument->setType(ArgumentType::Literal);
+        $result   = $argument->setType(ArgumentType::Literal);
 
         self::assertSame($argument, $result); // Fluent interface
         self::assertEquals(ArgumentType::Literal, $argument->getType());
@@ -91,7 +91,7 @@ final class ArgumentTest extends TestCase
     public function testSetTypeWithString(): void
     {
         $argument = new Argument('test');
-        $result = $argument->setType('identifier');
+        $result   = $argument->setType('identifier');
 
         self::assertSame($argument, $result);
         self::assertEquals(ArgumentType::Identifier, $argument->getType());
@@ -109,7 +109,7 @@ final class ArgumentTest extends TestCase
     public function testSetValue(): void
     {
         $argument = new Argument('initial');
-        $result = $argument->setValue('updated');
+        $result   = $argument->setValue('updated');
 
         self::assertSame($argument, $result); // Fluent interface
         self::assertEquals('updated', $argument->getValue());

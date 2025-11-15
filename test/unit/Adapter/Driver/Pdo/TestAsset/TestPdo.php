@@ -6,7 +6,6 @@ namespace PhpDbTest\Adapter\Driver\Pdo\TestAsset;
 
 use Override;
 use PDO;
-use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\Driver\Pdo\AbstractPdo;
 use PhpDb\Adapter\Driver\Pdo\AbstractPdoConnection;
 use PhpDb\Adapter\Driver\Pdo\Result;
@@ -19,8 +18,12 @@ use function ucfirst;
  */
 final class TestPdo extends AbstractPdo
 {
-    public function __construct(array|AbstractPdoConnection|PDO $connection, ?Statement $statement = null, ?Result $result = null, array $features = [])
-    {
+    public function __construct(
+        array|AbstractPdoConnection|PDO $connection,
+        ?Statement $statement = null,
+        ?Result $result = null,
+        array $features = []
+    ) {
         if (! $connection instanceof AbstractPdoConnection && ! $connection instanceof PDO) {
             $connection = new TestConnection($connection);
         }
@@ -35,6 +38,8 @@ final class TestPdo extends AbstractPdo
 
     /**
      * Create result
+     *
+     * @param mixed $resource
      */
     #[Override]
     public function createResult($resource): Result

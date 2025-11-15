@@ -162,7 +162,7 @@ class CreateTableTest extends TestCase
     public function testConstructorWithTableIdentifier(): void
     {
         $tableId = new TableIdentifier('bar', 'foo');
-        $ct = new CreateTable($tableId);
+        $ct      = new CreateTable($tableId);
 
         $rawState = $ct->getRawState();
         self::assertSame($tableId, $rawState[CreateTable::TABLE]);
@@ -180,7 +180,7 @@ class CreateTableTest extends TestCase
 
     public function testGetRawStateReturnsAllState(): void
     {
-        $ct = new CreateTable('users');
+        $ct  = new CreateTable('users');
         $col = $this->getMockBuilder(ColumnInterface::class)->getMock();
         $con = $this->getMockBuilder(ConstraintInterface::class)->getMock();
 
@@ -212,10 +212,10 @@ class CreateTableTest extends TestCase
 
     public function testChainedOperations(): void
     {
-        $ct = new CreateTable();
+        $ct   = new CreateTable();
         $col1 = $this->getMockBuilder(ColumnInterface::class)->getMock();
         $col2 = $this->getMockBuilder(ColumnInterface::class)->getMock();
-        $con = $this->getMockBuilder(ConstraintInterface::class)->getMock();
+        $con  = $this->getMockBuilder(ConstraintInterface::class)->getMock();
 
         $result = $ct->setTable('products')
             ->setTemporary(true)

@@ -9,6 +9,8 @@ use PDO;
 use PhpDb\Adapter\Driver\ConnectionInterface;
 use PhpDb\Adapter\Driver\Pdo\AbstractPdoConnection;
 
+use function sprintf;
+
 /**
  * Test asset for AbstractPdoConnection - provides a concrete implementation for testing
  */
@@ -22,18 +24,22 @@ final class TestConnection extends AbstractPdoConnection
         }
 
         // Build DSN if not already set
-        if (!isset($this->dsn)) {
+        if (! isset($this->dsn)) {
             $this->dsn = $this->buildDsn();
         }
 
-        $this->resource = new PDO($this->getDsn(), $this->connectionParameters['username'] ?? null, $this->connectionParameters['password'] ?? null);
+        $this->resource = new PDO(
+            $this->getDsn(),
+            $this->connectionParameters['username'] ?? null,
+            $this->connectionParameters['password'] ?? null
+        );
         return $this;
     }
 
     private function buildDsn(): string
     {
         $pdoDriver = $this->connectionParameters['pdodriver'] ?? 'sqlite';
-        $database = $this->connectionParameters['database'] ?? ':memory:';
+        $database  = $this->connectionParameters['database'] ?? ':memory:';
 
         return match ($pdoDriver) {
             'sqlite' => "sqlite:{$database}",
@@ -46,6 +52,9 @@ final class TestConnection extends AbstractPdoConnection
         };
     }
 
+    /**
+     * @param string|null $name
+     */
     #[Override]
     public function getLastGeneratedValue($name = null): string|int|bool|null
     {

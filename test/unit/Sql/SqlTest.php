@@ -154,7 +154,7 @@ final class SqlTest extends TestCase
 
     public function testBuildSqlString(): void
     {
-        $select = $this->sql->select()->where(['bar' => 'baz']);
+        $select    = $this->sql->select()->where(['bar' => 'baz']);
         $sqlString = $this->sql->buildSqlString($select);
         self::assertEquals('SELECT "foo".* FROM "foo" WHERE "bar" = \'baz\'', $sqlString);
     }

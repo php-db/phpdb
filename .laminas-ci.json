@@ -1,8 +1,35 @@
 {
-    "extensions": [
-        "pdo-sqlite",
-        "sqlite3",
-        "sqlsrv"
+    "php": [
+        {
+            "version": "8.2",
+            "extensions": [
+                "pdo-sqlite",
+                "sqlite3",
+                "sqlsrv"
+            ]
+        },
+        {
+            "version": "8.3",
+            "extensions": [
+                "pdo-sqlite",
+                "sqlite3",
+                "sqlsrv"
+            ]
+        },
+        {
+            "version": "8.4",
+            "extensions": [
+                "pdo-sqlite",
+                "sqlite3"
+            ]
+        },
+        {
+            "version": "8.5",
+            "extensions": [
+                "pdo-sqlite",
+                "sqlite3"
+            ]
+        }
     ],
     "additional_checks": [
         {

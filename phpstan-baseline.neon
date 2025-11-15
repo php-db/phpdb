@@ -103,66 +103,6 @@ parameters:
 			path: src/Metadata/Source/AbstractSource.php
 
 		-
-			message: '#^Instantiated class PhpDb\\Metadata\\Source\\MysqlMetadata not found\.$#'
-			identifier: class.notFound
-			count: 1
-			path: src/Metadata/Source/Factory.php
-
-		-
-			message: '#^Instantiated class PhpDb\\Metadata\\Source\\OracleMetadata not found\.$#'
-			identifier: class.notFound
-			count: 1
-			path: src/Metadata/Source/Factory.php
-
-		-
-			message: '#^Instantiated class PhpDb\\Metadata\\Source\\PostgresqlMetadata not found\.$#'
-			identifier: class.notFound
-			count: 1
-			path: src/Metadata/Source/Factory.php
-
-		-
-			message: '#^Instantiated class PhpDb\\Metadata\\Source\\SqlServerMetadata not found\.$#'
-			identifier: class.notFound
-			count: 1
-			path: src/Metadata/Source/Factory.php
-
-		-
-			message: '#^Instantiated class PhpDb\\Metadata\\Source\\SqliteMetadata not found\.$#'
-			identifier: class.notFound
-			count: 1
-			path: src/Metadata/Source/Factory.php
-
-		-
-			message: '#^Method PhpDb\\Metadata\\Source\\Factory\:\:createSourceFromAdapter\(\) should return PhpDb\\Metadata\\MetadataInterface but returns PhpDb\\Metadata\\Source\\MysqlMetadata\.$#'
-			identifier: return.type
-			count: 1
-			path: src/Metadata/Source/Factory.php
-
-		-
-			message: '#^Method PhpDb\\Metadata\\Source\\Factory\:\:createSourceFromAdapter\(\) should return PhpDb\\Metadata\\MetadataInterface but returns PhpDb\\Metadata\\Source\\OracleMetadata\.$#'
-			identifier: return.type
-			count: 1
-			path: src/Metadata/Source/Factory.php
-
-		-
-			message: '#^Method PhpDb\\Metadata\\Source\\Factory\:\:createSourceFromAdapter\(\) should return PhpDb\\Metadata\\MetadataInterface but returns PhpDb\\Metadata\\Source\\PostgresqlMetadata\.$#'
-			identifier: return.type
-			count: 1
-			path: src/Metadata/Source/Factory.php
-
-		-
-			message: '#^Method PhpDb\\Metadata\\Source\\Factory\:\:createSourceFromAdapter\(\) should return PhpDb\\Metadata\\MetadataInterface but returns PhpDb\\Metadata\\Source\\SqlServerMetadata\.$#'
-			identifier: return.type
-			count: 1
-			path: src/Metadata/Source/Factory.php
-
-		-
-			message: '#^Method PhpDb\\Metadata\\Source\\Factory\:\:createSourceFromAdapter\(\) should return PhpDb\\Metadata\\MetadataInterface but returns PhpDb\\Metadata\\Source\\SqliteMetadata\.$#'
-			identifier: return.type
-			count: 1
-			path: src/Metadata/Source/Factory.php
-
-		-
 			message: '#^Property PhpDb\\ResultSet\\AbstractResultSet\:\:\$dataSource \(Iterator\|IteratorAggregate\|null\) does not accept Traversable\<mixed, mixed\>\.$#'
 			identifier: assign.propertyType
 			count: 1
@@ -227,12 +167,6 @@ parameters:
 			identifier: binaryOp.invalid
 			count: 1
 			path: src/Sql/Combine.php
-
-		-
-			message: '#^Method PhpDb\\Sql\\Ddl\\Column\\AbstractPrecisionColumn\:\:getLengthExpression\(\) should return string but returns int\|null\.$#'
-			identifier: return.type
-			count: 1
-			path: src/Sql/Ddl/Column/AbstractPrecisionColumn.php
 
 		-
 			message: '#^Class PhpDb\\Sql\\Ddl\\Column\\Boolean referenced with incorrect case\: PhpDb\\Sql\\Ddl\\Column\\boolean\.$#'
@@ -319,14 +253,14 @@ parameters:
 			path: src/Sql/Platform/Platform.php
 
 		-
-			message: '#^Method PhpDb\\Sql\\Platform\\Platform\:\:getDecorators\(\) should return array\<PhpDb\\Sql\\Platform\\PlatformDecoratorInterface\> but returns PhpDb\\Sql\\Platform\\PlatformDecoratorInterface\.$#'
-			identifier: return.type
+			message: '#^Method PhpDb\\Sql\\Platform\\Platform\:\:prepareStatement\(\) with return type void returns PhpDb\\Adapter\\StatementContainerInterface but should not return anything\.$#'
+			identifier: return.void
 			count: 1
 			path: src/Sql/Platform/Platform.php
 
 		-
-			message: '#^Method PhpDb\\Sql\\Platform\\Platform\:\:prepareStatement\(\) with return type void returns PhpDb\\Adapter\\StatementContainerInterface but should not return anything\.$#'
-			identifier: return.void
+			message: '#^Return type \(PhpDb\\Sql\\Platform\\PlatformDecoratorInterface\) of method PhpDb\\Sql\\Platform\\Platform\:\:getDecorators\(\) should be compatible with return type \(array\<PhpDb\\Sql\\Platform\\PlatformDecoratorInterface\>\) of method PhpDb\\Sql\\Platform\\AbstractPlatform\:\:getDecorators\(\)$#'
+			identifier: method.childReturnType
 			count: 1
 			path: src/Sql/Platform/Platform.php
 
@@ -619,32 +553,14 @@ parameters:
 			path: test/unit/Adapter/AdapterAwareTraitTest.php
 
 		-
-			message: '#^Class PhpDb\\Adapter\\Adapter constructor invoked with 1 parameter, 3\-4 required\.$#'
-			identifier: arguments.count
-			count: 3
+			message: '#^Method PhpDbTest\\Adapter\\AdapterServiceDelegatorTest\:\:testDelegatorWithPluginManager\(\) has PHPUnit\\Framework\\MockObject\\Exception in PHPDoc @throws tag but it''s not thrown\.$#'
+			identifier: throws.unusedType
+			count: 1
 			path: test/unit/Adapter/AdapterServiceDelegatorTest.php
 
 		-
-			message: '#^Class PhpDb\\Adapter\\AdapterServiceDelegator not found\.$#'
-			identifier: class.notFound
-			count: 2
-			path: test/unit/Adapter/AdapterServiceDelegatorTest.php
-
-		-
-			message: '#^Instantiated class PhpDb\\Adapter\\AdapterServiceDelegator not found\.$#'
-			identifier: class.notFound
-			count: 5
-			path: test/unit/Adapter/AdapterServiceDelegatorTest.php
-
-		-
-			message: '#^Invoking callable on an unknown class PhpDb\\Adapter\\AdapterServiceDelegator\.$#'
-			identifier: class.notFound
-			count: 4
-			path: test/unit/Adapter/AdapterServiceDelegatorTest.php
-
-		-
-			message: '#^PHPDoc tag @var with type Laminas\\ServiceManager\\AbstractPluginManager is not subtype of native type Laminas\\ServiceManager\\AbstractPluginManager@anonymous/test/unit/Adapter/AdapterServiceDelegatorTest\.php\:219\.$#'
-			identifier: varTag.nativeType
+			message: '#^Unreachable statement \- code above always terminates\.$#'
+			identifier: deadCode.unreachable
 			count: 1
 			path: test/unit/Adapter/AdapterServiceDelegatorTest.php
 
@@ -769,105 +685,15 @@ parameters:
 			path: test/unit/Adapter/AdapterTest.php
 
 		-
-			message: '#^Call to method connect\(\) on an unknown class PhpDb\\Adapter\\Driver\\Pdo\\Connection\.$#'
-			identifier: class.notFound
-			count: 5
-			path: test/unit/Adapter/Driver/Pdo/ConnectionIntegrationTest.php
-
-		-
-			message: '#^Call to method disconnect\(\) on an unknown class PhpDb\\Adapter\\Driver\\Pdo\\Connection\.$#'
-			identifier: class.notFound
-			count: 6
-			path: test/unit/Adapter/Driver/Pdo/ConnectionIntegrationTest.php
-
-		-
-			message: '#^Call to method getConnection\(\) on an unknown class PhpDb\\Adapter\\Driver\\Pdo\\Pdo\.$#'
-			identifier: class.notFound
-			count: 2
-			path: test/unit/Adapter/Driver/Pdo/ConnectionIntegrationTest.php
-
-		-
-			message: '#^Call to method getCurrentSchema\(\) on an unknown class PhpDb\\Adapter\\Driver\\Pdo\\Connection\.$#'
-			identifier: class.notFound
+			message: '#^Call to an undefined method PhpDb\\Adapter\\Driver\\ConnectionInterface\:\:prepare\(\)\.$#'
+			identifier: method.notFound
 			count: 1
 			path: test/unit/Adapter/Driver/Pdo/ConnectionIntegrationTest.php
 
 		-
-			message: '#^Call to method getResource\(\) on an unknown class PhpDb\\Adapter\\Driver\\Pdo\\Connection\.$#'
-			identifier: class.notFound
-			count: 1
-			path: test/unit/Adapter/Driver/Pdo/ConnectionIntegrationTest.php
-
-		-
-			message: '#^Call to method isConnected\(\) on an unknown class PhpDb\\Adapter\\Driver\\Pdo\\Connection\.$#'
-			identifier: class.notFound
-			count: 5
-			path: test/unit/Adapter/Driver/Pdo/ConnectionIntegrationTest.php
-
-		-
-			message: '#^Call to method setResource\(\) on an unknown class PhpDb\\Adapter\\Driver\\Pdo\\Connection\.$#'
-			identifier: class.notFound
-			count: 2
-			path: test/unit/Adapter/Driver/Pdo/ConnectionIntegrationTest.php
-
-		-
-			message: '#^Class PhpDb\\Adapter\\Driver\\Pdo\\Connection not found\.$#'
-			identifier: class.notFound
-			count: 12
-			path: test/unit/Adapter/Driver/Pdo/ConnectionIntegrationTest.php
-
-		-
-			message: '#^Instantiated class PhpDb\\Adapter\\Driver\\Pdo\\Connection not found\.$#'
-			identifier: class.notFound
-			count: 7
-			path: test/unit/Adapter/Driver/Pdo/ConnectionIntegrationTest.php
-
-		-
-			message: '#^Instantiated class PhpDb\\Adapter\\Driver\\Pdo\\Pdo not found\.$#'
-			identifier: class.notFound
-			count: 2
-			path: test/unit/Adapter/Driver/Pdo/ConnectionIntegrationTest.php
-
-		-
-			message: '#^Call to method connect\(\) on an unknown class PhpDb\\Adapter\\Driver\\Pdo\\Connection\.$#'
-			identifier: class.notFound
+			message: '#^Unreachable statement \- code above always terminates\.$#'
+			identifier: deadCode.unreachable
 			count: 4
-			path: test/unit/Adapter/Driver/Pdo/ConnectionTest.php
-
-		-
-			message: '#^Call to method getDsn\(\) on an unknown class PhpDb\\Adapter\\Driver\\Pdo\\Connection\.$#'
-			identifier: class.notFound
-			count: 3
-			path: test/unit/Adapter/Driver/Pdo/ConnectionTest.php
-
-		-
-			message: '#^Call to method getResource\(\) on an unknown class PhpDb\\Adapter\\Driver\\Pdo\\Connection\.$#'
-			identifier: class.notFound
-			count: 1
-			path: test/unit/Adapter/Driver/Pdo/ConnectionTest.php
-
-		-
-			message: '#^Call to method setConnectionParameters\(\) on an unknown class PhpDb\\Adapter\\Driver\\Pdo\\Connection\.$#'
-			identifier: class.notFound
-			count: 4
-			path: test/unit/Adapter/Driver/Pdo/ConnectionTest.php
-
-		-
-			message: '#^Class PhpDb\\Adapter\\Driver\\Pdo\\Connection not found\.$#'
-			identifier: class.notFound
-			count: 2
-			path: test/unit/Adapter/Driver/Pdo/ConnectionTest.php
-
-		-
-			message: '#^Instantiated class PhpDb\\Adapter\\Driver\\Pdo\\Connection not found\.$#'
-			identifier: class.notFound
-			count: 1
-			path: test/unit/Adapter/Driver/Pdo/ConnectionTest.php
-
-		-
-			message: '#^Property PhpDbTest\\Adapter\\Driver\\Pdo\\ConnectionTest\:\:\$connection has unknown class PhpDb\\Adapter\\Driver\\Pdo\\Connection as its type\.$#'
-			identifier: class.notFound
-			count: 1
 			path: test/unit/Adapter/Driver/Pdo/ConnectionTest.php
 
 		-
@@ -919,76 +745,28 @@ parameters:
 			path: test/unit/Adapter/Driver/Pdo/ConnectionTransactionsTest.php
 
 		-
-			message: '#^Access to constant PARAMETERIZATION_NAMED on an unknown class PhpDb\\Adapter\\Driver\\Pdo\\Pdo\.$#'
-			identifier: class.notFound
-			count: 5
-			path: test/unit/Adapter/Driver/Pdo/PdoTest.php
-
-		-
-			message: '#^Call to method formatParameterName\(\) on an unknown class PhpDb\\Adapter\\Driver\\Pdo\\Pdo\.$#'
-			identifier: class.notFound
-			count: 2
-			path: test/unit/Adapter/Driver/Pdo/PdoTest.php
-
-		-
-			message: '#^Call to method getConnection\(\) on an unknown class PhpDb\\Adapter\\Driver\\Pdo\\Pdo\.$#'
-			identifier: class.notFound
+			message: '#^Method PhpDbTest\\Adapter\\Driver\\Pdo\\TestAsset\\TestConnection\:\:getLastGeneratedValue\(\) never returns int so it can be removed from the return type\.$#'
+			identifier: return.unusedType
 			count: 1
-			path: test/unit/Adapter/Driver/Pdo/PdoTest.php
+			path: test/unit/Adapter/Driver/Pdo/TestAsset/TestConnection.php
 
 		-
-			message: '#^Call to method getDatabasePlatformName\(\) on an unknown class PhpDb\\Adapter\\Driver\\Pdo\\Pdo\.$#'
-			identifier: class.notFound
-			count: 2
-			path: test/unit/Adapter/Driver/Pdo/PdoTest.php
-
-		-
-			message: '#^Call to method getResultPrototype\(\) on an unknown class PhpDb\\Adapter\\Driver\\Pdo\\Pdo\.$#'
-			identifier: class.notFound
+			message: '#^Call to an undefined method PhpDb\\Adapter\\Driver\\ResultInterface\:\:initialize\(\)\.$#'
+			identifier: method.notFound
 			count: 1
-			path: test/unit/Adapter/Driver/Pdo/PdoTest.php
+			path: test/unit/Adapter/Driver/Pdo/TestAsset/TestPdo.php
 
 		-
-			message: '#^Class PhpDb\\Adapter\\Driver\\Pdo\\Pdo not found\.$#'
-			identifier: class.notFound
-			count: 2
-			path: test/unit/Adapter/Driver/Pdo/PdoTest.php
-
-		-
-			message: '#^Instantiated class PhpDb\\Adapter\\Driver\\Pdo\\Pdo not found\.$#'
-			identifier: class.notFound
+			message: '#^Cannot call method getAttribute\(\) on resource\.$#'
+			identifier: method.nonObject
 			count: 1
-			path: test/unit/Adapter/Driver/Pdo/PdoTest.php
+			path: test/unit/Adapter/Driver/Pdo/TestAsset/TestPdo.php
 
 		-
-			message: '#^Property PhpDbTest\\Adapter\\Driver\\Pdo\\PdoTest\:\:\$pdo has unknown class PhpDb\\Adapter\\Driver\\Pdo\\Pdo as its type\.$#'
-			identifier: class.notFound
+			message: '#^Method PhpDbTest\\Adapter\\Driver\\Pdo\\TestAsset\\TestPdo\:\:createResult\(\) should return PhpDb\\Adapter\\Driver\\Pdo\\Result but returns PhpDb\\Adapter\\Driver\\ResultInterface\.$#'
+			identifier: return.type
 			count: 1
-			path: test/unit/Adapter/Driver/Pdo/PdoTest.php
-
-		-
-			message: '#^Class PhpDb\\Adapter\\Driver\\Pdo\\Pdo not found\.$#'
-			identifier: class.notFound
-			count: 1
-			path: test/unit/Adapter/Driver/Pdo/StatementIntegrationTest.php
-
-		-
-			message: '#^Call to static method PHPUnit\\Framework\\Assert\:\:assertNull\(\) with PhpDb\\Adapter\\Driver\\StatementInterface will always evaluate to false\.$#'
-			identifier: staticMethod.impossibleType
-			count: 1
-			path: test/unit/Adapter/Driver/Pdo/StatementTest.php
-
-		-
-			message: '#^Instantiated class PhpDb\\Adapter\\Driver\\Pdo\\Connection not found\.$#'
-			identifier: class.notFound
-			count: 1
-			path: test/unit/Adapter/Driver/Pdo/StatementTest.php
-
-		-
-			message: '#^Instantiated class PhpDb\\Adapter\\Driver\\Pdo\\Pdo not found\.$#'
-			identifier: class.notFound
-			count: 2
-			path: test/unit/Adapter/Driver/Pdo/StatementTest.php
+			path: test/unit/Adapter/Driver/Pdo/TestAsset/TestPdo.php
 
 		-
 			message: '#^Parameter \#1 \$attribute \(string\) of method PhpDbTest\\Adapter\\Driver\\TestAsset\\PdoMock\:\:getAttribute\(\) should be compatible with parameter \$attribute \(int\) of method PDO\:\:getAttribute\(\)$#'
@@ -1075,6 +853,30 @@ parameters:
 			path: test/unit/Sql/Ddl/AlterTableTest.php
 
 		-
+			message: '#^Access to an undefined property PhpDb\\Sql\\Delete\:\:\$unknown\.$#'
+			identifier: property.notFound
+			count: 1
+			path: test/unit/Sql/DeleteTest.php
+
+		-
+			message: '#^Access to protected property PhpDb\\Sql\\Delete\:\:\$table\.$#'
+			identifier: property.protected
+			count: 1
+			path: test/unit/Sql/DeleteTest.php
+
+		-
+			message: '#^Call to static method PHPUnit\\Framework\\Assert\:\:assertNull\(\) with array\|PhpDb\\Sql\\TableIdentifier\|string will always evaluate to false\.$#'
+			identifier: staticMethod.impossibleType
+			count: 1
+			path: test/unit/Sql/DeleteTest.php
+
+		-
+			message: '#^Call to static method PHPUnit\\Framework\\Assert\:\:assertIsArray\(\) with array will always evaluate to true\.$#'
+			identifier: staticMethod.alreadyNarrowedType
+			count: 1
+			path: test/unit/Sql/ExpressionDataTest.php
+
+		-
 			message: '#^Access to an undefined property PhpDb\\Sql\\InsertIgnore\:\:\$foo\.$#'
 			identifier: property.notFound
 			count: 6
@@ -1087,10 +889,22 @@ parameters:
 			path: test/unit/Sql/InsertTest.php
 
 		-
+			message: '#^Access to an undefined property PhpDb\\Sql\\Insert\:\:\$nonexistent\.$#'
+			identifier: property.notFound
+			count: 1
+			path: test/unit/Sql/InsertTest.php
+
+		-
 			message: '#^PHPDoc tag @var with type PhpDb\\Adapter\\Driver\\DriverInterface\|PHPUnit\\Framework\\MockObject\\MockObject is not subtype of native type PHPUnit\\Framework\\MockObject\\MockObject\.$#'
 			identifier: varTag.nativeType
 			count: 1
 			path: test/unit/Sql/Platform/PlatformTest.php
+
+		-
+			message: '#^Access to an undefined property PhpDb\\Sql\\Select\:\:\$invalidProperty\.$#'
+			identifier: property.notFound
+			count: 1
+			path: test/unit/Sql/SelectTest.php
 
 		-
 			message: '#^Instanceof between PhpDb\\Sql\\Platform\\PlatformDecoratorInterface and PhpDb\\Sql\\Platform\\PlatformDecoratorInterface will always evaluate to true\.$#'

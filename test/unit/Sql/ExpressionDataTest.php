@@ -52,7 +52,7 @@ final class ExpressionDataTest extends TestCase
 
     public function testConstructorWithExpressionPart(): void
     {
-        $part = new ExpressionPart('%s IS NULL', [Argument::identifier('field')]);
+        $part           = new ExpressionPart('%s IS NULL', [Argument::identifier('field')]);
         $expressionData = new ExpressionData($part);
 
         self::assertCount(1, $expressionData);
@@ -62,7 +62,7 @@ final class ExpressionDataTest extends TestCase
     public function testAddExpressionPartWithString(): void
     {
         $expressionData = new ExpressionData();
-        $result = $expressionData->addExpressionPart('%s > %s', [
+        $result         = $expressionData->addExpressionPart('%s > %s', [
             Argument::identifier('age'),
             Argument::value(18),
         ]);
@@ -74,7 +74,7 @@ final class ExpressionDataTest extends TestCase
     public function testAddExpressionPartWithExpressionPart(): void
     {
         $expressionData = new ExpressionData();
-        $part = new ExpressionPart('%s < %s', [
+        $part           = new ExpressionPart('%s < %s', [
             Argument::identifier('price'),
             Argument::value(100),
         ]);
@@ -104,7 +104,7 @@ final class ExpressionDataTest extends TestCase
     public function testAddExpressionPartsWithoutBrackets(): void
     {
         $expressionData = new ExpressionData();
-        $parts = [
+        $parts          = [
             new ExpressionPart('%s = %s', [Argument::identifier('a'), Argument::value(1)]),
             new ExpressionPart('%s = %s', [Argument::identifier('b'), Argument::value(2)]),
         ];
@@ -119,7 +119,7 @@ final class ExpressionDataTest extends TestCase
     public function testAddExpressionPartsWithBrackets(): void
     {
         $expressionData = new ExpressionData();
-        $parts = [
+        $parts          = [
             new ExpressionPart('%s = %s', [Argument::identifier('x'), Argument::value(1)]),
             new ExpressionPart('OR %s = %s', [Argument::identifier('y'), Argument::value(2)]),
         ];
@@ -191,7 +191,7 @@ final class ExpressionDataTest extends TestCase
         $expressionData->addExpressionPart($part2);
         $expressionData->addExpressionPart($part3);
 
-        $iterations = 0;
+        $iterations    = 0;
         $expectedParts = [$part1, $part2, $part3];
 
         foreach ($expressionData as $key => $part) {
@@ -244,7 +244,8 @@ final class ExpressionDataTest extends TestCase
 
         // Iterate once
         foreach ($expressionData as $part) {
-            // Just iterate
+            // Just iterate - suppress phpcs warning
+            $part;
         }
 
         // Iterate again to ensure rewind works

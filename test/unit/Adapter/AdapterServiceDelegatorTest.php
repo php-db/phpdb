@@ -3,13 +3,14 @@
 namespace PhpDbTest\Adapter;
 
 use Laminas\ServiceManager\AbstractPluginManager;
+use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use Laminas\ServiceManager\ServiceManager;
 use PhpDb\Adapter\Adapter;
-use PhpDb\Adapter\AdapterAwareInterface;
 use PhpDb\Adapter\AdapterInterface;
+use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\Platform\PlatformInterface;
 use PhpDb\Container\AdapterServiceDelegator;
-use PhpDb\Adapter\Driver\DriverInterface;
+use PhpDb\Exception\RuntimeException;
 use PhpDb\ResultSet\ResultSetInterface;
 use PhpDbTest\Adapter\TestAsset\ConcreteAdapterAwareObject;
 use PHPUnit\Framework\MockObject\Exception;
@@ -104,7 +105,7 @@ final class AdapterServiceDelegatorTest extends TestCase
 
         $callback = static fn(): ConcreteAdapterAwareObject => new ConcreteAdapterAwareObject();
 
-        $this->expectException(\Laminas\ServiceManager\Exception\ServiceNotFoundException::class);
+        $this->expectException(ServiceNotFoundException::class);
         $this->expectExceptionMessage('Service "PhpDb\Adapter\AdapterInterface" not found in container');
 
         (new AdapterServiceDelegator())(
@@ -126,8 +127,10 @@ final class AdapterServiceDelegatorTest extends TestCase
 
         $callback = static fn(): stdClass => new stdClass();
 
-        $this->expectException(\PhpDb\Exception\RuntimeException::class);
-        $this->expectExceptionMessage('Delegated service "stdClass" must implement PhpDb\Adapter\AdapterAwareInterface');
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage(
+            'Delegated service "stdClass" must implement PhpDb\Adapter\AdapterAwareInterface'
+        );
 
         (new AdapterServiceDelegator())(
             $container,
@@ -211,7 +214,9 @@ final class AdapterServiceDelegatorTest extends TestCase
      */
     public function testDelegatorWithPluginManager(): void
     {
-        $this->markTestSkipped('Test requires factory-based plugin manager configuration to pass options to constructor');
+        $this->markTestSkipped(
+            'Test requires factory-based plugin manager configuration to pass options to constructor'
+        );
         $databaseAdapter = new Adapter(
             $this->createMock(DriverInterface::class),
             $this->createMock(PlatformInterface::class),
