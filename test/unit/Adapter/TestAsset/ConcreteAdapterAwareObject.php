@@ -16,7 +16,7 @@ class ConcreteAdapterAwareObject implements AdapterAwareInterface
 
     public function getAdapter(): ?AdapterInterface
     {
-        return $this->adapter;
+        return $this->adapter ?? null;
     }
 
     public function getOptions(): array

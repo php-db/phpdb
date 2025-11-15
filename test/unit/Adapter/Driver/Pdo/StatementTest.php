@@ -3,11 +3,11 @@
 namespace PhpDbTest\Adapter\Driver\Pdo;
 
 use Override;
-use PhpDb\Adapter\Driver\Pdo\Connection;
-use PhpDb\Adapter\Driver\Pdo\Pdo;
 use PhpDb\Adapter\Driver\Pdo\Result;
 use PhpDb\Adapter\Driver\Pdo\Statement;
 use PhpDb\Adapter\ParameterContainer;
+use PhpDbTest\Adapter\Driver\Pdo\TestAsset\TestConnection;
+use PhpDbTest\Adapter\Driver\Pdo\TestAsset\TestPdo;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 
@@ -44,7 +44,7 @@ final class StatementTest extends TestCase
 
     public function testSetDriver(): void
     {
-        self::assertEquals($this->statement, $this->statement->setDriver(new Pdo([])));
+        self::assertEquals($this->statement, $this->statement->setDriver(new TestPdo([])));
     }
 
     public function testSetParameterContainer(): void
@@ -84,12 +84,14 @@ final class StatementTest extends TestCase
     }
 
     /**
-     * @todo Implement testPrepare().
+     * Test that prepare() returns the statement for method chaining
      */
     public function testPrepare(): void
     {
         $this->statement->initialize(new TestAsset\SqliteMemoryPdo());
-        self::assertNull($this->statement->prepare('SELECT 1'));
+        $result = $this->statement->prepare('SELECT 1');
+        self::assertInstanceOf(Statement::class, $result);
+        self::assertSame($this->statement, $result);
     }
 
     public function testIsPrepared(): void
@@ -102,7 +104,7 @@ final class StatementTest extends TestCase
 
     public function testExecute(): void
     {
-        $this->statement->setDriver(new Pdo(new Connection($pdo = new TestAsset\SqliteMemoryPdo())));
+        $this->statement->setDriver(new TestPdo(new TestConnection($pdo = new TestAsset\SqliteMemoryPdo())));
         $this->statement->initialize($pdo);
         $this->statement->prepare('SELECT 1');
         self::assertInstanceOf(Result::class, $this->statement->execute());

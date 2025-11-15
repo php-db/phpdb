@@ -15,13 +15,6 @@
             <!-- Tests with missing/refactored service factory classes -->
             <exclude>./test/unit/Adapter/AdapterAbstractServiceFactoryTest.php</exclude>
             <exclude>./test/unit/Adapter/AdapterServiceFactoryTest.php</exclude>
-            <exclude>./test/unit/Adapter/AdapterServiceDelegatorTest.php</exclude>
-            <!-- Tests with missing/refactored PDO driver classes -->
-            <exclude>./test/unit/Adapter/Driver/Pdo/PdoTest.php</exclude>
-            <exclude>./test/unit/Adapter/Driver/Pdo/ConnectionTest.php</exclude>
-            <exclude>./test/unit/Adapter/Driver/Pdo/ConnectionIntegrationTest.php</exclude>
-            <exclude>./test/unit/Adapter/Driver/Pdo/StatementTest.php</exclude>
-            <exclude>./test/unit/Adapter/Driver/Pdo/StatementIntegrationTest.php</exclude>
             <!-- Tests with Adapter constructor signature changes -->
             <exclude>./test/unit/Adapter/AdapterTest.php</exclude>
             <exclude>./test/unit/Adapter/AdapterAwareTraitTest.php</exclude>
@@ -30,8 +23,6 @@
             <exclude>./test/unit/RowGateway</exclude>
             <!-- ConfigProvider test with missing methods -->
             <exclude>./test/unit/ConfigProviderTest.php</exclude>
-            <!-- Sql functional tests with Adapter constructor issues -->
-            <exclude>./test/unit/Sql/SqlFunctionalTest.php</exclude>
         </testsuite>
         <testsuite name="integration test">
             <directory>./test/integration</directory>

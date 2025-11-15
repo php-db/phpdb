@@ -6,6 +6,8 @@ use PhpDb\Adapter\Platform\Sql92;
 
 final class TrustingMysqlPlatform extends Sql92
 {
+    protected $quoteIdentifier = ['`', '`'];
+
     /**
      * @param string $value
      */

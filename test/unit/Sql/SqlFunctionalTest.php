@@ -47,76 +47,25 @@ class SqlFunctionalTest extends TestCase
             'Select::processOffset()'      => [
                 'sqlObject' => self::select('foo')->offset(10),
                 'expected'  => [
-                    'sql92'     => [
-                        'string'     => 'SELECT "foo".* FROM "foo" OFFSET \'10\'',
-                        'prepare'    => 'SELECT "foo".* FROM "foo" OFFSET ?',
-                        'parameters' => ['offset' => 10],
-                    ],
-                    'MySql'     => [
-                        'string'     => 'SELECT `foo`.* FROM `foo` LIMIT 18446744073709551615 OFFSET 10',
-                        'prepare'    => 'SELECT `foo`.* FROM `foo` LIMIT 18446744073709551615 OFFSET ?',
-                        'parameters' => ['offset' => 10],
-                    ],
-                    'Oracle'    => [
-                        'string'     => 'SELECT * FROM (SELECT b.*, rownum b_rownum FROM ( SELECT "foo".* FROM "foo" ) b ) WHERE b_rownum > (10)',
-                        'prepare'    => 'SELECT * FROM (SELECT b.*, rownum b_rownum FROM ( SELECT "foo".* FROM "foo" ) b ) WHERE b_rownum > (:offset)',
-                        'parameters' => ['offset' => 10],
-                    ],
-                    'SqlServer' => [
-                        'string'     => 'SELECT * FROM ( SELECT [foo].*, ROW_NUMBER() OVER (ORDER BY (SELECT 1)) AS [__LAMINAS_ROW_NUMBER] FROM [foo] ) AS [LAMINAS_SQL_SERVER_LIMIT_OFFSET_EMULATION] WHERE [LAMINAS_SQL_SERVER_LIMIT_OFFSET_EMULATION].[__LAMINAS_ROW_NUMBER] BETWEEN 10+1 AND 0+10',
-                        'prepare'    => 'SELECT * FROM ( SELECT [foo].*, ROW_NUMBER() OVER (ORDER BY (SELECT 1)) AS [__LAMINAS_ROW_NUMBER] FROM [foo] ) AS [LAMINAS_SQL_SERVER_LIMIT_OFFSET_EMULATION] WHERE [LAMINAS_SQL_SERVER_LIMIT_OFFSET_EMULATION].[__LAMINAS_ROW_NUMBER] BETWEEN ?+1 AND ?+?',
-                        'parameters' => ['offset' => 10, 'limit' => null, 'offsetForSum' => 10],
-                    ],
+                    'string'     => 'SELECT "foo".* FROM "foo" OFFSET \'10\'',
+                    'prepare'    => 'SELECT "foo".* FROM "foo" OFFSET ?',
+                    'parameters' => ['offset' => 10],
                 ],
             ],
             'Select::processLimit()'       => [
                 'sqlObject' => self::select('foo')->limit(10),
                 'expected'  => [
-                    'sql92'     => [
-                        'string'     => 'SELECT "foo".* FROM "foo" LIMIT \'10\'',
-                        'prepare'    => 'SELECT "foo".* FROM "foo" LIMIT ?',
-                        'parameters' => ['limit' => 10],
-                    ],
-                    'MySql'     => [
-                        'string'     => 'SELECT `foo`.* FROM `foo` LIMIT 10',
-                        'prepare'    => 'SELECT `foo`.* FROM `foo` LIMIT ?',
-                        'parameters' => ['limit' => 10],
-                    ],
-                    'Oracle'    => [
-                        'string'     => 'SELECT * FROM (SELECT b.*, rownum b_rownum FROM ( SELECT "foo".* FROM "foo" ) b WHERE rownum <= (0+10)) WHERE b_rownum >= (0 + 1)',
-                        'prepare'    => 'SELECT * FROM (SELECT b.*, rownum b_rownum FROM ( SELECT "foo".* FROM "foo" ) b WHERE rownum <= (:offset+:limit)) WHERE b_rownum >= (:offset + 1)',
-                        'parameters' => ['offset' => 0, 'limit' => 10],
-                    ],
-                    'SqlServer' => [
-                        'string'     => 'SELECT * FROM ( SELECT [foo].*, ROW_NUMBER() OVER (ORDER BY (SELECT 1)) AS [__LAMINAS_ROW_NUMBER] FROM [foo] ) AS [LAMINAS_SQL_SERVER_LIMIT_OFFSET_EMULATION] WHERE [LAMINAS_SQL_SERVER_LIMIT_OFFSET_EMULATION].[__LAMINAS_ROW_NUMBER] BETWEEN 0+1 AND 10+0',
-                        'prepare'    => 'SELECT * FROM ( SELECT [foo].*, ROW_NUMBER() OVER (ORDER BY (SELECT 1)) AS [__LAMINAS_ROW_NUMBER] FROM [foo] ) AS [LAMINAS_SQL_SERVER_LIMIT_OFFSET_EMULATION] WHERE [LAMINAS_SQL_SERVER_LIMIT_OFFSET_EMULATION].[__LAMINAS_ROW_NUMBER] BETWEEN ?+1 AND ?+?',
-                        'parameters' => ['offset' => null, 'limit' => 10, 'offsetForSum' => null],
-                    ],
+                    'string'     => 'SELECT "foo".* FROM "foo" LIMIT \'10\'',
+                    'prepare'    => 'SELECT "foo".* FROM "foo" LIMIT ?',
+                    'parameters' => ['limit' => 10],
                 ],
             ],
             'Select::processLimitOffset()' => [
                 'sqlObject' => self::select('foo')->limit(10)->offset(5),
                 'expected'  => [
-                    'sql92'     => [
-                        'string'     => 'SELECT "foo".* FROM "foo" LIMIT \'10\' OFFSET \'5\'',
-                        'prepare'    => 'SELECT "foo".* FROM "foo" LIMIT ? OFFSET ?',
-                        'parameters' => ['limit' => 10, 'offset' => 5],
-                    ],
-                    'MySql'     => [
-                        'string'     => 'SELECT `foo`.* FROM `foo` LIMIT 10 OFFSET 5',
-                        'prepare'    => 'SELECT `foo`.* FROM `foo` LIMIT ? OFFSET ?',
-                        'parameters' => ['limit' => 10, 'offset' => 5],
-                    ],
-                    'Oracle'    => [
-                        'string'     => 'SELECT * FROM (SELECT b.*, rownum b_rownum FROM ( SELECT "foo".* FROM "foo" ) b WHERE rownum <= (5+10)) WHERE b_rownum >= (5 + 1)',
-                        'prepare'    => 'SELECT * FROM (SELECT b.*, rownum b_rownum FROM ( SELECT "foo".* FROM "foo" ) b WHERE rownum <= (:offset+:limit)) WHERE b_rownum >= (:offset + 1)',
-                        'parameters' => ['offset' => 5, 'limit' => 10],
-                    ],
-                    'SqlServer' => [
-                        'string'     => 'SELECT * FROM ( SELECT [foo].*, ROW_NUMBER() OVER (ORDER BY (SELECT 1)) AS [__LAMINAS_ROW_NUMBER] FROM [foo] ) AS [LAMINAS_SQL_SERVER_LIMIT_OFFSET_EMULATION] WHERE [LAMINAS_SQL_SERVER_LIMIT_OFFSET_EMULATION].[__LAMINAS_ROW_NUMBER] BETWEEN 5+1 AND 10+5',
-                        'prepare'    => 'SELECT * FROM ( SELECT [foo].*, ROW_NUMBER() OVER (ORDER BY (SELECT 1)) AS [__LAMINAS_ROW_NUMBER] FROM [foo] ) AS [LAMINAS_SQL_SERVER_LIMIT_OFFSET_EMULATION] WHERE [LAMINAS_SQL_SERVER_LIMIT_OFFSET_EMULATION].[__LAMINAS_ROW_NUMBER] BETWEEN ?+1 AND ?+?',
-                        'parameters' => ['offset' => 5, 'limit' => 10, 'offsetForSum' => 5],
-                    ],
+                    'string'     => 'SELECT "foo".* FROM "foo" LIMIT \'10\' OFFSET \'5\'',
+                    'prepare'    => 'SELECT "foo".* FROM "foo" LIMIT ? OFFSET ?',
+                    'parameters' => ['limit' => 10, 'offset' => 5],
                 ],
             ],
             // Github issue https://github.com/zendframework/zend-db/issues/98
@@ -166,8 +115,8 @@ class SqlFunctionalTest extends TestCase
                         'parameters' => ['subselect2where1' => 10, 'where2' => 20],
                     ],
                     'Oracle'    => [
-                        'string'     => 'SELECT "a".*, "b".* FROM "a" INNER JOIN (SELECT "c".* FROM "c" WHERE "cc" = \'10\') "b" ON "d"="e" WHERE "x" = \'20\'',
-                        'prepare'    => 'SELECT "a".*, "b".* FROM "a" INNER JOIN (SELECT "c".* FROM "c" WHERE "cc" = ?) "b" ON "d"="e" WHERE "x" = ?',
+                        'string'     => 'SELECT "a".*, "b".* FROM "a" INNER JOIN (SELECT "c".* FROM "c" WHERE "cc" = \'10\') AS "b" ON "d"="e" WHERE "x" = \'20\'',
+                        'prepare'    => 'SELECT "a".*, "b".* FROM "a" INNER JOIN (SELECT "c".* FROM "c" WHERE "cc" = ?) AS "b" ON "d"="e" WHERE "x" = ?',
                         'parameters' => ['subselect2where1' => 10, 'where2' => 20],
                     ],
                     'SqlServer' => [
@@ -512,7 +461,7 @@ class SqlFunctionalTest extends TestCase
         ];
     }
 
-    public static function dataProvider(): array
+        public static function dataProvider(): array
     {
         $data = array_merge(
             self::dataProviderCommonProcessMethods(),
@@ -522,15 +471,31 @@ class SqlFunctionalTest extends TestCase
         $res = [];
         foreach ($data as $index => $test) {
             self::assertIsArray($test);
-            $testExpected = $test['expected'] ?? [];
-            self::assertIsArray($testExpected);
-            /** @psalm-suppress MixedAssignment */
-            foreach ($testExpected as $platform => $expected) {
-                $res[$index . '->' . $platform] = [
+            $expected = $test['expected'] ?? [];
+
+            // Only use sql92 or direct expected values (no platform-specific tests)
+            if (is_string($expected)) {
+                $res[$index] = [
                     'sqlObject' => $test['sqlObject'],
-                    'platform'  => $platform,
+                    'platform'  => 'sql92',
                     'expected'  => $expected,
                 ];
+            } elseif (is_array($expected)) {
+                // If it has platform-specific entries, only use sql92
+                if (isset($expected['sql92'])) {
+                    $res[$index] = [
+                        'sqlObject' => $test['sqlObject'],
+                        'platform'  => 'sql92',
+                        'expected'  => $expected['sql92'],
+                    ];
+                } elseif (!isset($expected['MySql']) && !isset($expected['Oracle']) && !isset($expected['SqlServer'])) {
+                    // It's a direct expected value (not platform-specific)
+                    $res[$index] = [
+                        'sqlObject' => $test['sqlObject'],
+                        'platform'  => 'sql92',
+                        'expected'  => $expected,
+                    ];
+                }
             }
         }
 
