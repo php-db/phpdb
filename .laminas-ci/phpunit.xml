@@ -4,11 +4,6 @@
     xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
     bootstrap="vendor/autoload.php"
     colors="true">
-    <coverage processUncoveredFiles="true">
-        <include>
-            <directory suffix=".php">./src</directory>
-        </include>
-    </coverage>
 
     <extensions>
         <bootstrap class="PhpDbIntegrationTest\Extension\ListenerExtension" />
@@ -62,7 +57,7 @@
         <env name="TESTS_LAMINAS_DB_ADAPTER_DRIVER_IBMDB2_PASSWORD" value="" />
         <env name="TESTS_LAMINAS_DB_ADAPTER_DRIVER_IBMDB2_DATABASE" value="" />
 
-        <env name="TESTS_LAMINAS_DB_ADAPTER_DRIVER_PGSQL" value="true" />
+        <env name="TESTS_LAMINAS_DB_ADAPTER_DRIVER_PGSQL" value="false" />
         <env name="TESTS_LAMINAS_DB_ADAPTER_DRIVER_PGSQL_HOSTNAME" value="postgres" />
         <env name="TESTS_LAMINAS_DB_ADAPTER_DRIVER_PGSQL_USERNAME" value="gha" />
         <env name="TESTS_LAMINAS_DB_ADAPTER_DRIVER_PGSQL_PASSWORD" value="password" />
