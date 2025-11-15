@@ -2,26 +2,27 @@
 
 namespace PhpDbTest\Adapter\Driver\Pdo;
 
-use PhpDb\Adapter\Driver\Pdo\Connection;
-use PhpDb\Adapter\Driver\Pdo\Pdo;
+use PhpDb\Adapter\Driver\Pdo\AbstractPdoConnection;
 use PhpDb\Adapter\Driver\Pdo\Result;
 use PhpDb\Adapter\Driver\Pdo\Statement;
+use PhpDbTest\Adapter\Driver\Pdo\TestAsset\TestConnection;
+use PhpDbTest\Adapter\Driver\Pdo\TestAsset\TestPdo;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 
-#[CoversMethod(Connection::class, 'getCurrentSchema')]
-#[CoversMethod(Connection::class, 'setResource')]
-#[CoversMethod(Connection::class, 'getResource')]
-#[CoversMethod(Connection::class, 'connect')]
-#[CoversMethod(Connection::class, 'isConnected')]
-#[CoversMethod(Connection::class, 'disconnect')]
-#[CoversMethod(Connection::class, 'beginTransaction')]
-#[CoversMethod(Connection::class, 'commit')]
-#[CoversMethod(Connection::class, 'rollback')]
-#[CoversMethod(Connection::class, 'execute')]
-#[CoversMethod(Connection::class, 'prepare')]
-#[CoversMethod(Connection::class, 'getLastGeneratedValue')]
+#[CoversMethod(AbstractPdoConnection::class, 'getCurrentSchema')]
+#[CoversMethod(AbstractPdoConnection::class, 'setResource')]
+#[CoversMethod(AbstractPdoConnection::class, 'getResource')]
+#[CoversMethod(AbstractPdoConnection::class, 'connect')]
+#[CoversMethod(AbstractPdoConnection::class, 'isConnected')]
+#[CoversMethod(AbstractPdoConnection::class, 'disconnect')]
+#[CoversMethod(AbstractPdoConnection::class, 'beginTransaction')]
+#[CoversMethod(AbstractPdoConnection::class, 'commit')]
+#[CoversMethod(AbstractPdoConnection::class, 'rollback')]
+#[CoversMethod(AbstractPdoConnection::class, 'execute')]
+#[CoversMethod(AbstractPdoConnection::class, 'prepare')]
+#[CoversMethod(AbstractPdoConnection::class, 'getLastGeneratedValue')]
 #[Group('integration')]
 #[Group('integration-pdo')]
 class ConnectionIntegrationTest extends TestCase
@@ -31,14 +32,14 @@ class ConnectionIntegrationTest extends TestCase
 
     public function testGetCurrentSchema(): void
     {
-        $connection = new Connection($this->variables);
+        $connection = new TestConnection($this->variables);
         self::assertIsString($connection->getCurrentSchema());
     }
 
     public function testSetResource(): void
     {
         $resource   = new TestAsset\SqliteMemoryPdo();
-        $connection = new Connection([]);
+        $connection = new TestConnection([]);
         self::assertSame($connection, $connection->setResource($resource));
 
         $connection->disconnect();
@@ -48,7 +49,7 @@ class ConnectionIntegrationTest extends TestCase
 
     public function testGetResource(): void
     {
-        $connection = new Connection($this->variables);
+        $connection = new TestConnection($this->variables);
         $connection->connect();
         self::assertInstanceOf('PDO', $connection->getResource());
 
@@ -58,7 +59,7 @@ class ConnectionIntegrationTest extends TestCase
 
     public function testConnect(): void
     {
-        $connection = new Connection($this->variables);
+        $connection = new TestConnection($this->variables);
         self::assertSame($connection, $connection->connect());
         self::assertTrue($connection->isConnected());
 
@@ -68,7 +69,7 @@ class ConnectionIntegrationTest extends TestCase
 
     public function testIsConnected(): void
     {
-        $connection = new Connection($this->variables);
+        $connection = new TestConnection($this->variables);
         self::assertFalse($connection->isConnected());
         self::assertSame($connection, $connection->connect());
         self::assertTrue($connection->isConnected());
@@ -79,7 +80,7 @@ class ConnectionIntegrationTest extends TestCase
 
     public function testDisconnect(): void
     {
-        $connection = new Connection($this->variables);
+        $connection = new TestConnection($this->variables);
         $connection->connect();
         self::assertTrue($connection->isConnected());
         $connection->disconnect();
@@ -121,7 +122,7 @@ class ConnectionIntegrationTest extends TestCase
 
     public function testExecute(): void
     {
-        $sqlsrv     = new Pdo($this->variables);
+        $sqlsrv     = new TestPdo($this->variables);
         $connection = $sqlsrv->getConnection();
 
         $result = $connection->execute('SELECT \'foo\'');
@@ -130,7 +131,7 @@ class ConnectionIntegrationTest extends TestCase
 
     public function testPrepare(): void
     {
-        $sqlsrv     = new Pdo($this->variables);
+        $sqlsrv     = new TestPdo($this->variables);
         $connection = $sqlsrv->getConnection();
 
         $statement = $connection->prepare('SELECT \'foo\'');
@@ -148,7 +149,7 @@ class ConnectionIntegrationTest extends TestCase
     public function testConnectReturnsConnectionWhenResourceSet(): void
     {
         $resource   = new TestAsset\SqliteMemoryPdo();
-        $connection = new Connection([]);
+        $connection = new TestConnection([]);
         $connection->setResource($resource);
         self::assertSame($connection, $connection->connect());
 
