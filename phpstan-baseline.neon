@@ -151,12 +151,6 @@ parameters:
 			path: src/Sql/Combine.php
 
 		-
-			message: '#^Attribute class PhpDb\\Sql\\Ddl\\Constraint\\Override does not exist\.$#'
-			identifier: attribute.notFound
-			count: 1
-			path: src/Sql/Ddl/Index/Index.php
-
-		-
 			message: '#^Return type \(PhpDb\\Sql\\ExpressionPart\) of method PhpDb\\Sql\\ExpressionData\:\:current\(\) should be compatible with return type \(PhpDb\\Sql\\ExpressionData\) of method Iterator\<TKey of \(int\|string\),PhpDb\\Sql\\ExpressionData\>\:\:current\(\)$#'
 			identifier: method.childReturnType
 			count: 1
