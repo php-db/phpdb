@@ -1,11 +1,22 @@
 <?php
 
-// rector.php
+declare(strict_types=1);
+
 use Rector\Config\RectorConfig;
+use Rector\Php83\Rector\ClassConst\AddTypeToConstRector;
+use Rector\Php83\Rector\ClassMethod\AddOverrideAttributeToOverriddenMethodsRector;
+use Rector\TypeDeclaration\Rector\StmtsAwareInterface\IncreaseDeclareStrictTypesRector;
 
 return RectorConfig::configure()
-    ->withPaths([__DIR__ . '/src', __DIR__ . '/test'])
-    ->withTypeCoverageLevel(PHP_INT_MAX)      // Apply ALL type coverage rules
-    ->withDeadCodeLevel(PHP_INT_MAX)          // Apply ALL dead code rules
-    ->withCodeQualityLevel(PHP_INT_MAX)       // Apply ALL code quality rules
-    ->withCodingStyleLevel(PHP_INT_MAX);
+                   ->withPaths([
+                       __DIR__ . '/src',
+                       __DIR__ . '/test',
+                   ])
+                   ->withRules([
+                       IncreaseDeclareStrictTypesRector::class,
+                       AddTypeToConstRector::class,
+                       AddOverrideAttributeToOverriddenMethodsRector::class,
+                   ])
+                   ->withPreparedSets(
+                       codeQuality: true
+                   );
