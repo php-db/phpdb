@@ -14,7 +14,6 @@ final class StatementIntegrationTest extends TestCase
 {
     protected Statement $statement;
 
-    /** @var MockObject */
     protected PDOStatement|MockObject $pdoStatementMock;
 
     /**

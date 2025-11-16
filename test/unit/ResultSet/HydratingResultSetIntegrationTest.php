@@ -3,6 +3,7 @@
 namespace PhpDbTest\ResultSet;
 
 use ArrayIterator;
+use Exception;
 use PhpDb\ResultSet\HydratingResultSet;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
@@ -10,6 +11,9 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(HydratingResultSet::class, 'current')]
 class HydratingResultSetIntegrationTest extends TestCase
 {
+    /**
+     * @throws Exception
+     */
     public function testCurrentWillReturnBufferedRow(): void
     {
         $hydratingRs = new HydratingResultSet();

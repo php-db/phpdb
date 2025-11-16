@@ -14,16 +14,11 @@ abstract class AbstractLengthColumn extends Column
 
     protected ?int $length = null;
 
-    /**
-     * {@inheritDoc}
-     *
-     * @param int $length
-     */
     public function __construct(
         string $name,
         ?int $length = null,
-        $nullable = false,
-        $default = null,
+        bool $nullable = false,
+        mixed $default = null,
         array $options = []
     ) {
         $this->setLength($length);

@@ -6,14 +6,12 @@ use PhpDb\Sql;
 
 final class UpdateDecorator extends Sql\Update implements Sql\Platform\PlatformDecoratorInterface
 {
-    /** @var object|null */
-    public $subject;
+    public object|null $subject;
 
     /**
-     * @param null|object $subject
      * @return $this Provides a fluent interface
      */
-    public function setSubject($subject): UpdateDecorator
+    public function setSubject(?object $subject): UpdateDecorator
     {
         $this->subject = $subject;
         return $this;

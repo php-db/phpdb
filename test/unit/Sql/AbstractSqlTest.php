@@ -203,6 +203,7 @@ final class AbstractSqlTest extends TestCase
     public function testResolveColumnValueWithNull(): void
     {
         $method = new ReflectionMethod($this->abstractSql, 'resolveColumnValue');
+        /** @noinspection PhpExpressionResultUnusedInspection */
         $method->setAccessible(true);
 
         $result = $method->invoke(
@@ -224,6 +225,7 @@ final class AbstractSqlTest extends TestCase
     {
         $select = new Select('foo');
         $method = new ReflectionMethod($this->abstractSql, 'resolveColumnValue');
+        /** @noinspection PhpExpressionResultUnusedInspection */
         $method->setAccessible(true);
 
         $result = $method->invoke(
@@ -246,6 +248,7 @@ final class AbstractSqlTest extends TestCase
     public function testResolveColumnValueWithArrayAndFromTable(): void
     {
         $method = new ReflectionMethod($this->abstractSql, 'resolveColumnValue');
+        /** @noinspection PhpExpressionResultUnusedInspection */
         $method->setAccessible(true);
 
         $result = $method->invoke(
@@ -272,6 +275,7 @@ final class AbstractSqlTest extends TestCase
     {
         $table  = new TableIdentifier('users', 'public');
         $method = new ReflectionMethod($this->abstractSql, 'resolveTable');
+        /** @noinspection PhpExpressionResultUnusedInspection */
         $method->setAccessible(true);
 
         $result = $method->invoke(
@@ -293,6 +297,7 @@ final class AbstractSqlTest extends TestCase
     {
         $select = new Select('foo');
         $method = new ReflectionMethod($this->abstractSql, 'resolveTable');
+        /** @noinspection PhpExpressionResultUnusedInspection */
         $method->setAccessible(true);
 
         $result = $method->invoke(
@@ -317,6 +322,7 @@ final class AbstractSqlTest extends TestCase
         $select->where(['id' => 5]);
 
         $method = new ReflectionMethod($this->abstractSql, 'processSubSelect');
+        /** @noinspection PhpExpressionResultUnusedInspection */
         $method->setAccessible(true);
 
         $parameterContainer = new ParameterContainer();
@@ -340,6 +346,7 @@ final class AbstractSqlTest extends TestCase
         $select = new Select('foo');
 
         $method = new ReflectionMethod($this->abstractSql, 'processSubSelect');
+        /** @noinspection PhpExpressionResultUnusedInspection */
         $method->setAccessible(true);
 
         $result = $method->invoke(

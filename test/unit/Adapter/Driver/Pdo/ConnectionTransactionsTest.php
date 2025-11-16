@@ -13,7 +13,7 @@ use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Tests for {@see \PhpDb\Adapter\Driver\Pdo\AbstractPdoConnection} transaction support
+ * Tests for {@see AbstractPdoConnection} transaction support
  */
 #[CoversClass(AbstractPdoConnection::class)]
 #[CoversClass(AbstractConnection::class)]
@@ -23,7 +23,6 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(AbstractPdoConnection::class, 'rollback()')]
 final class ConnectionTransactionsTest extends TestCase
 {
-    /** @var Wrapper */
     protected Wrapper|ConnectionWrapper $wrapper;
 
     /**

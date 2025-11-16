@@ -11,9 +11,6 @@ use PhpDb\Adapter\StatementContainerInterface;
 
 abstract class AbstractPreparableSql extends AbstractSql implements PreparableSqlInterface
 {
-    /**
-     * {@inheritDoc}
-     */
     #[Override]
     public function prepareStatement(
         AdapterInterface $adapter,

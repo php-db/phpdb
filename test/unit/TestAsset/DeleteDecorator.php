@@ -6,14 +6,12 @@ use PhpDb\Sql;
 
 final class DeleteDecorator extends Sql\Delete implements Sql\Platform\PlatformDecoratorInterface
 {
-    /** @var object|null */
-    public $subject;
+    public object|null $subject;
 
     /**
-     * @param null|object $subject
      * @return $this Provides a fluent interface
      */
-    public function setSubject($subject): DeleteDecorator
+    public function setSubject(?object $subject): DeleteDecorator
     {
         $this->subject = $subject;
         return $this;

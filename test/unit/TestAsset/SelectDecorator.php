@@ -7,10 +7,9 @@ use PhpDb\Sql;
 final class SelectDecorator extends Sql\Select implements Sql\Platform\PlatformDecoratorInterface
 {
     /**
-     * @param null|object $subject
      * @return $this Provides a fluent interface
      */
-    public function setSubject($subject): SelectDecorator
+    public function setSubject(?object $subject): SelectDecorator
     {
         $this->subject = $subject;
         return $this;

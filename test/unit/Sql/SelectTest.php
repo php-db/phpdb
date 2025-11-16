@@ -33,6 +33,7 @@ use PHPUnit\Framework\Attributes\TestDox;
 use PHPUnit\Framework\TestCase;
 use ReflectionException;
 use ReflectionObject;
+use TypeError;
 
 #[CoversMethod(Select::class, '__construct')]
 #[CoversMethod(Select::class, 'from')]
@@ -458,7 +459,7 @@ final class SelectTest extends TestCase
     #[TestDox(': unit test: Test getRawState() returns information populated via limit()')]
     public function testGetRawStateViaLimit(Select $select): void
     {
-        $limit = $select->getRawState((string) Select::LIMIT);
+        $limit = $select->getRawState(Select::LIMIT);
         self::assertIsNumeric($limit);
         self::assertEquals(5, $limit);
     }
@@ -484,7 +485,7 @@ final class SelectTest extends TestCase
     #[TestDox(': unit test: Test getRawState() returns information populated via offset()')]
     public function testGetRawStateViaOffset(Select $select): void
     {
-        $offset = $select->getRawState((string) Select::OFFSET);
+        $offset = $select->getRawState(Select::OFFSET);
         self::assertIsNumeric($offset);
         self::assertEquals(10, $offset);
     }
@@ -1470,8 +1471,8 @@ final class SelectTest extends TestCase
     {
         $select = new Select();
 
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('$table must be a string, array, or an instance of TableIdentifier');
+        $this->expectException(TypeError::class);
+        /** @noinspection PhpArgumentWithoutNamedIdentifierInspection */
         $select->from(123);
     }
 

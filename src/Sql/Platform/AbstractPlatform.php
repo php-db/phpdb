@@ -13,11 +13,9 @@ use PhpDb\Sql\SqlInterface;
 
 class AbstractPlatform implements PlatformDecoratorInterface, PreparableSqlInterface, SqlInterface
 {
-    /** @var object|null */
-    protected $subject;
+    protected ?object $subject = null;
 
-    /** @var PlatformDecoratorInterface[] */
-    protected $decorators = [];
+    protected array $decorators = [];
 
     /**
      * {@inheritDoc}
@@ -29,24 +27,18 @@ class AbstractPlatform implements PlatformDecoratorInterface, PreparableSqlInter
         return $this;
     }
 
-    /**
-     * @param string                     $type
-     */
-    public function setTypeDecorator($type, PlatformDecoratorInterface $decorator): void
+    public function setTypeDecorator(string $type, PlatformDecoratorInterface $decorator): void
     {
         $this->decorators[$type] = $decorator;
     }
 
-    /**
-     * @param PreparableSqlInterface|SqlInterface $subject
-     * @return PlatformDecoratorInterface|PreparableSqlInterface|SqlInterface
-     */
-    public function getTypeDecorator($subject)
-    {
+    public function getTypeDecorator(
+        PreparableSqlInterface|SqlInterface $subject
+    ): PlatformDecoratorInterface|PreparableSqlInterface|SqlInterface {
         foreach ($this->decorators as $type => $decorator) {
+            /** @phpstan-ignore-next-line instanceof with string class name is valid */
             if ($subject instanceof $type) {
                 $decorator->setSubject($subject);
-
                 return $decorator;
             }
         }
@@ -57,14 +49,12 @@ class AbstractPlatform implements PlatformDecoratorInterface, PreparableSqlInter
     /**
      * @return array|PlatformDecoratorInterface[]
      */
-    public function getDecorators()
+    public function getDecorators(): array
     {
         return $this->decorators;
     }
 
     /**
-     * {@inheritDoc}
-     *
      * @throws Exception\RuntimeException
      */
     public function prepareStatement(
@@ -88,7 +78,7 @@ class AbstractPlatform implements PlatformDecoratorInterface, PreparableSqlInter
      *
      * @throws Exception\RuntimeException
      */
-    public function getSqlString(?PlatformInterface $adapterPlatform = null)
+    public function getSqlString(?PlatformInterface $adapterPlatform = null): string
     {
         if (! $this->subject instanceof SqlInterface) {
             throw new Exception\RuntimeException(

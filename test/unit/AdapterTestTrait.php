@@ -8,6 +8,7 @@ use PhpDb\Adapter\Platform\PlatformInterface;
 use PhpDb\Adapter\Platform\Sql92;
 use PhpDb\ResultSet\ResultSet;
 use PhpDb\ResultSet\ResultSetInterface;
+use PHPUnit\Framework\MockObject\Exception;
 
 /**
  * Helper trait for creating properly mocked Adapter instances in tests
@@ -17,9 +18,10 @@ trait AdapterTestTrait
     /**
      * Creates a mock Adapter with all required dependencies
      *
-     * @param DriverInterface|null $driver Optional mock driver, will create one if not provided
-     * @param PlatformInterface|null $platform Optional mock platform, will create Sql92 if not provided
+     * @param DriverInterface|null    $driver    Optional mock driver, will create one if not provided
+     * @param PlatformInterface|null  $platform  Optional mock platform, will create Sql92 if not provided
      * @param ResultSetInterface|null $resultSet Optional mock result set, will create one if not provided
+     * @throws Exception
      */
     protected function createMockAdapter(
         ?DriverInterface $driver = null,
@@ -39,9 +41,10 @@ trait AdapterTestTrait
     /**
      * Creates a real Adapter instance (not mocked) with all required dependencies
      *
-     * @param DriverInterface|null $driver Optional driver, will create mock if not provided
-     * @param PlatformInterface|null $platform Optional platform, will create Sql92 if not provided
+     * @param DriverInterface|null    $driver    Optional driver, will create mock if not provided
+     * @param PlatformInterface|null  $platform  Optional platform, will create Sql92 if not provided
      * @param ResultSetInterface|null $resultSet Optional result set, will create one if not provided
+     * @throws Exception
      */
     protected function createAdapter(
         ?DriverInterface $driver = null,

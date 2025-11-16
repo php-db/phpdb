@@ -153,7 +153,7 @@ class FeatureSetTest extends TestCase
 
         $reflectionClass    = new ReflectionClass(AbstractTableGateway::class);
         $reflectionProperty = $reflectionClass->getProperty('adapter');
-        /** @psalm-suppress UnusedMethodCall */
+        /** @noinspection PhpExpressionResultUnusedInspection */
         $reflectionProperty->setAccessible(true);
         $reflectionProperty->setValue($tableGatewayMock, $adapterMock);
 

@@ -12,13 +12,13 @@ use PhpDb\Adapter\ParameterContainer;
 use PhpDb\Adapter\StatementContainer;
 use PhpDb\Adapter\StatementContainerInterface;
 use PhpDb\Sql\Combine;
-use PhpDb\Sql\Exception\InvalidArgumentException;
 use PhpDb\Sql\Predicate\Expression;
 use PhpDb\Sql\Select;
 use PhpDbTest\AdapterTestTrait;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use TypeError;
 
 #[CoversMethod(Combine::class, '__construct')]
 #[CoversMethod(Combine::class, 'combine')]
@@ -46,7 +46,7 @@ final class CombineTest extends TestCase
 
     public function testRejectsInvalidStatement(): void
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(TypeError::class);
 
         /** @noinspection PhpParamsInspection */
         $this->combine->combine('foo');

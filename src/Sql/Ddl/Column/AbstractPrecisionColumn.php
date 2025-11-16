@@ -10,18 +10,12 @@ abstract class AbstractPrecisionColumn extends AbstractLengthColumn
 {
     protected ?int $decimal;
 
-    /**
-     * {@inheritDoc}
-     *
-     * @param int|null $decimal
-     * @param int      $digits
-     */
     public function __construct(
         string $name,
         ?int $digits = null,
-        $decimal = null,
-        $nullable = false,
-        $default = null,
+        ?int $decimal = null,
+        bool $nullable = false,
+        mixed $default = null,
         array $options = []
     ) {
         $this->setDecimal($decimal);
@@ -32,7 +26,7 @@ abstract class AbstractPrecisionColumn extends AbstractLengthColumn
     /**
      * @return $this
      */
-    public function setDigits(?int $digits)
+    public function setDigits(?int $digits): static
     {
         return $this->setLength($digits);
     }
@@ -45,17 +39,14 @@ abstract class AbstractPrecisionColumn extends AbstractLengthColumn
     /**
      * @return $this Provides a fluent interface
      */
-    public function setDecimal(?int $decimal)
+    public function setDecimal(?int $decimal): static
     {
         $this->decimal = $decimal;
 
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getDecimal()
+    public function getDecimal(): ?int
     {
         return $this->decimal;
     }

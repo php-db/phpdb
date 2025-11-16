@@ -310,10 +310,7 @@ class SqlFunctionalTest extends TestCase
     protected function resolveAdapter(string $platform): Adapter\Adapter
     {
         // Only sql92 platform is supported after abstraction
-        $platform = match ($platform) {
-            'sql92' => new TestAsset\TrustingSql92Platform(),
-            default => new TestAsset\TrustingSql92Platform(), // Default to sql92 for any other value
-        };
+        $platform = new TestAsset\TrustingSql92Platform();
 
         $mockDriver = $this->getMockBuilder(DriverInterface::class)->getMock();
         $mockDriver->expects($this->any())
