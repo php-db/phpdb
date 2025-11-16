@@ -11,23 +11,11 @@ use PhpDb\Sql\ExpressionInterface;
  */
 interface ColumnInterface extends ExpressionInterface
 {
-    /**
-     * @return string
-     */
-    public function getName();
+    public function getName(): string;
 
-    /**
-     * @return bool
-     */
-    public function isNullable();
+    public function isNullable(): bool;
 
-    /**
-     * @return null|string|int
-     */
-    public function getDefault();
+    public function getDefault(): string|int|null;
 
-    /**
-     * @return array
-     */
-    public function getOptions();
+    public function getOptions(): array;
 }

@@ -28,13 +28,12 @@ class Column implements ColumnInterface
 
     protected string $type = 'INTEGER';
 
-    /**
-     * @param null|string $name
-     * @param bool        $nullable
-     * @param mixed|null  $default
-     */
-    public function __construct($name = null, $nullable = false, $default = null, array $options = [])
-    {
+    public function __construct(
+        string $name = '',
+        bool $nullable = false,
+        mixed $default = null,
+        array $options = []
+    ) {
         $this->setName($name);
         $this->setNullable($nullable);
         $this->setDefault($default);
@@ -42,12 +41,11 @@ class Column implements ColumnInterface
     }
 
     /**
-     * @param  string $name
      * @return $this Provides a fluent interface
      */
-    public function setName($name): static
+    public function setName(string $name): static
     {
-        $this->name = (string) $name;
+        $this->name = $name;
         return $this;
     }
 
@@ -57,12 +55,11 @@ class Column implements ColumnInterface
     }
 
     /**
-     * @param  bool $nullable
      * @return $this Provides a fluent interface
      */
-    public function setNullable($nullable): static
+    public function setNullable(bool $nullable): static
     {
-        $this->isNullable = (bool) $nullable;
+        $this->isNullable = $nullable;
         return $this;
     }
 
@@ -95,11 +92,9 @@ class Column implements ColumnInterface
     }
 
     /**
-     * @param  string $name
-     * @param  string|boolean $value
      * @return $this Provides a fluent interface
      */
-    public function setOption($name, $value): static
+    public function setOption(string $name, bool|string $value): static
     {
         $this->options[$name] = $value;
         return $this;

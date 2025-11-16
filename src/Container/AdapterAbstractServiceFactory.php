@@ -8,7 +8,9 @@ use Laminas\ServiceManager\Factory\AbstractFactoryInterface;
 use PhpDb\Adapter\Adapter;
 use PhpDb\Adapter\AdapterInterface;
 use PhpDb\ResultSet\ResultSetInterface;
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
 use function is_array;
 
@@ -32,8 +34,7 @@ class AdapterAbstractServiceFactory implements AbstractFactoryInterface
             return false;
         }
 
-        return isset($config[$requestedName])
-            && is_array($config[$requestedName])
+        return is_array($config[$requestedName])
             && ! empty($config[$requestedName]);
     }
 
@@ -61,6 +62,8 @@ class AdapterAbstractServiceFactory implements AbstractFactoryInterface
     /**
      * Get db configuration, if any
      *
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      * @return array
      */
     protected function getConfig(ContainerInterface $container)

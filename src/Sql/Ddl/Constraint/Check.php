@@ -13,8 +13,7 @@ use PhpDb\Sql\ExpressionPart;
 
 class Check extends AbstractConstraint
 {
-    /** @var string|ExpressionInterface */
-    protected $expression;
+    protected string|ExpressionInterface $expression;
 
     /**
      * {}

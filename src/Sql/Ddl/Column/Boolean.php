@@ -18,7 +18,8 @@ class Boolean extends Column
     /**
      * {@inheritDoc}
      */
-    #[Override] public function setNullable($nullable): static
+    #[Override]
+    public function setNullable(bool $nullable): static
     {
         return parent::setNullable(false);
     }

@@ -30,8 +30,7 @@ use function vsprintf;
 
 abstract class AbstractSql implements SqlInterface
 {
-    /** @var object|null */
-    public $subject;
+    public ?object $subject = null;
 
     /**
      * Specifications for Sql String generation
@@ -90,11 +89,9 @@ abstract class AbstractSql implements SqlInterface
     /**
      * Render table with alias in from/join parts
      *
-     * @param string $alias
-     * @return string
      * @todo move TableIdentifier concatenation here
      */
-    protected function renderTable(string $table, $alias = null)
+    protected function renderTable(string $table, ?string $alias = null): string
     {
         return $table . ($alias ? ' AS ' . $alias : '');
     }
@@ -161,8 +158,6 @@ abstract class AbstractSql implements SqlInterface
         ?DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null,
     ): ?string {
-        $argument->getValue();
-
         return match ($argument->getType()) {
             ArgumentType::Select => $this->processExpressionOrSelect(
                 $argument,
@@ -225,12 +220,9 @@ abstract class AbstractSql implements SqlInterface
     }
 
     /**
-     * @param string|array $specifications
-     * @param array        $parameters
      * @throws Exception\RuntimeException
-     * @return string
      */
-    protected function createSqlFromSpecificationAndParameters($specifications, $parameters)
+    protected function createSqlFromSpecificationAndParameters(array|string $specifications, array $parameters): string
     {
         if (is_string($specifications)) {
             return vsprintf($specifications, $parameters);
@@ -293,15 +285,12 @@ abstract class AbstractSql implements SqlInterface
         return vsprintf($specificationString, $topParameters);
     }
 
-    /**
-     * @return string
-     */
     protected function processSubSelect(
         Select $subselect,
         PlatformInterface $platform,
         ?DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null
-    ) {
+    ): string {
         if ($this instanceof PlatformDecoratorInterface) {
             $decorator = clone $this;
             $decorator->setSubject($subselect);
@@ -400,17 +389,13 @@ abstract class AbstractSql implements SqlInterface
         return [$joinSpecArgArray];
     }
 
-    /**
-     * @param null|array|ExpressionInterface|Select $column
-     * @return string
-     */
     protected function resolveColumnValue(
-        $column,
+        Select|array|string|int|bool|ExpressionInterface|null $column,
         PlatformInterface $platform,
         ?DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null,
         ?string $namedParameterPrefix = null
-    ) {
+    ): string {
         $namedParameterPrefix = $namedParameterPrefix
             ? $this->processInfo['paramPrefix'] . $namedParameterPrefix
             : $namedParameterPrefix;
@@ -445,16 +430,12 @@ abstract class AbstractSql implements SqlInterface
             : $platform->quoteValue($column);
     }
 
-    /**
-     * @param string|TableIdentifier|Select $table
-     * @return string
-     */
     protected function resolveTable(
-        $table,
+        Select|string|TableIdentifier|null $table,
         PlatformInterface $platform,
         ?DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null
-    ) {
+    ): string|array|null {
         $schema = null;
         if ($table instanceof TableIdentifier) {
             [$table, $schema] = $table->getTableAndSchema();
@@ -475,10 +456,8 @@ abstract class AbstractSql implements SqlInterface
 
     /**
      * Copy variables from the subject into the local properties
-     *
-     * @return void
      */
-    protected function localizeVariables()
+    protected function localizeVariables(): void
     {
         if (! $this instanceof PlatformDecoratorInterface) {
             return;
