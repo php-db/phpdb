@@ -9,11 +9,7 @@ class InvalidConnectionParametersException extends RuntimeException implements E
     /** @var int */
     protected $parameters;
 
-    /**
-     * @param string $message
-     * @param int $parameters
-     */
-    public function __construct($message, $parameters)
+    public function __construct(string $message, int $parameters)
     {
         parent::__construct($message);
         $this->parameters = $parameters;

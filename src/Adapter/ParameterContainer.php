@@ -1,12 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDb\Adapter;
 
 use ArrayAccess;
 use ArrayIterator;
 use Countable;
 use Iterator;
-// phpcs:ignore SlevomatCodingStandard.Namespaces.UnusedUses.UnusedUse
 use Override;
 use ReturnTypeWillChange;
 
@@ -35,29 +36,29 @@ class ParameterContainer implements Iterator, ArrayAccess, Countable
     /**
      * Data
      *
-     * @var array
+     * @var array<string|int, mixed>
      */
-    protected $data = [];
+    protected array $data = [];
 
-    /** @var array */
-    protected $positions = [];
+    /** @var array<int, string> */
+    protected array $positions = [];
 
     /**
      * Errata
      *
-     * @var array
+     * @var array<string, mixed>
      */
-    protected $errata = [];
+    protected array $errata = [];
 
     /**
      * Max length
      *
-     * @var array
+     * @var array<string, mixed>
      */
-    protected $maxLength = [];
+    protected array $maxLength = [];
 
-    /** @var array */
-    protected $nameMapping = [];
+    /** @var array<string, string> */
+    protected array $nameMapping = [];
 
     /**
      * Constructor
@@ -72,11 +73,11 @@ class ParameterContainer implements Iterator, ArrayAccess, Countable
     /**
      * Offset exists
      *
-     * @param  string $name
-     * @return bool
+     * @param  string|int $name
      */
-    #[Override] #[ReturnTypeWillChange]
-    public function offsetExists($name)
+    #[Override]
+    #[ReturnTypeWillChange]
+    public function offsetExists(mixed $name): bool
     {
         return isset($this->data[$name]);
     }
@@ -84,12 +85,11 @@ class ParameterContainer implements Iterator, ArrayAccess, Countable
     /**
      * Offset get
      *
-     * @param  string $name
-     * @return mixed
+     * @param  string|int $name
      */
     #[Override]
     #[ReturnTypeWillChange]
-    public function offsetGet($name)
+    public function offsetGet(mixed $name): mixed
     {
         if (isset($this->data[$name])) {
             return $this->data[$name];
@@ -106,12 +106,7 @@ class ParameterContainer implements Iterator, ArrayAccess, Countable
         return null;
     }
 
-    /**
-     * @param string|int $name
-     * @param string|int $from
-     * @return void
-     */
-    public function offsetSetReference($name, $from)
+    public function offsetSetReference(string|int $name, string|int $from): void
     {
         $this->data[$name] = &$this->data[$from];
     }
@@ -119,15 +114,12 @@ class ParameterContainer implements Iterator, ArrayAccess, Countable
     /**
      * Offset set
      *
-     * @param string|int $name
-     * @param mixed $value
-     * @param mixed $errata
-     * @param mixed $maxLength
+     * @param string|int|null $name
      * @throws Exception\InvalidArgumentException
      */
     #[Override]
     #[ReturnTypeWillChange]
-    public function offsetSet($name, $value, $errata = null, $maxLength = null)
+    public function offsetSet(mixed $name, mixed $value, mixed $errata = null, mixed $maxLength = null): void
     {
         $position = false;
 
@@ -177,18 +169,15 @@ class ParameterContainer implements Iterator, ArrayAccess, Countable
 
     /**
      * Offset unset
-     *
-     * @param  string $name
-     * @return $this Provides a fluent interface
      */
-    #[Override] #[ReturnTypeWillChange]
-    public function offsetUnset($name)
+    #[Override]
+    #[ReturnTypeWillChange]
+    public function offsetUnset(mixed $name): void
     {
         if (is_int($name) && isset($this->positions[$name])) {
             $name = $this->positions[$name];
         }
         unset($this->data[$name]);
-        return $this;
     }
 
     /**
@@ -196,7 +185,7 @@ class ParameterContainer implements Iterator, ArrayAccess, Countable
      *
      * @return $this Provides a fluent interface
      */
-    public function setFromArray(array $data)
+    public function setFromArray(array $data): static
     {
         foreach ($data as $n => $v) {
             $this->offsetSet($n, $v);
@@ -206,11 +195,8 @@ class ParameterContainer implements Iterator, ArrayAccess, Countable
 
     /**
      * Offset set max length
-     *
-     * @param string|int $name
-     * @param mixed $maxLength
      */
-    public function offsetSetMaxLength($name, $maxLength): void
+    public function offsetSetMaxLength(string|int $name, mixed $maxLength): void
     {
         if (is_int($name)) {
             $name = $this->positions[$name];
@@ -221,11 +207,9 @@ class ParameterContainer implements Iterator, ArrayAccess, Countable
     /**
      * Offset get max length
      *
-     * @param  string|int $name
      * @throws Exception\InvalidArgumentException
-     * @return mixed
      */
-    public function offsetGetMaxLength($name)
+    public function offsetGetMaxLength(string|int $name): mixed
     {
         if (is_int($name)) {
             $name = $this->positions[$name];
@@ -238,11 +222,8 @@ class ParameterContainer implements Iterator, ArrayAccess, Countable
 
     /**
      * Offset has max length
-     *
-     * @param  string|int $name
-     * @return bool
      */
-    public function offsetHasMaxLength($name)
+    public function offsetHasMaxLength(string|int $name): bool
     {
         if (is_int($name)) {
             $name = $this->positions[$name];
@@ -253,11 +234,9 @@ class ParameterContainer implements Iterator, ArrayAccess, Countable
     /**
      * Offset unset max length
      *
-     * @param string|int $name
      * @throws Exception\InvalidArgumentException
-     * @return void
      */
-    public function offsetUnsetMaxLength($name)
+    public function offsetUnsetMaxLength(string|int $name): void
     {
         if (is_int($name)) {
             $name = $this->positions[$name];
@@ -271,20 +250,17 @@ class ParameterContainer implements Iterator, ArrayAccess, Countable
     /**
      * Get max length iterator
      *
-     * @return ArrayIterator
+     * @return ArrayIterator<string, mixed>
      */
-    public function getMaxLengthIterator()
+    public function getMaxLengthIterator(): ArrayIterator
     {
         return new ArrayIterator($this->maxLength);
     }
 
     /**
      * Offset set errata
-     *
-     * @param string|int $name
-     * @param mixed $errata
      */
-    public function offsetSetErrata($name, $errata): void
+    public function offsetSetErrata(string|int $name, mixed $errata): void
     {
         if (is_int($name)) {
             $name = $this->positions[$name];
@@ -295,11 +271,9 @@ class ParameterContainer implements Iterator, ArrayAccess, Countable
     /**
      * Offset get errata
      *
-     * @param  string|int $name
      * @throws Exception\InvalidArgumentException
-     * @return mixed
      */
-    public function offsetGetErrata($name)
+    public function offsetGetErrata(string|int $name): mixed
     {
         if (is_int($name)) {
             $name = $this->positions[$name];
@@ -312,11 +286,8 @@ class ParameterContainer implements Iterator, ArrayAccess, Countable
 
     /**
      * Offset has errata
-     *
-     * @param  string|int $name
-     * @return bool
      */
-    public function offsetHasErrata($name)
+    public function offsetHasErrata(string|int $name): bool
     {
         if (is_int($name)) {
             $name = $this->positions[$name];
@@ -327,11 +298,9 @@ class ParameterContainer implements Iterator, ArrayAccess, Countable
     /**
      * Offset unset errata
      *
-     * @param string|int $name
      * @throws Exception\InvalidArgumentException
-     * @return void
      */
-    public function offsetUnsetErrata($name)
+    public function offsetUnsetErrata(string|int $name): void
     {
         if (is_int($name)) {
             $name = $this->positions[$name];
@@ -345,9 +314,9 @@ class ParameterContainer implements Iterator, ArrayAccess, Countable
     /**
      * Get errata iterator
      *
-     * @return ArrayIterator
+     * @return ArrayIterator<string, mixed>
      */
-    public function getErrataIterator()
+    public function getErrataIterator(): ArrayIterator
     {
         return new ArrayIterator($this->errata);
     }
@@ -355,9 +324,9 @@ class ParameterContainer implements Iterator, ArrayAccess, Countable
     /**
      * getNamedArray
      *
-     * @return array
+     * @return array<string|int, mixed>
      */
-    public function getNamedArray()
+    public function getNamedArray(): array
     {
         return $this->data;
     }
@@ -365,64 +334,59 @@ class ParameterContainer implements Iterator, ArrayAccess, Countable
     /**
      * getNamedArray
      *
-     * @return array
+     * @return array<int, mixed>
      */
-    public function getPositionalArray()
+    public function getPositionalArray(): array
     {
         return array_values($this->data);
     }
 
     /**
      * count
-     *
-     * @return int
      */
-    #[Override] #[ReturnTypeWillChange]
-    public function count()
+    #[Override]
+    #[ReturnTypeWillChange]
+    public function count(): int
     {
         return count($this->data);
     }
 
     /**
      * Current
-     *
-     * @return mixed
      */
-    #[Override] #[ReturnTypeWillChange]
-    public function current()
+    #[Override]
+    #[ReturnTypeWillChange]
+    public function current(): mixed
     {
         return current($this->data);
     }
 
     /**
      * Next
-     *
-     * @return mixed
      */
-    #[Override] #[ReturnTypeWillChange]
-    public function next()
+    #[Override]
+    #[ReturnTypeWillChange]
+    public function next(): void
     {
-        return next($this->data);
+        next($this->data);
     }
 
     /**
      * Key
-     *
-     * @return int|string|null
      */
-    #[Override] #[ReturnTypeWillChange]
-    public function key()
+    #[Override]
+    #[ReturnTypeWillChange]
+    public function key(): int|string|null
     {
         return key($this->data);
     }
 
     /**
      * Valid
-     *
-     * @return bool
      */
-    #[Override] #[ReturnTypeWillChange]
-    public function valid()
+    #[Override]
+    #[ReturnTypeWillChange]
+    public function valid(): bool
     {
         return current($this->data) !== false;
     }
@@ -430,8 +394,9 @@ class ParameterContainer implements Iterator, ArrayAccess, Countable
     /**
      * Rewind
      */
-    #[Override] #[ReturnTypeWillChange]
-    public function rewind()
+    #[Override]
+    #[ReturnTypeWillChange]
+    public function rewind(): void
     {
         reset($this->data);
     }

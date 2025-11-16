@@ -18,14 +18,11 @@ class CreateTable extends AbstractSql implements SqlInterface
 
     public const TABLE = 'table';
 
-    /** @var Column\ColumnInterface[] */
-    protected $columns = [];
+    protected array $columns = [];
 
-    /** @var string[] */
-    protected $constraints = [];
+    protected array $constraints = [];
 
-    /** @var bool */
-    protected $isTemporary = false;
+    protected bool $isTemporary = false;
 
     /**
      * {@inheritDoc}
@@ -46,42 +43,32 @@ class CreateTable extends AbstractSql implements SqlInterface
         'statementEnd'    => '%1$s',
     ];
 
-    /** @var string */
-    protected $table = '';
+    protected string|TableIdentifier $table = '';
 
-    /**
-     * @param string|TableIdentifier $table
-     * @param bool   $isTemporary
-     */
-    public function __construct($table = '', $isTemporary = false)
+    public function __construct(string|TableIdentifier $table = '', bool $isTemporary = false)
     {
         $this->table = $table;
         $this->setTemporary($isTemporary);
     }
 
     /**
-     * @param  bool $temporary
      * @return $this Provides a fluent interface
      */
-    public function setTemporary($temporary): static
+    public function setTemporary(string|int|bool $temporary): static
     {
         $this->isTemporary = (bool) $temporary;
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function isTemporary()
+    public function isTemporary(): bool
     {
         return $this->isTemporary;
     }
 
     /**
-     * @param  string $name
      * @return $this Provides a fluent interface
      */
-    public function setTable($name): static
+    public function setTable(string $name): static
     {
         $this->table = $name;
         return $this;
@@ -106,11 +93,10 @@ class CreateTable extends AbstractSql implements SqlInterface
     }
 
     /**
-     * @param string|null $key
      * @return ((Column\ColumnInterface|string)[]|Column\ColumnInterface|string)[]|string
      * @psalm-return array<Column\ColumnInterface|array<Column\ColumnInterface|string>|string>|string
      */
-    public function getRawState($key = null): array|string
+    public function getRawState(?string $key = null): array|string
     {
         $rawState = [
             self::COLUMNS     => $this->columns,
@@ -150,10 +136,7 @@ class CreateTable extends AbstractSql implements SqlInterface
         return [$sqls];
     }
 
-    /**
-     * @return array|string
-     */
-    protected function processCombinedby(?PlatformInterface $adapterPlatform = null)
+    protected function processCombinedby(?PlatformInterface $adapterPlatform = null): string|null
     {
         if ($this->constraints && $this->columns) {
             return $this->specifications['combinedBy'];

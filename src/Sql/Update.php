@@ -59,8 +59,7 @@ class Update extends AbstractPreparableSql
 
     protected TableIdentifier|string|array $table = '';
 
-    /** @var bool */
-    protected $emptyWhereProtection = true;
+    protected bool $emptyWhereProtection = true;
 
     protected PriorityList $set;
 
@@ -70,10 +69,8 @@ class Update extends AbstractPreparableSql
 
     /**
      * Constructor
-     *
-     * @param  null|string|TableIdentifier $table
      */
-    public function __construct($table = null)
+    public function __construct(string|TableIdentifier|null $table = null)
     {
         if ($table) {
             $this->table($table);
@@ -100,11 +97,11 @@ class Update extends AbstractPreparableSql
      * Set key/value pairs to update
      *
      * @param  array $values Associative array of key values
-     * @param  string $flag One of the VALUES_* constants
-     * @return $this Provides a fluent interface
+     * @param string $flag   One of the VALUES_* constants
      * @throws Exception\InvalidArgumentException
+     * @return $this Provides a fluent interface
      */
-    public function set(array $values, $flag = self::VALUES_SET): static
+    public function set(array $values, string|int $flag = self::VALUES_SET): static
     {
         if ($flag === self::VALUES_SET) {
             $this->set->clear();
@@ -125,13 +122,13 @@ class Update extends AbstractPreparableSql
     /**
      * Create where clause
      *
-     * @param Where|Closure|string|array|PredicateInterface $predicate
-     * @param  string $combination One of the OP_* constants from Predicate\PredicateSet
-     * @return $this Provides a fluent interface
      * @throws Exception\InvalidArgumentException
+     * @return $this Provides a fluent interface
      */
-    public function where($predicate, $combination = Predicate\PredicateSet::OP_AND): static
-    {
+    public function where(
+        PredicateInterface|array|Closure|string|Where $predicate,
+        string $combination = Predicate\PredicateSet::OP_AND
+    ): static {
         if ($predicate instanceof Where) {
             $this->where = $predicate;
         } else {
@@ -144,24 +141,17 @@ class Update extends AbstractPreparableSql
     /**
      * Create join clause
      *
-     * @param  string|array $name
-     * @param  string $on
-     * @param  string $type one of the JOIN_* constants
-     * @return $this Provides a fluent interface
      * @throws Exception\InvalidArgumentException
+     * @return $this Provides a fluent interface
      */
-    public function join($name, $on, $type = Join::JOIN_INNER): static
+    public function join(array|string|TableIdentifier $name, string $on, string $type = Join::JOIN_INNER): static
     {
         $this->joins->join($name, $on, [], $type);
 
         return $this;
     }
 
-    /**
-     * @param null|string $key
-     * @return mixed|array<string, mixed>
-     */
-    public function getRawState($key = null)
+    public function getRawState(?string $key = null): mixed
     {
         $rawState = [
             'emptyWhereProtection' => $this->emptyWhereProtection,
@@ -256,10 +246,8 @@ class Update extends AbstractPreparableSql
     /**
      * Variable overloading
      * Proxies to "where" only
-     *
-     * @return string|null|Where
      */
-    public function __get(string $name): mixed
+    public function __get(string $name): ?Where
     {
         if (strtolower($name) === 'where') {
             return $this->where;

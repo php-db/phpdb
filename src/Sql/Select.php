@@ -5,14 +5,10 @@ declare(strict_types=1);
 namespace PhpDb\Sql;
 
 use Closure;
-use Override;
 use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\ParameterContainer;
 use PhpDb\Adapter\Platform\PlatformInterface;
-use PhpDb\Sql\Having;
-use PhpDb\Sql\Join;
 use PhpDb\Sql\Predicate\PredicateInterface;
-use PhpDb\Sql\Where;
 
 use function array_key_exists;
 use function count;
@@ -22,7 +18,6 @@ use function gettype;
 use function is_array;
 use function is_int;
 use function is_numeric;
-use function is_object;
 use function is_scalar;
 use function is_string;
 use function key;
@@ -148,43 +143,32 @@ class Select extends AbstractPreparableSql
 
     protected bool $prefixColumnsWithTable = true;
 
-    /** @var null|string|array|TableIdentifier */
-    protected $table;
+    protected string|array|TableIdentifier|null $table = null;
 
-    /** @var null|string|Expression */
-    protected $quantifier;
+    protected string|ExpressionInterface|null $quantifier = null;
 
     protected array $columns = [self::SQL_STAR];
 
-    /** @var Join[] */
     protected Join $joins;
 
     protected Where $where;
 
-    /** @var array */
-    protected $order = [];
+    protected array $order = [];
 
-    /** @var null|array */
-    protected $group;
+    protected array|null $group = null;
 
-    /** @var null|string|array */
     protected Having $having;
 
-    /** @var int|null */
-    protected $limit;
+    protected string|int|null $limit = null;
 
-    /** @var int|null */
-    protected $offset;
+    protected string|int|null $offset = null;
 
-    /** @var array */
-    protected $combine = [];
+    protected array $combine = [];
 
     /**
      * Constructor
-     *
-     * @param  null|string|array|TableIdentifier $table
      */
-    public function __construct($table = null)
+    public function __construct(array|string|TableIdentifier|null $table = null)
     {
         if ($table) {
             $this->from($table);
@@ -199,21 +183,14 @@ class Select extends AbstractPreparableSql
     /**
      * Create from clause
      *
-     * @param  string|array|TableIdentifier $table
-     * @return $this Provides a fluent interface
      * @throws Exception\InvalidArgumentException
+     * @return $this Provides a fluent interface
      */
-    public function from($table): static
+    public function from(array|string|TableIdentifier $table): static
     {
         if ($this->tableReadOnly) {
             throw new Exception\InvalidArgumentException(
                 'Since this object was created with a table and/or schema in the constructor, it is read only.'
-            );
-        }
-
-        if (! is_string($table) && ! is_array($table) && ! $table instanceof TableIdentifier) {
-            throw new Exception\InvalidArgumentException(
-                '$table must be a string, array, or an instance of TableIdentifier'
             );
         }
 
@@ -229,58 +206,47 @@ class Select extends AbstractPreparableSql
 
     /**
      * @param string|Expression $quantifier DISTINCT|ALL
-     * @return $this Provides a fluent interface
      * @throws Exception\InvalidArgumentException
+     * @return $this Provides a fluent interface
      */
-    public function quantifier($quantifier): static
+    public function quantifier(ExpressionInterface|string $quantifier): static
     {
-        if (! is_string($quantifier) && ! $quantifier instanceof ExpressionInterface) {
-            throw new Exception\InvalidArgumentException(
-                'Quantifier must be one of DISTINCT, ALL, or some platform specific object implementing '
-                . 'ExpressionInterface'
-            );
-        }
-
         $this->quantifier = $quantifier;
         return $this;
     }
 
     /**
      * Specify columns from which to select
-     *
      * Possible valid states:
-     *
      *   array(*)
-     *
      *   array(value, ...)
      *     value can be strings or Expression objects
-     *
      *   array(string => value, ...)
      *     key string will be use as alias,
      *     value can be string or Expression objects
      *
-     * @param  bool  $prefixColumnsWithTable
      * @return $this Provides a fluent interface
      */
-    public function columns(array $columns, $prefixColumnsWithTable = true): static
+    public function columns(array $columns, bool $prefixColumnsWithTable = true): static
     {
         $this->columns                = $columns;
-        $this->prefixColumnsWithTable = (bool) $prefixColumnsWithTable;
+        $this->prefixColumnsWithTable = $prefixColumnsWithTable;
         return $this;
     }
 
     /**
      * Create join clause
      *
-     * @param  string|array|TableIdentifier $name
-     * @param  string|PredicateInterface $on
-     * @param  string|array $columns
-     * @param  string $type one of the JOIN_* constants
-     * @return $this Provides a fluent interface
+     * @param string                    $type one of the JOIN_* constants
      * @throws Exception\InvalidArgumentException
+     * @return $this Provides a fluent interface
      */
-    public function join($name, $on, $columns = self::SQL_STAR, $type = self::JOIN_INNER): static
-    {
+    public function join(
+        array|string|TableIdentifier $name,
+        PredicateInterface|string $on,
+        array|string $columns = self::SQL_STAR,
+        string $type = self::JOIN_INNER
+    ): static {
         $this->joins->join($name, $on, $columns, $type);
 
         return $this;
@@ -289,13 +255,14 @@ class Select extends AbstractPreparableSql
     /**
      * Create where clause
      *
-     * @param Closure|string|array|PredicateInterface $predicate
-     * @param string $combination One of the OP_* constants from Predicate\PredicateSet
+     * @param string                                  $combination One of the OP_* constants from Predicate\PredicateSet
      * @throws Exception\InvalidArgumentException
      * @return $this Provides a fluent interface
      */
-    public function where($predicate, string $combination = Predicate\PredicateSet::OP_AND): self
-    {
+    public function where(
+        PredicateInterface|array|string|Closure $predicate,
+        string $combination = Predicate\PredicateSet::OP_AND
+    ): self {
         if ($predicate instanceof Where) {
             $this->where = $predicate;
         } else {
@@ -306,10 +273,9 @@ class Select extends AbstractPreparableSql
     }
 
     /**
-     * @param mixed $group
      * @return $this Provides a fluent interface
      */
-    public function group($group): static
+    public function group(mixed $group): static
     {
         if (is_array($group)) {
             foreach ($group as $o) {
@@ -325,12 +291,13 @@ class Select extends AbstractPreparableSql
     /**
      * Create having clause
      *
-     * @param Having|Closure|string|array|PredicateInterface $predicate
-     * @param  string $combination One of the OP_* constants from Predicate\PredicateSet
+     * @param string $combination One of the OP_* constants from Predicate\PredicateSet
      * @return $this Provides a fluent interface
      */
-    public function having($predicate, $combination = Predicate\PredicateSet::OP_AND): static
-    {
+    public function having(
+        Having|PredicateInterface|array|Closure|string $predicate,
+        string $combination = Predicate\PredicateSet::OP_AND
+    ): static {
         if ($predicate instanceof Having) {
             $this->having = $predicate;
         } else {
@@ -341,10 +308,9 @@ class Select extends AbstractPreparableSql
     }
 
     /**
-     * @param string|array|Expression $order
      * @return $this Provides a fluent interface
      */
-    public function order($order): static
+    public function order(ExpressionInterface|array|string $order): static
     {
         if (is_string($order)) {
             $order = str_contains($order, ',') ? preg_split('#,\s+#', $order) : (array) $order;
@@ -364,17 +330,16 @@ class Select extends AbstractPreparableSql
     }
 
     /**
-     * @param int|string $limit
-     * @return $this Provides a fluent interface
      * @throws Exception\InvalidArgumentException
+     * @return $this Provides a fluent interface
      */
-    public function limit($limit): static
+    public function limit(int|string $limit): static
     {
         if (! is_numeric($limit)) {
             throw new Exception\InvalidArgumentException(sprintf(
                 '%s expects parameter to be numeric, "%s" given',
                 __METHOD__,
-                is_object($limit) ? $limit::class : gettype($limit)
+                gettype($limit)
             ));
         }
 
@@ -383,17 +348,16 @@ class Select extends AbstractPreparableSql
     }
 
     /**
-     * @param int|string $offset
-     * @return $this Provides a fluent interface
      * @throws Exception\InvalidArgumentException
+     * @return $this Provides a fluent interface
      */
-    public function offset($offset): static
+    public function offset(int|string $offset): static
     {
         if (! is_numeric($offset)) {
             throw new Exception\InvalidArgumentException(sprintf(
                 '%s expects parameter to be numeric, "%s" given',
                 __METHOD__,
-                is_object($offset) ? $offset::class : gettype($offset)
+                gettype($offset)
             ));
         }
 
@@ -402,12 +366,10 @@ class Select extends AbstractPreparableSql
     }
 
     /**
-     * @param string $type
-     * @param string $modifier
-     * @return $this Provides a fluent interface
      * @throws Exception\InvalidArgumentException
+     * @return $this Provides a fluent interface
      */
-    public function combine(Select $select, $type = self::COMBINE_UNION, $modifier = ''): static
+    public function combine(Select $select, string $type = self::COMBINE_UNION, string $modifier = ''): static
     {
         if ($this->combine !== []) {
             throw new Exception\InvalidArgumentException(
@@ -424,11 +386,10 @@ class Select extends AbstractPreparableSql
     }
 
     /**
-     * @param string $part
-     * @return $this Provides a fluent interface
      * @throws Exception\InvalidArgumentException
+     * @return $this Provides a fluent interface
      */
-    public function reset($part): static
+    public function reset(string $part): static
     {
         switch ($part) {
             case self::TABLE:
@@ -479,7 +440,7 @@ class Select extends AbstractPreparableSql
      * @param string|array<string, array> $specification
      * @return $this Provides a fluent interface
      */
-    public function setSpecification(string $index, $specification): static
+    public function setSpecification(string $index, array|string $specification): static
     {
         if (! method_exists($this, 'process' . $index)) {
             throw new Exception\InvalidArgumentException('Not a valid specification name.');
@@ -489,11 +450,7 @@ class Select extends AbstractPreparableSql
         return $this;
     }
 
-    /**
-     * @param null|string $key
-     * @return array<string, mixed>|mixed
-     */
-    public function getRawState($key = null)
+    public function getRawState(?string $key = null): mixed
     {
         $rawState = [
             self::TABLE      => $this->table,
@@ -520,11 +477,8 @@ class Select extends AbstractPreparableSql
     }
 
     /** @return string[]|null */
-    protected function processStatementStart(
-        PlatformInterface $platform,
-        ?DriverInterface $driver = null,
-        ?ParameterContainer $parameterContainer = null
-    ): ?array {
+    protected function processStatementStart(): ?array
+    {
         if ($this->combine !== []) {
             return ['('];
         }
@@ -533,11 +487,8 @@ class Select extends AbstractPreparableSql
     }
 
     /** @return string[]|null */
-    protected function processStatementEnd(
-        PlatformInterface $platform,
-        ?DriverInterface $driver = null,
-        ?ParameterContainer $parameterContainer = null
-    ): ?array {
+    protected function processStatementEnd(): ?array
+    {
         if ($this->combine !== []) {
             return [')'];
         }
@@ -793,7 +744,7 @@ class Select extends AbstractPreparableSql
      *
      * @throws Exception\InvalidArgumentException
      */
-    public function __get(string $name): mixed
+    public function __get(string $name): Where|Join|Having
     {
         return match (strtolower($name)) {
             'where' => $this->where,
@@ -818,11 +769,11 @@ class Select extends AbstractPreparableSql
     }
 
     /**
-     * @param string|TableIdentifier|Select $table
+     * @return array{0: string, 1: string}
+     * @phpstan-return array{0: string, 1: string}
      */
-    #[Override]
     protected function resolveTable(
-        $table,
+        Select|string|array|TableIdentifier|null $table,
         PlatformInterface $platform,
         ?DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null

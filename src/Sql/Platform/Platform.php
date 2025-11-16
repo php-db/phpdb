@@ -12,7 +12,6 @@ use PhpDb\Sql\PreparableSqlInterface;
 use PhpDb\Sql\SqlInterface;
 
 use function is_a;
-use function sprintf;
 use function str_replace;
 use function strtolower;
 
@@ -46,23 +45,19 @@ class Platform extends AbstractPlatform
         // $this->decorators['sqlite']    = $sqlitePlatform->getDecorators();
     }
 
-    /**
-     * @param string                             $type
-     * @param AdapterInterface|PlatformInterface $adapterOrPlatform
-     */
-    public function setTypeDecorator($type, PlatformDecoratorInterface $decorator, $adapterOrPlatform = null): void
-    {
+    public function setTypeDecorator(
+        string $type,
+        PlatformDecoratorInterface $decorator,
+        AdapterInterface|PlatformInterface|null $adapterOrPlatform = null
+    ): void {
         $platformName                           = $this->resolvePlatformName($adapterOrPlatform);
         $this->decorators[$platformName][$type] = $decorator;
     }
 
-    /**
-     * @param PreparableSqlInterface|SqlInterface     $subject
-     * @param AdapterInterface|PlatformInterface|null $adapterOrPlatform
-     * @return PlatformDecoratorInterface|PreparableSqlInterface|SqlInterface
-     */
-    public function getTypeDecorator($subject, $adapterOrPlatform = null)
-    {
+    public function getTypeDecorator(
+        PreparableSqlInterface|SqlInterface $subject,
+        AdapterInterface|PlatformInterface|null $adapterOrPlatform = null
+    ): PlatformDecoratorInterface|PreparableSqlInterface|SqlInterface {
         $platformName = $this->resolvePlatformName($adapterOrPlatform);
 
         if (isset($this->decorators[$platformName])) {
@@ -77,10 +72,7 @@ class Platform extends AbstractPlatform
         return $subject;
     }
 
-    /**
-     * @return PlatformDecoratorInterface
-     */
-    public function getDecorators()
+    public function getDecorators(): array
     {
         $platformName = $this->resolvePlatformName($this->getDefaultPlatform());
         return $this->decorators[$platformName];
@@ -112,7 +104,7 @@ class Platform extends AbstractPlatform
      *
      * @throws Exception\RuntimeException
      */
-    public function getSqlString(?PlatformInterface $adapterPlatform = null)
+    public function getSqlString(?PlatformInterface $adapterPlatform = null): string
     {
         if (! $this->subject instanceof SqlInterface) {
             throw new Exception\RuntimeException(
@@ -126,23 +118,18 @@ class Platform extends AbstractPlatform
         return $this->getTypeDecorator($this->subject, $adapterPlatform)->getSqlString($adapterPlatform);
     }
 
-    /**
-     * @param AdapterInterface|PlatformInterface $adapterOrPlatform
-     */
-    protected function resolvePlatformName($adapterOrPlatform): string
+    protected function resolvePlatformName(PlatformInterface|AdapterInterface|null $adapterOrPlatform): string
     {
         $platformName = $this->resolvePlatform($adapterOrPlatform)->getName();
         return str_replace([' ', '_'], '', strtolower($platformName));
     }
 
     /**
-     * @param null|PlatformInterface|AdapterInterface $adapterOrPlatform
-     * @return PlatformInterface
      * @throws Exception\InvalidArgumentException
      */
-    protected function resolvePlatform($adapterOrPlatform)
+    protected function resolvePlatform(PlatformInterface|AdapterInterface|null $adapterOrPlatform): PlatformInterface
     {
-        if (! $adapterOrPlatform) {
+        if ($adapterOrPlatform === null) {
             return $this->getDefaultPlatform();
         }
 
@@ -150,27 +137,11 @@ class Platform extends AbstractPlatform
             return $adapterOrPlatform->getPlatform();
         }
 
-        if ($adapterOrPlatform instanceof PlatformInterface) {
-            return $adapterOrPlatform;
-        }
-
-        throw new Exception\InvalidArgumentException(sprintf(
-            '$adapterOrPlatform should be null, %s, or %s',
-            AdapterInterface::class,
-            PlatformInterface::class
-        ));
+        return $adapterOrPlatform;
     }
 
-    /**
-     * @return PlatformInterface
-     * @throws Exception\RuntimeException
-     */
-    protected function getDefaultPlatform()
+    protected function getDefaultPlatform(): PlatformInterface
     {
-        if (! $this->defaultPlatform) {
-            throw new Exception\RuntimeException('$this->defaultPlatform was not set');
-        }
-
         return $this->defaultPlatform;
     }
 }

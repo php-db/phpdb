@@ -48,17 +48,14 @@ class Insert extends AbstractPreparableSql
 
     protected TableIdentifier|string|array $table = '';
 
-    /** @var string[] */
-    protected $columns = [];
+    protected array $columns = [];
 
     protected null|array|Select $select = null;
 
     /**
      * Constructor
-     *
-     * @param  null|string|TableIdentifier $table
      */
-    public function __construct($table = null)
+    public function __construct(string|TableIdentifier|null $table = null)
     {
         if ($table) {
             $this->into($table);

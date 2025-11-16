@@ -9,8 +9,8 @@ use PhpDb\Adapter\StatementContainerInterface;
 
 interface PreparableSqlInterface
 {
-    /**
-     * @return void
-     */
-    public function prepareStatement(AdapterInterface $adapter, StatementContainerInterface $statementContainer);
+    public function prepareStatement(
+        AdapterInterface $adapter,
+        StatementContainerInterface $statementContainer
+    ): StatementContainerInterface;
 }

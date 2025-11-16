@@ -10,31 +10,23 @@ use function str_replace;
 
 class Literal implements ExpressionInterface
 {
-    /** @var string */
-    protected $literal = '';
+    protected string $literal = '';
 
-    /**
-     * @param string $literal
-     */
-    public function __construct($literal = '')
+    public function __construct(string $literal = '')
     {
         $this->literal = $literal;
     }
 
     /**
-     * @param string $literal
      * @return $this Provides a fluent interface
      */
-    public function setLiteral($literal): static
+    public function setLiteral(string $literal): static
     {
         $this->literal = $literal;
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getLiteral()
+    public function getLiteral(): string
     {
         return $this->literal;
     }

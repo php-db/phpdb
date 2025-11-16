@@ -40,20 +40,16 @@ class Delete extends AbstractPreparableSql
 
     protected TableIdentifier|string|array $table = '';
 
-    /** @var bool */
-    protected $emptyWhereProtection = true;
+    protected bool $emptyWhereProtection = true;
 
-    /** @var array */
-    protected $set = [];
+    protected array $set = [];
 
     protected Where $where;
 
     /**
      * Constructor
-     *
-     * @param  null|string|TableIdentifier $table
      */
-    public function __construct($table = null)
+    public function __construct(string|TableIdentifier|null $table = null)
     {
         if ($table) {
             $this->from($table);
@@ -73,10 +69,7 @@ class Delete extends AbstractPreparableSql
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getRawState(?string $key = null)
+    public function getRawState(?string $key = null): mixed
     {
         $rawState = [
             'emptyWhereProtection' => $this->emptyWhereProtection,
@@ -90,12 +83,13 @@ class Delete extends AbstractPreparableSql
     /**
      * Create where clause
      *
-     * @param Where|Closure|string|array|PredicateInterface $predicate
-     * @param  string $combination One of the OP_* constants from Predicate\PredicateSet
+     * @param string $combination One of the OP_* constants from Predicate\PredicateSet
      * @return $this Provides a fluent interface
      */
-    public function where($predicate, $combination = Predicate\PredicateSet::OP_AND): static
-    {
+    public function where(
+        PredicateInterface|array|Closure|string|Where $predicate,
+        string $combination = Predicate\PredicateSet::OP_AND
+    ): static {
         if ($predicate instanceof Where) {
             $this->where = $predicate;
         } else {
@@ -133,12 +127,9 @@ class Delete extends AbstractPreparableSql
 
     /**
      * Property overloading
-     *
      * Overloads "where" only.
-     *
-     * @return Where|null
      */
-    public function __get(string $name): mixed
+    public function __get(string $name): ?Where
     {
         if (strtolower($name) === 'where') {
             return $this->where;

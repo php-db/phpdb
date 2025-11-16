@@ -12,9 +12,6 @@ use PhpDb\Adapter\Platform\PlatformInterface;
 use function array_key_exists;
 use function array_keys;
 use function array_merge;
-use function gettype;
-use function is_array;
-use function is_object;
 use function sprintf;
 use function strtoupper;
 use function trim;
@@ -42,13 +39,11 @@ class Combine extends AbstractPreparableSql
     /** @var Select[][] */
     private array $combine = [];
 
-    /**
-     * @param Select|array|null $select
-     * @param string            $type
-     * @param string            $modifier
-     */
-    public function __construct($select = null, $type = self::COMBINE_UNION, $modifier = '')
-    {
+    public function __construct(
+        Select|array|null $select = null,
+        string $type = self::COMBINE_UNION,
+        string $modifier = ''
+    ) {
         if ($select) {
             $this->combine($select, $type, $modifier);
         }
@@ -57,13 +52,10 @@ class Combine extends AbstractPreparableSql
     /**
      * Create combine clause
      *
-     * @param Select|array $select
-     * @param string $type
-     * @param string $modifier
-     * @return $this Provides a fluent interface
      * @throws Exception\InvalidArgumentException
+     * @return $this Provides a fluent interface
      */
-    public function combine($select, $type = self::COMBINE_UNION, $modifier = ''): static
+    public function combine(Select|array $select, string $type = self::COMBINE_UNION, string $modifier = ''): static
     {
         if (is_array($select)) {
             foreach ($select as $combine) {
@@ -81,13 +73,6 @@ class Combine extends AbstractPreparableSql
             return $this;
         }
 
-        if (! $select instanceof Select) {
-            throw new Exception\InvalidArgumentException(sprintf(
-                '$select must be a array or instance of Select, "%s" given',
-                is_object($select) ? $select::class : gettype($select)
-            ));
-        }
-
         $this->combine[] = [
             'select'   => $select,
             'type'     => $type,
@@ -99,11 +84,9 @@ class Combine extends AbstractPreparableSql
     /**
      * Create union clause
      *
-     * @param Select|array $select
-     * @param string       $modifier
      * @return $this
      */
-    public function union($select, $modifier = '')
+    public function union(Select|array $select, string $modifier = ''): static
     {
         return $this->combine($select, self::COMBINE_UNION, $modifier);
     }
@@ -111,11 +94,9 @@ class Combine extends AbstractPreparableSql
     /**
      * Create except clause
      *
-     * @param Select|array $select
-     * @param string       $modifier
      * @return $this
      */
-    public function except($select, $modifier = '')
+    public function except(Select|array $select, string $modifier = ''): static
     {
         return $this->combine($select, self::COMBINE_EXCEPT, $modifier);
     }
@@ -123,11 +104,9 @@ class Combine extends AbstractPreparableSql
     /**
      * Create intersect clause
      *
-     * @param Select|array $select
-     * @param string $modifier
      * @return $this
      */
-    public function intersect($select, $modifier = '')
+    public function intersect(Select|array $select, string $modifier = ''): static
     {
         return $this->combine($select, self::COMBINE_INTERSECT, $modifier);
     }
@@ -193,11 +172,8 @@ class Combine extends AbstractPreparableSql
 
     /**
      * Get raw state
-     *
-     * @param string $key
-     * @return array
      */
-    public function getRawState($key = null)
+    public function getRawState(?string $key = null): mixed
     {
         $rawState = [
             self::COMBINE => $this->combine,

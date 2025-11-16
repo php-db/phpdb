@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace PhpDb\Sql\Ddl\Index;
 
+use Override;
 use PhpDb\Sql\Argument;
 use PhpDb\Sql\ArgumentType;
-use PhpDb\Sql\Ddl\Constraint\Override;
 use PhpDb\Sql\ExpressionData;
 use PhpDb\Sql\ExpressionPart;
 

@@ -151,18 +151,6 @@ parameters:
 			path: src/Sql/Combine.php
 
 		-
-			message: '#^Class PhpDb\\Sql\\Ddl\\Column\\Boolean referenced with incorrect case\: PhpDb\\Sql\\Ddl\\Column\\boolean\.$#'
-			identifier: class.nameCase
-			count: 1
-			path: src/Sql/Ddl/Column/Column.php
-
-		-
-			message: '#^Method PhpDb\\Sql\\Ddl\\CreateTable\:\:processCombinedby\(\) should return array\|string but returns null\.$#'
-			identifier: return.type
-			count: 1
-			path: src/Sql/Ddl/CreateTable.php
-
-		-
 			message: '#^Attribute class PhpDb\\Sql\\Ddl\\Constraint\\Override does not exist\.$#'
 			identifier: attribute.notFound
 			count: 1
@@ -211,32 +199,8 @@ parameters:
 			path: src/Sql/Join.php
 
 		-
-			message: '#^Instanceof between PhpDb\\Sql\\PreparableSqlInterface\|PhpDb\\Sql\\SqlInterface and mixed results in an error\.$#'
-			identifier: instanceof.invalidExprType
-			count: 1
-			path: src/Sql/Platform/AbstractPlatform.php
-
-		-
-			message: '#^Argument of an invalid type PhpDb\\Sql\\Platform\\PlatformDecoratorInterface supplied for foreach, only iterables are supported\.$#'
-			identifier: foreach.nonIterable
-			count: 1
-			path: src/Sql/Platform/Platform.php
-
-		-
 			message: '#^Cannot call method setSubject\(\) on class\-string\|object\.$#'
 			identifier: method.nonObject
-			count: 1
-			path: src/Sql/Platform/Platform.php
-
-		-
-			message: '#^Negated boolean expression is always false\.$#'
-			identifier: booleanNot.alwaysFalse
-			count: 1
-			path: src/Sql/Platform/Platform.php
-
-		-
-			message: '#^Return type \(PhpDb\\Sql\\Platform\\PlatformDecoratorInterface\) of method PhpDb\\Sql\\Platform\\Platform\:\:getDecorators\(\) should be compatible with return type \(array\<PhpDb\\Sql\\Platform\\PlatformDecoratorInterface\>\) of method PhpDb\\Sql\\Platform\\AbstractPlatform\:\:getDecorators\(\)$#'
-			identifier: method.childReturnType
 			count: 1
 			path: src/Sql/Platform/Platform.php
 
@@ -245,24 +209,6 @@ parameters:
 			identifier: function.alreadyNarrowedType
 			count: 1
 			path: src/Sql/Predicate/PredicateSet.php
-
-		-
-			message: '#^PHPDoc tag @var for property PhpDb\\Sql\\Select\:\:\$having with type array\|string\|null is incompatible with native type PhpDb\\Sql\\Having\.$#'
-			identifier: property.phpDocType
-			count: 1
-			path: src/Sql/Select.php
-
-		-
-			message: '#^PHPDoc tag @var for property PhpDb\\Sql\\Select\:\:\$joins with type array\<PhpDb\\Sql\\Join\> is incompatible with native type PhpDb\\Sql\\Join\.$#'
-			identifier: property.phpDocType
-			count: 1
-			path: src/Sql/Select.php
-
-		-
-			message: '#^Return type \(array\) of method PhpDb\\Sql\\Select\:\:resolveTable\(\) should be compatible with return type \(string\) of method PhpDb\\Sql\\AbstractSql\:\:resolveTable\(\)$#'
-			identifier: method.childReturnType
-			count: 1
-			path: src/Sql/Select.php
 
 		-
 			message: '#^Class PhpDb\\Adapter\\Driver\\Pdo\\Pdo not found\.$#'
@@ -311,12 +257,6 @@ parameters:
 			identifier: isset.property
 			count: 1
 			path: src/TableGateway/AbstractTableGateway.php
-
-		-
-			message: '#^Method PhpDb\\TableGateway\\Feature\\EventFeature\\TableGatewayEvent\:\:getName\(\) should return string but returns null\.$#'
-			identifier: return.type
-			count: 1
-			path: src/TableGateway/Feature/EventFeature/TableGatewayEvent.php
 
 		-
 			message: '#^Parameter \#1 \$params \(string\) of method PhpDb\\TableGateway\\Feature\\EventFeature\\TableGatewayEvent\:\:setParams\(\) should be compatible with parameter \$params \(array\|object\) of method Laminas\\EventManager\\EventInterface\<object\|string\|null,array\|object\>\:\:setParams\(\)$#'
@@ -667,15 +607,9 @@ parameters:
 			path: test/unit/Adapter/Driver/Pdo/ConnectionTransactionsTest.php
 
 		-
-			message: '#^Property PhpDbTest\\Adapter\\Driver\\Pdo\\ConnectionTransactionsTest\:\:\$wrapper \(PhpDbTest\\Adapter\\Driver\\Pdo\\Wrapper\) does not accept PhpDbTest\\TestAsset\\ConnectionWrapper\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: test/unit/Adapter/Driver/Pdo/ConnectionTransactionsTest.php
-
-		-
 			message: '#^Property PhpDbTest\\Adapter\\Driver\\Pdo\\ConnectionTransactionsTest\:\:\$wrapper has unknown class PhpDbTest\\Adapter\\Driver\\Pdo\\Wrapper as its type\.$#'
 			identifier: class.notFound
-			count: 2
+			count: 1
 			path: test/unit/Adapter/Driver/Pdo/ConnectionTransactionsTest.php
 
 		-
@@ -707,12 +641,6 @@ parameters:
 			identifier: method.childParameterType
 			count: 1
 			path: test/unit/Adapter/Driver/TestAsset/PdoMock.php
-
-		-
-			message: '#^Cannot assign new offset to PhpDb\\Adapter\\ParameterContainer\.$#'
-			identifier: offsetAssign.dimType
-			count: 2
-			path: test/unit/Adapter/ParameterContainerTest.php
 
 		-
 			message: '#^Call to an undefined method PhpDb\\ConfigProvider\:\:getDependencyConfig\(\)\.$#'

@@ -19,11 +19,7 @@ class SequenceFeature extends AbstractFeature
     /** @var int */
     protected $sequenceValue;
 
-    /**
-     * @param string $primaryKeyField
-     * @param string $sequenceName
-     */
-    public function __construct($primaryKeyField, $sequenceName)
+    public function __construct(string $primaryKeyField, string $sequenceName)
     {
         $this->primaryKeyField = $primaryKeyField;
         $this->sequenceName    = $sequenceName;
