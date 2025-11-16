@@ -48,7 +48,7 @@ use ReflectionProperty;
 #[CoversMethod(AbstractSource::class, 'loadTriggerData')]
 final class AbstractSourceTest extends TestCase
 {
-    protected MockObject|AbstractSource $abstractSourceMock;
+    protected MockObject $abstractSourceMock;
 
     protected MockObject $adapterMock;
 
@@ -56,11 +56,12 @@ final class AbstractSourceTest extends TestCase
     protected function setUp(): void
     {
         /** @var AdapterInterface&SchemaAwareInterface&MockObject $adapterMock */
-        $adapterMock              = $this->createMockForIntersectionOfInterfaces([
+        $adapterMock       = $this->createMockForIntersectionOfInterfaces([
             AdapterInterface::class,
             SchemaAwareInterface::class,
         ]);
-        $this->adapterMock        = $adapterMock;
+        $this->adapterMock = $adapterMock;
+
         $this->abstractSourceMock = $this->getMockBuilder(AbstractSource::class)
             ->setConstructorArgs([$this->adapterMock])
             ->onlyMethods([
@@ -909,6 +910,7 @@ final class AbstractSourceTest extends TestCase
         $refProp = new ReflectionProperty($source, 'data');
         /** @noinspection PhpExpressionResultUnusedInspection */
         $refProp->setAccessible(true);
+
         $data = $refProp->getValue($source);
 
         self::assertArrayHasKey('test_key', $data);
@@ -929,6 +931,7 @@ final class AbstractSourceTest extends TestCase
         $refProp = new ReflectionProperty($source, 'data');
         /** @noinspection PhpExpressionResultUnusedInspection */
         $refProp->setAccessible(true);
+
         $data = $refProp->getValue($source);
 
         self::assertArrayHasKey('level1', $data);

@@ -22,7 +22,7 @@ class AbstractPlatform implements PlatformDecoratorInterface, PreparableSqlInter
     /**
      * {@inheritDoc}
      */
-    public function setSubject($subject)
+    public function setSubject($subject): static
     {
         $this->subject = $subject;
 
@@ -31,9 +31,8 @@ class AbstractPlatform implements PlatformDecoratorInterface, PreparableSqlInter
 
     /**
      * @param string                     $type
-     * @return void
      */
-    public function setTypeDecorator($type, PlatformDecoratorInterface $decorator)
+    public function setTypeDecorator($type, PlatformDecoratorInterface $decorator): void
     {
         $this->decorators[$type] = $decorator;
     }
@@ -68,8 +67,10 @@ class AbstractPlatform implements PlatformDecoratorInterface, PreparableSqlInter
      *
      * @throws Exception\RuntimeException
      */
-    public function prepareStatement(AdapterInterface $adapter, StatementContainerInterface $statementContainer)
-    {
+    public function prepareStatement(
+        AdapterInterface $adapter,
+        StatementContainerInterface $statementContainer
+    ): StatementContainerInterface {
         if (! $this->subject instanceof PreparableSqlInterface) {
             throw new Exception\RuntimeException(
                 'The subject does not appear to implement PhpDb\Sql\PreparableSqlInterface, thus calling '

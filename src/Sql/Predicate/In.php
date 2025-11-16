@@ -17,7 +17,9 @@ use function vsprintf;
 class In extends AbstractExpression implements PredicateInterface
 {
     protected ?Argument $identifier = null;
-    protected ?Argument $valueSet   = null;
+
+    protected ?Argument $valueSet = null;
+
     protected string $specification = '%s IN %s';
 
     /**
@@ -30,6 +32,7 @@ class In extends AbstractExpression implements PredicateInterface
         if ($identifier !== null) {
             $this->setIdentifier($identifier);
         }
+
         if ($valueSet !== null) {
             $this->setValueSet($valueSet);
         }

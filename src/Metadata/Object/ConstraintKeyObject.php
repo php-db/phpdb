@@ -6,10 +6,14 @@ namespace PhpDb\Metadata\Object;
 
 class ConstraintKeyObject
 {
-    public const FK_CASCADE     = 'CASCADE';
-    public const FK_SET_NULL    = 'SET NULL';
-    public const FK_NO_ACTION   = 'NO ACTION';
-    public const FK_RESTRICT    = 'RESTRICT';
+    public const FK_CASCADE = 'CASCADE';
+
+    public const FK_SET_NULL = 'SET NULL';
+
+    public const FK_NO_ACTION = 'NO ACTION';
+
+    public const FK_RESTRICT = 'RESTRICT';
+
     public const FK_SET_DEFAULT = 'SET DEFAULT';
 
     /** @var string */
@@ -62,7 +66,7 @@ class ConstraintKeyObject
      * @param  string $columnName
      * @return $this Provides a fluent interface
      */
-    public function setColumnName($columnName)
+    public function setColumnName($columnName): static
     {
         $this->columnName = $columnName;
         return $this;
@@ -84,7 +88,7 @@ class ConstraintKeyObject
      * @param  int $ordinalPosition
      * @return $this Provides a fluent interface
      */
-    public function setOrdinalPosition($ordinalPosition)
+    public function setOrdinalPosition($ordinalPosition): static
     {
         $this->ordinalPosition = $ordinalPosition;
         return $this;
@@ -106,7 +110,7 @@ class ConstraintKeyObject
      * @param  bool $positionInUniqueConstraint
      * @return $this Provides a fluent interface
      */
-    public function setPositionInUniqueConstraint($positionInUniqueConstraint)
+    public function setPositionInUniqueConstraint($positionInUniqueConstraint): static
     {
         $this->positionInUniqueConstraint = $positionInUniqueConstraint;
         return $this;
@@ -128,7 +132,7 @@ class ConstraintKeyObject
      * @param  string $referencedTableSchema
      * @return $this Provides a fluent interface
      */
-    public function setReferencedTableSchema($referencedTableSchema)
+    public function setReferencedTableSchema($referencedTableSchema): static
     {
         $this->referencedTableSchema = $referencedTableSchema;
         return $this;
@@ -150,7 +154,7 @@ class ConstraintKeyObject
      * @param  string $referencedTableName
      * @return $this Provides a fluent interface
      */
-    public function setReferencedTableName($referencedTableName)
+    public function setReferencedTableName($referencedTableName): static
     {
         $this->referencedTableName = $referencedTableName;
         return $this;
@@ -172,7 +176,7 @@ class ConstraintKeyObject
      * @param  string $referencedColumnName
      * @return $this Provides a fluent interface
      */
-    public function setReferencedColumnName($referencedColumnName)
+    public function setReferencedColumnName($referencedColumnName): static
     {
         $this->referencedColumnName = $referencedColumnName;
         return $this;

@@ -16,9 +16,12 @@ use function sprintf;
 
 class ForeignKey extends AbstractConstraint
 {
-    protected string $onDeleteRule        = 'NO ACTION';
-    protected string $onUpdateRule        = 'NO ACTION';
-    protected string $referenceTable      = '';
+    protected string $onDeleteRule = 'NO ACTION';
+
+    protected string $onUpdateRule = 'NO ACTION';
+
+    protected string $referenceTable = '';
+
     protected string $columnSpecification = 'FOREIGN KEY (%s)';
 
     /** @var string[] */

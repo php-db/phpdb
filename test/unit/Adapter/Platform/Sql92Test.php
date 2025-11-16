@@ -79,7 +79,7 @@ final class Sql92Test extends TestCase
         self::assertEquals("'Foo O\\'Bar'", @$this->platform->quoteValue("Foo O'Bar"));
         self::assertEquals(
             '\'\\\'; DELETE FROM some_table; -- \'',
-            @$this->platform->quoteValue('\'; DELETE FROM some_table; -- ')
+            @$this->platform->quoteValue("'; DELETE FROM some_table; -- ")
         );
         self::assertEquals(
             "'\\\\\\'; DELETE FROM some_table; -- '",
@@ -93,7 +93,7 @@ final class Sql92Test extends TestCase
         self::assertEquals("'Foo O\\'Bar'", $this->platform->quoteTrustedValue("Foo O'Bar"));
         self::assertEquals(
             '\'\\\'; DELETE FROM some_table; -- \'',
-            $this->platform->quoteTrustedValue('\'; DELETE FROM some_table; -- ')
+            $this->platform->quoteTrustedValue("'; DELETE FROM some_table; -- ")
         );
 
         //                   '\\\'; DELETE FROM some_table; -- '  <- actual below

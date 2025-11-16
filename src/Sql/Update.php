@@ -10,7 +10,9 @@ use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\Driver\Pdo\Pdo;
 use PhpDb\Adapter\ParameterContainer;
 use PhpDb\Adapter\Platform\PlatformInterface;
+use PhpDb\Sql\Join;
 use PhpDb\Sql\Predicate\PredicateInterface;
+use PhpDb\Sql\TableIdentifier;
 use PhpDb\Sql\Where;
 
 use function array_key_exists;
@@ -30,12 +32,17 @@ class Update extends AbstractPreparableSql
      * @const
      */
     public const SPECIFICATION_UPDATE = 'update';
-    public const SPECIFICATION_SET    = 'set';
-    public const SPECIFICATION_WHERE  = 'where';
-    public const SPECIFICATION_JOIN   = 'joins';
+
+    public const SPECIFICATION_SET = 'set';
+
+    public const SPECIFICATION_WHERE = 'where';
+
+    public const SPECIFICATION_JOIN = 'joins';
 
     public const VALUES_MERGE = 'merge';
-    public const VALUES_SET   = 'set';
+
+    public const VALUES_SET = 'set';
+
     /**@#-**/
 
     /** @var array<string, string>|array<string, array> */
@@ -55,14 +62,11 @@ class Update extends AbstractPreparableSql
     /** @var bool */
     protected $emptyWhereProtection = true;
 
-    /** @var PriorityList */
-    protected $set;
+    protected PriorityList $set;
 
-    /** @var string|Where */
-    protected $where;
+    protected Where $where;
 
-    /** @var null|Join */
-    protected $joins;
+    protected Join $joins;
 
     /**
      * Constructor
@@ -74,6 +78,7 @@ class Update extends AbstractPreparableSql
         if ($table) {
             $this->table($table);
         }
+
         $this->where = new Where();
         $this->joins = new Join();
         $this->set   = new PriorityList();
@@ -83,10 +88,9 @@ class Update extends AbstractPreparableSql
     /**
      * Specify table for statement
      *
-     * @param  string|array|TableIdentifier $table
      * @return $this Provides a fluent interface
      */
-    public function table($table): static
+    public function table(TableIdentifier|string|array $table): static
     {
         $this->table = $table;
         return $this;
@@ -100,18 +104,21 @@ class Update extends AbstractPreparableSql
      * @return $this Provides a fluent interface
      * @throws Exception\InvalidArgumentException
      */
-    public function set(array $values, $flag = self::VALUES_SET)
+    public function set(array $values, $flag = self::VALUES_SET): static
     {
         if ($flag === self::VALUES_SET) {
             $this->set->clear();
         }
+
         $priority = is_numeric($flag) ? $flag : 0;
         foreach ($values as $k => $v) {
             if (! is_string($k)) {
                 throw new Exception\InvalidArgumentException('set() expects a string for the value key');
             }
+
             $this->set->insert($k, $v, $priority);
         }
+
         return $this;
     }
 
@@ -123,13 +130,14 @@ class Update extends AbstractPreparableSql
      * @return $this Provides a fluent interface
      * @throws Exception\InvalidArgumentException
      */
-    public function where($predicate, $combination = Predicate\PredicateSet::OP_AND)
+    public function where($predicate, $combination = Predicate\PredicateSet::OP_AND): static
     {
         if ($predicate instanceof Where) {
             $this->where = $predicate;
         } else {
             $this->where->addPredicates($predicate, $combination);
         }
+
         return $this;
     }
 
@@ -142,7 +150,7 @@ class Update extends AbstractPreparableSql
      * @return $this Provides a fluent interface
      * @throws Exception\InvalidArgumentException
      */
-    public function join($name, $on, $type = Join::JOIN_INNER)
+    public function join($name, $on, $type = Join::JOIN_INNER): static
     {
         $this->joins->join($name, $on, [], $type);
 
@@ -165,24 +173,22 @@ class Update extends AbstractPreparableSql
         return isset($key) && array_key_exists($key, $rawState) ? $rawState[$key] : $rawState;
     }
 
-    /** @return string */
     protected function processUpdate(
         PlatformInterface $platform,
         ?DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null
-    ) {
+    ): string {
         return sprintf(
             $this->specifications[static::SPECIFICATION_UPDATE],
             $this->resolveTable($this->table, $platform, $driver, $parameterContainer)
         );
     }
 
-    /** @return string */
     protected function processSet(
         PlatformInterface $platform,
         ?DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null
-    ) {
+    ): string {
         $setSql = [];
         $i      = 0;
         foreach ($this->set as $column => $value) {
@@ -204,6 +210,7 @@ class Update extends AbstractPreparableSql
                 if ($driver instanceof Pdo) {
                     $column = 'c_' . $i++;
                 }
+
                 $setSql[] = $prefix . $driver->formatParameterName($column);
                 $parameterContainer->offsetSet($column, $value);
             } else {
@@ -222,17 +229,15 @@ class Update extends AbstractPreparableSql
         );
     }
 
-    /**
-     * @return null|string
-     */
     protected function processWhere(
         PlatformInterface $platform,
         ?DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null
-    ) {
+    ): ?string {
         if ($this->where->count() === 0) {
             return null;
         }
+
         return sprintf(
             $this->specifications[static::SPECIFICATION_WHERE],
             $this->processExpression($this->where, $platform, $driver, $parameterContainer, 'where')
@@ -244,7 +249,7 @@ class Update extends AbstractPreparableSql
         PlatformInterface $platform,
         ?DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null
-    ) {
+    ): ?array {
         return $this->processJoin($this->joins, $platform, $driver, $parameterContainer);
     }
 
@@ -252,14 +257,14 @@ class Update extends AbstractPreparableSql
      * Variable overloading
      * Proxies to "where" only
      *
-     * @param  string $name
      * @return string|null|Where
      */
-    public function __get($name)
+    public function __get(string $name): mixed
     {
         if (strtolower($name) === 'where') {
             return $this->where;
         }
+
         return null;
     }
 

@@ -11,7 +11,8 @@ use function method_exists;
 class ResultSet extends AbstractResultSet
 {
     public const TYPE_ARRAYOBJECT = 'arrayobject';
-    public const TYPE_ARRAY       = 'array';
+
+    public const TYPE_ARRAY = 'array';
 
     /**
      * Allowed return types
@@ -54,6 +55,7 @@ class ResultSet extends AbstractResultSet
                 'Object must at least implement exchangeArray'
             );
         }
+
         $this->arrayObjectPrototype = $arrayObjectPrototype;
         return $this;
     }
@@ -80,9 +82,8 @@ class ResultSet extends AbstractResultSet
 
         if ($this->returnType === self::TYPE_ARRAYOBJECT && is_array($data)) {
             $ao = clone $this->arrayObjectPrototype;
-            if ($ao instanceof ArrayObject || method_exists($ao, 'exchangeArray')) {
-                $ao->exchangeArray($data);
-            }
+            $ao->exchangeArray($data);
+
             return $ao;
         }
 

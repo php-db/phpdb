@@ -12,6 +12,7 @@ use PhpDb\Sql\ExpressionPart;
 
 use function count;
 use function implode;
+use function sprintf;
 use function str_replace;
 
 class Index extends AbstractIndex
@@ -20,11 +21,7 @@ class Index extends AbstractIndex
 
     protected array $lengths;
 
-    /**
-     * @param  string|array|null $columns
-     * @param  null|string $name
-     */
-    public function __construct($columns, $name = null, array $lengths = [])
+    public function __construct(null|array|string $columns, ?string $name = null, array $lengths = [])
     {
         parent::__construct($columns, $name);
 
@@ -46,7 +43,7 @@ class Index extends AbstractIndex
             $expressionPart->addValue(new Argument($this->columns[$i], ArgumentType::Identifier));
 
             if (isset($this->lengths[$i])) {
-                $specPart .= "({$this->lengths[$i]})";
+                $specPart .= sprintf('(%s)', $this->lengths[$i]);
             }
 
             $specification[] = $specPart;

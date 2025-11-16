@@ -276,6 +276,7 @@ class SqlFunctionalTest extends TestCase
             $actual = $sql->buildSqlString($sqlObject);
             self::assertEquals($expectedString, $actual, 'getSqlString()');
         }
+
         if (is_array($expected) && isset($expected['prepare'])) {
             self::assertInstanceOf(PreparableSqlInterface::class, $sqlObject);
             /** @var StatementInterface|StatementContainer $actual */
@@ -303,12 +304,7 @@ class SqlFunctionalTest extends TestCase
             $decoratorMock->expects($this->any())->method('buildSqlString')->willReturn($decorator[1]);
             return $decoratorMock;
         }
-
-        if ($decorator instanceof Sql\Platform\PlatformDecoratorInterface) {
-            return $decorator;
-        }
-
-        return null;
+        return $decorator;
     }
 
     protected function resolveAdapter(string $platform): Adapter\Adapter
@@ -325,28 +321,30 @@ class SqlFunctionalTest extends TestCase
             ->willReturn('?');
         $mockDriver->expects($this->any())
             ->method('createStatement')
-            ->willReturnCallback(function () {
+            ->willReturnCallback(function (): MockObject {
                 $container = new Adapter\StatementContainer();
                 // Create a mock statement that delegates to the container for SQL/params
                 $mockStatement = $this->createMock(StatementInterface::class);
                 $mockStatement->expects($this->any())
                     ->method('setSql')
-                    ->willReturnCallback(function ($sql) use ($container, $mockStatement) {
+                    ->willReturnCallback(function ($sql) use ($container, $mockStatement): MockObject {
                         $container->setSql($sql);
                         return $mockStatement;
                     });
                 $mockStatement->expects($this->any())
                     ->method('getSql')
-                    ->willReturnCallback(fn() => $container->getSql());
+                    ->willReturnCallback(fn(): ?string => $container->getSql());
                 $mockStatement->expects($this->any())
                     ->method('setParameterContainer')
-                    ->willReturnCallback(function ($params) use ($container, $mockStatement) {
-                        $container->setParameterContainer($params);
-                        return $mockStatement;
-                    });
+                    ->willReturnCallback(
+                        function (ParameterContainer $params) use ($container, $mockStatement): MockObject {
+                            $container->setParameterContainer($params);
+                            return $mockStatement;
+                        }
+                    );
                 $mockStatement->expects($this->any())
                     ->method('getParameterContainer')
-                    ->willReturnCallback(fn() => $container->getParameterContainer());
+                    ->willReturnCallback(fn(): ?ParameterContainer => $container->getParameterContainer());
                 return $mockStatement;
             });
 

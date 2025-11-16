@@ -14,8 +14,10 @@ use PhpDb\Sql\ExpressionData;
 class Like extends AbstractExpression implements PredicateInterface
 {
     protected string $specification = '%1$s LIKE %2$s';
+
     protected ?Argument $identifier = null;
-    protected ?Argument $like       = null;
+
+    protected ?Argument $like = null;
 
     /**
      * Constructor

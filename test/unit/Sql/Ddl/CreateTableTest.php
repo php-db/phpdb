@@ -37,7 +37,7 @@ class CreateTableTest extends TestCase
     public function testObjectConstruction(): void
     {
         $ct = new CreateTable('foo', true);
-        self::assertEquals('foo', $ct->getRawState($ct::TABLE));
+        self::assertEquals('foo', $ct->getRawState(CreateTable::TABLE));
         self::assertTrue($ct->isTemporary());
     }
 

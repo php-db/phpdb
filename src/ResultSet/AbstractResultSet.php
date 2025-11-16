@@ -59,9 +59,11 @@ abstract class AbstractResultSet implements ResultSetInterface
             if ($dataSource->isBuffered()) {
                 $this->buffer = -1;
             }
+
             if (is_array($this->buffer)) {
                 $this->dataSource->rewind();
             }
+
             return $this;
         }
 
@@ -99,15 +101,13 @@ abstract class AbstractResultSet implements ResultSetInterface
                 $this->dataSource->rewind();
             }
         }
+
         return $this;
     }
 
     public function isBuffered(): bool
     {
-        if ($this->buffer === -1 || is_array($this->buffer)) {
-            return true;
-        }
-        return false;
+        return $this->buffer === -1 || is_array($this->buffer);
     }
 
     /**
@@ -161,6 +161,7 @@ abstract class AbstractResultSet implements ResultSetInterface
         if (! is_array($this->buffer) || $this->position === $this->dataSource->key()) {
             $this->dataSource->next();
         }
+
         $this->position++;
     }
 
@@ -187,10 +188,12 @@ abstract class AbstractResultSet implements ResultSetInterface
         } elseif (is_array($this->buffer) && isset($this->buffer[$this->position])) {
             return $this->buffer[$this->position];
         }
+
         $data = $this->dataSource->current();
         if (is_array($this->buffer)) {
             $this->buffer[$this->position] = $data;
         }
+
         return is_array($data) ? $data : null;
     }
 
@@ -202,6 +205,7 @@ abstract class AbstractResultSet implements ResultSetInterface
         if (is_array($this->buffer) && isset($this->buffer[$this->position])) {
             return true;
         }
+
         if ($this->dataSource instanceof Iterator) {
             return $this->dataSource->valid();
         } else {
@@ -222,6 +226,7 @@ abstract class AbstractResultSet implements ResultSetInterface
                 reset($this->dataSource);
             }
         }
+
         $this->position = 0;
     }
 
@@ -270,6 +275,7 @@ abstract class AbstractResultSet implements ResultSetInterface
 
             $return[] = method_exists($row, 'toArray') ? $row->toArray() : $row->getArrayCopy();
         }
+
         return $return;
     }
 }

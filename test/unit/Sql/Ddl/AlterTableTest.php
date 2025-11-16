@@ -47,7 +47,7 @@ class AlterTableTest extends TestCase
         /** @var ColumnInterface $colMock */
         $colMock = $this->getMockBuilder(ColumnInterface::class)->getMock();
         self::assertSame($at, $at->addColumn($colMock));
-        self::assertEquals([$colMock], $at->getRawState($at::ADD_COLUMNS));
+        self::assertEquals([$colMock], $at->getRawState(AlterTable::ADD_COLUMNS));
     }
 
     public function testChangeColumn(): void
@@ -56,21 +56,21 @@ class AlterTableTest extends TestCase
         /** @var ColumnInterface $colMock */
         $colMock = $this->getMockBuilder(ColumnInterface::class)->getMock();
         self::assertSame($at, $at->changeColumn('newname', $colMock));
-        self::assertEquals(['newname' => $colMock], $at->getRawState($at::CHANGE_COLUMNS));
+        self::assertEquals(['newname' => $colMock], $at->getRawState(AlterTable::CHANGE_COLUMNS));
     }
 
     public function testDropColumn(): void
     {
         $at = new AlterTable();
         self::assertSame($at, $at->dropColumn('foo'));
-        self::assertEquals(['foo'], $at->getRawState($at::DROP_COLUMNS));
+        self::assertEquals(['foo'], $at->getRawState(AlterTable::DROP_COLUMNS));
     }
 
     public function testDropConstraint(): void
     {
         $at = new AlterTable();
         self::assertSame($at, $at->dropConstraint('foo'));
-        self::assertEquals(['foo'], $at->getRawState($at::DROP_CONSTRAINTS));
+        self::assertEquals(['foo'], $at->getRawState(AlterTable::DROP_CONSTRAINTS));
     }
 
     public function testAddConstraint(): void
@@ -79,14 +79,14 @@ class AlterTableTest extends TestCase
         /** @var ConstraintInterface $conMock */
         $conMock = $this->getMockBuilder(ConstraintInterface::class)->getMock();
         self::assertSame($at, $at->addConstraint($conMock));
-        self::assertEquals([$conMock], $at->getRawState($at::ADD_CONSTRAINTS));
+        self::assertEquals([$conMock], $at->getRawState(AlterTable::ADD_CONSTRAINTS));
     }
 
     public function testDropIndex(): void
     {
         $at = new AlterTable();
         self::assertSame($at, $at->dropIndex('foo'));
-        self::assertEquals(['foo'], $at->getRawState($at::DROP_INDEXES));
+        self::assertEquals(['foo'], $at->getRawState(AlterTable::DROP_INDEXES));
     }
 
     /**
@@ -101,6 +101,7 @@ class AlterTableTest extends TestCase
         $at->addConstraint(new Constraint\ForeignKey('my_fk', 'other_id', 'other_table', 'id', 'CASCADE', 'CASCADE'));
         $at->dropConstraint('my_constraint');
         $at->dropIndex('my_index');
+
         $expected = <<<EOS
 ALTER TABLE "foo"
  ADD COLUMN "another" VARCHAR(255) NOT NULL,

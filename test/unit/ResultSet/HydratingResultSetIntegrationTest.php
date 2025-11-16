@@ -18,6 +18,7 @@ class HydratingResultSetIntegrationTest extends TestCase
             ['id' => 2, 'name' => 'two'],
         ]));
         $hydratingRs->buffer();
+
         $obj1 = $hydratingRs->current();
         $hydratingRs->rewind();
         $obj2 = $hydratingRs->current();

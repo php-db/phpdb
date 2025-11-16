@@ -8,6 +8,7 @@ use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\Driver\Pdo\Pdo;
 use PhpDb\Adapter\ParameterContainer;
 use PhpDb\Adapter\Platform\PlatformInterface;
+use PhpDb\Sql\TableIdentifier;
 
 use function array_combine;
 use function array_flip;
@@ -30,9 +31,13 @@ class Insert extends AbstractPreparableSql
      * @const
      */
     public const SPECIFICATION_INSERT = 'insert';
+
     public const SPECIFICATION_SELECT = 'select';
-    public const VALUES_MERGE         = 'merge';
-    public const VALUES_SET           = 'set';
+
+    public const VALUES_MERGE = 'merge';
+
+    public const VALUES_SET = 'set';
+
     /**#@-*/
 
     /** @var string[]|array[] $specifications */
@@ -46,7 +51,6 @@ class Insert extends AbstractPreparableSql
     /** @var string[] */
     protected $columns = [];
 
-    /** @var array|Select|null */
     protected null|array|Select $select = null;
 
     /**
@@ -64,10 +68,9 @@ class Insert extends AbstractPreparableSql
     /**
      * Create INTO clause
      *
-     * @param  string|array|TableIdentifier $table
      * @return $this Provides a fluent interface
      */
-    public function into($table): static
+    public function into(TableIdentifier|string|array $table): static
     {
         $this->table = $table;
         return $this;
@@ -78,7 +81,7 @@ class Insert extends AbstractPreparableSql
      *
      * @return $this Provides a fluent interface
      */
-    public function columns(array $columns)
+    public function columns(array $columns): static
     {
         $this->columns = array_flip($columns);
         return $this;
@@ -99,6 +102,7 @@ class Insert extends AbstractPreparableSql
                     'A PhpDb\Sql\Select instance cannot be provided with the merge flag'
                 );
             }
+
             $this->select = $values;
             return $this;
         }
@@ -125,6 +129,7 @@ class Insert extends AbstractPreparableSql
                 $this->columns[$column] = $value;
             }
         }
+
         return $this;
     }
 
@@ -132,10 +137,8 @@ class Insert extends AbstractPreparableSql
      * Simple test for an associative array
      *
      * @link http://stackoverflow.com/questions/173400/how-to-check-if-php-array-is-associative-or-sequential
-     *
-     * @return bool
      */
-    private function isAssocativeArray(array $array)
+    private function isAssocativeArray(array $array): bool
     {
         return array_keys($array) !== range(0, count($array) - 1);
     }
@@ -145,7 +148,7 @@ class Insert extends AbstractPreparableSql
      *
      * @return $this
      */
-    public function select(Select $select)
+    public function select(Select $select): static
     {
         return $this->values($select);
     }
@@ -154,9 +157,8 @@ class Insert extends AbstractPreparableSql
      * Get raw state
      *
      * @param string $key
-     * @return mixed
      */
-    public function getRawState($key = null)
+    public function getRawState($key = null): TableIdentifier|string|array
     {
         $rawState = [
             'table'   => $this->table,
@@ -166,17 +168,15 @@ class Insert extends AbstractPreparableSql
         return isset($key) && array_key_exists($key, $rawState) ? $rawState[$key] : $rawState;
     }
 
-    /**
-     * @return null|string
-     */
     protected function processInsert(
         PlatformInterface $platform,
         ?DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null
-    ) {
+    ): ?string {
         if ($this->select) {
             return null;
         }
+
         if (! $this->columns) {
             throw new Exception\InvalidArgumentException('values or select should be present');
         }
@@ -193,6 +193,7 @@ class Insert extends AbstractPreparableSql
                 if ($driver instanceof Pdo) {
                     $column = 'c_' . $i++;
                 }
+
                 $values[] = $driver->formatParameterName($column);
                 $parameterContainer->offsetSet($column, $value);
             } else {
@@ -204,6 +205,7 @@ class Insert extends AbstractPreparableSql
                 );
             }
         }
+
         return sprintf(
             $this->specifications[static::SPECIFICATION_INSERT],
             $this->resolveTable($this->table, $platform, $driver, $parameterContainer),
@@ -212,17 +214,15 @@ class Insert extends AbstractPreparableSql
         );
     }
 
-    /**
-     * @return null|string
-     */
     protected function processSelect(
         PlatformInterface $platform,
         ?DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null
-    ) {
+    ): ?string {
         if (! $this->select) {
             return null;
         }
+
         $selectSql = $this->processSubSelect($this->select, $platform, $driver, $parameterContainer);
 
         $columns = array_map([$platform, 'quoteIdentifier'], array_keys($this->columns));
@@ -231,7 +231,7 @@ class Insert extends AbstractPreparableSql
         return sprintf(
             $this->specifications[static::SPECIFICATION_SELECT],
             $this->resolveTable($this->table, $platform, $driver, $parameterContainer),
-            $columns !== '' && $columns !== '0' ? "($columns)" : '',
+            $columns !== '' && $columns !== '0' ? sprintf('(%s)', $columns) : '',
             $selectSql
         );
     }
@@ -241,11 +241,9 @@ class Insert extends AbstractPreparableSql
      *
      * Proxies to values, using VALUES_MERGE strategy
      *
-     * @param  string $name
-     * @param  mixed $value
      * @return $this Provides a fluent interface
      */
-    public function __set($name, $value)
+    public function __set(string $name, mixed $value)
     {
         $this->columns[$name] = $value;
         return $this;
@@ -256,11 +254,10 @@ class Insert extends AbstractPreparableSql
      *
      * Proxies to values and columns
      *
-     * @param  string $name
      * @throws Exception\InvalidArgumentException
      * @return void
      */
-    public function __unset($name)
+    public function __unset(string $name)
     {
         if (! array_key_exists($name, $this->columns)) {
             throw new Exception\InvalidArgumentException(
@@ -276,10 +273,9 @@ class Insert extends AbstractPreparableSql
      *
      * Proxies to columns; does a column of that name exist?
      *
-     * @param  string $name
      * @return bool
      */
-    public function __isset($name)
+    public function __isset(string $name)
     {
         return array_key_exists($name, $this->columns);
     }
@@ -288,17 +284,17 @@ class Insert extends AbstractPreparableSql
      * Overloading: variable retrieval
      * Retrieves value by column name
      *
-     * @param  string $name
      * @throws Exception\InvalidArgumentException
      * @return string
      */
-    public function __get($name)
+    public function __get(string $name): mixed
     {
         if (! array_key_exists($name, $this->columns)) {
             throw new Exception\InvalidArgumentException(
                 'The key ' . $name . ' was not found in this objects column list'
             );
         }
+
         return $this->columns[$name];
     }
 }

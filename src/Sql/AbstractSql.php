@@ -32,6 +32,7 @@ abstract class AbstractSql implements SqlInterface
 {
     /** @var object|null */
     public $subject;
+
     /**
      * Specifications for Sql String generation
      *
@@ -89,12 +90,11 @@ abstract class AbstractSql implements SqlInterface
     /**
      * Render table with alias in from/join parts
      *
-     * @param string $table
      * @param string $alias
      * @return string
      * @todo move TableIdentifier concatenation here
      */
-    protected function renderTable($table, $alias = null)
+    protected function renderTable(string $table, $alias = null)
     {
         return $table . ($alias ? ' AS ' . $alias : '');
     }
@@ -145,6 +145,7 @@ abstract class AbstractSql implements SqlInterface
                     $parameterContainer,
                 );
             }
+
             $sqlStrings[] = vsprintf($specification, $values);
         }
 
@@ -204,7 +205,7 @@ abstract class AbstractSql implements SqlInterface
                 $platform,
                 $driver,
                 $parameterContainer,
-                "{$namedParameterPrefix}{$vIndex}subpart"
+                sprintf('%s%dsubpart', $namedParameterPrefix, $vIndex)
             ),
             default => throw new ValueError('Invalid Argument type'),
         };
@@ -269,8 +270,10 @@ abstract class AbstractSql implements SqlInterface
                             $ppCount
                         ));
                     }
+
                     $multiParamValues[] = vsprintf($paramSpecs[$position][$ppCount], $multiParamsForPosition);
                 }
+
                 $topParameters[] = implode($paramSpecs[$position]['combinedby'], $multiParamValues);
             } elseif ($paramSpecs[$position] !== null) {
                 $ppCount = count($paramsForPosition);
@@ -280,6 +283,7 @@ abstract class AbstractSql implements SqlInterface
                         $ppCount
                     ));
                 }
+
                 $topParameters[] = vsprintf($paramSpecs[$position][$ppCount], $paramsForPosition);
             } else {
                 $topParameters[] = $paramsForPosition;
@@ -416,18 +420,22 @@ abstract class AbstractSql implements SqlInterface
             if (isset($column['isIdentifier'])) {
                 $isIdentifier = (bool) $column['isIdentifier'];
             }
+
             if (isset($column['fromTable']) && $column['fromTable'] !== null) {
                 $fromTable = $column['fromTable'];
             }
+
             $column = $column['column'];
         }
 
         if ($column instanceof ExpressionInterface) {
             return $this->processExpression($column, $platform, $driver, $parameterContainer, $namedParameterPrefix);
         }
+
         if ($column instanceof Select) {
             return '(' . $this->processSubSelect($column, $platform, $driver, $parameterContainer) . ')';
         }
+
         if ($column === null) {
             return 'NULL';
         }

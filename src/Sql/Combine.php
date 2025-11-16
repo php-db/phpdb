@@ -24,10 +24,14 @@ use function trim;
  */
 class Combine extends AbstractPreparableSql
 {
-    public const COLUMNS           = 'columns';
-    public const COMBINE           = 'combine';
-    public const COMBINE_UNION     = 'union';
-    public const COMBINE_EXCEPT    = 'except';
+    public const COLUMNS = 'columns';
+
+    public const COMBINE = 'combine';
+
+    public const COMBINE_UNION = 'union';
+
+    public const COMBINE_EXCEPT = 'except';
+
     public const COMBINE_INTERSECT = 'intersect';
 
     /** @var string[] */
@@ -36,7 +40,7 @@ class Combine extends AbstractPreparableSql
     ];
 
     /** @var Select[][] */
-    private $combine = [];
+    private array $combine = [];
 
     /**
      * @param Select|array|null $select
@@ -59,7 +63,7 @@ class Combine extends AbstractPreparableSql
      * @return $this Provides a fluent interface
      * @throws Exception\InvalidArgumentException
      */
-    public function combine($select, $type = self::COMBINE_UNION, $modifier = '')
+    public function combine($select, $type = self::COMBINE_UNION, $modifier = ''): static
     {
         if (is_array($select)) {
             foreach ($select as $combine) {
@@ -73,6 +77,7 @@ class Combine extends AbstractPreparableSql
                     $combine[2] ?? $modifier
                 );
             }
+
             return $this;
         }
 
@@ -152,13 +157,14 @@ class Combine extends AbstractPreparableSql
                 $select
             );
         }
+
         return trim($sql, ' ');
     }
 
     /**
      * @return $this Provides a fluent interface
      */
-    public function alignColumns()
+    public function alignColumns(): static
     {
         if (! $this->combine) {
             return $this;
@@ -178,8 +184,10 @@ class Combine extends AbstractPreparableSql
             foreach (array_keys($allColumns) as $alias) {
                 $aligned[$alias] = $combineColumns[$alias] ?? new Predicate\Expression('NULL');
             }
+
             $combine['select']->columns($aligned, false);
         }
+
         return $this;
     }
 

@@ -20,7 +20,7 @@ final class ColumnObjectTest extends TestCase
 
     public function testConstructorWithNullSchema(): void
     {
-        $column = new ColumnObject('column_name', 'table_name', null);
+        $column = new ColumnObject('column_name', 'table_name');
 
         self::assertSame('column_name', $column->getName());
         self::assertSame('table_name', $column->getTableName());

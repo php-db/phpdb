@@ -13,7 +13,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(AbstractResultSet::class, 'current')]
 final class AbstractResultSetIntegrationTest extends TestCase
 {
-    protected AbstractResultSet|MockObject $resultSet;
+    protected MockObject $resultSet;
 
     /**
      * Sets up the fixture, for example, opens a network connection.

@@ -44,6 +44,7 @@ final class IsNullTest extends TestCase
     {
         $isNotNull = new IsNotNull();
         $isNotNull->setIdentifier('foo.bar');
+
         $identifier = new Argument('foo.bar', ArgumentType::Identifier);
         self::assertEquals($identifier, $isNotNull->getIdentifier());
     }
@@ -59,6 +60,7 @@ final class IsNullTest extends TestCase
     {
         $isNotNull = new IsNotNull();
         $isNotNull->setIdentifier('foo.bar');
+
         $identifier = new Argument('foo.bar', ArgumentType::Identifier);
 
         $expressionData = $isNotNull->getExpressionData();

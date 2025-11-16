@@ -15,21 +15,34 @@ use PhpDb\Sql\Select;
 
 class Operator extends AbstractExpression implements PredicateInterface
 {
-    public const OPERATOR_EQUAL_TO                 = '=';
-    public const OP_EQ                             = '=';
-    public const OPERATOR_NOT_EQUAL_TO             = '!=';
-    public const OP_NE                             = '!=';
-    public const OPERATOR_LESS_THAN                = '<';
-    public const OP_LT                             = '<';
-    public const OPERATOR_LESS_THAN_OR_EQUAL_TO    = '<=';
-    public const OP_LTE                            = '<=';
-    public const OPERATOR_GREATER_THAN             = '>';
-    public const OP_GT                             = '>';
-    public const OPERATOR_GREATER_THAN_OR_EQUAL_TO = '>=';
-    public const OP_GTE                            = '>=';
+    public const OPERATOR_EQUAL_TO = '=';
 
-    protected ?Argument $left  = null;
+    public const OP_EQ = '=';
+
+    public const OPERATOR_NOT_EQUAL_TO = '!=';
+
+    public const OP_NE = '!=';
+
+    public const OPERATOR_LESS_THAN = '<';
+
+    public const OP_LT = '<';
+
+    public const OPERATOR_LESS_THAN_OR_EQUAL_TO = '<=';
+
+    public const OP_LTE = '<=';
+
+    public const OPERATOR_GREATER_THAN = '>';
+
+    public const OP_GT = '>';
+
+    public const OPERATOR_GREATER_THAN_OR_EQUAL_TO = '>=';
+
+    public const OP_GTE = '>=';
+
+    protected ?Argument $left = null;
+
     protected ?Argument $right = null;
+
     protected string $operator = self::OPERATOR_EQUAL_TO;
 
     /**

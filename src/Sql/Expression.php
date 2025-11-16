@@ -59,6 +59,7 @@ class Expression extends AbstractExpression
         if ($expression === '') {
             throw new Exception\InvalidArgumentException('Supplied expression must not be an empty string.');
         }
+
         $this->expression = $expression;
         return $this;
     }
@@ -93,6 +94,7 @@ class Expression extends AbstractExpression
             } elseif (! $parameter instanceof Argument) {
                 $parameter = new Argument($parameter);
             }
+
             $this->parameters[] = $parameter;
         }
 

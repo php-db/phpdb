@@ -18,11 +18,9 @@ use function strtolower;
 
 class Platform extends AbstractPlatform
 {
-    /** @var AdapterInterface */
-    protected $adapter;
+    protected AdapterInterface $adapter;
 
-    /** @var PlatformInterface */
-    protected $defaultPlatform;
+    protected PlatformInterface $defaultPlatform;
 
     public function __construct(AdapterInterface $adapter)
     {
@@ -52,7 +50,7 @@ class Platform extends AbstractPlatform
      * @param string                             $type
      * @param AdapterInterface|PlatformInterface $adapterOrPlatform
      */
-    public function setTypeDecorator($type, PlatformDecoratorInterface $decorator, $adapterOrPlatform = null)
+    public function setTypeDecorator($type, PlatformDecoratorInterface $decorator, $adapterOrPlatform = null): void
     {
         $platformName                           = $this->resolvePlatformName($adapterOrPlatform);
         $this->decorators[$platformName][$type] = $decorator;
@@ -93,8 +91,10 @@ class Platform extends AbstractPlatform
      *
      * @throws Exception\RuntimeException
      */
-    public function prepareStatement(AdapterInterface $adapter, StatementContainerInterface $statementContainer)
-    {
+    public function prepareStatement(
+        AdapterInterface $adapter,
+        StatementContainerInterface $statementContainer
+    ): StatementContainerInterface {
         if (! $this->subject instanceof PreparableSqlInterface) {
             throw new Exception\RuntimeException(
                 'The subject does not appear to implement PhpDb\Sql\PreparableSqlInterface, thus calling '
@@ -128,9 +128,8 @@ class Platform extends AbstractPlatform
 
     /**
      * @param AdapterInterface|PlatformInterface $adapterOrPlatform
-     * @return string
      */
-    protected function resolvePlatformName($adapterOrPlatform)
+    protected function resolvePlatformName($adapterOrPlatform): string
     {
         $platformName = $this->resolvePlatform($adapterOrPlatform)->getName();
         return str_replace([' ', '_'], '', strtolower($platformName));

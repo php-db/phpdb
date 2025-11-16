@@ -165,6 +165,7 @@ final class PredicateTest extends TestCase
     {
         $predicate = new Predicate();
         $predicate->literal('foo.bar = ?');
+
         $expressionData = $predicate->getExpressionData();
 
         self::assertCount(1, $expressionData->getExpressionParts());
@@ -356,6 +357,7 @@ final class PredicateTest extends TestCase
         $predicate = new Predicate();
 
         $predicate->expression('foo = bar');
+
         $predicates = $predicate->getPredicates();
 
         if (isset($predicates[0][1])) {
@@ -384,6 +386,7 @@ final class PredicateTest extends TestCase
         // test literal() is backwards-compatible, and works with with parameters
         $predicate = new Predicate();
         $predicate->expression('foo = ?', 'bar');
+
         $expression     = new Argument('bar', ArgumentType::Value);
         $expressionData = $predicate->getExpressionData();
 
@@ -394,6 +397,7 @@ final class PredicateTest extends TestCase
         // test literal() is backwards-compatible, and works with with parameters, even 0 which tests as false
         $predicate = new Predicate();
         $predicate->expression('foo = ?', 0);
+
         $expression     = new Argument(0, ArgumentType::Value);
         $expressionData = $predicate->getExpressionData();
 

@@ -26,17 +26,19 @@ use function str_contains;
 class PredicateSet implements PredicateInterface, Countable
 {
     public const COMBINED_BY_AND = 'AND';
-    public const OP_AND          = 'AND';
-    public const COMBINED_BY_OR  = 'OR';
-    public const OP_OR           = 'OR';
+
+    public const OP_AND = 'AND';
+
+    public const COMBINED_BY_OR = 'OR';
+
+    public const OP_OR = 'OR';
 
     protected string $defaultCombination = self::COMBINED_BY_AND;
-    protected array $predicates          = [];
+
+    protected array $predicates = [];
 
     /**
      * Constructor
-     *
-     * @param null|array $predicates
      */
     public function __construct(?array $predicates = null, string $defaultCombination = self::COMBINED_BY_AND)
     {

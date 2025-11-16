@@ -116,7 +116,7 @@ class ConstraintObject
      * @param  string $tableName
      * @return $this Provides a fluent interface
      */
-    public function setTableName($tableName)
+    public function setTableName($tableName): static
     {
         $this->tableName = $tableName;
         return $this;
@@ -142,8 +142,7 @@ class ConstraintObject
         return $this->type;
     }
 
-    /** @return bool */
-    public function hasColumns()
+    public function hasColumns(): bool
     {
         return $this->columns !== [];
     }
@@ -164,7 +163,7 @@ class ConstraintObject
      * @param string[] $columns
      * @return $this Provides a fluent interface
      */
-    public function setColumns(array $columns)
+    public function setColumns(array $columns): static
     {
         $this->columns = $columns;
         return $this;
@@ -186,7 +185,7 @@ class ConstraintObject
      * @param string $referencedTableSchema
      * @return $this Provides a fluent interface
      */
-    public function setReferencedTableSchema($referencedTableSchema)
+    public function setReferencedTableSchema($referencedTableSchema): static
     {
         $this->referencedTableSchema = $referencedTableSchema;
         return $this;
@@ -208,7 +207,7 @@ class ConstraintObject
      * @param string $referencedTableName
      * @return $this Provides a fluent interface
      */
-    public function setReferencedTableName($referencedTableName)
+    public function setReferencedTableName($referencedTableName): static
     {
         $this->referencedTableName = $referencedTableName;
         return $this;
@@ -230,7 +229,7 @@ class ConstraintObject
      * @param string[] $referencedColumns
      * @return $this Provides a fluent interface
      */
-    public function setReferencedColumns(array $referencedColumns)
+    public function setReferencedColumns(array $referencedColumns): static
     {
         $this->referencedColumns = $referencedColumns;
         return $this;
@@ -252,7 +251,7 @@ class ConstraintObject
      * @param string $matchOption
      * @return $this Provides a fluent interface
      */
-    public function setMatchOption($matchOption)
+    public function setMatchOption($matchOption): static
     {
         $this->matchOption = $matchOption;
         return $this;
@@ -274,7 +273,7 @@ class ConstraintObject
      * @param string $updateRule
      * @return $this Provides a fluent interface
      */
-    public function setUpdateRule($updateRule)
+    public function setUpdateRule($updateRule): static
     {
         $this->updateRule = $updateRule;
         return $this;
@@ -296,7 +295,7 @@ class ConstraintObject
      * @param string $deleteRule
      * @return $this Provides a fluent interface
      */
-    public function setDeleteRule($deleteRule)
+    public function setDeleteRule($deleteRule): static
     {
         $this->deleteRule = $deleteRule;
         return $this;
@@ -318,7 +317,7 @@ class ConstraintObject
      * @param string $checkClause
      * @return $this Provides a fluent interface
      */
-    public function setCheckClause($checkClause)
+    public function setCheckClause($checkClause): static
     {
         $this->checkClause = $checkClause;
         return $this;
@@ -326,40 +325,32 @@ class ConstraintObject
 
     /**
      * Is primary key
-     *
-     * @return bool
      */
-    public function isPrimaryKey()
+    public function isPrimaryKey(): bool
     {
         return 'PRIMARY KEY' === $this->type;
     }
 
     /**
      * Is unique key
-     *
-     * @return bool
      */
-    public function isUnique()
+    public function isUnique(): bool
     {
         return 'UNIQUE' === $this->type;
     }
 
     /**
      * Is foreign key
-     *
-     * @return bool
      */
-    public function isForeignKey()
+    public function isForeignKey(): bool
     {
         return 'FOREIGN KEY' === $this->type;
     }
 
     /**
      * Is foreign key
-     *
-     * @return bool
      */
-    public function isCheck()
+    public function isCheck(): bool
     {
         return 'CHECK' === $this->type;
     }

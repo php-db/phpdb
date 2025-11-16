@@ -31,13 +31,19 @@ use function sprintf;
  */
 class Join implements Iterator, Countable
 {
-    public const JOIN_INNER       = 'inner';
-    public const JOIN_OUTER       = 'outer';
-    public const JOIN_FULL_OUTER  = 'full outer';
-    public const JOIN_LEFT        = 'left';
-    public const JOIN_RIGHT       = 'right';
+    public const JOIN_INNER = 'inner';
+
+    public const JOIN_OUTER = 'outer';
+
+    public const JOIN_FULL_OUTER = 'full outer';
+
+    public const JOIN_LEFT = 'left';
+
+    public const JOIN_RIGHT = 'right';
+
     public const JOIN_RIGHT_OUTER = 'right outer';
-    public const JOIN_LEFT_OUTER  = 'left outer';
+
+    public const JOIN_LEFT_OUTER = 'left outer';
 
     /**
      * Current iterator position.
@@ -48,13 +54,6 @@ class Join implements Iterator, Countable
      * JOIN specifications
      */
     protected array $joins = [];
-
-    /**
-     * Initialize iterator position.
-     */
-    public function __construct()
-    {
-    }
 
     /**
      * Rewind iterator.
@@ -122,6 +121,7 @@ class Join implements Iterator, Countable
      * @return $this Provides a fluent interface
      * @throws Exception\InvalidArgumentException For invalid $name values.
      */
+    // phpcs:ignore Generic.NamingConventions.ConstructorName.OldStyle
     public function join($name, $on, $columns = [Select::SQL_STAR], $type = self::JOIN_INNER): static
     {
         if (is_array($name) && (! is_string(key($name)) || count($name) !== 1)) {

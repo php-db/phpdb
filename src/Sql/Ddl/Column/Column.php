@@ -45,16 +45,13 @@ class Column implements ColumnInterface
      * @param  string $name
      * @return $this Provides a fluent interface
      */
-    public function setName($name)
+    public function setName($name): static
     {
         $this->name = (string) $name;
         return $this;
     }
 
-    /**
-     * @return null|string
-     */
-    #[Override] public function getName()
+    #[Override] public function getName(): string
     {
         return $this->name;
     }
@@ -63,34 +60,27 @@ class Column implements ColumnInterface
      * @param  bool $nullable
      * @return $this Provides a fluent interface
      */
-    public function setNullable($nullable)
+    public function setNullable($nullable): static
     {
         $this->isNullable = (bool) $nullable;
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    #[Override] public function isNullable()
+    #[Override] public function isNullable(): bool
     {
         return $this->isNullable;
     }
 
     /**
-     * @param  null|string|int $default
      * @return $this Provides a fluent interface
      */
-    public function setDefault($default)
+    public function setDefault(string|int|null $default): static
     {
         $this->default = $default;
         return $this;
     }
 
-    /**
-     * @return null|string|int
-     */
-    #[Override] public function getDefault()
+    #[Override] public function getDefault(): string|int|null
     {
         return $this->default;
     }
@@ -98,7 +88,7 @@ class Column implements ColumnInterface
     /**
      * @return $this Provides a fluent interface
      */
-    public function setOptions(array $options)
+    public function setOptions(array $options): static
     {
         $this->options = $options;
         return $this;
@@ -109,16 +99,13 @@ class Column implements ColumnInterface
      * @param  string|boolean $value
      * @return $this Provides a fluent interface
      */
-    public function setOption($name, $value)
+    public function setOption($name, $value): static
     {
         $this->options[$name] = $value;
         return $this;
     }
 
-    /**
-     * @return array
-     */
-    #[Override] public function getOptions()
+    #[Override] public function getOptions(): array
     {
         return $this->options;
     }
@@ -126,7 +113,7 @@ class Column implements ColumnInterface
     /**
      * @return $this Provides a fluent interface
      */
-    public function addConstraint(ConstraintInterface $constraint)
+    public function addConstraint(ConstraintInterface $constraint): static
     {
         $this->constraints[] = $constraint;
 

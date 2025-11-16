@@ -82,7 +82,7 @@ class Argument
     public function getSpecification(): string
     {
         if (is_array($this->value)) {
-            return count($this->value) > 0 ?
+            return $this->value !== [] ?
                 sprintf('(%s)', implode(', ', array_fill(0, count($this->value), '%s'))) :
                 '(NULL)';
         }

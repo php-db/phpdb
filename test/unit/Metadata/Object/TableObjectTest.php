@@ -28,7 +28,7 @@ final class TableObjectTest extends TestCase
 
     public function testConstructorWithNullName(): void
     {
-        $table = new TableObject(null);
+        $table = new TableObject();
 
         self::assertNull($table->getName());
     }

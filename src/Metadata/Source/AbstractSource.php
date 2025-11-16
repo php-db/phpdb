@@ -53,8 +53,7 @@ abstract class AbstractSource implements MetadataInterface
 {
     public const DEFAULT_SCHEMA = '__DEFAULT_SCHEMA__';
 
-    /** @var string */
-    protected $defaultSchema;
+    protected string $defaultSchema;
 
     /** @psalm-var MetadataData */
     protected array $data = [];
@@ -98,6 +97,7 @@ abstract class AbstractSource implements MetadataInterface
                 $tableNames[] = $tableName;
             }
         }
+
         return $tableNames;
     }
 
@@ -115,6 +115,7 @@ abstract class AbstractSource implements MetadataInterface
         foreach ($this->getTableNames($schema, $includeViews) as $tableName) {
             $tables[] = $this->getTable($tableName, $schema);
         }
+
         return $tables;
     }
 
@@ -150,6 +151,7 @@ abstract class AbstractSource implements MetadataInterface
                     'Table "' . $tableName . '" is of an unsupported type "' . $data['table_type'] . '"'
                 );
         }
+
         $table->setColumns($this->getColumns($tableName, $schema));
         $table->setConstraints($this->getConstraints($tableName, $schema));
         return $table;
@@ -173,6 +175,7 @@ abstract class AbstractSource implements MetadataInterface
                 $viewNames[] = $tableName;
             }
         }
+
         return $viewNames;
     }
 
@@ -190,6 +193,7 @@ abstract class AbstractSource implements MetadataInterface
         foreach ($this->getViewNames($schema) as $tableName) {
             $views[] = $this->getTable($tableName, $schema);
         }
+
         return $views;
     }
 
@@ -209,6 +213,7 @@ abstract class AbstractSource implements MetadataInterface
         if (isset($tableNames[$viewName]) && 'VIEW' === $tableNames[$viewName]['table_type']) {
             return $this->getTable($viewName, $schema);
         }
+
         throw new Exception('View "' . $viewName . '" does not exist');
     }
 
@@ -247,6 +252,7 @@ abstract class AbstractSource implements MetadataInterface
         foreach ($this->getColumnNames($table, $schema) as $columnName) {
             $columns[] = $this->getColumn($columnName, $table, $schema);
         }
+
         return $columns;
     }
 
@@ -417,6 +423,7 @@ abstract class AbstractSource implements MetadataInterface
         foreach ($this->getTriggerNames($schema) as $triggerName) {
             $triggers[] = $this->getTrigger($triggerName, $schema);
         }
+
         return $triggers;
     }
 
@@ -469,6 +476,7 @@ abstract class AbstractSource implements MetadataInterface
             if (! isset($data[$key])) {
                 $data[$key] = [];
             }
+
             $data = &$data[$key];
         }
     }

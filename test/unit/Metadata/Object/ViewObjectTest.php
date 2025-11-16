@@ -28,7 +28,7 @@ final class ViewObjectTest extends TestCase
 
     public function testConstructorWithNullName(): void
     {
-        $view = new ViewObject(null);
+        $view = new ViewObject();
 
         self::assertNull($view->getName());
     }
@@ -147,7 +147,7 @@ final class ViewObjectTest extends TestCase
     {
         $view = new ViewObject('active_users');
 
-        $definition = 'SELECT id, username, email FROM users WHERE status = \'active\'';
+        $definition = "SELECT id, username, email FROM users WHERE status = 'active'";
         $view->setViewDefinition($definition)
             ->setCheckOption('CASCADED')
             ->setIsUpdatable(false);

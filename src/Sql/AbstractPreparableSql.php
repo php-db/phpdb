@@ -13,8 +13,6 @@ abstract class AbstractPreparableSql extends AbstractSql implements PreparableSq
 {
     /**
      * {@inheritDoc}
-     *
-     * @return StatementContainerInterface
      */
     #[Override]
     public function prepareStatement(

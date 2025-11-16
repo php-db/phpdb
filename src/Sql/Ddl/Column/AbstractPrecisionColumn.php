@@ -17,8 +17,8 @@ abstract class AbstractPrecisionColumn extends AbstractLengthColumn
      * @param int      $digits
      */
     public function __construct(
-        $name,
-        $digits = null,
+        string $name,
+        ?int $digits = null,
         $decimal = null,
         $nullable = false,
         $default = null,
@@ -30,10 +30,9 @@ abstract class AbstractPrecisionColumn extends AbstractLengthColumn
     }
 
     /**
-     * @param  int $digits
      * @return $this
      */
-    public function setDigits($digits)
+    public function setDigits(?int $digits)
     {
         return $this->setLength($digits);
     }

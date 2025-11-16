@@ -115,6 +115,7 @@ final class CombineTest extends TestCase
     {
         $select1 = new Select('t1');
         $select1->where(['x1' => 10]);
+
         $select2 = new Select('t2');
         $select2->where(['x2' => 20]);
 
@@ -204,6 +205,7 @@ final class CombineTest extends TestCase
                 $sqlValue = $sql;
                 return $mockStatement;
             }
+
             return $sqlValue;
         };
         $mockStatement->expects($this->any())->method('setSql')->willReturnCallback($setGetSqlFunction);

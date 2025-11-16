@@ -115,26 +115,8 @@ parameters:
 			path: src/ResultSet/HydratingResultSet.php
 
 		-
-			message: '#^Call to function method_exists\(\) with \*NEVER\* and ''exchangeArray'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: src/ResultSet/ResultSet.php
-
-		-
 			message: '#^Call to function method_exists\(\) with ArrayObject and ''exchangeArray'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
-			count: 1
-			path: src/ResultSet/ResultSet.php
-
-		-
-			message: '#^Instanceof between ArrayObject and ArrayObject will always evaluate to true\.$#'
-			identifier: instanceof.alwaysTrue
-			count: 1
-			path: src/ResultSet/ResultSet.php
-
-		-
-			message: '#^Result of \|\| is always true\.$#'
-			identifier: booleanOr.alwaysTrue
 			count: 1
 			path: src/ResultSet/ResultSet.php
 
@@ -235,12 +217,6 @@ parameters:
 			path: src/Sql/Platform/AbstractPlatform.php
 
 		-
-			message: '#^Method PhpDb\\Sql\\Platform\\AbstractPlatform\:\:prepareStatement\(\) with return type void returns PhpDb\\Adapter\\StatementContainerInterface but should not return anything\.$#'
-			identifier: return.void
-			count: 1
-			path: src/Sql/Platform/AbstractPlatform.php
-
-		-
 			message: '#^Argument of an invalid type PhpDb\\Sql\\Platform\\PlatformDecoratorInterface supplied for foreach, only iterables are supported\.$#'
 			identifier: foreach.nonIterable
 			count: 1
@@ -253,8 +229,8 @@ parameters:
 			path: src/Sql/Platform/Platform.php
 
 		-
-			message: '#^Method PhpDb\\Sql\\Platform\\Platform\:\:prepareStatement\(\) with return type void returns PhpDb\\Adapter\\StatementContainerInterface but should not return anything\.$#'
-			identifier: return.void
+			message: '#^Negated boolean expression is always false\.$#'
+			identifier: booleanNot.alwaysFalse
 			count: 1
 			path: src/Sql/Platform/Platform.php
 
@@ -271,51 +247,15 @@ parameters:
 			path: src/Sql/Predicate/PredicateSet.php
 
 		-
-			message: '#^Cannot call method addPredicates\(\) on array\|string\.$#'
-			identifier: method.nonObject
+			message: '#^PHPDoc tag @var for property PhpDb\\Sql\\Select\:\:\$having with type array\|string\|null is incompatible with native type PhpDb\\Sql\\Having\.$#'
+			identifier: property.phpDocType
 			count: 1
 			path: src/Sql/Select.php
 
 		-
-			message: '#^Cannot call method count\(\) on array\|string\.$#'
-			identifier: method.nonObject
+			message: '#^PHPDoc tag @var for property PhpDb\\Sql\\Select\:\:\$joins with type array\<PhpDb\\Sql\\Join\> is incompatible with native type PhpDb\\Sql\\Join\.$#'
+			identifier: property.phpDocType
 			count: 1
-			path: src/Sql/Select.php
-
-		-
-			message: '#^Cannot call method getJoins\(\) on array\<PhpDb\\Sql\\Join\>\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: src/Sql/Select.php
-
-		-
-			message: '#^Cannot call method join\(\) on array\<PhpDb\\Sql\\Join\>\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: src/Sql/Select.php
-
-		-
-			message: '#^Cannot clone array\<PhpDb\\Sql\\Join\>\.$#'
-			identifier: clone.nonObject
-			count: 1
-			path: src/Sql/Select.php
-
-		-
-			message: '#^Cannot clone array\|string\.$#'
-			identifier: clone.nonObject
-			count: 1
-			path: src/Sql/Select.php
-
-		-
-			message: '#^Property PhpDb\\Sql\\Select\:\:\$having \(array\|string\|null\) does not accept PhpDb\\Sql\\Having\.$#'
-			identifier: assign.propertyType
-			count: 3
-			path: src/Sql/Select.php
-
-		-
-			message: '#^Property PhpDb\\Sql\\Select\:\:\$joins \(array\<PhpDb\\Sql\\Join\>\) does not accept PhpDb\\Sql\\Join\.$#'
-			identifier: assign.propertyType
-			count: 2
 			path: src/Sql/Select.php
 
 		-
@@ -323,12 +263,6 @@ parameters:
 			identifier: method.childReturnType
 			count: 1
 			path: src/Sql/Select.php
-
-		-
-			message: '#^Result of method PhpDb\\Sql\\Platform\\Platform\:\:prepareStatement\(\) \(void\) is used\.$#'
-			identifier: method.void
-			count: 1
-			path: src/Sql/Sql.php
 
 		-
 			message: '#^Class PhpDb\\Adapter\\Driver\\Pdo\\Pdo not found\.$#'
@@ -799,6 +733,120 @@ parameters:
 			path: test/unit/ConfigProviderTest.php
 
 		-
+			message: '#^Call to an undefined method PHPUnit\\Framework\\MockObject\\MockObject\:\:getColumn\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: test/unit/Metadata/Source/AbstractSourceTest.php
+
+		-
+			message: '#^Call to an undefined method PHPUnit\\Framework\\MockObject\\MockObject\:\:getColumnNames\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: test/unit/Metadata/Source/AbstractSourceTest.php
+
+		-
+			message: '#^Call to an undefined method PHPUnit\\Framework\\MockObject\\MockObject\:\:getColumns\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: test/unit/Metadata/Source/AbstractSourceTest.php
+
+		-
+			message: '#^Call to an undefined method PHPUnit\\Framework\\MockObject\\MockObject\:\:getConstraint\(\)\.$#'
+			identifier: method.notFound
+			count: 3
+			path: test/unit/Metadata/Source/AbstractSourceTest.php
+
+		-
+			message: '#^Call to an undefined method PHPUnit\\Framework\\MockObject\\MockObject\:\:getConstraintKeys\(\)\.$#'
+			identifier: method.notFound
+			count: 3
+			path: test/unit/Metadata/Source/AbstractSourceTest.php
+
+		-
+			message: '#^Call to an undefined method PHPUnit\\Framework\\MockObject\\MockObject\:\:getConstraints\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: test/unit/Metadata/Source/AbstractSourceTest.php
+
+		-
+			message: '#^Call to an undefined method PHPUnit\\Framework\\MockObject\\MockObject\:\:getSchemas\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: test/unit/Metadata/Source/AbstractSourceTest.php
+
+		-
+			message: '#^Call to an undefined method PHPUnit\\Framework\\MockObject\\MockObject\:\:getTable\(\)\.$#'
+			identifier: method.notFound
+			count: 4
+			path: test/unit/Metadata/Source/AbstractSourceTest.php
+
+		-
+			message: '#^Call to an undefined method PHPUnit\\Framework\\MockObject\\MockObject\:\:getTableNames\(\)\.$#'
+			identifier: method.notFound
+			count: 4
+			path: test/unit/Metadata/Source/AbstractSourceTest.php
+
+		-
+			message: '#^Call to an undefined method PHPUnit\\Framework\\MockObject\\MockObject\:\:getTables\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: test/unit/Metadata/Source/AbstractSourceTest.php
+
+		-
+			message: '#^Call to an undefined method PHPUnit\\Framework\\MockObject\\MockObject\:\:getTrigger\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: test/unit/Metadata/Source/AbstractSourceTest.php
+
+		-
+			message: '#^Call to an undefined method PHPUnit\\Framework\\MockObject\\MockObject\:\:getTriggerNames\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: test/unit/Metadata/Source/AbstractSourceTest.php
+
+		-
+			message: '#^Call to an undefined method PHPUnit\\Framework\\MockObject\\MockObject\:\:getTriggers\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: test/unit/Metadata/Source/AbstractSourceTest.php
+
+		-
+			message: '#^Call to an undefined method PHPUnit\\Framework\\MockObject\\MockObject\:\:getView\(\)\.$#'
+			identifier: method.notFound
+			count: 3
+			path: test/unit/Metadata/Source/AbstractSourceTest.php
+
+		-
+			message: '#^Call to an undefined method PHPUnit\\Framework\\MockObject\\MockObject\:\:getViewNames\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: test/unit/Metadata/Source/AbstractSourceTest.php
+
+		-
+			message: '#^Call to an undefined method PHPUnit\\Framework\\MockObject\\MockObject\:\:getViews\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: test/unit/Metadata/Source/AbstractSourceTest.php
+
+		-
+			message: '#^Call to an undefined method PHPUnit\\Framework\\MockObject\\MockObject\:\:buffer\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: test/unit/ResultSet/AbstractResultSetIntegrationTest.php
+
+		-
+			message: '#^Call to an undefined method PHPUnit\\Framework\\MockObject\\MockObject\:\:current\(\)\.$#'
+			identifier: method.notFound
+			count: 6
+			path: test/unit/ResultSet/AbstractResultSetIntegrationTest.php
+
+		-
+			message: '#^Call to an undefined method PHPUnit\\Framework\\MockObject\\MockObject\:\:initialize\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: test/unit/ResultSet/AbstractResultSetIntegrationTest.php
+
+		-
 			message: '#^Result of method PhpDb\\ResultSet\\AbstractResultSet\:\:next\(\) \(void\) is used\.$#'
 			identifier: method.void
 			count: 1
@@ -851,6 +899,24 @@ parameters:
 			identifier: varTag.nativeType
 			count: 1
 			path: test/unit/Sql/Ddl/AlterTableTest.php
+
+		-
+			message: '#^Call to an undefined method PHPUnit\\Framework\\MockObject\\MockObject\:\:addColumn\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: test/unit/Sql/Ddl/Constraint/AbstractConstraintTest.php
+
+		-
+			message: '#^Call to an undefined method PHPUnit\\Framework\\MockObject\\MockObject\:\:getColumns\(\)\.$#'
+			identifier: method.notFound
+			count: 3
+			path: test/unit/Sql/Ddl/Constraint/AbstractConstraintTest.php
+
+		-
+			message: '#^Call to an undefined method PHPUnit\\Framework\\MockObject\\MockObject\:\:setColumns\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: test/unit/Sql/Ddl/Constraint/AbstractConstraintTest.php
 
 		-
 			message: '#^Access to an undefined property PhpDb\\Sql\\Delete\:\:\$unknown\.$#'
@@ -907,12 +973,6 @@ parameters:
 			path: test/unit/Sql/SelectTest.php
 
 		-
-			message: '#^Instanceof between PhpDb\\Sql\\Platform\\PlatformDecoratorInterface and PhpDb\\Sql\\Platform\\PlatformDecoratorInterface will always evaluate to true\.$#'
-			identifier: instanceof.alwaysTrue
-			count: 1
-			path: test/unit/Sql/SqlFunctionalTest.php
-
-		-
 			message: '#^Static call to instance method PhpDbTest\\Sql\\SqlFunctionalTest\:\:createColumn\(\)\.$#'
 			identifier: method.staticCall
 			count: 2
@@ -946,12 +1006,6 @@ parameters:
 			message: '#^Static call to instance method PhpDbTest\\Sql\\SqlFunctionalTest\:\:update\(\)\.$#'
 			identifier: method.staticCall
 			count: 3
-			path: test/unit/Sql/SqlFunctionalTest.php
-
-		-
-			message: '#^Unreachable statement \- code above always terminates\.$#'
-			identifier: deadCode.unreachable
-			count: 1
 			path: test/unit/Sql/SqlFunctionalTest.php
 
 		-

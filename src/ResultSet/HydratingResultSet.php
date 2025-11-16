@@ -39,6 +39,7 @@ class HydratingResultSet extends AbstractResultSet
                 'An object must be set as the object prototype, a ' . gettype($objectPrototype) . ' was provided.'
             );
         }
+
         $this->objectPrototype = $objectPrototype;
         return $this;
     }
@@ -80,6 +81,7 @@ class HydratingResultSet extends AbstractResultSet
         } elseif (is_array($this->buffer) && isset($this->buffer[$this->position])) {
             return $this->buffer[$this->position];
         }
+
         $data    = $this->dataSource->current();
         $current = is_array($data) ? $this->hydrator->hydrate($data, clone $this->objectPrototype) : null;
 
@@ -101,6 +103,7 @@ class HydratingResultSet extends AbstractResultSet
         foreach ($this as $row) {
             $return[] = $this->hydrator->extract($row);
         }
+
         return $return;
     }
 }

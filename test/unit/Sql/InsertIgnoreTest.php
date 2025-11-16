@@ -133,7 +133,8 @@ final class InsertIgnoreTest extends TestCase
 
         // with TableIdentifier
         $this->insert = new InsertIgnore();
-        $mockDriver   = $this->getMockBuilder(DriverInterface::class)->getMock();
+
+        $mockDriver = $this->getMockBuilder(DriverInterface::class)->getMock();
         $mockDriver->expects($this->any())->method('getPrepareType')->willReturn('positional');
         $mockDriver->expects($this->any())->method('formatParameterName')->willReturn('?');
         $mockAdapter = $this->createMockAdapter($mockDriver);

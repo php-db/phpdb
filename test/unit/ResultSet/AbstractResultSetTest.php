@@ -31,8 +31,7 @@ use function assert;
 #[CoversMethod(AbstractResultSet::class, 'toArray')]
 final class AbstractResultSetTest extends TestCase
 {
-    /** @var MockObject */
-    protected AbstractResultSet|MockObject $resultSet;
+    protected MockObject $resultSet;
 
     /**
      * Sets up the fixture, for example, opens a network connection.
@@ -266,6 +265,7 @@ final class AbstractResultSetTest extends TestCase
         $result->initialize($stub, null);
         $result->rewind();
         $result->rewind();
+
         $resultSet->initialize($result);
         $resultSet->buffer();
         $resultSet->rewind();
@@ -279,6 +279,7 @@ final class AbstractResultSetTest extends TestCase
 
         $resultSet->rewind();
         $resultSet->rewind();
+
         $data = $resultSet->current();
         self::assertEquals(1, $data['id']);
         $resultSet->next();

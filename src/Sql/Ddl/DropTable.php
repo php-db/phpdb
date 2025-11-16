@@ -18,16 +18,13 @@ class DropTable extends AbstractSql implements SqlInterface
 
     protected string|TableIdentifier $table = '';
 
-    /**
-     * @param string|TableIdentifier $table
-     */
-    public function __construct($table = '')
+    public function __construct(string|TableIdentifier $table = '')
     {
         $this->table = $table;
     }
 
     /** @return string[] */
-    protected function processTable(?PlatformInterface $adapterPlatform = null)
+    protected function processTable(?PlatformInterface $adapterPlatform = null): array
     {
         return [$this->resolveTable($this->table, $adapterPlatform)];
     }

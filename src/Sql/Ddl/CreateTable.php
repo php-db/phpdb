@@ -12,9 +12,11 @@ use function array_key_exists;
 
 class CreateTable extends AbstractSql implements SqlInterface
 {
-    public const COLUMNS     = 'columns';
+    public const COLUMNS = 'columns';
+
     public const CONSTRAINTS = 'constraints';
-    public const TABLE       = 'table';
+
+    public const TABLE = 'table';
 
     /** @var Column\ColumnInterface[] */
     protected $columns = [];
@@ -61,7 +63,7 @@ class CreateTable extends AbstractSql implements SqlInterface
      * @param  bool $temporary
      * @return $this Provides a fluent interface
      */
-    public function setTemporary($temporary)
+    public function setTemporary($temporary): static
     {
         $this->isTemporary = (bool) $temporary;
         return $this;
@@ -79,7 +81,7 @@ class CreateTable extends AbstractSql implements SqlInterface
      * @param  string $name
      * @return $this Provides a fluent interface
      */
-    public function setTable($name)
+    public function setTable($name): static
     {
         $this->table = $name;
         return $this;
@@ -88,7 +90,7 @@ class CreateTable extends AbstractSql implements SqlInterface
     /**
      * @return $this Provides a fluent interface
      */
-    public function addColumn(Column\ColumnInterface $column)
+    public function addColumn(Column\ColumnInterface $column): static
     {
         $this->columns[] = $column;
         return $this;
@@ -97,7 +99,7 @@ class CreateTable extends AbstractSql implements SqlInterface
     /**
      * @return $this Provides a fluent interface
      */
-    public function addConstraint(Constraint\ConstraintInterface $constraint)
+    public function addConstraint(Constraint\ConstraintInterface $constraint): static
     {
         $this->constraints[] = $constraint;
         return $this;
@@ -122,7 +124,7 @@ class CreateTable extends AbstractSql implements SqlInterface
     /**
      * @return string[]
      */
-    protected function processTable(?PlatformInterface $adapterPlatform = null)
+    protected function processTable(?PlatformInterface $adapterPlatform = null): array
     {
         return [
             $this->isTemporary ? 'TEMPORARY ' : '',
@@ -133,7 +135,7 @@ class CreateTable extends AbstractSql implements SqlInterface
     /**
      * @return string[][]|null
      */
-    protected function processColumns(?PlatformInterface $adapterPlatform = null)
+    protected function processColumns(?PlatformInterface $adapterPlatform = null): ?array
     {
         if (! $this->columns) {
             return null;
@@ -156,13 +158,14 @@ class CreateTable extends AbstractSql implements SqlInterface
         if ($this->constraints && $this->columns) {
             return $this->specifications['combinedBy'];
         }
+
         return null;
     }
 
     /**
      * @return string[][]|null
      */
-    protected function processConstraints(?PlatformInterface $adapterPlatform = null)
+    protected function processConstraints(?PlatformInterface $adapterPlatform = null): ?array
     {
         if (! $this->constraints) {
             return null;
@@ -180,7 +183,7 @@ class CreateTable extends AbstractSql implements SqlInterface
     /**
      * @return string[]
      */
-    protected function processStatementEnd(?PlatformInterface $adapterPlatform = null)
+    protected function processStatementEnd(?PlatformInterface $adapterPlatform = null): array
     {
         return ["\n)"];
     }

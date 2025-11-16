@@ -98,7 +98,7 @@ class PlatformTest extends TestCase
             ->willReturn('?');
         $mockDriver->expects($this->any())
             ->method('createStatement')
-            ->willReturnCallback(fn() => new StatementContainer());
+            ->willReturnCallback(fn(): StatementContainer => new StatementContainer());
 
         return new Adapter($mockDriver, $platform, new ResultSet());
     }

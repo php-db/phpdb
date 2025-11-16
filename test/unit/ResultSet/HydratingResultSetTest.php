@@ -78,6 +78,7 @@ final class HydratingResultSetTest extends TestCase
     {
         $hydratingRs = new HydratingResultSet();
         $hydratingRs->initialize([]);
+
         $result = $hydratingRs->current();
         self::assertNull($result);
     }

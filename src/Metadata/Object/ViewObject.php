@@ -27,7 +27,7 @@ class ViewObject extends AbstractTableObject
      * @param string $viewDefinition to set
      * @return $this Provides a fluent interface
      */
-    public function setViewDefinition($viewDefinition)
+    public function setViewDefinition($viewDefinition): static
     {
         $this->viewDefinition = $viewDefinition;
         return $this;
@@ -45,7 +45,7 @@ class ViewObject extends AbstractTableObject
      * @param string $checkOption to set
      * @return $this Provides a fluent interface
      */
-    public function setCheckOption($checkOption)
+    public function setCheckOption($checkOption): static
     {
         $this->checkOption = $checkOption;
         return $this;
@@ -71,7 +71,7 @@ class ViewObject extends AbstractTableObject
      * @param bool $isUpdatable to set
      * @return $this Provides a fluent interface
      */
-    public function setIsUpdatable($isUpdatable)
+    public function setIsUpdatable($isUpdatable): static
     {
         $this->isUpdatable = $isUpdatable;
         return $this;

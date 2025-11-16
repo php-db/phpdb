@@ -62,6 +62,7 @@ final class OperatorTest extends TestCase
         $operator = new Operator();
 
         $operator->setRight('bar');
+
         $expression = new Argument('bar', ArgumentType::Value);
         self::assertEquals($expression, $operator->getRight());
 

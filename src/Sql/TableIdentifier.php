@@ -17,6 +17,7 @@ class TableIdentifier
                 '$table must be a valid table name, empty string given'
             );
         }
+
         $this->table = $table;
 
         if ($schema !== null) {
@@ -25,6 +26,7 @@ class TableIdentifier
                     '$schema must be a valid schema name or null, empty string given'
                 );
             }
+
             $this->schema = $schema;
         }
     }

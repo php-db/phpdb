@@ -97,7 +97,7 @@ class ColumnObject
      * @param string $tableName
      * @return $this Provides a fluent interface
      */
-    public function setTableName($tableName)
+    public function setTableName($tableName): static
     {
         $this->tableName = $tableName;
         return $this;
@@ -135,7 +135,7 @@ class ColumnObject
      * @param int $ordinalPosition to set
      * @return $this Provides a fluent interface
      */
-    public function setOrdinalPosition($ordinalPosition)
+    public function setOrdinalPosition($ordinalPosition): static
     {
         $this->ordinalPosition = $ordinalPosition;
         return $this;
@@ -153,7 +153,7 @@ class ColumnObject
      * @param mixed $columnDefault to set
      * @return $this Provides a fluent interface
      */
-    public function setColumnDefault($columnDefault)
+    public function setColumnDefault($columnDefault): static
     {
         $this->columnDefault = $columnDefault;
         return $this;
@@ -171,7 +171,7 @@ class ColumnObject
      * @param bool $isNullable to set
      * @return $this Provides a fluent interface
      */
-    public function setIsNullable($isNullable)
+    public function setIsNullable($isNullable): static
     {
         $this->isNullable = $isNullable;
         return $this;
@@ -197,7 +197,7 @@ class ColumnObject
      * @param string $dataType the $dataType to set
      * @return $this Provides a fluent interface
      */
-    public function setDataType($dataType)
+    public function setDataType($dataType): static
     {
         $this->dataType = $dataType;
         return $this;
@@ -215,7 +215,7 @@ class ColumnObject
      * @param int $characterMaximumLength the $characterMaximumLength to set
      * @return $this Provides a fluent interface
      */
-    public function setCharacterMaximumLength($characterMaximumLength)
+    public function setCharacterMaximumLength($characterMaximumLength): static
     {
         $this->characterMaximumLength = $characterMaximumLength;
         return $this;
@@ -233,7 +233,7 @@ class ColumnObject
      * @param int $characterOctetLength the $characterOctetLength to set
      * @return $this Provides a fluent interface
      */
-    public function setCharacterOctetLength($characterOctetLength)
+    public function setCharacterOctetLength($characterOctetLength): static
     {
         $this->characterOctetLength = $characterOctetLength;
         return $this;
@@ -251,7 +251,7 @@ class ColumnObject
      * @param int $numericPrecision the $numericPrevision to set
      * @return $this Provides a fluent interface
      */
-    public function setNumericPrecision($numericPrecision)
+    public function setNumericPrecision($numericPrecision): static
     {
         $this->numericPrecision = $numericPrecision;
         return $this;
@@ -269,7 +269,7 @@ class ColumnObject
      * @param int $numericScale the $numericScale to set
      * @return $this Provides a fluent interface
      */
-    public function setNumericScale($numericScale)
+    public function setNumericScale($numericScale): static
     {
         $this->numericScale = $numericScale;
         return $this;
@@ -287,7 +287,7 @@ class ColumnObject
      * @param  bool $numericUnsigned
      * @return $this Provides a fluent interface
      */
-    public function setNumericUnsigned($numericUnsigned)
+    public function setNumericUnsigned($numericUnsigned): static
     {
         $this->numericUnsigned = $numericUnsigned;
         return $this;
@@ -312,11 +312,12 @@ class ColumnObject
     /**
      * @return $this Provides a fluent interface
      */
-    public function setErratas(array $erratas)
+    public function setErratas(array $erratas): static
     {
         foreach ($erratas as $name => $value) {
             $this->setErrata($name, $value);
         }
+
         return $this;
     }
 
@@ -338,7 +339,7 @@ class ColumnObject
      * @param mixed $errataValue
      * @return $this Provides a fluent interface
      */
-    public function setErrata($errataName, $errataValue)
+    public function setErrata($errataName, $errataValue): static
     {
         $this->errata[$errataName] = $errataValue;
         return $this;

@@ -123,6 +123,7 @@ final class UpdateTest extends TestCase
         $this->update->where(['c1' => null]);
         $this->update->where(['c2' => [1, 2, 3]]);
         $this->update->where([new IsNotNull('c3')]);
+
         $where = $this->update->where;
 
         $predicates = $this->readAttribute($where, 'predicates');
@@ -211,7 +212,8 @@ final class UpdateTest extends TestCase
 
         // with TableIdentifier
         $this->update = new Update();
-        $mockDriver   = $this->getMockBuilder(DriverInterface::class)->getMock();
+
+        $mockDriver = $this->getMockBuilder(DriverInterface::class)->getMock();
         $mockDriver->expects($this->any())->method('getPrepareType')->willReturn('positional');
         $mockDriver->expects($this->any())->method('formatParameterName')->willReturn('?');
         $mockAdapter = $this->createMockAdapter($mockDriver);

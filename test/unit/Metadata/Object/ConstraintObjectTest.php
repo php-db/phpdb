@@ -20,7 +20,7 @@ final class ConstraintObjectTest extends TestCase
 
     public function testConstructorWithNullSchema(): void
     {
-        $constraint = new ConstraintObject('constraint_name', 'table_name', null);
+        $constraint = new ConstraintObject('constraint_name', 'table_name');
 
         self::assertSame('constraint_name', $constraint->getName());
         self::assertSame('table_name', $constraint->getTableName());

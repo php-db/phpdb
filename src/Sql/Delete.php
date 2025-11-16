@@ -9,6 +9,8 @@ use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\ParameterContainer;
 use PhpDb\Adapter\Platform\PlatformInterface;
 use PhpDb\Sql\Predicate\PredicateInterface;
+use PhpDb\Sql\TableIdentifier;
+use PhpDb\Sql\Where;
 
 use function array_key_exists;
 use function sprintf;
@@ -23,7 +25,9 @@ class Delete extends AbstractPreparableSql
      * @const
      */
     public const SPECIFICATION_DELETE = 'delete';
-    public const SPECIFICATION_WHERE  = 'where';
+
+    public const SPECIFICATION_WHERE = 'where';
+
     /**@#-*/
 
     /**
@@ -42,8 +46,7 @@ class Delete extends AbstractPreparableSql
     /** @var array */
     protected $set = [];
 
-    /** @var null|string|Where */
-    protected $where;
+    protected Where $where;
 
     /**
      * Constructor
@@ -55,16 +58,16 @@ class Delete extends AbstractPreparableSql
         if ($table) {
             $this->from($table);
         }
+
         $this->where = new Where();
     }
 
     /**
      * Create from statement
      *
-     * @param  string|array|TableIdentifier $table
      * @return $this Provides a fluent interface
      */
-    public function from($table): static
+    public function from(TableIdentifier|string|array $table): static
     {
         $this->table = $table;
         return $this;
@@ -91,38 +94,33 @@ class Delete extends AbstractPreparableSql
      * @param  string $combination One of the OP_* constants from Predicate\PredicateSet
      * @return $this Provides a fluent interface
      */
-    public function where($predicate, $combination = Predicate\PredicateSet::OP_AND)
+    public function where($predicate, $combination = Predicate\PredicateSet::OP_AND): static
     {
         if ($predicate instanceof Where) {
             $this->where = $predicate;
         } else {
             $this->where->addPredicates($predicate, $combination);
         }
+
         return $this;
     }
 
-    /**
-     * @return string
-     */
     protected function processDelete(
         PlatformInterface $platform,
         ?DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null
-    ) {
+    ): string {
         return sprintf(
             $this->specifications[static::SPECIFICATION_DELETE],
             $this->resolveTable($this->table, $platform, $driver, $parameterContainer)
         );
     }
 
-    /**
-     * @return null|string
-     */
     protected function processWhere(
         PlatformInterface $platform,
         ?DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null
-    ) {
+    ): ?string {
         if ($this->where->count() === 0) {
             return null;
         }
@@ -138,14 +136,14 @@ class Delete extends AbstractPreparableSql
      *
      * Overloads "where" only.
      *
-     * @param  string $name
      * @return Where|null
      */
-    public function __get($name)
+    public function __get(string $name): mixed
     {
         if (strtolower($name) === 'where') {
             return $this->where;
         }
+
         return null;
     }
 }

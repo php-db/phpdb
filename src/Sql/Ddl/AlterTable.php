@@ -12,13 +12,19 @@ use function array_key_exists;
 
 class AlterTable extends AbstractSql implements SqlInterface
 {
-    public const ADD_COLUMNS      = 'addColumns';
-    public const ADD_CONSTRAINTS  = 'addConstraints';
-    public const CHANGE_COLUMNS   = 'changeColumns';
-    public const DROP_COLUMNS     = 'dropColumns';
+    public const ADD_COLUMNS = 'addColumns';
+
+    public const ADD_CONSTRAINTS = 'addConstraints';
+
+    public const CHANGE_COLUMNS = 'changeColumns';
+
+    public const DROP_COLUMNS = 'dropColumns';
+
     public const DROP_CONSTRAINTS = 'dropConstraints';
-    public const DROP_INDEXES     = 'dropIndexes';
-    public const TABLE            = 'table';
+
+    public const DROP_INDEXES = 'dropIndexes';
+
+    public const TABLE = 'table';
 
     /** @var array */
     protected $addColumns = [];
@@ -92,7 +98,7 @@ class AlterTable extends AbstractSql implements SqlInterface
      * @param  string $name
      * @return $this Provides a fluent interface
      */
-    public function setTable($name)
+    public function setTable($name): static
     {
         $this->table = $name;
 
@@ -102,7 +108,7 @@ class AlterTable extends AbstractSql implements SqlInterface
     /**
      * @return $this Provides a fluent interface
      */
-    public function addColumn(Column\ColumnInterface $column)
+    public function addColumn(Column\ColumnInterface $column): static
     {
         $this->addColumns[] = $column;
 
@@ -113,7 +119,7 @@ class AlterTable extends AbstractSql implements SqlInterface
      * @param  string $name
      * @return $this Provides a fluent interface
      */
-    public function changeColumn($name, Column\ColumnInterface $column)
+    public function changeColumn($name, Column\ColumnInterface $column): static
     {
         $this->changeColumns[$name] = $column;
 
@@ -124,7 +130,7 @@ class AlterTable extends AbstractSql implements SqlInterface
      * @param  string $name
      * @return $this Provides a fluent interface
      */
-    public function dropColumn($name)
+    public function dropColumn($name): static
     {
         $this->dropColumns[] = $name;
 
@@ -135,7 +141,7 @@ class AlterTable extends AbstractSql implements SqlInterface
      * @param  string $name
      * @return $this Provides a fluent interface
      */
-    public function dropConstraint($name)
+    public function dropConstraint($name): static
     {
         $this->dropConstraints[] = $name;
 
@@ -145,7 +151,7 @@ class AlterTable extends AbstractSql implements SqlInterface
     /**
      * @return $this Provides a fluent interface
      */
-    public function addConstraint(Constraint\ConstraintInterface $constraint)
+    public function addConstraint(Constraint\ConstraintInterface $constraint): static
     {
         $this->addConstraints[] = $constraint;
 
@@ -154,9 +160,9 @@ class AlterTable extends AbstractSql implements SqlInterface
 
     /**
      * @param  string $name
-     * @return self Provides a fluent interface
+     * @return static Provides a fluent interface
      */
-    public function dropIndex($name)
+    public function dropIndex($name): static
     {
         $this->dropIndexes[] = $name;
 
@@ -182,7 +188,7 @@ class AlterTable extends AbstractSql implements SqlInterface
     }
 
     /** @return string[] */
-    protected function processTable(?PlatformInterface $adapterPlatform = null)
+    protected function processTable(?PlatformInterface $adapterPlatform = null): array
     {
         return [$this->resolveTable($this->table, $adapterPlatform)];
     }

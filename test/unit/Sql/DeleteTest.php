@@ -79,6 +79,7 @@ final class DeleteTest extends TestCase
         $this->delete->where(['c2' => [1, 2, 3]]);
         $this->delete->where([new IsNotNull('c3')]);
         $this->delete->where(['one' => 1, 'two' => 2]);
+
         $where = $this->delete->where;
 
         $predicates = $this->readAttribute($where, 'predicates');
@@ -135,8 +136,9 @@ final class DeleteTest extends TestCase
 
         // with TableIdentifier
         $this->delete = new Delete();
-        $mockDriver   = $this->getMockBuilder(DriverInterface::class)->getMock();
-        $mockAdapter  = $this->createMockAdapter($mockDriver);
+
+        $mockDriver  = $this->getMockBuilder(DriverInterface::class)->getMock();
+        $mockAdapter = $this->createMockAdapter($mockDriver);
 
         $mockStatement = $this->getMockBuilder(StatementInterface::class)->getMock();
         $mockStatement->expects($this->once())

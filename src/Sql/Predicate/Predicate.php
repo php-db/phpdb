@@ -20,7 +20,8 @@ use PhpDb\Sql\ExpressionInterface;
  */
 class Predicate extends PredicateSet
 {
-    private Predicate|null $unnest                      = null;
+    private Predicate|null $unnest = null;
+
     protected string|null $nextPredicateCombineOperator = null;
 
     protected function getNextPredicateCombineOperator(): string
@@ -58,9 +59,10 @@ class Predicate extends PredicateSet
      */
     public function unnest(): Predicate
     {
-        if ($this->unnest === null) {
+        if (! $this->unnest instanceof Predicate) {
             throw new RuntimeException('Not nested');
         }
+
         $unnest = $this->unnest;
         /** @psalm-suppress PossiblyNullPropertyAssignmentValue */
         $this->unnest = null;

@@ -175,7 +175,7 @@ final class ArgumentTest extends TestCase
 
     public function testConstructorWithNullValue(): void
     {
-        $argument = new Argument(null);
+        $argument = new Argument();
         self::assertNull($argument->getValue());
         self::assertEquals(ArgumentType::Value, $argument->getType());
     }

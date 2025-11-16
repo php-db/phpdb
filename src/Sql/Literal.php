@@ -25,7 +25,7 @@ class Literal implements ExpressionInterface
      * @param string $literal
      * @return $this Provides a fluent interface
      */
-    public function setLiteral($literal)
+    public function setLiteral($literal): static
     {
         $this->literal = $literal;
         return $this;

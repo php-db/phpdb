@@ -71,6 +71,7 @@ class ExpressionData implements Iterator, Countable
                 if ($partsIndex === 0) {
                     $part->setSpecification('(' . $part->getSpecificationString());
                 }
+
                 if ($partsIndex === $partsCount - 1) {
                     $part->setSpecification($part->getSpecificationString() . ')');
                 }
@@ -103,13 +104,15 @@ class ExpressionData implements Iterator, Countable
     {
         return implode(
             ' ',
-            array_map(fn (ExpressionPart $part) => $part->getSpecificationString(), $this->expressionParts)
+            array_map(fn (ExpressionPart $part): string => $part->getSpecificationString(), $this->expressionParts)
         );
     }
 
     public function getExpressionValues(): array
     {
-        return array_merge(...array_map(fn (ExpressionPart $part) => $part->getValues(), $this->expressionParts));
+        return array_merge(
+            ...array_map(fn (ExpressionPart $part): array => $part->getValues(), $this->expressionParts)
+        );
     }
 
     #[Override]

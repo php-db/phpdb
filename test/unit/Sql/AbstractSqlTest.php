@@ -66,7 +66,7 @@ final class AbstractSqlTest extends TestCase
         $this->mockDriver
             ->expects($this->any())
             ->method('formatParameterName')
-            ->willReturnCallback(fn($x) => ':' . $x);
+            ->willReturnCallback(fn($x): string => ':' . $x);
     }
 
     /**
@@ -354,14 +354,12 @@ final class AbstractSqlTest extends TestCase
     }
 
     /**
-     * @param null                $parameterContainer
-     * @param null                $namedParameterPrefix
      * @throws ReflectionException
      */
     protected function invokeProcessExpressionMethod(
         ExpressionInterface $expression,
-        $parameterContainer = null,
-        $namedParameterPrefix = null
+        ParameterContainer|null $parameterContainer = null,
+        string|null $namedParameterPrefix = null
     ): string|StatementContainer {
         $method = new ReflectionMethod($this->abstractSql, 'processExpression');
         /** @noinspection PhpExpressionResultUnusedInspection */

@@ -122,17 +122,15 @@ final class ResultSetIntegrationTest extends TestCase
         self::assertSame($iteratorAggregate->getIterator(), $this->resultSet->getDataSource());
     }
 
-    /**
-     * @return void
-     */
     #[DataProvider('invalidReturnTypes')]
-    public function testInvalidDataSourceRaisesException(mixed $dataSource)
+    public function testInvalidDataSourceRaisesException(mixed $dataSource): void
     {
         if (is_array($dataSource)) {
             $this->expectNotToPerformAssertions();
             // this is valid
             return;
         }
+
         $this->expectException(TypeError::class);
         $this->resultSet->initialize($dataSource);
     }
@@ -151,6 +149,7 @@ final class ResultSetIntegrationTest extends TestCase
                 'title' => 'title ' . $i,
             ];
         }
+
         return new ArrayIterator($array);
     }
 
@@ -203,6 +202,7 @@ final class ResultSetIntegrationTest extends TestCase
         foreach ($dataSource as $index => $row) {
             $dataSource[$index] = (object) $row;
         }
+
         $this->resultSet->initialize($dataSource);
         $this->expectException(RuntimeException::class);
         $this->resultSet->toArray();

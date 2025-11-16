@@ -49,6 +49,7 @@ final class InTest extends TestCase
     {
         $in = new In();
         $in->setIdentifier('foo.bar');
+
         $identifier = new Argument('foo.bar', ArgumentType::Identifier);
         self::assertEquals($identifier, $in->getIdentifier());
     }
@@ -57,6 +58,7 @@ final class InTest extends TestCase
     {
         $in = new In();
         $in->setValueSet([1, 2]);
+
         $expression = new Argument([1, 2], ArgumentType::Value);
         self::assertEquals($expression, $in->getValueSet());
     }

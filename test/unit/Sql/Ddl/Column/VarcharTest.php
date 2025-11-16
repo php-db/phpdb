@@ -55,7 +55,7 @@ final class VarcharTest extends TestCase
 
     public function testGetExpressionDataWithNullLength(): void
     {
-        $column = new Varchar('name', null);
+        $column = new Varchar('name');
 
         $expressionData = $column->getExpressionData();
 
