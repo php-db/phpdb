@@ -34,7 +34,8 @@ class AdapterAbstractServiceFactory implements AbstractFactoryInterface
             return false;
         }
 
-        return is_array($config[$requestedName])
+        return isset($config[$requestedName])
+            && is_array($config[$requestedName])
             && ! empty($config[$requestedName]);
     }
 
