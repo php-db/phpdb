@@ -32,7 +32,6 @@ class PlatformTest extends TestCase
         $reflectionMethod->setAccessible(true);
 
         self::assertEquals($adapter->getPlatform(), $reflectionMethod->invoke($platform, null));
-        die('x');
     }
 
     /**

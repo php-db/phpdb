@@ -31,12 +31,6 @@
         </testsuite>
     </testsuites>
 
-    <coverage>
-        <report>
-            <text outputFile="php://stdout" showOnlySummary="false"/>
-        </report>
-    </coverage>
-
     <php>
         <!-- Note: the following is a FULL list of ALL POSSIBLE constants
             currently in use in Laminas for ALL COMPONENTS; you should choose the
