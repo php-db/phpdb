@@ -51,7 +51,7 @@ class TriggerObject
      *
      * @return $this Provides a fluent interface
      */
-    public function setName(?string $name): static
+    public function setName(string $name): static
     {
         $this->name = $name;
         return $this;
@@ -70,7 +70,7 @@ class TriggerObject
      *
      * @return $this Provides a fluent interface
      */
-    public function setEventManipulation(?string $eventManipulation): static
+    public function setEventManipulation(string $eventManipulation): static
     {
         $this->eventManipulation = $eventManipulation;
         return $this;
@@ -89,7 +89,7 @@ class TriggerObject
      *
      * @return $this Provides a fluent interface
      */
-    public function setEventObjectCatalog(?string $eventObjectCatalog): static
+    public function setEventObjectCatalog(string $eventObjectCatalog): static
     {
         $this->eventObjectCatalog = $eventObjectCatalog;
         return $this;
@@ -108,7 +108,7 @@ class TriggerObject
      *
      * @return $this Provides a fluent interface
      */
-    public function setEventObjectSchema(?string $eventObjectSchema): static
+    public function setEventObjectSchema(string $eventObjectSchema): static
     {
         $this->eventObjectSchema = $eventObjectSchema;
         return $this;
@@ -127,7 +127,7 @@ class TriggerObject
      *
      * @return $this Provides a fluent interface
      */
-    public function setEventObjectTable(?string $eventObjectTable): static
+    public function setEventObjectTable(string $eventObjectTable): static
     {
         $this->eventObjectTable = $eventObjectTable;
         return $this;
@@ -146,7 +146,7 @@ class TriggerObject
      *
      * @return $this Provides a fluent interface
      */
-    public function setActionOrder(?string $actionOrder): static
+    public function setActionOrder(string $actionOrder): static
     {
         $this->actionOrder = $actionOrder;
         return $this;
@@ -184,7 +184,7 @@ class TriggerObject
      *
      * @return $this Provides a fluent interface
      */
-    public function setActionStatement(?string $actionStatement): static
+    public function setActionStatement(string $actionStatement): static
     {
         $this->actionStatement = $actionStatement;
         return $this;
@@ -203,7 +203,7 @@ class TriggerObject
      *
      * @return $this Provides a fluent interface
      */
-    public function setActionOrientation(?string $actionOrientation): static
+    public function setActionOrientation(string $actionOrientation): static
     {
         $this->actionOrientation = $actionOrientation;
         return $this;
@@ -222,7 +222,7 @@ class TriggerObject
      *
      * @return $this Provides a fluent interface
      */
-    public function setActionTiming(?string $actionTiming): static
+    public function setActionTiming(string $actionTiming): static
     {
         $this->actionTiming = $actionTiming;
         return $this;
@@ -279,7 +279,7 @@ class TriggerObject
      *
      * @return $this Provides a fluent interface
      */
-    public function setActionReferenceOldRow(?string $actionReferenceOldRow): static
+    public function setActionReferenceOldRow(string $actionReferenceOldRow): static
     {
         $this->actionReferenceOldRow = $actionReferenceOldRow;
         return $this;
@@ -298,7 +298,7 @@ class TriggerObject
      *
      * @return $this Provides a fluent interface
      */
-    public function setActionReferenceNewRow(?string $actionReferenceNewRow): static
+    public function setActionReferenceNewRow(string $actionReferenceNewRow): static
     {
         $this->actionReferenceNewRow = $actionReferenceNewRow;
         return $this;

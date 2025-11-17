@@ -18,7 +18,7 @@ class ViewObject extends AbstractTableObject
     }
 
     /**
-     * @param string|null $viewDefinition to set
+     * @param null|string $viewDefinition to set
      * @return $this Provides a fluent interface
      */
     public function setViewDefinition(?string $viewDefinition): static
@@ -33,7 +33,7 @@ class ViewObject extends AbstractTableObject
     }
 
     /**
-     * @param string|null $checkOption to set
+     * @param null|string $checkOption to set
      * @return $this Provides a fluent interface
      */
     public function setCheckOption(?string $checkOption): static

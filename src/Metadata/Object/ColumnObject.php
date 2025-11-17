@@ -41,7 +41,10 @@ class ColumnObject
     {
         $this->setName($name);
         $this->setTableName($tableName);
-        $this->setSchemaName($schemaName);
+
+        if ($schemaName !== null) {
+            $this->setSchemaName($schemaName);
+        }
     }
 
     /**
@@ -82,7 +85,7 @@ class ColumnObject
     /**
      * Set schema name
      */
-    public function setSchemaName(?string $schemaName): void
+    public function setSchemaName(string $schemaName): void
     {
         $this->schemaName = $schemaName;
     }
@@ -122,7 +125,7 @@ class ColumnObject
     }
 
     /**
-     * @param string|null $columnDefault to set
+     * @param null|string $columnDefault to set
      * @return $this Provides a fluent interface
      */
     public function setColumnDefault(?string $columnDefault): static
@@ -166,10 +169,10 @@ class ColumnObject
     }
 
     /**
-     * @param string|null $dataType the $dataType to set
+     * @param string $dataType the $dataType to set
      * @return $this Provides a fluent interface
      */
-    public function setDataType(?string $dataType): static
+    public function setDataType(string $dataType): static
     {
         $this->dataType = $dataType;
         return $this;

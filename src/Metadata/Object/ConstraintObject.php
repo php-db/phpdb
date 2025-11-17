@@ -42,7 +42,10 @@ class ConstraintObject
     {
         $this->setName($name);
         $this->setTableName($tableName);
-        $this->setSchemaName($schemaName);
+
+        if ($schemaName !== null) {
+            $this->setSchemaName($schemaName);
+        }
     }
 
     /**
@@ -64,7 +67,7 @@ class ConstraintObject
     /**
      * Set schema name
      */
-    public function setSchemaName(?string $schemaName): void
+    public function setSchemaName(string $schemaName): void
     {
         $this->schemaName = $schemaName;
     }
