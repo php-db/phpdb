@@ -21,6 +21,6 @@ final class SqlPlatformFactory
         ContainerInterface $container
     ): PlatformDecoratorInterface&PreparableSqlInterface&SqlInterface {
         $adapter = $container->get(AdapterInterface::class);
-        return new Platform($adapter);
+        return new Platform($adapter->getPlatform());
     }
 }

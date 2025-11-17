@@ -24,7 +24,7 @@ class PlatformTest extends TestCase
     public function testResolveDefaultPlatform(): void
     {
         $adapter  = $this->resolveAdapter('sql92');
-        $platform = new Platform($adapter);
+        $platform = new Platform($adapter->getPlatform());
 
         $reflectionMethod = new ReflectionMethod($platform, 'resolvePlatform');
 
@@ -32,6 +32,7 @@ class PlatformTest extends TestCase
         $reflectionMethod->setAccessible(true);
 
         self::assertEquals($adapter->getPlatform(), $reflectionMethod->invoke($platform, null));
+        die('x');
     }
 
     /**
@@ -39,7 +40,7 @@ class PlatformTest extends TestCase
      */
     public function testResolvePlatformName(): void
     {
-        $platform = new Platform($this->resolveAdapter('sql92'));
+        $platform = new Platform($this->resolveAdapter('sql92')->getPlatform());
 
         $reflectionMethod = new ReflectionMethod($platform, 'resolvePlatformName');
 
