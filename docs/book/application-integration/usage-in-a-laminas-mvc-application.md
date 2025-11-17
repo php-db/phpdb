@@ -93,12 +93,72 @@ You can read more about the [adapter in the adapter chapter of the documentation
 
 When working with a MySQL database and when running the application with Docker, some files need to be added or adjusted.
 
-### Adding the MySQL extension to the PHP container
+This guide covers two web server options: **Nginx with PHP-FPM** (recommended for production) and **Apache** (simpler for development).
 
-Change the `Dockerfile` to add the PDO MySQL extension to PHP.
+### Option 1: Nginx with PHP-FPM (Recommended)
+
+Nginx with PHP-FPM provides better performance and resource efficiency for production environments.
+
+#### Creating the Dockerfile
+
+Create a `Dockerfile` in your project root:
 
 ```Dockerfile
-FROM php:7.3-apache
+FROM php:8.2-fpm
+
+RUN apt-get update \
+ && apt-get install -y git zlib1g-dev libzip-dev \
+ && docker-php-ext-install zip pdo_mysql \
+ && curl -sS https://getcomposer.org/installer \
+  | php -- --install-dir=/usr/local/bin --filename=composer
+
+WORKDIR /var/www
+```
+
+#### Creating the Nginx Configuration
+
+Create a file at `docker/nginx/default.conf`:
+
+```nginx
+server {
+    listen 80;
+    server_name localhost;
+    root /var/www/public;
+    index index.php;
+
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+
+    location ~ \.php$ {
+        fastcgi_pass app:9000;
+        fastcgi_index index.php;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        include fastcgi_params;
+    }
+
+    location ~ /\.ht {
+        deny all;
+    }
+}
+```
+
+This configuration:
+- Serves files from `/var/www/public`
+- Routes all requests through `index.php` (required for laminas-mvc routing)
+- Passes PHP requests to the `app` container on port 9000
+- Denies access to `.htaccess` files
+
+### Option 2: Apache
+
+Apache provides a simpler setup suitable for development environments.
+
+#### Creating the Dockerfile
+
+Create a `Dockerfile` in your project root:
+
+```Dockerfile
+FROM php:8.2-apache
 
 RUN apt-get update \
  && apt-get install -y git zlib1g-dev libzip-dev \
@@ -137,9 +197,38 @@ Though it is not the topic to explain how to write a `docker-compose.yml` file, 
 - SQL schemas will need to be added to the `/.docker/mysql/` directory so that Docker will be able to build and populate the database(s).
 - The mysql docker image is using the `$MYSQL_ROOT_PASSWORD` environment variable to set the mysql root password.
 
-### Link the containers
+### Configuring the Application Container
 
-Now link the mysql container and the laminas container so that the application knows where to find the mysql server.
+#### For Nginx (Option 1)
+
+When using Nginx with PHP-FPM, you'll need both an `app` container running PHP-FPM and an `nginx` container:
+
+```yaml
+  app:
+    container_name: laminas-app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+     - .:/var/www
+    links:
+     - mysql:mysql
+
+  nginx:
+    image: nginx:alpine
+    container_name: laminas-nginx
+    ports:
+     - 8080:80
+    volumes:
+     - .:/var/www
+     - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+     - app
+```
+
+#### For Apache (Option 2)
+
+When using Apache, you only need a single `laminas` container:
 
 ```yaml
   laminas:
@@ -170,23 +259,37 @@ Optionnally, you can also add a container for phpMyAdmin.
 The image uses the `$PMA_HOST` environment variable to set the host of the mysql server.
 The expected value is the name of the mysql container.
 
-Putting everything together:
+### Complete docker-compose.yml Examples
+
+#### Complete Example with Nginx (Recommended)
 
 ```yaml
-version: "2.1"
+version: "3.8"
 services:
-  laminas:
+  app:
+    container_name: laminas-app
     build:
       context: .
       dockerfile: Dockerfile
-    ports:
-     - 8080:80
     volumes:
      - .:/var/www
     links:
      - mysql:mysql
+
+  nginx:
+    image: nginx:alpine
+    container_name: laminas-nginx
+    ports:
+     - 8080:80
+    volumes:
+     - .:/var/www
+     - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+     - app
+
   mysql:
-    image: mysql
+    image: mysql:8
+    container_name: laminas-mysql
     ports:
      - 3306:3306
     command:
@@ -196,12 +299,57 @@ services:
      - ./.docker/mysql/:/docker-entrypoint-initdb.d/
     environment:
      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
+    container_name: laminas-phpmyadmin
     ports:
      - 8081:80
     environment:
      - PMA_HOST=${PMA_HOST}
+    depends_on:
+     - mysql
+```
+
+#### Complete Example with Apache
+
+```yaml
+version: "3.8"
+services:
+  laminas:
+    container_name: laminas-app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+     - 8080:80
+    volumes:
+     - .:/var/www
+    links:
+     - mysql:mysql
+
+  mysql:
+    image: mysql:8
+    container_name: laminas-mysql
+    ports:
+     - 3306:3306
+    command:
+      --default-authentication-plugin=mysql_native_password
+    volumes:
+     - ./.data/db:/var/lib/mysql
+     - ./.docker/mysql/:/docker-entrypoint-initdb.d/
+    environment:
+     - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: laminas-phpmyadmin
+    ports:
+     - 8081:80
+    environment:
+     - PMA_HOST=${PMA_HOST}
+    depends_on:
+     - mysql
 ```
 
 ### Defining credentials

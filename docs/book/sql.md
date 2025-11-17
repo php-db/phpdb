@@ -61,7 +61,7 @@ $selectString = $sql->buildSqlString($select);
 $results = $adapter->query($selectString, $adapter::QUERY_MODE_EXECUTE);
 ```
 
-`Laminas\\Db\\Sql\\Sql` objects can also be bound to a particular table so that in
+`PhpDb\\Sql\\Sql` objects can also be bound to a particular table so that in
 obtaining a `Select`, `Insert`, `Update`, or `Delete` instance, the object will be
 seeded with the table:
 
@@ -192,6 +192,27 @@ $select
     );
 ```
 
+The `$on` parameter accepts either a string or a `PredicateInterface` for complex join conditions:
+
+```php
+use PhpDb\Sql\Predicate;
+
+$where = new Predicate\Predicate();
+$where->equalTo('orders.customerId', 'customers.id', Predicate\Predicate::TYPE_IDENTIFIER, Predicate\Predicate::TYPE_IDENTIFIER)
+    ->greaterThan('orders.amount', 100);
+
+$select->from('customers')
+    ->join('orders', $where, ['orderId', 'amount']);
+```
+
+Produces:
+
+```sql
+SELECT customers.*, orders.orderId, orders.amount
+FROM customers
+INNER JOIN orders ON orders.customerId = customers.id AND orders.amount > 100
+```
+
 ### where(), having()
 
 `PhpDb\Sql\Select` provides bit of flexibility as it regards to what kind of
@@ -304,9 +325,267 @@ $select->order(['name ASC', 'age DESC']); // produces 'name' ASC, 'age' DESC
 
 ```php
 $select = new Select;
-$select->limit(5);   // always takes an integer/numeric
-$select->offset(10); // similarly takes an integer/numeric
+$select->limit(5);
+$select->offset(10);
 ```
+
+### group()
+
+The `group()` method specifies columns for GROUP BY clauses, typically used with
+aggregate functions to group rows that share common values.
+
+```php
+$select->group('category');
+```
+
+Multiple columns can be specified as an array, or by calling `group()` multiple times:
+
+```php
+$select->group(['category', 'status']);
+
+$select->group('category')
+    ->group('status');
+```
+
+As an example with aggregate functions:
+
+```php
+$select->from('orders')
+    ->columns([
+        'customer_id',
+        'totalOrders' => new Expression('COUNT(*)'),
+        'totalAmount' => new Expression('SUM(amount)'),
+    ])
+    ->group('customer_id');
+```
+
+Produces:
+
+```sql
+SELECT customer_id, COUNT(*) AS totalOrders, SUM(amount) AS totalAmount
+FROM orders
+GROUP BY customer_id
+```
+
+You can also use expressions in GROUP BY:
+
+```php
+$select->from('orders')
+    ->columns([
+        'orderYear' => new Expression('YEAR(created_at)'),
+        'orderCount' => new Expression('COUNT(*)'),
+    ])
+    ->group(new Expression('YEAR(created_at)'));
+```
+
+Produces:
+
+```sql
+SELECT YEAR(created_at) AS orderYear, COUNT(*) AS orderCount
+FROM orders
+GROUP BY YEAR(created_at)
+```
+
+### quantifier()
+
+The `quantifier()` method applies a quantifier to the SELECT statement, such as
+DISTINCT or ALL.
+
+```php
+$select->from('orders')
+    ->columns(['customer_id'])
+    ->quantifier(Select::QUANTIFIER_DISTINCT);
+```
+
+Produces:
+
+```sql
+SELECT DISTINCT customer_id FROM orders
+```
+
+The `QUANTIFIER_ALL` constant explicitly specifies ALL, though this is typically
+the default behavior:
+
+```php
+$select->quantifier(Select::QUANTIFIER_ALL);
+```
+
+### reset()
+
+The `reset()` method allows you to clear specific parts of a Select statement,
+useful when building queries dynamically.
+
+```php
+$select->from('users')
+    ->columns(['id', 'name'])
+    ->where(['status' => 'active'])
+    ->order('created_at DESC')
+    ->limit(10);
+```
+
+Before reset, produces:
+
+```sql
+SELECT id, name FROM users WHERE status = 'active' ORDER BY created_at DESC LIMIT 10
+```
+
+After resetting WHERE, ORDER, and LIMIT:
+
+```php
+$select->reset(Select::WHERE);
+$select->reset(Select::ORDER);
+$select->reset(Select::LIMIT);
+```
+
+Produces:
+
+```sql
+SELECT id, name FROM users
+```
+
+Available parts that can be reset:
+
+- `Select::QUANTIFIER`
+- `Select::COLUMNS`
+- `Select::JOINS`
+- `Select::WHERE`
+- `Select::GROUP`
+- `Select::HAVING`
+- `Select::LIMIT`
+- `Select::OFFSET`
+- `Select::ORDER`
+- `Select::COMBINE`
+
+Note that resetting `Select::TABLE` will throw an exception if the table was
+provided in the constructor (read-only table).
+
+### getRawState()
+
+The `getRawState()` method returns the internal state of the Select object,
+useful for debugging or introspection.
+
+```php
+$state = $select->getRawState();
+```
+
+Returns an array containing:
+
+```php
+[
+    'table' => 'users',
+    'quantifier' => null,
+    'columns' => ['id', 'name', 'email'],
+    'joins' => Join object,
+    'where' => Where object,
+    'order' => ['created_at DESC'],
+    'limit' => 10,
+    'offset' => 0,
+    'group' => null,
+    'having' => null,
+    'combine' => [],
+]
+```
+
+You can also retrieve a specific state element:
+
+```php
+$table = $select->getRawState(Select::TABLE);
+$columns = $select->getRawState(Select::COLUMNS);
+$limit = $select->getRawState(Select::LIMIT);
+```
+
+## Combine
+
+The `Combine` class enables combining multiple SELECT statements using UNION,
+INTERSECT, or EXCEPT operations. Each operation can optionally include modifiers
+such as ALL or DISTINCT.
+
+```php
+use PhpDb\Sql\Combine;
+
+$select1 = $sql->select('table1')->where(['status' => 'active']);
+$select2 = $sql->select('table2')->where(['status' => 'pending']);
+
+$combine = new Combine($select1, Combine::COMBINE_UNION);
+$combine->combine($select2);
+```
+
+### UNION
+
+The `union()` method combines results from multiple SELECT statements, removing
+duplicates by default.
+
+```php
+$combine = new Combine();
+$combine->union($select1);
+$combine->union($select2, 'ALL');
+```
+
+Produces:
+
+```sql
+(SELECT * FROM table1 WHERE status = 'active')
+UNION ALL
+(SELECT * FROM table2 WHERE status = 'pending')
+```
+
+### EXCEPT
+
+The `except()` method returns rows from the first SELECT that do not appear in
+subsequent SELECT statements.
+
+```php
+$combine = new Combine();
+$combine->union($select1);
+$combine->except($select2);
+```
+
+### INTERSECT
+
+The `intersect()` method returns only rows that appear in all SELECT statements.
+
+```php
+$combine = new Combine();
+$combine->union($select1);
+$combine->intersect($select2);
+```
+
+### alignColumns()
+
+The `alignColumns()` method ensures all SELECT statements have the same column
+structure by adding NULL for missing columns.
+
+```php
+$select1 = $sql->select('orders')->columns(['id', 'amount']);
+$select2 = $sql->select('refunds')->columns(['id', 'amount', 'reason']);
+
+$combine = new Combine();
+$combine->union($select1);
+$combine->union($select2);
+$combine->alignColumns();
+```
+
+Produces:
+
+```sql
+(SELECT id, amount, NULL AS reason FROM orders)
+UNION
+(SELECT id, amount, reason FROM refunds)
+```
+
+After alignment, both SELECTs will have id, amount, and reason columns, with
+NULL used where columns are missing.
+
+### Using combine() on Select
+
+The Select class also provides a `combine()` method for simple combinations:
+
+```php
+$select1->combine($select2, Select::COMBINE_UNION, 'ALL');
+```
+
+Note that Select can only combine with one other Select. For multiple
+combinations, use the Combine class directly.
 
 ## Insert
 
@@ -353,6 +632,89 @@ To merge values with previous calls, provide the appropriate flag:
 $insert->values(['col_2' => 'value2'], $insert::VALUES_MERGE);
 ```
 
+### select()
+
+The `select()` method enables INSERT INTO ... SELECT statements, copying data
+from one table to another.
+
+```php
+$select = $sql->select('tempUsers')
+    ->columns(['username', 'email', 'createdAt'])
+    ->where(['imported' => false]);
+
+$insert = $sql->insert('users');
+$insert->columns(['username', 'email', 'createdAt']);
+$insert->select($select);
+```
+
+Produces:
+
+```sql
+INSERT INTO users (username, email, createdAt)
+SELECT username, email, createdAt FROM tempUsers WHERE imported = 0
+```
+
+Alternatively, you can pass the Select object directly to `values()`:
+
+```php
+$insert->values($select);
+```
+
+Important: The column order must match between INSERT columns and SELECT columns.
+
+### Property-style column access
+
+The Insert class supports property-style access to columns as an alternative to
+using `values()`:
+
+```php
+$insert = $sql->insert('users');
+$insert->name = 'John';
+$insert->email = 'john@example.com';
+
+if (isset($insert->name)) {
+    $value = $insert->name;
+}
+
+unset($insert->email);
+```
+
+This is equivalent to:
+
+```php
+$insert->values([
+    'name' => 'John',
+    'email' => 'john@example.com',
+]);
+```
+
+## InsertIgnore
+
+The `InsertIgnore` class provides MySQL-specific INSERT IGNORE syntax, which
+silently ignores rows that would cause duplicate key errors.
+
+```php
+use PhpDb\Sql\InsertIgnore;
+
+$insert = new InsertIgnore('users');
+$insert->values([
+    'username' => 'john',
+    'email' => 'john@example.com',
+]);
+```
+
+Produces:
+
+```sql
+INSERT IGNORE INTO users (username, email) VALUES (?, ?)
+```
+
+If a row with the same username or email already exists and there is a unique
+constraint, the insert will be silently skipped rather than producing an error.
+
+Note: INSERT IGNORE is MySQL-specific. Other databases may use different syntax
+for this behavior (e.g., INSERT ... ON CONFLICT DO NOTHING in PostgreSQL).
+
 ## Update
 
 ```php
@@ -374,6 +736,29 @@ class Update
 ```php
 $update->set(['foo' => 'bar', 'baz' => 'bax']);
 ```
+
+The `set()` method accepts a flag parameter to control merging behavior:
+
+```php
+$update->set(['status' => 'active'], Update::VALUES_SET);
+$update->set(['updatedAt' => new Expression('NOW()')], Update::VALUES_MERGE);
+```
+
+When using `VALUES_MERGE`, you can optionally specify a numeric priority to control the order of SET clauses:
+
+```php
+$update->set(['counter' => 1], 100);
+$update->set(['status' => 'pending'], 50);
+$update->set(['flag' => true], 75);
+```
+
+Produces SET clauses in priority order (50, 75, 100):
+
+```sql
+UPDATE table SET status = ?, flag = ?, counter = ?
+```
+
+This is useful when the order of SET operations matters for certain database operations or triggers.
 
 ### where()
 
@@ -419,15 +804,78 @@ There is also a special use case type for literal values (`TYPE_LITERAL`). All
 element types are expressed via the `PhpDb\Sql\ExpressionInterface`
 interface.
 
+> **Note:** The `TYPE_*` constants are legacy constants maintained for backward
+> compatibility. New code should use the `ArgumentType` enum and `Argument`
+> class for type-safe argument handling (see the section below).
+
+### Arguments and Argument Types
+
+`PhpDb\Sql` provides the `Argument` class along with the `ArgumentType` enum
+for type-safe specification of SQL values. This provides a modern,
+object-oriented alternative to using raw values or the legacy type constants.
+
+The `ArgumentType` enum defines four types:
+
+- `ArgumentType::Identifier` - For column names, table names, and other identifiers that should be quoted
+- `ArgumentType::Value` - For values that should be parameterized or properly escaped (default)
+- `ArgumentType::Literal` - For literal SQL fragments that should not be quoted or escaped
+- `ArgumentType::Select` - For subqueries (automatically detected when using Expression or SqlInterface objects)
+
+```php
+use PhpDb\Sql\Argument;
+use PhpDb\Sql\ArgumentType;
+
+// Using the constructor with explicit type
+$arg = new Argument('column_name', ArgumentType::Identifier);
+
+// Using static factory methods (recommended)
+$valueArg = Argument::value(123);           // Value type
+$identifierArg = Argument::identifier('id'); // Identifier type
+$literalArg = Argument::literal('NOW()');   // Literal SQL
+
+// Using array notation for type specification
+$arg = new Argument(['column_name' => ArgumentType::Identifier]);
+
+// Arrays of values are also supported
+$arg = new Argument([1, 2, 3], ArgumentType::Value);
+```
+
+The `Argument` class is particularly useful when working with expressions
+where you need to explicitly control how values are treated:
+
+```php
+use PhpDb\Sql\Expression;
+use PhpDb\Sql\Argument;
+
+// Without Argument - relies on positional type inference
+$expression = new Expression(
+    'CONCAT(?, ?, ?)',
+    [
+        ['column1' => ExpressionInterface::TYPE_IDENTIFIER],
+        ['-' => ExpressionInterface::TYPE_VALUE],
+        ['column2' => ExpressionInterface::TYPE_IDENTIFIER]
+    ]
+);
+
+// With Argument - more explicit and readable
+$expression = new Expression(
+    'CONCAT(?, ?, ?)',
+    [
+        Argument::identifier('column1'),
+        Argument::value('-'),
+        Argument::identifier('column2')
+    ]
+);
+```
+
 > ### Literals
 >
-> In Laminas 2.1, an actual `Literal` type was added. `PhpDb\Sql` now makes the
-> distinction that literals will not have any parameters that need
-> interpolating, while `Expression` objects *might* have parameters that need
-> interpolating. In cases where there are parameters in an `Expression`,
+> `PhpDb\Sql` makes the distinction that literals will not have any parameters
+> that need interpolating, while `Expression` objects *might* have parameters
+> that need interpolating. In cases where there are parameters in an `Expression`,
 > `PhpDb\Sql\AbstractSql` will do its best to identify placeholders when the
 > `Expression` is processed during statement creation. In short, if you don't
-> have parameters, use `Literal` objects.
+> have parameters, use `Literal` objects or `Argument::literal()`.
 
 The `Where` and `Having` API is that of `Predicate` and `PredicateSet`:
 
@@ -761,4 +1209,951 @@ class Between implements PredicateInterface
     public function getMaxValue() : int|float|string;
     public function setSpecification(string $specification);
 }
+```
+
+As an example with different value types:
+
+```php
+$where->between('age', 18, 65);
+$where->notBetween('price', 100, 500);
+$where->between('createdAt', '2024-01-01', '2024-12-31');
+```
+
+Produces:
+
+```sql
+WHERE age BETWEEN 18 AND 65 AND price NOT BETWEEN 100 AND 500 AND createdAt BETWEEN '2024-01-01' AND '2024-12-31'
+```
+
+Expressions can also be used:
+
+```php
+$where->between(new Expression('YEAR(createdAt)'), 2020, 2024);
+```
+
+Produces:
+
+```sql
+WHERE YEAR(createdAt) BETWEEN 2020 AND 2024
+```
+
+## Advanced Predicate Usage
+
+### Magic properties for fluent chaining
+
+The Predicate class provides magic properties that enable fluent method chaining
+for combining predicates. These properties (`and`, `or`, `AND`, `OR`, `nest`,
+`unnest`, `NEST`, `UNNEST`) facilitate readable query construction.
+
+```php
+$select->where
+    ->equalTo('status', 'active')
+    ->and
+    ->greaterThan('age', 18)
+    ->or
+    ->equalTo('role', 'admin');
+```
+
+Produces:
+
+```sql
+WHERE status = 'active' AND age > 18 OR role = 'admin'
+```
+
+The properties are case-insensitive for convenience:
+
+```php
+$where->and->equalTo('a', 1);
+$where->AND->equalTo('b', 2');
+```
+
+### Deep nesting of predicates
+
+Complex nested conditions can be created using `nest()` and `unnest()`:
+
+```php
+$select->where->nest()
+        ->nest()
+            ->equalTo('a', 1)
+            ->or
+            ->equalTo('b', 2)
+        ->unnest()
+        ->and
+        ->nest()
+            ->equalTo('c', 3)
+            ->or
+            ->equalTo('d', 4)
+        ->unnest()
+    ->unnest();
+```
+
+Produces:
+
+```sql
+WHERE ((a = 1 OR b = 2) AND (c = 3 OR d = 4))
+```
+
+###  addPredicates() intelligent handling
+
+The `addPredicates()` method from `PredicateSet` provides intelligent handling of
+various input types, automatically creating appropriate predicate objects based on
+the input.
+
+```php
+$where->addPredicates([
+    'status = "active"',
+    'age > ?',
+    'category' => null,
+    'id' => [1, 2, 3],
+    'name' => 'John',
+    new \PhpDb\Sql\Predicate\IsNotNull('email'),
+]);
+```
+
+The method detects and handles:
+
+| Input Type | Behavior |
+|------------|----------|
+| String without `?` | Creates `Literal` predicate |
+| String with `?` | Creates `Expression` predicate (requires parameters) |
+| Key => `null` | Creates `IsNull` predicate |
+| Key => array | Creates `In` predicate |
+| Key => scalar | Creates `Operator` predicate (equality) |
+| `PredicateInterface` | Uses predicate directly |
+
+Combination operators can be specified:
+
+```php
+$where->addPredicates([
+    'role' => 'admin',
+    'status' => 'active',
+], PredicateSet::OP_OR);
+```
+
+Produces:
+
+```sql
+WHERE role = 'admin' OR status = 'active'
+```
+
+### Using LIKE and NOT LIKE patterns
+
+The `like()` and `notLike()` methods support SQL wildcard patterns:
+
+```php
+$where->like('name', 'John%');
+$where->like('email', '%@gmail.com');
+$where->like('description', '%keyword%');
+$where->notLike('email', '%@spam.com');
+```
+
+Multiple LIKE conditions:
+
+```php
+$where->like('name', 'A%')
+    ->or
+    ->like('name', 'B%');
+```
+
+Produces:
+
+```sql
+WHERE name LIKE 'A%' OR name LIKE 'B%'
+```
+
+### Using HAVING with aggregate functions
+
+While `where()` filters rows before grouping, `having()` filters groups after
+aggregation. The HAVING clause is used with GROUP BY and aggregate functions.
+
+```php
+$select->from('orders')
+    ->columns([
+        'customerId',
+        'orderCount' => new Expression('COUNT(*)'),
+        'totalAmount' => new Expression('SUM(amount)'),
+    ])
+    ->where->greaterThan('amount', 0)
+    ->group('customerId')
+    ->having->greaterThan(new Expression('COUNT(*)'), 10)
+    ->having->greaterThan(new Expression('SUM(amount)'), 1000);
+```
+
+Produces:
+
+```sql
+SELECT customerId, COUNT(*) AS orderCount, SUM(amount) AS totalAmount
+FROM orders
+WHERE amount > 0
+GROUP BY customerId
+HAVING COUNT(*) > 10 AND SUM(amount) > 1000
+```
+
+Using closures with HAVING:
+
+```php
+$select->having(function ($having) {
+    $having->greaterThan(new Expression('AVG(rating)'), 4.5)
+        ->or
+        ->greaterThan(new Expression('COUNT(reviews)'), 100);
+});
+```
+
+Produces:
+
+```sql
+HAVING AVG(rating) > 4.5 OR COUNT(reviews) > 100
+```
+
+## Subqueries
+
+Subqueries can be used in various contexts within SQL statements, including WHERE
+clauses, FROM clauses, and SELECT columns.
+
+### Subqueries in WHERE IN clauses
+
+```php
+$subselect = $sql->select('orders')
+    ->columns(['customerId'])
+    ->where(['status' => 'completed']);
+
+$select = $sql->select('customers')
+    ->where->in('id', $subselect);
+```
+
+Produces:
+
+```sql
+SELECT customers.* FROM customers
+WHERE id IN (SELECT customerId FROM orders WHERE status = 'completed')
+```
+
+### Subqueries in FROM clauses
+
+```php
+$subselect = $sql->select('orders')
+    ->columns([
+        'customerId',
+        'total' => new Expression('SUM(amount)'),
+    ])
+    ->group('customerId');
+
+$select = $sql->select(['orderTotals' => $subselect])
+    ->where->greaterThan('orderTotals.total', 1000);
+```
+
+Produces:
+
+```sql
+SELECT orderTotals.* FROM
+(SELECT customerId, SUM(amount) AS total FROM orders GROUP BY customerId) AS orderTotals
+WHERE orderTotals.total > 1000
+```
+
+### Scalar subqueries in SELECT columns
+
+```php
+$subselect = $sql->select('orders')
+    ->columns([new Expression('COUNT(*)')])
+    ->where(new Predicate\Expression('orders.customerId = customers.id'));
+
+$select = $sql->select('customers')
+    ->columns([
+        'id',
+        'name',
+        'orderCount' => $subselect,
+    ]);
+```
+
+Produces:
+
+```sql
+SELECT id, name,
+(SELECT COUNT(*) FROM orders WHERE orders.customerId = customers.id) AS orderCount
+FROM customers
+```
+
+### Subqueries with comparison operators
+
+```php
+$subselect = $sql->select('orders')
+    ->columns([new Expression('AVG(amount)')]);
+
+$select = $sql->select('orders')
+    ->where->greaterThan('amount', $subselect);
+```
+
+Produces:
+
+```sql
+SELECT orders.* FROM orders
+WHERE amount > (SELECT AVG(amount) FROM orders)
+```
+
+## Advanced JOIN Usage
+
+### Multiple JOIN types in a single query
+
+```php
+$select->from(['u' => 'users'])
+    ->join(
+        ['o' => 'orders'],
+        'u.id = o.userId',
+        ['orderId', 'amount'],
+        Select::JOIN_LEFT
+    )
+    ->join(
+        ['p' => 'products'],
+        'o.productId = p.id',
+        ['productName', 'price'],
+        Select::JOIN_INNER
+    )
+    ->join(
+        ['r' => 'reviews'],
+        'p.id = r.productId',
+        ['rating'],
+        Select::JOIN_RIGHT
+    );
+```
+
+### JOIN with no column selection
+
+When you need to join a table only for filtering purposes without selecting its
+columns:
+
+```php
+$select->from('orders')
+    ->join('customers', 'orders.customerId = customers.id', [])
+    ->where(['customers.status' => 'premium']);
+```
+
+Produces:
+
+```sql
+SELECT orders.* FROM orders
+INNER JOIN customers ON orders.customerId = customers.id
+WHERE customers.status = 'premium'
+```
+
+### JOIN with expressions in columns
+
+```php
+$select->from('users')
+    ->join(
+        'orders',
+        'users.id = orders.userId',
+        [
+            'orderCount' => new Expression('COUNT(*)'),
+            'totalSpent' => new Expression('SUM(amount)'),
+        ]
+    );
+```
+
+### Accessing the Join object
+
+The Join object can be accessed directly for programmatic manipulation:
+
+```php
+foreach ($select->joins as $join) {
+    $tableName = $join['name'];
+    $onCondition = $join['on'];
+    $columns = $join['columns'];
+    $joinType = $join['type'];
+}
+
+$joinCount = count($select->joins);
+
+$allJoins = $select->joins->getJoins();
+
+$select->joins->reset();
+```
+
+## Update and Delete Safety Features
+
+Both Update and Delete classes include empty WHERE protection by default, which
+prevents accidental mass updates or deletes.
+
+```php
+$update = $sql->update('users');
+$update->set(['status' => 'deleted']);
+
+$state = $update->getRawState();
+$protected = $state['emptyWhereProtection'];
+```
+
+Most database drivers will prevent execution of UPDATE or DELETE statements
+without a WHERE clause when this protection is enabled. Always include a WHERE
+clause:
+
+```php
+$update->where(['id' => 123]);
+
+$delete = $sql->delete('logs');
+$delete->where->lessThan('createdAt', '2020-01-01');
+```
+
+### Update with JOIN
+
+The Update class supports JOIN clauses for multi-table updates:
+
+```php
+$update = $sql->update('orders');
+$update->set(['status' => 'cancelled']);
+$update->join('customers', 'orders.customerId = customers.id', Update\Join::JOIN_INNER);
+$update->where(['customers.status' => 'inactive']);
+```
+
+Produces:
+
+```sql
+UPDATE orders
+INNER JOIN customers ON orders.customerId = customers.id
+SET status = ?
+WHERE customers.status = ?
+```
+
+Note: JOIN support in UPDATE statements varies by database platform. MySQL and
+PostgreSQL support this syntax, while some other databases may not.
+
+## Expression and Literal Advanced Usage
+
+### Distinguishing between Expression and Literal
+
+Use `Literal` for static SQL fragments without parameters:
+
+```php
+$literal = new Literal('NOW()');
+$literal = new Literal('CURRENT_TIMESTAMP');
+$literal = new Literal('COUNT(*)');
+```
+
+Use `Expression` when parameters are needed:
+
+```php
+$expression = new Expression('DATE_ADD(NOW(), INTERVAL ? DAY)', [7]);
+$expression = new Expression('CONCAT(?, ?)', ['Hello', 'World']);
+```
+
+### Mixed parameter types in expressions
+
+```php
+$expression = new Expression(
+    'CASE WHEN ? > ? THEN ? ELSE ? END',
+    [
+        Argument::identifier('age'),
+        Argument::value(18),
+        Argument::literal('ADULT'),
+        Argument::literal('MINOR'),
+    ]
+);
+```
+
+Produces:
+
+```sql
+CASE WHEN age > 18 THEN ADULT ELSE MINOR END
+```
+
+### Array values in expressions
+
+```php
+$expression = new Expression(
+    'id IN (?)',
+    [Argument::value([1, 2, 3, 4, 5])]
+);
+```
+
+Produces:
+
+```sql
+id IN (?, ?, ?, ?, ?)
+```
+
+### Nested expressions
+
+```php
+$innerExpression = new Expression('COUNT(*)');
+$outerExpression = new Expression(
+    'CASE WHEN ? > ? THEN ? ELSE ? END',
+    [
+        $innerExpression,
+        Argument::value(10),
+        Argument::literal('HIGH'),
+        Argument::literal('LOW'),
+    ]
+);
+```
+
+Produces:
+
+```sql
+CASE WHEN COUNT(*) > 10 THEN HIGH ELSE LOW END
+```
+
+### Using database-specific functions
+
+```php
+$select->where(new Predicate\Expression(
+    'FIND_IN_SET(?, ?)',
+    [
+        Argument::value('admin'),
+        Argument::identifier('roles'),
+    ]
+));
+```
+
+## TableIdentifier
+
+The `TableIdentifier` class provides a type-safe way to reference tables,
+especially when working with schemas or databases.
+
+```php
+use PhpDb\Sql\TableIdentifier;
+
+$table = new TableIdentifier('users', 'production');
+
+$tableName = $table->getTable();
+$schemaName = $table->getSchema();
+
+[$table, $schema] = $table->getTableAndSchema();
+```
+
+Usage in SQL objects:
+
+```php
+$select = new Select(new TableIdentifier('orders', 'ecommerce'));
+
+$select->join(
+    new TableIdentifier('customers', 'crm'),
+    'orders.customerId = customers.id'
+);
+```
+
+Produces:
+
+```sql
+SELECT * FROM "ecommerce"."orders"
+INNER JOIN "crm"."customers" ON orders.customerId = customers.id
+```
+
+With aliases:
+
+```php
+$select->from(['o' => new TableIdentifier('orders', 'sales')])
+    ->join(
+        ['c' => new TableIdentifier('customers', 'crm')],
+        'o.customerId = c.id'
+    );
+```
+
+## Working with the Sql Factory Class
+
+The `Sql` class serves as a factory for creating SQL statement objects and provides methods for preparing and building SQL strings.
+
+```php
+use PhpDb\Sql\Sql;
+
+$sql = new Sql($adapter);
+$sql = new Sql($adapter, 'defaultTable');
+```
+
+### Factory Methods
+
+```php
+$select = $sql->select();
+$select = $sql->select('users');
+
+$insert = $sql->insert();
+$insert = $sql->insert('users');
+
+$update = $sql->update();
+$update = $sql->update('users');
+
+$delete = $sql->delete();
+$delete = $sql->delete('users');
+```
+
+When a default table is set on the Sql instance, it will be used for all created statements unless overridden:
+
+```php
+$sql = new Sql($adapter, 'users');
+$select = $sql->select();
+$insert = $sql->insert();
+```
+
+### Preparing Statements
+
+The recommended approach for executing queries is to prepare them first:
+
+```php
+$select = $sql->select('users')->where(['status' => 'active']);
+$statement = $sql->prepareStatementForSqlObject($select);
+$results = $statement->execute();
+```
+
+This approach:
+- Uses parameter binding for security against SQL injection
+- Allows the database to cache query plans
+- Is the preferred method for production code
+
+### Building SQL Strings
+
+For debugging or special cases, you can build the SQL string directly:
+
+```php
+$select = $sql->select('users')->where(['id' => 5]);
+$sqlString = $sql->buildSqlString($select);
+```
+
+Note: Direct string building bypasses parameter binding. Use with caution and never with user input.
+
+### Accessing the Platform
+
+```php
+$platform = $sql->getSqlPlatform();
+```
+
+The platform object handles database-specific SQL generation and can be used for custom query building.
+
+## Common Patterns and Best Practices
+
+### Handling Column Name Conflicts in JOINs
+
+When joining tables with columns that have the same name, explicitly specify column aliases to avoid ambiguity:
+
+```php
+$select->from(['u' => 'users'])
+    ->columns([
+        'userId' => 'id',
+        'userName' => 'name',
+        'userEmail' => 'email',
+    ])
+    ->join(
+        ['o' => 'orders'],
+        'u.id = o.userId',
+        [
+            'orderId' => 'id',
+            'orderDate' => 'createdAt',
+            'orderAmount' => 'amount',
+        ]
+    );
+```
+
+This prevents confusion and ensures all columns are accessible in the result set.
+
+### Working with NULL Values
+
+NULL requires special handling in SQL. Use the appropriate predicates:
+
+```php
+$select->where(['deletedAt' => null]);
+
+$select->where->isNull('deletedAt')
+    ->or
+    ->lessThan('deletedAt', new Expression('NOW()'));
+```
+
+In UPDATE statements:
+
+```php
+$update->set(['optionalField' => null]);
+```
+
+In comparisons, remember that `column = NULL` does not work in SQL; you must use `IS NULL`:
+
+```php
+$select->where->nest()
+    ->isNull('field')
+    ->or
+    ->equalTo('field', '')
+->unnest();
+```
+
+### Dynamic Query Building
+
+Build queries dynamically based on conditions:
+
+```php
+$select = $sql->select('products');
+
+if ($categoryId) {
+    $select->where(['categoryId' => $categoryId]);
+}
+
+if ($minPrice) {
+    $select->where->greaterThanOrEqualTo('price', $minPrice);
+}
+
+if ($maxPrice) {
+    $select->where->lessThanOrEqualTo('price', $maxPrice);
+}
+
+if ($searchTerm) {
+    $select->where->nest()
+        ->like('name', '%' . $searchTerm . '%')
+        ->or
+        ->like('description', '%' . $searchTerm . '%')
+    ->unnest();
+}
+
+if ($sortBy) {
+    $select->order($sortBy . ' ' . ($sortDirection ?? 'ASC'));
+}
+
+if ($limit) {
+    $select->limit($limit);
+    if ($offset) {
+        $select->offset($offset);
+    }
+}
+```
+
+### Reusing Query Components
+
+Create reusable query components for common patterns:
+
+```php
+function applyActiveFilter(Select $select): Select
+{
+    return $select->where([
+        'status' => 'active',
+        'deletedAt' => null,
+    ]);
+}
+
+function applyPagination(Select $select, int $page, int $perPage): Select
+{
+    return $select
+        ->limit($perPage)
+        ->offset(($page - 1) * $perPage);
+}
+
+$select = $sql->select('users');
+applyActiveFilter($select);
+applyPagination($select, 2, 25);
+```
+
+## Troubleshooting and Common Issues
+
+### Empty WHERE Protection Errors
+
+If you encounter errors about empty WHERE clauses:
+
+```php
+$update = $sql->update('users');
+$update->set(['status' => 'inactive']);
+```
+
+Always include a WHERE clause for UPDATE and DELETE:
+
+```php
+$update->where(['id' => 123]);
+```
+
+To intentionally update all rows (use with extreme caution):
+
+```php
+$state = $update->getRawState();
+```
+
+### Parameter Count Mismatch
+
+When using Expression with placeholders:
+
+```php
+$expression = new Expression('CONCAT(?, ?, ?)', ['a', 'b']);
+```
+
+Ensure the number of `?` placeholders matches the number of parameters provided, or you will receive a RuntimeException.
+
+### Quote Character Issues
+
+Different databases use different quote characters. Let the platform handle quoting:
+
+```php
+$select->from('users');
+```
+
+Avoid manually quoting identifiers:
+
+```php
+$select->from('"users"');
+```
+
+### Type Confusion in Predicates
+
+When comparing two identifiers, specify both types:
+
+```php
+$where->equalTo(
+    'table1.columnA',
+    'table2.columnB',
+    Predicate\Predicate::TYPE_IDENTIFIER,
+    Predicate\Predicate::TYPE_IDENTIFIER
+);
+```
+
+Or use the Argument class:
+
+```php
+$where->equalTo(
+    Argument::identifier('table1.columnA'),
+    Argument::identifier('table2.columnB')
+);
+```
+
+## Performance Considerations
+
+### Use Prepared Statements
+
+Always use `prepareStatementForSqlObject()` instead of `buildSqlString()` for user input:
+
+```php
+$select->where(['username' => $userInput]);
+$statement = $sql->prepareStatementForSqlObject($select);
+```
+
+This provides:
+- Protection against SQL injection
+- Better performance through query plan caching
+- Proper type handling for parameters
+
+### Limit Result Sets
+
+Always use `limit()` for queries that may return large result sets:
+
+```php
+$select->limit(100);
+```
+
+For pagination, combine with `offset()`:
+
+```php
+$select->limit(25)->offset(50);
+```
+
+### Select Only Required Columns
+
+Instead of selecting all columns:
+
+```php
+$select->from('users');
+```
+
+Specify only the columns you need:
+
+```php
+$select->from('users')->columns(['id', 'username', 'email']);
+```
+
+This reduces memory usage and network transfer.
+
+### Avoid N+1 Query Problems
+
+Use JOINs instead of multiple queries:
+
+```php
+$select->from('orders')
+    ->join('customers', 'orders.customerId = customers.id', ['customerName' => 'name'])
+    ->join('products', 'orders.productId = products.id', ['productName' => 'name']);
+```
+
+### Index-Friendly Queries
+
+Structure WHERE clauses to use database indexes:
+
+```php
+$select->where->equalTo('indexedColumn', $value)
+    ->greaterThan('date', '2024-01-01');
+```
+
+Avoid functions on indexed columns in WHERE:
+
+```php
+$select->where(new Predicate\Expression('YEAR(createdAt) = ?', [2024]));
+```
+
+Instead, use ranges:
+
+```php
+$select->where->between('createdAt', '2024-01-01', '2024-12-31');
+```
+
+## Complete Examples
+
+### Complex reporting query with aggregation
+
+```php
+$select = $sql->select('orders')
+    ->columns([
+        'customerId',
+        'orderYear' => new Expression('YEAR(createdAt)'),
+        'orderCount' => new Expression('COUNT(*)'),
+        'totalRevenue' => new Expression('SUM(amount)'),
+        'avgOrderValue' => new Expression('AVG(amount)'),
+    ])
+    ->join(
+        'customers',
+        'orders.customerId = customers.id',
+        ['customerName' => 'name', 'customerTier' => 'tier'],
+        Select::JOIN_LEFT
+    )
+    ->where(function ($where) {
+        $where->nest()
+            ->equalTo('orders.status', 'completed')
+            ->or
+            ->equalTo('orders.status', 'shipped')
+        ->unnest();
+        $where->between('orders.createdAt', '2024-01-01', '2024-12-31');
+    })
+    ->group(['customerId', new Expression('YEAR(createdAt)')])
+    ->having(function ($having) {
+        $having->greaterThan(new Expression('SUM(amount)'), 10000);
+    })
+    ->order(['totalRevenue DESC', 'orderYear DESC'])
+    ->limit(100);
+
+$statement = $sql->prepareStatementForSqlObject($select);
+$results = $statement->execute();
+```
+
+### Data migration with INSERT SELECT
+
+```php
+$select = $sql->select('importedUsers')
+    ->columns(['username', 'email', 'firstName', 'lastName'])
+    ->where(['validated' => true])
+    ->where->isNotNull('email');
+
+$insert = $sql->insert('users');
+$insert->columns(['username', 'email', 'firstName', 'lastName']);
+$insert->select($select);
+
+$statement = $sql->prepareStatementForSqlObject($insert);
+$statement->execute();
+```
+
+### Combining multiple result sets
+
+```php
+$activeUsers = $sql->select('users')
+    ->columns(['id', 'name', 'email', 'status' => new Literal('"active"')])
+    ->where(['status' => 'active']);
+
+$pendingUsers = $sql->select('userRegistrations')
+    ->columns(['id', 'name', 'email', 'status' => new Literal('"pending"')])
+    ->where(['verified' => false]);
+
+$suspendedUsers = $sql->select('users')
+    ->columns(['id', 'name', 'email', 'status' => new Literal('"suspended"')])
+    ->where(['suspended' => true]);
+
+$combine = new Combine();
+$combine->union($activeUsers);
+$combine->union($pendingUsers);
+$combine->union($suspendedUsers);
+$combine->alignColumns();
+
+$statement = $sql->prepareStatementForSqlObject($combine);
+$results = $statement->execute();
 ```
