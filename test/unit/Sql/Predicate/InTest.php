@@ -29,38 +29,88 @@ final class InTest extends TestCase
 
     public function testCanPassIdentifierAndValueSetToConstructor(): void
     {
-        $in         = new In('foo.bar', [1, 2]);
-        $identifier = new Argument('foo.bar', ArgumentType::Identifier);
-        $expression = new Argument([1, 2], ArgumentType::Value);
-        self::assertEquals($identifier, $in->getIdentifier());
-        self::assertEquals($expression, $in->getValueSet());
+        $in = new In('foo.bar', [1, 2]);
+
+        // Verify identifier was set correctly
+        $identifier = $in->getIdentifier();
+        self::assertInstanceOf(Argument::class, $identifier);
+        self::assertEquals('foo.bar', $identifier->getValue());
+        self::assertEquals(ArgumentType::Identifier, $identifier->getType());
+
+        // Verify value set was set correctly
+        $valueSet = $in->getValueSet();
+        self::assertInstanceOf(Argument::class, $valueSet);
+        self::assertEquals([1, 2], $valueSet->getValue());
+        self::assertEquals(ArgumentType::Value, $valueSet->getType());
     }
 
     public function testCanPassIdentifierAndEmptyValueSetToConstructor(): void
     {
-        $in         = new In('foo.bar', []);
-        $identifier = new Argument('foo.bar', ArgumentType::Identifier);
-        $expression = new Argument([], ArgumentType::Value);
-        $this->assertEquals($identifier, $in->getIdentifier());
-        $this->assertEquals($expression, $in->getValueSet());
+        $in = new In('foo.bar', []);
+
+        // Verify identifier was set correctly
+        $identifier = $in->getIdentifier();
+        self::assertInstanceOf(Argument::class, $identifier);
+        self::assertEquals('foo.bar', $identifier->getValue());
+        self::assertEquals(ArgumentType::Identifier, $identifier->getType());
+
+        // Verify empty value set was set correctly
+        $valueSet = $in->getValueSet();
+        self::assertInstanceOf(Argument::class, $valueSet);
+        self::assertEquals([], $valueSet->getValue());
+        self::assertEquals(ArgumentType::Value, $valueSet->getType());
     }
 
     public function testIdentifierIsMutable(): void
     {
         $in = new In();
-        $in->setIdentifier('foo.bar');
 
-        $identifier = new Argument('foo.bar', ArgumentType::Identifier);
-        self::assertEquals($identifier, $in->getIdentifier());
+        // First mutation
+        $result = $in->setIdentifier('foo.bar');
+
+        // Verify fluent interface
+        self::assertSame($in, $result);
+
+        // Verify the first mutation occurred
+        $identifier1 = $in->getIdentifier();
+        self::assertInstanceOf(Argument::class, $identifier1);
+        self::assertEquals('foo.bar', $identifier1->getValue());
+        self::assertEquals(ArgumentType::Identifier, $identifier1->getType());
+
+        // Second mutation with different data to verify mutability
+        $in->setIdentifier('baz.qux');
+
+        // Verify the instance was actually mutated
+        $identifier2 = $in->getIdentifier();
+        self::assertInstanceOf(Argument::class, $identifier2);
+        self::assertEquals('baz.qux', $identifier2->getValue());
+        self::assertEquals(ArgumentType::Identifier, $identifier2->getType());
     }
 
     public function testValueSetIsMutable(): void
     {
         $in = new In();
-        $in->setValueSet([1, 2]);
 
-        $expression = new Argument([1, 2], ArgumentType::Value);
-        self::assertEquals($expression, $in->getValueSet());
+        // First mutation
+        $result = $in->setValueSet([1, 2]);
+
+        // Verify fluent interface
+        self::assertSame($in, $result);
+
+        // Verify the first mutation occurred
+        $valueSet1 = $in->getValueSet();
+        self::assertInstanceOf(Argument::class, $valueSet1);
+        self::assertEquals([1, 2], $valueSet1->getValue());
+        self::assertEquals(ArgumentType::Value, $valueSet1->getType());
+
+        // Second mutation with different data to verify mutability
+        $in->setValueSet([3, 4, 5]);
+
+        // Verify the instance was actually mutated
+        $valueSet2 = $in->getValueSet();
+        self::assertInstanceOf(Argument::class, $valueSet2);
+        self::assertEquals([3, 4, 5], $valueSet2->getValue());
+        self::assertEquals(ArgumentType::Value, $valueSet2->getType());
     }
 
     public function testRetrievingWherePartsReturnsSpecificationArrayOfIdentifierAndValuesAndArrayOfTypes(): void
@@ -68,44 +118,81 @@ final class InTest extends TestCase
         $in = new In();
         $in->setIdentifier('foo.bar')
             ->setValueSet([1, 2, 3]);
-        $expression1 = new Argument('foo.bar', ArgumentType::Identifier);
-        $expression2 = new Argument([1, 2, 3], ArgumentType::Value);
 
         $expressionData = $in->getExpressionData();
 
+        // Verify specification
         self::assertEquals('%s IN (%s, %s, %s)', $expressionData->getExpressionSpecification());
-        self::assertEquals([$expression1, $expression2], $expressionData->getExpressionValues());
 
+        // Verify expression values
+        $values = $expressionData->getExpressionValues();
+        self::assertCount(2, $values);
+
+        // Verify identifier argument
+        self::assertInstanceOf(Argument::class, $values[0]);
+        self::assertEquals('foo.bar', $values[0]->getValue());
+        self::assertEquals(ArgumentType::Identifier, $values[0]->getType());
+
+        // Verify value set argument
+        self::assertInstanceOf(Argument::class, $values[1]);
+        self::assertEquals([1, 2, 3], $values[1]->getValue());
+        self::assertEquals(ArgumentType::Value, $values[1]->getType());
+
+        // Test with typed value sets
         $in->setIdentifier('foo.bar')
             ->setValueSet([
                 [1 => ArgumentType::Literal],
                 [2 => ArgumentType::Value],
                 [3 => ArgumentType::Literal],
             ]);
-        $expression1 = new Argument('foo.bar', ArgumentType::Identifier);
-        $expression2 = new Argument([
-            [1 => ArgumentType::Literal],
-            [2 => ArgumentType::Value],
-            [3 => ArgumentType::Literal],
-        ], ArgumentType::Value);
 
         $expressionData = $in->getExpressionData();
 
+        // Verify specification
         self::assertEquals('%s IN (%s, %s, %s)', $expressionData->getExpressionSpecification());
-        self::assertEquals([$expression1, $expression2], $expressionData->getExpressionValues());
+
+        // Verify expression values
+        $values = $expressionData->getExpressionValues();
+        self::assertCount(2, $values);
+
+        // Verify identifier argument
+        self::assertInstanceOf(Argument::class, $values[0]);
+        self::assertEquals('foo.bar', $values[0]->getValue());
+        self::assertEquals(ArgumentType::Identifier, $values[0]->getType());
+
+        // Verify value set argument with types
+        self::assertInstanceOf(Argument::class, $values[1]);
+        self::assertEquals([
+            [1 => ArgumentType::Literal],
+            [2 => ArgumentType::Value],
+            [3 => ArgumentType::Literal],
+        ], $values[1]->getValue());
+        self::assertEquals(ArgumentType::Value, $values[1]->getType());
     }
 
     public function testGetExpressionDataWithSubselect(): void
     {
-        $select      = new Select();
-        $in          = new In(new Argument('foo'), $select);
-        $expression1 = new Argument('foo', ArgumentType::Value);
-        $expression2 = new Argument($select, ArgumentType::Select);
+        $select = new Select();
+        $in     = new In(new Argument('foo'), $select);
 
         $expressionData = $in->getExpressionData();
 
+        // Verify specification
         self::assertEquals('%s IN %s', $expressionData->getExpressionSpecification());
-        self::assertEquals([$expression1, $expression2], $expressionData->getExpressionValues());
+
+        // Verify expression values
+        $values = $expressionData->getExpressionValues();
+        self::assertCount(2, $values);
+
+        // Verify identifier argument
+        self::assertInstanceOf(Argument::class, $values[0]);
+        self::assertEquals('foo', $values[0]->getValue());
+        self::assertEquals(ArgumentType::Value, $values[0]->getType());
+
+        // Verify subselect argument
+        self::assertInstanceOf(Argument::class, $values[1]);
+        self::assertSame($select, $values[1]->getValue());
+        self::assertEquals(ArgumentType::Select, $values[1]->getType());
     }
 
     public function testGetExpressionDataWithEmptyValues(): void
@@ -120,28 +207,52 @@ final class InTest extends TestCase
 
     public function testGetExpressionDataWithSubselectAndIdentifier(): void
     {
-        $select      = new Select();
-        $in          = new In(new Argument('foo'), $select);
-        $expression1 = new Argument('foo', ArgumentType::Value);
-        $expression2 = new Argument($select, ArgumentType::Select);
+        $select = new Select();
+        $in     = new In(new Argument('foo'), $select);
 
         $expressionData = $in->getExpressionData();
 
+        // Verify specification
         self::assertEquals('%s IN %s', $expressionData->getExpressionSpecification());
-        self::assertEquals([$expression1, $expression2], $expressionData->getExpressionValues());
+
+        // Verify expression values
+        $values = $expressionData->getExpressionValues();
+        self::assertCount(2, $values);
+
+        // Verify identifier argument
+        self::assertInstanceOf(Argument::class, $values[0]);
+        self::assertEquals('foo', $values[0]->getValue());
+        self::assertEquals(ArgumentType::Value, $values[0]->getType());
+
+        // Verify subselect argument
+        self::assertInstanceOf(Argument::class, $values[1]);
+        self::assertSame($select, $values[1]->getValue());
+        self::assertEquals(ArgumentType::Select, $values[1]->getType());
     }
 
     public function testGetExpressionDataWithSubselectAndArrayIdentifier(): void
     {
-        $select      = new Select();
-        $in          = new In(new Argument(['foo', 'bar']), $select);
-        $expression1 = new Argument(['foo', 'bar'], ArgumentType::Value);
-        $expression2 = new Argument($select, ArgumentType::Select);
+        $select = new Select();
+        $in     = new In(new Argument(['foo', 'bar']), $select);
 
         $expressionData = $in->getExpressionData();
 
+        // Verify specification
         self::assertEquals('(%s, %s) IN %s', $expressionData->getExpressionSpecification());
-        self::assertEquals([$expression1, $expression2], $expressionData->getExpressionValues());
+
+        // Verify expression values
+        $values = $expressionData->getExpressionValues();
+        self::assertCount(2, $values);
+
+        // Verify array identifier argument
+        self::assertInstanceOf(Argument::class, $values[0]);
+        self::assertEquals(['foo', 'bar'], $values[0]->getValue());
+        self::assertEquals(ArgumentType::Value, $values[0]->getType());
+
+        // Verify subselect argument
+        self::assertInstanceOf(Argument::class, $values[1]);
+        self::assertSame($select, $values[1]->getValue());
+        self::assertEquals(ArgumentType::Select, $values[1]->getType());
     }
 
     public function testGetExpressionDataThrowsExceptionWhenIdentifierNotSet(): void

@@ -31,39 +31,113 @@ final class LikeTest extends TestCase
     public function testConstructWithArgs(): void
     {
         $like = new Like('bar', 'Foo%');
-        self::assertEquals(new Argument('bar', ArgumentType::Identifier), $like->getIdentifier());
-        self::assertEquals(new Argument('Foo%', ArgumentType::Value), $like->getLike());
+
+        $identifier = $like->getIdentifier();
+        self::assertInstanceOf(Argument::class, $identifier);
+        self::assertEquals('bar', $identifier->getValue());
+        self::assertEquals(ArgumentType::Identifier, $identifier->getType());
+
+        $likeValue = $like->getLike();
+        self::assertInstanceOf(Argument::class, $likeValue);
+        self::assertEquals('Foo%', $likeValue->getValue());
+        self::assertEquals(ArgumentType::Value, $likeValue->getType());
     }
 
     public function testAccessorsMutators(): void
     {
         $like = new Like();
-        $like->setIdentifier('bar');
-        self::assertEquals(new Argument('bar', ArgumentType::Identifier), $like->getIdentifier());
-        $like->setLike('foo%');
-        self::assertEquals(new Argument('foo%', ArgumentType::Value), $like->getLike());
-        $like->setSpecification('target = target');
+
+        // Test setIdentifier - first mutation
+        $result = $like->setIdentifier('bar');
+
+        // Verify fluent interface
+        self::assertInstanceOf(Like::class, $result);
+
+        // Verify first identifier mutation
+        $identifier1 = $like->getIdentifier();
+        self::assertInstanceOf(Argument::class, $identifier1);
+        self::assertEquals('bar', $identifier1->getValue());
+        self::assertEquals(ArgumentType::Identifier, $identifier1->getType());
+
+        // Second mutation to verify mutability
+        $like->setIdentifier('baz');
+        $identifier2 = $like->getIdentifier();
+        self::assertInstanceOf(Argument::class, $identifier2);
+        self::assertEquals('baz', $identifier2->getValue());
+        self::assertEquals(ArgumentType::Identifier, $identifier2->getType());
+
+        // Test setLike - first mutation
+        $result = $like->setLike('foo%');
+
+        // Verify fluent interface
+        self::assertInstanceOf(Like::class, $result);
+
+        // Verify first like mutation
+        $likeValue1 = $like->getLike();
+        self::assertInstanceOf(Argument::class, $likeValue1);
+        self::assertEquals('foo%', $likeValue1->getValue());
+        self::assertEquals(ArgumentType::Value, $likeValue1->getType());
+
+        // Second mutation to verify mutability
+        $like->setLike('bar%');
+        $likeValue2 = $like->getLike();
+        self::assertInstanceOf(Argument::class, $likeValue2);
+        self::assertEquals('bar%', $likeValue2->getValue());
+        self::assertEquals(ArgumentType::Value, $likeValue2->getType());
+
+        // Test setSpecification (this returns string, not Argument)
+        $result = $like->setSpecification('target = target');
+        self::assertInstanceOf(Like::class, $result);
         self::assertEquals('target = target', $like->getSpecification());
+
+        // Second mutation to verify mutability
+        $like->setSpecification('custom spec');
+        self::assertEquals('custom spec', $like->getSpecification());
     }
 
     public function testGetExpressionData(): void
     {
-        $like       = new Like('bar', 'Foo%');
-        $identifier = new Argument('bar', ArgumentType::Identifier);
-        $expression = new Argument('Foo%', ArgumentType::Value);
+        $like = new Like('bar', 'Foo%');
 
         $expressionData = $like->getExpressionData();
 
+        // Verify specification
         self::assertEquals('%1$s LIKE %2$s', $expressionData->getExpressionSpecification());
-        self::assertEquals([$identifier, $expression], $expressionData->getExpressionValues());
 
-        $like       = new Like(['Foo%' => ArgumentType::Value], ['bar' => ArgumentType::Identifier]);
-        $identifier = new Argument('Foo%', ArgumentType::Value);
-        $expression = new Argument('bar', ArgumentType::Identifier);
+        // Verify expression values
+        $values = $expressionData->getExpressionValues();
+        self::assertCount(2, $values);
+
+        // Verify identifier argument
+        self::assertInstanceOf(Argument::class, $values[0]);
+        self::assertEquals('bar', $values[0]->getValue());
+        self::assertEquals(ArgumentType::Identifier, $values[0]->getType());
+
+        // Verify like expression argument
+        self::assertInstanceOf(Argument::class, $values[1]);
+        self::assertEquals('Foo%', $values[1]->getValue());
+        self::assertEquals(ArgumentType::Value, $values[1]->getType());
+
+        $like = new Like(['Foo%' => ArgumentType::Value], ['bar' => ArgumentType::Identifier]);
 
         $expressionData = $like->getExpressionData();
+
+        // Verify specification
         self::assertEquals('%1$s LIKE %2$s', $expressionData->getExpressionSpecification());
-        self::assertEquals([$identifier, $expression], $expressionData->getExpressionValues());
+
+        // Verify expression values with custom types
+        $values = $expressionData->getExpressionValues();
+        self::assertCount(2, $values);
+
+        // Verify identifier argument (now with Value type)
+        self::assertInstanceOf(Argument::class, $values[0]);
+        self::assertEquals('Foo%', $values[0]->getValue());
+        self::assertEquals(ArgumentType::Value, $values[0]->getType());
+
+        // Verify like expression argument (now with Identifier type)
+        self::assertInstanceOf(Argument::class, $values[1]);
+        self::assertEquals('bar', $values[1]->getValue());
+        self::assertEquals(ArgumentType::Identifier, $values[1]->getType());
     }
 
     public function testInstanceOfPerSetters(): void

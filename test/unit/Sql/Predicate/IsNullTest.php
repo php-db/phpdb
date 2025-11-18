@@ -34,19 +34,39 @@ final class IsNullTest extends TestCase
 
     public function testCanPassIdentifierToConstructor(): void
     {
-        new IsNotNull();
-        $isnull     = new IsNotNull('foo.bar');
-        $identifier = new Argument('foo.bar', ArgumentType::Identifier);
-        self::assertEquals($identifier, $isnull->getIdentifier());
+        $isnull = new IsNotNull('foo.bar');
+
+        // Verify identifier was set correctly
+        $identifier = $isnull->getIdentifier();
+        self::assertInstanceOf(Argument::class, $identifier);
+        self::assertEquals('foo.bar', $identifier->getValue());
+        self::assertEquals(ArgumentType::Identifier, $identifier->getType());
     }
 
     public function testIdentifierIsMutable(): void
     {
         $isNotNull = new IsNotNull();
-        $isNotNull->setIdentifier('foo.bar');
 
-        $identifier = new Argument('foo.bar', ArgumentType::Identifier);
-        self::assertEquals($identifier, $isNotNull->getIdentifier());
+        // First mutation
+        $result = $isNotNull->setIdentifier('foo.bar');
+
+        // Verify fluent interface
+        self::assertSame($isNotNull, $result);
+
+        // Verify the first mutation occurred
+        $identifier1 = $isNotNull->getIdentifier();
+        self::assertInstanceOf(Argument::class, $identifier1);
+        self::assertEquals('foo.bar', $identifier1->getValue());
+        self::assertEquals(ArgumentType::Identifier, $identifier1->getType());
+
+        // Second mutation to verify mutability
+        $isNotNull->setIdentifier('baz.qux');
+
+        // Verify the instance was actually mutated
+        $identifier2 = $isNotNull->getIdentifier();
+        self::assertInstanceOf(Argument::class, $identifier2);
+        self::assertEquals('baz.qux', $identifier2->getValue());
+        self::assertEquals(ArgumentType::Identifier, $identifier2->getType());
     }
 
     public function testSpecificationIsMutable(): void
@@ -61,12 +81,19 @@ final class IsNullTest extends TestCase
         $isNotNull = new IsNotNull();
         $isNotNull->setIdentifier('foo.bar');
 
-        $identifier = new Argument('foo.bar', ArgumentType::Identifier);
-
         $expressionData = $isNotNull->getExpressionData();
 
+        // Verify specification
         self::assertEquals($isNotNull->getSpecification(), $expressionData->getExpressionSpecification());
-        self::assertEquals([$identifier], $expressionData->getExpressionValues());
+
+        // Verify expression values
+        $values = $expressionData->getExpressionValues();
+        self::assertCount(1, $values);
+
+        // Verify identifier argument
+        self::assertInstanceOf(Argument::class, $values[0]);
+        self::assertEquals('foo.bar', $values[0]->getValue());
+        self::assertEquals(ArgumentType::Identifier, $values[0]->getType());
     }
 
     public function testGetExpressionDataThrowsExceptionWhenIdentifierNotSet(): void

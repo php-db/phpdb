@@ -69,7 +69,8 @@ final class ExpressionDataTest extends TestCase
             Argument::value(18),
         ]);
 
-        self::assertSame($expressionData, $result); // Fluent interface
+        // Verify fluent interface
+        self::assertSame($expressionData, $result);
         self::assertCount(1, $expressionData);
     }
 
@@ -113,7 +114,8 @@ final class ExpressionDataTest extends TestCase
 
         $result = $expressionData->addExpressionParts($parts);
 
-        self::assertSame($expressionData, $result); // Fluent interface
+        // Verify fluent interface
+        self::assertSame($expressionData, $result);
         self::assertCount(2, $expressionData);
         self::assertEquals('%s = %s %s = %s', $expressionData->getExpressionSpecification());
     }
@@ -140,6 +142,7 @@ final class ExpressionDataTest extends TestCase
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Expression parts must be of type ExpressionPart');
+        /** @noinspection PhpParamsInspection */
         $expressionData->addExpressionParts(['not an ExpressionPart']);
     }
 
@@ -244,14 +247,16 @@ final class ExpressionDataTest extends TestCase
         $expressionData->addExpressionPart('PART1');
         $expressionData->addExpressionPart('PART2');
 
-        // Iterate once
+        // First iteration
+        /** @noinspection PhpUnusedLocalVariableInspection */
         foreach ($expressionData as $part) {
             // Just iterate - suppress phpcs warning
             sleep(0);
         }
 
-        // Iterate again to ensure rewind works
+        // Second iteration to verify rewind works
         $count = 0;
+        /** @noinspection PhpUnusedLocalVariableInspection */
         foreach ($expressionData as $part) {
             $count++;
         }

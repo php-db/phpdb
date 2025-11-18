@@ -7,7 +7,6 @@ namespace PhpDbTest\Sql\Ddl\Column;
 use PhpDb\Sql\Argument;
 use PhpDb\Sql\Ddl\Column\Column;
 use PHPUnit\Framework\Attributes\CoversMethod;
-use PHPUnit\Framework\Attributes\Depends;
 use PHPUnit\Framework\TestCase;
 
 #[CoversMethod(Column::class, '__construct')]
@@ -33,64 +32,104 @@ final class ColumnTest extends TestCase
         self::assertEquals(['option1' => 'value1'], $column->getOptions());
     }
 
-    public function testSetName(): Column
+    public function testSetName(): void
     {
         $column = new Column();
-        self::assertSame($column, $column->setName('foo'));
-        return $column;
-    }
 
-    #[Depends('testSetName')]
-    public function testGetName(Column $column): void
-    {
+        // First mutation
+        $result = $column->setName('foo');
+
+        // Verify fluent interface
+        self::assertSame($column, $result);
+
+        // Verify the first mutation occurred
         self::assertEquals('foo', $column->getName());
+
+        // Second mutation to verify mutability
+        $column->setName('bar');
+
+        // Verify the instance was actually mutated
+        self::assertEquals('bar', $column->getName());
     }
 
-    public function testSetNullable(): Column
+    public function testSetNullable(): void
     {
         $column = new Column();
-        self::assertSame($column, $column->setNullable(true));
-        return $column;
-    }
 
-    #[Depends('testSetNullable')]
-    public function testIsNullable(Column $column): void
-    {
+        // First mutation
+        $result = $column->setNullable(true);
+
+        // Verify fluent interface
+        self::assertSame($column, $result);
+
+        // Verify the first mutation occurred
         self::assertTrue($column->isNullable());
+
+        // Second mutation to verify mutability
         $column->setNullable(false);
+
+        // Verify the instance was actually mutated
         self::assertFalse($column->isNullable());
     }
 
-    public function testSetDefault(): Column
+    public function testSetDefault(): void
     {
         $column = new Column();
-        self::assertSame($column, $column->setDefault('foo bar'));
-        return $column;
-    }
 
-    #[Depends('testSetDefault')]
-    public function testGetDefault(Column $column): void
-    {
+        // First mutation
+        $result = $column->setDefault('foo bar');
+
+        // Verify fluent interface
+        self::assertSame($column, $result);
+
+        // Verify the first mutation occurred
         self::assertEquals('foo bar', $column->getDefault());
+
+        // Second mutation to verify mutability
+        $column->setDefault('baz qux');
+
+        // Verify the instance was actually mutated
+        self::assertEquals('baz qux', $column->getDefault());
     }
 
-    public function testSetOptions(): Column
+    public function testSetOptions(): void
     {
         $column = new Column();
-        self::assertSame($column, $column->setOptions(['autoincrement' => true]));
-        return $column;
+
+        // First mutation
+        $result = $column->setOptions(['autoincrement' => true]);
+
+        // Verify fluent interface
+        self::assertSame($column, $result);
+
+        // Verify the first mutation occurred
+        self::assertEquals(['autoincrement' => true], $column->getOptions());
+
+        // Second mutation to verify mutability
+        $column->setOptions(['primary' => true, 'unsigned' => true]);
+
+        // Verify the instance was actually mutated
+        self::assertEquals(['primary' => true, 'unsigned' => true], $column->getOptions());
     }
 
     public function testSetOption(): void
     {
         $column = new Column();
-        self::assertSame($column, $column->setOption('primary', true));
-    }
 
-    #[Depends('testSetOptions')]
-    public function testGetOptions(Column $column): void
-    {
-        self::assertEquals(['autoincrement' => true], $column->getOptions());
+        // First mutation
+        $result = $column->setOption('primary', true);
+
+        // Verify fluent interface
+        self::assertSame($column, $result);
+
+        // Verify the first mutation occurred
+        self::assertEquals(['primary' => true], $column->getOptions());
+
+        // Second mutation to verify mutability
+        $column->setOption('unsigned', true);
+
+        // Verify the instance was actually mutated
+        self::assertEquals(['primary' => true, 'unsigned' => true], $column->getOptions());
     }
 
     public function testGetExpressionData(): void

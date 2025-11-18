@@ -11,10 +11,7 @@ use PhpDb\Sql\Ddl\Constraint\ConstraintInterface;
 use PhpDb\Sql\Ddl\CreateTable;
 use PhpDb\Sql\TableIdentifier;
 use PHPUnit\Framework\Attributes\CoversMethod;
-use PHPUnit\Framework\Attributes\Depends;
 use PHPUnit\Framework\TestCase;
-
-use function array_pop;
 
 #[CoversMethod(CreateTable::class, '__construct')]
 #[CoversMethod(CreateTable::class, 'setTemporary')]
@@ -62,52 +59,81 @@ class CreateTableTest extends TestCase
         self::assertTrue($ct->isTemporary());
     }
 
-    public function testSetTable(): CreateTable
+    public function testSetTable(): void
     {
         $ct = new CreateTable();
+
+        // Verify initial state
         self::assertEquals('', $ct->getRawState('table'));
-        $ct->setTable('test');
-        return $ct;
-    }
 
-    #[Depends('testSetTable')]
-    public function testRawStateViaTable(CreateTable $ct): void
-    {
+        // First mutation
+        $result = $ct->setTable('test');
+
+        // Verify fluent interface
+        self::assertSame($ct, $result);
+
+        // Verify the first mutation occurred
         self::assertEquals('test', $ct->getRawState('table'));
+
+        // Second mutation to verify mutability
+        $ct->setTable('another_table');
+
+        // Verify the instance was actually mutated
+        self::assertEquals('another_table', $ct->getRawState('table'));
     }
 
-    public function testAddColumn(): CreateTable
+    public function testAddColumn(): void
     {
         $column = $this->getMockBuilder(ColumnInterface::class)->getMock();
         $ct     = new CreateTable();
-        self::assertSame($ct, $ct->addColumn($column));
-        return $ct;
-    }
 
-    #[Depends('testAddColumn')]
-    public function testRawStateViaColumn(CreateTable $ct): void
-    {
+        // First mutation
+        $result = $ct->addColumn($column);
+
+        // Verify fluent interface
+        self::assertSame($ct, $result);
+
+        // Verify the first mutation occurred
         $state = $ct->getRawState('columns');
         self::assertIsArray($state);
-        $column = array_pop($state);
-        self::assertInstanceOf(ColumnInterface::class, $column);
+        self::assertCount(1, $state);
+        self::assertInstanceOf(ColumnInterface::class, $state[0]);
+
+        // Second mutation to verify mutability (columns accumulate)
+        $column2 = $this->getMockBuilder(ColumnInterface::class)->getMock();
+        $ct->addColumn($column2);
+
+        // Verify the instance was actually mutated
+        $state2 = $ct->getRawState('columns');
+        self::assertCount(2, $state2);
+        self::assertInstanceOf(ColumnInterface::class, $state2[1]);
     }
 
-    public function testAddConstraint(): CreateTable
+    public function testAddConstraint(): void
     {
         $constraint = $this->getMockBuilder(ConstraintInterface::class)->getMock();
         $ct         = new CreateTable();
-        self::assertSame($ct, $ct->addConstraint($constraint));
-        return $ct;
-    }
 
-    #[Depends('testAddConstraint')]
-    public function testRawStateViaConstraint(CreateTable $ct): void
-    {
+        // First mutation
+        $result = $ct->addConstraint($constraint);
+
+        // Verify fluent interface
+        self::assertSame($ct, $result);
+
+        // Verify the first mutation occurred
         $state = $ct->getRawState('constraints');
         self::assertIsArray($state);
-        $constraint = array_pop($state);
-        self::assertInstanceOf(ConstraintInterface::class, $constraint);
+        self::assertCount(1, $state);
+        self::assertInstanceOf(ConstraintInterface::class, $state[0]);
+
+        // Second mutation to verify mutability (constraints accumulate)
+        $constraint2 = $this->getMockBuilder(ConstraintInterface::class)->getMock();
+        $ct->addConstraint($constraint2);
+
+        // Verify the instance was actually mutated
+        $state2 = $ct->getRawState('constraints');
+        self::assertCount(2, $state2);
+        self::assertInstanceOf(ConstraintInterface::class, $state2[1]);
     }
 
     public function testGetSqlString(): void

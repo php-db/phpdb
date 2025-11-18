@@ -84,7 +84,8 @@ final class ArgumentTest extends TestCase
         $argument = new Argument('test');
         $result   = $argument->setType(ArgumentType::Literal);
 
-        self::assertSame($argument, $result); // Fluent interface
+        // Verify fluent interface
+        self::assertSame($argument, $result);
         self::assertEquals(ArgumentType::Literal, $argument->getType());
     }
 
@@ -111,7 +112,8 @@ final class ArgumentTest extends TestCase
         $argument = new Argument('initial');
         $result   = $argument->setValue('updated');
 
-        self::assertSame($argument, $result); // Fluent interface
+        // Verify fluent interface
+        self::assertSame($argument, $result);
         self::assertEquals('updated', $argument->getValue());
     }
 

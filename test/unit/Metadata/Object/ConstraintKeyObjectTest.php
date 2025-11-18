@@ -13,11 +13,13 @@ final class ConstraintKeyObjectTest extends TestCase
     {
         $constraintKey = new ConstraintKeyObject('column_name');
 
+        // Verify column name is set by constructor
         self::assertSame('column_name', $constraintKey->getColumnName());
     }
 
     public function testForeignKeyConstants(): void
     {
+        // Verify all foreign key constants are defined correctly
         self::assertSame('CASCADE', ConstraintKeyObject::FK_CASCADE);
         self::assertSame('SET NULL', ConstraintKeyObject::FK_SET_NULL);
         self::assertSame('NO ACTION', ConstraintKeyObject::FK_NO_ACTION);
@@ -28,8 +30,9 @@ final class ConstraintKeyObjectTest extends TestCase
     public function testSetColumnNameAndGetColumnNameWithFluentInterface(): void
     {
         $constraintKey = new ConstraintKeyObject('initial');
-        $result        = $constraintKey->setColumnName('new_column');
 
+        // Verify fluent interface and value update
+        $result = $constraintKey->setColumnName('new_column');
         self::assertSame($constraintKey, $result);
         self::assertSame('new_column', $constraintKey->getColumnName());
     }
@@ -37,8 +40,9 @@ final class ConstraintKeyObjectTest extends TestCase
     public function testSetOrdinalPositionAndGetOrdinalPositionWithFluentInterface(): void
     {
         $constraintKey = new ConstraintKeyObject('column');
-        $result        = $constraintKey->setOrdinalPosition(3);
 
+        // Verify fluent interface and value update
+        $result = $constraintKey->setOrdinalPosition(3);
         self::assertSame($constraintKey, $result);
         self::assertSame(3, $constraintKey->getOrdinalPosition());
     }
@@ -46,8 +50,9 @@ final class ConstraintKeyObjectTest extends TestCase
     public function testSetPositionInUniqueConstraintAndGetPositionInUniqueConstraintWithFluentInterface(): void
     {
         $constraintKey = new ConstraintKeyObject('column');
-        $result        = $constraintKey->setPositionInUniqueConstraint(true);
 
+        // Verify fluent interface and value update
+        $result = $constraintKey->setPositionInUniqueConstraint(true);
         self::assertSame($constraintKey, $result);
         self::assertTrue($constraintKey->getPositionInUniqueConstraint());
     }
@@ -55,8 +60,9 @@ final class ConstraintKeyObjectTest extends TestCase
     public function testSetReferencedTableSchemaAndGetReferencedTableSchemaWithFluentInterface(): void
     {
         $constraintKey = new ConstraintKeyObject('column');
-        $result        = $constraintKey->setReferencedTableSchema('ref_schema');
 
+        // Verify fluent interface and value update
+        $result = $constraintKey->setReferencedTableSchema('ref_schema');
         self::assertSame($constraintKey, $result);
         self::assertSame('ref_schema', $constraintKey->getReferencedTableSchema());
     }
@@ -64,8 +70,9 @@ final class ConstraintKeyObjectTest extends TestCase
     public function testSetReferencedTableNameAndGetReferencedTableNameWithFluentInterface(): void
     {
         $constraintKey = new ConstraintKeyObject('column');
-        $result        = $constraintKey->setReferencedTableName('ref_table');
 
+        // Verify fluent interface and value update
+        $result = $constraintKey->setReferencedTableName('ref_table');
         self::assertSame($constraintKey, $result);
         self::assertSame('ref_table', $constraintKey->getReferencedTableName());
     }
@@ -73,8 +80,9 @@ final class ConstraintKeyObjectTest extends TestCase
     public function testSetReferencedColumnNameAndGetReferencedColumnNameWithFluentInterface(): void
     {
         $constraintKey = new ConstraintKeyObject('column');
-        $result        = $constraintKey->setReferencedColumnName('ref_column');
 
+        // Verify fluent interface and value update
+        $result = $constraintKey->setReferencedColumnName('ref_column');
         self::assertSame($constraintKey, $result);
         self::assertSame('ref_column', $constraintKey->getReferencedColumnName());
     }
@@ -82,27 +90,37 @@ final class ConstraintKeyObjectTest extends TestCase
     public function testSetForeignKeyUpdateRuleAndGetForeignKeyUpdateRule(): void
     {
         $constraintKey = new ConstraintKeyObject('column');
-        $constraintKey->setForeignKeyUpdateRule(ConstraintKeyObject::FK_CASCADE);
 
+        // Set update rule and verify retrieval
+        $constraintKey->setForeignKeyUpdateRule(ConstraintKeyObject::FK_CASCADE);
         self::assertSame('CASCADE', $constraintKey->getForeignKeyUpdateRule());
+
+        // Verify mutation by changing to different value
+        $constraintKey->setForeignKeyUpdateRule(ConstraintKeyObject::FK_RESTRICT);
+        self::assertSame('RESTRICT', $constraintKey->getForeignKeyUpdateRule());
     }
 
     public function testSetForeignKeyUpdateRuleWithAllConstants(): void
     {
         $constraintKey = new ConstraintKeyObject('column');
 
+        // Verify CASCADE constant
         $constraintKey->setForeignKeyUpdateRule(ConstraintKeyObject::FK_CASCADE);
         self::assertSame('CASCADE', $constraintKey->getForeignKeyUpdateRule());
 
+        // Verify SET NULL constant
         $constraintKey->setForeignKeyUpdateRule(ConstraintKeyObject::FK_SET_NULL);
         self::assertSame('SET NULL', $constraintKey->getForeignKeyUpdateRule());
 
+        // Verify NO ACTION constant
         $constraintKey->setForeignKeyUpdateRule(ConstraintKeyObject::FK_NO_ACTION);
         self::assertSame('NO ACTION', $constraintKey->getForeignKeyUpdateRule());
 
+        // Verify RESTRICT constant
         $constraintKey->setForeignKeyUpdateRule(ConstraintKeyObject::FK_RESTRICT);
         self::assertSame('RESTRICT', $constraintKey->getForeignKeyUpdateRule());
 
+        // Verify SET DEFAULT constant
         $constraintKey->setForeignKeyUpdateRule(ConstraintKeyObject::FK_SET_DEFAULT);
         self::assertSame('SET DEFAULT', $constraintKey->getForeignKeyUpdateRule());
     }
@@ -110,27 +128,37 @@ final class ConstraintKeyObjectTest extends TestCase
     public function testSetForeignKeyDeleteRuleAndGetForeignKeyDeleteRule(): void
     {
         $constraintKey = new ConstraintKeyObject('column');
-        $constraintKey->setForeignKeyDeleteRule(ConstraintKeyObject::FK_RESTRICT);
 
+        // Set delete rule and verify retrieval
+        $constraintKey->setForeignKeyDeleteRule(ConstraintKeyObject::FK_RESTRICT);
         self::assertSame('RESTRICT', $constraintKey->getForeignKeyDeleteRule());
+
+        // Verify mutation by changing to different value
+        $constraintKey->setForeignKeyDeleteRule(ConstraintKeyObject::FK_CASCADE);
+        self::assertSame('CASCADE', $constraintKey->getForeignKeyDeleteRule());
     }
 
     public function testSetForeignKeyDeleteRuleWithAllConstants(): void
     {
         $constraintKey = new ConstraintKeyObject('column');
 
+        // Verify CASCADE constant
         $constraintKey->setForeignKeyDeleteRule(ConstraintKeyObject::FK_CASCADE);
         self::assertSame('CASCADE', $constraintKey->getForeignKeyDeleteRule());
 
+        // Verify SET NULL constant
         $constraintKey->setForeignKeyDeleteRule(ConstraintKeyObject::FK_SET_NULL);
         self::assertSame('SET NULL', $constraintKey->getForeignKeyDeleteRule());
 
+        // Verify NO ACTION constant
         $constraintKey->setForeignKeyDeleteRule(ConstraintKeyObject::FK_NO_ACTION);
         self::assertSame('NO ACTION', $constraintKey->getForeignKeyDeleteRule());
 
+        // Verify RESTRICT constant
         $constraintKey->setForeignKeyDeleteRule(ConstraintKeyObject::FK_RESTRICT);
         self::assertSame('RESTRICT', $constraintKey->getForeignKeyDeleteRule());
 
+        // Verify SET DEFAULT constant
         $constraintKey->setForeignKeyDeleteRule(ConstraintKeyObject::FK_SET_DEFAULT);
         self::assertSame('SET DEFAULT', $constraintKey->getForeignKeyDeleteRule());
     }
@@ -138,6 +166,7 @@ final class ConstraintKeyObjectTest extends TestCase
     public function testCompleteConstraintKeyObject(): void
     {
         $constraintKey = new ConstraintKeyObject('user_id');
+
         $constraintKey->setOrdinalPosition(1)
             ->setPositionInUniqueConstraint(false)
             ->setReferencedTableSchema('public')
@@ -146,6 +175,7 @@ final class ConstraintKeyObjectTest extends TestCase
         $constraintKey->setForeignKeyUpdateRule(ConstraintKeyObject::FK_CASCADE);
         $constraintKey->setForeignKeyDeleteRule(ConstraintKeyObject::FK_RESTRICT);
 
+        // Verify all properties are set correctly
         self::assertSame('user_id', $constraintKey->getColumnName());
         self::assertSame(1, $constraintKey->getOrdinalPosition());
         self::assertFalse($constraintKey->getPositionInUniqueConstraint());

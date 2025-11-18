@@ -154,12 +154,42 @@ final class ExpressionTest extends TestCase
     public function testParameterIsMutable(): void
     {
         $expression = new Expression();
-        $expression->setParameters(['foo', 'bar']);
 
-        $parameter1 = new Argument('foo', ArgumentType::Value);
-        $parameter2 = new Argument('bar', ArgumentType::Value);
+        // First mutation
+        $result = $expression->setParameters(['foo', 'bar']);
 
-        self::assertEquals([$parameter1, $parameter2], $expression->getParameters());
+        // Verify fluent interface
+        self::assertSame($expression, $result);
+
+        // Verify the first mutation occurred - getParameters returns an array
+        $parameters1 = $expression->getParameters();
+        self::assertCount(2, $parameters1);
+        self::assertInstanceOf(Argument::class, $parameters1[0]);
+        self::assertEquals('foo', $parameters1[0]->getValue());
+        self::assertEquals(ArgumentType::Value, $parameters1[0]->getType());
+        self::assertInstanceOf(Argument::class, $parameters1[1]);
+        self::assertEquals('bar', $parameters1[1]->getValue());
+        self::assertEquals(ArgumentType::Value, $parameters1[1]->getType());
+
+        // Second mutation with different data to verify mutability
+        $expression->setParameters(['baz', 'qux', 'quux']);
+
+        // Verify the instance was actually mutated - parameters are accumulated
+        $parameters2 = $expression->getParameters();
+        self::assertCount(5, $parameters2); // 2 original + 3 new = 5 total
+        // First two are still there
+        self::assertEquals('foo', $parameters2[0]->getValue());
+        self::assertEquals('bar', $parameters2[1]->getValue());
+        // New ones were appended
+        self::assertInstanceOf(Argument::class, $parameters2[2]);
+        self::assertEquals('baz', $parameters2[2]->getValue());
+        self::assertEquals(ArgumentType::Value, $parameters2[2]->getType());
+        self::assertInstanceOf(Argument::class, $parameters2[3]);
+        self::assertEquals('qux', $parameters2[3]->getValue());
+        self::assertEquals(ArgumentType::Value, $parameters2[3]->getType());
+        self::assertInstanceOf(Argument::class, $parameters2[4]);
+        self::assertEquals('quux', $parameters2[4]->getValue());
+        self::assertEquals(ArgumentType::Value, $parameters2[4]->getType());
     }
 
     public function testRetrievingWherePartsReturnsSpecificationArrayOfLiteralAndParametersAndArrayOfTypes(): void

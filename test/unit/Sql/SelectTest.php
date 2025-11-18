@@ -27,7 +27,6 @@ use PhpDbTest\AdapterTestTrait;
 use PhpDbTest\TestAsset\TrustingSql92Platform;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\Attributes\Depends;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\TestDox;
 use PHPUnit\Framework\TestCase;
@@ -75,36 +74,45 @@ final class SelectTest extends TestCase
     }
 
     #[TestDox('unit test: Test from() returns Select object (is chainable)')]
-    public function testFrom(): Select
+    public function testFrom(): void
     {
         $select = new Select();
-        $return = $select->from('foo');
-        self::assertSame($select, $return);
 
-        return $return;
-    }
+        // First mutation
+        $result = $select->from('foo');
 
-    #[Depends('testFrom')]
-    #[TestDox('unit test: Test getRawState() returns information populated via from()')]
-    public function testGetRawStateViaFrom(Select $select): void
-    {
+        // Verify fluent interface
+        self::assertSame($select, $result);
+
+        // Verify the first mutation occurred
         self::assertEquals('foo', $select->getRawState('table'));
+
+        // Second mutation to verify mutability
+        $select->from('bar');
+
+        // Verify the instance was actually mutated
+        self::assertEquals('bar', $select->getRawState('table'));
     }
 
     #[TestDox('unit test: Test quantifier() returns Select object (is chainable)')]
-    public function testQuantifier(): Select
+    public function testQuantifier(): void
     {
         $select = new Select();
-        $return = $select->quantifier(Select::QUANTIFIER_DISTINCT);
-        self::assertSame($select, $return);
-        return $return;
-    }
 
-    #[Depends('testQuantifier')]
-    #[TestDox('unit test: Test getRawState() returns information populated via quantifier()')]
-    public function testGetRawStateViaQuantifier(Select $select): void
-    {
+        // First mutation
+        $result = $select->quantifier(Select::QUANTIFIER_DISTINCT);
+
+        // Verify fluent interface
+        self::assertSame($select, $result);
+
+        // Verify the first mutation occurred
         self::assertEquals(Select::QUANTIFIER_DISTINCT, $select->getRawState('quantifier'));
+
+        // Second mutation to verify mutability
+        $select->quantifier(Select::QUANTIFIER_ALL);
+
+        // Verify the instance was actually mutated
+        self::assertEquals(Select::QUANTIFIER_ALL, $select->getRawState('quantifier'));
     }
 
     #[TestDox('unit test: Test quantifier() accepts expression')]
@@ -121,13 +129,24 @@ final class SelectTest extends TestCase
     }
 
     #[TestDox('unit test: Test columns() returns Select object (is chainable)')]
-    public function testColumns(): Select
+    public function testColumns(): void
     {
         $select = new Select();
-        $return = $select->columns(['foo', 'bar']);
-        self::assertSame($select, $return);
 
-        return $select;
+        // First mutation
+        $result = $select->columns(['foo', 'bar']);
+
+        // Verify fluent interface
+        self::assertSame($select, $result);
+
+        // Verify the first mutation occurred
+        self::assertEquals(['foo', 'bar'], $select->getRawState('columns'));
+
+        // Second mutation to verify mutability
+        $select->columns(['baz', 'qux']);
+
+        // Verify the instance was actually mutated
+        self::assertEquals(['baz', 'qux'], $select->getRawState('columns'));
     }
 
     #[TestDox('unit test: Test isTableReadOnly() returns correct state for read only')]
@@ -140,21 +159,39 @@ final class SelectTest extends TestCase
         self::assertFalse($select->isTableReadOnly());
     }
 
-    #[Depends('testColumns')]
-    #[TestDox('unit test: Test getRawState() returns information populated via columns()')]
-    public function testGetRawStateViaColumns(Select $select): void
-    {
-        self::assertEquals(['foo', 'bar'], $select->getRawState('columns'));
-    }
-
     #[TestDox('unit test: Test join() returns same Select object (is chainable)')]
-    public function testJoin(): Select
+    public function testJoin(): void
     {
         $select = new Select();
-        $return = $select->join('foo', 'x = y');
-        self::assertSame($select, $return);
 
-        return $return;
+        // First mutation
+        $result = $select->join('foo', 'x = y');
+
+        // Verify fluent interface
+        self::assertSame($select, $result);
+
+        // Verify the first mutation occurred
+        $joins = $select->getRawState('joins');
+        self::assertInstanceOf(Join::class, $joins);
+        self::assertEquals(
+            [
+                [
+                    'name'    => 'foo',
+                    'on'      => 'x = y',
+                    'columns' => [Select::SQL_STAR],
+                    'type'    => Select::JOIN_INNER,
+                ],
+            ],
+            $joins->getJoins()
+        );
+
+        // Second mutation to verify mutability (joins accumulate)
+        $select->join('bar', 'a = b');
+
+        // Verify the instance was actually mutated
+        $joins2 = $select->getRawState('joins');
+        self::assertCount(2, $joins2->getJoins());
+        self::assertEquals('bar', $joins2->getJoins()[1]['name']);
     }
 
     #[TestDox('unit test: Test join() exception with bad join')]
@@ -189,25 +226,6 @@ final class SelectTest extends TestCase
 
         $this->expectException(InvalidArgumentException::class);
         $mr->invokeArgs($select, [new Sql92(), $mockDriver, $parameterContainer]);
-    }
-
-    #[Depends('testJoin')]
-    #[TestDox('unit test: Test getRawState() returns information populated via join()')]
-    public function testGetRawStateViaJoin(Select $select): void
-    {
-        $joins = $select->getRawState('joins');
-        self::assertInstanceOf(Join::class, $joins);
-        self::assertEquals(
-            [
-                [
-                    'name'    => 'foo',
-                    'on'      => 'x = y',
-                    'columns' => [Select::SQL_STAR],
-                    'type'    => Select::JOIN_INNER,
-                ],
-            ],
-            $joins->getJoins()
-        );
     }
 
     #[TestDox('unit test: Test where() returns Select object (is chainable)')]
@@ -448,20 +466,26 @@ final class SelectTest extends TestCase
     }
 
     #[TestDox(': unit test: test limit()')]
-    public function testLimit(): Select
+    public function testLimit(): void
     {
         $select = new Select();
-        self::assertSame($select, $select->limit(5));
-        return $select;
-    }
 
-    #[Depends('testLimit')]
-    #[TestDox(': unit test: Test getRawState() returns information populated via limit()')]
-    public function testGetRawStateViaLimit(Select $select): void
-    {
+        // First mutation
+        $result = $select->limit(5);
+
+        // Verify fluent interface
+        self::assertSame($select, $result);
+
+        // Verify the first mutation occurred
         $limit = $select->getRawState(Select::LIMIT);
         self::assertIsNumeric($limit);
         self::assertEquals(5, $limit);
+
+        // Second mutation to verify mutability
+        $select->limit(10);
+
+        // Verify the instance was actually mutated
+        self::assertEquals(10, $select->getRawState(Select::LIMIT));
     }
 
     #[TestDox(': unit test: test limit() throws exception when invalid parameter passed')]
@@ -474,20 +498,26 @@ final class SelectTest extends TestCase
     }
 
     #[TestDox(': unit test: test offset()')]
-    public function testOffset(): Select
+    public function testOffset(): void
     {
         $select = new Select();
-        self::assertSame($select, $select->offset(10));
-        return $select;
-    }
 
-    #[Depends('testOffset')]
-    #[TestDox(': unit test: Test getRawState() returns information populated via offset()')]
-    public function testGetRawStateViaOffset(Select $select): void
-    {
+        // First mutation
+        $result = $select->offset(10);
+
+        // Verify fluent interface
+        self::assertSame($select, $result);
+
+        // Verify the first mutation occurred
         $offset = $select->getRawState(Select::OFFSET);
         self::assertIsNumeric($offset);
         self::assertEquals(10, $offset);
+
+        // Second mutation to verify mutability
+        $select->offset(20);
+
+        // Verify the instance was actually mutated
+        self::assertEquals(20, $select->getRawState(Select::OFFSET));
     }
 
     #[TestDox(': unit test: test offset() throws exception when invalid parameter passed')]
@@ -500,75 +530,87 @@ final class SelectTest extends TestCase
     }
 
     #[TestDox('unit test: Test group() returns same Select object (is chainable)')]
-    public function testGroup(): Select
+    public function testGroup(): void
     {
         $select = new Select();
-        $return = $select->group(['col1', 'col2']);
-        self::assertSame($select, $return);
 
-        return $return;
-    }
+        // First mutation
+        $result = $select->group(['col1', 'col2']);
 
-    #[Depends('testGroup')]
-    #[TestDox('unit test: Test getRawState() returns information populated via group()')]
-    public function testGetRawStateViaGroup(Select $select): void
-    {
-        self::assertEquals(
-            ['col1', 'col2'],
-            $select->getRawState('group')
-        );
+        // Verify fluent interface
+        self::assertSame($select, $result);
+
+        // Verify the first mutation occurred
+        self::assertEquals(['col1', 'col2'], $select->getRawState('group'));
+
+        // Second mutation to verify mutability (group accumulates)
+        $select->group('col3');
+
+        // Verify the instance was actually mutated
+        self::assertEquals(['col1', 'col2', 'col3'], $select->getRawState('group'));
     }
 
     #[TestDox('unit test: Test having() returns same Select object (is chainable)')]
-    public function testHaving(): Select
+    public function testHaving(): void
     {
         $select = new Select();
-        $return = $select->having(['x = ?' => 5]);
-        self::assertSame($select, $return);
 
-        return $return;
+        // First mutation
+        $result = $select->having(['x = ?' => 5]);
+
+        // Verify fluent interface
+        self::assertSame($select, $result);
+
+        // Verify the first mutation occurred
+        $having = $select->getRawState('having');
+        self::assertInstanceOf(Having::class, $having);
+        self::assertEquals(1, $having->count());
+
+        // Second mutation to verify mutability (having predicates accumulate)
+        $select->having(['y = ?' => 10]);
+
+        // Verify the instance was actually mutated
+        self::assertEquals(2, $select->getRawState('having')->count());
     }
 
     #[TestDox('unit test: Test having() returns same Select object (is chainable)')]
-    public function testHavingArgument1IsHavingObject(): Select
+    public function testHavingArgument1IsHavingObject(): void
     {
         $select = new Select();
         $having = new Having();
         $return = $select->having($having);
         self::assertSame($select, $return);
         self::assertSame($having, $select->getRawState('having'));
-
-        return $return;
-    }
-
-    #[Depends('testHaving')]
-    #[TestDox('unit test: Test getRawState() returns information populated via having()')]
-    public function testGetRawStateViaHaving(Select $select): void
-    {
-        self::assertInstanceOf(Having::class, $select->getRawState('having'));
     }
 
     #[TestDox('unit test: Test combine() returns same Select object (is chainable)')]
-    public function testCombine(): Select
+    public function testCombine(): void
     {
         $select  = new Select();
         $combine = new Select();
-        $return  = $select->combine($combine, Select::COMBINE_UNION, 'ALL');
-        self::assertSame($select, $return);
 
-        return $return;
-    }
+        // First mutation
+        $result = $select->combine($combine, Select::COMBINE_UNION, 'ALL');
 
-    #[Depends('testCombine')]
-    #[TestDox('unit test: Test getRawState() returns information populated via combine()')]
-    public function testGetRawStateViaCombine(Select $select): void
-    {
-        /** @var array $state */
+        // Verify fluent interface
+        self::assertSame($select, $result);
+
+        // Verify the first mutation occurred
         $state = $select->getRawState('combine');
         self::assertInstanceOf(Select::class, $state['select']);
         self::assertNotSame($select, $state['select']);
         self::assertEquals(Select::COMBINE_UNION, $state['type']);
         self::assertEquals('ALL', $state['modifier']);
+
+        // Second mutation to verify mutability using a fresh Select
+        $select2  = new Select();
+        $combine2 = new Select();
+        $select2->combine($combine2, Select::COMBINE_INTERSECT, 'DISTINCT');
+
+        // Verify the instance was actually mutated
+        $state2 = $select2->getRawState('combine');
+        self::assertEquals(Select::COMBINE_INTERSECT, $state2['type']);
+        self::assertEquals('DISTINCT', $state2['modifier']);
     }
 
     #[TestDox('unit test: Test reset() resets internal stat of Select object, based on input')]
@@ -648,6 +690,7 @@ final class SelectTest extends TestCase
         self::assertEmpty($select->getRawState(Select::ORDER));
     }
 
+    /** @noinspection PhpUnusedParameterInspection */
     #[DataProvider('providerData')]
     #[TestDox('unit test: Test prepareStatement() will produce expected sql and parameters based on
                     a variety of provided arguments [uses data provider]')]
@@ -694,6 +737,7 @@ final class SelectTest extends TestCase
         );
     }
 
+    /** @noinspection PhpUnusedParameterInspection */
     #[DataProvider('providerData')]
     #[TestDox('unit test: Test getSqlString() will produce expected sql and parameters based on
                     a variety of provided arguments [uses data provider]')]
@@ -727,6 +771,7 @@ final class SelectTest extends TestCase
 
     /**
      * @throws ReflectionException
+     * @noinspection PhpUnusedParameterInspection
      */
     #[DataProvider('providerData')]
     #[TestDox('unit test: Text process*() methods will return proper array when internally called,
@@ -1472,7 +1517,7 @@ final class SelectTest extends TestCase
         $select = new Select();
 
         $this->expectException(TypeError::class);
-        /** @noinspection PhpArgumentWithoutNamedIdentifierInspection */
+        /** @noinspection ALL */
         $select->from(123);
     }
 
@@ -1500,6 +1545,7 @@ final class SelectTest extends TestCase
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Not a valid magic property for this object');
+        /** @noinspection ALL */
         $value = $select->invalidProperty;
     }
 }

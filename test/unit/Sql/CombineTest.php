@@ -151,6 +151,7 @@ final class CombineTest extends TestCase
                 ->union([$select1, $select2])
                 ->alignColumns();
 
+        // Verify first select has NULL for missing c2
         self::assertEquals(
             [
                 'c0' => 'c0',
@@ -160,6 +161,7 @@ final class CombineTest extends TestCase
             $select1->getRawState('columns')
         );
 
+        // Verify second select has NULL for missing c0
         self::assertEquals(
             [
                 'c0' => new Expression('NULL'),

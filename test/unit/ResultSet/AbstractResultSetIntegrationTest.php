@@ -13,7 +13,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(AbstractResultSet::class, 'current')]
 final class AbstractResultSetIntegrationTest extends TestCase
 {
-    protected MockObject $resultSet;
+    protected MockObject|AbstractResultSet $resultSet;
 
     /**
      * Sets up the fixture, for example, opens a network connection.
@@ -35,6 +35,7 @@ final class AbstractResultSetIntegrationTest extends TestCase
         $result = $this->getMockBuilder(ResultInterface::class)->getMock();
         $this->resultSet->initialize($result);
         $result->expects($this->exactly(3))->method('current')->willReturn(['foo' => 'bar']);
+        // Call current() multiple times and verify data source is called each time
         $value1 = $this->resultSet->current();
         $value2 = $this->resultSet->current();
         $this->resultSet->current();
@@ -50,6 +51,7 @@ final class AbstractResultSetIntegrationTest extends TestCase
         $this->resultSet->buffer();
         $this->resultSet->initialize($result);
         $result->expects($this->once())->method('current')->willReturn(['foo' => 'bar']);
+        // Call current() multiple times and verify data source is called only once due to buffering
         $value1 = $this->resultSet->current();
         $value2 = $this->resultSet->current();
         $this->resultSet->current();

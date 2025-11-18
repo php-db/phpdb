@@ -23,6 +23,7 @@ class HydratingResultSetIntegrationTest extends TestCase
         ]));
         $hydratingRs->buffer();
 
+        // Get current object and rewind to verify same buffered object is returned
         $obj1 = $hydratingRs->current();
         $hydratingRs->rewind();
         $obj2 = $hydratingRs->current();

@@ -16,6 +16,7 @@ final class ViewObjectTest extends TestCase
     {
         $view = new ViewObject('view_name');
 
+        // Verify view extends AbstractTableObject
         self::assertInstanceOf(AbstractTableObject::class, $view);
     }
 
@@ -23,6 +24,7 @@ final class ViewObjectTest extends TestCase
     {
         $view = new ViewObject('user_summary');
 
+        // Verify name is set by constructor
         self::assertSame('user_summary', $view->getName());
     }
 
@@ -30,6 +32,7 @@ final class ViewObjectTest extends TestCase
     {
         $view = new ViewObject();
 
+        // Verify name defaults to null when not provided
         self::assertNull($view->getName());
     }
 
@@ -37,8 +40,9 @@ final class ViewObjectTest extends TestCase
     {
         $view       = new ViewObject('view');
         $definition = 'SELECT id, name FROM users WHERE active = 1';
-        $result     = $view->setViewDefinition($definition);
 
+        // Verify fluent interface and value update
+        $result = $view->setViewDefinition($definition);
         self::assertSame($view, $result);
         self::assertSame($definition, $view->getViewDefinition());
     }
@@ -47,16 +51,18 @@ final class ViewObjectTest extends TestCase
     {
         $view = new ViewObject('view');
         $view->setViewDefinition('SELECT * FROM table');
-        $view->setViewDefinition(null);
 
+        // Set definition to null and verify
+        $view->setViewDefinition(null);
         self::assertNull($view->getViewDefinition());
     }
 
     public function testSetCheckOptionAndGetCheckOptionWithFluentInterface(): void
     {
-        $view   = new ViewObject('view');
-        $result = $view->setCheckOption('CASCADED');
+        $view = new ViewObject('view');
 
+        // Verify fluent interface and value update
+        $result = $view->setCheckOption('CASCADED');
         self::assertSame($view, $result);
         self::assertSame('CASCADED', $view->getCheckOption());
     }
@@ -65,16 +71,18 @@ final class ViewObjectTest extends TestCase
     {
         $view = new ViewObject('view');
         $view->setCheckOption('LOCAL');
-        $view->setCheckOption(null);
 
+        // Set check option to null and verify
+        $view->setCheckOption(null);
         self::assertNull($view->getCheckOption());
     }
 
     public function testSetIsUpdatableAndGetIsUpdatableWithFluentInterface(): void
     {
-        $view   = new ViewObject('view');
-        $result = $view->setIsUpdatable(true);
+        $view = new ViewObject('view');
 
+        // Verify fluent interface and value update
+        $result = $view->setIsUpdatable(true);
         self::assertSame($view, $result);
         self::assertTrue($view->getIsUpdatable());
     }
@@ -82,8 +90,9 @@ final class ViewObjectTest extends TestCase
     public function testSetIsUpdatableWithFalse(): void
     {
         $view = new ViewObject('view');
-        $view->setIsUpdatable(false);
 
+        // Set updatable to false and verify
+        $view->setIsUpdatable(false);
         self::assertFalse($view->getIsUpdatable());
     }
 
@@ -91,19 +100,22 @@ final class ViewObjectTest extends TestCase
     {
         $view = new ViewObject('view');
         $view->setIsUpdatable(true);
-        $view->setIsUpdatable(null);
 
+        // Set updatable to null and verify
+        $view->setIsUpdatable(null);
         self::assertNull($view->getIsUpdatable());
     }
 
     public function testIsUpdatableAlias(): void
     {
         $view = new ViewObject('view');
-        $view->setIsUpdatable(true);
 
+        // Verify alias returns same value when true
+        $view->setIsUpdatable(true);
         self::assertTrue($view->isUpdatable());
         self::assertSame($view->getIsUpdatable(), $view->isUpdatable());
 
+        // Verify alias returns same value when false
         $view->setIsUpdatable(false);
         self::assertFalse($view->isUpdatable());
         self::assertSame($view->getIsUpdatable(), $view->isUpdatable());
@@ -112,8 +124,9 @@ final class ViewObjectTest extends TestCase
     public function testIsUpdatableAliasWithNull(): void
     {
         $view = new ViewObject('view');
-        $view->setIsUpdatable(null);
 
+        // Verify alias returns same value when null
+        $view->setIsUpdatable(null);
         self::assertNull($view->isUpdatable());
         self::assertSame($view->getIsUpdatable(), $view->isUpdatable());
     }
@@ -125,8 +138,9 @@ final class ViewObjectTest extends TestCase
             new ColumnObject('id', 'user_summary', 'public'),
             new ColumnObject('username', 'user_summary', 'public'),
         ];
-        $view->setColumns($columns);
 
+        // Verify inherited setColumns method stores columns
+        $view->setColumns($columns);
         self::assertSame($columns, $view->getColumns());
         self::assertCount(2, $view->getColumns());
     }
@@ -137,8 +151,9 @@ final class ViewObjectTest extends TestCase
         $constraints = [
             new ConstraintObject('uq_summary', 'user_summary', 'public'),
         ];
-        $view->setConstraints($constraints);
 
+        // Verify inherited setConstraints method stores constraints
+        $view->setConstraints($constraints);
         self::assertSame($constraints, $view->getConstraints());
         self::assertCount(1, $view->getConstraints());
     }
@@ -159,6 +174,7 @@ final class ViewObjectTest extends TestCase
         ];
         $view->setColumns($columns);
 
+        // Verify all properties are set correctly
         self::assertSame('active_users', $view->getName());
         self::assertSame($definition, $view->getViewDefinition());
         self::assertSame('CASCADED', $view->getCheckOption());
@@ -171,6 +187,7 @@ final class ViewObjectTest extends TestCase
     {
         $view = new ViewObject('simple_view');
 
+        // Verify all properties default to null
         self::assertNull($view->getViewDefinition());
         self::assertNull($view->getCheckOption());
         self::assertNull($view->getIsUpdatable());
@@ -180,8 +197,9 @@ final class ViewObjectTest extends TestCase
     public function testViewObjectWithInheritedSetName(): void
     {
         $view = new ViewObject('initial_view');
-        $view->setName('renamed_view');
 
+        // Verify inherited setName method updates the name
+        $view->setName('renamed_view');
         self::assertSame('renamed_view', $view->getName());
     }
 }

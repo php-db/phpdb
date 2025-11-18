@@ -35,27 +35,57 @@ final class NotBetweenTest extends TestCase
             ->setMinValue(10)
             ->setMaxValue(19);
 
-        $identifier = new Argument('foo.bar', ArgumentType::Identifier);
-        $minValue   = new Argument(10, ArgumentType::Value);
-        $maxValue   = new Argument(19, ArgumentType::Value);
-
         $expressionData = $this->notBetween->getExpressionData();
 
+        // Verify specification
         self::assertEquals($this->notBetween->getSpecification(), $expressionData->getExpressionSpecification());
-        self::assertEquals([$identifier, $minValue, $maxValue], $expressionData->getExpressionValues());
+
+        // Verify expression values
+        $values = $expressionData->getExpressionValues();
+        self::assertCount(3, $values);
+
+        // Verify identifier argument
+        self::assertInstanceOf(Argument::class, $values[0]);
+        self::assertEquals('foo.bar', $values[0]->getValue());
+        self::assertEquals(ArgumentType::Identifier, $values[0]->getType());
+
+        // Verify min value argument
+        self::assertInstanceOf(Argument::class, $values[1]);
+        self::assertEquals(10, $values[1]->getValue());
+        self::assertEquals(ArgumentType::Value, $values[1]->getType());
+
+        // Verify max value argument
+        self::assertInstanceOf(Argument::class, $values[2]);
+        self::assertEquals(19, $values[2]->getValue());
+        self::assertEquals(ArgumentType::Value, $values[2]->getType());
 
         $this->notBetween
             ->setIdentifier([10 => ArgumentType::Value])
             ->setMinValue(['foo.bar' => ArgumentType::Identifier])
             ->setMaxValue(['foo.baz' => ArgumentType::Identifier]);
 
-        $identifier = new Argument(10, ArgumentType::Value);
-        $minValue   = new Argument('foo.bar', ArgumentType::Identifier);
-        $maxValue   = new Argument('foo.baz', ArgumentType::Identifier);
-
         $expressionData = $this->notBetween->getExpressionData();
 
+        // Verify specification
         self::assertEquals($this->notBetween->getSpecification(), $expressionData->getExpressionSpecification());
-        self::assertEquals([$identifier, $minValue, $maxValue], $expressionData->getExpressionValues());
+
+        // Verify expression values with custom types
+        $values = $expressionData->getExpressionValues();
+        self::assertCount(3, $values);
+
+        // Verify identifier argument
+        self::assertInstanceOf(Argument::class, $values[0]);
+        self::assertEquals(10, $values[0]->getValue());
+        self::assertEquals(ArgumentType::Value, $values[0]->getType());
+
+        // Verify min value argument
+        self::assertInstanceOf(Argument::class, $values[1]);
+        self::assertEquals('foo.bar', $values[1]->getValue());
+        self::assertEquals(ArgumentType::Identifier, $values[1]->getType());
+
+        // Verify max value argument
+        self::assertInstanceOf(Argument::class, $values[2]);
+        self::assertEquals('foo.baz', $values[2]->getValue());
+        self::assertEquals(ArgumentType::Identifier, $values[2]->getType());
     }
 }

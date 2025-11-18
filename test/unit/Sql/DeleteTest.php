@@ -23,6 +23,7 @@ use PhpDbTest\TestAsset\DeleteIgnore;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
+use ReflectionException;
 
 #[CoversMethod(Delete::class, '__construct')]
 #[CoversMethod(Delete::class, 'from')]
@@ -56,17 +57,23 @@ final class DeleteTest extends TestCase
     {
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public function testFrom(): void
     {
+        // Set table with string
         $this->delete->from('foo');
         self::assertEquals('foo', $this->readAttribute($this->delete, 'table'));
 
+        // Set table with TableIdentifier
         $tableIdentifier = new TableIdentifier('foo', 'bar');
         $this->delete->from($tableIdentifier);
         self::assertEquals($tableIdentifier, $this->readAttribute($this->delete, 'table'));
     }
 
     /**
+     * @throws ReflectionException
      * @todo REMOVE THIS IN 3.x
      */
     public function testWhere(): void
@@ -134,7 +141,7 @@ final class DeleteTest extends TestCase
 
         $this->delete->prepareStatement($mockAdapter, $mockStatement);
 
-        // with TableIdentifier
+        // Test with TableIdentifier
         $this->delete = new Delete();
 
         $mockDriver  = $this->getMockBuilder(DriverInterface::class)->getMock();
@@ -157,7 +164,7 @@ final class DeleteTest extends TestCase
             ->where('x = y');
         self::assertEquals('DELETE FROM "foo" WHERE x = y', $this->delete->getSqlString());
 
-        // with TableIdentifier
+        // Test with TableIdentifier
         $this->delete = new Delete();
         $this->delete->from(new TableIdentifier('foo', 'sch'))
             ->where('x = y');
@@ -252,8 +259,10 @@ final class DeleteTest extends TestCase
 
     public function testMagicGetReturnsNullForUnknownProperty(): void
     {
-        self::assertNull($this->delete->unknown);
-        self::assertNull($this->delete->table);
+        /** @noinspection PhpUndefinedFieldInspection */
+        self::assertNull($this->delete->unknown); // @phpstan-ignore-line
+        /** @noinspection ALL */
+        self::assertNull($this->delete->table); // @phpstan-ignore-line
     }
 
     public function testConstructorWithTable(): void

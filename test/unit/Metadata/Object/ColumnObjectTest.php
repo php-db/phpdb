@@ -13,6 +13,7 @@ final class ColumnObjectTest extends TestCase
     {
         $column = new ColumnObject('column_name', 'table_name', 'schema_name');
 
+        // Verify all constructor parameters are set
         self::assertSame('column_name', $column->getName());
         self::assertSame('table_name', $column->getTableName());
         self::assertSame('schema_name', $column->getSchemaName());
@@ -22,6 +23,7 @@ final class ColumnObjectTest extends TestCase
     {
         $column = new ColumnObject('column_name', 'table_name');
 
+        // Verify schema defaults to null
         self::assertSame('column_name', $column->getName());
         self::assertSame('table_name', $column->getTableName());
         self::assertNull($column->getSchemaName());
@@ -30,16 +32,18 @@ final class ColumnObjectTest extends TestCase
     public function testSetNameAndGetName(): void
     {
         $column = new ColumnObject('initial', 'table', 'schema');
-        $column->setName('new_name');
 
+        // Update name and verify change
+        $column->setName('new_name');
         self::assertSame('new_name', $column->getName());
     }
 
     public function testSetTableNameAndGetTableNameWithFluentInterface(): void
     {
         $column = new ColumnObject('column', 'initial_table', 'schema');
-        $result = $column->setTableName('new_table');
 
+        // Verify fluent interface and value update
+        $result = $column->setTableName('new_table');
         self::assertSame($column, $result);
         self::assertSame('new_table', $column->getTableName());
     }
@@ -47,16 +51,18 @@ final class ColumnObjectTest extends TestCase
     public function testSetSchemaNameAndGetSchemaName(): void
     {
         $column = new ColumnObject('column', 'table', 'initial_schema');
-        $column->setSchemaName('new_schema');
 
+        // Update schema and verify change
+        $column->setSchemaName('new_schema');
         self::assertSame('new_schema', $column->getSchemaName());
     }
 
     public function testSetOrdinalPositionAndGetOrdinalPositionWithFluentInterface(): void
     {
         $column = new ColumnObject('column', 'table', 'schema');
-        $result = $column->setOrdinalPosition(5);
 
+        // Verify fluent interface and value update
+        $result = $column->setOrdinalPosition(5);
         self::assertSame($column, $result);
         self::assertSame(5, $column->getOrdinalPosition());
     }
@@ -64,8 +70,9 @@ final class ColumnObjectTest extends TestCase
     public function testSetColumnDefaultAndGetColumnDefaultWithFluentInterface(): void
     {
         $column = new ColumnObject('column', 'table', 'schema');
-        $result = $column->setColumnDefault('DEFAULT_VALUE');
 
+        // Verify fluent interface and value update
+        $result = $column->setColumnDefault('DEFAULT_VALUE');
         self::assertSame($column, $result);
         self::assertSame('DEFAULT_VALUE', $column->getColumnDefault());
     }
@@ -74,16 +81,18 @@ final class ColumnObjectTest extends TestCase
     {
         $column = new ColumnObject('column', 'table', 'schema');
         $column->setColumnDefault('initial');
-        $column->setColumnDefault(null);
 
+        // Set default to null and verify
+        $column->setColumnDefault(null);
         self::assertNull($column->getColumnDefault());
     }
 
     public function testSetIsNullableAndGetIsNullableWithFluentInterface(): void
     {
         $column = new ColumnObject('column', 'table', 'schema');
-        $result = $column->setIsNullable(true);
 
+        // Verify fluent interface and value update
+        $result = $column->setIsNullable(true);
         self::assertSame($column, $result);
         self::assertTrue($column->getIsNullable());
     }
@@ -91,8 +100,9 @@ final class ColumnObjectTest extends TestCase
     public function testIsNullableAlias(): void
     {
         $column = new ColumnObject('column', 'table', 'schema');
-        $column->setIsNullable(false);
 
+        // Verify alias method returns same value
+        $column->setIsNullable(false);
         self::assertFalse($column->isNullable());
         self::assertSame($column->getIsNullable(), $column->isNullable());
     }
@@ -100,8 +110,9 @@ final class ColumnObjectTest extends TestCase
     public function testSetDataTypeAndGetDataTypeWithFluentInterface(): void
     {
         $column = new ColumnObject('column', 'table', 'schema');
-        $result = $column->setDataType('VARCHAR');
 
+        // Verify fluent interface and value update
+        $result = $column->setDataType('VARCHAR');
         self::assertSame($column, $result);
         self::assertSame('VARCHAR', $column->getDataType());
     }
@@ -109,8 +120,9 @@ final class ColumnObjectTest extends TestCase
     public function testSetCharacterMaximumLengthAndGetCharacterMaximumLengthWithFluentInterface(): void
     {
         $column = new ColumnObject('column', 'table', 'schema');
-        $result = $column->setCharacterMaximumLength(255);
 
+        // Verify fluent interface and value update
+        $result = $column->setCharacterMaximumLength(255);
         self::assertSame($column, $result);
         self::assertSame(255, $column->getCharacterMaximumLength());
     }
@@ -119,16 +131,18 @@ final class ColumnObjectTest extends TestCase
     {
         $column = new ColumnObject('column', 'table', 'schema');
         $column->setCharacterMaximumLength(255);
-        $column->setCharacterMaximumLength(null);
 
+        // Set length to null and verify
+        $column->setCharacterMaximumLength(null);
         self::assertNull($column->getCharacterMaximumLength());
     }
 
     public function testSetCharacterOctetLengthAndGetCharacterOctetLengthWithFluentInterface(): void
     {
         $column = new ColumnObject('column', 'table', 'schema');
-        $result = $column->setCharacterOctetLength(1024);
 
+        // Verify fluent interface and value update
+        $result = $column->setCharacterOctetLength(1024);
         self::assertSame($column, $result);
         self::assertSame(1024, $column->getCharacterOctetLength());
     }
@@ -137,16 +151,18 @@ final class ColumnObjectTest extends TestCase
     {
         $column = new ColumnObject('column', 'table', 'schema');
         $column->setCharacterOctetLength(1024);
-        $column->setCharacterOctetLength(null);
 
+        // Set octet length to null and verify
+        $column->setCharacterOctetLength(null);
         self::assertNull($column->getCharacterOctetLength());
     }
 
     public function testSetNumericPrecisionAndGetNumericPrecisionWithFluentInterface(): void
     {
         $column = new ColumnObject('column', 'table', 'schema');
-        $result = $column->setNumericPrecision(10);
 
+        // Verify fluent interface and value update
+        $result = $column->setNumericPrecision(10);
         self::assertSame($column, $result);
         self::assertSame(10, $column->getNumericPrecision());
     }
@@ -154,8 +170,9 @@ final class ColumnObjectTest extends TestCase
     public function testSetNumericScaleAndGetNumericScaleWithFluentInterface(): void
     {
         $column = new ColumnObject('column', 'table', 'schema');
-        $result = $column->setNumericScale(2);
 
+        // Verify fluent interface and value update
+        $result = $column->setNumericScale(2);
         self::assertSame($column, $result);
         self::assertSame(2, $column->getNumericScale());
     }
@@ -163,8 +180,9 @@ final class ColumnObjectTest extends TestCase
     public function testSetNumericUnsignedAndGetNumericUnsignedWithFluentInterface(): void
     {
         $column = new ColumnObject('column', 'table', 'schema');
-        $result = $column->setNumericUnsigned(true);
 
+        // Verify fluent interface and value update
+        $result = $column->setNumericUnsigned(true);
         self::assertSame($column, $result);
         self::assertTrue($column->getNumericUnsigned());
     }
@@ -172,8 +190,9 @@ final class ColumnObjectTest extends TestCase
     public function testIsNumericUnsignedAlias(): void
     {
         $column = new ColumnObject('column', 'table', 'schema');
-        $column->setNumericUnsigned(false);
 
+        // Verify alias method returns same value
+        $column->setNumericUnsigned(false);
         self::assertFalse($column->isNumericUnsigned());
         self::assertSame($column->getNumericUnsigned(), $column->isNumericUnsigned());
     }
@@ -181,8 +200,9 @@ final class ColumnObjectTest extends TestCase
     public function testSetErrataAndGetErrata(): void
     {
         $column = new ColumnObject('column', 'table', 'schema');
-        $result = $column->setErrata('key1', 'value1');
 
+        // Set single errata and verify fluent interface
+        $result = $column->setErrata('key1', 'value1');
         self::assertSame($column, $result);
         self::assertSame('value1', $column->getErrata('key1'));
     }
@@ -191,6 +211,7 @@ final class ColumnObjectTest extends TestCase
     {
         $column = new ColumnObject('column', 'table', 'schema');
 
+        // Verify non-existent key returns null
         self::assertNull($column->getErrata('non_existent'));
     }
 
@@ -202,8 +223,9 @@ final class ColumnObjectTest extends TestCase
             'key2' => 'value2',
             'key3' => 'value3',
         ];
-        $result  = $column->setErratas($erratas);
 
+        // Set multiple erratas and verify fluent interface
+        $result = $column->setErratas($erratas);
         self::assertSame($column, $result);
         self::assertSame($erratas, $column->getErratas());
     }
@@ -215,8 +237,9 @@ final class ColumnObjectTest extends TestCase
             'key1' => 'value1',
             'key2' => 'value2',
         ];
-        $column->setErratas($erratas);
 
+        // Verify each errata is accessible individually
+        $column->setErratas($erratas);
         self::assertSame('value1', $column->getErrata('key1'));
         self::assertSame('value2', $column->getErrata('key2'));
     }
@@ -225,12 +248,14 @@ final class ColumnObjectTest extends TestCase
     {
         $column = new ColumnObject('column', 'table', 'schema');
 
+        // Verify erratas default to empty array
         self::assertSame([], $column->getErratas());
     }
 
     public function testCompleteColumnObjectWithAllProperties(): void
     {
         $column = new ColumnObject('id', 'users', 'public');
+
         $column->setOrdinalPosition(1)
             ->setColumnDefault('0')
             ->setIsNullable(false)
@@ -242,6 +267,7 @@ final class ColumnObjectTest extends TestCase
             ->setNumericUnsigned(true)
             ->setErratas(['auto_increment' => true, 'comment' => 'Primary key']);
 
+        // Verify all properties are set correctly
         self::assertSame('id', $column->getName());
         self::assertSame('users', $column->getTableName());
         self::assertSame('public', $column->getSchemaName());

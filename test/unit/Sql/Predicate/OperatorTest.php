@@ -38,37 +38,97 @@ final class OperatorTest extends TestCase
     {
         $operator = new Operator('bar', '>=', 'foo.bar');
         self::assertEquals(Operator::OP_GTE, $operator->getOperator());
-        self::assertEquals(new Argument('bar', ArgumentType::Identifier), $operator->getLeft());
-        self::assertEquals(new Argument('foo.bar', ArgumentType::Value), $operator->getRight());
+
+        $left = $operator->getLeft();
+        self::assertInstanceOf(Argument::class, $left);
+        self::assertEquals('bar', $left->getValue());
+        self::assertEquals(ArgumentType::Identifier, $left->getType());
+
+        $right = $operator->getRight();
+        self::assertInstanceOf(Argument::class, $right);
+        self::assertEquals('foo.bar', $right->getValue());
+        self::assertEquals(ArgumentType::Value, $right->getType());
 
         $operator = new Operator(['bar' => ArgumentType::Value], '>=', ['foo.bar' => ArgumentType::Identifier]);
         self::assertEquals(Operator::OP_GTE, $operator->getOperator());
-        self::assertEquals(new Argument('bar', ArgumentType::Value), $operator->getLeft());
-        self::assertEquals(new Argument('foo.bar', ArgumentType::Identifier), $operator->getRight());
+
+        $left = $operator->getLeft();
+        self::assertInstanceOf(Argument::class, $left);
+        self::assertEquals('bar', $left->getValue());
+        self::assertEquals(ArgumentType::Value, $left->getType());
+
+        $right = $operator->getRight();
+        self::assertInstanceOf(Argument::class, $right);
+        self::assertEquals('foo.bar', $right->getValue());
+        self::assertEquals(ArgumentType::Identifier, $right->getType());
 
         $operator = new Operator('bar', '>=', 0);
-        self::assertEquals(new Argument(0, ArgumentType::Value), $operator->getRight());
+
+        $right = $operator->getRight();
+        self::assertInstanceOf(Argument::class, $right);
+        self::assertEquals(0, $right->getValue());
+        self::assertEquals(ArgumentType::Value, $right->getType());
     }
 
     public function testLeftIsMutable(): void
     {
         $operator = new Operator();
-        $operator->setLeft('foo.bar');
-        self::assertEquals(new Argument('foo.bar', ArgumentType::Identifier), $operator->getLeft());
+
+        // First mutation
+        $result = $operator->setLeft('foo.bar');
+
+        // Verify fluent interface
+        self::assertSame($operator, $result);
+
+        // Verify the first mutation occurred
+        $left1 = $operator->getLeft();
+        self::assertInstanceOf(Argument::class, $left1);
+        self::assertEquals('foo.bar', $left1->getValue());
+        self::assertEquals(ArgumentType::Identifier, $left1->getType());
+
+        // Second mutation with different data to verify mutability
+        $operator->setLeft('baz.qux');
+
+        // Verify the instance was actually mutated
+        $left2 = $operator->getLeft();
+        self::assertInstanceOf(Argument::class, $left2);
+        self::assertEquals('baz.qux', $left2->getValue());
+        self::assertEquals(ArgumentType::Identifier, $left2->getType());
     }
 
     public function testRightIsMutable(): void
     {
         $operator = new Operator();
 
-        $operator->setRight('bar');
+        // First mutation - default type (Value)
+        $result = $operator->setRight('bar');
 
-        $expression = new Argument('bar', ArgumentType::Value);
-        self::assertEquals($expression, $operator->getRight());
+        // Verify fluent interface
+        self::assertSame($operator, $result);
 
+        // Verify the first mutation occurred
+        $right1 = $operator->getRight();
+        self::assertInstanceOf(Argument::class, $right1);
+        self::assertEquals('bar', $right1->getValue());
+        self::assertEquals(ArgumentType::Value, $right1->getType());
+
+        // Second mutation - with explicit type (Identifier)
         $operator->setRight('bar', ArgumentType::Identifier);
-        $expression = new Argument('bar', ArgumentType::Identifier);
-        self::assertEquals($expression, $operator->getRight());
+
+        // Verify the instance was actually mutated (same value, different type)
+        $right2 = $operator->getRight();
+        self::assertInstanceOf(Argument::class, $right2);
+        self::assertEquals('bar', $right2->getValue());
+        self::assertEquals(ArgumentType::Identifier, $right2->getType());
+
+        // Third mutation - different value with default type
+        $operator->setRight('qux');
+
+        // Verify the instance was mutated again
+        $right3 = $operator->getRight();
+        self::assertInstanceOf(Argument::class, $right3);
+        self::assertEquals('qux', $right3->getValue());
+        self::assertEquals(ArgumentType::Value, $right3->getType());
     }
 
     public function testOperatorIsMutable(): void
@@ -86,13 +146,24 @@ final class OperatorTest extends TestCase
             ->setOperator('>=')
             ->setRight('foo.bar', ArgumentType::Identifier);
 
-        $left  = new Argument('foo', ArgumentType::Value);
-        $right = new Argument('foo.bar', ArgumentType::Identifier);
-
         $expressionData = $operator->getExpressionData();
 
+        // Verify specification
         self::assertEquals('%s >= %s', $expressionData->getExpressionSpecification());
-        self::assertEquals([$left, $right], $expressionData->getExpressionValues());
+
+        // Verify expression values
+        $values = $expressionData->getExpressionValues();
+        self::assertCount(2, $values);
+
+        // Verify left argument
+        self::assertInstanceOf(Argument::class, $values[0]);
+        self::assertEquals('foo', $values[0]->getValue());
+        self::assertEquals(ArgumentType::Value, $values[0]->getType());
+
+        // Verify right argument
+        self::assertInstanceOf(Argument::class, $values[1]);
+        self::assertEquals('foo.bar', $values[1]->getValue());
+        self::assertEquals(ArgumentType::Identifier, $values[1]->getType());
     }
 
     public function testGetExpressionDataThrowsExceptionWhenLeftNotSet(): void

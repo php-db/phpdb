@@ -13,6 +13,7 @@ final class ConstraintObjectTest extends TestCase
     {
         $constraint = new ConstraintObject('constraint_name', 'table_name', 'schema_name');
 
+        // Verify all constructor parameters are set
         self::assertSame('constraint_name', $constraint->getName());
         self::assertSame('table_name', $constraint->getTableName());
         self::assertSame('schema_name', $constraint->getSchemaName());
@@ -22,6 +23,7 @@ final class ConstraintObjectTest extends TestCase
     {
         $constraint = new ConstraintObject('constraint_name', 'table_name');
 
+        // Verify schema defaults to null
         self::assertSame('constraint_name', $constraint->getName());
         self::assertSame('table_name', $constraint->getTableName());
         self::assertNull($constraint->getSchemaName());
@@ -30,24 +32,27 @@ final class ConstraintObjectTest extends TestCase
     public function testSetNameAndGetName(): void
     {
         $constraint = new ConstraintObject('initial', 'table', 'schema');
-        $constraint->setName('new_name');
 
+        // Update name and verify change
+        $constraint->setName('new_name');
         self::assertSame('new_name', $constraint->getName());
     }
 
     public function testSetSchemaNameAndGetSchemaName(): void
     {
         $constraint = new ConstraintObject('name', 'table', 'initial_schema');
-        $constraint->setSchemaName('new_schema');
 
+        // Update schema and verify change
+        $constraint->setSchemaName('new_schema');
         self::assertSame('new_schema', $constraint->getSchemaName());
     }
 
     public function testSetTableNameAndGetTableNameWithFluentInterface(): void
     {
         $constraint = new ConstraintObject('name', 'initial_table', 'schema');
-        $result     = $constraint->setTableName('new_table');
 
+        // Verify fluent interface and value update
+        $result = $constraint->setTableName('new_table');
         self::assertSame($constraint, $result);
         self::assertSame('new_table', $constraint->getTableName());
     }
@@ -55,23 +60,30 @@ final class ConstraintObjectTest extends TestCase
     public function testSetTypeAndGetType(): void
     {
         $constraint = new ConstraintObject('name', 'table', 'schema');
-        $constraint->setType('PRIMARY KEY');
 
+        // Set type and verify retrieval
+        $constraint->setType('PRIMARY KEY');
         self::assertSame('PRIMARY KEY', $constraint->getType());
+
+        // Verify mutation to different type
+        $constraint->setType('UNIQUE');
+        self::assertSame('UNIQUE', $constraint->getType());
     }
 
     public function testHasColumnsReturnsFalseWhenEmpty(): void
     {
         $constraint = new ConstraintObject('name', 'table', 'schema');
 
+        // Verify hasColumns returns false when not set
         self::assertFalse($constraint->hasColumns());
     }
 
     public function testHasColumnsReturnsTrueWhenPopulated(): void
     {
         $constraint = new ConstraintObject('name', 'table', 'schema');
-        $constraint->setColumns(['col1', 'col2']);
 
+        // Verify hasColumns returns true after setting columns
+        $constraint->setColumns(['col1', 'col2']);
         self::assertTrue($constraint->hasColumns());
     }
 
@@ -79,8 +91,9 @@ final class ConstraintObjectTest extends TestCase
     {
         $constraint = new ConstraintObject('name', 'table', 'schema');
         $columns    = ['column1', 'column2', 'column3'];
-        $result     = $constraint->setColumns($columns);
 
+        // Verify fluent interface and value update
+        $result = $constraint->setColumns($columns);
         self::assertSame($constraint, $result);
         self::assertSame($columns, $constraint->getColumns());
     }
@@ -89,8 +102,9 @@ final class ConstraintObjectTest extends TestCase
     {
         $constraint = new ConstraintObject('name', 'table', 'schema');
         $constraint->setColumns(['col1']);
-        $constraint->setColumns([]);
 
+        // Set empty array and verify hasColumns reflects change
+        $constraint->setColumns([]);
         self::assertSame([], $constraint->getColumns());
         self::assertFalse($constraint->hasColumns());
     }
@@ -98,8 +112,9 @@ final class ConstraintObjectTest extends TestCase
     public function testSetReferencedTableSchemaAndGetReferencedTableSchemaWithFluentInterface(): void
     {
         $constraint = new ConstraintObject('name', 'table', 'schema');
-        $result     = $constraint->setReferencedTableSchema('ref_schema');
 
+        // Verify fluent interface and value update
+        $result = $constraint->setReferencedTableSchema('ref_schema');
         self::assertSame($constraint, $result);
         self::assertSame('ref_schema', $constraint->getReferencedTableSchema());
     }
@@ -107,8 +122,9 @@ final class ConstraintObjectTest extends TestCase
     public function testSetReferencedTableNameAndGetReferencedTableNameWithFluentInterface(): void
     {
         $constraint = new ConstraintObject('name', 'table', 'schema');
-        $result     = $constraint->setReferencedTableName('ref_table');
 
+        // Verify fluent interface and value update
+        $result = $constraint->setReferencedTableName('ref_table');
         self::assertSame($constraint, $result);
         self::assertSame('ref_table', $constraint->getReferencedTableName());
     }
@@ -117,8 +133,9 @@ final class ConstraintObjectTest extends TestCase
     {
         $constraint = new ConstraintObject('name', 'table', 'schema');
         $columns    = ['ref_col1', 'ref_col2'];
-        $result     = $constraint->setReferencedColumns($columns);
 
+        // Verify fluent interface and value update
+        $result = $constraint->setReferencedColumns($columns);
         self::assertSame($constraint, $result);
         self::assertSame($columns, $constraint->getReferencedColumns());
     }
@@ -126,8 +143,9 @@ final class ConstraintObjectTest extends TestCase
     public function testSetMatchOptionAndGetMatchOptionWithFluentInterface(): void
     {
         $constraint = new ConstraintObject('name', 'table', 'schema');
-        $result     = $constraint->setMatchOption('FULL');
 
+        // Verify fluent interface and value update
+        $result = $constraint->setMatchOption('FULL');
         self::assertSame($constraint, $result);
         self::assertSame('FULL', $constraint->getMatchOption());
     }
@@ -135,8 +153,9 @@ final class ConstraintObjectTest extends TestCase
     public function testSetUpdateRuleAndGetUpdateRuleWithFluentInterface(): void
     {
         $constraint = new ConstraintObject('name', 'table', 'schema');
-        $result     = $constraint->setUpdateRule('CASCADE');
 
+        // Verify fluent interface and value update
+        $result = $constraint->setUpdateRule('CASCADE');
         self::assertSame($constraint, $result);
         self::assertSame('CASCADE', $constraint->getUpdateRule());
     }
@@ -144,8 +163,9 @@ final class ConstraintObjectTest extends TestCase
     public function testSetDeleteRuleAndGetDeleteRuleWithFluentInterface(): void
     {
         $constraint = new ConstraintObject('name', 'table', 'schema');
-        $result     = $constraint->setDeleteRule('RESTRICT');
 
+        // Verify fluent interface and value update
+        $result = $constraint->setDeleteRule('RESTRICT');
         self::assertSame($constraint, $result);
         self::assertSame('RESTRICT', $constraint->getDeleteRule());
     }
@@ -153,8 +173,9 @@ final class ConstraintObjectTest extends TestCase
     public function testSetCheckClauseAndGetCheckClauseWithFluentInterface(): void
     {
         $constraint = new ConstraintObject('name', 'table', 'schema');
-        $result     = $constraint->setCheckClause('age >= 18');
 
+        // Verify fluent interface and value update
+        $result = $constraint->setCheckClause('age >= 18');
         self::assertSame($constraint, $result);
         self::assertSame('age >= 18', $constraint->getCheckClause());
     }
@@ -162,8 +183,9 @@ final class ConstraintObjectTest extends TestCase
     public function testIsPrimaryKeyReturnsTrueForPrimaryKey(): void
     {
         $constraint = new ConstraintObject('name', 'table', 'schema');
-        $constraint->setType('PRIMARY KEY');
 
+        // Verify isPrimaryKey returns true for PRIMARY KEY type
+        $constraint->setType('PRIMARY KEY');
         self::assertTrue($constraint->isPrimaryKey());
     }
 
@@ -171,12 +193,15 @@ final class ConstraintObjectTest extends TestCase
     {
         $constraint = new ConstraintObject('name', 'table', 'schema');
 
+        // Verify isPrimaryKey returns false for UNIQUE
         $constraint->setType('UNIQUE');
         self::assertFalse($constraint->isPrimaryKey());
 
+        // Verify isPrimaryKey returns false for FOREIGN KEY
         $constraint->setType('FOREIGN KEY');
         self::assertFalse($constraint->isPrimaryKey());
 
+        // Verify isPrimaryKey returns false for CHECK
         $constraint->setType('CHECK');
         self::assertFalse($constraint->isPrimaryKey());
     }
@@ -184,8 +209,9 @@ final class ConstraintObjectTest extends TestCase
     public function testIsUniqueReturnsTrueForUnique(): void
     {
         $constraint = new ConstraintObject('name', 'table', 'schema');
-        $constraint->setType('UNIQUE');
 
+        // Verify isUnique returns true for UNIQUE type
+        $constraint->setType('UNIQUE');
         self::assertTrue($constraint->isUnique());
     }
 
@@ -193,12 +219,15 @@ final class ConstraintObjectTest extends TestCase
     {
         $constraint = new ConstraintObject('name', 'table', 'schema');
 
+        // Verify isUnique returns false for PRIMARY KEY
         $constraint->setType('PRIMARY KEY');
         self::assertFalse($constraint->isUnique());
 
+        // Verify isUnique returns false for FOREIGN KEY
         $constraint->setType('FOREIGN KEY');
         self::assertFalse($constraint->isUnique());
 
+        // Verify isUnique returns false for CHECK
         $constraint->setType('CHECK');
         self::assertFalse($constraint->isUnique());
     }
@@ -206,8 +235,9 @@ final class ConstraintObjectTest extends TestCase
     public function testIsForeignKeyReturnsTrueForForeignKey(): void
     {
         $constraint = new ConstraintObject('name', 'table', 'schema');
-        $constraint->setType('FOREIGN KEY');
 
+        // Verify isForeignKey returns true for FOREIGN KEY type
+        $constraint->setType('FOREIGN KEY');
         self::assertTrue($constraint->isForeignKey());
     }
 
@@ -215,12 +245,15 @@ final class ConstraintObjectTest extends TestCase
     {
         $constraint = new ConstraintObject('name', 'table', 'schema');
 
+        // Verify isForeignKey returns false for PRIMARY KEY
         $constraint->setType('PRIMARY KEY');
         self::assertFalse($constraint->isForeignKey());
 
+        // Verify isForeignKey returns false for UNIQUE
         $constraint->setType('UNIQUE');
         self::assertFalse($constraint->isForeignKey());
 
+        // Verify isForeignKey returns false for CHECK
         $constraint->setType('CHECK');
         self::assertFalse($constraint->isForeignKey());
     }
@@ -228,8 +261,9 @@ final class ConstraintObjectTest extends TestCase
     public function testIsCheckReturnsTrueForCheck(): void
     {
         $constraint = new ConstraintObject('name', 'table', 'schema');
-        $constraint->setType('CHECK');
 
+        // Verify isCheck returns true for CHECK type
+        $constraint->setType('CHECK');
         self::assertTrue($constraint->isCheck());
     }
 
@@ -237,12 +271,15 @@ final class ConstraintObjectTest extends TestCase
     {
         $constraint = new ConstraintObject('name', 'table', 'schema');
 
+        // Verify isCheck returns false for PRIMARY KEY
         $constraint->setType('PRIMARY KEY');
         self::assertFalse($constraint->isCheck());
 
+        // Verify isCheck returns false for UNIQUE
         $constraint->setType('UNIQUE');
         self::assertFalse($constraint->isCheck());
 
+        // Verify isCheck returns false for FOREIGN KEY
         $constraint->setType('FOREIGN KEY');
         self::assertFalse($constraint->isCheck());
     }
@@ -253,6 +290,7 @@ final class ConstraintObjectTest extends TestCase
         $constraint->setType('PRIMARY KEY');
         $constraint->setColumns(['id']);
 
+        // Verify primary key constraint is configured correctly
         self::assertSame('pk_users', $constraint->getName());
         self::assertSame('users', $constraint->getTableName());
         self::assertSame('public', $constraint->getSchemaName());
@@ -276,6 +314,7 @@ final class ConstraintObjectTest extends TestCase
             ->setUpdateRule('CASCADE')
             ->setDeleteRule('RESTRICT');
 
+        // Verify foreign key constraint is configured correctly
         self::assertSame('fk_orders_user', $constraint->getName());
         self::assertTrue($constraint->isForeignKey());
         self::assertFalse($constraint->isPrimaryKey());
@@ -296,6 +335,7 @@ final class ConstraintObjectTest extends TestCase
         $constraint->setType('UNIQUE');
         $constraint->setColumns(['email']);
 
+        // Verify unique constraint is configured correctly
         self::assertTrue($constraint->isUnique());
         self::assertFalse($constraint->isPrimaryKey());
         self::assertFalse($constraint->isForeignKey());
@@ -309,6 +349,7 @@ final class ConstraintObjectTest extends TestCase
         $constraint->setType('CHECK');
         $constraint->setCheckClause('age >= 18 AND age <= 120');
 
+        // Verify check constraint is configured correctly
         self::assertTrue($constraint->isCheck());
         self::assertFalse($constraint->isPrimaryKey());
         self::assertFalse($constraint->isUnique());

@@ -11,7 +11,6 @@ use PhpDb\Sql\Exception\RuntimeException;
 use PhpDb\Sql\Expression;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\Attributes\Depends;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 use TypeError;
@@ -30,15 +29,24 @@ use TypeError;
 #[CoversMethod(Expression::class, 'getExpressionData')]
 final class ExpressionTest extends TestCase
 {
-    /**
-     * @return Expression
-     */
-    public function testSetExpression()
+    public function testSetExpression(): void
     {
         $expression = new Expression();
-        $return     = $expression->setExpression('Foo Bar');
-        self::assertSame($expression, $return);
-        return $return;
+
+        // First mutation
+        $result = $expression->setExpression('Foo Bar');
+
+        // Verify fluent interface
+        self::assertSame($expression, $result);
+
+        // Verify the first mutation occurred
+        self::assertEquals('Foo Bar', $expression->getExpression());
+
+        // Second mutation to verify mutability
+        $expression->setExpression('Baz Qux');
+
+        // Verify the instance was actually mutated
+        self::assertEquals('Baz Qux', $expression->getExpression());
     }
 
     public function testSetExpressionException(): void
@@ -54,24 +62,24 @@ final class ExpressionTest extends TestCase
         $expression->setExpression('');
     }
 
-    #[Depends('testSetExpression')]
-    public function testGetExpression(Expression $expression): void
-    {
-        self::assertEquals('Foo Bar', $expression->getExpression());
-    }
-
-    public function testSetParameters(): Expression
+    public function testSetParameters(): void
     {
         $expression = new Expression();
-        $return     = $expression->setParameters('foo');
-        self::assertSame($expression, $return);
-        return $return;
-    }
 
-    #[Depends('testSetParameters')]
-    public function testGetParameters(Expression $expression): void
-    {
+        // First mutation
+        $result = $expression->setParameters('foo');
+
+        // Verify fluent interface
+        self::assertSame($expression, $result);
+
+        // Verify the first mutation occurred
         self::assertEquals([Argument::value('foo')], $expression->getParameters());
+
+        // Second mutation to verify mutability (setParameters appends)
+        $expression->setParameters('bar');
+
+        // Verify the instance was actually mutated (now has both parameters)
+        self::assertEquals([Argument::value('foo'), Argument::value('bar')], $expression->getParameters());
     }
 
     public function testGetExpressionData(): void
