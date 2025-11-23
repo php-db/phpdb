@@ -12,7 +12,8 @@ use Psr\Container\ContainerInterface;
 
 use function sprintf;
 
-final class MetadataFactory implements FactoryInterface
+/** todo this factory may move in 0.4.x */
+final class MetadataInterfaceFactory implements FactoryInterface
 {
     public function __invoke(
         ContainerInterface $container,
