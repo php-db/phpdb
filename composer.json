@@ -30,7 +30,7 @@
     },
     "require": {
         "php": "~8.2.0 || ~8.3.0 || ~8.4.0 || ~8.5.0",
-        "laminas/laminas-servicemanager": "^4.0.0",
+        "laminas/laminas-servicemanager": "^3.0.0 || ^4.0.0",
         "laminas/laminas-stdlib": "^3.20.0"
     },
     "require-dev": {

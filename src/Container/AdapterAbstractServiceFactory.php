@@ -45,16 +45,15 @@ class AdapterAbstractServiceFactory implements AbstractFactoryInterface
         string $requestedName,
         ?array $options = null
     ): AdapterInterface {
-        $manager         = $container->get(AdapterManager::class);
-        $driverFactory   = ($manager->get(DriverInterfaceFactoryFactoryInterface::class))($container, $requestedName);
+        $driverFactory   = ($container->get(DriverInterfaceFactoryFactoryInterface::class))($container, $requestedName);
         $driverInstance  = $driverFactory::createFromConfig($container, $requestedName);
-        $platformFactory = ($manager->get(PlatformInterfaceFactoryFactoryInterface::class))();
+        $platformFactory = ($container->get(PlatformInterfaceFactoryFactoryInterface::class))();
 
         //$config = $this->getConfig($container);
         return new Adapter(
             $driverInstance,
             $platformFactory::fromDriver($driverInstance),
-            $manager->get(ResultSetInterface::class),
+            $container->get(ResultSetInterface::class),
         );
     }
 
