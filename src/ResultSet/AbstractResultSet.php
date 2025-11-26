@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDb\ResultSet;
 
 use ArrayIterator;
@@ -7,6 +9,7 @@ use Countable;
 use Exception;
 use Iterator;
 use IteratorAggregate;
+use Override;
 use PhpDb\Adapter\Driver\ResultInterface;
 use PhpDb\ResultSet\Exception\InvalidArgumentException;
 use PhpDb\ResultSet\Exception\RuntimeException;
@@ -44,8 +47,8 @@ abstract class AbstractResultSet implements ResultSetInterface
      * Set the data source for the result set
      *
      * @throws InvalidArgumentException|Exception
-     * @return $this Provides a fluent interface
      */
+    #[Override]
     public function initialize(iterable $dataSource): ResultSetInterface
     {
         // reset buffering
@@ -121,6 +124,7 @@ abstract class AbstractResultSet implements ResultSetInterface
     /**
      * Retrieve count of fields in individual rows of the result set
      */
+    #[Override]
     public function getFieldCount(): mixed
     {
         if (null !== $this->fieldCount) {
@@ -152,6 +156,7 @@ abstract class AbstractResultSet implements ResultSetInterface
     /**
      * Iterator: move pointer to next item
      */
+    #[Override]
     public function next(): void
     {
         if ($this->buffer === null) {
@@ -167,6 +172,7 @@ abstract class AbstractResultSet implements ResultSetInterface
     /**
      * Iterator: retrieve current key
      */
+    #[Override]
     public function key(): int
     {
         return $this->position;
@@ -175,6 +181,7 @@ abstract class AbstractResultSet implements ResultSetInterface
     /**
      * Iterator: get current item
      */
+    #[Override]
     public function current(): array|object|null
     {
         if (-1 === $this->buffer) {
@@ -197,6 +204,7 @@ abstract class AbstractResultSet implements ResultSetInterface
     /**
      * Iterator: is pointer valid?
      */
+    #[Override]
     public function valid(): bool
     {
         if (is_array($this->buffer) && isset($this->buffer[$this->position])) {
@@ -213,6 +221,7 @@ abstract class AbstractResultSet implements ResultSetInterface
     /**
      * Iterator: rewind
      */
+    #[Override]
     public function rewind(): void
     {
         if (! is_array($this->buffer)) {
@@ -228,6 +237,7 @@ abstract class AbstractResultSet implements ResultSetInterface
     /**
      * Countable: return count of rows
      */
+    #[Override]
     #[ReturnTypeWillChange]
     public function count(): ?int
     {
