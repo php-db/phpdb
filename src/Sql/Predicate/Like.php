@@ -6,25 +6,23 @@ namespace PhpDb\Sql\Predicate;
 
 use Override;
 use PhpDb\Sql\AbstractExpression;
-use PhpDb\Sql\Argument;
-use PhpDb\Sql\ArgumentType;
+use PhpDb\Sql\Argument\Argument;
+use PhpDb\Sql\Argument\ArgumentInterface;
 use PhpDb\Sql\Exception\InvalidArgumentException;
 use PhpDb\Sql\ExpressionData;
 
 class Like extends AbstractExpression implements PredicateInterface
 {
-    protected string $specification = '%1$s LIKE %2$s';
-
-    protected ?Argument $identifier = null;
-
-    protected ?Argument $like = null;
+    protected string $specification      = '%1$s LIKE %2$s';
+    protected ?ArgumentInterface $identifier = null;
+    protected ?ArgumentInterface $like       = null;
 
     /**
      * Constructor
      */
     public function __construct(
-        null|float|int|string|array|Argument $identifier = null,
-        null|float|int|string|array|Argument $like = null
+        null|string|ArgumentInterface $identifier = null,
+        null|string|ArgumentInterface $like = null
     ) {
         if ($identifier !== null) {
             $this->setIdentifier($identifier);
@@ -40,33 +38,35 @@ class Like extends AbstractExpression implements PredicateInterface
      *
      * @return $this Provides a fluent interface
      */
-    public function setIdentifier(
-        null|string|int|float|array|Argument $value,
-        ArgumentType $type = ArgumentType::Identifier
-    ): static {
-        $this->identifier = $value instanceof Argument ? $value : new Argument($value, $type);
+    public function setIdentifier(string|ArgumentInterface $identifier): static
+    {
+        $this->identifier = $identifier instanceof ArgumentInterface
+            ? $identifier
+            : Argument::identifier($identifier);
 
         return $this;
     }
 
-    public function getIdentifier(): ?Argument
+    public function getIdentifier(): ?ArgumentInterface
     {
         return $this->identifier;
     }
 
     /**
+     * Set like pattern for comparison
+     *
      * @return $this Provides a fluent interface
      */
-    public function setLike(
-        null|string|int|float|array|Argument $like,
-        ArgumentType $type = ArgumentType::Value
-    ): static {
-        $this->like = $like instanceof Argument ? $like : new Argument($like, $type);
+    public function setLike(string|ArgumentInterface $like): static
+    {
+        $this->like = $like instanceof ArgumentInterface
+            ? $like
+            : Argument::value($like);
 
         return $this;
     }
 
-    public function getLike(): ?Argument
+    public function getLike(): ?ArgumentInterface
     {
         return $this->like;
     }
@@ -89,11 +89,11 @@ class Like extends AbstractExpression implements PredicateInterface
     #[Override]
     public function getExpressionData(): ExpressionData
     {
-        if (! $this->identifier instanceof Argument) {
+        if (! $this->identifier instanceof ArgumentInterface) {
             throw new InvalidArgumentException('Identifier must be specified');
         }
 
-        if (! $this->like instanceof Argument) {
+        if (! $this->like instanceof ArgumentInterface) {
             throw new InvalidArgumentException('Like expression must be specified');
         }
 
