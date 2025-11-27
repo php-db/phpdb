@@ -8,6 +8,7 @@ use ArrayObject;
 use Override;
 
 use function is_array;
+use function is_string;
 
 class ResultSet extends AbstractResultSet
 {
