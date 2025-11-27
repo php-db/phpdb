@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace PhpDb\Sql;
 
+use PhpDb\Sql\Argument\Argument;
+use PhpDb\Sql\Argument\ArgumentInterface;
+
 use function implode;
 use function is_array;
 
@@ -19,14 +22,14 @@ class ExpressionPart
     /** @var string[] */
     protected array $specification = [];
 
-    /** @var Argument[] $values */
+    /** @var ArgumentInterface[] $values */
     protected array $values = [];
 
     protected bool $isJoin = false;
 
     /**
      * @param string|null $specification Format string for this expression part
-     * @param Argument[]|null $values Argument values for this part
+     * @param ArgumentInterface[]|null $values Argument values for this part
      */
     public function __construct(?string $specification = null, ?array $values = null)
     {
@@ -52,15 +55,15 @@ class ExpressionPart
     /**
      * Returns flattened argument values, expanding arrays into individual arguments.
      *
-     * @param Argument[] $values Accumulator for collecting values
-     * @return Argument[]
+     * @param ArgumentInterface[] $values Accumulator for collecting values
+     * @return ArgumentInterface[]
      */
     public function getSpecificationValues(array $values = []): array
     {
         foreach ($this->values as $value) {
             if (is_array($value->getValue())) {
                 foreach ($value->getValue() as $v) {
-                    $values[] = new Argument($v);
+                    $values[] = Argument::value($v);
                 }
             } else {
                 $values[] = $value;
@@ -94,7 +97,7 @@ class ExpressionPart
     /**
      * Returns the argument values for this part.
      *
-     * @return Argument[]
+     * @return ArgumentInterface[]
      */
     public function getValues(): array
     {
@@ -104,7 +107,7 @@ class ExpressionPart
     /**
      * Replaces all argument values with the provided array.
      *
-     * @param Argument[] $values
+     * @param ArgumentInterface[] $values
      */
     public function setValues(array $values): static
     {
@@ -118,7 +121,7 @@ class ExpressionPart
     /**
      * Adds a single argument value.
      */
-    public function addValue(Argument $value): static
+    public function addValue(ArgumentInterface $value): static
     {
         $this->values[] = $value;
 

@@ -7,6 +7,7 @@ namespace PhpDb\Sql;
 use Countable;
 use Iterator;
 use Override;
+use PhpDb\Sql\Argument\ArgumentInterface;
 
 use function array_map;
 use function array_merge;
@@ -24,7 +25,7 @@ class ExpressionData implements Iterator, Countable
     /** @var ExpressionPart[] */
     protected array $expressionParts = [];
 
-    /** @param Argument[] $values */
+    /** @param ArgumentInterface[] $values */
     public function __construct(null|string|ExpressionPart $specificationOrPart = null, ?array $values = null)
     {
         if ($specificationOrPart !== null) {
@@ -35,7 +36,7 @@ class ExpressionData implements Iterator, Countable
     /**
      * Add part to expression
      *
-     * @param Argument[] $values
+     * @param ArgumentInterface[] $values
      * @return $this Provides a fluent interface
      */
     public function addExpressionPart(
