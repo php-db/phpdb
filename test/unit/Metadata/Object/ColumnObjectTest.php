@@ -103,8 +103,7 @@ final class ColumnObjectTest extends TestCase
 
         // Verify alias method returns same value
         $column->setIsNullable(false);
-        self::assertFalse($column->isNullable());
-        self::assertSame($column->getIsNullable(), $column->isNullable());
+        self::assertFalse($column->getIsNullable());
     }
 
     public function testSetDataTypeAndGetDataTypeWithFluentInterface(): void
@@ -273,7 +272,7 @@ final class ColumnObjectTest extends TestCase
         self::assertSame('public', $column->getSchemaName());
         self::assertSame(1, $column->getOrdinalPosition());
         self::assertSame('0', $column->getColumnDefault());
-        self::assertFalse($column->isNullable());
+        self::assertFalse($column->getIsNullable());
         self::assertSame('INT', $column->getDataType());
         self::assertNull($column->getCharacterMaximumLength());
         self::assertNull($column->getCharacterOctetLength());

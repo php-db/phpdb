@@ -10,7 +10,6 @@ class Boolean extends Column
 {
     protected string $type = 'BOOLEAN';
 
-
     protected bool $isNullable = false;
 
     /**

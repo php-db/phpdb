@@ -14,7 +14,6 @@ class Check extends AbstractConstraint
 {
     protected string|ExpressionInterface $expression;
 
-
     protected string $specification = 'CHECK (%s)';
 
     /**
