@@ -22,7 +22,7 @@ class Like extends AbstractExpression implements PredicateInterface
      */
     public function __construct(
         null|string|ArgumentInterface $identifier = null,
-        null|string|ArgumentInterface $like = null
+        null|bool|float|int|string|ArgumentInterface $like = null
     ) {
         if ($identifier !== null) {
             $this->setIdentifier($identifier);
@@ -57,7 +57,7 @@ class Like extends AbstractExpression implements PredicateInterface
      *
      * @return $this Provides a fluent interface
      */
-    public function setLike(string|ArgumentInterface $like): static
+    public function setLike(bool|float|int|null|string|ArgumentInterface $like): static
     {
         $this->like = $like instanceof ArgumentInterface
             ? $like

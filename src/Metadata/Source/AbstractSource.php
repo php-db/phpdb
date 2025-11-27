@@ -194,7 +194,6 @@ abstract class AbstractSource implements MetadataInterface
         return $views;
     }
 
-
     #[Override]
     public function getView(string $viewName, ?string $schema = null): ViewObject|TableObject
     {

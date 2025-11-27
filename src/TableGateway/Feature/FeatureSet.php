@@ -118,7 +118,6 @@ class FeatureSet
      * Is the method requested available in one of the added features
      *
      * @param string $method
-     * @return bool
      */
     public function canCallMagicCall($method): bool
     {

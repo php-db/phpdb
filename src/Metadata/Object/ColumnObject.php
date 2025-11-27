@@ -16,7 +16,7 @@ class ColumnObject
 
     protected ?int $ordinalPosition = null;
 
-    protected ?string $columnDefault = null;
+    protected null|string|int|bool $columnDefault = null;
 
     protected ?bool $isNullable = null;
 
@@ -125,10 +125,10 @@ class ColumnObject
     }
 
     /**
-     * @param null|string $columnDefault to set
+     * @param null|string|int|bool $columnDefault to set
      * @return $this Provides a fluent interface
      */
-    public function setColumnDefault(?string $columnDefault): static
+    public function setColumnDefault(null|string|int|bool $columnDefault): static
     {
         $this->columnDefault = $columnDefault;
         return $this;
@@ -150,14 +150,6 @@ class ColumnObject
     {
         $this->isNullable = $isNullable;
         return $this;
-    }
-
-    /**
-     * @return bool|null $isNullable
-     */
-    public function isNullable(): ?bool
-    {
-        return $this->isNullable;
     }
 
     /**
