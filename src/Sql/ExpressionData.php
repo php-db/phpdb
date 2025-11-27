@@ -7,7 +7,6 @@ namespace PhpDb\Sql;
 use Countable;
 use Iterator;
 use Override;
-use PhpDb\Sql\Argument\ArgumentInterface;
 
 use function array_map;
 use function array_merge;

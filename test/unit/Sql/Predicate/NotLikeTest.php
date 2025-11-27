@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace PhpDbTest\Sql\Predicate;
 
-use PhpDb\Sql\Argument\ArgumentInterface;
-use PhpDb\Sql\Argument\ArgumentType;
+use PhpDb\Sql\ArgumentInterface;
+use PhpDb\Sql\ArgumentType;
 use PhpDb\Sql\Predicate\Like;
 use PhpDb\Sql\Predicate\NotLike;
 use PHPUnit\Framework\TestCase;

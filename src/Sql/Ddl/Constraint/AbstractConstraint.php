@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace PhpDb\Sql\Ddl\Constraint;
 
 use Override;
-use PhpDb\Sql\Argument\Argument;
+use PhpDb\Sql\Argument;
 use PhpDb\Sql\ExpressionData;
 use PhpDb\Sql\ExpressionPart;
 

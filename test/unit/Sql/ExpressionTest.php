@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace PhpDbTest\Sql;
 
-use PhpDb\Sql\Argument\Argument;
-use PhpDb\Sql\Argument\ArgumentInterface;
-use PhpDb\Sql\Argument\ArgumentType;
+use PhpDb\Sql\Argument;
+use PhpDb\Sql\ArgumentType;
 use PhpDb\Sql\Exception\InvalidArgumentException;
 use PhpDb\Sql\Exception\RuntimeException;
 use PhpDb\Sql\Expression;
@@ -88,9 +87,9 @@ final class ExpressionTest extends TestCase
         $expression = new Expression(
             'X SAME AS ? AND Y = ? BUT LITERALLY ?',
             [
-                ['foo' => ArgumentType::Identifier],
-                [5 => ArgumentType::Value],
-                ['FUNC(FF%X)' => ArgumentType::Literal],
+                new Argument\Identifier('foo'),
+                new Argument\Value(5),
+                new Argument\Literal('FUNC(FF%X)'),
             ]
         );
 
@@ -206,21 +205,6 @@ final class ExpressionTest extends TestCase
             Argument::value(1),
             Argument::value(2),
             Argument::value(3),
-        ], $expressionData->getExpressionValues());
-    }
-
-    public function testSetParametersWithMultipleArguments(): void
-    {
-        // Test deprecated multi-argument setParameters
-        $expression = new Expression('? * ?');
-        $expression->setParameters(5, 10);
-
-        $expressionData = $expression->getExpressionData();
-
-        self::assertEquals('%s * %s', $expressionData->getExpressionSpecification());
-        self::assertEquals([
-            Argument::value(5),
-            Argument::value(10),
         ], $expressionData->getExpressionValues());
     }
 }

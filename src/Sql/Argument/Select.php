@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace PhpDb\Sql\Argument;
 
+use PhpDb\Sql\ArgumentInterface;
+use PhpDb\Sql\ArgumentType;
 use PhpDb\Sql\ExpressionInterface;
 use PhpDb\Sql\SqlInterface;
 
@@ -12,7 +14,7 @@ use PhpDb\Sql\SqlInterface;
  * Used when embedding a SELECT statement or expression as part of
  * another query (e.g., subqueries, derived tables).
  */
-final readonly class SelectArgument implements ArgumentInterface
+final readonly class Select implements ArgumentInterface
 {
     public function __construct(
         private ExpressionInterface|SqlInterface $select

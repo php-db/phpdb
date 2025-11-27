@@ -8,9 +8,8 @@ use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\Driver\StatementInterface;
 use PhpDb\Adapter\ParameterContainer;
 use PhpDb\Adapter\Platform\Sql92;
-use PhpDb\Sql\Argument\Argument;
-use PhpDb\Sql\Argument\ArgumentInterface;
-use PhpDb\Sql\Argument\ArgumentType;
+use PhpDb\Sql\Argument;
+use PhpDb\Sql\ArgumentType;
 use PhpDb\Sql\Exception\InvalidArgumentException;
 use PhpDb\Sql\Expression;
 use PhpDb\Sql\ExpressionInterface;
@@ -914,9 +913,9 @@ final class SelectTest extends TestCase
                 new Expression(
                     '(COUNT(?) + ?) AS ?',
                     [
-                        ['some_column' => ArgumentType::Identifier],
-                        [5 => ArgumentType::Value],
-                        ['bar' => ArgumentType::Identifier],
+                        new Argument\Identifier('some_column'),
+                        new Argument\Value(5),
+                        new Argument\Identifier('bar'),
                     ],
                 ),
             ]
@@ -1019,7 +1018,7 @@ final class SelectTest extends TestCase
         ];
 
         $select19 = new Select();
-        $select19->from('foo')->group(new Expression('DAY(?)', [['col1' => ArgumentType::Identifier]]));
+        $select19->from('foo')->group(new Expression('DAY(?)', [new Argument\Identifier('col1')]));
         $sqlPrep19       = 'SELECT "foo".* FROM "foo" GROUP BY DAY("col1")';
         $sqlStr19        = 'SELECT "foo".* FROM "foo" GROUP BY DAY("col1")';
         $internalTests19 = [
@@ -1177,7 +1176,7 @@ final class SelectTest extends TestCase
         // @author Demian Katz
         $select34 = new Select();
         $select34->from('table')->order([
-            new Expression('isnull(?) DESC', [['name' => ArgumentType::Identifier]]),
+            new Expression('isnull(?) DESC', [new Argument\Identifier('name')]),
             'name',
         ]);
         $sqlPrep34       = 'SELECT "table".* FROM "table" ORDER BY isnull("name") DESC, "name" ASC';

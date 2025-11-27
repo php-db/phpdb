@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace PhpDbTest\Sql\Ddl\Column;
 
-use PhpDb\Sql\Argument\Argument;
-use PhpDb\Sql\Argument\ArgumentInterface;
+use PhpDb\Sql\Argument;
+use PhpDb\Sql\ArgumentInterface;
 use PhpDb\Sql\Ddl\Column\AbstractTimestampColumn;
 use PhpDb\Sql\Ddl\Column\Timestamp;
 use PHPUnit\Framework\Attributes\CoversMethod;

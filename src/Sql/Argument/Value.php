@@ -4,13 +4,15 @@ declare(strict_types=1);
 
 namespace PhpDb\Sql\Argument;
 
+use PhpDb\Sql\ArgumentInterface;
+use PhpDb\Sql\ArgumentType;
+
 /**
  * Represents a bound parameter value in SQL.
- *
  * Used for values that will be sent as bound parameters to the database,
  * providing protection against SQL injection.
  */
-final readonly class ValueArgument implements ArgumentInterface
+final readonly class Value implements ArgumentInterface
 {
     /**
      * @param null|string|int|float|bool $value Scalar value, or null
