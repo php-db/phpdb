@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace PhpDbTest\Sql;
 
-use PhpDb\Sql\Argument;
+use PhpDb\Sql\Argument\Argument;
+use PhpDb\Sql\Argument\ArgumentInterface;
 use PhpDb\Sql\Exception\InvalidArgumentException;
 use PhpDb\Sql\ExpressionData;
 use PhpDb\Sql\ExpressionPart;

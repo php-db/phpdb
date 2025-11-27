@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace PhpDbTest\Sql\Predicate;
 
-use PhpDb\Sql\Argument;
-use PhpDb\Sql\ArgumentType;
+use PhpDb\Sql\Argument\Argument;
+use PhpDb\Sql\Argument\ArgumentInterface;
+use PhpDb\Sql\Argument\ArgumentType;
 use PhpDb\Sql\Exception\InvalidArgumentException;
 use PhpDb\Sql\Predicate\Like;
 use PHPUnit\Framework\Attributes\CoversMethod;
@@ -33,12 +34,12 @@ final class LikeTest extends TestCase
         $like = new Like('bar', 'Foo%');
 
         $identifier = $like->getIdentifier();
-        self::assertInstanceOf(Argument::class, $identifier);
+        self::assertInstanceOf(ArgumentInterface::class, $identifier);
         self::assertEquals('bar', $identifier->getValue());
         self::assertEquals(ArgumentType::Identifier, $identifier->getType());
 
         $likeValue = $like->getLike();
-        self::assertInstanceOf(Argument::class, $likeValue);
+        self::assertInstanceOf(ArgumentInterface::class, $likeValue);
         self::assertEquals('Foo%', $likeValue->getValue());
         self::assertEquals(ArgumentType::Value, $likeValue->getType());
     }
@@ -55,14 +56,14 @@ final class LikeTest extends TestCase
 
         // Verify first identifier mutation
         $identifier1 = $like->getIdentifier();
-        self::assertInstanceOf(Argument::class, $identifier1);
+        self::assertInstanceOf(ArgumentInterface::class, $identifier1);
         self::assertEquals('bar', $identifier1->getValue());
         self::assertEquals(ArgumentType::Identifier, $identifier1->getType());
 
         // Second mutation to verify mutability
         $like->setIdentifier('baz');
         $identifier2 = $like->getIdentifier();
-        self::assertInstanceOf(Argument::class, $identifier2);
+        self::assertInstanceOf(ArgumentInterface::class, $identifier2);
         self::assertEquals('baz', $identifier2->getValue());
         self::assertEquals(ArgumentType::Identifier, $identifier2->getType());
 
@@ -74,14 +75,14 @@ final class LikeTest extends TestCase
 
         // Verify first like mutation
         $likeValue1 = $like->getLike();
-        self::assertInstanceOf(Argument::class, $likeValue1);
+        self::assertInstanceOf(ArgumentInterface::class, $likeValue1);
         self::assertEquals('foo%', $likeValue1->getValue());
         self::assertEquals(ArgumentType::Value, $likeValue1->getType());
 
         // Second mutation to verify mutability
         $like->setLike('bar%');
         $likeValue2 = $like->getLike();
-        self::assertInstanceOf(Argument::class, $likeValue2);
+        self::assertInstanceOf(ArgumentInterface::class, $likeValue2);
         self::assertEquals('bar%', $likeValue2->getValue());
         self::assertEquals(ArgumentType::Value, $likeValue2->getType());
 
@@ -109,16 +110,16 @@ final class LikeTest extends TestCase
         self::assertCount(2, $values);
 
         // Verify identifier argument
-        self::assertInstanceOf(Argument::class, $values[0]);
+        self::assertInstanceOf(ArgumentInterface::class, $values[0]);
         self::assertEquals('bar', $values[0]->getValue());
         self::assertEquals(ArgumentType::Identifier, $values[0]->getType());
 
         // Verify like expression argument
-        self::assertInstanceOf(Argument::class, $values[1]);
+        self::assertInstanceOf(ArgumentInterface::class, $values[1]);
         self::assertEquals('Foo%', $values[1]->getValue());
         self::assertEquals(ArgumentType::Value, $values[1]->getType());
 
-        $like = new Like(['Foo%' => ArgumentType::Value], ['bar' => ArgumentType::Identifier]);
+        $like = new Like(Argument::value('Foo%'), Argument::identifier('bar'));
 
         $expressionData = $like->getExpressionData();
 
@@ -130,12 +131,12 @@ final class LikeTest extends TestCase
         self::assertCount(2, $values);
 
         // Verify identifier argument (now with Value type)
-        self::assertInstanceOf(Argument::class, $values[0]);
+        self::assertInstanceOf(ArgumentInterface::class, $values[0]);
         self::assertEquals('Foo%', $values[0]->getValue());
         self::assertEquals(ArgumentType::Value, $values[0]->getType());
 
         // Verify like expression argument (now with Identifier type)
-        self::assertInstanceOf(Argument::class, $values[1]);
+        self::assertInstanceOf(ArgumentInterface::class, $values[1]);
         self::assertEquals('bar', $values[1]->getValue());
         self::assertEquals(ArgumentType::Identifier, $values[1]->getType());
     }

@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace PhpDbTest\Sql\Predicate;
 
 use Override;
-use PhpDb\Sql\Argument;
-use PhpDb\Sql\ArgumentType;
+use PhpDb\Sql\Argument\Argument;
+use PhpDb\Sql\Argument\ArgumentInterface;
+use PhpDb\Sql\Argument\ArgumentType;
 use PhpDb\Sql\Predicate\NotBetween;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
@@ -45,24 +46,24 @@ final class NotBetweenTest extends TestCase
         self::assertCount(3, $values);
 
         // Verify identifier argument
-        self::assertInstanceOf(Argument::class, $values[0]);
+        self::assertInstanceOf(ArgumentInterface::class, $values[0]);
         self::assertEquals('foo.bar', $values[0]->getValue());
         self::assertEquals(ArgumentType::Identifier, $values[0]->getType());
 
         // Verify min value argument
-        self::assertInstanceOf(Argument::class, $values[1]);
+        self::assertInstanceOf(ArgumentInterface::class, $values[1]);
         self::assertEquals(10, $values[1]->getValue());
         self::assertEquals(ArgumentType::Value, $values[1]->getType());
 
         // Verify max value argument
-        self::assertInstanceOf(Argument::class, $values[2]);
+        self::assertInstanceOf(ArgumentInterface::class, $values[2]);
         self::assertEquals(19, $values[2]->getValue());
         self::assertEquals(ArgumentType::Value, $values[2]->getType());
 
         $this->notBetween
-            ->setIdentifier([10 => ArgumentType::Value])
-            ->setMinValue(['foo.bar' => ArgumentType::Identifier])
-            ->setMaxValue(['foo.baz' => ArgumentType::Identifier]);
+            ->setIdentifier(Argument::value(10))
+            ->setMinValue(Argument::identifier('foo.bar'))
+            ->setMaxValue(Argument::identifier('foo.baz'));
 
         $expressionData = $this->notBetween->getExpressionData();
 
@@ -73,18 +74,18 @@ final class NotBetweenTest extends TestCase
         $values = $expressionData->getExpressionValues();
         self::assertCount(3, $values);
 
-        // Verify identifier argument
-        self::assertInstanceOf(Argument::class, $values[0]);
+        // Verify identifier argument (passed as Value type)
+        self::assertInstanceOf(ArgumentInterface::class, $values[0]);
         self::assertEquals(10, $values[0]->getValue());
         self::assertEquals(ArgumentType::Value, $values[0]->getType());
 
-        // Verify min value argument
-        self::assertInstanceOf(Argument::class, $values[1]);
+        // Verify min value argument (passed as Identifier type)
+        self::assertInstanceOf(ArgumentInterface::class, $values[1]);
         self::assertEquals('foo.bar', $values[1]->getValue());
         self::assertEquals(ArgumentType::Identifier, $values[1]->getType());
 
-        // Verify max value argument
-        self::assertInstanceOf(Argument::class, $values[2]);
+        // Verify max value argument (passed as Identifier type)
+        self::assertInstanceOf(ArgumentInterface::class, $values[2]);
         self::assertEquals('foo.baz', $values[2]->getValue());
         self::assertEquals(ArgumentType::Identifier, $values[2]->getType());
     }

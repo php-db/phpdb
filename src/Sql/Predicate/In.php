@@ -9,6 +9,7 @@ use PhpDb\Sql\AbstractExpression;
 use PhpDb\Sql\Argument\Argument;
 use PhpDb\Sql\Argument\ArgumentInterface;
 use PhpDb\Sql\Argument\IdentifierArgument;
+use PhpDb\Sql\Argument\IdentifiersArgument;
 use PhpDb\Sql\Argument\SelectArgument;
 use PhpDb\Sql\Argument\ValuesArgument;
 use PhpDb\Sql\Exception\InvalidArgumentException;
@@ -18,7 +19,6 @@ use PhpDb\Sql\Select;
 use function array_fill;
 use function count;
 use function implode;
-use function is_array;
 use function sprintf;
 use function vsprintf;
 
@@ -133,9 +133,8 @@ class In extends AbstractExpression implements PredicateInterface
         }
 
         // Handle array identifiers for multi-column IN: (col1, col2) IN ...
-        $value = $this->identifier->getValue();
-        if (is_array($value)) {
-            $count = count($value);
+        if ($this->identifier instanceof IdentifiersArgument) {
+            $count = count($this->identifier->getValue());
             return $count > 0
                 ? sprintf('(%s)', implode(', ', array_fill(0, $count, '%s')))
                 : '(NULL)';

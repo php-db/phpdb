@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace PhpDbTest\Sql;
 
-use PhpDb\Sql\Argument;
+use PhpDb\Sql\Argument\Argument;
+use PhpDb\Sql\Argument\ArgumentInterface;
 use PhpDb\Sql\ArgumentType;
 use PhpDb\Sql\Exception\InvalidArgumentException;
 use PhpDb\Sql\Exception\RuntimeException;
@@ -130,7 +131,7 @@ final class ExpressionTest extends TestCase
     public function testNumberOfReplacementsConsidersWhenSameVariableIsUsedManyTimes(): void
     {
         $expression = new Expression('uf.user_id = :user_id OR uf.friend_id = :user_id', ['user_id' => 1]);
-        $value      = new Argument(1, ArgumentType::Value);
+        $value      = Argument::value(1);
 
         $expressionData = $expression->getExpressionData();
 
@@ -145,7 +146,7 @@ final class ExpressionTest extends TestCase
     public function testConstructorWithFalsyValidParameters(mixed $falsyParameter): void
     {
         $expression = new Expression('?', $falsyParameter);
-        $falsyValue = new Argument($falsyParameter, ArgumentType::Value);
+        $falsyValue = Argument::value($falsyParameter);
 
         $expressionData = $expression->getExpressionData();
 
@@ -173,8 +174,8 @@ final class ExpressionTest extends TestCase
     public function testNumberOfReplacementsForExpressionWithParameters(): void
     {
         $expression = new Expression(':a + :b', ['a' => 1, 'b' => 2]);
-        $value1     = new Argument(1, ArgumentType::Value);
-        $value2     = new Argument(2, ArgumentType::Value);
+        $value1     = Argument::value(1);
+        $value2     = Argument::value(2);
 
         $expressionData = $expression->getExpressionData();
 

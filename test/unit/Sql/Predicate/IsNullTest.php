@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace PhpDbTest\Sql\Predicate;
 
-use PhpDb\Sql\Argument;
-use PhpDb\Sql\ArgumentType;
+use PhpDb\Sql\Argument\ArgumentInterface;
+use PhpDb\Sql\Argument\ArgumentType;
 use PhpDb\Sql\Exception\InvalidArgumentException;
 use PhpDb\Sql\Predicate\IsNotNull;
 use PhpDb\Sql\Predicate\IsNull;
@@ -38,7 +38,7 @@ final class IsNullTest extends TestCase
 
         // Verify identifier was set correctly
         $identifier = $isnull->getIdentifier();
-        self::assertInstanceOf(Argument::class, $identifier);
+        self::assertInstanceOf(ArgumentInterface::class, $identifier);
         self::assertEquals('foo.bar', $identifier->getValue());
         self::assertEquals(ArgumentType::Identifier, $identifier->getType());
     }
@@ -55,7 +55,7 @@ final class IsNullTest extends TestCase
 
         // Verify the first mutation occurred
         $identifier1 = $isNotNull->getIdentifier();
-        self::assertInstanceOf(Argument::class, $identifier1);
+        self::assertInstanceOf(ArgumentInterface::class, $identifier1);
         self::assertEquals('foo.bar', $identifier1->getValue());
         self::assertEquals(ArgumentType::Identifier, $identifier1->getType());
 
@@ -64,7 +64,7 @@ final class IsNullTest extends TestCase
 
         // Verify the instance was actually mutated
         $identifier2 = $isNotNull->getIdentifier();
-        self::assertInstanceOf(Argument::class, $identifier2);
+        self::assertInstanceOf(ArgumentInterface::class, $identifier2);
         self::assertEquals('baz.qux', $identifier2->getValue());
         self::assertEquals(ArgumentType::Identifier, $identifier2->getType());
     }
@@ -91,7 +91,7 @@ final class IsNullTest extends TestCase
         self::assertCount(1, $values);
 
         // Verify identifier argument
-        self::assertInstanceOf(Argument::class, $values[0]);
+        self::assertInstanceOf(ArgumentInterface::class, $values[0]);
         self::assertEquals('foo.bar', $values[0]->getValue());
         self::assertEquals(ArgumentType::Identifier, $values[0]->getType());
     }
