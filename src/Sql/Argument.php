@@ -4,104 +4,48 @@ declare(strict_types=1);
 
 namespace PhpDb\Sql;
 
-use InvalidArgumentException;
+use PhpDb\Sql\Argument\Identifier;
+use PhpDb\Sql\Argument\Identifiers;
+use PhpDb\Sql\Argument\Literal;
+use PhpDb\Sql\Argument\Select;
+use PhpDb\Sql\Argument\Value;
+use PhpDb\Sql\Argument\Values;
 
-use function array_fill;
-use function array_values;
-use function count;
-use function current;
-use function implode;
-use function is_array;
-use function key;
-use function sprintf;
-
-class Argument
+/**
+ * Factory for creating argument instances.
+ */
+final class Argument
 {
-    public function __construct(
-        protected null|bool|string|int|float|array|ExpressionInterface|SqlInterface $value = null,
-        protected ArgumentType $type = ArgumentType::Value
-    ) {
-        if ($value instanceof ExpressionInterface || $value instanceof SqlInterface) {
-            $type = ArgumentType::Select;
-        } elseif ($type === ArgumentType::Select) {
-            throw new InvalidArgumentException('Invalid argument value');
-        }
-
-        if (is_array($value)) {
-            $key = key($value);
-            /** @var null|bool|string|int|float|array|ArgumentType $current */
-            $current = current($value);
-            if ($current instanceof ArgumentType) {
-                $type  = $current;
-                $value = $key;
-            } else {
-                $value = array_values($value);
-            }
-        }
-
-        $this->setType($type);
-        $this->setValue($value);
+    public static function value(null|string|int|float|bool $value): Value
+    {
+        return new Value($value);
     }
 
-    public function setType(ArgumentType|string $type): static
+    public static function values(array $values): Values
     {
-        if (! $type instanceof ArgumentType) {
-            $type = ArgumentType::tryFrom($type);
-            if ($type === null) {
-                throw new InvalidArgumentException('Invalid argument type');
-            }
-        }
-
-        $this->type = $type;
-
-        return $this;
+        return new Values($values);
     }
 
-    public function getType(): ArgumentType
+    public static function identifier(string $identifier): Identifier
     {
-        return $this->type;
+        return new Identifier($identifier);
     }
 
-    public function setValue(null|bool|string|int|float|array|ExpressionInterface|SqlInterface $value): static
+    /**
+     * @param list<string> $identifiers
+     */
+    public static function identifiers(array $identifiers): Identifiers
     {
-        $this->value = $value;
-
-        return $this;
+        return new Identifiers($identifiers);
     }
 
-    public function getValue(): null|bool|string|int|float|array|ExpressionInterface|SqlInterface
+    public static function literal(string $literal): Literal
     {
-        return $this->value;
+        return new Literal($literal);
     }
 
-    public function getValueAsString(): string
+    public static function select(ExpressionInterface|SqlInterface $select): Select
     {
-        return (string) $this->value;
-    }
-
-    public function getSpecification(): string
-    {
-        if (is_array($this->value)) {
-            return $this->value !== [] ?
-                sprintf('(%s)', implode(', ', array_fill(0, count($this->value), '%s'))) :
-                '(NULL)';
-        }
-
-        return '%s';
-    }
-
-    public static function value(null|bool|string|int|float|array|ExpressionInterface|SqlInterface $value): Argument
-    {
-        return new self($value, ArgumentType::Value);
-    }
-
-    public static function identifier(null|string|int|float|array|ExpressionInterface|SqlInterface $value): Argument
-    {
-        return new self($value, ArgumentType::Identifier);
-    }
-
-    public static function literal(null|string|int|float|array|ExpressionInterface|SqlInterface $value): Argument
-    {
-        return new self($value, ArgumentType::Literal);
+        return new Select($select);
     }
 }

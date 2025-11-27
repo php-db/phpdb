@@ -437,8 +437,7 @@ The `ArgumentType` enum defines four types:
 - `ArgumentType::Select` - For subqueries (automatically detected when using Expression or SqlInterface objects)
 
 ```php
-use PhpDb\Sql\Argument\Argument;
-use PhpDb\Sql\Argument\ArgumentType;
+use PhpDb\Sql\Argument;use PhpDb\Sql\ArgumentType;
 
 // Using the constructor with explicit type
 $arg = new IdentifierArgument('column_name');
@@ -459,8 +458,7 @@ The `Argument` class is particularly useful when working with expressions
 where you need to explicitly control how values are treated:
 
 ```php
-use PhpDb\Sql\Expression;
-use PhpDb\Sql\Argument\Argument;
+use PhpDb\Sql\Argument;use PhpDb\Sql\Expression;
 
 // Without Argument - relies on positional type inference
 $expression = new Expression(

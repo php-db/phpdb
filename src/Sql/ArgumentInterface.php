@@ -2,10 +2,7 @@
 
 declare(strict_types=1);
 
-namespace PhpDb\Sql\Argument;
-
-use PhpDb\Sql\ExpressionInterface;
-use PhpDb\Sql\SqlInterface;
+namespace PhpDb\Sql;
 
 interface ArgumentInterface
 {

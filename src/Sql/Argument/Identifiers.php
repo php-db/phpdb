@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace PhpDb\Sql\Argument;
 
+use PhpDb\Sql\ArgumentInterface;
+use PhpDb\Sql\ArgumentType;
+
 use function array_values;
 
 /**
@@ -12,7 +15,7 @@ use function array_values;
  * Used for multi-column IN predicates like (col1, col2) IN (SELECT ...).
  * Each identifier will be quoted appropriately by the platform driver.
  */
-final readonly class IdentifiersArgument implements ArgumentInterface
+final readonly class Identifiers implements ArgumentInterface
 {
     /** @var list<string> */
     private array $identifiers;

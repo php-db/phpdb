@@ -9,8 +9,6 @@ use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\ParameterContainer;
 use PhpDb\Adapter\Platform\PlatformInterface;
 use PhpDb\Adapter\Platform\Sql92 as DefaultAdapterPlatform;
-use PhpDb\Sql\Argument\ArgumentInterface;
-use PhpDb\Sql\Argument\ArgumentType;
 use PhpDb\Sql\Platform\PlatformDecoratorInterface;
 use ValueError;
 
@@ -225,7 +223,7 @@ abstract class AbstractSql implements SqlInterface
         ?DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null
     ): string {
-        $values = $argument->getValue();
+        $values          = $argument->getValue();
         $processedValues = [];
 
         foreach ($values as $value) {
@@ -249,7 +247,7 @@ abstract class AbstractSql implements SqlInterface
         ArgumentInterface $argument,
         PlatformInterface $platform
     ): string {
-        $identifiers = $argument->getValue();
+        $identifiers          = $argument->getValue();
         $processedIdentifiers = [];
 
         foreach ($identifiers as $identifier) {

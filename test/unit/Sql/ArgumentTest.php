@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace PhpDbTest\Sql;
 
-use PhpDb\Sql\Argument\Argument;
-use PhpDb\Sql\Argument\ArgumentType;
-use PhpDb\Sql\Argument\IdentifierArgument;
-use PhpDb\Sql\Argument\SelectArgument;
-use PhpDb\Sql\Argument\ValueArgument;
-use PhpDb\Sql\Argument\ValuesArgument;
+use PhpDb\Sql\Argument;
+use PhpDb\Sql\Argument\Identifier;
+use PhpDb\Sql\Argument\Select as ArgumentSelect;
+use PhpDb\Sql\Argument\Value;
+use PhpDb\Sql\Argument\Values;
+use PhpDb\Sql\ArgumentType;
 use PhpDb\Sql\Expression;
 use PhpDb\Sql\Select;
 use PHPUnit\Framework\Attributes\CoversMethod;
@@ -30,14 +30,14 @@ final class ArgumentTest extends TestCase
 {
     public function testConstructorWithSimpleValue(): void
     {
-        $argument = new ValueArgument('test');
+        $argument = new Value('test');
         self::assertEquals('test', $argument->getValue());
         self::assertEquals(ArgumentType::Value, $argument->getType());
     }
 
     public function testConstructorWithExplicitType(): void
     {
-        $argument = new IdentifierArgument('column_name');
+        $argument = new Identifier('column_name');
         self::assertEquals('column_name', $argument->getValue());
         self::assertEquals(ArgumentType::Identifier, $argument->getType());
     }
@@ -45,7 +45,7 @@ final class ArgumentTest extends TestCase
     public function testConstructorWithExpressionInterface(): void
     {
         $expression = new Expression('NOW()');
-        $argument   = new SelectArgument($expression);
+        $argument   = new ArgumentSelect($expression);
 
         self::assertSame($expression, $argument->getValue());
         self::assertEquals(ArgumentType::Select, $argument->getType());
@@ -54,7 +54,7 @@ final class ArgumentTest extends TestCase
     public function testConstructorWithSqlInterface(): void
     {
         $select   = new Select();
-        $argument = new SelectArgument($select);
+        $argument = new ArgumentSelect($select);
 
         self::assertSame($select, $argument->getValue());
         self::assertEquals(ArgumentType::Select, $argument->getType());
@@ -65,12 +65,12 @@ final class ArgumentTest extends TestCase
         $this->expectException(TypeError::class);
         /** @noinspection PhpParamsInspection */
         /** @noinspection PhpExpressionResultUnusedInspection */
-        new SelectArgument('simple_value'); /** @phpstan-ignore-line */
+        new ArgumentSelect('simple_value'); /** @phpstan-ignore-line */
     }
 
     public function testConstructorWithArrayContainingArgumentType(): void
     {
-        $argument = new IdentifierArgument('column');
+        $argument = new Identifier('column');
 
         self::assertEquals('column', $argument->getValue());
         self::assertEquals(ArgumentType::Identifier, $argument->getType());
@@ -78,7 +78,7 @@ final class ArgumentTest extends TestCase
 
     public function testConstructorWithSimpleArray(): void
     {
-        $argument = new ValuesArgument([1, 2, 3]);
+        $argument = new Values([1, 2, 3]);
 
         self::assertEquals([1, 2, 3], $argument->getValue());
         self::assertEquals(ArgumentType::Value, $argument->getType());
@@ -110,21 +110,21 @@ final class ArgumentTest extends TestCase
 
     public function testConstructorWithBooleanValue(): void
     {
-        $argument = new ValueArgument(true);
+        $argument = new Value(true);
         self::assertTrue($argument->getValue());
         self::assertEquals(ArgumentType::Value, $argument->getType());
     }
 
     public function testConstructorWithNullValue(): void
     {
-        $argument = new ValueArgument(null);
+        $argument = new Value(null);
         self::assertNull($argument->getValue());
         self::assertEquals(ArgumentType::Value, $argument->getType());
     }
 
     public function testConstructorWithFloatValue(): void
     {
-        $argument = new ValueArgument(3.14);
+        $argument = new Value(3.14);
         self::assertEquals(3.14, $argument->getValue());
         self::assertEquals(ArgumentType::Value, $argument->getType());
     }

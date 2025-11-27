@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace PhpDb\Sql\Predicate;
 
-use PhpDb\Sql\Argument\ArgumentInterface;
+use PhpDb\Sql\ArgumentInterface;
 use PhpDb\Sql\Exception\RuntimeException;
 use PhpDb\Sql\ExpressionInterface;
 

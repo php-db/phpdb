@@ -6,14 +6,14 @@ namespace PhpDb\Sql\Predicate;
 
 use Override;
 use PhpDb\Sql\AbstractExpression;
-use PhpDb\Sql\Argument\Argument;
-use PhpDb\Sql\Argument\ArgumentInterface;
+use PhpDb\Sql\Argument;
+use PhpDb\Sql\ArgumentInterface;
 use PhpDb\Sql\Exception\InvalidArgumentException;
 use PhpDb\Sql\ExpressionData;
 
 class Like extends AbstractExpression implements PredicateInterface
 {
-    protected string $specification      = '%1$s LIKE %2$s';
+    protected string $specification          = '%1$s LIKE %2$s';
     protected ?ArgumentInterface $identifier = null;
     protected ?ArgumentInterface $like       = null;
 
