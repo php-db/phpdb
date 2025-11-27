@@ -10,7 +10,8 @@ use PHPUnit\TextUI\Configuration\Configuration;
 
 class ListenerExtension implements Extension
 {
-    #[Override] public function bootstrap(
+    #[Override]
+    public function bootstrap(
         Configuration $configuration,
         Facade $facade,
         ParameterCollection $parameters

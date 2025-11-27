@@ -120,7 +120,7 @@ class FeatureSet
      * @param string $method
      * @return bool
      */
-    public function canCallMagicCall($method)
+    public function canCallMagicCall($method): bool
     {
         if ($this->features !== []) {
             foreach ($this->features as $feature) {
