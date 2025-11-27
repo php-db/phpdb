@@ -22,7 +22,6 @@
             <exclude>./test/unit/Adapter/Driver/Pdo/StatementIntegrationTest.php</exclude>
             <exclude>./test/unit/Adapter/AdapterTest.php</exclude>
             <exclude>./test/unit/Adapter/AdapterAwareTraitTest.php</exclude>
-            <exclude>./test/unit/Sql/AbstractSqlFunctionalTest.php</exclude>
             <exclude>./test/unit/TableGateway</exclude>
             <exclude>./test/unit/RowGateway</exclude>
             <exclude>./test/unit/ConfigProviderTest.php</exclude>
