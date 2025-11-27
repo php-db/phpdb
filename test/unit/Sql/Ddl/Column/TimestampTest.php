@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace PhpDbTest\Sql\Ddl\Column;
 
-use PhpDb\Sql\Argument;
+use PhpDb\Sql\Argument\Argument;
+use PhpDb\Sql\Argument\ArgumentInterface;
 use PhpDb\Sql\Ddl\Column\AbstractTimestampColumn;
 use PhpDb\Sql\Ddl\Column\Timestamp;
 use PHPUnit\Framework\Attributes\CoversMethod;
@@ -46,7 +47,7 @@ final class TimestampTest extends TestCase
         self::assertEquals(Argument::literal('TIMESTAMP'), $values[1]);
 
         // Third value should be the ON UPDATE argument
-        self::assertInstanceOf(Argument::class, $values[2]);
+        self::assertInstanceOf(ArgumentInterface::class, $values[2]);
         // Verify it equals the expected Argument using factory method for consistency
         self::assertEquals(Argument::literal('ON UPDATE CURRENT_TIMESTAMP'), $values[2]);
     }

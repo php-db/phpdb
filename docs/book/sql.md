@@ -437,11 +437,11 @@ The `ArgumentType` enum defines four types:
 - `ArgumentType::Select` - For subqueries (automatically detected when using Expression or SqlInterface objects)
 
 ```php
-use PhpDb\Sql\Argument;
-use PhpDb\Sql\ArgumentType;
+use PhpDb\Sql\Argument\Argument;
+use PhpDb\Sql\Argument\ArgumentType;
 
 // Using the constructor with explicit type
-$arg = new Argument('column_name', ArgumentType::Identifier);
+$arg = new IdentifierArgument('column_name');
 
 // Using static factory methods (recommended)
 $valueArg = Argument::value(123);           // Value type
@@ -449,10 +449,10 @@ $identifierArg = Argument::identifier('id'); // Identifier type
 $literalArg = Argument::literal('NOW()');   // Literal SQL
 
 // Using array notation for type specification
-$arg = new Argument(['column_name' => ArgumentType::Identifier]);
+$arg = new ValueArgument(['column_name' => ArgumentType::Identifier]);
 
 // Arrays of values are also supported
-$arg = new Argument([1, 2, 3], ArgumentType::Value);
+$arg = new ValueArgument([1, 2, 3]);
 ```
 
 The `Argument` class is particularly useful when working with expressions
@@ -460,7 +460,7 @@ where you need to explicitly control how values are treated:
 
 ```php
 use PhpDb\Sql\Expression;
-use PhpDb\Sql\Argument;
+use PhpDb\Sql\Argument\Argument;
 
 // Without Argument - relies on positional type inference
 $expression = new Expression(
