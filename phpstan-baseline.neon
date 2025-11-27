@@ -739,40 +739,40 @@ parameters:
 			path: test/unit/Sql/SelectTest.php
 
 		-
-			message: '#^Static call to instance method PhpDbTest\\Sql\\AbstractSqlFunctionalTest\:\:createColumn\(\)\.$#'
+			message: '#^Static call to instance method PhpDbTest\\Sql\\AbstractSqlFunctionalTestCase\:\:createColumn\(\)\.$#'
 			identifier: method.staticCall
 			count: 2
-			path: test/unit/Sql/AbstractSqlFunctionalTest.php
+			path: test/unit/Sql/AbstractSqlFunctionalTestCase.php
 
 		-
-			message: '#^Static call to instance method PhpDbTest\\Sql\\AbstractSqlFunctionalTest\:\:createTable\(\)\.$#'
+			message: '#^Static call to instance method PhpDbTest\\Sql\\AbstractSqlFunctionalTestCase\:\:createTable\(\)\.$#'
 			identifier: method.staticCall
 			count: 2
-			path: test/unit/Sql/AbstractSqlFunctionalTest.php
+			path: test/unit/Sql/AbstractSqlFunctionalTestCase.php
 
 		-
-			message: '#^Static call to instance method PhpDbTest\\Sql\\AbstractSqlFunctionalTest\:\:delete\(\)\.$#'
+			message: '#^Static call to instance method PhpDbTest\\Sql\\AbstractSqlFunctionalTestCase\:\:delete\(\)\.$#'
 			identifier: method.staticCall
 			count: 1
-			path: test/unit/Sql/AbstractSqlFunctionalTest.php
+			path: test/unit/Sql/AbstractSqlFunctionalTestCase.php
 
 		-
-			message: '#^Static call to instance method PhpDbTest\\Sql\\AbstractSqlFunctionalTest\:\:insert\(\)\.$#'
+			message: '#^Static call to instance method PhpDbTest\\Sql\\AbstractSqlFunctionalTestCase\:\:insert\(\)\.$#'
 			identifier: method.staticCall
 			count: 1
-			path: test/unit/Sql/AbstractSqlFunctionalTest.php
+			path: test/unit/Sql/AbstractSqlFunctionalTestCase.php
 
 		-
-			message: '#^Static call to instance method PhpDbTest\\Sql\\AbstractSqlFunctionalTest\:\:select\(\)\.$#'
+			message: '#^Static call to instance method PhpDbTest\\Sql\\AbstractSqlFunctionalTestCase\:\:select\(\)\.$#'
 			identifier: method.staticCall
 			count: 15
-			path: test/unit/Sql/AbstractSqlFunctionalTest.php
+			path: test/unit/Sql/AbstractSqlFunctionalTestCase.php
 
 		-
-			message: '#^Static call to instance method PhpDbTest\\Sql\\AbstractSqlFunctionalTest\:\:update\(\)\.$#'
+			message: '#^Static call to instance method PhpDbTest\\Sql\\AbstractSqlFunctionalTestCase\:\:update\(\)\.$#'
 			identifier: method.staticCall
 			count: 3
-			path: test/unit/Sql/AbstractSqlFunctionalTest.php
+			path: test/unit/Sql/AbstractSqlFunctionalTestCase.php
 
 		-
 			message: '#^Expression "\$this\-\>mockUpdate" on a separate line does not do anything\.$#'
