@@ -34,6 +34,13 @@ final class AbstractResultSetTest extends TestCase
 {
     protected MockObject|AbstractResultSet $resultSet;
 
+    private function createResultSetMock(): MockObject|AbstractResultSet
+    {
+        return $this->getMockBuilder(AbstractResultSet::class)
+            ->onlyMethods(['setRowPrototype', 'getRowPrototype'])
+            ->getMock();
+    }
+
     /**
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
@@ -41,7 +48,7 @@ final class AbstractResultSetTest extends TestCase
     #[Override]
     protected function setUp(): void
     {
-        $this->resultSet = $this->getMockBuilder(AbstractResultSet::class)->onlyMethods([])->getMock();
+        $this->resultSet = $this->createResultSetMock();
     }
 
     /**
@@ -49,7 +56,7 @@ final class AbstractResultSetTest extends TestCase
      */
     public function testInitialize(): void
     {
-        $resultSet = $this->getMockBuilder(AbstractResultSet::class)->onlyMethods([])->getMock();
+        $resultSet = $this->createResultSetMock();
 
         // Verify initialize() accepts array data and returns fluent interface
         self::assertSame($resultSet, $resultSet->initialize([
@@ -69,7 +76,7 @@ final class AbstractResultSetTest extends TestCase
      */
     public function testInitializeDoesNotCallCount(): void
     {
-        $resultSet = $this->getMockBuilder(AbstractResultSet::class)->onlyMethods([])->getMock();
+        $resultSet = $this->createResultSetMock();
         $result    = $this->getMockBuilder(ResultInterface::class)->onlyMethods([])->getMock();
         $result->expects($this->never())->method('count');
         // Initialize with result and verify count() is never called
@@ -81,7 +88,7 @@ final class AbstractResultSetTest extends TestCase
      */
     public function testInitializeWithEmptyArray(): void
     {
-        $resultSet = $this->getMockBuilder(AbstractResultSet::class)->onlyMethods([])->getMock();
+        $resultSet = $this->createResultSetMock();
         // Verify initialize() accepts empty array
         self::assertSame($resultSet, $resultSet->initialize([]));
     }
@@ -91,11 +98,11 @@ final class AbstractResultSetTest extends TestCase
      */
     public function testBuffer(): void
     {
-        $resultSet = $this->getMockBuilder(AbstractResultSet::class)->onlyMethods([])->getMock();
+        $resultSet = $this->createResultSetMock();
         // Verify buffer() returns fluent interface
         self::assertSame($resultSet, $resultSet->buffer());
 
-        $resultSet = $this->getMockBuilder(AbstractResultSet::class)->onlyMethods([])->getMock();
+        $resultSet = $this->createResultSetMock();
         $resultSet->initialize(new ArrayIterator([
             ['id' => 1, 'name' => 'one'],
             ['id' => 2, 'name' => 'two'],
@@ -110,7 +117,7 @@ final class AbstractResultSetTest extends TestCase
 
     public function testIsBuffered(): void
     {
-        $resultSet = $this->getMockBuilder(AbstractResultSet::class)->onlyMethods([])->getMock();
+        $resultSet = $this->createResultSetMock();
         // Verify buffering is disabled by default
         self::assertFalse($resultSet->isBuffered());
         $resultSet->buffer();
@@ -123,7 +130,7 @@ final class AbstractResultSetTest extends TestCase
      */
     public function testGetDataSource(): void
     {
-        $resultSet = $this->getMockBuilder(AbstractResultSet::class)->onlyMethods([])->getMock();
+        $resultSet = $this->createResultSetMock();
         $resultSet->initialize(new ArrayIterator([
             ['id' => 1, 'name' => 'one'],
             ['id' => 2, 'name' => 'two'],
@@ -138,7 +145,7 @@ final class AbstractResultSetTest extends TestCase
      */
     public function testGetFieldCount(): void
     {
-        $resultSet = $this->getMockBuilder(AbstractResultSet::class)->onlyMethods([])->getMock();
+        $resultSet = $this->createResultSetMock();
         $resultSet->initialize(new ArrayIterator([
             ['id' => 1, 'name' => 'one'],
         ]));
@@ -157,7 +164,7 @@ final class AbstractResultSetTest extends TestCase
             ['id' => 3, 'name' => 'three'],
         ];
 
-        $resultSet = $this->getMockBuilder(AbstractResultSet::class)->onlyMethods([])->getMock();
+        $resultSet = $this->createResultSetMock();
         $resultSet->initialize(new ArrayIterator($rows));
 
         // Verify next() advances iterator position
@@ -171,7 +178,7 @@ final class AbstractResultSetTest extends TestCase
      */
     public function testKey(): void
     {
-        $resultSet = $this->getMockBuilder(AbstractResultSet::class)->onlyMethods([])->getMock();
+        $resultSet = $this->createResultSetMock();
         $resultSet->initialize(new ArrayIterator([
             ['id' => 1, 'name' => 'one'],
             ['id' => 2, 'name' => 'two'],
@@ -191,7 +198,7 @@ final class AbstractResultSetTest extends TestCase
      */
     public function testCurrent(): void
     {
-        $resultSet = $this->getMockBuilder(AbstractResultSet::class)->onlyMethods([])->getMock();
+        $resultSet = $this->createResultSetMock();
         $resultSet->initialize(new ArrayIterator([
             ['id' => 1, 'name' => 'one'],
             ['id' => 2, 'name' => 'two'],
@@ -206,7 +213,7 @@ final class AbstractResultSetTest extends TestCase
      */
     public function testValid(): void
     {
-        $resultSet = $this->getMockBuilder(AbstractResultSet::class)->onlyMethods([])->getMock();
+        $resultSet = $this->createResultSetMock();
         $resultSet->initialize(new ArrayIterator([
             ['id' => 1, 'name' => 'one'],
             ['id' => 2, 'name' => 'two'],
@@ -249,7 +256,7 @@ final class AbstractResultSetTest extends TestCase
      */
     public function testCount(): void
     {
-        $resultSet = $this->getMockBuilder(AbstractResultSet::class)->onlyMethods([])->getMock();
+        $resultSet = $this->createResultSetMock();
         $resultSet->initialize(new ArrayIterator([
             ['id' => 1, 'name' => 'one'],
             ['id' => 2, 'name' => 'two'],
@@ -264,7 +271,7 @@ final class AbstractResultSetTest extends TestCase
      */
     public function testToArray(): void
     {
-        $resultSet = $this->getMockBuilder(AbstractResultSet::class)->onlyMethods([])->getMock();
+        $resultSet = $this->createResultSetMock();
         $resultSet->initialize(new ArrayIterator([
             ['id' => 1, 'name' => 'one'],
             ['id' => 2, 'name' => 'two'],
@@ -289,7 +296,7 @@ final class AbstractResultSetTest extends TestCase
     #[Group('issue-6845')]
     public function testBufferIterations(): void
     {
-        $resultSet = $this->getMockBuilder(AbstractResultSet::class)->onlyMethods([])->getMock();
+        $resultSet = $this->createResultSetMock();
         $resultSet->initialize(new ArrayIterator([
             ['id' => 1, 'name' => 'one'],
             ['id' => 2, 'name' => 'two'],
@@ -324,7 +331,7 @@ final class AbstractResultSetTest extends TestCase
     #[Group('issue-6845')]
     public function testMultipleRewindBufferIterations(): void
     {
-        $resultSet = $this->getMockBuilder(AbstractResultSet::class)->onlyMethods([])->getMock();
+        $resultSet = $this->createResultSetMock();
         $result    = new Result();
         $stub      = $this->getMockBuilder(PDOStatement::class)->getMock();
         $data      = new ArrayIterator([

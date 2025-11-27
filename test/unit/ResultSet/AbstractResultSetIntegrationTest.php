@@ -24,7 +24,9 @@ final class AbstractResultSetIntegrationTest extends TestCase
     #[Override]
     protected function setUp(): void
     {
-        $this->resultSet = $this->getMockBuilder(AbstractResultSet::class)->onlyMethods([])->getMock();
+        $this->resultSet = $this->getMockBuilder(AbstractResultSet::class)
+            ->onlyMethods(['setRowPrototype', 'getRowPrototype'])
+            ->getMock();
     }
 
     /**
