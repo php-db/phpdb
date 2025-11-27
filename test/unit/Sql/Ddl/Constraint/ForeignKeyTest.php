@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace PhpDbTest\Sql\Ddl\Constraint;
 
-use PhpDb\Sql\Argument;
-use PhpDb\Sql\ArgumentType;
+use PhpDb\Sql\Argument\Argument;
+use PhpDb\Sql\Argument\ArgumentInterface;
+use PhpDb\Sql\Argument\ArgumentType;
 use PhpDb\Sql\Ddl\Constraint\AbstractConstraint;
 use PhpDb\Sql\Ddl\Constraint\ForeignKey;
 use PHPUnit\Framework\Attributes\CoversMethod;
@@ -149,32 +150,32 @@ final class ForeignKeyTest extends TestCase
         self::assertCount(6, $values);
 
         // Verify constraint name
-        self::assertInstanceOf(Argument::class, $values[0]);
+        self::assertInstanceOf(ArgumentInterface::class, $values[0]);
         self::assertEquals('foo', $values[0]->getValue());
         self::assertEquals(ArgumentType::Identifier, $values[0]->getType());
 
         // Verify column name
-        self::assertInstanceOf(Argument::class, $values[1]);
+        self::assertInstanceOf(ArgumentInterface::class, $values[1]);
         self::assertEquals('bar', $values[1]->getValue());
         self::assertEquals(ArgumentType::Identifier, $values[1]->getType());
 
         // Verify reference table
-        self::assertInstanceOf(Argument::class, $values[2]);
+        self::assertInstanceOf(ArgumentInterface::class, $values[2]);
         self::assertEquals('baz', $values[2]->getValue());
         self::assertEquals(ArgumentType::Identifier, $values[2]->getType());
 
         // Verify reference column
-        self::assertInstanceOf(Argument::class, $values[3]);
+        self::assertInstanceOf(ArgumentInterface::class, $values[3]);
         self::assertEquals('bam', $values[3]->getValue());
         self::assertEquals(ArgumentType::Identifier, $values[3]->getType());
 
         // Verify on delete rule
-        self::assertInstanceOf(Argument::class, $values[4]);
+        self::assertInstanceOf(ArgumentInterface::class, $values[4]);
         self::assertEquals('CASCADE', $values[4]->getValue());
         self::assertEquals(ArgumentType::Literal, $values[4]->getType());
 
         // Verify on update rule
-        self::assertInstanceOf(Argument::class, $values[5]);
+        self::assertInstanceOf(ArgumentInterface::class, $values[5]);
         self::assertEquals('SET NULL', $values[5]->getValue());
         self::assertEquals(ArgumentType::Literal, $values[5]->getType());
     }

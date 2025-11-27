@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace PhpDbTest\Sql\Ddl\Column;
 
-use PhpDb\Sql\Argument;
+use PhpDb\Sql\Argument\Argument;
 use PhpDb\Sql\Ddl\Column\AbstractLengthColumn;
 use PhpDb\Sql\Ddl\Column\Varchar;
 use PHPUnit\Framework\Attributes\CoversMethod;

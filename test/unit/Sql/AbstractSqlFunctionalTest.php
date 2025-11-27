@@ -38,7 +38,7 @@ use function is_string;
  * @method CreateTable createTable(null|string|TableIdentifier $sqlString)
  * @method Column createColumn(null|string $sqlString)
  */
-class SqlFunctionalTest extends TestCase
+abstract class AbstractSqlFunctionalTest extends TestCase
 {
     protected static function dataProviderCommonProcessMethods(): array
     {
@@ -307,7 +307,7 @@ class SqlFunctionalTest extends TestCase
         return $decorator;
     }
 
-    protected function resolveAdapter(string $platform): Adapter\Adapter
+    protected function resolveAdapter(string $platformName): Adapter\Adapter
     {
         // Only sql92 platform is supported after abstraction
         $platform = new TestAsset\TrustingSql92Platform();

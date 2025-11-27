@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace PhpDbTest\Sql\Ddl\Column;
 
-use PhpDb\Sql\Argument;
+use PhpDb\Sql\Argument\Argument;
 use PhpDb\Sql\Ddl\Column\AbstractPrecisionColumn;
 use PhpDb\Sql\Ddl\Column\Decimal;
 use PHPUnit\Framework\Attributes\CoversMethod;
@@ -72,7 +72,7 @@ final class DecimalTest extends TestCase
         self::assertEquals(Argument::identifier('amount'), $values[0]);
         self::assertEquals(Argument::literal('DECIMAL'), $values[1]);
         // The third value should be "10" (string representation)
-        self::assertEquals(Argument::literal(10), $values[2]);
+        self::assertEquals(Argument::literal((string) 10), $values[2]);
     }
 
     public function testInheritanceFromAbstractPrecisionColumn(): void

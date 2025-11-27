@@ -90,7 +90,7 @@ final class ExpressionTest extends TestCase
         /** @todo This test seems incorrect? */
         //$predicate = new IsNull('foo.baz');
         //$expression = new Expression('? OR ?', $predicate, $predicate);
-        //$isNull     = new Argument($predicate, ArgumentType::Select);
+        //$isNull     = new SelectArgument($predicate);
         //self::assertEquals([$isNull], $expression->getParameters());
     }
 

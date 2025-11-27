@@ -6,7 +6,7 @@ namespace PhpDbTest\Sql;
 
 use PhpDb\Sql\Argument\Argument;
 use PhpDb\Sql\Argument\ArgumentInterface;
-use PhpDb\Sql\ArgumentType;
+use PhpDb\Sql\Argument\ArgumentType;
 use PhpDb\Sql\Exception\InvalidArgumentException;
 use PhpDb\Sql\Exception\RuntimeException;
 use PhpDb\Sql\Expression;
