@@ -12,11 +12,11 @@ use function array_key_exists;
 
 class CreateTable extends AbstractSql implements SqlInterface
 {
-    public const COLUMNS = 'columns';
+    final public const COLUMNS = 'columns';
 
-    public const CONSTRAINTS = 'constraints';
+    final public const CONSTRAINTS = 'constraints';
 
-    public const TABLE = 'table';
+    final public const TABLE = 'table';
 
     protected array $columns = [];
 

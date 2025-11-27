@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace PhpDb\Sql\Predicate;
 
+use LogicException;
 use Override;
 use PhpDb\Sql\AbstractExpression;
 use PhpDb\Sql\Argument;
 use PhpDb\Sql\ArgumentInterface;
-use PhpDb\Sql\Exception\InvalidArgumentException;
 use PhpDb\Sql\ExpressionData;
 
 class Between extends AbstractExpression implements PredicateInterface
@@ -135,15 +135,15 @@ class Between extends AbstractExpression implements PredicateInterface
     public function getExpressionData(): ExpressionData
     {
         if (! $this->identifier instanceof ArgumentInterface) {
-            throw new InvalidArgumentException('Identifier must be specified');
+            throw new LogicException('Identifier must be specified');
         }
 
         if (! $this->minValue instanceof ArgumentInterface) {
-            throw new InvalidArgumentException('minValue must be specified');
+            throw new LogicException('minValue must be specified');
         }
 
         if (! $this->maxValue instanceof ArgumentInterface) {
-            throw new InvalidArgumentException('maxValue must be specified');
+            throw new LogicException('maxValue must be specified');
         }
 
         return new ExpressionData(

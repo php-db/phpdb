@@ -2,18 +2,18 @@
 
 namespace PhpDb\TableGateway\Feature;
 
-use PhpDb\Adapter\Adapter;
+use PhpDb\Adapter\AdapterInterface;
 use PhpDb\TableGateway\Exception;
 
 class GlobalAdapterFeature extends AbstractFeature
 {
-    /** @var Adapter[] */
-    protected static $staticAdapters = [];
+    /** @var AdapterInterface[] */
+    protected static array $staticAdapters = [];
 
     /**
      * Set static adapter
      */
-    public static function setStaticAdapter(Adapter $adapter): void
+    public static function setStaticAdapter(AdapterInterface $adapter): void
     {
         $class = static::class;
 
@@ -27,9 +27,8 @@ class GlobalAdapterFeature extends AbstractFeature
      * Get static adapter
      *
      * @throws Exception\RuntimeException
-     * @return Adapter
      */
-    public static function getStaticAdapter()
+    public static function getStaticAdapter(): AdapterInterface
     {
         $class = static::class;
 

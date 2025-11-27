@@ -48,7 +48,8 @@ class Column implements ColumnInterface
         return $this;
     }
 
-    #[Override] public function getName(): string
+    #[Override]
+    public function getName(): string
     {
         return $this->name;
     }
@@ -62,7 +63,8 @@ class Column implements ColumnInterface
         return $this;
     }
 
-    #[Override] public function isNullable(): bool
+    #[Override]
+    public function isNullable(): bool
     {
         return $this->isNullable;
     }
@@ -76,7 +78,8 @@ class Column implements ColumnInterface
         return $this;
     }
 
-    #[Override] public function getDefault(): string|int|null
+    #[Override]
+    public function getDefault(): string|int|null
     {
         return $this->default;
     }
@@ -99,7 +102,8 @@ class Column implements ColumnInterface
         return $this;
     }
 
-    #[Override] public function getOptions(): array
+    #[Override]
+    public function getOptions(): array
     {
         return $this->options;
     }
