@@ -43,7 +43,7 @@ class ResultSet extends AbstractResultSet
     /**
      * Get the return type to use when returning objects from the set
      */
-    public function getReturnType(): string
+    public function getReturnType(): ResultSetReturnType
     {
         return $this->returnType;
     }

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace PhpDbTest\Sql;
 
 use PhpDb\Sql\Argument;
-use PhpDb\Sql\ArgumentType;
 use PhpDb\Sql\Exception\InvalidArgumentException;
 use PhpDb\Sql\Exception\RuntimeException;
 use PhpDb\Sql\Expression;

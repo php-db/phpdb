@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace PhpDb\ResultSet;
 
 use ArrayIterator;
+use ArrayObject;
 use Countable;
 use Exception;
 use Iterator;
@@ -288,4 +289,16 @@ abstract class AbstractResultSet implements ResultSetInterface
 
         return $return;
     }
+
+    /**
+     * Set the row object prototype
+     *
+     * @return $this Provides a fluent interface
+     */
+    abstract public function setRowPrototype(ArrayObject $rowPrototype): ResultSetInterface;
+
+    /**
+     * Get the row object prototype
+     */
+    abstract public function getRowPrototype(): ?object;
 }

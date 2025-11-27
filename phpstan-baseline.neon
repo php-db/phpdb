@@ -109,18 +109,6 @@ parameters:
 			path: src/ResultSet/AbstractResultSet.php
 
 		-
-			message: '#^Call to function is_object\(\) with object will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: src/ResultSet/HydratingResultSet.php
-
-		-
-			message: '#^Call to function method_exists\(\) with ArrayObject and ''exchangeArray'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: src/ResultSet/ResultSet.php
-
-		-
 			message: '#^Call to an undefined method PhpDb\\Adapter\\StatementContainerInterface\:\:execute\(\)\.$#'
 			identifier: method.notFound
 			count: 4

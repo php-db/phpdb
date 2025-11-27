@@ -9,6 +9,7 @@ use PhpDb\Adapter\Driver\ResultInterface;
 use PhpDb\ResultSet\AbstractResultSet;
 use PhpDb\ResultSet\Exception\RuntimeException;
 use PhpDb\ResultSet\ResultSet;
+use PhpDb\ResultSet\ResultSetReturnType;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\Exception;
@@ -74,8 +75,8 @@ final class ResultSetIntegrationTest extends TestCase
 
     public function testReturnTypeIsObjectByDefault(): void
     {
-        // Verify default return type is TYPE_ARRAYOBJECT
-        self::assertEquals(ResultSet::TYPE_ARRAYOBJECT, $this->resultSet->getReturnType());
+        // Verify default return type is ArrayObject
+        self::assertEquals(ResultSetReturnType::ArrayObject, $this->resultSet->getReturnType());
     }
 
     /** @psalm-return array<array-key, array{0: mixed}> */

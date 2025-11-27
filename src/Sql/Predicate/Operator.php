@@ -15,29 +15,29 @@ use PhpDb\Sql\SqlInterface;
 
 class Operator extends AbstractExpression implements PredicateInterface
 {
-    public const OPERATOR_EQUAL_TO = '=';
+    final public const OPERATOR_EQUAL_TO = '=';
 
-    public const OP_EQ = '=';
+    final public const OP_EQ = '=';
 
-    public const OPERATOR_NOT_EQUAL_TO = '!=';
+    final public const OPERATOR_NOT_EQUAL_TO = '!=';
 
-    public const OP_NE = '!=';
+    final public const OP_NE = '!=';
 
-    public const OPERATOR_LESS_THAN = '<';
+    final public const OPERATOR_LESS_THAN = '<';
 
-    public const OP_LT = '<';
+    final public const OP_LT = '<';
 
-    public const OPERATOR_LESS_THAN_OR_EQUAL_TO = '<=';
+    final public const OPERATOR_LESS_THAN_OR_EQUAL_TO = '<=';
 
-    public const OP_LTE = '<=';
+    final public const OP_LTE = '<=';
 
-    public const OPERATOR_GREATER_THAN = '>';
+    final public const OPERATOR_GREATER_THAN = '>';
 
-    public const OP_GT = '>';
+    final public const OP_GT = '>';
 
-    public const OPERATOR_GREATER_THAN_OR_EQUAL_TO = '>=';
+    final public const OPERATOR_GREATER_THAN_OR_EQUAL_TO = '>=';
 
-    public const OP_GTE = '>=';
+    final public const OP_GTE = '>=';
 
     protected ?ArgumentInterface $left  = null;
     protected ?ArgumentInterface $right = null;
@@ -123,8 +123,9 @@ class Operator extends AbstractExpression implements PredicateInterface
      *
      * @return $this Provides a fluent interface
      */
-    public function setRight(null|bool|string|int|float|ArgumentInterface|ExpressionInterface|SqlInterface $right): static
-    {
+    public function setRight(
+        null|bool|string|int|float|ArgumentInterface|ExpressionInterface|SqlInterface $right
+    ): static {
         if ($right instanceof ArgumentInterface) {
             $this->right = $right;
         } elseif ($right instanceof ExpressionInterface || $right instanceof SqlInterface) {
