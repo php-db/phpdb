@@ -6,17 +6,15 @@ namespace PhpDb\Metadata\Object;
 
 class ConstraintKeyObject
 {
-    public const FK_CASCADE = 'CASCADE';
+    final public const FK_CASCADE = 'CASCADE';
 
-    public const FK_SET_NULL = 'SET NULL';
+    final public const FK_SET_NULL = 'SET NULL';
 
-    public const FK_NO_ACTION = 'NO ACTION';
+    final public const FK_NO_ACTION = 'NO ACTION';
 
-    public const FK_RESTRICT = 'RESTRICT';
+    final public const FK_RESTRICT = 'RESTRICT';
 
-    public const FK_SET_DEFAULT = 'SET DEFAULT';
-
-    protected string $columnName;
+    final public const FK_SET_DEFAULT = 'SET DEFAULT';
 
     protected ?int $ordinalPosition = null;
 
@@ -35,9 +33,8 @@ class ConstraintKeyObject
     /**
      * Constructor
      */
-    public function __construct(string $column)
+    public function __construct(protected string $columnName)
     {
-        $this->setColumnName($column);
     }
 
     /**

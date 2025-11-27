@@ -24,7 +24,7 @@ class Profiler implements ProfilerInterface
      * @throws InvalidArgumentException
      * @return $this Provides a fluent interface
      */
-    public function profilerStart(string|StatementContainerInterface $target): static
+    public function profilerStart(string|StatementContainerInterface $target): ProfilerInterface
     {
         $profileInformation = [
             'sql'        => '',
@@ -52,7 +52,7 @@ class Profiler implements ProfilerInterface
     /**
      * @return $this Provides a fluent interface
      */
-    public function profilerFinish(): static
+    public function profilerFinish(): ProfilerInterface
     {
         if (! isset($this->profiles[$this->currentIndex])) {
             throw new Exception\RuntimeException(

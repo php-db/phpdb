@@ -70,17 +70,13 @@ abstract class AbstractConstraint implements ConstraintInterface
         return $this;
     }
 
-    /**
-     * {}
-     */
+
     #[Override] public function getColumns(): array
     {
         return $this->columns;
     }
 
-    /**
-     * {}
-     */
+
     #[Override]
     public function getExpressionData(): ExpressionData
     {
