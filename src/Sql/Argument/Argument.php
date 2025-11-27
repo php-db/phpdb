@@ -27,6 +27,14 @@ final class Argument
         return new IdentifierArgument($identifier);
     }
 
+    /**
+     * @param list<string> $identifiers
+     */
+    public static function identifiers(array $identifiers): IdentifiersArgument
+    {
+        return new IdentifiersArgument($identifiers);
+    }
+
     public static function literal(string $literal): LiteralArgument
     {
         return new LiteralArgument($literal);

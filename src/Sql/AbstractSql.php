@@ -9,6 +9,8 @@ use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\ParameterContainer;
 use PhpDb\Adapter\Platform\PlatformInterface;
 use PhpDb\Adapter\Platform\Sql92 as DefaultAdapterPlatform;
+use PhpDb\Sql\Argument\ArgumentInterface;
+use PhpDb\Sql\Argument\ArgumentType;
 use PhpDb\Sql\Platform\PlatformDecoratorInterface;
 use ValueError;
 
@@ -150,7 +152,7 @@ abstract class AbstractSql implements SqlInterface
     }
 
     protected function processExpressionValue(
-        Argument $argument,
+        ArgumentInterface $argument,
         int &$expressionParamIndex,
         string $namedParameterPrefix,
         int $vIndex,
@@ -167,8 +169,9 @@ abstract class AbstractSql implements SqlInterface
                 $driver,
                 $parameterContainer
             ),
-            ArgumentType::Identifier => $platform->quoteIdentifierInFragment($argument->getValueAsString()),
-            ArgumentType::Literal => $argument->getValueAsString(),
+            ArgumentType::Identifier => $platform->quoteIdentifierInFragment((string) $argument->getValue()),
+            ArgumentType::Identifiers => $this->processIdentifiersArgument($argument, $platform),
+            ArgumentType::Literal => (string) $argument->getValue(),
             ArgumentType::Value => $parameterContainer instanceof ParameterContainer ?
                 $this->processExpressionParameterName(
                     $argument->getValue(),
@@ -177,12 +180,20 @@ abstract class AbstractSql implements SqlInterface
                     $driver,
                     $parameterContainer
                 ) :
-                $platform->quoteValue($argument->getValueAsString())
+                $platform->quoteValue((string) $argument->getValue()),
+            ArgumentType::Values => $this->processValuesArgument(
+                $argument,
+                $expressionParamIndex,
+                $namedParameterPrefix,
+                $platform,
+                $driver,
+                $parameterContainer
+            ),
         };
     }
 
     protected function processExpressionOrSelect(
-        Argument $argument,
+        ArgumentInterface $argument,
         string $namedParameterPrefix,
         int $vIndex,
         PlatformInterface $platform,
@@ -204,6 +215,48 @@ abstract class AbstractSql implements SqlInterface
             ),
             default => throw new ValueError('Invalid Argument type'),
         };
+    }
+
+    protected function processValuesArgument(
+        ArgumentInterface $argument,
+        int &$expressionParamIndex,
+        string $namedParameterPrefix,
+        PlatformInterface $platform,
+        ?DriverInterface $driver = null,
+        ?ParameterContainer $parameterContainer = null
+    ): string {
+        $values = $argument->getValue();
+        $processedValues = [];
+
+        foreach ($values as $value) {
+            if ($parameterContainer instanceof ParameterContainer) {
+                $processedValues[] = $this->processExpressionParameterName(
+                    $value,
+                    $namedParameterPrefix,
+                    $expressionParamIndex,
+                    $driver,
+                    $parameterContainer
+                );
+            } else {
+                $processedValues[] = $platform->quoteValue((string) $value);
+            }
+        }
+
+        return implode(', ', $processedValues);
+    }
+
+    protected function processIdentifiersArgument(
+        ArgumentInterface $argument,
+        PlatformInterface $platform
+    ): string {
+        $identifiers = $argument->getValue();
+        $processedIdentifiers = [];
+
+        foreach ($identifiers as $identifier) {
+            $processedIdentifiers[] = $platform->quoteIdentifierInFragment($identifier);
+        }
+
+        return implode(', ', $processedIdentifiers);
     }
 
     protected function processExpressionParameterName(

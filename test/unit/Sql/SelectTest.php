@@ -8,7 +8,8 @@ use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\Driver\StatementInterface;
 use PhpDb\Adapter\ParameterContainer;
 use PhpDb\Adapter\Platform\Sql92;
-use PhpDb\Sql\Argument;
+use PhpDb\Sql\Argument\Argument;
+use PhpDb\Sql\Argument\ArgumentInterface;
 use PhpDb\Sql\ArgumentType;
 use PhpDb\Sql\Exception\InvalidArgumentException;
 use PhpDb\Sql\Expression;
@@ -270,7 +271,7 @@ final class SelectTest extends TestCase
         /** @var Where $where */
         $where      = $select->getRawState('where');
         $predicates = $where->getPredicates();
-        $expression = new Argument(5, ArgumentType::Value);
+        $expression = Argument::value(5);
 
         self::assertCount(1, $predicates);
         self::assertIsArray($predicates[0]);
@@ -287,10 +288,10 @@ final class SelectTest extends TestCase
         $select = new Select();
         $select->where(['name' => 'Ralph', 'age' => 33]);
 
-        $identifier1 = new Argument('name', ArgumentType::Identifier);
-        $expression1 = new Argument('Ralph', ArgumentType::Value);
-        $identifier2 = new Argument('age', ArgumentType::Identifier);
-        $expression2 = new Argument(33, ArgumentType::Value);
+        $identifier1 = Argument::identifier('name');
+        $expression1 = Argument::value('Ralph');
+        $identifier2 = Argument::identifier('age');
+        $expression2 = Argument::value(33);
 
         /** @var Where $where */
         $where      = $select->getRawState('where');

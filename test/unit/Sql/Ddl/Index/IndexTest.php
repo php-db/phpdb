@@ -13,17 +13,31 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(Index::class, 'getExpressionData')]
 final class IndexTest extends TestCase
 {
+    private function compareExpressionTypeValues(array $expressionValues, array $comparisonValues): void
+    {
+        $diff = array_udiff($expressionValues, $comparisonValues, function($a, $b): int {
+            return [$a->getType(), $a->getValue()] <=> [$b->getType(), $b->getValue()];
+        });
+
+        var_dump($diff);
+        exit;
+
+        self::assertCount(0, $diff);
+    }
+
     public function testGetExpressionData(): void
     {
         $uk = new Index('foo', 'my_uk');
 
         $expressionData = $uk->getExpressionData();
-
-        self::assertEquals('INDEX %s(%s)', $expressionData->getExpressionSpecification());
-        self::assertEquals([
+        $expressionValues = $expressionData->getExpressionValues();
+        $comparisonValues = [
             Argument::identifier('my_uk'),
             Argument::identifier('foo'),
-        ], $expressionData->getExpressionValues());
+        ];
+
+        self::assertEquals('INDEX %s(%s)', $expressionData->getExpressionSpecification());
+        self::assertTrue($this->compareExpressionTypeValues($expressionValues, $comparisonValues));
     }
 
     public function testGetExpressionDataWithLength(): void

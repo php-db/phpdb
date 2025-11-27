@@ -7,8 +7,8 @@ namespace PhpDbTest\Sql\Predicate;
 use ErrorException;
 use Laminas\Stdlib\ErrorHandler;
 use PhpDb\Adapter\Platform\Sql92;
-use PhpDb\Sql\Argument;
-use PhpDb\Sql\ArgumentType;
+use PhpDb\Sql\Argument\Argument;
+use PhpDb\Sql\Argument\ArgumentInterface;
 use PhpDb\Sql\Expression;
 use PhpDb\Sql\Predicate\Predicate;
 use PhpDb\Sql\Select;
@@ -24,8 +24,8 @@ final class PredicateTest extends TestCase
         $predicate = new Predicate();
         $predicate->equalTo('foo.bar', 'bar');
 
-        $identifier = new Argument('foo.bar', ArgumentType::Identifier);
-        $expression = new Argument('bar', ArgumentType::Value);
+        $identifier = Argument::identifier('foo.bar');
+        $expression = Argument::value('bar');
 
         $expressionData = $predicate->getExpressionData();
 
@@ -42,8 +42,8 @@ final class PredicateTest extends TestCase
         $predicate = new Predicate();
         $predicate->notEqualTo('foo.bar', 'bar');
 
-        $identifier = new Argument('foo.bar', ArgumentType::Identifier);
-        $expression = new Argument('bar', ArgumentType::Value);
+        $identifier = Argument::identifier('foo.bar');
+        $expression = Argument::value('bar');
 
         $expressionData = $predicate->getExpressionData();
 
@@ -58,8 +58,8 @@ final class PredicateTest extends TestCase
         $predicate = new Predicate();
         $predicate->lessThan('foo.bar', 'bar');
 
-        $identifier = new Argument('foo.bar', ArgumentType::Identifier);
-        $expression = new Argument('bar', ArgumentType::Value);
+        $identifier = Argument::identifier('foo.bar');
+        $expression = Argument::value('bar');
 
         $expressionData = $predicate->getExpressionData();
 
@@ -76,8 +76,8 @@ final class PredicateTest extends TestCase
         $predicate = new Predicate();
         $predicate->greaterThan('foo.bar', 'bar');
 
-        $identifier = new Argument('foo.bar', ArgumentType::Identifier);
-        $expression = new Argument('bar', ArgumentType::Value);
+        $identifier = Argument::identifier('foo.bar');
+        $expression = Argument::value('bar');
 
         $expressionData = $predicate->getExpressionData();
 
@@ -94,8 +94,8 @@ final class PredicateTest extends TestCase
         $predicate = new Predicate();
         $predicate->lessThanOrEqualTo('foo.bar', 'bar');
 
-        $identifier = new Argument('foo.bar', ArgumentType::Identifier);
-        $expression = new Argument('bar', ArgumentType::Value);
+        $identifier = Argument::identifier('foo.bar');
+        $expression = Argument::value('bar');
 
         $expressionData = $predicate->getExpressionData();
 
@@ -112,8 +112,8 @@ final class PredicateTest extends TestCase
         $predicate = new Predicate();
         $predicate->greaterThanOrEqualTo('foo.bar', 'bar');
 
-        $identifier = new Argument('foo.bar', ArgumentType::Identifier);
-        $expression = new Argument('bar', ArgumentType::Value);
+        $identifier = Argument::identifier('foo.bar');
+        $expression = Argument::value('bar');
 
         $expressionData = $predicate->getExpressionData();
 
@@ -130,8 +130,8 @@ final class PredicateTest extends TestCase
         $predicate = new Predicate();
         $predicate->like('foo.bar', 'bar%');
 
-        $identifier = new Argument('foo.bar', ArgumentType::Identifier);
-        $expression = new Argument('bar%', ArgumentType::Value);
+        $identifier = Argument::identifier('foo.bar');
+        $expression = Argument::value('bar%');
 
         $expressionData = $predicate->getExpressionData();
 
@@ -148,8 +148,8 @@ final class PredicateTest extends TestCase
         $predicate = new Predicate();
         $predicate->notLike('foo.bar', 'bar%');
 
-        $identifier = new Argument('foo.bar', ArgumentType::Identifier);
-        $expression = new Argument('bar%', ArgumentType::Value);
+        $identifier = Argument::identifier('foo.bar');
+        $expression = Argument::value('bar%');
 
         $expressionData = $predicate->getExpressionData();
 
@@ -177,7 +177,7 @@ final class PredicateTest extends TestCase
         $predicate = new Predicate();
         $predicate->isNull('foo.bar');
 
-        $identifier = new Argument('foo.bar', ArgumentType::Identifier);
+        $identifier = Argument::identifier('foo.bar');
 
         $expressionData = $predicate->getExpressionData();
 
@@ -193,7 +193,7 @@ final class PredicateTest extends TestCase
         $predicate = new Predicate();
         $predicate->isNotNull('foo.bar');
 
-        $identifier = new Argument('foo.bar', ArgumentType::Identifier);
+        $identifier = Argument::identifier('foo.bar');
 
         $expressionData = $predicate->getExpressionData();
 
@@ -209,8 +209,8 @@ final class PredicateTest extends TestCase
         $predicate = new Predicate();
         $predicate->in('foo.bar', ['foo', 'bar']);
 
-        $identifier = new Argument('foo.bar', ArgumentType::Identifier);
-        $expression = new Argument(['foo', 'bar'], ArgumentType::Value);
+        $identifier = Argument::identifier('foo.bar');
+        $expression = Argument::values(['foo', 'bar']);
 
         $expressionData = $predicate->getExpressionData();
 
@@ -227,8 +227,8 @@ final class PredicateTest extends TestCase
         $predicate = new Predicate();
         $predicate->notIn('foo.bar', ['foo', 'bar']);
 
-        $identifier = new Argument('foo.bar', ArgumentType::Identifier);
-        $expression = new Argument(['foo', 'bar'], ArgumentType::Value);
+        $identifier = Argument::identifier('foo.bar');
+        $expression = Argument::values(['foo', 'bar']);
 
         $expressionData = $predicate->getExpressionData();
 
@@ -245,9 +245,9 @@ final class PredicateTest extends TestCase
         $predicate = new Predicate();
         $predicate->between('foo.bar', 1, 10);
 
-        $identifier = new Argument('foo.bar', ArgumentType::Identifier);
-        $minValue   = new Argument(1, ArgumentType::Value);
-        $maxValue   = new Argument(10, ArgumentType::Value);
+        $identifier = Argument::identifier('foo.bar');
+        $minValue   = Argument::value(1);
+        $maxValue   = Argument::value(10);
 
         $expressionData = $predicate->getExpressionData();
 
@@ -265,9 +265,9 @@ final class PredicateTest extends TestCase
         $predicate = new Predicate();
         $predicate->notBetween('foo.bar', 1, 10);
 
-        $identifier = new Argument('foo.bar', ArgumentType::Identifier);
-        $minValue   = new Argument(1, ArgumentType::Value);
-        $maxValue   = new Argument(10, ArgumentType::Value);
+        $identifier = Argument::identifier('foo.bar');
+        $minValue   = Argument::value(1);
+        $maxValue   = Argument::value(10);
 
         $expressionData = $predicate->getExpressionData();
 
@@ -289,10 +289,10 @@ final class PredicateTest extends TestCase
             ->and
             ->equalTo('baz.bat', 'foo');
 
-        $identifier1 = new Argument('foo.bar', ArgumentType::Identifier);
-        $identifier2 = new Argument('bar.baz', ArgumentType::Identifier);
-        $identifier3 = new Argument('baz.bat', ArgumentType::Identifier);
-        $expression3 = new Argument('foo', ArgumentType::Value);
+        $identifier1 = Argument::identifier('foo.bar');
+        $identifier2 = Argument::identifier('bar.baz');
+        $identifier3 = Argument::identifier('baz.bat');
+        $expression3 = Argument::value('foo');
 
         $expressionData = $predicate->getExpressionData();
 
@@ -318,10 +318,10 @@ final class PredicateTest extends TestCase
             ->equalTo('baz.bat', 'foo')
             ->unnest();
 
-        $identifier1 = new Argument('foo.bar', ArgumentType::Identifier);
-        $identifier2 = new Argument('bar.baz', ArgumentType::Identifier);
-        $identifier3 = new Argument('baz.bat', ArgumentType::Identifier);
-        $expression3 = new Argument('foo', ArgumentType::Value);
+        $identifier1 = Argument::identifier('foo.bar');
+        $identifier2 = Argument::identifier('bar.baz');
+        $identifier3 = Argument::identifier('baz.bat');
+        $expression3 = Argument::value('foo');
 
         $expressionData = $predicate->getExpressionData();
 
@@ -341,7 +341,7 @@ final class PredicateTest extends TestCase
     public function testExpression(): void
     {
         $predicate = new Predicate();
-        $value     = new Argument(0, ArgumentType::Value);
+        $value     = Argument::value(0);
 
         // is chainable
         self::assertSame($predicate, $predicate->expression('foo = ?', 0));
@@ -387,7 +387,7 @@ final class PredicateTest extends TestCase
         $predicate = new Predicate();
         $predicate->expression('foo = ?', 'bar');
 
-        $expression     = new Argument('bar', ArgumentType::Value);
+        $expression     = Argument::value('bar');
         $expressionData = $predicate->getExpressionData();
 
         // with parameter
@@ -398,7 +398,7 @@ final class PredicateTest extends TestCase
         $predicate = new Predicate();
         $predicate->expression('foo = ?', 0);
 
-        $expression     = new Argument(0, ArgumentType::Value);
+        $expression     = Argument::value(0);
         $expressionData = $predicate->getExpressionData();
 
         // with parameter

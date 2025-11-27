@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace PhpDbTest\Sql\Predicate;
 
-use PhpDb\Sql\Argument;
-use PhpDb\Sql\ArgumentType;
+use PhpDb\Sql\Argument\Argument;
+use PhpDb\Sql\Argument\ArgumentInterface;
+use PhpDb\Sql\Argument\ArgumentType;
 use PhpDb\Sql\Exception\InvalidArgumentException;
 use PhpDb\Sql\Predicate\Operator;
 use PHPUnit\Framework\Attributes\CoversMethod;
@@ -40,32 +41,32 @@ final class OperatorTest extends TestCase
         self::assertEquals(Operator::OP_GTE, $operator->getOperator());
 
         $left = $operator->getLeft();
-        self::assertInstanceOf(Argument::class, $left);
+        self::assertInstanceOf(ArgumentInterface::class, $left);
         self::assertEquals('bar', $left->getValue());
         self::assertEquals(ArgumentType::Identifier, $left->getType());
 
         $right = $operator->getRight();
-        self::assertInstanceOf(Argument::class, $right);
+        self::assertInstanceOf(ArgumentInterface::class, $right);
         self::assertEquals('foo.bar', $right->getValue());
         self::assertEquals(ArgumentType::Value, $right->getType());
 
-        $operator = new Operator(['bar' => ArgumentType::Value], '>=', ['foo.bar' => ArgumentType::Identifier]);
+        $operator = new Operator(Argument::value('bar'), '>=', Argument::identifier('foo.bar'));
         self::assertEquals(Operator::OP_GTE, $operator->getOperator());
 
         $left = $operator->getLeft();
-        self::assertInstanceOf(Argument::class, $left);
+        self::assertInstanceOf(ArgumentInterface::class, $left);
         self::assertEquals('bar', $left->getValue());
         self::assertEquals(ArgumentType::Value, $left->getType());
 
         $right = $operator->getRight();
-        self::assertInstanceOf(Argument::class, $right);
+        self::assertInstanceOf(ArgumentInterface::class, $right);
         self::assertEquals('foo.bar', $right->getValue());
         self::assertEquals(ArgumentType::Identifier, $right->getType());
 
         $operator = new Operator('bar', '>=', 0);
 
         $right = $operator->getRight();
-        self::assertInstanceOf(Argument::class, $right);
+        self::assertInstanceOf(ArgumentInterface::class, $right);
         self::assertEquals(0, $right->getValue());
         self::assertEquals(ArgumentType::Value, $right->getType());
     }
@@ -82,7 +83,7 @@ final class OperatorTest extends TestCase
 
         // Verify the first mutation occurred
         $left1 = $operator->getLeft();
-        self::assertInstanceOf(Argument::class, $left1);
+        self::assertInstanceOf(ArgumentInterface::class, $left1);
         self::assertEquals('foo.bar', $left1->getValue());
         self::assertEquals(ArgumentType::Identifier, $left1->getType());
 
@@ -91,7 +92,7 @@ final class OperatorTest extends TestCase
 
         // Verify the instance was actually mutated
         $left2 = $operator->getLeft();
-        self::assertInstanceOf(Argument::class, $left2);
+        self::assertInstanceOf(ArgumentInterface::class, $left2);
         self::assertEquals('baz.qux', $left2->getValue());
         self::assertEquals(ArgumentType::Identifier, $left2->getType());
     }
@@ -108,16 +109,16 @@ final class OperatorTest extends TestCase
 
         // Verify the first mutation occurred
         $right1 = $operator->getRight();
-        self::assertInstanceOf(Argument::class, $right1);
+        self::assertInstanceOf(ArgumentInterface::class, $right1);
         self::assertEquals('bar', $right1->getValue());
         self::assertEquals(ArgumentType::Value, $right1->getType());
 
-        // Second mutation - with explicit type (Identifier)
-        $operator->setRight('bar', ArgumentType::Identifier);
+        // Second mutation - with explicit type (Identifier) using factory
+        $operator->setRight(Argument::identifier('bar'));
 
         // Verify the instance was actually mutated (same value, different type)
         $right2 = $operator->getRight();
-        self::assertInstanceOf(Argument::class, $right2);
+        self::assertInstanceOf(ArgumentInterface::class, $right2);
         self::assertEquals('bar', $right2->getValue());
         self::assertEquals(ArgumentType::Identifier, $right2->getType());
 
@@ -126,7 +127,7 @@ final class OperatorTest extends TestCase
 
         // Verify the instance was mutated again
         $right3 = $operator->getRight();
-        self::assertInstanceOf(Argument::class, $right3);
+        self::assertInstanceOf(ArgumentInterface::class, $right3);
         self::assertEquals('qux', $right3->getValue());
         self::assertEquals(ArgumentType::Value, $right3->getType());
     }
@@ -142,9 +143,9 @@ final class OperatorTest extends TestCase
     {
         $operator = new Operator();
         $operator
-            ->setLeft('foo', ArgumentType::Value)
+            ->setLeft(Argument::value('foo'))
             ->setOperator('>=')
-            ->setRight('foo.bar', ArgumentType::Identifier);
+            ->setRight(Argument::identifier('foo.bar'));
 
         $expressionData = $operator->getExpressionData();
 
@@ -156,12 +157,12 @@ final class OperatorTest extends TestCase
         self::assertCount(2, $values);
 
         // Verify left argument
-        self::assertInstanceOf(Argument::class, $values[0]);
+        self::assertInstanceOf(ArgumentInterface::class, $values[0]);
         self::assertEquals('foo', $values[0]->getValue());
         self::assertEquals(ArgumentType::Value, $values[0]->getType());
 
         // Verify right argument
-        self::assertInstanceOf(Argument::class, $values[1]);
+        self::assertInstanceOf(ArgumentInterface::class, $values[1]);
         self::assertEquals('foo.bar', $values[1]->getValue());
         self::assertEquals(ArgumentType::Identifier, $values[1]->getType());
     }
