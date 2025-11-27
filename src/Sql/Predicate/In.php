@@ -6,28 +6,34 @@ namespace PhpDb\Sql\Predicate;
 
 use Override;
 use PhpDb\Sql\AbstractExpression;
-use PhpDb\Sql\Argument;
-use PhpDb\Sql\ArgumentType;
+use PhpDb\Sql\Argument\Argument;
+use PhpDb\Sql\Argument\ArgumentInterface;
+use PhpDb\Sql\Argument\IdentifierArgument;
+use PhpDb\Sql\Argument\SelectArgument;
+use PhpDb\Sql\Argument\ValuesArgument;
 use PhpDb\Sql\Exception\InvalidArgumentException;
 use PhpDb\Sql\ExpressionData;
 use PhpDb\Sql\Select;
 
+use function array_fill;
+use function count;
+use function implode;
+use function is_array;
+use function sprintf;
 use function vsprintf;
 
 class In extends AbstractExpression implements PredicateInterface
 {
-    protected ?Argument $identifier = null;
-
-    protected ?Argument $valueSet = null;
-
-    protected string $specification = '%s IN %s';
+    protected ?ArgumentInterface $identifier = null;
+    protected ?ArgumentInterface $valueSet   = null;
+    protected string $specification          = '%s IN %s';
 
     /**
      * Constructor
      */
     public function __construct(
-        null|float|int|string|array|Argument $identifier = null,
-        null|array|Select|Argument $valueSet = null
+        null|string|ArgumentInterface $identifier = null,
+        null|array|Select|ArgumentInterface $valueSet = null
     ) {
         if ($identifier !== null) {
             $this->setIdentifier($identifier);
@@ -43,11 +49,11 @@ class In extends AbstractExpression implements PredicateInterface
      *
      * @return $this Provides a fluent interface
      */
-    public function setIdentifier(
-        null|string|int|float|array|Argument $value,
-        ArgumentType $type = ArgumentType::Identifier
-    ): static {
-        $this->identifier = $value instanceof Argument ? $value : new Argument($value, $type);
+    public function setIdentifier(string|ArgumentInterface $identifier): static
+    {
+        $this->identifier = $identifier instanceof ArgumentInterface
+            ? $identifier
+            : Argument::identifier($identifier);
 
         return $this;
     }
@@ -55,7 +61,7 @@ class In extends AbstractExpression implements PredicateInterface
     /**
      * Get identifier of comparison
      */
-    public function getIdentifier(): ?Argument
+    public function getIdentifier(): ?ArgumentInterface
     {
         return $this->identifier;
     }
@@ -65,9 +71,15 @@ class In extends AbstractExpression implements PredicateInterface
      *
      * @return $this Provides a fluent interface
      */
-    public function setValueSet(array|Select|Argument $valueSet): static
+    public function setValueSet(array|Select|ArgumentInterface $valueSet): static
     {
-        $this->valueSet = $valueSet instanceof Argument ? $valueSet : new Argument($valueSet);
+        if ($valueSet instanceof ArgumentInterface) {
+            $this->valueSet = $valueSet;
+        } elseif ($valueSet instanceof Select) {
+            $this->valueSet = Argument::select($valueSet);
+        } else {
+            $this->valueSet = Argument::values($valueSet);
+        }
 
         return $this;
     }
@@ -75,7 +87,7 @@ class In extends AbstractExpression implements PredicateInterface
     /**
      * Gets set of values in IN comparison
      */
-    public function getValueSet(): ?Argument
+    public function getValueSet(): ?ArgumentInterface
     {
         return $this->valueSet;
     }
@@ -86,17 +98,20 @@ class In extends AbstractExpression implements PredicateInterface
     #[Override]
     public function getExpressionData(): ExpressionData
     {
-        if (! $this->identifier instanceof Argument) {
+        if (! $this->identifier instanceof ArgumentInterface) {
             throw new InvalidArgumentException('Identifier must be specified');
         }
 
-        if (! $this->valueSet instanceof Argument) {
+        if (! $this->valueSet instanceof ArgumentInterface) {
             throw new InvalidArgumentException('Value set must be provided for IN predicate');
         }
 
+        $identifierSpec = $this->getIdentifierSpecification();
+        $valueSetSpec   = $this->getValueSetSpecification();
+
         $specification = vsprintf($this->specification, [
-            $this->identifier->getSpecification(),
-            $this->valueSet->getSpecification(),
+            $identifierSpec,
+            $valueSetSpec,
         ]);
 
         return new ExpressionData(
@@ -106,5 +121,46 @@ class In extends AbstractExpression implements PredicateInterface
                 $this->valueSet,
             ]
         );
+    }
+
+    /**
+     * Build specification string for identifier
+     */
+    protected function getIdentifierSpecification(): string
+    {
+        if ($this->identifier instanceof IdentifierArgument) {
+            return '%s';
+        }
+
+        // Handle array identifiers for multi-column IN: (col1, col2) IN ...
+        $value = $this->identifier->getValue();
+        if (is_array($value)) {
+            $count = count($value);
+            return $count > 0
+                ? sprintf('(%s)', implode(', ', array_fill(0, $count, '%s')))
+                : '(NULL)';
+        }
+
+        return '%s';
+    }
+
+    /**
+     * Build specification string for value set
+     */
+    protected function getValueSetSpecification(): string
+    {
+        if ($this->valueSet instanceof SelectArgument) {
+            return '%s';
+        }
+
+        if ($this->valueSet instanceof ValuesArgument) {
+            $values = $this->valueSet->getValue();
+            $count  = count($values);
+            return $count > 0
+                ? sprintf('(%s)', implode(', ', array_fill(0, $count, '%s')))
+                : '(NULL)';
+        }
+
+        return '%s';
     }
 }

@@ -6,12 +6,12 @@ namespace PhpDb\Sql\Predicate;
 
 use Override;
 use PhpDb\Sql\AbstractExpression;
-use PhpDb\Sql\Argument;
-use PhpDb\Sql\ArgumentType;
+use PhpDb\Sql\Argument\Argument;
+use PhpDb\Sql\Argument\ArgumentInterface;
 use PhpDb\Sql\Exception\InvalidArgumentException;
-use PhpDb\Sql\Expression;
 use PhpDb\Sql\ExpressionData;
-use PhpDb\Sql\Select;
+use PhpDb\Sql\ExpressionInterface;
+use PhpDb\Sql\SqlInterface;
 
 class Operator extends AbstractExpression implements PredicateInterface
 {
@@ -39,19 +39,17 @@ class Operator extends AbstractExpression implements PredicateInterface
 
     public const OP_GTE = '>=';
 
-    protected ?Argument $left = null;
-
-    protected ?Argument $right = null;
-
-    protected string $operator = self::OPERATOR_EQUAL_TO;
+    protected ?ArgumentInterface $left  = null;
+    protected ?ArgumentInterface $right = null;
+    protected string $operator          = self::OPERATOR_EQUAL_TO;
 
     /**
      * Constructor
      */
     public function __construct(
-        null|bool|string|int|float|array|Argument|Expression|Select $left = null,
+        null|string|ArgumentInterface|ExpressionInterface|SqlInterface $left = null,
         string $operator = self::OPERATOR_EQUAL_TO,
-        null|bool|string|int|float|array|Argument|Expression|Select $right = null
+        null|bool|string|int|float|ArgumentInterface|ExpressionInterface|SqlInterface $right = null
     ) {
         if ($left !== null) {
             $this->setLeft($left);
@@ -69,7 +67,7 @@ class Operator extends AbstractExpression implements PredicateInterface
     /**
      * Get left side of operator
      */
-    public function getLeft(): ?Argument
+    public function getLeft(): ?ArgumentInterface
     {
         return $this->left;
     }
@@ -79,11 +77,15 @@ class Operator extends AbstractExpression implements PredicateInterface
      *
      * @return $this Provides a fluent interface
      */
-    public function setLeft(
-        null|bool|string|int|float|array|Expression|Select|Argument $left,
-        ArgumentType $type = ArgumentType::Identifier
-    ): static {
-        $this->left = $left instanceof Argument ? $left : new Argument($left, $type);
+    public function setLeft(string|ArgumentInterface|ExpressionInterface|SqlInterface $left): static
+    {
+        if ($left instanceof ArgumentInterface) {
+            $this->left = $left;
+        } elseif ($left instanceof ExpressionInterface || $left instanceof SqlInterface) {
+            $this->left = Argument::select($left);
+        } else {
+            $this->left = Argument::identifier($left);
+        }
 
         return $this;
     }
@@ -111,7 +113,7 @@ class Operator extends AbstractExpression implements PredicateInterface
     /**
      * Get right side of operator
      */
-    public function getRight(): ?Argument
+    public function getRight(): ?ArgumentInterface
     {
         return $this->right;
     }
@@ -121,11 +123,15 @@ class Operator extends AbstractExpression implements PredicateInterface
      *
      * @return $this Provides a fluent interface
      */
-    public function setRight(
-        null|bool|string|int|float|array|Expression|Select|Argument $right,
-        ArgumentType $type = ArgumentType::Value
-    ): static {
-        $this->right = $right instanceof Argument ? $right : new Argument($right, $type);
+    public function setRight(null|bool|string|int|float|ArgumentInterface|ExpressionInterface|SqlInterface $right): static
+    {
+        if ($right instanceof ArgumentInterface) {
+            $this->right = $right;
+        } elseif ($right instanceof ExpressionInterface || $right instanceof SqlInterface) {
+            $this->right = Argument::select($right);
+        } else {
+            $this->right = Argument::value($right);
+        }
 
         return $this;
     }
@@ -136,11 +142,11 @@ class Operator extends AbstractExpression implements PredicateInterface
     #[Override]
     public function getExpressionData(): ExpressionData
     {
-        if (! $this->left instanceof Argument) {
+        if (! $this->left instanceof ArgumentInterface) {
             throw new InvalidArgumentException('Left expression must be specified');
         }
 
-        if (! $this->right instanceof Argument) {
+        if (! $this->right instanceof ArgumentInterface) {
             throw new InvalidArgumentException('Right expression must be specified');
         }
 

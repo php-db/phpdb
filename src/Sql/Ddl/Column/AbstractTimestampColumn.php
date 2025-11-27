@@ -5,8 +5,7 @@ declare(strict_types=1);
 namespace PhpDb\Sql\Ddl\Column;
 
 use Override;
-use PhpDb\Sql\Argument;
-use PhpDb\Sql\ArgumentType;
+use PhpDb\Sql\Argument\Argument;
 use PhpDb\Sql\ExpressionData;
 
 /**
@@ -24,7 +23,7 @@ abstract class AbstractTimestampColumn extends Column
             $expressionData
                 ->getExpressionPart(0)
                 ->addSpecification('%s')
-                ->addValue(new Argument('ON UPDATE CURRENT_TIMESTAMP', ArgumentType::Literal));
+                ->addValue(Argument::literal('ON UPDATE CURRENT_TIMESTAMP'));
         }
 
         return $expressionData;

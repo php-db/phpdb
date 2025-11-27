@@ -5,8 +5,7 @@ declare(strict_types=1);
 namespace PhpDb\Sql\Ddl\Constraint;
 
 use Override;
-use PhpDb\Sql\Argument;
-use PhpDb\Sql\ArgumentType;
+use PhpDb\Sql\Argument\Argument;
 use PhpDb\Sql\ExpressionData;
 use PhpDb\Sql\ExpressionInterface;
 use PhpDb\Sql\ExpressionPart;
@@ -39,12 +38,12 @@ class Check extends AbstractConstraint
 
         if ($this->name !== '') {
             $expressionPart->addSpecification($this->namedSpecification);
-            $expressionPart->addValue(new Argument($this->name, ArgumentType::Identifier));
+            $expressionPart->addValue(Argument::identifier($this->name));
         }
 
         if ($this->expression !== '') {
             $expressionPart->addSpecification($this->specification);
-            $expressionPart->addValue(new Argument($this->expression, ArgumentType::Literal));
+            $expressionPart->addValue(Argument::literal($this->expression));
         }
 
         return new ExpressionData($expressionPart);

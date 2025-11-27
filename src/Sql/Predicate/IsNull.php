@@ -6,8 +6,8 @@ namespace PhpDb\Sql\Predicate;
 
 use Override;
 use PhpDb\Sql\AbstractExpression;
-use PhpDb\Sql\Argument;
-use PhpDb\Sql\ArgumentType;
+use PhpDb\Sql\Argument\Argument;
+use PhpDb\Sql\Argument\ArgumentInterface;
 use PhpDb\Sql\Exception\InvalidArgumentException;
 use PhpDb\Sql\ExpressionData;
 
@@ -15,12 +15,12 @@ class IsNull extends AbstractExpression implements PredicateInterface
 {
     protected string $specification = '%1$s IS NULL';
 
-    protected ?Argument $identifier = null;
+    protected ?ArgumentInterface $identifier = null;
 
     /**
      * Constructor
      */
-    public function __construct(null|float|int|string|array|Argument $identifier = null)
+    public function __construct(null|string|ArgumentInterface $identifier = null)
     {
         if ($identifier !== null) {
             $this->setIdentifier($identifier);
@@ -32,18 +32,19 @@ class IsNull extends AbstractExpression implements PredicateInterface
      *
      * @return $this Provides a fluent interface
      */
-    public function setIdentifier(
-        null|string|int|float|array|Argument $value,
-        ArgumentType $type = ArgumentType::Identifier
-    ): static {
-        $this->identifier = $value instanceof Argument ? $value : new Argument($value, $type);
+    public function setIdentifier(string|ArgumentInterface $identifier): static
+    {
+        $this->identifier = $identifier instanceof ArgumentInterface
+            ? $identifier
+            : Argument::identifier($identifier);
+
         return $this;
     }
 
     /**
      * Get identifier of comparison
      */
-    public function getIdentifier(): ?Argument
+    public function getIdentifier(): ?ArgumentInterface
     {
         return $this->identifier;
     }
@@ -56,6 +57,7 @@ class IsNull extends AbstractExpression implements PredicateInterface
     public function setSpecification(string $specification): static
     {
         $this->specification = $specification;
+
         return $this;
     }
 
@@ -73,7 +75,7 @@ class IsNull extends AbstractExpression implements PredicateInterface
     #[Override]
     public function getExpressionData(): ExpressionData
     {
-        if (! $this->identifier instanceof Argument) {
+        if (! $this->identifier instanceof ArgumentInterface) {
             throw new InvalidArgumentException('Identifier must be specified');
         }
 

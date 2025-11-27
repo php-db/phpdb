@@ -5,8 +5,7 @@ declare(strict_types=1);
 namespace PhpDb\Sql\Ddl\Constraint;
 
 use Override;
-use PhpDb\Sql\Argument;
-use PhpDb\Sql\ArgumentType;
+use PhpDb\Sql\Argument\Argument;
 use PhpDb\Sql\ExpressionData;
 
 use function array_fill;
@@ -132,7 +131,7 @@ class ForeignKey extends AbstractConstraint
         $expressionPart = $expressionData->getExpressionPart(0);
         $expressionPart
             ->addSpecification($this->referenceSpecification[0])
-            ->addValue(new Argument($this->referenceTable, ArgumentType::Identifier));
+            ->addValue(Argument::identifier($this->referenceTable));
 
         if ($colCount !== 0) {
             $expressionPart->addSpecification(sprintf(
@@ -140,14 +139,14 @@ class ForeignKey extends AbstractConstraint
                 implode(', ', array_fill(0, $colCount, '%s'))
             ));
             foreach ($this->referenceColumn as $column) {
-                $expressionPart->addValue(new Argument($column, ArgumentType::Identifier));
+                $expressionPart->addValue(Argument::identifier($column));
             }
         }
 
         $expressionPart
             ->addSpecification($this->referenceSpecification[1])
-            ->addValue(new Argument($this->onDeleteRule, ArgumentType::Literal))
-            ->addValue(new Argument($this->onUpdateRule, ArgumentType::Literal));
+            ->addValue(Argument::literal($this->onDeleteRule))
+            ->addValue(Argument::literal($this->onUpdateRule));
 
         return $expressionData;
     }
