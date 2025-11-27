@@ -119,9 +119,6 @@ abstract class AbstractSource implements MetadataInterface
         return $tables;
     }
 
-    /**
-     * {}
-     */
     #[Override]
     public function getTable(string $tableName, ?string $schema = null): TableObject|ViewObject
     {
@@ -197,9 +194,7 @@ abstract class AbstractSource implements MetadataInterface
         return $views;
     }
 
-    /**
-     * {}
-     */
+
     #[Override]
     public function getView(string $viewName, ?string $schema = null): ViewObject|TableObject
     {
@@ -217,9 +212,6 @@ abstract class AbstractSource implements MetadataInterface
         throw new Exception('View "' . $viewName . '" does not exist');
     }
 
-    /**
-     * {}
-     */
     #[Override]
     public function getColumnNames(string $table, ?string $schema = null): array
     {
@@ -256,9 +248,6 @@ abstract class AbstractSource implements MetadataInterface
         return $columns;
     }
 
-    /**
-     * {}
-     */
     #[Override]
     public function getColumn(string $columnName, string $table, ?string $schema = null): ColumnObject
     {
@@ -310,9 +299,6 @@ abstract class AbstractSource implements MetadataInterface
         return $constraints;
     }
 
-    /**
-     * {}
-     */
     #[Override]
     public function getConstraint(
         string $constraintName,
@@ -427,9 +413,6 @@ abstract class AbstractSource implements MetadataInterface
         return $triggers;
     }
 
-    /**
-     * {}
-     */
     #[Override]
     public function getTrigger(string $triggerName, ?string $schema = null): TriggerObject
     {
