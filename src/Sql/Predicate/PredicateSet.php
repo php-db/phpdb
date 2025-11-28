@@ -10,6 +10,7 @@ use Override;
 use PhpDb\Sql\Exception;
 use PhpDb\Sql\Expression;
 use PhpDb\Sql\ExpressionData;
+use PhpDb\Sql\ExpressionInterface;
 use PhpDb\Sql\ExpressionPart;
 use PhpDb\Sql\Predicate\Expression as PredicateExpression;
 use ReturnTypeWillChange;
@@ -130,6 +131,12 @@ class PredicateSet implements PredicateInterface, Countable
                 } elseif ($pvalue instanceof PredicateInterface) {
                     // Predicate type is ok
                     $predicate = $pvalue;
+                } elseif ($pvalue instanceof ExpressionInterface) {
+                    // Wrap ExpressionInterface in a Predicate\Expression
+                    $predicate = new PredicateExpression(
+                        $pvalue->getExpression(),
+                        $pvalue->getParameters()
+                    );
                 } else {
                     $predicate = str_contains($pvalue, Expression::PLACEHOLDER)
                         ? new Expression($pvalue) : new Literal($pvalue);
