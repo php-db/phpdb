@@ -5,6 +5,8 @@ parameters:
     paths:
         - src
         - test
+    excludePaths:
+        - test/benchmark
     universalObjectCratesClasses:
         - Laminas\Stdlib\ArrayObject
     stubFiles:
