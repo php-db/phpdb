@@ -167,15 +167,15 @@ final class PredicateSetTest extends TestCase
     }
 
     /**
-     * Test that ExpressionInterface objects (not just PredicateInterface) can be added via addPredicates
+     * Test that Expression objects (not just PredicateInterface) can be added via addPredicates
      *
      * @throws ReflectionException
      */
-    public function testAddPredicatesWithExpressionInterface(): void
+    public function testAddPredicatesWithExpression(): void
     {
         $predicateSet = new PredicateSet();
 
-        // Add a SqlExpression (ExpressionInterface) - not a Predicate\Expression (PredicateInterface)
+        // Add a SqlExpression (Expression) - not a Predicate\Expression (PredicateInterface)
         $predicateSet->addPredicates([
             new SqlExpression('COUNT(?) > ?', [Argument::identifier('id'), Argument::value(5)]),
         ]);
@@ -194,11 +194,11 @@ final class PredicateSetTest extends TestCase
     }
 
     /**
-     * Test multiple ExpressionInterface objects with different combinations
+     * Test multiple Expression objects with different combinations
      *
      * @throws ReflectionException
      */
-    public function testAddPredicatesWithMultipleExpressionInterfaces(): void
+    public function testAddPredicatesWithMultipleExpressions(): void
     {
         $predicateSet = new PredicateSet();
 
