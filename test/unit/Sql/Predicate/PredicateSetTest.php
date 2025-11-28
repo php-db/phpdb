@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace PhpDbTest\Sql\Predicate;
 
+use PhpDb\Sql\Argument;
+use PhpDb\Sql\Expression as SqlExpression;
 use PhpDb\Sql\Predicate\Expression;
 use PhpDb\Sql\Predicate\In;
 use PhpDb\Sql\Predicate\IsNotNull;
@@ -162,5 +164,53 @@ final class PredicateSetTest extends TestCase
         $this->expectException(TypeError::class);
         /** @noinspection PhpStrictTypeCheckingInspection */
         $predicateSet->addPredicates(null);
+    }
+
+    /**
+     * Test that ExpressionInterface objects (not just PredicateInterface) can be added via addPredicates
+     *
+     * @throws ReflectionException
+     */
+    public function testAddPredicatesWithExpressionInterface(): void
+    {
+        $predicateSet = new PredicateSet();
+
+        // Add a SqlExpression (ExpressionInterface) - not a Predicate\Expression (PredicateInterface)
+        $predicateSet->addPredicates([
+            new SqlExpression('COUNT(?) > ?', [Argument::identifier('id'), Argument::value(5)]),
+        ]);
+
+        $predicates = (array) $this->readAttribute($predicateSet, 'predicates');
+        self::assertCount(1, $predicates);
+
+        self::assertIsArray($predicates[0]);
+        self::assertEquals('AND', $predicates[0][0]);
+        // Should be wrapped in a Predicate\Expression
+        self::assertInstanceOf(Expression::class, $predicates[0][1]);
+
+        // Verify the expression data is preserved
+        $expressionData = $predicateSet->getExpressionData();
+        self::assertStringContainsString('COUNT', $expressionData->getExpressionSpecification());
+    }
+
+    /**
+     * Test multiple ExpressionInterface objects with different combinations
+     *
+     * @throws ReflectionException
+     */
+    public function testAddPredicatesWithMultipleExpressionInterfaces(): void
+    {
+        $predicateSet = new PredicateSet();
+
+        $predicateSet->addPredicates([
+            new SqlExpression('SUM(?) > ?', [Argument::identifier('amount'), Argument::value(100)]),
+            new SqlExpression('AVG(?) < ?', [Argument::identifier('price'), Argument::value(50)]),
+        ]);
+
+        $predicates = (array) $this->readAttribute($predicateSet, 'predicates');
+        self::assertCount(2, $predicates);
+
+        self::assertInstanceOf(Expression::class, $predicates[0][1]);
+        self::assertInstanceOf(Expression::class, $predicates[1][1]);
     }
 }

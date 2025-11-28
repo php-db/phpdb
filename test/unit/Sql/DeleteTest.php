@@ -7,7 +7,9 @@ namespace PhpDbTest\Sql;
 use Override;
 use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\Driver\StatementInterface;
+use PhpDb\Sql\Argument;
 use PhpDb\Sql\Delete;
+use PhpDb\Sql\Expression as SqlExpression;
 use PhpDb\Sql\Predicate\Expression;
 use PhpDb\Sql\Predicate\In;
 use PhpDb\Sql\Predicate\IsNotNull;
@@ -22,6 +24,7 @@ use PhpDbTest\DeprecatedAssertionsTrait;
 use PhpDbTest\TestAsset\DeleteIgnore;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\CoversNothing;
+use PHPUnit\Framework\Attributes\TestDox;
 use PHPUnit\Framework\TestCase;
 use ReflectionException;
 
@@ -283,5 +286,18 @@ final class DeleteTest extends TestCase
         $this->delete->from('foo');
         // Empty where should not add WHERE clause
         self::assertEquals('DELETE FROM "foo"', $this->delete->getSqlString());
+    }
+
+    #[TestDox('unit test: Test where() accepts Expression (ExpressionInterface) in array')]
+    public function testWhereAcceptsExpressionInterface(): void
+    {
+        $this->delete->from('foo')
+            ->where([
+                new SqlExpression('COUNT(?) > ?', [Argument::identifier('id'), Argument::value(5)]),
+            ]);
+
+        $where = $this->delete->getRawState('where');
+        self::assertInstanceOf(Where::class, $where);
+        self::assertEquals(1, $where->count());
     }
 }

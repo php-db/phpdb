@@ -582,6 +582,35 @@ final class SelectTest extends TestCase
         self::assertSame($having, $select->getRawState('having'));
     }
 
+    #[TestDox('unit test: Test where() accepts Expression (ExpressionInterface) in array')]
+    public function testWhereAcceptsExpressionInterface(): void
+    {
+        $select = new Select();
+        $select->from('foo')
+            ->where([
+                new Expression('COUNT(?) > ?', [Argument::identifier('id'), Argument::value(5)]),
+            ]);
+
+        $where = $select->getRawState('where');
+        self::assertInstanceOf(Where::class, $where);
+        self::assertEquals(1, $where->count());
+    }
+
+    #[TestDox('unit test: Test having() accepts Expression (ExpressionInterface) in array')]
+    public function testHavingAcceptsExpressionInterface(): void
+    {
+        $select = new Select();
+        $select->from('foo')
+            ->group('category')
+            ->having([
+                new Expression('SUM(?) > ?', [Argument::identifier('amount'), Argument::value(100)]),
+            ]);
+
+        $having = $select->getRawState('having');
+        self::assertInstanceOf(Having::class, $having);
+        self::assertEquals(1, $having->count());
+    }
+
     #[TestDox('unit test: Test combine() returns same Select object (is chainable)')]
     public function testCombine(): void
     {

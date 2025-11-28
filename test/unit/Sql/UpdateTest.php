@@ -9,6 +9,7 @@ use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\Driver\StatementInterface;
 use PhpDb\Adapter\ParameterContainer;
 use PhpDb\Sql\AbstractPreparableSql;
+use PhpDb\Sql\Argument;
 use PhpDb\Sql\Exception\InvalidArgumentException;
 use PhpDb\Sql\Expression;
 use PhpDb\Sql\Join;
@@ -485,5 +486,19 @@ final class UpdateTest extends TestCase
 
         $sql = $this->update->getSqlString(new TrustingSql92Platform());
         self::assertStringContainsString('JOIN "schema"."bar"', $sql);
+    }
+
+    #[TestDox('unit test: Test where() accepts Expression (ExpressionInterface) in array')]
+    public function testWhereAcceptsExpressionInterface(): void
+    {
+        $this->update->table('foo')
+            ->set(['bar' => 'baz'])
+            ->where([
+                new Expression('COUNT(?) > ?', [Argument::identifier('id'), Argument::value(5)]),
+            ]);
+
+        $where = $this->update->getRawState('where');
+        self::assertInstanceOf(Where::class, $where);
+        self::assertEquals(1, $where->count());
     }
 }
