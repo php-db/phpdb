@@ -5,10 +5,9 @@ declare(strict_types=1);
 namespace PhpDb\Sql;
 
 use PhpDb\Adapter\Driver\DriverInterface;
-use PhpDb\Adapter\Driver\Pdo\Pdo;
+use PhpDb\Adapter\Driver\PdoDriverInterface;
 use PhpDb\Adapter\ParameterContainer;
 use PhpDb\Adapter\Platform\PlatformInterface;
-use PhpDb\Sql\TableIdentifier;
 
 use function array_combine;
 use function array_flip;
@@ -18,7 +17,6 @@ use function array_map;
 use function array_values;
 use function count;
 use function implode;
-use function is_array;
 use function is_scalar;
 use function range;
 use function sprintf;
@@ -104,12 +102,6 @@ class Insert extends AbstractPreparableSql
             return $this;
         }
 
-        if (! is_array($values)) {
-            throw new Exception\InvalidArgumentException(
-                'values() expects an array of values or PhpDb\Sql\Select instance'
-            );
-        }
-
         if ($this->select !== null && $flag === self::VALUES_MERGE) {
             throw new Exception\InvalidArgumentException(
                 'An array of values cannot be provided with the merge flag when a PhpDb\Sql\Select'
@@ -152,10 +144,8 @@ class Insert extends AbstractPreparableSql
 
     /**
      * Get raw state
-     *
-     * @param string $key
      */
-    public function getRawState($key = null): TableIdentifier|string|array
+    public function getRawState(?string $key = null): TableIdentifier|string|array
     {
         $rawState = [
             'table'   => $this->table,
@@ -187,7 +177,7 @@ class Insert extends AbstractPreparableSql
             if (is_scalar($value) && $parameterContainer) {
                 // use incremental value instead of column name for PDO
                 // @see https://github.com/zendframework/zend-db/issues/35
-                if ($driver instanceof Pdo) {
+                if ($driver instanceof PdoDriverInterface) {
                     $column = 'c_' . $i++;
                 }
 
@@ -237,13 +227,10 @@ class Insert extends AbstractPreparableSql
      * Overloading: variable setting
      *
      * Proxies to values, using VALUES_MERGE strategy
-     *
-     * @return $this Provides a fluent interface
      */
-    public function __set(string $name, mixed $value)
+    public function __set(string $name, mixed $value): void
     {
         $this->columns[$name] = $value;
-        return $this;
     }
 
     /**

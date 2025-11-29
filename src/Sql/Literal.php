@@ -10,9 +10,7 @@ use function str_replace;
 
 class Literal implements ExpressionInterface
 {
-    protected string $literal = '';
-
-    public function __construct(string $literal = '')
+    public function __construct(protected string $literal = '')
     {
         $this->literal = $literal;
     }
