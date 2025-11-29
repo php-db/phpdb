@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace PhpDb\Sql;
 
 use Override;
+use PhpDb\Sql\Argument\Select as SelectArgument;
+use PhpDb\Sql\Argument\Value;
+use PhpDb\Sql\Argument\Values;
 
 use function array_slice;
 use function array_unique;
@@ -81,11 +84,11 @@ class Expression extends AbstractExpression
 
         foreach ($parameters as $parameter) {
             if (is_array($parameter)) {
-                $parameter = Argument::values($parameter);
+                $parameter = new Values($parameter);
             } elseif ($parameter instanceof ExpressionInterface) {
-                $parameter = Argument::select($parameter);
+                $parameter = new SelectArgument($parameter);
             } elseif (! $parameter instanceof ArgumentInterface) {
-                $parameter = Argument::value($parameter);
+                $parameter = new Value($parameter);
             }
 
             $this->parameters[] = $parameter;

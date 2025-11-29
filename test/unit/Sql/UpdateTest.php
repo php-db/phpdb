@@ -9,7 +9,8 @@ use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\Driver\StatementInterface;
 use PhpDb\Adapter\ParameterContainer;
 use PhpDb\Sql\AbstractPreparableSql;
-use PhpDb\Sql\Argument;
+use PhpDb\Sql\Argument\Identifier;
+use PhpDb\Sql\Argument\Value;
 use PhpDb\Sql\Exception\InvalidArgumentException;
 use PhpDb\Sql\Expression;
 use PhpDb\Sql\Join;
@@ -161,7 +162,7 @@ final class UpdateTest extends TestCase
         });
 
         $this->expectException(TypeError::class);
-        /** @psalm-suppress NullArgument - Ensure exception is thrown */
+        /** @noinspection PhpStrictTypeCheckingInspection */
         $this->update->where(null);
     }
 
@@ -494,7 +495,7 @@ final class UpdateTest extends TestCase
         $this->update->table('foo')
             ->set(['bar' => 'baz'])
             ->where([
-                new Expression('COUNT(?) > ?', [Argument::identifier('id'), Argument::value(5)]),
+                new Expression('COUNT(?) > ?', [new Identifier('id'), new Value(5)]),
             ]);
 
         $where = $this->update->getRawState('where');

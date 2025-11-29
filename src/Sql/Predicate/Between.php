@@ -7,7 +7,8 @@ namespace PhpDb\Sql\Predicate;
 use LogicException;
 use Override;
 use PhpDb\Sql\AbstractExpression;
-use PhpDb\Sql\Argument;
+use PhpDb\Sql\Argument\Identifier;
+use PhpDb\Sql\Argument\Value;
 use PhpDb\Sql\ArgumentInterface;
 use PhpDb\Sql\ExpressionData;
 
@@ -51,7 +52,7 @@ class Between extends AbstractExpression implements PredicateInterface
     {
         $this->identifier = $identifier instanceof ArgumentInterface
             ? $identifier
-            : Argument::identifier($identifier);
+            : new Identifier($identifier);
 
         return $this;
     }
@@ -73,7 +74,7 @@ class Between extends AbstractExpression implements PredicateInterface
     {
         $this->minValue = $minValue instanceof ArgumentInterface
             ? $minValue
-            : Argument::value($minValue);
+            : new Value($minValue);
 
         return $this;
     }
@@ -95,7 +96,7 @@ class Between extends AbstractExpression implements PredicateInterface
     {
         $this->maxValue = $maxValue instanceof ArgumentInterface
             ? $maxValue
-            : Argument::value($maxValue);
+            : new Value($maxValue);
 
         return $this;
     }

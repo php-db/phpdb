@@ -9,6 +9,8 @@ use PhpDb\Adapter\Driver\StatementInterface;
 use PhpDb\Adapter\ParameterContainer;
 use PhpDb\Adapter\Platform\Sql92;
 use PhpDb\Sql\Argument;
+use PhpDb\Sql\Argument\Identifier;
+use PhpDb\Sql\Argument\Value;
 use PhpDb\Sql\Exception\InvalidArgumentException;
 use PhpDb\Sql\Expression;
 use PhpDb\Sql\ExpressionInterface;
@@ -269,7 +271,7 @@ final class SelectTest extends TestCase
         /** @var Where $where */
         $where      = $select->getRawState('where');
         $predicates = $where->getPredicates();
-        $expression = Argument::value(5);
+        $expression = new Value(5);
 
         self::assertCount(1, $predicates);
         self::assertIsArray($predicates[0]);
@@ -286,10 +288,10 @@ final class SelectTest extends TestCase
         $select = new Select();
         $select->where(['name' => 'Ralph', 'age' => 33]);
 
-        $identifier1 = Argument::identifier('name');
-        $expression1 = Argument::value('Ralph');
-        $identifier2 = Argument::identifier('age');
-        $expression2 = Argument::value(33);
+        $identifier1 = new Identifier('name');
+        $expression1 = new Value('Ralph');
+        $identifier2 = new Identifier('age');
+        $expression2 = new Value(33);
 
         /** @var Where $where */
         $where      = $select->getRawState('where');
@@ -588,7 +590,7 @@ final class SelectTest extends TestCase
         $select = new Select();
         $select->from('foo')
             ->where([
-                new Expression('COUNT(?) > ?', [Argument::identifier('id'), Argument::value(5)]),
+                new Expression('COUNT(?) > ?', [new Identifier('id'), Argument::value(5)]),
             ]);
 
         $where = $select->getRawState('where');
@@ -1574,6 +1576,6 @@ final class SelectTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Not a valid magic property for this object');
         /** @noinspection ALL */
-        $value = $select->invalidProperty;
+        $value = $select->invalidProperty; /** @phpstan-ignore-line */
     }
 }

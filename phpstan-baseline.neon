@@ -733,12 +733,6 @@ parameters:
 			path: test/unit/Sql/Platform/PlatformTest.php
 
 		-
-			message: '#^Access to an undefined property PhpDb\\Sql\\Select\:\:\$invalidProperty\.$#'
-			identifier: property.notFound
-			count: 1
-			path: test/unit/Sql/SelectTest.php
-
-		-
 			message: '#^Static call to instance method PhpDbTest\\Sql\\AbstractSqlFunctionalTestCase\:\:createColumn\(\)\.$#'
 			identifier: method.staticCall
 			count: 2

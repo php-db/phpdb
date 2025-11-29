@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace PhpDb\Sql\Ddl\Constraint;
 
 use Override;
-use PhpDb\Sql\Argument;
+use PhpDb\Sql\Argument\Identifier;
 use PhpDb\Sql\ExpressionData;
 use PhpDb\Sql\ExpressionPart;
 
@@ -82,7 +82,7 @@ abstract class AbstractConstraint implements ConstraintInterface
 
         if ($this->name !== '') {
             $expressionPart->addSpecification($this->namedSpecification);
-            $expressionPart->addValue(Argument::identifier($this->name));
+            $expressionPart->addValue(new Identifier($this->name));
         }
 
         if ($this->specification !== '') {
@@ -95,7 +95,7 @@ abstract class AbstractConstraint implements ConstraintInterface
             $columnSpecification = sprintf($this->columnSpecification, implode(', ', $columnSpecification));
             $expressionPart->addSpecification($columnSpecification);
             for ($i = 0; $i < $columnCount; $i++) {
-                $expressionPart->addValue(Argument::identifier($this->columns[$i]));
+                $expressionPart->addValue(new Identifier($this->columns[$i]));
             }
         }
 

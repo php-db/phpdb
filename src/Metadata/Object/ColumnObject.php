@@ -107,7 +107,6 @@ class ColumnObject
     }
 
     /**
-     * @param int|null $ordinalPosition to set
      * @return $this Provides a fluent interface
      */
     public function setOrdinalPosition(?int $ordinalPosition): static
@@ -125,7 +124,6 @@ class ColumnObject
     }
 
     /**
-     * @param null|string|int|bool $columnDefault to set
      * @return $this Provides a fluent interface
      */
     public function setColumnDefault(null|string|int|bool $columnDefault): static
@@ -143,7 +141,6 @@ class ColumnObject
     }
 
     /**
-     * @param bool $isNullable to set
      * @return $this Provides a fluent interface
      */
     public function setIsNullable(?bool $isNullable): static
@@ -161,7 +158,6 @@ class ColumnObject
     }
 
     /**
-     * @param string $dataType the $dataType to set
      * @return $this Provides a fluent interface
      */
     public function setDataType(string $dataType): static
@@ -179,7 +175,6 @@ class ColumnObject
     }
 
     /**
-     * @param int|null $characterMaximumLength the $characterMaximumLength to set
      * @return $this Provides a fluent interface
      */
     public function setCharacterMaximumLength(?int $characterMaximumLength): static
@@ -197,7 +192,6 @@ class ColumnObject
     }
 
     /**
-     * @param int|null $characterOctetLength the $characterOctetLength to set
      * @return $this Provides a fluent interface
      */
     public function setCharacterOctetLength(?int $characterOctetLength): static
@@ -215,7 +209,6 @@ class ColumnObject
     }
 
     /**
-     * @param int|null $numericPrecision the $numericPrevision to set
      * @return $this Provides a fluent interface
      */
     public function setNumericPrecision(?int $numericPrecision): static
@@ -233,7 +226,6 @@ class ColumnObject
     }
 
     /**
-     * @param int|null $numericScale the $numericScale to set
      * @return $this Provides a fluent interface
      */
     public function setNumericScale(?int $numericScale): static

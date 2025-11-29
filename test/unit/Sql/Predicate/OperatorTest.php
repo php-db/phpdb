@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace PhpDbTest\Sql\Predicate;
 
-use PhpDb\Sql\Argument;
+use PhpDb\Sql\Argument\Identifier;
+use PhpDb\Sql\Argument\Value;
 use PhpDb\Sql\ArgumentInterface;
 use PhpDb\Sql\ArgumentType;
 use PhpDb\Sql\Exception\InvalidArgumentException;
@@ -50,7 +51,7 @@ final class OperatorTest extends TestCase
         self::assertEquals('foo.bar', $right->getValue());
         self::assertEquals(ArgumentType::Value, $right->getType());
 
-        $operator = new Operator(Argument::value('bar'), '>=', Argument::identifier('foo.bar'));
+        $operator = new Operator(new Value('bar'), '>=', new Identifier('foo.bar'));
         self::assertEquals(Operator::OP_GTE, $operator->getOperator());
 
         $left = $operator->getLeft();
@@ -114,7 +115,7 @@ final class OperatorTest extends TestCase
         self::assertEquals(ArgumentType::Value, $right1->getType());
 
         // Second mutation - with explicit type (Identifier) using factory
-        $operator->setRight(Argument::identifier('bar'));
+        $operator->setRight(new Identifier('bar'));
 
         // Verify the instance was actually mutated (same value, different type)
         $right2 = $operator->getRight();
@@ -143,9 +144,9 @@ final class OperatorTest extends TestCase
     {
         $operator = new Operator();
         $operator
-            ->setLeft(Argument::value('foo'))
+            ->setLeft(new Value('foo'))
             ->setOperator('>=')
-            ->setRight(Argument::identifier('foo.bar'));
+            ->setRight(new Identifier('foo.bar'));
 
         $expressionData = $operator->getExpressionData();
 

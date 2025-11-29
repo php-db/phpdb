@@ -6,7 +6,7 @@ namespace PhpDb\Sql\Predicate;
 
 use Override;
 use PhpDb\Sql\AbstractExpression;
-use PhpDb\Sql\Argument;
+use PhpDb\Sql\Argument\Identifier;
 use PhpDb\Sql\ArgumentInterface;
 use PhpDb\Sql\Exception\InvalidArgumentException;
 use PhpDb\Sql\ExpressionData;
@@ -36,7 +36,7 @@ class IsNull extends AbstractExpression implements PredicateInterface
     {
         $this->identifier = $identifier instanceof ArgumentInterface
             ? $identifier
-            : Argument::identifier($identifier);
+            : new Identifier($identifier);
 
         return $this;
     }

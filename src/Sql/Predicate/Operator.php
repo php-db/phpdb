@@ -7,6 +7,8 @@ namespace PhpDb\Sql\Predicate;
 use Override;
 use PhpDb\Sql\AbstractExpression;
 use PhpDb\Sql\Argument;
+use PhpDb\Sql\Argument\Identifier;
+use PhpDb\Sql\Argument\Select;
 use PhpDb\Sql\ArgumentInterface;
 use PhpDb\Sql\Exception\InvalidArgumentException;
 use PhpDb\Sql\ExpressionData;
@@ -82,9 +84,9 @@ class Operator extends AbstractExpression implements PredicateInterface
         if ($left instanceof ArgumentInterface) {
             $this->left = $left;
         } elseif ($left instanceof ExpressionInterface || $left instanceof SqlInterface) {
-            $this->left = Argument::select($left);
+            $this->left = new Select($left);
         } else {
-            $this->left = Argument::identifier($left);
+            $this->left = new Identifier($left);
         }
 
         return $this;
@@ -129,7 +131,7 @@ class Operator extends AbstractExpression implements PredicateInterface
         if ($right instanceof ArgumentInterface) {
             $this->right = $right;
         } elseif ($right instanceof ExpressionInterface || $right instanceof SqlInterface) {
-            $this->right = Argument::select($right);
+            $this->right = new Select($right);
         } else {
             $this->right = Argument::value($right);
         }

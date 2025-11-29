@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace PhpDb\Sql\Ddl\Index;
 
 use Override;
-use PhpDb\Sql\Argument;
+use PhpDb\Sql\Argument\Identifier;
 use PhpDb\Sql\ExpressionData;
 use PhpDb\Sql\ExpressionPart;
 
@@ -34,12 +34,12 @@ class Index extends AbstractIndex
 
         $expressionPart = new ExpressionPart();
         $expressionPart
-            ->addValue(Argument::identifier($this->name));
+            ->addValue(new Identifier($this->name));
 
         $specification = [];
         for ($i = 0; $i < $colCount; $i++) {
             $specPart = '%s';
-            $expressionPart->addValue(Argument::identifier($this->columns[$i]));
+            $expressionPart->addValue(new Identifier($this->columns[$i]));
 
             if (isset($this->lengths[$i])) {
                 $specPart .= sprintf('(%s)', $this->lengths[$i]);

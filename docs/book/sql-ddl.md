@@ -157,25 +157,24 @@ implement `PhpDb\Sql\Ddl\Column\ColumnInterface`.
 
 In alphabetical order:
 
-| Type             | Arguments For Construction                                                            |
-|------------------|---------------------------------------------------------------------------------------|
-| BigInteger       | `$name`, `$nullable = false`, `$default = null`, `array $options = array()`           |
-| Binary           | `$name`, `$length`, `nullable = false`, `$default = null`, `array $options = array()` |
-| Blob             | `$name`, `$length`, `nullable = false`, `$default = null`, `array $options = array()` |
-| Boolean          | `$name`                                                                               |
-| Char             | `$name`, `length`                                                                     |
-| Column (generic) | `$name = null`                                                                        |
-| Date             | `$name`                                                                               |
-| DateTime         | `$name`                                                                               |
-| Decimal          | `$name`, `$precision`, `$scale = null`                                                |
-| Float            | `$name`, `$digits`, `$decimal` (Note: this class is deprecated; use Floating instead) |
-| Floating         | `$name`, `$digits`, `$decimal`                                                        |
-| Integer          | `$name`, `$nullable = false`, `default = null`, `array $options = array()`            |
-| Text             | `$name`, `$length`, `nullable = false`, `$default = null`, `array $options = array()` |
-| Time             | `$name`                                                                               |
-| Timestamp        | `$name`                                                                               |
-| Varbinary        | `$name`, `$length`                                                                    |
-| Varchar          | `$name`, `$length`                                                                    |
+| Type             | Arguments For Construction                                                                             |
+|------------------|--------------------------------------------------------------------------------------------------------|
+| BigInteger       | `string $name`, `bool $nullable = false`, `mixed $default = null`, `array $options = []`               |
+| Binary           | `string $name`, `?int $length = null`, `bool $nullable = false`, `mixed $default = null`, `array $options = []` |
+| Blob             | `string $name`, `?int $length = null`, `bool $nullable = false`, `mixed $default = null`, `array $options = []` |
+| Boolean          | `string $name`, `bool $nullable = false`, `mixed $default = null`, `array $options = []`               |
+| Char             | `string $name`, `?int $length = null`, `bool $nullable = false`, `mixed $default = null`, `array $options = []` |
+| Column (generic) | `string $name = ''`, `bool $nullable = false`, `mixed $default = null`, `array $options = []`          |
+| Date             | `string $name`, `bool $nullable = false`, `mixed $default = null`, `array $options = []`               |
+| Datetime         | `string $name`, `bool $nullable = false`, `mixed $default = null`, `array $options = []`               |
+| Decimal          | `string $name`, `?int $digits = null`, `?int $decimal = null`, `bool $nullable = false`, `mixed $default = null`, `array $options = []` |
+| Floating         | `string $name`, `?int $digits = null`, `?int $decimal = null`, `bool $nullable = false`, `mixed $default = null`, `array $options = []` |
+| Integer          | `string $name`, `bool $nullable = false`, `mixed $default = null`, `array $options = []`               |
+| Text             | `string $name`, `?int $length = null`, `bool $nullable = false`, `mixed $default = null`, `array $options = []` |
+| Time             | `string $name`, `bool $nullable = false`, `mixed $default = null`, `array $options = []`               |
+| Timestamp        | `string $name`, `bool $nullable = false`, `mixed $default = null`, `array $options = []`               |
+| Varbinary        | `string $name`, `?int $length = null`, `bool $nullable = false`, `mixed $default = null`, `array $options = []` |
+| Varchar          | `string $name`, `?int $length = null`, `bool $nullable = false`, `mixed $default = null`, `array $options = []` |
 
 Each of the above types can be utilized in any place that accepts a `Column\ColumnInterface`
 instance. Currently, this is primarily in `CreateTable::addColumn()` and `AlterTable`'s
@@ -188,13 +187,13 @@ must implement `PhpDb\Sql\Ddl\Constraint\ConstraintInterface`.
 
 In alphabetical order:
 
-| Type       | Arguments For Construction                                                                                |
-|------------|-----------------------------------------------------------------------------------------------------------|
-| Check      | `$expression`, `$name`                                                                                    |
-| ForeignKey | `$name`, `$column`, `$referenceTable`, `$referenceColumn`, `$onDeleteRule = null`, `$onUpdateRule = null` |
-| PrimaryKey | `$columns`                                                                                                |
-| UniqueKey  | `$column`, `$name = null`                                                                                 |
+| Type       | Arguments For Construction                                                                                                                    |
+|------------|-----------------------------------------------------------------------------------------------------------------------------------------------|
+| Check      | `string\|ExpressionInterface $expression`, `?string $name`                                                                                    |
+| ForeignKey | `string $name`, `string\|array $columns`, `string $referenceTable`, `array\|string\|null $referenceColumn`, `?string $onDeleteRule = null`, `?string $onUpdateRule = null` |
+| PrimaryKey | `null\|array\|string $columns = null`, `?string $name = null`                                                                                 |
+| UniqueKey  | `null\|array\|string $columns = null`, `?string $name = null`                                                                                 |
 
 Each of the above types can be utilized in any place that accepts a
-`Column\ConstraintInterface` instance. Currently, this is primarily in
+`Constraint\ConstraintInterface` instance. Currently, this is primarily in
 `CreateTable::addConstraint()` and `AlterTable::addConstraint()`.

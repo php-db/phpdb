@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace PhpDbTest\Sql\Ddl\Column;
 
-use PhpDb\Sql\Argument;
+use PhpDb\Sql\Argument\Identifier;
+use PhpDb\Sql\Argument\Literal;
 use PhpDb\Sql\Ddl\Column\Time;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
@@ -20,8 +21,8 @@ final class TimeTest extends TestCase
 
         self::assertEquals('%s %s NOT NULL', $expressionData->getExpressionSpecification());
         self::assertEquals([
-            Argument::identifier('foo'),
-            Argument::literal('TIME'),
+            new Identifier('foo'),
+            new Literal('TIME'),
         ], $expressionData->getExpressionValues());
     }
 }

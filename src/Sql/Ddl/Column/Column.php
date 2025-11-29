@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace PhpDb\Sql\Ddl\Column;
 
 use Override;
-use PhpDb\Sql\Argument;
+use PhpDb\Sql\Argument\Identifier;
+use PhpDb\Sql\Argument\Literal;
+use PhpDb\Sql\Argument\Value;
 use PhpDb\Sql\Ddl\Constraint\ConstraintInterface;
 use PhpDb\Sql\ExpressionData;
 use PhpDb\Sql\ExpressionPart;
@@ -126,8 +128,8 @@ class Column implements ColumnInterface
         $expressionPart = new ExpressionPart();
         $expressionPart->setSpecification($this->specification);
         $expressionPart->setValues([
-            Argument::identifier($this->name),
-            Argument::literal($this->type),
+            new Identifier($this->name),
+            new Literal($this->type),
         ]);
 
         if ($this->isNullable === false) {
@@ -139,7 +141,7 @@ class Column implements ColumnInterface
         if ($this->default !== null) {
             $expressionPart = new ExpressionPart();
             $expressionPart->addSpecification('DEFAULT %s');
-            $expressionPart->addValue(Argument::value($this->default));
+            $expressionPart->addValue(new Value($this->default));
             $expressionData->addExpressionPart($expressionPart);
         }
 

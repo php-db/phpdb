@@ -9,7 +9,7 @@ use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\ParameterContainer;
 use PhpDb\Adapter\StatementContainer;
 use PhpDb\Sql\AbstractSql;
-use PhpDb\Sql\Argument;
+use PhpDb\Sql\Argument\Identifier;
 use PhpDb\Sql\Expression;
 use PhpDb\Sql\ExpressionInterface;
 use PhpDb\Sql\Predicate;
@@ -74,7 +74,7 @@ final class AbstractSqlTest extends TestCase
      */
     public function testProcessExpressionWithoutParameterContainer(): void
     {
-        $expression   = new Expression('? > ? AND y < ?', [Argument::identifier('x'), 5, 10]);
+        $expression   = new Expression('? > ? AND y < ?', [new Identifier('x'), 5, 10]);
         $sqlAndParams = $this->invokeProcessExpressionMethod($expression);
 
         self::assertEquals("\"x\" > '5' AND y < '10'", $sqlAndParams);
@@ -86,7 +86,7 @@ final class AbstractSqlTest extends TestCase
     public function testProcessExpressionWithParameterContainerAndParameterizationTypeNamed(): void
     {
         $parameterContainer = new ParameterContainer();
-        $expression         = new Expression('? > ? AND y < ?', [Argument::identifier('x'), 5, 10]);
+        $expression         = new Expression('? > ? AND y < ?', [new Identifier('x'), 5, 10]);
         $sqlAndParams       = $this->invokeProcessExpressionMethod($expression, $parameterContainer);
 
         $parameters = $parameterContainer->getNamedArray();

@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace PhpDbTest\Sql;
 
 use PhpDb\Sql\Argument;
+use PhpDb\Sql\Argument\Identifier;
+use PhpDb\Sql\Argument\Literal;
+use PhpDb\Sql\Argument\Value;
 use PhpDb\Sql\Exception\InvalidArgumentException;
 use PhpDb\Sql\Exception\RuntimeException;
 use PhpDb\Sql\Expression;
@@ -72,13 +75,13 @@ final class ExpressionTest extends TestCase
         self::assertSame($expression, $result);
 
         // Verify the first mutation occurred
-        self::assertEquals([Argument::value('foo')], $expression->getParameters());
+        self::assertEquals([new Value('foo')], $expression->getParameters());
 
         // Second mutation to verify mutability (setParameters appends)
         $expression->setParameters('bar');
 
         // Verify the instance was actually mutated (now has both parameters)
-        self::assertEquals([Argument::value('foo'), Argument::value('bar')], $expression->getParameters());
+        self::assertEquals([new Value('foo'), new Value('bar')], $expression->getParameters());
     }
 
     public function testGetExpressionData(): void
@@ -96,9 +99,9 @@ final class ExpressionTest extends TestCase
 
         self::assertEquals('X SAME AS %s AND Y = %s BUT LITERALLY %s', $expressionData->getExpressionSpecification());
         self::assertEquals([
-            Argument::identifier('foo'),
-            Argument::value(5),
-            Argument::literal('FUNC(FF%X)'),
+            new Identifier('foo'),
+            new Value(5),
+            new Literal('FUNC(FF%X)'),
         ], $expressionData->getExpressionValues());
     }
 
@@ -129,7 +132,7 @@ final class ExpressionTest extends TestCase
     public function testNumberOfReplacementsConsidersWhenSameVariableIsUsedManyTimes(): void
     {
         $expression = new Expression('uf.user_id = :user_id OR uf.friend_id = :user_id', ['user_id' => 1]);
-        $value      = Argument::value(1);
+        $value      = new Value(1);
 
         $expressionData = $expression->getExpressionData();
 

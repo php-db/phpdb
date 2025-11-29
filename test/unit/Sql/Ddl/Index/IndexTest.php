@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace PhpDbTest\Sql\Ddl\Index;
 
 use PhpDb\Sql\Argument;
+use PhpDb\Sql\Argument\Identifier;
 use PhpDb\Sql\Ddl\Index\Index;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
@@ -21,8 +22,8 @@ final class IndexTest extends TestCase
 
         self::assertEquals('INDEX %s(%s)', $expressionData->getExpressionSpecification());
         self::assertEquals([
-            Argument::identifier('my_uk'),
-            Argument::identifier('foo'),
+            new Identifier('my_uk'),
+            new Identifier('foo'),
         ], $expressionData->getExpressionValues());
     }
 
@@ -34,9 +35,9 @@ final class IndexTest extends TestCase
 
         self::assertEquals('INDEX %s(%s(10), %s(5))', $expressionData->getExpressionSpecification());
         self::assertEquals([
-            Argument::identifier('my_uk'),
-            Argument::identifier('foo'),
-            Argument::identifier('bar'),
+            new Identifier('my_uk'),
+            new Identifier('foo'),
+            new Identifier('bar'),
         ], $expressionData->getExpressionValues());
     }
 
@@ -48,8 +49,8 @@ final class IndexTest extends TestCase
 
         self::assertEquals('INDEX %s(%s(10), %s)', $expressionData->getExpressionSpecification());
         self::assertEquals([
-            Argument::identifier('my_uk'),
-            Argument::identifier('foo'),
+            new Identifier('my_uk'),
+            new Identifier('foo'),
             Argument::identifier('bar'),
         ], $expressionData->getExpressionValues());
     }

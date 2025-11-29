@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace PhpDbTest\Sql\Ddl\Column;
 
-use PhpDb\Sql\Argument;
+use PhpDb\Sql\Argument\Identifier;
+use PhpDb\Sql\Argument\Literal;
 use PhpDb\Sql\Ddl\Column\Char;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
@@ -20,9 +21,9 @@ final class CharTest extends TestCase
 
         self::assertEquals('%s %s(%s) NOT NULL', $expressionData->getExpressionSpecification());
         self::assertEquals([
-            Argument::identifier('foo'),
-            Argument::literal('CHAR'),
-            Argument::literal('20'),
+            new Identifier('foo'),
+            new Literal('CHAR'),
+            new Literal('20'),
         ], $expressionData->getExpressionValues());
     }
 }

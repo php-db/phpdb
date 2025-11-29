@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace PhpDbTest\Sql\Ddl\Column;
 
-use PhpDb\Sql\Argument;
+use PhpDb\Sql\Argument\Identifier;
+use PhpDb\Sql\Argument\Literal;
 use PhpDb\Sql\Ddl\Column\AbstractLengthColumn;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\MockObject\Exception;
@@ -55,9 +56,9 @@ final class AbstractLengthColumnTest extends TestCase
 
         self::assertEquals('%s %s(%s) NOT NULL', $expressionData->getExpressionSpecification());
         self::assertEquals([
-            Argument::identifier('foo'),
-            Argument::literal('INTEGER'),
-            Argument::literal('4'),
+            new Identifier('foo'),
+            new Literal('INTEGER'),
+            new Literal('4'),
         ], $expressionData->getExpressionValues());
     }
 }

@@ -6,7 +6,6 @@ namespace PhpDb\Sql\Predicate;
 
 use Override;
 use PhpDb\Sql\AbstractExpression;
-use PhpDb\Sql\Argument;
 use PhpDb\Sql\Argument\Identifier;
 use PhpDb\Sql\Argument\Identifiers;
 use PhpDb\Sql\Argument\Select as ArgumentSelect;
@@ -53,7 +52,7 @@ class In extends AbstractExpression implements PredicateInterface
     {
         $this->identifier = $identifier instanceof ArgumentInterface
             ? $identifier
-            : Argument::identifier($identifier);
+            : new Identifier($identifier);
 
         return $this;
     }
@@ -76,9 +75,9 @@ class In extends AbstractExpression implements PredicateInterface
         if ($valueSet instanceof ArgumentInterface) {
             $this->valueSet = $valueSet;
         } elseif ($valueSet instanceof Select) {
-            $this->valueSet = Argument::select($valueSet);
+            $this->valueSet = new ArgumentSelect($valueSet);
         } else {
-            $this->valueSet = Argument::values($valueSet);
+            $this->valueSet = new Values($valueSet);
         }
 
         return $this;

@@ -7,7 +7,8 @@ namespace PhpDbTest\Sql;
 use Override;
 use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\Driver\StatementInterface;
-use PhpDb\Sql\Argument;
+use PhpDb\Sql\Argument\Identifier;
+use PhpDb\Sql\Argument\Value;
 use PhpDb\Sql\Delete;
 use PhpDb\Sql\Expression as SqlExpression;
 use PhpDb\Sql\Predicate\Expression;
@@ -264,7 +265,6 @@ final class DeleteTest extends TestCase
     {
         /** @noinspection PhpUndefinedFieldInspection */
         self::assertNull($this->delete->unknown); // @phpstan-ignore-line
-        /** @noinspection ALL */
         self::assertNull($this->delete->table); // @phpstan-ignore-line
     }
 
@@ -293,7 +293,7 @@ final class DeleteTest extends TestCase
     {
         $this->delete->from('foo')
             ->where([
-                new SqlExpression('COUNT(?) > ?', [Argument::identifier('id'), Argument::value(5)]),
+                new SqlExpression('COUNT(?) > ?', [new Identifier('id'), new Value(5)]),
             ]);
 
         $where = $this->delete->getRawState('where');

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace PhpDb\Sql\Ddl\Column;
 
 use Override;
-use PhpDb\Sql\Argument;
+use PhpDb\Sql\Argument\Literal;
 use PhpDb\Sql\ExpressionData;
 
 abstract class AbstractLengthColumn extends Column
@@ -54,7 +54,7 @@ abstract class AbstractLengthColumn extends Column
         if ($this->getLengthExpression() !== '' && $this->getLengthExpression() !== '0') {
             $expressionData
                 ->getExpressionPart(0)
-                ->addValue(Argument::literal($this->getLengthExpression()));
+                ->addValue(new Literal($this->getLengthExpression()));
         }
 
         return $expressionData;

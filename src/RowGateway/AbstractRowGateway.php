@@ -95,11 +95,7 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
         return $this;
     }
 
-    /**
-     * @param mixed $array
-     * @return AbstractRowGateway
-     */
-    public function exchangeArray($array): static
+    public function exchangeArray(array $array): static
     {
         return $this->populate($array, true);
     }
