@@ -12,19 +12,19 @@ use function array_key_exists;
 
 class AlterTable extends AbstractSql implements SqlInterface
 {
-    public const ADD_COLUMNS = 'addColumns';
+    final public const ADD_COLUMNS = 'addColumns';
 
-    public const ADD_CONSTRAINTS = 'addConstraints';
+    final public const ADD_CONSTRAINTS = 'addConstraints';
 
-    public const CHANGE_COLUMNS = 'changeColumns';
+    final public const CHANGE_COLUMNS = 'changeColumns';
 
-    public const DROP_COLUMNS = 'dropColumns';
+    final public const DROP_COLUMNS = 'dropColumns';
 
-    public const DROP_CONSTRAINTS = 'dropConstraints';
+    final public const DROP_CONSTRAINTS = 'dropConstraints';
 
-    public const DROP_INDEXES = 'dropIndexes';
+    final public const DROP_INDEXES = 'dropIndexes';
 
-    public const TABLE = 'table';
+    final public const TABLE = 'table';
 
     protected array $addColumns = [];
 

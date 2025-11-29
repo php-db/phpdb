@@ -24,7 +24,7 @@ class Expression extends AbstractExpression
     /**
      * @const
      */
-    public const PLACEHOLDER = '?';
+    final public const PLACEHOLDER = '?';
 
     protected string $expression = '';
 

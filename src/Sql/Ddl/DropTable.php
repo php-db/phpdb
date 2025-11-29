@@ -10,7 +10,7 @@ use PhpDb\Sql\TableIdentifier;
 
 class DropTable extends AbstractSql implements SqlInterface
 {
-    public const TABLE = 'table';
+    final public const TABLE = 'table';
 
     protected array $specifications = [
         self::TABLE => 'DROP TABLE %1$s',

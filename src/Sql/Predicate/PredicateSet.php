@@ -25,13 +25,13 @@ use function str_contains;
 
 class PredicateSet implements PredicateInterface, Countable
 {
-    public const COMBINED_BY_AND = 'AND';
+    final public const COMBINED_BY_AND = 'AND';
 
-    public const OP_AND = 'AND';
+    final public const OP_AND = 'AND';
 
-    public const COMBINED_BY_OR = 'OR';
+    final public const COMBINED_BY_OR = 'OR';
 
-    public const OP_OR = 'OR';
+    final public const OP_OR = 'OR';
 
     protected string $defaultCombination = self::COMBINED_BY_AND;
 

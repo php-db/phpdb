@@ -31,17 +31,17 @@ class Update extends AbstractPreparableSql
     /**@#++
      * @const
      */
-    public const SPECIFICATION_UPDATE = 'update';
+    final public const SPECIFICATION_UPDATE = 'update';
 
-    public const SPECIFICATION_SET = 'set';
+    final public const SPECIFICATION_SET = 'set';
 
-    public const SPECIFICATION_WHERE = 'where';
+    final public const SPECIFICATION_WHERE = 'where';
 
-    public const SPECIFICATION_JOIN = 'joins';
+    final public const SPECIFICATION_JOIN = 'joins';
 
-    public const VALUES_MERGE = 'merge';
+    final public const VALUES_MERGE = 'merge';
 
-    public const VALUES_SET = 'set';
+    final public const VALUES_SET = 'set';
 
     /**@#-**/
 

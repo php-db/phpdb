@@ -24,9 +24,9 @@ class Delete extends AbstractPreparableSql
     /**@#+
      * @const
      */
-    public const SPECIFICATION_DELETE = 'delete';
+    final public const SPECIFICATION_DELETE = 'delete';
 
-    public const SPECIFICATION_WHERE = 'where';
+    final public const SPECIFICATION_WHERE = 'where';
 
     /**@#-*/
 

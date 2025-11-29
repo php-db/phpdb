@@ -43,59 +43,59 @@ class Select extends AbstractPreparableSql
      *
      * @const
      */
-    public const SELECT = 'select';
+    final public const SELECT = 'select';
 
-    public const QUANTIFIER = 'quantifier';
+    final public const QUANTIFIER = 'quantifier';
 
-    public const COLUMNS = 'columns';
+    final public const COLUMNS = 'columns';
 
-    public const TABLE = 'table';
+    final public const TABLE = 'table';
 
-    public const JOINS = 'joins';
+    final public const JOINS = 'joins';
 
-    public const WHERE = 'where';
+    final public const WHERE = 'where';
 
-    public const GROUP = 'group';
+    final public const GROUP = 'group';
 
-    public const HAVING = 'having';
+    final public const HAVING = 'having';
 
-    public const ORDER = 'order';
+    final public const ORDER = 'order';
 
-    public const LIMIT = 'limit';
+    final public const LIMIT = 'limit';
 
-    public const OFFSET = 'offset';
+    final public const OFFSET = 'offset';
 
-    public const QUANTIFIER_DISTINCT = 'DISTINCT';
+    final public const QUANTIFIER_DISTINCT = 'DISTINCT';
 
-    public const QUANTIFIER_ALL = 'ALL';
+    final public const QUANTIFIER_ALL = 'ALL';
 
-    public const JOIN_INNER = Join::JOIN_INNER;
+    final public const JOIN_INNER = Join::JOIN_INNER;
 
-    public const JOIN_OUTER = Join::JOIN_OUTER;
+    final public const JOIN_OUTER = Join::JOIN_OUTER;
 
-    public const JOIN_FULL_OUTER = Join::JOIN_FULL_OUTER;
+    final public const JOIN_FULL_OUTER = Join::JOIN_FULL_OUTER;
 
-    public const JOIN_LEFT = Join::JOIN_LEFT;
+    final public const JOIN_LEFT = Join::JOIN_LEFT;
 
-    public const JOIN_RIGHT = Join::JOIN_RIGHT;
+    final public const JOIN_RIGHT = Join::JOIN_RIGHT;
 
-    public const JOIN_RIGHT_OUTER = Join::JOIN_RIGHT_OUTER;
+    final public const JOIN_RIGHT_OUTER = Join::JOIN_RIGHT_OUTER;
 
-    public const JOIN_LEFT_OUTER = Join::JOIN_LEFT_OUTER;
+    final public const JOIN_LEFT_OUTER = Join::JOIN_LEFT_OUTER;
 
-    public const SQL_STAR = '*';
+    final public const SQL_STAR = '*';
 
-    public const ORDER_ASCENDING = 'ASC';
+    final public const ORDER_ASCENDING = 'ASC';
 
-    public const ORDER_DESCENDING = 'DESC';
+    final public const ORDER_DESCENDING = 'DESC';
 
-    public const COMBINE = 'combine';
+    final public const COMBINE = 'combine';
 
-    public const COMBINE_UNION = 'union';
+    final public const COMBINE_UNION = 'union';
 
-    public const COMBINE_EXCEPT = 'except';
+    final public const COMBINE_EXCEPT = 'except';
 
-    public const COMBINE_INTERSECT = 'intersect';
+    final public const COMBINE_INTERSECT = 'intersect';
 
     /** @var string[]|array[] $specifications */
     protected array $specifications = [
