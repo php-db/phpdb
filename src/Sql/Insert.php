@@ -28,7 +28,7 @@ class Insert extends AbstractPreparableSql
      *
      * @const
      */
-    final public const SPECIFICATION_INSERT = 'insert';
+    public const SPECIFICATION_INSERT = 'insert';
 
     final public const SPECIFICATION_SELECT = 'select';
 

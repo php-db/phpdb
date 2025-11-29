@@ -145,24 +145,6 @@ parameters:
 			path: src/Sql/ExpressionData.php
 
 		-
-			message: '#^Call to function is_array\(\) with array will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: src/Sql/Insert.php
-
-		-
-			message: '#^Class PhpDb\\Adapter\\Driver\\Pdo\\Pdo not found\.$#'
-			identifier: class.notFound
-			count: 1
-			path: src/Sql/Insert.php
-
-		-
-			message: '#^Method PhpDb\\Sql\\Insert\:\:__set\(\) with return type void returns \$this\(PhpDb\\Sql\\Insert\) but should not return anything\.$#'
-			identifier: return.void
-			count: 1
-			path: src/Sql/Insert.php
-
-		-
 			message: '#^PHPDoc type array of property PhpDb\\Sql\\InsertIgnore\:\:\$specifications is not covariant with PHPDoc type array\<array\|string\> of overridden property PhpDb\\Sql\\Insert\:\:\$specifications\.$#'
 			identifier: property.phpDocType
 			count: 1
