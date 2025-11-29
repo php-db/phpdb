@@ -181,21 +181,21 @@ specify various select statement parts:
 ```php
 class Select extends AbstractPreparableSql implements SqlInterface, PreparableSqlInterface
 {
-    public const JOIN_INNER = 'inner';
-    public const JOIN_OUTER = 'outer';
-    public const JOIN_FULL_OUTER = 'full outer';
-    public const JOIN_LEFT = 'left';
-    public const JOIN_RIGHT = 'right';
-    public const JOIN_LEFT_OUTER = 'left outer';
-    public const JOIN_RIGHT_OUTER = 'right outer';
-    public const SQL_STAR = '*';
-    public const ORDER_ASCENDING = 'ASC';
-    public const ORDER_DESCENDING = 'DESC';
-    public const QUANTIFIER_DISTINCT = 'DISTINCT';
-    public const QUANTIFIER_ALL = 'ALL';
-    public const COMBINE_UNION = 'union';
-    public const COMBINE_EXCEPT = 'except';
-    public const COMBINE_INTERSECT = 'intersect';
+    final public const JOIN_INNER = 'inner';
+    final public const JOIN_OUTER = 'outer';
+    final public const JOIN_FULL_OUTER = 'full outer';
+    final public const JOIN_LEFT = 'left';
+    final public const JOIN_RIGHT = 'right';
+    final public const JOIN_LEFT_OUTER = 'left outer';
+    final public const JOIN_RIGHT_OUTER = 'right outer';
+    final public const SQL_STAR = '*';
+    final public const ORDER_ASCENDING = 'ASC';
+    final public const ORDER_DESCENDING = 'DESC';
+    final public const QUANTIFIER_DISTINCT = 'DISTINCT';
+    final public const QUANTIFIER_ALL = 'ALL';
+    final public const COMBINE_UNION = 'union';
+    final public const COMBINE_EXCEPT = 'except';
+    final public const COMBINE_INTERSECT = 'intersect';
 
     public Where $where;
     public Having $having;
@@ -406,8 +406,8 @@ The Insert API:
 ```php
 class Insert extends AbstractPreparableSql implements SqlInterface, PreparableSqlInterface
 {
-    public const VALUES_MERGE = 'merge';
-    public const VALUES_SET   = 'set';
+    final public const VALUES_MERGE = 'merge';
+    final public const VALUES_SET   = 'set';
 
     public function __construct(string|TableIdentifier|null $table = null);
     public function into(TableIdentifier|string|array $table) : static;
@@ -451,8 +451,8 @@ $insert->values(['col_2' => 'value2'], $insert::VALUES_MERGE);
 ```php
 class Update extends AbstractPreparableSql implements SqlInterface, PreparableSqlInterface
 {
-    public const VALUES_MERGE = 'merge';
-    public const VALUES_SET   = 'set';
+    final public const VALUES_MERGE = 'merge';
+    final public const VALUES_SET   = 'set';
 
     public Where $where;
 
@@ -751,7 +751,7 @@ The following is the `Expression` API:
 ```php
 class Expression implements ExpressionInterface, PredicateInterface
 {
-    public const PLACEHOLDER = '?';
+    final public const PLACEHOLDER = '?';
 
     public function __construct(
         string $expression = '',
