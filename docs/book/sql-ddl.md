@@ -157,24 +157,31 @@ implement `PhpDb\Sql\Ddl\Column\ColumnInterface`.
 
 In alphabetical order:
 
-| Type             | Arguments For Construction                                                                             |
-|------------------|--------------------------------------------------------------------------------------------------------|
-| BigInteger       | `string $name`, `bool $nullable = false`, `mixed $default = null`, `array $options = []`               |
-| Binary           | `string $name`, `?int $length = null`, `bool $nullable = false`, `mixed $default = null`, `array $options = []` |
-| Blob             | `string $name`, `?int $length = null`, `bool $nullable = false`, `mixed $default = null`, `array $options = []` |
-| Boolean          | `string $name`, `bool $nullable = false`, `mixed $default = null`, `array $options = []`               |
-| Char             | `string $name`, `?int $length = null`, `bool $nullable = false`, `mixed $default = null`, `array $options = []` |
-| Column (generic) | `string $name = ''`, `bool $nullable = false`, `mixed $default = null`, `array $options = []`          |
-| Date             | `string $name`, `bool $nullable = false`, `mixed $default = null`, `array $options = []`               |
-| Datetime         | `string $name`, `bool $nullable = false`, `mixed $default = null`, `array $options = []`               |
-| Decimal          | `string $name`, `?int $digits = null`, `?int $decimal = null`, `bool $nullable = false`, `mixed $default = null`, `array $options = []` |
-| Floating         | `string $name`, `?int $digits = null`, `?int $decimal = null`, `bool $nullable = false`, `mixed $default = null`, `array $options = []` |
-| Integer          | `string $name`, `bool $nullable = false`, `mixed $default = null`, `array $options = []`               |
-| Text             | `string $name`, `?int $length = null`, `bool $nullable = false`, `mixed $default = null`, `array $options = []` |
-| Time             | `string $name`, `bool $nullable = false`, `mixed $default = null`, `array $options = []`               |
-| Timestamp        | `string $name`, `bool $nullable = false`, `mixed $default = null`, `array $options = []`               |
-| Varbinary        | `string $name`, `?int $length = null`, `bool $nullable = false`, `mixed $default = null`, `array $options = []` |
-| Varchar          | `string $name`, `?int $length = null`, `bool $nullable = false`, `mixed $default = null`, `array $options = []` |
+- **BigInteger**: `$name`, `$nullable=false`, `$default=null`, `$options=[]`
+- **Binary**: `$name`, `$length=null`, `$nullable=false`, `$default=null`,
+  `$options=[]`
+- **Blob**: `$name`, `$length=null`, `$nullable=false`, `$default=null`,
+  `$options=[]`
+- **Boolean**: `$name`, `$nullable=false`, `$default=null`, `$options=[]`
+- **Char**: `$name`, `$length=null`, `$nullable=false`, `$default=null`,
+  `$options=[]`
+- **Column** (generic): `$name=''`, `$nullable=false`, `$default=null`,
+  `$options=[]`
+- **Date**: `$name`, `$nullable=false`, `$default=null`, `$options=[]`
+- **Datetime**: `$name`, `$nullable=false`, `$default=null`, `$options=[]`
+- **Decimal**: `$name`, `$digits=null`, `$decimal=null`, `$nullable`,
+  `$default`, `$options`
+- **Floating**: `$name`, `$digits=null`, `$decimal=null`, `$nullable`,
+  `$default`, `$options`
+- **Integer**: `$name`, `$nullable=false`, `$default=null`, `$options=[]`
+- **Text**: `$name`, `$length=null`, `$nullable=false`, `$default=null`,
+  `$options=[]`
+- **Time**: `$name`, `$nullable=false`, `$default=null`, `$options=[]`
+- **Timestamp**: `$name`, `$nullable=false`, `$default=null`, `$options=[]`
+- **Varbinary**: `$name`, `$length=null`, `$nullable=false`, `$default=null`,
+  `$options=[]`
+- **Varchar**: `$name`, `$length=null`, `$nullable=false`, `$default=null`,
+  `$options=[]`
 
 Each of the above types can be utilized in any place that accepts a `Column\ColumnInterface`
 instance. Currently, this is primarily in `CreateTable::addColumn()` and `AlterTable`'s
@@ -187,12 +194,11 @@ must implement `PhpDb\Sql\Ddl\Constraint\ConstraintInterface`.
 
 In alphabetical order:
 
-| Type       | Arguments For Construction                                                                                                                    |
-|------------|-----------------------------------------------------------------------------------------------------------------------------------------------|
-| Check      | `string\|ExpressionInterface $expression`, `?string $name`                                                                                    |
-| ForeignKey | `string $name`, `string\|array $columns`, `string $referenceTable`, `array\|string\|null $referenceColumn`, `?string $onDeleteRule = null`, `?string $onUpdateRule = null` |
-| PrimaryKey | `null\|array\|string $columns = null`, `?string $name = null`                                                                                 |
-| UniqueKey  | `null\|array\|string $columns = null`, `?string $name = null`                                                                                 |
+- **Check**: `$expression`, `$name`
+- **ForeignKey**: `$name`, `$columns`, `$refTable`, `$refColumn`,
+  `$onDelete`, `$onUpdate`
+- **PrimaryKey**: `$columns=null`, `$name=null`
+- **UniqueKey**: `$columns=null`, `$name=null`
 
 Each of the above types can be utilized in any place that accepts a
 `Constraint\ConstraintInterface` instance. Currently, this is primarily in

@@ -80,7 +80,10 @@ Each of these objects implements the following two interfaces:
 ```php
 interface PreparableSqlInterface
 {
-     public function prepareStatement(Adapter $adapter, StatementInterface $statement) : void;
+     public function prepareStatement(
+         Adapter $adapter,
+         StatementInterface $statement
+     ) : void;
 }
 
 interface SqlInterface
@@ -94,15 +97,18 @@ to execute.
 
 ## SQL Arguments and Argument Types
 
-`PhpDb\Sql` provides individual `Argument\<type>` types as well as an `Argument` factory class 
-and an `ArgumentType` enum for type-safe specification of SQL values. This provides a modern,
-object-oriented alternative to using raw values or the legacy type constants.
+`PhpDb\Sql` provides individual `Argument\<type>` types as well as an
+`Argument` factory class and an `ArgumentType` enum for type-safe
+specification of SQL values. This provides a modern, object-oriented
+alternative to using raw values or the legacy type constants.
 
 The `ArgumentType` enum defines six types, each backed by its corresponding class:
 
-- `Identifier` - For column names, table names, and other identifiers that should be quoted
+- `Identifier` - For column names, table names, and other identifiers that
+  should be quoted
 - `Identifiers` - For arrays of identifiers (e.g., multi-column IN predicates)
-- `Value` - For values that should be parameterized or properly escaped (default)
+- `Value` - For values that should be parameterized or properly escaped
+  (default)
 - `Values` - For arrays of values (e.g., IN clauses)
 - `Literal` - For literal SQL fragments that should not be quoted or escaped
 - `Select` - For subqueries (Expression or SqlInterface objects)
@@ -145,6 +151,7 @@ $expression = new Expression(
 ```
 
 Scalar values passed directly to `Expression` are automatically wrapped:
+
 - Scalars become `Argument\Value`
 - Arrays become `Argument\Values`
 - `ExpressionInterface` instances become `Argument\Select`
@@ -201,10 +208,15 @@ class Select extends AbstractPreparableSql implements SqlInterface, PreparableSq
     public Having $having;
     public Join $joins;
 
-    public function __construct(array|string|TableIdentifier|null $table = null);
+    public function __construct(
+        array|string|TableIdentifier|null $table = null
+    );
     public function from(array|string|TableIdentifier $table) : static;
     public function quantifier(ExpressionInterface|string $quantifier) : static;
-    public function columns(array $columns, bool $prefixColumnsWithTable = true) : static;
+    public function columns(
+        array $columns,
+        bool $prefixColumnsWithTable = true
+    ) : static;
     public function join(
         array|string|TableIdentifier $name,
         PredicateInterface|string $on,
@@ -223,7 +235,11 @@ class Select extends AbstractPreparableSql implements SqlInterface, PreparableSq
     public function order(ExpressionInterface|array|string $order) : static;
     public function limit(int|string $limit) : static;
     public function offset(int|string $offset) : static;
-    public function combine(Select $select, string $type = self::COMBINE_UNION, string $modifier = '') : static;
+    public function combine(
+        Select $select,
+        string $type = self::COMBINE_UNION,
+        string $modifier = ''
+    ) : static;
     public function reset(string $part) : static;
     public function getRawState(?string $key = null) : mixed;
     public function isTableReadOnly() : bool;
@@ -270,9 +286,9 @@ $select->columns([
 ```php
 $select->join(
     'foo',              // table name
-    'id = bar.id',      // expression to join on (will be quoted by platform object before insertion),
-    ['bar', 'baz'],     // (optional) list of columns, same requirements as columns() above
-    $select::JOIN_OUTER // (optional), one of inner, outer, full outer, left, right also represented by constants in the API
+    'id = bar.id',      // expression to join on (will be quoted by platform),
+    ['bar', 'baz'],     // (optional) list of columns, same as columns() above
+    $select::JOIN_OUTER // (optional), one of inner, outer, left, right, etc.
 );
 
 $select
@@ -351,7 +367,8 @@ key will be cast as follows:
 As an example:
 
 ```php
-// SELECT "foo".* FROM "foo" WHERE "c1" IS NULL AND "c2" IN (?, ?, ?) AND "c3" IS NOT NULL
+// SELECT "foo".* FROM "foo" WHERE "c1" IS NULL
+//        AND "c2" IN (?, ?, ?) AND "c3" IS NOT NULL
 $select->from('foo')->where([
     'c1' => null,
     'c2' => [1, 2, 3],
@@ -412,7 +429,10 @@ class Insert extends AbstractPreparableSql implements SqlInterface, PreparableSq
     public function __construct(string|TableIdentifier|null $table = null);
     public function into(TableIdentifier|string|array $table) : static;
     public function columns(array $columns) : static;
-    public function values(array|Select $values, string $flag = self::VALUES_SET) : static;
+    public function values(
+        array|Select $values,
+        string $flag = self::VALUES_SET
+    ) : static;
     public function select(Select $select) : static;
     public function getRawState(?string $key = null) : TableIdentifier|string|array;
 }
@@ -421,7 +441,7 @@ class Insert extends AbstractPreparableSql implements SqlInterface, PreparableSq
 As with `Select`, the table may be provided during instantiation or via the
 `into()` method.
 
-### columns()
+### columns() (Insert)
 
 ```php
 $insert->columns(['foo', 'bar']); // set the valid columns
@@ -482,7 +502,7 @@ $update->set(['foo' => 'bar', 'baz' => 'bax']);
 
 See the [section on Where and Having](#where-and-having).
 
-### join()
+### join() (Update)
 
 ```php
 $update->join('bar', 'foo.id = bar.foo_id', Update::JOIN_LEFT);
@@ -505,7 +525,7 @@ class Delete extends AbstractPreparableSql implements SqlInterface, PreparableSq
 }
 ```
 
-### where()
+### where() (Delete)
 
 See the [section on Where and Having](#where-and-having).
 
@@ -586,10 +606,15 @@ class Predicate extends PredicateSet
     public function literal(string $literal) : static;
     public function expression(
         string $expression,
-        null|string|float|int|array|ArgumentInterface|ExpressionInterface $parameters = []
+        null|string|float|int|array|ArgumentInterface
+            |ExpressionInterface $parameters = []
     ) : static;
-    public function isNull(float|int|string|ArgumentInterface $identifier) : static;
-    public function isNotNull(float|int|string|ArgumentInterface $identifier) : static;
+    public function isNull(
+        float|int|string|ArgumentInterface $identifier
+    ) : static;
+    public function isNotNull(
+        float|int|string|ArgumentInterface $identifier
+    ) : static;
     public function in(
         float|int|string|ArgumentInterface $identifier,
         array|ArgumentInterface $valueSet
@@ -612,26 +637,34 @@ class Predicate extends PredicateSet
 
     // Inherited From PredicateSet
 
-    public function addPredicate(PredicateInterface $predicate, ?string $combination = null) : static;
+    public function addPredicate(
+        PredicateInterface $predicate,
+        ?string $combination = null
+    ) : static;
     public function addPredicates(
         PredicateInterface|Closure|string|array $predicates,
         string $combination = self::OP_AND
     ) : static;
     public function getPredicates() : array;
-    public function orPredicate(PredicateInterface $predicate) : static;
-    public function andPredicate(PredicateInterface $predicate) : static;
+    public function orPredicate(
+        PredicateInterface $predicate
+    ) : static;
+    public function andPredicate(
+        PredicateInterface $predicate
+    ) : static;
     public function getExpressionData() : ExpressionData;
     public function count() : int;
 }
 ```
 
-> **Note:** The `$leftType` and `$rightType` parameters have been removed from comparison methods.
-> Type information is now encoded within `ArgumentInterface` implementations. Pass an
-> `Argument\Identifier` for column names, `Argument\Value` for values, or `Argument\Literal`
-> for raw SQL fragments directly to control how values are treated.
+> **Note:** The `$leftType` and `$rightType` parameters have been removed
+> from comparison methods. Type information is now encoded within
+> `ArgumentInterface` implementations. Pass an `Argument\Identifier` for
+> column names, `Argument\Value` for values, or `Argument\Literal` for raw
+> SQL fragments directly to control how values are treated.
 
-Each method in the API will produce a corresponding `Predicate` object of a similarly named
-type, as described below.
+Each method in the API will produce a corresponding `Predicate` object of a
+similarly named type, as described below.
 
 ### equalTo(), lessThan(), greaterThan(), lessThanOrEqualTo(), greaterThanOrEqualTo()
 
@@ -663,24 +696,32 @@ class Operator implements PredicateInterface
     final public const OP_GTE                             = '>=';
 
     public function __construct(
-        null|string|ArgumentInterface|ExpressionInterface|SqlInterface $left = null,
+        null|string|ArgumentInterface
+            |ExpressionInterface|SqlInterface $left = null,
         string $operator = self::OPERATOR_EQUAL_TO,
-        null|bool|string|int|float|ArgumentInterface|ExpressionInterface|SqlInterface $right = null
+        null|bool|string|int|float|ArgumentInterface
+            |ExpressionInterface|SqlInterface $right = null
     );
-    public function setLeft(string|ArgumentInterface|ExpressionInterface|SqlInterface $left) : static;
+    public function setLeft(
+        string|ArgumentInterface|ExpressionInterface|SqlInterface $left
+    ) : static;
     public function getLeft() : ?ArgumentInterface;
     public function setOperator(string $operator) : static;
     public function getOperator() : string;
-    public function setRight(null|bool|string|int|float|ArgumentInterface|ExpressionInterface|SqlInterface $right) : static;
+    public function setRight(
+        null|bool|string|int|float|ArgumentInterface
+            |ExpressionInterface|SqlInterface $right
+    ) : static;
     public function getRight() : ?ArgumentInterface;
     public function getExpressionData() : ExpressionData;
 }
 ```
 
-> **Note:** The `setLeftType()`, `getLeftType()`, `setRightType()`, and `getRightType()` methods
-> have been removed. Type information is now encoded within the `ArgumentInterface` implementations.
-> Pass `Argument\Identifier`, `Argument\Value`, or `Argument\Literal` directly to `setLeft()`
-> and `setRight()` to control how values are treated.
+> **Note:** The `setLeftType()`, `getLeftType()`, `setRightType()`, and
+> `getRightType()` methods have been removed. Type information is now
+> encoded within the `ArgumentInterface` implementations. Pass
+> `Argument\Identifier`, `Argument\Value`, or `Argument\Literal` directly
+> to `setLeft()` and `setRight()` to control how values are treated.
 
 ### like($identifier, $like), notLike($identifier, $notLike)
 
@@ -704,7 +745,9 @@ class Like implements PredicateInterface
     );
     public function setIdentifier(string|ArgumentInterface $identifier) : static;
     public function getIdentifier() : ?ArgumentInterface;
-    public function setLike(bool|float|int|null|string|ArgumentInterface $like) : static;
+    public function setLike(
+        bool|float|int|null|string|ArgumentInterface $like
+    ) : static;
     public function getLike() : ?ArgumentInterface;
     public function setSpecification(string $specification) : static;
     public function getSpecification() : string;
@@ -755,12 +798,14 @@ class Expression implements ExpressionInterface, PredicateInterface
 
     public function __construct(
         string $expression = '',
-        null|bool|string|float|int|array|ArgumentInterface|ExpressionInterface $parameters = []
+        null|bool|string|float|int|array|ArgumentInterface
+            |ExpressionInterface $parameters = []
     );
     public function setExpression(string $expression) : self;
     public function getExpression() : string;
     public function setParameters(
-        null|bool|string|float|int|array|ExpressionInterface|ArgumentInterface $parameters = []
+        null|bool|string|float|int|array|ExpressionInterface
+            |ArgumentInterface $parameters = []
     ) : self;
     public function getParameters() : array;
     public function getExpressionData() : ExpressionData;
@@ -872,13 +917,15 @@ class In implements PredicateInterface
     );
     public function setIdentifier(string|ArgumentInterface $identifier) : static;
     public function getIdentifier() : ?ArgumentInterface;
-    public function setValueSet(array|Select|ArgumentInterface $valueSet) : static;
+    public function setValueSet(
+        array|Select|ArgumentInterface $valueSet
+    ) : static;
     public function getValueSet() : ?ArgumentInterface;
     public function getExpressionData() : ExpressionData;
 }
 ```
 
-### between($identifier, $minValue, $maxValue), notBetween($identifier, $minValue, $maxValue)
+### between() and notBetween()
 
 ```php
 $where->between($identifier, $minValue, $maxValue);
@@ -899,11 +946,17 @@ class Between implements PredicateInterface
         null|int|float|string|ArgumentInterface $minValue = null,
         null|int|float|string|ArgumentInterface $maxValue = null
     );
-    public function setIdentifier(string|ArgumentInterface $identifier) : static;
+    public function setIdentifier(
+        string|ArgumentInterface $identifier
+    ) : static;
     public function getIdentifier() : ?ArgumentInterface;
-    public function setMinValue(null|int|float|string|bool|ArgumentInterface $minValue) : static;
+    public function setMinValue(
+        null|int|float|string|bool|ArgumentInterface $minValue
+    ) : static;
     public function getMinValue() : ?ArgumentInterface;
-    public function setMaxValue(null|int|float|string|bool|ArgumentInterface $maxValue) : static;
+    public function setMaxValue(
+        null|int|float|string|bool|ArgumentInterface $maxValue
+    ) : static;
     public function getMaxValue() : ?ArgumentInterface;
     public function setSpecification(string $specification) : static;
     public function getSpecification() : string;
