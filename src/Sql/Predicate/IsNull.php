@@ -9,11 +9,10 @@ use PhpDb\Sql\AbstractExpression;
 use PhpDb\Sql\Argument\Identifier;
 use PhpDb\Sql\ArgumentInterface;
 use PhpDb\Sql\Exception\InvalidArgumentException;
-use PhpDb\Sql\ExpressionData;
 
 class IsNull extends AbstractExpression implements PredicateInterface
 {
-    protected string $specification = '%1$s IS NULL';
+    protected string $specification = '%s IS NULL';
 
     protected ?ArgumentInterface $identifier = null;
 
@@ -69,21 +68,17 @@ class IsNull extends AbstractExpression implements PredicateInterface
         return $this->specification;
     }
 
-    /**
-     * Get parts for where statement
-     */
+    /** @inheritDoc */
     #[Override]
-    public function getExpressionData(): ExpressionData
+    public function getExpressionData(): array
     {
         if (! $this->identifier instanceof ArgumentInterface) {
             throw new InvalidArgumentException('Identifier must be specified');
         }
 
-        return new ExpressionData(
-            $this->getSpecification(),
-            [
-                $this->identifier,
-            ]
-        );
+        return [
+            'spec' => $this->getSpecification(),
+            'values' => [$this->identifier],
+        ];
     }
 }

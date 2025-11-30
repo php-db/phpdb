@@ -24,24 +24,24 @@ final class VarcharTest extends TestCase
 
         $expressionData = $column->getExpressionData();
 
-        self::assertEquals('%s %s(%s) NOT NULL', $expressionData->getExpressionSpecification());
+        self::assertEquals('%s %s(%s) NOT NULL', $expressionData['spec']);
         self::assertEquals([
             Argument::identifier('foo'),
             Argument::literal('VARCHAR'),
             Argument::literal('20'),
-        ], $expressionData->getExpressionValues());
+        ], $expressionData['values']);
 
         $column->setDefault('bar');
 
         $expressionData = $column->getExpressionData();
 
-        self::assertEquals('%s %s(%s) NOT NULL DEFAULT %s', $expressionData->getExpressionSpecification());
+        self::assertEquals('%s %s(%s) NOT NULL DEFAULT %s', $expressionData['spec']);
         self::assertEquals([
             Argument::identifier('foo'),
             Argument::literal('VARCHAR'),
             Argument::literal('20'),
             Argument::value('bar'),
-        ], $expressionData->getExpressionValues());
+        ], $expressionData['values']);
     }
 
     public function testSetLengthAndGetLength(): void
@@ -63,8 +63,8 @@ final class VarcharTest extends TestCase
         // The condition in getExpressionData checks: getLengthExpression() !== '' && !== '0'
         // Empty string fails the first check, so length value is NOT added
         // But specification still has (%s) placeholder - need to verify actual behavior
-        $spec   = $expressionData->getExpressionSpecification();
-        $values = $expressionData->getExpressionValues();
+        $spec   = $expressionData['spec'];
+        $values = $expressionData['values'];
 
         // The specification format is defined in AbstractLengthColumn as '%s %s(%s)'
         // But when length value is not added, we need to check if placeholder remains

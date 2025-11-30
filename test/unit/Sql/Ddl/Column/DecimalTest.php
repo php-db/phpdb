@@ -25,12 +25,12 @@ final class DecimalTest extends TestCase
 
         $expressionData = $column->getExpressionData();
 
-        self::assertEquals('%s %s(%s) NOT NULL', $expressionData->getExpressionSpecification());
+        self::assertEquals('%s %s(%s) NOT NULL', $expressionData['spec']);
         self::assertEquals([
             Argument::identifier('foo'),
             Argument::literal('DECIMAL'),
             Argument::literal('10,5'),
-        ], $expressionData->getExpressionValues());
+        ], $expressionData['values']);
     }
 
     public function testConstructorSetsDigitsAndDecimal(): void
@@ -67,7 +67,7 @@ final class DecimalTest extends TestCase
         $expressionData = $column->getExpressionData();
 
         // Without decimal, length expression should be just the digits (as string)
-        $values = $expressionData->getExpressionValues();
+        $values = $expressionData['values'];
         self::assertCount(3, $values);
         self::assertEquals(Argument::identifier('amount'), $values[0]);
         self::assertEquals(Argument::literal('DECIMAL'), $values[1]);

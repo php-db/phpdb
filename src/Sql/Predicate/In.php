@@ -12,7 +12,6 @@ use PhpDb\Sql\Argument\Select as ArgumentSelect;
 use PhpDb\Sql\Argument\Values;
 use PhpDb\Sql\ArgumentInterface;
 use PhpDb\Sql\Exception\InvalidArgumentException;
-use PhpDb\Sql\ExpressionData;
 use PhpDb\Sql\Select;
 
 use function array_fill;
@@ -91,11 +90,9 @@ class In extends AbstractExpression implements PredicateInterface
         return $this->valueSet;
     }
 
-    /**
-     * Return array of parts for where statement
-     */
+    /** @inheritDoc */
     #[Override]
-    public function getExpressionData(): ExpressionData
+    public function getExpressionData(): array
     {
         if (! $this->identifier instanceof ArgumentInterface) {
             throw new InvalidArgumentException('Identifier must be specified');
@@ -113,13 +110,10 @@ class In extends AbstractExpression implements PredicateInterface
             $valueSetSpec,
         ]);
 
-        return new ExpressionData(
-            $specification,
-            [
-                $this->identifier,
-                $this->valueSet,
-            ]
-        );
+        return [
+            'spec' => $specification,
+            'values' => [$this->identifier, $this->valueSet],
+        ];
     }
 
     /**

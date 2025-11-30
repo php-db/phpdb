@@ -5,22 +5,20 @@ declare(strict_types=1);
 namespace PhpDb\Sql\Ddl\Column;
 
 use Override;
-use PhpDb\Sql\ExpressionData;
 
 use function sprintf;
 
 class Integer extends Column
 {
+    /** @inheritDoc */
     #[Override]
-    public function getExpressionData(): ExpressionData
+    public function getExpressionData(): array
     {
         $expressionData = parent::getExpressionData();
         $options        = $this->getOptions();
 
         if (isset($options['length'])) {
-            $expressionData
-                ->getExpressionPart(0)
-                ->addSpecification(sprintf('(%s)', $options['length']));
+            $expressionData['spec'] .= sprintf(' (%s)', $options['length']);
         }
 
         return $expressionData;

@@ -22,10 +22,10 @@ final class NotInTest extends TestCase
         $expressionData = $in->getExpressionData();
 
         // Verify specification
-        self::assertEquals('%s NOT IN (%s, %s, %s)', $expressionData->getExpressionSpecification());
+        self::assertEquals('%s NOT IN (%s, %s, %s)', $expressionData['spec']);
 
         // Verify expression values
-        $values = $expressionData->getExpressionValues();
+        $values = $expressionData['values'];
         self::assertCount(2, $values);
 
         // Verify identifier argument
@@ -36,7 +36,7 @@ final class NotInTest extends TestCase
         // Verify value set argument
         self::assertInstanceOf(ArgumentInterface::class, $values[1]);
         self::assertEquals([1, 2, 3], $values[1]->getValue());
-        self::assertEquals(ArgumentType::Value, $values[1]->getType());
+        self::assertEquals(ArgumentType::Values, $values[1]->getType());
     }
 
     public function testGetExpressionDataWithSubselect(): void
@@ -47,10 +47,10 @@ final class NotInTest extends TestCase
         $expressionData = $in->getExpressionData();
 
         // Verify specification
-        self::assertEquals('%s NOT IN %s', $expressionData->getExpressionSpecification());
+        self::assertEquals('%s NOT IN %s', $expressionData['spec']);
 
         // Verify expression values
-        $values = $expressionData->getExpressionValues();
+        $values = $expressionData['values'];
         self::assertCount(2, $values);
 
         // Verify identifier argument
@@ -72,10 +72,10 @@ final class NotInTest extends TestCase
         $expressionData = $in->getExpressionData();
 
         // Verify specification
-        self::assertEquals('%s NOT IN %s', $expressionData->getExpressionSpecification());
+        self::assertEquals('%s NOT IN %s', $expressionData['spec']);
 
         // Verify expression values
-        $values = $expressionData->getExpressionValues();
+        $values = $expressionData['values'];
         self::assertCount(2, $values);
 
         // Verify identifier argument
@@ -97,10 +97,10 @@ final class NotInTest extends TestCase
         $expressionData = $in->getExpressionData();
 
         // Verify specification
-        self::assertEquals('(%s, %s) NOT IN %s', $expressionData->getExpressionSpecification());
+        self::assertEquals('(%s, %s) NOT IN %s', $expressionData['spec']);
 
         // Verify expression values
-        $values = $expressionData->getExpressionValues();
+        $values = $expressionData['values'];
         self::assertCount(2, $values);
 
         // Verify array identifier argument

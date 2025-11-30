@@ -18,11 +18,11 @@ final class BinaryTest extends TestCase
 
         $expressionData = $column->getExpressionData();
 
-        self::assertEquals('%s %s(%s) NOT NULL', $expressionData->getExpressionSpecification());
+        self::assertEquals('%s %s(%s) NOT NULL', $expressionData['spec']);
         self::assertEquals([
             Argument::identifier('foo'),
             Argument::literal('BINARY'),
             Argument::literal('10000000'),
-        ], $expressionData->getExpressionValues());
+        ], $expressionData['values']);
     }
 }

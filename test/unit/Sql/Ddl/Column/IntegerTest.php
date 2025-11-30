@@ -27,21 +27,21 @@ final class IntegerTest extends TestCase
 
         $expressionData = $column->getExpressionData();
 
-        self::assertEquals('%s %s NOT NULL', $expressionData->getExpressionSpecification());
+        self::assertEquals('%s %s NOT NULL', $expressionData['spec']);
         self::assertEquals([
             Argument::identifier('foo'),
             Argument::literal('INTEGER'),
-        ], $expressionData->getExpressionValues());
+        ], $expressionData['values']);
 
         $column = new Integer('foo');
         $column->addConstraint(new PrimaryKey());
 
         $expressionData = $column->getExpressionData();
 
-        self::assertEquals('%s %s NOT NULL PRIMARY KEY', $expressionData->getExpressionSpecification());
+        self::assertEquals('%s %s NOT NULL PRIMARY KEY', $expressionData['spec']);
         self::assertEquals([
             Argument::identifier('foo'),
             Argument::literal('INTEGER'),
-        ], $expressionData->getExpressionValues());
+        ], $expressionData['values']);
     }
 }

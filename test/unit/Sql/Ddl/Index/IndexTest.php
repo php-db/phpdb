@@ -20,11 +20,11 @@ final class IndexTest extends TestCase
 
         $expressionData = $uk->getExpressionData();
 
-        self::assertEquals('INDEX %s(%s)', $expressionData->getExpressionSpecification());
+        self::assertEquals('INDEX %s(%s)', $expressionData['spec']);
         self::assertEquals([
             new Identifier('my_uk'),
             new Identifier('foo'),
-        ], $expressionData->getExpressionValues());
+        ], $expressionData['values']);
     }
 
     public function testGetExpressionDataWithLength(): void
@@ -33,12 +33,12 @@ final class IndexTest extends TestCase
 
         $expressionData = $key->getExpressionData();
 
-        self::assertEquals('INDEX %s(%s(10), %s(5))', $expressionData->getExpressionSpecification());
+        self::assertEquals('INDEX %s(%s(10), %s(5))', $expressionData['spec']);
         self::assertEquals([
             new Identifier('my_uk'),
             new Identifier('foo'),
             new Identifier('bar'),
-        ], $expressionData->getExpressionValues());
+        ], $expressionData['values']);
     }
 
     public function testGetExpressionDataWithLengthUnmatched(): void
@@ -47,11 +47,11 @@ final class IndexTest extends TestCase
 
         $expressionData = $key->getExpressionData();
 
-        self::assertEquals('INDEX %s(%s(10), %s)', $expressionData->getExpressionSpecification());
+        self::assertEquals('INDEX %s(%s(10), %s)', $expressionData['spec']);
         self::assertEquals([
             new Identifier('my_uk'),
             new Identifier('foo'),
             Argument::identifier('bar'),
-        ], $expressionData->getExpressionValues());
+        ], $expressionData['values']);
     }
 }

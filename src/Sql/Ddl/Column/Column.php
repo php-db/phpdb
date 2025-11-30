@@ -9,8 +9,8 @@ use PhpDb\Sql\Argument\Identifier;
 use PhpDb\Sql\Argument\Literal;
 use PhpDb\Sql\Argument\Value;
 use PhpDb\Sql\Ddl\Constraint\ConstraintInterface;
-use PhpDb\Sql\ExpressionData;
-use PhpDb\Sql\ExpressionPart;
+
+use function implode;
 
 class Column implements ColumnInterface
 {
@@ -120,35 +120,36 @@ class Column implements ColumnInterface
         return $this;
     }
 
+    /** @inheritDoc */
     #[Override]
-    public function getExpressionData(): ExpressionData
+    public function getExpressionData(): array
     {
-        $expressionData = new ExpressionData();
-
-        $expressionPart = new ExpressionPart();
-        $expressionPart->setSpecification($this->specification);
-        $expressionPart->setValues([
+        $specParts = [$this->specification];
+        $values    = [
             new Identifier($this->name),
             new Literal($this->type),
-        ]);
+        ];
 
         if ($this->isNullable === false) {
-            $expressionPart->addSpecification('NOT NULL');
+            $specParts[] = 'NOT NULL';
         }
 
-        $expressionData->addExpressionPart($expressionPart);
-
         if ($this->default !== null) {
-            $expressionPart = new ExpressionPart();
-            $expressionPart->addSpecification('DEFAULT %s');
-            $expressionPart->addValue(new Value($this->default));
-            $expressionData->addExpressionPart($expressionPart);
+            $specParts[] = 'DEFAULT %s';
+            $values[]    = new Value($this->default);
         }
 
         foreach ($this->constraints as $constraint) {
-            $expressionData->addExpressionParts($constraint->getExpressionData()->getExpressionParts());
+            $constraintData = $constraint->getExpressionData();
+            $specParts[]    = $constraintData['spec'];
+            foreach ($constraintData['values'] as $value) {
+                $values[] = $value;
+            }
         }
 
-        return $expressionData;
+        return [
+            'spec' => implode(' ', $specParts),
+            'values' => $values,
+        ];
     }
 }

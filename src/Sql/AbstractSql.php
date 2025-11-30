@@ -125,28 +125,45 @@ abstract class AbstractSql implements SqlInterface
 
         $expressionParamIndex = &$this->instanceParameterIndex[$namedParameterPrefix];
         $expressionData       = $expression->getExpressionData();
-        $sqlStrings           = [];
+        $specification        = $expressionData['spec'];
+        $expressionValues     = $this->flattenExpressionValues($expressionData['values']);
+        $values               = [];
 
-        foreach ($expressionData->getExpressionParts() as $expressionPart) {
-            $specification    = $expressionPart->getSpecificationString(true);
-            $expressionValues = $expressionPart->getSpecificationValues();
-            $values           = [];
-            foreach ($expressionValues as $vIndex => $argument) {
-                $values[] = (string) $this->processExpressionValue(
-                    $argument,
-                    $expressionParamIndex,
-                    $namedParameterPrefix,
-                    $vIndex,
-                    $platform,
-                    $driver,
-                    $parameterContainer,
-                );
-            }
-
-            $sqlStrings[] = vsprintf($specification, $values);
+        foreach ($expressionValues as $vIndex => $argument) {
+            $values[] = (string) $this->processExpressionValue(
+                $argument,
+                $expressionParamIndex,
+                $namedParameterPrefix,
+                $vIndex,
+                $platform,
+                $driver,
+                $parameterContainer,
+            );
         }
 
-        return implode(' ', $sqlStrings);
+        return vsprintf($specification, $values);
+    }
+
+    /**
+     * Flattens expression values, expanding Values arguments
+     *
+     * @param ArgumentInterface[] $arguments
+     * @return ArgumentInterface[]
+     */
+    protected function flattenExpressionValues(array $arguments): array
+    {
+        $values = [];
+        foreach ($arguments as $argument) {
+            if ($argument->getType() === ArgumentType::Values) {
+                foreach ($argument->getValue() as $v) {
+                    $values[] = Argument::value($v);
+                }
+            } else {
+                $values[] = $argument;
+            }
+        }
+
+        return $values;
     }
 
     protected function processExpressionValue(

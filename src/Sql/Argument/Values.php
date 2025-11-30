@@ -30,7 +30,7 @@ final readonly class Values implements ArgumentInterface
 
     public function getType(): ArgumentType
     {
-        return ArgumentType::Value;
+        return ArgumentType::Values;
     }
 
     /**

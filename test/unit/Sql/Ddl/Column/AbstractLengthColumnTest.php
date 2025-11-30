@@ -54,11 +54,11 @@ final class AbstractLengthColumnTest extends TestCase
 
         $expressionData = $column->getExpressionData();
 
-        self::assertEquals('%s %s(%s) NOT NULL', $expressionData->getExpressionSpecification());
+        self::assertEquals('%s %s(%s) NOT NULL', $expressionData['spec']);
         self::assertEquals([
             new Identifier('foo'),
             new Literal('INTEGER'),
             new Literal('4'),
-        ], $expressionData->getExpressionValues());
+        ], $expressionData['values']);
     }
 }

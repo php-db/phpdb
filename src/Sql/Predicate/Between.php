@@ -10,11 +10,10 @@ use PhpDb\Sql\AbstractExpression;
 use PhpDb\Sql\Argument\Identifier;
 use PhpDb\Sql\Argument\Value;
 use PhpDb\Sql\ArgumentInterface;
-use PhpDb\Sql\ExpressionData;
 
 class Between extends AbstractExpression implements PredicateInterface
 {
-    protected string $specification = '%1$s BETWEEN %2$s AND %3$s';
+    protected string $specification = '%s BETWEEN %s AND %s';
 
     protected ?ArgumentInterface $identifier = null;
 
@@ -129,11 +128,9 @@ class Between extends AbstractExpression implements PredicateInterface
         return $this->specification;
     }
 
-    /**
-     * Return "where" parts
-     */
+    /** @inheritDoc */
     #[Override]
-    public function getExpressionData(): ExpressionData
+    public function getExpressionData(): array
     {
         if (! $this->identifier instanceof ArgumentInterface) {
             throw new LogicException('Identifier must be specified');
@@ -147,13 +144,9 @@ class Between extends AbstractExpression implements PredicateInterface
             throw new LogicException('maxValue must be specified');
         }
 
-        return new ExpressionData(
-            $this->getSpecification(),
-            [
-                $this->identifier,
-                $this->minValue,
-                $this->maxValue,
-            ]
-        );
+        return [
+            'spec' => $this->getSpecification(),
+            'values' => [$this->identifier, $this->minValue, $this->maxValue],
+        ];
     }
 }

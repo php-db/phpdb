@@ -41,6 +41,6 @@ class LiteralTest extends TestCase
 
         $expressionData = $literal->getExpressionData();
 
-        self::assertEquals('bar', $expressionData->getExpressionSpecification());
+        self::assertEquals('bar', $expressionData['spec']);
     }
 }

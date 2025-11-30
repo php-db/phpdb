@@ -23,11 +23,11 @@ final class TimestampTest extends TestCase
 
         $expressionData = $column->getExpressionData();
 
-        self::assertEquals('%s %s NOT NULL', $expressionData->getExpressionSpecification());
+        self::assertEquals('%s %s NOT NULL', $expressionData['spec']);
         self::assertEquals([
             new Identifier('foo'),
             new Literal('TIMESTAMP'),
-        ], $expressionData->getExpressionValues());
+        ], $expressionData['values']);
     }
 
     public function testGetExpressionDataWithOnUpdateOption(): void
@@ -38,10 +38,10 @@ final class TimestampTest extends TestCase
         $expressionData = $column->getExpressionData();
 
         // Verify specification includes ON UPDATE
-        $spec = $expressionData->getExpressionSpecification();
+        $spec = $expressionData['spec'];
         self::assertEquals('%s %s NOT NULL %s', $spec);
 
-        $values = $expressionData->getExpressionValues();
+        $values = $expressionData['values'];
 
         // Should have 3 values: identifier, type, and ON UPDATE argument
         self::assertCount(3, $values);
@@ -61,7 +61,7 @@ final class TimestampTest extends TestCase
         $expressionData = $column->getExpressionData();
 
         // Should have 2 values: identifier and type (no ON UPDATE)
-        $values = $expressionData->getExpressionValues();
+        $values = $expressionData['values'];
         self::assertCount(2, $values);
         self::assertEquals(new Identifier('updated_at'), $values[0]);
         self::assertEquals(Argument::literal('TIMESTAMP'), $values[1]);

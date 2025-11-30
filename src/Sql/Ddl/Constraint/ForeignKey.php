@@ -7,7 +7,6 @@ namespace PhpDb\Sql\Ddl\Constraint;
 use Override;
 use PhpDb\Sql\Argument\Identifier;
 use PhpDb\Sql\Argument\Literal;
-use PhpDb\Sql\ExpressionData;
 
 use function array_fill;
 use function count;
@@ -122,32 +121,29 @@ class ForeignKey extends AbstractConstraint
         return $this;
     }
 
+    /** @inheritDoc */
     #[Override]
-    public function getExpressionData(): ExpressionData
+    public function getExpressionData(): array
     {
-        $colCount = count($this->referenceColumn);
-
         $expressionData = parent::getExpressionData();
+        $colCount       = count($this->referenceColumn);
 
-        $expressionPart = $expressionData->getExpressionPart(0);
-        $expressionPart
-            ->addSpecification($this->referenceSpecification[0])
-            ->addValue(new Identifier($this->referenceTable));
+        $expressionData['spec']     .= ' ' . $this->referenceSpecification[0];
+        $expressionData['values'][] = new Identifier($this->referenceTable);
 
         if ($colCount !== 0) {
-            $expressionPart->addSpecification(sprintf(
+            $expressionData['spec'] .= ' ' . sprintf(
                 '(%s)',
                 implode(', ', array_fill(0, $colCount, '%s'))
-            ));
+            );
             foreach ($this->referenceColumn as $column) {
-                $expressionPart->addValue(new Identifier($column));
+                $expressionData['values'][] = new Identifier($column);
             }
         }
 
-        $expressionPart
-            ->addSpecification($this->referenceSpecification[1])
-            ->addValue(new Literal($this->onDeleteRule))
-            ->addValue(new Literal($this->onUpdateRule));
+        $expressionData['spec']     .= ' ' . $this->referenceSpecification[1];
+        $expressionData['values'][] = new Literal($this->onDeleteRule);
+        $expressionData['values'][] = new Literal($this->onUpdateRule);
 
         return $expressionData;
     }

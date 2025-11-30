@@ -10,11 +10,10 @@ use PhpDb\Sql\Argument\Identifier;
 use PhpDb\Sql\Argument\Value;
 use PhpDb\Sql\ArgumentInterface;
 use PhpDb\Sql\Exception\InvalidArgumentException;
-use PhpDb\Sql\ExpressionData;
 
 class Like extends AbstractExpression implements PredicateInterface
 {
-    protected string $specification          = '%1$s LIKE %2$s';
+    protected string $specification          = '%s LIKE %s';
     protected ?ArgumentInterface $identifier = null;
     protected ?ArgumentInterface $like       = null;
 
@@ -87,8 +86,9 @@ class Like extends AbstractExpression implements PredicateInterface
         return $this->specification;
     }
 
+    /** @inheritDoc */
     #[Override]
-    public function getExpressionData(): ExpressionData
+    public function getExpressionData(): array
     {
         if (! $this->identifier instanceof ArgumentInterface) {
             throw new InvalidArgumentException('Identifier must be specified');
@@ -98,12 +98,9 @@ class Like extends AbstractExpression implements PredicateInterface
             throw new InvalidArgumentException('Like expression must be specified');
         }
 
-        return new ExpressionData(
-            $this->getSpecification(),
-            [
-                $this->identifier,
-                $this->like,
-            ]
-        );
+        return [
+            'spec' => $this->getSpecification(),
+            'values' => [$this->identifier, $this->like],
+        ];
     }
 }

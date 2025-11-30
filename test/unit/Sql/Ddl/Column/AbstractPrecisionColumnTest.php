@@ -81,11 +81,11 @@ final class AbstractPrecisionColumnTest extends TestCase
 
         $expressionData = $column->getExpressionData();
 
-        self::assertEquals('%s %s(%s) NOT NULL', $expressionData->getExpressionSpecification());
+        self::assertEquals('%s %s(%s) NOT NULL', $expressionData['spec']);
         self::assertEquals([
             Argument::identifier('foo'),
             Argument::literal('INTEGER'),
             Argument::literal('10,5'),
-        ], $expressionData->getExpressionValues());
+        ], $expressionData['values']);
     }
 }

@@ -6,8 +6,6 @@ namespace PhpDb\Sql\Ddl\Index;
 
 use Override;
 use PhpDb\Sql\Argument\Identifier;
-use PhpDb\Sql\ExpressionData;
-use PhpDb\Sql\ExpressionPart;
 
 use function count;
 use function implode;
@@ -27,29 +25,28 @@ class Index extends AbstractIndex
         $this->lengths = $lengths;
     }
 
+    /** @inheritDoc */
     #[Override]
-    public function getExpressionData(): ExpressionData
+    public function getExpressionData(): array
     {
-        $colCount = count($this->columns);
+        $colCount  = count($this->columns);
+        $values    = [new Identifier($this->name)];
+        $specParts = [];
 
-        $expressionPart = new ExpressionPart();
-        $expressionPart
-            ->addValue(new Identifier($this->name));
-
-        $specification = [];
         for ($i = 0; $i < $colCount; $i++) {
             $specPart = '%s';
-            $expressionPart->addValue(new Identifier($this->columns[$i]));
+            $values[] = new Identifier($this->columns[$i]);
 
             if (isset($this->lengths[$i])) {
                 $specPart .= sprintf('(%s)', $this->lengths[$i]);
             }
 
-            $specification[] = $specPart;
+            $specParts[] = $specPart;
         }
 
-        $expressionPart->addSpecification(str_replace('...', implode(', ', $specification), $this->specification));
-
-        return new ExpressionData($expressionPart);
+        return [
+            'spec' => str_replace('...', implode(', ', $specParts), $this->specification),
+            'values' => $values,
+        ];
     }
 }

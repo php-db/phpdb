@@ -46,9 +46,10 @@ final class PredicateSetTest extends TestCase
 
         $expressionData = $predicateSet->getExpressionData();
 
-        self::assertCount(3, $expressionData->getExpressionParts());
-        self::assertStringContainsString('AND', $expressionData->getExpressionSpecification());
-        self::assertStringNotContainsString('OR', $expressionData->getExpressionSpecification());
+        // 2 predicates = 2 values
+        self::assertCount(2, $expressionData['values']);
+        self::assertStringContainsString('AND', $expressionData['spec']);
+        self::assertStringNotContainsString('OR', $expressionData['spec']);
     }
 
     public function testCanPassPredicatesAndDefaultCombinationViaConstructor(): void
@@ -61,9 +62,10 @@ final class PredicateSetTest extends TestCase
 
         $expressionData = $predicateSet->getExpressionData();
 
-        self::assertCount(3, $expressionData->getExpressionParts());
-        self::assertStringContainsString('OR', $expressionData->getExpressionSpecification());
-        self::assertStringNotContainsString('AND', $expressionData->getExpressionSpecification());
+        // 2 predicates = 2 values
+        self::assertCount(2, $expressionData['values']);
+        self::assertStringContainsString('OR', $expressionData['spec']);
+        self::assertStringNotContainsString('AND', $expressionData['spec']);
     }
 
     public function testCanPassBothPredicateAndCombinationToAddPredicate(): void
@@ -77,16 +79,12 @@ final class PredicateSetTest extends TestCase
 
         $expressionData = $predicateSet->getExpressionData();
 
-        self::assertCount(7, $expressionData);
+        // 4 predicates = 4 values
+        self::assertCount(4, $expressionData['values']);
 
-        self::assertStringNotContainsString('OR', $expressionData->getExpressionPart(1)->getSpecificationString());
-        self::assertStringContainsString('AND', $expressionData->getExpressionPart(1)->getSpecificationString());
-
-        self::assertStringContainsString('OR', $expressionData->getExpressionPart(3)->getSpecificationString());
-        self::assertStringNotContainsString('AND', $expressionData->getExpressionPart(3)->getSpecificationString());
-
-        self::assertStringNotContainsString('OR', $expressionData->getExpressionPart(5)->getSpecificationString());
-        self::assertStringContainsString('AND', $expressionData->getExpressionPart(5)->getSpecificationString());
+        // Verify combinators are in spec string: AND bar AND baz OR bat
+        $spec = $expressionData['spec'];
+        self::assertEquals('%s IS NULL AND %s IS NULL OR %s IS NULL AND %s IS NULL', $spec);
     }
 
     public function testCanUseOrPredicateAndAndPredicateMethods(): void
@@ -99,16 +97,12 @@ final class PredicateSetTest extends TestCase
 
         $expressionData = $predicateSet->getExpressionData();
 
-        self::assertCount(7, $expressionData);
+        // 4 predicates = 4 values
+        self::assertCount(4, $expressionData['values']);
 
-        self::assertStringNotContainsString('OR', $expressionData->getExpressionPart(1)->getSpecificationString());
-        self::assertStringContainsString('AND', $expressionData->getExpressionPart(1)->getSpecificationString());
-
-        self::assertStringContainsString('OR', $expressionData->getExpressionPart(3)->getSpecificationString());
-        self::assertStringNotContainsString('AND', $expressionData->getExpressionPart(3)->getSpecificationString());
-
-        self::assertStringNotContainsString('OR', $expressionData->getExpressionPart(5)->getSpecificationString());
-        self::assertStringContainsString('AND', $expressionData->getExpressionPart(5)->getSpecificationString());
+        // Verify spec contains correct pattern: foo AND bar OR baz AND bat
+        $spec = $expressionData['spec'];
+        self::assertEquals('%s IS NULL AND %s IS NULL OR %s IS NULL AND %s IS NULL', $spec);
     }
 
     /**
@@ -190,7 +184,7 @@ final class PredicateSetTest extends TestCase
 
         // Verify the expression data is preserved
         $expressionData = $predicateSet->getExpressionData();
-        self::assertStringContainsString('COUNT', $expressionData->getExpressionSpecification());
+        self::assertStringContainsString('COUNT', $expressionData['spec']);
     }
 
     /**

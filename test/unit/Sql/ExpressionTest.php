@@ -97,12 +97,12 @@ final class ExpressionTest extends TestCase
 
         $expressionData = $expression->getExpressionData();
 
-        self::assertEquals('X SAME AS %s AND Y = %s BUT LITERALLY %s', $expressionData->getExpressionSpecification());
+        self::assertEquals('X SAME AS %s AND Y = %s BUT LITERALLY %s', $expressionData['spec']);
         self::assertEquals([
             new Identifier('foo'),
             new Value(5),
             new Literal('FUNC(FF%X)'),
-        ], $expressionData->getExpressionValues());
+        ], $expressionData['values']);
     }
 
     public function testGetExpressionDataWillEscapePercent(): void
@@ -111,7 +111,7 @@ final class ExpressionTest extends TestCase
 
         $expressionData = $expression->getExpressionData();
 
-        self::assertEquals('X LIKE "foo%%"', $expressionData->getExpressionSpecification());
+        self::assertEquals('X LIKE "foo%%"', $expressionData['spec']);
     }
 
     public function testConstructorWithLiteralZero(): void
@@ -138,9 +138,9 @@ final class ExpressionTest extends TestCase
 
         self::assertEquals(
             'uf.user_id = :user_id OR uf.friend_id = :user_id',
-            $expressionData->getExpressionSpecification()
+            $expressionData['spec']
         );
-        self::assertEquals([$value], $expressionData->getExpressionValues());
+        self::assertEquals([$value], $expressionData['values']);
     }
 
     #[DataProvider('falsyExpressionParametersProvider')]
@@ -151,7 +151,7 @@ final class ExpressionTest extends TestCase
 
         $expressionData = $expression->getExpressionData();
 
-        self::assertEquals([$falsyValue], $expressionData->getExpressionValues());
+        self::assertEquals([$falsyValue], $expressionData['values']);
     }
 
     public function testConstructorWithInvalidParameter(): void
@@ -180,8 +180,8 @@ final class ExpressionTest extends TestCase
 
         $expressionData = $expression->getExpressionData();
 
-        self::assertEquals(':a + :b', $expressionData->getExpressionSpecification());
-        self::assertEquals([$value1, $value2], $expressionData->getExpressionValues());
+        self::assertEquals(':a + :b', $expressionData['spec']);
+        self::assertEquals([$value1, $value2], $expressionData['values']);
     }
 
     public function testGetExpressionDataThrowsExceptionWhenParameterCountMismatch(): void
@@ -202,11 +202,11 @@ final class ExpressionTest extends TestCase
 
         $expressionData = $expression->getExpressionData();
 
-        self::assertEquals('%s + %s - %s', $expressionData->getExpressionSpecification());
+        self::assertEquals('%s + %s - %s', $expressionData['spec']);
         self::assertEquals([
             Argument::value(1),
             Argument::value(2),
             Argument::value(3),
-        ], $expressionData->getExpressionValues());
+        ], $expressionData['values']);
     }
 }

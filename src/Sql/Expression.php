@@ -104,17 +104,20 @@ class Expression extends AbstractExpression
 
     /**
      * @throws Exception\RuntimeException
+     * @inheritDoc
      */
     #[Override]
-    public function getExpressionData(): ExpressionData
+    public function getExpressionData(): array
     {
         $parameters      = $this->parameters;
         $parametersCount = count($parameters);
         $specification   = str_replace('%', '%%', $this->expression);
 
         if ($parametersCount === 0) {
-            $specification = str_ireplace(self::PLACEHOLDER, '', $specification);
-            return new ExpressionData($specification);
+            return [
+                'spec' => str_ireplace(self::PLACEHOLDER, '', $specification),
+                'values' => [],
+            ];
         }
 
         // assign locally, escaping % signs
@@ -131,6 +134,9 @@ class Expression extends AbstractExpression
             }
         }
 
-        return new ExpressionData($specification, $parameters);
+        return [
+            'spec' => $specification,
+            'values' => $parameters,
+        ];
     }
 }

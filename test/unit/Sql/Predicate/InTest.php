@@ -42,7 +42,7 @@ final class InTest extends TestCase
         $valueSet = $in->getValueSet();
         self::assertInstanceOf(ArgumentInterface::class, $valueSet);
         self::assertEquals([1, 2], $valueSet->getValue());
-        self::assertEquals(ArgumentType::Value, $valueSet->getType());
+        self::assertEquals(ArgumentType::Values, $valueSet->getType());
     }
 
     public function testCanPassIdentifierAndEmptyValueSetToConstructor(): void
@@ -59,7 +59,7 @@ final class InTest extends TestCase
         $valueSet = $in->getValueSet();
         self::assertInstanceOf(ArgumentInterface::class, $valueSet);
         self::assertEquals([], $valueSet->getValue());
-        self::assertEquals(ArgumentType::Value, $valueSet->getType());
+        self::assertEquals(ArgumentType::Values, $valueSet->getType());
     }
 
     public function testIdentifierIsMutable(): void
@@ -102,7 +102,7 @@ final class InTest extends TestCase
         $valueSet1 = $in->getValueSet();
         self::assertInstanceOf(ArgumentInterface::class, $valueSet1);
         self::assertEquals([1, 2], $valueSet1->getValue());
-        self::assertEquals(ArgumentType::Value, $valueSet1->getType());
+        self::assertEquals(ArgumentType::Values, $valueSet1->getType());
 
         // Second mutation with different data to verify mutability
         $in->setValueSet([3, 4, 5]);
@@ -111,7 +111,7 @@ final class InTest extends TestCase
         $valueSet2 = $in->getValueSet();
         self::assertInstanceOf(ArgumentInterface::class, $valueSet2);
         self::assertEquals([3, 4, 5], $valueSet2->getValue());
-        self::assertEquals(ArgumentType::Value, $valueSet2->getType());
+        self::assertEquals(ArgumentType::Values, $valueSet2->getType());
     }
 
     public function testRetrievingWherePartsReturnsSpecificationArrayOfIdentifierAndValuesAndArrayOfTypes(): void
@@ -123,10 +123,10 @@ final class InTest extends TestCase
         $expressionData = $in->getExpressionData();
 
         // Verify specification
-        self::assertEquals('%s IN (%s, %s, %s)', $expressionData->getExpressionSpecification());
+        self::assertEquals('%s IN (%s, %s, %s)', $expressionData['spec']);
 
         // Verify expression values
-        $values = $expressionData->getExpressionValues();
+        $values = $expressionData['values'];
         self::assertCount(2, $values);
 
         // Verify identifier argument
@@ -137,7 +137,7 @@ final class InTest extends TestCase
         // Verify value set argument
         self::assertInstanceOf(ArgumentInterface::class, $values[1]);
         self::assertEquals([1, 2, 3], $values[1]->getValue());
-        self::assertEquals(ArgumentType::Value, $values[1]->getType());
+        self::assertEquals(ArgumentType::Values, $values[1]->getType());
 
         // Test with typed value sets
         $in->setIdentifier('foo.bar')
@@ -150,10 +150,10 @@ final class InTest extends TestCase
         $expressionData = $in->getExpressionData();
 
         // Verify specification
-        self::assertEquals('%s IN (%s, %s, %s)', $expressionData->getExpressionSpecification());
+        self::assertEquals('%s IN (%s, %s, %s)', $expressionData['spec']);
 
         // Verify expression values
-        $values = $expressionData->getExpressionValues();
+        $values = $expressionData['values'];
         self::assertCount(2, $values);
 
         // Verify identifier argument
@@ -168,7 +168,7 @@ final class InTest extends TestCase
             [2 => ArgumentType::Value],
             [3 => ArgumentType::Literal],
         ], $values[1]->getValue());
-        self::assertEquals(ArgumentType::Value, $values[1]->getType());
+        self::assertEquals(ArgumentType::Values, $values[1]->getType());
     }
 
     public function testGetExpressionDataWithSubselect(): void
@@ -179,10 +179,10 @@ final class InTest extends TestCase
         $expressionData = $in->getExpressionData();
 
         // Verify specification
-        self::assertEquals('%s IN %s', $expressionData->getExpressionSpecification());
+        self::assertEquals('%s IN %s', $expressionData['spec']);
 
         // Verify expression values
-        $values = $expressionData->getExpressionValues();
+        $values = $expressionData['values'];
         self::assertCount(2, $values);
 
         // Verify value argument (passed as value type)
@@ -203,7 +203,7 @@ final class InTest extends TestCase
 
         $expressionData = $in->getExpressionData();
 
-        self::assertEquals('%s IN (NULL)', $expressionData->getExpressionSpecification());
+        self::assertEquals('%s IN (NULL)', $expressionData['spec']);
     }
 
     public function testGetExpressionDataWithSubselectAndIdentifier(): void
@@ -214,10 +214,10 @@ final class InTest extends TestCase
         $expressionData = $in->getExpressionData();
 
         // Verify specification
-        self::assertEquals('%s IN %s', $expressionData->getExpressionSpecification());
+        self::assertEquals('%s IN %s', $expressionData['spec']);
 
         // Verify expression values
-        $values = $expressionData->getExpressionValues();
+        $values = $expressionData['values'];
         self::assertCount(2, $values);
 
         // Verify identifier argument
@@ -239,10 +239,10 @@ final class InTest extends TestCase
         $expressionData = $in->getExpressionData();
 
         // Verify specification
-        self::assertEquals('(%s, %s) IN %s', $expressionData->getExpressionSpecification());
+        self::assertEquals('(%s, %s) IN %s', $expressionData['spec']);
 
         // Verify expression values
-        $values = $expressionData->getExpressionValues();
+        $values = $expressionData['values'];
         self::assertCount(2, $values);
 
         // Verify array identifiers argument

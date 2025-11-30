@@ -9,16 +9,14 @@ use Countable;
 use Override;
 use PhpDb\Sql\Exception;
 use PhpDb\Sql\Expression;
-use PhpDb\Sql\ExpressionData;
-use PhpDb\Sql\ExpressionPart;
 use PhpDb\Sql\Predicate\Expression as PredicateExpression;
 use ReturnTypeWillChange;
 
 use function count;
+use function implode;
 use function in_array;
 use function is_array;
 use function is_string;
-use function sprintf;
 use function str_contains;
 
 // phpcs:ignore SlevomatCodingStandard.Namespaces.UnusedUses.UnusedUse
@@ -180,30 +178,38 @@ class PredicateSet implements PredicateInterface, Countable
         return $this;
     }
 
-    /**
-     * Get predicate parts for where statement
-     */
+    /** @inheritDoc */
     #[Override]
-    public function getExpressionData(): ExpressionData
+    public function getExpressionData(): array
     {
-        $expressionData = new ExpressionData();
+        $specParts = [];
+        $allValues = [];
+        $count     = count($this->predicates);
 
-        for ($i = 0, $count = count($this->predicates); $i < $count; $i++) {
+        for ($i = 0; $i < $count; $i++) {
             /** @var PredicateInterface $predicate */
-            $predicate = $this->predicates[$i][1];
+            $predicate      = $this->predicates[$i][1];
+            $expressionData = $predicate->getExpressionData();
 
-            $expressionData->addExpressionParts(
-                $predicate->getExpressionData()->getExpressionParts(),
-                $predicate instanceof PredicateSet
-            );
+            $spec = $expressionData['spec'];
+            if ($predicate instanceof self) {
+                $spec = '(' . $spec . ')';
+            }
+            $specParts[] = $spec;
+
+            foreach ($expressionData['values'] as $value) {
+                $allValues[] = $value;
+            }
 
             if (isset($this->predicates[$i + 1])) {
-                $expressionPart = new ExpressionPart(sprintf('%s', $this->predicates[$i + 1][0]));
-                $expressionData->addExpressionPart($expressionPart);
+                $specParts[] = $this->predicates[$i + 1][0];
             }
         }
 
-        return $expressionData;
+        return [
+            'spec' => implode(' ', $specParts),
+            'values' => $allValues,
+        ];
     }
 
     /**

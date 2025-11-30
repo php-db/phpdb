@@ -27,7 +27,7 @@ final class BigIntegerTest extends TestCase
 
         self::assertEquals(
             '%s %s NOT NULL',
-            $expressionData->getExpressionSpecification()
+            $expressionData['spec']
         );
 
         self::assertEquals(
@@ -35,7 +35,7 @@ final class BigIntegerTest extends TestCase
                 Argument::Identifier('foo'),
                 Argument::Literal('BIGINT'),
             ],
-            $expressionData->getExpressionValues()
+            $expressionData['values']
         );
     }
 }

@@ -151,10 +151,10 @@ final class OperatorTest extends TestCase
         $expressionData = $operator->getExpressionData();
 
         // Verify specification
-        self::assertEquals('%s >= %s', $expressionData->getExpressionSpecification());
+        self::assertEquals('%s >= %s', $expressionData['spec']);
 
         // Verify expression values
-        $values = $expressionData->getExpressionValues();
+        $values = $expressionData['values'];
         self::assertCount(2, $values);
 
         // Verify left argument

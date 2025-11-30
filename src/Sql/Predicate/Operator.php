@@ -11,7 +11,6 @@ use PhpDb\Sql\Argument\Identifier;
 use PhpDb\Sql\Argument\Select;
 use PhpDb\Sql\ArgumentInterface;
 use PhpDb\Sql\Exception\InvalidArgumentException;
-use PhpDb\Sql\ExpressionData;
 use PhpDb\Sql\ExpressionInterface;
 use PhpDb\Sql\SqlInterface;
 
@@ -139,11 +138,9 @@ class Operator extends AbstractExpression implements PredicateInterface
         return $this;
     }
 
-    /**
-     * Get predicate parts for where statement
-     */
+    /** @inheritDoc */
     #[Override]
-    public function getExpressionData(): ExpressionData
+    public function getExpressionData(): array
     {
         if (! $this->left instanceof ArgumentInterface) {
             throw new InvalidArgumentException('Left expression must be specified');
@@ -153,12 +150,9 @@ class Operator extends AbstractExpression implements PredicateInterface
             throw new InvalidArgumentException('Right expression must be specified');
         }
 
-        return new ExpressionData(
-            '%s ' . $this->operator . ' %s',
-            [
-                $this->left,
-                $this->right,
-            ]
-        );
+        return [
+            'spec' => '%s ' . $this->operator . ' %s',
+            'values' => [$this->left, $this->right],
+        ];
     }
 }

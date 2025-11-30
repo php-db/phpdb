@@ -93,10 +93,10 @@ final class NotLikeTest extends TestCase
         $expressionData = $notLike->getExpressionData();
 
         // Verify specification
-        self::assertEquals('%1$s NOT LIKE %2$s', $expressionData->getExpressionSpecification());
+        self::assertEquals('%s NOT LIKE %s', $expressionData['spec']);
 
         // Verify expression values
-        $values = $expressionData->getExpressionValues();
+        $values = $expressionData['values'];
         self::assertCount(2, $values);
 
         // Verify identifier argument
@@ -114,7 +114,7 @@ final class NotLikeTest extends TestCase
     {
         $notLike = new NotLike();
         self::assertInstanceOf(Like::class, $notLike->setIdentifier('bar'));
-        self::assertInstanceOf(Like::class, $notLike->setSpecification('%1$s NOT LIKE %2$s'));
+        self::assertInstanceOf(Like::class, $notLike->setSpecification('%s NOT LIKE %s'));
         self::assertInstanceOf(Like::class, $notLike->setLike('foo%'));
     }
 }

@@ -103,10 +103,10 @@ final class LikeTest extends TestCase
         $expressionData = $like->getExpressionData();
 
         // Verify specification
-        self::assertEquals('%1$s LIKE %2$s', $expressionData->getExpressionSpecification());
+        self::assertEquals('%s LIKE %s', $expressionData['spec']);
 
         // Verify expression values
-        $values = $expressionData->getExpressionValues();
+        $values = $expressionData['values'];
         self::assertCount(2, $values);
 
         // Verify identifier argument
@@ -124,10 +124,10 @@ final class LikeTest extends TestCase
         $expressionData = $like->getExpressionData();
 
         // Verify specification
-        self::assertEquals('%1$s LIKE %2$s', $expressionData->getExpressionSpecification());
+        self::assertEquals('%s LIKE %s', $expressionData['spec']);
 
         // Verify expression values with custom types
-        $values = $expressionData->getExpressionValues();
+        $values = $expressionData['values'];
         self::assertCount(2, $values);
 
         // Verify identifier argument (now with Value type)
@@ -145,7 +145,7 @@ final class LikeTest extends TestCase
     {
         $like = new Like();
         self::assertInstanceOf(Like::class, $like->setIdentifier('bar'));
-        self::assertInstanceOf(Like::class, $like->setSpecification('%1$s LIKE %2$s'));
+        self::assertInstanceOf(Like::class, $like->setSpecification('%s LIKE %s'));
         self::assertInstanceOf(Like::class, $like->setLike('foo%'));
     }
 

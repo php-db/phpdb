@@ -139,31 +139,31 @@ final class ColumnTest extends TestCase
 
         $expressionData = $column->getExpressionData();
 
-        self::assertEquals('%s %s NOT NULL', $expressionData->getExpressionSpecification());
+        self::assertEquals('%s %s NOT NULL', $expressionData['spec']);
         self::assertEquals([
             Argument::identifier('foo'),
             Argument::literal('INTEGER'),
-        ], $expressionData->getExpressionValues());
+        ], $expressionData['values']);
 
         $column->setNullable(true);
 
         $expressionData = $column->getExpressionData();
 
-        self::assertEquals('%s %s', $expressionData->getExpressionSpecification());
+        self::assertEquals('%s %s', $expressionData['spec']);
         self::assertEquals([
             Argument::identifier('foo'),
             Argument::literal('INTEGER'),
-        ], $expressionData->getExpressionValues());
+        ], $expressionData['values']);
 
         $column->setDefault('bar');
 
         $expressionData = $column->getExpressionData();
 
-        self::assertEquals('%s %s DEFAULT %s', $expressionData->getExpressionSpecification());
+        self::assertEquals('%s %s DEFAULT %s', $expressionData['spec']);
         self::assertEquals([
             Argument::identifier('foo'),
             Argument::literal('INTEGER'),
             Argument::value('bar'),
-        ], $expressionData->getExpressionValues());
+        ], $expressionData['values']);
     }
 }

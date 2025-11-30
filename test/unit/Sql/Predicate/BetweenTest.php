@@ -96,7 +96,7 @@ final class BetweenTest extends TestCase
 
     public function testSpecificationHasSaneDefaultValue(): void
     {
-        self::assertEquals('%1$s BETWEEN %2$s AND %3$s', $this->between->getSpecification());
+        self::assertEquals('%s BETWEEN %s AND %s', $this->between->getSpecification());
     }
 
     public function testIdentifierIsMutable(): void
@@ -186,10 +186,10 @@ final class BetweenTest extends TestCase
         $expressionData = $this->between->getExpressionData();
 
         // Verify specification
-        self::assertEquals($this->between->getSpecification(), $expressionData->getExpressionSpecification());
+        self::assertEquals($this->between->getSpecification(), $expressionData['spec']);
 
         // Verify expression values
-        $values = $expressionData->getExpressionValues();
+        $values = $expressionData['values'];
         self::assertCount(3, $values);
 
         // Verify identifier argument
@@ -214,10 +214,10 @@ final class BetweenTest extends TestCase
         $expressionData = $this->between->getExpressionData();
 
         // Verify specification
-        self::assertEquals($this->between->getSpecification(), $expressionData->getExpressionSpecification());
+        self::assertEquals($this->between->getSpecification(), $expressionData['spec']);
 
         // Verify expression values with custom types
-        $values = $expressionData->getExpressionValues();
+        $values = $expressionData['values'];
         self::assertCount(3, $values);
 
         // Verify identifier argument (passed as Value type)

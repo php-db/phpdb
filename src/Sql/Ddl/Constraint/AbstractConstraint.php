@@ -6,8 +6,6 @@ namespace PhpDb\Sql\Ddl\Constraint;
 
 use Override;
 use PhpDb\Sql\Argument\Identifier;
-use PhpDb\Sql\ExpressionData;
-use PhpDb\Sql\ExpressionPart;
 
 use function array_fill;
 use function count;
@@ -75,30 +73,34 @@ abstract class AbstractConstraint implements ConstraintInterface
         return $this->columns;
     }
 
+    /** @inheritDoc */
     #[Override]
-    public function getExpressionData(): ExpressionData
+    public function getExpressionData(): array
     {
-        $expressionPart = new ExpressionPart();
+        $specParts = [];
+        $values    = [];
 
         if ($this->name !== '') {
-            $expressionPart->addSpecification($this->namedSpecification);
-            $expressionPart->addValue(new Identifier($this->name));
+            $specParts[] = $this->namedSpecification;
+            $values[]    = new Identifier($this->name);
         }
 
         if ($this->specification !== '') {
-            $expressionPart->addSpecification($this->specification);
+            $specParts[] = $this->specification;
         }
 
         $columnCount = count($this->columns);
         if ($columnCount !== 0) {
-            $columnSpecification = array_fill(0, $columnCount, '%s');
-            $columnSpecification = sprintf($this->columnSpecification, implode(', ', $columnSpecification));
-            $expressionPart->addSpecification($columnSpecification);
+            $columnSpec  = array_fill(0, $columnCount, '%s');
+            $specParts[] = sprintf($this->columnSpecification, implode(', ', $columnSpec));
             for ($i = 0; $i < $columnCount; $i++) {
-                $expressionPart->addValue(new Identifier($this->columns[$i]));
+                $values[] = new Identifier($this->columns[$i]);
             }
         }
 
-        return new ExpressionData($expressionPart);
+        return [
+            'spec' => implode(' ', $specParts),
+            'values' => $values,
+        ];
     }
 }

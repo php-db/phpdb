@@ -6,24 +6,22 @@ namespace PhpDb\Sql\Ddl\Column;
 
 use Override;
 use PhpDb\Sql\Argument\Literal;
-use PhpDb\Sql\ExpressionData;
 
 /**
  * @see doc section http://dev.mysql.com/doc/refman/5.6/en/timestamp-initialization.html
  */
 abstract class AbstractTimestampColumn extends Column
 {
+    /** @inheritDoc */
     #[Override]
-    public function getExpressionData(): ExpressionData
+    public function getExpressionData(): array
     {
         $expressionData = parent::getExpressionData();
         $options        = $this->getOptions();
 
         if (isset($options['on_update'])) {
-            $expressionData
-                ->getExpressionPart(0)
-                ->addSpecification('%s')
-                ->addValue(new Literal('ON UPDATE CURRENT_TIMESTAMP'));
+            $expressionData['spec']     .= ' %s';
+            $expressionData['values'][] = new Literal('ON UPDATE CURRENT_TIMESTAMP');
         }
 
         return $expressionData;

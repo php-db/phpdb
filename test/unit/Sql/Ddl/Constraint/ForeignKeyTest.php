@@ -141,11 +141,11 @@ final class ForeignKeyTest extends TestCase
         // Verify specification
         self::assertEquals(
             'CONSTRAINT %s FOREIGN KEY (%s) REFERENCES %s (%s) ON DELETE %s ON UPDATE %s',
-            $expressionData->getExpressionSpecification()
+            $expressionData['spec']
         );
 
         // Verify expression values
-        $values = $expressionData->getExpressionValues();
+        $values = $expressionData['values'];
         self::assertCount(6, $values);
 
         // Verify constraint name

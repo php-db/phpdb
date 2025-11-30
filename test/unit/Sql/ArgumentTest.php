@@ -81,7 +81,7 @@ final class ArgumentTest extends TestCase
         $argument = new Values([1, 2, 3]);
 
         self::assertEquals([1, 2, 3], $argument->getValue());
-        self::assertEquals(ArgumentType::Value, $argument->getType());
+        self::assertEquals(ArgumentType::Values, $argument->getType());
     }
 
     public function testStaticValueMethod(): void

@@ -42,12 +42,12 @@ class LiteralTest extends TestCase
 
         self::assertEquals(
             'bar',
-            $expressionData->getExpressionSpecification()
+            $expressionData['spec']
         );
 
         self::assertEquals(
             [],
-            $expressionData->getExpressionValues()
+            $expressionData['values']
         );
     }
 
@@ -58,12 +58,12 @@ class LiteralTest extends TestCase
 
         self::assertEquals(
             'X LIKE "foo%%"',
-            $expressionData->getExpressionSpecification()
+            $expressionData['spec']
         );
 
         self::assertEquals(
             [],
-            $expressionData->getExpressionValues()
+            $expressionData['values']
         );
     }
 }

@@ -29,9 +29,13 @@ class Literal implements ExpressionInterface
         return $this->literal;
     }
 
+    /** @inheritDoc */
     #[Override]
-    public function getExpressionData(): ExpressionData
+    public function getExpressionData(): array
     {
-        return new ExpressionData(str_replace('%', '%%', $this->literal));
+        return [
+            'spec' => str_replace('%', '%%', $this->literal),
+            'values' => [],
+        ];
     }
 }

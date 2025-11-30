@@ -6,5 +6,10 @@ namespace PhpDb\Sql;
 
 interface ExpressionInterface
 {
-    public function getExpressionData(): ExpressionData;
+    /**
+     * Returns raw expression data as array for optimised processing
+     *
+     * @return array{spec: string, values: ArgumentInterface[]}
+     */
+    public function getExpressionData(): array;
 }

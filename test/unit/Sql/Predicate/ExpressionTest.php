@@ -196,7 +196,7 @@ final class ExpressionTest extends TestCase
 
         $expressionData = $expression->getExpressionData();
 
-        self::assertEquals('foo.bar = %s AND id != %s', $expressionData->getExpressionSpecification());
-        self::assertEquals([$parameter1, $parameter2], $expressionData->getExpressionValues());
+        self::assertEquals('foo.bar = %s AND id != %s', $expressionData['spec']);
+        self::assertEquals([$parameter1, $parameter2], $expressionData['values']);
     }
 }
