@@ -136,7 +136,7 @@ abstract class AbstractSql implements SqlInterface
         $expressionValues     = $this->flattenExpressionValues($expressionData['values']);
         $values               = [];
 
-        // Inline common cases for performance, delegate complex cases
+        // Inline common cases for performance
         foreach ($expressionValues as $vIndex => $argument) {
             $values[] = match (true) {
                 $argument instanceof Value => $parameterContainer instanceof ParameterContainer
@@ -150,15 +150,24 @@ abstract class AbstractSql implements SqlInterface
                     : $platform->quoteValue((string) $argument->getValue()),
                 $argument instanceof Identifier => $platform->quoteIdentifierInFragment($argument->getValue()),
                 $argument instanceof Literal => $argument->getValue(),
-                default => $this->processComplexArgument(
+                $argument instanceof Values => $this->processValuesArgument(
                     $argument,
                     $expressionParamIndex,
+                    $namedParameterPrefix,
+                    $platform,
+                    $driver,
+                    $parameterContainer
+                ),
+                $argument instanceof Identifiers => $this->processIdentifiersArgument($argument, $platform),
+                $argument instanceof SelectArgument => $this->processExpressionOrSelect(
+                    $argument,
                     $namedParameterPrefix,
                     $vIndex,
                     $platform,
                     $driver,
                     $parameterContainer
                 ),
+                default => throw new Exception\InvalidArgumentException('Unknown argument type'),
             };
         }
 
@@ -197,40 +206,6 @@ abstract class AbstractSql implements SqlInterface
         }
 
         return $values;
-    }
-
-    /**
-     * Process less common argument types (Values, Identifiers, SelectArgument)
-     */
-    protected function processComplexArgument(
-        ArgumentInterface $argument,
-        int &$expressionParamIndex,
-        string $namedParameterPrefix,
-        int $vIndex,
-        PlatformInterface $platform,
-        ?DriverInterface $driver = null,
-        ?ParameterContainer $parameterContainer = null,
-    ): string {
-        return match (true) {
-            $argument instanceof Values => $this->processValuesArgument(
-                $argument,
-                $expressionParamIndex,
-                $namedParameterPrefix,
-                $platform,
-                $driver,
-                $parameterContainer
-            ),
-            $argument instanceof Identifiers => $this->processIdentifiersArgument($argument, $platform),
-            $argument instanceof SelectArgument => $this->processExpressionOrSelect(
-                $argument,
-                $namedParameterPrefix,
-                $vIndex,
-                $platform,
-                $driver,
-                $parameterContainer
-            ),
-            default => throw new Exception\InvalidArgumentException('Unknown argument type'),
-        };
     }
 
     protected function processExpressionOrSelect(
