@@ -3,6 +3,9 @@
         "pdo-sqlite",
         "sqlite3"
     ],
+    "ignore_commands": [
+        "vendor/bin/phpbench"
+    ],
     "additional_checks": [
         {
             "name": "PhpStan",
