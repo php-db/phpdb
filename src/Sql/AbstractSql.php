@@ -136,16 +136,30 @@ abstract class AbstractSql implements SqlInterface
         $expressionValues     = $this->flattenExpressionValues($expressionData['values']);
         $values               = [];
 
+        // Inline common cases for performance, delegate complex cases
         foreach ($expressionValues as $vIndex => $argument) {
-            $values[] = (string) $this->processExpressionValue(
-                $argument,
-                $expressionParamIndex,
-                $namedParameterPrefix,
-                $vIndex,
-                $platform,
-                $driver,
-                $parameterContainer,
-            );
+            $values[] = match (true) {
+                $argument instanceof Value => $parameterContainer instanceof ParameterContainer
+                    ? $this->processExpressionParameterName(
+                        $argument->getValue(),
+                        $namedParameterPrefix,
+                        $expressionParamIndex,
+                        $driver,
+                        $parameterContainer
+                    )
+                    : $platform->quoteValue((string) $argument->getValue()),
+                $argument instanceof Identifier => $platform->quoteIdentifierInFragment($argument->getValue()),
+                $argument instanceof Literal => $argument->getValue(),
+                default => $this->processComplexArgument(
+                    $argument,
+                    $expressionParamIndex,
+                    $namedParameterPrefix,
+                    $vIndex,
+                    $platform,
+                    $driver,
+                    $parameterContainer
+                ),
+            };
         }
 
         return vsprintf($specification, $values);
@@ -185,7 +199,10 @@ abstract class AbstractSql implements SqlInterface
         return $values;
     }
 
-    protected function processExpressionValue(
+    /**
+     * Process less common argument types (Values, Identifiers, SelectArgument)
+     */
+    protected function processComplexArgument(
         ArgumentInterface $argument,
         int &$expressionParamIndex,
         string $namedParameterPrefix,
@@ -193,20 +210,8 @@ abstract class AbstractSql implements SqlInterface
         PlatformInterface $platform,
         ?DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null,
-    ): ?string {
-        // Order by frequency: Value and Identifier are most common
+    ): string {
         return match (true) {
-            $argument instanceof Value => $parameterContainer instanceof ParameterContainer
-                ? $this->processExpressionParameterName(
-                    $argument->getValue(),
-                    $namedParameterPrefix,
-                    $expressionParamIndex,
-                    $driver,
-                    $parameterContainer
-                )
-                : $platform->quoteValue((string) $argument->getValue()),
-            $argument instanceof Identifier => $platform->quoteIdentifierInFragment($argument->getValue()),
-            $argument instanceof Literal => $argument->getValue(),
             $argument instanceof Values => $this->processValuesArgument(
                 $argument,
                 $expressionParamIndex,
