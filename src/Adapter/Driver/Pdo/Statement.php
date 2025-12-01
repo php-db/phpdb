@@ -20,8 +20,8 @@ use PhpDb\Adapter\StatementContainerInterface;
 
 use function implode;
 use function is_array;
-use function is_bool;
 use function is_int;
+use function ltrim;
 
 class Statement implements StatementInterface, PdoDriverAwareInterface, ProfilerAwareInterface
 {
@@ -204,32 +204,30 @@ class Statement implements StatementInterface, PdoDriverAwareInterface, Profiler
         }
 
         $parameters = $this->parameterContainer->getNamedArray();
+        $errata = $this->parameterContainer->getErrataIterator()->getArrayCopy();
+
         foreach ($parameters as $name => &$value) {
-            if (is_bool($value)) {
-                $type = PDO::PARAM_BOOL;
-            } elseif (is_int($value)) {
-                $type = PDO::PARAM_INT;
+            if (isset($errata[$name])) {
+                $type = match ($errata[$name]) {
+                    ParameterContainer::TYPE_INTEGER => PDO::PARAM_INT,
+                    ParameterContainer::TYPE_NULL => PDO::PARAM_NULL,
+                    ParameterContainer::TYPE_LOB => PDO::PARAM_LOB,
+                    default => PDO::PARAM_STR,
+                };
             } else {
-                $type = PDO::PARAM_STR;
-            }
-            if ($this->parameterContainer->offsetHasErrata($name)) {
-                switch ($this->parameterContainer->offsetGetErrata($name)) {
-                    case ParameterContainer::TYPE_INTEGER:
-                        $type = PDO::PARAM_INT;
-                        break;
-                    case ParameterContainer::TYPE_NULL:
-                        $type = PDO::PARAM_NULL;
-                        break;
-                    case ParameterContainer::TYPE_LOB:
-                        $type = PDO::PARAM_LOB;
-                        break;
-                }
+                $type = match (true) {
+                    is_int($value) => PDO::PARAM_INT,
+                    $value === null => PDO::PARAM_NULL,
+                    default => PDO::PARAM_STR,
+                };
             }
 
             // parameter is named or positional, value is reference
-            $parameter = is_int($name) ? $name + 1 : $this->driver->formatParameterName($name);
+            $parameter = is_int($name) ? $name + 1 : ':' . ltrim($name, ':');
             $this->resource->bindParam($parameter, $value, $type);
         }
+
+        $this->parametersBound = true;
     }
 
     /** Perform a deep clone */

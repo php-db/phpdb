@@ -121,30 +121,32 @@ class ParameterContainer implements Iterator, ArrayAccess, Countable
     #[ReturnTypeWillChange]
     public function offsetSet(mixed $name, mixed $value, mixed $errata = null, mixed $maxLength = null): void
     {
-        $position = false;
+        $isNewPosition = true;
 
-        // if integer, get name for this position
         if (is_int($name)) {
+            // Integer key: check if we have a name for this position
             if (isset($this->positions[$name])) {
-                $position = $name;
-                $name     = $this->positions[$name];
+                $isNewPosition = false;
+                $name = $this->positions[$name];
             } else {
                 $name = (string) $name;
             }
         } elseif (is_string($name)) {
-            // is a string:
-            $normalizedName = ltrim($name, ':');
-            if (isset($this->nameMapping[$normalizedName])) {
-                // We have a mapping; get real name from it
-                $name = $this->nameMapping[$normalizedName];
+            // Check for name mapping (handles :prefixed lookups)
+            if ($name[0] === ':') {
+                $normalizedName = substr($name, 1);
+                if (isset($this->nameMapping[$normalizedName])) {
+                    $name = $this->nameMapping[$normalizedName];
+                }
+            } elseif (isset($this->nameMapping[$name])) {
+                $name = $this->nameMapping[$name];
             }
 
-            $position = array_key_exists($name, $this->data);
+            $isNewPosition = ! isset($this->data[$name]);
 
-            // @todo: this assumes that any data begining with a ":" will be considered a parameter
-            if (is_string($value) && str_starts_with($value, ':')) {
-                // We have a named parameter; handle name mapping (container creation)
-                $this->nameMapping[ltrim($value, ':')] = $name;
+            // Create name mapping if value is a :parameter reference
+            if (is_string($value) && isset($value[0]) && $value[0] === ':') {
+                $this->nameMapping[substr($value, 1)] = $name;
             }
         } elseif ($name === null) {
             $name = (string) count($this->data);
@@ -152,18 +154,18 @@ class ParameterContainer implements Iterator, ArrayAccess, Countable
             throw new Exception\InvalidArgumentException('Keys must be string, integer or null');
         }
 
-        if ($position === false) {
+        if ($isNewPosition) {
             $this->positions[] = $name;
         }
 
         $this->data[$name] = $value;
 
-        if ($errata) {
-            $this->offsetSetErrata($name, $errata);
+        if ($errata !== null) {
+            $this->errata[$name] = $errata;
         }
 
-        if ($maxLength) {
-            $this->offsetSetMaxLength($name, $maxLength);
+        if ($maxLength !== null) {
+            $this->maxLength[$name] = $maxLength;
         }
     }
 
