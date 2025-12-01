@@ -194,18 +194,8 @@ abstract class AbstractSql implements SqlInterface
         ?DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null,
     ): ?string {
+        // Order by frequency: Value and Identifier are most common
         return match (true) {
-            $argument instanceof SelectArgument => $this->processExpressionOrSelect(
-                $argument,
-                $namedParameterPrefix,
-                $vIndex,
-                $platform,
-                $driver,
-                $parameterContainer
-            ),
-            $argument instanceof Identifier => $platform->quoteIdentifierInFragment($argument->getValue()),
-            $argument instanceof Identifiers => $this->processIdentifiersArgument($argument, $platform),
-            $argument instanceof Literal => $argument->getValue(),
             $argument instanceof Value => $parameterContainer instanceof ParameterContainer
                 ? $this->processExpressionParameterName(
                     $argument->getValue(),
@@ -215,10 +205,21 @@ abstract class AbstractSql implements SqlInterface
                     $parameterContainer
                 )
                 : $platform->quoteValue((string) $argument->getValue()),
+            $argument instanceof Identifier => $platform->quoteIdentifierInFragment($argument->getValue()),
+            $argument instanceof Literal => $argument->getValue(),
             $argument instanceof Values => $this->processValuesArgument(
                 $argument,
                 $expressionParamIndex,
                 $namedParameterPrefix,
+                $platform,
+                $driver,
+                $parameterContainer
+            ),
+            $argument instanceof Identifiers => $this->processIdentifiersArgument($argument, $platform),
+            $argument instanceof SelectArgument => $this->processExpressionOrSelect(
+                $argument,
+                $namedParameterPrefix,
+                $vIndex,
                 $platform,
                 $driver,
                 $parameterContainer
@@ -263,8 +264,8 @@ abstract class AbstractSql implements SqlInterface
         $values          = $argument->getValue();
         $processedValues = [];
 
-        foreach ($values as $value) {
-            if ($parameterContainer instanceof ParameterContainer) {
+        if ($parameterContainer instanceof ParameterContainer) {
+            foreach ($values as $value) {
                 $processedValues[] = $this->processExpressionParameterName(
                     $value,
                     $namedParameterPrefix,
@@ -272,7 +273,9 @@ abstract class AbstractSql implements SqlInterface
                     $driver,
                     $parameterContainer
                 );
-            } else {
+            }
+        } else {
+            foreach ($values as $value) {
                 $processedValues[] = $platform->quoteValue((string) $value);
             }
         }

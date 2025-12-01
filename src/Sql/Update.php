@@ -7,7 +7,7 @@ namespace PhpDb\Sql;
 use Closure;
 use Laminas\Stdlib\PriorityList;
 use PhpDb\Adapter\Driver\DriverInterface;
-use PhpDb\Adapter\Driver\Pdo\Pdo;
+use PhpDb\Adapter\Driver\PdoDriverInterface;
 use PhpDb\Adapter\ParameterContainer;
 use PhpDb\Adapter\Platform\PlatformInterface;
 use PhpDb\Sql\Join;
@@ -206,7 +206,7 @@ class Update extends AbstractPreparableSql
             if (is_scalar($value) && $parameterContainer) {
                 // use incremental value instead of column name for PDO
                 // @see https://github.com/zendframework/zend-db/issues/35
-                if ($driver instanceof Pdo) {
+                if ($driver instanceof PdoDriverInterface) {
                     $column = 'c_' . $i++;
                 }
 

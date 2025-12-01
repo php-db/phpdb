@@ -59,9 +59,13 @@ class PredicateSet implements PredicateInterface, Countable
     {
         $combination ??= $this->defaultCombination;
 
+        // AND is more common, check it first
         match ($combination) {
+            self::OP_AND => $this->andPredicate($predicate),
             self::OP_OR => $this->orPredicate($predicate),
-            default => $this->andPredicate($predicate),
+            default => throw new Exception\InvalidArgumentException(
+                "Invalid combination: expected 'AND' or 'OR'"
+            ),
         };
 
         return $this;
