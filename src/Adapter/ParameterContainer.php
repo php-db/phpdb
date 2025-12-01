@@ -21,7 +21,7 @@ use function key;
 use function ltrim;
 use function next;
 use function reset;
-use function str_starts_with;
+use function substr;
 
 class ParameterContainer implements Iterator, ArrayAccess, Countable
 {
@@ -127,7 +127,7 @@ class ParameterContainer implements Iterator, ArrayAccess, Countable
             // Integer key: check if we have a name for this position
             if (isset($this->positions[$name])) {
                 $isNewPosition = false;
-                $name = $this->positions[$name];
+                $name          = $this->positions[$name];
             } else {
                 $name = (string) $name;
             }

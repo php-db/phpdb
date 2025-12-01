@@ -204,7 +204,7 @@ class Statement implements StatementInterface, PdoDriverAwareInterface, Profiler
         }
 
         $parameters = $this->parameterContainer->getNamedArray();
-        $errata = $this->parameterContainer->getErrataIterator()->getArrayCopy();
+        $errata     = $this->parameterContainer->getErrataIterator()->getArrayCopy();
 
         foreach ($parameters as $name => &$value) {
             if (isset($errata[$name])) {
