@@ -157,12 +157,6 @@ parameters:
 			path: src/Sql/Platform/Platform.php
 
 		-
-			message: '#^Call to function is_array\(\) with array will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: src/Sql/Predicate/PredicateSet.php
-
-		-
 			message: '#^Class PhpDb\\Adapter\\Driver\\Pdo\\Pdo not found\.$#'
 			identifier: class.notFound
 			count: 1

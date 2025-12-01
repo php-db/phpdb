@@ -28,14 +28,11 @@ use function is_callable;
 use function is_object;
 use function is_string;
 use function key;
-use function preg_replace;
 use function rtrim;
 use function sprintf;
-use function str_pad;
+use function str_replace;
 use function strtoupper;
 use function vsprintf;
-
-use const STR_PAD_LEFT;
 
 abstract class AbstractSql implements SqlInterface
 {
@@ -123,11 +120,10 @@ abstract class AbstractSql implements SqlInterface
             : $this->processInfo['paramPrefix'] . $namedParameterPrefix;
 
         if ($parameterContainer && $namedParameterPrefix === '') {
-            $namedParameterPrefix = 'expr'
-                . str_pad((string) ++$runtimeExpressionPrefix, 4, '0', STR_PAD_LEFT)
-                . 'Param';
+            $namedParameterPrefix = "expr{$runtimeExpressionPrefix}Param";
+            ++$runtimeExpressionPrefix;
         } else {
-            $namedParameterPrefix = preg_replace('/\s/', '__', $namedParameterPrefix);
+            $namedParameterPrefix = str_replace([' ', "\t", "\n", "\r"], '__', $namedParameterPrefix);
         }
 
         if (! isset($this->instanceParameterIndex[$namedParameterPrefix])) {

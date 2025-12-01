@@ -92,16 +92,16 @@ final class AbstractSqlTest extends TestCase
         $parameters = $parameterContainer->getNamedArray();
 
         // Verify SQL uses named parameters
-        self::assertMatchesRegularExpression('#"x" > :expr\d\d\d\dParam1 AND y < :expr\d\d\d\dParam2#', $sqlAndParams);
+        self::assertMatchesRegularExpression('#"x" > :expr\d+Param1 AND y < :expr\d+Param2#', $sqlAndParams);
 
         // Verify parameter names and values
-        preg_match('#expr(\d\d\d\d)Param1#', key($parameters), $matches);
+        preg_match('#expr(\d+)Param1#', key($parameters), $matches);
         $expressionNumber = $matches[1];
 
-        self::assertMatchesRegularExpression('#expr\d\d\d\dParam1#', key($parameters));
+        self::assertMatchesRegularExpression('#expr\d+Param1#', key($parameters));
         self::assertEquals(5, current($parameters));
         next($parameters);
-        self::assertMatchesRegularExpression('#expr\d\d\d\dParam2#', key($parameters));
+        self::assertMatchesRegularExpression('#expr\d+Param2#', key($parameters));
         self::assertEquals(10, current($parameters));
 
         // Verify next invocation increments expression number
@@ -110,7 +110,7 @@ final class AbstractSqlTest extends TestCase
 
         $parameters = $parameterContainer->getNamedArray();
 
-        preg_match('#expr(\d\d\d\d)Param1#', key($parameters), $matches);
+        preg_match('#expr(\d+)Param1#', key($parameters), $matches);
         $expressionNumberNext = $matches[1];
 
         self::assertEquals(1, (int) $expressionNumberNext - (int) $expressionNumber);
