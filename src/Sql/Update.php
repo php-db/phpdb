@@ -61,7 +61,7 @@ class Update extends AbstractPreparableSql
 
     protected bool $emptyWhereProtection = true;
 
-    protected PriorityList $set;
+    protected ?PriorityList $set = null;
 
     protected ?Where $where = null;
 
@@ -75,9 +75,15 @@ class Update extends AbstractPreparableSql
         if ($table) {
             $this->table($table);
         }
+    }
 
-        $this->set = new PriorityList();
-        $this->set->isLIFO(false);
+    private function getSet(): PriorityList
+    {
+        if ($this->set === null) {
+            $this->set = new PriorityList();
+            $this->set->isLIFO(false);
+        }
+        return $this->set;
     }
 
     private function getWhere(): Where
@@ -111,8 +117,9 @@ class Update extends AbstractPreparableSql
      */
     public function set(array $values, string|int $flag = self::VALUES_SET): static
     {
+        $set = $this->getSet();
         if ($flag === self::VALUES_SET) {
-            $this->set->clear();
+            $set->clear();
         }
 
         $priority = is_numeric($flag) ? $flag : 0;
@@ -121,7 +128,7 @@ class Update extends AbstractPreparableSql
                 throw new Exception\InvalidArgumentException('set() expects a string for the value key');
             }
 
-            $this->set->insert($k, $v, $priority);
+            $set->insert($k, $v, $priority);
         }
 
         return $this;
@@ -164,7 +171,7 @@ class Update extends AbstractPreparableSql
         $rawState = [
             'emptyWhereProtection' => $this->emptyWhereProtection,
             'table'                => $this->table,
-            'set'                  => $this->set->toArray(),
+            'set'                  => $this->getSet()->toArray(),
             'where'                => $this->getWhere(),
             'joins'                => $this->getJoins(),
         ];
@@ -192,7 +199,7 @@ class Update extends AbstractPreparableSql
         $i           = 0;
         $isPdoDriver = $driver instanceof PdoDriverInterface;
 
-        foreach ($this->set as $column => $value) {
+        foreach ($this->getSet() as $column => $value) {
             $prefix  = $this->resolveColumnValue(
                 [
                     'column'       => $column,
@@ -284,6 +291,8 @@ class Update extends AbstractPreparableSql
         if ($this->joins !== null) {
             $this->joins = clone $this->joins;
         }
-        $this->set = clone $this->set;
+        if ($this->set !== null) {
+            $this->set = clone $this->set;
+        }
     }
 }

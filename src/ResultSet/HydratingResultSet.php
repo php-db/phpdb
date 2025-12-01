@@ -14,8 +14,8 @@ use function is_array;
 class HydratingResultSet extends AbstractResultSet
 {
     public function __construct(
-        private HydratorInterface $hydrator = new ArraySerializableHydrator(),
-        private ?object $rowPrototype = new ArrayObject()
+        private ?HydratorInterface $hydrator = null,
+        private ?object $rowPrototype = null
     ) {
     }
 
@@ -35,7 +35,7 @@ class HydratingResultSet extends AbstractResultSet
      */
     public function getHydrator(): HydratorInterface
     {
-        return $this->hydrator;
+        return $this->hydrator ??= new ArraySerializableHydrator();
     }
 
     /** {@inheritDoc} */
@@ -48,9 +48,9 @@ class HydratingResultSet extends AbstractResultSet
 
     /** {@inheritDoc} */
     #[Override]
-    public function getRowPrototype(): ?object
+    public function getRowPrototype(): object
     {
-        return $this->rowPrototype;
+        return $this->rowPrototype ??= new ArrayObject();
     }
 
     /** @deprecated use setRowPrototype() */
@@ -77,7 +77,7 @@ class HydratingResultSet extends AbstractResultSet
             return $this->buffer[$this->position];
         }
         $data    = $this->dataSource->current();
-        $current = is_array($data) ? $this->hydrator->hydrate($data, clone $this->rowPrototype) : null;
+        $current = is_array($data) ? $this->getHydrator()->hydrate($data, clone $this->getRowPrototype()) : null;
 
         if (is_array($this->buffer)) {
             $this->buffer[$this->position] = $current;
@@ -96,7 +96,7 @@ class HydratingResultSet extends AbstractResultSet
     {
         $return = [];
         foreach ($this as $row) {
-            $return[] = $this->hydrator->extract($row);
+            $return[] = $this->getHydrator()->extract($row);
         }
         return $return;
     }

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace PhpDbTest\Sql\Ddl\Index;
 
-use PhpDb\Sql\Argument;
 use PhpDb\Sql\Argument\Identifier;
 use PhpDb\Sql\Ddl\Index\Index;
 use PHPUnit\Framework\Attributes\CoversMethod;

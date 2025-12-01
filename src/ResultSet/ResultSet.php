@@ -18,7 +18,7 @@ class ResultSet extends AbstractResultSet
 
     public function __construct(
         private ResultSetReturnType|string $returnType = ResultSetReturnType::ArrayObject,
-        private ?ArrayObject $rowPrototype = new ArrayObject([], ArrayObject::ARRAY_AS_PROPS)
+        private ?ArrayObject $rowPrototype = null
     ) {
         if (is_string($this->returnType)) {
             $this->returnType = ResultSetReturnType::from($this->returnType);
@@ -37,7 +37,7 @@ class ResultSet extends AbstractResultSet
     #[Override]
     public function getRowPrototype(): ArrayObject
     {
-        return $this->rowPrototype;
+        return $this->rowPrototype ??= new ArrayObject([], ArrayObject::ARRAY_AS_PROPS);
     }
 
     /**
@@ -57,7 +57,7 @@ class ResultSet extends AbstractResultSet
         $data = parent::current();
 
         if ($this->returnType === ResultSetReturnType::ArrayObject && is_array($data)) {
-            $ao = clone $this->rowPrototype;
+            $ao = clone $this->getRowPrototype();
             $ao->exchangeArray($data);
             return $ao;
         }
