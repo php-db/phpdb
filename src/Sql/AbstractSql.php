@@ -163,6 +163,18 @@ abstract class AbstractSql implements SqlInterface
      */
     protected function flattenExpressionValues(array $arguments): array
     {
+        $hasValues = false;
+        foreach ($arguments as $argument) {
+            if ($argument instanceof Values) {
+                $hasValues = true;
+                break;
+            }
+        }
+
+        if (! $hasValues) {
+            return $arguments;
+        }
+
         $values = [];
         foreach ($arguments as $argument) {
             if ($argument instanceof Values) {
