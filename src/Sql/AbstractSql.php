@@ -9,7 +9,12 @@ use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\ParameterContainer;
 use PhpDb\Adapter\Platform\PlatformInterface;
 use PhpDb\Adapter\Platform\Sql92 as DefaultAdapterPlatform;
+use PhpDb\Sql\Argument\Identifier;
+use PhpDb\Sql\Argument\Identifiers;
+use PhpDb\Sql\Argument\Literal;
+use PhpDb\Sql\Argument\Select as SelectArgument;
 use PhpDb\Sql\Argument\Value;
+use PhpDb\Sql\Argument\Values;
 use PhpDb\Sql\Platform\PlatformDecoratorInterface;
 use ValueError;
 
@@ -160,7 +165,7 @@ abstract class AbstractSql implements SqlInterface
     {
         $values = [];
         foreach ($arguments as $argument) {
-            if ($argument->getType() === ArgumentType::Values) {
+            if ($argument instanceof Values) {
                 foreach ($argument->getValue() as $v) {
                     $values[] = new Value($v);
                 }
@@ -181,8 +186,8 @@ abstract class AbstractSql implements SqlInterface
         ?DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null,
     ): ?string {
-        return match ($argument->getType()) {
-            ArgumentType::Select => $this->processExpressionOrSelect(
+        return match (true) {
+            $argument instanceof SelectArgument => $this->processExpressionOrSelect(
                 $argument,
                 $namedParameterPrefix,
                 $vIndex,
@@ -190,19 +195,19 @@ abstract class AbstractSql implements SqlInterface
                 $driver,
                 $parameterContainer
             ),
-            ArgumentType::Identifier => $platform->quoteIdentifierInFragment((string) $argument->getValue()),
-            ArgumentType::Identifiers => $this->processIdentifiersArgument($argument, $platform),
-            ArgumentType::Literal => (string) $argument->getValue(),
-            ArgumentType::Value => $parameterContainer instanceof ParameterContainer ?
-                $this->processExpressionParameterName(
+            $argument instanceof Identifier => $platform->quoteIdentifierInFragment($argument->getValue()),
+            $argument instanceof Identifiers => $this->processIdentifiersArgument($argument, $platform),
+            $argument instanceof Literal => $argument->getValue(),
+            $argument instanceof Value => $parameterContainer instanceof ParameterContainer
+                ? $this->processExpressionParameterName(
                     $argument->getValue(),
                     $namedParameterPrefix,
                     $expressionParamIndex,
                     $driver,
                     $parameterContainer
-                ) :
-                $platform->quoteValue((string) $argument->getValue()),
-            ArgumentType::Values => $this->processValuesArgument(
+                )
+                : $platform->quoteValue((string) $argument->getValue()),
+            $argument instanceof Values => $this->processValuesArgument(
                 $argument,
                 $expressionParamIndex,
                 $namedParameterPrefix,
@@ -210,6 +215,7 @@ abstract class AbstractSql implements SqlInterface
                 $driver,
                 $parameterContainer
             ),
+            default => throw new Exception\InvalidArgumentException('Unknown argument type'),
         };
     }
 

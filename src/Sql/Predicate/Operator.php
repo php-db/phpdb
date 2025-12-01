@@ -6,7 +6,6 @@ namespace PhpDb\Sql\Predicate;
 
 use Override;
 use PhpDb\Sql\AbstractExpression;
-use PhpDb\Sql\Argument;
 use PhpDb\Sql\Argument\Identifier;
 use PhpDb\Sql\Argument\Select;
 use PhpDb\Sql\Argument\Value;
