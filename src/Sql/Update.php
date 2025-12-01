@@ -168,7 +168,7 @@ class Update extends AbstractPreparableSql
             'where'                => $this->getWhere(),
             'joins'                => $this->getJoins(),
         ];
-        return isset($key) && array_key_exists($key, $rawState) ? $rawState[$key] : $rawState;
+        return $key !== null && array_key_exists($key, $rawState) ? $rawState[$key] : $rawState;
     }
 
     protected function processUpdate(
@@ -188,8 +188,10 @@ class Update extends AbstractPreparableSql
         ?DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null
     ): string {
-        $setSql = [];
-        $i      = 0;
+        $setSql      = [];
+        $i           = 0;
+        $isPdoDriver = $driver instanceof PdoDriverInterface;
+
         foreach ($this->set as $column => $value) {
             $prefix  = $this->resolveColumnValue(
                 [
@@ -206,7 +208,7 @@ class Update extends AbstractPreparableSql
             if (is_scalar($value) && $parameterContainer) {
                 // use incremental value instead of column name for PDO
                 // @see https://github.com/zendframework/zend-db/issues/35
-                if ($driver instanceof PdoDriverInterface) {
+                if ($isPdoDriver) {
                     $column = 'c_' . $i++;
                 }
 

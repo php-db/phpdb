@@ -474,7 +474,7 @@ class Select extends AbstractPreparableSql
             self::OFFSET     => $this->offset,
             self::COMBINE    => $this->combine,
         ];
-        return isset($key) && array_key_exists($key, $rawState) ? $rawState[$key] : $rawState;
+        return $key !== null && array_key_exists($key, $rawState) ? $rawState[$key] : $rawState;
     }
 
     /**
@@ -536,13 +536,14 @@ class Select extends AbstractPreparableSql
                 is_string($columnIndexOrAs) ? $columnIndexOrAs : 'column'
             );
             // process As portion
+            $columnAs = null;
             if (is_string($columnIndexOrAs)) {
                 $columnAs = $platform->quoteIdentifier($columnIndexOrAs);
             } elseif (stripos($columnName, ' as ') === false) {
                 $columnAs = is_string($column) ? $platform->quoteIdentifier($column) : 'Expression' . $expr++;
             }
 
-            $columns[] = isset($columnAs) ? [$columnName, $columnAs] : [$columnName];
+            $columns[] = $columnAs !== null ? [$columnName, $columnAs] : [$columnName];
         }
 
         // process join columns

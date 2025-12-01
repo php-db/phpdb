@@ -42,8 +42,6 @@ class Delete extends AbstractPreparableSql
 
     protected bool $emptyWhereProtection = true;
 
-    protected array $set = [];
-
     protected ?Where $where = null;
 
     /**
@@ -77,10 +75,9 @@ class Delete extends AbstractPreparableSql
         $rawState = [
             'emptyWhereProtection' => $this->emptyWhereProtection,
             'table'                => $this->table,
-            'set'                  => $this->set,
             'where'                => $this->getWhere(),
         ];
-        return isset($key) && array_key_exists($key, $rawState) ? $rawState[$key] : $rawState;
+        return $key !== null && array_key_exists($key, $rawState) ? $rawState[$key] : $rawState;
     }
 
     /**

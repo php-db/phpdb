@@ -152,7 +152,7 @@ class Insert extends AbstractPreparableSql
             'columns' => array_keys($this->columns),
             'values'  => array_values($this->columns),
         ];
-        return isset($key) && array_key_exists($key, $rawState) ? $rawState[$key] : $rawState;
+        return $key !== null && array_key_exists($key, $rawState) ? $rawState[$key] : $rawState;
     }
 
     protected function processInsert(
@@ -168,16 +168,17 @@ class Insert extends AbstractPreparableSql
             throw new Exception\InvalidArgumentException('values or select should be present');
         }
 
-        $columns = [];
-        $values  = [];
-        $i       = 0;
+        $columns     = [];
+        $values      = [];
+        $i           = 0;
+        $isPdoDriver = $driver instanceof PdoDriverInterface;
 
         foreach ($this->columns as $column => $value) {
             $columns[] = $platform->quoteIdentifier($column);
             if (is_scalar($value) && $parameterContainer) {
                 // use incremental value instead of column name for PDO
                 // @see https://github.com/zendframework/zend-db/issues/35
-                if ($driver instanceof PdoDriverInterface) {
+                if ($isPdoDriver) {
                     $column = 'c_' . $i++;
                 }
 
@@ -222,7 +223,7 @@ class Insert extends AbstractPreparableSql
             ['%1$s', '%2$s', '%3$s'],
             [
                 $this->resolveTable($this->table, $platform, $driver, $parameterContainer),
-                $columns !== '' && $columns !== '0' ? "({$columns})" : '',
+                $columns ? "({$columns})" : '',
                 $selectSql,
             ],
             $this->specifications[static::SPECIFICATION_SELECT]

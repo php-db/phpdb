@@ -6,14 +6,14 @@ class StatementContainer implements StatementContainerInterface
 {
     protected string $sql = '';
 
-    protected ParameterContainer $parameterContainer;
+    protected ?ParameterContainer $parameterContainer = null;
 
     public function __construct(?string $sql = null, ?ParameterContainer $parameterContainer = null)
     {
         if ($sql) {
             $this->setSql($sql);
         }
-        $this->parameterContainer = $parameterContainer ?: new ParameterContainer();
+        $this->parameterContainer = $parameterContainer;
     }
 
     /**

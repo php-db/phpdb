@@ -237,12 +237,10 @@ final class DeleteTest extends TestCase
         self::assertArrayHasKey('table', $rawState);
         self::assertArrayHasKey('where', $rawState);
         self::assertArrayHasKey('emptyWhereProtection', $rawState);
-        self::assertArrayHasKey('set', $rawState);
 
         self::assertEquals('foo', $rawState['table']);
         self::assertInstanceOf(Where::class, $rawState['where']);
         self::assertTrue($rawState['emptyWhereProtection']);
-        self::assertEquals([], $rawState['set']);
     }
 
     public function testGetRawStateWithKey(): void
@@ -252,7 +250,6 @@ final class DeleteTest extends TestCase
         self::assertEquals('foo', $this->delete->getRawState('table'));
         self::assertInstanceOf(Where::class, $this->delete->getRawState('where'));
         self::assertTrue($this->delete->getRawState('emptyWhereProtection'));
-        self::assertEquals([], $this->delete->getRawState('set'));
     }
 
     public function testMagicGetReturnsWhereClause(): void
