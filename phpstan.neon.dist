@@ -6,7 +6,7 @@ parameters:
         - src
         - test
     excludePaths:
-        - test/benchmark
+        - test/benchmark (?)
     universalObjectCratesClasses:
         - Laminas\Stdlib\ArrayObject
     stubFiles:
