@@ -13,7 +13,7 @@ use function array_key_exists;
 use function array_keys;
 use function array_merge;
 use function is_array;
-use function sprintf;
+use function str_replace;
 use function strtoupper;
 use function trim;
 
@@ -131,10 +131,10 @@ class Combine extends AbstractPreparableSql
                     ? ''
                     : strtoupper($combine['type'] . ($combine['modifier'] ? ' ' . $combine['modifier'] : ''));
             $select = $this->processSubSelect($combine['select'], $platform, $driver, $parameterContainer);
-            $sql   .= sprintf(
-                $this->specifications[self::COMBINE],
-                $type,
-                $select
+            $sql   .= str_replace(
+                ['%1$s', '%2$s'],
+                [$type, $select],
+                $this->specifications[self::COMBINE]
             );
         }
 

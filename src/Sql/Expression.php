@@ -115,7 +115,7 @@ class Expression extends AbstractExpression
 
         if ($parametersCount === 0) {
             return [
-                'spec' => str_ireplace(self::PLACEHOLDER, '', $specification),
+                'spec'   => str_ireplace(self::PLACEHOLDER, '', $specification),
                 'values' => [],
             ];
         }
@@ -135,7 +135,7 @@ class Expression extends AbstractExpression
         }
 
         return [
-            'spec' => $specification,
+            'spec'   => $specification,
             'values' => $parameters,
         ];
     }

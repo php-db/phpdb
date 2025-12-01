@@ -10,7 +10,7 @@ use PhpDb\Sql\Argument\Identifier;
 use function array_fill;
 use function count;
 use function implode;
-use function sprintf;
+use function str_replace;
 
 abstract class AbstractConstraint implements ConstraintInterface
 {
@@ -92,14 +92,14 @@ abstract class AbstractConstraint implements ConstraintInterface
         $columnCount = count($this->columns);
         if ($columnCount !== 0) {
             $columnSpec  = array_fill(0, $columnCount, '%s');
-            $specParts[] = sprintf($this->columnSpecification, implode(', ', $columnSpec));
+            $specParts[] = str_replace('%s', implode(', ', $columnSpec), $this->columnSpecification);
             for ($i = 0; $i < $columnCount; $i++) {
                 $values[] = new Identifier($this->columns[$i]);
             }
         }
 
         return [
-            'spec' => implode(' ', $specParts),
+            'spec'   => implode(' ', $specParts),
             'values' => $values,
         ];
     }

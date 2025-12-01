@@ -44,7 +44,7 @@ class Check extends AbstractConstraint
         }
 
         return [
-            'spec' => implode(' ', $specParts),
+            'spec'   => implode(' ', $specParts),
             'values' => $values,
         ];
     }

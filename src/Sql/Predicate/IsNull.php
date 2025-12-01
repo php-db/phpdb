@@ -77,7 +77,7 @@ class IsNull extends AbstractExpression implements PredicateInterface
         }
 
         return [
-            'spec' => $this->getSpecification(),
+            'spec'   => $this->getSpecification(),
             'values' => [$this->identifier],
         ];
     }

@@ -9,7 +9,6 @@ use PhpDb\Sql\Argument\Identifier;
 
 use function count;
 use function implode;
-use function sprintf;
 use function str_replace;
 
 class Index extends AbstractIndex
@@ -38,14 +37,14 @@ class Index extends AbstractIndex
             $values[] = new Identifier($this->columns[$i]);
 
             if (isset($this->lengths[$i])) {
-                $specPart .= sprintf('(%s)', $this->lengths[$i]);
+                $specPart .= '(' . $this->lengths[$i] . ')';
             }
 
             $specParts[] = $specPart;
         }
 
         return [
-            'spec' => str_replace('...', implode(', ', $specParts), $this->specification),
+            'spec'   => str_replace('...', implode(', ', $specParts), $this->specification),
             'values' => $values,
         ];
     }

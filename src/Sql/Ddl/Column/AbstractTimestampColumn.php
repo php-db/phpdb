@@ -20,7 +20,7 @@ abstract class AbstractTimestampColumn extends Column
         $options        = $this->getOptions();
 
         if (isset($options['on_update'])) {
-            $expressionData['spec']     .= ' %s';
+            $expressionData['spec']    .= ' %s';
             $expressionData['values'][] = new Literal('ON UPDATE CURRENT_TIMESTAMP');
         }
 

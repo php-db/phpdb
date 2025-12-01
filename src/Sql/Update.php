@@ -20,7 +20,7 @@ use function implode;
 use function is_numeric;
 use function is_scalar;
 use function is_string;
-use function sprintf;
+use function str_replace;
 use function strtolower;
 
 /**
@@ -168,9 +168,10 @@ class Update extends AbstractPreparableSql
         ?DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null
     ): string {
-        return sprintf(
-            $this->specifications[static::SPECIFICATION_UPDATE],
-            $this->resolveTable($this->table, $platform, $driver, $parameterContainer)
+        return str_replace(
+            '%1$s',
+            $this->resolveTable($this->table, $platform, $driver, $parameterContainer),
+            $this->specifications[static::SPECIFICATION_UPDATE]
         );
     }
 
@@ -213,9 +214,10 @@ class Update extends AbstractPreparableSql
             }
         }
 
-        return sprintf(
-            $this->specifications[static::SPECIFICATION_SET],
-            implode(', ', $setSql)
+        return str_replace(
+            '%1$s',
+            implode(', ', $setSql),
+            $this->specifications[static::SPECIFICATION_SET]
         );
     }
 
@@ -228,9 +230,10 @@ class Update extends AbstractPreparableSql
             return null;
         }
 
-        return sprintf(
-            $this->specifications[static::SPECIFICATION_WHERE],
-            $this->processExpression($this->where, $platform, $driver, $parameterContainer, 'where')
+        return str_replace(
+            '%1$s',
+            $this->processExpression($this->where, $platform, $driver, $parameterContainer, 'where'),
+            $this->specifications[static::SPECIFICATION_WHERE]
         );
     }
 

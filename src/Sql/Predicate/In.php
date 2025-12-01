@@ -17,14 +17,12 @@ use PhpDb\Sql\Select;
 use function array_fill;
 use function count;
 use function implode;
-use function sprintf;
-use function vsprintf;
 
 class In extends AbstractExpression implements PredicateInterface
 {
     protected ?ArgumentInterface $identifier = null;
     protected ?ArgumentInterface $valueSet   = null;
-    protected string $specification          = '%s IN %s';
+    protected string $operator               = 'IN';
 
     /**
      * Constructor
@@ -105,13 +103,8 @@ class In extends AbstractExpression implements PredicateInterface
         $identifierSpec = $this->getIdentifierSpecification();
         $valueSetSpec   = $this->getValueSetSpecification();
 
-        $specification = vsprintf($this->specification, [
-            $identifierSpec,
-            $valueSetSpec,
-        ]);
-
         return [
-            'spec' => $specification,
+            'spec'   => "{$identifierSpec} {$this->operator} {$valueSetSpec}",
             'values' => [$this->identifier, $this->valueSet],
         ];
     }
@@ -129,7 +122,7 @@ class In extends AbstractExpression implements PredicateInterface
         if ($this->identifier instanceof Identifiers) {
             $count = count($this->identifier->getValue());
             return $count > 0
-                ? sprintf('(%s)', implode(', ', array_fill(0, $count, '%s')))
+                ? '(' . implode(', ', array_fill(0, $count, '%s')) . ')'
                 : '(NULL)';
         }
 
@@ -149,7 +142,7 @@ class In extends AbstractExpression implements PredicateInterface
             $values = $this->valueSet->getValue();
             $count  = count($values);
             return $count > 0
-                ? sprintf('(%s)', implode(', ', array_fill(0, $count, '%s')))
+                ? '(' . implode(', ', array_fill(0, $count, '%s')) . ')'
                 : '(NULL)';
         }
 

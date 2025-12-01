@@ -151,7 +151,7 @@ class Operator extends AbstractExpression implements PredicateInterface
         }
 
         return [
-            'spec' => '%s ' . $this->operator . ' %s',
+            'spec'   => "%s {$this->operator} %s",
             'values' => [$this->left, $this->right],
         ];
     }

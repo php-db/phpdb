@@ -25,8 +25,11 @@ use function key;
 use function preg_replace;
 use function rtrim;
 use function sprintf;
+use function str_pad;
 use function strtoupper;
 use function vsprintf;
+
+use const STR_PAD_LEFT;
 
 abstract class AbstractSql implements SqlInterface
 {
@@ -114,7 +117,9 @@ abstract class AbstractSql implements SqlInterface
             : $this->processInfo['paramPrefix'] . $namedParameterPrefix;
 
         if ($parameterContainer && $namedParameterPrefix === '') {
-            $namedParameterPrefix = sprintf('expr%04dParam', ++$runtimeExpressionPrefix);
+            $namedParameterPrefix = 'expr'
+                . str_pad((string) ++$runtimeExpressionPrefix, 4, '0', STR_PAD_LEFT)
+                . 'Param';
         } else {
             $namedParameterPrefix = preg_replace('/\s/', '__', $namedParameterPrefix);
         }
@@ -226,7 +231,7 @@ abstract class AbstractSql implements SqlInterface
                 $platform,
                 $driver,
                 $parameterContainer,
-                sprintf('%s%dsubpart', $namedParameterPrefix, $vIndex)
+                "{$namedParameterPrefix}{$vIndex}subpart"
             ),
             default => throw new ValueError('Invalid Argument type'),
         };

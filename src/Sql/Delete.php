@@ -13,7 +13,7 @@ use PhpDb\Sql\TableIdentifier;
 use PhpDb\Sql\Where;
 
 use function array_key_exists;
-use function sprintf;
+use function str_replace;
 use function strtolower;
 
 /**
@@ -104,9 +104,10 @@ class Delete extends AbstractPreparableSql
         ?DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null
     ): string {
-        return sprintf(
-            $this->specifications[static::SPECIFICATION_DELETE],
-            $this->resolveTable($this->table, $platform, $driver, $parameterContainer)
+        return str_replace(
+            '%1$s',
+            $this->resolveTable($this->table, $platform, $driver, $parameterContainer),
+            $this->specifications[static::SPECIFICATION_DELETE]
         );
     }
 
@@ -119,9 +120,10 @@ class Delete extends AbstractPreparableSql
             return null;
         }
 
-        return sprintf(
-            $this->specifications[static::SPECIFICATION_WHERE],
-            $this->processExpression($this->where, $platform, $driver, $parameterContainer, 'where')
+        return str_replace(
+            '%1$s',
+            $this->processExpression($this->where, $platform, $driver, $parameterContainer, 'where'),
+            $this->specifications[static::SPECIFICATION_WHERE]
         );
     }
 

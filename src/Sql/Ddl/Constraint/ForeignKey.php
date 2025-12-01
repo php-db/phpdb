@@ -11,7 +11,6 @@ use PhpDb\Sql\Argument\Literal;
 use function array_fill;
 use function count;
 use function implode;
-use function sprintf;
 
 class ForeignKey extends AbstractConstraint
 {
@@ -128,20 +127,17 @@ class ForeignKey extends AbstractConstraint
         $expressionData = parent::getExpressionData();
         $colCount       = count($this->referenceColumn);
 
-        $expressionData['spec']     .= ' ' . $this->referenceSpecification[0];
+        $expressionData['spec']    .= ' ' . $this->referenceSpecification[0];
         $expressionData['values'][] = new Identifier($this->referenceTable);
 
         if ($colCount !== 0) {
-            $expressionData['spec'] .= ' ' . sprintf(
-                '(%s)',
-                implode(', ', array_fill(0, $colCount, '%s'))
-            );
+            $expressionData['spec'] .= ' (' . implode(', ', array_fill(0, $colCount, '%s')) . ')';
             foreach ($this->referenceColumn as $column) {
                 $expressionData['values'][] = new Identifier($column);
             }
         }
 
-        $expressionData['spec']     .= ' ' . $this->referenceSpecification[1];
+        $expressionData['spec']    .= ' ' . $this->referenceSpecification[1];
         $expressionData['values'][] = new Literal($this->onDeleteRule);
         $expressionData['values'][] = new Literal($this->onUpdateRule);
 

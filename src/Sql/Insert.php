@@ -19,7 +19,7 @@ use function count;
 use function implode;
 use function is_scalar;
 use function range;
-use function sprintf;
+use function str_replace;
 
 class Insert extends AbstractPreparableSql
 {
@@ -193,11 +193,14 @@ class Insert extends AbstractPreparableSql
             }
         }
 
-        return sprintf(
-            $this->specifications[static::SPECIFICATION_INSERT],
-            $this->resolveTable($this->table, $platform, $driver, $parameterContainer),
-            implode(', ', $columns),
-            implode(', ', $values)
+        return str_replace(
+            ['%1$s', '%2$s', '%3$s'],
+            [
+                $this->resolveTable($this->table, $platform, $driver, $parameterContainer),
+                implode(', ', $columns),
+                implode(', ', $values),
+            ],
+            $this->specifications[static::SPECIFICATION_INSERT]
         );
     }
 
@@ -215,11 +218,14 @@ class Insert extends AbstractPreparableSql
         $columns = array_map([$platform, 'quoteIdentifier'], array_keys($this->columns));
         $columns = implode(', ', $columns);
 
-        return sprintf(
-            $this->specifications[static::SPECIFICATION_SELECT],
-            $this->resolveTable($this->table, $platform, $driver, $parameterContainer),
-            $columns !== '' && $columns !== '0' ? sprintf('(%s)', $columns) : '',
-            $selectSql
+        return str_replace(
+            ['%1$s', '%2$s', '%3$s'],
+            [
+                $this->resolveTable($this->table, $platform, $driver, $parameterContainer),
+                $columns !== '' && $columns !== '0' ? "({$columns})" : '',
+                $selectSql,
+            ],
+            $this->specifications[static::SPECIFICATION_SELECT]
         );
     }
 

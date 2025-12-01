@@ -139,12 +139,6 @@ parameters:
 			path: src/Sql/Combine.php
 
 		-
-			message: '#^Return type \(PhpDb\\Sql\\ExpressionPart\) of method PhpDb\\Sql\\ExpressionData\:\:current\(\) should be compatible with return type \(PhpDb\\Sql\\ExpressionData\) of method Iterator\<TKey of \(int\|string\),PhpDb\\Sql\\ExpressionData\>\:\:current\(\)$#'
-			identifier: method.childReturnType
-			count: 1
-			path: src/Sql/ExpressionData.php
-
-		-
 			message: '#^PHPDoc type array of property PhpDb\\Sql\\InsertIgnore\:\:\$specifications is not covariant with PHPDoc type array\<array\|string\> of overridden property PhpDb\\Sql\\Insert\:\:\$specifications\.$#'
 			identifier: property.phpDocType
 			count: 1
@@ -683,12 +677,6 @@ parameters:
 			identifier: method.notFound
 			count: 2
 			path: test/unit/Sql/Ddl/Constraint/AbstractConstraintTest.php
-
-		-
-			message: '#^Call to static method PHPUnit\\Framework\\Assert\:\:assertIsArray\(\) with array will always evaluate to true\.$#'
-			identifier: staticMethod.alreadyNarrowedType
-			count: 1
-			path: test/unit/Sql/ExpressionDataTest.php
 
 		-
 			message: '#^Access to an undefined property PhpDb\\Sql\\InsertIgnore\:\:\$foo\.$#'

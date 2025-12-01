@@ -7,6 +7,8 @@ namespace PhpDb\Sql\Ddl\Column;
 use Override;
 use PhpDb\Sql\Argument\Literal;
 
+use function array_splice;
+
 abstract class AbstractLengthColumn extends Column
 {
     protected string $specification = '%s %s(%s)';

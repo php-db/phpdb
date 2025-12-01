@@ -6,8 +6,6 @@ namespace PhpDb\Sql\Ddl\Column;
 
 use Override;
 
-use function sprintf;
-
 class Integer extends Column
 {
     /** @inheritDoc */
@@ -18,7 +16,7 @@ class Integer extends Column
         $options        = $this->getOptions();
 
         if (isset($options['length'])) {
-            $expressionData['spec'] .= sprintf(' (%s)', $options['length']);
+            $expressionData['spec'] .= ' (' . $options['length'] . ')';
         }
 
         return $expressionData;

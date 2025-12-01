@@ -148,7 +148,7 @@ class Column implements ColumnInterface
         }
 
         return [
-            'spec' => implode(' ', $specParts),
+            'spec'   => implode(' ', $specParts),
             'values' => $values,
         ];
     }

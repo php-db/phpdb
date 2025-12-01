@@ -207,7 +207,7 @@ class PredicateSet implements PredicateInterface, Countable
         }
 
         return [
-            'spec' => implode(' ', $specParts),
+            'spec'   => implode(' ', $specParts),
             'values' => $allValues,
         ];
     }
