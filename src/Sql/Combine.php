@@ -37,7 +37,7 @@ class Combine extends AbstractPreparableSql
         self::COMBINE => '%1$s (%2$s) ',
     ];
 
-    /** @var Select[][] */
+    /** @var array<array{select: Select, type: string, modifier: string}> */
     private array $combine = [];
 
     public function __construct(
@@ -128,8 +128,12 @@ class Combine extends AbstractPreparableSql
         $sql = '';
         foreach ($this->combine as $i => $combine) {
             $type   = $i === 0
-                    ? ''
-                    : strtoupper($combine['type'] . ($combine['modifier'] ? ' ' . $combine['modifier'] : ''));
+                ? ''
+                : strtoupper(
+                    $combine['modifier']
+                        ? "{$combine['type']} {$combine['modifier']}"
+                        : $combine['type']
+                );
             $select = $this->processSubSelect($combine['select'], $platform, $driver, $parameterContainer);
             $sql   .= str_replace(
                 ['%1$s', '%2$s'],

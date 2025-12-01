@@ -133,12 +133,6 @@ parameters:
 			path: src/Sql/AbstractSql.php
 
 		-
-			message: '#^Binary operation "\." between '' '' and PhpDb\\Sql\\Select results in an error\.$#'
-			identifier: binaryOp.invalid
-			count: 1
-			path: src/Sql/Combine.php
-
-		-
 			message: '#^PHPDoc type array of property PhpDb\\Sql\\InsertIgnore\:\:\$specifications is not covariant with PHPDoc type array\<array\|string\> of overridden property PhpDb\\Sql\\Insert\:\:\$specifications\.$#'
 			identifier: property.phpDocType
 			count: 1

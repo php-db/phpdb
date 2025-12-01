@@ -193,7 +193,7 @@ class PredicateSet implements PredicateInterface, Countable
 
             $spec = $expressionData['spec'];
             if ($predicate instanceof self) {
-                $spec = '(' . $spec . ')';
+                $spec = "({$spec})";
             }
             $specParts[] = $spec;
 

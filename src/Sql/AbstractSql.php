@@ -102,7 +102,7 @@ abstract class AbstractSql implements SqlInterface
      */
     protected function renderTable(string $table, ?string $alias = null): string
     {
-        return $table . ($alias ? ' AS ' . $alias : '');
+        return $alias ? "{$table} AS {$alias}" : $table;
     }
 
     /**

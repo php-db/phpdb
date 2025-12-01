@@ -509,7 +509,7 @@ class Select extends AbstractPreparableSql
         $columns = [];
         foreach ($this->columns as $columnIndexOrAs => $column) {
             if ($column === self::SQL_STAR) {
-                $columns[] = [$fromTable . self::SQL_STAR];
+                $columns[] = ["{$fromTable}*"];
                 continue;
             }
 
@@ -726,10 +726,9 @@ class Select extends AbstractPreparableSql
             return null;
         }
 
-        $type = $this->combine['type'];
-        if ($this->combine['modifier']) {
-            $type .= ' ' . $this->combine['modifier'];
-        }
+        $type = $this->combine['modifier']
+            ? "{$this->combine['type']} {$this->combine['modifier']}"
+            : $this->combine['type'];
 
         return [
             strtoupper($type),
