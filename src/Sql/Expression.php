@@ -16,7 +16,6 @@ use function func_get_args;
 use function func_num_args;
 use function is_array;
 use function preg_match_all;
-use function str_ireplace;
 use function str_replace;
 
 class Expression extends AbstractExpression
@@ -115,7 +114,7 @@ class Expression extends AbstractExpression
 
         if ($parametersCount === 0) {
             return [
-                'spec'   => str_ireplace(self::PLACEHOLDER, '', $specification),
+                'spec'   => $specification,
                 'values' => [],
             ];
         }
