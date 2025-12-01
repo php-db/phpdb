@@ -78,7 +78,7 @@ abstract class AbstractSql implements SqlInterface
 
             if (is_array($result)) {
                 $sqls[$name] = $this->createSqlFromSpecificationAndParameters($specification, $result);
-            } elseif (is_string($result)) {
+            } elseif ($result !== null) {
                 $sqls[$name] = $result;
             }
         }
@@ -401,11 +401,12 @@ abstract class AbstractSql implements SqlInterface
             $joinAs = null;
 
             // table name
-            if (is_array($join['name'])) {
-                $joinName = current($join['name']);
-                $joinAs   = $platform->quoteIdentifier(key($join['name']));
+            $joinNameValue = $join['name'];
+            if (is_array($joinNameValue)) {
+                $joinName = current($joinNameValue);
+                $joinAs   = $platform->quoteIdentifier(key($joinNameValue));
             } else {
-                $joinName = $join['name'];
+                $joinName = $joinNameValue;
             }
 
             if ($joinName instanceof Expression) {
@@ -467,15 +468,9 @@ abstract class AbstractSql implements SqlInterface
         $isIdentifier         = false;
         $fromTable            = '';
         if (is_array($column)) {
-            if (isset($column['isIdentifier'])) {
-                $isIdentifier = (bool) $column['isIdentifier'];
-            }
-
-            if (isset($column['fromTable']) && $column['fromTable'] !== null) {
-                $fromTable = $column['fromTable'];
-            }
-
-            $column = $column['column'];
+            $isIdentifier = (bool) ($column['isIdentifier'] ?? false);
+            $fromTable    = $column['fromTable'] ?? '';
+            $column       = $column['column'];
         }
 
         if ($column instanceof ExpressionInterface) {
@@ -507,7 +502,7 @@ abstract class AbstractSql implements SqlInterface
         }
 
         if ($table instanceof Select) {
-            $table = '(' . $this->processSubselect($table, $platform, $driver, $parameterContainer) . ')';
+            $table = '(' . $this->processSubSelect($table, $platform, $driver, $parameterContainer) . ')';
         } elseif ($table) {
             $table = $platform->quoteIdentifier($table);
         }
