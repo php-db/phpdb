@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace PhpDb\Container;
 
-use Laminas\ServiceManager\Factory\AbstractFactoryInterface;
 use PhpDb\Adapter\Adapter;
 use PhpDb\Adapter\AdapterInterface;
 use PhpDb\ResultSet\ResultSetInterface;
@@ -17,7 +16,7 @@ use function is_array;
  *
  * Allows configuring several database instances (such as writer and reader).
  */
-class AdapterAbstractServiceFactory implements AbstractFactoryInterface
+class AdapterAbstractServiceFactory
 {
     /** @var array */
     protected $config;
@@ -49,7 +48,6 @@ class AdapterAbstractServiceFactory implements AbstractFactoryInterface
         $driverInstance  = $driverFactory::createFromConfig($container, $requestedName);
         $platformFactory = ($container->get(PlatformInterfaceFactoryFactoryInterface::class))();
 
-        //$config = $this->getConfig($container);
         return new Adapter(
             $driverInstance,
             $platformFactory::fromDriver($driverInstance),
