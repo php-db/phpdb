@@ -9,6 +9,7 @@ use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\ParameterContainer;
 use PhpDb\Adapter\Platform\PlatformInterface;
 use PhpDb\Adapter\Platform\Sql92 as DefaultAdapterPlatform;
+use PhpDb\Sql\Argument\Value;
 use PhpDb\Sql\Platform\PlatformDecoratorInterface;
 use ValueError;
 
@@ -161,7 +162,7 @@ abstract class AbstractSql implements SqlInterface
         foreach ($arguments as $argument) {
             if ($argument->getType() === ArgumentType::Values) {
                 foreach ($argument->getValue() as $v) {
-                    $values[] = Argument::value($v);
+                    $values[] = new Value($v);
                 }
             } else {
                 $values[] = $argument;

@@ -51,7 +51,7 @@ final class IndexTest extends TestCase
         self::assertEquals([
             new Identifier('my_uk'),
             new Identifier('foo'),
-            Argument::identifier('bar'),
+            new Identifier('bar'),
         ], $expressionData['values']);
     }
 }

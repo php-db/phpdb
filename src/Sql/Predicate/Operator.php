@@ -9,6 +9,7 @@ use PhpDb\Sql\AbstractExpression;
 use PhpDb\Sql\Argument;
 use PhpDb\Sql\Argument\Identifier;
 use PhpDb\Sql\Argument\Select;
+use PhpDb\Sql\Argument\Value;
 use PhpDb\Sql\ArgumentInterface;
 use PhpDb\Sql\Exception\InvalidArgumentException;
 use PhpDb\Sql\ExpressionInterface;
@@ -132,7 +133,7 @@ class Operator extends AbstractExpression implements PredicateInterface
         } elseif ($right instanceof ExpressionInterface || $right instanceof SqlInterface) {
             $this->right = new Select($right);
         } else {
-            $this->right = Argument::value($right);
+            $this->right = new Value($right);
         }
 
         return $this;
