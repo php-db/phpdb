@@ -168,25 +168,20 @@ class PredicateSet implements PredicateInterface, Countable
     {
         $specParts = [];
         $allValues = [];
-        $count     = count($this->predicates);
+        $first     = true;
 
-        for ($i = 0; $i < $count; $i++) {
-            /** @var PredicateInterface $predicate */
-            $predicate      = $this->predicates[$i][1];
+        foreach ($this->predicates as [$operator, $predicate]) {
             $expressionData = $predicate->getExpressionData();
 
-            $spec = $expressionData['spec'];
-            if ($predicate instanceof self) {
-                $spec = "({$spec})";
-            }
-            $specParts[] = $spec;
+            $spec = $predicate instanceof self
+                ? "({$expressionData['spec']})"
+                : $expressionData['spec'];
+
+            $specParts[] = $first ? $spec : "{$operator} {$spec}";
+            $first       = false;
 
             foreach ($expressionData['values'] as $value) {
                 $allValues[] = $value;
-            }
-
-            if (isset($this->predicates[$i + 1])) {
-                $specParts[] = $this->predicates[$i + 1][0];
             }
         }
 
