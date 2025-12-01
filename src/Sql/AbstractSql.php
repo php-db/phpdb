@@ -67,25 +67,19 @@ abstract class AbstractSql implements SqlInterface
     ): string {
         $this->localizeVariables();
 
-        $sqls       = [];
-        $parameters = [];
+        $sqls = [];
 
         foreach ($this->specifications as $name => $specification) {
-            $parameters[$name] = $this->{'process' . $name}(
+            $result = $this->{'process' . $name}(
                 $platform,
                 $driver,
-                $parameterContainer,
-                $sqls,
-                $parameters
+                $parameterContainer
             );
 
-            if ($specification && is_array($parameters[$name])) {
-                $sqls[$name] = $this->createSqlFromSpecificationAndParameters($specification, $parameters[$name]);
-                continue;
-            }
-
-            if (is_string($parameters[$name])) {
-                $sqls[$name] = $parameters[$name];
+            if (is_array($result)) {
+                $sqls[$name] = $this->createSqlFromSpecificationAndParameters($specification, $result);
+            } elseif (is_string($result)) {
+                $sqls[$name] = $result;
             }
         }
 
