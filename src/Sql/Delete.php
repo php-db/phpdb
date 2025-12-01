@@ -44,7 +44,7 @@ class Delete extends AbstractPreparableSql
 
     protected array $set = [];
 
-    protected Where $where;
+    protected ?Where $where = null;
 
     /**
      * Constructor
@@ -54,8 +54,11 @@ class Delete extends AbstractPreparableSql
         if ($table) {
             $this->from($table);
         }
+    }
 
-        $this->where = new Where();
+    private function getWhere(): Where
+    {
+        return $this->where ??= new Where();
     }
 
     /**
@@ -75,7 +78,7 @@ class Delete extends AbstractPreparableSql
             'emptyWhereProtection' => $this->emptyWhereProtection,
             'table'                => $this->table,
             'set'                  => $this->set,
-            'where'                => $this->where,
+            'where'                => $this->getWhere(),
         ];
         return isset($key) && array_key_exists($key, $rawState) ? $rawState[$key] : $rawState;
     }
@@ -93,7 +96,7 @@ class Delete extends AbstractPreparableSql
         if ($predicate instanceof Where) {
             $this->where = $predicate;
         } else {
-            $this->where->addPredicates($predicate, $combination);
+            $this->getWhere()->addPredicates($predicate, $combination);
         }
 
         return $this;
@@ -116,7 +119,7 @@ class Delete extends AbstractPreparableSql
         ?DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null
     ): ?string {
-        if ($this->where->count() === 0) {
+        if ($this->where === null || $this->where->count() === 0) {
             return null;
         }
 
@@ -134,7 +137,7 @@ class Delete extends AbstractPreparableSql
     public function __get(string $name): ?Where
     {
         if (strtolower($name) === 'where') {
-            return $this->where;
+            return $this->getWhere();
         }
 
         return null;

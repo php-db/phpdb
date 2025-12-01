@@ -147,15 +147,15 @@ class Select extends AbstractPreparableSql
 
     protected array $columns = [self::SQL_STAR];
 
-    protected Join $joins;
+    protected ?Join $joins = null;
 
-    protected Where $where;
+    protected ?Where $where = null;
 
     protected array $order = [];
 
     protected array|null $group = null;
 
-    protected Having $having;
+    protected ?Having $having = null;
 
     protected string|int|null $limit = null;
 
@@ -172,10 +172,21 @@ class Select extends AbstractPreparableSql
             $this->from($table);
             $this->tableReadOnly = true;
         }
+    }
 
-        $this->where  = new Where();
-        $this->joins  = new Join();
-        $this->having = new Having();
+    private function getWhere(): Where
+    {
+        return $this->where ??= new Where();
+    }
+
+    private function getJoins(): Join
+    {
+        return $this->joins ??= new Join();
+    }
+
+    private function getHaving(): Having
+    {
+        return $this->having ??= new Having();
     }
 
     /**
@@ -245,7 +256,7 @@ class Select extends AbstractPreparableSql
         array|string $columns = self::SQL_STAR,
         string $type = self::JOIN_INNER
     ): static {
-        $this->joins->join($name, $on, $columns, $type);
+        $this->getJoins()->join($name, $on, $columns, $type);
 
         return $this;
     }
@@ -264,7 +275,7 @@ class Select extends AbstractPreparableSql
         if ($predicate instanceof Where) {
             $this->where = $predicate;
         } else {
-            $this->where->addPredicates($predicate, $combination);
+            $this->getWhere()->addPredicates($predicate, $combination);
         }
 
         return $this;
@@ -299,7 +310,7 @@ class Select extends AbstractPreparableSql
         if ($predicate instanceof Having) {
             $this->having = $predicate;
         } else {
-            $this->having->addPredicates($predicate, $combination);
+            $this->getHaving()->addPredicates($predicate, $combination);
         }
 
         return $this;
@@ -406,16 +417,16 @@ class Select extends AbstractPreparableSql
                 $this->columns = [];
                 break;
             case self::JOINS:
-                $this->joins = new Join();
+                $this->joins = null;
                 break;
             case self::WHERE:
-                $this->where = new Where();
+                $this->where = null;
                 break;
             case self::GROUP:
                 $this->group = null;
                 break;
             case self::HAVING:
-                $this->having = new Having();
+                $this->having = null;
                 break;
             case self::LIMIT:
                 $this->limit = null;
@@ -454,11 +465,11 @@ class Select extends AbstractPreparableSql
             self::TABLE      => $this->table,
             self::QUANTIFIER => $this->quantifier,
             self::COLUMNS    => $this->columns,
-            self::JOINS      => $this->joins,
-            self::WHERE      => $this->where,
+            self::JOINS      => $this->getJoins(),
+            self::WHERE      => $this->getWhere(),
             self::ORDER      => $this->order,
             self::GROUP      => $this->group,
-            self::HAVING     => $this->having,
+            self::HAVING     => $this->getHaving(),
             self::LIMIT      => $this->limit,
             self::OFFSET     => $this->offset,
             self::COMBINE    => $this->combine,
@@ -535,7 +546,7 @@ class Select extends AbstractPreparableSql
         }
 
         // process join columns
-        foreach ($this->joins->getJoins() as $join) {
+        foreach ($this->getJoins()->getJoins() as $join) {
             $joinName = is_array($join['name']) ? key($join['name']) : $join['name'];
             $joinName = parent::resolveTable($joinName, $platform, $driver, $parameterContainer);
 
@@ -594,7 +605,7 @@ class Select extends AbstractPreparableSql
         ?DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null
     ): ?array {
-        if ($this->where->count() === 0) {
+        if ($this->where === null || $this->where->count() === 0) {
             return null;
         }
 
@@ -635,7 +646,7 @@ class Select extends AbstractPreparableSql
         ?DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null
     ): ?array {
-        if ($this->having->count() === 0) {
+        if ($this->having === null || $this->having->count() === 0) {
             return null;
         }
 
@@ -744,9 +755,9 @@ class Select extends AbstractPreparableSql
     public function __get(string $name): Where|Join|Having
     {
         return match (strtolower($name)) {
-            'where' => $this->where,
-            'having' => $this->having,
-            'joins' => $this->joins,
+            'where' => $this->getWhere(),
+            'having' => $this->getHaving(),
+            'joins' => $this->getJoins(),
             default => throw new Exception\InvalidArgumentException('Not a valid magic property for this object'),
         };
     }
@@ -760,9 +771,15 @@ class Select extends AbstractPreparableSql
      */
     public function __clone()
     {
-        $this->where  = clone $this->where;
-        $this->joins  = clone $this->joins;
-        $this->having = clone $this->having;
+        if ($this->where !== null) {
+            $this->where = clone $this->where;
+        }
+        if ($this->joins !== null) {
+            $this->joins = clone $this->joins;
+        }
+        if ($this->having !== null) {
+            $this->having = clone $this->having;
+        }
     }
 
     /**

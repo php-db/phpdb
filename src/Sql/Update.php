@@ -63,9 +63,9 @@ class Update extends AbstractPreparableSql
 
     protected PriorityList $set;
 
-    protected Where $where;
+    protected ?Where $where = null;
 
-    protected Join $joins;
+    protected ?Join $joins = null;
 
     /**
      * Constructor
@@ -76,10 +76,18 @@ class Update extends AbstractPreparableSql
             $this->table($table);
         }
 
-        $this->where = new Where();
-        $this->joins = new Join();
-        $this->set   = new PriorityList();
+        $this->set = new PriorityList();
         $this->set->isLIFO(false);
+    }
+
+    private function getWhere(): Where
+    {
+        return $this->where ??= new Where();
+    }
+
+    private function getJoins(): Join
+    {
+        return $this->joins ??= new Join();
     }
 
     /**
@@ -132,7 +140,7 @@ class Update extends AbstractPreparableSql
         if ($predicate instanceof Where) {
             $this->where = $predicate;
         } else {
-            $this->where->addPredicates($predicate, $combination);
+            $this->getWhere()->addPredicates($predicate, $combination);
         }
 
         return $this;
@@ -146,7 +154,7 @@ class Update extends AbstractPreparableSql
      */
     public function join(array|string|TableIdentifier $name, string $on, string $type = Join::JOIN_INNER): static
     {
-        $this->joins->join($name, $on, [], $type);
+        $this->getJoins()->join($name, $on, [], $type);
 
         return $this;
     }
@@ -157,8 +165,8 @@ class Update extends AbstractPreparableSql
             'emptyWhereProtection' => $this->emptyWhereProtection,
             'table'                => $this->table,
             'set'                  => $this->set->toArray(),
-            'where'                => $this->where,
-            'joins'                => $this->joins,
+            'where'                => $this->getWhere(),
+            'joins'                => $this->getJoins(),
         ];
         return isset($key) && array_key_exists($key, $rawState) ? $rawState[$key] : $rawState;
     }
@@ -226,7 +234,7 @@ class Update extends AbstractPreparableSql
         ?DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null
     ): ?string {
-        if ($this->where->count() === 0) {
+        if ($this->where === null || $this->where->count() === 0) {
             return null;
         }
 
@@ -253,7 +261,7 @@ class Update extends AbstractPreparableSql
     public function __get(string $name): ?Where
     {
         if (strtolower($name) === 'where') {
-            return $this->where;
+            return $this->getWhere();
         }
 
         return null;
@@ -268,7 +276,12 @@ class Update extends AbstractPreparableSql
      */
     public function __clone()
     {
-        $this->where = clone $this->where;
-        $this->set   = clone $this->set;
+        if ($this->where !== null) {
+            $this->where = clone $this->where;
+        }
+        if ($this->joins !== null) {
+            $this->joins = clone $this->joins;
+        }
+        $this->set = clone $this->set;
     }
 }

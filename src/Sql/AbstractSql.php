@@ -401,12 +401,12 @@ abstract class AbstractSql implements SqlInterface
      * @return null|string[][][] Null if no joins present, array of JOIN statements otherwise
      */
     protected function processJoin(
-        Join $joins,
+        ?Join $joins,
         PlatformInterface $platform,
         ?DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null
     ): array|null {
-        if ($joins->count() === 0) {
+        if ($joins === null || $joins->count() === 0) {
             return null;
         }
 
