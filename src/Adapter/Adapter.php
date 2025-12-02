@@ -20,9 +20,9 @@ class Adapter implements AdapterInterface, Profiler\ProfilerAwareInterface, Sche
      * @throws Exception\InvalidArgumentException
      */
     public function __construct(
-        protected readonly Driver\DriverInterface $driver,
-        protected readonly Platform\PlatformInterface $platform,
-        protected readonly ResultSet\ResultSetInterface $queryResultSetPrototype,
+        protected Driver\DriverInterface $driver,
+        protected Platform\PlatformInterface $platform,
+        protected ResultSet\ResultSetInterface $queryResultSetPrototype = new ResultSet\ResultSet(),
         protected ?Profiler\ProfilerInterface $profiler = null
     ) {
         if ($profiler) {
