@@ -19,6 +19,8 @@ class Platform extends AbstractPlatform
 {
     protected PlatformInterface $defaultPlatform;
 
+    protected ?string $cachedPlatformName = null;
+
     /**
      * @todo sat-migration
      * We have removed the default behaviour of setting a decorator for the adapter's platform.
@@ -57,12 +59,21 @@ class Platform extends AbstractPlatform
     ): PlatformDecoratorInterface|PreparableSqlInterface|SqlInterface {
         $platformName = $this->resolvePlatformName($adapterOrPlatform);
 
-        if (isset($this->decorators[$platformName])) {
-            foreach ($this->decorators[$platformName] as $type => $decorator) {
-                if ($subject instanceof $type && is_a($decorator, $type, true)) {
-                    $decorator->setSubject($subject);
-                    return $decorator;
-                }
+        if (! isset($this->decorators[$platformName])) {
+            return $subject;
+        }
+
+        $subjectClass = $subject::class;
+        if (isset($this->decorators[$platformName][$subjectClass])) {
+            $decorator = $this->decorators[$platformName][$subjectClass];
+            $decorator->setSubject($subject);
+            return $decorator;
+        }
+
+        foreach ($this->decorators[$platformName] as $type => $decorator) {
+            if ($subject instanceof $type && is_a($decorator, $type, true)) {
+                $decorator->setSubject($subject);
+                return $decorator;
             }
         }
 
@@ -117,8 +128,18 @@ class Platform extends AbstractPlatform
 
     protected function resolvePlatformName(PlatformInterface|AdapterInterface|null $adapterOrPlatform): string
     {
+        if ($adapterOrPlatform === null && $this->cachedPlatformName !== null) {
+            return $this->cachedPlatformName;
+        }
+
         $platformName = $this->resolvePlatform($adapterOrPlatform)->getName();
-        return str_replace([' ', '_'], '', strtolower($platformName));
+        $normalized   = str_replace([' ', '_'], '', strtolower($platformName));
+
+        if ($adapterOrPlatform === null) {
+            $this->cachedPlatformName = $normalized;
+        }
+
+        return $normalized;
     }
 
     /**

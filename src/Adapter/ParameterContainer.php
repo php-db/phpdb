@@ -124,7 +124,6 @@ class ParameterContainer implements Iterator, ArrayAccess, Countable
         $isNewPosition = true;
 
         if (is_int($name)) {
-            // Integer key: check if we have a name for this position
             if (isset($this->positions[$name])) {
                 $isNewPosition = false;
                 $name          = $this->positions[$name];
@@ -132,7 +131,6 @@ class ParameterContainer implements Iterator, ArrayAccess, Countable
                 $name = (string) $name;
             }
         } elseif (is_string($name)) {
-            // Check for name mapping (handles :prefixed lookups)
             if ($name[0] === ':') {
                 $normalizedName = substr($name, 1);
                 if (isset($this->nameMapping[$normalizedName])) {
@@ -144,7 +142,6 @@ class ParameterContainer implements Iterator, ArrayAccess, Countable
 
             $isNewPosition = ! isset($this->data[$name]);
 
-            // Create name mapping if value is a :parameter reference
             if (is_string($value) && isset($value[0]) && $value[0] === ':') {
                 $this->nameMapping[substr($value, 1)] = $name;
             }

@@ -59,7 +59,6 @@ class PredicateSet implements PredicateInterface, Countable
     {
         $combination ??= $this->defaultCombination;
 
-        // AND is more common, check it first
         match ($combination) {
             self::OP_AND => $this->andPredicate($predicate),
             self::OP_OR => $this->orPredicate($predicate),
@@ -170,6 +169,26 @@ class PredicateSet implements PredicateInterface, Countable
     #[Override]
     public function getExpressionData(): array
     {
+        $predicateCount = count($this->predicates);
+
+        if ($predicateCount === 0) {
+            return ['spec' => '', 'values' => []];
+        }
+
+        if ($predicateCount === 1) {
+            [$operator, $predicate] = $this->predicates[0];
+            $expressionData         = $predicate->getExpressionData();
+
+            if ($predicate instanceof self) {
+                return [
+                    'spec'   => "({$expressionData['spec']})",
+                    'values' => $expressionData['values'],
+                ];
+            }
+
+            return $expressionData;
+        }
+
         $specParts = [];
         $allValues = [];
         $first     = true;
@@ -184,8 +203,11 @@ class PredicateSet implements PredicateInterface, Countable
             $specParts[] = $first ? $spec : "{$operator} {$spec}";
             $first       = false;
 
-            foreach ($expressionData['values'] as $value) {
-                $allValues[] = $value;
+            $values = $expressionData['values'];
+            if ($values !== []) {
+                foreach ($values as $value) {
+                    $allValues[] = $value;
+                }
             }
         }
 

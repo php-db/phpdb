@@ -516,8 +516,7 @@ class Select extends AbstractPreparableSql
         $expr = 1;
 
         [$table, $fromTable] = $this->resolveTable($this->table, $platform, $driver, $parameterContainer);
-        // process table columns
-        $columns = [];
+        $columns             = [];
         foreach ($this->columns as $columnIndexOrAs => $column) {
             if ($column === self::SQL_STAR) {
                 $columns[] = ["{$fromTable}*"];
@@ -535,8 +534,7 @@ class Select extends AbstractPreparableSql
                 $parameterContainer,
                 is_string($columnIndexOrAs) ? $columnIndexOrAs : 'column'
             );
-            // process As portion
-            $columnAs = null;
+            $columnAs   = null;
             if (is_string($columnIndexOrAs)) {
                 $columnAs = $platform->quoteIdentifier($columnIndexOrAs);
             } elseif (stripos($columnName, ' as ') === false) {
@@ -546,7 +544,6 @@ class Select extends AbstractPreparableSql
             $columns[] = $columnAs !== null ? [$columnName, $columnAs] : [$columnName];
         }
 
-        // process join columns
         foreach ($this->getJoins()->getJoins() as $join) {
             $joinName = is_array($join['name']) ? key($join['name']) : $join['name'];
             $joinName = parent::resolveTable($joinName, $platform, $driver, $parameterContainer);
@@ -624,7 +621,6 @@ class Select extends AbstractPreparableSql
             return null;
         }
 
-        // process table columns
         $groups = [];
         foreach ($this->group as $column) {
             $groups[] = $this->resolveColumnValue(

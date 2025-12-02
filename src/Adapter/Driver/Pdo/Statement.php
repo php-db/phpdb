@@ -110,9 +110,9 @@ class Statement implements StatementInterface, PdoDriverAwareInterface, Profiler
     }
 
     #[Override]
-    public function getParameterContainer(): ?ParameterContainer
+    public function getParameterContainer(): ParameterContainer
     {
-        return $this->parameterContainer;
+        return $this->parameterContainer ??= new ParameterContainer();
     }
 
     /** @throws Exception\RuntimeException */

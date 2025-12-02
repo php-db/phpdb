@@ -106,18 +106,23 @@ abstract class AbstractSql implements SqlInterface
         ?ParameterContainer $parameterContainer = null,
         ?string $namedParameterPrefix = null
     ): string {
-        // static counter for the number of times this method was invoked across the PHP runtime
         static $runtimeExpressionPrefix = 0;
 
-        $namedParameterPrefix = $namedParameterPrefix === null || $namedParameterPrefix === ''
-            ? ''
-            : $this->processInfo['paramPrefix'] . $namedParameterPrefix;
+        $expressionData   = $expression->getExpressionData();
+        $specification    = $expressionData['spec'];
+        $expressionValues = $expressionData['values'];
 
-        if ($parameterContainer && $namedParameterPrefix === '') {
-            $namedParameterPrefix = "expr{$runtimeExpressionPrefix}Param";
-            ++$runtimeExpressionPrefix;
+        if ($expressionValues === []) {
+            return str_replace('%%', '%', $specification);
+        }
+
+        if ($namedParameterPrefix === null || $namedParameterPrefix === '') {
+            $namedParameterPrefix = $parameterContainer
+                ? 'expr' . $runtimeExpressionPrefix++ . 'Param'
+                : '';
         } else {
-            $namedParameterPrefix = str_replace([' ', "\t", "\n", "\r"], '__', $namedParameterPrefix);
+            $namedParameterPrefix = $this->processInfo['paramPrefix']
+                . str_replace([' ', "\t", "\n", "\r"], '__', $namedParameterPrefix);
         }
 
         if (! isset($this->instanceParameterIndex[$namedParameterPrefix])) {
@@ -125,12 +130,9 @@ abstract class AbstractSql implements SqlInterface
         }
 
         $expressionParamIndex = &$this->instanceParameterIndex[$namedParameterPrefix];
-        $expressionData       = $expression->getExpressionData();
-        $specification        = $expressionData['spec'];
-        $expressionValues     = $this->flattenExpressionValues($expressionData['values']);
+        $expressionValues     = $this->flattenExpressionValues($expressionValues);
         $values               = [];
 
-        // Inline common cases for performance
         foreach ($expressionValues as $vIndex => $argument) {
             $values[] = match (true) {
                 $argument instanceof Value => $parameterContainer instanceof ParameterContainer
@@ -364,16 +366,13 @@ abstract class AbstractSql implements SqlInterface
         }
 
         if ($parameterContainer instanceof ParameterContainer) {
-            // Track subselect prefix and count for parameters
             $processInfoContext = $decorator instanceof PlatformDecoratorInterface ? $subselect : $decorator;
             $this->processInfo['subselectCount']++;
             $processInfoContext->processInfo['subselectCount'] = $this->processInfo['subselectCount'];
             $processInfoContext->processInfo['paramPrefix']    = 'subselect'
                 . $processInfoContext->processInfo['subselectCount'];
 
-            $sql = $decorator->buildSqlString($platform, $driver, $parameterContainer);
-
-            // copy count
+            $sql                                 = $decorator->buildSqlString($platform, $driver, $parameterContainer);
             $this->processInfo['subselectCount'] = $decorator->processInfo['subselectCount'];
 
             return $sql;
@@ -395,12 +394,9 @@ abstract class AbstractSql implements SqlInterface
             return null;
         }
 
-        // process joins
         $joinSpecArgArray = [];
         foreach ($joins->getJoins() as $j => $join) {
-            $joinAs = null;
-
-            // table name
+            $joinAs        = null;
             $joinNameValue = $join['name'];
             if (is_array($joinNameValue)) {
                 $joinName = current($joinNameValue);
@@ -432,9 +428,6 @@ abstract class AbstractSql implements SqlInterface
                 $this->renderTable($joinName, $joinAs),
             ];
 
-            // on expression
-            // note: for Expression objects, pass them to processExpression with a prefix specific to each join
-            // (used for named parameters)
             if ($join['on'] instanceof ExpressionInterface) {
                 $joinSpecArgArray[$j][] = $this->processExpression(
                     $join['on'],
@@ -444,7 +437,6 @@ abstract class AbstractSql implements SqlInterface
                     'join' . ($j + 1) . 'part'
                 );
             } else {
-                // on
                 $joinSpecArgArray[$j][] = $platform->quoteIdentifierInFragment(
                     $join['on'],
                     ['=', 'AND', 'OR', '(', ')', 'BETWEEN', '<', '>']

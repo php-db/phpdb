@@ -118,7 +118,6 @@ class In extends AbstractExpression implements PredicateInterface
             return '%s';
         }
 
-        // Handle array identifiers for multi-column IN: (col1, col2) IN ...
         if ($this->identifier instanceof Identifiers) {
             $count = count($this->identifier->getValue());
             return $count > 0
