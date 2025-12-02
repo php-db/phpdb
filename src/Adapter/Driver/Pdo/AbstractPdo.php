@@ -31,9 +31,9 @@ abstract class AbstractPdo implements PdoDriverInterface, ProfilerAwareInterface
     protected ?ProfilerInterface $profiler;
 
     public function __construct(
-        protected readonly AbstractPdoConnection|PDO $connection,
-        protected readonly StatementInterface&PdoDriverAwareInterface $statementPrototype,
-        protected readonly ResultInterface $resultPrototype,
+        protected AbstractPdoConnection|PDO $connection,
+        protected StatementInterface&PdoDriverAwareInterface $statementPrototype,
+        protected ResultInterface $resultPrototype,
         array $features = [],
     ) {
         if ($this->connection instanceof PdoDriverAwareInterface) {
