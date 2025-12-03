@@ -6,5 +6,5 @@ namespace PhpDb\Sql\Predicate;
 
 class IsNotNull extends IsNull
 {
-    protected string $specification = '%s IS NOT NULL';
+    protected string $operator = 'IS NOT NULL';
 }

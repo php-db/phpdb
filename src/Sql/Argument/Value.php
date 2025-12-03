@@ -31,4 +31,9 @@ final readonly class Value implements ArgumentInterface
     {
         return $this->value;
     }
+
+    public function getSpecification(): string
+    {
+        return '%s';
+    }
 }

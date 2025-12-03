@@ -94,9 +94,9 @@ final class BetweenTest extends TestCase
         self::assertEquals(ArgumentType::Value, $maxValue->getType());
     }
 
-    public function testSpecificationHasSaneDefaultValue(): void
+    public function testSpecificationIsNullByDefault(): void
     {
-        self::assertEquals('%s BETWEEN %s AND %s', $this->between->getSpecification());
+        self::assertNull($this->between->getSpecification());
     }
 
     public function testIdentifierIsMutable(): void
@@ -185,8 +185,8 @@ final class BetweenTest extends TestCase
 
         $expressionData = $this->between->getExpressionData();
 
-        // Verify specification
-        self::assertEquals($this->between->getSpecification(), $expressionData['spec']);
+        // Verify specification (default built from arguments)
+        self::assertEquals('%s BETWEEN %s AND %s', $expressionData['spec']);
 
         // Verify expression values
         $values = $expressionData['values'];
@@ -213,8 +213,8 @@ final class BetweenTest extends TestCase
 
         $expressionData = $this->between->getExpressionData();
 
-        // Verify specification
-        self::assertEquals($this->between->getSpecification(), $expressionData['spec']);
+        // Verify specification (default built from arguments)
+        self::assertEquals('%s BETWEEN %s AND %s', $expressionData['spec']);
 
         // Verify expression values with custom types
         $values = $expressionData['values'];

@@ -28,4 +28,9 @@ final readonly class Identifier implements ArgumentInterface
     {
         return $this->identifier;
     }
+
+    public function getSpecification(): string
+    {
+        return '%s';
+    }
 }

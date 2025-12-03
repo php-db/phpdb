@@ -29,4 +29,9 @@ final readonly class Literal implements ArgumentInterface
     {
         return $this->literal;
     }
+
+    public function getSpecification(): string
+    {
+        return '%s';
+    }
 }

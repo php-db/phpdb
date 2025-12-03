@@ -13,7 +13,7 @@ use PhpDb\Sql\ArgumentInterface;
 
 class Between extends AbstractExpression implements PredicateInterface
 {
-    protected string $specification = '%s BETWEEN %s AND %s';
+    protected string $operator = 'BETWEEN';
 
     protected ?ArgumentInterface $identifier = null;
 
@@ -108,26 +108,6 @@ class Between extends AbstractExpression implements PredicateInterface
         return $this->maxValue;
     }
 
-    /**
-     * Set specification string to use in forming SQL predicate
-     *
-     * @return $this Provides a fluent interface
-     */
-    public function setSpecification(string $specification): static
-    {
-        $this->specification = $specification;
-
-        return $this;
-    }
-
-    /**
-     * Get specification string to use in forming SQL predicate
-     */
-    public function getSpecification(): string
-    {
-        return $this->specification;
-    }
-
     /** @inheritDoc */
     #[Override]
     public function getExpressionData(): array
@@ -144,8 +124,13 @@ class Between extends AbstractExpression implements PredicateInterface
             throw new LogicException('maxValue must be specified');
         }
 
+        $identifierSpec = $this->identifier->getSpecification();
+        $minValueSpec   = $this->minValue->getSpecification();
+        $maxValueSpec   = $this->maxValue->getSpecification();
+        $spec           = "{$identifierSpec} {$this->operator} {$minValueSpec} AND {$maxValueSpec}";
+
         return [
-            'spec'   => $this->getSpecification(),
+            'spec'   => $this->specification ?? $spec,
             'values' => [$this->identifier, $this->minValue, $this->maxValue],
         ];
     }

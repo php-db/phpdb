@@ -6,5 +6,5 @@ namespace PhpDb\Sql\Predicate;
 
 class NotLike extends Like
 {
-    protected string $specification = '%s NOT LIKE %s';
+    protected string $operator = 'NOT LIKE';
 }

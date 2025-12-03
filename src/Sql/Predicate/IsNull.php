@@ -12,7 +12,7 @@ use PhpDb\Sql\Exception\InvalidArgumentException;
 
 class IsNull extends AbstractExpression implements PredicateInterface
 {
-    protected string $specification = '%s IS NULL';
+    protected string $operator = 'IS NULL';
 
     protected ?ArgumentInterface $identifier = null;
 
@@ -48,26 +48,6 @@ class IsNull extends AbstractExpression implements PredicateInterface
         return $this->identifier;
     }
 
-    /**
-     * Set specification string to use in forming SQL predicate
-     *
-     * @return $this Provides a fluent interface
-     */
-    public function setSpecification(string $specification): static
-    {
-        $this->specification = $specification;
-
-        return $this;
-    }
-
-    /**
-     * Get specification string to use in forming SQL predicate
-     */
-    public function getSpecification(): string
-    {
-        return $this->specification;
-    }
-
     /** @inheritDoc */
     #[Override]
     public function getExpressionData(): array
@@ -76,8 +56,10 @@ class IsNull extends AbstractExpression implements PredicateInterface
             throw new InvalidArgumentException('Identifier must be specified');
         }
 
+        $identifierSpec = $this->identifier->getSpecification();
+
         return [
-            'spec'   => $this->getSpecification(),
+            'spec'   => $this->specification ?? "{$identifierSpec} {$this->operator}",
             'values' => [$this->identifier],
         ];
     }

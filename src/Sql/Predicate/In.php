@@ -7,16 +7,11 @@ namespace PhpDb\Sql\Predicate;
 use Override;
 use PhpDb\Sql\AbstractExpression;
 use PhpDb\Sql\Argument\Identifier;
-use PhpDb\Sql\Argument\Identifiers;
 use PhpDb\Sql\Argument\Select as ArgumentSelect;
 use PhpDb\Sql\Argument\Values;
 use PhpDb\Sql\ArgumentInterface;
 use PhpDb\Sql\Exception\InvalidArgumentException;
 use PhpDb\Sql\Select;
-
-use function array_fill;
-use function count;
-use function implode;
 
 class In extends AbstractExpression implements PredicateInterface
 {
@@ -100,51 +95,12 @@ class In extends AbstractExpression implements PredicateInterface
             throw new InvalidArgumentException('Value set must be provided for IN predicate');
         }
 
-        $identifierSpec = $this->getIdentifierSpecification();
-        $valueSetSpec   = $this->getValueSetSpecification();
+        $identifierSpec = $this->identifier->getSpecification();
+        $valueSetSpec   = $this->valueSet->getSpecification();
 
         return [
-            'spec'   => "{$identifierSpec} {$this->operator} {$valueSetSpec}",
+            'spec'   => $this->specification ?? "{$identifierSpec} {$this->operator} {$valueSetSpec}",
             'values' => [$this->identifier, $this->valueSet],
         ];
-    }
-
-    /**
-     * Build specification string for identifier
-     */
-    protected function getIdentifierSpecification(): string
-    {
-        if ($this->identifier instanceof Identifier) {
-            return '%s';
-        }
-
-        if ($this->identifier instanceof Identifiers) {
-            $count = count($this->identifier->getValue());
-            return $count > 0
-                ? '(' . implode(', ', array_fill(0, $count, '%s')) . ')'
-                : '(NULL)';
-        }
-
-        return '%s';
-    }
-
-    /**
-     * Build specification string for value set
-     */
-    protected function getValueSetSpecification(): string
-    {
-        if ($this->valueSet instanceof ArgumentSelect) {
-            return '%s';
-        }
-
-        if ($this->valueSet instanceof Values) {
-            $values = $this->valueSet->getValue();
-            $count  = count($values);
-            return $count > 0
-                ? '(' . implode(', ', array_fill(0, $count, '%s')) . ')'
-                : '(NULL)';
-        }
-
-        return '%s';
     }
 }

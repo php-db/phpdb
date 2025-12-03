@@ -26,10 +26,10 @@ final class IsNullTest extends TestCase
         self::assertNull($isNotNull->getIdentifier());
     }
 
-    public function testSpecificationHasSaneDefaultValue(): void
+    public function testSpecificationIsNullByDefault(): void
     {
         $isNotNull = new IsNotNull();
-        self::assertEquals('%s IS NOT NULL', $isNotNull->getSpecification());
+        self::assertNull($isNotNull->getSpecification());
     }
 
     public function testCanPassIdentifierToConstructor(): void
@@ -83,8 +83,8 @@ final class IsNullTest extends TestCase
 
         $expressionData = $isNotNull->getExpressionData();
 
-        // Verify specification
-        self::assertEquals($isNotNull->getSpecification(), $expressionData['spec']);
+        // Verify specification (default built from arguments)
+        self::assertEquals('%s IS NOT NULL', $expressionData['spec']);
 
         // Verify expression values
         $values = $expressionData['values'];

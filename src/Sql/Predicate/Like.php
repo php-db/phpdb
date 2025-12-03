@@ -13,7 +13,7 @@ use PhpDb\Sql\Exception\InvalidArgumentException;
 
 class Like extends AbstractExpression implements PredicateInterface
 {
-    protected string $specification          = '%s LIKE %s';
+    protected string $operator               = 'LIKE';
     protected ?ArgumentInterface $identifier = null;
     protected ?ArgumentInterface $like       = null;
 
@@ -71,21 +71,6 @@ class Like extends AbstractExpression implements PredicateInterface
         return $this->like;
     }
 
-    /**
-     * @return $this Provides a fluent interface
-     */
-    public function setSpecification(string $specification): static
-    {
-        $this->specification = $specification;
-
-        return $this;
-    }
-
-    public function getSpecification(): string
-    {
-        return $this->specification;
-    }
-
     /** @inheritDoc */
     #[Override]
     public function getExpressionData(): array
@@ -98,8 +83,11 @@ class Like extends AbstractExpression implements PredicateInterface
             throw new InvalidArgumentException('Like expression must be specified');
         }
 
+        $identifierSpec = $this->identifier->getSpecification();
+        $likeSpec       = $this->like->getSpecification();
+
         return [
-            'spec'   => $this->getSpecification(),
+            'spec'   => $this->specification ?? "{$identifierSpec} {$this->operator} {$likeSpec}",
             'values' => [$this->identifier, $this->like],
         ];
     }

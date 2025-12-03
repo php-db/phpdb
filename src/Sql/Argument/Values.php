@@ -7,7 +7,10 @@ namespace PhpDb\Sql\Argument;
 use PhpDb\Sql\ArgumentInterface;
 use PhpDb\Sql\ArgumentType;
 
+use function array_fill;
 use function array_values;
+use function count;
+use function implode;
 
 /**
  * Represents multiple bound parameter values in SQL.
@@ -39,5 +42,13 @@ final readonly class Values implements ArgumentInterface
     public function getValue(): array
     {
         return $this->values;
+    }
+
+    public function getSpecification(): string
+    {
+        $count = count($this->values);
+        return $count > 0
+            ? '(' . implode(', ', array_fill(0, $count, '%s')) . ')'
+            : '(NULL)';
     }
 }

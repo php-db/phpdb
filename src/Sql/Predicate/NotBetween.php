@@ -6,5 +6,5 @@ namespace PhpDb\Sql\Predicate;
 
 class NotBetween extends Between
 {
-    protected string $specification = '%s NOT BETWEEN %s AND %s';
+    protected string $operator = 'NOT BETWEEN';
 }

@@ -30,4 +30,9 @@ final readonly class Select implements ArgumentInterface
     {
         return $this->select;
     }
+
+    public function getSpecification(): string
+    {
+        return '%s';
+    }
 }

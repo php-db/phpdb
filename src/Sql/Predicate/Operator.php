@@ -150,8 +150,11 @@ class Operator extends AbstractExpression implements PredicateInterface
             throw new InvalidArgumentException('Right expression must be specified');
         }
 
+        $leftSpec  = $this->left->getSpecification();
+        $rightSpec = $this->right->getSpecification();
+
         return [
-            'spec'   => "%s {$this->operator} %s",
+            'spec'   => $this->specification ?? "{$leftSpec} {$this->operator} {$rightSpec}",
             'values' => [$this->left, $this->right],
         ];
     }

@@ -24,9 +24,9 @@ final class NotBetweenTest extends TestCase
         $this->notBetween = new NotBetween();
     }
 
-    public function testSpecificationHasSameDefaultValue(): void
+    public function testSpecificationIsNullByDefault(): void
     {
-        self::assertEquals('%s NOT BETWEEN %s AND %s', $this->notBetween->getSpecification());
+        self::assertNull($this->notBetween->getSpecification());
     }
 
     public function testRetrievingWherePartsReturnsSpecificationArrayOfIdentifierAndValuesAndArrayOfTypes(): void
@@ -38,8 +38,8 @@ final class NotBetweenTest extends TestCase
 
         $expressionData = $this->notBetween->getExpressionData();
 
-        // Verify specification
-        self::assertEquals($this->notBetween->getSpecification(), $expressionData['spec']);
+        // Verify specification (default built from arguments)
+        self::assertEquals('%s NOT BETWEEN %s AND %s', $expressionData['spec']);
 
         // Verify expression values
         $values = $expressionData['values'];
@@ -67,8 +67,8 @@ final class NotBetweenTest extends TestCase
 
         $expressionData = $this->notBetween->getExpressionData();
 
-        // Verify specification
-        self::assertEquals($this->notBetween->getSpecification(), $expressionData['spec']);
+        // Verify specification (default built from arguments)
+        self::assertEquals('%s NOT BETWEEN %s AND %s', $expressionData['spec']);
 
         // Verify expression values with custom types
         $values = $expressionData['values'];
