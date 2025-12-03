@@ -8,5 +8,5 @@ interface ArgumentInterface
 {
     public function getType(): ArgumentType;
 
-    public function getValue(): null|string|int|float|bool|array|ExpressionInterface|SqlInterface;
+    public function getValue(): ExpressionInterface|SqlInterface|string|int|float|bool|array|null;
 }
