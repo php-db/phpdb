@@ -16,6 +16,8 @@ use function is_array;
  * Database adapter abstract service factory.
  *
  * Allows configuring several database instances (such as writer and reader).
+ *
+ * @internal
  */
 class AdapterAbstractServiceFactory implements AbstractFactoryInterface
 {
