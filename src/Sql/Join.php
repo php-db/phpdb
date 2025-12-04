@@ -119,7 +119,6 @@ class Join implements Iterator, Countable
      *     the columns to join.
      * @param string                       $type    The JOIN type to use; see the JOIN_* constants.
      * @throws Exception\InvalidArgumentException For invalid $name values.
-     * @return $this Provides a fluent interface
      */
     // phpcs:ignore Generic.NamingConventions.ConstructorName.OldStyle
     public function join(
@@ -150,8 +149,6 @@ class Join implements Iterator, Countable
 
     /**
      * Reset to an empty list of JOIN specifications.
-     *
-     * @return $this Provides a fluent interface
      */
     public function reset(): static
     {

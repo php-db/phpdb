@@ -73,8 +73,6 @@ class Predicate extends PredicateSet
     /**
      * Create "Equal To" predicate
      * Utilizes Operator predicate
-     *
-     * @return $this Provides a fluent interface
      */
     public function equalTo(
         null|float|int|string|ArgumentInterface $left,
@@ -91,8 +89,6 @@ class Predicate extends PredicateSet
     /**
      * Create "Not Equal To" predicate
      * Utilizes Operator predicate
-     *
-     * @return $this Provides a fluent interface
      */
     public function notEqualTo(
         null|float|int|string|ArgumentInterface $left,
@@ -109,8 +105,6 @@ class Predicate extends PredicateSet
     /**
      * Create "Less Than" predicate
      * Utilizes Operator predicate
-     *
-     * @return $this Provides a fluent interface
      */
     public function lessThan(
         null|float|int|string|ArgumentInterface $left,

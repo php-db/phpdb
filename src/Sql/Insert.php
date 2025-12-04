@@ -62,8 +62,6 @@ class Insert extends AbstractPreparableSql
 
     /**
      * Create INTO clause
-     *
-     * @return $this Provides a fluent interface
      */
     public function into(TableIdentifier|string|array $table): static
     {
@@ -73,8 +71,6 @@ class Insert extends AbstractPreparableSql
 
     /**
      * Specify columns
-     *
-     * @return $this Provides a fluent interface
      */
     public function columns(array $columns): static
     {
@@ -87,7 +83,6 @@ class Insert extends AbstractPreparableSql
      *
      * @param string        $flag one of VALUES_MERGE or VALUES_SET; defaults to VALUES_SET
      * @throws Exception\InvalidArgumentException
-     * @return $this Provides a fluent interface
      */
     public function values(array|Select $values, string $flag = self::VALUES_SET): static
     {
@@ -134,8 +129,6 @@ class Insert extends AbstractPreparableSql
 
     /**
      * Create INTO SELECT clause
-     *
-     * @return $this
      */
     public function select(Select $select): static
     {

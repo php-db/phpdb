@@ -181,8 +181,6 @@ class ParameterContainer implements Iterator, ArrayAccess, Countable
 
     /**
      * Set from array
-     *
-     * @return $this Provides a fluent interface
      */
     public function setFromArray(array $data): static
     {

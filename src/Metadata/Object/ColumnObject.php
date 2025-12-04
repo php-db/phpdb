@@ -73,8 +73,6 @@ class ColumnObject
 
     /**
      * Set table name
-     *
-     * @return $this Provides a fluent interface
      */
     public function setTableName(string $tableName): static
     {
@@ -106,9 +104,6 @@ class ColumnObject
         return $this->ordinalPosition;
     }
 
-    /**
-     * @return $this Provides a fluent interface
-     */
     public function setOrdinalPosition(?int $ordinalPosition): static
     {
         $this->ordinalPosition = $ordinalPosition;
@@ -123,9 +118,6 @@ class ColumnObject
         return $this->columnDefault;
     }
 
-    /**
-     * @return $this Provides a fluent interface
-     */
     public function setColumnDefault(null|string|int|bool $columnDefault): static
     {
         $this->columnDefault = $columnDefault;
@@ -140,9 +132,6 @@ class ColumnObject
         return $this->isNullable;
     }
 
-    /**
-     * @return $this Provides a fluent interface
-     */
     public function setIsNullable(?bool $isNullable): static
     {
         $this->isNullable = $isNullable;
@@ -157,9 +146,6 @@ class ColumnObject
         return $this->dataType;
     }
 
-    /**
-     * @return $this Provides a fluent interface
-     */
     public function setDataType(string $dataType): static
     {
         $this->dataType = $dataType;
@@ -174,9 +160,6 @@ class ColumnObject
         return $this->characterMaximumLength;
     }
 
-    /**
-     * @return $this Provides a fluent interface
-     */
     public function setCharacterMaximumLength(?int $characterMaximumLength): static
     {
         $this->characterMaximumLength = $characterMaximumLength;
@@ -191,9 +174,6 @@ class ColumnObject
         return $this->characterOctetLength;
     }
 
-    /**
-     * @return $this Provides a fluent interface
-     */
     public function setCharacterOctetLength(?int $characterOctetLength): static
     {
         $this->characterOctetLength = $characterOctetLength;
@@ -208,9 +188,6 @@ class ColumnObject
         return $this->numericPrecision;
     }
 
-    /**
-     * @return $this Provides a fluent interface
-     */
     public function setNumericPrecision(?int $numericPrecision): static
     {
         $this->numericPrecision = $numericPrecision;
@@ -225,9 +202,6 @@ class ColumnObject
         return $this->numericScale;
     }
 
-    /**
-     * @return $this Provides a fluent interface
-     */
     public function setNumericScale(?int $numericScale): static
     {
         $this->numericScale = $numericScale;
@@ -239,9 +213,6 @@ class ColumnObject
         return $this->numericUnsigned;
     }
 
-    /**
-     * @return $this Provides a fluent interface
-     */
     public function setNumericUnsigned(?bool $numericUnsigned): static
     {
         $this->numericUnsigned = $numericUnsigned;
@@ -261,9 +232,6 @@ class ColumnObject
         return $this->errata;
     }
 
-    /**
-     * @return $this Provides a fluent interface
-     */
     public function setErratas(array $erratas): static
     {
         foreach ($erratas as $name => $value) {
@@ -282,9 +250,6 @@ class ColumnObject
         return null;
     }
 
-    /**
-     * @return $this Provides a fluent interface
-     */
     public function setErrata(string $errataName, mixed $errataValue): static
     {
         $this->errata[$errataName] = $errataValue;

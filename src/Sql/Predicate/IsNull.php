@@ -28,8 +28,6 @@ class IsNull extends AbstractExpression implements PredicateInterface
 
     /**
      * Set identifier for comparison
-     *
-     * @return $this Provides a fluent interface
      */
     public function setIdentifier(string|ArgumentInterface $identifier): static
     {

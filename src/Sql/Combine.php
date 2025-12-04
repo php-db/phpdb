@@ -54,7 +54,6 @@ class Combine extends AbstractPreparableSql
      * Create combine clause
      *
      * @throws Exception\InvalidArgumentException
-     * @return $this Provides a fluent interface
      */
     public function combine(Select|array $select, string $type = self::COMBINE_UNION, string $modifier = ''): static
     {
@@ -84,8 +83,6 @@ class Combine extends AbstractPreparableSql
 
     /**
      * Create union clause
-     *
-     * @return $this
      */
     public function union(Select|array $select, string $modifier = ''): static
     {
@@ -94,8 +91,6 @@ class Combine extends AbstractPreparableSql
 
     /**
      * Create except clause
-     *
-     * @return $this
      */
     public function except(Select|array $select, string $modifier = ''): static
     {
@@ -104,8 +99,6 @@ class Combine extends AbstractPreparableSql
 
     /**
      * Create intersect clause
-     *
-     * @return $this
      */
     public function intersect(Select|array $select, string $modifier = ''): static
     {
@@ -145,9 +138,6 @@ class Combine extends AbstractPreparableSql
         return trim($sql, ' ');
     }
 
-    /**
-     * @return $this Provides a fluent interface
-     */
     public function alignColumns(): static
     {
         if (! $this->combine) {

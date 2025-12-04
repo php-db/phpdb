@@ -23,9 +23,6 @@ abstract class AbstractPrecisionColumn extends AbstractLengthColumn
         parent::__construct($name, $digits, $nullable, $default, $options);
     }
 
-    /**
-     * @return $this
-     */
     public function setDigits(?int $digits): static
     {
         return $this->setLength($digits);
@@ -36,9 +33,6 @@ abstract class AbstractPrecisionColumn extends AbstractLengthColumn
         return $this->getLength();
     }
 
-    /**
-     * @return $this Provides a fluent interface
-     */
     public function setDecimal(?int $decimal): static
     {
         $this->decimal = $decimal;

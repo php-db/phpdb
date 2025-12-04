@@ -41,9 +41,6 @@ class Column implements ColumnInterface
         $this->setOptions($options);
     }
 
-    /**
-     * @return $this Provides a fluent interface
-     */
     public function setName(string $name): static
     {
         $this->name = $name;
@@ -56,9 +53,6 @@ class Column implements ColumnInterface
         return $this->name;
     }
 
-    /**
-     * @return $this Provides a fluent interface
-     */
     public function setNullable(bool $nullable): static
     {
         $this->isNullable = $nullable;
@@ -71,9 +65,6 @@ class Column implements ColumnInterface
         return $this->isNullable;
     }
 
-    /**
-     * @return $this Provides a fluent interface
-     */
     public function setDefault(string|int|null $default): static
     {
         $this->default = $default;
@@ -86,18 +77,12 @@ class Column implements ColumnInterface
         return $this->default;
     }
 
-    /**
-     * @return $this Provides a fluent interface
-     */
     public function setOptions(array $options): static
     {
         $this->options = $options;
         return $this;
     }
 
-    /**
-     * @return $this Provides a fluent interface
-     */
     public function setOption(string $name, bool|string $value): static
     {
         $this->options[$name] = $value;
@@ -110,9 +95,6 @@ class Column implements ColumnInterface
         return $this->options;
     }
 
-    /**
-     * @return $this Provides a fluent interface
-     */
     public function addConstraint(ConstraintInterface $constraint): static
     {
         $this->constraints[] = $constraint;

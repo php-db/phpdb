@@ -51,9 +51,6 @@ class CreateTable extends AbstractSql implements SqlInterface
         $this->setTemporary($isTemporary);
     }
 
-    /**
-     * @return $this Provides a fluent interface
-     */
     public function setTemporary(string|int|bool $temporary): static
     {
         $this->isTemporary = (bool) $temporary;
@@ -65,27 +62,18 @@ class CreateTable extends AbstractSql implements SqlInterface
         return $this->isTemporary;
     }
 
-    /**
-     * @return $this Provides a fluent interface
-     */
     public function setTable(string $name): static
     {
         $this->table = $name;
         return $this;
     }
 
-    /**
-     * @return $this Provides a fluent interface
-     */
     public function addColumn(Column\ColumnInterface $column): static
     {
         $this->columns[] = $column;
         return $this;
     }
 
-    /**
-     * @return $this Provides a fluent interface
-     */
     public function addConstraint(Constraint\ConstraintInterface $constraint): static
     {
         $this->constraints[] = $constraint;

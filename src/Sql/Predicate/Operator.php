@@ -75,8 +75,6 @@ class Operator extends AbstractExpression implements PredicateInterface
 
     /**
      * Set left side of operator
-     *
-     * @return $this Provides a fluent interface
      */
     public function setLeft(string|ArgumentInterface|ExpressionInterface|SqlInterface $left): static
     {
@@ -101,8 +99,6 @@ class Operator extends AbstractExpression implements PredicateInterface
 
     /**
      * Set operator string
-     *
-     * @return $this Provides a fluent interface
      */
     public function setOperator(string $operator): static
     {
@@ -121,8 +117,6 @@ class Operator extends AbstractExpression implements PredicateInterface
 
     /**
      * Set right side of operator
-     *
-     * @return $this Provides a fluent interface
      */
     public function setRight(
         null|bool|string|int|float|ArgumentInterface|ExpressionInterface|SqlInterface $right

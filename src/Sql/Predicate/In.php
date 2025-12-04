@@ -37,8 +37,6 @@ class In extends AbstractExpression implements PredicateInterface
 
     /**
      * Set identifier for comparison
-     *
-     * @return $this Provides a fluent interface
      */
     public function setIdentifier(string|ArgumentInterface $identifier): static
     {
@@ -59,8 +57,6 @@ class In extends AbstractExpression implements PredicateInterface
 
     /**
      * Set set of values for IN comparison
-     *
-     * @return $this Provides a fluent interface
      */
     public function setValueSet(array|Select|ArgumentInterface $valueSet): static
     {

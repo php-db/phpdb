@@ -52,8 +52,6 @@ class PredicateSet implements PredicateInterface, Countable
 
     /**
      * Add predicate to set
-     *
-     * @return $this Provides a fluent interface
      */
     public function addPredicate(PredicateInterface $predicate, ?string $combination = null): static
     {
@@ -74,7 +72,6 @@ class PredicateSet implements PredicateInterface, Countable
      * Add predicates to set
      *
      * @throws Exception\InvalidArgumentException
-     * @return $this Provides a fluent interface
      */
     public function addPredicates(
         PredicateInterface|Closure|string|array $predicates,
@@ -143,8 +140,6 @@ class PredicateSet implements PredicateInterface, Countable
 
     /**
      * Add predicate using OR operator
-     *
-     * @return $this Provides a fluent interface
      */
     public function orPredicate(PredicateInterface $predicate): static
     {
@@ -155,8 +150,6 @@ class PredicateSet implements PredicateInterface, Countable
 
     /**
      * Add predicate using AND operator
-     *
-     * @return $this Provides a fluent interface
      */
     public function andPredicate(PredicateInterface $predicate): static
     {

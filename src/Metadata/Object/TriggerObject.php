@@ -48,8 +48,6 @@ class TriggerObject
 
     /**
      * Set Name.
-     *
-     * @return $this Provides a fluent interface
      */
     public function setName(string $name): static
     {
@@ -67,8 +65,6 @@ class TriggerObject
 
     /**
      * Set Event Manipulation.
-     *
-     * @return $this Provides a fluent interface
      */
     public function setEventManipulation(string $eventManipulation): static
     {
@@ -86,8 +82,6 @@ class TriggerObject
 
     /**
      * Set Event Object Catalog.
-     *
-     * @return $this Provides a fluent interface
      */
     public function setEventObjectCatalog(string $eventObjectCatalog): static
     {
@@ -105,8 +99,6 @@ class TriggerObject
 
     /**
      * Set Event Object Schema.
-     *
-     * @return $this Provides a fluent interface
      */
     public function setEventObjectSchema(string $eventObjectSchema): static
     {
@@ -124,8 +116,6 @@ class TriggerObject
 
     /**
      * Set Event Object Table.
-     *
-     * @return $this Provides a fluent interface
      */
     public function setEventObjectTable(string $eventObjectTable): static
     {
@@ -143,8 +133,6 @@ class TriggerObject
 
     /**
      * Set Action Order.
-     *
-     * @return $this Provides a fluent interface
      */
     public function setActionOrder(string $actionOrder): static
     {
@@ -162,8 +150,6 @@ class TriggerObject
 
     /**
      * Set Action Condition.
-     *
-     * @return $this Provides a fluent interface
      */
     public function setActionCondition(?string $actionCondition): static
     {
@@ -181,8 +167,6 @@ class TriggerObject
 
     /**
      * Set Action Statement.
-     *
-     * @return $this Provides a fluent interface
      */
     public function setActionStatement(string $actionStatement): static
     {
@@ -200,8 +184,6 @@ class TriggerObject
 
     /**
      * Set Action Orientation.
-     *
-     * @return $this Provides a fluent interface
      */
     public function setActionOrientation(string $actionOrientation): static
     {
@@ -219,8 +201,6 @@ class TriggerObject
 
     /**
      * Set Action Timing.
-     *
-     * @return $this Provides a fluent interface
      */
     public function setActionTiming(string $actionTiming): static
     {
@@ -238,8 +218,6 @@ class TriggerObject
 
     /**
      * Set Action Reference Old Table.
-     *
-     * @return $this Provides a fluent interface
      */
     public function setActionReferenceOldTable(?string $actionReferenceOldTable): static
     {
@@ -257,8 +235,6 @@ class TriggerObject
 
     /**
      * Set Action Reference New Table.
-     *
-     * @return $this Provides a fluent interface
      */
     public function setActionReferenceNewTable(?string $actionReferenceNewTable): static
     {

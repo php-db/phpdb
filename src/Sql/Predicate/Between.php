@@ -44,8 +44,6 @@ class Between extends AbstractExpression implements PredicateInterface
 
     /**
      * Set identifier for comparison
-     *
-     * @return $this Provides a fluent interface
      */
     public function setIdentifier(string|ArgumentInterface $identifier): static
     {
@@ -66,8 +64,6 @@ class Between extends AbstractExpression implements PredicateInterface
 
     /**
      * Set minimum value for comparison
-     *
-     * @return $this Provides a fluent interface
      */
     public function setMinValue(null|int|float|string|bool|ArgumentInterface $minValue): static
     {
@@ -88,8 +84,6 @@ class Between extends AbstractExpression implements PredicateInterface
 
     /**
      * Set maximum value for comparison
-     *
-     * @return $this Provides a fluent interface
      */
     public function setMaxValue(null|int|float|string|bool|ArgumentInterface $maxValue): static
     {

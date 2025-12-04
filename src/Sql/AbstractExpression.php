@@ -10,8 +10,6 @@ abstract class AbstractExpression implements ExpressionInterface
 
     /**
      * Set specification string to override the default
-     *
-     * @return $this Provides a fluent interface
      */
     public function setSpecification(string $specification): static
     {

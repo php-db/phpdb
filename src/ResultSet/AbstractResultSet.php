@@ -92,7 +92,6 @@ abstract class AbstractResultSet implements ResultSetInterface
     }
 
     /**
-     * @return $this Provides a fluent interface
      * @throws RuntimeException
      */
     public function buffer(): ResultSetInterface
@@ -292,8 +291,6 @@ abstract class AbstractResultSet implements ResultSetInterface
 
     /**
      * Set the row object prototype
-     *
-     * @return $this Provides a fluent interface
      */
     abstract public function setRowPrototype(ArrayObject $rowPrototype): ResultSetInterface;
 

@@ -21,8 +21,6 @@ class HydratingResultSet extends AbstractResultSet
 
     /**
      * Set the hydrator to use for each row object
-     *
-     * @return $this Provides a fluent interface
      */
     public function setHydrator(HydratorInterface $hydrator): ResultSetInterface
     {

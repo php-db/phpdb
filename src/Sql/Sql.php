@@ -39,7 +39,6 @@ class Sql
 
     /**
      * @throws Exception\InvalidArgumentException
-     * @return $this Provides a fluent interface
      */
     public function setTable(array|string|TableIdentifier $table): self
     {

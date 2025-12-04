@@ -47,8 +47,6 @@ class ConstraintKeyObject
 
     /**
      * Set column name
-     *
-     * @return $this Provides a fluent interface
      */
     public function setColumnName(string $columnName): static
     {
@@ -66,8 +64,6 @@ class ConstraintKeyObject
 
     /**
      * Set ordinal position
-     *
-     * @return $this Provides a fluent interface
      */
     public function setOrdinalPosition(int $ordinalPosition): static
     {
@@ -85,8 +81,6 @@ class ConstraintKeyObject
 
     /**
      * Set position in unique constraint
-     *
-     * @return $this Provides a fluent interface
      */
     public function setPositionInUniqueConstraint(bool $positionInUniqueConstraint): static
     {
@@ -104,8 +98,6 @@ class ConstraintKeyObject
 
     /**
      * Set referenced table schema
-     *
-     * @return $this Provides a fluent interface
      */
     public function setReferencedTableSchema(string $referencedTableSchema): static
     {
@@ -123,8 +115,6 @@ class ConstraintKeyObject
 
     /**
      * Set Referenced table name
-     *
-     * @return $this Provides a fluent interface
      */
     public function setReferencedTableName(string $referencedTableName): static
     {
@@ -142,8 +132,6 @@ class ConstraintKeyObject
 
     /**
      * Set referenced column name
-     *
-     * @return $this Provides a fluent interface
      */
     public function setReferencedColumnName(string $referencedColumnName): static
     {

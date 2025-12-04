@@ -193,7 +193,6 @@ class Select extends AbstractPreparableSql
      * Create from clause
      *
      * @throws Exception\InvalidArgumentException
-     * @return $this Provides a fluent interface
      */
     public function from(array|string|TableIdentifier $table): static
     {
@@ -216,7 +215,6 @@ class Select extends AbstractPreparableSql
     /**
      * @param string|Expression $quantifier DISTINCT|ALL
      * @throws Exception\InvalidArgumentException
-     * @return $this Provides a fluent interface
      */
     public function quantifier(ExpressionInterface|string $quantifier): static
     {
@@ -233,8 +231,6 @@ class Select extends AbstractPreparableSql
      *   array(string => value, ...)
      *     key string will be use as alias,
      *     value can be string or Expression objects
-     *
-     * @return $this Provides a fluent interface
      */
     public function columns(array $columns, bool $prefixColumnsWithTable = true): static
     {
@@ -248,7 +244,6 @@ class Select extends AbstractPreparableSql
      *
      * @param string                    $type one of the JOIN_* constants
      * @throws Exception\InvalidArgumentException
-     * @return $this Provides a fluent interface
      */
     public function join(
         array|string|TableIdentifier $name,
@@ -266,7 +261,6 @@ class Select extends AbstractPreparableSql
      *
      * @param string                                  $combination One of the OP_* constants from Predicate\PredicateSet
      * @throws Exception\InvalidArgumentException
-     * @return $this Provides a fluent interface
      */
     public function where(
         PredicateInterface|array|string|Closure $predicate,
@@ -281,9 +275,6 @@ class Select extends AbstractPreparableSql
         return $this;
     }
 
-    /**
-     * @return $this Provides a fluent interface
-     */
     public function group(mixed $group): static
     {
         if (is_array($group)) {
@@ -301,7 +292,6 @@ class Select extends AbstractPreparableSql
      * Create having clause
      *
      * @param string $combination One of the OP_* constants from Predicate\PredicateSet
-     * @return $this Provides a fluent interface
      */
     public function having(
         Having|PredicateInterface|array|Closure|string $predicate,
@@ -316,9 +306,6 @@ class Select extends AbstractPreparableSql
         return $this;
     }
 
-    /**
-     * @return $this Provides a fluent interface
-     */
     public function order(ExpressionInterface|array|string $order): static
     {
         if (is_string($order)) {
@@ -340,7 +327,6 @@ class Select extends AbstractPreparableSql
 
     /**
      * @throws Exception\InvalidArgumentException
-     * @return $this Provides a fluent interface
      */
     public function limit(int|string $limit): static
     {
@@ -358,7 +344,6 @@ class Select extends AbstractPreparableSql
 
     /**
      * @throws Exception\InvalidArgumentException
-     * @return $this Provides a fluent interface
      */
     public function offset(int|string $offset): static
     {
@@ -376,7 +361,6 @@ class Select extends AbstractPreparableSql
 
     /**
      * @throws Exception\InvalidArgumentException
-     * @return $this Provides a fluent interface
      */
     public function combine(Select $select, string $type = self::COMBINE_UNION, string $modifier = ''): static
     {
@@ -396,7 +380,6 @@ class Select extends AbstractPreparableSql
 
     /**
      * @throws Exception\InvalidArgumentException
-     * @return $this Provides a fluent interface
      */
     public function reset(string $part): static
     {
@@ -447,7 +430,6 @@ class Select extends AbstractPreparableSql
 
     /**
      * @param string|array<string, array> $specification
-     * @return $this Provides a fluent interface
      */
     public function setSpecification(string $index, array|string $specification): static
     {

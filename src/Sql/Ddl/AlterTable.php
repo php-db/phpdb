@@ -84,9 +84,6 @@ class AlterTable extends AbstractSql implements SqlInterface
         }
     }
 
-    /**
-     * @return $this Provides a fluent interface
-     */
     public function setTable(string|TableIdentifier $name): static
     {
         $this->table = $name;
@@ -94,9 +91,6 @@ class AlterTable extends AbstractSql implements SqlInterface
         return $this;
     }
 
-    /**
-     * @return $this Provides a fluent interface
-     */
     public function addColumn(Column\ColumnInterface $column): static
     {
         $this->addColumns[] = $column;
@@ -104,9 +98,6 @@ class AlterTable extends AbstractSql implements SqlInterface
         return $this;
     }
 
-    /**
-     * @return $this Provides a fluent interface
-     */
     public function changeColumn(string $name, Column\ColumnInterface $column): static
     {
         $this->changeColumns[$name] = $column;
@@ -114,9 +105,6 @@ class AlterTable extends AbstractSql implements SqlInterface
         return $this;
     }
 
-    /**
-     * @return $this Provides a fluent interface
-     */
     public function dropColumn(string $name): static
     {
         $this->dropColumns[] = $name;
@@ -124,9 +112,6 @@ class AlterTable extends AbstractSql implements SqlInterface
         return $this;
     }
 
-    /**
-     * @return $this Provides a fluent interface
-     */
     public function dropConstraint(string $name): static
     {
         $this->dropConstraints[] = $name;
@@ -134,9 +119,6 @@ class AlterTable extends AbstractSql implements SqlInterface
         return $this;
     }
 
-    /**
-     * @return $this Provides a fluent interface
-     */
     public function addConstraint(Constraint\ConstraintInterface $constraint): static
     {
         $this->addConstraints[] = $constraint;

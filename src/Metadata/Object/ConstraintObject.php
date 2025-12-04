@@ -90,8 +90,6 @@ class ConstraintObject
 
     /**
      * Set table name
-     *
-     * @return $this Provides a fluent interface
      */
     public function setTableName(string $tableName): static
     {
@@ -134,7 +132,6 @@ class ConstraintObject
      * Set Columns.
      *
      * @param string[] $columns
-     * @return $this Provides a fluent interface
      */
     public function setColumns(array $columns): static
     {
@@ -152,8 +149,6 @@ class ConstraintObject
 
     /**
      * Set Referenced Table Schema.
-     *
-     * @return $this Provides a fluent interface
      */
     public function setReferencedTableSchema(string $referencedTableSchema): static
     {
@@ -171,8 +166,6 @@ class ConstraintObject
 
     /**
      * Set Referenced Table Name.
-     *
-     * @return $this Provides a fluent interface
      */
     public function setReferencedTableName(string $referencedTableName): static
     {
@@ -194,7 +187,6 @@ class ConstraintObject
      * Set Referenced Columns.
      *
      * @param string[] $referencedColumns
-     * @return $this Provides a fluent interface
      */
     public function setReferencedColumns(array $referencedColumns): static
     {
@@ -212,8 +204,6 @@ class ConstraintObject
 
     /**
      * Set Match Option.
-     *
-     * @return $this Provides a fluent interface
      */
     public function setMatchOption(string $matchOption): static
     {
@@ -231,8 +221,6 @@ class ConstraintObject
 
     /**
      * Set Update Rule.
-     *
-     * @return $this Provides a fluent interface
      */
     public function setUpdateRule(string $updateRule): static
     {
@@ -250,8 +238,6 @@ class ConstraintObject
 
     /**
      * Set Delete Rule.
-     *
-     * @return $this Provides a fluent interface
      */
     public function setDeleteRule(string $deleteRule): static
     {
@@ -269,8 +255,6 @@ class ConstraintObject
 
     /**
      * Set Check Clause.
-     *
-     * @return $this Provides a fluent interface
      */
     public function setCheckClause(string $checkClause): static
     {

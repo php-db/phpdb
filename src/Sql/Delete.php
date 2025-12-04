@@ -61,8 +61,6 @@ class Delete extends AbstractPreparableSql
 
     /**
      * Create from statement
-     *
-     * @return $this Provides a fluent interface
      */
     public function from(TableIdentifier|string|array $table): static
     {
@@ -84,7 +82,6 @@ class Delete extends AbstractPreparableSql
      * Create where clause
      *
      * @param string $combination One of the OP_* constants from Predicate\PredicateSet
-     * @return $this Provides a fluent interface
      */
     public function where(
         PredicateInterface|array|Closure|string|Where $predicate,

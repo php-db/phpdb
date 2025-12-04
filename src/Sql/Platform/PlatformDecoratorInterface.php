@@ -6,8 +6,5 @@ namespace PhpDb\Sql\Platform;
 
 interface PlatformDecoratorInterface
 {
-    /**
-     * @return $this Provides a fluent interface
-     */
     public function setSubject(?object $subject): PlatformDecoratorInterface;
 }

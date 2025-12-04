@@ -35,8 +35,6 @@ class Like extends AbstractExpression implements PredicateInterface
 
     /**
      * Set identifier for comparison
-     *
-     * @return $this Provides a fluent interface
      */
     public function setIdentifier(string|ArgumentInterface $identifier): static
     {
@@ -54,8 +52,6 @@ class Like extends AbstractExpression implements PredicateInterface
 
     /**
      * Set like pattern for comparison
-     *
-     * @return $this Provides a fluent interface
      */
     public function setLike(bool|float|int|null|string|ArgumentInterface $like): static
     {

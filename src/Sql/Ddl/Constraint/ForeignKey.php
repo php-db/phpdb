@@ -64,9 +64,6 @@ class ForeignKey extends AbstractConstraint
         return $this->referenceTable;
     }
 
-    /**
-     * @return $this Provides a fluent interface
-     */
     public function setReferenceTable(string $referenceTable): static
     {
         $this->referenceTable = $referenceTable;
@@ -81,7 +78,6 @@ class ForeignKey extends AbstractConstraint
 
     /**
      * @param string[]|string $referenceColumn
-     * @return $this Provides a fluent interface
      */
     public function setReferenceColumn(array|string $referenceColumn): static
     {
@@ -95,9 +91,6 @@ class ForeignKey extends AbstractConstraint
         return $this->onDeleteRule;
     }
 
-    /**
-     * @return $this Provides a fluent interface
-     */
     public function setOnDeleteRule(string $onDeleteRule): static
     {
         $this->onDeleteRule = $onDeleteRule;
@@ -110,9 +103,6 @@ class ForeignKey extends AbstractConstraint
         return $this->onUpdateRule;
     }
 
-    /**
-     * @return $this Provides a fluent interface
-     */
     public function setOnUpdateRule(string $onUpdateRule): static
     {
         $this->onUpdateRule = $onUpdateRule;

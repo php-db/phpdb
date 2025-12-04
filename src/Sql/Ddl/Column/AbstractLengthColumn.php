@@ -27,9 +27,6 @@ abstract class AbstractLengthColumn extends Column
         parent::__construct($name, $nullable, $default, $options);
     }
 
-    /**
-     * @return $this Provides a fluent interface
-     */
     public function setLength(?int $length = 0): static
     {
         $this->length = $length;

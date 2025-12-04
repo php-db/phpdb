@@ -98,8 +98,6 @@ class Update extends AbstractPreparableSql
 
     /**
      * Specify table for statement
-     *
-     * @return $this Provides a fluent interface
      */
     public function table(TableIdentifier|string|array $table): static
     {
@@ -113,7 +111,6 @@ class Update extends AbstractPreparableSql
      * @param  array $values Associative array of key values
      * @param string $flag   One of the VALUES_* constants
      * @throws Exception\InvalidArgumentException
-     * @return $this Provides a fluent interface
      */
     public function set(array $values, string|int $flag = self::VALUES_SET): static
     {
@@ -138,7 +135,6 @@ class Update extends AbstractPreparableSql
      * Create where clause
      *
      * @throws Exception\InvalidArgumentException
-     * @return $this Provides a fluent interface
      */
     public function where(
         PredicateInterface|array|Closure|string|Where $predicate,
@@ -157,7 +153,6 @@ class Update extends AbstractPreparableSql
      * Create join clause
      *
      * @throws Exception\InvalidArgumentException
-     * @return $this Provides a fluent interface
      */
     public function join(array|string|TableIdentifier $name, string $on, string $type = Join::JOIN_INNER): static
     {
