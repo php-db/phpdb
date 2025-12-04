@@ -229,18 +229,6 @@ parameters:
 			path: src/TableGateway/Feature/SequenceFeature.php
 
 		-
-			message: '#^Class PhpDb\\Adapter\\Adapter constructor invoked with 1 parameter, 3\-4 required\.$#'
-			identifier: arguments.count
-			count: 1
-			path: test/integration/Adapter/Driver/Pdo/Postgresql/AdapterTest.php
-
-		-
-			message: '#^Class PhpDb\\Adapter\\Adapter constructor invoked with 1 parameter, 3\-4 required\.$#'
-			identifier: arguments.count
-			count: 1
-			path: test/integration/Adapter/Driver/Pdo/Postgresql/TableGatewayTest.php
-
-		-
 			message: '#^Call to method quoteValue\(\) on an unknown class PhpDb\\Adapter\\Platform\\Postgresql\.$#'
 			identifier: class.notFound
 			count: 4
@@ -343,12 +331,6 @@ parameters:
 			path: test/unit/Adapter/AdapterAbstractServiceFactoryTest.php
 
 		-
-			message: '#^Class PhpDb\\Adapter\\Adapter constructor invoked with 2 parameters, 3\-4 required\.$#'
-			identifier: arguments.count
-			count: 1
-			path: test/unit/Adapter/AdapterAwareTraitTest.php
-
-		-
 			message: '#^Method PhpDbTest\\Adapter\\AdapterServiceDelegatorTest\:\:testDelegatorWithPluginManager\(\) has PHPUnit\\Framework\\MockObject\\Exception in PHPDoc @throws tag but it''s not thrown\.$#'
 			identifier: throws.unusedType
 			count: 1
@@ -399,78 +381,6 @@ parameters:
 		-
 			message: '#^Access to an undefined property PhpDb\\Adapter\\Adapter\:\:\$foo\.$#'
 			identifier: property.notFound
-			count: 1
-			path: test/unit/Adapter/AdapterTest.php
-
-		-
-			message: '#^Class PhpDb\\Adapter\\Adapter constructor invoked with 1 parameter, 3\-4 required\.$#'
-			identifier: arguments.count
-			count: 8
-			path: test/unit/Adapter/AdapterTest.php
-
-		-
-			message: '#^Class PhpDb\\Adapter\\Adapter constructor invoked with 2 parameters, 3\-4 required\.$#'
-			identifier: arguments.count
-			count: 6
-			path: test/unit/Adapter/AdapterTest.php
-
-		-
-			message: '#^Class PhpDb\\Adapter\\Driver\\Mysqli\\Mysqli not found\.$#'
-			identifier: class.notFound
-			count: 1
-			path: test/unit/Adapter/AdapterTest.php
-
-		-
-			message: '#^Class PhpDb\\Adapter\\Driver\\Pdo\\Pdo not found\.$#'
-			identifier: class.notFound
-			count: 1
-			path: test/unit/Adapter/AdapterTest.php
-
-		-
-			message: '#^Class PhpDb\\Adapter\\Driver\\Pgsql\\Pgsql not found\.$#'
-			identifier: class.notFound
-			count: 1
-			path: test/unit/Adapter/AdapterTest.php
-
-		-
-			message: '#^Class PhpDb\\Adapter\\Driver\\Sqlsrv\\Sqlsrv not found\.$#'
-			identifier: class.notFound
-			count: 1
-			path: test/unit/Adapter/AdapterTest.php
-
-		-
-			message: '#^Class PhpDb\\Adapter\\Platform\\IbmDb2 not found\.$#'
-			identifier: class.notFound
-			count: 1
-			path: test/unit/Adapter/AdapterTest.php
-
-		-
-			message: '#^Class PhpDb\\Adapter\\Platform\\Mysql not found\.$#'
-			identifier: class.notFound
-			count: 1
-			path: test/unit/Adapter/AdapterTest.php
-
-		-
-			message: '#^Class PhpDb\\Adapter\\Platform\\Oracle not found\.$#'
-			identifier: class.notFound
-			count: 2
-			path: test/unit/Adapter/AdapterTest.php
-
-		-
-			message: '#^Class PhpDb\\Adapter\\Platform\\Postgresql not found\.$#'
-			identifier: class.notFound
-			count: 1
-			path: test/unit/Adapter/AdapterTest.php
-
-		-
-			message: '#^Class PhpDb\\Adapter\\Platform\\SqlServer not found\.$#'
-			identifier: class.notFound
-			count: 1
-			path: test/unit/Adapter/AdapterTest.php
-
-		-
-			message: '#^Class PhpDb\\Adapter\\Platform\\Sqlite not found\.$#'
-			identifier: class.notFound
 			count: 1
 			path: test/unit/Adapter/AdapterTest.php
 
@@ -613,6 +523,42 @@ parameters:
 			path: test/unit/RowGateway/AbstractRowGatewayTest.php
 
 		-
+			message: '#^Static call to instance method PhpDbTest\\Sql\\AbstractSqlFunctionalTestCase\:\:createColumn\(\)\.$#'
+			identifier: method.staticCall
+			count: 2
+			path: test/unit/Sql/AbstractSqlFunctionalTestCase.php
+
+		-
+			message: '#^Static call to instance method PhpDbTest\\Sql\\AbstractSqlFunctionalTestCase\:\:createTable\(\)\.$#'
+			identifier: method.staticCall
+			count: 2
+			path: test/unit/Sql/AbstractSqlFunctionalTestCase.php
+
+		-
+			message: '#^Static call to instance method PhpDbTest\\Sql\\AbstractSqlFunctionalTestCase\:\:delete\(\)\.$#'
+			identifier: method.staticCall
+			count: 1
+			path: test/unit/Sql/AbstractSqlFunctionalTestCase.php
+
+		-
+			message: '#^Static call to instance method PhpDbTest\\Sql\\AbstractSqlFunctionalTestCase\:\:insert\(\)\.$#'
+			identifier: method.staticCall
+			count: 1
+			path: test/unit/Sql/AbstractSqlFunctionalTestCase.php
+
+		-
+			message: '#^Static call to instance method PhpDbTest\\Sql\\AbstractSqlFunctionalTestCase\:\:select\(\)\.$#'
+			identifier: method.staticCall
+			count: 15
+			path: test/unit/Sql/AbstractSqlFunctionalTestCase.php
+
+		-
+			message: '#^Static call to instance method PhpDbTest\\Sql\\AbstractSqlFunctionalTestCase\:\:update\(\)\.$#'
+			identifier: method.staticCall
+			count: 3
+			path: test/unit/Sql/AbstractSqlFunctionalTestCase.php
+
+		-
 			message: '#^PHPDoc tag @var with type PhpDb\\Sql\\Ddl\\Column\\ColumnInterface is not subtype of native type PHPUnit\\Framework\\MockObject\\MockObject\.$#'
 			identifier: varTag.nativeType
 			count: 2
@@ -665,42 +611,6 @@ parameters:
 			identifier: varTag.nativeType
 			count: 1
 			path: test/unit/Sql/Platform/PlatformTest.php
-
-		-
-			message: '#^Static call to instance method PhpDbTest\\Sql\\AbstractSqlFunctionalTestCase\:\:createColumn\(\)\.$#'
-			identifier: method.staticCall
-			count: 2
-			path: test/unit/Sql/AbstractSqlFunctionalTestCase.php
-
-		-
-			message: '#^Static call to instance method PhpDbTest\\Sql\\AbstractSqlFunctionalTestCase\:\:createTable\(\)\.$#'
-			identifier: method.staticCall
-			count: 2
-			path: test/unit/Sql/AbstractSqlFunctionalTestCase.php
-
-		-
-			message: '#^Static call to instance method PhpDbTest\\Sql\\AbstractSqlFunctionalTestCase\:\:delete\(\)\.$#'
-			identifier: method.staticCall
-			count: 1
-			path: test/unit/Sql/AbstractSqlFunctionalTestCase.php
-
-		-
-			message: '#^Static call to instance method PhpDbTest\\Sql\\AbstractSqlFunctionalTestCase\:\:insert\(\)\.$#'
-			identifier: method.staticCall
-			count: 1
-			path: test/unit/Sql/AbstractSqlFunctionalTestCase.php
-
-		-
-			message: '#^Static call to instance method PhpDbTest\\Sql\\AbstractSqlFunctionalTestCase\:\:select\(\)\.$#'
-			identifier: method.staticCall
-			count: 15
-			path: test/unit/Sql/AbstractSqlFunctionalTestCase.php
-
-		-
-			message: '#^Static call to instance method PhpDbTest\\Sql\\AbstractSqlFunctionalTestCase\:\:update\(\)\.$#'
-			identifier: method.staticCall
-			count: 3
-			path: test/unit/Sql/AbstractSqlFunctionalTestCase.php
 
 		-
 			message: '#^Expression "\$this\-\>mockUpdate" on a separate line does not do anything\.$#'
