@@ -39,10 +39,8 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
 
     /**
      * initialize()
-     *
-     * @return void
      */
-    public function initialize()
+    public function initialize(): void
     {
         if ($this->isInitialized) {
             return;
@@ -105,7 +103,8 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
      *
      * @return int
      */
-    #[Override] public function save()
+    #[Override]
+    public function save()
     {
         $this->initialize();
 
@@ -183,7 +182,8 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
      *
      * @return int
      */
-    #[Override] public function delete()
+    #[Override]
+    public function delete()
     {
         $this->initialize();
 
@@ -213,7 +213,8 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
      * @param  string $offset
      * @return bool
      */
-    #[Override] #[ReturnTypeWillChange]
+    #[Override]
+    #[ReturnTypeWillChange]
     public function offsetExists($offset)
     {
         return array_key_exists($offset, $this->data);
@@ -225,7 +226,8 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
      * @param  string $offset
      * @return mixed
      */
-    #[Override] #[ReturnTypeWillChange]
+    #[Override]
+    #[ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         return $this->data[$offset];
@@ -238,7 +240,8 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
      * @param  mixed $value
      * @return $this Provides a fluent interface
      */
-    #[Override] #[ReturnTypeWillChange]
+    #[Override]
+    #[ReturnTypeWillChange]
     public function offsetSet($offset, $value)
     {
         $this->data[$offset] = $value;
@@ -251,7 +254,8 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
      * @param  string $offset
      * @return $this Provides a fluent interface
      */
-    #[Override] #[ReturnTypeWillChange]
+    #[Override]
+    #[ReturnTypeWillChange]
     public function offsetUnset($offset)
     {
         $this->data[$offset] = null;
@@ -261,7 +265,8 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
     /**
      * @return int
      */
-    #[Override] #[ReturnTypeWillChange]
+    #[Override]
+    #[ReturnTypeWillChange]
     public function count()
     {
         return count($this->data);
