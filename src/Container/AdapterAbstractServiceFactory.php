@@ -18,6 +18,8 @@ use function is_array;
  * Database adapter abstract service factory.
  *
  * Allows configuring several database instances (such as writer and reader).
+ *
+ * @internal
  */
 class AdapterAbstractServiceFactory implements AbstractFactoryInterface
 {
@@ -27,7 +29,7 @@ class AdapterAbstractServiceFactory implements AbstractFactoryInterface
     /**
      * Can we create an adapter by the requested name?
      */
-    public function canCreate(ContainerInterface $container, string $requestedName): bool
+    public function canCreate(ContainerInterface $container, $requestedName): bool
     {
         $config = $this->getConfig($container);
         if (empty($config)) {
@@ -44,14 +46,13 @@ class AdapterAbstractServiceFactory implements AbstractFactoryInterface
      */
     public function __invoke(
         ContainerInterface $container,
-        string $requestedName,
+        $requestedName,
         ?array $options = null
     ): AdapterInterface {
         $driverFactory   = ($container->get(DriverInterfaceFactoryFactoryInterface::class))($container, $requestedName);
         $driverInstance  = $driverFactory::createFromConfig($container, $requestedName);
         $platformFactory = ($container->get(PlatformInterfaceFactoryFactoryInterface::class))();
 
-        //$config = $this->getConfig($container);
         return new Adapter(
             $driverInstance,
             $platformFactory::fromDriver($driverInstance),
@@ -61,12 +62,8 @@ class AdapterAbstractServiceFactory implements AbstractFactoryInterface
 
     /**
      * Get db configuration, if any
-     *
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
-     * @return array
      */
-    protected function getConfig(ContainerInterface $container)
+    protected function getConfig(ContainerInterface $container): array
     {
         if ($this->config !== null) {
             return $this->config;
