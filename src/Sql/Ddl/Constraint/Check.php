@@ -1,53 +1,51 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDb\Sql\Ddl\Constraint;
 
+use Override;
+use PhpDb\Sql\Argument\Identifier;
+use PhpDb\Sql\Argument\Literal;
 use PhpDb\Sql\ExpressionInterface;
 
-use function array_unshift;
+use function implode;
 
 class Check extends AbstractConstraint
 {
-    /** @var string|ExpressionInterface */
-    protected $expression;
+    protected string|ExpressionInterface $expression;
 
-    /**
-     * {@inheritDoc}
-     */
-    protected $specification = 'CHECK (%s)';
+    protected string $specification = 'CHECK (%s)';
 
     /**
      * @param string|ExpressionInterface $expression
-     * @param  null|string $name
      */
-    public function __construct($expression, $name)
+    public function __construct($expression, ?string $name)
     {
+        parent::__construct(null, $name);
+
         $this->expression = $expression;
-        $this->name       = $name;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function getExpressionData()
+    /** @inheritDoc */
+    #[Override] public function getExpressionData(): array
     {
-        $newSpecTypes = [self::TYPE_LITERAL];
-        $values       = [$this->expression];
-        $newSpec      = '';
+        $specParts = [];
+        $values    = [];
 
-        if ($this->name) {
-            $newSpec .= $this->namedSpecification;
+        if ($this->name !== '') {
+            $specParts[] = $this->namedSpecification;
+            $values[]    = new Identifier($this->name);
+        }
 
-            array_unshift($values, $this->name);
-            array_unshift($newSpecTypes, self::TYPE_IDENTIFIER);
+        if ($this->expression !== '') {
+            $specParts[] = $this->specification;
+            $values[]    = new Literal($this->expression);
         }
 
         return [
-            [
-                $newSpec . $this->specification,
-                $values,
-                $newSpecTypes,
-            ],
+            'spec'   => implode(' ', $specParts),
+            'values' => $values,
         ];
     }
 }

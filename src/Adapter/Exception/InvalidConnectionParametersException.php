@@ -6,14 +6,9 @@ namespace PhpDb\Adapter\Exception;
 
 class InvalidConnectionParametersException extends RuntimeException implements ExceptionInterface
 {
-    /** @var int */
-    protected $parameters;
+    protected array $parameters;
 
-    /**
-     * @param string $message
-     * @param int $parameters
-     */
-    public function __construct($message, $parameters)
+    public function __construct(string $message, array $parameters)
     {
         parent::__construct($message);
         $this->parameters = $parameters;

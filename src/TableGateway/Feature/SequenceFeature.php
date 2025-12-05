@@ -19,11 +19,7 @@ class SequenceFeature extends AbstractFeature
     /** @var int */
     protected $sequenceValue;
 
-    /**
-     * @param string $primaryKeyField
-     * @param string $sequenceName
-     */
-    public function __construct($primaryKeyField, $sequenceName)
+    public function __construct(string $primaryKeyField, string $sequenceName)
     {
         $this->primaryKeyField = $primaryKeyField;
         $this->sequenceName    = $sequenceName;
@@ -51,7 +47,7 @@ class SequenceFeature extends AbstractFeature
         return $insert;
     }
 
-    public function postInsert(StatementInterface $statement, ResultInterface $result)
+    public function postInsert(StatementInterface $statement, ResultInterface $result): void
     {
         if ($this->sequenceValue !== null) {
             $this->tableGateway->lastInsertValue = $this->sequenceValue;
@@ -76,7 +72,7 @@ class SequenceFeature extends AbstractFeature
                 $sql = 'SELECT NEXTVAL(\'"' . $this->sequenceName . '"\')';
                 break;
             default:
-                return;
+                return null;
         }
 
         $statement = $this->tableGateway->adapter->createStatement();
@@ -105,7 +101,7 @@ class SequenceFeature extends AbstractFeature
                 $sql = 'SELECT CURRVAL(\'' . $this->sequenceName . '\')';
                 break;
             default:
-                return;
+                return null;
         }
 
         $statement = $this->tableGateway->adapter->createStatement();

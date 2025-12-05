@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDbTest\Sql;
 
 use Override;
@@ -10,14 +12,26 @@ use PhpDb\Adapter\ParameterContainer;
 use PhpDb\Adapter\StatementContainer;
 use PhpDb\Adapter\StatementContainerInterface;
 use PhpDb\Sql\Combine;
-use PhpDb\Sql\Exception\InvalidArgumentException;
 use PhpDb\Sql\Predicate\Expression;
 use PhpDb\Sql\Select;
+use PhpDbTest\AdapterTestTrait;
+use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use TypeError;
 
+#[CoversMethod(Combine::class, '__construct')]
+#[CoversMethod(Combine::class, 'combine')]
+#[CoversMethod(Combine::class, 'union')]
+#[CoversMethod(Combine::class, 'except')]
+#[CoversMethod(Combine::class, 'intersect')]
+#[CoversMethod(Combine::class, 'buildSqlString')]
+#[CoversMethod(Combine::class, 'alignColumns')]
+#[CoversMethod(Combine::class, 'getRawState')]
 final class CombineTest extends TestCase
 {
+    use AdapterTestTrait;
+
     protected Combine $combine;
 
     /**
@@ -32,8 +46,9 @@ final class CombineTest extends TestCase
 
     public function testRejectsInvalidStatement(): void
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(TypeError::class);
 
+        /** @noinspection PhpParamsInspection */
         $this->combine->combine('foo');
     }
 
@@ -93,13 +108,14 @@ final class CombineTest extends TestCase
 
     public function testGetSqlStringEmpty(): void
     {
-        self::assertNull($this->combine->getSqlString());
+        self::assertEmpty($this->combine->getSqlString());
     }
 
     public function testPrepareStatementWithModifier(): void
     {
         $select1 = new Select('t1');
         $select1->where(['x1' => 10]);
+
         $select2 = new Select('t2');
         $select2->where(['x2' => 20]);
 
@@ -135,6 +151,7 @@ final class CombineTest extends TestCase
                 ->union([$select1, $select2])
                 ->alignColumns();
 
+        // Verify first select has NULL for missing c2
         self::assertEquals(
             [
                 'c0' => 'c0',
@@ -144,6 +161,7 @@ final class CombineTest extends TestCase
             $select1->getRawState('columns')
         );
 
+        // Verify second select has NULL for missing c0
         self::assertEquals(
             [
                 'c0' => new Expression('NULL'),
@@ -189,6 +207,7 @@ final class CombineTest extends TestCase
                 $sqlValue = $sql;
                 return $mockStatement;
             }
+
             return $sqlValue;
         };
         $mockStatement->expects($this->any())->method('setSql')->willReturnCallback($setGetSqlFunction);
@@ -198,9 +217,6 @@ final class CombineTest extends TestCase
         $mockDriver->expects($this->any())->method('formatParameterName')->willReturn('?');
         $mockDriver->expects($this->any())->method('createStatement')->willReturn($mockStatement);
 
-        return $this->getMockBuilder(Adapter::class)
-            ->onlyMethods([])
-            ->setConstructorArgs([$mockDriver])
-            ->getMock();
+        return $this->createMockAdapter($mockDriver);
     }
 }

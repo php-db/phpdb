@@ -5,6 +5,7 @@ namespace PhpDbTest\Adapter\Driver\Pdo;
 use Override;
 use PDO;
 use PDOStatement;
+use PhpDb\Adapter\Driver\Pdo\AbstractPdo;
 use PhpDb\Adapter\Driver\Pdo\Statement;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -13,7 +14,6 @@ final class StatementIntegrationTest extends TestCase
 {
     protected Statement $statement;
 
-    /** @var MockObject */
     protected PDOStatement|MockObject $pdoStatementMock;
 
     /**
@@ -23,8 +23,8 @@ final class StatementIntegrationTest extends TestCase
     #[Override]
     protected function setUp(): void
     {
-        $driver = $this->getMockBuilder(\PhpDb\Adapter\Driver\Pdo\Pdo::class)
-            ->onlyMethods(['createResult'])
+        $driver = $this->getMockBuilder(AbstractPdo::class)
+            ->onlyMethods(['createResult', 'getDatabasePlatformName'])
             ->disableOriginalConstructor()
             ->getMock();
 

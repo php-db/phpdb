@@ -1,12 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDbTest\Sql;
 
 use Override;
-use PhpDb\Adapter\Adapter;
 use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\Driver\StatementInterface;
 use PhpDb\Adapter\ParameterContainer;
+use PhpDb\Sql\AbstractPreparableSql;
+use PhpDb\Sql\Argument\Identifier;
+use PhpDb\Sql\Argument\Value;
 use PhpDb\Sql\Exception\InvalidArgumentException;
 use PhpDb\Sql\Expression;
 use PhpDb\Sql\Join;
@@ -19,6 +23,7 @@ use PhpDb\Sql\Predicate\PredicateSet;
 use PhpDb\Sql\TableIdentifier;
 use PhpDb\Sql\Update;
 use PhpDb\Sql\Where;
+use PhpDbTest\AdapterTestTrait;
 use PhpDbTest\DeprecatedAssertionsTrait;
 use PhpDbTest\TestAsset\TrustingSql92Platform;
 use PhpDbTest\TestAsset\UpdateIgnore;
@@ -28,7 +33,9 @@ use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\TestDox;
 use PHPUnit\Framework\TestCase;
 use ReflectionException;
+use TypeError;
 
+#[CoversMethod(AbstractPreparableSql::class, 'prepareStatement')]
 #[CoversMethod(Update::class, 'table')]
 #[CoversMethod(Update::class, '__construct')]
 #[CoversMethod(Update::class, 'set')]
@@ -39,8 +46,13 @@ use ReflectionException;
 #[CoversMethod(Update::class, '__get')]
 #[CoversMethod(Update::class, '__clone')]
 #[CoversMethod(Update::class, 'join')]
+#[CoversMethod(Update::class, 'processUpdate')]
+#[CoversMethod(Update::class, 'processSet')]
+#[CoversMethod(Update::class, 'processWhere')]
+#[CoversMethod(Update::class, 'processJoins')]
 final class UpdateTest extends TestCase
 {
+    use AdapterTestTrait;
     use DeprecatedAssertionsTrait;
 
     protected Update $update;
@@ -113,6 +125,7 @@ final class UpdateTest extends TestCase
         $this->update->where(['c1' => null]);
         $this->update->where(['c2' => [1, 2, 3]]);
         $this->update->where([new IsNotNull('c3')]);
+
         $where = $this->update->where;
 
         $predicates = $this->readAttribute($where, 'predicates');
@@ -148,9 +161,8 @@ final class UpdateTest extends TestCase
             self::assertSame($where, $what);
         });
 
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Predicate cannot be null');
-        /** @psalm-suppress NullArgument - Ensure exception is thrown */
+        $this->expectException(TypeError::class);
+        /** @noinspection PhpStrictTypeCheckingInspection */
         $this->update->where(null);
     }
 
@@ -184,10 +196,7 @@ final class UpdateTest extends TestCase
         $mockDriver = $this->getMockBuilder(DriverInterface::class)->getMock();
         $mockDriver->expects($this->any())->method('getPrepareType')->willReturn('positional');
         $mockDriver->expects($this->any())->method('formatParameterName')->willReturn('?');
-        $mockAdapter = $this->getMockBuilder(Adapter::class)
-            ->onlyMethods([])
-            ->setConstructorArgs([$mockDriver])
-            ->getMock();
+        $mockAdapter = $this->createMockAdapter($mockDriver);
 
         $mockStatement = $this->getMockBuilder(StatementInterface::class)->getMock();
         $pContainer    = new ParameterContainer([]);
@@ -205,13 +214,11 @@ final class UpdateTest extends TestCase
 
         // with TableIdentifier
         $this->update = new Update();
-        $mockDriver   = $this->getMockBuilder(DriverInterface::class)->getMock();
+
+        $mockDriver = $this->getMockBuilder(DriverInterface::class)->getMock();
         $mockDriver->expects($this->any())->method('getPrepareType')->willReturn('positional');
         $mockDriver->expects($this->any())->method('formatParameterName')->willReturn('?');
-        $mockAdapter = $this->getMockBuilder(Adapter::class)
-            ->onlyMethods([])
-            ->setConstructorArgs([$mockDriver])
-            ->getMock();
+        $mockAdapter = $this->createMockAdapter($mockDriver);
 
         $mockStatement = $this->getMockBuilder(StatementInterface::class)->getMock();
         $pContainer    = new ParameterContainer([]);
@@ -305,10 +312,7 @@ final class UpdateTest extends TestCase
         $mockDriver = $this->getMockBuilder(DriverInterface::class)->getMock();
         $mockDriver->expects($this->any())->method('getPrepareType')->willReturn('positional');
         $mockDriver->expects($this->any())->method('formatParameterName')->willReturn('?');
-        $mockAdapter = $this->getMockBuilder(Adapter::class)
-            ->onlyMethods([])
-            ->setConstructorArgs([$mockDriver])
-            ->getMock();
+        $mockAdapter = $this->createMockAdapter($mockDriver);
 
         $mockStatement = $this->getMockBuilder(StatementInterface::class)->getMock();
         $pContainer    = new ParameterContainer([]);
@@ -404,5 +408,98 @@ final class UpdateTest extends TestCase
     {
         $return = $this->update->join('baz', 'foo.fooId = baz.fooId', Join::JOIN_LEFT);
         self::assertSame($this->update, $return);
+    }
+
+    public function testSetWithNonStringKeyThrowsException(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('set() expects a string for the value key');
+
+        /** @psalm-suppress InvalidArgument - Testing invalid argument handling */
+        $this->update->set([0 => 'value']);
+    }
+
+    public function testSetWithMergeFlag(): void
+    {
+        $this->update->set(['foo' => 'bar']);
+        $this->update->set(['baz' => 'qux'], Update::VALUES_MERGE);
+
+        $set = $this->update->getRawState('set');
+        self::assertEquals(['foo' => 'bar', 'baz' => 'qux'], $set);
+    }
+
+    public function testSetWithNumericPriority(): void
+    {
+        $this->update->set(['three' => 'c'], 30);
+        $this->update->set(['one' => 'a'], 10);
+        $this->update->set(['two' => 'b'], 20);
+
+        $set = $this->update->getRawState('set');
+        self::assertEquals(['one' => 'a', 'two' => 'b', 'three' => 'c'], $set);
+    }
+
+    public function testConstructWithTableIdentifier(): void
+    {
+        $tableIdentifier = new TableIdentifier('foo', 'bar');
+        $update          = new Update($tableIdentifier);
+
+        self::assertEquals($tableIdentifier, $update->getRawState('table'));
+    }
+
+    public function testGetSqlStringWithEmptyWhere(): void
+    {
+        $this->update->table('foo')
+            ->set(['bar' => 'baz']);
+
+        self::assertEquals(
+            'UPDATE "foo" SET "bar" = \'baz\'',
+            $this->update->getSqlString(new TrustingSql92Platform())
+        );
+    }
+
+    public function testGetRawStateReturnsAllState(): void
+    {
+        $this->update->table('foo')
+            ->set(['bar' => 'baz'])
+            ->where('x = y');
+
+        $rawState = $this->update->getRawState();
+
+        self::assertIsArray($rawState);
+        self::assertArrayHasKey('table', $rawState);
+        self::assertArrayHasKey('set', $rawState);
+        self::assertArrayHasKey('where', $rawState);
+        self::assertArrayHasKey('emptyWhereProtection', $rawState);
+        self::assertArrayHasKey('joins', $rawState);
+
+        self::assertEquals('foo', $rawState['table']);
+        self::assertEquals(['bar' => 'baz'], $rawState['set']);
+        self::assertInstanceOf(Where::class, $rawState['where']);
+        self::assertInstanceOf(Join::class, $rawState['joins']);
+        self::assertTrue($rawState['emptyWhereProtection']);
+    }
+
+    public function testJoinWithTableIdentifier(): void
+    {
+        $this->update->table('foo')
+            ->set(['x' => 'y'])
+            ->join(new TableIdentifier('bar', 'schema'), 'foo.id = bar.foo_id');
+
+        $sql = $this->update->getSqlString(new TrustingSql92Platform());
+        self::assertStringContainsString('JOIN "schema"."bar"', $sql);
+    }
+
+    #[TestDox('unit test: Test where() accepts Expression (ExpressionInterface) in array')]
+    public function testWhereAcceptsExpressionInterface(): void
+    {
+        $this->update->table('foo')
+            ->set(['bar' => 'baz'])
+            ->where([
+                new Expression('COUNT(?) > ?', [new Identifier('id'), new Value(5)]),
+            ]);
+
+        $where = $this->update->getRawState('where');
+        self::assertInstanceOf(Where::class, $where);
+        self::assertEquals(1, $where->count());
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDb\Sql\Ddl;
 
 use PhpDb\Adapter\Platform\PlatformInterface;
@@ -8,26 +10,21 @@ use PhpDb\Sql\TableIdentifier;
 
 class DropTable extends AbstractSql implements SqlInterface
 {
-    public const TABLE = 'table';
+    final public const TABLE = 'table';
 
-    /** @var array */
-    protected $specifications = [
+    protected array $specifications = [
         self::TABLE => 'DROP TABLE %1$s',
     ];
 
-    /** @var string */
-    protected $table = '';
+    protected string|TableIdentifier $table = '';
 
-    /**
-     * @param string|TableIdentifier $table
-     */
-    public function __construct($table = '')
+    public function __construct(string|TableIdentifier $table = '')
     {
         $this->table = $table;
     }
 
     /** @return string[] */
-    protected function processTable(?PlatformInterface $adapterPlatform = null)
+    protected function processTable(?PlatformInterface $adapterPlatform = null): array
     {
         return [$this->resolveTable($this->table, $adapterPlatform)];
     }

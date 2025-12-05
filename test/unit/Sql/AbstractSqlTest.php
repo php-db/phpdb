@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDbTest\Sql;
 
 use Override;
@@ -7,10 +9,12 @@ use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\ParameterContainer;
 use PhpDb\Adapter\StatementContainer;
 use PhpDb\Sql\AbstractSql;
+use PhpDb\Sql\Argument\Identifier;
 use PhpDb\Sql\Expression;
 use PhpDb\Sql\ExpressionInterface;
 use PhpDb\Sql\Predicate;
 use PhpDb\Sql\Select;
+use PhpDb\Sql\TableIdentifier;
 use PhpDbTest\TestAsset\TrustingSql92Platform;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Group;
@@ -20,13 +24,26 @@ use PHPUnit\Framework\TestCase;
 use ReflectionException;
 use ReflectionMethod;
 
+use function count;
 use function current;
 use function key;
 use function next;
 use function preg_match;
 use function uniqid;
 
+#[CoversMethod(AbstractSql::class, 'getSqlString')]
+#[CoversMethod(AbstractSql::class, 'buildSqlString')]
+#[CoversMethod(AbstractSql::class, 'renderTable')]
 #[CoversMethod(AbstractSql::class, 'processExpression')]
+#[CoversMethod(AbstractSql::class, 'processExpressionValue')]
+#[CoversMethod(AbstractSql::class, 'processExpressionOrSelect')]
+#[CoversMethod(AbstractSql::class, 'processExpressionParameterName')]
+#[CoversMethod(AbstractSql::class, 'createSqlFromSpecificationAndParameters')]
+#[CoversMethod(AbstractSql::class, 'processSubSelect')]
+#[CoversMethod(AbstractSql::class, 'processJoin')]
+#[CoversMethod(AbstractSql::class, 'resolveColumnValue')]
+#[CoversMethod(AbstractSql::class, 'resolveTable')]
+#[CoversMethod(AbstractSql::class, 'localizeVariables')]
 final class AbstractSqlTest extends TestCase
 {
     protected AbstractSql&MockObject $abstractSql;
@@ -49,7 +66,7 @@ final class AbstractSqlTest extends TestCase
         $this->mockDriver
             ->expects($this->any())
             ->method('formatParameterName')
-            ->willReturnCallback(fn($x) => ':' . $x);
+            ->willReturnCallback(fn($x): string => ':' . $x);
     }
 
     /**
@@ -57,7 +74,7 @@ final class AbstractSqlTest extends TestCase
      */
     public function testProcessExpressionWithoutParameterContainer(): void
     {
-        $expression   = new Expression('? > ? AND y < ?', [['x' => ExpressionInterface::TYPE_IDENTIFIER], 5, 10]);
+        $expression   = new Expression('? > ? AND y < ?', [new Identifier('x'), 5, 10]);
         $sqlAndParams = $this->invokeProcessExpressionMethod($expression);
 
         self::assertEquals("\"x\" > '5' AND y < '10'", $sqlAndParams);
@@ -69,30 +86,31 @@ final class AbstractSqlTest extends TestCase
     public function testProcessExpressionWithParameterContainerAndParameterizationTypeNamed(): void
     {
         $parameterContainer = new ParameterContainer();
-        $expression         = new Expression('? > ? AND y < ?', [['x' => ExpressionInterface::TYPE_IDENTIFIER], 5, 10]);
+        $expression         = new Expression('? > ? AND y < ?', [new Identifier('x'), 5, 10]);
         $sqlAndParams       = $this->invokeProcessExpressionMethod($expression, $parameterContainer);
 
         $parameters = $parameterContainer->getNamedArray();
 
-        self::assertMatchesRegularExpression('#"x" > :expr\d\d\d\dParam1 AND y < :expr\d\d\d\dParam2#', $sqlAndParams);
+        // Verify SQL uses named parameters
+        self::assertMatchesRegularExpression('#"x" > :expr\d+Param1 AND y < :expr\d+Param2#', $sqlAndParams);
 
-        // test keys and values
-        preg_match('#expr(\d\d\d\d)Param1#', key($parameters), $matches);
+        // Verify parameter names and values
+        preg_match('#expr(\d+)Param1#', key($parameters), $matches);
         $expressionNumber = $matches[1];
 
-        self::assertMatchesRegularExpression('#expr\d\d\d\dParam1#', key($parameters));
+        self::assertMatchesRegularExpression('#expr\d+Param1#', key($parameters));
         self::assertEquals(5, current($parameters));
         next($parameters);
-        self::assertMatchesRegularExpression('#expr\d\d\d\dParam2#', key($parameters));
+        self::assertMatchesRegularExpression('#expr\d+Param2#', key($parameters));
         self::assertEquals(10, current($parameters));
 
-        // ensure next invocation increases number by 1
+        // Verify next invocation increments expression number
         $parameterContainer = new ParameterContainer();
         $this->invokeProcessExpressionMethod($expression, $parameterContainer);
 
         $parameters = $parameterContainer->getNamedArray();
 
-        preg_match('#expr(\d\d\d\d)Param1#', key($parameters), $matches);
+        preg_match('#expr(\d+)Param1#', key($parameters), $matches);
         $expressionNumberNext = $matches[1];
 
         self::assertEquals(1, (int) $expressionNumberNext - (int) $expressionNumber);
@@ -164,7 +182,7 @@ final class AbstractSqlTest extends TestCase
         $expression           = new Expression('FROM_UNIXTIME(?)', [10000000]);
         $this->invokeProcessExpressionMethod($expression, $parameterContainer, $namedParameterPrefix);
 
-        self::assertSame($namedParameterPrefix . '1', key($parameterContainer->getNamedArray()));
+        self::assertSame($namedParameterPrefix . '1', (string) key($parameterContainer->getNamedArray()));
     }
 
     /**
@@ -181,17 +199,178 @@ final class AbstractSqlTest extends TestCase
     }
 
     /**
-     * @param null                $parameterContainer
-     * @param null                $namedParameterPrefix
+     * @throws ReflectionException
+     */
+    public function testResolveColumnValueWithNull(): void
+    {
+        $method = new ReflectionMethod($this->abstractSql, 'resolveColumnValue');
+        /** @noinspection PhpExpressionResultUnusedInspection */
+        $method->setAccessible(true);
+
+        $result = $method->invoke(
+            $this->abstractSql,
+            null,
+            new TrustingSql92Platform(),
+            $this->mockDriver,
+            null,
+            null
+        );
+
+        self::assertEquals('NULL', $result);
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    public function testResolveColumnValueWithSelect(): void
+    {
+        $select = new Select('foo');
+        $method = new ReflectionMethod($this->abstractSql, 'resolveColumnValue');
+        /** @noinspection PhpExpressionResultUnusedInspection */
+        $method->setAccessible(true);
+
+        $result = $method->invoke(
+            $this->abstractSql,
+            $select,
+            new TrustingSql92Platform(),
+            $this->mockDriver,
+            null,
+            null
+        );
+
+        self::assertStringContainsString('SELECT', $result);
+        self::assertStringStartsWith('(', $result);
+        self::assertStringEndsWith(')', $result);
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    public function testResolveColumnValueWithArrayAndFromTable(): void
+    {
+        $method = new ReflectionMethod($this->abstractSql, 'resolveColumnValue');
+        /** @noinspection PhpExpressionResultUnusedInspection */
+        $method->setAccessible(true);
+
+        $result = $method->invoke(
+            $this->abstractSql,
+            [
+                'column'       => 'id',
+                'isIdentifier' => true,
+                'fromTable'    => 'table.',
+            ],
+            new TrustingSql92Platform(),
+            $this->mockDriver,
+            null,
+            null
+        );
+
+        self::assertStringContainsString('table.', $result);
+        self::assertStringContainsString('id', $result);
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    public function testResolveTableWithTableIdentifierAndSchema(): void
+    {
+        $table  = new TableIdentifier('users', 'public');
+        $method = new ReflectionMethod($this->abstractSql, 'resolveTable');
+        /** @noinspection PhpExpressionResultUnusedInspection */
+        $method->setAccessible(true);
+
+        $result = $method->invoke(
+            $this->abstractSql,
+            $table,
+            new TrustingSql92Platform(),
+            $this->mockDriver,
+            null
+        );
+
+        self::assertStringContainsString('public', $result);
+        self::assertStringContainsString('users', $result);
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    public function testResolveTableWithSelect(): void
+    {
+        $select = new Select('foo');
+        $method = new ReflectionMethod($this->abstractSql, 'resolveTable');
+        /** @noinspection PhpExpressionResultUnusedInspection */
+        $method->setAccessible(true);
+
+        $result = $method->invoke(
+            $this->abstractSql,
+            $select,
+            new TrustingSql92Platform(),
+            $this->mockDriver,
+            null
+        );
+
+        self::assertStringStartsWith('(', $result);
+        self::assertStringEndsWith(')', $result);
+        self::assertStringContainsString('SELECT', $result);
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    public function testProcessSubSelectWithParameterContainer(): void
+    {
+        $select = new Select('foo');
+        $select->where(['id' => 5]);
+
+        $method = new ReflectionMethod($this->abstractSql, 'processSubSelect');
+        /** @noinspection PhpExpressionResultUnusedInspection */
+        $method->setAccessible(true);
+
+        $parameterContainer = new ParameterContainer();
+        $result             = $method->invoke(
+            $this->abstractSql,
+            $select,
+            new TrustingSql92Platform(),
+            $this->mockDriver,
+            $parameterContainer
+        );
+
+        self::assertStringContainsString('SELECT', $result);
+        self::assertGreaterThan(0, count($parameterContainer->getNamedArray()));
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    public function testProcessSubSelectWithoutParameterContainer(): void
+    {
+        $select = new Select('foo');
+
+        $method = new ReflectionMethod($this->abstractSql, 'processSubSelect');
+        /** @noinspection PhpExpressionResultUnusedInspection */
+        $method->setAccessible(true);
+
+        $result = $method->invoke(
+            $this->abstractSql,
+            $select,
+            new TrustingSql92Platform(),
+            $this->mockDriver,
+            null
+        );
+
+        self::assertStringContainsString('SELECT', $result);
+    }
+
+    /**
      * @throws ReflectionException
      */
     protected function invokeProcessExpressionMethod(
         ExpressionInterface $expression,
-        $parameterContainer = null,
-        $namedParameterPrefix = null
+        ParameterContainer|null $parameterContainer = null,
+        string|null $namedParameterPrefix = null
     ): string|StatementContainer {
         $method = new ReflectionMethod($this->abstractSql, 'processExpression');
-        /** @psalm-suppress UnusedMethodCall */
+        /** @noinspection PhpExpressionResultUnusedInspection */
         $method->setAccessible(true);
         return $method->invoke(
             $this->abstractSql,

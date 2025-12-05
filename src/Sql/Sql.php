@@ -39,7 +39,6 @@ class Sql
 
     /**
      * @throws Exception\InvalidArgumentException
-     * @return $this Provides a fluent interface
      */
     public function setTable(array|string|TableIdentifier $table): self
     {
@@ -48,7 +47,7 @@ class Sql
         return $this;
     }
 
-    public function getTable(): array|string|TableIdentifier
+    public function getTable(): array|string|TableIdentifier|null
     {
         return $this->table;
     }
@@ -125,6 +124,8 @@ class Sql
         return $this
             ->sqlPlatform
             ->setSubject($sqlObject)
-            ->getSqlString($adapter ? $adapter->getPlatform() : $this->adapter->getPlatform());
+            ->getSqlString(
+                $adapter instanceof AdapterInterface ? $adapter->getPlatform() : $this->adapter->getPlatform()
+            );
     }
 }

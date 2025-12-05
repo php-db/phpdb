@@ -1,16 +1,32 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDbTest\Sql\Predicate;
 
 use PhpDb\Sql\Predicate\Literal;
 use PHPUnit\Framework\TestCase;
 
-final class LiteralTest extends TestCase
+class LiteralTest extends TestCase
 {
     public function testSetLiteral(): void
     {
         $literal = new Literal('bar');
-        self::assertSame($literal, $literal->setLiteral('foo'));
+
+        // First mutation
+        $result = $literal->setLiteral('foo');
+
+        // Verify fluent interface
+        self::assertSame($literal, $result);
+
+        // Verify the first mutation occurred
+        self::assertEquals('foo', $literal->getLiteral());
+
+        // Second mutation to verify mutability
+        $literal->setLiteral('baz');
+
+        // Verify the instance was actually mutated
+        self::assertEquals('baz', $literal->getLiteral());
     }
 
     public function testGetLiteral(): void
@@ -22,6 +38,9 @@ final class LiteralTest extends TestCase
     public function testGetExpressionData(): void
     {
         $literal = new Literal('bar');
-        self::assertEquals([['bar', [], []]], $literal->getExpressionData());
+
+        $expressionData = $literal->getExpressionData();
+
+        self::assertEquals('bar', $expressionData['spec']);
     }
 }

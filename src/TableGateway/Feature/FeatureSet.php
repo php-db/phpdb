@@ -23,7 +23,7 @@ class FeatureSet
 
     public function __construct(array $features = [])
     {
-        if ($features) {
+        if ($features !== []) {
             $this->addFeatures($features);
         }
     }
@@ -115,33 +115,13 @@ class FeatureSet
     }
 
     /**
-     * @param string $property
-     * @return bool
-     */
-    public function canCallMagicSet($property)
-    {
-        return false;
-    }
-
-    /**
-     * @param string $property
-     * @param mixed $value
-     * @return mixed
-     */
-    public function callMagicSet($property, $value)
-    {
-        return null;
-    }
-
-    /**
      * Is the method requested available in one of the added features
      *
      * @param string $method
-     * @return bool
      */
-    public function canCallMagicCall($method)
+    public function canCallMagicCall($method): bool
     {
-        if (! empty($this->features)) {
+        if ($this->features !== []) {
             foreach ($this->features as $feature) {
                 if (method_exists($feature, $method)) {
                     return true;

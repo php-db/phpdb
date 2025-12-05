@@ -4,9 +4,10 @@ namespace PhpDb\RowGateway;
 
 use ArrayAccess;
 use Countable;
+// phpcs:ignore SlevomatCodingStandard.Namespaces.UnusedUses.UnusedUse
+use Override;
 use PhpDb\Sql\Sql;
 use PhpDb\Sql\TableIdentifier;
-// phpcs:ignore SlevomatCodingStandard.Namespaces.UnusedUses.UnusedUse
 use ReturnTypeWillChange;
 
 use function array_key_exists;
@@ -39,7 +40,7 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
     /**
      * initialize()
      */
-    public function initialize()
+    public function initialize(): void
     {
         if ($this->isInitialized) {
             return;
@@ -92,11 +93,7 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
         return $this;
     }
 
-    /**
-     * @param mixed $array
-     * @return AbstractRowGateway
-     */
-    public function exchangeArray($array)
+    public function exchangeArray(array $array): static
     {
         return $this->populate($array, true);
     }
@@ -106,6 +103,7 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
      *
      * @return int
      */
+    #[Override]
     public function save()
     {
         $this->initialize();
@@ -184,6 +182,7 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
      *
      * @return int
      */
+    #[Override]
     public function delete()
     {
         $this->initialize();
@@ -214,6 +213,7 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
      * @param  string $offset
      * @return bool
      */
+    #[Override]
     #[ReturnTypeWillChange]
     public function offsetExists($offset)
     {
@@ -226,6 +226,7 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
      * @param  string $offset
      * @return mixed
      */
+    #[Override]
     #[ReturnTypeWillChange]
     public function offsetGet($offset)
     {
@@ -239,6 +240,7 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
      * @param  mixed $value
      * @return $this Provides a fluent interface
      */
+    #[Override]
     #[ReturnTypeWillChange]
     public function offsetSet($offset, $value)
     {
@@ -252,6 +254,7 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
      * @param  string $offset
      * @return $this Provides a fluent interface
      */
+    #[Override]
     #[ReturnTypeWillChange]
     public function offsetUnset($offset)
     {
@@ -262,6 +265,7 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
     /**
      * @return int
      */
+    #[Override]
     #[ReturnTypeWillChange]
     public function count()
     {
@@ -289,9 +293,8 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
     {
         if (array_key_exists($name, $this->data)) {
             return $this->data[$name];
-        } else {
-            throw new Exception\InvalidArgumentException('Not a valid column in this row: ' . $name);
         }
+        throw new Exception\InvalidArgumentException('Not a valid column in this row: ' . $name);
     }
 
     /**
@@ -338,6 +341,7 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
 
     /**
      * @throws Exception\RuntimeException
+     * @return void
      */
     protected function processPrimaryKeyData()
     {

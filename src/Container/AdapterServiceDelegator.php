@@ -8,7 +8,9 @@ use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use PhpDb\Adapter\AdapterAwareInterface;
 use PhpDb\Adapter\AdapterInterface;
 use PhpDb\Exception;
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
 use function sprintf;
 
@@ -24,6 +26,10 @@ class AdapterServiceDelegator
         return new self($state['adapterName'] ?? AdapterInterface::class);
     }
 
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
     public function __invoke(
         ContainerInterface $container,
         string $name,

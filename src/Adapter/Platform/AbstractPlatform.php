@@ -29,22 +29,24 @@ abstract class AbstractPlatform implements PlatformInterface
     protected $quoteIdentifiers = true;
 
     /** @var string */
-    protected $quoteIdentifierFragmentPattern = '/([^0-9,a-z,A-Z$_:])/i';
+    protected $quoteIdentifierFragmentPattern = '/([^0-9,a-zA-Z$_:])/i';
+
+    /** @var array<string, true> */
+    private const SAFE_WORDS = ['*' => true, ' ' => true, '.' => true, 'as' => true];
 
     /**
      * {@inheritDoc}
      */
     #[Override]
-    public function quoteIdentifierInFragment(string $identifier, array $safeWords = []): string
+    public function quoteIdentifierInFragment(string $identifier, array $additionalSafeWords = []): string
     {
         if (! $this->quoteIdentifiers) {
             return $identifier;
         }
 
-        $safeWordsInt = ['*' => true, ' ' => true, '.' => true, 'as' => true];
-
-        foreach ($safeWords as $sWord) {
-            $safeWordsInt[strtolower($sWord)] = true;
+        $safeWords = self::SAFE_WORDS;
+        foreach ($additionalSafeWords as $sWord) {
+            $safeWords[strtolower($sWord)] = true;
         }
 
         $parts = preg_split(
@@ -54,17 +56,21 @@ abstract class AbstractPlatform implements PlatformInterface
             PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY
         );
 
-        $identifier = '';
+        $quoteStart = $this->quoteIdentifier[0];
+        $quoteEnd   = $this->quoteIdentifier[1];
+        $quoteTo    = $this->quoteIdentifierTo;
+        $result     = '';
 
         foreach ($parts as $part) {
-            $identifier .= isset($safeWordsInt[strtolower($part)])
-                ? $part
-                : $this->quoteIdentifier[0]
-                . str_replace($this->quoteIdentifier[0], $this->quoteIdentifierTo, $part)
-                . $this->quoteIdentifier[1];
+            $lowerPart = strtolower($part);
+            if (isset($safeWords[$lowerPart])) {
+                $result .= $part;
+            } else {
+                $result .= $quoteStart . str_replace($quoteStart, $quoteTo, $part) . $quoteEnd;
+            }
         }
 
-        return $identifier;
+        return $result;
     }
 
     /**

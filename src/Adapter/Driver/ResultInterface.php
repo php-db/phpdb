@@ -33,17 +33,13 @@ interface ResultInterface extends
 
     /**
      * Get generated value
-     *
-     * @return mixed|null
      */
-    public function getGeneratedValue();
+    public function getGeneratedValue(): mixed;
 
     /**
      * Get the resource
-     *
-     * @return mixed
      */
-    public function getResource();
+    public function getResource(): mixed;
 
     /**
      * Get field count

@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDb\Sql;
 
 use Countable;
 use Iterator;
-// phpcs:ignore SlevomatCodingStandard.Namespaces.UnusedUses.UnusedUse
+use Override;
 use ReturnTypeWillChange;
 
 use function array_shift;
@@ -16,75 +18,69 @@ use function sprintf;
 
 /**
  * Aggregate JOIN specifications.
- *
  * Each specification is an array with the following keys:
- *
  * - name: the JOIN name
  * - on: the table on which the JOIN occurs
  * - columns: the columns to include with the JOIN operation; defaults to
  *   `Select::SQL_STAR`.
  * - type: the type of JOIN being performed; see the `JOIN_*` constants;
  *   defaults to `JOIN_INNER`
+ *
+ * @implements Iterator
+ * @implements Countable
  */
 class Join implements Iterator, Countable
 {
-    public const JOIN_INNER       = 'inner';
-    public const JOIN_OUTER       = 'outer';
-    public const JOIN_FULL_OUTER  = 'full outer';
-    public const JOIN_LEFT        = 'left';
-    public const JOIN_RIGHT       = 'right';
-    public const JOIN_RIGHT_OUTER = 'right outer';
-    public const JOIN_LEFT_OUTER  = 'left outer';
+    final public const JOIN_INNER = 'inner';
+
+    final public const JOIN_OUTER = 'outer';
+
+    final public const JOIN_FULL_OUTER = 'full outer';
+
+    final public const JOIN_LEFT = 'left';
+
+    final public const JOIN_RIGHT = 'right';
+
+    final public const JOIN_RIGHT_OUTER = 'right outer';
+
+    final public const JOIN_LEFT_OUTER = 'left outer';
 
     /**
      * Current iterator position.
-     *
-     * @var int
      */
-    private $position = 0;
+    private int $position = 0;
 
     /**
      * JOIN specifications
-     *
-     * @var array
      */
-    protected $joins = [];
-
-    /**
-     * Initialize iterator position.
-     */
-    public function __construct()
-    {
-        $this->position = 0;
-    }
+    protected array $joins = [];
 
     /**
      * Rewind iterator.
      */
+    #[Override]
     #[ReturnTypeWillChange]
-    public function rewind()
+    public function rewind(): void
     {
         $this->position = 0;
     }
 
     /**
      * Return current join specification.
-     *
-     * @return array
      */
+    #[Override]
     #[ReturnTypeWillChange]
-    public function current()
+    public function current(): array
     {
         return $this->joins[$this->position];
     }
 
     /**
      * Return the current iterator index.
-     *
-     * @return int
      */
+    #[Override]
     #[ReturnTypeWillChange]
-    public function key()
+    public function key(): int
     {
         return $this->position;
     }
@@ -92,44 +88,45 @@ class Join implements Iterator, Countable
     /**
      * Advance to the next JOIN specification.
      */
+    #[Override]
     #[ReturnTypeWillChange]
-    public function next()
+    public function next(): void
     {
         ++$this->position;
     }
 
     /**
      * Is the iterator at a valid position?
-     *
-     * @return bool
      */
+    #[Override]
     #[ReturnTypeWillChange]
-    public function valid()
+    public function valid(): bool
     {
         return isset($this->joins[$this->position]);
     }
 
-    /**
-     * @return array
-     */
-    public function getJoins()
+    public function getJoins(): array
     {
         return $this->joins;
     }
 
     /**
-     * @param string|array|TableIdentifier $name A table name on which to join, or a single
+     * @param array|string|TableIdentifier $name    A table name on which to join, or a single
      *     element associative array, of the form alias => table, or TableIdentifier instance
-     * @param string|Predicate\Expression $on A specification describing the fields to join on.
-     * @param string|string[]|int|int[] $columns A single column name, an array
+     * @param string|Predicate\Expression  $on      A specification describing the fields to join on.
+     * @param int|string|int[]|string[]    $columns A single column name, an array
      *     of column names, or (a) specification(s) such as SQL_STAR representing
      *     the columns to join.
-     * @param string $type The JOIN type to use; see the JOIN_* constants.
-     * @return $this Provides a fluent interface
+     * @param string                       $type    The JOIN type to use; see the JOIN_* constants.
      * @throws Exception\InvalidArgumentException For invalid $name values.
      */
-    public function join($name, $on, $columns = [Select::SQL_STAR], $type = self::JOIN_INNER)
-    {
+    // phpcs:ignore Generic.NamingConventions.ConstructorName.OldStyle
+    public function join(
+        array|string|TableIdentifier $name,
+        string|Predicate\PredicateInterface $on,
+        array|int|string $columns = [Select::SQL_STAR],
+        string $type = self::JOIN_INNER
+    ): static {
         if (is_array($name) && (! is_string(key($name)) || count($name) !== 1)) {
             throw new Exception\InvalidArgumentException(
                 sprintf("join() expects '%s' as a single element associative array", array_shift($name))
@@ -144,7 +141,7 @@ class Join implements Iterator, Countable
             'name'    => $name,
             'on'      => $on,
             'columns' => $columns,
-            'type'    => $type ? $type : self::JOIN_INNER,
+            'type'    => $type,
         ];
 
         return $this;
@@ -152,10 +149,8 @@ class Join implements Iterator, Countable
 
     /**
      * Reset to an empty list of JOIN specifications.
-     *
-     * @return $this Provides a fluent interface
      */
-    public function reset()
+    public function reset(): static
     {
         $this->joins = [];
         return $this;
@@ -163,11 +158,10 @@ class Join implements Iterator, Countable
 
     /**
      * Get count of attached predicates
-     *
-     * @return int
      */
+    #[Override]
     #[ReturnTypeWillChange]
-    public function count()
+    public function count(): int
     {
         return count($this->joins);
     }

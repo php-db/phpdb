@@ -37,6 +37,7 @@
         "laminas/laminas-coding-standard": "^3.0.1",
         "laminas/laminas-eventmanager": "^3.14.0",
         "laminas/laminas-hydrator": "^4.6.0",
+        "phpbench/phpbench": "^1.4",
         "phpstan/phpstan": "^2.1",
         "phpstan/phpstan-phpunit": "^2.0",
         "phpunit/phpunit": "^11.5.15",
@@ -55,7 +56,8 @@
     "autoload-dev": {
         "psr-4": {
             "PhpDbTest\\": "test/unit/",
-            "PhpDbIntegrationTest\\": "test/integration/"
+            "PhpDbIntegrationTest\\": "test/integration/",
+            "PhpDbBenchmark\\": "test/benchmark/"
         }
     },
     "scripts": {

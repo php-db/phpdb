@@ -1,66 +1,54 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDb\Metadata\Object;
 
 class ConstraintKeyObject
 {
-    public const FK_CASCADE     = 'CASCADE';
-    public const FK_SET_NULL    = 'SET NULL';
-    public const FK_NO_ACTION   = 'NO ACTION';
-    public const FK_RESTRICT    = 'RESTRICT';
-    public const FK_SET_DEFAULT = 'SET DEFAULT';
+    final public const FK_CASCADE = 'CASCADE';
 
-    /** @var string */
-    protected $columnName;
+    final public const FK_SET_NULL = 'SET NULL';
 
-    /** @var int */
-    protected $ordinalPosition;
+    final public const FK_NO_ACTION = 'NO ACTION';
 
-    /** @var bool */
-    protected $positionInUniqueConstraint;
+    final public const FK_RESTRICT = 'RESTRICT';
 
-    /** @var string */
-    protected $referencedTableSchema;
+    final public const FK_SET_DEFAULT = 'SET DEFAULT';
 
-    /** @var string */
-    protected $referencedTableName;
+    protected ?int $ordinalPosition = null;
 
-    /** @var string */
-    protected $referencedColumnName;
+    protected ?bool $positionInUniqueConstraint = null;
 
-    /** @var string */
-    protected $foreignKeyUpdateRule;
+    protected ?string $referencedTableSchema = null;
 
-    /** @var string */
-    protected $foreignKeyDeleteRule;
+    protected ?string $referencedTableName = null;
+
+    protected ?string $referencedColumnName = null;
+
+    protected ?string $foreignKeyUpdateRule = null;
+
+    protected ?string $foreignKeyDeleteRule = null;
 
     /**
      * Constructor
-     *
-     * @param string $column
      */
-    public function __construct($column)
+    public function __construct(protected string $columnName)
     {
-        $this->setColumnName($column);
     }
 
     /**
      * Get column name
-     *
-     * @return string
      */
-    public function getColumnName()
+    public function getColumnName(): string
     {
         return $this->columnName;
     }
 
     /**
      * Set column name
-     *
-     * @param  string $columnName
-     * @return $this Provides a fluent interface
      */
-    public function setColumnName($columnName)
+    public function setColumnName(string $columnName): static
     {
         $this->columnName = $columnName;
         return $this;
@@ -68,21 +56,16 @@ class ConstraintKeyObject
 
     /**
      * Get ordinal position
-     *
-     * @return int
      */
-    public function getOrdinalPosition()
+    public function getOrdinalPosition(): ?int
     {
         return $this->ordinalPosition;
     }
 
     /**
      * Set ordinal position
-     *
-     * @param  int $ordinalPosition
-     * @return $this Provides a fluent interface
      */
-    public function setOrdinalPosition($ordinalPosition)
+    public function setOrdinalPosition(int $ordinalPosition): static
     {
         $this->ordinalPosition = $ordinalPosition;
         return $this;
@@ -90,43 +73,33 @@ class ConstraintKeyObject
 
     /**
      * Get position in unique constraint
-     *
-     * @return bool
      */
-    public function getPositionInUniqueConstraint()
+    public function getPositionInUniqueConstraint(): ?bool
     {
         return $this->positionInUniqueConstraint;
     }
 
     /**
      * Set position in unique constraint
-     *
-     * @param  bool $positionInUniqueConstraint
-     * @return $this Provides a fluent interface
      */
-    public function setPositionInUniqueConstraint($positionInUniqueConstraint)
+    public function setPositionInUniqueConstraint(bool $positionInUniqueConstraint): static
     {
         $this->positionInUniqueConstraint = $positionInUniqueConstraint;
         return $this;
     }
 
     /**
-     * Get referencred table schema
-     *
-     * @return string
+     * Get referenced table schema
      */
-    public function getReferencedTableSchema()
+    public function getReferencedTableSchema(): ?string
     {
         return $this->referencedTableSchema;
     }
 
     /**
      * Set referenced table schema
-     *
-     * @param string $referencedTableSchema
-     * @return $this Provides a fluent interface
      */
-    public function setReferencedTableSchema($referencedTableSchema)
+    public function setReferencedTableSchema(string $referencedTableSchema): static
     {
         $this->referencedTableSchema = $referencedTableSchema;
         return $this;
@@ -134,21 +107,16 @@ class ConstraintKeyObject
 
     /**
      * Get referenced table name
-     *
-     * @return string
      */
-    public function getReferencedTableName()
+    public function getReferencedTableName(): ?string
     {
         return $this->referencedTableName;
     }
 
     /**
      * Set Referenced table name
-     *
-     * @param  string $referencedTableName
-     * @return $this Provides a fluent interface
      */
-    public function setReferencedTableName($referencedTableName)
+    public function setReferencedTableName(string $referencedTableName): static
     {
         $this->referencedTableName = $referencedTableName;
         return $this;
@@ -156,21 +124,16 @@ class ConstraintKeyObject
 
     /**
      * Get referenced column name
-     *
-     * @return string
      */
-    public function getReferencedColumnName()
+    public function getReferencedColumnName(): ?string
     {
         return $this->referencedColumnName;
     }
 
     /**
      * Set referenced column name
-     *
-     * @param  string $referencedColumnName
-     * @return $this Provides a fluent interface
      */
-    public function setReferencedColumnName($referencedColumnName)
+    public function setReferencedColumnName(string $referencedColumnName): static
     {
         $this->referencedColumnName = $referencedColumnName;
         return $this;
@@ -178,40 +141,32 @@ class ConstraintKeyObject
 
     /**
      * set foreign key update rule
-     *
-     * @param string $foreignKeyUpdateRule
      */
-    public function setForeignKeyUpdateRule($foreignKeyUpdateRule)
+    public function setForeignKeyUpdateRule(string $foreignKeyUpdateRule): void
     {
         $this->foreignKeyUpdateRule = $foreignKeyUpdateRule;
     }
 
     /**
      * Get foreign key update rule
-     *
-     * @return string
      */
-    public function getForeignKeyUpdateRule()
+    public function getForeignKeyUpdateRule(): ?string
     {
         return $this->foreignKeyUpdateRule;
     }
 
     /**
      * Set foreign key delete rule
-     *
-     * @param string $foreignKeyDeleteRule
      */
-    public function setForeignKeyDeleteRule($foreignKeyDeleteRule)
+    public function setForeignKeyDeleteRule(string $foreignKeyDeleteRule): void
     {
         $this->foreignKeyDeleteRule = $foreignKeyDeleteRule;
     }
 
     /**
      * get foreign key delete rule
-     *
-     * @return string
      */
-    public function getForeignKeyDeleteRule()
+    public function getForeignKeyDeleteRule(): ?string
     {
         return $this->foreignKeyDeleteRule;
     }

@@ -12,8 +12,14 @@ interface MetadataInterface
 {
     public function getSchemas();
 
-    public function getTableNames(string $schema = null, bool $includeViews = false) : string[];
-    public function getTables(string $schema = null, bool $includeViews = false) : Object\TableObject[];
+    public function getTableNames(
+        string $schema = null,
+        bool $includeViews = false
+    ) : string[];
+    public function getTables(
+        string $schema = null,
+        bool $includeViews = false
+    ) : Object\TableObject[];
     public function getTable(string $tableName, string $schema = null) : Object\TableObject;
 
     public function getViewNames(string $schema = null) : string[];
@@ -22,11 +28,26 @@ interface MetadataInterface
 
     public function getColumnNames(string string $table, $schema = null) : string[];
     public function getColumns(string $table, string $schema = null) : Object\ColumnObject[];
-    public function getColumn(string $columnName, string $table, string $schema = null) Object\ColumnObject;
+    public function getColumn(
+        string $columnName,
+        string $table,
+        string $schema = null
+    ) Object\ColumnObject;
 
-    public function getConstraints(string $table, $string schema = null) : Object\ConstraintObject[];
-    public function getConstraint(string $constraintName, string $table, string $schema = null) : Object\ConstraintObject;
-    public function getConstraintKeys(string $constraint, string $table, string $schema = null) : Object\ConstraintKeyObject[];
+    public function getConstraints(
+        string $table,
+        $string schema = null
+    ) : Object\ConstraintObject[];
+    public function getConstraint(
+        string $constraintName,
+        string $table,
+        string $schema = null
+    ) : Object\ConstraintObject;
+    public function getConstraintKeys(
+        string $constraint,
+        string $table,
+        string $schema = null
+    ) : Object\ConstraintKeyObject[];
 
     public function getTriggerNames(string $schema = null) : string[];
     public function getTriggers(string $schema = null) : Object\TriggerObject[];

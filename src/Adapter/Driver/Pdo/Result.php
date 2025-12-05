@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDb\Adapter\Driver\Pdo;
 
 use Closure;
@@ -152,11 +154,9 @@ class Result implements Iterator, ResultInterface
 
     /**
      * Get resource
-     *
-     * @return mixed
      */
     #[Override]
-    public function getResource()
+    public function getResource(): mixed
     {
         return $this->resource;
     }
@@ -285,11 +285,8 @@ class Result implements Iterator, ResultInterface
         return $this->resource->rowCount();
     }
 
-    /**
-     * @return mixed|null
-     */
     #[Override]
-    public function getGeneratedValue()
+    public function getGeneratedValue(): mixed
     {
         return $this->generatedValue;
     }

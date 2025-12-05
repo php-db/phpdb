@@ -1,9 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDbTest\Sql\Predicate;
 
 use Override;
-use PhpDb\Sql\ExpressionInterface;
+use PhpDb\Sql\Argument;
+use PhpDb\Sql\ArgumentInterface;
+use PhpDb\Sql\ArgumentType;
 use PhpDb\Sql\Predicate\NotBetween;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
@@ -20,44 +24,69 @@ final class NotBetweenTest extends TestCase
         $this->notBetween = new NotBetween();
     }
 
-    public function testSpecificationHasSameDefaultValue(): void
+    public function testSpecificationIsNullByDefault(): void
     {
-        self::assertEquals('%1$s NOT BETWEEN %2$s AND %3$s', $this->notBetween->getSpecification());
+        self::assertNull($this->notBetween->getSpecification());
     }
 
     public function testRetrievingWherePartsReturnsSpecificationArrayOfIdentifierAndValuesAndArrayOfTypes(): void
     {
-        $this->notBetween->setIdentifier('foo.bar')
-                      ->setMinValue(10)
-                      ->setMaxValue(19);
-        $expected = [
-            [
-                $this->notBetween->getSpecification(),
-                ['foo.bar', 10, 19],
-                [
-                    ExpressionInterface::TYPE_IDENTIFIER,
-                    ExpressionInterface::TYPE_VALUE,
-                    ExpressionInterface::TYPE_VALUE,
-                ],
-            ],
-        ];
-        self::assertEquals($expected, $this->notBetween->getExpressionData());
+        $this->notBetween
+            ->setIdentifier('foo.bar')
+            ->setMinValue(10)
+            ->setMaxValue(19);
+
+        $expressionData = $this->notBetween->getExpressionData();
+
+        // Verify specification (default built from arguments)
+        self::assertEquals('%s NOT BETWEEN %s AND %s', $expressionData['spec']);
+
+        // Verify expression values
+        $values = $expressionData['values'];
+        self::assertCount(3, $values);
+
+        // Verify identifier argument
+        self::assertInstanceOf(ArgumentInterface::class, $values[0]);
+        self::assertEquals('foo.bar', $values[0]->getValue());
+        self::assertEquals(ArgumentType::Identifier, $values[0]->getType());
+
+        // Verify min value argument
+        self::assertInstanceOf(ArgumentInterface::class, $values[1]);
+        self::assertEquals(10, $values[1]->getValue());
+        self::assertEquals(ArgumentType::Value, $values[1]->getType());
+
+        // Verify max value argument
+        self::assertInstanceOf(ArgumentInterface::class, $values[2]);
+        self::assertEquals(19, $values[2]->getValue());
+        self::assertEquals(ArgumentType::Value, $values[2]->getType());
 
         $this->notBetween
-            ->setIdentifier([10 => ExpressionInterface::TYPE_VALUE])
-            ->setMinValue(['foo.bar' => ExpressionInterface::TYPE_IDENTIFIER])
-            ->setMaxValue(['foo.baz' => ExpressionInterface::TYPE_IDENTIFIER]);
-        $expected = [
-            [
-                $this->notBetween->getSpecification(),
-                [10, 'foo.bar', 'foo.baz'],
-                [
-                    ExpressionInterface::TYPE_VALUE,
-                    ExpressionInterface::TYPE_IDENTIFIER,
-                    ExpressionInterface::TYPE_IDENTIFIER,
-                ],
-            ],
-        ];
-        self::assertEquals($expected, $this->notBetween->getExpressionData());
+            ->setIdentifier(Argument::value(10))
+            ->setMinValue(Argument::identifier('foo.bar'))
+            ->setMaxValue(Argument::identifier('foo.baz'));
+
+        $expressionData = $this->notBetween->getExpressionData();
+
+        // Verify specification (default built from arguments)
+        self::assertEquals('%s NOT BETWEEN %s AND %s', $expressionData['spec']);
+
+        // Verify expression values with custom types
+        $values = $expressionData['values'];
+        self::assertCount(3, $values);
+
+        // Verify identifier argument (passed as Value type)
+        self::assertInstanceOf(ArgumentInterface::class, $values[0]);
+        self::assertEquals(10, $values[0]->getValue());
+        self::assertEquals(ArgumentType::Value, $values[0]->getType());
+
+        // Verify min value argument (passed as Identifier type)
+        self::assertInstanceOf(ArgumentInterface::class, $values[1]);
+        self::assertEquals('foo.bar', $values[1]->getValue());
+        self::assertEquals(ArgumentType::Identifier, $values[1]->getType());
+
+        // Verify max value argument (passed as Identifier type)
+        self::assertInstanceOf(ArgumentInterface::class, $values[2]);
+        self::assertEquals('foo.baz', $values[2]->getValue());
+        self::assertEquals(ArgumentType::Identifier, $values[2]->getType());
     }
 }

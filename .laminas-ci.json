@@ -1,8 +1,7 @@
 {
     "extensions": [
         "pdo-sqlite",
-        "sqlite3",
-        "sqlsrv"
+        "sqlite3"
     ],
     "additional_checks": [
         {

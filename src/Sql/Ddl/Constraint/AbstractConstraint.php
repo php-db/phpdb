@@ -1,121 +1,97 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDb\Sql\Ddl\Constraint;
 
+use Override;
+use PhpDb\Sql\Argument\Identifier;
+
 use function array_fill;
-use function array_merge;
 use function count;
 use function implode;
-use function sprintf;
+use function str_replace;
 
 abstract class AbstractConstraint implements ConstraintInterface
 {
-    /** @var string */
-    protected $columnSpecification = ' (%s)';
+    protected string $columnSpecification = '(%s)';
 
-    /** @var string */
-    protected $namedSpecification = 'CONSTRAINT %s ';
+    protected string $namedSpecification = 'CONSTRAINT %s';
 
-    /** @var string */
-    protected $specification = '';
+    protected string $specification = '';
 
-    /** @var string */
-    protected $name = '';
+    protected string $name = '';
 
-    /** @var array */
-    protected $columns = [];
+    protected array $columns = [];
 
-    /**
-     * @param null|string|array $columns
-     * @param null|string $name
-     */
-    public function __construct($columns = null, $name = null)
+    public function __construct(null|array|string $columns = null, ?string $name = null)
     {
-        if ($columns) {
+        if ($columns !== null) {
             $this->setColumns($columns);
         }
 
-        $this->setName($name);
+        if ($name !== null) {
+            $this->setName($name);
+        }
     }
 
-    /**
-     * @param  string $name
-     * @return $this Provides a fluent interface
-     */
-    public function setName($name)
+    public function setName(string $name): static
     {
-        $this->name = (string) $name;
+        $this->name = $name;
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @param  null|string|array $columns
-     * @return $this Provides a fluent interface
-     */
-    public function setColumns($columns)
+    public function setColumns(string|array $columns): static
     {
         $this->columns = (array) $columns;
 
         return $this;
     }
 
-    /**
-     * @param  string $column
-     * @return $this Provides a fluent interface
-     */
-    public function addColumn($column)
+    public function addColumn(string $column): static
     {
         $this->columns[] = $column;
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function getColumns()
+    #[Override] public function getColumns(): array
     {
         return $this->columns;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function getExpressionData()
+    /** @inheritDoc */
+    #[Override]
+    public function getExpressionData(): array
     {
-        $colCount     = count($this->columns);
-        $newSpecTypes = [];
-        $values       = [];
-        $newSpec      = '';
+        $specParts = [];
+        $values    = [];
 
-        if ($this->name) {
-            $newSpec       .= $this->namedSpecification;
-            $values[]       = $this->name;
-            $newSpecTypes[] = self::TYPE_IDENTIFIER;
+        if ($this->name !== '') {
+            $specParts[] = $this->namedSpecification;
+            $values[]    = new Identifier($this->name);
         }
 
-        $newSpec .= $this->specification;
+        if ($this->specification !== '') {
+            $specParts[] = $this->specification;
+        }
 
-        if ($colCount) {
-            $values       = array_merge($values, $this->columns);
-            $newSpecParts = array_fill(0, $colCount, '%s');
-            $newSpecTypes = array_merge($newSpecTypes, array_fill(0, $colCount, self::TYPE_IDENTIFIER));
-            $newSpec     .= sprintf($this->columnSpecification, implode(', ', $newSpecParts));
+        $columnCount = count($this->columns);
+        if ($columnCount !== 0) {
+            $columnSpec  = array_fill(0, $columnCount, '%s');
+            $specParts[] = str_replace('%s', implode(', ', $columnSpec), $this->columnSpecification);
+            for ($i = 0; $i < $columnCount; $i++) {
+                $values[] = new Identifier($this->columns[$i]);
+            }
         }
 
         return [
-            [
-                $newSpec,
-                $values,
-                $newSpecTypes,
-            ],
+            'spec'   => implode(' ', $specParts),
+            'values' => $values,
         ];
     }
 }

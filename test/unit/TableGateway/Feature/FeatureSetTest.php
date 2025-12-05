@@ -24,7 +24,7 @@ use ReflectionClass;
 
 #[CoversMethod(FeatureSet::class, 'canCallMagicCall')]
 #[CoversMethod(FeatureSet::class, 'callMagicCall')]
-final class FeatureSetTest extends TestCase
+class FeatureSetTest extends TestCase
 {
     /**
      * @cover FeatureSet::addFeature
@@ -94,7 +94,7 @@ final class FeatureSetTest extends TestCase
 
         self::assertTrue(
             $featureSet->canCallMagicCall('lastSequenceId'),
-            "Should have been able to call lastSequenceId from the Sequence Feature"
+            'Should have been able to call lastSequenceId from the Sequence Feature'
         );
     }
 
@@ -106,7 +106,7 @@ final class FeatureSetTest extends TestCase
 
         self::assertFalse(
             $featureSet->canCallMagicCall('postInitialize'),
-            "Should have been able to call postInitialize from the MetaData Feature"
+            'Should have been able to call postInitialize from the MetaData Feature'
         );
     }
 
@@ -153,7 +153,7 @@ final class FeatureSetTest extends TestCase
 
         $reflectionClass    = new ReflectionClass(AbstractTableGateway::class);
         $reflectionProperty = $reflectionClass->getProperty('adapter');
-        /** @psalm-suppress UnusedMethodCall */
+        /** @noinspection PhpExpressionResultUnusedInspection */
         $reflectionProperty->setAccessible(true);
         $reflectionProperty->setValue($tableGatewayMock, $adapterMock);
 

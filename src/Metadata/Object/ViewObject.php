@@ -1,75 +1,61 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDb\Metadata\Object;
 
 class ViewObject extends AbstractTableObject
 {
-    /** @var null|string */
-    protected $viewDefinition;
+    protected ?string $viewDefinition = null;
 
-    /** @var null|string */
-    protected $checkOption;
+    protected ?string $checkOption = null;
 
-    /** @var null|bool */
-    protected $isUpdatable;
+    protected ?bool $isUpdatable = null;
 
-    /**
-     * @return string $viewDefinition
-     */
-    public function getViewDefinition()
+    public function getViewDefinition(): ?string
     {
         return $this->viewDefinition;
     }
 
     /**
-     * @param string $viewDefinition to set
-     * @return $this Provides a fluent interface
+     * @param null|string $viewDefinition to set
      */
-    public function setViewDefinition($viewDefinition)
+    public function setViewDefinition(?string $viewDefinition): static
     {
         $this->viewDefinition = $viewDefinition;
         return $this;
     }
 
-    /**
-     * @return string $checkOption
-     */
-    public function getCheckOption()
+    public function getCheckOption(): ?string
     {
         return $this->checkOption;
     }
 
     /**
-     * @param string $checkOption to set
-     * @return $this Provides a fluent interface
+     * @param null|string $checkOption to set
      */
-    public function setCheckOption($checkOption)
+    public function setCheckOption(?string $checkOption): static
     {
         $this->checkOption = $checkOption;
         return $this;
     }
 
-    /**
-     * @return bool $isUpdatable
-     */
-    public function getIsUpdatable()
+    public function getIsUpdatable(): ?bool
+    {
+        return $this->isUpdatable;
+    }
+
+    public function isUpdatable(): ?bool
     {
         return $this->isUpdatable;
     }
 
     /**
      * @param bool $isUpdatable to set
-     * @return $this Provides a fluent interface
      */
-    public function setIsUpdatable($isUpdatable)
+    public function setIsUpdatable(?bool $isUpdatable): static
     {
         $this->isUpdatable = $isUpdatable;
         return $this;
-    }
-
-    /** @return bool */
-    public function isUpdatable()
-    {
-        return (bool) $this->isUpdatable;
     }
 }

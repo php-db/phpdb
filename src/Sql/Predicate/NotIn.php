@@ -1,9 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDb\Sql\Predicate;
 
 class NotIn extends In
 {
-    /** @var string */
-    protected $specification = '%s NOT IN %s';
+    protected string $operator = 'NOT IN';
 }

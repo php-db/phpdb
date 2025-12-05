@@ -1,32 +1,44 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDbTest\Sql;
 
 use Override;
-use PhpDb\Adapter\Adapter;
 use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\Driver\StatementInterface;
+use PhpDb\Sql\Argument\Identifier;
+use PhpDb\Sql\Argument\Value;
 use PhpDb\Sql\Delete;
+use PhpDb\Sql\Expression as SqlExpression;
 use PhpDb\Sql\Predicate\Expression;
 use PhpDb\Sql\Predicate\In;
 use PhpDb\Sql\Predicate\IsNotNull;
 use PhpDb\Sql\Predicate\IsNull;
 use PhpDb\Sql\Predicate\Literal;
 use PhpDb\Sql\Predicate\Operator;
+use PhpDb\Sql\Predicate\PredicateSet;
 use PhpDb\Sql\TableIdentifier;
 use PhpDb\Sql\Where;
+use PhpDbTest\AdapterTestTrait;
 use PhpDbTest\DeprecatedAssertionsTrait;
 use PhpDbTest\TestAsset\DeleteIgnore;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\CoversNothing;
+use PHPUnit\Framework\Attributes\TestDox;
 use PHPUnit\Framework\TestCase;
+use ReflectionException;
 
+#[CoversMethod(Delete::class, '__construct')]
 #[CoversMethod(Delete::class, 'from')]
+#[CoversMethod(Delete::class, 'getRawState')]
 #[CoversMethod(Delete::class, 'where')]
-#[CoversMethod(Delete::class, 'prepareStatement')]
-#[CoversMethod(Delete::class, 'getSqlString')]
+#[CoversMethod(Delete::class, 'processDelete')]
+#[CoversMethod(Delete::class, 'processWhere')]
+#[CoversMethod(Delete::class, '__get')]
 final class DeleteTest extends TestCase
 {
+    use AdapterTestTrait;
     use DeprecatedAssertionsTrait;
 
     protected Delete $delete;
@@ -49,17 +61,23 @@ final class DeleteTest extends TestCase
     {
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public function testFrom(): void
     {
+        // Set table with string
         $this->delete->from('foo');
         self::assertEquals('foo', $this->readAttribute($this->delete, 'table'));
 
+        // Set table with TableIdentifier
         $tableIdentifier = new TableIdentifier('foo', 'bar');
         $this->delete->from($tableIdentifier);
         self::assertEquals($tableIdentifier, $this->readAttribute($this->delete, 'table'));
     }
 
     /**
+     * @throws ReflectionException
      * @todo REMOVE THIS IN 3.x
      */
     public function testWhere(): void
@@ -67,11 +85,12 @@ final class DeleteTest extends TestCase
         $this->delete->where('x = y');
         $this->delete->where(['foo > ?' => 5]);
         $this->delete->where(['id' => 2]);
-        $this->delete->where(['a = b'], Where::OP_OR);
+        $this->delete->where(['a = b'], PredicateSet::OP_OR);
         $this->delete->where(['c1' => null]);
         $this->delete->where(['c2' => [1, 2, 3]]);
         $this->delete->where([new IsNotNull('c3')]);
         $this->delete->where(['one' => 1, 'two' => 2]);
+
         $where = $this->delete->where;
 
         $predicates = $this->readAttribute($where, 'predicates');
@@ -114,10 +133,7 @@ final class DeleteTest extends TestCase
     public function testPrepareStatement(): void
     {
         $mockDriver  = $this->getMockBuilder(DriverInterface::class)->getMock();
-        $mockAdapter = $this->getMockBuilder(Adapter::class)
-            ->onlyMethods([])
-            ->setConstructorArgs([$mockDriver])
-            ->getMock();
+        $mockAdapter = $this->createMockAdapter($mockDriver);
 
         $mockStatement = $this->getMockBuilder(StatementInterface::class)->getMock();
         $mockStatement->expects($this->once())
@@ -129,13 +145,11 @@ final class DeleteTest extends TestCase
 
         $this->delete->prepareStatement($mockAdapter, $mockStatement);
 
-        // with TableIdentifier
+        // Test with TableIdentifier
         $this->delete = new Delete();
-        $mockDriver   = $this->getMockBuilder(DriverInterface::class)->getMock();
-        $mockAdapter  = $this->getMockBuilder(Adapter::class)
-            ->onlyMethods([])
-            ->setConstructorArgs([$mockDriver])
-            ->getMock();
+
+        $mockDriver  = $this->getMockBuilder(DriverInterface::class)->getMock();
+        $mockAdapter = $this->createMockAdapter($mockDriver);
 
         $mockStatement = $this->getMockBuilder(StatementInterface::class)->getMock();
         $mockStatement->expects($this->once())
@@ -154,7 +168,7 @@ final class DeleteTest extends TestCase
             ->where('x = y');
         self::assertEquals('DELETE FROM "foo" WHERE x = y', $this->delete->getSqlString());
 
-        // with TableIdentifier
+        // Test with TableIdentifier
         $this->delete = new Delete();
         $this->delete->from(new TableIdentifier('foo', 'sch'))
             ->where('x = y');
@@ -167,10 +181,7 @@ final class DeleteTest extends TestCase
         $deleteIgnore = new DeleteIgnore();
 
         $mockDriver  = $this->getMockBuilder(DriverInterface::class)->getMock();
-        $mockAdapter = $this->getMockBuilder(Adapter::class)
-            ->onlyMethods([])
-            ->setConstructorArgs([$mockDriver])
-            ->getMock();
+        $mockAdapter = $this->createMockAdapter($mockDriver);
 
         $mockStatement = $this->getMockBuilder(StatementInterface::class)->getMock();
         $mockStatement->expects($this->once())
@@ -186,10 +197,7 @@ final class DeleteTest extends TestCase
         $deleteIgnore = new DeleteIgnore();
 
         $mockDriver  = $this->getMockBuilder(DriverInterface::class)->getMock();
-        $mockAdapter = $this->getMockBuilder(Adapter::class)
-            ->onlyMethods([])
-            ->setConstructorArgs([$mockDriver])
-            ->getMock();
+        $mockAdapter = $this->createMockAdapter($mockDriver);
 
         $mockStatement = $this->getMockBuilder(StatementInterface::class)->getMock();
         $mockStatement->expects($this->once())
@@ -216,5 +224,77 @@ final class DeleteTest extends TestCase
         $deleteIgnore->from(new TableIdentifier('foo', 'sch'))
             ->where('x = y');
         self::assertEquals('DELETE IGNORE FROM "sch"."foo" WHERE x = y', $deleteIgnore->getSqlString());
+    }
+
+    public function testGetRawState(): void
+    {
+        $this->delete->from('foo')
+            ->where('x = y');
+
+        $rawState = $this->delete->getRawState();
+
+        self::assertIsArray($rawState);
+        self::assertArrayHasKey('table', $rawState);
+        self::assertArrayHasKey('where', $rawState);
+        self::assertArrayHasKey('emptyWhereProtection', $rawState);
+
+        self::assertEquals('foo', $rawState['table']);
+        self::assertInstanceOf(Where::class, $rawState['where']);
+        self::assertTrue($rawState['emptyWhereProtection']);
+    }
+
+    public function testGetRawStateWithKey(): void
+    {
+        $this->delete->from('foo');
+
+        self::assertEquals('foo', $this->delete->getRawState('table'));
+        self::assertInstanceOf(Where::class, $this->delete->getRawState('where'));
+        self::assertTrue($this->delete->getRawState('emptyWhereProtection'));
+    }
+
+    public function testMagicGetReturnsWhereClause(): void
+    {
+        $where = $this->delete->where;
+        self::assertInstanceOf(Where::class, $where);
+    }
+
+    public function testMagicGetReturnsNullForUnknownProperty(): void
+    {
+        /** @noinspection PhpUndefinedFieldInspection */
+        self::assertNull($this->delete->unknown); // @phpstan-ignore-line
+        self::assertNull($this->delete->table); // @phpstan-ignore-line
+    }
+
+    public function testConstructorWithTable(): void
+    {
+        $delete = new Delete('foo');
+        self::assertEquals('foo', $delete->getRawState('table'));
+    }
+
+    public function testConstructorWithTableIdentifier(): void
+    {
+        $tableIdentifier = new TableIdentifier('foo', 'bar');
+        $delete          = new Delete($tableIdentifier);
+        self::assertEquals($tableIdentifier, $delete->getRawState('table'));
+    }
+
+    public function testGetSqlStringWithEmptyWhere(): void
+    {
+        $this->delete->from('foo');
+        // Empty where should not add WHERE clause
+        self::assertEquals('DELETE FROM "foo"', $this->delete->getSqlString());
+    }
+
+    #[TestDox('unit test: Test where() accepts Expression (ExpressionInterface) in array')]
+    public function testWhereAcceptsExpressionInterface(): void
+    {
+        $this->delete->from('foo')
+            ->where([
+                new SqlExpression('COUNT(?) > ?', [new Identifier('id'), new Value(5)]),
+            ]);
+
+        $where = $this->delete->getRawState('where');
+        self::assertInstanceOf(Where::class, $where);
+        self::assertEquals(1, $where->count());
     }
 }

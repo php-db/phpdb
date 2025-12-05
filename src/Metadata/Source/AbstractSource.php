@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDb\Metadata\Source;
 
 use Exception;
@@ -16,7 +18,6 @@ use PhpDb\Metadata\Object\ViewObject;
 
 use function array_keys;
 use function func_get_args;
-use function str_replace;
 
 /**
  * AbstractSource
@@ -52,8 +53,7 @@ abstract class AbstractSource implements MetadataInterface
 {
     public const DEFAULT_SCHEMA = '__DEFAULT_SCHEMA__';
 
-    /** @var string */
-    protected $defaultSchema;
+    protected string $defaultSchema;
 
     /** @psalm-var MetadataData */
     protected array $data = [];
@@ -97,6 +97,7 @@ abstract class AbstractSource implements MetadataInterface
                 $tableNames[] = $tableName;
             }
         }
+
         return $tableNames;
     }
 
@@ -114,12 +115,10 @@ abstract class AbstractSource implements MetadataInterface
         foreach ($this->getTableNames($schema, $includeViews) as $tableName) {
             $tables[] = $this->getTable($tableName, $schema);
         }
+
         return $tables;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     #[Override]
     public function getTable(string $tableName, ?string $schema = null): TableObject|ViewObject
     {
@@ -149,6 +148,7 @@ abstract class AbstractSource implements MetadataInterface
                     'Table "' . $tableName . '" is of an unsupported type "' . $data['table_type'] . '"'
                 );
         }
+
         $table->setColumns($this->getColumns($tableName, $schema));
         $table->setConstraints($this->getConstraints($tableName, $schema));
         return $table;
@@ -172,6 +172,7 @@ abstract class AbstractSource implements MetadataInterface
                 $viewNames[] = $tableName;
             }
         }
+
         return $viewNames;
     }
 
@@ -189,12 +190,10 @@ abstract class AbstractSource implements MetadataInterface
         foreach ($this->getViewNames($schema) as $tableName) {
             $views[] = $this->getTable($tableName, $schema);
         }
+
         return $views;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     #[Override]
     public function getView(string $viewName, ?string $schema = null): ViewObject|TableObject
     {
@@ -208,12 +207,10 @@ abstract class AbstractSource implements MetadataInterface
         if (isset($tableNames[$viewName]) && 'VIEW' === $tableNames[$viewName]['table_type']) {
             return $this->getTable($viewName, $schema);
         }
+
         throw new Exception('View "' . $viewName . '" does not exist');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     #[Override]
     public function getColumnNames(string $table, ?string $schema = null): array
     {
@@ -246,12 +243,10 @@ abstract class AbstractSource implements MetadataInterface
         foreach ($this->getColumnNames($table, $schema) as $columnName) {
             $columns[] = $this->getColumn($columnName, $table, $schema);
         }
+
         return $columns;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     #[Override]
     public function getColumn(string $columnName, string $table, ?string $schema = null): ColumnObject
     {
@@ -268,23 +263,6 @@ abstract class AbstractSource implements MetadataInterface
         $info = $this->data['columns'][$schema][$table][$columnName];
 
         $column = new ColumnObject($columnName, $table, $schema);
-        $props  = [
-            'ordinal_position',
-            'column_default',
-            'is_nullable',
-            'data_type',
-            'character_maximum_length',
-            'character_octet_length',
-            'numeric_precision',
-            'numeric_scale',
-            'numeric_unsigned',
-            'erratas',
-        ];
-        foreach ($props as $prop) {
-            if (isset($info[$prop])) {
-                $column->{'set' . str_replace('_', '', $prop)}($info[$prop]);
-            }
-        }
 
         $column->setOrdinalPosition($info['ordinal_position']);
         $column->setColumnDefault($info['column_default']);
@@ -320,9 +298,6 @@ abstract class AbstractSource implements MetadataInterface
         return $constraints;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     #[Override]
     public function getConstraint(
         string $constraintName,
@@ -433,12 +408,10 @@ abstract class AbstractSource implements MetadataInterface
         foreach ($this->getTriggerNames($schema) as $triggerName) {
             $triggers[] = $this->getTrigger($triggerName, $schema);
         }
+
         return $triggers;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     #[Override]
     public function getTrigger(string $triggerName, ?string $schema = null): TriggerObject
     {
@@ -485,6 +458,7 @@ abstract class AbstractSource implements MetadataInterface
             if (! isset($data[$key])) {
                 $data[$key] = [];
             }
+
             $data = &$data[$key];
         }
     }

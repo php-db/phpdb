@@ -6,13 +6,12 @@ use PhpDb\Sql;
 
 final class InsertDecorator extends Sql\Insert implements Sql\Platform\PlatformDecoratorInterface
 {
-    protected ?object $subject;
+    public object|null $subject;
 
     /**
-     * @param null|object $subject
      * @return $this Provides a fluent interface
      */
-    public function setSubject($subject): static
+    public function setSubject(?object $subject): InsertDecorator
     {
         $this->subject = $subject;
         return $this;

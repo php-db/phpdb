@@ -26,6 +26,8 @@ class AdapterAbstractServiceFactory implements AbstractFactoryInterface
 
     /**
      * Can we create an adapter by the requested name?
+     *
+     * @param string $requestedName
      */
     public function canCreate(ContainerInterface $container, $requestedName): bool
     {
@@ -41,6 +43,8 @@ class AdapterAbstractServiceFactory implements AbstractFactoryInterface
 
     /**
      * Create a DB adapter
+     *
+     * @param string $requestedName
      */
     public function __invoke(
         ContainerInterface $container,

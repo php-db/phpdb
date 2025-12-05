@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDb\Sql\Ddl\Column;
 
 /**
@@ -10,6 +12,5 @@ namespace PhpDb\Sql\Ddl\Column;
  */
 class Floating extends AbstractPrecisionColumn
 {
-    /** @var string */
-    protected $type = 'FLOAT';
+    protected string $type = 'FLOAT';
 }

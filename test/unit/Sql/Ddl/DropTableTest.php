@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDbTest\Sql\Ddl;
 
 use PhpDb\Sql\Ddl\DropTable;
@@ -8,7 +10,7 @@ use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 
 #[CoversMethod(DropTable::class, 'getSqlString')]
-final class DropTableTest extends TestCase
+class DropTableTest extends TestCase
 {
     public function testGetSqlString(): void
     {

@@ -1,9 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDb\Sql\Ddl\Constraint;
 
 class PrimaryKey extends AbstractConstraint
 {
-    /** @var string */
-    protected $specification = 'PRIMARY KEY';
+    protected string $specification = 'PRIMARY KEY';
 }

@@ -1,9 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDb\Sql\Ddl\Column;
 
 class Decimal extends AbstractPrecisionColumn
 {
-    /** @var string */
-    protected $type = 'DECIMAL';
+    protected string $type = 'DECIMAL';
 }

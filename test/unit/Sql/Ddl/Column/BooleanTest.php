@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDbTest\Sql\Ddl\Column;
 
+use PhpDb\Sql\Argument;
 use PhpDb\Sql\Ddl\Column\Boolean;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\CoversMethod;
@@ -15,10 +18,14 @@ final class BooleanTest extends TestCase
     public function testGetExpressionData(): void
     {
         $column = new Boolean('foo');
-        self::assertEquals(
-            [['%s %s NOT NULL', ['foo', 'BOOLEAN'], [$column::TYPE_IDENTIFIER, $column::TYPE_LITERAL]]],
-            $column->getExpressionData()
-        );
+
+        $expressionData = $column->getExpressionData();
+
+        self::assertEquals('%s %s NOT NULL', $expressionData['spec']);
+        self::assertEquals([
+            Argument::identifier('foo'),
+            Argument::literal('BOOLEAN'),
+        ], $expressionData['values']);
     }
 
     #[Group('6257')]

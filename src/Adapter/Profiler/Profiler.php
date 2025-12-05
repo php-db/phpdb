@@ -21,11 +21,10 @@ class Profiler implements ProfilerInterface
     protected $currentIndex = 0;
 
     /**
-     * @param string|StatementContainerInterface $target
-     * @return $this Provides a fluent interface
      * @throws InvalidArgumentException
+     * @return $this Provides a fluent interface
      */
-    public function profilerStart($target)
+    public function profilerStart(string|StatementContainerInterface $target): ProfilerInterface
     {
         $profileInformation = [
             'sql'        => '',
@@ -35,8 +34,11 @@ class Profiler implements ProfilerInterface
             'elapse'     => null,
         ];
         if ($target instanceof StatementContainerInterface) {
-            $profileInformation['sql']        = $target->getSql();
-            $profileInformation['parameters'] = clone $target->getParameterContainer();
+            $profileInformation['sql'] = $target->getSql();
+            $container                 = $target->getParameterContainer();
+            if ($container !== null) {
+                $profileInformation['parameters'] = clone $container;
+            }
         } elseif (is_string($target)) {
             $profileInformation['sql'] = $target;
         } else {
@@ -53,7 +55,7 @@ class Profiler implements ProfilerInterface
     /**
      * @return $this Provides a fluent interface
      */
-    public function profilerFinish()
+    public function profilerFinish(): ProfilerInterface
     {
         if (! isset($this->profiles[$this->currentIndex])) {
             throw new Exception\RuntimeException(
@@ -70,15 +72,12 @@ class Profiler implements ProfilerInterface
     /**
      * @return array|null
      */
-    public function getLastProfile()
+    public function getLastProfile(): ?array
     {
         return end($this->profiles);
     }
 
-    /**
-     * @return array
-     */
-    public function getProfiles()
+    public function getProfiles(): array
     {
         return $this->profiles;
     }

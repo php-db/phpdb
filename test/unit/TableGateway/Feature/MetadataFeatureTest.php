@@ -13,10 +13,11 @@ use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
 
-final class MetadataFeatureTest extends TestCase
+class MetadataFeatureTest extends TestCase
 {
     /**
      * @throws Exception
+     * @throws \Exception
      */
     #[Group('integration-test')]
     public function testPostInitialize(): void
@@ -40,6 +41,7 @@ final class MetadataFeatureTest extends TestCase
 
     /**
      * @throws Exception
+     * @throws \Exception
      */
     public function testPostInitializeRecordsPrimaryKeyColumnToSharedMetadata(): void
     {
@@ -62,7 +64,7 @@ final class MetadataFeatureTest extends TestCase
         $feature->postInitialize();
 
         $r = new ReflectionProperty(MetadataFeature::class, 'sharedData');
-        /** @psalm-suppress UnusedMethodCall */
+        /** @noinspection PhpExpressionResultUnusedInspection */
         $r->setAccessible(true);
         $sharedData = $r->getValue($feature);
 
@@ -71,11 +73,12 @@ final class MetadataFeatureTest extends TestCase
             isset($sharedData['metadata']['primaryKey']),
             'Shared data must have metadata entry for primary key'
         );
-        self::assertSame($sharedData['metadata']['primaryKey'], 'id');
+        self::assertSame('id', $sharedData['metadata']['primaryKey']);
     }
 
     /**
      * @throws Exception
+     * @throws \Exception
      */
     public function testPostInitializeRecordsListOfColumnsInPrimaryKeyToSharedMetadata(): void
     {
@@ -98,7 +101,7 @@ final class MetadataFeatureTest extends TestCase
         $feature->postInitialize();
 
         $r = new ReflectionProperty(MetadataFeature::class, 'sharedData');
-        /** @psalm-suppress UnusedMethodCall */
+        /** @noinspection PhpExpressionResultUnusedInspection */
         $r->setAccessible(true);
         $sharedData = $r->getValue($feature);
 
@@ -112,6 +115,7 @@ final class MetadataFeatureTest extends TestCase
 
     /**
      * @throws Exception
+     * @throws \Exception
      */
     public function testPostInitializeSkipsPrimaryKeyCheckIfNotTable(): void
     {

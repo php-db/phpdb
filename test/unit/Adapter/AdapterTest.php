@@ -4,23 +4,13 @@ namespace PhpDbTest\Adapter;
 
 use Override;
 use PhpDb\Adapter\Adapter;
+use PhpDb\Adapter\AdapterInterface;
 use PhpDb\Adapter\Driver\ConnectionInterface;
 use PhpDb\Adapter\Driver\DriverInterface;
-use PhpDb\Adapter\Driver\Mysqli\Mysqli;
-use PhpDb\Adapter\Driver\Pdo\Pdo;
-use PhpDb\Adapter\Driver\Pgsql\Pgsql;
 use PhpDb\Adapter\Driver\ResultInterface;
-use PhpDb\Adapter\Driver\Sqlsrv\Sqlsrv;
 use PhpDb\Adapter\Driver\StatementInterface;
 use PhpDb\Adapter\ParameterContainer;
-use PhpDb\Adapter\Platform\IbmDb2;
-use PhpDb\Adapter\Platform\Mysql;
-use PhpDb\Adapter\Platform\Oracle;
 use PhpDb\Adapter\Platform\PlatformInterface;
-use PhpDb\Adapter\Platform\Postgresql;
-use PhpDb\Adapter\Platform\Sql92;
-use PhpDb\Adapter\Platform\Sqlite;
-use PhpDb\Adapter\Platform\SqlServer;
 use PhpDb\Adapter\Profiler;
 use PhpDb\ResultSet\ResultSet;
 use PhpDb\ResultSet\ResultSetInterface;
@@ -31,8 +21,6 @@ use PHPUnit\Framework\Attributes\TestDox;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-
-use function extension_loaded;
 
 #[CoversMethod(Adapter::class, 'setProfiler')]
 #[CoversMethod(Adapter::class, 'getProfiler')]
@@ -67,11 +55,11 @@ final class AdapterTest extends TestCase
         $this->mockConnection = $this->createMock(ConnectionInterface::class);
         $this->mockDriver->method('checkEnvironment')->willReturn(true);
         $this->mockDriver->method('getConnection')
-            ->willReturn($this->mockConnection);
+                         ->willReturn($this->mockConnection);
         $this->mockPlatform  = $this->createMock(PlatformInterface::class);
         $this->mockStatement = $this->createMock(StatementInterface::class);
         $this->mockDriver->method('createStatement')
-            ->willReturn($this->mockStatement);
+                         ->willReturn($this->mockStatement);
 
         $this->adapter = new Adapter($this->mockDriver, $this->mockPlatform);
     }
@@ -91,91 +79,6 @@ final class AdapterTest extends TestCase
 
         $adapter = new Adapter(['driver' => $this->mockDriver, 'profiler' => true], $this->mockPlatform);
         self::assertInstanceOf(Profiler\Profiler::class, $adapter->getProfiler());
-    }
-
-    #[TestDox('unit test: Test createDriverFromParameters() will create proper driver type')]
-    public function testCreateDriver(): void
-    {
-        if (extension_loaded('mysqli')) {
-            $adapter = new Adapter(['driver' => 'mysqli'], $this->mockPlatform);
-            self::assertInstanceOf(Mysqli::class, $adapter->driver);
-            unset($adapter);
-        }
-
-        if (extension_loaded('pgsql')) {
-            $adapter = new Adapter(['driver' => 'pgsql'], $this->mockPlatform);
-            self::assertInstanceOf(Pgsql::class, $adapter->driver);
-            unset($adapter);
-        }
-
-        if (extension_loaded('sqlsrv')) {
-            $adapter = new Adapter(['driver' => 'sqlsrv'], $this->mockPlatform);
-            self::assertInstanceOf(Sqlsrv::class, $adapter->driver);
-            unset($adapter);
-        }
-
-        if (extension_loaded('pdo')) {
-            $adapter = new Adapter(['driver' => 'pdo_sqlite'], $this->mockPlatform);
-            self::assertInstanceOf(Pdo::class, $adapter->driver);
-            unset($adapter);
-        }
-    }
-
-    #[TestDox('unit test: Test createPlatformFromDriver() will create proper platform from driver')]
-    public function testCreatePlatform(): void
-    {
-        $driver = clone $this->mockDriver;
-        $driver->expects($this->any())->method('getDatabasePlatformName')->willReturn('Mysql');
-        $adapter = new Adapter($driver);
-        self::assertInstanceOf(Mysql::class, $adapter->platform);
-        unset($adapter, $driver);
-
-        $driver = clone $this->mockDriver;
-        $driver->expects($this->any())->method('getDatabasePlatformName')->willReturn('SqlServer');
-        $adapter = new Adapter($driver);
-        self::assertInstanceOf(SqlServer::class, $adapter->platform);
-        unset($adapter, $driver);
-
-        $driver = clone $this->mockDriver;
-        $driver->expects($this->any())->method('getDatabasePlatformName')->willReturn('Postgresql');
-        $adapter = new Adapter($driver);
-        self::assertInstanceOf(Postgresql::class, $adapter->platform);
-        unset($adapter, $driver);
-
-        $driver = clone $this->mockDriver;
-        $driver->expects($this->any())->method('getDatabasePlatformName')->willReturn('Sqlite');
-        $adapter = new Adapter($driver);
-        self::assertInstanceOf(Sqlite::class, $adapter->platform);
-        unset($adapter, $driver);
-
-        $driver = clone $this->mockDriver;
-        $driver->expects($this->any())->method('getDatabasePlatformName')->willReturn('IbmDb2');
-        $adapter = new Adapter($driver);
-        self::assertInstanceOf(IbmDb2::class, $adapter->platform);
-        unset($adapter, $driver);
-
-        $driver = clone $this->mockDriver;
-        $driver->expects($this->any())->method('getDatabasePlatformName')->willReturn('Oracle');
-        $adapter = new Adapter($driver);
-        self::assertInstanceOf(Oracle::class, $adapter->platform);
-        unset($adapter, $driver);
-
-        $driver = clone $this->mockDriver;
-        $driver->expects($this->any())->method('getDatabasePlatformName')->willReturn('Foo');
-        $adapter = new Adapter($driver);
-        self::assertInstanceOf(Sql92::class, $adapter->platform);
-        unset($adapter, $driver);
-
-        // ensure platform can created via string, and also that it passed in options to platform object
-        $driver  = [
-            'driver'           => 'pdo_oci',
-            'platform'         => 'Oracle',
-            'platform_options' => ['quote_identifiers' => false],
-        ];
-        $adapter = new Adapter($driver);
-        self::assertInstanceOf(Oracle::class, $adapter->platform);
-        self::assertEquals('foo', $adapter->getPlatform()->quoteIdentifier('foo'));
-        unset($adapter, $driver);
     }
 
     #[TestDox('unit test: Test getDriver() will return driver object')]
@@ -224,11 +127,11 @@ final class AdapterTest extends TestCase
         $result    = $this->createMock(ResultInterface::class);
 
         $this->mockDriver->method('createStatement')
-            ->willReturn($statement);
+                         ->willReturn($statement);
         $this->mockStatement->method('execute')
-            ->willReturn($result);
+                            ->willReturn($result);
         $result->method('isQueryResult')
-            ->willReturn(true);
+               ->willReturn(true);
 
         self::assertNotSame(
             $this->adapter->query('SELECT foo', []),
@@ -247,7 +150,7 @@ final class AdapterTest extends TestCase
         $statement = $this->getMockBuilder(StatementInterface::class)->getMock();
         $result    = $this->getMockBuilder(ResultInterface::class)->getMock();
         $this->mockDriver->expects($this->any())->method('createStatement')
-            ->with($sql)->willReturn($statement);
+                         ->with($sql)->willReturn($statement);
         $this->mockStatement->expects($this->any())->method('execute')->willReturn($result);
 
         $r = $this->adapter->query($sql, $parray);
@@ -264,7 +167,7 @@ final class AdapterTest extends TestCase
         $parameterContainer = $this->getMockBuilder(ParameterContainer::class)->getMock();
         $result             = $this->getMockBuilder(ResultInterface::class)->getMock();
         $this->mockDriver->expects($this->any())->method('createStatement')
-            ->with($sql)->willReturn($this->mockStatement);
+                         ->with($sql)->willReturn($this->mockStatement);
         $this->mockStatement->expects($this->any())->method('execute')->willReturn($result);
         $result->expects($this->any())->method('isQueryResult')->willReturn(true);
 
@@ -282,7 +185,7 @@ final class AdapterTest extends TestCase
         $result = $this->getMockBuilder(ResultInterface::class)->getMock();
         $this->mockConnection->expects($this->any())->method('execute')->with($sql)->willReturn($result);
 
-        $r = $this->adapter->query($sql, Adapter::QUERY_MODE_EXECUTE);
+        $r = $this->adapter->query($sql, AdapterInterface::QUERY_MODE_EXECUTE);
         self::assertSame($result, $r);
     }
 
@@ -298,10 +201,10 @@ final class AdapterTest extends TestCase
         $this->mockConnection->expects($this->any())->method('execute')->with($sql)->willReturn($result);
         $result->expects($this->any())->method('isQueryResult')->willReturn(true);
 
-        $r = $this->adapter->query($sql, Adapter::QUERY_MODE_EXECUTE);
+        $r = $this->adapter->query($sql, AdapterInterface::QUERY_MODE_EXECUTE);
         self::assertInstanceOf(ResultSet::class, $r);
 
-        $r = $this->adapter->query($sql, Adapter::QUERY_MODE_EXECUTE, new TemporaryResultSet());
+        $r = $this->adapter->query($sql, AdapterInterface::QUERY_MODE_EXECUTE, new TemporaryResultSet());
         self::assertInstanceOf(TemporaryResultSet::class, $r);
     }
 

@@ -1,9 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDb\Sql\Ddl\Column;
 
 class Timestamp extends AbstractTimestampColumn
 {
-    /** @var string */
-    protected $type = 'TIMESTAMP';
+    protected string $type = 'TIMESTAMP';
 }

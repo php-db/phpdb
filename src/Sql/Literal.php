@@ -1,51 +1,38 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDb\Sql;
+
+use Override;
 
 use function str_replace;
 
 class Literal implements ExpressionInterface
 {
-    /** @var string */
-    protected $literal = '';
-
-    /**
-     * @param string $literal
-     */
-    public function __construct($literal = '')
+    public function __construct(protected string $literal = '')
     {
         $this->literal = $literal;
     }
 
-    /**
-     * @param string $literal
-     * @return $this Provides a fluent interface
-     */
-    public function setLiteral($literal)
+    public function setLiteral(string $literal): static
     {
         $this->literal = $literal;
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getLiteral()
+    public function getLiteral(): string
     {
         return $this->literal;
     }
 
-    /**
-     * @return array
-     */
-    public function getExpressionData()
+    /** @inheritDoc */
+    #[Override]
+    public function getExpressionData(): array
     {
         return [
-            [
-                str_replace('%', '%%', $this->literal),
-                [],
-                [],
-            ],
+            'spec'   => str_replace('%', '%%', $this->literal),
+            'values' => [],
         ];
     }
 }

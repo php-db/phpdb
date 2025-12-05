@@ -1,9 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDb\Sql\Ddl\Column;
 
 class BigInteger extends Integer
 {
-    /** @var string */
-    protected $type = 'BIGINT';
+    protected string $type = 'BIGINT';
 }

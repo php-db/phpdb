@@ -1,38 +1,42 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDb\Sql\Predicate;
 
+use LogicException;
+use Override;
 use PhpDb\Sql\AbstractExpression;
+use PhpDb\Sql\Argument\Identifier;
+use PhpDb\Sql\Argument\Value;
+use PhpDb\Sql\ArgumentInterface;
 
 class Between extends AbstractExpression implements PredicateInterface
 {
-    /** @var string */
-    protected $specification = '%1$s BETWEEN %2$s AND %3$s';
+    protected string $operator = 'BETWEEN';
 
-    /** @var string */
-    protected $identifier;
+    protected ?ArgumentInterface $identifier = null;
 
-    /** @var null|int */
-    protected $minValue;
+    protected ?ArgumentInterface $minValue = null;
 
-    /** @var null|int */
-    protected $maxValue;
+    protected ?ArgumentInterface $maxValue = null;
 
     /**
      * Constructor
-     *
-     * @param  string $identifier
-     * @param  int|float|string $minValue
-     * @param  int|float|string $maxValue
      */
-    public function __construct($identifier = null, $minValue = null, $maxValue = null)
-    {
-        if ($identifier) {
+    public function __construct(
+        null|string|ArgumentInterface $identifier = null,
+        null|int|float|string|ArgumentInterface $minValue = null,
+        null|int|float|string|ArgumentInterface $maxValue = null
+    ) {
+        if ($identifier !== null) {
             $this->setIdentifier($identifier);
         }
+
         if ($minValue !== null) {
             $this->setMinValue($minValue);
         }
+
         if ($maxValue !== null) {
             $this->setMaxValue($maxValue);
         }
@@ -40,108 +44,88 @@ class Between extends AbstractExpression implements PredicateInterface
 
     /**
      * Set identifier for comparison
-     *
-     * @param  string $identifier
-     * @return $this Provides a fluent interface
      */
-    public function setIdentifier($identifier)
+    public function setIdentifier(string|ArgumentInterface $identifier): static
     {
-        $this->identifier = $identifier;
+        $this->identifier = $identifier instanceof ArgumentInterface
+            ? $identifier
+            : new Identifier($identifier);
+
         return $this;
     }
 
     /**
-     * Get identifier of comparison
-     *
-     * @return null|string
+     * Get identifier for comparison
      */
-    public function getIdentifier()
+    public function getIdentifier(): ?ArgumentInterface
     {
         return $this->identifier;
     }
 
     /**
-     * Set minimum boundary for comparison
-     *
-     * @param  int|float|string $minValue
-     * @return $this Provides a fluent interface
+     * Set minimum value for comparison
      */
-    public function setMinValue($minValue)
+    public function setMinValue(null|int|float|string|bool|ArgumentInterface $minValue): static
     {
-        $this->minValue = $minValue;
+        $this->minValue = $minValue instanceof ArgumentInterface
+            ? $minValue
+            : new Value($minValue);
+
         return $this;
     }
 
     /**
-     * Get minimum boundary for comparison
-     *
-     * @return null|int|float|string
+     * Get minimum value for comparison
      */
-    public function getMinValue()
+    public function getMinValue(): ?ArgumentInterface
     {
         return $this->minValue;
     }
 
     /**
-     * Set maximum boundary for comparison
-     *
-     * @param  int|float|string $maxValue
-     * @return $this Provides a fluent interface
+     * Set maximum value for comparison
      */
-    public function setMaxValue($maxValue)
+    public function setMaxValue(null|int|float|string|bool|ArgumentInterface $maxValue): static
     {
-        $this->maxValue = $maxValue;
+        $this->maxValue = $maxValue instanceof ArgumentInterface
+            ? $maxValue
+            : new Value($maxValue);
+
         return $this;
     }
 
     /**
-     * Get maximum boundary for comparison
-     *
-     * @return null|int|float|string
+     * Get maximum value for comparison
      */
-    public function getMaxValue()
+    public function getMaxValue(): ?ArgumentInterface
     {
         return $this->maxValue;
     }
 
-    /**
-     * Set specification string to use in forming SQL predicate
-     *
-     * @param  string $specification
-     * @return $this Provides a fluent interface
-     */
-    public function setSpecification($specification)
+    /** @inheritDoc */
+    #[Override]
+    public function getExpressionData(): array
     {
-        $this->specification = $specification;
-        return $this;
-    }
+        if (! $this->identifier instanceof ArgumentInterface) {
+            throw new LogicException('Identifier must be specified');
+        }
 
-    /**
-     * Get specification string to use in forming SQL predicate
-     *
-     * @return string
-     */
-    public function getSpecification()
-    {
-        return $this->specification;
-    }
+        if (! $this->minValue instanceof ArgumentInterface) {
+            throw new LogicException('minValue must be specified');
+        }
 
-    /**
-     * Return "where" parts
-     *
-     * @return array
-     */
-    public function getExpressionData()
-    {
-        [$values[], $types[]] = $this->normalizeArgument($this->identifier, self::TYPE_IDENTIFIER);
-        [$values[], $types[]] = $this->normalizeArgument($this->minValue, self::TYPE_VALUE);
-        [$values[], $types[]] = $this->normalizeArgument($this->maxValue, self::TYPE_VALUE);
+        if (! $this->maxValue instanceof ArgumentInterface) {
+            throw new LogicException('maxValue must be specified');
+        }
+
+        $identifierSpec = $this->identifier->getSpecification();
+        $minValueSpec   = $this->minValue->getSpecification();
+        $maxValueSpec   = $this->maxValue->getSpecification();
+        $spec           = "{$identifierSpec} {$this->operator} {$minValueSpec} AND {$maxValueSpec}";
+
         return [
-            [
-                $this->getSpecification(),
-                $values,
-                $types,
-            ],
+            'spec'   => $this->specification ?? $spec,
+            'values' => [$this->identifier, $this->minValue, $this->maxValue],
         ];
     }
 }

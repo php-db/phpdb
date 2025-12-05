@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDbTest\Sql;
 
 use PhpDb\Sql\Exception\InvalidArgumentException;
@@ -17,7 +19,7 @@ use function array_merge;
  * Tests for {@see TableIdentifier}
  */
 #[CoversClass(TableIdentifier::class)]
-final class TableIdentifierTest extends TestCase
+class TableIdentifierTest extends TestCase
 {
     public function testGetTable(): void
     {

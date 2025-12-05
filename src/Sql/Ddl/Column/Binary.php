@@ -1,9 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDb\Sql\Ddl\Column;
 
 class Binary extends AbstractLengthColumn
 {
-    /** @var string */
-    protected $type = 'BINARY';
+    protected string $type = 'BINARY';
 }

@@ -85,9 +85,6 @@ $table = new Ddl\AlterTable('bar');
 
 // With a schema name "foo":
 $table = new Ddl\AlterTable(new TableIdentifier('bar', 'foo'));
-
-// Optionally, as a temporary table:
-$table = new Ddl\AlterTable('bar', true);
 ```
 
 The primary difference between a `CreateTable` and `AlterTable` is that the
@@ -98,7 +95,7 @@ also have the ability to *alter* existing columns:
 ```php
 use PhpDb\Sql\Ddl\Column;
 
-$table->changeColumn('name', Column\Varchar('new_name', 50));
+$table->changeColumn('name', new Column\Varchar('new_name', 50));
 ```
 
 You may also *drop* existing columns or constraints:
@@ -145,7 +142,7 @@ $adapter->query(
 ```
 
 By passing the `$ddl` object through the `$sql` instance's
-`getSqlStringForSqlObject()` method, we ensure that any platform specific
+`buildSqlString()` method, we ensure that any platform specific
 specializations/modifications are utilized to create a platform specific SQL
 statement.
 
@@ -160,25 +157,31 @@ implement `PhpDb\Sql\Ddl\Column\ColumnInterface`.
 
 In alphabetical order:
 
-Type             | Arguments For Construction
------------------|---------------------------
-BigInteger       | `$name`, `$nullable = false`, `$default = null`, `array $options = array()`
-Binary           | `$name`, `$length`, `nullable = false`, `$default = null`, `array $options = array()`
-Blob             | `$name`, `$length`, `nullable = false`, `$default = null`, `array $options = array()`
-Boolean          | `$name`
-Char             | `$name`, `length`
-Column (generic) | `$name = null`
-Date             | `$name`
-DateTime         | `$name`
-Decimal          | `$name`, `$precision`, `$scale = null`
-Float            | `$name`, `$digits`, `$decimal` (Note: this class is deprecated as of 2.4.0; use Floating instead)
-Floating         | `$name`, `$digits`, `$decimal`
-Integer          | `$name`, `$nullable = false`, `default = null`, `array $options = array()`
-Text             | `$name`, `$length`, `nullable = false`, `$default = null`, `array $options = array()`
-Time             | `$name`
-Timestamp        | `$name`
-Varbinary        | `$name`, `$length`
-Varchar          | `$name`, `$length`
+- **BigInteger**: `$name`, `$nullable=false`, `$default=null`, `$options=[]`
+- **Binary**: `$name`, `$length=null`, `$nullable=false`, `$default=null`,
+  `$options=[]`
+- **Blob**: `$name`, `$length=null`, `$nullable=false`, `$default=null`,
+  `$options=[]`
+- **Boolean**: `$name`, `$nullable=false`, `$default=null`, `$options=[]`
+- **Char**: `$name`, `$length=null`, `$nullable=false`, `$default=null`,
+  `$options=[]`
+- **Column** (generic): `$name=''`, `$nullable=false`, `$default=null`,
+  `$options=[]`
+- **Date**: `$name`, `$nullable=false`, `$default=null`, `$options=[]`
+- **Datetime**: `$name`, `$nullable=false`, `$default=null`, `$options=[]`
+- **Decimal**: `$name`, `$digits=null`, `$decimal=null`, `$nullable`,
+  `$default`, `$options`
+- **Floating**: `$name`, `$digits=null`, `$decimal=null`, `$nullable`,
+  `$default`, `$options`
+- **Integer**: `$name`, `$nullable=false`, `$default=null`, `$options=[]`
+- **Text**: `$name`, `$length=null`, `$nullable=false`, `$default=null`,
+  `$options=[]`
+- **Time**: `$name`, `$nullable=false`, `$default=null`, `$options=[]`
+- **Timestamp**: `$name`, `$nullable=false`, `$default=null`, `$options=[]`
+- **Varbinary**: `$name`, `$length=null`, `$nullable=false`, `$default=null`,
+  `$options=[]`
+- **Varchar**: `$name`, `$length=null`, `$nullable=false`, `$default=null`,
+  `$options=[]`
 
 Each of the above types can be utilized in any place that accepts a `Column\ColumnInterface`
 instance. Currently, this is primarily in `CreateTable::addColumn()` and `AlterTable`'s
@@ -191,13 +194,12 @@ must implement `PhpDb\Sql\Ddl\Constraint\ConstraintInterface`.
 
 In alphabetical order:
 
-Type       | Arguments For Construction
------------|---------------------------
-Check      | `$expression`, `$name`
-ForeignKey | `$name`, `$column`, `$referenceTable`, `$referenceColumn`, `$onDeleteRule = null`, `$onUpdateRule = null`
-PrimaryKey | `$columns`
-UniqueKey  | `$column`, `$name = null`
+- **Check**: `$expression`, `$name`
+- **ForeignKey**: `$name`, `$columns`, `$refTable`, `$refColumn`,
+  `$onDelete`, `$onUpdate`
+- **PrimaryKey**: `$columns=null`, `$name=null`
+- **UniqueKey**: `$columns=null`, `$name=null`
 
 Each of the above types can be utilized in any place that accepts a
-`Column\ConstraintInterface` instance. Currently, this is primarily in
+`Constraint\ConstraintInterface` instance. Currently, this is primarily in
 `CreateTable::addConstraint()` and `AlterTable::addConstraint()`.

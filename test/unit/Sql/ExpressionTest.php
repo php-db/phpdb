@@ -1,12 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDbTest\Sql;
 
+use PhpDb\Sql\Argument;
+use PhpDb\Sql\Argument\Identifier;
+use PhpDb\Sql\Argument\Literal;
+use PhpDb\Sql\Argument\Value;
 use PhpDb\Sql\Exception\InvalidArgumentException;
+use PhpDb\Sql\Exception\RuntimeException;
 use PhpDb\Sql\Expression;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\Attributes\Depends;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 use TypeError;
@@ -17,6 +23,7 @@ use TypeError;
  *
  * Expression is a value object with no dependencies/collaborators, therefore, no fixure needed
  */
+#[CoversMethod(Expression::class, '__construct')]
 #[CoversMethod(Expression::class, 'setExpression')]
 #[CoversMethod(Expression::class, 'getExpression')]
 #[CoversMethod(Expression::class, 'setParameters')]
@@ -24,22 +31,31 @@ use TypeError;
 #[CoversMethod(Expression::class, 'getExpressionData')]
 final class ExpressionTest extends TestCase
 {
-    /**
-     * @return Expression
-     */
-    public function testSetExpression()
+    public function testSetExpression(): void
     {
         $expression = new Expression();
-        $return     = $expression->setExpression('Foo Bar');
-        self::assertSame($expression, $return);
-        return $return;
+
+        // First mutation
+        $result = $expression->setExpression('Foo Bar');
+
+        // Verify fluent interface
+        self::assertSame($expression, $result);
+
+        // Verify the first mutation occurred
+        self::assertEquals('Foo Bar', $expression->getExpression());
+
+        // Second mutation to verify mutability
+        $expression->setExpression('Baz Qux');
+
+        // Verify the instance was actually mutated
+        self::assertEquals('Baz Qux', $expression->getExpression());
     }
 
     public function testSetExpressionException(): void
     {
         $expression = new Expression();
         $this->expectException(TypeError::class);
-        /** @psalm-suppress NullArgument - ensure an exception is thrown */
+        /** @noinspection PhpStrictTypeCheckingInspection */
         $expression->setExpression(null);
 
         $expression = new Expression();
@@ -48,33 +64,24 @@ final class ExpressionTest extends TestCase
         $expression->setExpression('');
     }
 
-    #[Depends('testSetExpression')]
-    public function testGetExpression(Expression $expression): void
-    {
-        self::assertEquals('Foo Bar', $expression->getExpression());
-    }
-
-    public function testSetParameters(): Expression
+    public function testSetParameters(): void
     {
         $expression = new Expression();
-        $return     = $expression->setParameters('foo');
-        self::assertSame($expression, $return);
-        return $return;
-    }
 
-    public function testSetParametersException(): void
-    {
-        $expression = new Expression('', 'foo');
+        // First mutation
+        $result = $expression->setParameters('foo');
 
-        $this->expectException(TypeError::class);
-        /** @psalm-suppress NullArgument - ensure an exception is thrown */
-        $expression->setParameters(null);
-    }
+        // Verify fluent interface
+        self::assertSame($expression, $result);
 
-    #[Depends('testSetParameters')]
-    public function testGetParameters(Expression $expression): void
-    {
-        self::assertEquals('foo', $expression->getParameters());
+        // Verify the first mutation occurred
+        self::assertEquals([new Value('foo')], $expression->getParameters());
+
+        // Second mutation to verify mutability (setParameters appends)
+        $expression->setParameters('bar');
+
+        // Verify the instance was actually mutated (now has both parameters)
+        self::assertEquals([new Value('foo'), new Value('bar')], $expression->getParameters());
     }
 
     public function testGetExpressionData(): void
@@ -82,30 +89,29 @@ final class ExpressionTest extends TestCase
         $expression = new Expression(
             'X SAME AS ? AND Y = ? BUT LITERALLY ?',
             [
-                ['foo' => Expression::TYPE_IDENTIFIER],
-                [5 => Expression::TYPE_VALUE],
-                ['FUNC(FF%X)' => Expression::TYPE_LITERAL],
+                new Argument\Identifier('foo'),
+                new Argument\Value(5),
+                new Argument\Literal('FUNC(FF%X)'),
             ]
         );
 
-        $expected = [
-            [
-                'X SAME AS %s AND Y = %s BUT LITERALLY %s',
-                ['foo', 5, 'FUNC(FF%X)'],
-                [Expression::TYPE_IDENTIFIER, Expression::TYPE_VALUE, Expression::TYPE_LITERAL],
-            ],
-        ];
+        $expressionData = $expression->getExpressionData();
 
-        self::assertEquals($expected, $expression->getExpressionData());
+        self::assertEquals('X SAME AS %s AND Y = %s BUT LITERALLY %s', $expressionData['spec']);
+        self::assertEquals([
+            new Identifier('foo'),
+            new Value(5),
+            new Literal('FUNC(FF%X)'),
+        ], $expressionData['values']);
     }
 
     public function testGetExpressionDataWillEscapePercent(): void
     {
         $expression = new Expression('X LIKE "foo%"');
-        self::assertEquals(
-            ['X LIKE "foo%%"'],
-            $expression->getExpressionData()
-        );
+
+        $expressionData = $expression->getExpressionData();
+
+        self::assertEquals('X LIKE "foo%%"', $expressionData['spec']);
     }
 
     public function testConstructorWithLiteralZero(): void
@@ -126,24 +132,26 @@ final class ExpressionTest extends TestCase
     public function testNumberOfReplacementsConsidersWhenSameVariableIsUsedManyTimes(): void
     {
         $expression = new Expression('uf.user_id = :user_id OR uf.friend_id = :user_id', ['user_id' => 1]);
+        $value      = new Value(1);
 
-        self::assertSame(
-            [
-                [
-                    'uf.user_id = :user_id OR uf.friend_id = :user_id',
-                    [1],
-                    ['value'],
-                ],
-            ],
-            $expression->getExpressionData()
+        $expressionData = $expression->getExpressionData();
+
+        self::assertEquals(
+            'uf.user_id = :user_id OR uf.friend_id = :user_id',
+            $expressionData['spec']
         );
+        self::assertEquals([$value], $expressionData['values']);
     }
 
     #[DataProvider('falsyExpressionParametersProvider')]
     public function testConstructorWithFalsyValidParameters(mixed $falsyParameter): void
     {
         $expression = new Expression('?', $falsyParameter);
-        self::assertSame($falsyParameter, $expression->getParameters());
+        $falsyValue = Argument::value($falsyParameter);
+
+        $expressionData = $expression->getExpressionData();
+
+        self::assertEquals([$falsyValue], $expressionData['values']);
     }
 
     public function testConstructorWithInvalidParameter(): void
@@ -161,23 +169,44 @@ final class ExpressionTest extends TestCase
             [0],
             [0.0],
             [false],
-            [[]],
         ];
     }
 
     public function testNumberOfReplacementsForExpressionWithParameters(): void
     {
         $expression = new Expression(':a + :b', ['a' => 1, 'b' => 2]);
+        $value1     = Argument::value(1);
+        $value2     = Argument::value(2);
 
-        self::assertSame(
-            [
-                [
-                    ':a + :b',
-                    [1, 2],
-                    ['value', 'value'],
-                ],
-            ],
-            $expression->getExpressionData()
+        $expressionData = $expression->getExpressionData();
+
+        self::assertEquals(':a + :b', $expressionData['spec']);
+        self::assertEquals([$value1, $value2], $expressionData['values']);
+    }
+
+    public function testGetExpressionDataThrowsExceptionWhenParameterCountMismatch(): void
+    {
+        $expression = new Expression('? AND ?', [1]); // Two placeholders but only one parameter
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage(
+            'The number of replacements in the expression does not match the number of parameters'
         );
+        $expression->getExpressionData();
+    }
+
+    public function testConstructorWithMultipleArguments(): void
+    {
+        // Test deprecated multi-argument constructor
+        $expression = new Expression('? + ? - ?', 1, 2, 3);
+
+        $expressionData = $expression->getExpressionData();
+
+        self::assertEquals('%s + %s - %s', $expressionData['spec']);
+        self::assertEquals([
+            Argument::value(1),
+            Argument::value(2),
+            Argument::value(3),
+        ], $expressionData['values']);
     }
 }

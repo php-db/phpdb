@@ -3,7 +3,6 @@
 namespace PhpDb\TableGateway\Feature;
 
 use PhpDb\Metadata\MetadataInterface;
-use PhpDb\Metadata\Object\ConstraintObject;
 use PhpDb\Metadata\Object\TableObject;
 use PhpDb\Sql\TableIdentifier;
 use PhpDb\TableGateway\Exception;
@@ -57,7 +56,6 @@ class MetadataFeature extends AbstractFeature
         $pkc = null;
 
         foreach ($m->getConstraints($table, $schema) as $constraint) {
-            /** @var ConstraintObject $constraint */
             if ($constraint->getType() === 'PRIMARY KEY') {
                 $pkc = $constraint;
                 break;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDb\Sql;
 
 class TableIdentifier
@@ -15,6 +17,7 @@ class TableIdentifier
                 '$table must be a valid table name, empty string given'
             );
         }
+
         $this->table = $table;
 
         if ($schema !== null) {
@@ -23,6 +26,7 @@ class TableIdentifier
                     '$schema must be a valid schema name or null, empty string given'
                 );
             }
+
             $this->schema = $schema;
         }
     }
@@ -30,11 +34,6 @@ class TableIdentifier
     public function getTable(): string
     {
         return $this->table;
-    }
-
-    public function hasSchema(): bool
-    {
-        return $this->schema !== null;
     }
 
     public function getSchema(): ?string

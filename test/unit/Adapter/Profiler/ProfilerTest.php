@@ -1,14 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDbTest\Adapter\Profiler;
 
 use Override;
-use PhpDb\Adapter\Exception\InvalidArgumentException;
 use PhpDb\Adapter\Exception\RuntimeException;
 use PhpDb\Adapter\Profiler\Profiler;
 use PhpDb\Adapter\StatementContainer;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
+use TypeError;
 
 #[CoversMethod(Profiler::class, 'profilerStart')]
 #[CoversMethod(Profiler::class, 'profilerFinish')]
@@ -35,8 +37,7 @@ final class ProfilerTest extends TestCase
         $ret = $this->profiler->profilerStart(new StatementContainer());
         self::assertSame($this->profiler, $ret);
 
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('profilerStart takes either a StatementContainer or a string');
+        $this->expectException(TypeError::class);
         $this->profiler->profilerStart(5);
     }
 

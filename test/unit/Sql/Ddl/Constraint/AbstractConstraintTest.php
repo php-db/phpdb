@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDbTest\Sql\Ddl\Constraint;
 
 use Override;
@@ -14,8 +16,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(AbstractConstraint::class, 'getColumns')]
 final class AbstractConstraintTest extends TestCase
 {
-    /** @var AbstractConstraint */
-    protected AbstractConstraint|MockObject $ac;
+    protected MockObject $ac;
 
     /**
      * @throws Exception

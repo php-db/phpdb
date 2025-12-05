@@ -1,87 +1,64 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDb\Sql\Predicate;
 
+use Override;
 use PhpDb\Sql\AbstractExpression;
+use PhpDb\Sql\Argument\Identifier;
+use PhpDb\Sql\ArgumentInterface;
+use PhpDb\Sql\Exception\InvalidArgumentException;
 
 class IsNull extends AbstractExpression implements PredicateInterface
 {
-    /** @var string */
-    protected $specification = '%1$s IS NULL';
+    protected string $operator = 'IS NULL';
 
-    /** @var nuill|string */
-    protected $identifier;
+    protected ?ArgumentInterface $identifier = null;
 
     /**
      * Constructor
-     *
-     * @param  string $identifier
      */
-    public function __construct($identifier = null)
+    public function __construct(null|string|ArgumentInterface $identifier = null)
     {
-        if ($identifier) {
+        if ($identifier !== null) {
             $this->setIdentifier($identifier);
         }
     }
 
     /**
      * Set identifier for comparison
-     *
-     * @param  string $identifier
-     * @return $this Provides a fluent interface
      */
-    public function setIdentifier($identifier)
+    public function setIdentifier(string|ArgumentInterface $identifier): static
     {
-        $this->identifier = $identifier;
+        $this->identifier = $identifier instanceof ArgumentInterface
+            ? $identifier
+            : new Identifier($identifier);
+
         return $this;
     }
 
     /**
      * Get identifier of comparison
-     *
-     * @return null|string
      */
-    public function getIdentifier()
+    public function getIdentifier(): ?ArgumentInterface
     {
         return $this->identifier;
     }
 
-    /**
-     * Set specification string to use in forming SQL predicate
-     *
-     * @param  string $specification
-     * @return $this Provides a fluent interface
-     */
-    public function setSpecification($specification)
+    /** @inheritDoc */
+    #[Override]
+    public function getExpressionData(): array
     {
-        $this->specification = $specification;
-        return $this;
-    }
+        if (! $this->identifier instanceof ArgumentInterface) {
+            throw new InvalidArgumentException('Identifier must be specified');
+        }
 
-    /**
-     * Get specification string to use in forming SQL predicate
-     *
-     * @return string
-     */
-    public function getSpecification()
-    {
-        return $this->specification;
-    }
+        $identifierSpec = $this->identifier->getSpecification();
 
-    /**
-     * Get parts for where statement
-     *
-     * @return array
-     */
-    public function getExpressionData()
-    {
-        $identifier = $this->normalizeArgument($this->identifier, self::TYPE_IDENTIFIER);
         return [
-            [
-                $this->getSpecification(),
-                [$identifier[0]],
-                [$identifier[1]],
-            ],
+            'spec'   => $this->specification ?? "{$identifierSpec} {$this->operator}",
+            'values' => [$this->identifier],
         ];
     }
 }

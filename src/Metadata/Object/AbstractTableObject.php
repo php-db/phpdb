@@ -1,32 +1,25 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDb\Metadata\Object;
 
 abstract class AbstractTableObject
 {
-    /*
-    protected $catalogName = null;
-    protected $schemaName = null;
-    */
+    protected ?string $name = null;
 
-    /** @var string */
-    protected $name;
+    protected ?string $type = null;
 
-    /** @var string */
-    protected $type;
+    /** @var array<int|string, mixed>|null */
+    protected ?array $columns = null;
 
-    /** @var array */
-    protected $columns;
-
-    /** @var array */
-    protected $constraints;
+    /** @var array<int|string, mixed>|null */
+    protected ?array $constraints = null;
 
     /**
      * Constructor
-     *
-     * @param string $name
      */
-    public function __construct($name)
+    public function __construct(?string $name = null)
     {
         if ($name) {
             $this->setName($name);
@@ -36,7 +29,7 @@ abstract class AbstractTableObject
     /**
      * Set columns
      */
-    public function setColumns(array $columns)
+    public function setColumns(array $columns): void
     {
         $this->columns = $columns;
     }
@@ -44,19 +37,17 @@ abstract class AbstractTableObject
     /**
      * Get columns
      *
-     * @return array
+     * @return array<int|string, mixed>|null
      */
-    public function getColumns()
+    public function getColumns(): ?array
     {
         return $this->columns;
     }
 
     /**
      * Set constraints
-     *
-     * @param array $constraints
      */
-    public function setConstraints($constraints)
+    public function setConstraints(array $constraints): void
     {
         $this->constraints = $constraints;
     }
@@ -64,29 +55,25 @@ abstract class AbstractTableObject
     /**
      * Get constraints
      *
-     * @return array
+     * @return array<int|string, mixed>|null
      */
-    public function getConstraints()
+    public function getConstraints(): ?array
     {
         return $this->constraints;
     }
 
     /**
      * Set name
-     *
-     * @param string $name
      */
-    public function setName($name)
+    public function setName(string $name): void
     {
         $this->name = $name;
     }
 
     /**
      * Get name
-     *
-     * @return string
      */
-    public function getName()
+    public function getName(): ?string
     {
         return $this->name;
     }

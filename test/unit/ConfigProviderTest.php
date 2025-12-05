@@ -7,7 +7,7 @@ use PhpDb\ConfigProvider;
 use PHPUnit\Framework\Attributes\Depends;
 use PHPUnit\Framework\TestCase;
 
-final class ConfigProviderTest extends TestCase
+class ConfigProviderTest extends TestCase
 {
     /** @var array<string, array<array-key, string>> */
     private array $config = [

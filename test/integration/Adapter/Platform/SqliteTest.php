@@ -24,6 +24,7 @@ final class SqliteTest extends TestCase
         if (! getenv('TESTS_PHPDB_ADAPTER_DRIVER_SQLITE_MEMORY')) {
             $this->markTestSkipped(self::class . ' integration tests are not enabled!');
         }
+
         if (extension_loaded('pdo')) {
             $this->adapters['pdo_sqlite'] = new \PDO(
                 'sqlite::memory:'
@@ -31,20 +32,18 @@ final class SqliteTest extends TestCase
         }
     }
 
-    /**
-     * @return void
-     */
-    public function testQuoteValueWithPdoSqlite()
+    public function testQuoteValueWithPdoSqlite(): void
     {
         if (! $this->adapters['pdo_sqlite'] instanceof \PDO) {
             $this->markTestSkipped('SQLite (PDO_SQLITE) not configured in unit test configuration file');
         }
+
         $sqlite = new Sqlite($this->adapters['pdo_sqlite']);
         $value  = $sqlite->quoteValue('value');
-        self::assertEquals('\'value\'', $value);
+        self::assertEquals("'value'", $value);
 
         $sqlite = new Sqlite(new Pdo\Pdo(new Pdo\Connection($this->adapters['pdo_sqlite'])));
         $value  = $sqlite->quoteValue('value');
-        self::assertEquals('\'value\'', $value);
+        self::assertEquals("'value'", $value);
     }
 }

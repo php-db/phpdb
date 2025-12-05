@@ -1,73 +1,55 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDb\Metadata\Object;
 
 use DateTime;
 
 class TriggerObject
 {
-    /** @var string */
-    protected $name;
+    protected ?string $name = null;
 
-    /** @var string */
-    protected $eventManipulation;
+    protected ?string $eventManipulation = null;
 
-    /** @var string */
-    protected $eventObjectCatalog;
+    protected ?string $eventObjectCatalog = null;
 
-    /** @var string */
-    protected $eventObjectSchema;
+    protected ?string $eventObjectSchema = null;
 
-    /** @var string */
-    protected $eventObjectTable;
+    protected ?string $eventObjectTable = null;
 
-    /** @var string */
-    protected $actionOrder;
+    protected ?string $actionOrder = null;
 
-    /** @var string */
-    protected $actionCondition;
+    protected ?string $actionCondition = null;
 
-    /** @var string */
-    protected $actionStatement;
+    protected ?string $actionStatement = null;
 
-    /** @var string */
-    protected $actionOrientation;
+    protected ?string $actionOrientation = null;
 
-    /** @var string */
-    protected $actionTiming;
+    protected ?string $actionTiming = null;
 
-    /** @var string */
-    protected $actionReferenceOldTable;
+    protected ?string $actionReferenceOldTable = null;
 
-    /** @var string */
-    protected $actionReferenceNewTable;
+    protected ?string $actionReferenceNewTable = null;
 
-    /** @var string */
-    protected $actionReferenceOldRow;
+    protected ?string $actionReferenceOldRow = null;
 
-    /** @var string */
-    protected $actionReferenceNewRow;
+    protected ?string $actionReferenceNewRow = null;
 
-    /** @var DateTime */
-    protected $created;
+    protected ?DateTime $created = null;
 
     /**
      * Get Name.
-     *
-     * @return string
      */
-    public function getName()
+    public function getName(): ?string
     {
         return $this->name;
     }
 
     /**
      * Set Name.
-     *
-     * @param string $name
-     * @return $this Provides a fluent interface
      */
-    public function setName($name)
+    public function setName(string $name): static
     {
         $this->name = $name;
         return $this;
@@ -75,21 +57,16 @@ class TriggerObject
 
     /**
      * Get Event Manipulation.
-     *
-     * @return string
      */
-    public function getEventManipulation()
+    public function getEventManipulation(): ?string
     {
         return $this->eventManipulation;
     }
 
     /**
      * Set Event Manipulation.
-     *
-     * @param string $eventManipulation
-     * @return $this Provides a fluent interface
      */
-    public function setEventManipulation($eventManipulation)
+    public function setEventManipulation(string $eventManipulation): static
     {
         $this->eventManipulation = $eventManipulation;
         return $this;
@@ -97,21 +74,16 @@ class TriggerObject
 
     /**
      * Get Event Object Catalog.
-     *
-     * @return string
      */
-    public function getEventObjectCatalog()
+    public function getEventObjectCatalog(): ?string
     {
         return $this->eventObjectCatalog;
     }
 
     /**
      * Set Event Object Catalog.
-     *
-     * @param string $eventObjectCatalog
-     * @return $this Provides a fluent interface
      */
-    public function setEventObjectCatalog($eventObjectCatalog)
+    public function setEventObjectCatalog(string $eventObjectCatalog): static
     {
         $this->eventObjectCatalog = $eventObjectCatalog;
         return $this;
@@ -119,21 +91,16 @@ class TriggerObject
 
     /**
      * Get Event Object Schema.
-     *
-     * @return string
      */
-    public function getEventObjectSchema()
+    public function getEventObjectSchema(): ?string
     {
         return $this->eventObjectSchema;
     }
 
     /**
      * Set Event Object Schema.
-     *
-     * @param string $eventObjectSchema
-     * @return $this Provides a fluent interface
      */
-    public function setEventObjectSchema($eventObjectSchema)
+    public function setEventObjectSchema(string $eventObjectSchema): static
     {
         $this->eventObjectSchema = $eventObjectSchema;
         return $this;
@@ -141,21 +108,16 @@ class TriggerObject
 
     /**
      * Get Event Object Table.
-     *
-     * @return string
      */
-    public function getEventObjectTable()
+    public function getEventObjectTable(): ?string
     {
         return $this->eventObjectTable;
     }
 
     /**
      * Set Event Object Table.
-     *
-     * @param string $eventObjectTable
-     * @return $this Provides a fluent interface
      */
-    public function setEventObjectTable($eventObjectTable)
+    public function setEventObjectTable(string $eventObjectTable): static
     {
         $this->eventObjectTable = $eventObjectTable;
         return $this;
@@ -163,21 +125,16 @@ class TriggerObject
 
     /**
      * Get Action Order.
-     *
-     * @return string
      */
-    public function getActionOrder()
+    public function getActionOrder(): ?string
     {
         return $this->actionOrder;
     }
 
     /**
      * Set Action Order.
-     *
-     * @param string $actionOrder
-     * @return $this Provides a fluent interface
      */
-    public function setActionOrder($actionOrder)
+    public function setActionOrder(string $actionOrder): static
     {
         $this->actionOrder = $actionOrder;
         return $this;
@@ -185,21 +142,16 @@ class TriggerObject
 
     /**
      * Get Action Condition.
-     *
-     * @return string
      */
-    public function getActionCondition()
+    public function getActionCondition(): ?string
     {
         return $this->actionCondition;
     }
 
     /**
      * Set Action Condition.
-     *
-     * @param string $actionCondition
-     * @return $this Provides a fluent interface
      */
-    public function setActionCondition($actionCondition)
+    public function setActionCondition(?string $actionCondition): static
     {
         $this->actionCondition = $actionCondition;
         return $this;
@@ -207,21 +159,16 @@ class TriggerObject
 
     /**
      * Get Action Statement.
-     *
-     * @return string
      */
-    public function getActionStatement()
+    public function getActionStatement(): ?string
     {
         return $this->actionStatement;
     }
 
     /**
      * Set Action Statement.
-     *
-     * @param string $actionStatement
-     * @return $this Provides a fluent interface
      */
-    public function setActionStatement($actionStatement)
+    public function setActionStatement(string $actionStatement): static
     {
         $this->actionStatement = $actionStatement;
         return $this;
@@ -229,21 +176,16 @@ class TriggerObject
 
     /**
      * Get Action Orientation.
-     *
-     * @return string
      */
-    public function getActionOrientation()
+    public function getActionOrientation(): ?string
     {
         return $this->actionOrientation;
     }
 
     /**
      * Set Action Orientation.
-     *
-     * @param string $actionOrientation
-     * @return $this Provides a fluent interface
      */
-    public function setActionOrientation($actionOrientation)
+    public function setActionOrientation(string $actionOrientation): static
     {
         $this->actionOrientation = $actionOrientation;
         return $this;
@@ -251,21 +193,16 @@ class TriggerObject
 
     /**
      * Get Action Timing.
-     *
-     * @return string
      */
-    public function getActionTiming()
+    public function getActionTiming(): ?string
     {
         return $this->actionTiming;
     }
 
     /**
      * Set Action Timing.
-     *
-     * @param string $actionTiming
-     * @return $this Provides a fluent interface
      */
-    public function setActionTiming($actionTiming)
+    public function setActionTiming(string $actionTiming): static
     {
         $this->actionTiming = $actionTiming;
         return $this;
@@ -273,21 +210,16 @@ class TriggerObject
 
     /**
      * Get Action Reference Old Table.
-     *
-     * @return string
      */
-    public function getActionReferenceOldTable()
+    public function getActionReferenceOldTable(): ?string
     {
         return $this->actionReferenceOldTable;
     }
 
     /**
      * Set Action Reference Old Table.
-     *
-     * @param string $actionReferenceOldTable
-     * @return $this Provides a fluent interface
      */
-    public function setActionReferenceOldTable($actionReferenceOldTable)
+    public function setActionReferenceOldTable(?string $actionReferenceOldTable): static
     {
         $this->actionReferenceOldTable = $actionReferenceOldTable;
         return $this;
@@ -295,21 +227,16 @@ class TriggerObject
 
     /**
      * Get Action Reference New Table.
-     *
-     * @return string
      */
-    public function getActionReferenceNewTable()
+    public function getActionReferenceNewTable(): ?string
     {
         return $this->actionReferenceNewTable;
     }
 
     /**
      * Set Action Reference New Table.
-     *
-     * @param string $actionReferenceNewTable
-     * @return $this Provides a fluent interface
      */
-    public function setActionReferenceNewTable($actionReferenceNewTable)
+    public function setActionReferenceNewTable(?string $actionReferenceNewTable): static
     {
         $this->actionReferenceNewTable = $actionReferenceNewTable;
         return $this;
@@ -317,10 +244,8 @@ class TriggerObject
 
     /**
      * Get Action Reference Old Row.
-     *
-     * @return string
      */
-    public function getActionReferenceOldRow()
+    public function getActionReferenceOldRow(): ?string
     {
         return $this->actionReferenceOldRow;
     }
@@ -328,10 +253,9 @@ class TriggerObject
     /**
      * Set Action Reference Old Row.
      *
-     * @param string $actionReferenceOldRow
      * @return $this Provides a fluent interface
      */
-    public function setActionReferenceOldRow($actionReferenceOldRow)
+    public function setActionReferenceOldRow(string $actionReferenceOldRow): static
     {
         $this->actionReferenceOldRow = $actionReferenceOldRow;
         return $this;
@@ -339,10 +263,8 @@ class TriggerObject
 
     /**
      * Get Action Reference New Row.
-     *
-     * @return string
      */
-    public function getActionReferenceNewRow()
+    public function getActionReferenceNewRow(): ?string
     {
         return $this->actionReferenceNewRow;
     }
@@ -350,10 +272,9 @@ class TriggerObject
     /**
      * Set Action Reference New Row.
      *
-     * @param string $actionReferenceNewRow
      * @return $this Provides a fluent interface
      */
-    public function setActionReferenceNewRow($actionReferenceNewRow)
+    public function setActionReferenceNewRow(string $actionReferenceNewRow): static
     {
         $this->actionReferenceNewRow = $actionReferenceNewRow;
         return $this;
@@ -361,10 +282,8 @@ class TriggerObject
 
     /**
      * Get Created.
-     *
-     * @return DateTime
      */
-    public function getCreated()
+    public function getCreated(): ?DateTime
     {
         return $this->created;
     }
@@ -372,10 +291,9 @@ class TriggerObject
     /**
      * Set Created.
      *
-     * @param DateTime $created
      * @return $this Provides a fluent interface
      */
-    public function setCreated($created)
+    public function setCreated(?DateTime $created): static
     {
         $this->created = $created;
         return $this;

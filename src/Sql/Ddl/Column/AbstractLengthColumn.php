@@ -1,62 +1,59 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDb\Sql\Ddl\Column;
+
+use Override;
+use PhpDb\Sql\Argument\Literal;
+
+use function array_splice;
 
 abstract class AbstractLengthColumn extends Column
 {
-    /** @var int */
-    protected $length;
+    protected string $specification = '%s %s(%s)';
 
-    /**
-     * {@inheritDoc}
-     *
-     * @param int $length
-     */
-    public function __construct($name, $length = null, $nullable = false, $default = null, array $options = [])
-    {
+    protected ?int $length = null;
+
+    public function __construct(
+        string $name,
+        ?int $length = null,
+        bool $nullable = false,
+        mixed $default = null,
+        array $options = []
+    ) {
         $this->setLength($length);
 
         parent::__construct($name, $nullable, $default, $options);
     }
 
-    /**
-     * @param  int $length
-     * @return $this Provides a fluent interface
-     */
-    public function setLength($length)
+    public function setLength(?int $length = 0): static
     {
-        $this->length = (int) $length;
+        $this->length = $length;
 
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getLength()
+    public function getLength(): int|null
     {
         return $this->length;
     }
 
-    /**
-     * @return string
-     */
-    protected function getLengthExpression()
+    protected function getLengthExpression(): string
     {
         return (string) $this->length;
     }
 
-    /**
-     * @return array
-     */
-    public function getExpressionData()
+    /** @inheritDoc */
+    #[Override]
+    public function getExpressionData(): array
     {
-        $data = parent::getExpressionData();
+        $expressionData = parent::getExpressionData();
 
-        if ($this->getLengthExpression()) {
-            $data[0][1][1] .= '(' . $this->getLengthExpression() . ')';
+        if ($this->getLengthExpression() !== '' && $this->getLengthExpression() !== '0') {
+            array_splice($expressionData['values'], 2, 0, [new Literal($this->getLengthExpression())]);
         }
 
-        return $data;
+        return $expressionData;
     }
 }

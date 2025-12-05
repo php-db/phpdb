@@ -4,18 +4,19 @@ namespace PhpDbTest\Adapter\Driver\Pdo;
 
 use Override;
 use PhpDb\Adapter\Driver\DriverInterface;
-use PhpDb\Adapter\Driver\Pdo\Pdo;
+use PhpDb\Adapter\Driver\Pdo\AbstractPdo;
 use PhpDb\Adapter\Driver\Pdo\Result;
 use PhpDb\Exception\RuntimeException;
+use PhpDbTest\Adapter\Driver\Pdo\TestAsset\TestPdo;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
-#[CoversMethod(Pdo::class, 'getDatabasePlatformName')]
-#[CoversMethod(Pdo::class, 'getResultPrototype')]
+#[CoversMethod(AbstractPdo::class, 'getDatabasePlatformName')]
+#[CoversMethod(AbstractPdo::class, 'getResultPrototype')]
 final class PdoTest extends TestCase
 {
-    protected Pdo $pdo;
+    protected TestPdo $pdo;
 
     /**
      * Sets up the fixture, for example, opens a network connection.
@@ -24,7 +25,7 @@ final class PdoTest extends TestCase
     #[Override]
     protected function setUp(): void
     {
-        $this->pdo = new Pdo([]);
+        $this->pdo = new TestPdo([]);
     }
 
     public function testGetDatabasePlatformName(): void
@@ -44,11 +45,11 @@ final class PdoTest extends TestCase
             ['123foo', null, ':123foo'],
             [1, null, '?'],
             ['1', null, '?'],
-            ['foo', Pdo::PARAMETERIZATION_NAMED, ':foo'],
-            ['foo_bar', Pdo::PARAMETERIZATION_NAMED, ':foo_bar'],
-            ['123foo', Pdo::PARAMETERIZATION_NAMED, ':123foo'],
-            [1, Pdo::PARAMETERIZATION_NAMED, ':1'],
-            ['1', Pdo::PARAMETERIZATION_NAMED, ':1'],
+            ['foo', DriverInterface::PARAMETERIZATION_NAMED, ':foo'],
+            ['foo_bar', DriverInterface::PARAMETERIZATION_NAMED, ':foo_bar'],
+            ['123foo', DriverInterface::PARAMETERIZATION_NAMED, ':123foo'],
+            [1, DriverInterface::PARAMETERIZATION_NAMED, ':1'],
+            ['1', DriverInterface::PARAMETERIZATION_NAMED, ':1'],
             [':foo', null, ':foo'],
         ];
     }

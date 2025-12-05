@@ -1,176 +1,137 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDb\Sql\Ddl\Column;
 
+use Override;
+use PhpDb\Sql\Argument\Identifier;
+use PhpDb\Sql\Argument\Literal;
+use PhpDb\Sql\Argument\Value;
 use PhpDb\Sql\Ddl\Constraint\ConstraintInterface;
 
-use function array_merge;
+use function implode;
 
 class Column implements ColumnInterface
 {
-    /** @var null|string|int */
-    protected $default;
+    protected string|int|null $default;
 
-    /** @var bool */
-    protected $isNullable = false;
+    protected bool $isNullable = false;
 
-    /** @var string */
-    protected $name = '';
+    protected string $name = '';
 
-    /** @var array */
-    protected $options = [];
+    protected array $options = [];
 
     /** @var ConstraintInterface[] */
-    protected $constraints = [];
+    protected array $constraints = [];
 
-    /** @var string */
-    protected $specification = '%s %s';
+    protected string $specification = '%s %s';
 
-    /** @var string */
-    protected $type = 'INTEGER';
+    protected string $type = 'INTEGER';
 
-    /**
-     * @param null|string $name
-     * @param bool        $nullable
-     * @param mixed|null  $default
-     * @param mixed[]     $options
-     */
-    public function __construct($name = null, $nullable = false, $default = null, array $options = [])
-    {
+    public function __construct(
+        string $name = '',
+        bool $nullable = false,
+        mixed $default = null,
+        array $options = []
+    ) {
         $this->setName($name);
         $this->setNullable($nullable);
         $this->setDefault($default);
         $this->setOptions($options);
     }
 
-    /**
-     * @param  string $name
-     * @return $this Provides a fluent interface
-     */
-    public function setName($name)
+    public function setName(string $name): static
     {
-        $this->name = (string) $name;
+        $this->name = $name;
         return $this;
     }
 
-    /**
-     * @return null|string
-     */
-    public function getName()
+    #[Override]
+    public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @param  bool $nullable
-     * @return $this Provides a fluent interface
-     */
-    public function setNullable($nullable)
+    public function setNullable(bool $nullable): static
     {
-        $this->isNullable = (bool) $nullable;
+        $this->isNullable = $nullable;
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function isNullable()
+    #[Override]
+    public function isNullable(): bool
     {
         return $this->isNullable;
     }
 
-    /**
-     * @param  null|string|int $default
-     * @return $this Provides a fluent interface
-     */
-    public function setDefault($default)
+    public function setDefault(string|int|null $default): static
     {
         $this->default = $default;
         return $this;
     }
 
-    /**
-     * @return null|string|int
-     */
-    public function getDefault()
+    #[Override]
+    public function getDefault(): string|int|null
     {
         return $this->default;
     }
 
-    /**
-     * @return $this Provides a fluent interface
-     */
-    public function setOptions(array $options)
+    public function setOptions(array $options): static
     {
         $this->options = $options;
         return $this;
     }
 
-    /**
-     * @param  string $name
-     * @param  string|boolean $value
-     * @return $this Provides a fluent interface
-     */
-    public function setOption($name, $value)
+    public function setOption(string $name, bool|string $value): static
     {
         $this->options[$name] = $value;
         return $this;
     }
 
-    /**
-     * @return array
-     */
-    public function getOptions()
+    #[Override]
+    public function getOptions(): array
     {
         return $this->options;
     }
 
-    /**
-     * @return $this Provides a fluent interface
-     */
-    public function addConstraint(ConstraintInterface $constraint)
+    public function addConstraint(ConstraintInterface $constraint): static
     {
         $this->constraints[] = $constraint;
 
         return $this;
     }
 
-    /**
-     * @return array
-     */
-    public function getExpressionData()
+    /** @inheritDoc */
+    #[Override]
+    public function getExpressionData(): array
     {
-        $spec = $this->specification;
+        $specParts = [$this->specification];
+        $values    = [
+            new Identifier($this->name),
+            new Literal($this->type),
+        ];
 
-        $params   = [];
-        $params[] = $this->name;
-        $params[] = $this->type;
-
-        $types = [self::TYPE_IDENTIFIER, self::TYPE_LITERAL];
-
-        if (! $this->isNullable) {
-            $spec .= ' NOT NULL';
+        if ($this->isNullable === false) {
+            $specParts[] = 'NOT NULL';
         }
 
         if ($this->default !== null) {
-            $spec    .= ' DEFAULT %s';
-            $params[] = $this->default;
-            $types[]  = self::TYPE_VALUE;
+            $specParts[] = 'DEFAULT %s';
+            $values[]    = new Value($this->default);
         }
-
-        $data = [
-            [
-                $spec,
-                $params,
-                $types,
-            ],
-        ];
 
         foreach ($this->constraints as $constraint) {
-            $data[] = ' ';
-            $data   = array_merge($data, $constraint->getExpressionData());
+            $constraintData = $constraint->getExpressionData();
+            $specParts[]    = $constraintData['spec'];
+            foreach ($constraintData['values'] as $value) {
+                $values[] = $value;
+            }
         }
 
-        return $data;
+        return [
+            'spec'   => implode(' ', $specParts),
+            'values' => $values,
+        ];
     }
 }

@@ -1,8 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDbTest\Sql\Predicate;
 
-use PhpDb\Sql\Exception\InvalidArgumentException;
+use PhpDb\Sql\Argument;
+use PhpDb\Sql\Expression as SqlExpression;
 use PhpDb\Sql\Predicate\Expression;
 use PhpDb\Sql\Predicate\In;
 use PhpDb\Sql\Predicate\IsNotNull;
@@ -14,10 +17,16 @@ use PhpDbTest\DeprecatedAssertionsTrait;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 use ReflectionException;
+use TypeError;
 
-use function var_export;
-
+#[CoversMethod(PredicateSet::class, '__construct')]
+#[CoversMethod(PredicateSet::class, 'addPredicate')]
 #[CoversMethod(PredicateSet::class, 'addPredicates')]
+#[CoversMethod(PredicateSet::class, 'getPredicates')]
+#[CoversMethod(PredicateSet::class, 'orPredicate')]
+#[CoversMethod(PredicateSet::class, 'andPredicate')]
+#[CoversMethod(PredicateSet::class, 'getExpressionData')]
+#[CoversMethod(PredicateSet::class, 'count')]
 final class PredicateSetTest extends TestCase
 {
     use DeprecatedAssertionsTrait;
@@ -31,66 +40,69 @@ final class PredicateSetTest extends TestCase
     public function testCombinationIsAndByDefault(): void
     {
         $predicateSet = new PredicateSet();
-        $predicateSet->addPredicate(new IsNull('foo'))
-                  ->addPredicate(new IsNull('bar'));
-        $parts = $predicateSet->getExpressionData();
-        self::assertCount(3, $parts);
+        $predicateSet
+            ->addPredicate(new IsNull('foo'))
+            ->addPredicate(new IsNull('bar'));
 
-        self::assertStringContainsString('AND', (string) $parts[1]);
-        self::assertStringNotContainsString('OR', (string) $parts[1]);
+        $expressionData = $predicateSet->getExpressionData();
+
+        // 2 predicates = 2 values
+        self::assertCount(2, $expressionData['values']);
+        self::assertStringContainsString('AND', $expressionData['spec']);
+        self::assertStringNotContainsString('OR', $expressionData['spec']);
     }
 
     public function testCanPassPredicatesAndDefaultCombinationViaConstructor(): void
     {
         new PredicateSet();
-        $set   = new PredicateSet([
+        $predicateSet = new PredicateSet([
             new IsNull('foo'),
             new IsNull('bar'),
         ], 'OR');
-        $parts = $set->getExpressionData();
-        self::assertCount(3, $parts);
-        self::assertStringContainsString('OR', (string) $parts[1]);
-        self::assertStringNotContainsString('AND', (string) $parts[1]);
+
+        $expressionData = $predicateSet->getExpressionData();
+
+        // 2 predicates = 2 values
+        self::assertCount(2, $expressionData['values']);
+        self::assertStringContainsString('OR', $expressionData['spec']);
+        self::assertStringNotContainsString('AND', $expressionData['spec']);
     }
 
     public function testCanPassBothPredicateAndCombinationToAddPredicate(): void
     {
         $predicateSet = new PredicateSet();
-        $predicateSet->addPredicate(new IsNull('foo'), 'OR')
-                  ->addPredicate(new IsNull('bar'), 'AND')
-                  ->addPredicate(new IsNull('baz'), 'OR')
-                  ->addPredicate(new IsNull('bat'), 'AND');
-        $parts = $predicateSet->getExpressionData();
-        self::assertCount(7, $parts);
+        $predicateSet
+            ->addPredicate(new IsNull('foo'), 'OR')
+            ->addPredicate(new IsNull('bar'), 'AND')
+            ->addPredicate(new IsNull('baz'), 'OR')
+            ->addPredicate(new IsNull('bat'), 'AND');
 
-        self::assertStringNotContainsString('OR', (string) $parts[1], var_export($parts, true));
-        self::assertStringContainsString('AND', (string) $parts[1]);
+        $expressionData = $predicateSet->getExpressionData();
 
-        self::assertStringContainsString('OR', (string) $parts[3]);
-        self::assertStringNotContainsString('AND', (string) $parts[3]);
+        // 4 predicates = 4 values
+        self::assertCount(4, $expressionData['values']);
 
-        self::assertStringNotContainsString('OR', (string) $parts[5]);
-        self::assertStringContainsString('AND', (string) $parts[5]);
+        // Verify combinators are in spec string: AND bar AND baz OR bat
+        $spec = $expressionData['spec'];
+        self::assertEquals('%s IS NULL AND %s IS NULL OR %s IS NULL AND %s IS NULL', $spec);
     }
 
     public function testCanUseOrPredicateAndAndPredicateMethods(): void
     {
         $predicateSet = new PredicateSet();
         $predicateSet->orPredicate(new IsNull('foo'))
-                  ->andPredicate(new IsNull('bar'))
-                  ->orPredicate(new IsNull('baz'))
-                  ->andPredicate(new IsNull('bat'));
-        $parts = $predicateSet->getExpressionData();
-        self::assertCount(7, $parts);
+                     ->andPredicate(new IsNull('bar'))
+                     ->orPredicate(new IsNull('baz'))
+                     ->andPredicate(new IsNull('bat'));
 
-        self::assertStringNotContainsString('OR', (string) $parts[1], var_export($parts, true));
-        self::assertStringContainsString('AND', (string) $parts[1]);
+        $expressionData = $predicateSet->getExpressionData();
 
-        self::assertStringContainsString('OR', (string) $parts[3]);
-        self::assertStringNotContainsString('AND', (string) $parts[3]);
+        // 4 predicates = 4 values
+        self::assertCount(4, $expressionData['values']);
 
-        self::assertStringNotContainsString('OR', (string) $parts[5]);
-        self::assertStringContainsString('AND', (string) $parts[5]);
+        // Verify spec contains correct pattern: foo AND bar OR baz AND bat
+        $spec = $expressionData['spec'];
+        self::assertEquals('%s IS NULL AND %s IS NULL OR %s IS NULL AND %s IS NULL', $spec);
     }
 
     /**
@@ -143,9 +155,56 @@ final class PredicateSetTest extends TestCase
             self::assertSame($predicateSet, $what);
         });
 
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Predicate cannot be null');
-        /** @psalm-suppress NullArgument - ensure an exception is thrown */
+        $this->expectException(TypeError::class);
+        /** @noinspection PhpStrictTypeCheckingInspection */
         $predicateSet->addPredicates(null);
+    }
+
+    /**
+     * Test that Expression objects (not just PredicateInterface) can be added via addPredicates
+     *
+     * @throws ReflectionException
+     */
+    public function testAddPredicatesWithExpression(): void
+    {
+        $predicateSet = new PredicateSet();
+
+        // Add a SqlExpression (Expression) - not a Predicate\Expression (PredicateInterface)
+        $predicateSet->addPredicates([
+            new SqlExpression('COUNT(?) > ?', [Argument::identifier('id'), Argument::value(5)]),
+        ]);
+
+        $predicates = (array) $this->readAttribute($predicateSet, 'predicates');
+        self::assertCount(1, $predicates);
+
+        self::assertIsArray($predicates[0]);
+        self::assertEquals('AND', $predicates[0][0]);
+        // Should be wrapped in a Predicate\Expression
+        self::assertInstanceOf(Expression::class, $predicates[0][1]);
+
+        // Verify the expression data is preserved
+        $expressionData = $predicateSet->getExpressionData();
+        self::assertStringContainsString('COUNT', $expressionData['spec']);
+    }
+
+    /**
+     * Test multiple Expression objects with different combinations
+     *
+     * @throws ReflectionException
+     */
+    public function testAddPredicatesWithMultipleExpressions(): void
+    {
+        $predicateSet = new PredicateSet();
+
+        $predicateSet->addPredicates([
+            new SqlExpression('SUM(?) > ?', [Argument::identifier('amount'), Argument::value(100)]),
+            new SqlExpression('AVG(?) < ?', [Argument::identifier('price'), Argument::value(50)]),
+        ]);
+
+        $predicates = (array) $this->readAttribute($predicateSet, 'predicates');
+        self::assertCount(2, $predicates);
+
+        self::assertInstanceOf(Expression::class, $predicates[0][1]);
+        self::assertInstanceOf(Expression::class, $predicates[1][1]);
     }
 }

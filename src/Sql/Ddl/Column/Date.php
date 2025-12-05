@@ -1,9 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDb\Sql\Ddl\Column;
 
 class Date extends Column
 {
-    /** @var string */
-    protected $type = 'DATE';
+    protected string $type = 'DATE';
 }

@@ -1,8 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDbTest\Sql;
 
-use InvalidArgumentException;
 use PhpDb\Sql\Join;
 use PhpDb\Sql\Select;
 use PhpDbTest\DeprecatedAssertionsTrait;
@@ -10,11 +11,19 @@ use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\TestDox;
 use PHPUnit\Framework\TestCase;
 use ReflectionException;
+use TypeError;
 
+#[CoversMethod(Join::class, '__construct')]
+#[CoversMethod(Join::class, 'rewind')]
+#[CoversMethod(Join::class, 'current')]
+#[CoversMethod(Join::class, 'key')]
+#[CoversMethod(Join::class, 'next')]
+#[CoversMethod(Join::class, 'valid')]
+#[CoversMethod(Join::class, 'getJoins')]
 #[CoversMethod(Join::class, 'join')]
 #[CoversMethod(Join::class, 'count')]
 #[CoversMethod(Join::class, 'reset')]
-final class JoinTest extends TestCase
+class JoinTest extends TestCase
 {
     use DeprecatedAssertionsTrait;
 
@@ -115,9 +124,8 @@ final class JoinTest extends TestCase
     {
         $join = new Join();
 
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage("join() expects '' as a single element associative array");
-        /** @psalm-suppress InvalidArgument */
+        $this->expectException(TypeError::class);
+        /** @noinspection PhpArgumentWithoutNamedIdentifierInspection */
         $join->join([], false);
     }
 

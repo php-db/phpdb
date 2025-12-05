@@ -28,10 +28,9 @@ final class PdoMock extends PDO
 
     /**
      * @param string $attribute
-     * @return null
      */
     #[ReturnTypeWillChange]
-    public function getAttribute($attribute)
+    public function getAttribute($attribute): null
     {
         return null;
     }

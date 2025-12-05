@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDb\Sql;
 
 use Closure;
@@ -7,9 +9,11 @@ use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\ParameterContainer;
 use PhpDb\Adapter\Platform\PlatformInterface;
 use PhpDb\Sql\Predicate\PredicateInterface;
+use PhpDb\Sql\TableIdentifier;
+use PhpDb\Sql\Where;
 
 use function array_key_exists;
-use function sprintf;
+use function str_replace;
 use function strtolower;
 
 /**
@@ -21,130 +25,115 @@ class Delete extends AbstractPreparableSql
      * @const
      */
     public const SPECIFICATION_DELETE = 'delete';
-    public const SPECIFICATION_WHERE  = 'where';
+
+    final public const SPECIFICATION_WHERE = 'where';
+
     /**@#-*/
 
     /**
      * {@inheritDoc}
      */
-    protected $specifications = [
+    protected array $specifications = [
         self::SPECIFICATION_DELETE => 'DELETE FROM %1$s',
         self::SPECIFICATION_WHERE  => 'WHERE %1$s',
     ];
 
-    /** @var string|array|TableIdentifier */
     protected TableIdentifier|string|array $table = '';
 
-    /** @var bool */
-    protected $emptyWhereProtection = true;
+    protected bool $emptyWhereProtection = true;
 
-    /** @var array */
-    protected $set = [];
-
-    /** @var null|string|Where */
-    protected $where;
+    protected ?Where $where = null;
 
     /**
      * Constructor
-     *
-     * @param  null|string|TableIdentifier $table
      */
-    public function __construct($table = null)
+    public function __construct(string|TableIdentifier|null $table = null)
     {
         if ($table) {
             $this->from($table);
         }
-        $this->where = new Where();
+    }
+
+    private function getWhere(): Where
+    {
+        return $this->where ??= new Where();
     }
 
     /**
      * Create from statement
-     *
-     * @param  string|array|TableIdentifier $table
-     * @return $this Provides a fluent interface
      */
-    public function from($table): static
+    public function from(TableIdentifier|string|array $table): static
     {
         $this->table = $table;
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getRawState(?string $key = null)
+    public function getRawState(?string $key = null): mixed
     {
         $rawState = [
             'emptyWhereProtection' => $this->emptyWhereProtection,
             'table'                => $this->table,
-            'set'                  => $this->set,
-            'where'                => $this->where,
+            'where'                => $this->getWhere(),
         ];
-        return isset($key) && array_key_exists($key, $rawState) ? $rawState[$key] : $rawState;
+        return $key !== null && array_key_exists($key, $rawState) ? $rawState[$key] : $rawState;
     }
 
     /**
      * Create where clause
      *
-     * @param Where|Closure|string|array|PredicateInterface $predicate
-     * @param  string $combination One of the OP_* constants from Predicate\PredicateSet
-     * @return $this Provides a fluent interface
+     * @param string $combination One of the OP_* constants from Predicate\PredicateSet
      */
-    public function where($predicate, $combination = Predicate\PredicateSet::OP_AND)
-    {
+    public function where(
+        PredicateInterface|array|Closure|string|Where $predicate,
+        string $combination = Predicate\PredicateSet::OP_AND
+    ): static {
         if ($predicate instanceof Where) {
             $this->where = $predicate;
         } else {
-            $this->where->addPredicates($predicate, $combination);
+            $this->getWhere()->addPredicates($predicate, $combination);
         }
+
         return $this;
     }
 
-    /**
-     * @return string
-     */
     protected function processDelete(
         PlatformInterface $platform,
         ?DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null
-    ) {
-        return sprintf(
-            $this->specifications[static::SPECIFICATION_DELETE],
-            $this->resolveTable($this->table, $platform, $driver, $parameterContainer)
+    ): string {
+        return str_replace(
+            '%1$s',
+            $this->resolveTable($this->table, $platform, $driver, $parameterContainer),
+            $this->specifications[static::SPECIFICATION_DELETE]
         );
     }
 
-    /**
-     * @return null|string
-     */
     protected function processWhere(
         PlatformInterface $platform,
         ?DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null
-    ) {
-        if ($this->where->count() === 0) {
-            return;
+    ): ?string {
+        if ($this->where === null || $this->where->count() === 0) {
+            return null;
         }
 
-        return sprintf(
-            $this->specifications[static::SPECIFICATION_WHERE],
-            $this->processExpression($this->where, $platform, $driver, $parameterContainer, 'where')
+        return str_replace(
+            '%1$s',
+            $this->processExpression($this->where, $platform, $driver, $parameterContainer, 'where'),
+            $this->specifications[static::SPECIFICATION_WHERE]
         );
     }
 
     /**
      * Property overloading
-     *
      * Overloads "where" only.
-     *
-     * @param  string $name
-     * @return Where|null
      */
-    public function __get($name)
+    public function __get(string $name): ?Where
     {
-        switch (strtolower($name)) {
-            case 'where':
-                return $this->where;
+        if (strtolower($name) === 'where') {
+            return $this->getWhere();
         }
+
+        return null;
     }
 }

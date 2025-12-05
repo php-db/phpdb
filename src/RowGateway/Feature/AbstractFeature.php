@@ -30,7 +30,7 @@ abstract class AbstractFeature extends AbstractRowGateway
     /**
      * @throws RuntimeException
      */
-    public function initialize()
+    public function initialize(): void
     {
         throw new Exception\RuntimeException('This method is not intended to be called on this object.');
     }

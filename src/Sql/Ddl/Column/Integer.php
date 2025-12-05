@@ -1,21 +1,24 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDb\Sql\Ddl\Column;
+
+use Override;
 
 class Integer extends Column
 {
-    /**
-     * @return array
-     */
-    public function getExpressionData()
+    /** @inheritDoc */
+    #[Override]
+    public function getExpressionData(): array
     {
-        $data    = parent::getExpressionData();
-        $options = $this->getOptions();
+        $expressionData = parent::getExpressionData();
+        $options        = $this->getOptions();
 
         if (isset($options['length'])) {
-            $data[0][1][1] .= '(' . $options['length'] . ')';
+            $expressionData['spec'] .= ' (' . $options['length'] . ')';
         }
 
-        return $data;
+        return $expressionData;
     }
 }

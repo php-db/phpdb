@@ -1,7 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDbTest\Sql\Ddl\Column;
 
+use PhpDb\Sql\Argument\Identifier;
+use PhpDb\Sql\Argument\Literal;
 use PhpDb\Sql\Ddl\Column\AbstractLengthColumn;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\MockObject\Exception;
@@ -48,9 +52,13 @@ final class AbstractLengthColumnTest extends TestCase
             ->onlyMethods([])
             ->getMock();
 
-        self::assertEquals(
-            [['%s %s NOT NULL', ['foo', 'INTEGER(4)'], [$column::TYPE_IDENTIFIER, $column::TYPE_LITERAL]]],
-            $column->getExpressionData()
-        );
+        $expressionData = $column->getExpressionData();
+
+        self::assertEquals('%s %s(%s) NOT NULL', $expressionData['spec']);
+        self::assertEquals([
+            new Identifier('foo'),
+            new Literal('INTEGER'),
+            new Literal('4'),
+        ], $expressionData['values']);
     }
 }

@@ -1,13 +1,21 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDb\Sql;
 
+use Override;
+use PhpDb\Sql\Argument\Select as SelectArgument;
+use PhpDb\Sql\Argument\Value;
+use PhpDb\Sql\Argument\Values;
+
+use function array_slice;
 use function array_unique;
 use function count;
+use function func_get_args;
+use function func_num_args;
 use function is_array;
-use function is_scalar;
 use function preg_match_all;
-use function str_ireplace;
 use function str_replace;
 
 class Expression extends AbstractExpression
@@ -15,24 +23,34 @@ class Expression extends AbstractExpression
     /**
      * @const
      */
-    public const PLACEHOLDER = '?';
+    final public const PLACEHOLDER = '?';
 
     protected string $expression = '';
 
-    protected float|array|int|string|bool $parameters = [];
+    /** @var ArgumentInterface[] */
+    protected array $parameters = [];
 
     /**
      * @todo Update documentation to show how parameters can be specifically typed
      */
-    public function __construct(string $expression = '', float|array|int|string|bool|null $parameters = null)
-    {
+    public function __construct(
+        string $expression = '',
+        null|bool|string|float|int|array|ArgumentInterface|ExpressionInterface $parameters = []
+    ) {
         if ($expression !== '') {
             $this->setExpression($expression);
         }
 
-        if ($parameters !== null) {
-            $this->setParameters($parameters);
+        if (func_num_args() > 2) {
+            /**
+             * @deprecated
+             *
+             * @todo Make notes in documentation
+             */
+            $parameters = array_slice(func_get_args(), 1);
         }
+
+        $this->setParameters($parameters);
     }
 
     /**
@@ -43,6 +61,7 @@ class Expression extends AbstractExpression
         if ($expression === '') {
             throw new Exception\InvalidArgumentException('Supplied expression must not be an empty string.');
         }
+
         $this->expression = $expression;
         return $this;
     }
@@ -55,42 +74,58 @@ class Expression extends AbstractExpression
     /**
      * @throws Exception\InvalidArgumentException
      */
-    public function setParameters(float|array|int|string|bool $parameters): self
-    {
-        if (! is_scalar($parameters) && ! is_array($parameters)) {
-            throw new Exception\InvalidArgumentException('Expression parameters must be a scalar or array.');
+    public function setParameters(
+        null|bool|string|float|int|array|ExpressionInterface|ArgumentInterface $parameters = []
+    ): self {
+        if (! is_array($parameters)) {
+            $parameters = [$parameters];
         }
-        $this->parameters = $parameters;
+
+        foreach ($parameters as $parameter) {
+            if (is_array($parameter)) {
+                $parameter = new Values($parameter);
+            } elseif ($parameter instanceof ExpressionInterface) {
+                $parameter = new SelectArgument($parameter);
+            } elseif (! $parameter instanceof ArgumentInterface) {
+                $parameter = new Value($parameter);
+            }
+
+            $this->parameters[] = $parameter;
+        }
+
         return $this;
     }
 
-    public function getParameters(): float|array|int|string|bool
+    public function getParameters(): array
     {
         return $this->parameters;
     }
 
     /**
      * @throws Exception\RuntimeException
+     * @inheritDoc
      */
+    #[Override]
     public function getExpressionData(): array
     {
-        $parameters      = is_scalar($this->parameters) ? [$this->parameters] : $this->parameters;
+        $parameters      = $this->parameters;
         $parametersCount = count($parameters);
-        $expression      = str_replace('%', '%%', $this->expression);
+        $specification   = str_replace('%', '%%', $this->expression);
 
         if ($parametersCount === 0) {
             return [
-                str_ireplace(self::PLACEHOLDER, '', $expression),
+                'spec'   => $specification,
+                'values' => [],
             ];
         }
 
         // assign locally, escaping % signs
-        $expression = str_replace(self::PLACEHOLDER, '%s', $expression, $count);
+        $specification = str_replace(self::PLACEHOLDER, '%s', $specification, $count);
 
         // test number of replacements without considering same variable begin used many times first, which is
         // faster, if the test fails then resort to regex which are slow and used rarely
         if ($count !== $parametersCount) {
-            preg_match_all('/:\w*/', $expression, $matches);
+            preg_match_all('/:\w*/', $specification, $matches);
             if ($parametersCount !== count(array_unique($matches[0]))) {
                 throw new Exception\RuntimeException(
                     'The number of replacements in the expression does not match the number of parameters'
@@ -98,15 +133,9 @@ class Expression extends AbstractExpression
             }
         }
 
-        foreach ($parameters as $parameter) {
-            [$values[], $types[]] = $this->normalizeArgument($parameter);
-        }
         return [
-            [
-                $expression,
-                $values,
-                $types,
-            ],
+            'spec'   => $specification,
+            'values' => $parameters,
         ];
     }
 }

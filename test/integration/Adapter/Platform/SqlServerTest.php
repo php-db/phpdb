@@ -46,6 +46,7 @@ final class SqlServerTest extends TestCase
                 exit;
             }
         }
+
         if (extension_loaded('pdo') && extension_loaded('pdo_sqlsrv')) {
             $this->adapters['pdo_sqlsrv'] = new PDO(
                 'sqlsrv:Server='
@@ -57,10 +58,7 @@ final class SqlServerTest extends TestCase
         }
     }
 
-    /**
-     * @return void
-     */
-    public function testQuoteValueWithSqlServer()
+    public function testQuoteValueWithSqlServer(): void
     {
         if (! isset($this->adapters['pdo_sqlsrv'])) {
             $this->markTestSkipped('SQLServer (pdo_sqlsrv) not configured in unit test configuration file');

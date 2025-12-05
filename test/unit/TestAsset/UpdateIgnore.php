@@ -10,7 +10,7 @@ use PhpDb\Sql\Update;
 /**
  * @psalm-return UpdateIgnore&static
  */
-final class UpdateIgnore extends Update
+class UpdateIgnore extends Update
 {
     /**
      * Override specification update for testing
@@ -20,7 +20,7 @@ final class UpdateIgnore extends Update
     public const SPECIFICATION_UPDATE = 'updateIgnore';
 
     /** @var array<string, string> */
-    protected $specifications = [
+    protected array $specifications = [
         self::SPECIFICATION_UPDATE => 'UPDATE IGNORE %1$s',
         self::SPECIFICATION_SET    => 'SET %1$s',
         self::SPECIFICATION_WHERE  => 'WHERE %1$s',

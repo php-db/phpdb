@@ -99,7 +99,7 @@ The `HydratingResultSet` depends on
 need to install:
 
 ```bash
-$ composer require laminas/laminas-hydrator
+composer require laminas/laminas-hydrator
 ```
 
 In the example below, rows from the database will be iterated, and during

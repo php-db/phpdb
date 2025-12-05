@@ -1,72 +1,56 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDb\Sql\Predicate;
 
+use Override;
 use PhpDb\Sql\AbstractExpression;
-use PhpDb\Sql\Exception;
-
-use function in_array;
-use function is_array;
-use function sprintf;
+use PhpDb\Sql\Argument\Identifier;
+use PhpDb\Sql\Argument\Select;
+use PhpDb\Sql\Argument\Value;
+use PhpDb\Sql\ArgumentInterface;
+use PhpDb\Sql\Exception\InvalidArgumentException;
+use PhpDb\Sql\ExpressionInterface;
+use PhpDb\Sql\SqlInterface;
 
 class Operator extends AbstractExpression implements PredicateInterface
 {
-    public const OPERATOR_EQUAL_TO = '=';
-    public const OP_EQ             = '=';
+    final public const OPERATOR_EQUAL_TO = '=';
 
-    public const OPERATOR_NOT_EQUAL_TO = '!=';
-    public const OP_NE                 = '!=';
+    final public const OP_EQ = '=';
 
-    public const OPERATOR_LESS_THAN = '<';
-    public const OP_LT              = '<';
+    final public const OPERATOR_NOT_EQUAL_TO = '!=';
 
-    public const OPERATOR_LESS_THAN_OR_EQUAL_TO = '<=';
-    public const OP_LTE                         = '<=';
+    final public const OP_NE = '!=';
 
-    public const OPERATOR_GREATER_THAN = '>';
-    public const OP_GT                 = '>';
+    final public const OPERATOR_LESS_THAN = '<';
 
-    public const OPERATOR_GREATER_THAN_OR_EQUAL_TO = '>=';
-    public const OP_GTE                            = '>=';
+    final public const OP_LT = '<';
 
-    /**
-     * {@inheritDoc}
-     */
-    protected $allowedTypes = [
-        self::TYPE_IDENTIFIER,
-        self::TYPE_VALUE,
-    ];
+    final public const OPERATOR_LESS_THAN_OR_EQUAL_TO = '<=';
 
-    /** @var int|float|bool|string */
-    protected $left;
+    final public const OP_LTE = '<=';
 
-    /** @var int|float|bool|string */
-    protected $right;
+    final public const OPERATOR_GREATER_THAN = '>';
 
-    /** @var string */
-    protected $leftType = self::TYPE_IDENTIFIER;
+    final public const OP_GT = '>';
 
-    /** @var string */
-    protected $rightType = self::TYPE_VALUE;
+    final public const OPERATOR_GREATER_THAN_OR_EQUAL_TO = '>=';
 
-    /** @var string */
-    protected $operator = self::OPERATOR_EQUAL_TO;
+    final public const OP_GTE = '>=';
+
+    protected ?ArgumentInterface $left  = null;
+    protected ?ArgumentInterface $right = null;
+    protected string $operator          = self::OPERATOR_EQUAL_TO;
 
     /**
      * Constructor
-     *
-     * @param int|float|bool|string $left
-     * @param string $operator
-     * @param int|float|bool|string $right
-     * @param string $leftType TYPE_IDENTIFIER or TYPE_VALUE by default TYPE_IDENTIFIER {@see allowedTypes}
-     * @param string $rightType TYPE_IDENTIFIER or TYPE_VALUE by default TYPE_VALUE {@see allowedTypes}
      */
     public function __construct(
-        $left = null,
-        $operator = self::OPERATOR_EQUAL_TO,
-        $right = null,
-        $leftType = self::TYPE_IDENTIFIER,
-        $rightType = self::TYPE_VALUE
+        null|string|ArgumentInterface|ExpressionInterface|SqlInterface $left = null,
+        string $operator = self::OPERATOR_EQUAL_TO,
+        null|bool|string|int|float|ArgumentInterface|ExpressionInterface|SqlInterface $right = null
     ) {
         if ($left !== null) {
             $this->setLeft($left);
@@ -79,84 +63,44 @@ class Operator extends AbstractExpression implements PredicateInterface
         if ($right !== null) {
             $this->setRight($right);
         }
-
-        if ($leftType !== self::TYPE_IDENTIFIER) {
-            $this->setLeftType($leftType);
-        }
-
-        if ($rightType !== self::TYPE_VALUE) {
-            $this->setRightType($rightType);
-        }
-    }
-
-    /**
-     * Set left side of operator
-     *
-     * @param  int|float|bool|string $left
-     * @return $this Provides a fluent interface
-     */
-    public function setLeft($left)
-    {
-        $this->left = $left;
-
-        if (is_array($left)) {
-            $left           = $this->normalizeArgument($left, $this->leftType);
-            $this->leftType = $left[1];
-        }
-
-        return $this;
     }
 
     /**
      * Get left side of operator
-     *
-     * @return int|float|bool|string
      */
-    public function getLeft()
+    public function getLeft(): ?ArgumentInterface
     {
         return $this->left;
     }
 
     /**
-     * Set parameter type for left side of operator
-     *
-     * @param  string $type TYPE_IDENTIFIER or TYPE_VALUE {@see allowedTypes}
-     * @return $this Provides a fluent interface
-     * @throws Exception\InvalidArgumentException
+     * Set left side of operator
      */
-    public function setLeftType($type)
+    public function setLeft(string|ArgumentInterface|ExpressionInterface|SqlInterface $left): static
     {
-        if (! in_array($type, $this->allowedTypes)) {
-            throw new Exception\InvalidArgumentException(sprintf(
-                'Invalid type "%s" provided; must be of type "%s" or "%s"',
-                $type,
-                self::class . '::TYPE_IDENTIFIER',
-                self::class . '::TYPE_VALUE'
-            ));
+        if ($left instanceof ArgumentInterface) {
+            $this->left = $left;
+        } elseif ($left instanceof ExpressionInterface || $left instanceof SqlInterface) {
+            $this->left = new Select($left);
+        } else {
+            $this->left = new Identifier($left);
         }
-
-        $this->leftType = $type;
 
         return $this;
     }
 
     /**
-     * Get parameter type on left side of operator
-     *
-     * @return string
+     * Get operator string
      */
-    public function getLeftType()
+    public function getOperator(): string
     {
-        return $this->leftType;
+        return $this->operator;
     }
 
     /**
      * Set operator string
-     *
-     * @param  string $operator
-     * @return $this Provides a fluent interface
      */
-    public function setOperator($operator)
+    public function setOperator(string $operator): static
     {
         $this->operator = $operator;
 
@@ -164,92 +108,48 @@ class Operator extends AbstractExpression implements PredicateInterface
     }
 
     /**
-     * Get operator string
-     *
-     * @return string
-     */
-    public function getOperator()
-    {
-        return $this->operator;
-    }
-
-    /**
-     * Set right side of operator
-     *
-     * @param  int|float|bool|string $right
-     * @return $this Provides a fluent interface
-     */
-    public function setRight($right)
-    {
-        $this->right = $right;
-
-        if (is_array($right)) {
-            $right           = $this->normalizeArgument($right, $this->rightType);
-            $this->rightType = $right[1];
-        }
-
-        return $this;
-    }
-
-    /**
      * Get right side of operator
-     *
-     * @return int|float|bool|string
      */
-    public function getRight()
+    public function getRight(): ?ArgumentInterface
     {
         return $this->right;
     }
 
     /**
-     * Set parameter type for right side of operator
-     *
-     * @param  string $type TYPE_IDENTIFIER or TYPE_VALUE {@see allowedTypes}
-     * @return $this Provides a fluent interface
-     * @throws Exception\InvalidArgumentException
+     * Set right side of operator
      */
-    public function setRightType($type)
-    {
-        if (! in_array($type, $this->allowedTypes)) {
-            throw new Exception\InvalidArgumentException(sprintf(
-                'Invalid type "%s" provided; must be of type "%s" or "%s"',
-                $type,
-                self::class . '::TYPE_IDENTIFIER',
-                self::class . '::TYPE_VALUE'
-            ));
+    public function setRight(
+        null|bool|string|int|float|ArgumentInterface|ExpressionInterface|SqlInterface $right
+    ): static {
+        if ($right instanceof ArgumentInterface) {
+            $this->right = $right;
+        } elseif ($right instanceof ExpressionInterface || $right instanceof SqlInterface) {
+            $this->right = new Select($right);
+        } else {
+            $this->right = new Value($right);
         }
-
-        $this->rightType = $type;
 
         return $this;
     }
 
-    /**
-     * Get parameter type on right side of operator
-     *
-     * @return string
-     */
-    public function getRightType()
+    /** @inheritDoc */
+    #[Override]
+    public function getExpressionData(): array
     {
-        return $this->rightType;
-    }
+        if (! $this->left instanceof ArgumentInterface) {
+            throw new InvalidArgumentException('Left expression must be specified');
+        }
 
-    /**
-     * Get predicate parts for where statement
-     *
-     * @return array
-     */
-    public function getExpressionData()
-    {
-        [$values[], $types[]] = $this->normalizeArgument($this->left, $this->leftType);
-        [$values[], $types[]] = $this->normalizeArgument($this->right, $this->rightType);
+        if (! $this->right instanceof ArgumentInterface) {
+            throw new InvalidArgumentException('Right expression must be specified');
+        }
+
+        $leftSpec  = $this->left->getSpecification();
+        $rightSpec = $this->right->getSpecification();
 
         return [
-            [
-                '%s ' . $this->operator . ' %s',
-                $values,
-                $types,
-            ],
+            'spec'   => $this->specification ?? "{$leftSpec} {$this->operator} {$rightSpec}",
+            'values' => [$this->left, $this->right],
         ];
     }
 }

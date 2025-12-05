@@ -7,12 +7,12 @@ use PhpDb\Adapter\ParameterContainer;
 use PhpDb\Adapter\Platform\PlatformInterface;
 use PhpDb\Sql\Delete;
 
-final class DeleteIgnore extends Delete
+class DeleteIgnore extends Delete
 {
     public const SPECIFICATION_DELETE = 'deleteIgnore';
 
     /** @var array<string, string> */
-    protected $specifications = [
+    protected array $specifications = [
         self::SPECIFICATION_DELETE => 'DELETE IGNORE FROM %1$s',
         self::SPECIFICATION_WHERE  => 'WHERE %1$s',
     ];

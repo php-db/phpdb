@@ -18,7 +18,7 @@ trait DeprecatedAssertionsTrait
         string $message = ''
     ): void {
         $r = new ReflectionProperty($instance, $attribute);
-        /** @psalm-suppress UnusedMethodCall */
+        /** @noinspection PhpExpressionResultUnusedInspection */
         $r->setAccessible(true);
         Assert::assertEquals($expected, $r->getValue($instance), $message);
     }
@@ -29,7 +29,7 @@ trait DeprecatedAssertionsTrait
     public function readAttribute(object $instance, string $attribute): mixed
     {
         $r = new ReflectionProperty($instance, $attribute);
-        /** @psalm-suppress UnusedMethodCall */
+        /** @noinspection PhpExpressionResultUnusedInspection */
         $r->setAccessible(true);
         return $r->getValue($instance);
     }

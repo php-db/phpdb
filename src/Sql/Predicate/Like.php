@@ -1,101 +1,90 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDb\Sql\Predicate;
 
+use Override;
 use PhpDb\Sql\AbstractExpression;
+use PhpDb\Sql\Argument\Identifier;
+use PhpDb\Sql\Argument\Value;
+use PhpDb\Sql\ArgumentInterface;
+use PhpDb\Sql\Exception\InvalidArgumentException;
 
 class Like extends AbstractExpression implements PredicateInterface
 {
-    /** @var string */
-    protected $specification = '%1$s LIKE %2$s';
-
-    /** @var string */
-    protected $identifier = '';
-
-    /** @var string */
-    protected $like = '';
+    protected string $operator               = 'LIKE';
+    protected ?ArgumentInterface $identifier = null;
+    protected ?ArgumentInterface $like       = null;
 
     /**
-     * @param string $identifier
-     * @param string $like
+     * Constructor
      */
-    public function __construct($identifier = null, $like = null)
-    {
-        if ($identifier) {
+    public function __construct(
+        null|string|ArgumentInterface $identifier = null,
+        null|bool|float|int|string|ArgumentInterface $like = null
+    ) {
+        if ($identifier !== null) {
             $this->setIdentifier($identifier);
         }
-        if ($like) {
+
+        if ($like !== null) {
             $this->setLike($like);
         }
     }
 
     /**
-     * @param  string $identifier
-     * @return $this Provides a fluent interface
+     * Set identifier for comparison
      */
-    public function setIdentifier($identifier)
+    public function setIdentifier(string|ArgumentInterface $identifier): static
     {
-        $this->identifier = $identifier;
+        $this->identifier = $identifier instanceof ArgumentInterface
+            ? $identifier
+            : new Identifier($identifier);
+
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getIdentifier()
+    public function getIdentifier(): ?ArgumentInterface
     {
         return $this->identifier;
     }
 
     /**
-     * @param  string $like
-     * @return $this Provides a fluent interface
+     * Set like pattern for comparison
      */
-    public function setLike($like)
+    public function setLike(bool|float|int|null|string|ArgumentInterface $like): static
     {
-        $this->like = $like;
+        $this->like = $like instanceof ArgumentInterface
+            ? $like
+            : new Value($like);
+
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getLike()
+    public function getLike(): ?ArgumentInterface
     {
         return $this->like;
     }
 
-    /**
-     * @param  string $specification
-     * @return $this Provides a fluent interface
-     */
-    public function setSpecification($specification)
+    /** @inheritDoc */
+    #[Override]
+    public function getExpressionData(): array
     {
-        $this->specification = $specification;
-        return $this;
-    }
+        if (! $this->identifier instanceof ArgumentInterface) {
+            throw new InvalidArgumentException('Identifier must be specified');
+        }
 
-    /**
-     * @return string
-     */
-    public function getSpecification()
-    {
-        return $this->specification;
-    }
+        if (! $this->like instanceof ArgumentInterface) {
+            throw new InvalidArgumentException('Like expression must be specified');
+        }
 
-    /**
-     * @return array
-     */
-    public function getExpressionData()
-    {
-        [$values[], $types[]] = $this->normalizeArgument($this->identifier, self::TYPE_IDENTIFIER);
-        [$values[], $types[]] = $this->normalizeArgument($this->like, self::TYPE_VALUE);
+        $identifierSpec = $this->identifier->getSpecification();
+        $likeSpec       = $this->like->getSpecification();
+
         return [
-            [
-                $this->specification,
-                $values,
-                $types,
-            ],
+            'spec'   => $this->specification ?? "{$identifierSpec} {$this->operator} {$likeSpec}",
+            'values' => [$this->identifier, $this->like],
         ];
     }
 }

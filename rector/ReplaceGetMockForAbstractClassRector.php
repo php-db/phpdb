@@ -4,16 +4,18 @@ declare(strict_types=1);
 
 namespace CustomRule\PHPUnit;
 
+use Override;
 use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\Variable;
 use Rector\PhpParser\Node\Value\ValueResolver;
 use Rector\Rector\AbstractRector;
+use Symplify\RuleDocGenerator\Exception\PoorDocumentationException;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
-final class ReplaceGetMockForAbstractClassRector extends AbstractRector
+class ReplaceGetMockForAbstractClassRector extends AbstractRector
 {
     public function __construct(
         private readonly ValueResolver $valueResolver
@@ -21,6 +23,9 @@ final class ReplaceGetMockForAbstractClassRector extends AbstractRector
     {
     }
 
+    /**
+     * @throws PoorDocumentationException
+     */
     public function getRuleDefinition(): RuleDefinition
     {
         return new RuleDefinition(
@@ -34,18 +39,14 @@ final class ReplaceGetMockForAbstractClassRector extends AbstractRector
         );
     }
 
-    public function getNodeTypes(): array
+    #[Override] public function getNodeTypes(): array
     {
         return [MethodCall::class];
     }
 
-    public function refactor(Node $node): ?Node
+    #[Override] public function refactor(Node $node): ?Node
     {
-        if (! $this->isName($node->name, 'getMockForAbstractClass')) {
-            return null;
-        }
-
-        if (! $this->isName($node->var, 'this')) {
+        if (! $this->isName($node->name, 'getMockForAbstractClass') || ! $this->isName($node->var, 'this')) {
             return null;
         }
 

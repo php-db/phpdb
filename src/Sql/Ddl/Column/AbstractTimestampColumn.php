@@ -1,58 +1,29 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDb\Sql\Ddl\Column;
 
-use function array_merge;
+use Override;
+use PhpDb\Sql\Argument\Literal;
 
 /**
  * @see doc section http://dev.mysql.com/doc/refman/5.6/en/timestamp-initialization.html
  */
 abstract class AbstractTimestampColumn extends Column
 {
-    /**
-     * @return array
-     */
-    public function getExpressionData()
+    /** @inheritDoc */
+    #[Override]
+    public function getExpressionData(): array
     {
-        $spec = $this->specification;
-
-        $params   = [];
-        $params[] = $this->name;
-        $params[] = $this->type;
-
-        $types = [self::TYPE_IDENTIFIER, self::TYPE_LITERAL];
-
-        if (! $this->isNullable) {
-            $spec .= ' NOT NULL';
-        }
-
-        if ($this->default !== null) {
-            $spec    .= ' DEFAULT %s';
-            $params[] = $this->default;
-            $types[]  = self::TYPE_VALUE;
-        }
-
-        $options = $this->getOptions();
+        $expressionData = parent::getExpressionData();
+        $options        = $this->getOptions();
 
         if (isset($options['on_update'])) {
-            $spec    .= ' %s';
-            $params[] = 'ON UPDATE CURRENT_TIMESTAMP';
-            $types[]  = self::TYPE_LITERAL;
+            $expressionData['spec']    .= ' %s';
+            $expressionData['values'][] = new Literal('ON UPDATE CURRENT_TIMESTAMP');
         }
 
-        $data = [
-            [
-                $spec,
-                $params,
-                $types,
-            ],
-        ];
-
-        foreach ($this->constraints as $constraint) {
-            $data[] = ' ';
-            $data   = array_merge($data, $constraint->getExpressionData());
-        }
-
-        return $data;
+        return $expressionData;
     }
 }
