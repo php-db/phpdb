@@ -2,9 +2,7 @@
 
 ## Common Patterns and Best Practices
 
-### Finding All Tables with a Specific Column
-
-```php
+```php title="Finding All Tables with a Specific Column"
 function findTablesWithColumn(MetadataInterface $metadata, string $columnName): array
 {
     $tables = [];
@@ -20,9 +18,7 @@ function findTablesWithColumn(MetadataInterface $metadata, string $columnName): 
 $tablesWithUserId = findTablesWithColumn($metadata, 'user_id');
 ```
 
-### Discovering Foreign Key Relationships
-
-```php
+```php title="Discovering Foreign Key Relationships"
 function getForeignKeyRelationships(MetadataInterface $metadata, string $tableName): array
 {
     $relationships = [];
@@ -47,9 +43,7 @@ function getForeignKeyRelationships(MetadataInterface $metadata, string $tableNa
 }
 ```
 
-### Generating Schema Documentation
-
-```php
+```php title="Generating Schema Documentation"
 function generateTableDocumentation(MetadataInterface $metadata, string $tableName): string
 {
     $table = $metadata->getTable($tableName);
@@ -97,9 +91,7 @@ function generateTableDocumentation(MetadataInterface $metadata, string $tableNa
 }
 ```
 
-### Comparing Schemas Across Environments
-
-```php
+```php title="Comparing Schemas Across Environments"
 function compareTables(
     MetadataInterface $metadata1,
     MetadataInterface $metadata2,
@@ -124,9 +116,7 @@ function compareTables(
 }
 ```
 
-### Generating Entity Classes from Metadata
-
-```php
+```php title="Generating Entity Classes from Metadata"
 function generateEntityClass(MetadataInterface $metadata, string $tableName): string
 {
     $columns = $metadata->getColumns($tableName);
@@ -188,9 +178,7 @@ if (in_array('users', $metadata->getTableNames(), true)) {
 When working with databases that have hundreds of tables, use `get*Names()`
 methods instead of retrieving full objects:
 
-### Efficient Metadata Access for Large Schemas
-
-```php
+```php title="Efficient Metadata Access for Large Schemas"
 $tableNames = $metadata->getTableNames();
 foreach ($tableNames as $tableName) {
     $columnNames = $metadata->getColumnNames($tableName);
@@ -199,9 +187,7 @@ foreach ($tableNames as $tableName) {
 
 This is more efficient than:
 
-### Inefficient Metadata Access Pattern
-
-```php
+```php title="Inefficient Metadata Access Pattern"
 $tables = $metadata->getTables();
 foreach ($tables as $table) {
     $columns = $table->getColumns();
@@ -213,9 +199,7 @@ foreach ($tables as $table) {
 If you encounter errors accessing certain tables or schemas, verify database
 user permissions:
 
-### Verifying Schema Access Permissions
-
-```php
+```php title="Verifying Schema Access Permissions"
 try {
     $tables = $metadata->getTableNames('restricted_schema');
 } catch (Exception $e) {
@@ -228,9 +212,7 @@ try {
 The metadata component queries the database each time a method is called. For
 better performance in production, consider caching the results:
 
-### Implementing Metadata Caching
-
-```php
+```php title="Implementing Metadata Caching"
 $cache = $container->get('cache');
 $cacheKey = 'metadata_tables';
 

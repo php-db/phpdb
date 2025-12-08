@@ -21,9 +21,7 @@ quoted.
 parameters are acceptable when calling `where()` or `having()`. The method
 signature is listed as:
 
-### Method signature for where() and having()
-
-```php
+```php title="Method signature for where() and having()"
 /**
  * Create where clause
  *
@@ -43,9 +41,7 @@ If you provide a PHP callable to `where()` or `having()`, this function will be
 called with the `Select`'s `Where`/`Having` instance as the only parameter.
 This enables code like the following:
 
-### Using a callable with where()
-
-```php
+```php title="Using a callable with where()"
 $select->where(function (Where $where) {
     $where->like('username', 'ralph%');
 });
@@ -55,9 +51,7 @@ If you provide a *string*, this string will be used to create a
 `PhpDb\Sql\Predicate\Expression` instance, and its contents will be applied
 as-is, with no quoting:
 
-### Using a string expression with where()
-
-```php
+```php title="Using a string expression with where()"
 // SELECT "foo".* FROM "foo" WHERE x = 5
 $select->from('foo')->where('x = 5');
 ```
@@ -72,9 +66,7 @@ In either case, the instances are pushed onto the `Where` stack with the
 
 As an example:
 
-### Using an array of string expressions
-
-```php
+```php title="Using an array of string expressions"
 // SELECT "foo".* FROM "foo" WHERE x = 5 AND y = z
 $select->from('foo')->where(['x = 5', 'y = z']);
 ```
@@ -90,9 +82,7 @@ key will be cast as follows:
 
 As an example:
 
-### Using an associative array with mixed value types
-
-```php
+```php title="Using an associative array with mixed value types"
 // SELECT "foo".* FROM "foo" WHERE "c1" IS NULL
 //        AND "c2" IN (?, ?, ?) AND "c3" IS NOT NULL
 $select->from('foo')->where([
@@ -104,17 +94,13 @@ $select->from('foo')->where([
 
 As another example of complex queries with nested conditions e.g.
 
-### SQL example with nested OR and AND conditions
-
-```sql
+```sql title="SQL example with nested OR and AND conditions"
 SELECT * WHERE (column1 is null or column1 = 2) AND (column2 = 3)
 ```
 
 you need to use the `nest()` and `unnest()` methods, as follows:
 
-### Using nest() and unnest() for complex conditions
-
-```php
+```php title="Using nest() and unnest() for complex conditions"
 $select->where->nest() // bracket opened
     ->isNull('column1')
     ->or
@@ -127,9 +113,7 @@ $select->where->nest() // bracket opened
 
 The `Where` and `Having` API is that of `Predicate` and `PredicateSet`:
 
-### Predicate class API definition
-
-```php
+```php title="Predicate class API definition"
 // Where & Having extend Predicate:
 class Predicate extends PredicateSet
 {
@@ -241,9 +225,7 @@ similarly named type, as described below.
 
 ### equalTo(), lessThan(), greaterThan(), lessThanOrEqualTo(), greaterThanOrEqualTo()
 
-### Using equalTo() to create an Operator predicate
-
-```php
+```php title="Using equalTo() to create an Operator predicate"
 $where->equalTo('id', 5);
 
 // The above is equivalent to:
@@ -254,9 +236,7 @@ $where->addPredicate(
 
 Operators use the following API:
 
-### Operator class API definition
-
-```php
+```php title="Operator class API definition"
 class Operator implements PredicateInterface
 {
     final public const OPERATOR_EQUAL_TO                  = '=';
@@ -304,9 +284,7 @@ class Operator implements PredicateInterface
 
 ### like($identifier, $like), notLike($identifier, $notLike)
 
-### Using like() to create a Like predicate
-
-```php
+```php title="Using like() to create a Like predicate"
 $where->like($identifier, $like):
 
 // The above is equivalent to:
@@ -317,9 +295,7 @@ $where->addPredicate(
 
 The following is the `Like` API:
 
-### Like class API definition
-
-```php
+```php title="Like class API definition"
 class Like implements PredicateInterface
 {
     public function __construct(
@@ -342,9 +318,7 @@ class Like implements PredicateInterface
 
 ### literal($literal)
 
-### Using literal() to create a Literal predicate
-
-```php
+```php title="Using literal() to create a Literal predicate"
 $where->literal($literal);
 
 // The above is equivalent to:
@@ -355,9 +329,7 @@ $where->addPredicate(
 
 The following is the `Literal` API:
 
-### Literal class API definition
-
-```php
+```php title="Literal class API definition"
 class Literal implements ExpressionInterface, PredicateInterface
 {
     public function __construct(string $literal = '');
@@ -369,9 +341,7 @@ class Literal implements ExpressionInterface, PredicateInterface
 
 ### expression($expression, $parameter)
 
-### Using expression() to create an Expression predicate
-
-```php
+```php title="Using expression() to create an Expression predicate"
 $where->expression($expression, $parameter);
 
 // The above is equivalent to:
@@ -382,9 +352,7 @@ $where->addPredicate(
 
 The following is the `Expression` API:
 
-### Expression class API definition
-
-```php
+```php title="Expression class API definition"
 class Expression implements ExpressionInterface, PredicateInterface
 {
     final public const PLACEHOLDER = '?';
@@ -407,9 +375,7 @@ class Expression implements ExpressionInterface, PredicateInterface
 
 Expression parameters can be supplied in multiple ways:
 
-### Using Expression with various parameter types
-
-```php
+```php title="Using Expression with various parameter types"
 // Using Argument classes for explicit typing
 $expression = new Expression(
     'CONCAT(?, ?, ?)',
@@ -444,9 +410,7 @@ $select
 
 ### isNull($identifier)
 
-### Using isNull() to create an IsNull predicate
-
-```php
+```php title="Using isNull() to create an IsNull predicate"
 $where->isNull($identifier);
 
 // The above is equivalent to:
@@ -457,9 +421,7 @@ $where->addPredicate(
 
 The following is the `IsNull` API:
 
-### IsNull class API definition
-
-```php
+```php title="IsNull class API definition"
 class IsNull implements PredicateInterface
 {
     public function __construct(null|string|ArgumentInterface $identifier = null);
@@ -473,9 +435,7 @@ class IsNull implements PredicateInterface
 
 ### isNotNull($identifier)
 
-### Using isNotNull() to create an IsNotNull predicate
-
-```php
+```php title="Using isNotNull() to create an IsNotNull predicate"
 $where->isNotNull($identifier);
 
 // The above is equivalent to:
@@ -486,9 +446,7 @@ $where->addPredicate(
 
 The following is the `IsNotNull` API:
 
-### IsNotNull class API definition
-
-```php
+```php title="IsNotNull class API definition"
 class IsNotNull implements PredicateInterface
 {
     public function __construct(null|string|ArgumentInterface $identifier = null);
@@ -504,9 +462,7 @@ class IsNotNull implements PredicateInterface
 
 ### in($identifier, $valueSet), notIn($identifier, $valueSet)
 
-### Using in() to create an In predicate
-
-```php
+```php title="Using in() to create an In predicate"
 $where->in($identifier, $valueSet);
 
 // The above is equivalent to:
@@ -517,9 +473,7 @@ $where->addPredicate(
 
 The following is the `In` API:
 
-### In class API definition
-
-```php
+```php title="In class API definition"
 class In implements PredicateInterface
 {
     public function __construct(
@@ -540,9 +494,7 @@ class In implements PredicateInterface
 
 ### between() and notBetween()
 
-### Using between() to create a Between predicate
-
-```php
+```php title="Using between() to create a Between predicate"
 $where->between($identifier, $minValue, $maxValue);
 
 // The above is equivalent to:
@@ -553,9 +505,7 @@ $where->addPredicate(
 
 The following is the `Between` API:
 
-### Between class API definition
-
-```php
+```php title="Between class API definition"
 class Between implements PredicateInterface
 {
     public function __construct(
@@ -583,9 +533,7 @@ class Between implements PredicateInterface
 
 As an example with different value types:
 
-### Using between() with different value types
-
-```php
+```php title="Using between() with different value types"
 $where->between('age', 18, 65);
 $where->notBetween('price', 100, 500);
 $where->between('createdAt', '2024-01-01', '2024-12-31');
@@ -593,25 +541,19 @@ $where->between('createdAt', '2024-01-01', '2024-12-31');
 
 Produces:
 
-### SQL output for between() examples
-
-```sql
+```sql title="SQL output for between() examples"
 WHERE age BETWEEN 18 AND 65 AND price NOT BETWEEN 100 AND 500 AND createdAt BETWEEN '2024-01-01' AND '2024-12-31'
 ```
 
 Expressions can also be used:
 
-### Using between() with an Expression
-
-```php
+```php title="Using between() with an Expression"
 $where->between(new Expression('YEAR(createdAt)'), 2020, 2024);
 ```
 
 Produces:
 
-### SQL output for between() with Expression
-
-```sql
+```sql title="SQL output for between() with Expression"
 WHERE YEAR(createdAt) BETWEEN 2020 AND 2024
 ```
 
@@ -623,9 +565,7 @@ The Predicate class provides magic properties that enable fluent method chaining
 for combining predicates. These properties (`and`, `or`, `AND`, `OR`, `nest`,
 `unnest`, `NEST`, `UNNEST`) facilitate readable query construction.
 
-### Using magic properties for fluent chaining
-
-```php
+```php title="Using magic properties for fluent chaining"
 $select->where
     ->equalTo('status', 'active')
     ->and
@@ -636,17 +576,13 @@ $select->where
 
 Produces:
 
-### SQL output for fluent chaining example
-
-```sql
+```sql title="SQL output for fluent chaining example"
 WHERE status = 'active' AND age > 18 OR role = 'admin'
 ```
 
 The properties are case-insensitive for convenience:
 
-### Case-insensitive magic property usage
-
-```php
+```php title="Case-insensitive magic property usage"
 $where->and->equalTo('a', 1);
 $where->AND->equalTo('b', 2');
 ```
@@ -655,9 +591,7 @@ $where->AND->equalTo('b', 2');
 
 Complex nested conditions can be created using `nest()` and `unnest()`:
 
-### Creating deeply nested predicate conditions
-
-```php
+```php title="Creating deeply nested predicate conditions"
 $select->where->nest()
         ->nest()
             ->equalTo('a', 1)
@@ -675,9 +609,7 @@ $select->where->nest()
 
 Produces:
 
-### SQL output for deeply nested predicates
-
-```sql
+```sql title="SQL output for deeply nested predicates"
 WHERE ((a = 1 OR b = 2) AND (c = 3 OR d = 4))
 ```
 
@@ -687,9 +619,7 @@ The `addPredicates()` method from `PredicateSet` provides intelligent handling o
 various input types, automatically creating appropriate predicate objects based on
 the input.
 
-### Using addPredicates() with mixed input types
-
-```php
+```php title="Using addPredicates() with mixed input types"
 $where->addPredicates([
     'status = "active"',
     'age > ?',
@@ -713,9 +643,7 @@ The method detects and handles:
 
 Combination operators can be specified:
 
-### Using addPredicates() with OR combination
-
-```php
+```php title="Using addPredicates() with OR combination"
 $where->addPredicates([
     'role' => 'admin',
     'status' => 'active',
@@ -724,9 +652,7 @@ $where->addPredicates([
 
 Produces:
 
-### SQL output for OR combination
-
-```sql
+```sql title="SQL output for OR combination"
 WHERE role = 'admin' OR status = 'active'
 ```
 
@@ -734,9 +660,7 @@ WHERE role = 'admin' OR status = 'active'
 
 The `like()` and `notLike()` methods support SQL wildcard patterns:
 
-### Using like() and notLike() with wildcard patterns
-
-```php
+```php title="Using like() and notLike() with wildcard patterns"
 $where->like('name', 'John%');
 $where->like('email', '%@gmail.com');
 $where->like('description', '%keyword%');
@@ -745,9 +669,7 @@ $where->notLike('email', '%@spam.com');
 
 Multiple LIKE conditions:
 
-### Combining multiple LIKE conditions with OR
-
-```php
+```php title="Combining multiple LIKE conditions with OR"
 $where->like('name', 'A%')
     ->or
     ->like('name', 'B%');
@@ -755,9 +677,7 @@ $where->like('name', 'A%')
 
 Produces:
 
-### SQL output for multiple LIKE conditions
-
-```sql
+```sql title="SQL output for multiple LIKE conditions"
 WHERE name LIKE 'A%' OR name LIKE 'B%'
 ```
 
@@ -766,9 +686,7 @@ WHERE name LIKE 'A%' OR name LIKE 'B%'
 While `where()` filters rows before grouping, `having()` filters groups after
 aggregation. The HAVING clause is used with GROUP BY and aggregate functions.
 
-### Using HAVING to filter aggregate results
-
-```php
+```php title="Using HAVING to filter aggregate results"
 $select->from('orders')
     ->columns([
         'customerId',
@@ -783,9 +701,7 @@ $select->from('orders')
 
 Produces:
 
-### SQL output for HAVING with aggregate functions
-
-```sql
+```sql title="SQL output for HAVING with aggregate functions"
 SELECT customerId, COUNT(*) AS orderCount, SUM(amount) AS totalAmount
 FROM orders
 WHERE amount > 0
@@ -795,9 +711,7 @@ HAVING COUNT(*) > 10 AND SUM(amount) > 1000
 
 Using closures with HAVING:
 
-### Using a closure with HAVING for complex conditions
-
-```php
+```php title="Using a closure with HAVING for complex conditions"
 $select->having(function ($having) {
     $having->greaterThan(new Expression('AVG(rating)'), 4.5)
         ->or
@@ -807,9 +721,7 @@ $select->having(function ($having) {
 
 Produces:
 
-### SQL output for HAVING with closure
-
-```sql
+```sql title="SQL output for HAVING with closure"
 HAVING AVG(rating) > 4.5 OR COUNT(reviews) > 100
 ```
 
@@ -820,9 +732,7 @@ clauses, FROM clauses, and SELECT columns.
 
 ### Subqueries in WHERE IN clauses
 
-### Using a subquery in a WHERE IN clause
-
-```php
+```php title="Using a subquery in a WHERE IN clause"
 $subselect = $sql->select('orders')
     ->columns(['customerId'])
     ->where(['status' => 'completed']);
@@ -833,18 +743,14 @@ $select = $sql->select('customers')
 
 Produces:
 
-### SQL output for subquery in WHERE IN
-
-```sql
+```sql title="SQL output for subquery in WHERE IN"
 SELECT customers.* FROM customers
 WHERE id IN (SELECT customerId FROM orders WHERE status = 'completed')
 ```
 
 ### Subqueries in FROM clauses
 
-### Using a subquery in a FROM clause
-
-```php
+```php title="Using a subquery in a FROM clause"
 $subselect = $sql->select('orders')
     ->columns([
         'customerId',
@@ -858,9 +764,7 @@ $select = $sql->select(['orderTotals' => $subselect])
 
 Produces:
 
-### SQL output for subquery in FROM clause
-
-```sql
+```sql title="SQL output for subquery in FROM clause"
 SELECT orderTotals.* FROM
 (SELECT customerId, SUM(amount) AS total FROM orders GROUP BY customerId) AS orderTotals
 WHERE orderTotals.total > 1000
@@ -868,9 +772,7 @@ WHERE orderTotals.total > 1000
 
 ### Scalar subqueries in SELECT columns
 
-### Using a scalar subquery in SELECT columns
-
-```php
+```php title="Using a scalar subquery in SELECT columns"
 $subselect = $sql->select('orders')
     ->columns([new Expression('COUNT(*)')])
     ->where(new Predicate\Expression('orders.customerId = customers.id'));
@@ -885,9 +787,7 @@ $select = $sql->select('customers')
 
 Produces:
 
-### SQL output for scalar subquery in SELECT
-
-```sql
+```sql title="SQL output for scalar subquery in SELECT"
 SELECT id, name,
 (SELECT COUNT(*) FROM orders WHERE orders.customerId = customers.id) AS orderCount
 FROM customers
@@ -895,9 +795,7 @@ FROM customers
 
 ### Subqueries with comparison operators
 
-### Using a subquery with a comparison operator
-
-```php
+```php title="Using a subquery with a comparison operator"
 $subselect = $sql->select('orders')
     ->columns([new Expression('AVG(amount)')]);
 
@@ -907,9 +805,7 @@ $select = $sql->select('orders')
 
 Produces:
 
-### SQL output for subquery with comparison operator
-
-```sql
+```sql title="SQL output for subquery with comparison operator"
 SELECT orders.* FROM orders
 WHERE amount > (SELECT AVG(amount) FROM orders)
 ```

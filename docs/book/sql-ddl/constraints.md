@@ -6,9 +6,7 @@ Constraints enforce data integrity rules at the database level. All constraints 
 
 A primary key uniquely identifies each row in a table.
 
-### Single-Column Primary Key
-
-```php
+```php title="Single-Column Primary Key"
 use PhpDb\Sql\Ddl\Constraint\PrimaryKey;
 
 // Simple - name is optional
@@ -58,9 +56,7 @@ $table->addColumn($id);
 
 Foreign keys enforce referential integrity between tables.
 
-### Basic Foreign Key
-
-```php
+```php title="Basic Foreign Key"
 use PhpDb\Sql\Ddl\Constraint\ForeignKey;
 
 $fk = new ForeignKey(
@@ -104,9 +100,7 @@ $fk = new ForeignKey(
 
 **Common Patterns:**
 
-### Common Foreign Key Action Patterns
-
-```php
+```php title="Common Foreign Key Action Patterns"
 // Delete child records when parent is deleted
 $fk = new ForeignKey('fk_name', 'parent_id', 'parents', 'id', 'CASCADE');
 
@@ -144,9 +138,7 @@ CONSTRAINT "fk_user_tenant" FOREIGN KEY ("user_id", "tenant_id")
 
 Unique constraints ensure column values are unique across all rows.
 
-### Single-Column Unique Constraint
-
-```php
+```php title="Single-Column Unique Constraint"
 use PhpDb\Sql\Ddl\Constraint\UniqueKey;
 
 // Simple - name is optional
@@ -186,9 +178,7 @@ CONSTRAINT "unique_username_per_tenant" UNIQUE ("username", "tenant_id")
 
 Check constraints enforce custom validation rules.
 
-### Simple Check Constraints
-
-```php
+```php title="Simple Check Constraints"
 use PhpDb\Sql\Ddl\Constraint\Check;
 
 // Age must be 18 or older
@@ -204,9 +194,7 @@ $check = new Check('email LIKE "%@%"', 'check_email_format');
 $table->addConstraint($check);
 ```
 
-### Complex Check Constraints
-
-```php
+```php title="Complex Check Constraints"
 // Discount percentage must be between 0 and 100
 $check = new Check(
     'discount_percent >= 0 AND discount_percent <= 100',
@@ -270,9 +258,7 @@ $check = new Check($expr, 'check_discount_range');
 
 Indexes improve query performance by creating fast lookup structures. The `Index` class is in the `PhpDb\Sql\Ddl\Index` namespace.
 
-### Basic Index Creation
-
-```php
+```php title="Basic Index Creation"
 use PhpDb\Sql\Ddl\Index\Index;
 
 // Single column index
@@ -377,9 +363,7 @@ $alter->dropIndex('idx_deprecated_field');
 
 While some constraints allow optional names, it's a best practice to always provide explicit names:
 
-### Best Practice: Using Explicit Constraint Names
-
-```php
+```php title="Best Practice: Using Explicit Constraint Names"
 // Good - explicit names for all constraints
 $table->addConstraint(new Constraint\PrimaryKey('id', 'pk_users'));
 $table->addConstraint(new Constraint\UniqueKey('email', 'unique_user_email'));
@@ -425,9 +409,7 @@ $alter->dropConstraint('fk_user_role');
 
 ### Index Best Practices
 
-### Implementing Indexing Best Practices
-
-```php
+```php title="Implementing Indexing Best Practices"
 // 1. Index foreign keys
 $table->addColumn(new Column\Integer('user_id'));
 $table->addConstraint(new Constraint\ForeignKey(
@@ -452,9 +434,7 @@ $table->addConstraint(new Index('title', 'idx_title', [100])); // Index first 10
 
 ### Index Order Matters
 
-### Optimal vs Suboptimal Index Column Order
-
-```php
+```php title="Optimal vs Suboptimal Index Column Order"
 // For query: WHERE category_id = ? ORDER BY created_at DESC
 new Index(['category_id', 'created_at'], 'idx_category_date'); // Good
 

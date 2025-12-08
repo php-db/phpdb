@@ -24,9 +24,7 @@ standalone, you need an `Adapter` instance and a set of data to work with.
 
 The following demonstrates a basic use case.
 
-### Standalone RowGateway Usage
-
-```php
+```php title="Standalone RowGateway Usage"
 use PhpDb\RowGateway\RowGateway;
 
 // Query the database:
@@ -54,9 +52,7 @@ In that paradigm, `select()` operations will produce a `ResultSet` that iterates
 
 As an example:
 
-### Using RowGateway with TableGateway
-
-```php
+```php title="Using RowGateway with TableGateway"
 use PhpDb\TableGateway\Feature\RowGatewayFeature;
 use PhpDb\TableGateway\TableGateway;
 
@@ -76,9 +72,7 @@ essentially making them behave similarly to the
 pattern), pass a prototype object implementing the `RowGatewayInterface` to the
 `RowGatewayFeature` constructor instead of a primary key:
 
-### Custom ActiveRecord-Style Implementation
-
-```php
+```php title="Custom ActiveRecord-Style Implementation"
 use PhpDb\TableGateway\Feature\RowGatewayFeature;
 use PhpDb\TableGateway\TableGateway;
 use PhpDb\RowGateway\RowGatewayInterface;

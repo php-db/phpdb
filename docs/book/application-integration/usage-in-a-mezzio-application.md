@@ -17,9 +17,7 @@ SQLite is a lightweight option to have the application working with a database.
 Here is an example of the configuration array for a SQLite database.
 Assuming the SQLite file path is `data/sample.sqlite`, the following configuration will produce the adapter:
 
-### SQLite adapter configuration
-
-```php
+```php title="SQLite adapter configuration"
 <?php
 
 declare(strict_types=1);
@@ -57,9 +55,7 @@ Here is an example of a configuration array for a MySQL database.
 
 Create `config/autoload/database.local.php` for environment-specific credentials:
 
-### MySQL adapter configuration
-
-```php
+```php title="MySQL adapter configuration"
 <?php
 
 declare(strict_types=1);
@@ -95,9 +91,7 @@ return [
 
 PostgreSQL support is coming soon. Once the `php-db/postgres` package is available:
 
-### PostgreSQL adapter configuration
-
-```php
+```php title="PostgreSQL adapter configuration"
 <?php
 
 declare(strict_types=1);
@@ -137,9 +131,7 @@ Once you have configured an adapter, as in the above examples, you now have a `P
 
 Mezzio uses request handlers (also known as middleware) that receive dependencies through constructor injection:
 
-### Request handler with database adapter injection
-
-```php
+```php title="Request handler with database adapter injection"
 <?php
 
 declare(strict_types=1);
@@ -184,9 +176,7 @@ class UserListHandler implements RequestHandlerInterface
 
 You need to create a factory for your handler that injects the adapter:
 
-### Handler factory implementation
-
-```php
+```php title="Handler factory implementation"
 <?php
 
 declare(strict_types=1);
@@ -211,9 +201,7 @@ class UserListHandlerFactory
 
 Register your handler factory in `config/autoload/dependencies.global.php`:
 
-### Registering the handler in dependencies configuration
-
-```php
+```php title="Registering the handler in dependencies configuration"
 <?php
 
 declare(strict_types=1);
@@ -238,9 +226,7 @@ return [
 
 For more structured database interactions, use TableGateway with dependency injection:
 
-### Extending TableGateway for custom database operations
-
-```php
+```php title="Extending TableGateway for custom database operations"
 <?php
 
 declare(strict_types=1);
@@ -275,9 +261,7 @@ class UsersTable extends TableGateway
 
 Create a factory for the table:
 
-### Factory for the TableGateway class
-
-```php
+```php title="Factory for the TableGateway class"
 <?php
 
 declare(strict_types=1);
@@ -300,9 +284,7 @@ class UsersTableFactory
 
 Register the table factory:
 
-### Registering the table factory in dependencies
-
-```php
+```php title="Registering the table factory in dependencies"
 <?php
 
 declare(strict_types=1);
@@ -321,9 +303,7 @@ return [
 
 Use in your handler:
 
-### Using TableGateway in a request handler
-
-```php
+```php title="Using TableGateway in a request handler"
 <?php
 
 declare(strict_types=1);
@@ -362,9 +342,7 @@ For production deployments, use environment variables to configure database cred
 
 Install `vlucas/phpdotenv`:
 
-### Installing the phpdotenv package
-
-```bash
+```bash title="Installing the phpdotenv package"
 composer require vlucas/phpdotenv
 ```
 
@@ -384,9 +362,7 @@ DB_CHARSET=utf8mb4
 
 Load environment variables in `public/index.php`:
 
-### Loading environment variables in the application bootstrap
-
-```php
+```php title="Loading environment variables in the application bootstrap"
 <?php
 
 declare(strict_types=1);
@@ -404,9 +380,7 @@ $container = require 'config/container.php';
 
 Update your database configuration to use environment variables:
 
-### Dynamic adapter configuration using environment variables
-
-```php
+```php title="Dynamic adapter configuration using environment variables"
 <?php
 
 declare(strict_types=1);
@@ -463,9 +437,7 @@ For integration testing with a real database in Mezzio:
 
 Create `config/autoload/database.test.php`:
 
-### Test database configuration with in-memory SQLite
-
-```php
+```php title="Test database configuration with in-memory SQLite"
 <?php
 
 declare(strict_types=1);
@@ -495,9 +467,7 @@ return [
 
 ### Use in PHPUnit Tests
 
-### PHPUnit test with database integration
-
-```php
+```php title="PHPUnit test with database integration"
 <?php
 
 declare(strict_types=1);
@@ -559,9 +529,7 @@ Always inject the adapter or table gateway through constructors, never instantia
 
 Create repository or table gateway classes to separate database logic from HTTP handlers:
 
-### Repository pattern implementation for database operations
-
-```php
+```php title="Repository pattern implementation for database operations"
 <?php
 
 declare(strict_types=1);
@@ -612,9 +580,7 @@ Centralize adapter configuration in factory classes for better maintainability a
 
 Always wrap database operations in try-catch blocks:
 
-### Exception handling for database operations
-
-```php
+```php title="Exception handling for database operations"
 use PhpDb\Adapter\Exception\RuntimeException;
 
 public function handle(ServerRequestInterface $request): ResponseInterface

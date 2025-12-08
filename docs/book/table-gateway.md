@@ -44,9 +44,7 @@ order to be consumed and utilized to its fullest.
 The following example uses `PhpDb\TableGateway\TableGateway`, which defines
 the following API:
 
-### TableGateway Class API
-
-```php
+```php title="TableGateway Class API"
 namespace PhpDb\TableGateway;
 
 use PhpDb\Adapter\AdapterInterface;
@@ -104,9 +102,7 @@ or metadata, and when `select()` is executed, a simple `ResultSet` object with
 the populated `Adapter`'s `Result` (the datasource) will be returned and ready
 for iteration.
 
-### Basic Select Operations
-
-```php
+```php title="Basic Select Operations"
 use PhpDb\TableGateway\TableGateway;
 
 $projectTable = new TableGateway('project', $adapter);
@@ -129,9 +125,7 @@ The `select()` method takes the same arguments as
 `PhpDb\Sql\Select::where()`; arguments will be passed to the `Select`
 instance used to build the SELECT query. This means the following is possible:
 
-### Advanced Select with Callback
-
-```php
+```php title="Advanced Select with Callback"
 use PhpDb\TableGateway\TableGateway;
 use PhpDb\Sql\Select;
 
@@ -263,17 +257,13 @@ Listeners receive a `PhpDb\TableGateway\Feature\EventFeature\TableGatewayEvent`
 instance as an argument. Within the listener, you can retrieve a parameter by
 name from the event using the following syntax:
 
-### Retrieving Event Parameters
-
-```php
+```php title="Retrieving Event Parameters"
 $parameter = $event->getParam($paramName);
 ```
 
 As an example, you might attach a listener on the `postInsert` event as follows:
 
-### Attaching a Listener to postInsert Event
-
-```php
+```php title="Attaching a Listener to postInsert Event"
 use PhpDb\Adapter\Driver\ResultInterface;
 use PhpDb\TableGateway\Feature\EventFeature\TableGatewayEvent;
 use Laminas\EventManager\EventManager;

@@ -6,9 +6,7 @@
 
 Use `Literal` for static SQL fragments without parameters:
 
-### Creating static SQL literals
-
-```php
+```php title="Creating static SQL literals"
 use PhpDb\Sql\Literal;
 
 $literal = new Literal('NOW()');
@@ -18,18 +16,14 @@ $literal = new Literal('COUNT(*)');
 
 Use `Expression` when parameters are needed:
 
-### Creating expressions with parameters
-
-```php
+```php title="Creating expressions with parameters"
 use PhpDb\Sql\Expression;
 
 $expression = new Expression('DATE_ADD(NOW(), INTERVAL ? DAY)', [7]);
 $expression = new Expression('CONCAT(?, ?)', ['Hello', 'World']);
 ```
 
-### Mixed parameter types in expressions
-
-```php
+```php title="Mixed parameter types in expressions"
 use PhpDb\Sql\Argument;
 
 $expression = new Expression(
@@ -45,15 +39,11 @@ $expression = new Expression(
 
 Produces:
 
-### SQL output for mixed parameter types
-
-```sql
+```sql title="SQL output for mixed parameter types"
 CASE WHEN age > 18 THEN ADULT ELSE MINOR END
 ```
 
-### Array values in expressions
-
-```php
+```php title="Array values in expressions"
 $expression = new Expression(
     'id IN (?)',
     [Argument::value([1, 2, 3, 4, 5])]
@@ -62,15 +52,11 @@ $expression = new Expression(
 
 Produces:
 
-### SQL output for array values
-
-```sql
+```sql title="SQL output for array values"
 id IN (?, ?, ?, ?, ?)
 ```
 
-### Nested expressions
-
-```php
+```php title="Nested expressions"
 $innerExpression = new Expression('COUNT(*)');
 $outerExpression = new Expression(
     'CASE WHEN ? > ? THEN ? ELSE ? END',
@@ -85,15 +71,11 @@ $outerExpression = new Expression(
 
 Produces:
 
-### SQL output for nested expressions
-
-```sql
+```sql title="SQL output for nested expressions"
 CASE WHEN COUNT(*) > 10 THEN HIGH ELSE LOW END
 ```
 
-### Using database-specific functions
-
-```php
+```php title="Using database-specific functions"
 use PhpDb\Sql\Predicate;
 
 $select->where(new Predicate\Expression(
@@ -112,9 +94,7 @@ For detailed information on Arguments and Argument Types, see the [SQL Introduct
 The `Combine` class enables combining multiple SELECT statements using UNION,
 INTERSECT, or EXCEPT operations.
 
-### Basic Combine usage with UNION
-
-```php
+```php title="Basic Combine usage with UNION"
 use PhpDb\Sql\Combine;
 
 $select1 = $sql->select('table1')->where(['status' => 'active']);
@@ -124,9 +104,7 @@ $combine = new Combine($select1, Combine::COMBINE_UNION);
 $combine->combine($select2);
 ```
 
-### Combine API
-
-```php
+```php title="Combine API"
 class Combine extends AbstractPreparableSql
 {
     final public const COMBINE_UNION = 'union';
@@ -151,9 +129,7 @@ class Combine extends AbstractPreparableSql
 }
 ```
 
-### UNION
-
-```php
+```php title="UNION"
 $combine = new Combine();
 $combine->union($select1);
 $combine->union($select2, 'ALL'); // UNION ALL keeps duplicates
@@ -161,9 +137,7 @@ $combine->union($select2, 'ALL'); // UNION ALL keeps duplicates
 
 Produces:
 
-### SQL output for UNION ALL
-
-```sql
+```sql title="SQL output for UNION ALL"
 (SELECT * FROM table1 WHERE status = 'active')
 UNION ALL
 (SELECT * FROM table2 WHERE status = 'pending')
@@ -208,9 +182,7 @@ $combine->alignColumns();
 
 Produces:
 
-### SQL output for aligned columns
-
-```sql
+```sql title="SQL output for aligned columns"
 (SELECT id, amount, NULL AS reason FROM orders)
 UNION
 (SELECT id, amount, reason FROM refunds)

@@ -44,9 +44,7 @@ The `PhpDb\Metadata` component uses platform-specific implementations to retriev
 metadata from your database. The metadata instance is typically created through
 dependency injection or directly with an adapter:
 
-### Creating Metadata from an Adapter
-
-```php
+```php title="Creating Metadata from an Adapter"
 use PhpDb\Adapter\Adapter;
 use PhpDb\Metadata\Source\Factory as MetadataSourceFactory;
 
@@ -71,9 +69,7 @@ tables for the currently accessible schema.
 
 The `get*Names()` methods return arrays of strings:
 
-### Getting Names of Database Objects
-
-```php
+```php title="Getting Names of Database Objects"
 $tableNames = $metadata->getTableNames();
 $columnNames = $metadata->getColumnNames('users');
 $schemas = $metadata->getSchemas();
@@ -92,9 +88,7 @@ $constraint = $metadata->getConstraint('PRIMARY', 'users'); // Returns Constrain
 Note that `getTable()` and `getView()` can return either `TableObject` or
 `ViewObject` depending on whether the database object is a table or a view.
 
-### Basic Example
-
-```php
+```php title="Basic Example"
 use PhpDb\Metadata\Source\Factory as MetadataSourceFactory;
 
 $adapter = new Adapter($config);
@@ -164,9 +158,7 @@ FOREIGN KEY fk_orders_products (product_id) REFERENCES products (id)
 
 The `getSchemas()` method returns all available schema names in the database:
 
-### Listing All Schemas and Their Tables
-
-```php
+```php title="Listing All Schemas and Their Tables"
 $schemas = $metadata->getSchemas();
 foreach ($schemas as $schema) {
     $tables = $metadata->getTableNames($schema);
@@ -177,9 +169,7 @@ foreach ($schemas as $schema) {
 When the `$schema` parameter is `null`, the metadata component uses the current
 default schema from the adapter. You can explicitly specify a schema for any method:
 
-### Specifying a Schema Explicitly
-
-```php
+```php title="Specifying a Schema Explicitly"
 $tables = $metadata->getTableNames('production');
 $columns = $metadata->getColumns('users', 'production');
 $constraints = $metadata->getConstraints('users', 'production');
@@ -189,9 +179,7 @@ $constraints = $metadata->getConstraints('users', 'production');
 
 Retrieve all views in the current schema:
 
-### Retrieving View Information
-
-```php
+```php title="Retrieving View Information"
 $viewNames = $metadata->getViewNames();
 foreach ($viewNames as $viewName) {
     $view = $metadata->getView($viewName);
@@ -231,9 +219,7 @@ $allTables = $metadata->getTableNames(null, true);
 
 Retrieve all triggers and their details:
 
-### Retrieving Trigger Information
-
-```php
+```php title="Retrieving Trigger Information"
 $triggers = $metadata->getTriggers();
 foreach ($triggers as $trigger) {
     printf(
@@ -262,9 +248,7 @@ The `getActionTiming()` returns when the trigger fires:
 
 Get detailed foreign key information using `getConstraintKeys()`:
 
-### Examining Foreign Key Details
-
-```php
+```php title="Examining Foreign Key Details"
 $constraints = $metadata->getConstraints('orders');
 $foreignKeys = array_filter($constraints, fn($c) => $c->isForeignKey());
 
@@ -302,9 +286,7 @@ Foreign Key: fk_orders_products
 
 Examine column types and their properties:
 
-### Examining Column Data Types
-
-```php
+```php title="Examining Column Data Types"
 $column = $metadata->getColumn('price', 'products');
 
 if ($column->getDataType() === 'decimal') {
@@ -341,9 +323,7 @@ echo 'Position: ' . $column->getOrdinalPosition() . PHP_EOL;
 The `ColumnObject` includes an errata system for storing database-specific
 metadata not covered by the standard properties:
 
-### Using the Errata System
-
-```php
+```php title="Using the Errata System"
 $columns = $metadata->getColumns('users');
 foreach ($columns as $column) {
     if ($column->getErrata('auto_increment')) {
@@ -382,9 +362,7 @@ foreach ($erratas as $key => $value) {
 
 All setter methods on value objects return `static`, enabling method chaining:
 
-### Using Method Chaining with Value Objects
-
-```php
+```php title="Using Method Chaining with Value Objects"
 $column = new ColumnObject('id', 'users');
 $column->setDataType('int')
     ->setIsNullable(false)

@@ -399,9 +399,7 @@ $adapter->query($sql->buildSqlString($alter), $adapter::QUERY_MODE_EXECUTE);
 
 Foreign keys add overhead to INSERT/UPDATE/DELETE operations:
 
-### Disabling Foreign Key Checks for Bulk Operations
-
-```php
+```php title="Disabling Foreign Key Checks for Bulk Operations"
 // If you need to bulk load data, consider:
 // 1. Disable foreign key checks (platform-specific)
 // 2. Load data

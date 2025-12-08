@@ -6,9 +6,7 @@
 
 The `PhpDb\Sql\Sql` class creates the four primary DML statement types: `Select`, `Insert`, `Update`, and `Delete`.
 
-### Creating SQL Statement Objects
-
-```php
+```php title="Creating SQL Statement Objects"
 use PhpDb\Sql\Sql;
 
 $sql    = new Sql($adapter);
@@ -58,9 +56,7 @@ $results = $adapter->query($selectString, $adapter::QUERY_MODE_EXECUTE);
 obtaining a `Select`, `Insert`, `Update`, or `Delete` instance, the object will be
 seeded with the table:
 
-### Binding to a Default Table
-
-```php
+```php title="Binding to a Default Table"
 use PhpDb\Sql\Sql;
 
 $sql    = new Sql($adapter, 'foo');
@@ -72,9 +68,7 @@ $select->where(['id' => 2]); // $select already has from('foo') applied
 
 Each of these objects implements the following two interfaces:
 
-### PreparableSqlInterface and SqlInterface
-
-```php
+```php title="PreparableSqlInterface and SqlInterface"
 interface PreparableSqlInterface
 {
      public function prepareStatement(
@@ -112,9 +106,7 @@ The `ArgumentType` enum defines six types, each backed by its corresponding clas
 
 All argument classes are `readonly` and implement `ArgumentInterface`:
 
-### Using Argument Factory and Classes
-
-```php
+```php title="Using Argument Factory and Classes"
 use PhpDb\Sql\Argument;
 
 // Using the Argument factory class (recommended)
@@ -134,9 +126,7 @@ $arg = new Argument\Values([1, 2, 3]);
 The `Argument` classes are particularly useful when working with expressions
 where you need to explicitly control how values are treated:
 
-### Type-Safe Expression Arguments
-
-```php
+```php title="Type-Safe Expression Arguments"
 use PhpDb\Sql\Argument;
 use PhpDb\Sql\Expression;
 
@@ -170,18 +160,14 @@ Scalar values passed directly to `Expression` are automatically wrapped:
 
 The `Sql` class serves as a factory for creating SQL statement objects and provides methods for preparing and building SQL strings.
 
-### Instantiating the Sql Factory
-
-```php
+```php title="Instantiating the Sql Factory"
 use PhpDb\Sql\Sql;
 
 $sql = new Sql($adapter);
 $sql = new Sql($adapter, 'defaultTable');
 ```
 
-### Factory Methods
-
-```php
+```php title="Factory Methods"
 $select = $sql->select();
 $select = $sql->select('users');
 
@@ -232,9 +218,7 @@ $sqlString = $sql->buildSqlString($select);
 
 Note: Direct string building bypasses parameter binding. Use with caution and never with user input.
 
-### Getting the SQL Platform
-
-```php
+```php title="Getting the SQL Platform"
 $platform = $sql->getSqlPlatform();
 ```
 
@@ -245,9 +229,7 @@ The platform object handles database-specific SQL generation and can be used for
 The `TableIdentifier` class provides a type-safe way to reference tables,
 especially when working with schemas or databases.
 
-### Creating and Using TableIdentifier
-
-```php
+```php title="Creating and Using TableIdentifier"
 use PhpDb\Sql\TableIdentifier;
 
 $table = new TableIdentifier('users', 'production');

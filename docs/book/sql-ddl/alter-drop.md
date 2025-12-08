@@ -4,9 +4,7 @@
 
 The `AlterTable` class represents an `ALTER TABLE` statement. It provides methods to modify existing table structures.
 
-### Basic AlterTable Creation
-
-```php
+```php title="Basic AlterTable Creation"
 use PhpDb\Sql\Ddl\AlterTable;
 use PhpDb\Sql\TableIdentifier;
 
@@ -249,9 +247,7 @@ $adapter->query(
 
 The `DropTable` class represents a `DROP TABLE` statement.
 
-### Basic Drop Table
-
-```php
+```php title="Basic Drop Table"
 use PhpDb\Sql\Ddl\DropTable;
 
 // Simple
@@ -273,9 +269,7 @@ $adapter->query(
 DROP TABLE "old_table"
 ```
 
-### Schema-Qualified Drop
-
-```php
+```php title="Schema-Qualified Drop"
 use PhpDb\Sql\Ddl\DropTable;
 use PhpDb\Sql\TableIdentifier;
 
@@ -322,9 +316,7 @@ foreach ($tables as $tableName) {
 
 The DDL abstraction is designed to work across platforms without modification:
 
-### Example of Platform-Agnostic DDL Code
-
-```php
+```php title="Example of Platform-Agnostic DDL Code"
 // This code works on MySQL, PostgreSQL, SQL Server, SQLite, etc.
 $table = new CreateTable('users');
 $table->addColumn(new Column\Integer('id'));
@@ -340,9 +332,7 @@ $table->addColumn(new Column\Varchar('name', 255));
 
 Use column options for platform-specific features:
 
-### Using Platform-Specific Column Options
-
-```php
+```php title="Using Platform-Specific Column Options"
 // MySQL AUTO_INCREMENT
 $id = new Column\Integer('id');
 $id->setOption('AUTO_INCREMENT', true);
@@ -360,9 +350,7 @@ $count->setOption('unsigned', true);
 
 ### Platform Detection
 
-### Detecting Database Platform at Runtime
-
-```php
+```php title="Detecting Database Platform at Runtime"
 // Check platform before using platform-specific options
 $platformName = $adapter->getPlatform()->getName();
 
@@ -377,9 +365,7 @@ if ($platformName === 'MySQL') {
 
 Use `getRawState()` to inspect the internal configuration of DDL objects:
 
-### Using getRawState() to Inspect DDL Configuration
-
-```php
+```php title="Using getRawState() to Inspect DDL Configuration"
 $table = new CreateTable('users');
 $table->addColumn(new Column\Integer('id'));
 $table->addColumn(new Column\Varchar('name', 255));
@@ -409,9 +395,7 @@ This is useful for:
 
 Use `TableIdentifier` for schema-qualified table references:
 
-### Creating and Using Table Identifiers
-
-```php
+```php title="Creating and Using Table Identifiers"
 use PhpDb\Sql\TableIdentifier;
 
 // Table in default schema
@@ -439,9 +423,7 @@ $fk = new ForeignKey(
 
 ### Setting Nullable
 
-### Configuring Nullable Columns
-
-```php
+```php title="Configuring Nullable Columns"
 // NOT NULL (default for most types)
 $column = new Column\Varchar('email', 255);
 $column->setNullable(false);
@@ -465,9 +447,7 @@ $column->setNullable(true); // Has no effect - still NOT NULL
 
 ### Setting Default Values
 
-### Configuring Default Column Values
-
-```php
+```php title="Configuring Default Column Values"
 // String default
 $column = new Column\Varchar('status', 20);
 $column->setDefault('pending');
@@ -495,9 +475,7 @@ All DDL objects support method chaining for cleaner, more readable code.
 
 ### Chaining Column Configuration
 
-### Example of Fluent Column Configuration
-
-```php
+```php title="Example of Fluent Column Configuration"
 $column = (new Column\Varchar('email', 255))
     ->setNullable(false)
     ->setDefault('user@example.com')
@@ -509,9 +487,7 @@ $table->addColumn($column);
 
 ### Chaining Table Construction
 
-### Example of Fluent Table Construction
-
-```php
+```php title="Example of Fluent Table Construction"
 $table = (new CreateTable('users'))
     ->addColumn(
         (new Column\Integer('id'))

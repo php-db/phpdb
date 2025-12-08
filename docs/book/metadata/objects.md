@@ -7,9 +7,7 @@ better explore the metadata. Below is the API for the various value objects:
 
 `TableObject` extends `AbstractTableObject` and represents a database table:
 
-### TableObject Class Definition
-
-```php
+```php title="TableObject Class Definition"
 class PhpDb\Metadata\Object\TableObject extends AbstractTableObject
 {
     public function __construct(?string $name = null);
@@ -26,9 +24,7 @@ class PhpDb\Metadata\Object\TableObject extends AbstractTableObject
 
 All setter methods return `static` for fluent interface support:
 
-### ColumnObject Class Definition
-
-```php
+```php title="ColumnObject Class Definition"
 class PhpDb\Metadata\Object\ColumnObject
 {
     public function __construct(string $name, string $tableName, ?string $schemaName = null);
@@ -83,9 +79,7 @@ class PhpDb\Metadata\Object\ColumnObject
 
 All setter methods return `static` for fluent interface support:
 
-### ConstraintObject Class Definition
-
-```php
+```php title="ConstraintObject Class Definition"
 class PhpDb\Metadata\Object\ConstraintObject
 {
     public function __construct(string $name, string $tableName, ?string $schemaName = null);
@@ -140,9 +134,7 @@ class PhpDb\Metadata\Object\ConstraintObject
 The `ViewObject` extends `AbstractTableObject` and represents database views. It
 includes all methods from `TableObject` plus view-specific properties:
 
-### ViewObject Class Definition
-
-```php
+```php title="ViewObject Class Definition"
 class PhpDb\Metadata\Object\ViewObject extends AbstractTableObject
 {
     public function __construct(?string $name = null);
@@ -167,18 +159,14 @@ class PhpDb\Metadata\Object\ViewObject extends AbstractTableObject
 
 The `getViewDefinition()` method returns the SQL that creates the view:
 
-### Retrieving View Definition
-
-```php
+```php title="Retrieving View Definition"
 $view = $metadata->getView('active_users');
 echo $view->getViewDefinition();
 ```
 
 Outputs:
 
-### View Definition SQL Output
-
-```sql
+```sql title="View Definition SQL Output"
 SELECT id, name, email FROM users WHERE status = 'active'
 ```
 
@@ -196,9 +184,7 @@ view supports INSERT, UPDATE, or DELETE operations.
 The `ConstraintKeyObject` provides detailed information about individual columns
 participating in constraints, particularly useful for foreign key relationships:
 
-### ConstraintKeyObject Class Definition
-
-```php
+```php title="ConstraintKeyObject Class Definition"
 class PhpDb\Metadata\Object\ConstraintKeyObject
 {
     public const FK_CASCADE = 'CASCADE';
@@ -237,9 +223,7 @@ class PhpDb\Metadata\Object\ConstraintKeyObject
 
 Constraint keys are retrieved using `getConstraintKeys()`:
 
-### Iterating Through Foreign Key Constraint Details
-
-```php
+```php title="Iterating Through Foreign Key Constraint Details"
 $keys = $metadata->getConstraintKeys('fk_orders_customers', 'orders');
 foreach ($keys as $key) {
     echo $key->getColumnName() . ' -> '
@@ -252,9 +236,7 @@ foreach ($keys as $key) {
 
 Outputs:
 
-### Foreign Key Constraint Output
-
-```text
+```text title="Foreign Key Constraint Output"
 customer_id -> customers.id
   ON UPDATE: CASCADE
   ON DELETE: RESTRICT
@@ -264,9 +246,7 @@ customer_id -> customers.id
 
 All setter methods return `static` for fluent interface support:
 
-### TriggerObject Class Definition
-
-```php
+```php title="TriggerObject Class Definition"
 class PhpDb\Metadata\Object\TriggerObject
 {
     public function getName(): ?string;

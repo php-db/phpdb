@@ -40,17 +40,13 @@ $select->where->isNull('deletedAt')
 
 In UPDATE statements:
 
-### Setting NULL Values in UPDATE
-
-```php
+```php title="Setting NULL Values in UPDATE"
 $update->set(['optionalField' => null]);
 ```
 
 In comparisons, remember that `column = NULL` does not work in SQL; you must use `IS NULL`:
 
-### Checking for NULL or Empty Values
-
-```php
+```php title="Checking for NULL or Empty Values"
 $select->where->nest()
     ->isNull('field')
     ->or
@@ -128,9 +124,7 @@ applyPagination($select, 2, 25);
 
 If you encounter errors about empty WHERE clauses:
 
-### UPDATE Without WHERE Clause (Wrong)
-
-```php
+```php title="UPDATE Without WHERE Clause (Wrong)"
 $update = $sql->update('users');
 $update->set(['status' => 'inactive']);
 // This will trigger empty WHERE protection!
@@ -138,17 +132,13 @@ $update->set(['status' => 'inactive']);
 
 Always include a WHERE clause for UPDATE and DELETE:
 
-### Adding WHERE Clause to UPDATE
-
-```php
+```php title="Adding WHERE Clause to UPDATE"
 $update->where(['id' => 123]);
 ```
 
 To intentionally update all rows (use with extreme caution):
 
-### Checking Empty WHERE Protection Status
-
-```php
+```php title="Checking Empty WHERE Protection Status"
 // Check the raw state to understand the protection status
 $state = $update->getRawState();
 $protected = $state['emptyWhereProtection'];
@@ -158,18 +148,14 @@ $protected = $state['emptyWhereProtection'];
 
 When using Expression with placeholders:
 
-### Incorrect Parameter Count
-
-```php
+```php title="Incorrect Parameter Count"
 // WRONG - 3 placeholders but only 2 values
 $expression = new Expression('CONCAT(?, ?, ?)', ['a', 'b']);
 ```
 
 Ensure the number of `?` placeholders matches the number of parameters provided, or you will receive a RuntimeException.
 
-### Correct Parameter Count
-
-```php
+```php title="Correct Parameter Count"
 // CORRECT
 $expression = new Expression('CONCAT(?, ?, ?)', ['a', 'b', 'c']);
 ```
@@ -178,18 +164,14 @@ $expression = new Expression('CONCAT(?, ?, ?)', ['a', 'b', 'c']);
 
 Different databases use different quote characters. Let the platform handle quoting:
 
-### Proper Platform-Managed Quoting
-
-```php
+```php title="Proper Platform-Managed Quoting"
 // CORRECT - let the platform handle quoting
 $select->from('users');
 ```
 
 Avoid manually quoting identifiers:
 
-### Avoid Manual Quoting
-
-```php
+```php title="Avoid Manual Quoting"
 // WRONG - don't manually quote
 $select->from('"users"');
 ```
@@ -198,9 +180,7 @@ $select->from('"users"');
 
 When comparing two identifiers (column to column), specify both types:
 
-### Column Comparison Using Type Constants
-
-```php
+```php title="Column Comparison Using Type Constants"
 // Using type constants
 $where->equalTo(
     'table1.columnA',
@@ -212,9 +192,7 @@ $where->equalTo(
 
 Or use the Argument class for better readability:
 
-### Column Comparison Using Argument Class
-
-```php
+```php title="Column Comparison Using Argument Class"
 // Using Argument class (recommended)
 use PhpDb\Sql\Argument;
 
@@ -265,9 +243,7 @@ $select->limit(100);
 
 For pagination, combine with `offset()`:
 
-### Pagination with Limit and Offset
-
-```php
+```php title="Pagination with Limit and Offset"
 $select->limit(25)->offset(50);
 ```
 
@@ -275,18 +251,14 @@ $select->limit(25)->offset(50);
 
 Instead of selecting all columns:
 
-### Selecting All Columns (Avoid)
-
-```php
+```php title="Selecting All Columns (Avoid)"
 // Avoid - selects all columns
 $select->from('users');
 ```
 
 Specify only the columns you need:
 
-### Selecting Specific Columns
-
-```php
+```php title="Selecting Specific Columns"
 // Better - only select what's needed
 $select->from('users')->columns(['id', 'username', 'email']);
 ```
@@ -297,9 +269,7 @@ This reduces memory usage and network transfer.
 
 Use JOINs instead of multiple queries:
 
-### Using JOINs to Avoid N+1 Queries
-
-```php
+```php title="Using JOINs to Avoid N+1 Queries"
 // WRONG - N+1 queries
 foreach ($orders as $order) {
     $customer = getCustomer($order['customerId']); // Additional query per order
@@ -315,9 +285,7 @@ $select->from('orders')
 
 Structure WHERE clauses to use database indexes:
 
-### Index-Friendly WHERE Clause
-
-```php
+```php title="Index-Friendly WHERE Clause"
 // Good - can use index on indexedColumn
 $select->where->equalTo('indexedColumn', $value)
     ->greaterThan('date', '2024-01-01');
@@ -325,27 +293,21 @@ $select->where->equalTo('indexedColumn', $value)
 
 Avoid functions on indexed columns in WHERE:
 
-### Functions on Indexed Columns (Prevents Index Usage)
-
-```php
+```php title="Functions on Indexed Columns (Prevents Index Usage)"
 // BAD - prevents index usage
 $select->where(new Predicate\Expression('YEAR(createdAt) = ?', [2024]));
 ```
 
 Instead, use ranges:
 
-### Using Ranges for Index-Friendly Queries
-
-```php
+```php title="Using Ranges for Index-Friendly Queries"
 // GOOD - allows index usage
 $select->where->between('createdAt', '2024-01-01', '2024-12-31');
 ```
 
 ## Complete Examples
 
-### Complex Reporting Query with Aggregation
-
-```php
+```php title="Complex Reporting Query with Aggregation"
 use PhpDb\Sql\Sql;
 use PhpDb\Sql\Select;
 use PhpDb\Sql\Expression;
@@ -387,9 +349,7 @@ $results = $statement->execute();
 
 Produces:
 
-### Generated SQL for Reporting Query
-
-```sql
+```sql title="Generated SQL for Reporting Query"
 SELECT orders.customerId,
        YEAR(createdAt) AS orderYear,
        COUNT(*) AS orderCount,
@@ -407,9 +367,7 @@ ORDER BY totalRevenue DESC, orderYear DESC
 LIMIT 100
 ```
 
-### Data Migration with INSERT SELECT
-
-```php
+```php title="Data Migration with INSERT SELECT"
 $select = $sql->select('importedUsers')
     ->columns(['username', 'email', 'firstName', 'lastName'])
     ->where(['validated' => true])
@@ -425,18 +383,14 @@ $statement->execute();
 
 Produces:
 
-### Generated SQL for INSERT SELECT
-
-```sql
+```sql title="Generated SQL for INSERT SELECT"
 INSERT INTO users (username, email, firstName, lastName)
 SELECT username, email, firstName, lastName
 FROM importedUsers
 WHERE validated = 1 AND email IS NOT NULL
 ```
 
-### Combining Multiple Result Sets
-
-```php
+```php title="Combining Multiple Result Sets"
 use PhpDb\Sql\Combine;
 use PhpDb\Sql\Literal;
 
@@ -464,9 +418,7 @@ $results = $statement->execute();
 
 Produces:
 
-### Generated SQL for UNION Query
-
-```sql
+```sql title="Generated SQL for UNION Query"
 (SELECT id, name, email, "active" AS status FROM users WHERE status = 'active')
 UNION
 (SELECT id, name, email, "pending" AS status FROM userRegistrations WHERE verified = 0)
@@ -474,9 +426,7 @@ UNION
 (SELECT id, name, email, "suspended" AS status FROM users WHERE suspended = 1)
 ```
 
-### Search with Full-Text and Filters
-
-```php
+```php title="Search with Full-Text and Filters"
 use PhpDb\Sql\Predicate;
 
 $select = $sql->select('products')
@@ -515,9 +465,7 @@ $select = $sql->select('products')
     ->limit(50);
 ```
 
-### Batch Update with Transaction
-
-```php
+```php title="Batch Update with Transaction"
 $connection = $adapter->getDriver()->getConnection();
 $connection->beginTransaction();
 

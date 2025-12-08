@@ -2,9 +2,7 @@
 
 ## Example 1: E-Commerce Product Table
 
-### Creating a Complete Product Table with Constraints and Indexes
-
-```php
+```php title="Creating a Complete Product Table with Constraints and Indexes"
 use PhpDb\Sql\Ddl\CreateTable;
 use PhpDb\Sql\Ddl\Column;
 use PhpDb\Sql\Ddl\Constraint;
@@ -73,9 +71,7 @@ $adapter->query($sql->buildSqlString($table), $adapter::QUERY_MODE_EXECUTE);
 
 ## Example 2: User Authentication System
 
-### Building a Multi-Table User Authentication Schema with Roles
-
-```php
+```php title="Building a Multi-Table User Authentication Schema with Roles"
 // Users table
 $users = new CreateTable('users');
 
@@ -153,9 +149,7 @@ $adapter->query($sql->buildSqlString($userRoles), $adapter::QUERY_MODE_EXECUTE);
 
 ## Example 3: Multi-Tenant Schema
 
-### Implementing Cross-Schema Tables with Foreign Key References
-
-```php
+```php title="Implementing Cross-Schema Tables with Foreign Key References"
 use PhpDb\Sql\TableIdentifier;
 
 // Tenants table (in public schema)
@@ -207,9 +201,7 @@ $adapter->query($sql->buildSqlString($tenantUsers), $adapter::QUERY_MODE_EXECUTE
 
 ## Example 4: Database Migration Pattern
 
-### Creating Reversible Migration Classes with Up and Down Methods
-
-```php
+```php title="Creating Reversible Migration Classes with Up and Down Methods"
 use PhpDb\Sql\Sql;
 use PhpDb\Sql\Ddl;
 
@@ -290,9 +282,7 @@ class Migration_002_AddUserProfiles
 
 ## Example 5: Audit Log Table
 
-### Designing an Audit Trail Table for Tracking Data Changes
-
-```php
+```php title="Designing an Audit Trail Table for Tracking Data Changes"
 $auditLog = new CreateTable('audit_log');
 
 // Auto-increment ID
@@ -343,9 +333,7 @@ $adapter->query($sql->buildSqlString($auditLog), $adapter::QUERY_MODE_EXECUTE);
 
 ## Example 6: Session Storage Table
 
-### Building a Database-Backed Session Storage System
-
-```php
+```php title="Building a Database-Backed Session Storage System"
 $sessions = new CreateTable('sessions');
 
 // Session ID as primary key (not auto-increment)
@@ -398,9 +386,7 @@ $adapter->query($sql->buildSqlString($sessions), $adapter::QUERY_MODE_EXECUTE);
 
 ## Example 7: File Storage Metadata Table
 
-### Implementing File Metadata Storage with UUID Primary Keys
-
-```php
+```php title="Implementing File Metadata Storage with UUID Primary Keys"
 $files = new CreateTable('files');
 
 // UUID as primary key
@@ -453,9 +439,7 @@ $adapter->query($sql->buildSqlString($files), $adapter::QUERY_MODE_EXECUTE);
 
 ### Issue: Table Already Exists
 
-### Safely Creating Tables with Existence Checks
-
-```php
+```php title="Safely Creating Tables with Existence Checks"
 // Check before creating
 function createTableIfNotExists($adapter, CreateTable $table) {
     $sql = new Sql($adapter);
@@ -479,9 +463,7 @@ function createTableIfNotExists($adapter, CreateTable $table) {
 
 ### Issue: Foreign Key Constraint Fails
 
-### Ensuring Correct Table Creation Order for Foreign Keys
-
-```php
+```php title="Ensuring Correct Table Creation Order for Foreign Keys"
 // Ensure referenced table exists first
 $sql = new Sql($adapter);
 
@@ -498,9 +480,7 @@ $adapter->query($sql->buildSqlString($userRoles), $adapter::QUERY_MODE_EXECUTE);
 
 ### Issue: Column Type Mismatch in Foreign Key
 
-### Matching Column Types Between Parent and Child Tables
-
-```php
+```php title="Matching Column Types Between Parent and Child Tables"
 // Ensure both columns have the same type
 $parentTable = new CreateTable('categories');
 $parentId = new Column\Integer('id'); // INTEGER
@@ -519,9 +499,7 @@ $childTable->addConstraint(new Constraint\ForeignKey(
 
 ### Issue: Index Too Long
 
-### Using Prefix Indexes for Long Text Columns
-
-```php
+```php title="Using Prefix Indexes for Long Text Columns"
 // Use prefix indexes for long text columns
 $table->addConstraint(new Index(
     'long_description',

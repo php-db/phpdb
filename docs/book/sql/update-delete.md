@@ -4,9 +4,7 @@
 
 The `Update` class provides an API for building SQL UPDATE statements.
 
-### Update API
-
-```php
+```php title="Update API"
 class Update extends AbstractPreparableSql implements SqlInterface, PreparableSqlInterface
 {
     final public const VALUES_MERGE = 'merge';
@@ -30,9 +28,7 @@ class Update extends AbstractPreparableSql implements SqlInterface, PreparableSq
 }
 ```
 
-### Basic Usage
-
-```php
+```php title="Basic Usage"
 use PhpDb\Sql\Sql;
 
 $sql = new Sql($adapter);
@@ -47,34 +43,26 @@ $statement->execute();
 
 Produces:
 
-### Generated SQL for basic update
-
-```sql
+```sql title="Generated SQL for basic update"
 UPDATE users SET status = ? WHERE id = ?
 ```
 
 ### set()
 
-### Setting multiple values
-
-```php
+```php title="Setting multiple values"
 $update->set(['foo' => 'bar', 'baz' => 'bax']);
 ```
 
 The `set()` method accepts a flag parameter to control merging behavior:
 
-### Controlling merge behavior with VALUES_SET and VALUES_MERGE
-
-```php
+```php title="Controlling merge behavior with VALUES_SET and VALUES_MERGE"
 $update->set(['status' => 'active'], Update::VALUES_SET);
 $update->set(['updatedAt' => new Expression('NOW()')], Update::VALUES_MERGE);
 ```
 
 When using `VALUES_MERGE`, you can optionally specify a numeric priority to control the order of SET clauses:
 
-### Using numeric priority to control SET clause ordering
-
-```php
+```php title="Using numeric priority to control SET clause ordering"
 $update->set(['counter' => 1], 100);
 $update->set(['status' => 'pending'], 50);
 $update->set(['flag' => true], 75);
@@ -82,9 +70,7 @@ $update->set(['flag' => true], 75);
 
 Produces SET clauses in priority order (50, 75, 100):
 
-### Generated SQL showing priority-based ordering
-
-```sql
+```sql title="Generated SQL showing priority-based ordering"
 UPDATE table SET status = ?, flag = ?, counter = ?
 ```
 
@@ -94,9 +80,7 @@ This is useful when the order of SET operations matters for certain database ope
 
 The `where()` method works the same as in Select queries. See the [Where and Having](where-having.md) documentation for full details.
 
-### Using various where clause methods
-
-```php
+```php title="Using various where clause methods"
 $update->where(['id' => 5]);
 $update->where->equalTo('status', 'active');
 $update->where(function ($where) {
@@ -108,17 +92,13 @@ $update->where(function ($where) {
 
 The Update class supports JOIN clauses for multi-table updates:
 
-### Basic JOIN syntax
-
-```php
+```php title="Basic JOIN syntax"
 $update->join('bar', 'foo.id = bar.foo_id', Update::JOIN_LEFT);
 ```
 
 Example:
 
-### Update with INNER JOIN on customers table
-
-```php
+```php title="Update with INNER JOIN on customers table"
 $update = $sql->update('orders');
 $update->set(['status' => 'cancelled']);
 $update->join('customers', 'orders.customerId = customers.id', Join::JOIN_INNER);
@@ -127,9 +107,7 @@ $update->where(['customers.status' => 'inactive']);
 
 Produces:
 
-### Generated SQL for update with JOIN
-
-```sql
+```sql title="Generated SQL for update with JOIN"
 UPDATE orders
 INNER JOIN customers ON orders.customerId = customers.id
 SET status = ?
@@ -143,9 +121,7 @@ PostgreSQL support this syntax, while some other databases may not.
 
 The `Delete` class provides an API for building SQL DELETE statements.
 
-### Delete API
-
-```php
+```php title="Delete API"
 class Delete extends AbstractPreparableSql implements SqlInterface, PreparableSqlInterface
 {
     public Where $where;
@@ -160,9 +136,7 @@ class Delete extends AbstractPreparableSql implements SqlInterface, PreparableSq
 }
 ```
 
-### Delete Basic Usage
-
-```php
+```php title="Delete Basic Usage"
 use PhpDb\Sql\Sql;
 
 $sql = new Sql($adapter);
@@ -176,9 +150,7 @@ $statement->execute();
 
 Produces:
 
-### Generated SQL for basic delete
-
-```sql
+```sql title="Generated SQL for basic delete"
 DELETE FROM users WHERE id = ?
 ```
 
@@ -186,9 +158,7 @@ DELETE FROM users WHERE id = ?
 
 The `where()` method works the same as in Select queries. See the [Where and Having](where-having.md) documentation for full details.
 
-### Using where conditions in delete statements
-
-```php
+```php title="Using where conditions in delete statements"
 $delete->where(['status' => 'deleted']);
 $delete->where->lessThan('created_at', '2020-01-01');
 ```
@@ -198,9 +168,7 @@ $delete->where->lessThan('created_at', '2020-01-01');
 Both Update and Delete classes include empty WHERE protection by default, which
 prevents accidental mass updates or deletes.
 
-### Checking empty WHERE protection status
-
-```php
+```php title="Checking empty WHERE protection status"
 $update = $sql->update('users');
 $update->set(['status' => 'deleted']);
 // No where clause - this could update ALL rows!
@@ -213,9 +181,7 @@ Most database drivers will prevent execution of UPDATE or DELETE statements
 without a WHERE clause when this protection is enabled. Always include a WHERE
 clause:
 
-### Adding WHERE clause for safe operations
-
-```php
+```php title="Adding WHERE clause for safe operations"
 $update->where(['id' => 123]);
 
 $delete = $sql->delete('logs');
@@ -224,9 +190,7 @@ $delete->where->lessThan('createdAt', '2020-01-01');
 
 ## Examples
 
-### Update with expressions
-
-```php
+```php title="Update with expressions"
 $update = $sql->update('products');
 $update->set([
     'view_count' => new Expression('view_count + 1'),
@@ -237,15 +201,11 @@ $update->where(['id' => $productId]);
 
 Produces:
 
-### Generated SQL for update with expressions
-
-```sql
+```sql title="Generated SQL for update with expressions"
 UPDATE products SET view_count = view_count + 1, last_viewed = NOW() WHERE id = ?
 ```
 
-### Conditional update
-
-```php
+```php title="Conditional update"
 $update = $sql->update('orders');
 $update->set(['status' => 'shipped']);
 $update->where(function ($where) {
@@ -255,18 +215,14 @@ $update->where(function ($where) {
 });
 ```
 
-### Update with JOIN
-
-```php
+```php title="Update with JOIN"
 $update = $sql->update('products');
 $update->set(['products.is_featured' => true]);
 $update->join('categories', 'products.category_id = categories.id');
 $update->where(['categories.name' => 'Electronics']);
 ```
 
-### Delete old records
-
-```php
+```php title="Delete old records"
 $delete = $sql->delete('sessions');
 $delete->where->lessThan('last_activity', new Expression('NOW() - INTERVAL 24 HOUR'));
 
@@ -275,9 +231,7 @@ $result = $statement->execute();
 $deletedCount = $result->getAffectedRows();
 ```
 
-### Delete with complex conditions
-
-```php
+```php title="Delete with complex conditions"
 $delete = $sql->delete('users');
 $delete->where(function ($where) {
     $where->nest()
@@ -296,17 +250,13 @@ $delete->where(function ($where) {
 
 Produces:
 
-### Generated SQL for delete with complex conditions
-
-```sql
+```sql title="Generated SQL for delete with complex conditions"
 DELETE FROM users
 WHERE (status = 'pending' AND created_at < '2023-01-01')
    OR (status = 'banned' AND appeal_date IS NULL)
 ```
 
-### Bulk operations with transactions
-
-```php
+```php title="Bulk operations with transactions"
 $connection = $adapter->getDriver()->getConnection();
 $connection->beginTransaction();
 

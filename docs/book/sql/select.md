@@ -22,9 +22,7 @@ later to change the name of the table.
 Once you have a valid `Select` object, the following API can be used to further
 specify various select statement parts:
 
-### Select class definition and constants
-
-```php
+```php title="Select class definition and constants"
 class Select extends AbstractPreparableSql implements SqlInterface, PreparableSqlInterface
 {
     final public const JOIN_INNER = 'inner';
@@ -87,9 +85,7 @@ class Select extends AbstractPreparableSql implements SqlInterface, PreparableSq
 
 ## from()
 
-### Specifying the FROM table
-
-```php
+```php title="Specifying the FROM table"
 // As a string:
 $select->from('foo');
 
@@ -104,9 +100,7 @@ $select->from(['t' => new TableIdentifier('table')]);
 
 ## columns()
 
-### Selecting columns
-
-```php
+```php title="Selecting columns"
 // As an array of names
 $select->columns(['foo', 'bar']);
 
@@ -126,9 +120,7 @@ $select->columns([
 
 ## join()
 
-### Basic JOIN examples
-
-```php
+```php title="Basic JOIN examples"
 $select->join(
     'foo',              // table name
     'id = bar.id',      // expression to join on (will be quoted by platform),
@@ -146,9 +138,7 @@ $select
 
 The `$on` parameter accepts either a string or a `PredicateInterface` for complex join conditions:
 
-### JOIN with predicate conditions
-
-```php
+```php title="JOIN with predicate conditions"
 use PhpDb\Sql\Predicate;
 
 $where = new Predicate\Predicate();
@@ -169,9 +159,7 @@ INNER JOIN orders ON orders.customerId = customers.id AND orders.amount > 100
 
 ## order()
 
-### Ordering results
-
-```php
+```php title="Ordering results"
 $select = new Select;
 $select->order('id DESC'); // produces 'id' DESC
 
@@ -186,9 +174,7 @@ $select->order(['name ASC', 'age DESC']); // produces 'name' ASC, 'age' DESC
 
 ## limit() and offset()
 
-### Limiting and offsetting results
-
-```php
+```php title="Limiting and offsetting results"
 $select = new Select;
 $select->limit(5);
 $select->offset(10);
@@ -199,17 +185,13 @@ $select->offset(10);
 The `group()` method specifies columns for GROUP BY clauses, typically used with
 aggregate functions to group rows that share common values.
 
-### Grouping by a single column
-
-```php
+```php title="Grouping by a single column"
 $select->group('category');
 ```
 
 Multiple columns can be specified as an array, or by calling `group()` multiple times:
 
-### Grouping by multiple columns
-
-```php
+```php title="Grouping by multiple columns"
 $select->group(['category', 'status']);
 
 $select->group('category')
@@ -218,9 +200,7 @@ $select->group('category')
 
 As an example with aggregate functions:
 
-### Grouping with aggregate functions
-
-```php
+```php title="Grouping with aggregate functions"
 $select->from('orders')
     ->columns([
         'customer_id',
@@ -240,9 +220,7 @@ GROUP BY customer_id
 
 You can also use expressions in GROUP BY:
 
-### Grouping with expressions
-
-```php
+```php title="Grouping with expressions"
 $select->from('orders')
     ->columns([
         'orderYear' => new Expression('YEAR(created_at)'),
@@ -264,9 +242,7 @@ GROUP BY YEAR(created_at)
 The `quantifier()` method applies a quantifier to the SELECT statement, such as
 DISTINCT or ALL.
 
-### Using DISTINCT quantifier
-
-```php
+```php title="Using DISTINCT quantifier"
 $select->from('orders')
     ->columns(['customer_id'])
     ->quantifier(Select::QUANTIFIER_DISTINCT);
@@ -281,9 +257,7 @@ SELECT DISTINCT customer_id FROM orders
 The `QUANTIFIER_ALL` constant explicitly specifies ALL, though this is typically
 the default behavior:
 
-### Using ALL quantifier
-
-```php
+```php title="Using ALL quantifier"
 $select->quantifier(Select::QUANTIFIER_ALL);
 ```
 
@@ -292,9 +266,7 @@ $select->quantifier(Select::QUANTIFIER_ALL);
 The `reset()` method allows you to clear specific parts of a Select statement,
 useful when building queries dynamically.
 
-### Building a Select query before reset
-
-```php
+```php title="Building a Select query before reset"
 $select->from('users')
     ->columns(['id', 'name'])
     ->where(['status' => 'active'])
@@ -310,9 +282,7 @@ SELECT id, name FROM users WHERE status = 'active' ORDER BY created_at DESC LIMI
 
 After resetting WHERE, ORDER, and LIMIT:
 
-### Resetting specific parts of a query
-
-```php
+```php title="Resetting specific parts of a query"
 $select->reset(Select::WHERE);
 $select->reset(Select::ORDER);
 $select->reset(Select::LIMIT);
@@ -345,17 +315,13 @@ provided in the constructor (read-only table).
 The `getRawState()` method returns the internal state of the Select object,
 useful for debugging or introspection.
 
-### Getting the full raw state
-
-```php
+```php title="Getting the full raw state"
 $state = $select->getRawState();
 ```
 
 Returns an array containing:
 
-### Raw state array structure
-
-```php
+```php title="Raw state array structure"
 [
     'table' => 'users',
     'quantifier' => null,
@@ -373,9 +339,7 @@ Returns an array containing:
 
 You can also retrieve a specific state element:
 
-### Getting specific state elements
-
-```php
+```php title="Getting specific state elements"
 $table = $select->getRawState(Select::TABLE);
 $columns = $select->getRawState(Select::COLUMNS);
 $limit = $select->getRawState(Select::LIMIT);
@@ -402,9 +366,7 @@ $combine->union($select2, 'ALL');
 
 ### Multiple JOIN types in a single query
 
-### Combining different JOIN types
-
-```php
+```php title="Combining different JOIN types"
 $select->from(['u' => 'users'])
     ->join(
         ['o' => 'orders'],
@@ -431,9 +393,7 @@ $select->from(['u' => 'users'])
 When you need to join a table only for filtering purposes without selecting its
 columns:
 
-### Joining for filtering without selecting columns
-
-```php
+```php title="Joining for filtering without selecting columns"
 $select->from('orders')
     ->join('customers', 'orders.customerId = customers.id', [])
     ->where(['customers.status' => 'premium']);
@@ -449,9 +409,7 @@ WHERE customers.status = 'premium'
 
 ### JOIN with expressions in columns
 
-### Using expressions in JOIN column selection
-
-```php
+```php title="Using expressions in JOIN column selection"
 $select->from('users')
     ->join(
         'orders',
@@ -467,9 +425,7 @@ $select->from('users')
 
 The Join object can be accessed directly for programmatic manipulation:
 
-### Programmatically accessing Join information
-
-```php
+```php title="Programmatically accessing Join information"
 foreach ($select->joins as $join) {
     $tableName = $join['name'];
     $onCondition = $join['on'];

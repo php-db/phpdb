@@ -26,9 +26,7 @@ Once attached, the profiler automatically tracks all queries executed through th
 
 After executing queries, you can retrieve profiling information:
 
-### Get the Last Profile
-
-```php
+```php title="Get the Last Profile"
 $adapter->query('SELECT * FROM users WHERE status = ?', ['active']);
 
 $lastProfile = $profiler->getLastProfile();
@@ -43,9 +41,7 @@ $lastProfile = $profiler->getLastProfile();
 // ]
 ```
 
-### Get All Profiles
-
-```php
+```php title="Get All Profiles"
 // Execute several queries
 $adapter->query('SELECT * FROM users');
 $adapter->query('SELECT * FROM orders WHERE user_id = ?', [42]);

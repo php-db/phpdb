@@ -67,9 +67,7 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 ## Database Containers
 
-### MySQL
-
-```yaml
+```yaml title="MySQL"
 mysql:
   image: mysql:8.0
   ports:
@@ -85,9 +83,7 @@ mysql:
     - MYSQL_PASSWORD=${DB_PASSWORD}
 ```
 
-### PostgreSQL
-
-```yaml
+```yaml title="PostgreSQL"
 postgres:
   image: postgres:15-alpine
   ports:
@@ -107,9 +103,7 @@ For PostgreSQL, add to your Dockerfile:
 RUN docker-php-ext-install pdo_pgsql
 ```
 
-### phpMyAdmin (Optional)
-
-```yaml
+```yaml title="phpMyAdmin (Optional)"
 phpmyadmin:
   image: phpmyadmin/phpmyadmin
   ports:
@@ -123,9 +117,7 @@ phpmyadmin:
 
 ## Complete Examples
 
-### Nginx + MySQL
-
-```yaml
+```yaml title="Nginx + MySQL"
 version: "3.8"
 
 services:
@@ -183,9 +175,7 @@ volumes:
   mysql_data:
 ```
 
-### Apache + MySQL
-
-```yaml
+```yaml title="Apache + MySQL"
 version: "3.8"
 
 services:

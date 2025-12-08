@@ -11,9 +11,7 @@ The typical workflow for using DDL abstraction:
 3. **Generate SQL** using `Sql::buildSqlString()`
 4. **Execute** using `Adapter::query()` with `QUERY_MODE_EXECUTE`
 
-### Creating and Executing a Simple Table
-
-```php
+```php title="Creating and Executing a Simple Table"
 use PhpDb\Sql\Sql;
 use PhpDb\Sql\Ddl\CreateTable;
 use PhpDb\Sql\Ddl\Column;
@@ -37,9 +35,7 @@ $adapter->query(
 
 The `CreateTable` class represents a `CREATE TABLE` statement. You can build complex table definitions using a fluent, object-oriented interface.
 
-### Basic Table Creation
-
-```php
+```php title="Basic Table Creation"
 use PhpDb\Sql\Ddl\CreateTable;
 use PhpDb\Sql\Ddl\Column;
 
@@ -201,9 +197,7 @@ $table = (new CreateTable('users'))
     ->addConstraint(new Constraint\UniqueKey('email', 'unique_user_email'));
 ```
 
-### Complete Example: User Table
-
-```php
+```php title="Complete Example: User Table"
 use PhpDb\Sql\Ddl\CreateTable;
 use PhpDb\Sql\Ddl\Column;
 use PhpDb\Sql\Ddl\Constraint;

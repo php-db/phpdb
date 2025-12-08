@@ -59,9 +59,7 @@ derivative of `PhpDb\ResultSet\AbstractResultSet` will be used. The
 implementation of the `AbstractResultSet` offers the following core
 functionality:
 
-### AbstractResultSet API
-
-```php
+```php title="AbstractResultSet API"
 namespace PhpDb\ResultSet;
 
 use Iterator;
@@ -102,9 +100,7 @@ The `HydratingResultSet` depends on
 [laminas-hydrator](https://docs.laminas.dev/laminas-hydrator), which you will
 need to install:
 
-### Installing laminas-hydrator
-
-```bash
+```bash title="Installing laminas-hydrator"
 composer require laminas/laminas-hydrator
 ```
 
@@ -113,9 +109,7 @@ iteration, `HydratingResultSet` will use the `Reflection` based hydrator to
 inject the row data directly into the protected members of the cloned
 `UserEntity` object:
 
-### Using HydratingResultSet with ReflectionHydrator
-
-```php
+```php title="Using HydratingResultSet with ReflectionHydrator"
 use PhpDb\Adapter\Driver\ResultInterface;
 use PhpDb\ResultSet\HydratingResultSet;
 use Laminas\Hydrator\Reflection as ReflectionHydrator;

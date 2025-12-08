@@ -24,9 +24,7 @@ Database-specific drivers are provided as separate packages:
 
 ## Quick Start
 
-### MySQL Connection
-
-```php
+```php title="MySQL Connection"
 use PhpDb\Adapter\Adapter;
 use PhpDb\Mysql\Driver\Mysql;
 use PhpDb\Mysql\Platform\Mysql as MysqlPlatform;
@@ -41,9 +39,7 @@ $driver = new Mysql([
 $adapter = new Adapter($driver, new MysqlPlatform());
 ```
 
-### SQLite Connection
-
-```php
+```php title="SQLite Connection"
 use PhpDb\Adapter\Adapter;
 use PhpDb\Sqlite\Driver\Sqlite;
 use PhpDb\Sqlite\Platform\Sqlite as SqlitePlatform;
@@ -59,9 +55,7 @@ $adapter = new Adapter($driver, new SqlitePlatform());
 
 The `Adapter` class provides the primary interface for database operations:
 
-### Adapter Class Interface
-
-```php
+```php title="Adapter Class Interface"
 namespace PhpDb\Adapter;
 
 use PhpDb\ResultSet;
@@ -108,9 +102,7 @@ By default, `PhpDb\Adapter\Adapter::query()` prefers that you use
 that you will supply a SQL statement containing placeholders for the values, and
 separately provide substitutions for those placeholders:
 
-### Query with Prepared Statement
-
-```php
+```php title="Query with Prepared Statement"
 $adapter->query('SELECT * FROM `artist` WHERE `id` = ?', [5]);
 ```
 
@@ -136,9 +128,7 @@ extensions and RDBMS systems are incapable of preparing such statements.
 To execute a query without the preparation step, pass a flag as
 the second argument indicating execution is required:
 
-### Executing DDL Statement Without Preparation
-
-```php
+```php title="Executing DDL Statement Without Preparation"
 $adapter->query(
     'ALTER TABLE ADD INDEX(`foo_index`) ON (`foo_column`)',
     Adapter::QUERY_MODE_EXECUTE
@@ -155,9 +145,7 @@ via the `Adapter`, it generally makes more sense to create a statement and
 interact with it directly, so that you have greater control over the
 prepare-then-execute workflow:
 
-### Creating and Executing a Statement
-
-```php
+```php title="Creating and Executing a Statement"
 $statement = $adapter->createStatement($sql, $optionalParameters);
 $result    = $statement->execute();
 ```
@@ -172,11 +160,7 @@ driver is composed of three objects:
 - A statement: `PhpDb\Adapter\Driver\StatementInterface`
 - A result: `PhpDb\Adapter\Driver\ResultInterface`
 
-### DriverInterface
-
-### Driver Interface Definition
-
-```php
+```php title="Driver Interface Definition"
 namespace PhpDb\Adapter\Driver;
 
 interface DriverInterface
@@ -211,11 +195,7 @@ From this `DriverInterface`, you can:
   between the various ways parameters are named between extensions
 - Retrieve the overall last generated value (such as an auto-increment value)
 
-### StatementInterface
-
-### Statement Interface Definition
-
-```php
+```php title="Statement Interface Definition"
 namespace PhpDb\Adapter\Driver;
 
 interface StatementInterface extends StatementContainerInterface
@@ -233,11 +213,7 @@ interface StatementInterface extends StatementContainerInterface
 }
 ```
 
-### ResultInterface
-
-### Result Interface Definition
-
-```php
+```php title="Result Interface Definition"
 namespace PhpDb\Adapter\Driver;
 
 use Countable;
@@ -261,9 +237,7 @@ that is specific to the SQL implementation of a particular vendor. The object
 handles nuances such as how identifiers or values are quoted, or what the
 identifier separator character is:
 
-### Platform Interface Definition
-
-```php
+```php title="Platform Interface Definition"
 namespace PhpDb\Adapter\Platform;
 
 interface PlatformInterface
@@ -285,20 +259,14 @@ While you can directly instantiate a `Platform` object, generally speaking, it
 is easier to get the proper `Platform` instance from the configured adapter (by
 default the `Platform` type will match the underlying driver implementation):
 
-### Getting Platform from Adapter
-
-```php
+```php title="Getting Platform from Adapter"
 $platform = $adapter->getPlatform();
 
 // or
 $platform = $adapter->platform; // magic property access
 ```
 
-### Platform Usage Examples
-
-### Quoting Identifiers and Values
-
-```php
+```php title="Quoting Identifiers and Values"
 $platform = $adapter->getPlatform();
 
 // "first_name"
@@ -336,9 +304,7 @@ The `ParameterContainer` object is a container for the various parameters that
 need to be passed into a `Statement` object to fulfill all the various
 parameterized parts of the SQL statement:
 
-### ParameterContainer Class Interface
-
-```php
+```php title="ParameterContainer Class Interface"
 namespace PhpDb\Adapter;
 
 use ArrayAccess;
@@ -393,18 +359,14 @@ class ParameterContainer implements Iterator, ArrayAccess, Countable
 In addition to handling parameter names and values, the container will assist in
 tracking parameter types for PHP type to SQL type handling:
 
-### Setting Parameter Without Type
-
-```php
+```php title="Setting Parameter Without Type"
 $container->offsetSet('limit', 5);
 ```
 
 To bind as an integer, pass the `ParameterContainer::TYPE_INTEGER` constant as
 the 3rd parameter:
 
-### Setting Parameter with Type Binding
-
-```php
+```php title="Setting Parameter with Type Binding"
 $container->offsetSet('limit', 5, $container::TYPE_INTEGER);
 ```
 
@@ -416,9 +378,7 @@ actual PHP database driver.
 
 Drivers can provide optional features through the `DriverFeatureProviderInterface`:
 
-### DriverFeatureProviderInterface Definition
-
-```php
+```php title="DriverFeatureProviderInterface Definition"
 namespace PhpDb\Adapter\Driver\Feature;
 
 interface DriverFeatureProviderInterface
@@ -438,9 +398,7 @@ database platform.
 
 The adapter supports profiling through the `ProfilerInterface`:
 
-### Setting Up a Profiler
-
-```php
+```php title="Setting Up a Profiler"
 use PhpDb\Adapter\Profiler\Profiler;
 
 $profiler = new Profiler();
@@ -457,9 +415,7 @@ $profiles = $profiler->getProfiles();
 
 Creating a driver, a vendor-portable query, and preparing and iterating the result:
 
-### Full Workflow Example with Adapter
-
-```php
+```php title="Full Workflow Example with Adapter"
 use PhpDb\Adapter\Adapter;
 use PhpDb\Mysql\Driver\Mysql;
 use PhpDb\Mysql\Platform\Mysql as MysqlPlatform;

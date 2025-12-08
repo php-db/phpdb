@@ -55,9 +55,7 @@ foreach ($resultSet as $user) {
 }
 ```
 
-### Checking for Empty Results
-
-```php
+```php title="Checking for Empty Results"
 $resultSet = $adapter->query('SELECT * FROM users WHERE id = ?', [999]);
 
 if ($resultSet->count() === 0) {
@@ -273,9 +271,7 @@ foreach ($resultSet as $row) {
 }
 ```
 
-### Use Generators for Transformation
-
-```php
+```php title="Use Generators for Transformation"
 function transformUsers(ResultSetInterface $resultSet): Generator
 {
     foreach ($resultSet as $row) {

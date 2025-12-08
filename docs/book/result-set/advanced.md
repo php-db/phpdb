@@ -7,9 +7,7 @@
 The `ResultSet` class extends `AbstractResultSet` and provides row data as either
 `ArrayObject` instances or plain arrays.
 
-### ResultSet Class Definition
-
-```php
+```php title="ResultSet Class Definition"
 namespace PhpDb\ResultSet;
 
 use ArrayObject;
@@ -31,9 +29,7 @@ class ResultSet extends AbstractResultSet
 
 The `ResultSetReturnType` enum provides type-safe return type configuration:
 
-### ResultSetReturnType Definition
-
-```php
+```php title="ResultSetReturnType Definition"
 namespace PhpDb\ResultSet;
 
 enum ResultSetReturnType: string
@@ -43,9 +39,7 @@ enum ResultSetReturnType: string
 }
 ```
 
-### Using ResultSetReturnType
-
-```php
+```php title="Using ResultSetReturnType"
 use PhpDb\ResultSet\ResultSet;
 use PhpDb\ResultSet\ResultSetReturnType;
 
@@ -66,9 +60,7 @@ $resultSet = new ResultSet(ResultSetReturnType::Array);
 
 **ArrayObject Mode** (default):
 
-### ArrayObject Mode Example
-
-```php
+```php title="ArrayObject Mode Example"
 $resultSet = new ResultSet(ResultSetReturnType::ArrayObject);
 $resultSet->initialize($result);
 
@@ -80,9 +72,7 @@ foreach ($resultSet as $row) {
 
 **Array Mode:**
 
-### Array Mode Example
-
-```php
+```php title="Array Mode Example"
 $resultSet = new ResultSet(ResultSetReturnType::Array);
 $resultSet->initialize($result);
 
@@ -97,9 +87,7 @@ The array mode is more memory efficient for large result sets.
 
 Complete API for `HydratingResultSet`:
 
-### HydratingResultSet Class Definition
-
-```php
+```php title="HydratingResultSet Class Definition"
 namespace PhpDb\ResultSet;
 
 use Laminas\Hydrator\HydratorInterface;
@@ -126,17 +114,13 @@ class HydratingResultSet extends AbstractResultSet
 
 If no hydrator is provided, `ArraySerializableHydrator` is used by default:
 
-### Default Hydrator
-
-```php
+```php title="Default Hydrator"
 $resultSet = new HydratingResultSet();
 ```
 
 If no object prototype is provided, `ArrayObject` is used:
 
-### Default Object Prototype
-
-```php
+```php title="Default Object Prototype"
 $resultSet = new HydratingResultSet(new ReflectionHydrator());
 ```
 
@@ -144,9 +128,7 @@ $resultSet = new HydratingResultSet(new ReflectionHydrator());
 
 You can change the hydration strategy at runtime:
 
-### Changing Hydrator at Runtime
-
-```php
+```php title="Changing Hydrator at Runtime"
 use Laminas\Hydrator\ClassMethodsHydrator;
 use Laminas\Hydrator\ReflectionHydrator;
 
@@ -169,9 +151,7 @@ result sets are not buffered until explicitly requested.
 
 Forces the result set to buffer all rows into memory:
 
-### Buffering for Multiple Iterations
-
-```php
+```php title="Buffering for Multiple Iterations"
 $resultSet = new ResultSet();
 $resultSet->initialize($result);
 $resultSet->buffer();
@@ -189,9 +169,7 @@ foreach ($resultSet as $row) {
 
 **Important:** Calling `buffer()` after iteration has started throws `RuntimeException`:
 
-### Buffer After Iteration Error
-
-```php
+```php title="Buffer After Iteration Error"
 $resultSet = new ResultSet();
 $resultSet->initialize($result);
 
@@ -212,9 +190,7 @@ RuntimeException: Buffering must be enabled before iteration is started
 
 Checks if the result set is currently buffered:
 
-### Checking Buffer Status
-
-```php
+```php title="Checking Buffer Status"
 $resultSet = new ResultSet();
 $resultSet->initialize($result);
 
@@ -236,9 +212,7 @@ bool(true)
 
 Arrays and certain data sources are automatically buffered:
 
-### Array Data Source Auto-Buffering
-
-```php
+```php title="Array Data Source Auto-Buffering"
 $resultSet = new ResultSet();
 $resultSet->initialize([
     ['id' => 1, 'name' => 'Alice'],
@@ -258,9 +232,7 @@ bool(true)
 
 When using ArrayObject mode (default), rows support both property and array access:
 
-### Property and Array Access
-
-```php
+```php title="Property and Array Access"
 $resultSet = new ResultSet(ResultSetReturnType::ArrayObject);
 $resultSet->initialize($result);
 
@@ -285,9 +257,7 @@ This flexibility comes from `ArrayObject` being constructed with the
 
 You can provide a custom ArrayObject subclass:
 
-### Custom Row Class with Helper Methods
-
-```php
+```php title="Custom Row Class with Helper Methods"
 class CustomRow extends ArrayObject
 {
     public function getFullName(): string
@@ -319,9 +289,7 @@ When `Adapter::query()` or `TableGateway::select()` execute, they:
 
 This ensures each query gets an isolated ResultSet instance:
 
-### Independent Query Results
-
-```php
+```php title="Independent Query Results"
 $resultSet1 = $adapter->query('SELECT * FROM users');
 $resultSet2 = $adapter->query('SELECT * FROM posts');
 ```
@@ -332,9 +300,7 @@ Both `$resultSet1` and `$resultSet2` are independent clones with their own state
 
 You can provide a custom ResultSet prototype to the Adapter:
 
-### Custom Adapter Prototype
-
-```php
+```php title="Custom Adapter Prototype"
 use PhpDb\Adapter\Adapter;
 use PhpDb\ResultSet\ResultSet;
 use PhpDb\ResultSet\ResultSetReturnType;
@@ -352,9 +318,7 @@ Now all queries return plain arrays instead of ArrayObject instances.
 
 TableGateway also uses a ResultSet prototype:
 
-### TableGateway with HydratingResultSet
-
-```php
+```php title="TableGateway with HydratingResultSet"
 use PhpDb\ResultSet\HydratingResultSet;
 use PhpDb\TableGateway\TableGateway;
 use Laminas\Hydrator\ReflectionHydrator;
@@ -393,9 +357,7 @@ foreach ($users as $user) {
 
 Buffer when you need to:
 
-### Buffering for Count and Multiple Passes
-
-```php
+```php title="Buffering for Count and Multiple Passes"
 $resultSet->buffer();
 
 $count = $resultSet->count();
@@ -413,9 +375,7 @@ foreach ($resultSet as $row) {
 
 Don't buffer for single-pass large result sets:
 
-### Streaming Large Result Sets
-
-```php
+```php title="Streaming Large Result Sets"
 $resultSet = $adapter->query('SELECT * FROM huge_table');
 
 foreach ($resultSet as $row) {
@@ -425,9 +385,7 @@ foreach ($resultSet as $row) {
 
 ### Memory Efficiency Comparison
 
-### Comparing Array vs ArrayObject Mode
-
-```php
+```php title="Comparing Array vs ArrayObject Mode"
 use PhpDb\ResultSet\ResultSetReturnType;
 
 $arrayMode = new ResultSet(ResultSetReturnType::Array);
@@ -446,9 +404,7 @@ object overhead.
 
 Switch hydrators based on context:
 
-### Conditional Hydrator Selection
-
-```php
+```php title="Conditional Hydrator Selection"
 use Laminas\Hydrator\ClassMethodsHydrator;
 use Laminas\Hydrator\ReflectionHydrator;
 
@@ -465,9 +421,7 @@ if ($includePrivateProps) {
 
 Extract all rows as arrays:
 
-### Using toArray()
-
-```php
+```php title="Using toArray()"
 $resultSet = new ResultSet();
 $resultSet->initialize($result);
 
@@ -478,9 +432,7 @@ printf("Found %d rows\n", count($allRows));
 
 With HydratingResultSet, `toArray()` uses the hydrator's extractor:
 
-### toArray() with HydratingResultSet
-
-```php
+```php title="toArray() with HydratingResultSet"
 $resultSet = new HydratingResultSet(new ReflectionHydrator(), new UserEntity());
 $resultSet->initialize($result);
 
@@ -493,9 +445,7 @@ Each row is extracted back to an array using the hydrator's `extract()` method.
 
 Get the current row without iteration:
 
-### Getting First Row with current()
-
-```php
+```php title="Getting First Row with current()"
 $resultSet = new ResultSet();
 $resultSet->initialize($result);
 

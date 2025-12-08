@@ -17,9 +17,7 @@ SQLite is a lightweight option to have the application working with a database.
 Here is an example of the configuration array for a SQLite database.
 Assuming the SQLite file path is `data/sample.sqlite`, the following configuration will produce the adapter:
 
-### SQLite adapter configuration
-
-```php
+```php title="SQLite adapter configuration"
 <?php
 
 declare(strict_types=1);
@@ -55,9 +53,7 @@ Unlike a SQLite database, the MySQL database adapter requires a MySQL server.
 
 Here is an example of a configuration array for a MySQL database:
 
-### MySQL adapter configuration
-
-```php
+```php title="MySQL adapter configuration"
 <?php
 
 declare(strict_types=1);
@@ -93,9 +89,7 @@ return [
 
 PostgreSQL support is coming soon. Once the `php-db/postgres` package is available:
 
-### PostgreSQL adapter configuration
-
-```php
+```php title="PostgreSQL adapter configuration"
 <?php
 
 declare(strict_types=1);
@@ -133,9 +127,7 @@ Once you have configured an adapter, as in the above examples, you now have a `P
 
 A factory for a class that consumes an adapter can pull the adapter from the container:
 
-### Retrieving the adapter from the service container
-
-```php
+```php title="Retrieving the adapter from the service container"
 use PhpDb\Adapter\AdapterInterface;
 
 $adapter = $container->get(AdapterInterface::class);
@@ -151,9 +143,7 @@ If you have services that implement `PhpDb\Adapter\AdapterAwareInterface`, you c
 
 Register the delegator in your service configuration:
 
-### Delegator configuration for adapter-aware services
-
-```php
+```php title="Delegator configuration for adapter-aware services"
 use PhpDb\Adapter\AdapterInterface;
 use PhpDb\Container\AdapterServiceDelegator;
 
@@ -172,9 +162,7 @@ return [
 
 When using multiple adapters, you can specify which adapter to inject:
 
-### Delegator configuration for multiple adapters
-
-```php
+```php title="Delegator configuration for multiple adapters"
 use PhpDb\Container\AdapterServiceDelegator;
 
 return [
@@ -195,9 +183,7 @@ return [
 
 Your service class must implement `AdapterAwareInterface`:
 
-### Implementing AdapterAwareInterface in a service class
-
-```php
+```php title="Implementing AdapterAwareInterface in a service class"
 use PhpDb\Adapter\AdapterAwareInterface;
 use PhpDb\Adapter\AdapterInterface;
 

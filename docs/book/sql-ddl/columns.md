@@ -8,9 +8,7 @@ All column types are in the `PhpDb\Sql\Ddl\Column` namespace and implement `Colu
 
 Standard integer column.
 
-### Creating Integer Columns
-
-```php
+```php title="Creating Integer Columns"
 use PhpDb\Sql\Ddl\Column\Integer;
 
 $column = new Integer('user_id');
@@ -36,9 +34,7 @@ $column->setOption('length', 11);
 
 For larger integer values (typically 64-bit).
 
-### Creating BigInteger Columns
-
-```php
+```php title="Creating BigInteger Columns"
 use PhpDb\Sql\Ddl\Column\BigInteger;
 
 $column = new BigInteger('large_number');
@@ -51,9 +47,7 @@ $column = new BigInteger('id', false, null, ['length' => 20]);
 
 Fixed-point decimal numbers with precision and scale.
 
-### Creating Decimal Columns with Precision and Scale
-
-```php
+```php title="Creating Decimal Columns with Precision and Scale"
 use PhpDb\Sql\Ddl\Column\Decimal;
 
 $column = new Decimal('price', 10, 2); // DECIMAL(10,2)
@@ -78,9 +72,7 @@ $column->setDecimal(3); // Change scale
 
 Floating-point numbers.
 
-### Creating Floating Point Columns
-
-```php
+```php title="Creating Floating Point Columns"
 use PhpDb\Sql\Ddl\Column\Floating;
 
 $column = new Floating('measurement', 10, 2);
@@ -101,9 +93,7 @@ $column->setDecimal(4);
 
 Variable-length character string.
 
-### Creating Varchar Columns
-
-```php
+```php title="Creating Varchar Columns"
 use PhpDb\Sql\Ddl\Column\Varchar;
 
 $column = new Varchar('name', 255);
@@ -125,9 +115,7 @@ $column->setNullable(true);
 
 Fixed-length character string.
 
-### Creating Fixed-Length Char Columns
-
-```php
+```php title="Creating Fixed-Length Char Columns"
 use PhpDb\Sql\Ddl\Column\Char;
 
 $column = new Char('country_code', 2); // ISO country codes
@@ -140,9 +128,7 @@ $column = new Char('status', 1); // Single character status
 
 Variable-length text for large strings.
 
-### Creating Text Columns
-
-```php
+```php title="Creating Text Columns"
 use PhpDb\Sql\Ddl\Column\Text;
 
 $column = new Text('description');
@@ -160,9 +146,7 @@ $column = new Text('notes', null, true, 'No notes');
 
 Fixed-length binary data.
 
-### Creating Binary Columns
-
-```php
+```php title="Creating Binary Columns"
 use PhpDb\Sql\Ddl\Column\Binary;
 
 $column = new Binary('hash', 32); // 32-byte hash
@@ -174,9 +158,7 @@ $column = new Binary('hash', 32); // 32-byte hash
 
 Variable-length binary data.
 
-### Creating Varbinary Columns
-
-```php
+```php title="Creating Varbinary Columns"
 use PhpDb\Sql\Ddl\Column\Varbinary;
 
 $column = new Varbinary('file_data', 65535);
@@ -188,9 +170,7 @@ $column = new Varbinary('file_data', 65535);
 
 Binary large object for very large binary data.
 
-### Creating Blob Columns
-
-```php
+```php title="Creating Blob Columns"
 use PhpDb\Sql\Ddl\Column\Blob;
 
 $column = new Blob('image');
@@ -205,9 +185,7 @@ $column = new Blob('document', 16777215); // MEDIUMBLOB size
 
 Date without time.
 
-### Creating Date Columns
-
-```php
+```php title="Creating Date Columns"
 use PhpDb\Sql\Ddl\Column\Date;
 
 $column = new Date('birth_date');
@@ -220,9 +198,7 @@ $column = new Date('hire_date');
 
 Time without date.
 
-### Creating Time Columns
-
-```php
+```php title="Creating Time Columns"
 use PhpDb\Sql\Ddl\Column\Time;
 
 $column = new Time('start_time');
@@ -235,9 +211,7 @@ $column = new Time('duration');
 
 Date and time combined.
 
-### Creating Datetime Columns
-
-```php
+```php title="Creating Datetime Columns"
 use PhpDb\Sql\Ddl\Column\Datetime;
 
 $column = new Datetime('last_login');
@@ -250,9 +224,7 @@ $column = new Datetime('event_time');
 
 Timestamp with special capabilities.
 
-### Creating Timestamp Columns with Auto-Update
-
-```php
+```php title="Creating Timestamp Columns with Auto-Update"
 use PhpDb\Sql\Ddl\Column\Timestamp;
 
 // Basic timestamp
@@ -278,9 +250,7 @@ $column->setOption('on_update', true);
 
 Boolean/bit column. **Note:** Boolean columns are always NOT NULL and cannot be made nullable.
 
-### Creating Boolean Columns
-
-```php
+```php title="Creating Boolean Columns"
 use PhpDb\Sql\Ddl\Column\Boolean;
 
 $column = new Boolean('is_active');
@@ -300,9 +270,7 @@ $column->setNullable(true); // Does nothing - stays NOT NULL
 
 Generic column type (defaults to INTEGER). Use specific types when possible.
 
-### Creating Generic Columns
-
-```php
+```php title="Creating Generic Columns"
 use PhpDb\Sql\Ddl\Column\Column;
 
 $column = new Column('custom_field');
@@ -314,9 +282,7 @@ $column = new Column('custom_field');
 
 All column types share these methods:
 
-### Working with Nullable, Defaults, Options, and Constraints
-
-```php
+```php title="Working with Nullable, Defaults, Options, and Constraints"
 // Nullable setting
 $column->setNullable(true);  // Allow NULL values
 $column->setNullable(false); // NOT NULL (default for most types)
@@ -347,9 +313,7 @@ Column options provide a flexible way to specify platform-specific features and 
 
 ### Setting Options
 
-### Setting Single and Multiple Column Options
-
-```php
+```php title="Setting Single and Multiple Column Options"
 // Set single option
 $column->setOption('option_name', 'option_value');
 
@@ -375,9 +339,7 @@ $options = $column->getOptions();
 
 ### MySQL/MariaDB Specific Options
 
-### Using MySQL-Specific Column Modifiers
-
-```php
+```php title="Using MySQL-Specific Column Modifiers"
 // UNSIGNED modifier
 $column = new Column\Integer('count');
 $column->setOption('unsigned', true);
@@ -401,9 +363,7 @@ $column->setOption('collation', 'utf8mb4_unicode_ci');
 
 ### PostgreSQL Specific Options
 
-### Creating Serial/Identity Columns in PostgreSQL
-
-```php
+```php title="Creating Serial/Identity Columns in PostgreSQL"
 // SERIAL type (via identity option)
 $id = new Column\Integer('id');
 $id->setOption('identity', true);
@@ -412,9 +372,7 @@ $id->setOption('identity', true);
 
 ### SQL Server Specific Options
 
-### Creating Identity Columns in SQL Server
-
-```php
+```php title="Creating Identity Columns in SQL Server"
 // IDENTITY column
 $id = new Column\Integer('id');
 $id->setOption('identity', true);
@@ -425,9 +383,7 @@ $id->setOption('identity', true);
 
 #### Auto-Incrementing Primary Key
 
-### Creating Auto-Incrementing Primary Keys
-
-```php
+```php title="Creating Auto-Incrementing Primary Keys"
 // MySQL
 $id = new Column\Integer('id');
 $id->setOption('AUTO_INCREMENT', true);
@@ -443,9 +399,7 @@ $table->addColumn($id);
 
 #### Timestamp with Auto-Update
 
-### Creating Self-Updating Timestamp Columns
-
-```php
+```php title="Creating Self-Updating Timestamp Columns"
 $updated = new Column\Timestamp('updated_at');
 $updated->setDefault('CURRENT_TIMESTAMP');
 $updated->setOption('on_update', true);
@@ -455,9 +409,7 @@ $table->addColumn($updated);
 
 #### Documented Column with Comment
 
-### Adding Comments to Column Definitions
-
-```php
+```php title="Adding Comments to Column Definitions"
 $column = new Column\Varchar('email', 255);
 $column->setOption('comment', 'User email address for authentication');
 $table->addColumn($column);
@@ -523,9 +475,7 @@ $notes = new Column\Text('notes');                // User notes
 
 ### Date/Time Types
 
-### Choosing the Right Date and Time Type
-
-```php
+```php title="Choosing the Right Date and Time Type"
 // Use Date for dates without time
 $birthDate = new Column\Date('birth_date');
 $eventDate = new Column\Date('event_date');

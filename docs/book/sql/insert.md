@@ -4,9 +4,7 @@ The `Insert` class provides an API for building SQL INSERT statements.
 
 ## Insert API
 
-### Insert Class Definition
-
-```php
+```php title="Insert Class Definition"
 class Insert extends AbstractPreparableSql implements SqlInterface, PreparableSqlInterface
 {
     final public const VALUES_MERGE = 'merge';
@@ -29,9 +27,7 @@ As with `Select`, the table may be provided during instantiation or via the
 
 ## Basic Usage
 
-### Creating a Basic Insert Statement
-
-```php
+```php title="Creating a Basic Insert Statement"
 use PhpDb\Sql\Sql;
 
 $sql = new Sql($adapter);
@@ -49,9 +45,7 @@ $statement->execute();
 
 Produces:
 
-### Generated SQL Output
-
-```sql
+```sql title="Generated SQL Output"
 INSERT INTO users (username, email, created_at) VALUES (?, ?, ?)
 ```
 
@@ -59,17 +53,13 @@ INSERT INTO users (username, email, created_at) VALUES (?, ?, ?)
 
 The `columns()` method explicitly sets which columns will receive values:
 
-### Setting Valid Columns
-
-```php
+```php title="Setting Valid Columns"
 $insert->columns(['foo', 'bar']); // set the valid columns
 ```
 
 When using `columns()`, only the specified columns will be included even if more values are provided:
 
-### Restricting Columns with Validation
-
-```php
+```php title="Restricting Columns with Validation"
 $insert->columns(['username', 'email']);
 $insert->values([
     'username' => 'john',
@@ -83,9 +73,7 @@ $insert->values([
 The default behavior of values is to set the values. Successive calls will not
 preserve values from previous calls.
 
-### Setting Values for Insert
-
-```php
+```php title="Setting Values for Insert"
 $insert->values([
     'col_1' => 'value1',
     'col_2' => 'value2',
@@ -95,18 +83,14 @@ $insert->values([
 To merge values with previous calls, provide the appropriate flag:
 `PhpDb\Sql\Insert::VALUES_MERGE`
 
-### Merging Values from Multiple Calls
-
-```php
+```php title="Merging Values from Multiple Calls"
 $insert->values(['col_1' => 'value1'], $insert::VALUES_SET);
 $insert->values(['col_2' => 'value2'], $insert::VALUES_MERGE);
 ```
 
 This produces:
 
-### Merged Values SQL Output
-
-```sql
+```sql title="Merged Values SQL Output"
 INSERT INTO table (col_1, col_2) VALUES (?, ?)
 ```
 
@@ -115,9 +99,7 @@ INSERT INTO table (col_1, col_2) VALUES (?, ?)
 The `select()` method enables INSERT INTO ... SELECT statements, copying data
 from one table to another.
 
-### INSERT INTO SELECT Statement
-
-```php
+```php title="INSERT INTO SELECT Statement"
 $select = $sql->select('tempUsers')
     ->columns(['username', 'email', 'createdAt'])
     ->where(['imported' => false]);
@@ -129,18 +111,14 @@ $insert->select($select);
 
 Produces:
 
-### INSERT SELECT SQL Output
-
-```sql
+```sql title="INSERT SELECT SQL Output"
 INSERT INTO users (username, email, createdAt)
 SELECT username, email, createdAt FROM tempUsers WHERE imported = 0
 ```
 
 Alternatively, you can pass the Select object directly to `values()`:
 
-### Passing Select to values() Method
-
-```php
+```php title="Passing Select to values() Method"
 $insert->values($select);
 ```
 
@@ -151,9 +129,7 @@ Important: The column order must match between INSERT columns and SELECT columns
 The Insert class supports property-style access to columns as an alternative to
 using `values()`:
 
-### Using Property-style Column Access
-
-```php
+```php title="Using Property-style Column Access"
 $insert = $sql->insert('users');
 $insert->name = 'John';
 $insert->email = 'john@example.com';
@@ -167,9 +143,7 @@ unset($insert->email);
 
 This is equivalent to:
 
-### Equivalent values() Method Call
-
-```php
+```php title="Equivalent values() Method Call"
 $insert->values([
     'name' => 'John',
     'email' => 'john@example.com',
@@ -181,9 +155,7 @@ $insert->values([
 The `InsertIgnore` class provides MySQL-specific INSERT IGNORE syntax, which
 silently ignores rows that would cause duplicate key errors.
 
-### Using InsertIgnore for Duplicate Prevention
-
-```php
+```php title="Using InsertIgnore for Duplicate Prevention"
 use PhpDb\Sql\InsertIgnore;
 
 $insert = new InsertIgnore('users');
@@ -195,9 +167,7 @@ $insert->values([
 
 Produces:
 
-### INSERT IGNORE SQL Output
-
-```sql
+```sql title="INSERT IGNORE SQL Output"
 INSERT IGNORE INTO users (username, email) VALUES (?, ?)
 ```
 
@@ -209,9 +179,7 @@ for this behavior (e.g., INSERT ... ON CONFLICT DO NOTHING in PostgreSQL).
 
 ## Examples
 
-### Basic insert with prepared statement
-
-```php
+```php title="Basic insert with prepared statement"
 $insert = $sql->insert('products');
 $insert->values([
     'name' => 'Widget',
@@ -227,9 +195,7 @@ $result = $statement->execute();
 $lastId = $adapter->getDriver()->getLastGeneratedValue();
 ```
 
-### Insert with expressions
-
-```php
+```php title="Insert with expressions"
 $insert = $sql->insert('logs');
 $insert->values([
     'message' => 'User logged in',
@@ -238,9 +204,7 @@ $insert->values([
 ]);
 ```
 
-### Bulk insert from select
-
-```php
+```php title="Bulk insert from select"
 // Copy active users to an archive table
 $select = $sql->select('users')
     ->columns(['id', 'username', 'email', 'created_at'])
@@ -254,9 +218,7 @@ $statement = $sql->prepareStatementForSqlObject($insert);
 $statement->execute();
 ```
 
-### Conditional insert with InsertIgnore
-
-```php
+```php title="Conditional insert with InsertIgnore"
 // Import users, skipping duplicates
 $users = [
     ['username' => 'alice', 'email' => 'alice@example.com'],
