@@ -1,0 +1,42 @@
+docs_dir: docs/book
+site_dir: docs/html
+nav:
+    - Home: index.md
+    - Adapters:
+        - Introduction: adapter.md
+        - AdapterAwareTrait: adapters/adapter-aware-trait.md
+    - "Result Sets":
+        - Introduction: result-set/intro.md
+        - Examples: result-set/examples.md
+        - Advanced Usage: result-set/advanced.md
+    - "SQL Abstraction":
+        - Introduction: sql/intro.md
+        - Select: sql/select.md
+        - Insert: sql/insert.md
+        - Update and Delete: sql/update-delete.md
+        - Where and Having: sql/where-having.md
+        - Examples: sql/examples.md
+        - Advanced Usage: sql/advanced.md
+    - "DDL Abstraction":
+        - Introduction: sql-ddl/intro.md
+        - Columns: sql-ddl/columns.md
+        - Constraints: sql-ddl/constraints.md
+        - Alter and Drop: sql-ddl/alter-drop.md
+        - Examples: sql-ddl/examples.md
+        - Advanced Usage: sql-ddl/advanced.md
+    - "Table Gateways": table-gateway.md
+    - "Row Gateways": row-gateway.md
+    - "RDBMS Metadata":
+        - Introduction: metadata/intro.md
+        - Metadata Objects: metadata/objects.md
+        - Examples: metadata/examples.md
+    - Profiler: profiler.md
+    - "Application Integration":
+        - "Integrating in a Laminas MVC application": application-integration/usage-in-a-laminas-mvc-application.md
+        - "Integrating in a Mezzio application": application-integration/usage-in-a-mezzio-application.md
+    - "Docker Deployment": docker-deployment.md
+site_name: phpdb
+site_description: "Database abstraction layer, SQL abstraction, result set abstraction, and RowDataGateway and TableDataGateway implementations"
+repo_url: 'https://github.com/php-db/phpdb'
+extra:
+    project: Components
