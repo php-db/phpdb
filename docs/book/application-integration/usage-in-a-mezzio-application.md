@@ -1,28 +1,14 @@
 # Usage in a Mezzio Application
 
-The minimal installation for a Mezzio-based application doesn't include any database features.
-
-## When installing the Mezzio Skeleton Application
-
-While `Composer` is [installing the Mezzio Application](https://docs.mezzio.dev/mezzio/v3/getting-started/skeleton/), you can add the `phpdb` package after the skeleton is created.
-
-## Adding to an existing Mezzio Skeleton Application
-
-If the Mezzio application is already created, then use Composer to [add the phpdb](../index.md) package:
-
-```bash
-composer require phpdb/phpdb
-```
+For installation instructions, see [Installation](../index.md#installation).
 
 ## Service Configuration
 
-Now that the phpdb package is installed, you need to configure the adapter through Mezzio's dependency injection container.
-
-### Configuring the adapter
+Now that the phpdb packages are installed, you need to configure the adapter through Mezzio's dependency injection container.
 
 Mezzio uses PSR-11 containers and typically uses laminas-servicemanager or another DI container. The adapter configuration goes in your application's configuration files.
 
-Create a configuration file `config/autoload/database.global.php` to define database settings:
+Create a configuration file `config/autoload/database.global.php` to define database settings.
 
 ### Working with a SQLite database
 
@@ -31,6 +17,8 @@ SQLite is a lightweight option to have the application working with a database.
 Here is an example of the configuration array for a SQLite database.
 Assuming the SQLite file path is `data/sample.sqlite`, the following configuration will produce the adapter:
 
+### SQLite adapter configuration
+
 ```php
 <?php
 
@@ -38,15 +26,18 @@ declare(strict_types=1);
 
 use PhpDb\Adapter\Adapter;
 use PhpDb\Adapter\AdapterInterface;
+use PhpDb\Sqlite\Driver\Sqlite;
+use PhpDb\Sqlite\Platform\Sqlite as SqlitePlatform;
+use Psr\Container\ContainerInterface;
 
 return [
     'dependencies' => [
         'factories' => [
-            Adapter::class => function ($container) {
-                return new Adapter([
-                    'driver' => 'Pdo_Sqlite',
+            Adapter::class => function (ContainerInterface $container) {
+                $driver = new Sqlite([
                     'database' => 'data/sample.sqlite',
                 ]);
+                return new Adapter($driver, new SqlitePlatform());
             },
         ],
         'aliases' => [
@@ -66,6 +57,8 @@ Here is an example of a configuration array for a MySQL database.
 
 Create `config/autoload/database.local.php` for environment-specific credentials:
 
+### MySQL adapter configuration
+
 ```php
 <?php
 
@@ -73,22 +66,22 @@ declare(strict_types=1);
 
 use PhpDb\Adapter\Adapter;
 use PhpDb\Adapter\AdapterInterface;
+use PhpDb\Mysql\Driver\Mysql;
+use PhpDb\Mysql\Platform\Mysql as MysqlPlatform;
+use Psr\Container\ContainerInterface;
 
 return [
     'dependencies' => [
         'factories' => [
-            Adapter::class => function ($container) {
-                return new Adapter([
-                    'driver' => 'Pdo_Mysql',
+            Adapter::class => function (ContainerInterface $container) {
+                $driver = new Mysql([
                     'database' => 'your_database_name',
                     'username' => 'your_mysql_username',
                     'password' => 'your_mysql_password',
                     'hostname' => 'localhost',
                     'charset' => 'utf8mb4',
-                    'driver_options' => [
-                        PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8mb4',
-                    ],
                 ]);
+                return new Adapter($driver, new MysqlPlatform());
             },
         ],
         'aliases' => [
@@ -100,7 +93,9 @@ return [
 
 ### Working with PostgreSQL database
 
-For PostgreSQL support:
+PostgreSQL support is coming soon. Once the `php-db/postgres` package is available:
+
+### PostgreSQL adapter configuration
 
 ```php
 <?php
@@ -109,20 +104,22 @@ declare(strict_types=1);
 
 use PhpDb\Adapter\Adapter;
 use PhpDb\Adapter\AdapterInterface;
+use PhpDb\Postgres\Driver\Postgres;
+use PhpDb\Postgres\Platform\Postgres as PostgresPlatform;
+use Psr\Container\ContainerInterface;
 
 return [
     'dependencies' => [
         'factories' => [
-            Adapter::class => function ($container) {
-                return new Adapter([
-                    'driver' => 'Pdo_Pgsql',
+            Adapter::class => function (ContainerInterface $container) {
+                $driver = new Postgres([
                     'database' => 'your_database_name',
                     'username' => 'your_pgsql_username',
                     'password' => 'your_pgsql_password',
                     'hostname' => 'localhost',
                     'port' => 5432,
-                    'charset' => 'utf8',
                 ]);
+                return new Adapter($driver, new PostgresPlatform());
             },
         ],
         'aliases' => [
@@ -139,6 +136,8 @@ Once you have configured an adapter, as in the above examples, you now have a `P
 ### In Request Handlers
 
 Mezzio uses request handlers (also known as middleware) that receive dependencies through constructor injection:
+
+### Request handler with database adapter injection
 
 ```php
 <?php
@@ -185,6 +184,8 @@ class UserListHandler implements RequestHandlerInterface
 
 You need to create a factory for your handler that injects the adapter:
 
+### Handler factory implementation
+
 ```php
 <?php
 
@@ -210,6 +211,8 @@ class UserListHandlerFactory
 
 Register your handler factory in `config/autoload/dependencies.global.php`:
 
+### Registering the handler in dependencies configuration
+
 ```php
 <?php
 
@@ -234,6 +237,8 @@ return [
 ### Using with TableGateway
 
 For more structured database interactions, use TableGateway with dependency injection:
+
+### Extending TableGateway for custom database operations
 
 ```php
 <?php
@@ -270,6 +275,8 @@ class UsersTable extends TableGateway
 
 Create a factory for the table:
 
+### Factory for the TableGateway class
+
 ```php
 <?php
 
@@ -293,6 +300,8 @@ class UsersTableFactory
 
 Register the table factory:
 
+### Registering the table factory in dependencies
+
 ```php
 <?php
 
@@ -311,6 +320,8 @@ return [
 ```
 
 Use in your handler:
+
+### Using TableGateway in a request handler
 
 ```php
 <?php
@@ -351,14 +362,18 @@ For production deployments, use environment variables to configure database cred
 
 Install `vlucas/phpdotenv`:
 
+### Installing the phpdotenv package
+
 ```bash
 composer require vlucas/phpdotenv
 ```
 
 Create a `.env` file in your project root:
 
+### Environment variables configuration file
+
 ```env
-DB_DRIVER=Pdo_Mysql
+DB_TYPE=mysql
 DB_DATABASE=myapp_production
 DB_USERNAME=dbuser
 DB_PASSWORD=secure_password
@@ -368,6 +383,8 @@ DB_CHARSET=utf8mb4
 ```
 
 Load environment variables in `public/index.php`:
+
+### Loading environment variables in the application bootstrap
 
 ```php
 <?php
@@ -387,6 +404,8 @@ $container = require 'config/container.php';
 
 Update your database configuration to use environment variables:
 
+### Dynamic adapter configuration using environment variables
+
 ```php
 <?php
 
@@ -394,20 +413,35 @@ declare(strict_types=1);
 
 use PhpDb\Adapter\Adapter;
 use PhpDb\Adapter\AdapterInterface;
+use PhpDb\Mysql\Driver\Mysql;
+use PhpDb\Mysql\Platform\Mysql as MysqlPlatform;
+use PhpDb\Sqlite\Driver\Sqlite;
+use PhpDb\Sqlite\Platform\Sqlite as SqlitePlatform;
+use Psr\Container\ContainerInterface;
 
 return [
     'dependencies' => [
         'factories' => [
-            Adapter::class => function ($container) {
-                return new Adapter([
-                    'driver' => $_ENV['DB_DRIVER'] ?? 'Pdo_Mysql',
-                    'database' => $_ENV['DB_DATABASE'] ?? 'myapp',
-                    'username' => $_ENV['DB_USERNAME'] ?? 'root',
-                    'password' => $_ENV['DB_PASSWORD'] ?? '',
-                    'hostname' => $_ENV['DB_HOSTNAME'] ?? 'localhost',
-                    'port' => $_ENV['DB_PORT'] ?? '3306',
-                    'charset' => $_ENV['DB_CHARSET'] ?? 'utf8mb4',
+            Adapter::class => function (ContainerInterface $container) {
+                $dbType = $_ENV['DB_TYPE'] ?? 'sqlite';
+
+                if ($dbType === 'mysql') {
+                    $driver = new Mysql([
+                        'database' => $_ENV['DB_DATABASE'] ?? 'myapp',
+                        'username' => $_ENV['DB_USERNAME'] ?? 'root',
+                        'password' => $_ENV['DB_PASSWORD'] ?? '',
+                        'hostname' => $_ENV['DB_HOSTNAME'] ?? 'localhost',
+                        'port' => (int) ($_ENV['DB_PORT'] ?? 3306),
+                        'charset' => $_ENV['DB_CHARSET'] ?? 'utf8mb4',
+                    ]);
+                    return new Adapter($driver, new MysqlPlatform());
+                }
+
+                // Default to SQLite
+                $driver = new Sqlite([
+                    'database' => $_ENV['DB_DATABASE'] ?? 'data/app.sqlite',
                 ]);
+                return new Adapter($driver, new SqlitePlatform());
             },
         ],
         'aliases' => [
@@ -419,365 +453,7 @@ return [
 
 ## Running with Docker
 
-When working with a MySQL database and when running the application with Docker, some files need to be added or adjusted.
-
-### Adding the MySQL extension to the PHP container
-
-#### Option 1: Nginx with PHP-FPM (Recommended)
-
-For an nginx-based setup with PHP-FPM, create a `Dockerfile`:
-
-```dockerfile
-FROM php:8.2-fpm-alpine
-
-RUN apk add --no-cache \
-    git \
-    zip \
-    unzip \
-    && docker-php-ext-install pdo_mysql
-
-WORKDIR /var/www
-
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-```
-
-Create an nginx configuration file at `docker/nginx/default.conf`:
-
-```nginx
-server {
-    listen 80;
-    server_name localhost;
-    root /var/www/public;
-    index index.php;
-
-    location / {
-        try_files $uri $uri/ /index.php?$query_string;
-    }
-
-    location ~ \.php$ {
-        fastcgi_pass app:9000;
-        fastcgi_index index.php;
-        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-        include fastcgi_params;
-    }
-
-    location ~ /\.ht {
-        deny all;
-    }
-}
-```
-
-Update your `docker-compose.yml` to include nginx:
-
-```yaml
-  nginx:
-    image: nginx:alpine
-    ports:
-      - "8080:80"
-    volumes:
-      - .:/var/www
-      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
-    depends_on:
-      - app
-```
-
-#### Option 2: Apache
-
-For an Apache-based setup, create a `Dockerfile`:
-
-```dockerfile
-FROM php:8.2-apache
-
-RUN apt-get update \
- && apt-get install -y git zlib1g-dev libzip-dev \
- && docker-php-ext-install zip pdo_mysql \
- && a2enmod rewrite \
- && sed -i 's!/var/www/html!/var/www/public!g' /etc/apache2/sites-available/000-default.conf
-
-WORKDIR /var/www
-
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-```
-
-### Adding the MySQL container
-
-Change the `docker-compose.yml` file to add a new container for MySQL:
-
-```yaml
-version: "3.8"
-
-services:
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    ports:
-      - "8080:80"
-    volumes:
-      - .:/var/www
-    depends_on:
-      - mysql
-    environment:
-      - DB_DRIVER=Pdo_Mysql
-      - DB_DATABASE=${DB_DATABASE}
-      - DB_USERNAME=${DB_USERNAME}
-      - DB_PASSWORD=${DB_PASSWORD}
-      - DB_HOSTNAME=mysql
-      - DB_PORT=3306
-
-  mysql:
-    image: mysql:8.0
-    ports:
-      - "3306:3306"
-    command: --default-authentication-plugin=mysql_native_password
-    volumes:
-      - mysql_data:/var/lib/mysql
-      - ./docker/mysql/init:/docker-entrypoint-initdb.d
-    environment:
-      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
-      - MYSQL_DATABASE=${DB_DATABASE}
-      - MYSQL_USER=${DB_USERNAME}
-      - MYSQL_PASSWORD=${DB_PASSWORD}
-
-volumes:
-  mysql_data:
-```
-
-Though it is not the topic to explain how to write a `docker-compose.yml` file, a few details need to be highlighted:
-
-- The name of the container is `mysql`.
-- MySQL database files will be persisted in a named volume `mysql_data`.
-- SQL schemas will need to be added to the `./docker/mysql/init/` directory so that Docker will be able to build and populate the database(s).
-- The MySQL docker image uses environment variables to set the database name, user, and passwords.
-- The `depends_on` directive ensures MySQL starts before the application container.
-
-### Adding PostgreSQL Container
-
-For PostgreSQL instead of MySQL:
-
-```yaml
-version: "3.8"
-
-services:
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    ports:
-      - "8080:80"
-    volumes:
-      - .:/var/www
-    depends_on:
-      - postgres
-    environment:
-      - DB_DRIVER=Pdo_Pgsql
-      - DB_DATABASE=${DB_DATABASE}
-      - DB_USERNAME=${DB_USERNAME}
-      - DB_PASSWORD=${DB_PASSWORD}
-      - DB_HOSTNAME=postgres
-      - DB_PORT=5432
-
-  postgres:
-    image: postgres:15-alpine
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-      - ./docker/postgres/init:/docker-entrypoint-initdb.d
-    environment:
-      - POSTGRES_DB=${DB_DATABASE}
-      - POSTGRES_USER=${DB_USERNAME}
-      - POSTGRES_PASSWORD=${DB_PASSWORD}
-
-volumes:
-  postgres_data:
-```
-
-Update the `Dockerfile` to install the PostgreSQL extension:
-
-```dockerfile
-RUN docker-php-ext-install pdo_pgsql
-```
-
-### Adding phpMyAdmin
-
-Optionally, you can also add a container for phpMyAdmin:
-
-```yaml
-  phpmyadmin:
-    image: phpmyadmin/phpmyadmin
-    ports:
-      - "8081:80"
-    depends_on:
-      - mysql
-    environment:
-      - PMA_HOST=mysql
-      - PMA_PORT=3306
-```
-
-### Complete Docker Compose Example
-
-#### With Nginx (Recommended)
-
-Putting everything together with nginx:
-
-```yaml
-version: "3.8"
-
-services:
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    volumes:
-      - .:/var/www
-    depends_on:
-      - mysql
-    environment:
-      - DB_DRIVER=Pdo_Mysql
-      - DB_DATABASE=${DB_DATABASE}
-      - DB_USERNAME=${DB_USERNAME}
-      - DB_PASSWORD=${DB_PASSWORD}
-      - DB_HOSTNAME=mysql
-      - DB_PORT=3306
-
-  nginx:
-    image: nginx:alpine
-    ports:
-      - "8080:80"
-    volumes:
-      - .:/var/www
-      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
-    depends_on:
-      - app
-
-  mysql:
-    image: mysql:8.0
-    ports:
-      - "3306:3306"
-    command: --default-authentication-plugin=mysql_native_password
-    volumes:
-      - mysql_data:/var/lib/mysql
-      - ./docker/mysql/init:/docker-entrypoint-initdb.d
-    environment:
-      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
-      - MYSQL_DATABASE=${DB_DATABASE}
-      - MYSQL_USER=${DB_USERNAME}
-      - MYSQL_PASSWORD=${DB_PASSWORD}
-
-  phpmyadmin:
-    image: phpmyadmin/phpmyadmin
-    ports:
-      - "8081:80"
-    depends_on:
-      - mysql
-    environment:
-      - PMA_HOST=mysql
-      - PMA_PORT=3306
-
-volumes:
-  mysql_data:
-```
-
-#### With Apache
-
-For Apache-based deployment:
-
-```yaml
-version: "3.8"
-
-services:
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    ports:
-      - "8080:80"
-    volumes:
-      - .:/var/www
-    depends_on:
-      - mysql
-    environment:
-      - DB_DRIVER=Pdo_Mysql
-      - DB_DATABASE=${DB_DATABASE}
-      - DB_USERNAME=${DB_USERNAME}
-      - DB_PASSWORD=${DB_PASSWORD}
-      - DB_HOSTNAME=mysql
-      - DB_PORT=3306
-
-  mysql:
-    image: mysql:8.0
-    ports:
-      - "3306:3306"
-    command: --default-authentication-plugin=mysql_native_password
-    volumes:
-      - mysql_data:/var/lib/mysql
-      - ./docker/mysql/init:/docker-entrypoint-initdb.d
-    environment:
-      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
-      - MYSQL_DATABASE=${DB_DATABASE}
-      - MYSQL_USER=${DB_USERNAME}
-      - MYSQL_PASSWORD=${DB_PASSWORD}
-
-  phpmyadmin:
-    image: phpmyadmin/phpmyadmin
-    ports:
-      - "8081:80"
-    depends_on:
-      - mysql
-    environment:
-      - PMA_HOST=mysql
-      - PMA_PORT=3306
-
-volumes:
-  mysql_data:
-```
-
-### Defining credentials
-
-The `docker-compose.yml` file uses environment variables to define the credentials.
-
-Docker will read the environment variables from a `.env` file:
-
-```env
-DB_DATABASE=mezzio_app
-DB_USERNAME=appuser
-DB_PASSWORD=apppassword
-MYSQL_ROOT_PASSWORD=rootpassword
-```
-
-### Initiating the database schemas
-
-At build, if the volume is empty, Docker will create the MySQL database with any `.sql` files found in the `./docker/mysql/init/` directory.
-
-Create `docker/mysql/init/01-schema.sql`:
-
-```sql
-USE mezzio_app;
-
-CREATE TABLE users (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(100) NOT NULL UNIQUE,
-    email VARCHAR(255) NOT NULL UNIQUE,
-    status ENUM('active', 'inactive') DEFAULT 'active',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-CREATE INDEX idx_status ON users(status);
-```
-
-Create `docker/mysql/init/02-seed.sql`:
-
-```sql
-USE mezzio_app;
-
-INSERT INTO users (username, email, status) VALUES
-    ('alice', 'alice@example.com', 'active'),
-    ('bob', 'bob@example.com', 'active'),
-    ('charlie', 'charlie@example.com', 'inactive');
-```
-
-If multiple `.sql` files are present, they are executed in alphanumeric order, which is why the files are prefixed with numbers.
+For Docker deployment instructions including Dockerfiles, Nginx/Apache configuration, MySQL/PostgreSQL setup, and complete docker-compose examples, see the [Docker Deployment Guide](../docker-deployment.md).
 
 ## Testing with Database
 
@@ -787,6 +463,8 @@ For integration testing with a real database in Mezzio:
 
 Create `config/autoload/database.test.php`:
 
+### Test database configuration with in-memory SQLite
+
 ```php
 <?php
 
@@ -794,15 +472,18 @@ declare(strict_types=1);
 
 use PhpDb\Adapter\Adapter;
 use PhpDb\Adapter\AdapterInterface;
+use PhpDb\Sqlite\Driver\Sqlite;
+use PhpDb\Sqlite\Platform\Sqlite as SqlitePlatform;
+use Psr\Container\ContainerInterface;
 
 return [
     'dependencies' => [
         'factories' => [
-            Adapter::class => function ($container) {
-                return new Adapter([
-                    'driver' => 'Pdo_Sqlite',
+            Adapter::class => function (ContainerInterface $container) {
+                $driver = new Sqlite([
                     'database' => ':memory:',
                 ]);
+                return new Adapter($driver, new SqlitePlatform());
             },
         ],
         'aliases' => [
@@ -813,6 +494,8 @@ return [
 ```
 
 ### Use in PHPUnit Tests
+
+### PHPUnit test with database integration
 
 ```php
 <?php
@@ -876,6 +559,8 @@ Always inject the adapter or table gateway through constructors, never instantia
 
 Create repository or table gateway classes to separate database logic from HTTP handlers:
 
+### Repository pattern implementation for database operations
+
 ```php
 <?php
 
@@ -926,6 +611,8 @@ Centralize adapter configuration in factory classes for better maintainability a
 ### Handle Exceptions
 
 Always wrap database operations in try-catch blocks:
+
+### Exception handling for database operations
 
 ```php
 use PhpDb\Adapter\Exception\RuntimeException;

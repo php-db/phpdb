@@ -1,15 +1,10 @@
 # Row Gateways
 
-`PhpDb\RowGateway` is a sub-component of laminas-db that implements the Row Data
-Gateway pattern described in the book [Patterns of Enterprise Application
-Architecture](http://www.martinfowler.com/books/eaa.html). Row Data Gateways
-model individual rows of a database table, and provide methods such as `save()`
-and `delete()` that persist the row to the database. Likewise, after a row from
-the database is retrieved, it can then be manipulated and `save()`'d back to
-the database in the same position (row), or it can be `delete()`'d from the
-table.
+`PhpDb\RowGateway` implements the [Row Data Gateway pattern](http://www.martinfowler.com/eaaCatalog/rowDataGateway.html) - an object that wraps a single database row, providing `save()` and `delete()` methods to persist changes.
 
-`RowGatewayInterface` defines the methods `save()` and `delete()`:
+`RowGatewayInterface` defines these methods:
+
+### RowGatewayInterface Definition
 
 ```php
 namespace PhpDb\RowGateway;
@@ -28,6 +23,8 @@ interface RowGatewayInterface
 standalone, you need an `Adapter` instance and a set of data to work with.
 
 The following demonstrates a basic use case.
+
+### Standalone RowGateway Usage
 
 ```php
 use PhpDb\RowGateway\RowGateway;
@@ -57,6 +54,8 @@ In that paradigm, `select()` operations will produce a `ResultSet` that iterates
 
 As an example:
 
+### Using RowGateway with TableGateway
+
 ```php
 use PhpDb\TableGateway\Feature\RowGatewayFeature;
 use PhpDb\TableGateway\TableGateway;
@@ -76,6 +75,8 @@ essentially making them behave similarly to the
 [ActiveRecord](http://www.martinfowler.com/eaaCatalog/activeRecord.html)
 pattern), pass a prototype object implementing the `RowGatewayInterface` to the
 `RowGatewayFeature` constructor instead of a primary key:
+
+### Custom ActiveRecord-Style Implementation
 
 ```php
 use PhpDb\TableGateway\Feature\RowGatewayFeature;

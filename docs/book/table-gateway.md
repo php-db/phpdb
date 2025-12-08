@@ -4,6 +4,8 @@ The Table Gateway subcomponent provides an object-oriented representation of a
 database table; its methods mirror the most common table operations. In code,
 the interface resembles:
 
+### TableGatewayInterface Definition
+
 ```php
 namespace PhpDb\TableGateway;
 
@@ -41,6 +43,8 @@ order to be consumed and utilized to its fullest.
 
 The following example uses `PhpDb\TableGateway\TableGateway`, which defines
 the following API:
+
+### TableGateway Class API
 
 ```php
 namespace PhpDb\TableGateway;
@@ -100,6 +104,8 @@ or metadata, and when `select()` is executed, a simple `ResultSet` object with
 the populated `Adapter`'s `Result` (the datasource) will be returned and ready
 for iteration.
 
+### Basic Select Operations
+
 ```php
 use PhpDb\TableGateway\TableGateway;
 
@@ -122,6 +128,8 @@ var_dump($artistRow);
 The `select()` method takes the same arguments as
 `PhpDb\Sql\Select::where()`; arguments will be passed to the `Select`
 instance used to build the SELECT query. This means the following is possible:
+
+### Advanced Select with Callback
 
 ```php
 use PhpDb\TableGateway\TableGateway;
@@ -157,6 +165,8 @@ There are a number of features built-in and shipped with laminas-db:
   needing to inject it into a `TableGateway` instance. This is only useful when
   you are extending the `AbstractTableGateway` implementation:
 
+    ### Extending AbstractTableGateway with GlobalAdapterFeature
+
     ```php
     use PhpDb\TableGateway\AbstractTableGateway;
     use PhpDb\TableGateway\Feature;
@@ -183,6 +193,8 @@ There are a number of features built-in and shipped with laminas-db:
   `update()`, and `delete()`, but switch to a slave adapter for all `select()`
   operations.
 
+    ### Using MasterSlaveFeature
+
     ```php
     $table = new TableGateway('artist', $adapter, new Feature\MasterSlaveFeature($slaveAdapter));
     ```
@@ -190,6 +202,8 @@ There are a number of features built-in and shipped with laminas-db:
 - `MetadataFeature`: the ability populate `TableGateway` with column
   information from a `Metadata` object. It will also store the primary key
   information in case the `RowGatewayFeature` needs to consume this information.
+
+    ### Using MetadataFeature
 
     ```php
     $table = new TableGateway('artist', $adapter, new Feature\MetadataFeature());
@@ -202,12 +216,16 @@ There are a number of features built-in and shipped with laminas-db:
   lifecycle events below](#tablegateway-lifecycle-events) for more information
   on available events and the parameters they compose.
 
+    ### Using EventFeature
+
     ```php
     $table = new TableGateway('artist', $adapter, new Feature\EventFeature($eventManagerInstance));
     ```
 
 - `RowGatewayFeature`: the ability for `select()` to return a `ResultSet` object that upon iteration
   will return a `RowGateway` instance for each row.
+
+    ### Using RowGatewayFeature
 
     ```php
     $table   = new TableGateway('artist', $adapter, new Feature\RowGatewayFeature('id'));
@@ -227,36 +245,40 @@ listed.
 - `preInitialize` (no parameters)
 - `postInitialize` (no parameters)
 - `preSelect`, with the following parameters:
-  - `select`, with type `PhpDb\Sql\Select`
+    - `select`, with type `PhpDb\Sql\Select`
 - `postSelect`, with the following parameters:
-  - `statement`, with type `PhpDb\Adapter\Driver\StatementInterface`
-  - `result`, with type `PhpDb\Adapter\Driver\ResultInterface`
-  - `resultSet`, with type `PhpDb\ResultSet\ResultSetInterface`
+    - `statement`, with type `PhpDb\Adapter\Driver\StatementInterface`
+    - `result`, with type `PhpDb\Adapter\Driver\ResultInterface`
+    - `resultSet`, with type `PhpDb\ResultSet\ResultSetInterface`
 - `preInsert`, with the following parameters:
-  - `insert`, with type `PhpDb\Sql\Insert`
+    - `insert`, with type `PhpDb\Sql\Insert`
 - `postInsert`, with the following parameters:
-  - `statement` with type `PhpDb\Adapter\Driver\StatementInterface`
-  - `result` with type `PhpDb\Adapter\Driver\ResultInterface`
+    - `statement` with type `PhpDb\Adapter\Driver\StatementInterface`
+    - `result` with type `PhpDb\Adapter\Driver\ResultInterface`
 - `preUpdate`, with the following parameters:
-  - `update`, with type `PhpDb\Sql\Update`
+    - `update`, with type `PhpDb\Sql\Update`
 - `postUpdate`, with the following parameters:
-  - `statement`, with type `PhpDb\Adapter\Driver\StatementInterface`
-  - `result`, with type `PhpDb\Adapter\Driver\ResultInterface`
+    - `statement`, with type `PhpDb\Adapter\Driver\StatementInterface`
+    - `result`, with type `PhpDb\Adapter\Driver\ResultInterface`
 - `preDelete`, with the following parameters:
-  - `delete`, with type `PhpDb\Sql\Delete`
+    - `delete`, with type `PhpDb\Sql\Delete`
 - `postDelete`, with the following parameters:
-  - `statement`, with type `PhpDb\Adapter\Driver\StatementInterface`
-  - `result`, with type `PhpDb\Adapter\Driver\ResultInterface`
+    - `statement`, with type `PhpDb\Adapter\Driver\StatementInterface`
+    - `result`, with type `PhpDb\Adapter\Driver\ResultInterface`
 
 Listeners receive a `PhpDb\TableGateway\Feature\EventFeature\TableGatewayEvent`
 instance as an argument. Within the listener, you can retrieve a parameter by
 name from the event using the following syntax:
+
+### Retrieving Event Parameters
 
 ```php
 $parameter = $event->getParam($paramName);
 ```
 
 As an example, you might attach a listener on the `postInsert` event as follows:
+
+### Attaching a Listener to postInsert Event
 
 ```php
 use PhpDb\Adapter\Driver\ResultInterface;
