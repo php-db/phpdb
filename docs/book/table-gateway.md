@@ -255,26 +255,26 @@ parameters listed.
 - `preInitialize` (no parameters)
 - `postInitialize` (no parameters)
 - `preSelect`, with the following parameters:
-  - `select`, with type `PhpDb\Sql\Select`
+    - `select`, with type `PhpDb\Sql\Select`
 - `postSelect`, with the following parameters:
-  - `statement`, with type `PhpDb\Adapter\Driver\StatementInterface`
-  - `result`, with type `PhpDb\Adapter\Driver\ResultInterface`
-  - `resultSet`, with type `PhpDb\ResultSet\ResultSetInterface`
+    - `statement`, with type `PhpDb\Adapter\Driver\StatementInterface`
+    - `result`, with type `PhpDb\Adapter\Driver\ResultInterface`
+    - `resultSet`, with type `PhpDb\ResultSet\ResultSetInterface`
 - `preInsert`, with the following parameters:
-  - `insert`, with type `PhpDb\Sql\Insert`
+    - `insert`, with type `PhpDb\Sql\Insert`
 - `postInsert`, with the following parameters:
-  - `statement` with type `PhpDb\Adapter\Driver\StatementInterface`
-  - `result` with type `PhpDb\Adapter\Driver\ResultInterface`
+    - `statement` with type `PhpDb\Adapter\Driver\StatementInterface`
+    - `result` with type `PhpDb\Adapter\Driver\ResultInterface`
 - `preUpdate`, with the following parameters:
-  - `update`, with type `PhpDb\Sql\Update`
+    - `update`, with type `PhpDb\Sql\Update`
 - `postUpdate`, with the following parameters:
-  - `statement`, with type `PhpDb\Adapter\Driver\StatementInterface`
-  - `result`, with type `PhpDb\Adapter\Driver\ResultInterface`
+    - `statement`, with type `PhpDb\Adapter\Driver\StatementInterface`
+    - `result`, with type `PhpDb\Adapter\Driver\ResultInterface`
 - `preDelete`, with the following parameters:
-  - `delete`, with type `PhpDb\Sql\Delete`
+    - `delete`, with type `PhpDb\Sql\Delete`
 - `postDelete`, with the following parameters:
-  - `statement`, with type `PhpDb\Adapter\Driver\StatementInterface`
-  - `result`, with type `PhpDb\Adapter\Driver\ResultInterface`
+    - `statement`, with type `PhpDb\Adapter\Driver\StatementInterface`
+    - `result`, with type `PhpDb\Adapter\Driver\ResultInterface`
 
 Listeners receive a
 `PhpDb\TableGateway\Feature\EventFeature\TableGatewayEvent` instance as an
