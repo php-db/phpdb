@@ -226,6 +226,7 @@ try {
 ### Hydration Failures
 
 Object properties not populated? Match hydrator to object structure:
+
 - `ReflectionHydrator` for protected/private properties
 - `ClassMethodsHydrator` for public setters
 

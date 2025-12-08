@@ -4,7 +4,7 @@
 SELECT queries. Instances may be created and consumed without
 `PhpDb\Sql\Sql`:
 
-### Creating a Select instance
+## Creating a Select instance
 
 ```php
 use PhpDb\Sql\Select;

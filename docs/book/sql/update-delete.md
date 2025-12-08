@@ -160,7 +160,7 @@ class Delete extends AbstractPreparableSql implements SqlInterface, PreparableSq
 }
 ```
 
-### Basic Usage
+### Delete Basic Usage
 
 ```php
 use PhpDb\Sql\Sql;
@@ -182,7 +182,7 @@ Produces:
 DELETE FROM users WHERE id = ?
 ```
 
-### where()
+### Delete where()
 
 The `where()` method works the same as in Select queries. See the [Where and Having](where-having.md) documentation for full details.
 

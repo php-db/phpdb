@@ -4,7 +4,7 @@
 
 `RowGatewayInterface` defines these methods:
 
-### RowGatewayInterface Definition
+## RowGatewayInterface Definition
 
 ```php
 namespace PhpDb\RowGateway;

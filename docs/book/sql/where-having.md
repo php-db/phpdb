@@ -681,7 +681,7 @@ Produces:
 WHERE ((a = 1 OR b = 2) AND (c = 3 OR d = 4))
 ```
 
-###  addPredicates() intelligent handling
+### addPredicates() intelligent handling
 
 The `addPredicates()` method from `PredicateSet` provides intelligent handling of
 various input types, automatically creating appropriate predicate objects based on

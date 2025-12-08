@@ -216,6 +216,7 @@ $results = $statement->execute();
 ```
 
 This approach:
+
 - Uses parameter binding for security against SQL injection
 - Allows the database to cache query plans
 - Is the preferred method for production code

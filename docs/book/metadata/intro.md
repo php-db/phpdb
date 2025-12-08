@@ -5,7 +5,7 @@ metadata information about tables, columns, constraints, triggers, and other
 information from a database in a standardized way. The primary interface for
 `Metadata` is:
 
-### MetadataInterface Definition
+## MetadataInterface Definition
 
 ```php
 namespace PhpDb\Metadata;
@@ -118,7 +118,7 @@ foreach ($table->getColumns() as $column) {
 
 Example output:
 
-```
+```text
 id INT NOT NULL
 username VARCHAR NOT NULL
 email VARCHAR NOT NULL
@@ -152,7 +152,7 @@ foreach ($constraints as $constraint) {
 
 Example output:
 
-```
+```text
 PRIMARY KEY (id)
 FOREIGN KEY fk_orders_customers (customer_id) REFERENCES customers (id)
 FOREIGN KEY fk_orders_products (product_id) REFERENCES products (id)
@@ -248,11 +248,13 @@ foreach ($triggers as $trigger) {
 ```
 
 The `getEventManipulation()` returns the trigger event:
+
 - `INSERT` - Trigger fires on INSERT operations
 - `UPDATE` - Trigger fires on UPDATE operations
 - `DELETE` - Trigger fires on DELETE operations
 
 The `getActionTiming()` returns when the trigger fires:
+
 - `BEFORE` - Executes before the triggering statement
 - `AFTER` - Executes after the triggering statement
 
@@ -285,7 +287,7 @@ foreach ($foreignKeys as $constraint) {
 
 Outputs:
 
-```
+```text
 Foreign Key: fk_orders_customers
   customer_id -> customers.id
     ON UPDATE: CASCADE

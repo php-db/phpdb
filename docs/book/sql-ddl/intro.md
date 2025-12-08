@@ -52,6 +52,7 @@ $table->addColumn(new Column\Varchar('name', 255));
 ### SQL Output for Basic Table
 
 **Generated SQL:**
+
 ```sql
 CREATE TABLE "users" (
     "id" INTEGER NOT NULL,
@@ -86,6 +87,7 @@ $table = new CreateTable(new TableIdentifier('users', 'public'));
 ### SQL Output for Schema-Qualified Table
 
 **Generated SQL:**
+
 ```sql
 CREATE TABLE "public"."users" (...)
 ```
@@ -105,6 +107,7 @@ $table->setTemporary(true);
 ### SQL Output for Temporary Table
 
 **Generated SQL:**
+
 ```sql
 CREATE TEMPORARY TABLE "temp_data" (...)
 ```
@@ -171,6 +174,7 @@ $table->addColumn($id);
 ### SQL Output for Column-Level Constraint
 
 **Generated SQL:**
+
 ```sql
 "id" INTEGER NOT NULL PRIMARY KEY
 ```

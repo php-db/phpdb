@@ -250,6 +250,7 @@ $statement = $sql->prepareStatementForSqlObject($select);
 ```
 
 This provides:
+
 - Protection against SQL injection
 - Better performance through query plan caching
 - Proper type handling for parameters

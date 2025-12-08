@@ -24,6 +24,7 @@ $column->setOption('length', 11);
 **Constructor:** `__construct($name, $nullable = false, $default = null, array $options = [])`
 
 **Methods:**
+
 - `setNullable(bool $nullable): self`
 - `isNullable(): bool`
 - `setDefault(string|int|null $default): self`
@@ -67,6 +68,7 @@ $column->setDecimal(3); // Change scale
 **Constructor:** `__construct($name, $precision, $scale = null)`
 
 **Methods:**
+
 - `setDigits(int $digits): self` - Set precision
 - `getDigits(): int` - Get precision
 - `setDecimal(int $decimal): self` - Set scale
@@ -115,6 +117,7 @@ $column->setNullable(true);
 **Constructor:** `__construct($name, $length)`
 
 **Methods:**
+
 - `setLength(int $length): self`
 - `getLength(): int`
 
@@ -266,6 +269,7 @@ $column->setOption('on_update', true);
 **Constructor:** `__construct($name)`
 
 **Special Options:**
+
 - `on_update` - When `true`, adds `ON UPDATE CURRENT_TIMESTAMP`
 
 ## Boolean Type
@@ -470,9 +474,9 @@ $table->addColumn($column);
 
 ## Column Type Selection Best Practices
 
-### Numeric Types
+### Numeric Type Selection
 
-### Choosing the Right Numeric Type
+#### Choosing the Right Numeric Type
 
 ```php
 // Use Integer for most numeric IDs and counters
@@ -491,9 +495,9 @@ $latitude = new Column\Floating('lat', 10, 6);   // GPS coordinates
 $measurement = new Column\Floating('temp', 5, 2); // Temperature readings
 ```
 
-### String Types
+### String Type Selection
 
-### Choosing the Right String Type
+#### Choosing the Right String Type
 
 ```php
 // Use Varchar for bounded strings with known max length
@@ -512,6 +516,7 @@ $notes = new Column\Text('notes');                // User notes
 ```
 
 **Rule of Thumb:**
+
 - String <= 255 chars with known max → Varchar
 - Fixed length → Char
 - No length limit or very large → Text

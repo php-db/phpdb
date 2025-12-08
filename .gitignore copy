@@ -1,9 +1,0 @@
-/.phpcs-cache
-/.phpstan-cache
-/phpstan.neon
-/.phpunit.cache
-/.phpunit.result.cache
-/phpunit.xml
-/vendor/
-/xdebug_filter.php
-/clover.xml

@@ -42,6 +42,7 @@ $alter->addColumn(new Column\Varchar('country', 2));
 ### SQL Output for Adding Columns
 
 **Generated SQL:**
+
 ```sql
 ALTER TABLE "users"
 ADD COLUMN "phone" VARCHAR(20) NOT NULL,
@@ -67,6 +68,7 @@ $alter->changeColumn('name', new Column\Varchar('full_name', 200));
 ### SQL Output for Changing Columns
 
 **Generated SQL:**
+
 ```sql
 ALTER TABLE "users"
 CHANGE COLUMN "name" "full_name" VARCHAR(200) NOT NULL
@@ -86,6 +88,7 @@ $alter->dropColumn('deprecated_column');
 ### SQL Output for Dropping Columns
 
 **Generated SQL:**
+
 ```sql
 ALTER TABLE "users"
 DROP COLUMN "old_field",
@@ -135,6 +138,7 @@ $alter->dropConstraint('fk_old_relation');
 ### SQL Output for Dropping Constraints
 
 **Generated SQL:**
+
 ```sql
 ALTER TABLE "users"
 DROP CONSTRAINT "old_unique_key",
@@ -178,6 +182,7 @@ $alter->dropIndex('idx_deprecated');
 ### SQL Output for Dropping Indexes
 
 **Generated SQL:**
+
 ```sql
 ALTER TABLE "products"
 DROP INDEX "idx_old_search",
@@ -263,6 +268,7 @@ $adapter->query(
 ### SQL Output for Basic Drop Table
 
 **Generated SQL:**
+
 ```sql
 DROP TABLE "old_table"
 ```
@@ -279,6 +285,7 @@ $drop = new DropTable(new TableIdentifier('users', 'archive'));
 ### SQL Output for Schema-Qualified Drop
 
 **Generated SQL:**
+
 ```sql
 DROP TABLE "archive"."users"
 ```
@@ -393,6 +400,7 @@ Array(
 ```
 
 This is useful for:
+
 - Debugging DDL object configuration
 - Testing DDL generation
 - Introspection and analysis tools
@@ -449,6 +457,7 @@ if ($column->isNullable()) {
 ```
 
 **Note:** Boolean columns cannot be made nullable:
+
 ```php
 $column = new Column\Boolean('is_active');
 $column->setNullable(true); // Has no effect - still NOT NULL

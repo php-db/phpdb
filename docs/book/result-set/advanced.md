@@ -56,6 +56,7 @@ $resultSet = new ResultSet(ResultSetReturnType::Array);
 #### Constructor Parameters
 
 **`$returnType`** - Controls how rows are returned:
+
 - `ResultSetReturnType::ArrayObject` (default) - Returns rows as ArrayObject instances
 - `ResultSetReturnType::Array` - Returns rows as plain PHP arrays
 
@@ -203,7 +204,7 @@ $resultSet->buffer();
 
 Throws:
 
-```
+```text
 RuntimeException: Buffering must be enabled before iteration is started
 ```
 
@@ -226,7 +227,7 @@ var_dump($resultSet->isBuffered());
 
 Outputs:
 
-```
+```text
 bool(false)
 bool(true)
 ```
@@ -249,7 +250,7 @@ var_dump($resultSet->isBuffered());
 
 Outputs:
 
-```
+```text
 bool(true)
 ```
 
@@ -374,12 +375,14 @@ foreach ($users as $user) {
 ### Buffered vs Unbuffered
 
 **Unbuffered (default):**
+
 - Memory usage: O(1) per row
 - Supports single iteration only
 - Cannot rewind without buffering
 - Ideal for large result sets processed once
 
 **Buffered:**
+
 - Memory usage: O(n) for all rows
 - Supports multiple iterations
 - Allows rewinding

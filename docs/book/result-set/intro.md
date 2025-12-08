@@ -4,7 +4,7 @@
 
 `ResultSetInterface` is defined as follows:
 
-### ResultSetInterface Definition
+## ResultSetInterface Definition
 
 ```php
 use Countable;

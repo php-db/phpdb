@@ -7,6 +7,7 @@
 **Important:** DDL objects themselves do **not throw exceptions** during construction or configuration. They are designed to build up state without validation.
 
 Errors typically occur during:
+
 1. **SQL Generation** - When `buildSqlString()` is called
 2. **Execution** - When the adapter executes the DDL statement
 

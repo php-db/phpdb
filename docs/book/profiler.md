@@ -71,7 +71,7 @@ Each profile entry contains:
 | Key          | Type                      | Description                                    |
 |--------------|---------------------------|------------------------------------------------|
 | `sql`        | `string`                  | The SQL query that was executed                |
-| `parameters` | `ParameterContainer|null` | The bound parameters (if any)                  |
+| `parameters` | `ParameterContainer\|null` | The bound parameters (if any)                  |
 | `start`      | `float`                   | Unix timestamp with microseconds (query start) |
 | `end`        | `float`                   | Unix timestamp with microseconds (query end)   |
 | `elapse`     | `float`                   | Total execution time in seconds                |

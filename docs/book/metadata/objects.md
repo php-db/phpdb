@@ -254,7 +254,7 @@ Outputs:
 
 ### Foreign Key Constraint Output
 
-```
+```text
 customer_id -> customers.id
   ON UPDATE: CASCADE
   ON DELETE: RESTRICT

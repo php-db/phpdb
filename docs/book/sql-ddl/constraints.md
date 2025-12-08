@@ -48,9 +48,8 @@ $id->addConstraint(new PrimaryKey());
 $table->addColumn($id);
 ```
 
-### Generated SQL Output
-
 **Generated SQL:**
+
 ```sql
 "id" INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT
 ```
@@ -74,9 +73,8 @@ $fk = new ForeignKey(
 $table->addConstraint($fk);
 ```
 
-### Generated SQL Output
-
 **Generated SQL:**
+
 ```sql
 CONSTRAINT "fk_order_customer" FOREIGN KEY ("customer_id")
     REFERENCES "customers" ("id")
@@ -98,6 +96,7 @@ $fk = new ForeignKey(
 ```
 
 **Available Actions:**
+
 - `CASCADE` - Propagate the change to dependent rows
 - `SET NULL` - Set foreign key column to NULL
 - `RESTRICT` - Prevent the change if dependent rows exist
@@ -133,9 +132,8 @@ $fk = new ForeignKey(
 );
 ```
 
-### Generated SQL Output
-
 **Generated SQL:**
+
 ```sql
 CONSTRAINT "fk_user_tenant" FOREIGN KEY ("user_id", "tenant_id")
     REFERENCES "user_tenants" ("user_id", "tenant_id")
@@ -160,9 +158,8 @@ $unique = new UniqueKey('email', 'unique_user_email');
 $table->addConstraint($unique);
 ```
 
-### Generated SQL Output
-
 **Generated SQL:**
+
 ```sql
 CONSTRAINT "unique_user_email" UNIQUE ("email")
 ```
@@ -179,9 +176,8 @@ $unique = new UniqueKey(
 );
 ```
 
-### Generated SQL Output
-
 **Generated SQL:**
+
 ```sql
 CONSTRAINT "unique_username_per_tenant" UNIQUE ("username", "tenant_id")
 ```
@@ -288,9 +284,8 @@ $index = new Index('email', 'idx_user_email');
 $table->addConstraint($index);
 ```
 
-### Generated SQL Output
-
 **Generated SQL:**
+
 ```sql
 INDEX "idx_username" ("username")
 ```
@@ -309,9 +304,8 @@ $index = new Index(['last_name', 'first_name'], 'idx_name_search');
 $table->addConstraint($index);
 ```
 
-### Generated SQL Output
-
 **Generated SQL:**
+
 ```sql
 INDEX "idx_category_price" ("category", "price")
 ```
@@ -334,14 +328,14 @@ $index = new Index(
 $table->addConstraint($index);
 ```
 
-### Generated SQL Output
-
 **Generated SQL (platform-specific):**
+
 ```sql
 INDEX "idx_search" ("title"(50), "description"(100))
 ```
 
 **Why use length specifications?**
+
 - Reduces index size for large text columns
 - Improves index creation and maintenance performance
 - Particularly useful for VARCHAR/TEXT columns that store long content
@@ -402,6 +396,7 @@ $alter->dropConstraint('fk_user_role');
 ```
 
 **Recommended Naming Patterns:**
+
 - Primary keys: `pk_<table_name>`
 - Foreign keys: `fk_<table>_<referenced_table>` or `fk_<table>_<column>`
 - Unique constraints: `unique_<table>_<column>` or `unique_<descriptive_name>`
@@ -413,6 +408,7 @@ $alter->dropConstraint('fk_user_role');
 ### When to Add Indexes
 
 **DO index:**
+
 - Primary keys (automatic in most platforms)
 - Foreign key columns
 - Columns frequently used in WHERE clauses
@@ -421,6 +417,7 @@ $alter->dropConstraint('fk_user_role');
 - Columns used in GROUP BY clauses
 
 **DON'T index:**
+
 - Very small tables (< 1000 rows)
 - Columns with low cardinality (few unique values) like boolean
 - Columns rarely used in queries
