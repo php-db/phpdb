@@ -112,7 +112,7 @@ of the `Example` class with a database adapter:
 $example = $serviceManager->get(Example::class);
 
 var_dump(
-    $example->getAdapter() instanceof PhpDb\Adapter\Adapter
+    $example->getAdapter() instanceof PhpDb\Adapter\AdapterInterface
 ); // true
 ```
 
