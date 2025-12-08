@@ -3,8 +3,10 @@
 ## Common Patterns and Best Practices
 
 ```php title="Finding All Tables with a Specific Column"
-function findTablesWithColumn(MetadataInterface $metadata, string $columnName): array
-{
+function findTablesWithColumn(
+    MetadataInterface $metadata,
+    string $columnName
+): array {
     $tables = [];
     foreach ($metadata->getTableNames() as $tableName) {
         $columnNames = $metadata->getColumnNames($tableName);
@@ -19,8 +21,10 @@ $tablesWithUserId = findTablesWithColumn($metadata, 'user_id');
 ```
 
 ```php title="Discovering Foreign Key Relationships"
-function getForeignKeyRelationships(MetadataInterface $metadata, string $tableName): array
-{
+function getForeignKeyRelationships(
+    MetadataInterface $metadata,
+    string $tableName
+): array {
     $relationships = [];
     $constraints = $metadata->getConstraints($tableName);
 
@@ -44,8 +48,10 @@ function getForeignKeyRelationships(MetadataInterface $metadata, string $tableNa
 ```
 
 ```php title="Generating Schema Documentation"
-function generateTableDocumentation(MetadataInterface $metadata, string $tableName): string
-{
+function generateTableDocumentation(
+    MetadataInterface $metadata,
+    string $tableName
+): string {
     $table = $metadata->getTable($tableName);
     $doc = "# Table: $tableName\n\n";
 
@@ -75,15 +81,22 @@ function generateTableDocumentation(MetadataInterface $metadata, string $tableNa
     $constraints = $metadata->getConstraints($tableName);
 
     foreach ($constraints as $constraint) {
-        $doc .= "- **{$constraint->getName()}** ({$constraint->getType()})\n";
+        $doc .= "- **{$constraint->getName()}** ";
+        $doc .= "({$constraint->getType()})\n";
         if ($constraint->hasColumns()) {
-            $doc .= "  - Columns: " . implode(', ', $constraint->getColumns()) . "\n";
+            $doc .= "  - Columns: " .
+                implode(', ', $constraint->getColumns()) . "\n";
         }
         if ($constraint->isForeignKey()) {
-            $doc .= "  - References: {$constraint->getReferencedTableName()}";
-            $doc .= "(" . implode(', ', $constraint->getReferencedColumns()) . ")\n";
-            $doc .= "  - ON UPDATE: {$constraint->getUpdateRule()}\n";
-            $doc .= "  - ON DELETE: {$constraint->getDeleteRule()}\n";
+            $doc .= "  - References: ";
+            $doc .= "{$constraint->getReferencedTableName()}";
+            $doc .= "(" .
+                implode(', ', $constraint->getReferencedColumns()) .
+                ")\n";
+            $doc .= "  - ON UPDATE: ";
+            $doc .= "{$constraint->getUpdateRule()}\n";
+            $doc .= "  - ON DELETE: ";
+            $doc .= "{$constraint->getDeleteRule()}\n";
         }
     }
 
@@ -117,25 +130,39 @@ function compareTables(
 ```
 
 ```php title="Generating Entity Classes from Metadata"
-function generateEntityClass(MetadataInterface $metadata, string $tableName): string
-{
+function generateEntityClass(
+    MetadataInterface $metadata,
+    string $tableName
+): string {
     $columns = $metadata->getColumns($tableName);
-    $className = str_replace(' ', '', ucwords(str_replace('_', ' ', $tableName)));
+    $className = str_replace(
+        ' ',
+        '',
+        ucwords(str_replace('_', ' ', $tableName))
+    );
 
     $code = "<?php\n\nclass {$className}\n{\n";
 
     foreach ($columns as $column) {
         $type = match ($column->getDataType()) {
-            'int', 'integer', 'bigint', 'smallint', 'tinyint' => 'int',
+            'int', 'integer', 'bigint', 'smallint', 'tinyint'
+                => 'int',
             'decimal', 'float', 'double', 'real' => 'float',
             'bool', 'boolean' => 'bool',
             default => 'string',
         };
 
         $nullable = $column->isNullable() ? '?' : '';
-        $property = lcfirst(str_replace(' ', '', ucwords(str_replace('_', ' ', $column->getName()))));
+        $property = lcfirst(
+            str_replace(
+                ' ',
+                '',
+                ucwords(str_replace('_', ' ', $column->getName()))
+            )
+        );
 
-        $code .= "    private {$nullable}{$type} \${$property};\n";
+        $code .= "    private {$nullable}{$type} ";
+        $code .= "\${$property};\n";
     }
 
     $code .= "}\n";
@@ -158,14 +185,15 @@ try {
 **Exception messages by method:**
 
 | Method | Message |
-|--------|---------|
+| ------ | ------- |
 | `getTable()` | Table "name" does not exist |
 | `getView()` | View "name" does not exist |
 | `getColumn()` | A column by that name was not found |
-| `getConstraint()` | Cannot find a constraint by that name in this table |
+| `getConstraint()` | Cannot find a constraint by that name |
 | `getTrigger()` | Trigger "name" does not exist |
 
-**Best practice:** Check existence first using `getTableNames()`, `getColumnNames()`, etc:
+**Best practice:** Check existence first using `getTableNames()`,
+`getColumnNames()`, etc:
 
 ```php
 if (in_array('users', $metadata->getTableNames(), true)) {
@@ -175,8 +203,8 @@ if (in_array('users', $metadata->getTableNames(), true)) {
 
 ### Performance with Large Schemas
 
-When working with databases that have hundreds of tables, use `get*Names()`
-methods instead of retrieving full objects:
+When working with databases that have hundreds of tables, use
+`get*Names()` methods instead of retrieving full objects:
 
 ```php title="Efficient Metadata Access for Large Schemas"
 $tableNames = $metadata->getTableNames();
@@ -209,8 +237,8 @@ try {
 
 ### Caching Metadata
 
-The metadata component queries the database each time a method is called. For
-better performance in production, consider caching the results:
+The metadata component queries the database each time a method is called.
+For better performance in production, consider caching the results:
 
 ```php title="Implementing Metadata Caching"
 $cache = $container->get('cache');

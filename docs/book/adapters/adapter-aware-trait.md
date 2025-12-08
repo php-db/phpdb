@@ -1,6 +1,7 @@
 # AdapterAwareTrait
 
-`PhpDb\Adapter\AdapterAwareTrait` provides a standard implementation of `AdapterAwareInterface` for injecting database adapters into your classes.
+`PhpDb\Adapter\AdapterAwareTrait` provides a standard implementation of
+`AdapterAwareInterface` for injecting database adapters into your classes.
 
 ```php
 public function setDbAdapter(\PhpDb\Adapter\Adapter $adapter) : self;
@@ -25,8 +26,8 @@ $example->setDbAdapter($adapter);
 ## AdapterServiceDelegator
 
 The [delegator](https://docs.laminas.dev/laminas-servicemanager/delegators/)
-`PhpDb\Adapter\AdapterServiceDelegator` can be used to set a database
-adapter via the [service manager of laminas-servicemanager](https://docs.laminas.dev/laminas-servicemanager/quick-start/).
+`PhpDb\Adapter\AdapterServiceDelegator` can be used to set a database adapter
+via the [service manager of laminas-servicemanager](https://docs.laminas.dev/laminas-servicemanager/quick-start/).
 
 The delegator tries to fetch a database adapter via the name
 `PhpDb\Adapter\AdapterInterface` from the service container and sets the
@@ -35,8 +36,9 @@ adapter to the requested service. The adapter itself must be an instance of
 
 > ### Integration for Mezzio and laminas-mvc based Applications
 >
-> In a Mezzio or laminas-mvc based application the database adapter is already
-> registered during the installation with the laminas-component-installer.
+> In a Mezzio or laminas-mvc based application the database adapter is
+> already registered during the installation with the
+> laminas-component-installer.
 
 ### Create Class and Use Trait
 
@@ -61,7 +63,8 @@ class Example implements AdapterAwareInterface
 
 ### Create and Configure Service Manager
 
-Create and [configure the service manager](https://docs.laminas.dev/laminas-servicemanager/configuring-the-service-manager/):
+Create and [configure the service manager](
+https://docs.laminas.dev/laminas-servicemanager/configuring-the-service-manager/):
 
 ```php
 use Psr\Container\ContainerInterface;
@@ -76,7 +79,9 @@ use PhpDb\Sqlite\Platform\Sqlite as SqlitePlatform;
 $serviceManager = new Laminas\ServiceManager\ServiceManager([
     'factories' => [
         // Database adapter
-        AdapterInterface::class => static function(ContainerInterface $container) {
+        AdapterInterface::class => static function(
+            ContainerInterface $container
+        ) {
             $driver = new Sqlite([
                 'database' => 'path/to/sqlite.db',
             ]);
@@ -98,14 +103,19 @@ $serviceManager = new Laminas\ServiceManager\ServiceManager([
 
 ### Get Instance of Class
 
-[Retrieving an instance](https://docs.laminas.dev/laminas-servicemanager/quick-start/#3-retrieving-objects)
+[Retrieving an instance](
+https://docs.laminas.dev/laminas-servicemanager/quick-start/#3-retrieving-objects)
 of the `Example` class with a database adapter:
 
 ```php
 /** @var Example $example */
 $example = $serviceManager->get(Example::class);
 
-var_dump($example->getAdapter() instanceof PhpDb\Adapter\Adapter); // true
+var_dump(
+    $example->getAdapter() instanceof PhpDb\Adapter\Adapter
+); // true
 ```
 
-The [laminas-validator](https://docs.laminas.dev/laminas-validator/validators/db/) `Db\RecordExists` and `Db\NoRecordExists` validators use this pattern.
+The [laminas-validator](
+https://docs.laminas.dev/laminas-validator/validators/db/)
+`Db\RecordExists` and `Db\NoRecordExists` validators use this pattern.

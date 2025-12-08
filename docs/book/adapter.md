@@ -1,6 +1,9 @@
 # Adapters
 
-`PhpDb\Adapter\Adapter` is the central component that provides a unified interface to different PHP PDO extensions and database vendors. It abstracts both the database driver (connection management) and platform-specific SQL dialects.
+`PhpDb\Adapter\Adapter` is the central component that provides a unified
+interface to different PHP PDO extensions and database vendors. It abstracts
+both the database driver (connection management) and platform-specific SQL
+dialects.
 
 ## Package Architecture
 
@@ -17,7 +20,7 @@ Starting with version 0.4.x, PhpDb uses a modular package architecture. The core
 Database-specific drivers are provided as separate packages:
 
 | Package | Database | Status |
-|---------|----------|--------|
+| ------- | -------- | ------ |
 | `php-db/mysql` | MySQL/MariaDB | Available |
 | `php-db/sqlite` | SQLite | Available |
 | `php-db/postgres` | PostgreSQL | Coming Soon |
@@ -90,10 +93,14 @@ class Adapter implements AdapterInterface, Profiler\ProfilerAwareInterface, Sche
 
 ### Constructor Parameters
 
-- **`$driver`**: A `DriverInterface` implementation from a driver package (e.g., `PhpDb\Mysql\Driver\Mysql`)
-- **`$platform`**: A `PlatformInterface` implementation for SQL dialect handling
-- **`$queryResultSetPrototype`** (optional): Custom `ResultSetInterface` for query results
-- **`$profiler`** (optional): A profiler for query logging and performance analysis
+- **`$driver`**: A `DriverInterface` implementation from a driver package
+  (e.g., `PhpDb\Mysql\Driver\Mysql`)
+- **`$platform`**: A `PlatformInterface` implementation for SQL dialect
+  handling
+- **`$queryResultSetPrototype`** (optional): Custom `ResultSetInterface` for
+  query results
+- **`$profiler`** (optional): A profiler for query logging and performance
+  analysis
 
 ## Query Preparation
 
@@ -108,29 +115,14 @@ $adapter->query('SELECT * FROM `artist` WHERE `id` = ?', [5]);
 
 The above example will go through the following steps:
 
-<<<<<<< HEAD
 1. Create a new `Statement` object
 2. Prepare the array `[5]` into a `ParameterContainer` if necessary
 3. Inject the `ParameterContainer` into the `Statement` object
 4. Execute the `Statement` object, producing a `Result` object
 5. Check the `Result` object to check if the supplied SQL was a result set
-   producing statement:
-    - If the query produced a result set, clone the `ResultSet` prototype,
-      inject the `Result` as its datasource, and return the new `ResultSet`
-      instance
-    - Otherwise, return the `Result`
-=======
-- create a new `Statement` object.
-- prepare the array `[5]` into a `ParameterContainer` if necessary.
-- inject the `ParameterContainer` into the `Statement` object.
-- execute the `Statement` object, producing a `Result` object.
-- check the `Result` object to check if the supplied SQL was a result set
-  producing statement:
-    - if the query produced a result set, clone the `ResultSet` prototype,
-      inject the `Result` as its datasource, and return the new `ResultSet`
-      instance.
-    - otherwise, return the `Result`.
->>>>>>> origin/0.4.x
+   producing statement. If the query produced a result set, clone the
+   `ResultSet` prototype, inject the `Result` as its datasource, and return
+   the new `ResultSet` instance. Otherwise, return the `Result`.
 
 ## Query Execution
 
@@ -183,7 +175,9 @@ interface DriverInterface
     public const NAME_FORMAT_CAMELCASE = 'camelCase';
     public const NAME_FORMAT_NATURAL = 'natural';
 
-    public function getDatabasePlatformName(string $nameFormat = self::NAME_FORMAT_CAMELCASE): string;
+    public function getDatabasePlatformName(
+        string $nameFormat = self::NAME_FORMAT_CAMELCASE
+    ): string;
     public function checkEnvironment(): bool;
     public function getConnection(): ConnectionInterface;
     public function createStatement($sqlOrResource = null): StatementInterface;
@@ -221,7 +215,9 @@ interface StatementInterface extends StatementContainerInterface
     /** Inherited from StatementContainerInterface */
     public function setSql(string $sql): void;
     public function getSql(): string;
-    public function setParameterContainer(ParameterContainer $parameterContainer): void;
+    public function setParameterContainer(
+        ParameterContainer $parameterContainer
+    ): void;
     public function getParameterContainer(): ParameterContainer;
 }
 ```
@@ -264,7 +260,10 @@ interface PlatformInterface
     public function quoteTrustedValue(int|float|string|bool $value): ?string;
     public function quoteValueList(array|string $valueList): string;
     public function getIdentifierSeparator(): string;
-    public function quoteIdentifierInFragment(string $identifier, array $additionalSafeWords = []): string;
+    public function quoteIdentifierInFragment(
+        string $identifier,
+        array $additionalSafeWords = []
+    ): string;
 }
 ```
 
@@ -333,7 +332,12 @@ class ParameterContainer implements Iterator, ArrayAccess, Countable
     public function offsetExists(string|int $name): bool;
     public function offsetGet(string|int $name): mixed;
     public function offsetSetReference(string|int $name, string|int $from): void;
-    public function offsetSet(string|int $name, mixed $value, mixed $errata = null, int $maxLength = null): void;
+    public function offsetSet(
+        string|int $name,
+        mixed $value,
+        mixed $errata = null,
+        int $maxLength = null
+    ): void;
     public function offsetUnset(string|int $name): void;
 
     /** Set values from array (will reset first) */

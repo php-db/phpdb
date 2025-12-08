@@ -5,25 +5,32 @@ The `Insert` class provides an API for building SQL INSERT statements.
 ## Insert API
 
 ```php title="Insert Class Definition"
-class Insert extends AbstractPreparableSql implements SqlInterface, PreparableSqlInterface
+class Insert extends AbstractPreparableSql
+    implements SqlInterface, PreparableSqlInterface
 {
     final public const VALUES_MERGE = 'merge';
     final public const VALUES_SET   = 'set';
 
-    public function __construct(string|TableIdentifier|null $table = null);
-    public function into(TableIdentifier|string|array $table) : static;
+    public function __construct(
+        string|TableIdentifier|null $table = null
+    );
+    public function into(
+        TableIdentifier|string|array $table
+    ) : static;
     public function columns(array $columns) : static;
     public function values(
         array|Select $values,
         string $flag = self::VALUES_SET
     ) : static;
     public function select(Select $select) : static;
-    public function getRawState(?string $key = null) : TableIdentifier|string|array;
+    public function getRawState(
+        ?string $key = null
+    ) : TableIdentifier|string|array;
 }
 ```
 
-As with `Select`, the table may be provided during instantiation or via the
-`into()` method.
+As with `Select`, the table may be provided during instantiation or
+via the `into()` method.
 
 ## Basic Usage
 
@@ -51,13 +58,15 @@ INSERT INTO users (username, email, created_at) VALUES (?, ?, ?)
 
 ## columns()
 
-The `columns()` method explicitly sets which columns will receive values:
+The `columns()` method explicitly sets which columns will receive
+values:
 
 ```php title="Setting Valid Columns"
 $insert->columns(['foo', 'bar']); // set the valid columns
 ```
 
-When using `columns()`, only the specified columns will be included even if more values are provided:
+When using `columns()`, only the specified columns will be included
+even if more values are provided:
 
 ```php title="Restricting Columns with Validation"
 $insert->columns(['username', 'email']);
@@ -70,8 +79,8 @@ $insert->values([
 
 ## values()
 
-The default behavior of values is to set the values. Successive calls will not
-preserve values from previous calls.
+The default behavior of values is to set the values.
+Successive calls will not preserve values from previous calls.
 
 ```php title="Setting Values for Insert"
 $insert->values([
@@ -96,8 +105,8 @@ INSERT INTO table (col_1, col_2) VALUES (?, ?)
 
 ## select()
 
-The `select()` method enables INSERT INTO ... SELECT statements, copying data
-from one table to another.
+The `select()` method enables INSERT INTO ... SELECT statements,
+copying data from one table to another.
 
 ```php title="INSERT INTO SELECT Statement"
 $select = $sql->select('tempUsers')
@@ -113,7 +122,8 @@ Produces:
 
 ```sql title="INSERT SELECT SQL Output"
 INSERT INTO users (username, email, createdAt)
-SELECT username, email, createdAt FROM tempUsers WHERE imported = 0
+SELECT username, email, createdAt
+FROM tempUsers WHERE imported = 0
 ```
 
 Alternatively, you can pass the Select object directly to `values()`:
@@ -122,12 +132,13 @@ Alternatively, you can pass the Select object directly to `values()`:
 $insert->values($select);
 ```
 
-Important: The column order must match between INSERT columns and SELECT columns.
+Important: The column order must match between INSERT columns and
+SELECT columns.
 
 ## Property-style Column Access
 
-The Insert class supports property-style access to columns as an alternative to
-using `values()`:
+The Insert class supports property-style access to columns as an
+alternative to using `values()`:
 
 ```php title="Using Property-style Column Access"
 $insert = $sql->insert('users');
@@ -152,8 +163,8 @@ $insert->values([
 
 ## InsertIgnore
 
-The `InsertIgnore` class provides MySQL-specific INSERT IGNORE syntax, which
-silently ignores rows that would cause duplicate key errors.
+The `InsertIgnore` class provides MySQL-specific INSERT IGNORE syntax,
+which silently ignores rows that would cause duplicate key errors.
 
 ```php title="Using InsertIgnore for Duplicate Prevention"
 use PhpDb\Sql\InsertIgnore;
@@ -171,11 +182,13 @@ Produces:
 INSERT IGNORE INTO users (username, email) VALUES (?, ?)
 ```
 
-If a row with the same username or email already exists and there is a unique
-constraint, the insert will be silently skipped rather than producing an error.
+If a row with the same username or email already exists and there is a
+unique constraint, the insert will be silently skipped rather than
+producing an error.
 
-Note: INSERT IGNORE is MySQL-specific. Other databases may use different syntax
-for this behavior (e.g., INSERT ... ON CONFLICT DO NOTHING in PostgreSQL).
+Note: INSERT IGNORE is MySQL-specific. Other databases may use
+different syntax for this behavior
+(e.g., INSERT ... ON CONFLICT DO NOTHING in PostgreSQL).
 
 ## Examples
 
@@ -211,7 +224,12 @@ $select = $sql->select('users')
     ->where(['status' => 'active']);
 
 $insert = $sql->insert('users_archive');
-$insert->columns(['user_id', 'username', 'email', 'original_created_at']);
+$insert->columns([
+    'user_id',
+    'username',
+    'email',
+    'original_created_at'
+]);
 $insert->select($select);
 
 $statement = $sql->prepareStatementForSqlObject($insert);

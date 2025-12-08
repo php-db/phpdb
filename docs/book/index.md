@@ -2,11 +2,14 @@
 
 phpdb is a database abstraction layer providing:
 
-- **Database adapters** for connecting to various database vendors (MySQL, PostgreSQL, SQLite, and more)
-- **SQL abstraction** for building database-agnostic queries programmatically
+- **Database adapters** for connecting to various database vendors
+  (MySQL, PostgreSQL, SQLite, and more)
+- **SQL abstraction** for building database-agnostic queries
+  programmatically
 - **DDL abstraction** for creating and modifying database schemas
 - **Result set abstraction** for working with query results
-- **TableGateway and RowGateway** implementations for the Table Data Gateway and Row Data Gateway patterns
+- **TableGateway and RowGateway** implementations for the Table Data
+  Gateway and Row Data Gateway patterns
 
 ## Installation
 
@@ -16,7 +19,8 @@ Install the core package via Composer:
 composer require php-db/phpdb
 ```
 
-Additionally, install the driver package(s) for the database(s) you plan to use:
+Additionally, install the driver package(s) for the database(s) you plan to
+use:
 
 ```bash
 # For MySQL/MariaDB support
@@ -31,9 +35,11 @@ composer require php-db/postgres
 
 ### Mezzio
 
-phpdb provides a `ConfigProvider` that is automatically registered when using [laminas-component-installer](https://docs.laminas.dev/laminas-component-installer/).
+phpdb provides a `ConfigProvider` that is automatically registered when using
+[laminas-component-installer](https://docs.laminas.dev/laminas-component-installer/).
 
-If you are not using the component installer, add the following to your `config/config.php`:
+If you are not using the component installer, add the following to your
+`config/config.php`:
 
 ```php
 $aggregator = new ConfigAggregator([
@@ -42,13 +48,17 @@ $aggregator = new ConfigAggregator([
 ]);
 ```
 
-For detailed Mezzio configuration including adapter setup and dependency injection, see the [Mezzio integration guide](application-integration/usage-in-a-mezzio-application.md).
+For detailed Mezzio configuration including adapter setup and dependency
+injection, see the
+[Mezzio integration guide](application-integration/usage-in-a-mezzio-application.md).
 
 ### Laminas MVC
 
-phpdb provides module configuration that is automatically registered when using [laminas-component-installer](https://docs.laminas.dev/laminas-component-installer/).
+phpdb provides module configuration that is automatically registered when using
+[laminas-component-installer](https://docs.laminas.dev/laminas-component-installer/).
 
-If you are not using the component installer, add the module to your `config/modules.config.php`:
+If you are not using the component installer, add the module to your
+`config/modules.config.php`:
 
 ```php
 return [
@@ -57,14 +67,18 @@ return [
 ];
 ```
 
-For detailed Laminas MVC configuration including adapter setup and service manager integration, see the [Laminas MVC integration guide](application-integration/usage-in-a-laminas-mvc-application.md).
+For detailed Laminas MVC configuration including adapter setup and service
+manager integration, see the
+[Laminas MVC integration guide](application-integration/usage-in-a-laminas-mvc-application.md).
 
 ### Optional Dependencies
 
 The following packages provide additional functionality:
 
-- **laminas/laminas-hydrator** - Required for using `HydratingResultSet` to hydrate result rows into objects
-- **laminas/laminas-eventmanager** - Enables event-driven profiling and logging of database operations
+- **laminas/laminas-hydrator** - Required for using `HydratingResultSet` to
+  hydrate result rows into objects
+- **laminas/laminas-eventmanager** - Enables event-driven profiling and
+  logging of database operations
 
 Install optional dependencies as needed:
 
@@ -129,9 +143,14 @@ $usersTable->delete(['id' => 123]);
 ## Documentation Overview
 
 - **[Adapters](adapter.md)** - Database connection and configuration
-- **[SQL Abstraction](sql/intro.md)** - Building SELECT, INSERT, UPDATE, and DELETE queries
-- **[DDL Abstraction](sql-ddl/intro.md)** - Creating and modifying database schemas
+- **[SQL Abstraction](sql/intro.md)** - Building SELECT, INSERT, UPDATE,
+  and DELETE queries
+- **[DDL Abstraction](sql-ddl/intro.md)** - Creating and modifying database
+  schemas
 - **[Result Sets](result-set/intro.md)** - Working with query results
-- **[Table Gateways](table-gateway.md)** - Table Data Gateway pattern implementation
-- **[Row Gateways](row-gateway.md)** - Row Data Gateway pattern implementation
-- **[Metadata](metadata/intro.md)** - Database introspection and schema information
+- **[Table Gateways](table-gateway.md)** - Table Data Gateway pattern
+  implementation
+- **[Row Gateways](row-gateway.md)** - Row Data Gateway pattern
+  implementation
+- **[Metadata](metadata/intro.md)** - Database introspection and schema
+  information

@@ -4,8 +4,8 @@
 
 ### ResultSet Class
 
-The `ResultSet` class extends `AbstractResultSet` and provides row data as either
-`ArrayObject` instances or plain arrays.
+The `ResultSet` class extends `AbstractResultSet` and provides row data as
+either `ArrayObject` instances or plain arrays.
 
 ```php title="ResultSet Class Definition"
 namespace PhpDb\ResultSet;
@@ -19,7 +19,9 @@ class ResultSet extends AbstractResultSet
         ?ArrayObject $rowPrototype = null
     );
 
-    public function setRowPrototype(ArrayObject $rowPrototype): ResultSetInterface;
+    public function setRowPrototype(
+        ArrayObject $rowPrototype
+    ): ResultSetInterface;
     public function getRowPrototype(): ArrayObject;
     public function getReturnType(): ResultSetReturnType;
 }
@@ -27,7 +29,8 @@ class ResultSet extends AbstractResultSet
 
 ### ResultSetReturnType Enum
 
-The `ResultSetReturnType` enum provides type-safe return type configuration:
+The `ResultSetReturnType` enum provides type-safe return type
+configuration:
 
 ```php title="ResultSetReturnType Definition"
 namespace PhpDb\ResultSet;
@@ -51,10 +54,12 @@ $resultSet = new ResultSet(ResultSetReturnType::Array);
 
 **`$returnType`** - Controls how rows are returned:
 
-- `ResultSetReturnType::ArrayObject` (default) - Returns rows as ArrayObject instances
+- `ResultSetReturnType::ArrayObject` (default) - Returns rows as
+  ArrayObject instances
 - `ResultSetReturnType::Array` - Returns rows as plain PHP arrays
 
-**`$rowPrototype`** - Custom ArrayObject prototype for row objects (only used with ArrayObject mode)
+**`$rowPrototype`** - Custom ArrayObject prototype for row objects
+(only used with ArrayObject mode)
 
 #### Return Type Modes
 
@@ -99,10 +104,14 @@ class HydratingResultSet extends AbstractResultSet
         ?object $rowPrototype = null
     );
 
-    public function setHydrator(HydratorInterface $hydrator): ResultSetInterface;
+    public function setHydrator(
+        HydratorInterface $hydrator
+    ): ResultSetInterface;
     public function getHydrator(): HydratorInterface;
 
-    public function setRowPrototype(object $rowPrototype): ResultSetInterface;
+    public function setRowPrototype(
+        object $rowPrototype
+    ): ResultSetInterface;
     public function getRowPrototype(): object;
 
     public function current(): ?object;
@@ -132,7 +141,10 @@ You can change the hydration strategy at runtime:
 use Laminas\Hydrator\ClassMethodsHydrator;
 use Laminas\Hydrator\ReflectionHydrator;
 
-$resultSet = new HydratingResultSet(new ReflectionHydrator(), new UserEntity());
+$resultSet = new HydratingResultSet(
+    new ReflectionHydrator(),
+    new UserEntity()
+);
 $resultSet->initialize($result);
 
 foreach ($resultSet as $user) {
@@ -167,7 +179,8 @@ foreach ($resultSet as $row) {
 }
 ```
 
-**Important:** Calling `buffer()` after iteration has started throws `RuntimeException`:
+**Important:** Calling `buffer()` after iteration has started throws
+`RuntimeException`:
 
 ```php title="Buffer After Iteration Error"
 $resultSet = new ResultSet();
@@ -183,7 +196,8 @@ $resultSet->buffer();
 Throws:
 
 ```text
-RuntimeException: Buffering must be enabled before iteration is started
+RuntimeException: Buffering must be enabled before iteration is
+started
 ```
 
 ### isBuffered() Method
@@ -230,7 +244,8 @@ bool(true)
 
 ## ArrayObject Access Patterns
 
-When using ArrayObject mode (default), rows support both property and array access:
+When using ArrayObject mode (default), rows support both property and array
+access:
 
 ```php title="Property and Array Access"
 $resultSet = new ResultSet(ResultSetReturnType::ArrayObject);
@@ -267,7 +282,10 @@ class CustomRow extends ArrayObject
 }
 
 $prototype = new CustomRow([], ArrayObject::ARRAY_AS_PROPS);
-$resultSet = new ResultSet(ResultSetReturnType::ArrayObject, $prototype);
+$resultSet = new ResultSet(
+    ResultSetReturnType::ArrayObject,
+    $prototype
+);
 $resultSet->initialize($result);
 
 foreach ($resultSet as $row) {
@@ -294,7 +312,8 @@ $resultSet1 = $adapter->query('SELECT * FROM users');
 $resultSet2 = $adapter->query('SELECT * FROM posts');
 ```
 
-Both `$resultSet1` and `$resultSet2` are independent clones with their own state.
+Both `$resultSet1` and `$resultSet2` are independent clones with their own
+state.
 
 ### Customizing the Prototype
 
@@ -323,7 +342,10 @@ use PhpDb\ResultSet\HydratingResultSet;
 use PhpDb\TableGateway\TableGateway;
 use Laminas\Hydrator\ReflectionHydrator;
 
-$prototype = new HydratingResultSet(new ReflectionHydrator(), new UserEntity());
+$prototype = new HydratingResultSet(
+    new ReflectionHydrator(),
+    new UserEntity()
+);
 
 $userTable = new TableGateway('users', $adapter, null, $prototype);
 
@@ -408,7 +430,10 @@ Switch hydrators based on context:
 use Laminas\Hydrator\ClassMethodsHydrator;
 use Laminas\Hydrator\ReflectionHydrator;
 
-$resultSet = new HydratingResultSet(new ReflectionHydrator(), new UserEntity());
+$resultSet = new HydratingResultSet(
+    new ReflectionHydrator(),
+    new UserEntity()
+);
 
 if ($includePrivateProps) {
     $resultSet->setHydrator(new ReflectionHydrator());
@@ -433,13 +458,17 @@ printf("Found %d rows\n", count($allRows));
 With HydratingResultSet, `toArray()` uses the hydrator's extractor:
 
 ```php title="toArray() with HydratingResultSet"
-$resultSet = new HydratingResultSet(new ReflectionHydrator(), new UserEntity());
+$resultSet = new HydratingResultSet(
+    new ReflectionHydrator(),
+    new UserEntity()
+);
 $resultSet->initialize($result);
 
 $allRows = $resultSet->toArray();
 ```
 
-Each row is extracted back to an array using the hydrator's `extract()` method.
+Each row is extracted back to an array using the hydrator's `extract()`
+method.
 
 ### Accessing Current Row
 

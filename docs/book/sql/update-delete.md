@@ -5,16 +5,24 @@
 The `Update` class provides an API for building SQL UPDATE statements.
 
 ```php title="Update API"
-class Update extends AbstractPreparableSql implements SqlInterface, PreparableSqlInterface
+class Update extends AbstractPreparableSql
+    implements SqlInterface, PreparableSqlInterface
 {
     final public const VALUES_MERGE = 'merge';
     final public const VALUES_SET   = 'set';
 
     public Where $where;
 
-    public function __construct(string|TableIdentifier|null $table = null);
-    public function table(TableIdentifier|string|array $table) : static;
-    public function set(array $values, string|int $flag = self::VALUES_SET) : static;
+    public function __construct(
+        string|TableIdentifier|null $table = null
+    );
+    public function table(
+        TableIdentifier|string|array $table
+    ) : static;
+    public function set(
+        array $values,
+        string|int $flag = self::VALUES_SET
+    ) : static;
     public function where(
         PredicateInterface|array|Closure|string|Where $predicate,
         string $combination = Predicate\PredicateSet::OP_AND
@@ -57,10 +65,14 @@ The `set()` method accepts a flag parameter to control merging behavior:
 
 ```php title="Controlling merge behavior with VALUES_SET and VALUES_MERGE"
 $update->set(['status' => 'active'], Update::VALUES_SET);
-$update->set(['updatedAt' => new Expression('NOW()')], Update::VALUES_MERGE);
+$update->set(
+    ['updatedAt' => new Expression('NOW()')],
+    Update::VALUES_MERGE
+);
 ```
 
-When using `VALUES_MERGE`, you can optionally specify a numeric priority to control the order of SET clauses:
+When using `VALUES_MERGE`, you can optionally specify a numeric
+priority to control the order of SET clauses:
 
 ```php title="Using numeric priority to control SET clause ordering"
 $update->set(['counter' => 1], 100);
@@ -74,11 +86,14 @@ Produces SET clauses in priority order (50, 75, 100):
 UPDATE table SET status = ?, flag = ?, counter = ?
 ```
 
-This is useful when the order of SET operations matters for certain database operations or triggers.
+This is useful when the order of SET operations matters for certain
+database operations or triggers.
 
 ### where()
 
-The `where()` method works the same as in Select queries. See the [Where and Having](where-having.md) documentation for full details.
+The `where()` method works the same as in Select queries.
+See the [Where and Having](where-having.md) documentation for full
+details.
 
 ```php title="Using various where clause methods"
 $update->where(['id' => 5]);
@@ -101,7 +116,11 @@ Example:
 ```php title="Update with INNER JOIN on customers table"
 $update = $sql->update('orders');
 $update->set(['status' => 'cancelled']);
-$update->join('customers', 'orders.customerId = customers.id', Join::JOIN_INNER);
+$update->join(
+    'customers',
+    'orders.customerId = customers.id',
+    Join::JOIN_INNER
+);
 $update->where(['customers.status' => 'inactive']);
 ```
 
@@ -114,20 +133,26 @@ SET status = ?
 WHERE customers.status = ?
 ```
 
-Note: JOIN support in UPDATE statements varies by database platform. MySQL and
-PostgreSQL support this syntax, while some other databases may not.
+Note: JOIN support in UPDATE statements varies by database platform.
+MySQL and PostgreSQL support this syntax,
+while some other databases may not.
 
 ## Delete
 
 The `Delete` class provides an API for building SQL DELETE statements.
 
 ```php title="Delete API"
-class Delete extends AbstractPreparableSql implements SqlInterface, PreparableSqlInterface
+class Delete extends AbstractPreparableSql
+    implements SqlInterface, PreparableSqlInterface
 {
     public Where $where;
 
-    public function __construct(string|TableIdentifier|null $table = null);
-    public function from(TableIdentifier|string|array $table) : static;
+    public function __construct(
+        string|TableIdentifier|null $table = null
+    );
+    public function from(
+        TableIdentifier|string|array $table
+    ) : static;
     public function where(
         PredicateInterface|array|Closure|string|Where $predicate,
         string $combination = Predicate\PredicateSet::OP_AND
@@ -156,7 +181,9 @@ DELETE FROM users WHERE id = ?
 
 ### Delete where()
 
-The `where()` method works the same as in Select queries. See the [Where and Having](where-having.md) documentation for full details.
+The `where()` method works the same as in Select queries.
+See the [Where and Having](where-having.md) documentation for full
+details.
 
 ```php title="Using where conditions in delete statements"
 $delete->where(['status' => 'deleted']);
@@ -165,8 +192,8 @@ $delete->where->lessThan('created_at', '2020-01-01');
 
 ## Safety Features
 
-Both Update and Delete classes include empty WHERE protection by default, which
-prevents accidental mass updates or deletes.
+Both Update and Delete classes include empty WHERE protection by
+default, which prevents accidental mass updates or deletes.
 
 ```php title="Checking empty WHERE protection status"
 $update = $sql->update('users');
@@ -177,9 +204,9 @@ $state = $update->getRawState();
 $protected = $state['emptyWhereProtection'];
 ```
 
-Most database drivers will prevent execution of UPDATE or DELETE statements
-without a WHERE clause when this protection is enabled. Always include a WHERE
-clause:
+Most database drivers will prevent execution of UPDATE or DELETE
+statements without a WHERE clause when this protection is enabled.
+Always include a WHERE clause:
 
 ```php title="Adding WHERE clause for safe operations"
 $update->where(['id' => 123]);
@@ -202,7 +229,9 @@ $update->where(['id' => $productId]);
 Produces:
 
 ```sql title="Generated SQL for update with expressions"
-UPDATE products SET view_count = view_count + 1, last_viewed = NOW() WHERE id = ?
+UPDATE products
+SET view_count = view_count + 1, last_viewed = NOW()
+WHERE id = ?
 ```
 
 ```php title="Conditional update"
@@ -211,7 +240,10 @@ $update->set(['status' => 'shipped']);
 $update->where(function ($where) {
     $where->equalTo('status', 'processing')
         ->and
-        ->lessThan('created_at', new Expression('NOW() - INTERVAL 7 DAY'));
+        ->lessThan(
+            'created_at',
+            new Expression('NOW() - INTERVAL 7 DAY')
+        );
 });
 ```
 
@@ -224,7 +256,10 @@ $update->where(['categories.name' => 'Electronics']);
 
 ```php title="Delete old records"
 $delete = $sql->delete('sessions');
-$delete->where->lessThan('last_activity', new Expression('NOW() - INTERVAL 24 HOUR'));
+$delete->where->lessThan(
+    'last_activity',
+    new Expression('NOW() - INTERVAL 24 HOUR')
+);
 
 $statement = $sql->prepareStatementForSqlObject($delete);
 $result = $statement->execute();

@@ -1,9 +1,9 @@
 # RDBMS Metadata
 
-`PhpDb\Metadata` is a sub-component of laminas-db that makes it possible to get
-metadata information about tables, columns, constraints, triggers, and other
-information from a database in a standardized way. The primary interface for
-`Metadata` is:
+`PhpDb\Metadata` is a sub-component of laminas-db that makes it possible to
+get metadata information about tables, columns, constraints, triggers,
+and other information from a database in a standardized way. The primary
+interface for `Metadata` is:
 
 ## MetadataInterface Definition
 
@@ -14,25 +14,61 @@ interface MetadataInterface
 {
     public function getSchemas() : string[];
 
-    public function getTableNames(?string $schema = null, bool $includeViews = false) : string[];
-    public function getTables(?string $schema = null, bool $includeViews = false) : Object\TableObject[];
-    public function getTable(string $tableName, ?string $schema = null) : Object\TableObject|Object\ViewObject;
+    public function getTableNames(
+        ?string $schema = null,
+        bool $includeViews = false
+    ) : string[];
+    public function getTables(
+        ?string $schema = null,
+        bool $includeViews = false
+    ) : Object\TableObject[];
+    public function getTable(
+        string $tableName,
+        ?string $schema = null
+    ) : Object\TableObject|Object\ViewObject;
 
     public function getViewNames(?string $schema = null) : string[];
     public function getViews(?string $schema = null) : Object\ViewObject[];
-    public function getView(string $viewName, ?string $schema = null) : Object\ViewObject|Object\TableObject;
+    public function getView(
+        string $viewName,
+        ?string $schema = null
+    ) : Object\ViewObject|Object\TableObject;
 
-    public function getColumnNames(string $table, ?string $schema = null) : string[];
-    public function getColumns(string $table, ?string $schema = null) : Object\ColumnObject[];
-    public function getColumn(string $columnName, string $table, ?string $schema = null) : Object\ColumnObject;
+    public function getColumnNames(
+        string $table,
+        ?string $schema = null
+    ) : string[];
+    public function getColumns(
+        string $table,
+        ?string $schema = null
+    ) : Object\ColumnObject[];
+    public function getColumn(
+        string $columnName,
+        string $table,
+        ?string $schema = null
+    ) : Object\ColumnObject;
 
-    public function getConstraints(string $table, ?string $schema = null) : Object\ConstraintObject[];
-    public function getConstraint(string $constraintName, string $table, ?string $schema = null) : Object\ConstraintObject;
-    public function getConstraintKeys(string $constraint, string $table, ?string $schema = null) : Object\ConstraintKeyObject[];
+    public function getConstraints(
+        string $table,
+        ?string $schema = null
+    ) : Object\ConstraintObject[];
+    public function getConstraint(
+        string $constraintName,
+        string $table,
+        ?string $schema = null
+    ) : Object\ConstraintObject;
+    public function getConstraintKeys(
+        string $constraint,
+        string $table,
+        ?string $schema = null
+    ) : Object\ConstraintKeyObject[];
 
     public function getTriggerNames(?string $schema = null) : string[];
     public function getTriggers(?string $schema = null) : Object\TriggerObject[];
-    public function getTrigger(string $triggerName, ?string $schema = null) : Object\TriggerObject;
+    public function getTrigger(
+        string $triggerName,
+        ?string $schema = null
+    ) : Object\TriggerObject;
 }
 ```
 
@@ -40,9 +76,9 @@ interface MetadataInterface
 
 ### Instantiating Metadata
 
-The `PhpDb\Metadata` component uses platform-specific implementations to retrieve
-metadata from your database. The metadata instance is typically created through
-dependency injection or directly with an adapter:
+The `PhpDb\Metadata` component uses platform-specific implementations to
+retrieve metadata from your database. The metadata instance is typically
+created through dependency injection or directly with an adapter:
 
 ```php title="Creating Metadata from an Adapter"
 use PhpDb\Adapter\Adapter;
@@ -80,9 +116,12 @@ $schemas = $metadata->getSchemas();
 The other methods return value objects specific to the type queried:
 
 ```php
-$table = $metadata->getTable('users');       // Returns TableObject or ViewObject
-$column = $metadata->getColumn('id', 'users'); // Returns ColumnObject
-$constraint = $metadata->getConstraint('PRIMARY', 'users'); // Returns ConstraintObject
+// Returns TableObject or ViewObject
+$table = $metadata->getTable('users');
+// Returns ColumnObject
+$column = $metadata->getColumn('id', 'users');
+// Returns ConstraintObject
+$constraint = $metadata->getConstraint('PRIMARY', 'users');
 ```
 
 Note that `getTable()` and `getView()` can return either `TableObject` or
@@ -148,7 +187,8 @@ Example output:
 
 ```text
 PRIMARY KEY (id)
-FOREIGN KEY fk_orders_customers (customer_id) REFERENCES customers (id)
+FOREIGN KEY fk_orders_customers (customer_id) REFERENCES
+  customers (id)
 FOREIGN KEY fk_orders_products (product_id) REFERENCES products (id)
 ```
 
@@ -156,18 +196,24 @@ FOREIGN KEY fk_orders_products (product_id) REFERENCES products (id)
 
 ### Working with Schemas
 
-The `getSchemas()` method returns all available schema names in the database:
+The `getSchemas()` method returns all available schema names in the
+database:
 
 ```php title="Listing All Schemas and Their Tables"
 $schemas = $metadata->getSchemas();
 foreach ($schemas as $schema) {
     $tables = $metadata->getTableNames($schema);
-    printf("Schema: %s\n  Tables: %s\n", $schema, implode(', ', $tables));
+    printf(
+        "Schema: %s\n  Tables: %s\n",
+        $schema,
+        implode(', ', $tables)
+    );
 }
 ```
 
-When the `$schema` parameter is `null`, the metadata component uses the current
-default schema from the adapter. You can explicitly specify a schema for any method:
+When the `$schema` parameter is `null`, the metadata component uses the
+current default schema from the adapter. You can explicitly specify a schema
+for any method:
 
 ```php title="Specifying a Schema Explicitly"
 $tables = $metadata->getTableNames('production');
@@ -201,7 +247,11 @@ Distinguishing between tables and views:
 $table = $metadata->getTable('users');
 
 if ($table instanceof \PhpDb\Metadata\Object\ViewObject) {
-    printf("View: %s\nDefinition: %s\n", $table->getName(), $table->getViewDefinition());
+    printf(
+        "View: %s\nDefinition: %s\n",
+        $table->getName(),
+        $table->getViewDefinition()
+    );
 } else {
     printf("Table: %s\n", $table->getName());
 }
@@ -250,12 +300,18 @@ Get detailed foreign key information using `getConstraintKeys()`:
 
 ```php title="Examining Foreign Key Details"
 $constraints = $metadata->getConstraints('orders');
-$foreignKeys = array_filter($constraints, fn($c) => $c->isForeignKey());
+$foreignKeys = array_filter(
+    $constraints,
+    fn($c) => $c->isForeignKey()
+);
 
 foreach ($foreignKeys as $constraint) {
     printf("Foreign Key: %s\n", $constraint->getName());
 
-    $keys = $metadata->getConstraintKeys($constraint->getName(), 'orders');
+    $keys = $metadata->getConstraintKeys(
+        $constraint->getName(),
+        'orders'
+    );
     foreach ($keys as $key) {
         printf(
             "  %s -> %s.%s\n    ON UPDATE: %s\n    ON DELETE: %s\n",
@@ -313,8 +369,10 @@ Check column nullability and defaults:
 ```php
 $column = $metadata->getColumn('email', 'users');
 
-echo 'Nullable: ' . ($column->isNullable() ? 'YES' : 'NO') . PHP_EOL;
-echo 'Default: ' . ($column->getColumnDefault() ?? 'NULL') . PHP_EOL;
+echo 'Nullable: ' .
+    ($column->isNullable() ? 'YES' : 'NO') . PHP_EOL;
+echo 'Default: ' .
+    ($column->getColumnDefault() ?? 'NULL') . PHP_EOL;
 echo 'Position: ' . $column->getOrdinalPosition() . PHP_EOL;
 ```
 

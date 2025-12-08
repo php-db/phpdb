@@ -504,6 +504,8 @@ $childTable->addConstraint(new Constraint\ForeignKey(
 $table->addConstraint(new Index(
     'long_description',
     'idx_description',
-    [191] // MySQL InnoDB with utf8mb4 has 767 byte limit; 191 chars * 4 bytes = 764
+    // MySQL InnoDB with utf8mb4 has 767 byte limit
+    // 191 chars * 4 bytes = 764
+    [191]
 ));
 ```

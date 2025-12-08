@@ -1,10 +1,12 @@
 # Docker Deployment
 
-This guide covers Docker deployment for phpdb applications, applicable to both Laminas MVC and Mezzio frameworks.
+This guide covers Docker deployment for phpdb applications,
+applicable to both Laminas MVC and Mezzio frameworks.
 
 ## Web Server Options
 
-Two web server options are supported: **Nginx with PHP-FPM** (recommended for production) and **Apache** (simpler for development).
+Two web server options are supported: **Nginx with PHP-FPM**
+(recommended for production) and **Apache** (simpler for development).
 
 ### Nginx with PHP-FPM
 
@@ -37,7 +39,8 @@ server {
     location ~ \.php$ {
         fastcgi_pass app:9000;
         fastcgi_index index.php;
-        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        fastcgi_param SCRIPT_FILENAME \
+            $document_root$fastcgi_script_name;
         include fastcgi_params;
     }
 
@@ -58,7 +61,8 @@ RUN apt-get update \
     && apt-get install -y git zlib1g-dev libzip-dev \
     && docker-php-ext-install zip pdo_mysql \
     && a2enmod rewrite \
-    && sed -i 's!/var/www/html!/var/www/public!g' /etc/apache2/sites-available/000-default.conf
+    && sed -i 's!/var/www/html!/var/www/public!g' \
+       /etc/apache2/sites-available/000-default.conf
 
 WORKDIR /var/www
 
@@ -72,7 +76,8 @@ mysql:
   image: mysql:8.0
   ports:
     - "3306:3306"
-  command: --default-authentication-plugin=mysql_native_password
+  command: \
+    --default-authentication-plugin=mysql_native_password
   volumes:
     - mysql_data:/var/lib/mysql
     - ./docker/mysql/init:/docker-entrypoint-initdb.d
@@ -143,7 +148,8 @@ services:
       - "8080:80"
     volumes:
       - .:/var/www
-      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - ./docker/nginx/default.conf:\
+          /etc/nginx/conf.d/default.conf
     depends_on:
       - app
 
@@ -151,7 +157,8 @@ services:
     image: mysql:8.0
     ports:
       - "3306:3306"
-    command: --default-authentication-plugin=mysql_native_password
+    command: \
+      --default-authentication-plugin=mysql_native_password
     volumes:
       - mysql_data:/var/lib/mysql
       - ./docker/mysql/init:/docker-entrypoint-initdb.d
@@ -201,7 +208,8 @@ services:
     image: mysql:8.0
     ports:
       - "3306:3306"
-    command: --default-authentication-plugin=mysql_native_password
+    command: \
+      --default-authentication-plugin=mysql_native_password
     volumes:
       - mysql_data:/var/lib/mysql
       - ./docker/mysql/init:/docker-entrypoint-initdb.d
@@ -238,7 +246,8 @@ MYSQL_ROOT_PASSWORD=rootpassword
 
 ## Database Initialization
 
-Place SQL files in `./docker/mysql/init/` (or `./docker/postgres/init/` for PostgreSQL). Files execute in alphanumeric order on first container start.
+Place SQL files in `./docker/mysql/init/` (or `./docker/postgres/init/` for
+PostgreSQL). Files execute in alphanumeric order on first container start.
 
 Example `docker/mysql/init/01-schema.sql`:
 
@@ -249,7 +258,8 @@ CREATE TABLE users (
     email VARCHAR(255) NOT NULL UNIQUE,
     status ENUM('active', 'inactive') DEFAULT 'active',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+  COLLATE=utf8mb4_unicode_ci;
 
 CREATE INDEX idx_status ON users(status);
 ```
@@ -279,4 +289,5 @@ docker compose logs -f app
 docker compose down
 ```
 
-Access your application at `http://localhost:8080` and phpMyAdmin at `http://localhost:8081`.
+Access your application at `http://localhost:8080` and phpMyAdmin at
+`http://localhost:8081`.

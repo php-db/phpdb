@@ -4,7 +4,8 @@
 
 ### Handling Column Name Conflicts in JOINs
 
-When joining tables with columns that have the same name, explicitly specify column aliases to avoid ambiguity:
+When joining tables with columns that have the same name,
+explicitly specify column aliases to avoid ambiguity:
 
 ```php
 $select->from(['u' => 'users'])
@@ -24,7 +25,8 @@ $select->from(['u' => 'users'])
     );
 ```
 
-This prevents confusion and ensures all columns are accessible in the result set.
+This prevents confusion and ensures all columns are accessible in the
+result set.
 
 ### Working with NULL Values
 
@@ -44,7 +46,8 @@ In UPDATE statements:
 $update->set(['optionalField' => null]);
 ```
 
-In comparisons, remember that `column = NULL` does not work in SQL; you must use `IS NULL`:
+In comparisons, remember that `column = NULL` does not work in SQL;
+you must use `IS NULL`:
 
 ```php title="Checking for NULL or Empty Values"
 $select->where->nest()
@@ -153,7 +156,8 @@ When using Expression with placeholders:
 $expression = new Expression('CONCAT(?, ?, ?)', ['a', 'b']);
 ```
 
-Ensure the number of `?` placeholders matches the number of parameters provided, or you will receive a RuntimeException.
+Ensure the number of `?` placeholders matches the number of parameters
+provided, or you will receive a RuntimeException.
 
 ```php title="Correct Parameter Count"
 // CORRECT
@@ -162,7 +166,8 @@ $expression = new Expression('CONCAT(?, ?, ?)', ['a', 'b', 'c']);
 
 ### Quote Character Issues
 
-Different databases use different quote characters. Let the platform handle quoting:
+Different databases use different quote characters.
+Let the platform handle quoting:
 
 ```php title="Proper Platform-Managed Quoting"
 // CORRECT - let the platform handle quoting
@@ -178,7 +183,8 @@ $select->from('"users"');
 
 ### Type Confusion in Predicates
 
-When comparing two identifiers (column to column), specify both types:
+When comparing two identifiers (column to column),
+specify both types:
 
 ```php title="Column Comparison Using Type Constants"
 // Using type constants
@@ -220,7 +226,8 @@ $statement = $sql->prepareStatementForSqlObject($select);
 
 ### Use Prepared Statements
 
-Always use `prepareStatementForSqlObject()` instead of `buildSqlString()` for user input:
+Always use `prepareStatementForSqlObject()` instead of
+`buildSqlString()` for user input:
 
 ```php
 $select->where(['username' => $userInput]);
@@ -272,13 +279,22 @@ Use JOINs instead of multiple queries:
 ```php title="Using JOINs to Avoid N+1 Queries"
 // WRONG - N+1 queries
 foreach ($orders as $order) {
-    $customer = getCustomer($order['customerId']); // Additional query per order
+    // Additional query per order
+    $customer = getCustomer($order['customerId']);
 }
 
 // CORRECT - single query with JOIN
 $select->from('orders')
-    ->join('customers', 'orders.customerId = customers.id', ['customerName' => 'name'])
-    ->join('products', 'orders.productId = products.id', ['productName' => 'name']);
+    ->join(
+        'customers',
+        'orders.customerId = customers.id',
+        ['customerName' => 'name']
+    )
+    ->join(
+        'products',
+        'orders.productId = products.id',
+        ['productName' => 'name']
+    );
 ```
 
 ### Index-Friendly Queries
@@ -295,7 +311,9 @@ Avoid functions on indexed columns in WHERE:
 
 ```php title="Functions on Indexed Columns (Prevents Index Usage)"
 // BAD - prevents index usage
-$select->where(new Predicate\Expression('YEAR(createdAt) = ?', [2024]));
+$select->where(
+    new Predicate\Expression('YEAR(createdAt) = ?', [2024])
+);
 ```
 
 Instead, use ranges:
@@ -334,7 +352,11 @@ $select = $sql->select('orders')
             ->or
             ->equalTo('orders.status', 'shipped')
         ->unnest();
-        $where->between('orders.createdAt', '2024-01-01', '2024-12-31');
+        $where->between(
+            'orders.createdAt',
+            '2024-01-01',
+            '2024-12-31'
+        );
     })
     ->group(['customerId', new Expression('YEAR(createdAt)')])
     ->having(function ($having) {
@@ -419,11 +441,14 @@ $results = $statement->execute();
 Produces:
 
 ```sql title="Generated SQL for UNION Query"
-(SELECT id, name, email, "active" AS status FROM users WHERE status = 'active')
+(SELECT id, name, email, "active" AS status
+ FROM users WHERE status = 'active')
 UNION
-(SELECT id, name, email, "pending" AS status FROM userRegistrations WHERE verified = 0)
+(SELECT id, name, email, "pending" AS status
+ FROM userRegistrations WHERE verified = 0)
 UNION
-(SELECT id, name, email, "suspended" AS status FROM users WHERE suspended = 1)
+(SELECT id, name, email, "suspended" AS status
+ FROM users WHERE suspended = 1)
 ```
 
 ```php title="Search with Full-Text and Filters"
@@ -435,9 +460,17 @@ $select = $sql->select('products')
         'name',
         'description',
         'price',
-        'relevance' => new Expression('MATCH(name, description) AGAINST(?)', [$searchTerm]),
+        'relevance' => new Expression(
+            'MATCH(name, description) AGAINST(?)',
+            [$searchTerm]
+        ),
     ])
-    ->where(function ($where) use ($searchTerm, $categoryId, $minPrice, $maxPrice) {
+    ->where(function ($where) use (
+        $searchTerm,
+        $categoryId,
+        $minPrice,
+        $maxPrice
+    ) {
         // Full-text search
         $where->expression(
             'MATCH(name, description) AGAINST(? IN BOOLEAN MODE)',
@@ -480,7 +513,10 @@ try {
     // Archive processed orders
     $select = $sql->select('orders')
         ->where(['status' => 'completed'])
-        ->where->lessThan('completedAt', new Expression('DATE_SUB(NOW(), INTERVAL 1 YEAR)'));
+        ->where->lessThan(
+            'completedAt',
+            new Expression('DATE_SUB(NOW(), INTERVAL 1 YEAR)')
+        );
 
     $insert = $sql->insert('orders_archive');
     $insert->select($select);
@@ -489,7 +525,10 @@ try {
     // Delete archived orders from main table
     $delete = $sql->delete('orders');
     $delete->where(['status' => 'completed']);
-    $delete->where->lessThan('completedAt', new Expression('DATE_SUB(NOW(), INTERVAL 1 YEAR)'));
+    $delete->where->lessThan(
+        'completedAt',
+        new Expression('DATE_SUB(NOW(), INTERVAL 1 YEAR)')
+    );
     $sql->prepareStatementForSqlObject($delete)->execute();
 
     $connection->commit();

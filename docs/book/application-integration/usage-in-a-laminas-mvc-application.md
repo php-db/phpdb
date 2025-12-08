@@ -4,18 +4,21 @@ For installation instructions, see [Installation](../index.md#installation).
 
 ## Service Configuration
 
-Now that the phpdb packages are installed, you need to configure the adapter through your application's service manager.
+Now that the phpdb packages are installed, you need to configure the
+adapter through your application's service manager.
 
 ### Configuring the Adapter
 
-Create a configuration file `config/autoload/database.global.php` (or `local.php` for credentials) to define database settings.
+Create a configuration file `config/autoload/database.global.php`
+(or `local.php` for credentials) to define database settings.
 
 ### Working with a SQLite database
 
 SQLite is a lightweight option to have the application working with a database.
 
 Here is an example of the configuration array for a SQLite database.
-Assuming the SQLite file path is `data/sample.sqlite`, the following configuration will produce the adapter:
+Assuming the SQLite file path is `data/sample.sqlite`, the following
+configuration will produce the adapter:
 
 ```php title="SQLite adapter configuration"
 <?php
@@ -45,7 +48,8 @@ return [
 ];
 ```
 
-The `data/` filepath for the SQLite file is the default `data/` directory from the Laminas MVC application.
+The `data/` filepath for the SQLite file is the default `data/` directory
+from the Laminas MVC application.
 
 ### Working with a MySQL database
 
@@ -87,7 +91,8 @@ return [
 
 ### Working with PostgreSQL database
 
-PostgreSQL support is coming soon. Once the `php-db/postgres` package is available:
+PostgreSQL support is coming soon. Once the `php-db/postgres` package is
+available:
 
 ```php title="PostgreSQL adapter configuration"
 <?php
@@ -123,9 +128,11 @@ return [
 
 ## Working with the adapter
 
-Once you have configured an adapter, as in the above examples, you now have a `PhpDb\Adapter\Adapter` available to your application.
+Once you have configured an adapter, as in the above examples,
+you now have a `PhpDb\Adapter\Adapter` available to your application.
 
-A factory for a class that consumes an adapter can pull the adapter from the container:
+A factory for a class that consumes an adapter can pull the adapter from
+the container:
 
 ```php title="Retrieving the adapter from the service container"
 use PhpDb\Adapter\AdapterInterface;
@@ -133,11 +140,14 @@ use PhpDb\Adapter\AdapterInterface;
 $adapter = $container->get(AdapterInterface::class);
 ```
 
-You can read more about the [adapter in the adapter chapter of the documentation](../adapter.md).
+You can read more about the
+[adapter in the adapter chapter of the documentation](../adapter.md).
 
 ## Adapter-Aware Services with AdapterServiceDelegator
 
-If you have services that implement `PhpDb\Adapter\AdapterAwareInterface`, you can use the `AdapterServiceDelegator` to automatically inject the database adapter.
+If you have services that implement `PhpDb\Adapter\AdapterAwareInterface`,
+you can use the `AdapterServiceDelegator` to automatically inject the
+database adapter.
 
 ### Using the Delegator
 
@@ -205,4 +215,7 @@ class MyDatabaseService implements AdapterAwareInterface
 
 ## Running with Docker
 
-For Docker deployment instructions including Dockerfiles, Nginx/Apache configuration, MySQL/PostgreSQL setup, and complete docker-compose examples, see the [Docker Deployment Guide](../docker-deployment.md).
+For Docker deployment instructions including Dockerfiles,
+Nginx/Apache configuration, MySQL/PostgreSQL setup, and complete
+docker-compose examples, see the
+[Docker Deployment Guide](../docker-deployment.md).

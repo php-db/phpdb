@@ -1,45 +1,50 @@
 # Where and Having
 
-In the following, we will talk about `Where`; note, however, that `Having`
-utilizes the same API.
+In the following, we will talk about `Where`; note, however,
+that `Having` utilizes the same API.
 
 Effectively, `Where` and `Having` extend from the same base object, a
 `Predicate` (and `PredicateSet`). All of the parts that make up a WHERE or
-HAVING clause that are AND'ed or OR'd together are called *predicates*.  The
-full set of predicates is called a `PredicateSet`. A `Predicate` generally
-contains the values (and identifiers) separate from the fragment they belong to
-until the last possible moment when the statement is either prepared
-(parameteritized) or executed. In parameterization, the parameters will be
-replaced with their proper placeholder (a named or positional parameter), and
-the values stored inside an `Adapter\ParameterContainer`. When executed, the
-values will be interpolated into the fragments they belong to and properly
-quoted.
+HAVING clause that are AND'ed or OR'd together are called *predicates*.
+The full set of predicates is called a `PredicateSet`. A `Predicate`
+generally contains the values (and identifiers) separate from the
+fragment they belong to until the last possible moment when the statement
+is either prepared (parameteritized) or executed. In parameterization,
+the parameters will be replaced with their proper placeholder
+(a named or positional parameter), and the values stored inside an
+`Adapter\ParameterContainer`. When executed, the values will be
+interpolated into the fragments they belong to and properly quoted.
 
 ## Using where() and having()
 
-`PhpDb\Sql\Select` provides bit of flexibility as it regards to what kind of
-parameters are acceptable when calling `where()` or `having()`. The method
-signature is listed as:
+`PhpDb\Sql\Select` provides bit of flexibility as it regards to what
+kind of parameters are acceptable when calling `where()` or `having()`.
+The method signature is listed as:
 
 ```php title="Method signature for where() and having()"
 /**
  * Create where clause
  *
  * @param  Where|callable|string|array $predicate
- * @param  string $combination One of the OP_* constants from Predicate\PredicateSet
+ * @param  string $combination One of the OP_* constants from
+ *                             Predicate\PredicateSet
  * @return Select
  */
-public function where($predicate, $combination = Predicate\PredicateSet::OP_AND);
+public function where(
+    $predicate,
+    $combination = Predicate\PredicateSet::OP_AND
+);
 ```
 
 If you provide a `PhpDb\Sql\Where` instance to `where()` or a
-`PhpDb\Sql\Having` instance to `having()`, any previous internal instances
-will be replaced completely. When either instance is processed, this object will
-be iterated to produce the WHERE or HAVING section of the SELECT statement.
+`PhpDb\Sql\Having` instance to `having()`, any previous internal
+instances will be replaced completely. When either instance is processed,
+this object will be iterated to produce the WHERE or HAVING section of
+the SELECT statement.
 
-If you provide a PHP callable to `where()` or `having()`, this function will be
-called with the `Select`'s `Where`/`Having` instance as the only parameter.
-This enables code like the following:
+If you provide a PHP callable to `where()` or `having()`,
+this function will be called with the `Select`'s `Where`/`Having`
+instance as the only parameter. This enables code like the following:
 
 ```php title="Using a callable with where()"
 $select->where(function (Where $where) {
@@ -48,8 +53,8 @@ $select->where(function (Where $where) {
 ```
 
 If you provide a *string*, this string will be used to create a
-`PhpDb\Sql\Predicate\Expression` instance, and its contents will be applied
-as-is, with no quoting:
+`PhpDb\Sql\Predicate\Expression` instance, and its contents will be
+applied as-is, with no quoting:
 
 ```php title="Using a string expression with where()"
 // SELECT "foo".* FROM "foo" WHERE x = 5
@@ -61,8 +66,8 @@ If you provide an array with integer indices, the value can be one of:
 - a string; this will be used to build a `Predicate\Expression`.
 - any object implementing `Predicate\PredicateInterface`.
 
-In either case, the instances are pushed onto the `Where` stack with the
-`$combination` provided (defaulting to `AND`).
+In either case, the instances are pushed onto the `Where` stack with
+the `$combination` provided (defaulting to `AND`).
 
 As an example:
 
@@ -71,14 +76,14 @@ As an example:
 $select->from('foo')->where(['x = 5', 'y = z']);
 ```
 
-If you provide an associative array with string keys, any value with a string
-key will be cast as follows:
+If you provide an associative array with string keys,
+any value with a string key will be cast as follows:
 
-| PHP value | Predicate type                                         |
-|-----------|--------------------------------------------------------|
-| `null`    | `Predicate\IsNull`                                     |
-| `array`   | `Predicate\In`                                         |
-| `string`  | `Predicate\Operator`, where the key is the identifier. |
+| PHP value | Predicate type                           |
+|-----------|------------------------------------------|
+| `null`    | `Predicate\IsNull`                       |
+| `array`   | `Predicate\In`                           |
+| `string`  | `Predicate\Operator`, key is identifier. |
 
 As an example:
 
@@ -218,12 +223,15 @@ class Predicate extends PredicateSet
 > column names, `Argument\Value` for values, or `Argument\Literal` for raw
 > SQL fragments directly to control how values are treated.
 
-Each method in the API will produce a corresponding `Predicate` object of a
-similarly named type, as described below.
+Each method in the API will produce a corresponding `Predicate` object
+of a similarly named type, as described below.
 
 ## Comparison Predicates
 
-### equalTo(), lessThan(), greaterThan(), lessThanOrEqualTo(), greaterThanOrEqualTo()
+### Comparison Methods
+
+Methods: `equalTo()`, `lessThan()`, `greaterThan()`,
+`lessThanOrEqualTo()`, `greaterThanOrEqualTo()`
 
 ```php title="Using equalTo() to create an Operator predicate"
 $where->equalTo('id', 5);
@@ -239,18 +247,18 @@ Operators use the following API:
 ```php title="Operator class API definition"
 class Operator implements PredicateInterface
 {
-    final public const OPERATOR_EQUAL_TO                  = '=';
-    final public const OP_EQ                              = '=';
-    final public const OPERATOR_NOT_EQUAL_TO              = '!=';
-    final public const OP_NE                              = '!=';
-    final public const OPERATOR_LESS_THAN                 = '<';
-    final public const OP_LT                              = '<';
-    final public const OPERATOR_LESS_THAN_OR_EQUAL_TO     = '<=';
-    final public const OP_LTE                             = '<=';
-    final public const OPERATOR_GREATER_THAN              = '>';
-    final public const OP_GT                              = '>';
-    final public const OPERATOR_GREATER_THAN_OR_EQUAL_TO  = '>=';
-    final public const OP_GTE                             = '>=';
+    final public const OPERATOR_EQUAL_TO = '=';
+    final public const OP_EQ = '=';
+    final public const OPERATOR_NOT_EQUAL_TO = '!=';
+    final public const OP_NE = '!=';
+    final public const OPERATOR_LESS_THAN = '<';
+    final public const OP_LT = '<';
+    final public const OPERATOR_LESS_THAN_OR_EQUAL_TO = '<=';
+    final public const OP_LTE = '<=';
+    final public const OPERATOR_GREATER_THAN = '>';
+    final public const OP_GT = '>';
+    final public const OPERATOR_GREATER_THAN_OR_EQUAL_TO = '>=';
+    final public const OP_GTE = '>=';
 
     public function __construct(
         null|string|ArgumentInterface
@@ -260,7 +268,8 @@ class Operator implements PredicateInterface
             |ExpressionInterface|SqlInterface $right = null
     );
     public function setLeft(
-        string|ArgumentInterface|ExpressionInterface|SqlInterface $left
+        string|ArgumentInterface
+            |ExpressionInterface|SqlInterface $left
     ) : static;
     public function getLeft() : ?ArgumentInterface;
     public function setOperator(string $operator) : static;
@@ -302,7 +311,9 @@ class Like implements PredicateInterface
         null|string|ArgumentInterface $identifier = null,
         null|bool|float|int|string|ArgumentInterface $like = null
     );
-    public function setIdentifier(string|ArgumentInterface $identifier) : static;
+    public function setIdentifier(
+        string|ArgumentInterface $identifier
+    ) : static;
     public function getIdentifier() : ?ArgumentInterface;
     public function setLike(
         bool|float|int|null|string|ArgumentInterface $like
@@ -353,7 +364,8 @@ $where->addPredicate(
 The following is the `Expression` API:
 
 ```php title="Expression class API definition"
-class Expression implements ExpressionInterface, PredicateInterface
+class Expression implements
+    ExpressionInterface, PredicateInterface
 {
     final public const PLACEHOLDER = '?';
 
@@ -424,8 +436,12 @@ The following is the `IsNull` API:
 ```php title="IsNull class API definition"
 class IsNull implements PredicateInterface
 {
-    public function __construct(null|string|ArgumentInterface $identifier = null);
-    public function setIdentifier(string|ArgumentInterface $identifier) : static;
+    public function __construct(
+        null|string|ArgumentInterface $identifier = null
+    );
+    public function setIdentifier(
+        string|ArgumentInterface $identifier
+    ) : static;
     public function getIdentifier() : ?ArgumentInterface;
     public function setSpecification(string $specification) : static;
     public function getSpecification() : string;
@@ -449,8 +465,12 @@ The following is the `IsNotNull` API:
 ```php title="IsNotNull class API definition"
 class IsNotNull implements PredicateInterface
 {
-    public function __construct(null|string|ArgumentInterface $identifier = null);
-    public function setIdentifier(string|ArgumentInterface $identifier) : static;
+    public function __construct(
+        null|string|ArgumentInterface $identifier = null
+    );
+    public function setIdentifier(
+        string|ArgumentInterface $identifier
+    ) : static;
     public function getIdentifier() : ?ArgumentInterface;
     public function setSpecification(string $specification) : static;
     public function getSpecification() : string;
@@ -480,7 +500,9 @@ class In implements PredicateInterface
         null|string|ArgumentInterface $identifier = null,
         null|array|Select|ArgumentInterface $valueSet = null
     );
-    public function setIdentifier(string|ArgumentInterface $identifier) : static;
+    public function setIdentifier(
+        string|ArgumentInterface $identifier
+    ) : static;
     public function getIdentifier() : ?ArgumentInterface;
     public function setValueSet(
         array|Select|ArgumentInterface $valueSet
@@ -542,7 +564,9 @@ $where->between('createdAt', '2024-01-01', '2024-12-31');
 Produces:
 
 ```sql title="SQL output for between() examples"
-WHERE age BETWEEN 18 AND 65 AND price NOT BETWEEN 100 AND 500 AND createdAt BETWEEN '2024-01-01' AND '2024-12-31'
+WHERE age BETWEEN 18 AND 65
+  AND price NOT BETWEEN 100 AND 500
+  AND createdAt BETWEEN '2024-01-01' AND '2024-12-31'
 ```
 
 Expressions can also be used:
@@ -561,9 +585,10 @@ WHERE YEAR(createdAt) BETWEEN 2020 AND 2024
 
 ### Magic properties for fluent chaining
 
-The Predicate class provides magic properties that enable fluent method chaining
-for combining predicates. These properties (`and`, `or`, `AND`, `OR`, `nest`,
-`unnest`, `NEST`, `UNNEST`) facilitate readable query construction.
+The Predicate class provides magic properties that enable fluent method
+chaining for combining predicates. These properties (`and`, `or`, `AND`,
+`OR`, `nest`, `unnest`, `NEST`, `UNNEST`) facilitate readable query
+construction.
 
 ```php title="Using magic properties for fluent chaining"
 $select->where
@@ -615,9 +640,9 @@ WHERE ((a = 1 OR b = 2) AND (c = 3 OR d = 4))
 
 ### addPredicates() intelligent handling
 
-The `addPredicates()` method from `PredicateSet` provides intelligent handling of
-various input types, automatically creating appropriate predicate objects based on
-the input.
+The `addPredicates()` method from `PredicateSet` provides intelligent
+handling of various input types, automatically creating appropriate
+predicate objects based on the input.
 
 ```php title="Using addPredicates() with mixed input types"
 $where->addPredicates([
@@ -633,12 +658,12 @@ $where->addPredicates([
 The method detects and handles:
 
 | Input Type | Behavior |
-|------------|----------|
+| ---------- | -------- |
 | String without `?` | Creates `Literal` predicate |
-| String with `?` | Creates `Expression` predicate (requires parameters) |
+| String with `?` | Creates `Expression` (requires params) |
 | Key => `null` | Creates `IsNull` predicate |
 | Key => array | Creates `In` predicate |
-| Key => scalar | Creates `Operator` predicate (equality) |
+| Key => scalar | Creates `Operator` (equality) |
 | `PredicateInterface` | Uses predicate directly |
 
 Combination operators can be specified:
@@ -683,8 +708,9 @@ WHERE name LIKE 'A%' OR name LIKE 'B%'
 
 ### Using HAVING with aggregate functions
 
-While `where()` filters rows before grouping, `having()` filters groups after
-aggregation. The HAVING clause is used with GROUP BY and aggregate functions.
+While `where()` filters rows before grouping, `having()` filters groups
+after aggregation. The HAVING clause is used with GROUP BY and aggregate
+functions.
 
 ```php title="Using HAVING to filter aggregate results"
 $select->from('orders')
@@ -702,7 +728,9 @@ $select->from('orders')
 Produces:
 
 ```sql title="SQL output for HAVING with aggregate functions"
-SELECT customerId, COUNT(*) AS orderCount, SUM(amount) AS totalAmount
+SELECT customerId,
+       COUNT(*) AS orderCount,
+       SUM(amount) AS totalAmount
 FROM orders
 WHERE amount > 0
 GROUP BY customerId
@@ -727,8 +755,8 @@ HAVING AVG(rating) > 4.5 OR COUNT(reviews) > 100
 
 ## Subqueries in WHERE Clauses
 
-Subqueries can be used in various contexts within SQL statements, including WHERE
-clauses, FROM clauses, and SELECT columns.
+Subqueries can be used in various contexts within SQL statements,
+including WHERE clauses, FROM clauses, and SELECT columns.
 
 ### Subqueries in WHERE IN clauses
 
@@ -745,7 +773,9 @@ Produces:
 
 ```sql title="SQL output for subquery in WHERE IN"
 SELECT customers.* FROM customers
-WHERE id IN (SELECT customerId FROM orders WHERE status = 'completed')
+WHERE id IN (
+  SELECT customerId FROM orders WHERE status = 'completed'
+)
 ```
 
 ### Subqueries in FROM clauses
@@ -766,7 +796,8 @@ Produces:
 
 ```sql title="SQL output for subquery in FROM clause"
 SELECT orderTotals.* FROM
-(SELECT customerId, SUM(amount) AS total FROM orders GROUP BY customerId) AS orderTotals
+(SELECT customerId, SUM(amount) AS total
+ FROM orders GROUP BY customerId) AS orderTotals
 WHERE orderTotals.total > 1000
 ```
 
@@ -775,7 +806,9 @@ WHERE orderTotals.total > 1000
 ```php title="Using a scalar subquery in SELECT columns"
 $subselect = $sql->select('orders')
     ->columns([new Expression('COUNT(*)')])
-    ->where(new Predicate\Expression('orders.customerId = customers.id'));
+    ->where(new Predicate\Expression(
+        'orders.customerId = customers.id'
+    ));
 
 $select = $sql->select('customers')
     ->columns([
@@ -789,7 +822,8 @@ Produces:
 
 ```sql title="SQL output for scalar subquery in SELECT"
 SELECT id, name,
-(SELECT COUNT(*) FROM orders WHERE orders.customerId = customers.id) AS orderCount
+  (SELECT COUNT(*) FROM orders
+   WHERE orders.customerId = customers.id) AS orderCount
 FROM customers
 ```
 

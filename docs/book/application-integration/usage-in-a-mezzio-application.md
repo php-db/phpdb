@@ -4,18 +4,23 @@ For installation instructions, see [Installation](../index.md#installation).
 
 ## Service Configuration
 
-Now that the phpdb packages are installed, you need to configure the adapter through Mezzio's dependency injection container.
+Now that the phpdb packages are installed, you need to configure the
+adapter through Mezzio's dependency injection container.
 
-Mezzio uses PSR-11 containers and typically uses laminas-servicemanager or another DI container. The adapter configuration goes in your application's configuration files.
+Mezzio uses PSR-11 containers and typically uses laminas-servicemanager
+or another DI container. The adapter configuration goes in your
+application's configuration files.
 
-Create a configuration file `config/autoload/database.global.php` to define database settings.
+Create a configuration file `config/autoload/database.global.php` to
+define database settings.
 
 ### Working with a SQLite database
 
 SQLite is a lightweight option to have the application working with a database.
 
 Here is an example of the configuration array for a SQLite database.
-Assuming the SQLite file path is `data/sample.sqlite`, the following configuration will produce the adapter:
+Assuming the SQLite file path is `data/sample.sqlite`, the following
+configuration will produce the adapter:
 
 ```php title="SQLite adapter configuration"
 <?php
@@ -45,7 +50,8 @@ return [
 ];
 ```
 
-The `data/` filepath for the SQLite file is relative to your application root directory.
+The `data/` filepath for the SQLite file is relative to your application
+root directory.
 
 ### Working with a MySQL database
 
@@ -53,7 +59,8 @@ Unlike a SQLite database, the MySQL database adapter requires a MySQL server.
 
 Here is an example of a configuration array for a MySQL database.
 
-Create `config/autoload/database.local.php` for environment-specific credentials:
+Create `config/autoload/database.local.php` for environment-specific
+credentials:
 
 ```php title="MySQL adapter configuration"
 <?php
@@ -89,7 +96,8 @@ return [
 
 ### Working with PostgreSQL database
 
-PostgreSQL support is coming soon. Once the `php-db/postgres` package is available:
+PostgreSQL support is coming soon. Once the `php-db/postgres` package is
+available:
 
 ```php title="PostgreSQL adapter configuration"
 <?php
@@ -125,11 +133,14 @@ return [
 
 ## Working with the adapter
 
-Once you have configured an adapter, as in the above examples, you now have a `PhpDb\Adapter\Adapter` available to your application through dependency injection.
+Once you have configured an adapter, as in the above examples,
+you now have a `PhpDb\Adapter\Adapter` available to your application
+through dependency injection.
 
 ### In Request Handlers
 
-Mezzio uses request handlers (also known as middleware) that receive dependencies through constructor injection:
+Mezzio uses request handlers (also known as middleware) that receive
+dependencies through constructor injection:
 
 ```php title="Request handler with database adapter injection"
 <?php
@@ -151,8 +162,9 @@ class UserListHandler implements RequestHandlerInterface
     ) {
     }
 
-    public function handle(ServerRequestInterface $request): ResponseInterface
-    {
+    public function handle(
+        ServerRequestInterface $request
+    ): ResponseInterface {
         $results = $this->adapter->query(
             'SELECT id, username, email FROM users WHERE status = ?',
             ['active']
@@ -188,8 +200,9 @@ use Psr\Container\ContainerInterface;
 
 class UserListHandlerFactory
 {
-    public function __invoke(ContainerInterface $container): UserListHandler
-    {
+    public function __invoke(
+        ContainerInterface $container
+    ): UserListHandler {
         return new UserListHandler(
             $container->get(AdapterInterface::class)
         );
@@ -199,7 +212,8 @@ class UserListHandlerFactory
 
 ### Registering the Handler
 
-Register your handler factory in `config/autoload/dependencies.global.php`:
+Register your handler factory in
+`config/autoload/dependencies.global.php`:
 
 ```php title="Registering the handler in dependencies configuration"
 <?php
@@ -224,7 +238,8 @@ return [
 
 ### Using with TableGateway
 
-For more structured database interactions, use TableGateway with dependency injection:
+For more structured database interactions, use TableGateway with
+dependency injection:
 
 ```php title="Extending TableGateway for custom database operations"
 <?php
@@ -273,8 +288,9 @@ use Psr\Container\ContainerInterface;
 
 class UsersTableFactory
 {
-    public function __invoke(ContainerInterface $container): UsersTable
-    {
+    public function __invoke(
+        ContainerInterface $container
+    ): UsersTable {
         return new UsersTable(
             $container->get(AdapterInterface::class)
         );
@@ -323,8 +339,9 @@ class UserListHandler implements RequestHandlerInterface
     ) {
     }
 
-    public function handle(ServerRequestInterface $request): ResponseInterface
-    {
+    public function handle(
+        ServerRequestInterface $request
+    ): ResponseInterface {
         $users = $this->usersTable->findActiveUsers();
 
         return new JsonResponse(['users' => $users]);
@@ -332,11 +349,14 @@ class UserListHandler implements RequestHandlerInterface
 }
 ```
 
-You can read more about the [adapter in the adapter chapter of the documentation](../adapter.md) and [TableGateway in the table gateway chapter](../table-gateway.md).
+You can read more about the
+[adapter in the adapter chapter of the documentation](../adapter.md) and
+[TableGateway in the table gateway chapter](../table-gateway.md).
 
 ## Environment-based Configuration
 
-For production deployments, use environment variables to configure database credentials:
+For production deployments, use environment variables to configure
+database credentials:
 
 ### Using dotenv
 
@@ -396,7 +416,9 @@ use Psr\Container\ContainerInterface;
 return [
     'dependencies' => [
         'factories' => [
-            Adapter::class => function (ContainerInterface $container) {
+            Adapter::class => function (
+                ContainerInterface $container
+            ) {
                 $dbType = $_ENV['DB_TYPE'] ?? 'sqlite';
 
                 if ($dbType === 'mysql') {
@@ -413,7 +435,8 @@ return [
 
                 // Default to SQLite
                 $driver = new Sqlite([
-                    'database' => $_ENV['DB_DATABASE'] ?? 'data/app.sqlite',
+                    'database' =>
+                        $_ENV['DB_DATABASE'] ?? 'data/app.sqlite',
                 ]);
                 return new Adapter($driver, new SqlitePlatform());
             },
@@ -427,7 +450,10 @@ return [
 
 ## Running with Docker
 
-For Docker deployment instructions including Dockerfiles, Nginx/Apache configuration, MySQL/PostgreSQL setup, and complete docker-compose examples, see the [Docker Deployment Guide](../docker-deployment.md).
+For Docker deployment instructions including Dockerfiles,
+Nginx/Apache configuration, MySQL/PostgreSQL setup, and complete
+docker-compose examples, see the
+[Docker Deployment Guide](../docker-deployment.md).
 
 ## Testing with Database
 
@@ -451,7 +477,9 @@ use Psr\Container\ContainerInterface;
 return [
     'dependencies' => [
         'factories' => [
-            Adapter::class => function (ContainerInterface $container) {
+            Adapter::class => function (
+                ContainerInterface $container
+            ) {
                 $driver = new Sqlite([
                     'database' => ':memory:',
                 ]);
@@ -499,7 +527,8 @@ class UserListHandlerTest extends TestCase
         );
 
         $this->adapter->query(
-            "INSERT INTO users (username, email, status) VALUES
+            "INSERT INTO users (username, email, status)
+             VALUES
                 ('alice', 'alice@example.com', 'active'),
                 ('bob', 'bob@example.com', 'active')"
         );
@@ -523,11 +552,13 @@ class UserListHandlerTest extends TestCase
 
 ### Use Dependency Injection
 
-Always inject the adapter or table gateway through constructors, never instantiate directly in handlers.
+Always inject the adapter or table gateway through constructors,
+never instantiate directly in handlers.
 
 ### Separate Database Logic
 
-Create repository or table gateway classes to separate database logic from HTTP handlers:
+Create repository or table gateway classes to separate database logic
+from HTTP handlers:
 
 ```php title="Repository pattern implementation for database operations"
 <?php
@@ -551,7 +582,8 @@ class UserRepository
         $sql = new Sql($this->adapter);
         $select = $sql->select('users');
 
-        $statement = $sql->prepareStatementForSqlObject($select);
+        $statement =
+            $sql->prepareStatementForSqlObject($select);
         $results = $statement->execute();
 
         return iterator_to_array($results);
@@ -563,7 +595,8 @@ class UserRepository
         $select = $sql->select('users');
         $select->where(['id' => $id]);
 
-        $statement = $sql->prepareStatementForSqlObject($select);
+        $statement =
+            $sql->prepareStatementForSqlObject($select);
         $results = $statement->execute();
         $row = $results->current();
 
@@ -574,7 +607,8 @@ class UserRepository
 
 ### Use Configuration Factories
 
-Centralize adapter configuration in factory classes for better maintainability and testability.
+Centralize adapter configuration in factory classes for better
+maintainability and testability.
 
 ### Handle Exceptions
 
@@ -583,8 +617,9 @@ Always wrap database operations in try-catch blocks:
 ```php title="Exception handling for database operations"
 use PhpDb\Adapter\Exception\RuntimeException;
 
-public function handle(ServerRequestInterface $request): ResponseInterface
-{
+public function handle(
+    ServerRequestInterface $request
+): ResponseInterface {
     try {
         $users = $this->usersTable->findActiveUsers();
         return new JsonResponse(['users' => $users]);

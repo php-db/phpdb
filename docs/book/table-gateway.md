@@ -1,8 +1,8 @@
 # Table Gateways
 
-The Table Gateway subcomponent provides an object-oriented representation of a
-database table; its methods mirror the most common table operations. In code,
-the interface resembles:
+The Table Gateway subcomponent provides an object-oriented representation of
+a database table; its methods mirror the most common table operations. In
+code, the interface resembles:
 
 ## TableGatewayInterface Definition
 
@@ -15,7 +15,9 @@ use PhpDb\Sql\Where;
 interface TableGatewayInterface
 {
     public function getTable() : string;
-    public function select(Where|callable|string|array $where = null) : ResultSetInterface;
+    public function select(
+        Where|callable|string|array $where = null
+    ) : ResultSetInterface;
     public function insert(array $set) : int;
     public function update(
         array $set,
@@ -32,12 +34,12 @@ abstract basic implementation that provides functionality for `select()`,
 `insert()`, `update()`, `delete()`, as well as an additional API for doing
 these same kinds of tasks with explicit `PhpDb\Sql` objects: `selectWith()`,
 `insertWith()`, `updateWith()`, and `deleteWith()`. In addition,
-AbstractTableGateway also implements a "Feature" API, that allows for expanding
-the behaviors of the base `TableGateway` implementation without having to
-extend the class with this new functionality.  The `TableGateway` concrete
-implementation simply adds a sensible constructor to the `AbstractTableGateway`
-class so that out-of-the-box, `TableGateway` does not need to be extended in
-order to be consumed and utilized to its fullest.
+AbstractTableGateway also implements a "Feature" API, that allows for
+expanding the behaviors of the base `TableGateway` implementation without
+having to extend the class with this new functionality.  The `TableGateway`
+concrete implementation simply adds a sensible constructor to the
+`AbstractTableGateway` class so that out-of-the-box, `TableGateway` does not
+need to be extended in order to be consumed and utilized to its fullest.
 
 ## Quick start
 
@@ -62,7 +64,8 @@ class TableGateway extends AbstractTableGateway
     public function __construct(
         string|TableIdentifier $table,
         AdapterInterface $adapter,
-        Feature\AbstractFeature|Feature\FeatureSet|Feature\AbstractFeature[] $features = null,
+        Feature\AbstractFeature|Feature\FeatureSet|
+            Feature\AbstractFeature[] $features = null,
         ResultSetInterface $resultSetPrototype = null,
         Sql\Sql $sql = null
     );
@@ -77,8 +80,12 @@ class TableGateway extends AbstractTableGateway
     public function getFeatureSet() Feature\FeatureSet;
     public function getResultSetPrototype() : ResultSetInterface;
     public function getSql() | Sql\Sql;
-    public function select(Sql\Where|callable|string|array $where = null) : ResultSetInterface;
-    public function selectWith(Sql\Select $select) : ResultSetInterface;
+    public function select(
+        Sql\Where|callable|string|array $where = null
+    ) : ResultSetInterface;
+    public function selectWith(
+        Sql\Select $select
+    ) : ResultSetInterface;
     public function insert(array $set) : int;
     public function insertWith(Sql\Insert $insert) | int;
     public function update(
@@ -87,7 +94,9 @@ class TableGateway extends AbstractTableGateway
         array $joins = null
     ) : int;
     public function updateWith(Sql\Update $update) : int;
-    public function delete(Sql\Where|callable|string|array $where) : int;
+    public function delete(
+        Sql\Where|callable|string|array $where
+    ) : int;
     public function deleteWith(Sql\Delete $delete) : int;
     public function getLastInsertValue() : int;
 }
@@ -97,10 +106,10 @@ The concrete `TableGateway` object uses constructor injection for getting
 dependencies and options into the instance. The table name and an instance of
 an `Adapter` are all that is required to create an instance.
 
-Out of the box, this implementation makes no assumptions about table structure
-or metadata, and when `select()` is executed, a simple `ResultSet` object with
-the populated `Adapter`'s `Result` (the datasource) will be returned and ready
-for iteration.
+Out of the box, this implementation makes no assumptions about table
+structure or metadata, and when `select()` is executed, a simple `ResultSet`
+object with the populated `Adapter`'s `Result` (the datasource) will be
+returned and ready for iteration.
 
 ```php title="Basic Select Operations"
 use PhpDb\TableGateway\TableGateway;
@@ -123,7 +132,8 @@ var_dump($artistRow);
 
 The `select()` method takes the same arguments as
 `PhpDb\Sql\Select::where()`; arguments will be passed to the `Select`
-instance used to build the SELECT query. This means the following is possible:
+instance used to build the SELECT query. This means the following is
+possible:
 
 ```php title="Advanced Select with Callback"
 use PhpDb\TableGateway\TableGateway;
@@ -141,10 +151,10 @@ $rowset = $artistTable->select(function (Select $select) {
 ## TableGateway Features
 
 The Features API allows for extending the functionality of the base
-`TableGateway` object without having to polymorphically extend the base class.
-This allows for a wider array of possible mixing and matching of features to
-achieve a particular behavior that needs to be attained to make the base
-implementation of `TableGateway` useful for a particular problem.
+`TableGateway` object without having to polymorphically extend the base
+class. This allows for a wider array of possible mixing and matching of
+features to achieve a particular behavior that needs to be attained to make
+the base implementation of `TableGateway` useful for a particular problem.
 
 With the `TableGateway` object, features should be injected through the
 constructor. The constructor can take features in 3 different forms:
@@ -157,8 +167,9 @@ There are a number of features built-in and shipped with laminas-db:
 
 ### GlobalAdapterFeature
 
-Use a global/static adapter without injecting it into a `TableGateway` instance.
-This is only useful when extending the `AbstractTableGateway` implementation:
+Use a global/static adapter without injecting it into a `TableGateway`
+instance. This is only useful when extending the `AbstractTableGateway`
+implementation:
 
 ```php
 use PhpDb\TableGateway\AbstractTableGateway;
@@ -176,7 +187,9 @@ class MyTableGateway extends AbstractTableGateway
 }
 
 // elsewhere in code, in a bootstrap
-PhpDb\TableGateway\Feature\GlobalAdapterFeature::setStaticAdapter($adapter);
+PhpDb\TableGateway\Feature\GlobalAdapterFeature::setStaticAdapter(
+    $adapter
+);
 
 // in a controller, or model somewhere
 $table = new MyTableGateway(); // adapter is statically loaded
@@ -184,11 +197,15 @@ $table = new MyTableGateway(); // adapter is statically loaded
 
 ### MasterSlaveFeature
 
-Use a master adapter for `insert()`, `update()`, and `delete()`, but switch to
-a slave adapter for all `select()` operations:
+Use a master adapter for `insert()`, `update()`, and `delete()`, but switch
+to a slave adapter for all `select()` operations:
 
 ```php
-$table = new TableGateway('artist', $adapter, new Feature\MasterSlaveFeature($slaveAdapter));
+$table = new TableGateway(
+    'artist',
+    $adapter,
+    new Feature\MasterSlaveFeature($slaveAdapter)
+);
 ```
 
 ### MetadataFeature
@@ -202,12 +219,18 @@ $table = new TableGateway('artist', $adapter, new Feature\MetadataFeature());
 
 ### EventFeature
 
-Compose a [laminas-eventmanager](https://github.com/laminas/laminas-eventmanager)
+Compose a
+[laminas-eventmanager](https://github.com/laminas/laminas-eventmanager)
 `EventManager` instance and attach listeners to lifecycle events. See the
-[section on lifecycle events below](#tablegateway-lifecycle-events) for details:
+[section on lifecycle events below](#tablegateway-lifecycle-events) for
+details:
 
 ```php
-$table = new TableGateway('artist', $adapter, new Feature\EventFeature($eventManagerInstance));
+$table = new TableGateway(
+    'artist',
+    $adapter,
+    new Feature\EventFeature($eventManagerInstance)
+);
 ```
 
 ### RowGatewayFeature
@@ -226,42 +249,44 @@ $artistRow->save();
 ## TableGateway LifeCycle Events
 
 When the `EventFeature` is enabled on the `TableGateway` instance, you may
-attach to any of the following events, which provide access to the parameters
-listed.
+attach to any of the following events, which provide access to the
+parameters listed.
 
 - `preInitialize` (no parameters)
 - `postInitialize` (no parameters)
 - `preSelect`, with the following parameters:
-    - `select`, with type `PhpDb\Sql\Select`
+  - `select`, with type `PhpDb\Sql\Select`
 - `postSelect`, with the following parameters:
-    - `statement`, with type `PhpDb\Adapter\Driver\StatementInterface`
-    - `result`, with type `PhpDb\Adapter\Driver\ResultInterface`
-    - `resultSet`, with type `PhpDb\ResultSet\ResultSetInterface`
+  - `statement`, with type `PhpDb\Adapter\Driver\StatementInterface`
+  - `result`, with type `PhpDb\Adapter\Driver\ResultInterface`
+  - `resultSet`, with type `PhpDb\ResultSet\ResultSetInterface`
 - `preInsert`, with the following parameters:
-    - `insert`, with type `PhpDb\Sql\Insert`
+  - `insert`, with type `PhpDb\Sql\Insert`
 - `postInsert`, with the following parameters:
-    - `statement` with type `PhpDb\Adapter\Driver\StatementInterface`
-    - `result` with type `PhpDb\Adapter\Driver\ResultInterface`
+  - `statement` with type `PhpDb\Adapter\Driver\StatementInterface`
+  - `result` with type `PhpDb\Adapter\Driver\ResultInterface`
 - `preUpdate`, with the following parameters:
-    - `update`, with type `PhpDb\Sql\Update`
+  - `update`, with type `PhpDb\Sql\Update`
 - `postUpdate`, with the following parameters:
-    - `statement`, with type `PhpDb\Adapter\Driver\StatementInterface`
-    - `result`, with type `PhpDb\Adapter\Driver\ResultInterface`
+  - `statement`, with type `PhpDb\Adapter\Driver\StatementInterface`
+  - `result`, with type `PhpDb\Adapter\Driver\ResultInterface`
 - `preDelete`, with the following parameters:
-    - `delete`, with type `PhpDb\Sql\Delete`
+  - `delete`, with type `PhpDb\Sql\Delete`
 - `postDelete`, with the following parameters:
-    - `statement`, with type `PhpDb\Adapter\Driver\StatementInterface`
-    - `result`, with type `PhpDb\Adapter\Driver\ResultInterface`
+  - `statement`, with type `PhpDb\Adapter\Driver\StatementInterface`
+  - `result`, with type `PhpDb\Adapter\Driver\ResultInterface`
 
-Listeners receive a `PhpDb\TableGateway\Feature\EventFeature\TableGatewayEvent`
-instance as an argument. Within the listener, you can retrieve a parameter by
-name from the event using the following syntax:
+Listeners receive a
+`PhpDb\TableGateway\Feature\EventFeature\TableGatewayEvent` instance as an
+argument. Within the listener, you can retrieve a parameter by name from the
+event using the following syntax:
 
 ```php title="Retrieving Event Parameters"
 $parameter = $event->getParam($paramName);
 ```
 
-As an example, you might attach a listener on the `postInsert` event as follows:
+As an example, you might attach a listener on the `postInsert` event as
+follows:
 
 ```php title="Attaching a Listener to postInsert Event"
 use PhpDb\Adapter\Driver\ResultInterface;

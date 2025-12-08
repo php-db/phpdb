@@ -2,7 +2,8 @@
 
 ## AlterTable
 
-The `AlterTable` class represents an `ALTER TABLE` statement. It provides methods to modify existing table structures.
+The `AlterTable` class represents an `ALTER TABLE` statement. It provides
+methods to modify existing table structures.
 
 ```php title="Basic AlterTable Creation"
 use PhpDb\Sql\Ddl\AlterTable;
@@ -304,13 +305,19 @@ foreach ($tables as $tableName) {
 
 ### Current Status
 
-**Important:** Platform-specific DDL decorators have been **removed during refactoring**. The decorator infrastructure exists in the codebase but specific platform implementations (MySQL, SQL Server, Oracle, SQLite) have been deprecated and removed.
+**Important:** Platform-specific DDL decorators have been **removed during
+refactoring**. The decorator infrastructure exists in the codebase but specific
+platform implementations (MySQL, SQL Server, Oracle, SQLite) have been
+deprecated and removed.
 
 ### What This Means
 
-1. **Platform specialization is handled at the Adapter Platform level**, not the SQL DDL level
-2. **DDL objects are platform-agnostic** - they define the structure, and the platform renders it appropriately
-3. **The decorator system can be used manually** if needed via `setTypeDecorator()`, but this is advanced usage
+1. **Platform specialization is handled at the Adapter Platform level**,
+   not the SQL DDL level
+2. **DDL objects are platform-agnostic** - they define the structure,
+   and the platform renders it appropriately
+3. **The decorator system can be used manually** if needed via
+   `setTypeDecorator()`, but this is advanced usage
 
 ### Platform-Agnostic Approach
 
@@ -323,9 +330,12 @@ $table->addColumn(new Column\Integer('id'));
 $table->addColumn(new Column\Varchar('name', 255));
 
 // The platform adapter handles rendering differences:
-// - MySQL: CREATE TABLE `users` (`id` INT NOT NULL, `name` VARCHAR(255) NOT NULL)
-// - PostgreSQL: CREATE TABLE "users" ("id" INTEGER NOT NULL, "name" VARCHAR(255) NOT NULL)
-// - SQL Server: CREATE TABLE [users] ([id] INT NOT NULL, [name] VARCHAR(255) NOT NULL)
+// - MySQL: CREATE TABLE `users` (`id` INT NOT NULL,
+//   `name` VARCHAR(255) NOT NULL)
+// - PostgreSQL: CREATE TABLE "users" ("id" INTEGER NOT NULL,
+//   "name" VARCHAR(255) NOT NULL)
+// - SQL Server: CREATE TABLE [users] ([id] INT NOT NULL,
+//   [name] VARCHAR(255) NOT NULL)
 ```
 
 ### Platform-Specific Options
@@ -346,7 +356,8 @@ $count = new Column\Integer('count');
 $count->setOption('unsigned', true);
 ```
 
-**Note:** Not all options work on all platforms. Test your DDL against your target database.
+**Note:** Not all options work on all platforms. Test your DDL against your
+target database.
 
 ### Platform Detection
 

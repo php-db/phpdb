@@ -1,6 +1,10 @@
 # Result Sets
 
-`PhpDb\ResultSet` abstracts iteration over database query results. Result sets implement `ResultSetInterface` and are typically populated from `ResultInterface` instances returned by query execution. Components use the prototype pattern to clone and specialize result sets with specific data sources.
+`PhpDb\ResultSet` abstracts iteration over database query results. Result
+sets implement `ResultSetInterface` and are typically populated from
+`ResultInterface` instances returned by query execution. Components use the
+prototype pattern to clone and specialize result sets with specific data
+sources.
 
 `ResultSetInterface` is defined as follows:
 
@@ -14,7 +18,9 @@ interface ResultSetInterface extends Traversable, Countable
 {
     public function initialize(iterable $dataSource): ResultSetInterface;
     public function getFieldCount(): mixed;
-    public function setRowPrototype(ArrayObject $rowPrototype): ResultSetInterface;
+    public function setRowPrototype(
+        ArrayObject $rowPrototype
+    ): ResultSetInterface;
     public function getRowPrototype(): ?object;
 }
 ```
@@ -68,8 +74,11 @@ use PhpDb\Adapter\Driver\ResultInterface;
 
 abstract class AbstractResultSet implements Iterator, ResultSetInterface
 {
-    public function initialize(array|Iterator|IteratorAggregate|ResultInterface $dataSource): ResultSetInterface;
-    public function getDataSource(): array|Iterator|IteratorAggregate|ResultInterface;
+    public function initialize(
+        array|Iterator|IteratorAggregate|ResultInterface $dataSource
+    ): ResultSetInterface;
+    public function getDataSource():
+        array|Iterator|IteratorAggregate|ResultInterface;
     public function getFieldCount(): int;
 
     public function buffer(): ResultSetInterface;
@@ -92,19 +101,15 @@ abstract class AbstractResultSet implements Iterator, ResultSetInterface
 `PhpDb\ResultSet\HydratingResultSet` is a more flexible `ResultSet` object
 that allows the developer to choose an appropriate "hydration strategy" for
 getting row data into a target object.  While iterating over results,
-`HydratingResultSet` will take a prototype of a target object and clone it once
-for each row. The `HydratingResultSet` will then hydrate that clone with the
-row data.
+`HydratingResultSet` will take a prototype of a target object and clone it
+once for each row. The `HydratingResultSet` will then hydrate that clone with
+the row data.
 
 The `HydratingResultSet` depends on
 [laminas-hydrator](https://docs.laminas.dev/laminas-hydrator), which you will
 need to install:
 
-<<<<<<< HEAD:docs/book/result-set/intro.md
 ```bash title="Installing laminas-hydrator"
-=======
-```bash
->>>>>>> origin/0.4.x:docs/book/result-set.md
 composer require laminas/laminas-hydrator
 ```
 
@@ -123,7 +128,10 @@ $statement->prepare();
 $result = $statement->execute();
 
 if ($result instanceof ResultInterface && $result->isQueryResult()) {
-    $resultSet = new HydratingResultSet(new ReflectionHydrator(), new UserEntity());
+    $resultSet = new HydratingResultSet(
+        new ReflectionHydrator(),
+        new UserEntity()
+    );
     $resultSet->initialize($result);
 
     foreach ($resultSet as $user) {
@@ -132,13 +140,15 @@ if ($result instanceof ResultInterface && $result->isQueryResult()) {
 }
 ```
 
-For more information, see the [laminas-hydrator](https://docs.laminas.dev/laminas-hydrator/)
+For more information, see the
+[laminas-hydrator](https://docs.laminas.dev/laminas-hydrator/)
 documentation to get a better sense of the different strategies that can be
 employed in order to populate a target object.
 
 ## Data Source Types
 
-The `initialize()` method accepts arrays, `Iterator`, `IteratorAggregate`, or `ResultInterface`:
+The `initialize()` method accepts arrays, `Iterator`, `IteratorAggregate`,
+or `ResultInterface`:
 
 ```php
 // Arrays (auto-buffered, allows multiple iterations)

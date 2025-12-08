@@ -1,6 +1,7 @@
 # Constraints and Indexes
 
-Constraints enforce data integrity rules at the database level. All constraints are in the `PhpDb\Sql\Ddl\Constraint` namespace.
+Constraints enforce data integrity rules at the database level.
+All constraints are in the `PhpDb\Sql\Ddl\Constraint` namespace.
 
 ## Primary Key Constraints
 
@@ -256,7 +257,8 @@ $check = new Check($expr, 'check_discount_range');
 
 ## Indexes
 
-Indexes improve query performance by creating fast lookup structures. The `Index` class is in the `PhpDb\Sql\Ddl\Index` namespace.
+Indexes improve query performance by creating fast lookup structures.
+The `Index` class is in the `PhpDb\Sql\Ddl\Index` namespace.
 
 ```php title="Basic Index Creation"
 use PhpDb\Sql\Ddl\Index\Index;
@@ -361,7 +363,8 @@ $alter->dropIndex('idx_deprecated_field');
 
 ## Naming Conventions
 
-While some constraints allow optional names, it's a best practice to always provide explicit names:
+While some constraints allow optional names, it's a best practice to always
+provide explicit names:
 
 ```php title="Best Practice: Using Explicit Constraint Names"
 // Good - explicit names for all constraints
@@ -429,7 +432,8 @@ $table->addConstraint(new Index(['category_id', 'created_at'], 'idx_category_dat
 $table->addConstraint(new Index(['status', 'priority', 'created_at'], 'idx_active_priority'));
 
 // 4. Prefix indexes for large text columns
-$table->addConstraint(new Index('title', 'idx_title', [100])); // Index first 100 chars
+// Index first 100 chars
+$table->addConstraint(new Index('title', 'idx_title', [100]));
 ```
 
 ### Index Order Matters

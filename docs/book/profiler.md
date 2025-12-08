@@ -1,6 +1,9 @@
 # Profiler
 
-The profiler component allows you to collect timing information about database queries executed through phpdb. This is invaluable during development for identifying slow queries, debugging SQL issues, and integrating with development tools and logging systems.
+The profiler component allows you to collect timing information about database
+queries executed through phpdb. This is invaluable during development for
+identifying slow queries, debugging SQL issues, and integrating with
+development tools and logging systems.
 
 ## Basic Usage
 
@@ -20,7 +23,8 @@ $adapter->setProfiler($profiler);
 $adapter = new Adapter($driver, $platform, $resultSetPrototype, $profiler);
 ```
 
-Once attached, the profiler automatically tracks all queries executed through the adapter.
+Once attached, the profiler automatically tracks all queries executed through
+the adapter.
 
 ## Retrieving Profile Data
 
@@ -64,13 +68,13 @@ foreach ($allProfiles as $index => $profile) {
 
 Each profile entry contains:
 
-| Key          | Type                      | Description                                    |
-|--------------|---------------------------|------------------------------------------------|
-| `sql`        | `string`                  | The SQL query that was executed                |
-| `parameters` | `ParameterContainer\|null` | The bound parameters (if any)                  |
-| `start`      | `float`                   | Unix timestamp with microseconds (query start) |
-| `end`        | `float`                   | Unix timestamp with microseconds (query end)   |
-| `elapse`     | `float`                   | Total execution time in seconds                |
+| Key          | Type                       | Description                    |
+| ------------ | -------------------------- | ------------------------------ |
+| `sql`        | `string`                   | The executed SQL query         |
+| `parameters` | `ParameterContainer\|null` | Bound parameters (if any)      |
+| `start`      | `float`                    | Query start (Unix timestamp)   |
+| `end`        | `float`                    | Query end (Unix timestamp)     |
+| `elapse`     | `float`                    | Execution time in seconds      |
 
 ## Integration with Development Tools
 
@@ -137,7 +141,7 @@ class DebugBarCollector
             $queries[] = [
                 'sql' => $profile['sql'],
                 'params' => $profile['parameters']?->getNamedArray() ?? [],
-                'duration' => round($profile['elapse'] * 1000, 2), // Convert to ms
+                'duration' => round($profile['elapse'] * 1000, 2),
                 'duration_str' => sprintf('%.2f ms', $profile['elapse'] * 1000),
             ];
         }
@@ -357,7 +361,8 @@ $adapter = new Adapter($driver, $platform, $resultSetPrototype, $profiler);
 
 ### Memory Considerations
 
-The profiler stores all query profiles in memory. For long-running processes or batch operations, consider periodically clearing or limiting profiles:
+The profiler stores all query profiles in memory. For long-running processes
+or batch operations, consider periodically clearing or limiting profiles:
 
 ```php
 class LimitedProfiler extends Profiler

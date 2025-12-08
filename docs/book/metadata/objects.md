@@ -1,11 +1,13 @@
 # Metadata Value Objects
 
-Metadata returns value objects that provide an interface to help developers
-better explore the metadata. Below is the API for the various value objects:
+Metadata returns value objects that provide an interface to help
+developers better explore the metadata. Below is the API for the various
+value objects:
 
 ## TableObject
 
-`TableObject` extends `AbstractTableObject` and represents a database table:
+`TableObject` extends `AbstractTableObject` and represents a database
+table:
 
 ```php title="TableObject Class Definition"
 class PhpDb\Metadata\Object\TableObject extends AbstractTableObject
@@ -27,7 +29,11 @@ All setter methods return `static` for fluent interface support:
 ```php title="ColumnObject Class Definition"
 class PhpDb\Metadata\Object\ColumnObject
 {
-    public function __construct(string $name, string $tableName, ?string $schemaName = null);
+    public function __construct(
+        string $name,
+        string $tableName,
+        ?string $schemaName = null
+    );
 
     public function setName(string $name): void;
     public function getName(): string;
@@ -42,7 +48,9 @@ class PhpDb\Metadata\Object\ColumnObject
     public function setOrdinalPosition(?int $ordinalPosition): static;
 
     public function getColumnDefault(): ?string;
-    public function setColumnDefault(null|string|int|bool $columnDefault): static;
+    public function setColumnDefault(
+        null|string|int|bool $columnDefault
+    ): static;
 
     public function getIsNullable(): ?bool;
     public function setIsNullable(?bool $isNullable): static;
@@ -52,10 +60,14 @@ class PhpDb\Metadata\Object\ColumnObject
     public function setDataType(string $dataType): static;
 
     public function getCharacterMaximumLength(): ?int;
-    public function setCharacterMaximumLength(?int $characterMaximumLength): static;
+    public function setCharacterMaximumLength(
+        ?int $characterMaximumLength
+    ): static;
 
     public function getCharacterOctetLength(): ?int;
-    public function setCharacterOctetLength(?int $characterOctetLength): static;
+    public function setCharacterOctetLength(
+        ?int $characterOctetLength
+    ): static;
 
     public function getNumericPrecision(): ?int;
     public function setNumericPrecision(?int $numericPrecision): static;
@@ -64,8 +76,11 @@ class PhpDb\Metadata\Object\ColumnObject
     public function setNumericScale(?int $numericScale): static;
 
     public function getNumericUnsigned(): ?bool;
-    public function setNumericUnsigned(?bool $numericUnsigned): static;
-    public function isNumericUnsigned(): ?bool;  // Alias for getNumericUnsigned()
+    public function setNumericUnsigned(
+        ?bool $numericUnsigned
+    ): static;
+    // Alias for getNumericUnsigned()
+    public function isNumericUnsigned(): ?bool;
 
     public function getErratas(): array;
     public function setErratas(array $erratas): static;
@@ -82,7 +97,11 @@ All setter methods return `static` for fluent interface support:
 ```php title="ConstraintObject Class Definition"
 class PhpDb\Metadata\Object\ConstraintObject
 {
-    public function __construct(string $name, string $tableName, ?string $schemaName = null);
+    public function __construct(
+        string $name,
+        string $tableName,
+        ?string $schemaName = null
+    );
 
     public function setName(string $name): void;
     public function getName(): string;
@@ -101,13 +120,19 @@ class PhpDb\Metadata\Object\ConstraintObject
     public function setColumns(array $columns): static;
 
     public function getReferencedTableSchema(): ?string;
-    public function setReferencedTableSchema(string $referencedTableSchema): static;
+    public function setReferencedTableSchema(
+        string $referencedTableSchema
+    ): static;
 
     public function getReferencedTableName(): ?string;
-    public function setReferencedTableName(string $referencedTableName): static;
+    public function setReferencedTableName(
+        string $referencedTableName
+    ): static;
 
     public function getReferencedColumns(): ?array;
-    public function setReferencedColumns(array $referencedColumns): static;
+    public function setReferencedColumns(
+        array $referencedColumns
+    ): static;
 
     public function getMatchOption(): ?string;
     public function setMatchOption(string $matchOption): static;
@@ -131,8 +156,9 @@ class PhpDb\Metadata\Object\ConstraintObject
 
 ## ViewObject
 
-The `ViewObject` extends `AbstractTableObject` and represents database views. It
-includes all methods from `TableObject` plus view-specific properties:
+The `ViewObject` extends `AbstractTableObject` and represents database
+views. It includes all methods from `TableObject` plus view-specific
+properties:
 
 ```php title="ViewObject Class Definition"
 class PhpDb\Metadata\Object\ViewObject extends AbstractTableObject
@@ -176,13 +202,14 @@ The `getCheckOption()` returns the view's check option:
 - `LOCAL` - Only checks this view for updatability
 - `NONE` - No check option specified
 
-The `isUpdatable()` method (alias for `getIsUpdatable()`) indicates whether the
-view supports INSERT, UPDATE, or DELETE operations.
+The `isUpdatable()` method (alias for `getIsUpdatable()`) indicates
+whether the view supports INSERT, UPDATE, or DELETE operations.
 
 ## ConstraintKeyObject
 
-The `ConstraintKeyObject` provides detailed information about individual columns
-participating in constraints, particularly useful for foreign key relationships:
+The `ConstraintKeyObject` provides detailed information about individual
+columns participating in constraints, particularly useful for foreign key
+relationships:
 
 ```php title="ConstraintKeyObject Class Definition"
 class PhpDb\Metadata\Object\ConstraintKeyObject
@@ -202,35 +229,52 @@ class PhpDb\Metadata\Object\ConstraintKeyObject
     public function setOrdinalPosition(int $ordinalPosition): static;
 
     public function getPositionInUniqueConstraint(): ?bool;
-    public function setPositionInUniqueConstraint(bool $positionInUniqueConstraint): static;
+    public function setPositionInUniqueConstraint(
+        bool $positionInUniqueConstraint
+    ): static;
 
     public function getReferencedTableSchema(): ?string;
-    public function setReferencedTableSchema(string $referencedTableSchema): static;
+    public function setReferencedTableSchema(
+        string $referencedTableSchema
+    ): static;
 
     public function getReferencedTableName(): ?string;
-    public function setReferencedTableName(string $referencedTableName): static;
+    public function setReferencedTableName(
+        string $referencedTableName
+    ): static;
 
     public function getReferencedColumnName(): ?string;
-    public function setReferencedColumnName(string $referencedColumnName): static;
+    public function setReferencedColumnName(
+        string $referencedColumnName
+    ): static;
 
     public function getForeignKeyUpdateRule(): ?string;
-    public function setForeignKeyUpdateRule(string $foreignKeyUpdateRule): void;
+    public function setForeignKeyUpdateRule(
+        string $foreignKeyUpdateRule
+    ): void;
 
     public function getForeignKeyDeleteRule(): ?string;
-    public function setForeignKeyDeleteRule(string $foreignKeyDeleteRule): void;
+    public function setForeignKeyDeleteRule(
+        string $foreignKeyDeleteRule
+    ): void;
 }
 ```
 
 Constraint keys are retrieved using `getConstraintKeys()`:
 
 ```php title="Iterating Through Foreign Key Constraint Details"
-$keys = $metadata->getConstraintKeys('fk_orders_customers', 'orders');
+$keys = $metadata->getConstraintKeys(
+    'fk_orders_customers',
+    'orders'
+);
 foreach ($keys as $key) {
     echo $key->getColumnName() . ' -> '
          . $key->getReferencedTableName() . '.'
          . $key->getReferencedColumnName() . PHP_EOL;
-    echo '  ON UPDATE: ' . $key->getForeignKeyUpdateRule() . PHP_EOL;
-    echo '  ON DELETE: ' . $key->getForeignKeyDeleteRule() . PHP_EOL;
+    echo '  ON UPDATE: ' .
+        $key->getForeignKeyUpdateRule() . PHP_EOL;
+    echo '  ON DELETE: ' .
+        $key->getForeignKeyDeleteRule() . PHP_EOL;
 }
 ```
 
@@ -253,43 +297,65 @@ class PhpDb\Metadata\Object\TriggerObject
     public function setName(string $name): static;
 
     public function getEventManipulation(): ?string;
-    public function setEventManipulation(string $eventManipulation): static;
+    public function setEventManipulation(
+        string $eventManipulation
+    ): static;
 
     public function getEventObjectCatalog(): ?string;
-    public function setEventObjectCatalog(string $eventObjectCatalog): static;
+    public function setEventObjectCatalog(
+        string $eventObjectCatalog
+    ): static;
 
     public function getEventObjectSchema(): ?string;
-    public function setEventObjectSchema(string $eventObjectSchema): static;
+    public function setEventObjectSchema(
+        string $eventObjectSchema
+    ): static;
 
     public function getEventObjectTable(): ?string;
-    public function setEventObjectTable(string $eventObjectTable): static;
+    public function setEventObjectTable(
+        string $eventObjectTable
+    ): static;
 
     public function getActionOrder(): ?string;
     public function setActionOrder(string $actionOrder): static;
 
     public function getActionCondition(): ?string;
-    public function setActionCondition(?string $actionCondition): static;
+    public function setActionCondition(
+        ?string $actionCondition
+    ): static;
 
     public function getActionStatement(): ?string;
-    public function setActionStatement(string $actionStatement): static;
+    public function setActionStatement(
+        string $actionStatement
+    ): static;
 
     public function getActionOrientation(): ?string;
-    public function setActionOrientation(string $actionOrientation): static;
+    public function setActionOrientation(
+        string $actionOrientation
+    ): static;
 
     public function getActionTiming(): ?string;
     public function setActionTiming(string $actionTiming): static;
 
     public function getActionReferenceOldTable(): ?string;
-    public function setActionReferenceOldTable(?string $actionReferenceOldTable): static;
+    public function setActionReferenceOldTable(
+        ?string $actionReferenceOldTable
+    ): static;
 
     public function getActionReferenceNewTable(): ?string;
-    public function setActionReferenceNewTable(?string $actionReferenceNewTable): static;
+    public function setActionReferenceNewTable(
+        ?string $actionReferenceNewTable
+    ): static;
 
     public function getActionReferenceOldRow(): ?string;
-    public function setActionReferenceOldRow(string $actionReferenceOldRow): static;
+    public function setActionReferenceOldRow(
+        string $actionReferenceOldRow
+    ): static;
 
     public function getActionReferenceNewRow(): ?string;
-    public function setActionReferenceNewRow(string $actionReferenceNewRow): static;
+    public function setActionReferenceNewRow(
+        string $actionReferenceNewRow
+    ): static;
 
     public function getCreated(): ?DateTime;
     public function setCreated(?DateTime $created): static;

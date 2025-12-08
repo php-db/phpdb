@@ -1,6 +1,8 @@
 # DDL Abstraction Overview
 
-`PhpDb\Sql\Ddl` provides object-oriented abstraction for DDL (Data Definition Language) statements. Create, alter, and drop tables using PHP objects instead of raw SQL, with automatic platform-specific SQL generation.
+`PhpDb\Sql\Ddl` provides object-oriented abstraction for DDL (Data Definition
+Language) statements. Create, alter, and drop tables using PHP objects instead
+of raw SQL, with automatic platform-specific SQL generation.
 
 ## Basic Workflow
 
@@ -33,7 +35,8 @@ $adapter->query(
 
 ## Creating Tables
 
-The `CreateTable` class represents a `CREATE TABLE` statement. You can build complex table definitions using a fluent, object-oriented interface.
+The `CreateTable` class represents a `CREATE TABLE` statement. You can build
+complex table definitions using a fluent, object-oriented interface.
 
 ```php title="Basic Table Creation"
 use PhpDb\Sql\Ddl\CreateTable;

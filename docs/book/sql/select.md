@@ -1,8 +1,8 @@
 # Select Queries
 
-`PhpDb\Sql\Select` presents a unified API for building platform-specific SQL
-SELECT queries. Instances may be created and consumed without
-`PhpDb\Sql\Sql`:
+`PhpDb\Sql\Select` presents a unified API for building
+platform-specific SQL SELECT queries. Instances may be created and
+consumed without `PhpDb\Sql\Sql`:
 
 ## Creating a Select instance
 
@@ -19,11 +19,12 @@ later to change the name of the table.
 
 ## Select API
 
-Once you have a valid `Select` object, the following API can be used to further
-specify various select statement parts:
+Once you have a valid `Select` object, the following API can be used to
+further specify various select statement parts:
 
 ```php title="Select class definition and constants"
-class Select extends AbstractPreparableSql implements SqlInterface, PreparableSqlInterface
+class Select extends AbstractPreparableSql
+    implements SqlInterface, PreparableSqlInterface
 {
     final public const JOIN_INNER = 'inner';
     final public const JOIN_OUTER = 'outer';
@@ -48,8 +49,12 @@ class Select extends AbstractPreparableSql implements SqlInterface, PreparableSq
     public function __construct(
         array|string|TableIdentifier|null $table = null
     );
-    public function from(array|string|TableIdentifier $table) : static;
-    public function quantifier(ExpressionInterface|string $quantifier) : static;
+    public function from(
+        array|string|TableIdentifier $table
+    ) : static;
+    public function quantifier(
+        ExpressionInterface|string $quantifier
+    ) : static;
     public function columns(
         array $columns,
         bool $prefixColumnsWithTable = true
@@ -69,7 +74,9 @@ class Select extends AbstractPreparableSql implements SqlInterface, PreparableSq
         Having|PredicateInterface|array|Closure|string $predicate,
         string $combination = Predicate\PredicateSet::OP_AND
     ) : static;
-    public function order(ExpressionInterface|array|string $order) : static;
+    public function order(
+        ExpressionInterface|array|string $order
+    ) : static;
     public function limit(int|string $limit) : static;
     public function offset(int|string $offset) : static;
     public function combine(
@@ -123,9 +130,9 @@ $select->columns([
 ```php title="Basic JOIN examples"
 $select->join(
     'foo',              // table name
-    'id = bar.id',      // expression to join on (will be quoted by platform),
-    ['bar', 'baz'],     // (optional) list of columns, same as columns() above
-    $select::JOIN_OUTER // (optional), one of inner, outer, left, right, etc.
+    'id = bar.id',      // expression to join on
+    ['bar', 'baz'],     // (optional) list of columns
+    $select::JOIN_OUTER // (optional), one of inner, outer, etc.
 );
 
 $select
@@ -136,13 +143,19 @@ $select
     );
 ```
 
-The `$on` parameter accepts either a string or a `PredicateInterface` for complex join conditions:
+The `$on` parameter accepts either a string or a `PredicateInterface`
+for complex join conditions:
 
 ```php title="JOIN with predicate conditions"
 use PhpDb\Sql\Predicate;
 
 $where = new Predicate\Predicate();
-$where->equalTo('orders.customerId', 'customers.id', Predicate\Predicate::TYPE_IDENTIFIER, Predicate\Predicate::TYPE_IDENTIFIER)
+$where->equalTo(
+        'orders.customerId',
+        'customers.id',
+        Predicate\Predicate::TYPE_IDENTIFIER,
+        Predicate\Predicate::TYPE_IDENTIFIER
+    )
     ->greaterThan('orders.amount', 100);
 
 $select->from('customers')
@@ -154,7 +167,8 @@ Produces:
 ```sql
 SELECT customers.*, orders.orderId, orders.amount
 FROM customers
-INNER JOIN orders ON orders.customerId = customers.id AND orders.amount > 100
+INNER JOIN orders
+  ON orders.customerId = customers.id AND orders.amount > 100
 ```
 
 ## order()
@@ -166,10 +180,12 @@ $select->order('id DESC'); // produces 'id' DESC
 $select = new Select;
 $select
     ->order('id DESC')
-    ->order('name ASC, age DESC'); // produces 'id' DESC, 'name' ASC, 'age' DESC
+    // produces 'id' DESC, 'name' ASC, 'age' DESC
+    ->order('name ASC, age DESC');
 
 $select = new Select;
-$select->order(['name ASC', 'age DESC']); // produces 'name' ASC, 'age' DESC
+// produces 'name' ASC, 'age' DESC
+$select->order(['name ASC', 'age DESC']);
 ```
 
 ## limit() and offset()
@@ -182,14 +198,16 @@ $select->offset(10);
 
 ## group()
 
-The `group()` method specifies columns for GROUP BY clauses, typically used with
-aggregate functions to group rows that share common values.
+The `group()` method specifies columns for GROUP BY clauses,
+typically used with aggregate functions to group rows that share
+common values.
 
 ```php title="Grouping by a single column"
 $select->group('category');
 ```
 
-Multiple columns can be specified as an array, or by calling `group()` multiple times:
+Multiple columns can be specified as an array,
+or by calling `group()` multiple times:
 
 ```php title="Grouping by multiple columns"
 $select->group(['category', 'status']);
@@ -232,15 +250,16 @@ $select->from('orders')
 Produces:
 
 ```sql
-SELECT YEAR(created_at) AS orderYear, COUNT(*) AS orderCount
+SELECT YEAR(created_at) AS orderYear,
+       COUNT(*) AS orderCount
 FROM orders
 GROUP BY YEAR(created_at)
 ```
 
 ## quantifier()
 
-The `quantifier()` method applies a quantifier to the SELECT statement, such as
-DISTINCT or ALL.
+The `quantifier()` method applies a quantifier to the SELECT statement,
+such as DISTINCT or ALL.
 
 ```php title="Using DISTINCT quantifier"
 $select->from('orders')
@@ -254,8 +273,8 @@ Produces:
 SELECT DISTINCT customer_id FROM orders
 ```
 
-The `QUANTIFIER_ALL` constant explicitly specifies ALL, though this is typically
-the default behavior:
+The `QUANTIFIER_ALL` constant explicitly specifies ALL,
+though this is typically the default behavior:
 
 ```php title="Using ALL quantifier"
 $select->quantifier(Select::QUANTIFIER_ALL);
@@ -263,8 +282,8 @@ $select->quantifier(Select::QUANTIFIER_ALL);
 
 ## reset()
 
-The `reset()` method allows you to clear specific parts of a Select statement,
-useful when building queries dynamically.
+The `reset()` method allows you to clear specific parts of a Select
+statement, useful when building queries dynamically.
 
 ```php title="Building a Select query before reset"
 $select->from('users')
@@ -277,7 +296,8 @@ $select->from('users')
 Before reset, produces:
 
 ```sql
-SELECT id, name FROM users WHERE status = 'active' ORDER BY created_at DESC LIMIT 10
+SELECT id, name FROM users
+WHERE status = 'active' ORDER BY created_at DESC LIMIT 10
 ```
 
 After resetting WHERE, ORDER, and LIMIT:
@@ -307,13 +327,13 @@ Available parts that can be reset:
 - `Select::ORDER`
 - `Select::COMBINE`
 
-Note that resetting `Select::TABLE` will throw an exception if the table was
-provided in the constructor (read-only table).
+Note that resetting `Select::TABLE` will throw an exception if the
+table was provided in the constructor (read-only table).
 
 ## getRawState()
 
-The `getRawState()` method returns the internal state of the Select object,
-useful for debugging or introspection.
+The `getRawState()` method returns the internal state of the Select
+object, useful for debugging or introspection.
 
 ```php title="Getting the full raw state"
 $state = $select->getRawState();
@@ -347,7 +367,8 @@ $limit = $select->getRawState(Select::LIMIT);
 
 ## Combine
 
-For combining SELECT statements using UNION, INTERSECT, or EXCEPT, see [Advanced SQL Features: Combine](advanced.md#combine-union-intersect-except).
+For combining SELECT statements using UNION, INTERSECT, or EXCEPT,
+see [Advanced SQL Features: Combine](advanced.md#combine-union-intersect-except).
 
 Quick example:
 
@@ -390,8 +411,8 @@ $select->from(['u' => 'users'])
 
 ### JOIN with no column selection
 
-When you need to join a table only for filtering purposes without selecting its
-columns:
+When you need to join a table only for filtering purposes without
+selecting its columns:
 
 ```php title="Joining for filtering without selecting columns"
 $select->from('orders')

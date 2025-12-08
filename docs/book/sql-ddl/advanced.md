@@ -4,7 +4,9 @@
 
 ### DDL Error Behavior
 
-**Important:** DDL objects themselves do **not throw exceptions** during construction or configuration. They are designed to build up state without validation.
+**Important:** DDL objects themselves do **not throw exceptions** during
+construction or configuration. They are designed to build up state without
+validation.
 
 Errors typically occur during:
 

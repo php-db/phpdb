@@ -219,7 +219,8 @@ try {
 
 ### Property Access Not Working
 
-`$row->column_name` returns null? Ensure using ArrayObject mode (default), or use array access: `$row['column_name']`.
+`$row->column_name` returns null? Ensure using ArrayObject mode (default),
+or use array access: `$row['column_name']`.
 
 ### Hydration Failures
 
@@ -236,14 +237,18 @@ Column names must match property names or setter methods:
 // Database columns: first_name, last_name
 class UserEntity
 {
-    protected string $first_name; // Matches column name
-    public function setFirstName($value) {} // For ClassMethodsHydrator
+    // Matches column name
+    protected string $first_name;
+    // For ClassMethodsHydrator
+    public function setFirstName($value) {}
 }
 ```
 
 ### toArray() Issues
 
-Ensure the result set is buffered first: `$resultSet->buffer()`. For `HydratingResultSet`, the hydrator must have an `extract()` method (e.g., `ReflectionHydrator`).
+Ensure the result set is buffered first: `$resultSet->buffer()`. For
+`HydratingResultSet`, the hydrator must have an `extract()` method
+(e.g., `ReflectionHydrator`).
 
 ## Performance Tips
 
@@ -293,7 +298,9 @@ foreach ($users as $user) {
 Reduce data at the database level:
 
 ```php
-$resultSet = $adapter->query('SELECT id, name FROM users WHERE active = 1 LIMIT 100');
+$resultSet = $adapter->query(
+    'SELECT id, name FROM users WHERE active = 1 LIMIT 100'
+);
 ```
 
 ### Profile Memory Usage

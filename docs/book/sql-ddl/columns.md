@@ -19,7 +19,16 @@ $column = new Integer('user_id');
 $column->setOption('length', 11);
 ```
 
-**Constructor:** `__construct($name, $nullable = false, $default = null, array $options = [])`
+**Constructor:**
+
+```php
+__construct(
+    $name,
+    $nullable = false,
+    $default = null,
+    array $options = []
+)
+```
 
 **Methods:**
 
@@ -41,7 +50,16 @@ $column = new BigInteger('large_number');
 $column = new BigInteger('id', false, null, ['length' => 20]);
 ```
 
-**Constructor:** `__construct($name, $nullable = false, $default = null, array $options = [])`
+**Constructor:**
+
+```php
+__construct(
+    $name,
+    $nullable = false,
+    $default = null,
+    array $options = []
+)
+```
 
 ### Decimal
 
@@ -138,7 +156,17 @@ $column = new Text('content', 65535); // With length limit
 $column = new Text('notes', null, true, 'No notes');
 ```
 
-**Constructor:** `__construct($name, $length = null, $nullable = false, $default = null, array $options = [])`
+**Constructor:**
+
+```php
+__construct(
+    $name,
+    $length = null,
+    $nullable = false,
+    $default = null,
+    array $options = []
+)
+```
 
 ## Binary Types
 
@@ -152,7 +180,17 @@ use PhpDb\Sql\Ddl\Column\Binary;
 $column = new Binary('hash', 32); // 32-byte hash
 ```
 
-**Constructor:** `__construct($name, $length, $nullable = false, $default = null, array $options = [])`
+**Constructor:**
+
+```php
+__construct(
+    $name,
+    $length,
+    $nullable = false,
+    $default = null,
+    array $options = []
+)
+```
 
 ### Varbinary
 
@@ -177,7 +215,17 @@ $column = new Blob('image');
 $column = new Blob('document', 16777215); // MEDIUMBLOB size
 ```
 
-**Constructor:** `__construct($name, $length = null, $nullable = false, $default = null, array $options = [])`
+**Constructor:**
+
+```php
+__construct(
+    $name,
+    $length = null,
+    $nullable = false,
+    $default = null,
+    array $options = []
+)
+```
 
 ## Date and Time Types
 
@@ -248,7 +296,9 @@ $column->setOption('on_update', true);
 
 ### Boolean
 
-Boolean/bit column. **Note:** Boolean columns are always NOT NULL and cannot be made nullable.
+Boolean/bit column.
+
+> **Note:** Boolean columns are always NOT NULL and cannot be made nullable.
 
 ```php title="Creating Boolean Columns"
 use PhpDb\Sql\Ddl\Column\Boolean;
@@ -329,13 +379,13 @@ $options = $column->getOptions();
 
 ### Documented Options
 
-| Option | Type | Platforms | Description | Example |
-|--------|------|-----------|-------------|---------|
-| `AUTO_INCREMENT` | bool | MySQL, MariaDB | Auto-incrementing integer | `$col->setOption('AUTO_INCREMENT', true)` |
-| `identity` | bool | PostgreSQL, SQL Server | Identity/Serial column | `$col->setOption('identity', true)` |
-| `comment` | string | MySQL, PostgreSQL | Column comment/description | `$col->setOption('comment', 'User ID')` |
-| `on_update` | bool | MySQL (Timestamp) | ON UPDATE CURRENT_TIMESTAMP | `$col->setOption('on_update', true)` |
-| `length` | int | MySQL (Integer) | Display width | `$col->setOption('length', 11)` |
+| Option           | Type   | Platforms         | Description                 |
+| ---------------- | ------ | ----------------- | --------------------------- |
+| `AUTO_INCREMENT` | bool   | MySQL, MariaDB    | Auto-increment integer      |
+| `identity`       | bool   | PostgreSQL, MSSQL | Identity/Serial column      |
+| `comment`        | string | MySQL, PostgreSQL | Column comment              |
+| `on_update`      | bool   | MySQL (Timestamp) | ON UPDATE CURRENT_TIMESTAMP |
+| `length`         | int    | MySQL (Integer)   | Display width               |
 
 ### MySQL/MariaDB Specific Options
 
@@ -419,10 +469,13 @@ $table->addColumn($column);
 
 **Important Considerations:**
 
-1. **Not all options work on all platforms** - Test your DDL against your target database
+1. **Not all options work on all platforms** - Test your DDL against your
+   target database
 2. **Some options are silently ignored** on unsupported platforms
-3. **Platform rendering varies** - the same option may produce different SQL on different platforms
-4. **Options are not validated** by DDL objects - invalid options may cause SQL errors during execution
+3. **Platform rendering varies** - the same option may produce different SQL
+   on different platforms
+4. **Options are not validated** by DDL objects - invalid options may cause
+   SQL errors during execution
 
 ## Column Type Selection Best Practices
 

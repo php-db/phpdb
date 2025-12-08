@@ -1,19 +1,23 @@
 # SQL Abstraction
 
-`PhpDb\Sql` provides an object-oriented API for building platform-specific SQL queries. It produces either a prepared `Statement` with `ParameterContainer`, or a raw SQL string for direct execution. Requires an `Adapter` for platform-specific SQL generation.
+`PhpDb\Sql` provides an object-oriented API for building
+platform-specific SQL queries. It produces either a prepared `Statement`
+with `ParameterContainer`, or a raw SQL string for direct execution.
+Requires an `Adapter` for platform-specific SQL generation.
 
 ## Quick Start
 
-The `PhpDb\Sql\Sql` class creates the four primary DML statement types: `Select`, `Insert`, `Update`, and `Delete`.
+The `PhpDb\Sql\Sql` class creates the four primary DML statement types:
+`Select`, `Insert`, `Update`, and `Delete`.
 
 ```php title="Creating SQL Statement Objects"
 use PhpDb\Sql\Sql;
 
 $sql    = new Sql($adapter);
-$select = $sql->select(); // returns a PhpDb\Sql\Select instance
-$insert = $sql->insert(); // returns a PhpDb\Sql\Insert instance
-$update = $sql->update(); // returns a PhpDb\Sql\Update instance
-$delete = $sql->delete(); // returns a PhpDb\Sql\Delete instance
+$select = $sql->select(); // PhpDb\Sql\Select instance
+$insert = $sql->insert(); // PhpDb\Sql\Insert instance
+$update = $sql->update(); // PhpDb\Sql\Update instance
+$delete = $sql->delete(); // PhpDb\Sql\Delete instance
 ```
 
 As a developer, you can now interact with these objects, as described in the
@@ -61,7 +65,8 @@ use PhpDb\Sql\Sql;
 
 $sql    = new Sql($adapter, 'foo');
 $select = $sql->select();
-$select->where(['id' => 2]); // $select already has from('foo') applied
+// $select already has from('foo') applied
+$select->where(['id' => 2]);
 ```
 
 ## Common Interfaces for SQL Implementations
@@ -79,12 +84,14 @@ interface PreparableSqlInterface
 
 interface SqlInterface
 {
-     public function getSqlString(PlatformInterface $adapterPlatform = null) : string;
+     public function getSqlString(
+         PlatformInterface $adapterPlatform = null
+     ) : string;
 }
 ```
 
-Use these functions to produce either (a) a prepared statement, or (b) a string
-to execute.
+Use these functions to produce either (a) a prepared statement,
+or (b) a string to execute.
 
 ## SQL Arguments and Argument Types
 
@@ -93,15 +100,18 @@ to execute.
 specification of SQL values. This provides a modern, object-oriented
 alternative to using raw values or the legacy type constants.
 
-The `ArgumentType` enum defines six types, each backed by its corresponding class:
+The `ArgumentType` enum defines six types,
+each backed by its corresponding class:
 
 - `Identifier` - For column names, table names, and other identifiers that
   should be quoted
-- `Identifiers` - For arrays of identifiers (e.g., multi-column IN predicates)
+- `Identifiers` - For arrays of identifiers
+  (e.g., multi-column IN predicates)
 - `Value` - For values that should be parameterized or properly escaped
   (default)
 - `Values` - For arrays of values (e.g., IN clauses)
-- `Literal` - For literal SQL fragments that should not be quoted or escaped
+- `Literal` - For literal SQL fragments that should not be quoted
+  or escaped
 - `Select` - For subqueries (Expression or SqlInterface objects)
 
 All argument classes are `readonly` and implement `ArgumentInterface`:
@@ -114,7 +124,8 @@ $valueArg = Argument::value(123);             // Value type
 $identifierArg = Argument::identifier('id');  // Identifier type
 $literalArg = Argument::literal('NOW()');     // Literal SQL
 $valuesArg = Argument::values([1, 2, 3]);     // Multiple values
-$identifiersArg = Argument::identifiers(['col1', 'col2']); // Multiple identifiers
+// Multiple identifiers
+$identifiersArg = Argument::identifiers(['col1', 'col2']);
 
 // Direct instantiation is preferred
 $arg = new Argument\Identifier('column_name');
@@ -123,8 +134,8 @@ $arg = new Argument\Literal('NOW()');
 $arg = new Argument\Values([1, 2, 3]);
 ```
 
-The `Argument` classes are particularly useful when working with expressions
-where you need to explicitly control how values are treated:
+The `Argument` classes are particularly useful when working with
+expressions where you need to explicitly control how values are treated:
 
 ```php title="Type-Safe Expression Arguments"
 use PhpDb\Sql\Argument;
@@ -149,16 +160,18 @@ Scalar values passed directly to `Expression` are automatically wrapped:
 
 > ### Literals
 >
-> `PhpDb\Sql` makes the distinction that literals will not have any parameters
-> that need interpolating, while `Expression` objects *might* have parameters
-> that need interpolating. In cases where there are parameters in an `Expression`,
-> `PhpDb\Sql\AbstractSql` will do its best to identify placeholders when the
-> `Expression` is processed during statement creation. In short, if you don't
-> have parameters, use `Literal` objects`.
+> `PhpDb\Sql` makes the distinction that literals will not have any
+> parameters that need interpolating, while `Expression` objects *might*
+> have parameters that need interpolating. In cases where there are
+> parameters in an `Expression`, `PhpDb\Sql\AbstractSql` will do its best
+> to identify placeholders when the `Expression` is processed during
+> statement creation. In short, if you don't have parameters,
+> use `Literal` objects`.
 
 ## Working with the Sql Factory Class
 
-The `Sql` class serves as a factory for creating SQL statement objects and provides methods for preparing and building SQL strings.
+The `Sql` class serves as a factory for creating SQL statement objects
+and provides methods for preparing and building SQL strings.
 
 ```php title="Instantiating the Sql Factory"
 use PhpDb\Sql\Sql;
@@ -183,7 +196,8 @@ $delete = $sql->delete('users');
 
 ### Using a Default Table with Factory Methods
 
-When a default table is set on the Sql instance, it will be used for all created statements unless overridden:
+When a default table is set on the Sql instance,
+it will be used for all created statements unless overridden:
 
 ```php
 $sql = new Sql($adapter, 'users');
@@ -216,13 +230,15 @@ $select = $sql->select('users')->where(['id' => 5]);
 $sqlString = $sql->buildSqlString($select);
 ```
 
-Note: Direct string building bypasses parameter binding. Use with caution and never with user input.
+Note: Direct string building bypasses parameter binding.
+Use with caution and never with user input.
 
 ```php title="Getting the SQL Platform"
 $platform = $sql->getSqlPlatform();
 ```
 
-The platform object handles database-specific SQL generation and can be used for custom query building.
+The platform object handles database-specific SQL generation and can be
+used for custom query building.
 
 ## TableIdentifier
 

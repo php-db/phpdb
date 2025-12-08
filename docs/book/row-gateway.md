@@ -1,6 +1,9 @@
 # Row Gateways
 
-`PhpDb\RowGateway` implements the [Row Data Gateway pattern](http://www.martinfowler.com/eaaCatalog/rowDataGateway.html) - an object that wraps a single database row, providing `save()` and `delete()` methods to persist changes.
+`PhpDb\RowGateway` implements the
+[Row Data Gateway pattern](http://www.martinfowler.com/eaaCatalog/rowDataGateway.html),
+an object that wraps a single database row, providing `save()` and `delete()`
+methods to persist changes.
 
 `RowGatewayInterface` defines these methods:
 
@@ -28,7 +31,10 @@ The following demonstrates a basic use case.
 use PhpDb\RowGateway\RowGateway;
 
 // Query the database:
-$resultSet = $adapter->query('SELECT * FROM `user` WHERE `id` = ?', [2]);
+$resultSet = $adapter->query(
+    'SELECT * FROM `user` WHERE `id` = ?',
+    [2]
+);
 
 // Get array of data:
 $rowData = $resultSet->current()->getArrayCopy();
@@ -45,9 +51,10 @@ $rowGateway->save();
 $rowGateway->delete();
 ```
 
-The workflow described above is greatly simplified when `RowGateway` is used in
-conjunction with the [TableGateway RowGatewayFeature](table-gateway.md#tablegateway-features).
-In that paradigm, `select()` operations will produce a `ResultSet` that iterates
+The workflow described above is greatly simplified when `RowGateway` is used
+in conjunction with the
+[TableGateway RowGatewayFeature](table-gateway.md#tablegateway-features). In
+that paradigm, `select()` operations will produce a `ResultSet` that iterates
 `RowGateway` instances.
 
 As an example:
@@ -69,8 +76,8 @@ $artistRow->save();
 If you wish to have custom behaviour in your `RowGateway` objects &mdash;
 essentially making them behave similarly to the
 [ActiveRecord](http://www.martinfowler.com/eaaCatalog/activeRecord.html)
-pattern), pass a prototype object implementing the `RowGatewayInterface` to the
-`RowGatewayFeature` constructor instead of a primary key:
+pattern), pass a prototype object implementing the `RowGatewayInterface` to
+the `RowGatewayFeature` constructor instead of a primary key:
 
 ```php title="Custom ActiveRecord-Style Implementation"
 use PhpDb\TableGateway\Feature\RowGatewayFeature;
@@ -89,5 +96,9 @@ class Artist implements RowGatewayInterface
     // ... save() and delete() implementations
 }
 
-$table = new TableGateway('artist', $adapter, new RowGatewayFeature(new Artist($adapter)));
+$table = new TableGateway(
+    'artist',
+    $adapter,
+    new RowGatewayFeature(new Artist($adapter))
+);
 ```
