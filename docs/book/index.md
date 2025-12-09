@@ -13,14 +13,8 @@ phpdb is a database abstraction layer providing:
 
 ## Installation
 
-Install the core package via Composer:
-
-```bash
-composer require php-db/phpdb
-```
-
-Additionally, install the driver package(s) for the database(s) you plan to
-use:
+Install the driver package(s) for the database(s) you plan to
+use via Composer:
 
 ```bash
 # For MySQL/MariaDB support
@@ -32,6 +26,9 @@ composer require php-db/sqlite
 # For PostgreSQL support (coming soon)
 composer require php-db/postgres
 ```
+
+This will also install the `php-db/phpdb` package, which provides the core
+abstractions and functionality.
 
 ### Mezzio
 

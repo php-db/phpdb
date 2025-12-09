@@ -2,142 +2,116 @@
 
 For installation instructions, see [Installation](../index.md#installation).
 
-## Service Configuration
+## Configuration
 
-Now that the phpdb packages are installed, you need to configure the
-adapter through your application's service manager.
+The adapter factory is already wired into the service manager. You only
+need to provide the `db` configuration in `config/autoload/db.global.php`:
 
-### Configuring the Adapter
-
-Create a configuration file `config/autoload/database.global.php`
-(or `local.php` for credentials) to define database settings.
-
-### Working with a SQLite database
-
-SQLite is a lightweight option to have the application working with a database.
-
-Here is an example of the configuration array for a SQLite database.
-Assuming the SQLite file path is `data/sample.sqlite`, the following
-configuration will produce the adapter:
-
-```php title="SQLite adapter configuration"
+```php title="config/autoload/db.global.php"
 <?php
 
 declare(strict_types=1);
 
-use PhpDb\Adapter\Adapter;
-use PhpDb\Adapter\AdapterInterface;
-use PhpDb\Sqlite\Driver\Sqlite;
-use PhpDb\Sqlite\Platform\Sqlite as SqlitePlatform;
-use Psr\Container\ContainerInterface;
+use PhpDb\Adapter\Driver\Pdo;
 
 return [
-    'service_manager' => [
-        'factories' => [
-            Adapter::class => function (ContainerInterface $container) {
-                $driver = new Sqlite([
-                    'database' => 'data/sample.sqlite',
-                ]);
-                return new Adapter($driver, new SqlitePlatform());
-            },
+    'db' => [
+        'driver'     => Pdo::class,
+        'connection' => [
+            'hostname'       => (string) getenv('DB_HOSTNAME') ?: 'localhost',
+            'username'       => (string) getenv('DB_USERNAME'),
+            'password'       => (string) getenv('DB_PASSWORD'),
+            'database'       => (string) getenv('DB_DATABASE'),
+            'port'           => (string) getenv('DB_PORT') ?: '3306',
+            'charset'        => 'utf8',
+            'driver_options' => [],
         ],
-        'aliases' => [
-            AdapterInterface::class => Adapter::class,
+        'options'    => [
+            'buffer_results' => false,
         ],
     ],
 ];
 ```
 
-The `data/` filepath for the SQLite file is the default `data/` directory
-from the Laminas MVC application.
+### Named Adapters
 
-### Working with a MySQL database
+For applications requiring multiple database connections (e.g., read/write
+separation), use named adapters:
 
-Unlike a SQLite database, the MySQL database adapter requires a MySQL server.
-
-Here is an example of a configuration array for a MySQL database:
-
-```php title="MySQL adapter configuration"
+```php title="config/autoload/db.global.php"
 <?php
 
 declare(strict_types=1);
 
-use PhpDb\Adapter\Adapter;
-use PhpDb\Adapter\AdapterInterface;
-use PhpDb\Mysql\Driver\Mysql;
-use PhpDb\Mysql\Platform\Mysql as MysqlPlatform;
-use Psr\Container\ContainerInterface;
+use PhpDb\Adapter\Driver\Pdo;
 
 return [
-    'service_manager' => [
-        'factories' => [
-            Adapter::class => function (ContainerInterface $container) {
-                $driver = new Mysql([
-                    'database' => 'your_database_name',
-                    'username' => 'your_mysql_username',
-                    'password' => 'your_mysql_password',
-                    'hostname' => 'localhost',
-                    'charset' => 'utf8mb4',
-                ]);
-                return new Adapter($driver, new MysqlPlatform());
-            },
-        ],
-        'aliases' => [
-            AdapterInterface::class => Adapter::class,
+    'db' => [
+        'adapters' => [
+            'ReadAdapter' => [
+                'driver'     => Pdo::class,
+                'connection' => [
+                    'hostname'       => (string) getenv('DB_READ_HOSTNAME') ?: 'localhost',
+                    'username'       => (string) getenv('DB_READ_USERNAME'),
+                    'password'       => (string) getenv('DB_READ_PASSWORD'),
+                    'database'       => (string) getenv('DB_READ_DATABASE'),
+                    'port'           => (string) getenv('DB_READ_PORT') ?: '3306',
+                    'charset'        => 'utf8',
+                    'driver_options' => [],
+                ],
+                'options'    => [
+                    'buffer_results' => true,
+                ],
+            ],
+            'WriteAdapter' => [
+                'driver'     => Pdo::class,
+                'connection' => [
+                    'hostname'       => (string) getenv('DB_WRITE_HOSTNAME') ?: 'localhost',
+                    'username'       => (string) getenv('DB_WRITE_USERNAME'),
+                    'password'       => (string) getenv('DB_WRITE_PASSWORD'),
+                    'database'       => (string) getenv('DB_WRITE_DATABASE'),
+                    'port'           => (string) getenv('DB_WRITE_PORT') ?: '3306',
+                    'charset'        => 'utf8',
+                    'driver_options' => [],
+                ],
+                'options'    => [
+                    'buffer_results' => false,
+                ],
+            ],
         ],
     ],
 ];
 ```
 
-### Working with PostgreSQL database
+## Working with the Adapter
 
-PostgreSQL support is coming soon. Once the `php-db/postgres` package is
-available:
+### Container-Managed Instantiation
 
-```php title="PostgreSQL adapter configuration"
-<?php
-
-declare(strict_types=1);
-
-use PhpDb\Adapter\Adapter;
-use PhpDb\Adapter\AdapterInterface;
-use PhpDb\Postgres\Driver\Postgres;
-use PhpDb\Postgres\Platform\Postgres as PostgresPlatform;
-use Psr\Container\ContainerInterface;
-
-return [
-    'service_manager' => [
-        'factories' => [
-            Adapter::class => function (ContainerInterface $container) {
-                $driver = new Postgres([
-                    'database' => 'your_database_name',
-                    'username' => 'your_pgsql_username',
-                    'password' => 'your_pgsql_password',
-                    'hostname' => 'localhost',
-                    'port' => 5432,
-                ]);
-                return new Adapter($driver, new PostgresPlatform());
-            },
-        ],
-        'aliases' => [
-            AdapterInterface::class => Adapter::class,
-        ],
-    ],
-];
-```
-
-## Working with the adapter
-
-Once you have configured an adapter, as in the above examples,
-you now have a `PhpDb\Adapter\Adapter` available to your application.
-
-A factory for a class that consumes an adapter can pull the adapter from
-the container:
+Once configured, retrieve the adapter from the service manager:
 
 ```php title="Retrieving the adapter from the service container"
 use PhpDb\Adapter\AdapterInterface;
 
 $adapter = $container->get(AdapterInterface::class);
+```
+
+### Manual Instantiation
+
+If you need to create an adapter without the container:
+
+```php
+use PhpDb\Adapter\Adapter;
+use PhpDb\Mysql\Driver\Mysql;
+use PhpDb\Mysql\Platform\Mysql as MysqlPlatform;
+
+$driver = new Mysql([
+    'hostname' => 'localhost',
+    'database' => 'my_database',
+    'username' => 'my_username',
+    'password' => 'my_password',
+]);
+
+$adapter = new Adapter($driver, new MysqlPlatform());
 ```
 
 You can read more about the
