@@ -10,7 +10,7 @@ use PhpDb\Sql\TableIdentifier;
 
 use function array_key_exists;
 
-class CreateTable extends AbstractSql implements SqlInterface
+class CreateTable extends AbstractSql
 {
     final public const COLUMNS = 'columns';
 
