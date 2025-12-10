@@ -8,9 +8,8 @@ use PhpDb\Sql\ArgumentInterface;
 use PhpDb\Sql\ArgumentType;
 use PhpDb\Sql\PreparableSqlInterface;
 
-use function array_map;
 use function array_values;
-use function implode;
+use function str_contains;
 use function str_replace;
 
 /**
@@ -51,17 +50,29 @@ final readonly class Identifiers implements ArgumentInterface
             return '(NULL)';
         }
 
-        $marked = array_map(
-            static fn(string $id): string => PreparableSqlInterface::P_LQUOTE
-                . str_replace(
-                    '.',
-                    PreparableSqlInterface::P_RQUOTE . '.' . PreparableSqlInterface::P_LQUOTE,
-                    $id
-                )
-                . PreparableSqlInterface::P_RQUOTE,
-            $this->identifiers
-        );
+        // Build marked identifiers with string concatenation for efficiency
+        $result = '(';
+        $first = true;
+        foreach ($this->identifiers as $id) {
+            if (! $first) {
+                $result .= ', ';
+            }
+            $first = false;
 
-        return '(' . implode(', ', $marked) . ')';
+            // Fast path for simple identifiers without dots
+            if (! str_contains($id, '.')) {
+                $result .= PreparableSqlInterface::P_LQUOTE . $id . PreparableSqlInterface::P_RQUOTE;
+            } else {
+                $result .= PreparableSqlInterface::P_LQUOTE
+                    . str_replace(
+                        '.',
+                        PreparableSqlInterface::P_RQUOTE . '.' . PreparableSqlInterface::P_LQUOTE,
+                        $id
+                    )
+                    . PreparableSqlInterface::P_RQUOTE;
+            }
+        }
+
+        return $result . ')';
     }
 }
