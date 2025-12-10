@@ -14,6 +14,7 @@ use function implode;
 use function preg_split;
 use function str_contains;
 use function str_replace;
+use function strpbrk;
 use function strtolower;
 use function trigger_error;
 
@@ -48,21 +49,25 @@ abstract class AbstractPlatform implements PlatformInterface
         }
 
         if ($additionalSafeWords === []) {
-            if (
-                ! str_contains($identifier, ' ') &&
-                ! str_contains($identifier, '=') &&
-                ! str_contains($identifier, '(')
-            ) {
+            if (strpbrk($identifier, ' =(') === false) {
                 $quoteStart = $this->quoteIdentifier[0];
                 $quoteEnd   = $this->quoteIdentifier[1];
                 $quoteTo    = $this->quoteIdentifierTo;
 
                 if (! str_contains($identifier, '.')) {
+                    // Handle standalone * (safe word)
+                    if ($identifier === '*') {
+                        return '*';
+                    }
                     return $quoteStart . str_replace($quoteStart, $quoteTo, $identifier) . $quoteEnd;
                 }
 
                 $parts = explode('.', $identifier);
                 if (count($parts) === 2) {
+                    // Handle table.* pattern - * is a safe word
+                    if ($parts[1] === '*') {
+                        return $quoteStart . str_replace($quoteStart, $quoteTo, $parts[0]) . $quoteEnd . '.*';
+                    }
                     return $quoteStart . str_replace($quoteStart, $quoteTo, $parts[0]) . $quoteEnd
                         . '.'
                         . $quoteStart . str_replace($quoteStart, $quoteTo, $parts[1]) . $quoteEnd;
