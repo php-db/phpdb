@@ -13,6 +13,9 @@ use PhpDb\Sql\TableIdentifier;
 use PhpDb\Sql\Where;
 
 use function array_key_exists;
+use function implode;
+use function is_array;
+use function rtrim;
 use function str_replace;
 use function strtolower;
 
@@ -94,6 +97,35 @@ class Delete extends AbstractPreparableSql
         }
 
         return $this;
+    }
+
+    /**
+     * Optimized buildSqlString using match expression instead of dynamic method dispatch
+     */
+    protected function buildSqlString(
+        PlatformInterface $platform,
+        ?DriverInterface $driver = null,
+        ?ParameterContainer $parameterContainer = null
+    ): string {
+        $this->localizeVariables();
+
+        $sqls = [];
+
+        foreach ($this->specifications as $name => $specification) {
+            $result = match ($name) {
+                'delete' => $this->processDelete($platform, $driver, $parameterContainer),
+                'where' => $this->processWhere($platform, $driver, $parameterContainer),
+                default => $this->{'process' . $name}($platform, $driver, $parameterContainer),
+            };
+
+            if (is_array($result)) {
+                $sqls[$name] = $this->createSqlFromSpecificationAndParameters($specification, $result);
+            } elseif ($result !== null) {
+                $sqls[$name] = $result;
+            }
+        }
+
+        return rtrim(implode(' ', $sqls), "\n ,");
     }
 
     protected function processDelete(

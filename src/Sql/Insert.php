@@ -17,8 +17,10 @@ use function array_map;
 use function array_values;
 use function count;
 use function implode;
+use function is_array;
 use function is_scalar;
 use function range;
+use function rtrim;
 use function str_replace;
 
 class Insert extends AbstractPreparableSql
@@ -146,6 +148,35 @@ class Insert extends AbstractPreparableSql
             'values'  => array_values($this->columns),
         ];
         return $key !== null && array_key_exists($key, $rawState) ? $rawState[$key] : $rawState;
+    }
+
+    /**
+     * Optimized buildSqlString using match expression instead of dynamic method dispatch
+     */
+    protected function buildSqlString(
+        PlatformInterface $platform,
+        ?DriverInterface $driver = null,
+        ?ParameterContainer $parameterContainer = null
+    ): string {
+        $this->localizeVariables();
+
+        $sqls = [];
+
+        foreach ($this->specifications as $name => $specification) {
+            $result = match ($name) {
+                'insert' => $this->processInsert($platform, $driver, $parameterContainer),
+                'select' => $this->processSelect($platform, $driver, $parameterContainer),
+                default => $this->{'process' . $name}($platform, $driver, $parameterContainer),
+            };
+
+            if (is_array($result)) {
+                $sqls[$name] = $this->createSqlFromSpecificationAndParameters($specification, $result);
+            } elseif ($result !== null) {
+                $sqls[$name] = $result;
+            }
+        }
+
+        return rtrim(implode(' ', $sqls), "\n ,");
     }
 
     protected function processInsert(

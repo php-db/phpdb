@@ -15,6 +15,7 @@ use function count;
 use function current;
 use function explode;
 use function gettype;
+use function implode;
 use function is_array;
 use function is_int;
 use function is_numeric;
@@ -23,6 +24,7 @@ use function is_string;
 use function key;
 use function method_exists;
 use function preg_split;
+use function rtrim;
 use function sprintf;
 use function str_contains;
 use function strcasecmp;
@@ -465,6 +467,44 @@ class Select extends AbstractPreparableSql
     public function isTableReadOnly(): bool
     {
         return $this->tableReadOnly;
+    }
+
+    /**
+     * Optimized buildSqlString using match expression instead of dynamic method dispatch
+     */
+    protected function buildSqlString(
+        PlatformInterface $platform,
+        ?DriverInterface $driver = null,
+        ?ParameterContainer $parameterContainer = null
+    ): string {
+        $this->localizeVariables();
+
+        $sqls = [];
+
+        foreach ($this->specifications as $name => $specification) {
+            $result = match ($name) {
+                'statementStart' => $this->processStatementStart(),
+                'select' => $this->processSelect($platform, $driver, $parameterContainer),
+                'joins' => $this->processJoins($platform, $driver, $parameterContainer),
+                'where' => $this->processWhere($platform, $driver, $parameterContainer),
+                'group' => $this->processGroup($platform, $driver, $parameterContainer),
+                'having' => $this->processHaving($platform, $driver, $parameterContainer),
+                'order' => $this->processOrder($platform, $driver, $parameterContainer),
+                'limit' => $this->processLimit($platform, $driver, $parameterContainer),
+                'offset' => $this->processOffset($platform, $driver, $parameterContainer),
+                'statementEnd' => $this->processStatementEnd(),
+                'combine' => $this->processCombine($platform, $driver, $parameterContainer),
+                default => $this->{'process' . $name}($platform, $driver, $parameterContainer),
+            };
+
+            if (is_array($result)) {
+                $sqls[$name] = $this->createSqlFromSpecificationAndParameters($specification, $result);
+            } elseif ($result !== null) {
+                $sqls[$name] = $result;
+            }
+        }
+
+        return rtrim(implode(' ', $sqls), "\n ,");
     }
 
     /** @return string[]|null */

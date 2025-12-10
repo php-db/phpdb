@@ -17,9 +17,11 @@ use PhpDb\Sql\Where;
 
 use function array_key_exists;
 use function implode;
+use function is_array;
 use function is_numeric;
 use function is_scalar;
 use function is_string;
+use function rtrim;
 use function str_replace;
 use function strtolower;
 
@@ -171,6 +173,37 @@ class Update extends AbstractPreparableSql
             'joins'                => $this->getJoins(),
         ];
         return $key !== null && array_key_exists($key, $rawState) ? $rawState[$key] : $rawState;
+    }
+
+    /**
+     * Optimized buildSqlString using match expression instead of dynamic method dispatch
+     */
+    protected function buildSqlString(
+        PlatformInterface $platform,
+        ?DriverInterface $driver = null,
+        ?ParameterContainer $parameterContainer = null
+    ): string {
+        $this->localizeVariables();
+
+        $sqls = [];
+
+        foreach ($this->specifications as $name => $specification) {
+            $result = match ($name) {
+                'update' => $this->processUpdate($platform, $driver, $parameterContainer),
+                'joins' => $this->processJoins($platform, $driver, $parameterContainer),
+                'set' => $this->processSet($platform, $driver, $parameterContainer),
+                'where' => $this->processWhere($platform, $driver, $parameterContainer),
+                default => $this->{'process' . $name}($platform, $driver, $parameterContainer),
+            };
+
+            if (is_array($result)) {
+                $sqls[$name] = $this->createSqlFromSpecificationAndParameters($specification, $result);
+            } elseif ($result !== null) {
+                $sqls[$name] = $result;
+            }
+        }
+
+        return rtrim(implode(' ', $sqls), "\n ,");
     }
 
     protected function processUpdate(
