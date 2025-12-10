@@ -8,8 +8,11 @@ use Override;
 
 use function addcslashes;
 use function array_map;
+use function count;
+use function explode;
 use function implode;
 use function preg_split;
+use function str_contains;
 use function str_replace;
 use function strtolower;
 use function trigger_error;
@@ -42,6 +45,25 @@ abstract class AbstractPlatform implements PlatformInterface
     {
         if (! $this->quoteIdentifiers) {
             return $identifier;
+        }
+
+        if ($additionalSafeWords === []) {
+            if (! str_contains($identifier, ' ') && ! str_contains($identifier, '=') && ! str_contains($identifier, '(')) {
+                $quoteStart = $this->quoteIdentifier[0];
+                $quoteEnd   = $this->quoteIdentifier[1];
+                $quoteTo    = $this->quoteIdentifierTo;
+
+                if (! str_contains($identifier, '.')) {
+                    return $quoteStart . str_replace($quoteStart, $quoteTo, $identifier) . $quoteEnd;
+                }
+
+                $parts = explode('.', $identifier);
+                if (count($parts) === 2) {
+                    return $quoteStart . str_replace($quoteStart, $quoteTo, $parts[0]) . $quoteEnd
+                        . '.'
+                        . $quoteStart . str_replace($quoteStart, $quoteTo, $parts[1]) . $quoteEnd;
+                }
+            }
         }
 
         $safeWords = self::SAFE_WORDS;
