@@ -159,14 +159,14 @@ abstract class AbstractResultSet implements ResultSetInterface
     #[Override]
     public function next(): void
     {
-        if ($this->buffer === null) {
-            $this->buffer = -2; // implicitly disable buffering from here on
-        }
-
-        if (! is_array($this->buffer) || $this->position === $this->dataSource->key()) {
+        if (-1 === $this->buffer) {
+            $this->dataSource->next();
+        } elseif ($this->buffer === null) {
+            $this->buffer = -2;
+            $this->dataSource->next();
+        } elseif (! is_array($this->buffer) || $this->position === $this->dataSource->key()) {
             $this->dataSource->next();
         }
-
         $this->position++;
     }
 
@@ -210,16 +210,20 @@ abstract class AbstractResultSet implements ResultSetInterface
     #[Override]
     public function valid(): bool
     {
+        if (-1 === $this->buffer) {
+            return $this->dataSource->valid();
+        }
+
         if (is_array($this->buffer) && isset($this->buffer[$this->position])) {
             return true;
         }
 
         if ($this->dataSource instanceof Iterator) {
             return $this->dataSource->valid();
-        } else {
-            $key = key($this->dataSource);
-            return $key !== null;
         }
+
+        $key = key($this->dataSource);
+        return $key !== null;
     }
 
     /**
@@ -228,7 +232,9 @@ abstract class AbstractResultSet implements ResultSetInterface
     #[Override]
     public function rewind(): void
     {
-        if (! is_array($this->buffer)) {
+        if (-1 === $this->buffer) {
+            $this->dataSource->rewind();
+        } elseif (! is_array($this->buffer)) {
             if ($this->dataSource instanceof Iterator) {
                 $this->dataSource->rewind();
             } else {
