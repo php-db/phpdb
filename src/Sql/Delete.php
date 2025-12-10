@@ -112,9 +112,11 @@ class Delete extends AbstractPreparableSql
         $sqls = [];
 
         foreach ($this->specifications as $name => $specification) {
+            // Skip method calls for null/empty properties (avoid function call overhead)
             $result = match ($name) {
                 'delete' => $this->processDelete($platform, $driver, $parameterContainer),
-                'where' => $this->processWhere($platform, $driver, $parameterContainer),
+                'where' => $this->where !== null && $this->where->count() > 0
+                    ? $this->processWhere($platform, $driver, $parameterContainer) : null,
                 default => $this->{'process' . $name}($platform, $driver, $parameterContainer),
             };
 

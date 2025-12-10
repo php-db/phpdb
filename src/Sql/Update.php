@@ -188,11 +188,13 @@ class Update extends AbstractPreparableSql
         $sqls = [];
 
         foreach ($this->specifications as $name => $specification) {
+            // Skip method calls for null/empty properties (avoid function call overhead)
             $result = match ($name) {
                 'update' => $this->processUpdate($platform, $driver, $parameterContainer),
-                'joins' => $this->processJoins($platform, $driver, $parameterContainer),
+                'joins' => $this->joins !== null ? $this->processJoins($platform, $driver, $parameterContainer) : null,
                 'set' => $this->processSet($platform, $driver, $parameterContainer),
-                'where' => $this->processWhere($platform, $driver, $parameterContainer),
+                'where' => $this->where !== null && $this->where->count() > 0
+                    ? $this->processWhere($platform, $driver, $parameterContainer) : null,
                 default => $this->{'process' . $name}($platform, $driver, $parameterContainer),
             };
 

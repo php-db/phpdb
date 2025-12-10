@@ -482,18 +482,21 @@ class Select extends AbstractPreparableSql
         $sqls = [];
 
         foreach ($this->specifications as $name => $specification) {
+            // Skip method calls for null/empty properties (avoid function call overhead)
             $result = match ($name) {
-                'statementStart' => $this->processStatementStart(),
+                'statementStart' => $this->combine !== [] ? $this->processStatementStart() : null,
                 'select' => $this->processSelect($platform, $driver, $parameterContainer),
-                'joins' => $this->processJoins($platform, $driver, $parameterContainer),
-                'where' => $this->processWhere($platform, $driver, $parameterContainer),
-                'group' => $this->processGroup($platform, $driver, $parameterContainer),
-                'having' => $this->processHaving($platform, $driver, $parameterContainer),
-                'order' => $this->processOrder($platform, $driver, $parameterContainer),
-                'limit' => $this->processLimit($platform, $driver, $parameterContainer),
-                'offset' => $this->processOffset($platform, $driver, $parameterContainer),
-                'statementEnd' => $this->processStatementEnd(),
-                'combine' => $this->processCombine($platform, $driver, $parameterContainer),
+                'joins' => $this->joins !== null ? $this->processJoins($platform, $driver, $parameterContainer) : null,
+                'where' => $this->where !== null && $this->where->count() > 0
+                    ? $this->processWhere($platform, $driver, $parameterContainer) : null,
+                'group' => $this->group !== null ? $this->processGroup($platform, $driver, $parameterContainer) : null,
+                'having' => $this->having !== null && $this->having->count() > 0
+                    ? $this->processHaving($platform, $driver, $parameterContainer) : null,
+                'order' => $this->order !== [] ? $this->processOrder($platform, $driver, $parameterContainer) : null,
+                'limit' => $this->limit !== null ? $this->processLimit($platform, $driver, $parameterContainer) : null,
+                'offset' => $this->offset !== null ? $this->processOffset($platform, $driver, $parameterContainer) : null,
+                'statementEnd' => $this->combine !== [] ? $this->processStatementEnd() : null,
+                'combine' => $this->combine !== [] ? $this->processCombine($platform, $driver, $parameterContainer) : null,
                 default => $this->{'process' . $name}($platform, $driver, $parameterContainer),
             };
 
@@ -566,7 +569,9 @@ class Select extends AbstractPreparableSql
             $columns[] = $columnAs !== null ? [$columnName, $columnAs] : [$columnName];
         }
 
-        foreach ($this->getJoins()->getJoins() as $join) {
+        // Only process joins if there are any (avoid creating Join object)
+        if ($this->joins !== null) {
+            foreach ($this->joins->getJoins() as $join) {
             $joinName = is_array($join['name']) ? key($join['name']) : $join['name'];
             $joinName = parent::resolveTable($joinName, $platform, $driver, $parameterContainer);
 
@@ -593,6 +598,7 @@ class Select extends AbstractPreparableSql
                 }
 
                 $columns[] = $jColumns;
+                }
             }
         }
 

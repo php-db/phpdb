@@ -163,9 +163,10 @@ class Insert extends AbstractPreparableSql
         $sqls = [];
 
         foreach ($this->specifications as $name => $specification) {
+            // Skip method calls for null/empty properties (avoid function call overhead)
             $result = match ($name) {
-                'insert' => $this->processInsert($platform, $driver, $parameterContainer),
-                'select' => $this->processSelect($platform, $driver, $parameterContainer),
+                'insert' => $this->select === null ? $this->processInsert($platform, $driver, $parameterContainer) : null,
+                'select' => $this->select !== null ? $this->processSelect($platform, $driver, $parameterContainer) : null,
                 default => $this->{'process' . $name}($platform, $driver, $parameterContainer),
             };
 
