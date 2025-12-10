@@ -16,8 +16,10 @@ use PhpDb\Sql\TableIdentifier;
 use PhpDb\Sql\Where;
 
 use function array_key_exists;
+use function array_merge;
 use function implode;
 use function is_array;
+use function is_int;
 use function is_numeric;
 use function is_scalar;
 use function is_string;

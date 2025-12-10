@@ -8,18 +8,11 @@ use Override;
 
 use function addcslashes;
 use function array_map;
-use function count;
-use function explode;
 use function implode;
-use function preg_split;
+use function preg_replace;
 use function str_contains;
 use function str_replace;
-use function strpbrk;
-use function strtolower;
 use function trigger_error;
-
-use const PREG_SPLIT_DELIM_CAPTURE;
-use const PREG_SPLIT_NO_EMPTY;
 
 abstract class AbstractPlatform implements PlatformInterface
 {
@@ -32,11 +25,7 @@ abstract class AbstractPlatform implements PlatformInterface
     /** @var bool */
     protected $quoteIdentifiers = true;
 
-    /** @var string */
-    protected $quoteIdentifierFragmentPattern = '/([^0-9,a-zA-Z$_:])/i';
-
-    /** @var array<string, true> */
-    private const SAFE_WORDS = ['*' => true, ' ' => true, '.' => true, 'as' => true];
+    private const SAFE_WORDS_PATTERN = '/(?<![a-zA-Z0-9_$])(?!(?:as|and|or|between)(?![a-zA-Z0-9_$]))([a-zA-Z_][a-zA-Z0-9_$]*)/i';
 
     /**
      * {@inheritDoc}
@@ -44,64 +33,11 @@ abstract class AbstractPlatform implements PlatformInterface
     #[Override]
     public function quoteIdentifierInFragment(string $identifier, array $additionalSafeWords = []): string
     {
-        if (! $this->quoteIdentifiers) {
+        if (! $this->quoteIdentifiers || $identifier === '*') {
             return $identifier;
         }
 
-        if ($additionalSafeWords === []) {
-            if (strpbrk($identifier, ' =(') === false) {
-                $quoteStart = $this->quoteIdentifier[0];
-                $quoteEnd   = $this->quoteIdentifier[1];
-                $quoteTo    = $this->quoteIdentifierTo;
-
-                if (! str_contains($identifier, '.')) {
-                    // Handle standalone * (safe word)
-                    if ($identifier === '*') {
-                        return '*';
-                    }
-                    return $quoteStart . str_replace($quoteStart, $quoteTo, $identifier) . $quoteEnd;
-                }
-
-                $parts = explode('.', $identifier);
-                if (count($parts) === 2) {
-                    // Handle table.* pattern - * is a safe word
-                    if ($parts[1] === '*') {
-                        return $quoteStart . str_replace($quoteStart, $quoteTo, $parts[0]) . $quoteEnd . '.*';
-                    }
-                    return $quoteStart . str_replace($quoteStart, $quoteTo, $parts[0]) . $quoteEnd
-                        . '.'
-                        . $quoteStart . str_replace($quoteStart, $quoteTo, $parts[1]) . $quoteEnd;
-                }
-            }
-        }
-
-        $safeWords = self::SAFE_WORDS;
-        foreach ($additionalSafeWords as $sWord) {
-            $safeWords[strtolower($sWord)] = true;
-        }
-
-        $parts = preg_split(
-            $this->quoteIdentifierFragmentPattern,
-            $identifier,
-            -1,
-            PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY
-        );
-
-        $quoteStart = $this->quoteIdentifier[0];
-        $quoteEnd   = $this->quoteIdentifier[1];
-        $quoteTo    = $this->quoteIdentifierTo;
-        $result     = '';
-
-        foreach ($parts as $part) {
-            $lowerPart = strtolower($part);
-            if (isset($safeWords[$lowerPart])) {
-                $result .= $part;
-            } else {
-                $result .= $quoteStart . str_replace($quoteStart, $quoteTo, $part) . $quoteEnd;
-            }
-        }
-
-        return $result;
+        return preg_replace(self::SAFE_WORDS_PATTERN, $this->quoteIdentifier[0] . '$1' . $this->quoteIdentifier[1], $identifier);
     }
 
     /**
