@@ -48,7 +48,11 @@ abstract class AbstractPlatform implements PlatformInterface
         }
 
         if ($additionalSafeWords === []) {
-            if (! str_contains($identifier, ' ') && ! str_contains($identifier, '=') && ! str_contains($identifier, '(')) {
+            if (
+                ! str_contains($identifier, ' ') &&
+                ! str_contains($identifier, '=') &&
+                ! str_contains($identifier, '(')
+            ) {
                 $quoteStart = $this->quoteIdentifier[0];
                 $quoteEnd   = $this->quoteIdentifier[1];
                 $quoteTo    = $this->quoteIdentifierTo;
