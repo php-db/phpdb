@@ -38,8 +38,8 @@ final class NotBetweenTest extends TestCase
 
         $expressionData = $this->notBetween->getExpressionData();
 
-        // Verify specification (default built from arguments)
-        self::assertEquals('%s NOT BETWEEN %s AND %s', $expressionData['spec']);
+        // Verify specification (uses new marker format)
+        self::assertEquals('{"foo"}.{"bar"} NOT BETWEEN {?} AND {?}', $expressionData['spec']);
 
         // Verify expression values
         $values = $expressionData['values'];
@@ -67,8 +67,8 @@ final class NotBetweenTest extends TestCase
 
         $expressionData = $this->notBetween->getExpressionData();
 
-        // Verify specification (default built from arguments)
-        self::assertEquals('%s NOT BETWEEN %s AND %s', $expressionData['spec']);
+        // Verify specification (uses new marker format)
+        self::assertEquals('{?} NOT BETWEEN {"foo"}.{"bar"} AND {"foo"}.{"baz"}', $expressionData['spec']);
 
         // Verify expression values with custom types
         $values = $expressionData['values'];

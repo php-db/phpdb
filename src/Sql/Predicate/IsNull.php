@@ -61,4 +61,15 @@ class IsNull extends AbstractExpression implements PredicateInterface
             'values' => [$this->identifier],
         ];
     }
+
+    /** @inheritDoc */
+    #[Override]
+    public function toSqlPart(array &$values): string
+    {
+        if (! $this->identifier instanceof ArgumentInterface) {
+            throw new InvalidArgumentException('Identifier must be specified');
+        }
+
+        return $this->identifier->getSpecification() . ' ' . $this->operator;
+    }
 }

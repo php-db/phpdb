@@ -84,7 +84,7 @@ final class PredicateSetTest extends TestCase
 
         // Verify combinators are in spec string: AND bar AND baz OR bat
         $spec = $expressionData['spec'];
-        self::assertEquals('%s IS NULL AND %s IS NULL OR %s IS NULL AND %s IS NULL', $spec);
+        self::assertEquals('{"foo"} IS NULL AND {"bar"} IS NULL OR {"baz"} IS NULL AND {"bat"} IS NULL', $spec);
     }
 
     public function testCanUseOrPredicateAndAndPredicateMethods(): void
@@ -100,9 +100,9 @@ final class PredicateSetTest extends TestCase
         // 4 predicates = 4 values
         self::assertCount(4, $expressionData['values']);
 
-        // Verify spec contains correct pattern: foo AND bar OR baz AND bat
+        // Verify spec contains correct pattern (uses new marker format)
         $spec = $expressionData['spec'];
-        self::assertEquals('%s IS NULL AND %s IS NULL OR %s IS NULL AND %s IS NULL', $spec);
+        self::assertEquals('{"foo"} IS NULL AND {"bar"} IS NULL OR {"baz"} IS NULL AND {"bat"} IS NULL', $spec);
     }
 
     /**

@@ -6,6 +6,7 @@ namespace PhpDb\Sql\Argument;
 
 use PhpDb\Sql\ArgumentInterface;
 use PhpDb\Sql\ArgumentType;
+use PhpDb\Sql\PreparableSqlInterface;
 
 /**
  * Represents a bound parameter value in SQL.
@@ -34,6 +35,6 @@ final readonly class Value implements ArgumentInterface
 
     public function getSpecification(): string
     {
-        return '%s';
+        return PreparableSqlInterface::P_VALUE;
     }
 }

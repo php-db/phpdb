@@ -150,8 +150,8 @@ final class OperatorTest extends TestCase
 
         $expressionData = $operator->getExpressionData();
 
-        // Verify specification
-        self::assertEquals('%s >= %s', $expressionData['spec']);
+        // Verify specification (uses new marker format)
+        self::assertEquals('{?} >= {"foo"}.{"bar"}', $expressionData['spec']);
 
         // Verify expression values
         $values = $expressionData['values'];

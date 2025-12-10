@@ -21,8 +21,8 @@ final class NotInTest extends TestCase
 
         $expressionData = $in->getExpressionData();
 
-        // Verify specification
-        self::assertEquals('%s NOT IN (%s, %s, %s)', $expressionData['spec']);
+        // Verify specification (uses new marker format)
+        self::assertEquals('{"foo"}.{"bar"} NOT IN ({?}, {?}, {?})', $expressionData['spec']);
 
         // Verify expression values
         $values = $expressionData['values'];
@@ -46,8 +46,8 @@ final class NotInTest extends TestCase
 
         $expressionData = $in->getExpressionData();
 
-        // Verify specification
-        self::assertEquals('%s NOT IN %s', $expressionData['spec']);
+        // Verify specification (uses new marker format)
+        self::assertEquals('{"foo"} NOT IN {SQL}', $expressionData['spec']);
 
         // Verify expression values
         $values = $expressionData['values'];
@@ -71,8 +71,8 @@ final class NotInTest extends TestCase
 
         $expressionData = $in->getExpressionData();
 
-        // Verify specification
-        self::assertEquals('%s NOT IN %s', $expressionData['spec']);
+        // Verify specification (uses new marker format)
+        self::assertEquals('{"foo"} NOT IN {SQL}', $expressionData['spec']);
 
         // Verify expression values
         $values = $expressionData['values'];
@@ -96,8 +96,8 @@ final class NotInTest extends TestCase
 
         $expressionData = $in->getExpressionData();
 
-        // Verify specification
-        self::assertEquals('(%s, %s) NOT IN %s', $expressionData['spec']);
+        // Verify specification (uses new marker format)
+        self::assertEquals('({"foo"}, {"bar"}) NOT IN {SQL}', $expressionData['spec']);
 
         // Verify expression values
         $values = $expressionData['values'];

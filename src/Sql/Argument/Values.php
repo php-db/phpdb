@@ -6,6 +6,7 @@ namespace PhpDb\Sql\Argument;
 
 use PhpDb\Sql\ArgumentInterface;
 use PhpDb\Sql\ArgumentType;
+use PhpDb\Sql\PreparableSqlInterface;
 
 use function array_fill;
 use function array_values;
@@ -48,7 +49,7 @@ final readonly class Values implements ArgumentInterface
     {
         $count = count($this->values);
         return $count > 0
-            ? '(' . implode(', ', array_fill(0, $count, '%s')) . ')'
+            ? '(' . implode(', ', array_fill(0, $count, PreparableSqlInterface::P_VALUE)) . ')'
             : '(NULL)';
     }
 }

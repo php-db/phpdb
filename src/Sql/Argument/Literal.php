@@ -32,6 +32,6 @@ final readonly class Literal implements ArgumentInterface
 
     public function getSpecification(): string
     {
-        return '%s';
+        return $this->literal;
     }
 }

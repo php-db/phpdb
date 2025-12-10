@@ -128,4 +128,35 @@ class Between extends AbstractExpression implements PredicateInterface
             'values' => [$this->identifier, $this->minValue, $this->maxValue],
         ];
     }
+
+    /** @inheritDoc */
+    #[Override]
+    public function toSqlPart(array &$values): string
+    {
+        if (! $this->identifier instanceof ArgumentInterface) {
+            throw new LogicException('Identifier must be specified');
+        }
+
+        if (! $this->minValue instanceof ArgumentInterface) {
+            throw new LogicException('minValue must be specified');
+        }
+
+        if (! $this->maxValue instanceof ArgumentInterface) {
+            throw new LogicException('maxValue must be specified');
+        }
+
+        $identifierSql = $this->identifier->getSpecification();
+        $minValueSql = $this->minValue->getSpecification();
+        $maxValueSql = $this->maxValue->getSpecification();
+
+        // Collect values from Value arguments
+        if ($this->minValue instanceof Value) {
+            $values[] = $this->minValue->getValue();
+        }
+        if ($this->maxValue instanceof Value) {
+            $values[] = $this->maxValue->getValue();
+        }
+
+        return "{$identifierSql} {$this->operator} {$minValueSql} AND {$maxValueSql}";
+    }
 }

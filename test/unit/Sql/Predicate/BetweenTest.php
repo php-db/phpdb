@@ -185,8 +185,8 @@ final class BetweenTest extends TestCase
 
         $expressionData = $this->between->getExpressionData();
 
-        // Verify specification (default built from arguments)
-        self::assertEquals('%s BETWEEN %s AND %s', $expressionData['spec']);
+        // Verify specification (uses new marker format)
+        self::assertEquals('{"foo"}.{"bar"} BETWEEN {?} AND {?}', $expressionData['spec']);
 
         // Verify expression values
         $values = $expressionData['values'];
@@ -213,8 +213,8 @@ final class BetweenTest extends TestCase
 
         $expressionData = $this->between->getExpressionData();
 
-        // Verify specification (default built from arguments)
-        self::assertEquals('%s BETWEEN %s AND %s', $expressionData['spec']);
+        // Verify specification (uses new marker format)
+        self::assertEquals('{?} BETWEEN {"foo"}.{"bar"} AND {"foo"}.{"baz"}', $expressionData['spec']);
 
         // Verify expression values with custom types
         $values = $expressionData['values'];

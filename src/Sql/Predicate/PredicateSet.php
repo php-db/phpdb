@@ -219,4 +219,43 @@ class PredicateSet implements PredicateInterface, Countable
     {
         return count($this->predicates);
     }
+
+    /** @inheritDoc */
+    #[Override]
+    public function toSqlPart(array &$values): string
+    {
+        $predicateCount = count($this->predicates);
+
+        if ($predicateCount === 0) {
+            return '';
+        }
+
+        if ($predicateCount === 1) {
+            [$operator, $predicate] = $this->predicates[0];
+            $sql = $predicate->toSqlPart($values);
+
+            if ($predicate instanceof self) {
+                return "({$sql})";
+            }
+
+            return $sql;
+        }
+
+        $result = '';
+        $first = true;
+
+        foreach ($this->predicates as [$operator, $predicate]) {
+            $sql = $predicate->toSqlPart($values);
+
+            // Wrap nested predicate sets in parentheses
+            if ($predicate instanceof self && $predicate->count() > 1) {
+                $sql = '(' . $sql . ')';
+            }
+
+            $result .= $first ? $sql : " {$operator} {$sql}";
+            $first = false;
+        }
+
+        return $result;
+    }
 }

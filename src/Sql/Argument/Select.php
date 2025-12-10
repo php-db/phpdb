@@ -7,6 +7,7 @@ namespace PhpDb\Sql\Argument;
 use PhpDb\Sql\ArgumentInterface;
 use PhpDb\Sql\ArgumentType;
 use PhpDb\Sql\ExpressionInterface;
+use PhpDb\Sql\PreparableSqlInterface;
 use PhpDb\Sql\SqlInterface;
 
 /**
@@ -33,6 +34,8 @@ final readonly class Select implements ArgumentInterface
 
     public function getSpecification(): string
     {
-        return '%s';
+        // Return a placeholder marker - the Select object itself will be
+        // collected as a value and processed with platform context during assembly
+        return PreparableSqlInterface::P_SELECT;
     }
 }
