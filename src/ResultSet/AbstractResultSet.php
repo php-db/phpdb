@@ -21,10 +21,10 @@ use function current;
 use function gettype;
 use function is_array;
 use function is_object;
+use function iterator_to_array;
 use function key;
 use function method_exists;
 use function reset;
-use function iterator_to_array;
 
 abstract class AbstractResultSet implements ResultSetInterface
 {
