@@ -24,6 +24,7 @@ use function is_object;
 use function key;
 use function method_exists;
 use function reset;
+use function iterator_to_array;
 
 abstract class AbstractResultSet implements ResultSetInterface
 {
@@ -270,6 +271,10 @@ abstract class AbstractResultSet implements ResultSetInterface
      */
     public function toArray(): array
     {
+        if (-1 === $this->buffer && $this->dataSource !== null) {
+            return iterator_to_array($this->dataSource);
+        }
+
         $return = [];
         foreach ($this as $row) {
             if (is_array($row)) {
