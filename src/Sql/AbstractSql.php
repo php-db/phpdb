@@ -67,7 +67,7 @@ abstract class AbstractSql implements SqlInterface
     ): string {
         $this->localizeVariables();
 
-        $sqls = [];
+        $sql = '';
 
         foreach ($this->specifications as $name => $specification) {
             $result = $this->{'process' . $name}(
@@ -77,13 +77,14 @@ abstract class AbstractSql implements SqlInterface
             );
 
             if (is_array($result)) {
-                $sqls[$name] = $this->createSqlFromSpecificationAndParameters($specification, $result);
+                $part = $this->createSqlFromSpecificationAndParameters($specification, $result);
+                $sql .= $sql === '' ? $part : ' ' . $part;
             } elseif ($result !== null) {
-                $sqls[$name] = $result;
+                $sql .= $sql === '' ? $result : ' ' . $result;
             }
         }
 
-        return rtrim(implode(' ', $sqls), "\n ,");
+        return rtrim($sql, "\n ,");
     }
 
     /**

@@ -182,19 +182,19 @@ class PredicateSet implements PredicateInterface, Countable
             return $expressionData;
         }
 
-        $specParts = [];
+        $spec      = '';
         $allValues = [];
         $first     = true;
 
         foreach ($this->predicates as [$operator, $predicate]) {
             $expressionData = $predicate->getExpressionData();
 
-            $spec = $predicate instanceof self
+            $partSpec = $predicate instanceof self
                 ? "({$expressionData['spec']})"
                 : $expressionData['spec'];
 
-            $specParts[] = $first ? $spec : "{$operator} {$spec}";
-            $first       = false;
+            $spec .= $first ? $partSpec : " {$operator} {$partSpec}";
+            $first = false;
 
             $values = $expressionData['values'];
             if ($values !== []) {
@@ -205,7 +205,7 @@ class PredicateSet implements PredicateInterface, Countable
         }
 
         return [
-            'spec'   => implode(' ', $specParts),
+            'spec'   => $spec,
             'values' => $allValues,
         ];
     }

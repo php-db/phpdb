@@ -11,6 +11,21 @@ use PhpDb\Adapter\StatementContainerInterface;
 
 abstract class AbstractPreparableSql extends AbstractSql implements PreparableSqlInterface
 {
+    /**
+     * Wrap an identifier with quote markers for deferred quoting.
+     * Handles qualified identifiers (table.column) by wrapping each part.
+     *
+     * Examples:
+     *   markIdentifier('column')       -> '{"column"}'
+     *   markIdentifier('table.column') -> '{"table"}.{"column"}'
+     */
+    protected static function markIdentifier(string $identifier): string
+    {
+        return self::P_LQUOTE
+            . str_replace('.', self::P_RQUOTE . '.' . self::P_LQUOTE, $identifier)
+            . self::P_RQUOTE;
+    }
+
     #[Override]
     public function prepareStatement(
         AdapterInterface $adapter,
