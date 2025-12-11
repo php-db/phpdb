@@ -53,7 +53,6 @@ class Operator extends AbstractExpression implements PredicateInterface
         null|bool|string|int|float|ArgumentInterface|ExpressionInterface|SqlInterface $right = null
     ) {
         if ($left !== null) {
-            // Inline setLeft logic to avoid method call overhead
             if ($left instanceof ArgumentInterface) {
                 $this->left = $left;
             } elseif ($left instanceof ExpressionInterface || $left instanceof SqlInterface) {
@@ -68,7 +67,6 @@ class Operator extends AbstractExpression implements PredicateInterface
         }
 
         if ($right !== null) {
-            // Inline setRight logic to avoid method call overhead
             if ($right instanceof ArgumentInterface) {
                 $this->right = $right;
             } elseif ($right instanceof ExpressionInterface || $right instanceof SqlInterface) {
@@ -182,7 +180,6 @@ class Operator extends AbstractExpression implements PredicateInterface
         $leftSql  = $this->left->getSpecification();
         $rightSql = $this->right->getSpecification();
 
-        // Collect values from Value arguments
         if ($this->left instanceof Value) {
             $values[] = $this->left->getValue();
         }

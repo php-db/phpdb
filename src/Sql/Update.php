@@ -5,26 +5,15 @@ declare(strict_types=1);
 namespace PhpDb\Sql;
 
 use Closure;
-use Laminas\Stdlib\PriorityList;
 use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\Driver\PdoDriverInterface;
 use PhpDb\Adapter\ParameterContainer;
 use PhpDb\Adapter\Platform\PlatformInterface;
-use PhpDb\Sql\Join;
 use PhpDb\Sql\Predicate\PredicateInterface;
-use PhpDb\Sql\TableIdentifier;
-use PhpDb\Sql\Where;
 
 use function array_key_exists;
-use function array_merge;
 use function implode;
-use function is_array;
-use function is_int;
-use function is_numeric;
 use function is_scalar;
-use function is_string;
-use function rtrim;
-use function str_replace;
 use function strtolower;
 
 /**
@@ -32,48 +21,18 @@ use function strtolower;
  */
 class Update extends AbstractPreparableSql
 {
-    /**@#++
-     * @const
-     */
-    public const SPECIFICATION_UPDATE = 'update';
-
-    final public const SPECIFICATION_SET = 'set';
-
-    final public const SPECIFICATION_WHERE = 'where';
-
-    final public const SPECIFICATION_JOIN = 'joins';
-
     final public const VALUES_MERGE = 'merge';
 
     final public const VALUES_SET = 'set';
 
-    /**@#-**/
-
-    /** @var array<string, string>|array<string, array> */
-    protected array $specifications = [
-        self::SPECIFICATION_UPDATE => 'UPDATE %1$s',
-        self::SPECIFICATION_JOIN   => [
-            '%1$s' => [
-                [3 => '%1$s JOIN %2$s ON %3$s', 'combinedby' => ' '],
-            ],
-        ],
-        self::SPECIFICATION_SET    => 'SET %1$s',
-        self::SPECIFICATION_WHERE  => 'WHERE %1$s',
-    ];
-
     protected ?TableIdentifier $table = null;
 
-    protected bool $emptyWhereProtection = true;
-
-    protected ?PriorityList $set = null;
+    protected ?Set $set = null;
 
     protected ?Where $where = null;
 
     protected ?Join $joins = null;
 
-    /**
-     * Constructor
-     */
     public function __construct(string|TableIdentifier|null $table = null)
     {
         if ($table) {
@@ -81,13 +40,9 @@ class Update extends AbstractPreparableSql
         }
     }
 
-    private function getSet(): PriorityList
+    private function getSet(): Set
     {
-        if ($this->set === null) {
-            $this->set = new PriorityList();
-            $this->set->isLIFO(false);
-        }
-        return $this->set;
+        return $this->set ??= new Set();
     }
 
     private function getWhere(): Where
@@ -100,46 +55,18 @@ class Update extends AbstractPreparableSql
         return $this->joins ??= new Join();
     }
 
-    /**
-     * Specify table for statement
-     */
     public function table(TableIdentifier|string|array $table): static
     {
         $this->table = TableIdentifier::from($table);
         return $this;
     }
 
-    /**
-     * Set key/value pairs to update
-     *
-     * @param  array $values Associative array of key values
-     * @param string $flag   One of the VALUES_* constants
-     * @throws Exception\InvalidArgumentException
-     */
     public function set(array $values, string|int $flag = self::VALUES_SET): static
     {
-        $set = $this->getSet();
-        if ($flag === self::VALUES_SET) {
-            $set->clear();
-        }
-
-        $priority = is_numeric($flag) ? $flag : 0;
-        foreach ($values as $k => $v) {
-            if (! is_string($k)) {
-                throw new Exception\InvalidArgumentException('set() expects a string for the value key');
-            }
-
-            $set->insert($k, $v, $priority);
-        }
-
+        $this->getSet()->set($values, $flag);
         return $this;
     }
 
-    /**
-     * Create where clause
-     *
-     * @throws Exception\InvalidArgumentException
-     */
     public function where(
         PredicateInterface|array|Closure|string|Where $predicate,
         string $combination = Predicate\PredicateSet::OP_AND
@@ -153,11 +80,6 @@ class Update extends AbstractPreparableSql
         return $this;
     }
 
-    /**
-     * Create join clause
-     *
-     * @throws Exception\InvalidArgumentException
-     */
     public function join(array|string|TableIdentifier $name, string $on, string $type = Join::JOIN_INNER): static
     {
         $this->getJoins()->join($name, $on, [], $type);
@@ -168,18 +90,14 @@ class Update extends AbstractPreparableSql
     public function getRawState(?string $key = null): mixed
     {
         $rawState = [
-            'emptyWhereProtection' => $this->emptyWhereProtection,
-            'table'                => $this->table,
-            'set'                  => $this->getSet()->toArray(),
-            'where'                => $this->getWhere(),
-            'joins'                => $this->getJoins(),
+            'table' => $this->table,
+            'set'   => $this->set,
+            'where' => $this->where,
+            'joins' => $this->joins,
         ];
         return $key !== null && array_key_exists($key, $rawState) ? $rawState[$key] : $rawState;
     }
 
-    /**
-     * Optimized buildSqlString using direct concatenation with coalescing
-     */
     protected function buildSqlString(
         PlatformInterface $platform,
         ?DriverInterface $driver = null,
@@ -187,43 +105,23 @@ class Update extends AbstractPreparableSql
     ): string {
         $this->localizeVariables();
 
+        if (($this->where === null || $this->where->count() === 0) && !$this->where?->isEmptyAllowed()) {
+            throw new Exception\InvalidArgumentException(
+                'UPDATE requires a WHERE clause. Use ->where->setEmptyAllowed() to allow updating all rows.'
+            );
+        }
+
         $values = [];
 
-        // Build UPDATE table part
-        $tableSql = $this->table !== null
-            ? $this->table->toSqlPart()
-            : '';
-
-        // Build SET part
-        $setSql = $this->processSet($platform, $driver, $parameterContainer);
-
-        // Build complete SQL using direct concatenation
-        $sql = 'UPDATE ' . $tableSql
+        $sql = 'UPDATE ' . ($this->table?->toSqlPart() ?? '')
              . ($this->joins?->toSqlPart($values) ?? '')
-             . ' ' . $setSql
+             . $this->buildSetPart($platform, $driver, $parameterContainer)
              . ($this->where?->toSqlPart($values) ?? '');
 
-        return $this->assembleSqlWithValues($sql, $values, $platform, $parameterContainer, 'where', $driver);
+        return $this->quoteSqlString($sql, $values, $platform, $parameterContainer, 'where', $driver);
     }
 
-    protected function processUpdate(
-        PlatformInterface $platform,
-        ?DriverInterface $driver = null,
-        ?ParameterContainer $parameterContainer = null
-    ): string {
-        // Use TableIdentifier's toSqlPart() and assemble with platform
-        $tableSql = $this->table !== null
-            ? $this->assembleSqlWithValues($this->table->toSqlPart(), [], $platform, null, 'table')
-            : '';
-
-        return str_replace(
-            '%1$s',
-            $tableSql,
-            $this->specifications[static::SPECIFICATION_UPDATE]
-        );
-    }
-
-    protected function processSet(
+    protected function buildSetPart(
         PlatformInterface $platform,
         ?DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null
@@ -246,8 +144,6 @@ class Update extends AbstractPreparableSql
             );
             $prefix .= ' = ';
             if (is_scalar($value) && $parameterContainer) {
-                // use incremental value instead of column name for PDO
-                // @see https://github.com/zendframework/zend-db/issues/35
                 if ($isPdoDriver) {
                     $column = 'c_' . $i++;
                 }
@@ -264,42 +160,9 @@ class Update extends AbstractPreparableSql
             }
         }
 
-        return str_replace(
-            '%1$s',
-            implode(', ', $setSql),
-            $this->specifications[static::SPECIFICATION_SET]
-        );
+        return ' SET ' . implode(', ', $setSql);
     }
 
-    protected function processWhere(
-        PlatformInterface $platform,
-        ?DriverInterface $driver = null,
-        ?ParameterContainer $parameterContainer = null
-    ): ?string {
-        if ($this->where === null || $this->where->count() === 0) {
-            return null;
-        }
-
-        $values = [];
-        $sql    = $this->where->toSqlPart($values);
-
-        // toSqlPart already includes " WHERE " prefix, just assemble and return
-        return $this->assembleSqlWithValues($sql, $values, $platform, $parameterContainer, 'where', $driver);
-    }
-
-    /** @return string[][][]|null */
-    protected function processJoins(
-        PlatformInterface $platform,
-        ?DriverInterface $driver = null,
-        ?ParameterContainer $parameterContainer = null
-    ): ?array {
-        return $this->processJoin($this->joins, $platform, $driver, $parameterContainer);
-    }
-
-    /**
-     * Variable overloading
-     * Proxies to "where" only
-     */
     public function __get(string $name): ?Where
     {
         if (strtolower($name) === 'where') {
@@ -309,13 +172,6 @@ class Update extends AbstractPreparableSql
         return null;
     }
 
-    /**
-     * __clone
-     *
-     * Resets the where object each time the Update is cloned.
-     *
-     * @return void
-     */
     public function __clone()
     {
         if ($this->where !== null) {

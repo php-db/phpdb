@@ -34,8 +34,6 @@ final readonly class Select implements ArgumentInterface
 
     public function getSpecification(): string
     {
-        // Return a placeholder marker - the Select object itself will be
-        // collected as a value and processed with platform context during assembly
         return PreparableSqlInterface::P_SELECT;
     }
 }

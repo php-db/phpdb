@@ -75,7 +75,6 @@ class Order
                 ? self::ORDER_DESCENDING
                 : self::ORDER_ASCENDING;
 
-            // Use markers for deferred quoting - handle table.column format
             if (str_contains($k, '.')) {
                 $quoted = $lq . str_replace('.', $rq . '.' . $lq, $k) . $rq;
             } else {

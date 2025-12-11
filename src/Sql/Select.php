@@ -12,26 +12,13 @@ use PhpDb\Sql\Predicate\PredicateInterface;
 
 use function array_key_exists;
 use function count;
-use function current;
-use function explode;
 use function gettype;
-use function implode;
 use function is_array;
-use function is_int;
 use function is_numeric;
-use function is_scalar;
 use function is_string;
 use function key;
-use function method_exists;
-use function preg_split;
-use function rtrim;
 use function sprintf;
-use function str_contains;
-use function strcasecmp;
-use function stripos;
 use function strtolower;
-use function strtoupper;
-use function trim;
 
 /**
  * @property Where $where
@@ -99,55 +86,11 @@ class Select extends AbstractPreparableSql
 
     final public const COMBINE_INTERSECT = 'intersect';
 
-    /** @var string[]|array[] $specifications */
-    protected array $specifications = [
-        'statementStart' => '%1$s',
-        self::SELECT     => [
-            'SELECT %1$s FROM %2$s'      => [
-                [1 => '%1$s', 2 => '%1$s AS %2$s', 'combinedby' => ', '],
-                null,
-            ],
-            'SELECT %1$s %2$s FROM %3$s' => [
-                null,
-                [1 => '%1$s', 2 => '%1$s AS %2$s', 'combinedby' => ', '],
-                null,
-            ],
-            'SELECT %1$s'                => [
-                [1 => '%1$s', 2 => '%1$s AS %2$s', 'combinedby' => ', '],
-            ],
-        ],
-        self::JOINS      => [
-            '%1$s' => [
-                [3 => '%1$s JOIN %2$s ON %3$s', 'combinedby' => ' '],
-            ],
-        ],
-        self::WHERE      => 'WHERE %1$s',
-        self::GROUP      => [
-            'GROUP BY %1$s' => [
-                [1 => '%1$s', 'combinedby' => ', '],
-            ],
-        ],
-        self::HAVING     => 'HAVING %1$s',
-        self::ORDER      => [
-            'ORDER BY %1$s' => [
-                [1 => '%1$s', 2 => '%1$s %2$s', 'combinedby' => ', '],
-            ],
-        ],
-        self::LIMIT      => 'LIMIT %1$s',
-        self::OFFSET     => 'OFFSET %1$s',
-        'statementEnd'   => '%1$s',
-        self::COMBINE    => '%1$s ( %2$s )',
-    ];
-
-    protected bool $tableReadOnly = false;
-
-    protected bool $prefixColumnsWithTable = true;
-
     protected ?TableIdentifier $table = null;
 
     protected string|ExpressionInterface|null $quantifier = null;
 
-    protected ?Columns $columnsObj = null;
+    protected ?Columns $columns = null;
 
     protected ?Join $joins = null;
 
@@ -171,8 +114,7 @@ class Select extends AbstractPreparableSql
     public function __construct(array|string|TableIdentifier|null $table = null)
     {
         if ($table) {
-            $this->from($table);
-            $this->tableReadOnly = true;
+            $this->table = TableIdentifier::from($table, null, true);
         }
     }
 
@@ -198,7 +140,7 @@ class Select extends AbstractPreparableSql
      */
     public function from(array|string|TableIdentifier $table): static
     {
-        if ($this->tableReadOnly) {
+        if ($this->table?->isReadOnly()) {
             throw new Exception\InvalidArgumentException(
                 'Since this object was created with a table and/or schema in the constructor, it is read only.'
             );
@@ -236,14 +178,13 @@ class Select extends AbstractPreparableSql
      */
     public function columns(array $columns, bool $prefixColumnsWithTable = true): static
     {
-        $this->columnsObj             = new Columns($columns, $prefixColumnsWithTable);
-        $this->prefixColumnsWithTable = $prefixColumnsWithTable;
+        $this->columns = new Columns($columns, $prefixColumnsWithTable);
         return $this;
     }
 
     private function getColumns(): Columns
     {
-        return $this->columnsObj ??= new Columns();
+        return $this->columns ??= new Columns();
     }
 
     /**
@@ -372,7 +313,7 @@ class Select extends AbstractPreparableSql
     {
         switch ($part) {
             case self::TABLE:
-                if ($this->tableReadOnly) {
+                if ($this->table?->isReadOnly()) {
                     throw new Exception\InvalidArgumentException(
                         'Since this object was created with a table and/or schema in the constructor, it is read only.'
                     );
@@ -384,7 +325,7 @@ class Select extends AbstractPreparableSql
                 $this->quantifier = null;
                 break;
             case self::COLUMNS:
-                $this->columnsObj = null;
+                $this->columns = null;
                 break;
             case self::JOINS:
                 $this->joins = null;
@@ -415,30 +356,17 @@ class Select extends AbstractPreparableSql
         return $this;
     }
 
-    /**
-     * @param string|array<string, array> $specification
-     */
-    public function setSpecification(string $index, array|string $specification): static
-    {
-        if (! method_exists($this, 'process' . $index)) {
-            throw new Exception\InvalidArgumentException('Not a valid specification name.');
-        }
-
-        $this->specifications[$index] = $specification;
-        return $this;
-    }
-
     public function getRawState(?string $key = null): mixed
     {
         $rawState = [
             self::TABLE      => $this->table,
             self::QUANTIFIER => $this->quantifier,
-            self::COLUMNS    => $this->getColumns()->getColumns(),
-            self::JOINS      => $this->getJoins(),
-            self::WHERE      => $this->getWhere(),
+            self::COLUMNS    => $this->columns,
+            self::JOINS      => $this->joins,
+            self::WHERE      => $this->where,
             self::ORDER      => $this->order,
             self::GROUP      => $this->group,
-            self::HAVING     => $this->getHaving(),
+            self::HAVING     => $this->having,
             self::LIMIT      => $this->limit,
             self::OFFSET     => $this->offset,
             self::COMBINE    => $this->combine,
@@ -451,7 +379,7 @@ class Select extends AbstractPreparableSql
      */
     public function isTableReadOnly(): bool
     {
-        return $this->tableReadOnly;
+        return $this->table?->isReadOnly() ?? false;
     }
 
     /**
@@ -475,7 +403,7 @@ class Select extends AbstractPreparableSql
              . ($this->limit?->toSqlPart($values) ?? '')
              . ($this->offset?->toSqlPart($values) ?? '');
 
-        return $this->assembleSqlWithValues($sql, $values, $platform, $parameterContainer, 'where', $driver);
+        return $this->quoteSqlString($sql, $values, $platform, $parameterContainer, 'where', $driver);
     }
 
     /**
@@ -487,7 +415,6 @@ class Select extends AbstractPreparableSql
         ?ParameterContainer $parameterContainer,
         array &$values
     ): string {
-        // Quantifier (DISTINCT/ALL)
         $quantifierPart = '';
         if ($this->quantifier !== null) {
             $quantifierPart = $this->quantifier instanceof ExpressionInterface
@@ -495,383 +422,17 @@ class Select extends AbstractPreparableSql
                 : $this->quantifier . ' ';
         }
 
-        // Build FROM clause - table is always TableIdentifier now
         $fromPart = $this->table?->toFromSqlPart() ?? '';
 
-        // Build columns using Columns class - processor handles both expressions and subqueries
         $expressionProcessor = fn(ExpressionInterface|Select $expr) =>
             $expr instanceof Select
                 ? $this->processSubSelect($expr, $platform, $driver, $parameterContainer)
                 : $this->processExpression($expr, $platform, $driver, $parameterContainer);
 
         return 'SELECT ' . $quantifierPart
-            . $this->getColumns()->toSqlPart($this->table, $this->joins, $expressionProcessor)
+            . $this->getColumns()->toSqlPart($this->table, $expressionProcessor)
+            . ($this->joins?->toColumnsSqlPart($expressionProcessor) ?? '')
             . $fromPart;
-    }
-
-    /**
-     * Build GROUP BY clause
-     */
-    protected function buildGroupPart(PlatformInterface $platform): string
-    {
-        if ($this->group === null) {
-            return '';
-        }
-
-        $groups = [];
-        foreach ($this->group as $column) {
-            $groups[] = $platform->quoteIdentifierInFragment($column);
-        }
-
-        return ' GROUP BY ' . implode(', ', $groups);
-    }
-
-    /**
-     * Build ORDER BY clause
-     */
-    protected function buildOrderPart(PlatformInterface $platform): string
-    {
-        if ($this->order === []) {
-            return '';
-        }
-
-        $orders = [];
-        foreach ($this->order as $k => $v) {
-            if ($v instanceof ExpressionInterface) {
-                // Expression will be processed separately - for now just include as-is
-                $orders[] = (string) $v;
-                continue;
-            }
-
-            if (is_int($k)) {
-                if (str_contains($v, ' ')) {
-                    [$k, $v] = explode(' ', $v, 2);
-                } else {
-                    $k = $v;
-                    $v = self::ORDER_ASCENDING;
-                }
-            }
-
-            $direction = strcasecmp(trim($v), self::ORDER_DESCENDING) === 0
-                ? self::ORDER_DESCENDING
-                : self::ORDER_ASCENDING;
-
-            $orders[] = $platform->quoteIdentifierInFragment($k) . ' ' . $direction;
-        }
-
-        return ' ORDER BY ' . implode(', ', $orders);
-    }
-
-    /**
-     * Build LIMIT clause
-     */
-    protected function buildLimitPart(
-        PlatformInterface $platform,
-        ?DriverInterface $driver,
-        ?ParameterContainer $parameterContainer
-    ): string {
-        if ($this->limit === null) {
-            return '';
-        }
-
-        if ($parameterContainer instanceof ParameterContainer) {
-            $paramPrefix = $this->processInfo['paramPrefix'];
-            $parameterContainer->offsetSet($paramPrefix . 'limit', $this->limit, ParameterContainer::TYPE_INTEGER);
-            return ' LIMIT ' . $driver->formatParameterName($paramPrefix . 'limit');
-        }
-
-        return ' LIMIT ' . $platform->quoteValue($this->limit);
-    }
-
-    /**
-     * Build OFFSET clause
-     */
-    protected function buildOffsetPart(
-        PlatformInterface $platform,
-        ?DriverInterface $driver,
-        ?ParameterContainer $parameterContainer
-    ): string {
-        if ($this->offset === null) {
-            return '';
-        }
-
-        if ($parameterContainer instanceof ParameterContainer) {
-            $paramPrefix = $this->processInfo['paramPrefix'];
-            $parameterContainer->offsetSet($paramPrefix . 'offset', $this->offset, ParameterContainer::TYPE_INTEGER);
-            return ' OFFSET ' . $driver->formatParameterName($paramPrefix . 'offset');
-        }
-
-        return ' OFFSET ' . $platform->quoteValue($this->offset);
-    }
-
-    /** @return string[]|null */
-    protected function processStatementStart(): ?array
-    {
-        if ($this->combine !== []) {
-            return ['('];
-        }
-
-        return null;
-    }
-
-    /** @return string[]|null */
-    protected function processStatementEnd(): ?array
-    {
-        if ($this->combine !== []) {
-            return [')'];
-        }
-
-        return null;
-    }
-
-    /**
-     * Process the select part
-     */
-    protected function processSelect(
-        PlatformInterface $platform,
-        ?DriverInterface $driver = null,
-        ?ParameterContainer $parameterContainer = null
-    ): array {
-        $expr = 1;
-
-        [$table, $fromTable] = $this->resolveTable($this->table, $platform, $driver, $parameterContainer);
-        $columns             = [];
-        foreach ($this->getColumns()->getColumns() as $columnIndexOrAs => $column) {
-            if ($column === self::SQL_STAR) {
-                $columns[] = ["{$fromTable}*"];
-                continue;
-            }
-
-            $columnName = $this->resolveColumnValue(
-                [
-                    'column'       => $column,
-                    'fromTable'    => $fromTable,
-                    'isIdentifier' => true,
-                ],
-                $platform,
-                $driver,
-                $parameterContainer,
-                is_string($columnIndexOrAs) ? $columnIndexOrAs : 'column'
-            );
-            $columnAs   = null;
-            if (is_string($columnIndexOrAs)) {
-                $columnAs = $platform->quoteIdentifier($columnIndexOrAs);
-            } elseif (stripos($columnName, ' as ') === false) {
-                $columnAs = is_string($column) ? $platform->quoteIdentifier($column) : 'Expression' . $expr++;
-            }
-
-            $columns[] = $columnAs !== null ? [$columnName, $columnAs] : [$columnName];
-        }
-
-        // Only process joins if there are any (avoid creating Join object)
-        if ($this->joins !== null) {
-            foreach ($this->joins->getJoins() as $join) {
-                $joinName = is_array($join['name']) ? key($join['name']) : $join['name'];
-                $joinName = parent::resolveTable($joinName, $platform, $driver, $parameterContainer);
-
-                foreach ($join['columns'] as $jKey => $jColumn) {
-                    $jColumns   = [];
-                    $jFromTable = is_scalar($jColumn)
-                            ? $joinName . $platform->getIdentifierSeparator()
-                            : '';
-                    $jColumns[] = $this->resolveColumnValue(
-                        [
-                            'column'       => $jColumn,
-                            'fromTable'    => $jFromTable,
-                            'isIdentifier' => true,
-                        ],
-                        $platform,
-                        $driver,
-                        $parameterContainer,
-                        is_string($jKey) ? $jKey : 'column'
-                    );
-                    if (is_string($jKey)) {
-                        $jColumns[] = $platform->quoteIdentifier($jKey);
-                    } elseif ($jColumn !== self::SQL_STAR) {
-                        $jColumns[] = $platform->quoteIdentifier($jColumn);
-                    }
-
-                    $columns[] = $jColumns;
-                }
-            }
-        }
-
-        if ($this->quantifier) {
-            $quantifier = $this->quantifier instanceof ExpressionInterface
-                    ? $this->processExpression($this->quantifier, $platform, $driver, $parameterContainer, 'quantifier')
-                    : $this->quantifier;
-        }
-
-        if (! isset($table)) {
-            return [$columns];
-        } elseif (isset($quantifier)) {
-            return [$quantifier, $columns, $table];
-        } else {
-            return [$columns, $table];
-        }
-    }
-
-    /** @return string[][][]|null */
-    protected function processJoins(
-        PlatformInterface $platform,
-        ?DriverInterface $driver = null,
-        ?ParameterContainer $parameterContainer = null
-    ): ?array {
-        return $this->processJoin($this->joins, $platform, $driver, $parameterContainer);
-    }
-
-    protected function processWhere(
-        PlatformInterface $platform,
-        ?DriverInterface $driver = null,
-        ?ParameterContainer $parameterContainer = null
-    ): ?array {
-        if ($this->where === null || $this->where->count() === 0) {
-            return null;
-        }
-
-        $values = [];
-        $sql    = $this->where->toSqlPart($values);
-
-        // Assemble the marked SQL - handles identifier quoting and value binding
-        $assembledSql = $this->assembleSqlWithValues($sql, $values, $platform, $parameterContainer, 'where', $driver);
-
-        return [$assembledSql];
-    }
-
-    protected function processGroup(
-        PlatformInterface $platform,
-        ?DriverInterface $driver = null,
-        ?ParameterContainer $parameterContainer = null
-    ): ?array {
-        if ($this->group === null) {
-            return null;
-        }
-
-        $groups = [];
-        foreach ($this->group as $column) {
-            $groups[] = $this->resolveColumnValue(
-                [
-                    'column'       => $column,
-                    'isIdentifier' => true,
-                ],
-                $platform,
-                $driver,
-                $parameterContainer,
-                'group'
-            );
-        }
-
-        return [$groups];
-    }
-
-    protected function processHaving(
-        PlatformInterface $platform,
-        ?DriverInterface $driver = null,
-        ?ParameterContainer $parameterContainer = null
-    ): ?array {
-        if ($this->having === null || $this->having->count() === 0) {
-            return null;
-        }
-
-        $values = [];
-        $sql    = $this->having->toSqlPart($values);
-
-        // Assemble the marked SQL - handles identifier quoting and value binding
-        $assembledSql = $this->assembleSqlWithValues($sql, $values, $platform, $parameterContainer, 'having', $driver);
-
-        return [$assembledSql];
-    }
-
-    protected function processOrder(
-        PlatformInterface $platform,
-        ?DriverInterface $driver = null,
-        ?ParameterContainer $parameterContainer = null
-    ): ?array {
-        if (empty($this->order)) {
-            return null;
-        }
-
-        $orders = [];
-        foreach ($this->order as $k => $v) {
-            if ($v instanceof ExpressionInterface) {
-                $orders[] = [
-                    $this->processExpression($v, $platform, $driver, $parameterContainer),
-                ];
-                continue;
-            }
-
-            if (is_int($k)) {
-                if (str_contains($v, ' ')) {
-                    [$k, $v] = explode(' ', $v, 2);
-                } else {
-                    $k = $v;
-                    $v = self::ORDER_ASCENDING;
-                }
-            }
-
-            if (strcasecmp(trim($v), self::ORDER_DESCENDING) === 0) {
-                $orders[] = [$platform->quoteIdentifierInFragment($k), self::ORDER_DESCENDING];
-            } else {
-                $orders[] = [$platform->quoteIdentifierInFragment($k), self::ORDER_ASCENDING];
-            }
-        }
-
-        return [$orders];
-    }
-
-    protected function processLimit(
-        PlatformInterface $platform,
-        ?DriverInterface $driver = null,
-        ?ParameterContainer $parameterContainer = null
-    ): ?array {
-        if ($this->limit === null) {
-            return null;
-        }
-
-        if ($parameterContainer instanceof ParameterContainer) {
-            $paramPrefix = $this->processInfo['paramPrefix'];
-            $parameterContainer->offsetSet($paramPrefix . 'limit', $this->limit, ParameterContainer::TYPE_INTEGER);
-            return [$driver->formatParameterName($paramPrefix . 'limit')];
-        }
-
-        return [$platform->quoteValue($this->limit)];
-    }
-
-    protected function processOffset(
-        PlatformInterface $platform,
-        ?DriverInterface $driver = null,
-        ?ParameterContainer $parameterContainer = null
-    ): ?array {
-        if ($this->offset === null) {
-            return null;
-        }
-
-        if ($parameterContainer instanceof ParameterContainer) {
-            $paramPrefix = $this->processInfo['paramPrefix'];
-            $parameterContainer->offsetSet($paramPrefix . 'offset', $this->offset, ParameterContainer::TYPE_INTEGER);
-            return [$driver->formatParameterName($paramPrefix . 'offset')];
-        }
-
-        return [$platform->quoteValue($this->offset)];
-    }
-
-    protected function processCombine(
-        PlatformInterface $platform,
-        ?DriverInterface $driver = null,
-        ?ParameterContainer $parameterContainer = null
-    ): ?array {
-        if ($this->combine === []) {
-            return null;
-        }
-
-        $type = $this->combine['modifier']
-            ? "{$this->combine['type']} {$this->combine['modifier']}"
-            : $this->combine['type'];
-
-        return [
-            strtoupper($type),
-            $this->processSubSelect($this->combine['select'], $platform, $driver, $parameterContainer),
-        ];
     }
 
     /**
@@ -898,6 +459,9 @@ class Select extends AbstractPreparableSql
      */
     public function __clone()
     {
+        if ($this->columns !== null) {
+            $this->columns = clone $this->columns;
+        }
         if ($this->where !== null) {
             $this->where = clone $this->where;
         }
@@ -907,43 +471,18 @@ class Select extends AbstractPreparableSql
         if ($this->having !== null) {
             $this->having = clone $this->having;
         }
+        if ($this->group !== null) {
+            $this->group = clone $this->group;
+        }
+        if ($this->order !== null) {
+            $this->order = clone $this->order;
+        }
+        if ($this->limit !== null) {
+            $this->limit = clone $this->limit;
+        }
+        if ($this->offset !== null) {
+            $this->offset = clone $this->offset;
+        }
     }
 
-    /**
-     * @return array{0: string, 1: string}
-     * @phpstan-return array{0: string, 1: string}
-     */
-    protected function resolveTable(
-        Select|string|array|TableIdentifier|null $table,
-        PlatformInterface $platform,
-        ?DriverInterface $driver = null,
-        ?ParameterContainer $parameterContainer = null
-    ): array {
-        $alias = null;
-
-        if (is_array($table)) {
-            $alias = key($table);
-            $table = current($table);
-        }
-
-        $table = parent::resolveTable($table, $platform, $driver, $parameterContainer);
-
-        if ($alias) {
-            $fromTable = $platform->quoteIdentifier($alias);
-            $table     = $this->renderTable($table, $fromTable);
-        } else {
-            $fromTable = $table;
-        }
-
-        if ($this->prefixColumnsWithTable && $fromTable) {
-            $fromTable .= $platform->getIdentifierSeparator();
-        } else {
-            $fromTable = '';
-        }
-
-        return [
-            $table,
-            $fromTable,
-        ];
-    }
 }

@@ -29,13 +29,14 @@ class TableIdentifier
      *
      * @param string|array|self $table Table name, ['alias' => 'table'] array, or existing TableIdentifier
      * @param string|null $alias Optional alias (ignored if $table is array with alias)
+     * @param bool $readOnly Whether this table reference is read-only (cannot be changed)
      */
-    public static function from(string|array|self $table, ?string $alias = null): self
+    public static function from(string|array|self $table, ?string $alias = null, bool $readOnly = false): self
     {
         if ($table instanceof self) {
-            // If alias provided, create new instance with that alias
-            return $alias !== null && $alias !== $table->alias
-                ? new self($table->table, $table->schema, $alias)
+            $needsNew = ($alias !== null && $alias !== $table->alias) || ($readOnly && !$table->readOnly);
+            return $needsNew
+                ? new self($table->table, $table->schema, $alias ?? $table->alias, $readOnly || $table->readOnly)
                 : $table;
         }
 
@@ -44,19 +45,19 @@ class TableIdentifier
             $table = (string) current($table);
         }
 
-        // Check for schema.table format
         if (str_contains($table, '.')) {
             $parts = explode('.', $table, 2);
-            return new self($parts[1], $parts[0], $alias);
+            return new self($parts[1], $parts[0], $alias, $readOnly);
         }
 
-        return new self($table, null, $alias);
+        return new self($table, null, $alias, $readOnly);
     }
 
     public function __construct(
         protected readonly string $table,
         protected readonly ?string $schema = null,
-        protected readonly ?string $alias = null
+        protected readonly ?string $alias = null,
+        protected readonly bool $readOnly = false
     ) {
         if ($table === '') {
             throw new Exception\InvalidArgumentException('$table must be a valid table name, empty string given');
@@ -64,6 +65,11 @@ class TableIdentifier
         if ($schema === '') {
             throw new Exception\InvalidArgumentException('$schema must be a valid schema name or null, empty string given');
         }
+    }
+
+    public function isReadOnly(): bool
+    {
+        return $this->readOnly;
     }
 
     public function getTable(): string
@@ -95,7 +101,7 @@ class TableIdentifier
      */
     public function as(string $alias): self
     {
-        return new self($this->table, $this->schema, $alias);
+        return new self($this->table, $this->schema, $alias, $this->readOnly);
     }
 
     /**

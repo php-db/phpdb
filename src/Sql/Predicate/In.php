@@ -115,14 +115,12 @@ class In extends AbstractExpression implements PredicateInterface
         $identifierSql = $this->identifier->getSpecification();
         $valueSetSql   = $this->valueSet->getSpecification();
 
-        // Collect values based on argument type
         if ($this->valueSet instanceof Values) {
             $valueList = $this->valueSet->getValue();
             foreach ($valueList as $v) {
                 $values[] = $v;
             }
         } elseif ($this->valueSet instanceof ArgumentSelect) {
-            // Collect the Select object itself for later processing
             $values[] = $this->valueSet;
         }
 

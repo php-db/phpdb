@@ -141,7 +141,6 @@ class Join implements Iterator, Countable
             $columns = [$columns];
         }
 
-        // Convert to TableIdentifier for consistent handling
         $tableIdentifier = TableIdentifier::from($name);
 
         $this->joins[] = [
@@ -191,14 +190,11 @@ class Join implements Iterator, Countable
             /** @var TableIdentifier $tableIdentifier */
             $tableIdentifier = $join['name'];
 
-            // TableIdentifier handles table name, schema, and alias via toSqlPart()
             $sql = strtoupper($join['type']) . ' JOIN ' . $tableIdentifier->toSqlPart();
 
-            // Process ON condition
             if ($join['on'] instanceof Predicate\PredicateInterface) {
                 $sql .= ' ON ' . $join['on']->toSqlPart($values);
             } else {
-                // String ON condition - add markers for identifiers (table.column pattern)
                 $sql .= ' ON ' . preg_replace(
                     '/([a-zA-Z_][a-zA-Z0-9_]*)\.([a-zA-Z_][a-zA-Z0-9_]*)/',
                     $lq . '$1' . $rq . '.' . $lq . '$2' . $rq,
@@ -210,5 +206,47 @@ class Join implements Iterator, Countable
         }
 
         return ' ' . implode(' ', $parts);
+    }
+
+    /**
+     * Build columns SQL for SELECT clause from all joins.
+     * Returns comma-prefixed string if there are join columns, empty string otherwise.
+     *
+     * @param callable|null $expressionProcessor Callback to process ExpressionInterface/Select objects
+     */
+    public function toColumnsSqlPart(?callable $expressionProcessor = null): string
+    {
+        if ($this->joins === []) {
+            return '';
+        }
+
+        $result = '';
+        foreach ($this->joins as $join) {
+            /** @var TableIdentifier $tableIdentifier */
+            $tableIdentifier = $join['name'];
+            $joinPrefix = '{"' . $tableIdentifier->getRef() . '"}.';
+
+            foreach ($join['columns'] as $jAlias => $jColumn) {
+                if ($jColumn === Select::SQL_STAR) {
+                    $result .= ', ' . $joinPrefix . '*';
+                } elseif ($jColumn instanceof ExpressionInterface) {
+                    $columnName = $expressionProcessor ? $expressionProcessor($jColumn) : (string) $jColumn;
+                    $result .= is_string($jAlias)
+                        ? ', ' . $columnName . ' AS {"' . $jAlias . '"}'
+                        : ', ' . $columnName;
+                } elseif ($jColumn instanceof Select) {
+                    $columnName = $expressionProcessor ? $expressionProcessor($jColumn) : '{SQL}';
+                    $result .= is_string($jAlias)
+                        ? ', (' . $columnName . ') AS {"' . $jAlias . '"}'
+                        : ', (' . $columnName . ')';
+                } elseif (is_string($jAlias)) {
+                    $result .= ', ' . $joinPrefix . '{"' . $jColumn . '"} AS {"' . $jAlias . '"}';
+                } else {
+                    $result .= ', ' . $joinPrefix . '{"' . $jColumn . '"} AS {"' . $jColumn . '"}';
+                }
+            }
+        }
+
+        return $result;
     }
 }

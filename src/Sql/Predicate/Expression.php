@@ -20,7 +20,6 @@ class Expression extends BaseExpression implements PredicateInterface
     {
         $sql = $this->expression;
 
-        // Replace ? placeholders with markers and collect values
         foreach ($this->parameters as $param) {
             if ($param instanceof Value) {
                 $values[] = $param->getValue();
@@ -31,7 +30,6 @@ class Expression extends BaseExpression implements PredicateInterface
                 }
                 $sql = preg_replace('/\?/', $param->getSpecification(), $sql, 1);
             } else {
-                // For other argument types, use getSpecification()
                 $sql = preg_replace('/\?/', $param->getSpecification(), $sql, 1);
             }
         }

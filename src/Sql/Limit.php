@@ -10,7 +10,6 @@ class Limit
 
     public function __construct(string|int $value)
     {
-        // Convert to int for proper parameter binding
         $this->value = (int) $value;
     }
 

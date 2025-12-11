@@ -18,8 +18,6 @@ use function is_scalar;
 use function is_string;
 use function str_contains;
 
-// phpcs:ignore SlevomatCodingStandard.Namespaces.UnusedUses.UnusedUse
-
 class PredicateSet implements PredicateInterface, Countable
 {
     final public const OP_AND = 'AND';
@@ -72,12 +70,9 @@ class PredicateSet implements PredicateInterface, Countable
         PredicateInterface|Closure|string|array $predicates,
         string $combination = self::OP_AND
     ): static {
-        // Fast path: array is the most common case
         if (is_array($predicates)) {
             foreach ($predicates as $pkey => $pvalue) {
-                // Fast path: string key with scalar value (most common)
                 if (is_string($pkey)) {
-                    // Most common case: simple equality check with scalar
                     if (is_scalar($pvalue)) {
                         $this->predicates[] = [$combination, new Operator($pkey, Operator::OP_EQ, $pvalue)];
                     } elseif ($pvalue === null) {
@@ -122,7 +117,6 @@ class PredicateSet implements PredicateInterface, Countable
             return $this;
         }
 
-        // String predicate
         $predicate = str_contains($predicates, Expression::PLACEHOLDER)
             ? new PredicateExpression($predicates) : new Literal($predicates);
         $this->predicates[] = [$combination, $predicate];
@@ -247,7 +241,6 @@ class PredicateSet implements PredicateInterface, Countable
         foreach ($this->predicates as [$operator, $predicate]) {
             $sql = $predicate->toSqlPart($values);
 
-            // Wrap nested predicate sets in parentheses
             if ($predicate instanceof self && $predicate->count() > 1) {
                 $sql = '(' . $sql . ')';
             }

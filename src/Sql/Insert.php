@@ -9,52 +9,24 @@ use PhpDb\Adapter\Driver\PdoDriverInterface;
 use PhpDb\Adapter\ParameterContainer;
 use PhpDb\Adapter\Platform\PlatformInterface;
 
-use function array_combine;
-use function array_flip;
 use function array_key_exists;
 use function array_keys;
 use function array_map;
-use function array_values;
-use function count;
 use function implode;
-use function is_array;
 use function is_scalar;
-use function range;
-use function rtrim;
-use function str_replace;
 
 class Insert extends AbstractPreparableSql
 {
-    /**
-     * Constants
-     *
-     * @const
-     */
-    public const SPECIFICATION_INSERT = 'insert';
-
-    final public const SPECIFICATION_SELECT = 'select';
-
     final public const VALUES_MERGE = 'merge';
 
     final public const VALUES_SET = 'set';
 
-    /**#@-*/
-
-    /** @var string[]|array[] $specifications */
-    protected array $specifications = [
-        self::SPECIFICATION_INSERT => 'INSERT INTO %1$s (%2$s) VALUES (%3$s)',
-        self::SPECIFICATION_SELECT => 'INSERT INTO %1$s %2$s %3$s',
-    ];
-
     protected ?TableIdentifier $table = null;
 
-    protected array $columns = [];
+    protected ?Values $values = null;
 
-    protected null|array|Select $select = null;
+    protected ?Select $select = null;
 
-    /**
-     * Constructor
-     */
     public function __construct(string|TableIdentifier|null $table = null)
     {
         if ($table) {
@@ -62,30 +34,23 @@ class Insert extends AbstractPreparableSql
         }
     }
 
-    /**
-     * Create INTO clause
-     */
+    private function getValues(): Values
+    {
+        return $this->values ??= new Values();
+    }
+
     public function into(TableIdentifier|string|array $table): static
     {
         $this->table = TableIdentifier::from($table);
         return $this;
     }
 
-    /**
-     * Specify columns
-     */
     public function columns(array $columns): static
     {
-        $this->columns = array_flip($columns);
+        $this->getValues()->columns($columns);
         return $this;
     }
 
-    /**
-     * Specify values to insert
-     *
-     * @param string        $flag one of VALUES_MERGE or VALUES_SET; defaults to VALUES_SET
-     * @throws Exception\InvalidArgumentException
-     */
     public function values(array|Select $values, string $flag = self::VALUES_SET): static
     {
         if ($values instanceof Select) {
@@ -106,53 +71,30 @@ class Insert extends AbstractPreparableSql
             );
         }
 
-        if ($flag === self::VALUES_SET) {
-            $this->columns = $this->isAssocativeArray($values)
-                ? $values
-                : array_combine(array_keys($this->columns), array_values($values));
-        } else {
-            foreach ($values as $column => $value) {
-                $this->columns[$column] = $value;
-            }
-        }
-
+        $this->getValues()->set($values, $flag);
         return $this;
     }
 
-    /**
-     * Simple test for an associative array
-     *
-     * @link http://stackoverflow.com/questions/173400/how-to-check-if-php-array-is-associative-or-sequential
-     */
-    private function isAssocativeArray(array $array): bool
-    {
-        return array_keys($array) !== range(0, count($array) - 1);
-    }
-
-    /**
-     * Create INTO SELECT clause
-     */
     public function select(Select $select): static
     {
         return $this->values($select);
     }
 
-    /**
-     * Get raw state
-     */
-    public function getRawState(?string $key = null): TableIdentifier|string|array
+    public function getRawState(?string $key = null): mixed
     {
         $rawState = [
-            'table'   => $this->table,
-            'columns' => array_keys($this->columns),
-            'values'  => array_values($this->columns),
+            'table'  => $this->table,
+            'values' => $this->values,
+            'select' => $this->select,
         ];
         return $key !== null && array_key_exists($key, $rawState) ? $rawState[$key] : $rawState;
     }
 
-    /**
-     * Optimized buildSqlString using match expression and string concatenation
-     */
+    protected function getInsertKeyword(): string
+    {
+        return 'INSERT';
+    }
+
     protected function buildSqlString(
         PlatformInterface $platform,
         ?DriverInterface $driver = null,
@@ -160,58 +102,42 @@ class Insert extends AbstractPreparableSql
     ): string {
         $this->localizeVariables();
 
-        $sql = '';
+        $tablePart = $this->table?->toSqlPart() ?? '';
+        $tableSql = $this->quoteSqlString($tablePart, [], $platform, null, 'table');
 
-        foreach ($this->specifications as $name => $specification) {
-            // Skip method calls for null/empty properties (avoid function call overhead)
-            $result = match ($name) {
-                'insert' => $this->select === null ? $this->processInsert($platform, $driver, $parameterContainer) : null,
-                'select' => $this->select !== null ? $this->processSelect($platform, $driver, $parameterContainer) : null,
-                default => $this->{'process' . $name}($platform, $driver, $parameterContainer),
-            };
-
-            if (is_array($result)) {
-                $part = $this->createSqlFromSpecificationAndParameters($specification, $result);
-                $sql .= $sql === '' ? $part : ' ' . $part;
-            } elseif ($result !== null) {
-                $sql .= $sql === '' ? $result : ' ' . $result;
-            }
+        if ($this->select !== null) {
+            return $this->buildInsertSelectSql($tableSql, $platform, $driver, $parameterContainer);
         }
 
-        return rtrim($sql, "\n ,");
+        return $this->buildInsertValuesSql($tableSql, $platform, $driver, $parameterContainer);
     }
 
-    protected function processInsert(
+    protected function buildInsertValuesSql(
+        string $tableSql,
         PlatformInterface $platform,
         ?DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null
-    ): ?string {
-        if ($this->select) {
-            return null;
-        }
+    ): string {
+        $valuesObj = $this->getValues();
 
-        if (! $this->columns) {
+        if ($valuesObj->count() === 0) {
             throw new Exception\InvalidArgumentException('values or select should be present');
         }
 
         $columns     = [];
-        $values      = [];
+        $valueParts  = [];
         $i           = 0;
         $isPdoDriver = $driver instanceof PdoDriverInterface;
 
-        foreach ($this->columns as $column => $value) {
+        foreach ($valuesObj as $column => $value) {
             $columns[] = $platform->quoteIdentifier($column);
-            if (is_scalar($value) && $parameterContainer) {
-                // use incremental value instead of column name for PDO
-                // @see https://github.com/zendframework/zend-db/issues/35
-                if ($isPdoDriver) {
-                    $column = 'c_' . $i++;
-                }
 
-                $values[] = $driver->formatParameterName($column);
-                $parameterContainer->offsetSet($column, $value);
+            if (is_scalar($value) && $parameterContainer !== null && $driver !== null) {
+                $paramName = $isPdoDriver ? 'c_' . $i++ : $column;
+                $valueParts[] = $driver->formatParameterName($paramName);
+                $parameterContainer->offsetSet($paramName, $value);
             } else {
-                $values[] = $this->resolveColumnValue(
+                $valueParts[] = $this->resolveColumnValue(
                     $value,
                     $platform,
                     $driver,
@@ -220,108 +146,68 @@ class Insert extends AbstractPreparableSql
             }
         }
 
-        // Use TableIdentifier's toSqlPart() and assemble with platform
-        $tableSql = $this->table !== null
-            ? $this->assembleSqlWithValues($this->table->toSqlPart(), [], $platform, null, 'table')
-            : '';
-
-        return str_replace(
-            ['%1$s', '%2$s', '%3$s'],
-            [
-                $tableSql,
-                implode(', ', $columns),
-                implode(', ', $values),
-            ],
-            $this->specifications[static::SPECIFICATION_INSERT]
-        );
+        return $this->getInsertKeyword() . ' INTO ' . $tableSql
+             . ' (' . implode(', ', $columns) . ')'
+             . ' VALUES (' . implode(', ', $valueParts) . ')';
     }
 
-    protected function processSelect(
+    protected function buildInsertSelectSql(
+        string $tableSql,
         PlatformInterface $platform,
         ?DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null
-    ): ?string {
-        if (! $this->select) {
-            return null;
-        }
-
+    ): string {
         $selectSql = $this->processSubSelect($this->select, $platform, $driver, $parameterContainer);
 
-        $columns = array_map([$platform, 'quoteIdentifier'], array_keys($this->columns));
-        $columns = implode(', ', $columns);
+        $columnsPart = '';
+        $valuesObj = $this->values;
+        if ($valuesObj !== null && $valuesObj->count() > 0) {
+            $columns = array_map([$platform, 'quoteIdentifier'], $valuesObj->getColumns());
+            $columnsPart = ' (' . implode(', ', $columns) . ')';
+        }
 
-        // Use TableIdentifier's toSqlPart() and assemble with platform
-        $tableSql = $this->table !== null
-            ? $this->assembleSqlWithValues($this->table->toSqlPart(), [], $platform, null, 'table')
-            : '';
-
-        return str_replace(
-            ['%1$s', '%2$s', '%3$s'],
-            [
-                $tableSql,
-                $columns ? "({$columns})" : '',
-                $selectSql,
-            ],
-            $this->specifications[static::SPECIFICATION_SELECT]
-        );
+        return $this->getInsertKeyword() . ' INTO ' . $tableSql . $columnsPart . ' ' . $selectSql;
     }
 
-    /**
-     * Overloading: variable setting
-     *
-     * Proxies to values, using VALUES_MERGE strategy
-     */
     public function __set(string $name, mixed $value): void
     {
-        $this->columns[$name] = $value;
+        $this->getValues()->merge($name, $value);
     }
 
-    /**
-     * Overloading: variable unset
-     *
-     * Proxies to values and columns
-     *
-     * @throws Exception\InvalidArgumentException
-     * @return void
-     */
-    public function __unset(string $name)
+    public function __unset(string $name): void
     {
-        if (! array_key_exists($name, $this->columns)) {
+        if (!$this->getValues()->has($name)) {
             throw new Exception\InvalidArgumentException(
                 'The key ' . $name . ' was not found in this objects column list'
             );
         }
 
-        unset($this->columns[$name]);
+        $this->getValues()->remove($name);
     }
 
-    /**
-     * Overloading: variable isset
-     *
-     * Proxies to columns; does a column of that name exist?
-     *
-     * @return bool
-     */
-    public function __isset(string $name)
+    public function __isset(string $name): bool
     {
-        return array_key_exists($name, $this->columns);
+        return $this->values !== null && $this->values->has($name);
     }
 
-    /**
-     * Overloading: variable retrieval
-     * Retrieves value by column name
-     *
-     * @throws Exception\InvalidArgumentException
-     * @return string
-     */
     public function __get(string $name): mixed
     {
-        if (! array_key_exists($name, $this->columns)) {
+        if ($this->values === null || !$this->values->has($name)) {
             throw new Exception\InvalidArgumentException(
                 'The key ' . $name . ' was not found in this objects column list'
             );
         }
 
-        return $this->columns[$name];
+        return $this->values->get($name);
+    }
+
+    public function __clone()
+    {
+        if ($this->values !== null) {
+            $this->values = clone $this->values;
+        }
+        if ($this->select !== null) {
+            $this->select = clone $this->select;
+        }
     }
 }

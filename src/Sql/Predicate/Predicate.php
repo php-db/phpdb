@@ -358,7 +358,6 @@ class Predicate extends PredicateSet
      *
      * @return $this Provides a fluent interface
      */
-    // phpcs:ignore Generic.NamingConventions.ConstructorName.OldStyle
     public function predicate(PredicateInterface $predicate): static
     {
         $this->addPredicate(

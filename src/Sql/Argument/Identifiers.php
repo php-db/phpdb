@@ -50,7 +50,6 @@ final readonly class Identifiers implements ArgumentInterface
             return '(NULL)';
         }
 
-        // Build marked identifiers with string concatenation for efficiency
         $result = '(';
         $first  = true;
         foreach ($this->identifiers as $id) {
@@ -59,7 +58,6 @@ final readonly class Identifiers implements ArgumentInterface
             }
             $first = false;
 
-            // Fast path for simple identifiers without dots
             if (! str_contains($id, '.')) {
                 $result .= PreparableSqlInterface::P_LQUOTE . $id . PreparableSqlInterface::P_RQUOTE;
             } else {

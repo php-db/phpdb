@@ -35,12 +35,10 @@ final readonly class Identifier implements ArgumentInterface
 
     public function getSpecification(): string
     {
-        // Fast path for simple identifiers without dots
         if (! str_contains($this->identifier, '.')) {
             return PreparableSqlInterface::P_LQUOTE . $this->identifier . PreparableSqlInterface::P_RQUOTE;
         }
 
-        // Handle qualified identifiers (table.column)
         return PreparableSqlInterface::P_LQUOTE
             . str_replace(
                 '.',
