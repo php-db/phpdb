@@ -154,7 +154,7 @@ abstract class AbstractSql implements SqlInterface
         ?DriverInterface $driver = null
     ): string {
         $quote = $platform->getQuoteIdentifierSymbol();
-        $sql = str_replace([PreparableSqlInterface::P_LQUOTE, PreparableSqlInterface::P_RQUOTE], $quote, $sql);
+        $sql = strtr($sql, [PreparableSqlInterface::P_LQUOTE => $quote, PreparableSqlInterface::P_RQUOTE => $quote]);
 
         if ($values === []) {
             return $sql;
