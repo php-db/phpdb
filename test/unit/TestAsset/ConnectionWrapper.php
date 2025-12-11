@@ -12,8 +12,9 @@ final class ConnectionWrapper extends AbstractPdoConnection
 {
     public function __construct()
     {
-        parent::__construct();
-        $this->resource = new PdoStubDriver('foo', 'bar', 'baz');
+        parent::__construct(
+            new PdoStubDriver('foo', 'bar', 'baz')
+        );
     }
 
     public function connect(): ConnectionInterface

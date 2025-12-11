@@ -40,9 +40,7 @@ abstract class AbstractPdo implements PdoDriverInterface, ProfilerAwareInterface
             $this->connection->setDriver($this);
         }
 
-        if ($this->statementPrototype instanceof PdoDriverAwareInterface) {
-            $this->statementPrototype->setDriver($this);
-        }
+        $this->statementPrototype->setDriver($this);
 
         // $features is not constructor promoted because $this->features is defined in the trait
         if ($features !== [] && $this instanceof DriverFeatureProviderInterface) {

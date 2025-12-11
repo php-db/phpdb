@@ -36,16 +36,12 @@ abstract class AbstractPdoConnection extends AbstractConnection implements
      * @throws Exception\InvalidArgumentException
      */
     public function __construct(
-        array|PDO|null $connectionParameters = null
+        PDO|array $connectionParameters
     ) {
         if (is_array($connectionParameters)) {
             $this->setConnectionParameters($connectionParameters);
         } elseif ($connectionParameters instanceof PDO) {
             $this->setResource($connectionParameters);
-        } elseif (null !== $connectionParameters) {
-            throw new Exception\InvalidArgumentException(
-                '$connection must be an array of parameters, a \PDO object or null'
-            );
         }
     }
 
@@ -181,7 +177,7 @@ abstract class AbstractPdoConnection extends AbstractConnection implements
         $resultResource = $this->resource->query($sql);
 
         if ($this->profiler) {
-            $this->profiler->profilerFinish($sql);
+            $this->profiler->profilerFinish();
         }
 
         if ($resultResource === false) {
@@ -189,6 +185,7 @@ abstract class AbstractPdoConnection extends AbstractConnection implements
             throw new Exception\InvalidQueryException($errorInfo[2]);
         }
 
+        /** @phpstan-ignore arguments.count */
         return $this->driver->createResult($resultResource, $sql);
     }
 

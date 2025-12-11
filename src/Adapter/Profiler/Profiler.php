@@ -17,7 +17,7 @@ class Profiler implements ProfilerInterface
     /** @var array */
     protected $profiles = [];
 
-    /** @var null */
+    /** @var int */
     protected $currentIndex = 0;
 
     /**

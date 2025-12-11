@@ -79,6 +79,7 @@ abstract class AbstractResultSet implements ResultSetInterface
             $this->dataSource = new ArrayIterator($dataSource);
             $this->buffer     = -1; // array's are a natural buffer
         } elseif ($dataSource instanceof IteratorAggregate) {
+            /** @phpstan-ignore assign.propertyType */
             $this->dataSource = $dataSource->getIterator();
         } elseif ($dataSource instanceof Iterator) {
             $this->dataSource = $dataSource;

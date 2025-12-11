@@ -12,7 +12,7 @@ interface StatementInterface extends StatementContainerInterface
     /**
      * Get resource
      *
-     * @return resource
+     * @return resource|false|null
      */
     public function getResource();
 

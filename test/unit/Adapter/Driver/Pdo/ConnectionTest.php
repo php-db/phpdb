@@ -24,7 +24,13 @@ final class ConnectionTest extends TestCase
     #[Override]
     protected function setUp(): void
     {
-        $this->connection = new TestConnection();
+        $this->connection = new TestConnection(
+            [
+                'dsn' => 'sqlite::memory:',
+                'username' => 'bar',
+                'password' => 'baz'
+            ]
+        );
     }
 
     /**

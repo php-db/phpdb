@@ -1,11 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDb\RowGateway;
 
 use ArrayAccess;
 use Countable;
 // phpcs:ignore SlevomatCodingStandard.Namespaces.UnusedUses.UnusedUse
 use Override;
+use PhpDb\Adapter\Driver\StatementInterface;
 use PhpDb\Sql\Sql;
 use PhpDb\Sql\TableIdentifier;
 use ReturnTypeWillChange;
@@ -25,7 +28,7 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
     /** @var array */
     protected $primaryKeyColumn;
 
-    /** @var array */
+    /** @var ?array */
     protected $primaryKeyData;
 
     /** @var array */
@@ -74,11 +77,9 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
 
     /**
      * Populate Data
-     *
-     * @param  bool  $rowExistsInDatabase
-     * @return $this Provides a fluent interface
+     * todo: Refactor to a standard ArrayObject implementation - remove fluent interface
      */
-    public function populate(array $rowData, $rowExistsInDatabase = false)
+    public function populate(array $rowData, bool $rowExistsInDatabase = false): RowGatewayInterface
     {
         $this->initialize();
 
@@ -93,18 +94,16 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
         return $this;
     }
 
-    public function exchangeArray(array $array): static
+    /**
+     * todo: Refactor to a standard ArrayObject implementation - remove proxy to populate
+     */
+    public function exchangeArray(array $array): RowGatewayInterface
     {
         return $this->populate($array, true);
     }
 
-    /**
-     * Save
-     *
-     * @return int
-     */
     #[Override]
-    public function save()
+    public function save(): int
     {
         $this->initialize();
 
@@ -126,6 +125,7 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
                 }
             }
 
+            /** @var StatementInterface $statement */
             $statement    = $this->sql->prepareStatementForSqlObject($this->sql->update()->set($data)->where($where));
             $result       = $statement->execute();
             $rowsAffected = $result->getAffectedRows();
@@ -145,6 +145,7 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
             $insert = $this->sql->insert();
             $insert->values($this->data);
 
+            /** @var StatementInterface $statement */
             $statement = $this->sql->prepareStatementForSqlObject($insert);
 
             $result = $statement->execute();
@@ -165,6 +166,7 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
         }
 
         // refresh data
+        /** @var StatementInterface $statement */
         $statement = $this->sql->prepareStatementForSqlObject($this->sql->select()->where($where));
         $result    = $statement->execute();
         $rowData   = $result->current();
@@ -177,13 +179,8 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
         return $rowsAffected;
     }
 
-    /**
-     * Delete
-     *
-     * @return int
-     */
     #[Override]
-    public function delete()
+    public function delete(): int
     {
         $this->initialize();
 
@@ -195,6 +192,7 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
 
         // @todo determine if we need to do a select to ensure 1 row will be affected
 
+        /** @var StatementInterface $statement */
         $statement = $this->sql->prepareStatementForSqlObject($this->sql->delete()->where($where));
         $result    = $statement->execute();
 
@@ -272,24 +270,15 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
         return count($this->data);
     }
 
-    /**
-     * To array
-     *
-     * @return array
-     */
-    public function toArray()
+    public function toArray(): array
     {
         return $this->data;
     }
 
     /**
-     * __get
-     *
-     * @param  string $name
      * @throws Exception\InvalidArgumentException
-     * @return mixed
      */
-    public function __get($name)
+    public function __get(string $name): mixed
     {
         if (array_key_exists($name, $this->data)) {
             return $this->data[$name];
@@ -297,53 +286,30 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
         throw new Exception\InvalidArgumentException('Not a valid column in this row: ' . $name);
     }
 
-    /**
-     * __set
-     *
-     * @param  string $name
-     * @param  mixed $value
-     * @return void
-     */
-    public function __set($name, $value)
+    public function __set(string $name, mixed $value): void
     {
         $this->offsetSet($name, $value);
     }
 
-    /**
-     * __isset
-     *
-     * @param  string $name
-     * @return bool
-     */
-    public function __isset($name)
+    public function __isset(string $name): bool
     {
         return $this->offsetExists($name);
     }
 
-    /**
-     * __unset
-     *
-     * @param  string $name
-     * @return void
-     */
-    public function __unset($name)
+    public function __unset(string $name): void
     {
         $this->offsetUnset($name);
     }
 
-    /**
-     * @return bool
-     */
-    public function rowExistsInDatabase()
+    public function rowExistsInDatabase(): bool
     {
         return $this->primaryKeyData !== null;
     }
 
     /**
      * @throws Exception\RuntimeException
-     * @return void
      */
-    protected function processPrimaryKeyData()
+    protected function processPrimaryKeyData(): void
     {
         $this->primaryKeyData = [];
         foreach ($this->primaryKeyColumn as $column) {
