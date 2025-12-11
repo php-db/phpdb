@@ -6,14 +6,15 @@ namespace PhpDb\Sql;
 
 class Offset
 {
-    protected string|int $value;
+    protected int $value;
 
     public function __construct(string|int $value)
     {
-        $this->value = $value;
+        // Convert to int for proper parameter binding
+        $this->value = (int) $value;
     }
 
-    public function getValue(): string|int
+    public function getValue(): int
     {
         return $this->value;
     }

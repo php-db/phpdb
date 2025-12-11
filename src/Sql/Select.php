@@ -498,9 +498,11 @@ class Select extends AbstractPreparableSql
         // Build FROM clause - table is always TableIdentifier now
         $fromPart = $this->table?->toFromSqlPart() ?? '';
 
-        // Build columns using Columns class
-        $expressionProcessor = fn(ExpressionInterface $expr) =>
-            $this->processExpression($expr, $platform, $driver, $parameterContainer);
+        // Build columns using Columns class - processor handles both expressions and subqueries
+        $expressionProcessor = fn(ExpressionInterface|Select $expr) =>
+            $expr instanceof Select
+                ? $this->processSubSelect($expr, $platform, $driver, $parameterContainer)
+                : $this->processExpression($expr, $platform, $driver, $parameterContainer);
 
         return 'SELECT ' . $quantifierPart
             . $this->getColumns()->toSqlPart($this->table, $this->joins, $expressionProcessor)

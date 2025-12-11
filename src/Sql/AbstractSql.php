@@ -237,6 +237,10 @@ abstract class AbstractSql implements SqlInterface
         if (is_int($value) || is_float($value)) {
             return (string) $value;
         }
+        // Numeric strings (e.g., limit/offset values) should not be quoted
+        if (is_string($value) && is_numeric($value)) {
+            return $value;
+        }
 
         return $platform->quoteTrustedValue($value);
     }
