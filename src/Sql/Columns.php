@@ -4,14 +4,7 @@ declare(strict_types=1);
 
 namespace PhpDb\Sql;
 
-use PhpDb\Adapter\Driver\DriverInterface;
-use PhpDb\Adapter\ParameterContainer;
-use PhpDb\Adapter\Platform\PlatformInterface;
-
-use function current;
-use function is_array;
 use function is_string;
-use function key;
 
 class Columns
 {
@@ -46,18 +39,19 @@ class Columns
     /**
      * Build columns SQL part with marker-based identifiers.
      *
-     * @param string|array|TableIdentifier|null $table The table for prefixing columns
+     * @param TableIdentifier|null $table The table for prefixing columns
      * @param Join|null $joins Join object to include join columns
      * @param callable|null $expressionProcessor Callback to process ExpressionInterface objects
      */
     public function toSqlPart(
-        string|array|TableIdentifier|null $table,
+        ?TableIdentifier $table,
         ?Join $joins = null,
         ?callable $expressionProcessor = null
     ): string {
-        // Build table prefix
-        $tableRef = $this->getTableRef($table);
-        $prefix = $this->prefixWithTable && $tableRef ? '{"' . $tableRef . '"}.' : '';
+        // Build table prefix using TableIdentifier's getRef() method
+        $prefix = $this->prefixWithTable && $table !== null
+            ? '{"' . $table->getRef() . '"}.'
+            : '';
 
         $result = '';
         $first = true;
@@ -75,6 +69,12 @@ class Columns
                 $result .= is_string($alias)
                     ? $columnName . ' AS {"' . $alias . '"}'
                     : $columnName;
+            } elseif ($column instanceof Select) {
+                // Subquery column - use expression processor if available
+                $columnName = $expressionProcessor ? $expressionProcessor($column) : '{SQL}';
+                $result .= is_string($alias)
+                    ? '(' . $columnName . ') AS {"' . $alias . '"}'
+                    : '(' . $columnName . ')';
             } elseif (is_string($alias)) {
                 $result .= $prefix . '{"' . $column . '"} AS {"' . $alias . '"}';
             } else {
@@ -85,8 +85,9 @@ class Columns
         // Join columns
         if ($joins !== null) {
             foreach ($joins->getJoins() as $join) {
-                $joinTable = is_array($join['name']) ? key($join['name']) : $join['name'];
-                $joinPrefix = '{"' . $joinTable . '"}.';
+                /** @var TableIdentifier $joinTableId */
+                $joinTableId = $join['name'];
+                $joinPrefix = '{"' . $joinTableId->getRef() . '"}.';
 
                 foreach ($join['columns'] as $jAlias => $jColumn) {
                     if (!$first) {
@@ -113,23 +114,4 @@ class Columns
         return $result;
     }
 
-    /**
-     * Get the table reference name for column prefixing
-     */
-    protected function getTableRef(string|array|TableIdentifier|null $table): ?string
-    {
-        if ($table === null) {
-            return null;
-        }
-
-        if (is_array($table)) {
-            return (string) key($table);
-        }
-
-        if ($table instanceof TableIdentifier) {
-            return $table->getTable();
-        }
-
-        return $table;
-    }
 }

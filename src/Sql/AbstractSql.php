@@ -9,14 +9,9 @@ use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\ParameterContainer;
 use PhpDb\Adapter\Platform\PlatformInterface;
 use PhpDb\Adapter\Platform\Sql92 as DefaultAdapterPlatform;
-use PhpDb\Sql\Argument\Identifier;
-use PhpDb\Sql\Argument\Identifiers;
-use PhpDb\Sql\Argument\Literal;
 use PhpDb\Sql\Argument\Select as SelectArgument;
 use PhpDb\Sql\Argument\Value;
-use PhpDb\Sql\Argument\Values;
 use PhpDb\Sql\Platform\PlatformDecoratorInterface;
-use ValueError;
 
 use function count;
 use function current;
@@ -26,10 +21,11 @@ use function implode;
 use function is_array;
 use function is_bool;
 use function is_callable;
+use function is_float;
+use function is_int;
 use function is_object;
 use function is_string;
 use function key;
-use function preg_quote;
 use function preg_replace;
 use function rtrim;
 use function sprintf;
@@ -41,30 +37,34 @@ use function vsprintf;
 
 abstract class AbstractSql implements SqlInterface
 {
-    public ?object $subject = null;
+    /** Pre-computed regex pattern for value marker replacement */
+    private const VALUE_PATTERN = '/\\{\\?\\}/';
 
-    /**
-     * Specifications for Sql String generation
-     *
-     * @var string[]|array[]
-     */
-    protected array $specifications = [];
+    /** Pre-computed regex pattern for select marker replacement */
+    private const SELECT_PATTERN = '/\\{SQL\\}/';
+
+    public ?object $subject = null;
 
     protected array $processInfo = ['paramPrefix' => '', 'subselectCount' => 0];
 
     protected array $instanceParameterIndex = [];
 
     /**
-     * {@inheritDoc}
+     * Specifications for Sql String generation (used by DDL classes)
+     *
+     * @var string[]|array[]
      */
+    protected array $specifications = [];
+
     #[Override]
     public function getSqlString(?PlatformInterface $adapterPlatform = null): string
     {
-        $adapterPlatform = $adapterPlatform ?: new DefaultAdapterPlatform();
-
-        return $this->buildSqlString($adapterPlatform);
+        return $this->buildSqlString($adapterPlatform ?? new DefaultAdapterPlatform());
     }
 
+    /**
+     * Build the SQL string. Override in subclasses for optimized implementations.
+     */
     protected function buildSqlString(
         PlatformInterface $platform,
         ?DriverInterface $driver = null,
@@ -73,13 +73,8 @@ abstract class AbstractSql implements SqlInterface
         $this->localizeVariables();
 
         $sql = '';
-
         foreach ($this->specifications as $name => $specification) {
-            $result = $this->{'process' . $name}(
-                $platform,
-                $driver,
-                $parameterContainer
-            );
+            $result = $this->{'process' . $name}($platform, $driver, $parameterContainer);
 
             if (is_array($result)) {
                 $part = $this->createSqlFromSpecificationAndParameters($specification, $result);
@@ -93,9 +88,60 @@ abstract class AbstractSql implements SqlInterface
     }
 
     /**
-     * Render table with alias in from/join parts
+     * Create SQL from specification and parameters (used by DDL classes).
      *
-     * @todo move TableIdentifier concatenation here
+     * @throws Exception\RuntimeException
+     */
+    protected function createSqlFromSpecificationAndParameters(array|string $specifications, array $parameters): string
+    {
+        if (is_string($specifications)) {
+            return vsprintf($specifications, $parameters);
+        }
+
+        $parametersCount = count($parameters);
+
+        foreach ($specifications as $specificationString => $paramSpecs) {
+            if ($parametersCount === count($paramSpecs)) {
+                break;
+            }
+            unset($specificationString, $paramSpecs);
+        }
+
+        if (!isset($specificationString)) {
+            throw new Exception\RuntimeException('A number of parameters was found that is not supported by this specification');
+        }
+
+        $topParameters = [];
+        foreach ($parameters as $position => $paramsForPosition) {
+            if (isset($paramSpecs[$position]['combinedby'])) {
+                $multiParamValues = [];
+                foreach ($paramsForPosition as $multiParamsForPosition) {
+                    $ppCount = is_array($multiParamsForPosition) ? count($multiParamsForPosition) : 1;
+                    if (!is_array($multiParamsForPosition)) {
+                        $multiParamsForPosition = [$multiParamsForPosition];
+                    }
+                    if (!isset($paramSpecs[$position][$ppCount])) {
+                        throw new Exception\RuntimeException(sprintf('A number of parameters (%d) was found that is not supported by this specification', $ppCount));
+                    }
+                    $multiParamValues[] = vsprintf($paramSpecs[$position][$ppCount], $multiParamsForPosition);
+                }
+                $topParameters[] = implode($paramSpecs[$position]['combinedby'], $multiParamValues);
+            } elseif ($paramSpecs[$position] !== null) {
+                $ppCount = count($paramsForPosition);
+                if (!isset($paramSpecs[$position][$ppCount])) {
+                    throw new Exception\RuntimeException(sprintf('A number of parameters (%d) was found that is not supported by this specification', $ppCount));
+                }
+                $topParameters[] = vsprintf($paramSpecs[$position][$ppCount], $paramsForPosition);
+            } else {
+                $topParameters[] = $paramsForPosition;
+            }
+        }
+
+        return vsprintf($specificationString, $topParameters);
+    }
+
+    /**
+     * Render table with alias in from/join parts
      */
     protected function renderTable(string $table, ?string $alias = null): string
     {
@@ -105,14 +151,6 @@ abstract class AbstractSql implements SqlInterface
     /**
      * Assemble marked SQL by replacing identifier markers with quotes
      * and value markers with either bound parameters or quoted values.
-     *
-     * @param string $sql SQL with {"identifier"}, {?}, and {SQL} markers
-     * @param array $values Values to substitute for markers
-     * @param PlatformInterface $platform Platform for quoting
-     * @param ParameterContainer|null $parameterContainer If set, use bound parameters
-     * @param string $paramPrefix Prefix for parameter names
-     * @param DriverInterface|null $driver Driver for formatting parameter names
-     * @return string Assembled SQL
      */
     protected function assembleSqlWithValues(
         string $sql,
@@ -124,40 +162,32 @@ abstract class AbstractSql implements SqlInterface
     ): string {
         // Replace identifier markers with actual quotes
         $quote = $platform->getQuoteIdentifierSymbol();
-        $sql = strtr($sql, [
-            PreparableSqlInterface::P_LQUOTE => $quote,
-            PreparableSqlInterface::P_RQUOTE => $quote,
-        ]);
+        $sql = str_replace([PreparableSqlInterface::P_LQUOTE, PreparableSqlInterface::P_RQUOTE], $quote, $sql);
 
-        // Prepend processInfo prefix (e.g., 'subselect1') to ensure unique parameter names
+        if ($values === []) {
+            return $sql;
+        }
+
+        // Fast path: single value with no parameter container (most common case)
+        if ($parameterContainer === null && count($values) === 1 && !$values[0] instanceof SelectArgument) {
+            return str_replace(PreparableSqlInterface::P_VALUE, $this->quoteValueForSql($values[0], $platform), $sql);
+        }
+
         $fullPrefix = $this->processInfo['paramPrefix'] . $paramPrefix;
-
-        // Process values - separate scalar values from Select arguments
         $paramIndex = 1;
+
         foreach ($values as $value) {
             if ($value instanceof SelectArgument) {
-                // Process subquery
-                $subSql = $this->processSubSelectForAssembly(
-                    $value,
-                    $platform,
-                    $driver,
-                    $parameterContainer,
-                    $fullPrefix . 'sub' . $paramIndex
-                );
-                $sql    = preg_replace('/' . preg_quote(PreparableSqlInterface::P_SELECT, '/') . '/', $subSql, $sql, 1);
+                $subSql = $this->processSubSelectForAssembly($value, $platform, $driver, $parameterContainer, $fullPrefix . 'sub' . $paramIndex);
+                $sql = preg_replace(self::SELECT_PATTERN, $subSql, $sql, 1);
                 $paramIndex++;
             } elseif ($parameterContainer !== null && $driver !== null) {
-                // Use bound parameters for scalar values
                 $paramName = $fullPrefix . $paramIndex++;
                 $parameterContainer->offsetSet($paramName, $value);
-                $placeholder = $driver->formatParameterName($paramName);
-                $sql         = preg_replace('/' . preg_quote(PreparableSqlInterface::P_VALUE, '/') . '/', $placeholder, $sql, 1);
+                $sql = preg_replace(self::VALUE_PATTERN, $driver->formatParameterName($paramName), $sql, 1);
             } else {
-                // Quote values directly
-                $quotedValue = $this->quoteValueForSql($value, $platform);
-                // Escape special regex characters in replacement
-                $quotedValue = str_replace(['\\', '$'], ['\\\\', '\\$'], $quotedValue);
-                $sql         = preg_replace('/' . preg_quote(PreparableSqlInterface::P_VALUE, '/') . '/', $quotedValue, $sql, 1);
+                $quotedValue = str_replace(['\\', '$'], ['\\\\', '\\$'], $this->quoteValueForSql($value, $platform));
+                $sql = preg_replace(self::VALUE_PATTERN, $quotedValue, $sql, 1);
             }
         }
 
@@ -177,16 +207,12 @@ abstract class AbstractSql implements SqlInterface
         $select = $selectArg->getValue();
 
         if ($select instanceof SqlInterface) {
-            // Build the subquery SQL - wrap in parentheses for subqueries
             if ($parameterContainer !== null) {
-                // Set up the parameter prefix on the subquery for LIMIT/OFFSET etc.
                 $this->processInfo['subselectCount']++;
                 $select->processInfo['subselectCount'] = $this->processInfo['subselectCount'];
-                $select->processInfo['paramPrefix']    = 'subselect' . $this->processInfo['subselectCount'];
+                $select->processInfo['paramPrefix'] = 'subselect' . $this->processInfo['subselectCount'];
 
                 $sql = '(' . $select->buildSqlString($platform, $driver, $parameterContainer) . ')';
-
-                // Propagate back any nested subselect count
                 $this->processInfo['subselectCount'] = $select->processInfo['subselectCount'];
 
                 return $sql;
@@ -194,8 +220,6 @@ abstract class AbstractSql implements SqlInterface
             return '(' . $select->getSqlString($platform) . ')';
         }
 
-        // For ExpressionInterface, process it without extra parentheses
-        // (the expression itself may already contain them if needed)
         return $this->processExpression($select, $platform, $driver, $parameterContainer, $paramPrefix);
     }
 
@@ -210,13 +234,15 @@ abstract class AbstractSql implements SqlInterface
         if (is_bool($value)) {
             return $value ? '1' : '0';
         }
+        if (is_int($value) || is_float($value)) {
+            return (string) $value;
+        }
 
-        // Quote all values including integers/floats for consistency
         return $platform->quoteTrustedValue($value);
     }
 
     /**
-     * @staticvar int $runtimeExpressionPrefix
+     * Process an expression into SQL.
      */
     protected function processExpression(
         ExpressionInterface $expression,
@@ -227,8 +253,8 @@ abstract class AbstractSql implements SqlInterface
     ): string {
         static $runtimeExpressionPrefix = 0;
 
-        $expressionData   = $expression->getExpressionData();
-        $specification    = $expressionData['spec'];
+        $expressionData = $expression->getExpressionData();
+        $specification = $expressionData['spec'];
         $expressionValues = $expressionData['values'];
 
         if ($expressionValues === []) {
@@ -236,27 +262,18 @@ abstract class AbstractSql implements SqlInterface
         }
 
         if ($namedParameterPrefix === null || $namedParameterPrefix === '') {
-            $namedParameterPrefix = $parameterContainer
-                ? 'expr' . $runtimeExpressionPrefix++ . 'Param'
-                : '';
+            $namedParameterPrefix = $parameterContainer ? 'expr' . $runtimeExpressionPrefix++ . 'Param' : '';
         } else {
-            $namedParameterPrefix = $this->processInfo['paramPrefix']
-                . str_replace([' ', "\t", "\n", "\r"], '__', $namedParameterPrefix);
+            $namedParameterPrefix = $this->processInfo['paramPrefix'] . str_replace([' ', "\t", "\n", "\r"], '__', $namedParameterPrefix);
         }
 
-        if (! isset($this->instanceParameterIndex[$namedParameterPrefix])) {
-            $this->instanceParameterIndex[$namedParameterPrefix] = 1;
-        }
-
+        $this->instanceParameterIndex[$namedParameterPrefix] ??= 1;
         $expressionParamIndex = &$this->instanceParameterIndex[$namedParameterPrefix];
 
-        // Detect if specification uses new marker format (contains {"} or {?} or {SQL})
-        $usesMarkers = str_contains($specification, PreparableSqlInterface::P_LQUOTE)
+        // Use marker-based processing if specification contains markers
+        if (str_contains($specification, PreparableSqlInterface::P_LQUOTE)
             || str_contains($specification, PreparableSqlInterface::P_VALUE)
-            || str_contains($specification, PreparableSqlInterface::P_SELECT);
-
-        if ($usesMarkers) {
-            // New marker-based processing path
+            || str_contains($specification, PreparableSqlInterface::P_SELECT)) {
             return $this->processExpressionWithMarkers(
                 $specification,
                 $expressionValues,
@@ -268,49 +285,30 @@ abstract class AbstractSql implements SqlInterface
             );
         }
 
-        // Legacy vsprintf path
-        $expressionValues = $this->flattenExpressionValues($expressionValues);
-        $values           = [];
-
-        foreach ($expressionValues as $vIndex => $argument) {
-            $values[] = match (true) {
-                $argument instanceof Value => $parameterContainer instanceof ParameterContainer
-                    ? $this->processExpressionParameterName(
-                        $argument->getValue(),
-                        $namedParameterPrefix,
-                        $expressionParamIndex,
-                        $driver,
-                        $parameterContainer
-                    )
-                    : $platform->quoteValue((string) $argument->getValue()),
-                $argument instanceof Identifier => $platform->quoteIdentifierInFragment($argument->getValue()),
-                $argument instanceof Literal => $argument->getValue(),
-                $argument instanceof Values => $this->processValuesArgument(
-                    $argument,
-                    $expressionParamIndex,
-                    $namedParameterPrefix,
-                    $platform,
-                    $driver,
-                    $parameterContainer
-                ),
-                $argument instanceof Identifiers => $this->processIdentifiersArgument($argument, $platform),
-                $argument instanceof SelectArgument => $this->processExpressionOrSelect(
-                    $argument,
-                    $namedParameterPrefix,
-                    $vIndex,
-                    $platform,
-                    $driver,
-                    $parameterContainer
-                ),
-                default => throw new Exception\InvalidArgumentException('Unknown argument type'),
-            };
+        // Legacy vsprintf path for backwards compatibility
+        $values = [];
+        foreach ($expressionValues as $argument) {
+            if ($argument instanceof Value) {
+                $values[] = $parameterContainer !== null
+                    ? $this->processParameterValue($argument->getValue(), $namedParameterPrefix, $expressionParamIndex, $driver, $parameterContainer)
+                    : $platform->quoteValue((string) $argument->getValue());
+            } elseif ($argument instanceof Argument\Identifier) {
+                $values[] = $platform->quoteIdentifierInFragment($argument->getValue());
+            } elseif ($argument instanceof Argument\Literal) {
+                $values[] = $argument->getValue();
+            } elseif ($argument instanceof SelectArgument) {
+                $select = $argument->getValue();
+                $values[] = $select instanceof Select
+                    ? '(' . $this->processSubSelect($select, $platform, $driver, $parameterContainer) . ')'
+                    : $this->processExpression($select, $platform, $driver, $parameterContainer, "{$namedParameterPrefix}subpart");
+            }
         }
 
         return vsprintf($specification, $values);
     }
 
     /**
-     * Process expression using the new marker-based format.
+     * Process expression using marker-based format.
      */
     protected function processExpressionWithMarkers(
         string $specification,
@@ -321,7 +319,6 @@ abstract class AbstractSql implements SqlInterface
         string $namedParameterPrefix,
         int &$expressionParamIndex
     ): string {
-        // Replace identifier markers with actual quotes
         $sql = strtr($specification, [
             PreparableSqlInterface::P_LQUOTE => $platform->getQuoteIdentifierSymbol(),
             PreparableSqlInterface::P_RQUOTE => $platform->getQuoteIdentifierSymbol(),
@@ -332,7 +329,7 @@ abstract class AbstractSql implements SqlInterface
         foreach ($expressionValues as $argument) {
             if ($argument instanceof Value) {
                 $scalarValues[] = $argument->getValue();
-            } elseif ($argument instanceof Values) {
+            } elseif ($argument instanceof Argument\Values) {
                 foreach ($argument->getValue() as $v) {
                     $scalarValues[] = $v;
                 }
@@ -341,27 +338,18 @@ abstract class AbstractSql implements SqlInterface
             }
         }
 
-        // Process values and subqueries
         foreach ($scalarValues as $value) {
             if ($value instanceof SelectArgument) {
-                $subSql = $this->processSubSelectForAssembly(
-                    $value,
-                    $platform,
-                    $driver,
-                    $parameterContainer,
-                    $namedParameterPrefix . 'sub' . $expressionParamIndex
-                );
-                $sql    = preg_replace('/' . preg_quote(PreparableSqlInterface::P_SELECT, '/') . '/', $subSql, $sql, 1);
+                $subSql = $this->processSubSelectForAssembly($value, $platform, $driver, $parameterContainer, $namedParameterPrefix . 'sub' . $expressionParamIndex);
+                $sql = preg_replace(self::SELECT_PATTERN, $subSql, $sql, 1);
                 $expressionParamIndex++;
             } elseif ($parameterContainer !== null && $driver !== null) {
                 $paramName = $namedParameterPrefix . $expressionParamIndex++;
                 $parameterContainer->offsetSet($paramName, $value);
-                $placeholder = $driver->formatParameterName($paramName);
-                $sql         = preg_replace('/' . preg_quote(PreparableSqlInterface::P_VALUE, '/') . '/', $placeholder, $sql, 1);
+                $sql = preg_replace(self::VALUE_PATTERN, $driver->formatParameterName($paramName), $sql, 1);
             } else {
-                $quotedValue = $this->quoteValueForSql($value, $platform);
-                $quotedValue = str_replace(['\\', '$'], ['\\\\', '\\$'], $quotedValue);
-                $sql         = preg_replace('/' . preg_quote(PreparableSqlInterface::P_VALUE, '/') . '/', $quotedValue, $sql, 1);
+                $quotedValue = str_replace(['\\', '$'], ['\\\\', '\\$'], $this->quoteValueForSql($value, $platform));
+                $sql = preg_replace(self::VALUE_PATTERN, $quotedValue, $sql, 1);
             }
         }
 
@@ -369,115 +357,15 @@ abstract class AbstractSql implements SqlInterface
     }
 
     /**
-     * Flattens expression values, expanding Values arguments
-     *
-     * @param ArgumentInterface[] $arguments
-     * @return ArgumentInterface[]
+     * Process a parameter value for bound parameters.
      */
-    protected function flattenExpressionValues(array $arguments): array
-    {
-        $hasValues = false;
-        foreach ($arguments as $argument) {
-            if ($argument instanceof Values) {
-                $hasValues = true;
-                break;
-            }
-        }
-
-        if (! $hasValues) {
-            return $arguments;
-        }
-
-        $values = [];
-        foreach ($arguments as $argument) {
-            if ($argument instanceof Values) {
-                foreach ($argument->getValue() as $v) {
-                    $values[] = new Value($v);
-                }
-            } else {
-                $values[] = $argument;
-            }
-        }
-
-        return $values;
-    }
-
-    protected function processExpressionOrSelect(
-        ArgumentInterface $argument,
-        string $namedParameterPrefix,
-        int $vIndex,
-        PlatformInterface $platform,
-        ?DriverInterface $driver = null,
-        ?ParameterContainer $parameterContainer = null
-    ): string {
-        $value = $argument->getValue();
-
-        return match (true) {
-            $value instanceof Select => '('
-                . $this->processSubSelect($value, $platform, $driver, $parameterContainer)
-                . ')',
-            $value instanceof ExpressionInterface => $this->processExpression(
-                $value,
-                $platform,
-                $driver,
-                $parameterContainer,
-                "{$namedParameterPrefix}{$vIndex}subpart"
-            ),
-            default => throw new ValueError('Invalid Argument type'),
-        };
-    }
-
-    protected function processValuesArgument(
-        ArgumentInterface $argument,
-        int &$expressionParamIndex,
-        string $namedParameterPrefix,
-        PlatformInterface $platform,
-        ?DriverInterface $driver = null,
-        ?ParameterContainer $parameterContainer = null
-    ): string {
-        $values          = $argument->getValue();
-        $processedValues = [];
-
-        if ($parameterContainer instanceof ParameterContainer) {
-            foreach ($values as $value) {
-                $processedValues[] = $this->processExpressionParameterName(
-                    $value,
-                    $namedParameterPrefix,
-                    $expressionParamIndex,
-                    $driver,
-                    $parameterContainer
-                );
-            }
-        } else {
-            foreach ($values as $value) {
-                $processedValues[] = $platform->quoteValue((string) $value);
-            }
-        }
-
-        return implode(', ', $processedValues);
-    }
-
-    protected function processIdentifiersArgument(
-        ArgumentInterface $argument,
-        PlatformInterface $platform
-    ): string {
-        $identifiers          = $argument->getValue();
-        $processedIdentifiers = [];
-
-        foreach ($identifiers as $identifier) {
-            $processedIdentifiers[] = $platform->quoteIdentifierInFragment($identifier);
-        }
-
-        return implode(', ', $processedIdentifiers);
-    }
-
-    protected function processExpressionParameterName(
-        int|float|string|bool $value,
+    protected function processParameterValue(
+        mixed $value,
         string $namedParameterPrefix,
         int &$expressionParamIndex,
-        DriverInterface $driver,
+        ?DriverInterface $driver,
         ParameterContainer $parameterContainer
-    ): ?string {
+    ): string {
         $name = $namedParameterPrefix . $expressionParamIndex++;
         $parameterContainer->offsetSet($name, $value);
 
@@ -485,71 +373,8 @@ abstract class AbstractSql implements SqlInterface
     }
 
     /**
-     * @throws Exception\RuntimeException
+     * Process a subselect query.
      */
-    protected function createSqlFromSpecificationAndParameters(array|string $specifications, array $parameters): string
-    {
-        if (is_string($specifications)) {
-            return vsprintf($specifications, $parameters);
-        }
-
-        $parametersCount = count($parameters);
-
-        foreach ($specifications as $specificationString => $paramSpecs) {
-            if ($parametersCount === count($paramSpecs)) {
-                break;
-            }
-
-            unset($specificationString, $paramSpecs);
-        }
-
-        if (! isset($specificationString)) {
-            throw new Exception\RuntimeException(
-                'A number of parameters was found that is not supported by this specification'
-            );
-        }
-
-        $topParameters = [];
-        foreach ($parameters as $position => $paramsForPosition) {
-            if (isset($paramSpecs[$position]['combinedby'])) {
-                $multiParamValues = [];
-                foreach ($paramsForPosition as $multiParamsForPosition) {
-                    if (is_array($multiParamsForPosition)) {
-                        $ppCount = count($multiParamsForPosition);
-                    } else {
-                        $ppCount                = 1;
-                        $multiParamsForPosition = [$multiParamsForPosition];
-                    }
-
-                    if (! isset($paramSpecs[$position][$ppCount])) {
-                        throw new Exception\RuntimeException(sprintf(
-                            'A number of parameters (%d) was found that is not supported by this specification',
-                            $ppCount
-                        ));
-                    }
-
-                    $multiParamValues[] = vsprintf($paramSpecs[$position][$ppCount], $multiParamsForPosition);
-                }
-
-                $topParameters[] = implode($paramSpecs[$position]['combinedby'], $multiParamValues);
-            } elseif ($paramSpecs[$position] !== null) {
-                $ppCount = count($paramsForPosition);
-                if (! isset($paramSpecs[$position][$ppCount])) {
-                    throw new Exception\RuntimeException(sprintf(
-                        'A number of parameters (%d) was found that is not supported by this specification',
-                        $ppCount
-                    ));
-                }
-
-                $topParameters[] = vsprintf($paramSpecs[$position][$ppCount], $paramsForPosition);
-            } else {
-                $topParameters[] = $paramsForPosition;
-            }
-        }
-
-        return vsprintf($specificationString, $topParameters);
-    }
-
     protected function processSubSelect(
         Select $subselect,
         PlatformInterface $platform,
@@ -563,14 +388,13 @@ abstract class AbstractSql implements SqlInterface
             $decorator = $subselect;
         }
 
-        if ($parameterContainer instanceof ParameterContainer) {
+        if ($parameterContainer !== null) {
             $processInfoContext = $decorator instanceof PlatformDecoratorInterface ? $subselect : $decorator;
             $this->processInfo['subselectCount']++;
             $processInfoContext->processInfo['subselectCount'] = $this->processInfo['subselectCount'];
-            $processInfoContext->processInfo['paramPrefix']    = 'subselect'
-                . $processInfoContext->processInfo['subselectCount'];
+            $processInfoContext->processInfo['paramPrefix'] = 'subselect' . $processInfoContext->processInfo['subselectCount'];
 
-            $sql                                 = $decorator->buildSqlString($platform, $driver, $parameterContainer);
+            $sql = $decorator->buildSqlString($platform, $driver, $parameterContainer);
             $this->processInfo['subselectCount'] = $decorator->processInfo['subselectCount'];
 
             return $sql;
@@ -580,25 +404,26 @@ abstract class AbstractSql implements SqlInterface
     }
 
     /**
-     * @return null|string[][][] Null if no joins present, array of JOIN statements otherwise
+     * Process JOIN clauses.
      */
     protected function processJoin(
         ?Join $joins,
         PlatformInterface $platform,
         ?DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null
-    ): array|null {
+    ): ?array {
         if ($joins === null || $joins->count() === 0) {
             return null;
         }
 
         $joinSpecArgArray = [];
         foreach ($joins->getJoins() as $j => $join) {
-            $joinAs        = null;
+            $joinAs = null;
             $joinNameValue = $join['name'];
+
             if (is_array($joinNameValue)) {
                 $joinName = current($joinNameValue);
-                $joinAs   = $platform->quoteIdentifier(key($joinNameValue));
+                $joinAs = $platform->quoteIdentifier(key($joinNameValue));
             } else {
                 $joinName = $joinNameValue;
             }
@@ -607,9 +432,8 @@ abstract class AbstractSql implements SqlInterface
                 $joinName = $joinName->getExpression();
             } elseif ($joinName instanceof TableIdentifier) {
                 $joinName = $joinName->getTableAndSchema();
-                $joinName = ($joinName[1]
-                        ? $platform->quoteIdentifier($joinName[1]) . $platform->getIdentifierSeparator()
-                        : '') . $platform->quoteIdentifier($joinName[0]);
+                $joinName = ($joinName[1] ? $platform->quoteIdentifier($joinName[1]) . $platform->getIdentifierSeparator() : '')
+                    . $platform->quoteIdentifier($joinName[0]);
             } elseif ($joinName instanceof Select) {
                 $joinName = '(' . $this->processSubSelect($joinName, $platform, $driver, $parameterContainer) . ')';
             } elseif (is_string($joinName) || (is_object($joinName) && is_callable([$joinName, '__toString']))) {
@@ -621,42 +445,25 @@ abstract class AbstractSql implements SqlInterface
                 ));
             }
 
-            $joinSpecArgArray[$j] = [
-                strtoupper($join['type']),
-                $this->renderTable($joinName, $joinAs),
-            ];
+            $joinSpecArgArray[$j] = [strtoupper($join['type']), $this->renderTable($joinName, $joinAs)];
 
             if ($join['on'] instanceof Predicate\PredicateInterface) {
-                $values                 = [];
-                $sql                    = $join['on']->toSqlPart($values);
-                $joinSpecArgArray[$j][] = $this->assembleSqlWithValues(
-                    $sql,
-                    $values,
-                    $platform,
-                    $parameterContainer,
-                    'join' . ($j + 1) . 'part',
-                    $driver
-                );
+                $values = [];
+                $sql = $join['on']->toSqlPart($values);
+                $joinSpecArgArray[$j][] = $this->assembleSqlWithValues($sql, $values, $platform, $parameterContainer, 'join' . ($j + 1) . 'part', $driver);
             } elseif ($join['on'] instanceof ExpressionInterface) {
-                $joinSpecArgArray[$j][] = $this->processExpression(
-                    $join['on'],
-                    $platform,
-                    $driver,
-                    $parameterContainer,
-                    'join' . ($j + 1) . 'part'
-                );
+                $joinSpecArgArray[$j][] = $this->processExpression($join['on'], $platform, $driver, $parameterContainer, 'join' . ($j + 1) . 'part');
             } else {
-                // Process string ON condition - use quoteIdentifierInFragment with SQL operators as safe words
-                $joinSpecArgArray[$j][] = $platform->quoteIdentifierInFragment(
-                    $join['on'],
-                    ['=', 'AND', 'OR', '(', ')', 'BETWEEN', '<', '>']
-                );
+                $joinSpecArgArray[$j][] = $platform->quoteIdentifierInFragment($join['on'], ['=', 'AND', 'OR', '(', ')', 'BETWEEN', '<', '>']);
             }
         }
 
         return [$joinSpecArgArray];
     }
 
+    /**
+     * Resolve a column value for SQL.
+     */
     protected function resolveColumnValue(
         Select|array|string|int|bool|ExpressionInterface|null $column,
         PlatformInterface $platform,
@@ -664,15 +471,14 @@ abstract class AbstractSql implements SqlInterface
         ?ParameterContainer $parameterContainer = null,
         ?string $namedParameterPrefix = null
     ): string {
-        $namedParameterPrefix = $namedParameterPrefix
-            ? $this->processInfo['paramPrefix'] . $namedParameterPrefix
-            : $namedParameterPrefix;
-        $isIdentifier         = false;
-        $fromTable            = '';
+        $namedParameterPrefix = $namedParameterPrefix ? $this->processInfo['paramPrefix'] . $namedParameterPrefix : $namedParameterPrefix;
+        $isIdentifier = false;
+        $fromTable = '';
+
         if (is_array($column)) {
             $isIdentifier = (bool) ($column['isIdentifier'] ?? false);
-            $fromTable    = $column['fromTable'] ?? '';
-            $column       = $column['column'];
+            $fromTable = $column['fromTable'] ?? '';
+            $column = $column['column'];
         }
 
         if ($column instanceof ExpressionInterface) {
@@ -692,6 +498,9 @@ abstract class AbstractSql implements SqlInterface
             : $platform->quoteValue($column);
     }
 
+    /**
+     * Resolve a table reference for SQL.
+     */
     protected function resolveTable(
         Select|string|TableIdentifier|null $table,
         PlatformInterface $platform,
@@ -699,6 +508,7 @@ abstract class AbstractSql implements SqlInterface
         ?ParameterContainer $parameterContainer = null
     ): string|array|null {
         $schema = null;
+
         if ($table instanceof TableIdentifier) {
             [$table, $schema] = $table->getTableAndSchema();
         }
@@ -717,11 +527,11 @@ abstract class AbstractSql implements SqlInterface
     }
 
     /**
-     * Copy variables from the subject into the local properties
+     * Copy variables from the subject into the local properties (for platform decorators).
      */
     protected function localizeVariables(): void
     {
-        if (! $this instanceof PlatformDecoratorInterface) {
+        if (!$this instanceof PlatformDecoratorInterface) {
             return;
         }
 

@@ -143,7 +143,7 @@ class Select extends AbstractPreparableSql
 
     protected bool $prefixColumnsWithTable = true;
 
-    protected string|array|TableIdentifier|null $table = null;
+    protected ?TableIdentifier $table = null;
 
     protected string|ExpressionInterface|null $quantifier = null;
 
@@ -204,13 +204,13 @@ class Select extends AbstractPreparableSql
             );
         }
 
-        if (is_array($table) && (! is_string(key($table)) || count($table) !== 1)) {
+        if (is_array($table) && (!is_string(key($table)) || count($table) !== 1)) {
             throw new Exception\InvalidArgumentException(
                 'from() expects $table as an array is a single element associative array'
             );
         }
 
-        $this->table = $table;
+        $this->table = TableIdentifier::from($table);
         return $this;
     }
 
@@ -495,20 +495,8 @@ class Select extends AbstractPreparableSql
                 : $this->quantifier . ' ';
         }
 
-        // Build FROM clause inline
-        $fromPart = '';
-        if ($this->table !== null) {
-            if ($this->table instanceof TableIdentifier) {
-                [$tableName, $schema] = $this->table->getTableAndSchema();
-                $fromPart = $schema
-                    ? ' FROM {"' . $schema . '"}.{"' . $tableName . '"}'
-                    : ' FROM {"' . $tableName . '"}';
-            } elseif (is_array($this->table)) {
-                $fromPart = ' FROM {"' . current($this->table) . '"} AS {"' . key($this->table) . '"}';
-            } else {
-                $fromPart = ' FROM {"' . $this->table . '"}';
-            }
-        }
+        // Build FROM clause - table is always TableIdentifier now
+        $fromPart = $this->table?->toFromSqlPart() ?? '';
 
         // Build columns using Columns class
         $expressionProcessor = fn(ExpressionInterface $expr) =>

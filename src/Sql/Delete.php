@@ -40,7 +40,7 @@ class Delete extends AbstractPreparableSql
         self::SPECIFICATION_WHERE  => 'WHERE %1$s',
     ];
 
-    protected TableIdentifier|string|array $table = '';
+    protected ?TableIdentifier $table = null;
 
     protected bool $emptyWhereProtection = true;
 
@@ -66,7 +66,7 @@ class Delete extends AbstractPreparableSql
      */
     public function from(TableIdentifier|string|array $table): static
     {
-        $this->table = $table;
+        $this->table = TableIdentifier::from($table);
         return $this;
     }
 
@@ -99,7 +99,7 @@ class Delete extends AbstractPreparableSql
     }
 
     /**
-     * Optimized buildSqlString using match expression and string concatenation
+     * Optimized buildSqlString using direct concatenation with coalescing
      */
     protected function buildSqlString(
         PlatformInterface $platform,
@@ -108,26 +108,18 @@ class Delete extends AbstractPreparableSql
     ): string {
         $this->localizeVariables();
 
-        $sql = '';
+        $values = [];
 
-        foreach ($this->specifications as $name => $specification) {
-            // Skip method calls for null/empty properties (avoid function call overhead)
-            $result = match ($name) {
-                'delete' => $this->processDelete($platform, $driver, $parameterContainer),
-                'where' => $this->where !== null && $this->where->count() > 0
-                    ? $this->processWhere($platform, $driver, $parameterContainer) : null,
-                default => $this->{'process' . $name}($platform, $driver, $parameterContainer),
-            };
+        // Build DELETE FROM table part
+        $tableSql = $this->table !== null
+            ? $this->table->toSqlPart()
+            : '';
 
-            if (is_array($result)) {
-                $part = $this->createSqlFromSpecificationAndParameters($specification, $result);
-                $sql .= $sql === '' ? $part : ' ' . $part;
-            } elseif ($result !== null) {
-                $sql .= $sql === '' ? $result : ' ' . $result;
-            }
-        }
+        // Build complete SQL using direct concatenation
+        $sql = 'DELETE FROM ' . $tableSql
+             . ($this->where?->toSqlPart($values) ?? '');
 
-        return rtrim($sql, "\n ,");
+        return $this->assembleSqlWithValues($sql, $values, $platform, $parameterContainer, 'where', $driver);
     }
 
     protected function processDelete(
@@ -135,9 +127,14 @@ class Delete extends AbstractPreparableSql
         ?DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null
     ): string {
+        // Use TableIdentifier's toSqlPart() and assemble with platform
+        $tableSql = $this->table !== null
+            ? $this->assembleSqlWithValues($this->table->toSqlPart(), [], $platform, null, 'table')
+            : '';
+
         return str_replace(
             '%1$s',
-            $this->resolveTable($this->table, $platform, $driver, $parameterContainer),
+            $tableSql,
             $this->specifications[static::SPECIFICATION_DELETE]
         );
     }
@@ -151,15 +148,11 @@ class Delete extends AbstractPreparableSql
             return null;
         }
 
-        $values       = [];
-        $sql          = $this->where->toSqlPart($values);
-        $assembledSql = $this->assembleSqlWithValues($sql, $values, $platform, $parameterContainer, 'where', $driver);
+        $values = [];
+        $sql    = $this->where->toSqlPart($values);
 
-        return str_replace(
-            '%1$s',
-            $assembledSql,
-            $this->specifications[static::SPECIFICATION_WHERE]
-        );
+        // toSqlPart already includes " WHERE " prefix, just assemble and return
+        return $this->assembleSqlWithValues($sql, $values, $platform, $parameterContainer, 'where', $driver);
     }
 
     /**

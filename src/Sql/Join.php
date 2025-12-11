@@ -12,7 +12,6 @@ use ReturnTypeWillChange;
 
 use function array_shift;
 use function count;
-use function current;
 use function implode;
 use function is_array;
 use function is_string;
@@ -142,8 +141,11 @@ class Join implements Iterator, Countable
             $columns = [$columns];
         }
 
+        // Convert to TableIdentifier for consistent handling
+        $tableIdentifier = TableIdentifier::from($name);
+
         $this->joins[] = [
-            'name'    => $name,
+            'name'    => $tableIdentifier,
             'on'      => $on,
             'columns' => $columns,
             'type'    => $type,
@@ -186,28 +188,11 @@ class Join implements Iterator, Countable
 
         $parts = [];
         foreach ($this->joins as $join) {
-            $joinName = $join['name'];
-            $joinAs = null;
+            /** @var TableIdentifier $tableIdentifier */
+            $tableIdentifier = $join['name'];
 
-            if (is_array($joinName)) {
-                $joinAs = $lq . key($joinName) . $rq;
-                $joinName = current($joinName);
-            }
-
-            if ($joinName instanceof TableIdentifier) {
-                $tableAndSchema = $joinName->getTableAndSchema();
-                $joinName = ($tableAndSchema[1] ? $lq . $tableAndSchema[1] . $rq . '.' . $lq . $tableAndSchema[0] . $rq : $lq . $tableAndSchema[0] . $rq);
-            } elseif ($joinName instanceof Expression) {
-                $joinName = $joinName->getExpression();
-            } else {
-                $joinName = $lq . $joinName . $rq;
-            }
-
-            $sql = strtoupper($join['type']) . ' JOIN ' . $joinName;
-
-            if ($joinAs !== null) {
-                $sql .= ' AS ' . $joinAs;
-            }
+            // TableIdentifier handles table name, schema, and alias via toSqlPart()
+            $sql = strtoupper($join['type']) . ' JOIN ' . $tableIdentifier->toSqlPart();
 
             // Process ON condition
             if ($join['on'] instanceof Predicate\PredicateInterface) {

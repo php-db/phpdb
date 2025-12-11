@@ -46,7 +46,7 @@ class Insert extends AbstractPreparableSql
         self::SPECIFICATION_SELECT => 'INSERT INTO %1$s %2$s %3$s',
     ];
 
-    protected TableIdentifier|string|array $table = '';
+    protected ?TableIdentifier $table = null;
 
     protected array $columns = [];
 
@@ -67,7 +67,7 @@ class Insert extends AbstractPreparableSql
      */
     public function into(TableIdentifier|string|array $table): static
     {
-        $this->table = $table;
+        $this->table = TableIdentifier::from($table);
         return $this;
     }
 
@@ -220,10 +220,15 @@ class Insert extends AbstractPreparableSql
             }
         }
 
+        // Use TableIdentifier's toSqlPart() and assemble with platform
+        $tableSql = $this->table !== null
+            ? $this->assembleSqlWithValues($this->table->toSqlPart(), [], $platform, null, 'table')
+            : '';
+
         return str_replace(
             ['%1$s', '%2$s', '%3$s'],
             [
-                $this->resolveTable($this->table, $platform, $driver, $parameterContainer),
+                $tableSql,
                 implode(', ', $columns),
                 implode(', ', $values),
             ],
@@ -245,10 +250,15 @@ class Insert extends AbstractPreparableSql
         $columns = array_map([$platform, 'quoteIdentifier'], array_keys($this->columns));
         $columns = implode(', ', $columns);
 
+        // Use TableIdentifier's toSqlPart() and assemble with platform
+        $tableSql = $this->table !== null
+            ? $this->assembleSqlWithValues($this->table->toSqlPart(), [], $platform, null, 'table')
+            : '';
+
         return str_replace(
             ['%1$s', '%2$s', '%3$s'],
             [
-                $this->resolveTable($this->table, $platform, $driver, $parameterContainer),
+                $tableSql,
                 $columns ? "({$columns})" : '',
                 $selectSql,
             ],

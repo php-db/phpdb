@@ -14,6 +14,7 @@ use ReturnTypeWillChange;
 
 use function count;
 use function is_array;
+use function is_scalar;
 use function is_string;
 use function str_contains;
 
@@ -57,15 +58,7 @@ class PredicateSet implements PredicateInterface, Countable
      */
     public function addPredicate(PredicateInterface $predicate, ?string $combination = null): static
     {
-        $combination ??= $this->defaultCombination;
-
-        match ($combination) {
-            self::OP_AND => $this->andPredicate($predicate),
-            self::OP_OR => $this->orPredicate($predicate),
-            default => throw new Exception\InvalidArgumentException(
-                "Invalid combination: expected 'AND' or 'OR'"
-            ),
-        };
+        $this->predicates[] = [$combination ?? $this->defaultCombination, $predicate];
 
         return $this;
     }
@@ -79,8 +72,46 @@ class PredicateSet implements PredicateInterface, Countable
         PredicateInterface|Closure|string|array $predicates,
         string $combination = self::OP_AND
     ): static {
+        // Fast path: array is the most common case
+        if (is_array($predicates)) {
+            foreach ($predicates as $pkey => $pvalue) {
+                // Fast path: string key with scalar value (most common)
+                if (is_string($pkey)) {
+                    // Most common case: simple equality check with scalar
+                    if (is_scalar($pvalue)) {
+                        $this->predicates[] = [$combination, new Operator($pkey, Operator::OP_EQ, $pvalue)];
+                    } elseif ($pvalue === null) {
+                        $this->predicates[] = [$combination, new IsNull($pkey)];
+                    } elseif (is_array($pvalue)) {
+                        $this->predicates[] = [$combination, new In($pkey, $pvalue)];
+                    } elseif (str_contains($pkey, '?')) {
+                        $this->predicates[] = [$combination, new PredicateExpression($pkey, $pvalue)];
+                    } elseif ($pvalue instanceof PredicateInterface) {
+                        throw new Exception\InvalidArgumentException(
+                            'Using Predicate must not use string keys'
+                        );
+                    } else {
+                        $this->predicates[] = [$combination, new Operator($pkey, Operator::OP_EQ, $pvalue)];
+                    }
+                } elseif ($pvalue instanceof PredicateInterface) {
+                    $this->predicates[] = [$combination, $pvalue];
+                } elseif ($pvalue instanceof Expression) {
+                    $this->predicates[] = [$combination, new PredicateExpression(
+                        $pvalue->getExpression(),
+                        $pvalue->getParameters()
+                    )];
+                } else {
+                    $predicate = str_contains($pvalue, Expression::PLACEHOLDER)
+                        ? new PredicateExpression($pvalue) : new Literal($pvalue);
+                    $this->predicates[] = [$combination, $predicate];
+                }
+            }
+
+            return $this;
+        }
+
         if ($predicates instanceof PredicateInterface) {
-            $this->addPredicate($predicates, $combination);
+            $this->predicates[] = [$combination, $predicates];
 
             return $this;
         }
@@ -91,43 +122,10 @@ class PredicateSet implements PredicateInterface, Countable
             return $this;
         }
 
-        if (is_string($predicates)) {
-            $predicate = str_contains($predicates, Expression::PLACEHOLDER)
-                ? new PredicateExpression($predicates) : new Literal($predicates);
-            $this->addPredicate($predicate, $combination);
-
-            return $this;
-        }
-
-        foreach ($predicates as $pkey => $pvalue) {
-            if (is_string($pkey)) {
-                if (str_contains($pkey, '?')) {
-                    $predicate = new PredicateExpression($pkey, $pvalue);
-                } elseif ($pvalue === null) {
-                    $predicate = new IsNull($pkey);
-                } elseif (is_array($pvalue)) {
-                    $predicate = new In($pkey, $pvalue);
-                } elseif ($pvalue instanceof PredicateInterface) {
-                    throw new Exception\InvalidArgumentException(
-                        'Using Predicate must not use string keys'
-                    );
-                } else {
-                    $predicate = new Operator($pkey, Operator::OP_EQ, $pvalue);
-                }
-            } elseif ($pvalue instanceof PredicateInterface) {
-                $predicate = $pvalue;
-            } elseif ($pvalue instanceof Expression) {
-                $predicate = new PredicateExpression(
-                    $pvalue->getExpression(),
-                    $pvalue->getParameters()
-                );
-            } else {
-                $predicate = str_contains($pvalue, Expression::PLACEHOLDER)
-                    ? new Expression($pvalue) : new Literal($pvalue);
-            }
-
-            $this->addPredicate($predicate, $combination);
-        }
+        // String predicate
+        $predicate = str_contains($predicates, Expression::PLACEHOLDER)
+            ? new PredicateExpression($predicates) : new Literal($predicates);
+        $this->predicates[] = [$combination, $predicate];
 
         return $this;
     }

@@ -53,15 +53,29 @@ class Operator extends AbstractExpression implements PredicateInterface
         null|bool|string|int|float|ArgumentInterface|ExpressionInterface|SqlInterface $right = null
     ) {
         if ($left !== null) {
-            $this->setLeft($left);
+            // Inline setLeft logic to avoid method call overhead
+            if ($left instanceof ArgumentInterface) {
+                $this->left = $left;
+            } elseif ($left instanceof ExpressionInterface || $left instanceof SqlInterface) {
+                $this->left = new Select($left);
+            } else {
+                $this->left = new Identifier($left);
+            }
         }
 
         if ($operator !== self::OPERATOR_EQUAL_TO) {
-            $this->setOperator($operator);
+            $this->operator = $operator;
         }
 
         if ($right !== null) {
-            $this->setRight($right);
+            // Inline setRight logic to avoid method call overhead
+            if ($right instanceof ArgumentInterface) {
+                $this->right = $right;
+            } elseif ($right instanceof ExpressionInterface || $right instanceof SqlInterface) {
+                $this->right = new Select($right);
+            } else {
+                $this->right = new Value($right);
+            }
         }
     }
 
