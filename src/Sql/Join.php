@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PhpDb\Sql;
 
+use PhpDb\Sql\PreparableSqlInterface;
 use Countable;
 use Iterator;
 use Override;
@@ -11,10 +12,14 @@ use ReturnTypeWillChange;
 
 use function array_shift;
 use function count;
+use function current;
+use function implode;
 use function is_array;
 use function is_string;
 use function key;
+use function preg_replace;
 use function sprintf;
+use function strtoupper;
 
 /**
  * Aggregate JOIN specifications.
@@ -164,5 +169,61 @@ class Join implements Iterator, Countable
     public function count(): int
     {
         return count($this->joins);
+    }
+
+    /**
+     * Build SQL part string with marker-based identifiers.
+     * Returns empty string if no joins, otherwise returns " INNER JOIN ... ON ..." etc.
+     */
+    public function toSqlPart(array &$values): string
+    {
+        if ($this->joins === []) {
+            return '';
+        }
+
+        $lq = PreparableSqlInterface::P_LQUOTE;
+        $rq = PreparableSqlInterface::P_RQUOTE;
+
+        $parts = [];
+        foreach ($this->joins as $join) {
+            $joinName = $join['name'];
+            $joinAs = null;
+
+            if (is_array($joinName)) {
+                $joinAs = $lq . key($joinName) . $rq;
+                $joinName = current($joinName);
+            }
+
+            if ($joinName instanceof TableIdentifier) {
+                $tableAndSchema = $joinName->getTableAndSchema();
+                $joinName = ($tableAndSchema[1] ? $lq . $tableAndSchema[1] . $rq . '.' . $lq . $tableAndSchema[0] . $rq : $lq . $tableAndSchema[0] . $rq);
+            } elseif ($joinName instanceof Expression) {
+                $joinName = $joinName->getExpression();
+            } else {
+                $joinName = $lq . $joinName . $rq;
+            }
+
+            $sql = strtoupper($join['type']) . ' JOIN ' . $joinName;
+
+            if ($joinAs !== null) {
+                $sql .= ' AS ' . $joinAs;
+            }
+
+            // Process ON condition
+            if ($join['on'] instanceof Predicate\PredicateInterface) {
+                $sql .= ' ON ' . $join['on']->toSqlPart($values);
+            } else {
+                // String ON condition - add markers for identifiers (table.column pattern)
+                $sql .= ' ON ' . preg_replace(
+                    '/([a-zA-Z_][a-zA-Z0-9_]*)\.([a-zA-Z_][a-zA-Z0-9_]*)/',
+                    $lq . '$1' . $rq . '.' . $lq . '$2' . $rq,
+                    $join['on']
+                );
+            }
+
+            $parts[] = $sql;
+        }
+
+        return ' ' . implode(' ', $parts);
     }
 }

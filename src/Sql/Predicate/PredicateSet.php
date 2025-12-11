@@ -35,6 +35,9 @@ class PredicateSet implements PredicateInterface, Countable
 
     protected array $predicates = [];
 
+    /** SQL clause prefix (e.g., 'WHERE', 'HAVING') - override in subclasses */
+    protected string $prefix = '';
+
     /**
      * Constructor
      */
@@ -234,10 +237,10 @@ class PredicateSet implements PredicateInterface, Countable
             $sql                    = $predicate->toSqlPart($values);
 
             if ($predicate instanceof self) {
-                return "({$sql})";
+                $sql = "({$sql})";
             }
 
-            return $sql;
+            return $this->prefix !== '' ? ' ' . $this->prefix . ' ' . $sql : $sql;
         }
 
         $result = '';
@@ -255,6 +258,6 @@ class PredicateSet implements PredicateInterface, Countable
             $first   = false;
         }
 
-        return $result;
+        return $this->prefix !== '' ? ' ' . $this->prefix . ' ' . $result : $result;
     }
 }

@@ -15,6 +15,7 @@ use function count;
 use function current;
 use function explode;
 use function gettype;
+use function implode;
 use function is_array;
 use function is_int;
 use function is_numeric;
@@ -146,21 +147,21 @@ class Select extends AbstractPreparableSql
 
     protected string|ExpressionInterface|null $quantifier = null;
 
-    protected array $columns = [self::SQL_STAR];
+    protected ?Columns $columnsObj = null;
 
     protected ?Join $joins = null;
 
     protected ?Where $where = null;
 
-    protected array $order = [];
+    protected ?Order $order = null;
 
-    protected array|null $group = null;
+    protected ?Group $group = null;
 
     protected ?Having $having = null;
 
-    protected string|int|null $limit = null;
+    protected ?Limit $limit = null;
 
-    protected string|int|null $offset = null;
+    protected ?Offset $offset = null;
 
     protected array $combine = [];
 
@@ -235,9 +236,14 @@ class Select extends AbstractPreparableSql
      */
     public function columns(array $columns, bool $prefixColumnsWithTable = true): static
     {
-        $this->columns                = $columns;
+        $this->columnsObj             = new Columns($columns, $prefixColumnsWithTable);
         $this->prefixColumnsWithTable = $prefixColumnsWithTable;
         return $this;
+    }
+
+    private function getColumns(): Columns
+    {
+        return $this->columnsObj ??= new Columns();
     }
 
     /**
@@ -278,14 +284,7 @@ class Select extends AbstractPreparableSql
 
     public function group(mixed $group): static
     {
-        if (is_array($group)) {
-            foreach ($group as $o) {
-                $this->group[] = $o;
-            }
-        } else {
-            $this->group[] = $group;
-        }
-
+        ($this->group ??= new Group())->add($group);
         return $this;
     }
 
@@ -309,20 +308,7 @@ class Select extends AbstractPreparableSql
 
     public function order(ExpressionInterface|array|string $order): static
     {
-        if (is_string($order)) {
-            $order = str_contains($order, ',') ? preg_split('#,\s+#', $order) : (array) $order;
-        } elseif (! is_array($order)) {
-            $order = [$order];
-        }
-
-        foreach ($order as $k => $v) {
-            if (is_string($k)) {
-                $this->order[$k] = $v;
-            } else {
-                $this->order[] = $v;
-            }
-        }
-
+        ($this->order ??= new Order())->add($order);
         return $this;
     }
 
@@ -339,7 +325,7 @@ class Select extends AbstractPreparableSql
             ));
         }
 
-        $this->limit = $limit;
+        $this->limit = new Limit($limit);
         return $this;
     }
 
@@ -356,7 +342,7 @@ class Select extends AbstractPreparableSql
             ));
         }
 
-        $this->offset = $offset;
+        $this->offset = new Offset($offset);
         return $this;
     }
 
@@ -398,7 +384,7 @@ class Select extends AbstractPreparableSql
                 $this->quantifier = null;
                 break;
             case self::COLUMNS:
-                $this->columns = [];
+                $this->columnsObj = null;
                 break;
             case self::JOINS:
                 $this->joins = null;
@@ -419,7 +405,7 @@ class Select extends AbstractPreparableSql
                 $this->offset = null;
                 break;
             case self::ORDER:
-                $this->order = [];
+                $this->order = null;
                 break;
             case self::COMBINE:
                 $this->combine = [];
@@ -447,7 +433,7 @@ class Select extends AbstractPreparableSql
         $rawState = [
             self::TABLE      => $this->table,
             self::QUANTIFIER => $this->quantifier,
-            self::COLUMNS    => $this->columns,
+            self::COLUMNS    => $this->getColumns()->getColumns(),
             self::JOINS      => $this->getJoins(),
             self::WHERE      => $this->getWhere(),
             self::ORDER      => $this->order,
@@ -469,7 +455,7 @@ class Select extends AbstractPreparableSql
     }
 
     /**
-     * Optimized buildSqlString using match expression instead of dynamic method dispatch
+     * Optimized buildSqlString using direct concatenation with coalescing
      */
     protected function buildSqlString(
         PlatformInterface $platform,
@@ -478,36 +464,154 @@ class Select extends AbstractPreparableSql
     ): string {
         $this->localizeVariables();
 
-        $sql = '';
+        $values = [];
 
-        foreach ($this->specifications as $name => $specification) {
-            // Skip method calls for null/empty properties (avoid function call overhead)
-            $result = match ($name) {
-                'statementStart' => $this->combine !== [] ? $this->processStatementStart() : null,
-                'select' => $this->processSelect($platform, $driver, $parameterContainer),
-                'joins' => $this->joins !== null ? $this->processJoins($platform, $driver, $parameterContainer) : null,
-                'where' => $this->where !== null && $this->where->count() > 0
-                    ? $this->processWhere($platform, $driver, $parameterContainer) : null,
-                'group' => $this->group !== null ? $this->processGroup($platform, $driver, $parameterContainer) : null,
-                'having' => $this->having !== null && $this->having->count() > 0
-                    ? $this->processHaving($platform, $driver, $parameterContainer) : null,
-                'order' => $this->order !== [] ? $this->processOrder($platform, $driver, $parameterContainer) : null,
-                'limit' => $this->limit !== null ? $this->processLimit($platform, $driver, $parameterContainer) : null,
-                'offset' => $this->offset !== null ? $this->processOffset($platform, $driver, $parameterContainer) : null,
-                'statementEnd' => $this->combine !== [] ? $this->processStatementEnd() : null,
-                'combine' => $this->combine !== [] ? $this->processCombine($platform, $driver, $parameterContainer) : null,
-                default => $this->{'process' . $name}($platform, $driver, $parameterContainer),
-            };
+        $sql = $this->buildSelectPart($platform, $driver, $parameterContainer, $values)
+             . ($this->joins?->toSqlPart($values) ?? '')
+             . ($this->where?->toSqlPart($values) ?? '')
+             . ($this->group?->toSqlPart($platform) ?? '')
+             . ($this->having?->toSqlPart($values) ?? '')
+             . ($this->order?->toSqlPart() ?? '')
+             . ($this->limit?->toSqlPart($values) ?? '')
+             . ($this->offset?->toSqlPart($values) ?? '');
 
-            if (is_array($result)) {
-                $part = $this->createSqlFromSpecificationAndParameters($specification, $result);
-                $sql .= $sql === '' ? $part : ' ' . $part;
-            } elseif ($result !== null) {
-                $sql .= $sql === '' ? $result : ' ' . $result;
+        return $this->assembleSqlWithValues($sql, $values, $platform, $parameterContainer, 'where', $driver);
+    }
+
+    /**
+     * Build the SELECT ... FROM part of the query - optimized for speed
+     */
+    protected function buildSelectPart(
+        PlatformInterface $platform,
+        ?DriverInterface $driver,
+        ?ParameterContainer $parameterContainer,
+        array &$values
+    ): string {
+        // Quantifier (DISTINCT/ALL)
+        $quantifierPart = '';
+        if ($this->quantifier !== null) {
+            $quantifierPart = $this->quantifier instanceof ExpressionInterface
+                ? $this->processExpression($this->quantifier, $platform, $driver, $parameterContainer, 'quantifier') . ' '
+                : $this->quantifier . ' ';
+        }
+
+        // Build FROM clause inline
+        $fromPart = '';
+        if ($this->table !== null) {
+            if ($this->table instanceof TableIdentifier) {
+                [$tableName, $schema] = $this->table->getTableAndSchema();
+                $fromPart = $schema
+                    ? ' FROM {"' . $schema . '"}.{"' . $tableName . '"}'
+                    : ' FROM {"' . $tableName . '"}';
+            } elseif (is_array($this->table)) {
+                $fromPart = ' FROM {"' . current($this->table) . '"} AS {"' . key($this->table) . '"}';
+            } else {
+                $fromPart = ' FROM {"' . $this->table . '"}';
             }
         }
 
-        return rtrim($sql, "\n ,");
+        // Build columns using Columns class
+        $expressionProcessor = fn(ExpressionInterface $expr) =>
+            $this->processExpression($expr, $platform, $driver, $parameterContainer);
+
+        return 'SELECT ' . $quantifierPart
+            . $this->getColumns()->toSqlPart($this->table, $this->joins, $expressionProcessor)
+            . $fromPart;
+    }
+
+    /**
+     * Build GROUP BY clause
+     */
+    protected function buildGroupPart(PlatformInterface $platform): string
+    {
+        if ($this->group === null) {
+            return '';
+        }
+
+        $groups = [];
+        foreach ($this->group as $column) {
+            $groups[] = $platform->quoteIdentifierInFragment($column);
+        }
+
+        return ' GROUP BY ' . implode(', ', $groups);
+    }
+
+    /**
+     * Build ORDER BY clause
+     */
+    protected function buildOrderPart(PlatformInterface $platform): string
+    {
+        if ($this->order === []) {
+            return '';
+        }
+
+        $orders = [];
+        foreach ($this->order as $k => $v) {
+            if ($v instanceof ExpressionInterface) {
+                // Expression will be processed separately - for now just include as-is
+                $orders[] = (string) $v;
+                continue;
+            }
+
+            if (is_int($k)) {
+                if (str_contains($v, ' ')) {
+                    [$k, $v] = explode(' ', $v, 2);
+                } else {
+                    $k = $v;
+                    $v = self::ORDER_ASCENDING;
+                }
+            }
+
+            $direction = strcasecmp(trim($v), self::ORDER_DESCENDING) === 0
+                ? self::ORDER_DESCENDING
+                : self::ORDER_ASCENDING;
+
+            $orders[] = $platform->quoteIdentifierInFragment($k) . ' ' . $direction;
+        }
+
+        return ' ORDER BY ' . implode(', ', $orders);
+    }
+
+    /**
+     * Build LIMIT clause
+     */
+    protected function buildLimitPart(
+        PlatformInterface $platform,
+        ?DriverInterface $driver,
+        ?ParameterContainer $parameterContainer
+    ): string {
+        if ($this->limit === null) {
+            return '';
+        }
+
+        if ($parameterContainer instanceof ParameterContainer) {
+            $paramPrefix = $this->processInfo['paramPrefix'];
+            $parameterContainer->offsetSet($paramPrefix . 'limit', $this->limit, ParameterContainer::TYPE_INTEGER);
+            return ' LIMIT ' . $driver->formatParameterName($paramPrefix . 'limit');
+        }
+
+        return ' LIMIT ' . $platform->quoteValue($this->limit);
+    }
+
+    /**
+     * Build OFFSET clause
+     */
+    protected function buildOffsetPart(
+        PlatformInterface $platform,
+        ?DriverInterface $driver,
+        ?ParameterContainer $parameterContainer
+    ): string {
+        if ($this->offset === null) {
+            return '';
+        }
+
+        if ($parameterContainer instanceof ParameterContainer) {
+            $paramPrefix = $this->processInfo['paramPrefix'];
+            $parameterContainer->offsetSet($paramPrefix . 'offset', $this->offset, ParameterContainer::TYPE_INTEGER);
+            return ' OFFSET ' . $driver->formatParameterName($paramPrefix . 'offset');
+        }
+
+        return ' OFFSET ' . $platform->quoteValue($this->offset);
     }
 
     /** @return string[]|null */
@@ -542,7 +646,7 @@ class Select extends AbstractPreparableSql
 
         [$table, $fromTable] = $this->resolveTable($this->table, $platform, $driver, $parameterContainer);
         $columns             = [];
-        foreach ($this->columns as $columnIndexOrAs => $column) {
+        foreach ($this->getColumns()->getColumns() as $columnIndexOrAs => $column) {
             if ($column === self::SQL_STAR) {
                 $columns[] = ["{$fromTable}*"];
                 continue;

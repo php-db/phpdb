@@ -123,9 +123,10 @@ abstract class AbstractSql implements SqlInterface
         ?DriverInterface $driver = null
     ): string {
         // Replace identifier markers with actual quotes
+        $quote = $platform->getQuoteIdentifierSymbol();
         $sql = strtr($sql, [
-            PreparableSqlInterface::P_LQUOTE => $platform->getQuoteIdentifierSymbol(),
-            PreparableSqlInterface::P_RQUOTE => $platform->getQuoteIdentifierSymbol(),
+            PreparableSqlInterface::P_LQUOTE => $quote,
+            PreparableSqlInterface::P_RQUOTE => $quote,
         ]);
 
         // Prepend processInfo prefix (e.g., 'subselect1') to ensure unique parameter names

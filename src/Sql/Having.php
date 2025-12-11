@@ -6,4 +6,5 @@ namespace PhpDb\Sql;
 
 class Having extends Predicate\Predicate
 {
+    protected string $prefix = 'HAVING';
 }

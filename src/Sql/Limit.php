@@ -1,0 +1,29 @@
+<?php
+
+declare(strict_types=1);
+
+namespace PhpDb\Sql;
+
+class Limit
+{
+    protected string|int $value;
+
+    public function __construct(string|int $value)
+    {
+        $this->value = $value;
+    }
+
+    public function getValue(): string|int
+    {
+        return $this->value;
+    }
+
+    /**
+     * Returns SQL with marker and populates values array for deferred processing.
+     */
+    public function toSqlPart(array &$values): string
+    {
+        $values[] = $this->value;
+        return ' LIMIT ' . PreparableSqlInterface::P_VALUE;
+    }
+}
