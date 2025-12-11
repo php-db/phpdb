@@ -24,14 +24,19 @@ use function get_object_vars;
 use function gettype;
 use function implode;
 use function is_array;
+use function is_bool;
 use function is_callable;
 use function is_object;
 use function is_string;
 use function key;
+use function preg_quote;
+use function preg_replace;
 use function rtrim;
 use function sprintf;
+use function str_contains;
 use function str_replace;
 use function strtoupper;
+use function strtr;
 use function vsprintf;
 
 abstract class AbstractSql implements SqlInterface
@@ -67,7 +72,7 @@ abstract class AbstractSql implements SqlInterface
     ): string {
         $this->localizeVariables();
 
-        $sqls = [];
+        $sql = '';
 
         foreach ($this->specifications as $name => $specification) {
             $result = $this->{'process' . $name}(
@@ -77,13 +82,14 @@ abstract class AbstractSql implements SqlInterface
             );
 
             if (is_array($result)) {
-                $sqls[$name] = $this->createSqlFromSpecificationAndParameters($specification, $result);
+                $part = $this->createSqlFromSpecificationAndParameters($specification, $result);
+                $sql .= $sql === '' ? $part : ' ' . $part;
             } elseif ($result !== null) {
-                $sqls[$name] = $result;
+                $sql .= $sql === '' ? $result : ' ' . $result;
             }
         }
 
-        return rtrim(implode(' ', $sqls), "\n ,");
+        return rtrim($sql, "\n ,");
     }
 
     /**
@@ -94,6 +100,118 @@ abstract class AbstractSql implements SqlInterface
     protected function renderTable(string $table, ?string $alias = null): string
     {
         return $alias ? "{$table} AS {$alias}" : $table;
+    }
+
+    /**
+     * Assemble marked SQL by replacing identifier markers with quotes
+     * and value markers with either bound parameters or quoted values.
+     *
+     * @param string $sql SQL with {"identifier"}, {?}, and {SQL} markers
+     * @param array $values Values to substitute for markers
+     * @param PlatformInterface $platform Platform for quoting
+     * @param ParameterContainer|null $parameterContainer If set, use bound parameters
+     * @param string $paramPrefix Prefix for parameter names
+     * @param DriverInterface|null $driver Driver for formatting parameter names
+     * @return string Assembled SQL
+     */
+    protected function assembleSqlWithValues(
+        string $sql,
+        array $values,
+        PlatformInterface $platform,
+        ?ParameterContainer $parameterContainer = null,
+        string $paramPrefix = 'param',
+        ?DriverInterface $driver = null
+    ): string {
+        // Replace identifier markers with actual quotes
+        $sql = strtr($sql, [
+            PreparableSqlInterface::P_LQUOTE => $platform->getQuoteIdentifierSymbol(),
+            PreparableSqlInterface::P_RQUOTE => $platform->getQuoteIdentifierSymbol(),
+        ]);
+
+        // Prepend processInfo prefix (e.g., 'subselect1') to ensure unique parameter names
+        $fullPrefix = $this->processInfo['paramPrefix'] . $paramPrefix;
+
+        // Process values - separate scalar values from Select arguments
+        $paramIndex = 1;
+        foreach ($values as $value) {
+            if ($value instanceof SelectArgument) {
+                // Process subquery
+                $subSql = $this->processSubSelectForAssembly(
+                    $value,
+                    $platform,
+                    $driver,
+                    $parameterContainer,
+                    $fullPrefix . 'sub' . $paramIndex
+                );
+                $sql    = preg_replace('/' . preg_quote(PreparableSqlInterface::P_SELECT, '/') . '/', $subSql, $sql, 1);
+                $paramIndex++;
+            } elseif ($parameterContainer !== null && $driver !== null) {
+                // Use bound parameters for scalar values
+                $paramName = $fullPrefix . $paramIndex++;
+                $parameterContainer->offsetSet($paramName, $value);
+                $placeholder = $driver->formatParameterName($paramName);
+                $sql         = preg_replace('/' . preg_quote(PreparableSqlInterface::P_VALUE, '/') . '/', $placeholder, $sql, 1);
+            } else {
+                // Quote values directly
+                $quotedValue = $this->quoteValueForSql($value, $platform);
+                // Escape special regex characters in replacement
+                $quotedValue = str_replace(['\\', '$'], ['\\\\', '\\$'], $quotedValue);
+                $sql         = preg_replace('/' . preg_quote(PreparableSqlInterface::P_VALUE, '/') . '/', $quotedValue, $sql, 1);
+            }
+        }
+
+        return $sql;
+    }
+
+    /**
+     * Process a Select argument for assembly into SQL.
+     */
+    protected function processSubSelectForAssembly(
+        SelectArgument $selectArg,
+        PlatformInterface $platform,
+        ?DriverInterface $driver,
+        ?ParameterContainer $parameterContainer,
+        string $paramPrefix
+    ): string {
+        $select = $selectArg->getValue();
+
+        if ($select instanceof SqlInterface) {
+            // Build the subquery SQL - wrap in parentheses for subqueries
+            if ($parameterContainer !== null) {
+                // Set up the parameter prefix on the subquery for LIMIT/OFFSET etc.
+                $this->processInfo['subselectCount']++;
+                $select->processInfo['subselectCount'] = $this->processInfo['subselectCount'];
+                $select->processInfo['paramPrefix']    = 'subselect' . $this->processInfo['subselectCount'];
+
+                $sql = '(' . $select->buildSqlString($platform, $driver, $parameterContainer) . ')';
+
+                // Propagate back any nested subselect count
+                $this->processInfo['subselectCount'] = $select->processInfo['subselectCount'];
+
+                return $sql;
+            }
+            return '(' . $select->getSqlString($platform) . ')';
+        }
+
+        // For ExpressionInterface, process it without extra parentheses
+        // (the expression itself may already contain them if needed)
+        return $this->processExpression($select, $platform, $driver, $parameterContainer, $paramPrefix);
+    }
+
+    /**
+     * Quote a value for direct SQL embedding.
+     */
+    protected function quoteValueForSql(mixed $value, PlatformInterface $platform): string
+    {
+        if ($value === null) {
+            return 'NULL';
+        }
+        if (is_bool($value)) {
+            return $value ? '1' : '0';
+        }
+
+        // Quote all values including integers/floats for consistency
+        return $platform->quoteTrustedValue($value);
     }
 
     /**
@@ -130,8 +248,28 @@ abstract class AbstractSql implements SqlInterface
         }
 
         $expressionParamIndex = &$this->instanceParameterIndex[$namedParameterPrefix];
-        $expressionValues     = $this->flattenExpressionValues($expressionValues);
-        $values               = [];
+
+        // Detect if specification uses new marker format (contains {"} or {?} or {SQL})
+        $usesMarkers = str_contains($specification, PreparableSqlInterface::P_LQUOTE)
+            || str_contains($specification, PreparableSqlInterface::P_VALUE)
+            || str_contains($specification, PreparableSqlInterface::P_SELECT);
+
+        if ($usesMarkers) {
+            // New marker-based processing path
+            return $this->processExpressionWithMarkers(
+                $specification,
+                $expressionValues,
+                $platform,
+                $driver,
+                $parameterContainer,
+                $namedParameterPrefix,
+                $expressionParamIndex
+            );
+        }
+
+        // Legacy vsprintf path
+        $expressionValues = $this->flattenExpressionValues($expressionValues);
+        $values           = [];
 
         foreach ($expressionValues as $vIndex => $argument) {
             $values[] = match (true) {
@@ -168,6 +306,65 @@ abstract class AbstractSql implements SqlInterface
         }
 
         return vsprintf($specification, $values);
+    }
+
+    /**
+     * Process expression using the new marker-based format.
+     */
+    protected function processExpressionWithMarkers(
+        string $specification,
+        array $expressionValues,
+        PlatformInterface $platform,
+        ?DriverInterface $driver,
+        ?ParameterContainer $parameterContainer,
+        string $namedParameterPrefix,
+        int &$expressionParamIndex
+    ): string {
+        // Replace identifier markers with actual quotes
+        $sql = strtr($specification, [
+            PreparableSqlInterface::P_LQUOTE => $platform->getQuoteIdentifierSymbol(),
+            PreparableSqlInterface::P_RQUOTE => $platform->getQuoteIdentifierSymbol(),
+        ]);
+
+        // Collect scalar values from arguments
+        $scalarValues = [];
+        foreach ($expressionValues as $argument) {
+            if ($argument instanceof Value) {
+                $scalarValues[] = $argument->getValue();
+            } elseif ($argument instanceof Values) {
+                foreach ($argument->getValue() as $v) {
+                    $scalarValues[] = $v;
+                }
+            } elseif ($argument instanceof SelectArgument) {
+                $scalarValues[] = $argument;
+            }
+        }
+
+        // Process values and subqueries
+        foreach ($scalarValues as $value) {
+            if ($value instanceof SelectArgument) {
+                $subSql = $this->processSubSelectForAssembly(
+                    $value,
+                    $platform,
+                    $driver,
+                    $parameterContainer,
+                    $namedParameterPrefix . 'sub' . $expressionParamIndex
+                );
+                $sql    = preg_replace('/' . preg_quote(PreparableSqlInterface::P_SELECT, '/') . '/', $subSql, $sql, 1);
+                $expressionParamIndex++;
+            } elseif ($parameterContainer !== null && $driver !== null) {
+                $paramName = $namedParameterPrefix . $expressionParamIndex++;
+                $parameterContainer->offsetSet($paramName, $value);
+                $placeholder = $driver->formatParameterName($paramName);
+                $sql         = preg_replace('/' . preg_quote(PreparableSqlInterface::P_VALUE, '/') . '/', $placeholder, $sql, 1);
+            } else {
+                $quotedValue = $this->quoteValueForSql($value, $platform);
+                $quotedValue = str_replace(['\\', '$'], ['\\\\', '\\$'], $quotedValue);
+                $sql         = preg_replace('/' . preg_quote(PreparableSqlInterface::P_VALUE, '/') . '/', $quotedValue, $sql, 1);
+            }
+        }
+
+        return $sql;
     }
 
     /**
@@ -428,7 +625,18 @@ abstract class AbstractSql implements SqlInterface
                 $this->renderTable($joinName, $joinAs),
             ];
 
-            if ($join['on'] instanceof ExpressionInterface) {
+            if ($join['on'] instanceof Predicate\PredicateInterface) {
+                $values                 = [];
+                $sql                    = $join['on']->toSqlPart($values);
+                $joinSpecArgArray[$j][] = $this->assembleSqlWithValues(
+                    $sql,
+                    $values,
+                    $platform,
+                    $parameterContainer,
+                    'join' . ($j + 1) . 'part',
+                    $driver
+                );
+            } elseif ($join['on'] instanceof ExpressionInterface) {
                 $joinSpecArgArray[$j][] = $this->processExpression(
                     $join['on'],
                     $platform,
@@ -437,6 +645,7 @@ abstract class AbstractSql implements SqlInterface
                     'join' . ($j + 1) . 'part'
                 );
             } else {
+                // Process string ON condition - use quoteIdentifierInFragment with SQL operators as safe words
                 $joinSpecArgArray[$j][] = $platform->quoteIdentifierInFragment(
                     $join['on'],
                     ['=', 'AND', 'OR', '(', ')', 'BETWEEN', '<', '>']

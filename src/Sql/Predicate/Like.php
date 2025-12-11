@@ -87,4 +87,27 @@ class Like extends AbstractExpression implements PredicateInterface
             'values' => [$this->identifier, $this->like],
         ];
     }
+
+    /** @inheritDoc */
+    #[Override]
+    public function toSqlPart(array &$values): string
+    {
+        if (! $this->identifier instanceof ArgumentInterface) {
+            throw new InvalidArgumentException('Identifier must be specified');
+        }
+
+        if (! $this->like instanceof ArgumentInterface) {
+            throw new InvalidArgumentException('Like expression must be specified');
+        }
+
+        $identifierSql = $this->identifier->getSpecification();
+        $likeSql       = $this->like->getSpecification();
+
+        // Collect value from Value argument
+        if ($this->like instanceof Value) {
+            $values[] = $this->like->getValue();
+        }
+
+        return "{$identifierSql} {$this->operator} {$likeSql}";
+    }
 }

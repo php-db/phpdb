@@ -178,7 +178,7 @@ class Update extends AbstractPreparableSql
     }
 
     /**
-     * Optimized buildSqlString using match expression instead of dynamic method dispatch
+     * Optimized buildSqlString using match expression and string concatenation
      */
     protected function buildSqlString(
         PlatformInterface $platform,
@@ -187,7 +187,7 @@ class Update extends AbstractPreparableSql
     ): string {
         $this->localizeVariables();
 
-        $sqls = [];
+        $sql = '';
 
         foreach ($this->specifications as $name => $specification) {
             // Skip method calls for null/empty properties (avoid function call overhead)
@@ -201,13 +201,14 @@ class Update extends AbstractPreparableSql
             };
 
             if (is_array($result)) {
-                $sqls[$name] = $this->createSqlFromSpecificationAndParameters($specification, $result);
+                $part = $this->createSqlFromSpecificationAndParameters($specification, $result);
+                $sql .= $sql === '' ? $part : ' ' . $part;
             } elseif ($result !== null) {
-                $sqls[$name] = $result;
+                $sql .= $sql === '' ? $result : ' ' . $result;
             }
         }
 
-        return rtrim(implode(' ', $sqls), "\n ,");
+        return rtrim($sql, "\n ,");
     }
 
     protected function processUpdate(
@@ -279,9 +280,13 @@ class Update extends AbstractPreparableSql
             return null;
         }
 
+        $values       = [];
+        $sql          = $this->where->toSqlPart($values);
+        $assembledSql = $this->assembleSqlWithValues($sql, $values, $platform, $parameterContainer, 'where', $driver);
+
         return str_replace(
             '%1$s',
-            $this->processExpression($this->where, $platform, $driver, $parameterContainer, 'where'),
+            $assembledSql,
             $this->specifications[static::SPECIFICATION_WHERE]
         );
     }

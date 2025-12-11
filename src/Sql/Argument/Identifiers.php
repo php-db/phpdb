@@ -6,11 +6,11 @@ namespace PhpDb\Sql\Argument;
 
 use PhpDb\Sql\ArgumentInterface;
 use PhpDb\Sql\ArgumentType;
+use PhpDb\Sql\PreparableSqlInterface;
 
-use function array_fill;
 use function array_values;
-use function count;
-use function implode;
+use function str_contains;
+use function str_replace;
 
 /**
  * Represents multiple SQL identifiers (column names for multi-column clauses).
@@ -46,9 +46,33 @@ final readonly class Identifiers implements ArgumentInterface
 
     public function getSpecification(): string
     {
-        $count = count($this->identifiers);
-        return $count > 0
-            ? '(' . implode(', ', array_fill(0, $count, '%s')) . ')'
-            : '(NULL)';
+        if ($this->identifiers === []) {
+            return '(NULL)';
+        }
+
+        // Build marked identifiers with string concatenation for efficiency
+        $result = '(';
+        $first  = true;
+        foreach ($this->identifiers as $id) {
+            if (! $first) {
+                $result .= ', ';
+            }
+            $first = false;
+
+            // Fast path for simple identifiers without dots
+            if (! str_contains($id, '.')) {
+                $result .= PreparableSqlInterface::P_LQUOTE . $id . PreparableSqlInterface::P_RQUOTE;
+            } else {
+                $result .= PreparableSqlInterface::P_LQUOTE
+                    . str_replace(
+                        '.',
+                        PreparableSqlInterface::P_RQUOTE . '.' . PreparableSqlInterface::P_LQUOTE,
+                        $id
+                    )
+                    . PreparableSqlInterface::P_RQUOTE;
+            }
+        }
+
+        return $result . ')';
     }
 }

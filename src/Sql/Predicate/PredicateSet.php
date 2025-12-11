@@ -13,7 +13,6 @@ use PhpDb\Sql\Predicate\Expression as PredicateExpression;
 use ReturnTypeWillChange;
 
 use function count;
-use function implode;
 use function is_array;
 use function is_string;
 use function str_contains;
@@ -182,19 +181,19 @@ class PredicateSet implements PredicateInterface, Countable
             return $expressionData;
         }
 
-        $specParts = [];
+        $spec      = '';
         $allValues = [];
         $first     = true;
 
         foreach ($this->predicates as [$operator, $predicate]) {
             $expressionData = $predicate->getExpressionData();
 
-            $spec = $predicate instanceof self
+            $partSpec = $predicate instanceof self
                 ? "({$expressionData['spec']})"
                 : $expressionData['spec'];
 
-            $specParts[] = $first ? $spec : "{$operator} {$spec}";
-            $first       = false;
+            $spec .= $first ? $partSpec : " {$operator} {$partSpec}";
+            $first = false;
 
             $values = $expressionData['values'];
             if ($values !== []) {
@@ -205,7 +204,7 @@ class PredicateSet implements PredicateInterface, Countable
         }
 
         return [
-            'spec'   => implode(' ', $specParts),
+            'spec'   => $spec,
             'values' => $allValues,
         ];
     }
@@ -218,5 +217,44 @@ class PredicateSet implements PredicateInterface, Countable
     public function count(): int
     {
         return count($this->predicates);
+    }
+
+    /** @inheritDoc */
+    #[Override]
+    public function toSqlPart(array &$values): string
+    {
+        $predicateCount = count($this->predicates);
+
+        if ($predicateCount === 0) {
+            return '';
+        }
+
+        if ($predicateCount === 1) {
+            [$operator, $predicate] = $this->predicates[0];
+            $sql                    = $predicate->toSqlPart($values);
+
+            if ($predicate instanceof self) {
+                return "({$sql})";
+            }
+
+            return $sql;
+        }
+
+        $result = '';
+        $first  = true;
+
+        foreach ($this->predicates as [$operator, $predicate]) {
+            $sql = $predicate->toSqlPart($values);
+
+            // Wrap nested predicate sets in parentheses
+            if ($predicate instanceof self && $predicate->count() > 1) {
+                $sql = '(' . $sql . ')';
+            }
+
+            $result .= $first ? $sql : " {$operator} {$sql}";
+            $first   = false;
+        }
+
+        return $result;
     }
 }

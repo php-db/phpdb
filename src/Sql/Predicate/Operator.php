@@ -152,4 +152,30 @@ class Operator extends AbstractExpression implements PredicateInterface
             'values' => [$this->left, $this->right],
         ];
     }
+
+    /** @inheritDoc */
+    #[Override]
+    public function toSqlPart(array &$values): string
+    {
+        if (! $this->left instanceof ArgumentInterface) {
+            throw new InvalidArgumentException('Left expression must be specified');
+        }
+
+        if (! $this->right instanceof ArgumentInterface) {
+            throw new InvalidArgumentException('Right expression must be specified');
+        }
+
+        $leftSql  = $this->left->getSpecification();
+        $rightSql = $this->right->getSpecification();
+
+        // Collect values from Value arguments
+        if ($this->left instanceof Value) {
+            $values[] = $this->left->getValue();
+        }
+        if ($this->right instanceof Value) {
+            $values[] = $this->right->getValue();
+        }
+
+        return "{$leftSql} {$this->operator} {$rightSql}";
+    }
 }

@@ -102,8 +102,8 @@ final class LikeTest extends TestCase
 
         $expressionData = $like->getExpressionData();
 
-        // Verify specification
-        self::assertEquals('%s LIKE %s', $expressionData['spec']);
+        // Verify specification (uses new marker format)
+        self::assertEquals('{"bar"} LIKE {?}', $expressionData['spec']);
 
         // Verify expression values
         $values = $expressionData['values'];
@@ -123,8 +123,8 @@ final class LikeTest extends TestCase
 
         $expressionData = $like->getExpressionData();
 
-        // Verify specification
-        self::assertEquals('%s LIKE %s', $expressionData['spec']);
+        // Verify specification (uses new marker format)
+        self::assertEquals('{?} LIKE {"bar"}', $expressionData['spec']);
 
         // Verify expression values with custom types
         $values = $expressionData['values'];

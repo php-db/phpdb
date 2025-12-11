@@ -15,7 +15,6 @@ use function count;
 use function current;
 use function explode;
 use function gettype;
-use function implode;
 use function is_array;
 use function is_int;
 use function is_numeric;
@@ -479,7 +478,7 @@ class Select extends AbstractPreparableSql
     ): string {
         $this->localizeVariables();
 
-        $sqls = [];
+        $sql = '';
 
         foreach ($this->specifications as $name => $specification) {
             // Skip method calls for null/empty properties (avoid function call overhead)
@@ -501,13 +500,14 @@ class Select extends AbstractPreparableSql
             };
 
             if (is_array($result)) {
-                $sqls[$name] = $this->createSqlFromSpecificationAndParameters($specification, $result);
+                $part = $this->createSqlFromSpecificationAndParameters($specification, $result);
+                $sql .= $sql === '' ? $part : ' ' . $part;
             } elseif ($result !== null) {
-                $sqls[$name] = $result;
+                $sql .= $sql === '' ? $result : ' ' . $result;
             }
         }
 
-        return rtrim(implode(' ', $sqls), "\n ,");
+        return rtrim($sql, "\n ,");
     }
 
     /** @return string[]|null */
@@ -572,32 +572,32 @@ class Select extends AbstractPreparableSql
         // Only process joins if there are any (avoid creating Join object)
         if ($this->joins !== null) {
             foreach ($this->joins->getJoins() as $join) {
-            $joinName = is_array($join['name']) ? key($join['name']) : $join['name'];
-            $joinName = parent::resolveTable($joinName, $platform, $driver, $parameterContainer);
+                $joinName = is_array($join['name']) ? key($join['name']) : $join['name'];
+                $joinName = parent::resolveTable($joinName, $platform, $driver, $parameterContainer);
 
-            foreach ($join['columns'] as $jKey => $jColumn) {
-                $jColumns   = [];
-                $jFromTable = is_scalar($jColumn)
+                foreach ($join['columns'] as $jKey => $jColumn) {
+                    $jColumns   = [];
+                    $jFromTable = is_scalar($jColumn)
                             ? $joinName . $platform->getIdentifierSeparator()
                             : '';
-                $jColumns[] = $this->resolveColumnValue(
-                    [
-                        'column'       => $jColumn,
-                        'fromTable'    => $jFromTable,
-                        'isIdentifier' => true,
-                    ],
-                    $platform,
-                    $driver,
-                    $parameterContainer,
-                    is_string($jKey) ? $jKey : 'column'
-                );
-                if (is_string($jKey)) {
-                    $jColumns[] = $platform->quoteIdentifier($jKey);
-                } elseif ($jColumn !== self::SQL_STAR) {
-                    $jColumns[] = $platform->quoteIdentifier($jColumn);
-                }
+                    $jColumns[] = $this->resolveColumnValue(
+                        [
+                            'column'       => $jColumn,
+                            'fromTable'    => $jFromTable,
+                            'isIdentifier' => true,
+                        ],
+                        $platform,
+                        $driver,
+                        $parameterContainer,
+                        is_string($jKey) ? $jKey : 'column'
+                    );
+                    if (is_string($jKey)) {
+                        $jColumns[] = $platform->quoteIdentifier($jKey);
+                    } elseif ($jColumn !== self::SQL_STAR) {
+                        $jColumns[] = $platform->quoteIdentifier($jColumn);
+                    }
 
-                $columns[] = $jColumns;
+                    $columns[] = $jColumns;
                 }
             }
         }
@@ -635,9 +635,13 @@ class Select extends AbstractPreparableSql
             return null;
         }
 
-        return [
-            $this->processExpression($this->where, $platform, $driver, $parameterContainer, 'where'),
-        ];
+        $values = [];
+        $sql    = $this->where->toSqlPart($values);
+
+        // Assemble the marked SQL - handles identifier quoting and value binding
+        $assembledSql = $this->assembleSqlWithValues($sql, $values, $platform, $parameterContainer, 'where', $driver);
+
+        return [$assembledSql];
     }
 
     protected function processGroup(
@@ -675,9 +679,13 @@ class Select extends AbstractPreparableSql
             return null;
         }
 
-        return [
-            $this->processExpression($this->having, $platform, $driver, $parameterContainer, 'having'),
-        ];
+        $values = [];
+        $sql    = $this->having->toSqlPart($values);
+
+        // Assemble the marked SQL - handles identifier quoting and value binding
+        $assembledSql = $this->assembleSqlWithValues($sql, $values, $platform, $parameterContainer, 'having', $driver);
+
+        return [$assembledSql];
     }
 
     protected function processOrder(
