@@ -11,11 +11,16 @@ use function array_map;
 use function count;
 use function explode;
 use function implode;
+use function is_bool;
+use function is_float;
+use function is_int;
+use function preg_replace;
 use function preg_split;
 use function str_contains;
 use function str_replace;
 use function strpbrk;
 use function strtolower;
+use function strtr;
 use function trigger_error;
 
 use const PREG_SPLIT_DELIM_CAPTURE;
@@ -208,7 +213,7 @@ abstract class AbstractPlatform implements PlatformInterface
         // Replace value placeholders sequentially
         foreach ($values as $value) {
             $quotedValue = $this->quoteValueForAssembly($value);
-            $sql = preg_replace('/\{\?\}/', $quotedValue, $sql, 1);
+            $sql         = preg_replace('/\{\?\}/', $quotedValue, $sql, 1);
         }
 
         return $sql;

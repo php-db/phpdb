@@ -24,7 +24,7 @@ class Expression extends BaseExpression implements PredicateInterface
         foreach ($this->parameters as $param) {
             if ($param instanceof Value) {
                 $values[] = $param->getValue();
-                $sql = preg_replace('/\?/', PreparableSqlInterface::P_VALUE, $sql, 1);
+                $sql      = preg_replace('/\?/', PreparableSqlInterface::P_VALUE, $sql, 1);
             } elseif ($param instanceof Values) {
                 foreach ($param->getValue() as $v) {
                     $values[] = $v;

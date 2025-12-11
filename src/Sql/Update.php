@@ -278,8 +278,8 @@ class Update extends AbstractPreparableSql
             return null;
         }
 
-        $values = [];
-        $sql = $this->where->toSqlPart($values);
+        $values       = [];
+        $sql          = $this->where->toSqlPart($values);
         $assembledSql = $this->assembleSqlWithValues($sql, $values, $platform, $parameterContainer, 'where', $driver);
 
         return str_replace(

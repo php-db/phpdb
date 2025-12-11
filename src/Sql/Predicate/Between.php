@@ -146,8 +146,8 @@ class Between extends AbstractExpression implements PredicateInterface
         }
 
         $identifierSql = $this->identifier->getSpecification();
-        $minValueSql = $this->minValue->getSpecification();
-        $maxValueSql = $this->maxValue->getSpecification();
+        $minValueSql   = $this->minValue->getSpecification();
+        $maxValueSql   = $this->maxValue->getSpecification();
 
         // Collect values from Value arguments
         if ($this->minValue instanceof Value) {

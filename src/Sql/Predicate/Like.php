@@ -101,7 +101,7 @@ class Like extends AbstractExpression implements PredicateInterface
         }
 
         $identifierSql = $this->identifier->getSpecification();
-        $likeSql = $this->like->getSpecification();
+        $likeSql       = $this->like->getSpecification();
 
         // Collect value from Value argument
         if ($this->like instanceof Value) {

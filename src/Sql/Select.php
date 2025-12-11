@@ -15,7 +15,6 @@ use function count;
 use function current;
 use function explode;
 use function gettype;
-use function implode;
 use function is_array;
 use function is_int;
 use function is_numeric;
@@ -573,32 +572,32 @@ class Select extends AbstractPreparableSql
         // Only process joins if there are any (avoid creating Join object)
         if ($this->joins !== null) {
             foreach ($this->joins->getJoins() as $join) {
-            $joinName = is_array($join['name']) ? key($join['name']) : $join['name'];
-            $joinName = parent::resolveTable($joinName, $platform, $driver, $parameterContainer);
+                $joinName = is_array($join['name']) ? key($join['name']) : $join['name'];
+                $joinName = parent::resolveTable($joinName, $platform, $driver, $parameterContainer);
 
-            foreach ($join['columns'] as $jKey => $jColumn) {
-                $jColumns   = [];
-                $jFromTable = is_scalar($jColumn)
+                foreach ($join['columns'] as $jKey => $jColumn) {
+                    $jColumns   = [];
+                    $jFromTable = is_scalar($jColumn)
                             ? $joinName . $platform->getIdentifierSeparator()
                             : '';
-                $jColumns[] = $this->resolveColumnValue(
-                    [
-                        'column'       => $jColumn,
-                        'fromTable'    => $jFromTable,
-                        'isIdentifier' => true,
-                    ],
-                    $platform,
-                    $driver,
-                    $parameterContainer,
-                    is_string($jKey) ? $jKey : 'column'
-                );
-                if (is_string($jKey)) {
-                    $jColumns[] = $platform->quoteIdentifier($jKey);
-                } elseif ($jColumn !== self::SQL_STAR) {
-                    $jColumns[] = $platform->quoteIdentifier($jColumn);
-                }
+                    $jColumns[] = $this->resolveColumnValue(
+                        [
+                            'column'       => $jColumn,
+                            'fromTable'    => $jFromTable,
+                            'isIdentifier' => true,
+                        ],
+                        $platform,
+                        $driver,
+                        $parameterContainer,
+                        is_string($jKey) ? $jKey : 'column'
+                    );
+                    if (is_string($jKey)) {
+                        $jColumns[] = $platform->quoteIdentifier($jKey);
+                    } elseif ($jColumn !== self::SQL_STAR) {
+                        $jColumns[] = $platform->quoteIdentifier($jColumn);
+                    }
 
-                $columns[] = $jColumns;
+                    $columns[] = $jColumns;
                 }
             }
         }
@@ -637,7 +636,7 @@ class Select extends AbstractPreparableSql
         }
 
         $values = [];
-        $sql = $this->where->toSqlPart($values);
+        $sql    = $this->where->toSqlPart($values);
 
         // Assemble the marked SQL - handles identifier quoting and value binding
         $assembledSql = $this->assembleSqlWithValues($sql, $values, $platform, $parameterContainer, 'where', $driver);
@@ -681,7 +680,7 @@ class Select extends AbstractPreparableSql
         }
 
         $values = [];
-        $sql = $this->having->toSqlPart($values);
+        $sql    = $this->having->toSqlPart($values);
 
         // Assemble the marked SQL - handles identifier quoting and value binding
         $assembledSql = $this->assembleSqlWithValues($sql, $values, $platform, $parameterContainer, 'having', $driver);

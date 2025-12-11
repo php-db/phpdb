@@ -13,7 +13,6 @@ use PhpDb\Sql\Predicate\Expression as PredicateExpression;
 use ReturnTypeWillChange;
 
 use function count;
-use function implode;
 use function is_array;
 use function is_string;
 use function str_contains;
@@ -232,7 +231,7 @@ class PredicateSet implements PredicateInterface, Countable
 
         if ($predicateCount === 1) {
             [$operator, $predicate] = $this->predicates[0];
-            $sql = $predicate->toSqlPart($values);
+            $sql                    = $predicate->toSqlPart($values);
 
             if ($predicate instanceof self) {
                 return "({$sql})";
@@ -242,7 +241,7 @@ class PredicateSet implements PredicateInterface, Countable
         }
 
         $result = '';
-        $first = true;
+        $first  = true;
 
         foreach ($this->predicates as [$operator, $predicate]) {
             $sql = $predicate->toSqlPart($values);
@@ -253,7 +252,7 @@ class PredicateSet implements PredicateInterface, Countable
             }
 
             $result .= $first ? $sql : " {$operator} {$sql}";
-            $first = false;
+            $first   = false;
         }
 
         return $result;

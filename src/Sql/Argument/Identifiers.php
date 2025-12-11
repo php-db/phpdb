@@ -52,7 +52,7 @@ final readonly class Identifiers implements ArgumentInterface
 
         // Build marked identifiers with string concatenation for efficiency
         $result = '(';
-        $first = true;
+        $first  = true;
         foreach ($this->identifiers as $id) {
             if (! $first) {
                 $result .= ', ';

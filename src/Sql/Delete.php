@@ -13,7 +13,6 @@ use PhpDb\Sql\TableIdentifier;
 use PhpDb\Sql\Where;
 
 use function array_key_exists;
-use function implode;
 use function is_array;
 use function rtrim;
 use function str_replace;
@@ -152,8 +151,8 @@ class Delete extends AbstractPreparableSql
             return null;
         }
 
-        $values = [];
-        $sql = $this->where->toSqlPart($values);
+        $values       = [];
+        $sql          = $this->where->toSqlPart($values);
         $assembledSql = $this->assembleSqlWithValues($sql, $values, $platform, $parameterContainer, 'where', $driver);
 
         return str_replace(

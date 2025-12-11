@@ -113,7 +113,7 @@ class In extends AbstractExpression implements PredicateInterface
         }
 
         $identifierSql = $this->identifier->getSpecification();
-        $valueSetSql = $this->valueSet->getSpecification();
+        $valueSetSql   = $this->valueSet->getSpecification();
 
         // Collect values based on argument type
         if ($this->valueSet instanceof Values) {

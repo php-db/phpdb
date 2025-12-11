@@ -165,7 +165,7 @@ class Operator extends AbstractExpression implements PredicateInterface
             throw new InvalidArgumentException('Right expression must be specified');
         }
 
-        $leftSql = $this->left->getSpecification();
+        $leftSql  = $this->left->getSpecification();
         $rightSql = $this->right->getSpecification();
 
         // Collect values from Value arguments

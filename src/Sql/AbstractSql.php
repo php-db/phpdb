@@ -24,6 +24,7 @@ use function get_object_vars;
 use function gettype;
 use function implode;
 use function is_array;
+use function is_bool;
 use function is_callable;
 use function is_object;
 use function is_string;
@@ -32,9 +33,10 @@ use function preg_quote;
 use function preg_replace;
 use function rtrim;
 use function sprintf;
+use function str_contains;
 use function str_replace;
-use function strtr;
 use function strtoupper;
+use function strtr;
 use function vsprintf;
 
 abstract class AbstractSql implements SqlInterface
@@ -141,20 +143,20 @@ abstract class AbstractSql implements SqlInterface
                     $parameterContainer,
                     $fullPrefix . 'sub' . $paramIndex
                 );
-                $sql = preg_replace('/' . preg_quote(PreparableSqlInterface::P_SELECT, '/') . '/', $subSql, $sql, 1);
+                $sql    = preg_replace('/' . preg_quote(PreparableSqlInterface::P_SELECT, '/') . '/', $subSql, $sql, 1);
                 $paramIndex++;
             } elseif ($parameterContainer !== null && $driver !== null) {
                 // Use bound parameters for scalar values
                 $paramName = $fullPrefix . $paramIndex++;
                 $parameterContainer->offsetSet($paramName, $value);
                 $placeholder = $driver->formatParameterName($paramName);
-                $sql = preg_replace('/' . preg_quote(PreparableSqlInterface::P_VALUE, '/') . '/', $placeholder, $sql, 1);
+                $sql         = preg_replace('/' . preg_quote(PreparableSqlInterface::P_VALUE, '/') . '/', $placeholder, $sql, 1);
             } else {
                 // Quote values directly
                 $quotedValue = $this->quoteValueForSql($value, $platform);
                 // Escape special regex characters in replacement
                 $quotedValue = str_replace(['\\', '$'], ['\\\\', '\\$'], $quotedValue);
-                $sql = preg_replace('/' . preg_quote(PreparableSqlInterface::P_VALUE, '/') . '/', $quotedValue, $sql, 1);
+                $sql         = preg_replace('/' . preg_quote(PreparableSqlInterface::P_VALUE, '/') . '/', $quotedValue, $sql, 1);
             }
         }
 
@@ -179,7 +181,7 @@ abstract class AbstractSql implements SqlInterface
                 // Set up the parameter prefix on the subquery for LIMIT/OFFSET etc.
                 $this->processInfo['subselectCount']++;
                 $select->processInfo['subselectCount'] = $this->processInfo['subselectCount'];
-                $select->processInfo['paramPrefix'] = 'subselect' . $this->processInfo['subselectCount'];
+                $select->processInfo['paramPrefix']    = 'subselect' . $this->processInfo['subselectCount'];
 
                 $sql = '(' . $select->buildSqlString($platform, $driver, $parameterContainer) . ')';
 
@@ -348,17 +350,17 @@ abstract class AbstractSql implements SqlInterface
                     $parameterContainer,
                     $namedParameterPrefix . 'sub' . $expressionParamIndex
                 );
-                $sql = preg_replace('/' . preg_quote(PreparableSqlInterface::P_SELECT, '/') . '/', $subSql, $sql, 1);
+                $sql    = preg_replace('/' . preg_quote(PreparableSqlInterface::P_SELECT, '/') . '/', $subSql, $sql, 1);
                 $expressionParamIndex++;
             } elseif ($parameterContainer !== null && $driver !== null) {
                 $paramName = $namedParameterPrefix . $expressionParamIndex++;
                 $parameterContainer->offsetSet($paramName, $value);
                 $placeholder = $driver->formatParameterName($paramName);
-                $sql = preg_replace('/' . preg_quote(PreparableSqlInterface::P_VALUE, '/') . '/', $placeholder, $sql, 1);
+                $sql         = preg_replace('/' . preg_quote(PreparableSqlInterface::P_VALUE, '/') . '/', $placeholder, $sql, 1);
             } else {
                 $quotedValue = $this->quoteValueForSql($value, $platform);
                 $quotedValue = str_replace(['\\', '$'], ['\\\\', '\\$'], $quotedValue);
-                $sql = preg_replace('/' . preg_quote(PreparableSqlInterface::P_VALUE, '/') . '/', $quotedValue, $sql, 1);
+                $sql         = preg_replace('/' . preg_quote(PreparableSqlInterface::P_VALUE, '/') . '/', $quotedValue, $sql, 1);
             }
         }
 
@@ -624,8 +626,8 @@ abstract class AbstractSql implements SqlInterface
             ];
 
             if ($join['on'] instanceof Predicate\PredicateInterface) {
-                $values = [];
-                $sql = $join['on']->toSqlPart($values);
+                $values                 = [];
+                $sql                    = $join['on']->toSqlPart($values);
                 $joinSpecArgArray[$j][] = $this->assembleSqlWithValues(
                     $sql,
                     $values,
@@ -643,6 +645,7 @@ abstract class AbstractSql implements SqlInterface
                     'join' . ($j + 1) . 'part'
                 );
             } else {
+                // Process string ON condition - use quoteIdentifierInFragment with SQL operators as safe words
                 $joinSpecArgArray[$j][] = $platform->quoteIdentifierInFragment(
                     $join['on'],
                     ['=', 'AND', 'OR', '(', ')', 'BETWEEN', '<', '>']
