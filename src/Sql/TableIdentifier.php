@@ -25,7 +25,7 @@ use const E_USER_DEPRECATED;
  *   TableIdentifier::from('public.users')       // Schema.table (parsed)
  *   new TableIdentifier('users', 'public', 'u') // Full constructor
  */
-class TableIdentifier
+final readonly class TableIdentifier
 {
     /**
      * Create a TableIdentifier from various input formats.
@@ -57,10 +57,10 @@ class TableIdentifier
     }
 
     public function __construct(
-        protected readonly string $table,
-        protected readonly ?string $schema = null,
-        protected readonly ?string $alias = null,
-        protected readonly bool $readOnly = false
+        protected string $table,
+        protected ?string $schema = null,
+        protected ?string $alias = null,
+        protected bool $readOnly = false
     ) {
         if ($table === '') {
             throw new Exception\InvalidArgumentException('$table must be a valid table name, empty string given');
@@ -164,22 +164,18 @@ class TableIdentifier
     }
 
     /**
-     * Generate the SQL part with marker-based identifiers.
+     * Generate the SQL part with quoted identifiers.
      *
-     * Examples:
-     *   {"users"}
-     *   {"public"}.{"users"}
-     *   {"users"} AS {"u"}
-     *   {"public"}.{"users"} AS {"u"}
+     * @param string $q Quote character (empty string = no quoting)
      */
-    public function toSqlPart(): string
+    public function toSqlPart(string $q): string
     {
         $sql = $this->schema !== null
-            ? '{"' . $this->schema . '"}.{"' . $this->table . '"}'
-            : '{"' . $this->table . '"}';
+            ? $q . $this->schema . $q . '.' . $q . $this->table . $q
+            : $q . $this->table . $q;
 
         if ($this->alias !== null) {
-            $sql .= ' AS {"' . $this->alias . '"}';
+            $sql .= ' AS ' . $q . $this->alias . $q;
         }
 
         return $sql;
@@ -188,8 +184,8 @@ class TableIdentifier
     /**
      * Generate SQL for FROM clause (includes " FROM " prefix).
      */
-    public function toFromSqlPart(): string
+    public function toFromSqlPart(string $q): string
     {
-        return ' FROM ' . $this->toSqlPart();
+        return ' FROM ' . $this->toSqlPart($q);
     }
 }

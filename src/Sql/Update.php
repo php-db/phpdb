@@ -19,7 +19,7 @@ use function strtolower;
 /**
  * @property Where $where
  */
-class Update extends AbstractPreparableSql
+final class Update extends AbstractPreparableSql
 {
     final public const VALUES_MERGE = 'merge';
 
@@ -111,14 +111,12 @@ class Update extends AbstractPreparableSql
             );
         }
 
-        $values = [];
+        $q = $platform->getQuoteIdentifierSymbol();
 
-        $sql = 'UPDATE ' . ($this->table?->toSqlPart() ?? '')
-             . ($this->joins?->toSqlPart($values) ?? '')
+        return 'UPDATE ' . ($this->table?->toSqlPart($q) ?? '')
+             . ($this->joins?->toSqlPart($q, $platform) ?? '')
              . $this->buildSetPart($platform, $driver, $parameterContainer)
-             . ($this->where?->toSqlPart($values) ?? '');
-
-        return $this->quoteSqlString($sql, $values, $platform, $parameterContainer, 'where', $driver);
+             . ($this->where?->toSqlPart($q, $platform) ?? '');
     }
 
     protected function buildSetPart(

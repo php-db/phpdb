@@ -6,79 +6,62 @@ namespace PhpDb\Sql;
 
 use function is_string;
 
-class Columns
+final readonly class Columns
 {
     public const SQL_STAR = '*';
 
-    protected array $columns = [self::SQL_STAR];
-    protected bool $prefixWithTable = true;
-
-    public function __construct(array $columns = [self::SQL_STAR], bool $prefixWithTable = true)
-    {
-        $this->columns = $columns;
-        $this->prefixWithTable = $prefixWithTable;
-    }
-
-    public function set(array $columns, bool $prefixWithTable = true): static
-    {
-        $this->columns = $columns;
-        $this->prefixWithTable = $prefixWithTable;
-        return $this;
-    }
-
-    public function getColumns(): array
-    {
-        return $this->columns;
-    }
-
-    public function isPrefixWithTable(): bool
-    {
-        return $this->prefixWithTable;
+    public function __construct(
+        public array $columns = [self::SQL_STAR],
+        public bool $prefixWithTable = true
+    ) {
     }
 
     /**
-     * Build columns SQL part with marker-based identifiers.
+     * Build columns SQL part with quoted identifiers.
      *
+     * @param string $q Quote character (empty string = no quoting)
      * @param TableIdentifier|null $table The table for prefixing columns
      * @param callable|null $expressionProcessor Callback to process ExpressionInterface/Select objects
      */
     public function toSqlPart(
+        string $q,
         ?TableIdentifier $table,
         ?callable $expressionProcessor = null
     ): string {
         $prefix = $this->prefixWithTable && $table !== null
-            ? '{"' . $table->getRef() . '"}.'
+            ? $q . $table->getRef() . $q . '.'
             : '';
 
         $result = '';
-        $first = true;
+        $first  = true;
 
         foreach ($this->columns as $alias => $column) {
-            if (!$first) {
+            if (! $first) {
                 $result .= ', ';
             }
             $first = false;
 
+            // Handle star separately - no alias support
             if ($column === self::SQL_STAR) {
-                $result .= $prefix . '*';
-            } elseif ($column instanceof ExpressionInterface) {
-                $columnName = $expressionProcessor ? $expressionProcessor($column) : (string) $column;
-                $result .= is_string($alias)
-                    ? $columnName . ' AS {"' . $alias . '"}'
-                    : $columnName;
-            } elseif ($column instanceof Select) {
-                $columnName = $expressionProcessor ? $expressionProcessor($column) : '{SQL}';
-                $result .= is_string($alias)
-                    ? '(' . $columnName . ') AS {"' . $alias . '"}'
-                    : '(' . $columnName . ')';
-            } elseif (is_string($alias)) {
-                $result .= $prefix . '{"' . $column . '"} AS {"' . $alias . '"}';
-            } else {
-                $result .= $prefix . '{"' . $column . '"}';
+                $result .= $prefix . $column;
+                continue;
             }
+
+            // Resolve column to SQL string
+            if ($column instanceof ExpressionInterface) {
+                $columnSql = $expressionProcessor ? $expressionProcessor($column) : $column->getExpressionData()['spec'];
+            } elseif ($column instanceof Select) {
+                $columnSql = '(' . ($expressionProcessor ? $expressionProcessor($column) : '') . ')';
+            } else {
+                $columnSql = $prefix . $q . $column . $q;
+            }
+
+            // Apply alias once
+            $result .= is_string($alias)
+                ? $columnSql . ' AS ' . $q . $alias . $q
+                : $columnSql;
         }
 
         return $result;
     }
-
 }

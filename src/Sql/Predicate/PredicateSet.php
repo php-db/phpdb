@@ -7,6 +7,8 @@ namespace PhpDb\Sql\Predicate;
 use Closure;
 use Countable;
 use Override;
+use PhpDb\Adapter\Platform\PlatformInterface;
+use PhpDb\Sql\AbstractExpression;
 use PhpDb\Sql\Exception;
 use PhpDb\Sql\Expression;
 use PhpDb\Sql\Predicate\Expression as PredicateExpression;
@@ -18,7 +20,7 @@ use function is_scalar;
 use function is_string;
 use function str_contains;
 
-class PredicateSet implements PredicateInterface, Countable
+class PredicateSet extends AbstractExpression implements PredicateInterface, Countable
 {
     final public const OP_AND = 'AND';
 
@@ -47,6 +49,7 @@ class PredicateSet implements PredicateInterface, Countable
 
     protected string $defaultCombination = self::OP_AND;
 
+    /** @var PredicateInterface[] */
     protected array $predicates = [];
 
     /** SQL clause prefix (e.g., 'WHERE', 'HAVING') - override in subclasses */
@@ -71,7 +74,8 @@ class PredicateSet implements PredicateInterface, Countable
      */
     public function addPredicate(PredicateInterface $predicate, ?string $combination = null): static
     {
-        $this->predicates[] = [$combination ?? $this->defaultCombination, $predicate];
+        $predicate->setCombination($combination ?? $this->defaultCombination);
+        $this->predicates[] = $predicate;
 
         return $this;
     }
@@ -89,39 +93,42 @@ class PredicateSet implements PredicateInterface, Countable
             foreach ($predicates as $pkey => $pvalue) {
                 if (is_string($pkey)) {
                     if (is_scalar($pvalue)) {
-                        $this->predicates[] = [$combination, new Operator($pkey, Operator::OP_EQ, $pvalue)];
+                        $predicate = new Operator($pkey, Operator::OP_EQ, $pvalue);
                     } elseif ($pvalue === null) {
-                        $this->predicates[] = [$combination, new IsNull($pkey)];
+                        $predicate = new IsNull($pkey);
                     } elseif (is_array($pvalue)) {
-                        $this->predicates[] = [$combination, new In($pkey, $pvalue)];
+                        $predicate = new In($pkey, $pvalue);
                     } elseif (str_contains($pkey, '?')) {
-                        $this->predicates[] = [$combination, new PredicateExpression($pkey, $pvalue)];
+                        $predicate = new PredicateExpression($pkey, $pvalue);
                     } elseif ($pvalue instanceof PredicateInterface) {
                         throw new Exception\InvalidArgumentException(
                             'Using Predicate must not use string keys'
                         );
                     } else {
-                        $this->predicates[] = [$combination, new Operator($pkey, Operator::OP_EQ, $pvalue)];
+                        $predicate = new Operator($pkey, Operator::OP_EQ, $pvalue);
                     }
                 } elseif ($pvalue instanceof PredicateInterface) {
-                    $this->predicates[] = [$combination, $pvalue];
+                    $predicate = $pvalue;
                 } elseif ($pvalue instanceof Expression) {
-                    $this->predicates[] = [$combination, new PredicateExpression(
+                    $predicate = new PredicateExpression(
                         $pvalue->getExpression(),
                         $pvalue->getParameters()
-                    )];
+                    );
                 } else {
                     $predicate = str_contains($pvalue, Expression::PLACEHOLDER)
                         ? new PredicateExpression($pvalue) : new Literal($pvalue);
-                    $this->predicates[] = [$combination, $predicate];
                 }
+
+                $predicate->setCombination($combination);
+                $this->predicates[] = $predicate;
             }
 
             return $this;
         }
 
         if ($predicates instanceof PredicateInterface) {
-            $this->predicates[] = [$combination, $predicates];
+            $predicates->setCombination($combination);
+            $this->predicates[] = $predicates;
 
             return $this;
         }
@@ -134,7 +141,8 @@ class PredicateSet implements PredicateInterface, Countable
 
         $predicate = str_contains($predicates, Expression::PLACEHOLDER)
             ? new PredicateExpression($predicates) : new Literal($predicates);
-        $this->predicates[] = [$combination, $predicate];
+        $predicate->setCombination($combination);
+        $this->predicates[] = $predicate;
 
         return $this;
     }
@@ -152,9 +160,7 @@ class PredicateSet implements PredicateInterface, Countable
      */
     public function orPredicate(PredicateInterface $predicate): static
     {
-        $this->predicates[] = [self::OP_OR, $predicate];
-
-        return $this;
+        return $this->addPredicate($predicate, self::OP_OR);
     }
 
     /**
@@ -162,47 +168,29 @@ class PredicateSet implements PredicateInterface, Countable
      */
     public function andPredicate(PredicateInterface $predicate): static
     {
-        $this->predicates[] = [self::OP_AND, $predicate];
-
-        return $this;
+        return $this->addPredicate($predicate, self::OP_AND);
     }
 
     /** @inheritDoc */
     #[Override]
     public function getExpressionData(): array
     {
-        $predicateCount = count($this->predicates);
-
-        if ($predicateCount === 0) {
+        if ($this->predicates === []) {
             return ['spec' => '', 'values' => []];
-        }
-
-        if ($predicateCount === 1) {
-            [$operator, $predicate] = $this->predicates[0];
-            $expressionData         = $predicate->getExpressionData();
-
-            if ($predicate instanceof self) {
-                return [
-                    'spec'   => "({$expressionData['spec']})",
-                    'values' => $expressionData['values'],
-                ];
-            }
-
-            return $expressionData;
         }
 
         $spec      = '';
         $allValues = [];
         $first     = true;
 
-        foreach ($this->predicates as [$operator, $predicate]) {
+        foreach ($this->predicates as $predicate) {
             $expressionData = $predicate->getExpressionData();
 
             $partSpec = $predicate instanceof self
                 ? "({$expressionData['spec']})"
                 : $expressionData['spec'];
 
-            $spec .= $first ? $partSpec : " {$operator} {$partSpec}";
+            $spec .= $first ? $partSpec : ' ' . $predicate->getCombination() . ' ' . $partSpec;
             $first = false;
 
             $values = $expressionData['values'];
@@ -231,36 +219,23 @@ class PredicateSet implements PredicateInterface, Countable
 
     /** @inheritDoc */
     #[Override]
-    public function toSqlPart(array &$values): string
+    public function toSqlPart(string $q, PlatformInterface $platform): string
     {
-        $predicateCount = count($this->predicates);
-
-        if ($predicateCount === 0) {
+        if ($this->predicates === []) {
             return '';
-        }
-
-        if ($predicateCount === 1) {
-            [$operator, $predicate] = $this->predicates[0];
-            $sql                    = $predicate->toSqlPart($values);
-
-            if ($predicate instanceof self) {
-                $sql = "({$sql})";
-            }
-
-            return $this->prefix !== '' ? ' ' . $this->prefix . ' ' . $sql : $sql;
         }
 
         $result = '';
         $first  = true;
 
-        foreach ($this->predicates as [$operator, $predicate]) {
-            $sql = $predicate->toSqlPart($values);
+        foreach ($this->predicates as $predicate) {
+            $sql = $predicate->toSqlPart($q, $platform);
 
             if ($predicate instanceof self && $predicate->count() > 1) {
                 $sql = '(' . $sql . ')';
             }
 
-            $result .= $first ? $sql : " {$operator} {$sql}";
+            $result .= $first ? $sql : ' ' . $predicate->getCombination() . ' ' . $sql;
             $first   = false;
         }
 

@@ -17,7 +17,7 @@ use function range;
 /**
  * @implements IteratorAggregate<string, mixed>
  */
-class Values implements Countable, IteratorAggregate
+final class Values implements Countable, IteratorAggregate
 {
     protected array $values = [];
 

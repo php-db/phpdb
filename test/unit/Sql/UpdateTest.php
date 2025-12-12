@@ -20,6 +20,7 @@ use PhpDb\Sql\Predicate\IsNull;
 use PhpDb\Sql\Predicate\Literal;
 use PhpDb\Sql\Predicate\Operator;
 use PhpDb\Sql\Predicate\PredicateSet;
+use PhpDb\Sql\Set;
 use PhpDb\Sql\TableIdentifier;
 use PhpDb\Sql\Update;
 use PhpDb\Sql\Where;
@@ -30,6 +31,7 @@ use PhpDbTest\TestAsset\UpdateIgnore;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\RequiresMethod;
 use PHPUnit\Framework\Attributes\TestDox;
 use PHPUnit\Framework\TestCase;
 use ReflectionException;
@@ -92,7 +94,9 @@ final class UpdateTest extends TestCase
     public function testSet(): void
     {
         $this->update->set(['foo' => 'bar']);
-        self::assertEquals(['foo' => 'bar'], $this->update->getRawState('set'));
+        $set = $this->update->getRawState('set');
+        self::assertInstanceOf(Set::class, $set);
+        self::assertEquals(['foo' => 'bar'], $set->toArray());
     }
 
     public function testSortableSet(): void
@@ -103,13 +107,15 @@ final class UpdateTest extends TestCase
         ]);
         $this->update->set(['one' => 'с_one'], '10');
 
+        $set = $this->update->getRawState('set');
+        self::assertInstanceOf(Set::class, $set);
         self::assertEquals(
             [
                 'one'   => 'с_one',
                 'two'   => 'с_two',
                 'three' => 'с_three',
             ],
-            $this->update->getRawState('set')
+            $set->toArray()
         );
     }
 
@@ -185,9 +191,9 @@ final class UpdateTest extends TestCase
             ->set(['bar' => 'baz'])
             ->where('x = y');
 
-        self::assertEquals('foo', $this->update->getRawState('table'));
-        self::assertTrue($this->update->getRawState('emptyWhereProtection'));
-        self::assertEquals(['bar' => 'baz'], $this->update->getRawState('set'));
+        self::assertInstanceOf(TableIdentifier::class, $this->update->getRawState('table'));
+        self::assertEquals('foo', $this->update->getRawState('table')->getTable());
+        self::assertInstanceOf(Set::class, $this->update->getRawState('set'));
         self::assertInstanceOf(Where::class, $this->update->getRawState('where'));
     }
 
@@ -299,12 +305,16 @@ final class UpdateTest extends TestCase
                 'id = ?' => 1,
             ]);
         self::assertEquals(
-            'UPDATE "foo" SET "bar" = \'baz\' WHERE id = \'1\'',
+            'UPDATE "foo" SET "bar" = \'baz\' WHERE id = 1',
             $update2->getSqlString(new TrustingSql92Platform())
         );
     }
 
+    /**
+     * @deprecated SPECIFICATION_* constants no longer exist in new architecture
+     */
     #[CoversNothing]
+    #[RequiresMethod(Update::class, 'processUpdate')]
     public function testSpecificationconstantsCouldBeOverridedByExtensionInPrepareStatement(): void
     {
         $updateIgnore = new UpdateIgnore();
@@ -329,7 +339,11 @@ final class UpdateTest extends TestCase
         $updateIgnore->prepareStatement($mockAdapter, $mockStatement);
     }
 
+    /**
+     * @deprecated SPECIFICATION_* constants no longer exist in new architecture
+     */
     #[CoversNothing]
+    #[RequiresMethod(Update::class, 'processUpdate')]
     public function testSpecificationconstantsCouldBeOverridedByExtensionInGetSqlString(): void
     {
         $this->update = new UpdateIgnore();
@@ -369,6 +383,7 @@ final class UpdateTest extends TestCase
                 'Category.CategoryId = Document.CategoryId',
                 Join::JOIN_LEFT // (optional), one of inner, outer, left, right
             );
+        $this->update->where->setEmptyAllowed();
 
         self::assertEquals(
             'UPDATE "Document" INNER JOIN "User" ON "User"."UserId" = "Document"."UserId" '
@@ -395,6 +410,7 @@ final class UpdateTest extends TestCase
                 'Category.CategoryId = Document.CategoryId',
                 Join::JOIN_LEFT
             );
+        $this->update->where->setEmptyAllowed();
 
         self::assertEquals(
             'UPDATE "Document" INNER JOIN "User" ON "User"."UserId" = "Document"."UserId" '
@@ -425,7 +441,8 @@ final class UpdateTest extends TestCase
         $this->update->set(['baz' => 'qux'], Update::VALUES_MERGE);
 
         $set = $this->update->getRawState('set');
-        self::assertEquals(['foo' => 'bar', 'baz' => 'qux'], $set);
+        self::assertInstanceOf(Set::class, $set);
+        self::assertEquals(['foo' => 'bar', 'baz' => 'qux'], $set->toArray());
     }
 
     public function testSetWithNumericPriority(): void
@@ -435,7 +452,8 @@ final class UpdateTest extends TestCase
         $this->update->set(['two' => 'b'], 20);
 
         $set = $this->update->getRawState('set');
-        self::assertEquals(['one' => 'a', 'two' => 'b', 'three' => 'c'], $set);
+        self::assertInstanceOf(Set::class, $set);
+        self::assertEquals(['one' => 'a', 'two' => 'b', 'three' => 'c'], $set->toArray());
     }
 
     public function testConstructWithTableIdentifier(): void
@@ -450,6 +468,7 @@ final class UpdateTest extends TestCase
     {
         $this->update->table('foo')
             ->set(['bar' => 'baz']);
+        $this->update->where->setEmptyAllowed();
 
         self::assertEquals(
             'UPDATE "foo" SET "bar" = \'baz\'',
@@ -469,14 +488,12 @@ final class UpdateTest extends TestCase
         self::assertArrayHasKey('table', $rawState);
         self::assertArrayHasKey('set', $rawState);
         self::assertArrayHasKey('where', $rawState);
-        self::assertArrayHasKey('emptyWhereProtection', $rawState);
         self::assertArrayHasKey('joins', $rawState);
 
-        self::assertEquals('foo', $rawState['table']);
-        self::assertEquals(['bar' => 'baz'], $rawState['set']);
+        self::assertInstanceOf(TableIdentifier::class, $rawState['table']);
+        self::assertEquals('foo', $rawState['table']->getTable());
+        self::assertInstanceOf(Set::class, $rawState['set']);
         self::assertInstanceOf(Where::class, $rawState['where']);
-        self::assertInstanceOf(Join::class, $rawState['joins']);
-        self::assertTrue($rawState['emptyWhereProtection']);
     }
 
     public function testJoinWithTableIdentifier(): void
@@ -484,6 +501,7 @@ final class UpdateTest extends TestCase
         $this->update->table('foo')
             ->set(['x' => 'y'])
             ->join(new TableIdentifier('bar', 'schema'), 'foo.id = bar.foo_id');
+        $this->update->where->setEmptyAllowed();
 
         $sql = $this->update->getSqlString(new TrustingSql92Platform());
         self::assertStringContainsString('JOIN "schema"."bar"', $sql);

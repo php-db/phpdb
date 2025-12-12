@@ -5,13 +5,14 @@ declare(strict_types=1);
 namespace PhpDb\Sql\Predicate;
 
 use Override;
+use PhpDb\Adapter\Platform\PlatformInterface;
 use PhpDb\Sql\Literal as BaseLiteral;
 
-class Literal extends BaseLiteral implements PredicateInterface
+final class Literal extends BaseLiteral implements PredicateInterface
 {
     /** @inheritDoc */
     #[Override]
-    public function toSqlPart(array &$values): string
+    public function toSqlPart(string $q, PlatformInterface $platform): string
     {
         return $this->literal;
     }

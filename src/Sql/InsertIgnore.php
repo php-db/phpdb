@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace PhpDb\Sql;
 
-class InsertIgnore extends Insert
+final class InsertIgnore extends AbstractInsert
 {
     protected function getInsertKeyword(): string
     {

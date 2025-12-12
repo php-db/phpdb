@@ -83,14 +83,13 @@ class JoinTest extends TestCase
         $join = new Join();
         $join->join($name, $on);
 
-        $expectedSpecification = [
-            'name'    => $name,
-            'on'      => $on,
-            'columns' => [Select::SQL_STAR],
-            'type'    => Join::JOIN_INNER,
-        ];
-
-        self::assertEquals($expectedSpecification, $join->current());
+        $current = $join->current();
+        self::assertEquals($on, $current['on']);
+        self::assertEquals([Select::SQL_STAR], $current['columns']);
+        self::assertEquals(Join::JOIN_INNER, $current['type']);
+        self::assertArrayHasKey('name', $current);
+        self::assertEquals($name, $current['name']['table']->getTable());
+        self::assertNull($current['name']['alias']);
     }
 
     public function testValidReturnsTrueIfTheIteratorIsAtAValidPositionAndFalseIfNot(): void

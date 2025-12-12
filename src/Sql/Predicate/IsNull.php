@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace PhpDb\Sql\Predicate;
 
 use Override;
+use PhpDb\Adapter\Platform\PlatformInterface;
 use PhpDb\Sql\AbstractExpression;
 use PhpDb\Sql\Argument\Identifier;
 use PhpDb\Sql\ArgumentInterface;
@@ -64,12 +65,16 @@ class IsNull extends AbstractExpression implements PredicateInterface
 
     /** @inheritDoc */
     #[Override]
-    public function toSqlPart(array &$values): string
+    public function toSqlPart(string $q, PlatformInterface $platform): string
     {
         if (! $this->identifier instanceof ArgumentInterface) {
             throw new InvalidArgumentException('Identifier must be specified');
         }
 
-        return $this->identifier->getSpecification() . ' ' . $this->operator;
+        $identifierSql = $this->identifier instanceof Identifier
+            ? $this->identifier->toSql($q)
+            : $this->identifier->getSpecification();
+
+        return $identifierSql . ' ' . $this->operator;
     }
 }

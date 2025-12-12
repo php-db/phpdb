@@ -4,26 +4,20 @@ declare(strict_types=1);
 
 namespace PhpDb\Sql;
 
-class Limit
+final readonly class Limit
 {
-    protected int $value;
+    public int $value;
 
     public function __construct(string|int $value)
     {
         $this->value = (int) $value;
     }
 
-    public function getValue(): int
-    {
-        return $this->value;
-    }
-
     /**
-     * Returns SQL with marker and populates values array for deferred processing.
+     * Returns SQL part with embedded value.
      */
-    public function toSqlPart(array &$values): string
+    public function toSqlPart(): string
     {
-        $values[] = $this->value;
-        return ' LIMIT ' . PreparableSqlInterface::P_VALUE;
+        return ' LIMIT ' . $this->value;
     }
 }

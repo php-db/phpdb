@@ -8,7 +8,7 @@ use function current;
 use function is_array;
 use function key;
 
-class From
+final class From
 {
     protected string|array|TableIdentifier $table;
     protected ?string $alias = null;

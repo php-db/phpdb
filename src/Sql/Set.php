@@ -16,7 +16,7 @@ use function is_string;
 /**
  * @implements IteratorAggregate<string, mixed>
  */
-class Set implements Countable, IteratorAggregate
+final class Set implements Countable, IteratorAggregate
 {
     protected PriorityList $values;
 

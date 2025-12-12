@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace PhpDb\Sql\Predicate;
 
 use Override;
+use PhpDb\Adapter\Platform\PlatformInterface;
 use PhpDb\Sql\AbstractExpression;
 use PhpDb\Sql\Argument\Identifier;
 use PhpDb\Sql\Argument\Value;
@@ -90,7 +91,7 @@ class Like extends AbstractExpression implements PredicateInterface
 
     /** @inheritDoc */
     #[Override]
-    public function toSqlPart(array &$values): string
+    public function toSqlPart(string $q, PlatformInterface $platform): string
     {
         if (! $this->identifier instanceof ArgumentInterface) {
             throw new InvalidArgumentException('Identifier must be specified');
@@ -100,12 +101,13 @@ class Like extends AbstractExpression implements PredicateInterface
             throw new InvalidArgumentException('Like expression must be specified');
         }
 
-        $identifierSql = $this->identifier->getSpecification();
-        $likeSql       = $this->like->getSpecification();
+        $identifierSql = $this->identifier instanceof Identifier
+            ? $this->identifier->toSql($q)
+            : $this->identifier->getSpecification();
 
-        if ($this->like instanceof Value) {
-            $values[] = $this->like->getValue();
-        }
+        $likeSql = $this->like instanceof Value
+            ? $platform->quoteTrustedValue($this->like->getValue())
+            : $this->like->getSpecification();
 
         return "{$identifierSql} {$this->operator} {$likeSql}";
     }

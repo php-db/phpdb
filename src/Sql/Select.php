@@ -25,7 +25,7 @@ use function strtolower;
  * @property Having $having
  * @property Join $joins
  */
-class Select extends AbstractPreparableSql
+final class Select extends AbstractPreparableSql
 {
     /**#@+
      * Constant
@@ -390,30 +390,26 @@ class Select extends AbstractPreparableSql
         ?DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null
     ): string {
-        $this->localizeVariables();
+        $q = $platform->getQuoteIdentifierSymbol();
 
-        $values = [];
-
-        $sql = $this->buildSelectPart($platform, $driver, $parameterContainer, $values)
-             . ($this->joins?->toSqlPart($values) ?? '')
-             . ($this->where?->toSqlPart($values) ?? '')
-             . ($this->group?->toSqlPart($platform) ?? '')
-             . ($this->having?->toSqlPart($values) ?? '')
-             . ($this->order?->toSqlPart() ?? '')
-             . ($this->limit?->toSqlPart($values) ?? '')
-             . ($this->offset?->toSqlPart($values) ?? '');
-
-        return $this->quoteSqlString($sql, $values, $platform, $parameterContainer, 'where', $driver);
+        return $this->buildSelectPart($q, $platform, $driver, $parameterContainer)
+             . ($this->joins?->toSqlPart($q, $platform) ?? '')
+             . ($this->where?->toSqlPart($q, $platform) ?? '')
+             . ($this->group?->toSqlPart($q) ?? '')
+             . ($this->having?->toSqlPart($q, $platform) ?? '')
+             . ($this->order?->toSqlPart($q) ?? '')
+             . ($this->limit?->toSqlPart() ?? '')
+             . ($this->offset?->toSqlPart() ?? '');
     }
 
     /**
      * Build the SELECT ... FROM part of the query - optimized for speed
      */
     protected function buildSelectPart(
+        string $q,
         PlatformInterface $platform,
         ?DriverInterface $driver,
-        ?ParameterContainer $parameterContainer,
-        array &$values
+        ?ParameterContainer $parameterContainer
     ): string {
         $quantifierPart = '';
         if ($this->quantifier !== null) {
@@ -422,7 +418,7 @@ class Select extends AbstractPreparableSql
                 : $this->quantifier . ' ';
         }
 
-        $fromPart = $this->table?->toFromSqlPart() ?? '';
+        $fromPart = $this->table?->toFromSqlPart($q) ?? '';
 
         $expressionProcessor = fn(ExpressionInterface|Select $expr) =>
             $expr instanceof Select
@@ -430,8 +426,8 @@ class Select extends AbstractPreparableSql
                 : $this->processExpression($expr, $platform, $driver, $parameterContainer);
 
         return 'SELECT ' . $quantifierPart
-            . $this->getColumns()->toSqlPart($this->table, $expressionProcessor)
-            . ($this->joins?->toColumnsSqlPart($expressionProcessor) ?? '')
+            . $this->getColumns()->toSqlPart($q, $this->table, $expressionProcessor)
+            . ($this->joins?->toColumnsSqlPart($q, $expressionProcessor) ?? '')
             . $fromPart;
     }
 

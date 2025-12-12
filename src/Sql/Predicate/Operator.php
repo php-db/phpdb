@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace PhpDb\Sql\Predicate;
 
 use Override;
+use PhpDb\Adapter\Platform\PlatformInterface;
 use PhpDb\Sql\AbstractExpression;
 use PhpDb\Sql\Argument\Identifier;
 use PhpDb\Sql\Argument\Select;
@@ -14,7 +15,7 @@ use PhpDb\Sql\Exception\InvalidArgumentException;
 use PhpDb\Sql\ExpressionInterface;
 use PhpDb\Sql\SqlInterface;
 
-class Operator extends AbstractExpression implements PredicateInterface
+final class Operator extends AbstractExpression implements PredicateInterface
 {
     final public const OPERATOR_EQUAL_TO = '=';
 
@@ -167,7 +168,7 @@ class Operator extends AbstractExpression implements PredicateInterface
 
     /** @inheritDoc */
     #[Override]
-    public function toSqlPart(array &$values): string
+    public function toSqlPart(string $q, PlatformInterface $platform): string
     {
         if (! $this->left instanceof ArgumentInterface) {
             throw new InvalidArgumentException('Left expression must be specified');
@@ -177,15 +178,17 @@ class Operator extends AbstractExpression implements PredicateInterface
             throw new InvalidArgumentException('Right expression must be specified');
         }
 
-        $leftSql  = $this->left->getSpecification();
-        $rightSql = $this->right->getSpecification();
+        $leftSql = $this->left instanceof Value
+            ? $platform->quoteTrustedValue($this->left->getValue())
+            : ($this->left instanceof Identifier
+                ? $this->left->toSql($q)
+                : $this->left->getSpecification());
 
-        if ($this->left instanceof Value) {
-            $values[] = $this->left->getValue();
-        }
-        if ($this->right instanceof Value) {
-            $values[] = $this->right->getValue();
-        }
+        $rightSql = $this->right instanceof Value
+            ? $platform->quoteTrustedValue($this->right->getValue())
+            : ($this->right instanceof Identifier
+                ? $this->right->toSql($q)
+                : $this->right->getSpecification());
 
         return "{$leftSql} {$this->operator} {$rightSql}";
     }

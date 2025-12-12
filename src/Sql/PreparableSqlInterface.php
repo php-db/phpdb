@@ -11,7 +11,7 @@ interface PreparableSqlInterface
 {
     public const P_LQUOTE = '{"';
     public const P_RQUOTE = '"}';
-    public const P_VALUE  = '{?}';
+    public const P_VALUE  = '%s';
     public const P_SELECT = '{SQL}';
 
     public function prepareStatement(

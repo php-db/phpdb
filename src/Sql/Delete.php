@@ -16,7 +16,7 @@ use function strtolower;
 /**
  * @property Where $where
  */
-class Delete extends AbstractPreparableSql
+final class Delete extends AbstractPreparableSql
 {
     protected ?TableIdentifier $table = null;
 
@@ -75,12 +75,10 @@ class Delete extends AbstractPreparableSql
             );
         }
 
-        $values = [];
+        $q = $platform->getQuoteIdentifierSymbol();
 
-        $sql = 'DELETE FROM ' . ($this->table?->toSqlPart() ?? '')
-             . ($this->where?->toSqlPart($values) ?? '');
-
-        return $this->quoteSqlString($sql, $values, $platform, $parameterContainer, 'where', $driver);
+        return 'DELETE FROM ' . ($this->table?->toSqlPart($q) ?? '')
+             . ($this->where?->toSqlPart($q, $platform) ?? '');
     }
 
     public function __get(string $name): ?Where

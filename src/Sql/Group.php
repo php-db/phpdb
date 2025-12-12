@@ -4,52 +4,52 @@ declare(strict_types=1);
 
 namespace PhpDb\Sql;
 
-use function implode;
-use function str_contains;
-use function str_replace;
+use function count;
+use function is_array;
 
-class Group
+final class Group
 {
-    protected array $columns = [];
+    /** @var GroupColumn[] */
+    protected array $items = [];
 
     public function add(string|array $column): static
     {
         if (is_array($column)) {
             foreach ($column as $c) {
-                $this->columns[] = $c;
+                $this->items[] = new GroupColumn($c);
             }
         } else {
-            $this->columns[] = $column;
+            $this->items[] = new GroupColumn($column);
         }
         return $this;
     }
 
     public function count(): int
     {
-        return count($this->columns);
+        return count($this->items);
     }
 
     /**
-     * Build GROUP BY clause with marker-based identifiers for deferred quoting.
+     * Build GROUP BY clause.
+     *
+     * @param string $q Quote character (empty string = no quoting)
      */
-    public function toSqlPart(): string
+    public function toSqlPart(string $q): string
     {
-        if ($this->columns === []) {
+        if ($this->items === []) {
             return '';
         }
 
-        $lq = PreparableSqlInterface::P_LQUOTE;
-        $rq = PreparableSqlInterface::P_RQUOTE;
-
-        $groups = [];
-        foreach ($this->columns as $column) {
-            if (str_contains($column, '.')) {
-                $groups[] = $lq . str_replace('.', $rq . '.' . $lq, $column) . $rq;
-            } else {
-                $groups[] = $lq . $column . $rq;
+        $sql   = ' GROUP BY ';
+        $first = true;
+        foreach ($this->items as $item) {
+            if (! $first) {
+                $sql .= ', ';
             }
+            $sql  .= $item->toSql($q);
+            $first = false;
         }
 
-        return ' GROUP BY ' . implode(', ', $groups);
+        return $sql;
     }
 }

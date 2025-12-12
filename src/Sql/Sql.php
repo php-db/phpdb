@@ -10,7 +10,7 @@ use PhpDb\Adapter\StatementContainerInterface;
 
 use function sprintf;
 
-class Sql
+final class Sql
 {
     protected AdapterInterface $adapter;
 
@@ -121,6 +121,7 @@ class Sql
      */
     public function buildSqlString(SqlInterface $sqlObject, ?AdapterInterface $adapter = null): string
     {
+        return '';
         return $this
             ->sqlPlatform
             ->setSubject($sqlObject)

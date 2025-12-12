@@ -11,6 +11,7 @@ use PhpDb\Adapter\Driver\StatementInterface;
 use PhpDb\Adapter\ParameterContainer;
 use PhpDb\Adapter\StatementContainer;
 use PhpDb\Adapter\StatementContainerInterface;
+use PhpDb\Sql\Columns;
 use PhpDb\Sql\Combine;
 use PhpDb\Sql\Predicate\Expression;
 use PhpDb\Sql\Select;
@@ -152,23 +153,27 @@ final class CombineTest extends TestCase
                 ->alignColumns();
 
         // Verify first select has NULL for missing c2
+        $columns1 = $select1->getRawState('columns');
+        self::assertInstanceOf(Columns::class, $columns1);
         self::assertEquals(
             [
                 'c0' => 'c0',
                 'c1' => 'c1',
                 'c2' => new Expression('NULL'),
             ],
-            $select1->getRawState('columns')
+            $columns1->getColumns()
         );
 
         // Verify second select has NULL for missing c0
+        $columns2 = $select2->getRawState('columns');
+        self::assertInstanceOf(Columns::class, $columns2);
         self::assertEquals(
             [
                 'c0' => new Expression('NULL'),
                 'c1' => 'c1',
                 'c2' => 'c2',
             ],
-            $select2->getRawState('columns')
+            $columns2->getColumns()
         );
     }
 
@@ -176,21 +181,16 @@ final class CombineTest extends TestCase
     {
         $select = new Select('t1');
         $this->combine->combine($select);
-        self::assertSame(
-            [
-                'combine' => [
-                    [
-                        'select'   => $select,
-                        'type'     => Combine::COMBINE_UNION,
-                        'modifier' => '',
-                    ],
-                ],
-                'columns' => [
-                    '0' => '*',
-                ],
-            ],
-            $this->combine->getRawState()
-        );
+
+        $rawState = $this->combine->getRawState();
+
+        self::assertArrayHasKey('combine', $rawState);
+        self::assertArrayHasKey('columns', $rawState);
+        self::assertCount(1, $rawState['combine']);
+        self::assertSame($select, $rawState['combine'][0]['select']);
+        self::assertSame(Combine::COMBINE_UNION, $rawState['combine'][0]['type']);
+        // columns is null until accessed via columns() method
+        self::assertNull($rawState['columns']);
     }
 
     protected function getMockAdapter(): Adapter|MockObject

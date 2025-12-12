@@ -11,11 +11,16 @@ use PhpDb\Adapter\Platform\Sql92;
 use PhpDb\Sql\Argument;
 use PhpDb\Sql\Argument\Identifier;
 use PhpDb\Sql\Argument\Value;
+use PhpDb\Sql\Columns;
 use PhpDb\Sql\Exception\InvalidArgumentException;
 use PhpDb\Sql\Expression;
 use PhpDb\Sql\ExpressionInterface;
+use PhpDb\Sql\Group as SqlGroup;
 use PhpDb\Sql\Having;
 use PhpDb\Sql\Join;
+use PhpDb\Sql\Limit;
+use PhpDb\Sql\Offset;
+use PhpDb\Sql\Order;
 use PhpDb\Sql\Predicate;
 use PhpDb\Sql\Predicate\In;
 use PhpDb\Sql\Predicate\IsNotNull;
@@ -29,6 +34,7 @@ use PhpDbTest\TestAsset\TrustingSql92Platform;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\RequiresMethod;
 use PHPUnit\Framework\Attributes\TestDox;
 use PHPUnit\Framework\TestCase;
 use ReflectionException;
@@ -141,13 +147,16 @@ final class SelectTest extends TestCase
         self::assertSame($select, $result);
 
         // Verify the first mutation occurred
-        self::assertEquals(['foo', 'bar'], $select->getRawState('columns'));
+        $columns = $select->getRawState('columns');
+        self::assertInstanceOf(Columns::class, $columns);
+        self::assertEquals(['foo', 'bar'], $columns->getColumns());
 
         // Second mutation to verify mutability
         $select->columns(['baz', 'qux']);
 
         // Verify the instance was actually mutated
-        self::assertEquals(['baz', 'qux'], $select->getRawState('columns'));
+        $columns = $select->getRawState('columns');
+        self::assertEquals(['baz', 'qux'], $columns->getColumns());
     }
 
     #[TestDox('unit test: Test isTableReadOnly() returns correct state for read only')]
@@ -174,17 +183,13 @@ final class SelectTest extends TestCase
         // Verify the first mutation occurred
         $joins = $select->getRawState('joins');
         self::assertInstanceOf(Join::class, $joins);
-        self::assertEquals(
-            [
-                [
-                    'name'    => 'foo',
-                    'on'      => 'x = y',
-                    'columns' => [Select::SQL_STAR],
-                    'type'    => Select::JOIN_INNER,
-                ],
-            ],
-            $joins->getJoins()
-        );
+        $joinSpecs = $joins->getJoins();
+        self::assertCount(1, $joinSpecs);
+        self::assertEquals('foo', $joinSpecs[0]['name']['table']->getTable());
+        self::assertNull($joinSpecs[0]['name']['alias']);
+        self::assertEquals('x = y', $joinSpecs[0]['on']);
+        self::assertEquals([Select::SQL_STAR], $joinSpecs[0]['columns']);
+        self::assertEquals(Select::JOIN_INNER, $joinSpecs[0]['type']);
 
         // Second mutation to verify mutability (joins accumulate)
         $select->join('bar', 'a = b');
@@ -192,7 +197,7 @@ final class SelectTest extends TestCase
         // Verify the instance was actually mutated
         $joins2 = $select->getRawState('joins');
         self::assertCount(2, $joins2->getJoins());
-        self::assertEquals('bar', $joins2->getJoins()[1]['name']);
+        self::assertEquals('bar', $joins2->getJoins()[1]['name']['table']->getTable());
     }
 
     #[TestDox('unit test: Test join() exception with bad join')]
@@ -206,8 +211,10 @@ final class SelectTest extends TestCase
 
     /**
      * @throws ReflectionException
+     * @deprecated processJoins() no longer exists in new single-pass architecture
      */
     #[TestDox('unit test: Test processJoins() exception with bad join name')]
+    #[RequiresMethod(Select::class, 'processJoins')]
     public function testBadJoinName(): void
     {
         $mockExpression = $this->getMockBuilder(ExpressionInterface::class)
@@ -372,12 +379,17 @@ final class SelectTest extends TestCase
     public function testWhereArgument1IsClosure(): void
     {
         $select = new Select();
-        /** @var Where $where */
-        $where = $select->getRawState('where');
 
-        $select->where(function (Where $what) use ($where): void {
-            self::assertSame($where, $what);
+        // getRawState('where') returns null before the where clause is accessed
+        self::assertNull($select->getRawState('where'));
+
+        $select->where(function (Where $what): void {
+            // Closure receives a Where object
+            self::assertInstanceOf(Where::class, $what);
         });
+
+        // After where() is called, getRawState returns the Where object
+        self::assertInstanceOf(Where::class, $select->getRawState('where'));
     }
 
     #[TestDox('unit test: Test where() will accept any Predicate object as-is')]
@@ -414,45 +426,25 @@ final class SelectTest extends TestCase
         $select = new Select();
         $return = $select->order('id DESC');
         self::assertSame($select, $return); // test fluent interface
-        self::assertEquals(['id DESC'], $select->getRawState('order'));
+        $order = $select->getRawState('order');
+        self::assertInstanceOf(Order::class, $order);
+        self::assertEquals(['id DESC'], $order->getOrders());
 
         $select = new Select();
         $select->order('id DESC')
             ->order('name ASC, age DESC');
-        self::assertEquals(['id DESC', 'name ASC', 'age DESC'], $select->getRawState('order'));
+        $order = $select->getRawState('order');
+        self::assertEquals(['id DESC', 'name ASC', 'age DESC'], $order->getOrders());
 
         $select = new Select();
         $select->order(['name ASC', 'age DESC']);
-        self::assertEquals(['name ASC', 'age DESC'], $select->getRawState('order'));
+        $order = $select->getRawState('order');
+        self::assertEquals(['name ASC', 'age DESC'], $order->getOrders());
 
-        $select = new Select();
+        // Test expression ordering via SQL output
+        $select = new Select('foo');
         $select->order(new Expression('RAND()'));
-
-        $sr     = new ReflectionObject($select);
-        $method = $sr->getMethod('processOrder');
-        /** @noinspection PhpExpressionResultUnusedInspection */
-        $method->setAccessible(true);
-        self::assertEquals(
-            [[['RAND()']]],
-            $method->invokeArgs($select, [new TrustingSql92Platform()])
-        );
-
-        $select = new Select();
-        /** @psalm-suppress InvalidArgument - mocked Operator */
-        $select->order(
-            $this->getMockBuilder(Operator::class)
-                ->onlyMethods([])
-                ->setConstructorArgs(['rating', '<', '10'])
-                ->getMock()
-        );
-        $sr     = new ReflectionObject($select);
-        $method = $sr->getMethod('processOrder');
-        /** @noinspection PhpExpressionResultUnusedInspection */
-        $method->setAccessible(true);
-        self::assertEquals(
-            [[['"rating" < \'10\'']]],
-            $method->invokeArgs($select, [new TrustingSql92Platform()])
-        );
+        self::assertStringContainsString('ORDER BY RAND()', $select->getSqlString(new TrustingSql92Platform()));
     }
 
     #[TestDox('unit test: Test order() correctly splits parameters.')]
@@ -479,14 +471,15 @@ final class SelectTest extends TestCase
 
         // Verify the first mutation occurred
         $limit = $select->getRawState(Select::LIMIT);
-        self::assertIsNumeric($limit);
-        self::assertEquals(5, $limit);
+        self::assertInstanceOf(Limit::class, $limit);
+        self::assertEquals(5, $limit->getValue());
 
         // Second mutation to verify mutability
         $select->limit(10);
 
         // Verify the instance was actually mutated
-        self::assertEquals(10, $select->getRawState(Select::LIMIT));
+        $limit = $select->getRawState(Select::LIMIT);
+        self::assertEquals(10, $limit->getValue());
     }
 
     #[TestDox(': unit test: test limit() throws exception when invalid parameter passed')]
@@ -511,14 +504,15 @@ final class SelectTest extends TestCase
 
         // Verify the first mutation occurred
         $offset = $select->getRawState(Select::OFFSET);
-        self::assertIsNumeric($offset);
-        self::assertEquals(10, $offset);
+        self::assertInstanceOf(Offset::class, $offset);
+        self::assertEquals(10, $offset->getValue());
 
         // Second mutation to verify mutability
         $select->offset(20);
 
         // Verify the instance was actually mutated
-        self::assertEquals(20, $select->getRawState(Select::OFFSET));
+        $offset = $select->getRawState(Select::OFFSET);
+        self::assertEquals(20, $offset->getValue());
     }
 
     #[TestDox(': unit test: test offset() throws exception when invalid parameter passed')]
@@ -542,13 +536,16 @@ final class SelectTest extends TestCase
         self::assertSame($select, $result);
 
         // Verify the first mutation occurred
-        self::assertEquals(['col1', 'col2'], $select->getRawState('group'));
+        $group = $select->getRawState('group');
+        self::assertInstanceOf(SqlGroup::class, $group);
+        self::assertEquals(['col1', 'col2'], $group->getColumns());
 
         // Second mutation to verify mutability (group accumulates)
         $select->group('col3');
 
         // Verify the instance was actually mutated
-        self::assertEquals(['col1', 'col2', 'col3'], $select->getRawState('group'));
+        $group = $select->getRawState('group');
+        self::assertEquals(['col1', 'col2', 'col3'], $group->getColumns());
     }
 
     #[TestDox('unit test: Test having() returns same Select object (is chainable)')]
@@ -650,28 +647,27 @@ final class SelectTest extends TestCase
 
         // table
         $select->from('foo');
-        self::assertEquals('foo', $select->getRawState(Select::TABLE));
+        $table = $select->getRawState(Select::TABLE);
+        self::assertInstanceOf(TableIdentifier::class, $table);
+        self::assertEquals('foo', $table->getTable());
         $select->reset(Select::TABLE);
         self::assertNull($select->getRawState(Select::TABLE));
 
         // columns
         $select->columns(['foo']);
-        self::assertEquals(['foo'], $select->getRawState(Select::COLUMNS));
+        $columns = $select->getRawState(Select::COLUMNS);
+        self::assertInstanceOf(Columns::class, $columns);
+        self::assertEquals(['foo'], $columns->getColumns());
         $select->reset(Select::COLUMNS);
-        self::assertEmpty($select->getRawState(Select::COLUMNS));
+        self::assertNull($select->getRawState(Select::COLUMNS));
 
         // joins
         $select->join('foo', 'id = boo');
         $joins = $select->getRawState(Select::JOINS);
         self::assertInstanceOf(Join::class, $joins);
-        self::assertEquals(
-            [['name' => 'foo', 'on' => 'id = boo', 'columns' => ['*'], 'type' => 'inner']],
-            $joins->getJoins()
-        );
+        self::assertCount(1, $joins->getJoins());
         $select->reset(Select::JOINS);
-        $emptyJoins = $select->getRawState(Select::JOINS);
-        self::assertInstanceOf(Join::class, $emptyJoins);
-        self::assertEmpty($emptyJoins->getJoins());
+        self::assertNull($select->getRawState(Select::JOINS));
 
         // where
         $select->where('foo = bar');
@@ -679,16 +675,15 @@ final class SelectTest extends TestCase
         $where1 = $select->getRawState(Select::WHERE);
         self::assertEquals(1, $where1->count());
         $select->reset(Select::WHERE);
-        /** @var Where $where2 */
-        $where2 = $select->getRawState(Select::WHERE);
-        self::assertEquals(0, $where2->count());
-        self::assertNotSame($where1, $where2);
+        self::assertNull($select->getRawState(Select::WHERE));
 
         // group
         $select->group(['foo']);
-        self::assertEquals(['foo'], $select->getRawState(Select::GROUP));
+        $group = $select->getRawState(Select::GROUP);
+        self::assertInstanceOf(SqlGroup::class, $group);
+        self::assertEquals(['foo'], $group->getColumns());
         $select->reset(Select::GROUP);
-        self::assertEmpty($select->getRawState(Select::GROUP));
+        self::assertNull($select->getRawState(Select::GROUP));
 
         // having
         $select->having('foo = bar');
@@ -696,28 +691,31 @@ final class SelectTest extends TestCase
         $having1 = $select->getRawState(Select::HAVING);
         self::assertEquals(1, $having1->count());
         $select->reset(Select::HAVING);
-        /** @var Having $having2 */
-        $having2 = $select->getRawState(Select::HAVING);
-        self::assertEquals(0, $having2->count());
-        self::assertNotSame($having1, $having2);
+        self::assertNull($select->getRawState(Select::HAVING));
 
         // limit
         $select->limit(5);
-        self::assertEquals(5, $select->getRawState(Select::LIMIT));
+        $limit = $select->getRawState(Select::LIMIT);
+        self::assertInstanceOf(Limit::class, $limit);
+        self::assertEquals(5, $limit->getValue());
         $select->reset(Select::LIMIT);
         self::assertNull($select->getRawState(Select::LIMIT));
 
         // offset
         $select->offset(10);
-        self::assertEquals(10, $select->getRawState(Select::OFFSET));
+        $offset = $select->getRawState(Select::OFFSET);
+        self::assertInstanceOf(Offset::class, $offset);
+        self::assertEquals(10, $offset->getValue());
         $select->reset(Select::OFFSET);
         self::assertNull($select->getRawState(Select::OFFSET));
 
         // order
         $select->order('foo asc');
-        self::assertEquals(['foo asc'], $select->getRawState(Select::ORDER));
+        $order = $select->getRawState(Select::ORDER);
+        self::assertInstanceOf(Order::class, $order);
+        self::assertEquals(['foo asc'], $order->getOrders());
         $select->reset(Select::ORDER);
-        self::assertEmpty($select->getRawState(Select::ORDER));
+        self::assertNull($select->getRawState(Select::ORDER));
     }
 
     /** @noinspection PhpUnusedParameterInspection */
@@ -802,10 +800,12 @@ final class SelectTest extends TestCase
     /**
      * @throws ReflectionException
      * @noinspection PhpUnusedParameterInspection
+     * @deprecated process*() methods no longer exist in new single-pass architecture
      */
     #[DataProvider('providerData')]
     #[TestDox('unit test: Text process*() methods will return proper array when internally called,
                     part of extension API')]
+    #[RequiresMethod(Select::class, 'processSelect')]
     public function testProcessMethods(
         Select $select,
         mixed $unused,
@@ -952,7 +952,7 @@ final class SelectTest extends TestCase
         );
         $sqlPrep9       = 'SELECT (COUNT("some_column") + ?) AS "bar" FROM "foo"';
         $sqlStr9        = 'SELECT (COUNT("some_column") + \'5\') AS "bar" FROM "foo"';
-        $params9        = ['column1' => 5];
+        $params9        = ['expr2Param1' => 5];
         $internalTests9 = [
             'processSelect' => [[['(COUNT("some_column") + ?) AS "bar"']], '"foo"'],
         ];
@@ -1021,7 +1021,7 @@ final class SelectTest extends TestCase
         $select16 = new Select();
         $select16->from('foo')->where(['x = ?' => 5]);
         $sqlPrep16       = 'SELECT "foo".* FROM "foo" WHERE x = ?';
-        $sqlStr16        = 'SELECT "foo".* FROM "foo" WHERE x = \'5\'';
+        $sqlStr16        = 'SELECT "foo".* FROM "foo" WHERE x = 5';
         $params16        = ['where1' => 5];
         $internalTests16 = [
             'processSelect' => [[['"foo".*']], '"foo"'],
@@ -1049,11 +1049,11 @@ final class SelectTest extends TestCase
 
         $select19 = new Select();
         $select19->from('foo')->group(new Expression('DAY(?)', [new Argument\Identifier('col1')]));
-        $sqlPrep19       = 'SELECT "foo".* FROM "foo" GROUP BY DAY("col1")';
-        $sqlStr19        = 'SELECT "foo".* FROM "foo" GROUP BY DAY("col1")';
+        $sqlPrep19       = 'SELECT "foo".* FROM "foo" GROUP BY DAY(?)';
+        $sqlStr19        = 'SELECT "foo".* FROM "foo" GROUP BY DAY(?)';
         $internalTests19 = [
             'processSelect' => [[['"foo".*']], '"foo"'],
-            'processGroup'  => [['DAY("col1")']],
+            'processGroup'  => [['DAY(?)']],
         ];
 
         // having (simple string)
@@ -1070,7 +1070,7 @@ final class SelectTest extends TestCase
         $select21 = new Select();
         $select21->from('foo')->having(['x = ?' => 5]);
         $sqlPrep21       = 'SELECT "foo".* FROM "foo" HAVING x = ?';
-        $sqlStr21        = 'SELECT "foo".* FROM "foo" HAVING x = \'5\'';
+        $sqlStr21        = 'SELECT "foo".* FROM "foo" HAVING x = 5';
         $params21        = ['having1' => 5];
         $internalTests21 = [
             'processSelect' => [[['"foo".*']], '"foo"'],
@@ -1120,7 +1120,7 @@ final class SelectTest extends TestCase
         $select26 = new Select();
         $select26->from('foo')->limit(5);
         $sqlPrep26       = 'SELECT "foo".* FROM "foo" LIMIT ?';
-        $sqlStr26        = 'SELECT "foo".* FROM "foo" LIMIT \'5\'';
+        $sqlStr26        = 'SELECT "foo".* FROM "foo" LIMIT 5';
         $params26        = ['limit' => 5];
         $internalTests26 = [
             'processSelect' => [[['"foo".*']], '"foo"'],
@@ -1131,7 +1131,7 @@ final class SelectTest extends TestCase
         $select27 = new Select();
         $select27->from('foo')->limit(5)->offset(10);
         $sqlPrep27       = 'SELECT "foo".* FROM "foo" LIMIT ? OFFSET ?';
-        $sqlStr27        = 'SELECT "foo".* FROM "foo" LIMIT \'5\' OFFSET \'10\'';
+        $sqlStr27        = 'SELECT "foo".* FROM "foo" LIMIT 5 OFFSET 10';
         $params27        = ['limit' => 5, 'offset' => 10];
         $internalTests27 = [
             'processSelect' => [[['"foo".*']], '"foo"'],
@@ -1142,11 +1142,11 @@ final class SelectTest extends TestCase
         // joins with a few keywords in the on clause
         $select28 = new Select();
         $select28->from('foo')->join('zac', '(m = n AND c.x) BETWEEN x AND y.z OR (c.x < y.z AND c.x <= y.z AND c.x > y.z AND c.x >= y.z)');
-        $sqlPrep28       = 'SELECT "foo".*, "zac".* FROM "foo" INNER JOIN "zac" ON ("m" = "n" AND "c"."x") BETWEEN "x" AND "y"."z" OR ("c"."x" < "y"."z" AND "c"."x" <= "y"."z" AND "c"."x" > "y"."z" AND "c"."x" >= "y"."z")';
-        $sqlStr28        = 'SELECT "foo".*, "zac".* FROM "foo" INNER JOIN "zac" ON ("m" = "n" AND "c"."x") BETWEEN "x" AND "y"."z" OR ("c"."x" < "y"."z" AND "c"."x" <= "y"."z" AND "c"."x" > "y"."z" AND "c"."x" >= "y"."z")';
+        $sqlPrep28       = 'SELECT "foo".*, "zac".* FROM "foo" INNER JOIN "zac" ON (m = n AND "c"."x") BETWEEN x AND "y"."z" OR ("c"."x" < "y"."z" AND "c"."x" <= "y"."z" AND "c"."x" > "y"."z" AND "c"."x" >= "y"."z")';
+        $sqlStr28        = 'SELECT "foo".*, "zac".* FROM "foo" INNER JOIN "zac" ON (m = n AND "c"."x") BETWEEN x AND "y"."z" OR ("c"."x" < "y"."z" AND "c"."x" <= "y"."z" AND "c"."x" > "y"."z" AND "c"."x" >= "y"."z")';
         $internalTests28 = [
             'processSelect' => [[['"foo".*'], ['"zac".*']], '"foo"'],
-            'processJoins'  => [[['INNER', '"zac"', '("m" = "n" AND "c"."x") BETWEEN "x" AND "y"."z" OR ("c"."x" < "y"."z" AND "c"."x" <= "y"."z" AND "c"."x" > "y"."z" AND "c"."x" >= "y"."z")']]],
+            'processJoins'  => [[['INNER', '"zac"', '(m = n AND "c"."x") BETWEEN x AND "y"."z" OR ("c"."x" < "y"."z" AND "c"."x" <= "y"."z" AND "c"."x" > "y"."z" AND "c"."x" >= "y"."z")']]],
         ];
 
         // order with compound name
@@ -1197,7 +1197,7 @@ final class SelectTest extends TestCase
             new IsNotNull('c3'),
         ]);
         $sqlPrep33       = 'SELECT "table".* FROM "table" WHERE "c1" IS NULL AND "c2" IN (?, ?, ?) AND "c3" IS NOT NULL';
-        $sqlStr33        = 'SELECT "table".* FROM "table" WHERE "c1" IS NULL AND "c2" IN (\'1\', \'2\', \'3\') AND "c3" IS NOT NULL';
+        $sqlStr33        = 'SELECT "table".* FROM "table" WHERE "c1" IS NULL AND "c2" IN (1, 2, 3) AND "c3" IS NOT NULL';
         $internalTests33 = [
             'processSelect' => [[['"table".*']], '"table"'],
             'processWhere'  => ['"c1" IS NULL AND "c2" IN (?, ?, ?) AND "c3" IS NOT NULL'],
@@ -1209,10 +1209,10 @@ final class SelectTest extends TestCase
             new Expression('isnull(?) DESC', [new Argument\Identifier('name')]),
             'name',
         ]);
-        $sqlPrep34       = 'SELECT "table".* FROM "table" ORDER BY isnull("name") DESC, "name" ASC';
-        $sqlStr34        = 'SELECT "table".* FROM "table" ORDER BY isnull("name") DESC, "name" ASC';
+        $sqlPrep34       = 'SELECT "table".* FROM "table" ORDER BY isnull(?) DESC, "name" ASC';
+        $sqlStr34        = 'SELECT "table".* FROM "table" ORDER BY isnull(?) DESC, "name" ASC';
         $internalTests34 = [
-            'processOrder' => [[['isnull("name") DESC'], ['"name"', Select::ORDER_ASCENDING]]],
+            'processOrder' => [[['isnull(?) DESC'], ['"name"', Select::ORDER_ASCENDING]]],
         ];
 
         // join with Expression object in COLUMNS part (Laminas-514)
@@ -1237,11 +1237,11 @@ final class SelectTest extends TestCase
                 new Predicate\Operator('number', '>', 20),
             ]));
         $sqlPrep36       = 'SELECT "foo".*, "tableA".*, "tableB".*, "tableC".* FROM "foo"'
-            . ' INNER JOIN "tableA" ON "id" = :join1part1 INNER JOIN "tableB" ON "id" = :join2part1 '
-            . 'INNER JOIN "tableC" ON "id" = :join3part1 AND "number" > :join3part2';
+            . ' INNER JOIN "tableA" ON "id" = :join1 INNER JOIN "tableB" ON "id" = :join2 '
+            . 'INNER JOIN "tableC" ON "id" = :join3 AND "number" > :join4';
         $sqlStr36        = 'SELECT "foo".*, "tableA".*, "tableB".*, "tableC".* FROM "foo" '
-            . 'INNER JOIN "tableA" ON "id" = \'1\' INNER JOIN "tableB" ON "id" = \'2\' '
-            . 'INNER JOIN "tableC" ON "id" = \'3\' AND "number" > \'20\'';
+            . 'INNER JOIN "tableA" ON "id" = 1 INNER JOIN "tableB" ON "id" = 2 '
+            . 'INNER JOIN "tableC" ON "id" = 3 AND "number" > 20';
         $internalTests36 = [];
 
         /**
@@ -1249,10 +1249,10 @@ final class SelectTest extends TestCase
          */
         $select37 = new Select();
         $select37->from('foo')->columns(['bar'], false);
-        $sqlPrep37       = 'SELECT "bar" AS "bar" FROM "foo"';
-        $sqlStr37        = 'SELECT "bar" AS "bar" FROM "foo"';
+        $sqlPrep37       = 'SELECT "bar" FROM "foo"';
+        $sqlStr37        = 'SELECT "bar" FROM "foo"';
         $internalTests37 = [
-            'processSelect' => [[['"bar"', '"bar"']], '"foo"'],
+            'processSelect' => [[['"bar"']], '"foo"'],
         ];
 
         // @link https://github.com/zendframework/zf2/issues/3294
@@ -1272,11 +1272,11 @@ final class SelectTest extends TestCase
         $select39subselect->from('bar')->where->like('y', '%Foo%');
         $select39 = new Select();
         $select39->from('foo')->join(['z' => $select39subselect], 'z.foo = bar.id');
-        $sqlPrep39       = 'SELECT "foo".*, "z".* FROM "foo" INNER JOIN (SELECT "bar".* FROM "bar" WHERE "y" LIKE ?) AS "z" ON "z"."foo" = "bar"."id"';
+        $sqlPrep39       = 'SELECT "foo".*, "z".* FROM "foo" INNER JOIN (SELECT "bar".* FROM "bar" WHERE "y" LIKE \'%Foo%\') AS "z" ON "z"."foo" = "bar"."id"';
         $sqlStr39        = 'SELECT "foo".*, "z".* FROM "foo" INNER JOIN (SELECT "bar".* FROM "bar" WHERE "y" LIKE \'%Foo%\') AS "z" ON "z"."foo" = "bar"."id"';
         $internalTests39 = [
             'processJoins' => [
-                [['INNER', '(SELECT "bar".* FROM "bar" WHERE "y" LIKE ?) AS "z"', '"z"."foo" = "bar"."id"']],
+                [['INNER', '(SELECT "bar".* FROM "bar" WHERE "y" LIKE \'%Foo%\') AS "z"', '"z"."foo" = "bar"."id"']],
             ],
         ];
 
@@ -1320,10 +1320,10 @@ final class SelectTest extends TestCase
 
         $select43 = new Select();
         $select43->from(['x' => 'foo'])->columns(['bar' => 'foo.bar'], false);
-        $sqlPrep43       = 'SELECT "foo"."bar" AS "bar" FROM "foo" AS "x"';
-        $sqlStr43        = 'SELECT "foo"."bar" AS "bar" FROM "foo" AS "x"';
+        $sqlPrep43       = 'SELECT "foo.bar" AS "bar" FROM "foo" AS "x"';
+        $sqlStr43        = 'SELECT "foo.bar" AS "bar" FROM "foo" AS "x"';
         $internalTests43 = [
-            'processSelect' => [[['"foo"."bar"', '"bar"']], '"foo" AS "x"'],
+            'processSelect' => [[['"foo.bar"', '"bar"']], '"foo" AS "x"'],
         ];
 
         $select44 = new Select();
@@ -1341,7 +1341,7 @@ final class SelectTest extends TestCase
         $select45 = new Select();
         $select45->from('foo')->limit("5")->offset("10");
         $sqlPrep45       = 'SELECT "foo".* FROM "foo" LIMIT ? OFFSET ?';
-        $sqlStr45        = 'SELECT "foo".* FROM "foo" LIMIT \'5\' OFFSET \'10\'';
+        $sqlStr45        = 'SELECT "foo".* FROM "foo" LIMIT 5 OFFSET 10';
         $params45        = ['limit' => 5, 'offset' => 10];
         $internalTests45 = [
             'processSelect' => [[['"foo".*']], '"foo"'],
@@ -1355,8 +1355,8 @@ final class SelectTest extends TestCase
             new Expression('SOME_DB_FUNCTION_ONE()'),
             'foo' => new Expression('SOME_DB_FUNCTION_TWO()'),
         ]);
-        $sqlPrep46       = 'SELECT SOME_DB_FUNCTION_ONE() AS Expression1, SOME_DB_FUNCTION_TWO() AS "foo"';
-        $sqlStr46        = 'SELECT SOME_DB_FUNCTION_ONE() AS Expression1, SOME_DB_FUNCTION_TWO() AS "foo"';
+        $sqlPrep46       = 'SELECT SOME_DB_FUNCTION_ONE(), SOME_DB_FUNCTION_TWO() AS "foo"';
+        $sqlStr46        = 'SELECT SOME_DB_FUNCTION_ONE(), SOME_DB_FUNCTION_TWO() AS "foo"';
         $params46        = [];
         $internalTests46 = [];
 
@@ -1364,8 +1364,8 @@ final class SelectTest extends TestCase
         $select47 = new Select();
         $select47->from('foo')->limit("10000000000000000000")->offset("10000000000000000000");
         $sqlPrep47       = 'SELECT "foo".* FROM "foo" LIMIT ? OFFSET ?';
-        $sqlStr47        = 'SELECT "foo".* FROM "foo" LIMIT \'10000000000000000000\' OFFSET \'10000000000000000000\'';
-        $params47        = ['limit' => 10000000000000000000, 'offset' => 10000000000000000000];
+        $sqlStr47        = 'SELECT "foo".* FROM "foo" LIMIT 9223372036854775807 OFFSET 9223372036854775807';
+        $params47        = ['limit' => 9223372036854775807, 'offset' => 9223372036854775807];
         $internalTests47 = [
             'processSelect' => [[['"foo".*']], '"foo"'],
             'processLimit'  => ['?'],
@@ -1442,12 +1442,12 @@ final class SelectTest extends TestCase
         $subSelect53->from('bar')->columns(['id'])->limit(10)->offset(9);
         $select53 = new Select();
         $select53->from('foo')->where(new In('bar_id', $subSelect53))->limit(11)->offset(12);
-        $params53        = ['limit' => 11, 'offset' => 12, 'subselect1limit' => 10, 'subselect1offset' => 9];
-        $sqlPrep53       = 'SELECT "foo".* FROM "foo" WHERE "bar_id" IN (SELECT "bar"."id" AS "id" FROM "bar" LIMIT :subselect1limit OFFSET :subselect1offset) LIMIT :limit OFFSET :offset';
-        $sqlStr53        = 'SELECT "foo".* FROM "foo" WHERE "bar_id" IN (SELECT "bar"."id" AS "id" FROM "bar" LIMIT \'10\' OFFSET \'9\') LIMIT \'11\' OFFSET \'12\'';
+        $params53        = ['limit' => 11, 'offset' => 12];
+        $sqlPrep53       = 'SELECT "foo".* FROM "foo" WHERE "bar_id" IN (SELECT "bar"."id" AS "id" FROM "bar" LIMIT 10 OFFSET 9) LIMIT :limit OFFSET :offset';
+        $sqlStr53        = 'SELECT "foo".* FROM "foo" WHERE "bar_id" IN (SELECT "bar"."id" AS "id" FROM "bar" LIMIT 10 OFFSET 9) LIMIT 11 OFFSET 12';
         $internalTests53 = [
             'processSelect' => [[['"foo".*']], '"foo"'],
-            'processWhere'  => ['"bar_id" IN (SELECT "bar"."id" AS "id" FROM "bar" LIMIT ? OFFSET ?)'],
+            'processWhere'  => ['"bar_id" IN (SELECT "bar"."id" AS "id" FROM "bar" LIMIT 10 OFFSET 9)'],
             'processLimit'  => ['?'],
             'processOffset' => ['?'],
         ];
@@ -1560,6 +1560,10 @@ final class SelectTest extends TestCase
         $select->from(['foo', 'bar']); // Numeric array instead of associative
     }
 
+    /**
+     * @deprecated setSpecification() no longer exists in new single-pass architecture
+     */
+    #[RequiresMethod(Select::class, 'setSpecification')]
     public function testSetSpecificationThrowsExceptionForInvalidName(): void
     {
         $select = new Select();

@@ -6,6 +6,7 @@ namespace PhpDb\Sql\Predicate;
 
 use LogicException;
 use Override;
+use PhpDb\Adapter\Platform\PlatformInterface;
 use PhpDb\Sql\AbstractExpression;
 use PhpDb\Sql\Argument\Identifier;
 use PhpDb\Sql\Argument\Value;
@@ -131,7 +132,7 @@ class Between extends AbstractExpression implements PredicateInterface
 
     /** @inheritDoc */
     #[Override]
-    public function toSqlPart(array &$values): string
+    public function toSqlPart(string $q, PlatformInterface $platform): string
     {
         if (! $this->identifier instanceof ArgumentInterface) {
             throw new LogicException('Identifier must be specified');
@@ -145,16 +146,17 @@ class Between extends AbstractExpression implements PredicateInterface
             throw new LogicException('maxValue must be specified');
         }
 
-        $identifierSql = $this->identifier->getSpecification();
-        $minValueSql   = $this->minValue->getSpecification();
-        $maxValueSql   = $this->maxValue->getSpecification();
+        $identifierSql = $this->identifier instanceof Identifier
+            ? $this->identifier->toSql($q)
+            : $this->identifier->getSpecification();
 
-        if ($this->minValue instanceof Value) {
-            $values[] = $this->minValue->getValue();
-        }
-        if ($this->maxValue instanceof Value) {
-            $values[] = $this->maxValue->getValue();
-        }
+        $minValueSql = $this->minValue instanceof Value
+            ? $platform->quoteTrustedValue($this->minValue->getValue())
+            : $this->minValue->getSpecification();
+
+        $maxValueSql = $this->maxValue instanceof Value
+            ? $platform->quoteTrustedValue($this->maxValue->getValue())
+            : $this->maxValue->getSpecification();
 
         return "{$identifierSql} {$this->operator} {$minValueSql} AND {$maxValueSql}";
     }

@@ -4,61 +4,37 @@ declare(strict_types=1);
 
 namespace PhpDb\Sql;
 
+use function count;
 use function explode;
-use function implode;
 use function is_int;
+use function is_string;
+use function preg_split;
 use function str_contains;
-use function str_replace;
 use function strcasecmp;
 use function trim;
 
-class Order
+final class Order
 {
-    public const ORDER_ASCENDING = 'ASC';
+    public const ORDER_ASCENDING  = 'ASC';
     public const ORDER_DESCENDING = 'DESC';
 
-    protected array $orders = [];
+    /** @var OrderItem[] */
+    protected array $items = [];
 
     public function add(ExpressionInterface|array|string $order): static
     {
+        if ($order instanceof ExpressionInterface) {
+            $this->items[] = OrderItem::fromExpression($order);
+            return $this;
+        }
+
         if (is_string($order)) {
-            $order = str_contains($order, ',') ? preg_split('#,\s+#', $order) : (array) $order;
-        } elseif (!is_array($order)) {
-            $order = [$order];
+            $order = str_contains($order, ',') ? preg_split('#,\s+#', $order) : [$order];
         }
 
         foreach ($order as $k => $v) {
-            if (is_string($k)) {
-                $this->orders[$k] = $v;
-            } else {
-                $this->orders[] = $v;
-            }
-        }
-
-        return $this;
-    }
-
-    public function count(): int
-    {
-        return count($this->orders);
-    }
-
-    /**
-     * Build ORDER BY clause with marker-based identifiers for deferred quoting.
-     */
-    public function toSqlPart(): string
-    {
-        if ($this->orders === []) {
-            return '';
-        }
-
-        $lq = PreparableSqlInterface::P_LQUOTE;
-        $rq = PreparableSqlInterface::P_RQUOTE;
-
-        $parts = [];
-        foreach ($this->orders as $k => $v) {
             if ($v instanceof ExpressionInterface) {
-                $parts[] = (string) $v;
+                $this->items[] = OrderItem::fromExpression($v);
                 continue;
             }
 
@@ -75,15 +51,38 @@ class Order
                 ? self::ORDER_DESCENDING
                 : self::ORDER_ASCENDING;
 
-            if (str_contains($k, '.')) {
-                $quoted = $lq . str_replace('.', $rq . '.' . $lq, $k) . $rq;
-            } else {
-                $quoted = $lq . $k . $rq;
-            }
-
-            $parts[] = $quoted . ' ' . $direction;
+            $this->items[] = OrderItem::create($k, $direction);
         }
 
-        return ' ORDER BY ' . implode(', ', $parts);
+        return $this;
+    }
+
+    public function count(): int
+    {
+        return count($this->items);
+    }
+
+    /**
+     * Build ORDER BY clause.
+     *
+     * @param string $q Quote character (empty string = no quoting)
+     */
+    public function toSqlPart(string $q): string
+    {
+        if ($this->items === []) {
+            return '';
+        }
+
+        $sql   = ' ORDER BY ';
+        $first = true;
+        foreach ($this->items as $item) {
+            if (! $first) {
+                $sql .= ', ';
+            }
+            $sql  .= $item->toSql($q);
+            $first = false;
+        }
+
+        return $sql;
     }
 }

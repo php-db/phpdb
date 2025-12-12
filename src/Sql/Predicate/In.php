@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace PhpDb\Sql\Predicate;
 
 use Override;
+use PhpDb\Adapter\Platform\PlatformInterface;
 use PhpDb\Sql\AbstractExpression;
 use PhpDb\Sql\Argument\Identifier;
 use PhpDb\Sql\Argument\Select as ArgumentSelect;
@@ -102,7 +103,7 @@ class In extends AbstractExpression implements PredicateInterface
 
     /** @inheritDoc */
     #[Override]
-    public function toSqlPart(array &$values): string
+    public function toSqlPart(string $q, PlatformInterface $platform): string
     {
         if (! $this->identifier instanceof ArgumentInterface) {
             throw new InvalidArgumentException('Identifier must be specified');
@@ -112,16 +113,20 @@ class In extends AbstractExpression implements PredicateInterface
             throw new InvalidArgumentException('Value set must be provided for IN predicate');
         }
 
-        $identifierSql = $this->identifier->getSpecification();
-        $valueSetSql   = $this->valueSet->getSpecification();
+        $identifierSql = $this->identifier instanceof Identifier
+            ? $this->identifier->toSql($q)
+            : $this->identifier->getSpecification();
 
         if ($this->valueSet instanceof Values) {
-            $valueList = $this->valueSet->getValue();
-            foreach ($valueList as $v) {
-                $values[] = $v;
+            $quoted = [];
+            foreach ($this->valueSet->getValue() as $v) {
+                $quoted[] = $platform->quoteTrustedValue($v);
             }
+            $valueSetSql = '(' . implode(', ', $quoted) . ')';
         } elseif ($this->valueSet instanceof ArgumentSelect) {
-            $values[] = $this->valueSet;
+            $valueSetSql = '(' . $this->valueSet->getValue()->getSqlString($platform) . ')';
+        } else {
+            $valueSetSql = $this->valueSet->getSpecification();
         }
 
         return "{$identifierSql} {$this->operator} {$valueSetSql}";

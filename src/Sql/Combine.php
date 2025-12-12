@@ -20,7 +20,7 @@ use function trim;
 /**
  * Combine SQL statement - allows combining multiple select statements into one
  */
-class Combine extends AbstractPreparableSql
+final class Combine extends AbstractPreparableSql
 {
     final public const COLUMNS = 'columns';
 

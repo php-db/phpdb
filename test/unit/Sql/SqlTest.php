@@ -15,6 +15,7 @@ use PhpDb\Sql\Exception\InvalidArgumentException;
 use PhpDb\Sql\Insert;
 use PhpDb\Sql\Select;
 use PhpDb\Sql\Sql;
+use PhpDb\Sql\TableIdentifier;
 use PhpDb\Sql\Update;
 use PhpDbTest\TestAsset;
 use PHPUnit\Framework\Attributes\CoversMethod;
@@ -96,7 +97,9 @@ final class SqlTest extends TestCase
     {
         $select = $this->sql->select();
         self::assertInstanceOf(Select::class, $select);
-        self::assertSame('foo', $select->getRawState('table'));
+        $table = $select->getRawState('table');
+        self::assertInstanceOf(TableIdentifier::class, $table);
+        self::assertEquals('foo', $table->getTable());
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
@@ -109,7 +112,9 @@ final class SqlTest extends TestCase
     {
         $insert = $this->sql->insert();
         self::assertInstanceOf(Insert::class, $insert);
-        self::assertSame('foo', $insert->getRawState('table'));
+        $table = $insert->getRawState('table');
+        self::assertInstanceOf(TableIdentifier::class, $table);
+        self::assertEquals('foo', $table->getTable());
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
@@ -122,7 +127,9 @@ final class SqlTest extends TestCase
     {
         $update = $this->sql->update();
         self::assertInstanceOf(Update::class, $update);
-        self::assertSame('foo', $update->getRawState('table'));
+        $table = $update->getRawState('table');
+        self::assertInstanceOf(TableIdentifier::class, $table);
+        self::assertEquals('foo', $table->getTable());
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
@@ -136,7 +143,9 @@ final class SqlTest extends TestCase
         $delete = $this->sql->delete();
 
         self::assertInstanceOf(Delete::class, $delete);
-        self::assertSame('foo', $delete->getRawState('table'));
+        $table = $delete->getRawState('table');
+        self::assertInstanceOf(TableIdentifier::class, $table);
+        self::assertEquals('foo', $table->getTable());
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(

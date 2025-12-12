@@ -25,6 +25,7 @@ use PhpDbTest\DeprecatedAssertionsTrait;
 use PhpDbTest\TestAsset\DeleteIgnore;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\CoversNothing;
+use PHPUnit\Framework\Attributes\RequiresMethod;
 use PHPUnit\Framework\Attributes\TestDox;
 use PHPUnit\Framework\TestCase;
 use ReflectionException;
@@ -175,7 +176,11 @@ final class DeleteTest extends TestCase
         self::assertEquals('DELETE FROM "sch"."foo" WHERE x = y', $this->delete->getSqlString());
     }
 
+    /**
+     * @deprecated SPECIFICATION_* constants no longer exist in new architecture
+     */
     #[CoversNothing]
+    #[RequiresMethod(Delete::class, 'processDelete')]
     public function testSpecificationconstantsCouldBeOverridedByExtensionInPrepareStatement(): void
     {
         $deleteIgnore = new DeleteIgnore();
@@ -210,7 +215,11 @@ final class DeleteTest extends TestCase
         $deleteIgnore->prepareStatement($mockAdapter, $mockStatement);
     }
 
+    /**
+     * @deprecated SPECIFICATION_* constants no longer exist in new architecture
+     */
     #[CoversNothing]
+    #[RequiresMethod(Delete::class, 'processDelete')]
     public function testSpecificationconstantsCouldBeOverridedByExtensionInGetSqlString(): void
     {
         $deleteIgnore = new DeleteIgnore();
@@ -236,20 +245,24 @@ final class DeleteTest extends TestCase
         self::assertIsArray($rawState);
         self::assertArrayHasKey('table', $rawState);
         self::assertArrayHasKey('where', $rawState);
-        self::assertArrayHasKey('emptyWhereProtection', $rawState);
 
-        self::assertEquals('foo', $rawState['table']);
+        self::assertInstanceOf(TableIdentifier::class, $rawState['table']);
+        self::assertEquals('foo', $rawState['table']->getTable());
         self::assertInstanceOf(Where::class, $rawState['where']);
-        self::assertTrue($rawState['emptyWhereProtection']);
     }
 
     public function testGetRawStateWithKey(): void
     {
         $this->delete->from('foo');
 
-        self::assertEquals('foo', $this->delete->getRawState('table'));
+        self::assertInstanceOf(TableIdentifier::class, $this->delete->getRawState('table'));
+        self::assertEquals('foo', $this->delete->getRawState('table')->getTable());
+        // where is null until accessed via where() or the magic property
+        self::assertNull($this->delete->getRawState('where'));
+        // Accessing the magic property initializes the where clause
+        $where = $this->delete->where;
+        self::assertInstanceOf(Where::class, $where);
         self::assertInstanceOf(Where::class, $this->delete->getRawState('where'));
-        self::assertTrue($this->delete->getRawState('emptyWhereProtection'));
     }
 
     public function testMagicGetReturnsWhereClause(): void
@@ -281,6 +294,7 @@ final class DeleteTest extends TestCase
     public function testGetSqlStringWithEmptyWhere(): void
     {
         $this->delete->from('foo');
+        $this->delete->where->setEmptyAllowed();
         // Empty where should not add WHERE clause
         self::assertEquals('DELETE FROM "foo"', $this->delete->getSqlString());
     }
