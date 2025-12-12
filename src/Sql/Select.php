@@ -146,13 +146,14 @@ final class Select extends AbstractPreparableSql
             );
         }
 
-        if (is_array($table) && (!is_string(key($table)) || count($table) !== 1)) {
+        if (is_array($table) && (! is_string(key($table)) || count($table) !== 1)) {
             throw new Exception\InvalidArgumentException(
                 'from() expects $table as an array is a single element associative array'
             );
         }
 
         $this->table = TableIdentifier::from($table);
+
         return $this;
     }
 
@@ -163,6 +164,7 @@ final class Select extends AbstractPreparableSql
     public function quantifier(ExpressionInterface|string $quantifier): static
     {
         $this->quantifier = $quantifier;
+
         return $this;
     }
 
@@ -179,6 +181,7 @@ final class Select extends AbstractPreparableSql
     public function columns(array $columns, bool $prefixColumnsWithTable = true): static
     {
         $this->columns = new Columns($columns, $prefixColumnsWithTable);
+
         return $this;
     }
 
@@ -190,7 +193,7 @@ final class Select extends AbstractPreparableSql
     /**
      * Create join clause
      *
-     * @param string                    $type one of the JOIN_* constants
+     * @param string $type one of the JOIN_* constants
      * @throws Exception\InvalidArgumentException
      */
     public function join(
@@ -207,7 +210,7 @@ final class Select extends AbstractPreparableSql
     /**
      * Create where clause
      *
-     * @param string                                  $combination One of the OP_* constants from Predicate\PredicateSet
+     * @param string $combination One of the OP_* constants from Predicate\PredicateSet
      * @throws Exception\InvalidArgumentException
      */
     public function where(
@@ -226,6 +229,7 @@ final class Select extends AbstractPreparableSql
     public function group(mixed $group): static
     {
         ($this->group ??= new Group())->add($group);
+
         return $this;
     }
 
@@ -250,6 +254,7 @@ final class Select extends AbstractPreparableSql
     public function order(ExpressionInterface|array|string $order): static
     {
         ($this->order ??= new Order())->add($order);
+
         return $this;
     }
 
@@ -267,6 +272,7 @@ final class Select extends AbstractPreparableSql
         }
 
         $this->limit = new Limit($limit);
+
         return $this;
     }
 
@@ -284,6 +290,7 @@ final class Select extends AbstractPreparableSql
         }
 
         $this->offset = new Offset($offset);
+
         return $this;
     }
 
@@ -303,6 +310,7 @@ final class Select extends AbstractPreparableSql
             'type'     => $type,
             'modifier' => $modifier,
         ];
+
         return $this;
     }
 
@@ -371,6 +379,7 @@ final class Select extends AbstractPreparableSql
             self::OFFSET     => $this->offset,
             self::COMBINE    => $this->combine,
         ];
+
         return $key !== null && array_key_exists($key, $rawState) ? $rawState[$key] : $rawState;
     }
 
@@ -393,13 +402,13 @@ final class Select extends AbstractPreparableSql
         $q = $platform->getQuoteIdentifierSymbol();
 
         return $this->buildSelectPart($q, $platform, $driver, $parameterContainer)
-             . ($this->joins?->toSqlPart($q, $platform) ?? '')
-             . ($this->where?->toSqlPart($q, $platform) ?? '')
-             . ($this->group?->toSqlPart($q) ?? '')
-             . ($this->having?->toSqlPart($q, $platform) ?? '')
-             . ($this->order?->toSqlPart($q) ?? '')
-             . ($this->limit?->toSqlPart() ?? '')
-             . ($this->offset?->toSqlPart() ?? '');
+            . ($this->joins?->toSqlPart($q, $platform) ?? '')
+            . ($this->where?->toSqlPart($q, $platform) ?? '')
+            . ($this->group?->toSqlPart($q) ?? '')
+            . ($this->having?->toSqlPart($q, $platform) ?? '')
+            . ($this->order?->toSqlPart($q) ?? '')
+            . ($this->limit?->toSqlPart() ?? '')
+            . ($this->offset?->toSqlPart() ?? '');
     }
 
     /**
@@ -414,16 +423,19 @@ final class Select extends AbstractPreparableSql
         $quantifierPart = '';
         if ($this->quantifier !== null) {
             $quantifierPart = $this->quantifier instanceof ExpressionInterface
-                ? $this->processExpression($this->quantifier, $platform, $driver, $parameterContainer, 'quantifier') . ' '
+                ? $this->processExpression($this->quantifier,
+                    $platform,
+                    $driver,
+                    $parameterContainer,
+                    'quantifier') . ' '
                 : $this->quantifier . ' ';
         }
 
         $fromPart = $this->table?->toFromSqlPart($q) ?? '';
 
-        $expressionProcessor = fn(ExpressionInterface|Select $expr) =>
-            $expr instanceof Select
-                ? $this->processSubSelect($expr, $platform, $driver, $parameterContainer)
-                : $this->processExpression($expr, $platform, $driver, $parameterContainer);
+        $expressionProcessor = fn(ExpressionInterface|Select $expr) => $expr instanceof Select
+            ? $this->processSubSelect($expr, $platform, $driver, $parameterContainer)
+            : $this->processExpression($expr, $platform, $driver, $parameterContainer);
 
         return 'SELECT ' . $quantifierPart
             . $this->getColumns()->toSqlPart($q, $this->table, $expressionProcessor)
@@ -448,7 +460,6 @@ final class Select extends AbstractPreparableSql
 
     /**
      * __clone
-     *
      * Resets the where object each time the Select is cloned.
      *
      * @return void

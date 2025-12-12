@@ -136,8 +136,8 @@ final class Join implements Iterator, Countable
 
         $sql = '';
         foreach ($this->joins as $join) {
-            $sql .= $join->type->value . ' JOIN ' . $join->name->toSqlPart($q);
-            $sql .= ' ON ' . $join->on->toSqlPart($q, $platform);
+            $sql .= ' ' . $join->type->value . ' JOIN ' . $join->name->toSqlPart($q)
+                  . ' ON ' . $join->on->toSqlPart($q, $platform);
         }
 
         return $sql;

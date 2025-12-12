@@ -12,7 +12,8 @@ use PhpDb\Sql\Expression as BaseExpression;
 use PhpDb\Sql\PreparableSqlInterface;
 
 use function implode;
-use function preg_replace;
+use function strpos;
+use function substr_replace;
 
 final class Expression extends BaseExpression implements PredicateInterface
 {
@@ -20,20 +21,32 @@ final class Expression extends BaseExpression implements PredicateInterface
     #[Override]
     public function toSqlPart(string $q, PlatformInterface $platform): string
     {
+        // Fast path: no parameters, return expression directly
+        if ($this->parameters === []) {
+            return $this->expression;
+        }
+
         $sql = $this->expression;
 
         foreach ($this->parameters as $param) {
+            $pos = strpos($sql, '?');
+            if ($pos === false) {
+                break;
+            }
+
             if ($param instanceof Value) {
-                $sql = preg_replace('/\?/', $platform->quoteTrustedValue($param->getValue()), $sql, 1);
+                $replacement = $platform->quoteTrustedValue($param->getValue());
             } elseif ($param instanceof Values) {
                 $quoted = [];
                 foreach ($param->getValue() as $v) {
                     $quoted[] = $platform->quoteTrustedValue($v);
                 }
-                $sql = preg_replace('/\?/', '(' . implode(', ', $quoted) . ')', $sql, 1);
+                $replacement = '(' . implode(', ', $quoted) . ')';
             } else {
-                $sql = preg_replace('/\?/', $param->getSpecification(), $sql, 1);
+                $replacement = $param->getSpecification();
             }
+
+            $sql = substr_replace($sql, $replacement, $pos, 1);
         }
 
         return $sql;
