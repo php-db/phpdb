@@ -4,9 +4,16 @@ declare(strict_types=1);
 
 namespace PhpDb\Sql\Predicate;
 
+use PhpDb\Sql\Argument\Identifier;
+use PhpDb\Sql\Argument\Literal as LiteralArgument;
+use PhpDb\Sql\Argument\Value;
 use PhpDb\Sql\ArgumentInterface;
 use PhpDb\Sql\Exception\RuntimeException;
 use PhpDb\Sql\ExpressionInterface;
+
+use function trigger_error;
+
+use const E_USER_DEPRECATED;
 
 /**
  * @property Predicate $and
@@ -71,15 +78,59 @@ class Predicate extends PredicateSet
     }
 
     /**
+     * Convert a value to an ArgumentInterface based on the deprecated type parameter.
+     *
+     * @deprecated This method supports BC for legacy $leftType/$rightType parameters
+     * @internal
+     */
+    private function convertToArgument(
+        mixed $value,
+        ?string $type,
+        string $defaultType = self::TYPE_VALUE
+    ): ArgumentInterface|float|int|string|null {
+        // If already an ArgumentInterface, return as-is
+        if ($value instanceof ArgumentInterface) {
+            return $value;
+        }
+
+        // If no type specified, return raw value for auto-detection in Operator
+        if ($type === null) {
+            return $value;
+        }
+
+        // Deprecated type parameter was used - emit deprecation notice
+        trigger_error(
+            'The $leftType/$rightType parameters are deprecated. Use ArgumentInterface (Identifier, Value) instead.',
+            E_USER_DEPRECATED
+        );
+
+        return match ($type) {
+            self::TYPE_IDENTIFIER => new Identifier((string) $value),
+            self::TYPE_VALUE => new Value($value),
+            self::TYPE_LITERAL => new LiteralArgument((string) $value),
+            default => $value,
+        };
+    }
+
+    /**
      * Create "Equal To" predicate
      * Utilizes Operator predicate
+     *
+     * @param string|null $leftType @deprecated Use ArgumentInterface instead
+     * @param string|null $rightType @deprecated Use ArgumentInterface instead
      */
     public function equalTo(
         null|float|int|string|ArgumentInterface $left,
         null|float|int|string|ArgumentInterface $right,
+        ?string $leftType = null,
+        ?string $rightType = null
     ): static {
         $this->addPredicate(
-            new Operator($left, Operator::OPERATOR_EQUAL_TO, $right),
+            new Operator(
+                $this->convertToArgument($left, $leftType),
+                Operator::OPERATOR_EQUAL_TO,
+                $this->convertToArgument($right, $rightType)
+            ),
             $this->getNextPredicateCombineOperator()
         );
 
@@ -89,13 +140,22 @@ class Predicate extends PredicateSet
     /**
      * Create "Not Equal To" predicate
      * Utilizes Operator predicate
+     *
+     * @param string|null $leftType @deprecated Use ArgumentInterface instead
+     * @param string|null $rightType @deprecated Use ArgumentInterface instead
      */
     public function notEqualTo(
         null|float|int|string|ArgumentInterface $left,
-        null|float|int|string|ArgumentInterface $right
+        null|float|int|string|ArgumentInterface $right,
+        ?string $leftType = null,
+        ?string $rightType = null
     ): static {
         $this->addPredicate(
-            new Operator($left, Operator::OPERATOR_NOT_EQUAL_TO, $right),
+            new Operator(
+                $this->convertToArgument($left, $leftType),
+                Operator::OPERATOR_NOT_EQUAL_TO,
+                $this->convertToArgument($right, $rightType)
+            ),
             $this->getNextPredicateCombineOperator()
         );
 
@@ -105,13 +165,22 @@ class Predicate extends PredicateSet
     /**
      * Create "Less Than" predicate
      * Utilizes Operator predicate
+     *
+     * @param string|null $leftType @deprecated Use ArgumentInterface instead
+     * @param string|null $rightType @deprecated Use ArgumentInterface instead
      */
     public function lessThan(
         null|float|int|string|ArgumentInterface $left,
-        null|float|int|string|ArgumentInterface $right
+        null|float|int|string|ArgumentInterface $right,
+        ?string $leftType = null,
+        ?string $rightType = null
     ): static {
         $this->addPredicate(
-            new Operator($left, Operator::OPERATOR_LESS_THAN, $right),
+            new Operator(
+                $this->convertToArgument($left, $leftType),
+                Operator::OPERATOR_LESS_THAN,
+                $this->convertToArgument($right, $rightType)
+            ),
             $this->getNextPredicateCombineOperator()
         );
 
@@ -122,14 +191,22 @@ class Predicate extends PredicateSet
      * Create "Greater Than" predicate
      * Utilizes Operator predicate
      *
+     * @param string|null $leftType @deprecated Use ArgumentInterface instead
+     * @param string|null $rightType @deprecated Use ArgumentInterface instead
      * @return $this Provides a fluent interface
      */
     public function greaterThan(
         null|float|int|string|ArgumentInterface $left,
-        null|float|int|string|ArgumentInterface $right
+        null|float|int|string|ArgumentInterface $right,
+        ?string $leftType = null,
+        ?string $rightType = null
     ): static {
         $this->addPredicate(
-            new Operator($left, Operator::OPERATOR_GREATER_THAN, $right),
+            new Operator(
+                $this->convertToArgument($left, $leftType),
+                Operator::OPERATOR_GREATER_THAN,
+                $this->convertToArgument($right, $rightType)
+            ),
             $this->getNextPredicateCombineOperator()
         );
 
@@ -140,14 +217,22 @@ class Predicate extends PredicateSet
      * Create "Less Than Or Equal To" predicate
      * Utilizes Operator predicate
      *
+     * @param string|null $leftType @deprecated Use ArgumentInterface instead
+     * @param string|null $rightType @deprecated Use ArgumentInterface instead
      * @return $this Provides a fluent interface
      */
     public function lessThanOrEqualTo(
         null|float|int|string|ArgumentInterface $left,
-        null|float|int|string|ArgumentInterface $right
+        null|float|int|string|ArgumentInterface $right,
+        ?string $leftType = null,
+        ?string $rightType = null
     ): static {
         $this->addPredicate(
-            new Operator($left, Operator::OPERATOR_LESS_THAN_OR_EQUAL_TO, $right),
+            new Operator(
+                $this->convertToArgument($left, $leftType),
+                Operator::OPERATOR_LESS_THAN_OR_EQUAL_TO,
+                $this->convertToArgument($right, $rightType)
+            ),
             $this->getNextPredicateCombineOperator()
         );
 
@@ -158,14 +243,22 @@ class Predicate extends PredicateSet
      * Create "Greater Than Or Equal To" predicate
      * Utilizes Operator predicate
      *
+     * @param string|null $leftType @deprecated Use ArgumentInterface instead
+     * @param string|null $rightType @deprecated Use ArgumentInterface instead
      * @return $this Provides a fluent interface
      */
     public function greaterThanOrEqualTo(
         null|float|int|string|ArgumentInterface $left,
-        null|float|int|string|ArgumentInterface $right
+        null|float|int|string|ArgumentInterface $right,
+        ?string $leftType = null,
+        ?string $rightType = null
     ): static {
         $this->addPredicate(
-            new Operator($left, Operator::OPERATOR_GREATER_THAN_OR_EQUAL_TO, $right),
+            new Operator(
+                $this->convertToArgument($left, $leftType),
+                Operator::OPERATOR_GREATER_THAN_OR_EQUAL_TO,
+                $this->convertToArgument($right, $rightType)
+            ),
             $this->getNextPredicateCombineOperator()
         );
 
@@ -236,10 +329,20 @@ class Predicate extends PredicateSet
      * Create "Literal" predicate
      * Literal predicate, for parameters, use expression()
      *
+     * @param mixed $parameters @deprecated Use expression() for parameterized predicates
      * @return $this Provides a fluent interface
      */
-    public function literal(string $literal): static
+    public function literal(string $literal, mixed $parameters = null): static
     {
+        // BC: If parameters are passed, redirect to expression() with deprecation notice
+        if ($parameters !== null) {
+            trigger_error(
+                'Passing $parameters to literal() is deprecated. Use expression() instead.',
+                E_USER_DEPRECATED
+            );
+            return $this->expression($literal, $parameters);
+        }
+
         $this->addPredicate(
             new Literal($literal),
             $this->getNextPredicateCombineOperator()

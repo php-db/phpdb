@@ -179,14 +179,14 @@ abstract class AbstractSql implements SqlInterface
      */
     private function quoteValuesDirect(string $sql, array $values, PlatformInterface $platform): string
     {
-        $parts = explode(PreparableSqlInterface::P_VALUE, $sql);
-        $result = $parts[0];
-
-        foreach ($values as $i => $value) {
-            $result .= $this->quoteValueForSql($value, $platform) . $parts[$i + 1];
+        foreach ($values as $value) {
+            $pos = strpos($sql, PreparableSqlInterface::P_VALUE);
+            if ($pos !== false) {
+                $sql = substr_replace($sql, $this->quoteValueForSql($value, $platform), $pos, 3); // 3 = strlen('{?}')
+            }
         }
 
-        return $result;
+        return $sql;
     }
 
     /**
@@ -199,17 +199,19 @@ abstract class AbstractSql implements SqlInterface
         ParameterContainer $parameterContainer,
         string $paramPrefix
     ): string {
-        $parts = explode(PreparableSqlInterface::P_VALUE, $sql);
-        $result = $parts[0];
         $fullPrefix = $this->processInfo['paramPrefix'] . $paramPrefix;
+        $paramIndex = 1;
 
-        foreach ($values as $i => $value) {
-            $paramName = $fullPrefix . ($i + 1);
+        foreach ($values as $value) {
+            $paramName = $fullPrefix . $paramIndex++;
             $parameterContainer->offsetSet($paramName, $value);
-            $result .= $driver->formatParameterName($paramName) . $parts[$i + 1];
+            $pos = strpos($sql, PreparableSqlInterface::P_VALUE);
+            if ($pos !== false) {
+                $sql = substr_replace($sql, $driver->formatParameterName($paramName), $pos, 3); // 3 = strlen('{?}')
+            }
         }
 
-        return $result;
+        return $sql;
     }
 
     /**
@@ -240,7 +242,7 @@ abstract class AbstractSql implements SqlInterface
                 $parameterContainer->offsetSet($paramName, $value);
                 $pos = strpos($sql, PreparableSqlInterface::P_VALUE);
                 if ($pos !== false) {
-                    $sql = substr_replace($sql, $driver->formatParameterName($paramName), $pos, 3);
+                    $sql = substr_replace($sql, $driver->formatParameterName($paramName), $pos, 3); // 3 = strlen('{?}')
                 }
             } else {
                 $pos = strpos($sql, PreparableSqlInterface::P_VALUE);
@@ -403,24 +405,22 @@ abstract class AbstractSql implements SqlInterface
             return $sql;
         }
 
-        // Fast path: no subselects - use explode/implode
+        // Fast path: no subselects - use position-based replacement
         if (!$hasSubSelect) {
-            $parts = explode(PreparableSqlInterface::P_VALUE, $sql);
-            $result = $parts[0];
-
-            if ($parameterContainer !== null && $driver !== null) {
-                foreach ($scalarValues as $i => $value) {
-                    $paramName = $namedParameterPrefix . $expressionParamIndex++;
-                    $parameterContainer->offsetSet($paramName, $value);
-                    $result .= $driver->formatParameterName($paramName) . $parts[$i + 1];
-                }
-            } else {
-                foreach ($scalarValues as $i => $value) {
-                    $result .= $this->quoteValueForSql($value, $platform) . $parts[$i + 1];
+            foreach ($scalarValues as $value) {
+                $pos = strpos($sql, PreparableSqlInterface::P_VALUE);
+                if ($pos !== false) {
+                    if ($parameterContainer !== null && $driver !== null) {
+                        $paramName = $namedParameterPrefix . $expressionParamIndex++;
+                        $parameterContainer->offsetSet($paramName, $value);
+                        $sql = substr_replace($sql, $driver->formatParameterName($paramName), $pos, 3); // 3 = strlen('{?}')
+                    } else {
+                        $sql = substr_replace($sql, $this->quoteValueForSql($value, $platform), $pos, 3); // 3 = strlen('{?}')
+                    }
                 }
             }
 
-            return $result;
+            return $sql;
         }
 
         // Slow path: has subselects - need position-aware replacement

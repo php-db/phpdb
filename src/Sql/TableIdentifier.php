@@ -9,6 +9,9 @@ use function explode;
 use function is_array;
 use function key;
 use function str_contains;
+use function trigger_error;
+
+use const E_USER_DEPRECATED;
 
 /**
  * Represents a table reference with optional schema and alias.
@@ -111,6 +114,53 @@ class TableIdentifier
     public function getTableAndSchema(): array
     {
         return [$this->table, $this->schema];
+    }
+
+    /**
+     * Set the table name.
+     *
+     * @deprecated TableIdentifier is now immutable. Create a new instance instead.
+     * @return self Returns a NEW instance with the updated table name
+     */
+    public function setTable(string $table): self
+    {
+        trigger_error(
+            'TableIdentifier::setTable() is deprecated. TableIdentifier is now immutable. Create a new instance instead.',
+            E_USER_DEPRECATED
+        );
+
+        return new self($table, $this->schema, $this->alias, $this->readOnly);
+    }
+
+    /**
+     * Set the schema name.
+     *
+     * @deprecated TableIdentifier is now immutable. Create a new instance instead.
+     * @return self Returns a NEW instance with the updated schema
+     */
+    public function setSchema(?string $schema): self
+    {
+        trigger_error(
+            'TableIdentifier::setSchema() is deprecated. TableIdentifier is now immutable. Create a new instance instead.',
+            E_USER_DEPRECATED
+        );
+
+        return new self($this->table, $schema, $this->alias, $this->readOnly);
+    }
+
+    /**
+     * Check if a schema is set.
+     *
+     * @deprecated Use getSchema() !== null instead
+     */
+    public function hasSchema(): bool
+    {
+        trigger_error(
+            'TableIdentifier::hasSchema() is deprecated. Use getSchema() !== null instead.',
+            E_USER_DEPRECATED
+        );
+
+        return $this->schema !== null;
     }
 
     /**

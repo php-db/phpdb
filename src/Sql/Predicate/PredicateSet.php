@@ -30,6 +30,21 @@ class PredicateSet implements PredicateInterface, Countable
     /** @deprecated Use OP_OR instead */
     final public const COMBINED_BY_OR = self::OP_OR;
 
+    /**
+     * @deprecated Use ArgumentInterface (Identifier, Value) instead
+     */
+    final public const TYPE_IDENTIFIER = 'identifier';
+
+    /**
+     * @deprecated Use ArgumentInterface (Identifier, Value) instead
+     */
+    final public const TYPE_VALUE = 'value';
+
+    /**
+     * @deprecated Use ArgumentInterface (Identifier, Value) instead
+     */
+    final public const TYPE_LITERAL = 'literal';
+
     protected string $defaultCombination = self::OP_AND;
 
     protected array $predicates = [];
