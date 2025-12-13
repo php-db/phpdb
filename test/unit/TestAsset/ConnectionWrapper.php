@@ -24,7 +24,7 @@ final class ConnectionWrapper extends AbstractPdoConnection
         return $this;
     }
 
-    public function getCurrentSchema(): string|false
+    public function getCurrentSchema(): string
     {
         return 'test_schema';
     }

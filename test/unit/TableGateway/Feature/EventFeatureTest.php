@@ -30,6 +30,25 @@ final class EventFeatureTest extends TestCase
 
     protected TableGateway&MockObject $tableGateway;
 
+    /**
+     * @throws Exception
+     */
+    #[Override]
+    protected function setUp(): void
+    {
+        $this->eventManager = new EventManager();
+        $this->event        = new EventFeature\TableGatewayEvent();
+        $this->feature      = new EventFeature($this->eventManager, $this->event);
+        $this->tableGateway = $this->getMockBuilder(TableGateway::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods([])
+            ->getMock();
+        $this->feature->setTableGateway($this->tableGateway);
+
+        // typically runs before everything else
+        $this->feature->preInitialize();
+    }
+
     public function testGetEventManager(): void
     {
         self::assertSame($this->eventManager, $this->feature->getEventManager());
@@ -45,7 +64,7 @@ final class EventFeatureTest extends TestCase
         $closureHasRun = false;
 
         /** @var EventFeature\TableGatewayEvent $event */
-        $event = null;
+        $event = new EventFeature\TableGatewayEvent();
         $this->eventManager->attach(
             EventFeatureEventsInterface::EVENT_PRE_INITIALIZE,
             function (EventFeature\TableGatewayEvent $e) use (&$closureHasRun, &$event): void {
@@ -65,7 +84,7 @@ final class EventFeatureTest extends TestCase
         $closureHasRun = false;
 
         /** @var EventFeature\TableGatewayEvent $event */
-        $event = null;
+        $event = new EventFeature\TableGatewayEvent();
         $this->eventManager->attach(
             EventFeatureEventsInterface::EVENT_POST_INITIALIZE,
             function (EventFeature\TableGatewayEvent $e) use (&$closureHasRun, &$event): void {
@@ -85,7 +104,7 @@ final class EventFeatureTest extends TestCase
         $closureHasRun = false;
 
         /** @var EventFeature\TableGatewayEvent $event */
-        $event = null;
+        $event = new EventFeature\TableGatewayEvent();
         $this->eventManager->attach(
             EventFeatureEventsInterface::EVENT_PRE_SELECT,
             function (EventFeature\TableGatewayEvent $e) use (&$closureHasRun, &$event): void {
@@ -106,7 +125,7 @@ final class EventFeatureTest extends TestCase
         $closureHasRun = false;
 
         /** @var EventFeature\TableGatewayEvent $event */
-        $event = null;
+        $event = new EventFeature\TableGatewayEvent();
         $this->eventManager->attach(
             EventFeatureEventsInterface::EVENT_POST_SELECT,
             function (EventFeature\TableGatewayEvent $e) use (&$closureHasRun, &$event): void {
@@ -133,7 +152,7 @@ final class EventFeatureTest extends TestCase
         $closureHasRun = false;
 
         /** @var EventFeature\TableGatewayEvent $event */
-        $event = null;
+        $event = new EventFeature\TableGatewayEvent();
         $this->eventManager->attach(
             EventFeatureEventsInterface::EVENT_PRE_INSERT,
             function (EventFeature\TableGatewayEvent $e) use (&$closureHasRun, &$event): void {
@@ -154,7 +173,7 @@ final class EventFeatureTest extends TestCase
         $closureHasRun = false;
 
         /** @var EventFeature\TableGatewayEvent $event */
-        $event = null;
+        $event = new EventFeature\TableGatewayEvent();
         $this->eventManager->attach(
             EventFeatureEventsInterface::EVENT_POST_INSERT,
             function (EventFeature\TableGatewayEvent $e) use (&$closureHasRun, &$event): void {
@@ -179,7 +198,7 @@ final class EventFeatureTest extends TestCase
         $closureHasRun = false;
 
         /** @var EventFeature\TableGatewayEvent $event */
-        $event = null;
+        $event = new EventFeature\TableGatewayEvent();
         $this->eventManager->attach(
             EventFeatureEventsInterface::EVENT_PRE_UPDATE,
             function (EventFeature\TableGatewayEvent $e) use (&$closureHasRun, &$event): void {
@@ -200,7 +219,7 @@ final class EventFeatureTest extends TestCase
         $closureHasRun = false;
 
         /** @var EventFeature\TableGatewayEvent $event */
-        $event = null;
+        $event = new EventFeature\TableGatewayEvent();
         $this->eventManager->attach(
             EventFeatureEventsInterface::EVENT_POST_UPDATE,
             function (EventFeature\TableGatewayEvent $e) use (&$closureHasRun, &$event): void {
@@ -225,7 +244,7 @@ final class EventFeatureTest extends TestCase
         $closureHasRun = false;
 
         /** @var EventFeature\TableGatewayEvent $event */
-        $event = null;
+        $event = new EventFeature\TableGatewayEvent();
         $this->eventManager->attach(
             EventFeatureEventsInterface::EVENT_PRE_DELETE,
             function (EventFeature\TableGatewayEvent $e) use (&$closureHasRun, &$event): void {
@@ -246,7 +265,7 @@ final class EventFeatureTest extends TestCase
         $closureHasRun = false;
 
         /** @var EventFeature\TableGatewayEvent $event */
-        $event = null;
+        $event = new EventFeature\TableGatewayEvent();
         $this->eventManager->attach(
             EventFeatureEventsInterface::EVENT_POST_DELETE,
             function (EventFeature\TableGatewayEvent $e) use (&$closureHasRun, &$event): void {
@@ -264,24 +283,5 @@ final class EventFeatureTest extends TestCase
         self::assertEquals(EventFeatureEventsInterface::EVENT_POST_DELETE, $event->getName());
         self::assertSame($stmt, $event->getParam('statement'));
         self::assertSame($result, $event->getParam('result'));
-    }
-
-    /**
-     * @throws Exception
-     */
-    #[Override]
-    protected function setUp(): void
-    {
-        $this->eventManager = new EventManager();
-        $this->event        = new EventFeature\TableGatewayEvent();
-        $this->feature      = new EventFeature($this->eventManager, $this->event);
-        $this->tableGateway = $this->getMockBuilder(TableGateway::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods([])
-            ->getMock();
-        $this->feature->setTableGateway($this->tableGateway);
-
-        // typically runs before everything else
-        $this->feature->preInitialize();
     }
 }

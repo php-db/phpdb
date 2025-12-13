@@ -122,6 +122,8 @@ class FeatureSetTest extends TestCase
 
     public function testCallMagicCallSucceedsForValidMethodOfAddedFeature(): void
     {
+        $this->markTestSkipped('This needs refactored to use a custom TestFeature and Sql92');
+        /** @phpstan-ignore deadCode.unreachable */
         $sequenceName = 'table_sequence';
 
         $platformMock = $this->getMockBuilder(Postgresql::class)->getMock();

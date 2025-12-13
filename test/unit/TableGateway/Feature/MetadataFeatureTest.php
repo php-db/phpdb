@@ -12,6 +12,7 @@ use PhpDb\TableGateway\AbstractTableGateway;
 use PhpDb\TableGateway\Feature\MetadataFeature;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\MockObject\Exception;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
 
@@ -47,7 +48,7 @@ class MetadataFeatureTest extends TestCase
      */
     public function testPostInitializeRecordsPrimaryKeyColumnToSharedMetadata(): void
     {
-        /** @var AbstractTableGateway $tableGatewayMock */
+        /** @var AbstractTableGateway&MockObject $tableGatewayMock */
         $tableGatewayMock = $this->getMockBuilder(AbstractTableGateway::class)->onlyMethods([])->getMock();
         $metadataMock     = $this->getMockBuilder(MetadataInterface::class)->getMock();
         $metadataMock->expects($this->any())->method('getColumnNames')->willReturn(['id', 'name']);
@@ -84,7 +85,7 @@ class MetadataFeatureTest extends TestCase
      */
     public function testPostInitializeRecordsListOfColumnsInPrimaryKeyToSharedMetadata(): void
     {
-        /** @var AbstractTableGateway $tableGatewayMock */
+        /** @var AbstractTableGateway&MockObject $tableGatewayMock */
         $tableGatewayMock = $this->getMockBuilder(AbstractTableGateway::class)->onlyMethods([])->getMock();
         $metadataMock     = $this->getMockBuilder(MetadataInterface::class)->getMock();
         $metadataMock->expects($this->any())->method('getColumnNames')->willReturn(['id', 'name']);
@@ -121,7 +122,7 @@ class MetadataFeatureTest extends TestCase
      */
     public function testPostInitializeSkipsPrimaryKeyCheckIfNotTable(): void
     {
-        /** @var AbstractTableGateway $tableGatewayMock */
+        /** @var AbstractTableGateway&MockObject $tableGatewayMock */
         $tableGatewayMock = $this->getMockBuilder(AbstractTableGateway::class)->onlyMethods([])->getMock();
         $metadataMock     = $this->getMockBuilder(MetadataInterface::class)->getMock();
         $metadataMock->expects($this->any())->method('getColumnNames')->willReturn(['id', 'name']);

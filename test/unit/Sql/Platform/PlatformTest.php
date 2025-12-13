@@ -90,7 +90,7 @@ class PlatformTest extends TestCase
                 break;
         }
 
-        /** @var DriverInterface|MockObject $mockDriver */
+        /** @var DriverInterface&MockObject $mockDriver */
         $mockDriver = $this->getMockBuilder(DriverInterface::class)->getMock();
 
         $mockDriver->expects($this->any())

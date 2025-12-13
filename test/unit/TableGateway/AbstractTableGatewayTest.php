@@ -295,6 +295,7 @@ final class AbstractTableGatewayTest extends TestCase
 
     public function testUpdateWithNoCriteria(): void
     {
+        /** @phpstan-ignore expr.resultUnused */
         $this->mockUpdate;
 
         $affectedRows = $this->table->update(['foo' => 'bar']);
