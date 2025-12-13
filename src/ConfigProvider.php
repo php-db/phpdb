@@ -15,6 +15,13 @@ final class ConfigProvider
 
     public function getDependencies(): array
     {
-        return [];
+        return [
+            'abstract_factories' => [
+                Container\AdapterAbstractServiceFactory::class,
+            ],
+            'aliases'            => [
+                Adapter\AdapterInterface::class => Adapter\Adapter::class,
+            ],
+        ];
     }
 }

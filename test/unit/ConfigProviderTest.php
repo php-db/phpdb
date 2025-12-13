@@ -1,37 +1,30 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDbTest;
 
 use PhpDb\Adapter;
 use PhpDb\ConfigProvider;
-use PHPUnit\Framework\Attributes\Depends;
+use PhpDb\Container\AdapterAbstractServiceFactory;
 use PHPUnit\Framework\TestCase;
 
 class ConfigProviderTest extends TestCase
 {
-    /** @var array<string, array<array-key, string>> */
+    /** @phpstan-var array{'dependencies': array{abstract_factories: list<class-string>, aliases: array<class-string, class-string>}} */
     private array $config = [
-        'abstract_factories' => [
-            Adapter\AdapterAbstractServiceFactory::class,
-        ],
-        'factories'          => [
-            Adapter\AdapterInterface::class => Adapter\AdapterServiceFactory::class,
-        ],
-        'aliases'            => [
-            Adapter\Adapter::class => Adapter\AdapterInterface::class,
+        'dependencies' => [
+            'abstract_factories' => [
+                AdapterAbstractServiceFactory::class,
+            ],
+            'aliases'            => [
+                Adapter\AdapterInterface::class => Adapter\Adapter::class,
+            ],
         ],
     ];
 
-    public function testProvidesExpectedConfiguration(): ConfigProvider
-    {
-        $provider = new ConfigProvider();
-        self::assertEquals($this->config, $provider->getDependencyConfig());
-        return $provider;
-    }
-
-    #[Depends('testProvidesExpectedConfiguration')]
     public function testInvocationProvidesDependencyConfiguration(ConfigProvider $provider): void
     {
-        self::assertEquals(['dependencies' => $provider->getDependencyConfig()], $provider());
+        self::assertEquals($this->config, (new ConfigProvider())());
     }
 }

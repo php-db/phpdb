@@ -36,8 +36,6 @@ class Insert extends AbstractPreparableSql
 
     final public const VALUES_SET = 'set';
 
-    /**#@-*/
-
     /** @var string[]|array[] $specifications */
     protected array $specifications = [
         self::SPECIFICATION_INSERT => 'INSERT INTO %1$s (%2$s) VALUES (%3$s)',

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDbTest\Adapter\Driver\Pdo;
 
 use PhpDb\Adapter\Driver\Pdo\AbstractPdoConnection;
@@ -131,7 +133,8 @@ class ConnectionIntegrationTest extends TestCase
 
     public function testPrepare(): void
     {
-        $sqlsrv     = new TestPdo($this->variables);
+        $sqlsrv = new TestPdo($this->variables);
+        /** @var AbstractPdoConnection $connection */
         $connection = $sqlsrv->getConnection();
 
         $statement = $connection->prepare('SELECT \'foo\'');

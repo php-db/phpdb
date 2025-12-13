@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDbTest\Adapter\Driver\Pdo;
 
 use Override;
@@ -23,7 +25,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(AbstractPdoConnection::class, 'rollback()')]
 final class ConnectionTransactionsTest extends TestCase
 {
-    protected Wrapper|ConnectionWrapper $wrapper;
+    protected ConnectionWrapper $wrapper;
 
     /**
      * {@inheritDoc}

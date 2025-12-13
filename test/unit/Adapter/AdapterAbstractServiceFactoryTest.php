@@ -1,13 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDbTest\Adapter;
 
-use Laminas\ServiceManager\Config;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use Laminas\ServiceManager\ServiceManager;
 use Override;
-use PhpDb\Adapter\AdapterAbstractServiceFactory;
 use PhpDb\Adapter\AdapterInterface;
+use PhpDb\Container\AdapterAbstractServiceFactory;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\RequiresPhpExtension;
 use PHPUnit\Framework\TestCase;
@@ -22,12 +23,10 @@ final class AdapterAbstractServiceFactoryTest extends TestCase
     #[Override]
     protected function setUp(): void
     {
-        $this->serviceManager = new ServiceManager();
-
-        $config = new Config([
+        $config = [
             'abstract_factories' => [AdapterAbstractServiceFactory::class],
-        ]);
-        $config->configureServiceManager($this->serviceManager);
+        ];
+        $this->serviceManager = new ServiceManager($config);
 
         $this->serviceManager->setService('config', [
             'db' => [

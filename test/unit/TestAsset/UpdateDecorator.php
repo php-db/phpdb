@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDbTest\TestAsset;
 
 use PhpDb\Sql;

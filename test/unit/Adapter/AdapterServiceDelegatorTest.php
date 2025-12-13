@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDbTest\Adapter;
 
 use Laminas\ServiceManager\AbstractPluginManager;
@@ -209,25 +211,25 @@ final class AdapterServiceDelegatorTest extends TestCase
         );
     }
 
-    /**
-     * @throws Exception
-     */
     public function testDelegatorWithPluginManager(): void
     {
         $this->markTestSkipped(
             'Test requires factory-based plugin manager configuration to pass options to constructor'
         );
+
+        /** @phpstan-ignore deadCode.unreachable */
         $databaseAdapter = new Adapter(
             $this->createMock(DriverInterface::class),
             $this->createMock(PlatformInterface::class),
             $this->createMock(ResultSetInterface::class)
         );
 
-        $container           = new ServiceManager([
+        $container       = new ServiceManager([
             'factories' => [
                 AdapterInterface::class => static fn() => $databaseAdapter,
             ],
         ]);
+
         $pluginManagerConfig = [
             'invokables' => [
                 ConcreteAdapterAwareObject::class => ConcreteAdapterAwareObject::class,

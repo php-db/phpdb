@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDbTest\TableGateway\Feature;
 
 use PhpDb\Adapter\Adapter;

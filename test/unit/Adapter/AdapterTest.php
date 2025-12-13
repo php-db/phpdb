@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDbTest\Adapter;
 
 use Override;
@@ -219,14 +221,15 @@ final class AdapterTest extends TestCase
     {
         // @codingStandardsIgnoreEnd
         self::assertSame($this->mockDriver, $this->adapter->driver);
-        /** @psalm-suppress UndefinedMagicPropertyFetch */
+        /** @phpstan-ignore property.notFound */
         self::assertSame($this->mockDriver, $this->adapter->DrivER);
-        /** @psalm-suppress UndefinedMagicPropertyFetch */
+        /** @phpstan-ignore property.notFound */
         self::assertSame($this->mockPlatform, $this->adapter->PlatForm);
         self::assertSame($this->mockPlatform, $this->adapter->platform);
 
         $this->expectException('InvalidArgumentException');
         $this->expectExceptionMessage('Invalid magic');
+        /** @phpstan-ignore property.notFound, expr.resultUnused */
         $this->adapter->foo;
     }
 }
