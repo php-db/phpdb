@@ -7,9 +7,9 @@ namespace PhpDbTest\TableGateway\Feature;
 use Override;
 use PhpDb\Adapter\AdapterInterface;
 use PhpDb\Adapter\Driver\DriverInterface;
+use PhpDb\Adapter\Driver\ResultInterface;
 use PhpDb\Adapter\Driver\StatementInterface;
 use PhpDb\Adapter\Platform\Sql92;
-use PhpDb\ResultSet\ResultSet;
 use PhpDb\TableGateway\Feature\MasterSlaveFeature;
 use PhpDb\TableGateway\TableGateway;
 use PHPUnit\Framework\MockObject\Exception;
@@ -78,7 +78,7 @@ final class MasterSlaveFeatureTest extends TestCase
         $stmt
             ->expects($this->once())
             ->method('execute')
-            ->willReturn($this->getMockBuilder(ResultSet::class)->onlyMethods([])->getMock());
+            ->willReturn($this->getMockBuilder(ResultInterface::class)->onlyMethods([])->getMock());
         $table->select('foo = bar');
     }
 
@@ -102,7 +102,7 @@ final class MasterSlaveFeatureTest extends TestCase
             ->expects($this->once())
             ->method('execute')
             ->willReturn(
-                $this->getMockBuilder(ResultSet::class)
+                $this->getMockBuilder(ResultInterface::class)
                     ->onlyMethods([])
                     ->getMock()
             );

@@ -10,6 +10,7 @@ use PhpDb\Adapter\Driver\ConnectionInterface;
 use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\Driver\ResultInterface;
 use PhpDb\Adapter\Driver\StatementInterface;
+use PhpDb\Adapter\Platform\PlatformInterface;
 use PhpDb\RowGateway\AbstractRowGateway;
 use PhpDb\RowGateway\Exception\RuntimeException;
 use PhpDb\RowGateway\RowGateway;
@@ -69,8 +70,12 @@ final class AbstractRowGatewayTest extends TestCase
         // setup mock adapter
         $this->mockAdapter = $this->getMockBuilder(Adapter::class)
             ->onlyMethods([])
-            ->setConstructorArgs([$mockDriver])
-            ->getMock();
+            ->setConstructorArgs(
+                [
+                    $mockDriver,
+                    $this->getMockBuilder(PlatformInterface::class)->getMock(),
+                ]
+            )->getMock();
 
         $this->rowGateway = $this->getMockBuilder(AbstractRowGateway::class)->onlyMethods([])->getMock();
 

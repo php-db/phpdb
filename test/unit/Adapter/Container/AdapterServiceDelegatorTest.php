@@ -224,7 +224,7 @@ final class AdapterServiceDelegatorTest extends TestCase
             $this->createMock(ResultSetInterface::class)
         );
 
-        $container       = new ServiceManager([
+        $container = new ServiceManager([
             'factories' => [
                 AdapterInterface::class => static fn() => $databaseAdapter,
             ],

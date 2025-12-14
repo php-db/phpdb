@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PhpDbTest\TestAsset;
 
+use PDO;
 use PhpDb\Adapter\Driver\ConnectionInterface;
 use PhpDb\Adapter\Driver\Pdo\AbstractPdoConnection;
 
@@ -13,7 +14,7 @@ use PhpDb\Adapter\Driver\Pdo\AbstractPdoConnection;
 final class ConnectionWrapper extends AbstractPdoConnection
 {
     public function __construct(
-        $connectionParameters = new PdoStubDriver()
+        PDO $connectionParameters = new PdoStubDriver()
     ) {
         parent::__construct($connectionParameters);
     }

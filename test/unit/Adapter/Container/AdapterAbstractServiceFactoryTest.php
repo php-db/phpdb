@@ -13,8 +13,8 @@ use PhpDb\Adapter\Platform\Sql92;
 use PhpDb\Container\AdapterAbstractServiceFactory;
 use PhpDb\Container\ConnectionInterfaceFactoryFactoryInterface;
 use PhpDb\Container\DriverInterfaceFactoryFactoryInterface;
-use PhpDb\Container\PlatformInterfaceFactoryFactoryInterface;
 use PhpDb\Container\FactoryFactoryInterface;
+use PhpDb\Container\PlatformInterfaceFactoryFactoryInterface;
 use PhpDbTest\TestAsset\ConnectionWrapper;
 use PhpDbTest\TestAsset\PdoStubDriver;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -36,76 +36,84 @@ final class AdapterAbstractServiceFactoryTest extends TestCase
 
         $config = [
             'abstract_factories' => [AdapterAbstractServiceFactory::class],
-            'aliases' => [
+            'aliases'            => [
                 ConnectionInterfaceFactoryFactoryInterface::class => 'ConnectionInterfaceFactoryFactory',
                 DriverInterfaceFactoryFactoryInterface::class     => 'DriverInterfaceFactoryFactory',
                 PlatformInterfaceFactoryFactoryInterface::class   => 'PlatformInterfaceFactoryFactory',
             ],
-            'factories' => [
-                'ConnectionInterfaceFactoryFactory' => new class implements ConnectionInterfaceFactoryFactoryInterface {
-                    public function __invoke(): callable
-                    {
-                        return new class implements FactoryFactoryInterface {
-                            public function __invoke(): callable
-                            {
-                                return new self();
-                            }
-
-                            public static function createFromConfig()
-                            {
-                                return new ConnectionWrapper();
-                            }
-                        };
-                    }
-                },
-                'DriverInterfaceFactoryFactory' => new class($pdoDriverInterfaceMock) implements DriverInterfaceFactoryFactoryInterface {
-                    private static PdoDriverInterface $pdoDriverInterface;
-
-                    public function __construct(PdoDriverInterface $pdoDriverInterfaceMock)
-                    {
-                        static::$pdoDriverInterface = $pdoDriverInterfaceMock;
-                    }
-
-                    public function __invoke(): callable
-                    {
-                        return new class(static::$pdoDriverInterface) implements FactoryFactoryInterface {
-
-                            private static PdoDriverInterface $pdoDriverInterface;
-
-                            public function __construct(PdoDriverInterface $pdoDriverInterface)
-                            {
-                                static::$pdoDriverInterface = $pdoDriverInterface;
-                            }
-
-                            public function __invoke(): callable
-                            {
-                                return new self(static::$pdoDriverInterface);
-                            }
-
-                            public static function createFromConfig() {
-                                return self::$pdoDriverInterface;
-                            }
-                        };
-                    }
-                },
-                'PlatformInterfaceFactoryFactory' => function (){
-                    return new class() implements PlatformInterfaceFactoryFactoryInterface {
+            'factories'          => [
+                'ConnectionInterfaceFactoryFactory'
+                    => new class implements ConnectionInterfaceFactoryFactoryInterface
+                        {
                         public function __invoke(): callable
                         {
-                            return new class() implements FactoryFactoryInterface {
-
+                            return new class implements FactoryFactoryInterface {
                                 public function __invoke(): callable
                                 {
                                     return new self();
                                 }
 
-                                public static function fromDriver() {
-                                    return new Sql92();
+                                public static function createFromConfig(): ConnectionWrapper
+                                {
+                                    return new ConnectionWrapper();
                                 }
                             };
                         }
-                    };
-                },
+                    },
+                'DriverInterfaceFactoryFactory'
+                    => new class ($pdoDriverInterfaceMock) implements DriverInterfaceFactoryFactoryInterface
+                        {
+                        private static PdoDriverInterface $pdoDriverInterface;
+
+                        public function __construct(PdoDriverInterface $pdoDriverInterfaceMock)
+                        {
+                            static::$pdoDriverInterface = $pdoDriverInterfaceMock;
+                        }
+
+                        public function __invoke(): callable
+                        {
+                            return new class (static::$pdoDriverInterface) implements FactoryFactoryInterface
+                            {
+                                private static PdoDriverInterface $pdoDriverInterface;
+
+                                public function __construct(PdoDriverInterface $pdoDriverInterface)
+                                {
+                                    static::$pdoDriverInterface = $pdoDriverInterface;
+                                }
+
+                                public function __invoke(): callable
+                                {
+                                    return new self(static::$pdoDriverInterface);
+                                }
+
+                                public static function createFromConfig(): PdoDriverInterface
+                                {
+                                    return self::$pdoDriverInterface;
+                                }
+                            };
+                        }
+                    },
+                'PlatformInterfaceFactoryFactory'
+                    => function () {
+                        return new class () implements PlatformInterfaceFactoryFactoryInterface
+                        {
+                            public function __invoke(): callable
+                            {
+                                return new class () implements FactoryFactoryInterface
+                                {
+                                    public function __invoke(): callable
+                                    {
+                                        return new self();
+                                    }
+
+                                    public static function fromDriver(): Sql92
+                                    {
+                                        return new Sql92();
+                                    }
+                                };
+                            }
+                        };
+                    },
             ],
         ];
 

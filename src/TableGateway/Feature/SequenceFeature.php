@@ -59,6 +59,7 @@ class SequenceFeature extends AbstractFeature
 
     /**
      * Generate a new value from the specified sequence in the database, and return it.
+     *
      * @throws RuntimeException
      */
     public function nextSequenceId(): int
@@ -67,7 +68,9 @@ class SequenceFeature extends AbstractFeature
         $platformName = $platform->getName();
 
         $sql = match ($platformName) {
-            'Oracle'     => 'SELECT ' . $platform->quoteIdentifier($this->sequenceName) . '.NEXTVAL as "nextval" FROM dual',
+            'Oracle'     => 'SELECT '
+                            . $platform->quoteIdentifier($this->sequenceName)
+                            . '.NEXTVAL as "nextval" FROM dual',
             'PostgreSQL' => 'SELECT NEXTVAL(\'"' . $this->sequenceName . '"\')',
             default      => throw new RuntimeException('Unsupported platform for retrieving next sequence id'),
         };
@@ -92,7 +95,9 @@ class SequenceFeature extends AbstractFeature
 
         // todo: Remove string usage
         $sql = match ($platformName) {
-            'Oracle'     => 'SELECT ' . $platform->quoteIdentifier($this->sequenceName) . '.CURRVAL as "currval" FROM dual',
+            'Oracle'     => 'SELECT '
+                            . $platform->quoteIdentifier($this->sequenceName)
+                            . '.CURRVAL as "currval" FROM dual',
             'PostgreSQL' => 'SELECT LAST_INSERT_ROWID() as "currval"',
             default => throw new RuntimeException('Unsupported platform for retrieving last sequence id'),
         };

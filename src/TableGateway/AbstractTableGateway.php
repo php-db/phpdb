@@ -50,10 +50,8 @@ abstract class AbstractTableGateway implements TableGatewayInterface
     /** @var array */
     protected $columns = [];
 
-    /** @var Feature\FeatureSet */
     protected Feature\FeatureSet $featureSet;
 
-    /** @var ResultSetInterface */
     protected ?ResultSetInterface $resultSetPrototype;
 
     /** @var Sql */

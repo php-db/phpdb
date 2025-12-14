@@ -23,7 +23,7 @@ class ConfigProviderTest extends TestCase
         ],
     ];
 
-    public function testInvocationProvidesDependencyConfiguration(ConfigProvider $provider): void
+    public function testInvocationProvidesDependencyConfiguration(): void
     {
         self::assertEquals($this->config, (new ConfigProvider())());
     }

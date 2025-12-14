@@ -28,9 +28,9 @@ final class ConnectionTest extends TestCase
     {
         $this->connection = new TestConnection(
             [
-                'dsn' => 'sqlite::memory:',
+                'dsn'      => 'sqlite::memory:',
                 'username' => 'bar',
-                'password' => 'baz'
+                'password' => 'baz',
             ]
         );
     }

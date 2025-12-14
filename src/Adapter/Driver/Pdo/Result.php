@@ -90,8 +90,11 @@ class Result implements Iterator, ResultInterface
      * @param  mixed $generatedValue
      * @param  int   $rowCount
      */
-    public function initialize(PDOStatement $resource, $generatedValue, Closure|int $rowCount = 0): ResultInterface&Result
-    {
+    public function initialize(
+        PDOStatement $resource,
+        $generatedValue,
+        Closure|int $rowCount = 0
+    ): ResultInterface&Result {
         $this->resource       = $resource;
         $this->generatedValue = $generatedValue;
         $this->rowCount       = $rowCount;

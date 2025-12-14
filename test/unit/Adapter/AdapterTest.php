@@ -79,7 +79,11 @@ final class AdapterTest extends TestCase
         $this->adapter->setProfiler($profiler = new Profiler\Profiler());
         self::assertSame($profiler, $this->adapter->getProfiler());
 
-        $adapter = new Adapter(['driver' => $this->mockDriver, 'profiler' => true], $this->mockPlatform);
+        $adapter = new Adapter(
+            driver: $this->mockDriver,
+            platform: $this->mockPlatform,
+            profiler: new Profiler\Profiler(),
+        );
         self::assertInstanceOf(Profiler\Profiler::class, $adapter->getProfiler());
     }
 

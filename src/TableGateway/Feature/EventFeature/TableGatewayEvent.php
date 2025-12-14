@@ -86,7 +86,6 @@ class TableGatewayEvent implements EventInterface
      *
      * @param string $name
      * @param mixed $value
-     * @return void
      */
     public function setParam($name, $value): void
     {
