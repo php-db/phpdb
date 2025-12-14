@@ -20,10 +20,12 @@ use PhpDb\TableGateway\Feature\MetadataFeature;
 use PhpDb\TableGateway\Feature\SequenceFeature;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\RequiresPhp;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 
+#[RequiresPhp('<= 8.4')]
 #[CoversMethod(FeatureSet::class, 'canCallMagicCall')]
 #[CoversMethod(FeatureSet::class, 'callMagicCall')]
 class FeatureSetTest extends TestCase

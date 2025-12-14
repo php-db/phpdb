@@ -17,6 +17,7 @@ use PhpDb\RowGateway\RowGateway;
 use PhpDb\Sql\Select;
 use PhpDb\Sql\Sql;
 use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\RequiresPhp;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -177,6 +178,7 @@ final class AbstractRowGatewayTest extends TestCase
      * @throws ReflectionException
      * @throws Exception
      */
+    #[RequiresPhp('<= 8.4')]
     public function testSaveInsertMultiKey(): void
     {
         $this->rowGateway = $this->getMockBuilder(AbstractRowGateway::class)->onlyMethods([])->getMock();
@@ -300,6 +302,7 @@ final class AbstractRowGatewayTest extends TestCase
     /**
      * @throws ReflectionException
      */
+    #[RequiresPhp('<= 8.4')]
     protected function setRowGatewayState(array $properties): void
     {
         $refRowGateway = new ReflectionObject($this->rowGateway);

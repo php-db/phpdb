@@ -21,10 +21,12 @@ use PhpDb\Sql\Update;
 use PhpDb\TableGateway\AbstractTableGateway;
 use PhpDb\TableGateway\Feature\FeatureSet;
 use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\RequiresPhp;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 
+#[RequiresPhp('<= 8.4')]
 #[CoversMethod(AbstractTableGateway::class, 'getTable')]
 #[CoversMethod(AbstractTableGateway::class, 'getAdapter')]
 #[CoversMethod(AbstractTableGateway::class, 'getSql')]

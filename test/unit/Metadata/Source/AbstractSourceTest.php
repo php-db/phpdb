@@ -16,6 +16,7 @@ use PhpDb\Metadata\Object\TriggerObject;
 use PhpDb\Metadata\Object\ViewObject;
 use PhpDb\Metadata\Source\AbstractSource;
 use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\RequiresPhp;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use ReflectionException;
@@ -46,6 +47,7 @@ use ReflectionProperty;
 #[CoversMethod(AbstractSource::class, 'loadConstraintDataKeys')]
 #[CoversMethod(AbstractSource::class, 'loadConstraintReferences')]
 #[CoversMethod(AbstractSource::class, 'loadTriggerData')]
+#[RequiresPhp('<= 8.4')]
 final class AbstractSourceTest extends TestCase
 {
     protected MockObject|AbstractSource $abstractSourceMock;

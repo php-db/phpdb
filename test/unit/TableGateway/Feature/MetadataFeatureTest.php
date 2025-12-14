@@ -11,11 +11,13 @@ use PhpDb\Metadata\Object\ViewObject;
 use PhpDb\TableGateway\AbstractTableGateway;
 use PhpDb\TableGateway\Feature\MetadataFeature;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\RequiresPhp;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
 
+#[RequiresPhp('<= 8.4')]
 class MetadataFeatureTest extends TestCase
 {
     /**

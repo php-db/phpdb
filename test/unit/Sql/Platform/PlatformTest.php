@@ -11,11 +11,13 @@ use PhpDb\ResultSet\ResultSet;
 use PhpDb\Sql\Platform\Platform;
 use PhpDbTest\TestAsset;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\RequiresPhp;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use ReflectionException;
 use ReflectionMethod;
 
+#[RequiresPhp('<= 8.4')]
 class PlatformTest extends TestCase
 {
     /**
