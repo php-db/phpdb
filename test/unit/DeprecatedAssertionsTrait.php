@@ -11,12 +11,12 @@ use ReflectionException;
 use ReflectionProperty;
 
 #[IgnoreDeprecations]
+#[RequiresPhp('<= 8.6')]
 trait DeprecatedAssertionsTrait
 {
     /**
      * @throws ReflectionException
      */
-    #[RequiresPhp('<= 8.6')]
     public static function assertAttributeEquals(
         mixed $expected,
         string $attribute,
@@ -32,7 +32,6 @@ trait DeprecatedAssertionsTrait
     /**
      * @throws ReflectionException
      */
-    #[RequiresPhp('<= 8.6')]
     public function readAttribute(object $instance, string $attribute): mixed
     {
         $r = new ReflectionProperty($instance, $attribute);
