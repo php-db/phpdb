@@ -19,11 +19,6 @@ class PdoStubDriver extends PDO
         return true;
     }
 
-    /**
-     * @param string $user
-     * @param string $password
-     * @phpstan-ignore constructor.unusedParameter, constructor.unusedParameter, constructor.unusedParameter
-     */
     public function __construct()
     {
         parent::__construct('sqlite::memory:');
