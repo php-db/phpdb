@@ -12,11 +12,10 @@ use PhpDb\Adapter\Driver\Pdo\AbstractPdoConnection;
  */
 final class ConnectionWrapper extends AbstractPdoConnection
 {
-    public function __construct()
-    {
-        parent::__construct(
-            new PdoStubDriver('foo', 'bar', 'baz')
-        );
+    public function __construct(
+        $connectionParameters = new PdoStubDriver()
+    ) {
+        parent::__construct($connectionParameters);
     }
 
     public function connect(): ConnectionInterface

@@ -34,6 +34,7 @@ final class ConnectionTransactionsTest extends TestCase
     protected function setUp(): void
     {
         $this->wrapper = new ConnectionWrapper();
+        parent::setUp();
     }
 
     public function testBeginTransactionReturnsInstanceOfConnection(): void

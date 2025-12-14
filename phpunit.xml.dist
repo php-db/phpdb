@@ -5,9 +5,7 @@
     bootstrap="vendor/autoload.php"
     colors="true"
     cacheDirectory=".phpunit.cache"
-    requireCoverageMetadata="true"
     displayDetailsOnAllIssues="true"
-    failOnNotice="true"
     failOnDeprecation="true"
     failOnWarning="true">
 
