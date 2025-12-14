@@ -5,16 +5,18 @@ declare(strict_types=1);
 namespace PhpDbTest;
 
 use PHPUnit\Framework\Assert;
+use PHPUnit\Framework\Attributes\IgnoreDeprecations;
 use PHPUnit\Framework\Attributes\RequiresPhp;
 use ReflectionException;
 use ReflectionProperty;
 
+#[IgnoreDeprecations]
 trait DeprecatedAssertionsTrait
 {
     /**
      * @throws ReflectionException
      */
-    #[RequiresPhp('<= 8.4')]
+    #[RequiresPhp('<= 8.6')]
     public static function assertAttributeEquals(
         mixed $expected,
         string $attribute,
@@ -30,7 +32,7 @@ trait DeprecatedAssertionsTrait
     /**
      * @throws ReflectionException
      */
-    #[RequiresPhp('<= 8.4')]
+    #[RequiresPhp('<= 8.6')]
     public function readAttribute(object $instance, string $attribute): mixed
     {
         $r = new ReflectionProperty($instance, $attribute);

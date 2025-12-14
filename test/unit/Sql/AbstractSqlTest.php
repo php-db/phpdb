@@ -17,6 +17,7 @@ use PhpDb\Sql\Select;
 use PhpDb\Sql\TableIdentifier;
 use PhpDbTest\TestAsset\TrustingSql92Platform;
 use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\IgnoreDeprecations;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RequiresPhp;
 use PHPUnit\Framework\MockObject\Exception;
@@ -32,7 +33,8 @@ use function next;
 use function preg_match;
 use function uniqid;
 
-#[RequiresPhp('<= 8.4')]
+#[IgnoreDeprecations]
+#[RequiresPhp('<= 8.6')]
 #[CoversMethod(AbstractSql::class, 'getSqlString')]
 #[CoversMethod(AbstractSql::class, 'buildSqlString')]
 #[CoversMethod(AbstractSql::class, 'renderTable')]
