@@ -1,0 +1,7 @@
+/vendor/
+/composer.lock
+/.phpbench/
+/reports/*
+!/reports/.gitkeep
+/results/*
+!/results/.gitkeep

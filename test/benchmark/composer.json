@@ -1,0 +1,46 @@
+{
+    "name": "php-db/benchmark-suite",
+    "description": "Benchmark suite comparing PhpDb, Laminas Db, and Doctrine DBAL",
+    "type": "project",
+    "license": "BSD-3-Clause",
+    "require": {
+        "php": "~8.2.0 || ~8.3.0 || ~8.4.0 || ~8.5.0",
+        "laminas/laminas-servicemanager": "^3.0.0 || ^4.0.0",
+        "laminas/laminas-stdlib": "^3.20.0"
+    },
+    "require-dev": {
+        "php-db/phpdb-adapter-mysql": "*",
+        "laminas/laminas-db": "^2.20",
+        "doctrine/dbal": "^4.0",
+        "phpbench/phpbench": "^1.4"
+    },
+    "replace": {
+        "php-db/phpdb": "0.1.999"
+    },
+    "autoload": {
+        "psr-4": {
+            "PhpDb\\": "../../src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "PhpDbBenchmark\\": "./"
+        }
+    },
+    "config": {
+        "sort-packages": true,
+        "platform": {
+            "php": "8.2.99"
+        },
+        "process-timeout": 0
+    },
+    "scripts": {
+        "bench": "phpbench run --report=consistent",
+        "bench:phpdb": "phpbench run --filter=PhpDbBench --report=consistent",
+        "bench:laminas": "phpbench run --filter=LaminasBench --report=consistent",
+        "bench:doctrine": "phpbench run --filter=DoctrineBench --report=consistent",
+        "bench:save": "phpbench run --report=consistent --dump-file=results/benchmark_$(date +%Y%m%d_%H%M%S).xml",
+        "bench:compare": "php bin/compare-results.php",
+        "bench:compare:md": "php bin/compare-results.php --markdown"
+    }
+}

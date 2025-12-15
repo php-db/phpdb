@@ -1,0 +1,54 @@
+{
+    "$schema": "https://phpbench.github.io/phpbench/schema/phpbench.schema.json",
+    "runner.bootstrap": "vendor/autoload.php",
+    "runner.path": [
+        "PhpDbBench.php",
+        "LaminasBench.php",
+        "DoctrineBench.php"
+    ],
+    "report.generators": {
+        "consistent": {
+            "generator": "expression",
+            "title": "Benchmark Results (Consistent Format)",
+            "description": "Use mode() for consistent, reproducible results across runs",
+            "cols": [
+                "benchmark",
+                "subject",
+                "revs",
+                "its",
+                "mode",
+                "rstdev",
+                "mem_peak"
+            ]
+        },
+        "full": {
+            "generator": "expression",
+            "title": "Full Benchmark Results",
+            "cols": [
+                "benchmark",
+                "subject",
+                "set",
+                "revs",
+                "its",
+                "best",
+                "mean",
+                "mode",
+                "worst",
+                "stdev",
+                "rstdev",
+                "mem_peak"
+            ]
+        },
+        "compare": {
+            "generator": "expression",
+            "title": "Comparison Report",
+            "cols": [
+                "benchmark",
+                "subject",
+                "mode",
+                "mem_peak",
+                "rstdev"
+            ]
+        }
+    }
+}

@@ -56,8 +56,7 @@
     "autoload-dev": {
         "psr-4": {
             "PhpDbTest\\": "test/unit/",
-            "PhpDbIntegrationTest\\": "test/integration/",
-            "PhpDbBenchmark\\": "test/benchmark/"
+            "PhpDbIntegrationTest\\": "test/integration/"
         }
     },
     "scripts": {
@@ -72,7 +71,15 @@
         "test-integration": "phpunit --colors=always --testsuite \"integration test\"",
         "static-analysis": "vendor/bin/phpstan analyse --memory-limit=256M",
         "sa-generate-baseline": "vendor/bin/phpstan analyse --memory-limit=256M --generate-baseline",
-        "upload-coverage": "coveralls -v"
+        "upload-coverage": "coveralls -v",
+        "bench:install": "cd test/benchmark && composer install",
+        "bench": "cd test/benchmark && vendor/bin/phpbench run --report=consistent",
+        "bench:phpdb": "cd test/benchmark && vendor/bin/phpbench run --filter=PhpDbBench --report=consistent",
+        "bench:laminas": "cd test/benchmark && vendor/bin/phpbench run --filter=LaminasBench --report=consistent",
+        "bench:doctrine": "cd test/benchmark && vendor/bin/phpbench run --filter=DoctrineBench --report=consistent",
+        "bench:save": "cd test/benchmark && vendor/bin/phpbench run --report=consistent --dump-file=results/benchmark_$(date +%Y%m%d_%H%M%S).xml",
+        "bench:compare": "cd test/benchmark && php bin/compare-results.php",
+        "bench:compare:md": "cd test/benchmark && php bin/compare-results.php --markdown"
     },
     "conflict": {
         "zendframework/zend-db": "*",
