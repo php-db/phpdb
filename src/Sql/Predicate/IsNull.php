@@ -71,6 +71,6 @@ class IsNull extends AbstractExpression implements PredicateInterface
             throw new InvalidArgumentException('Identifier must be specified');
         }
 
-        return $this->identifier->toSql($builder) . ' ' . $this->operator;
+        return $builder->argumentToSql($this->identifier) . ' ' . $this->operator;
     }
 }

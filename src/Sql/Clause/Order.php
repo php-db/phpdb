@@ -37,8 +37,8 @@ final class Order implements ClauseInterface
             if (! str_contains($order, ',')) {
                 $spacePos = strpos($order, ' ');
                 if ($spacePos !== false) {
-                    $column    = substr($order, 0, $spacePos);
-                    $direction = strtoupper(trim(substr($order, $spacePos + 1)));
+                    $column        = substr($order, 0, $spacePos);
+                    $direction     = strtoupper(trim(substr($order, $spacePos + 1)));
                     $this->items[] = new OrderSpecification(
                         $column,
                         $direction === self::ORDER_DESCENDING ? self::ORDER_DESCENDING : self::ORDER_ASCENDING

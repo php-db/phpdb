@@ -12,8 +12,8 @@ use function implode;
 use function is_bool;
 use function is_float;
 use function is_int;
+use function preg_quote;
 use function preg_replace;
-use function str_contains;
 use function str_replace;
 use function strtr;
 use function trigger_error;
@@ -57,7 +57,7 @@ abstract class AbstractPlatform implements PlatformInterface
             $q  = $this->quoteIdentifier[0];
             $qe = preg_quote($q, '/');
 
-            $this->identifierPatterns = [
+            $this->identifierPatterns     = [
                 '/([A-Za-z_]\w*)\.([A-Za-z_]\w*)/S',
                 '/(?<!' . $qe . ')\b(?!(?:' . self::KEYWORDS_PATTERN . ')\b)([A-Za-z_]\w*+)\b(?!' . $qe . '|\s*\()/iS',
             ];

@@ -17,7 +17,7 @@ use PhpDb\Sql\PreparableSqlBuilder;
 final readonly class Literal implements ArgumentInterface
 {
     public function __construct(
-        private string $literal
+        public string $value
     ) {
     }
 
@@ -28,11 +28,11 @@ final readonly class Literal implements ArgumentInterface
 
     public function getValue(): string
     {
-        return $this->literal;
+        return $this->value;
     }
 
     public function toSql(PreparableSqlBuilder $builder): string
     {
-        return $this->literal;
+        return $this->value;
     }
 }

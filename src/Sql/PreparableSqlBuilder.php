@@ -16,6 +16,7 @@ use PhpDb\Sql\Argument\Values;
 use function is_bool;
 use function is_float;
 use function is_int;
+use function str_contains;
 use function str_replace;
 use function vsprintf;
 
@@ -189,6 +190,44 @@ final class PreparableSqlBuilder
     }
 
     /**
+     * Quote an identifier with optional table prefix. Static for performance.
+     */
+    public static function quoteId(string $id, string $q): string
+    {
+        return str_contains($id, '.')
+            ? $q . str_replace('.', $q . '.' . $q, $id) . $q
+            : $q . $id . $q;
+    }
+
+    /**
+     * Convert an Argument to SQL. Centralizes logic for all argument types.
+     */
+    public function argumentToSql(ArgumentInterface $argument): string
+    {
+        if ($argument instanceof Identifier) {
+            return self::quoteId($argument->value, $this->q);
+        }
+        if ($argument instanceof Value) {
+            return $this->bindValue($argument->value);
+        }
+        if ($argument instanceof Literal) {
+            return $argument->value;
+        }
+        if ($argument instanceof Values) {
+            return '(' . $this->bindValues($argument->value) . ')';
+        }
+        if ($argument instanceof SelectArgument) {
+            // Note: Callers are responsible for wrapping in parentheses if needed
+            return $argument->value instanceof Select
+                ? $this->processSubSelect($argument->value)
+                : $this->processExpression($argument->value);
+        }
+
+        // Fallback for any custom ArgumentInterface implementations
+        return $argument->toSql($this);
+    }
+
+    /**
      * Process an expression into SQL.
      */
     public function processExpression(ExpressionInterface $expression): string
@@ -204,18 +243,17 @@ final class PreparableSqlBuilder
         $values = [];
         foreach ($expressionValues as $argument) {
             if ($argument instanceof Value) {
-                $values[] = $this->bindValue($argument->getValue());
+                $values[] = $this->bindValue($argument->value);
             } elseif ($argument instanceof Values) {
-                $values[] = '(' . $this->bindValues($argument->getValue()) . ')';
+                $values[] = '(' . $this->bindValues($argument->value) . ')';
             } elseif ($argument instanceof Identifier) {
-                $values[] = $argument->toSql($this);
+                $values[] = self::quoteId($argument->value, $this->q);
             } elseif ($argument instanceof Literal) {
-                $values[] = $argument->getValue();
+                $values[] = $argument->value;
             } elseif ($argument instanceof SelectArgument) {
-                $select   = $argument->getValue();
-                $values[] = $select instanceof Select
-                    ? '(' . $this->processSubSelect($select) . ')'
-                    : $this->processExpression($select);
+                $values[] = $argument->value instanceof Select
+                    ? '(' . $this->processSubSelect($argument->value) . ')'
+                    : $this->processExpression($argument->value);
             }
         }
 

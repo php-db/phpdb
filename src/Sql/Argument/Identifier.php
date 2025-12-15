@@ -8,9 +8,6 @@ use PhpDb\Sql\ArgumentInterface;
 use PhpDb\Sql\ArgumentType;
 use PhpDb\Sql\PreparableSqlBuilder;
 
-use function str_contains;
-use function str_replace;
-
 /**
  * Represents a SQL identifier (table name, column name, alias, etc.).
  * Identifiers will be quoted appropriately by the platform driver
@@ -19,7 +16,7 @@ use function str_replace;
 final readonly class Identifier implements ArgumentInterface
 {
     public function __construct(
-        private string $identifier
+        public string $value
     ) {
     }
 
@@ -30,17 +27,11 @@ final readonly class Identifier implements ArgumentInterface
 
     public function getValue(): string
     {
-        return $this->identifier;
+        return $this->value;
     }
 
     public function toSql(PreparableSqlBuilder $builder): string
     {
-        $q = $builder->q;
-
-        if (! str_contains($this->identifier, '.')) {
-            return $q . $this->identifier . $q;
-        }
-
-        return $q . str_replace('.', $q . '.' . $q, $this->identifier) . $q;
+        return PreparableSqlBuilder::quoteId($this->value, $builder->q);
     }
 }

@@ -7,9 +7,6 @@ namespace PhpDb\Sql\Clause;
 use PhpDb\Sql\ExpressionInterface;
 use PhpDb\Sql\PreparableSqlBuilder;
 
-use function str_contains;
-use function str_replace;
-
 final readonly class GroupExpression
 {
     public function __construct(
@@ -26,9 +23,6 @@ final readonly class GroupExpression
             return $builder->processExpression($this->column);
         }
 
-        $q = $builder->q;
-        return str_contains($this->column, '.')
-            ? $q . str_replace('.', $q . '.' . $q, $this->column) . $q
-            : $q . $this->column . $q;
+        return PreparableSqlBuilder::quoteId($this->column, $builder->q);
     }
 }

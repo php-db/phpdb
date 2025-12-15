@@ -9,8 +9,6 @@ use PhpDb\Sql\ArgumentType;
 use PhpDb\Sql\PreparableSqlBuilder;
 
 use function array_values;
-use function str_contains;
-use function str_replace;
 
 /**
  * Represents multiple SQL identifiers (column names for multi-column clauses).
@@ -58,11 +56,8 @@ final readonly class Identifiers implements ArgumentInterface
             if (! $first) {
                 $result .= ', ';
             }
-            $first = false;
-
-            $result .= str_contains($id, '.')
-                ? $q . str_replace('.', $q . '.' . $q, $id) . $q
-                : $q . $id . $q;
+            $first   = false;
+            $result .= PreparableSqlBuilder::quoteId($id, $q);
         }
 
         return $result . ')';

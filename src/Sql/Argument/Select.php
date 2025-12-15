@@ -19,7 +19,7 @@ use PhpDb\Sql\SqlInterface;
 final readonly class Select implements ArgumentInterface
 {
     public function __construct(
-        private ExpressionInterface|SqlInterface $select
+        public ExpressionInterface|SqlInterface $value
     ) {
     }
 
@@ -30,13 +30,13 @@ final readonly class Select implements ArgumentInterface
 
     public function getValue(): ExpressionInterface|SqlInterface
     {
-        return $this->select;
+        return $this->value;
     }
 
     public function toSql(PreparableSqlBuilder $builder): string
     {
-        return $this->select instanceof SelectStatement
-            ? $builder->processSubSelect($this->select)
-            : $builder->processExpression($this->select);
+        return $this->value instanceof SelectStatement
+            ? $builder->processSubSelect($this->value)
+            : $builder->processExpression($this->value);
     }
 }

@@ -17,8 +17,6 @@ use PhpDb\Sql\SqlInterface;
 
 use function is_scalar;
 use function is_string;
-use function str_contains;
-use function str_replace;
 
 final class Operator extends AbstractExpression implements PredicateInterface
 {
@@ -176,12 +174,9 @@ final class Operator extends AbstractExpression implements PredicateInterface
         }
 
         if ($this->left instanceof ArgumentInterface) {
-            $leftSql = $this->left->toSql($builder);
+            $leftSql = $builder->argumentToSql($this->left);
         } elseif (is_string($this->left)) {
-            $q       = $builder->q;
-            $leftSql = str_contains($this->left, '.')
-                ? $q . str_replace('.', $q . '.' . $q, $this->left) . $q
-                : $q . $this->left . $q;
+            $leftSql = PreparableSqlBuilder::quoteId($this->left, $builder->q);
         } elseif ($this->left instanceof ExpressionInterface) {
             $leftSql = $builder->processExpression($this->left);
         } else {
@@ -189,7 +184,7 @@ final class Operator extends AbstractExpression implements PredicateInterface
         }
 
         if ($this->right instanceof ArgumentInterface) {
-            $rightSql = $this->right->toSql($builder);
+            $rightSql = $builder->argumentToSql($this->right);
         } elseif (is_scalar($this->right)) {
             $rightSql = $builder->bindValue($this->right);
         } elseif ($this->right instanceof ExpressionInterface) {

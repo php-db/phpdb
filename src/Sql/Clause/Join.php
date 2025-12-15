@@ -120,7 +120,7 @@ final class Join implements Iterator, Countable, ClauseInterface
             } else {
                 $table = (string) $value;
                 if (str_contains($table, '.')) {
-                    $parts = explode('.', $table, 2);
+                    $parts      = explode('.', $table, 2);
                     $joinTarget = new TableIdentifier($parts[1], $parts[0], $alias);
                 } else {
                     $joinTarget = new TableIdentifier($table, null, $alias);
@@ -130,7 +130,7 @@ final class Join implements Iterator, Countable, ClauseInterface
 
         $this->joins[] = new JoinSpecification(
             $joinTarget,
-            $on, // Keep strings as-is; deferred to prepareSqlString for performance
+            is_string($on) ? new Predicate\Expression($on) : $on,
             is_array($columns) ? $columns : [$columns],
             match ($type) {
                 self::JOIN_INNER => JoinType::Inner,
@@ -189,10 +189,7 @@ final class Join implements Iterator, Countable, ClauseInterface
                 }
             }
 
-            // Fast path: string ON expressions bypass object creation
-            $sql .= ' ON ' . (is_string($join->on)
-                ? $builder->quoteIdentifierInFragment($join->on)
-                : $join->on->prepareSqlString($builder));
+            $sql .= ' ON ' . $join->on->prepareSqlString($builder);
         }
 
         return $sql;

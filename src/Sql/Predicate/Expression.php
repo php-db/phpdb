@@ -26,7 +26,7 @@ final class Expression extends BaseExpression implements PredicateInterface
                     break;
                 }
 
-                $sql = substr_replace($sql, $param->toSql($builder), $pos, 1);
+                $sql = substr_replace($sql, $builder->argumentToSql($param), $pos, 1);
             }
         }
 

@@ -483,8 +483,9 @@ class Select extends AbstractPreparableSql
         }
 
         // Columns
-        $prefixTable = $this->table ?? ($this->subselectAlias !== null ? new TableIdentifier($this->subselectAlias) : null);
-        $columnsPart = $this->getColumns()->prepareSqlString($builder, $prefixTable);
+        $prefixTable  = $this->table
+            ?? ($this->subselectAlias !== null ? new TableIdentifier($this->subselectAlias) : null);
+        $columnsPart  = $this->getColumns()->prepareSqlString($builder, $prefixTable);
         $joinColsPart = $this->joins?->toColumnsSqlPart($builder) ?? '';
 
         if ($columnsPart === '' && $joinColsPart !== '') {

@@ -14,16 +14,9 @@ use function is_string;
 
 final readonly class JoinSpecification
 {
-    /**
-     * @param TableIdentifier|Select|ExpressionInterface $name
-     * @param PredicateInterface|string $on String ON expressions are deferred until render for performance
-     * @param array $columns
-     * @param JoinType $type
-     * @param string|null $alias
-     */
     public function __construct(
         public TableIdentifier|Select|ExpressionInterface $name,
-        public PredicateInterface|string $on,
+        public PredicateInterface $on,
         public array $columns,
         public JoinType $type,
         public ?string $alias = null,

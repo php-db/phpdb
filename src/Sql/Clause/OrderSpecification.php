@@ -7,9 +7,6 @@ namespace PhpDb\Sql\Clause;
 use PhpDb\Sql\ExpressionInterface;
 use PhpDb\Sql\PreparableSqlBuilder;
 
-use function str_contains;
-use function str_replace;
-
 final readonly class OrderSpecification
 {
     public function __construct(
@@ -44,11 +41,6 @@ final readonly class OrderSpecification
             return $this->column;
         }
 
-        $q      = $builder->q;
-        $quoted = str_contains($this->column, '.')
-            ? $q . str_replace('.', $q . '.' . $q, $this->column) . $q
-            : $q . $this->column . $q;
-
-        return $quoted . ' ' . $this->direction;
+        return PreparableSqlBuilder::quoteId($this->column, $builder->q) . ' ' . $this->direction;
     }
 }

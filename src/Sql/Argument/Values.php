@@ -19,14 +19,14 @@ use function array_values;
 final readonly class Values implements ArgumentInterface
 {
     /** @var list<null|string|int|float|bool> */
-    private array $values;
+    public array $value;
 
     /**
      * @param list<null|string|int|float|bool> $values
      */
     public function __construct(array $values)
     {
-        $this->values = array_values($values);
+        $this->value = array_values($values);
     }
 
     public function getType(): ArgumentType
@@ -39,13 +39,13 @@ final readonly class Values implements ArgumentInterface
      */
     public function getValue(): array
     {
-        return $this->values;
+        return $this->value;
     }
 
     public function toSql(PreparableSqlBuilder $builder): string
     {
-        return $this->values === []
+        return $this->value === []
             ? '(NULL)'
-            : '(' . $builder->bindValues($this->values) . ')';
+            : '(' . $builder->bindValues($this->value) . ')';
     }
 }

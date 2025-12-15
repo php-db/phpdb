@@ -121,9 +121,9 @@ class In extends AbstractExpression implements PredicateInterface
         // Fast path: Values (most common) already includes parentheses
         // ArgumentSelect needs wrapping
         $valueSetSql = ! $this->valueSet instanceof ArgumentSelect
-            ? $this->valueSet->toSql($builder)
-            : '(' . $this->valueSet->toSql($builder) . ')';
+            ? $builder->argumentToSql($this->valueSet)
+            : '(' . $builder->argumentToSql($this->valueSet) . ')';
 
-        return $this->identifier->toSql($builder) . ' ' . $this->operator . ' ' . $valueSetSql;
+        return $builder->argumentToSql($this->identifier) . ' ' . $this->operator . ' ' . $valueSetSql;
     }
 }
