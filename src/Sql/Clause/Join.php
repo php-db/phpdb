@@ -17,6 +17,7 @@ use PhpDb\Sql\TableIdentifier;
 
 use function array_shift;
 use function count;
+use function current;
 use function is_array;
 use function is_string;
 use function key;

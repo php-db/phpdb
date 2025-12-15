@@ -20,6 +20,7 @@ use PhpDb\Sql\Predicate\PredicateInterface;
 
 use function array_key_exists;
 use function count;
+use function current;
 use function gettype;
 use function is_array;
 use function is_numeric;
@@ -27,6 +28,8 @@ use function is_string;
 use function key;
 use function sprintf;
 use function strtolower;
+use function strtoupper;
+use function substr;
 
 /**
  * @property Where  $where
@@ -127,8 +130,10 @@ class Select extends AbstractPreparableSql
      */
     public function __construct(array|string|TableIdentifier|null $table = null)
     {
-        if ($table) {
-            $this->table = TableIdentifier::from($table, null, true);
+        if ($table !== null) {
+            $this->table = is_string($table)
+                ? new TableIdentifier($table, null, null, true)
+                : TableIdentifier::from($table, null, true);
         }
     }
 
@@ -162,9 +167,9 @@ class Select extends AbstractPreparableSql
 
         // Handle subselect passed directly
         if ($table instanceof self) {
-            $this->subselect = $table;
+            $this->subselect      = $table;
             $this->subselectAlias = null;
-            $this->table = null;
+            $this->table          = null;
             return $this;
         }
 
@@ -180,15 +185,15 @@ class Select extends AbstractPreparableSql
             $value = current($table);
 
             if ($value instanceof self) {
-                $this->subselect = $value;
+                $this->subselect      = $value;
                 $this->subselectAlias = $alias;
-                $this->table = null;
+                $this->table          = null;
                 return $this;
             }
         }
 
-        $this->table = TableIdentifier::from($table);
-        $this->subselect = null;
+        $this->table          = TableIdentifier::from($table);
+        $this->subselect      = null;
         $this->subselectAlias = null;
 
         return $this;
@@ -363,8 +368,8 @@ class Select extends AbstractPreparableSql
                     );
                 }
 
-                $this->table = null;
-                $this->subselect = null;
+                $this->table          = null;
+                $this->subselect      = null;
                 $this->subselectAlias = null;
                 break;
             case self::QUANTIFIER:
@@ -407,7 +412,7 @@ class Select extends AbstractPreparableSql
         $rawState = [
             self::TABLE      => $this->table,
             self::QUANTIFIER => $this->quantifier,
-            self::COLUMNS    => $this->columns?->columns ?? [SelectExpression::SQL_STAR],
+            self::COLUMNS    => $this->columns !== null ? $this->columns->columns : [SelectExpression::SQL_STAR],
             self::JOINS      => $this->joins,
             self::WHERE      => $this->where,
             self::ORDER      => $this->order,
@@ -448,8 +453,8 @@ class Select extends AbstractPreparableSql
         // Handle UNION/INTERSECT/EXCEPT (combine)
         if ($this->combine !== []) {
             /** @var Select $combineSelect */
-            $combineSelect = $this->combine['select'];
-            $combineType = strtoupper($this->combine['type']);
+            $combineSelect   = $this->combine['select'];
+            $combineType     = strtoupper($this->combine['type']);
             $combineModifier = $this->combine['modifier'] !== '' ? ' ' . strtoupper($this->combine['modifier']) : '';
 
             $sql = '( ' . $sql . ' ) ' . $combineType . $combineModifier
@@ -480,7 +485,7 @@ class Select extends AbstractPreparableSql
             $prefixTable = new TableIdentifier($this->subselectAlias);
         }
 
-        $columnsPart = $this->getColumns()->prepareSqlString($builder, $prefixTable);
+        $columnsPart     = $this->getColumns()->prepareSqlString($builder, $prefixTable);
         $joinColumnsPart = $this->joins?->toColumnsSqlPart($builder) ?? '';
 
         // If main columns are empty but join columns exist, remove leading comma from join columns
@@ -491,7 +496,7 @@ class Select extends AbstractPreparableSql
         // Handle FROM clause - either table or subselect
         $fromPart = '';
         if ($this->subselect !== null) {
-            $q = $builder->q;
+            $q        = $builder->q;
             $fromPart = ' FROM (' . $builder->processSubSelect($this->subselect) . ')';
             if ($this->subselectAlias !== null) {
                 $fromPart .= ' AS ' . $q . $this->subselectAlias . $q;

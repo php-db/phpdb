@@ -11,7 +11,6 @@ use PhpDb\Adapter\Driver\StatementInterface;
 use PhpDb\Adapter\ParameterContainer;
 use PhpDb\Adapter\StatementContainer;
 use PhpDb\Adapter\StatementContainerInterface;
-use PhpDb\Sql\Clause\SelectExpression;
 use PhpDb\Sql\Combine;
 use PhpDb\Sql\Predicate\Expression;
 use PhpDb\Sql\Select;

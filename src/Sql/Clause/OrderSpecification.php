@@ -44,7 +44,7 @@ final readonly class OrderSpecification
             return $this->column;
         }
 
-        $q = $builder->q;
+        $q      = $builder->q;
         $quoted = str_contains($this->column, '.')
             ? $q . str_replace('.', $q . '.' . $q, $this->column) . $q
             : $q . $this->column . $q;

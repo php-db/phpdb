@@ -9,11 +9,14 @@ use Override;
 use function addcslashes;
 use function array_map;
 use function implode;
+use function in_array;
 use function is_bool;
 use function is_float;
 use function is_int;
 use function preg_replace;
+use function preg_replace_callback;
 use function str_replace;
+use function strtolower;
 use function strtr;
 use function trigger_error;
 
@@ -21,6 +24,8 @@ abstract class AbstractPlatform implements PlatformInterface
 {
     /** @var string[] */
     protected $quoteIdentifier = ['"', '"'];
+
+    public string $q = '"';
 
     /** @var string */
     protected $quoteIdentifierTo = '\'';
@@ -50,10 +55,9 @@ abstract class AbstractPlatform implements PlatformInterface
             '/\b([a-z_]\w*)(\s*\()?/i',
             static function ($matches) use ($q) {
                 $word = $matches[1];
-                $hasParens = isset($matches[2]) && $matches[2] !== '';
 
                 // Don't quote if followed by '(' (function name)
-                if ($hasParens) {
+                if (isset($matches[2])) {
                     return $word . $matches[2];
                 }
 

@@ -27,13 +27,11 @@ use function vsprintf;
  */
 final class PreparableSqlBuilder
 {
-    /** Quote character for identifiers (e.g., ` or ") */
     public readonly string $q;
 
     private int $paramIndex     = 1;
     private int $subselectCount = 0;
 
-    /** Whether we're currently processing a subselect (affects LIMIT/OFFSET) */
     public bool $inSubselect = false;
 
     public function __construct(
@@ -238,8 +236,8 @@ final class PreparableSqlBuilder
         // Create a child builder WITHOUT driver/params to embed values directly
         $childBuilder = new self(
             $this->platform,
-            null,  // No driver = no parameterization
-            null,  // No params
+            null, // No driver = no parameterization
+            null, // No params
             $this->paramPrefix . 'sub' . $this->subselectCount . '_'
         );
 

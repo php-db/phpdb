@@ -19,7 +19,6 @@ use PhpDb\Sql\Clause\JoinType;
 use PhpDb\Sql\Clause\Limit;
 use PhpDb\Sql\Clause\Offset;
 use PhpDb\Sql\Clause\Order;
-use PhpDb\Sql\Clause\SelectExpression;
 use PhpDb\Sql\Clause\Where;
 use PhpDb\Sql\Exception\InvalidArgumentException;
 use PhpDb\Sql\Expression;
@@ -1446,7 +1445,7 @@ final class SelectTest extends TestCase
         $subSelect53->from('bar')->columns(['id'])->limit(10)->offset(9);
         $select53 = new Select();
         $select53->from('foo')->where(new In('bar_id', $subSelect53))->limit(11)->offset(12);
-        $params53        = ['limit' => 11, 'offset' => 12];
+        $params53 = ['limit' => 11, 'offset' => 12];
         // Columns without explicit alias don't get AS added
         $sqlPrep53       = 'SELECT "foo".* FROM "foo" WHERE "bar_id" IN (SELECT "bar"."id" FROM "bar" LIMIT 10 OFFSET 9) LIMIT :limit OFFSET :offset';
         $sqlStr53        = 'SELECT "foo".* FROM "foo" WHERE "bar_id" IN (SELECT "bar"."id" FROM "bar" LIMIT 10 OFFSET 9) LIMIT 11 OFFSET 12';
