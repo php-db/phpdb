@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace PhpDb\Sql\Clause;
 
+use PhpDb\Sql\ClauseInterface;
 use PhpDb\Sql\ExpressionInterface;
-use PhpDb\Sql\OrderItem;
 
 use function count;
 use function explode;
@@ -16,18 +16,18 @@ use function str_contains;
 use function strcasecmp;
 use function trim;
 
-final class OrderClause implements ClauseInterface
+final class Order implements ClauseInterface
 {
     public const ORDER_ASCENDING  = 'ASC';
     public const ORDER_DESCENDING = 'DESC';
 
-    /** @var OrderItem[] */
+    /** @var OrderSpecification[] */
     protected array $items = [];
 
     public function add(ExpressionInterface|array|string $order): static
     {
         if ($order instanceof ExpressionInterface) {
-            $this->items[] = OrderItem::fromExpression($order);
+            $this->items[] = OrderSpecification::fromExpression($order);
             return $this;
         }
 
@@ -37,7 +37,7 @@ final class OrderClause implements ClauseInterface
 
         foreach ($order as $k => $v) {
             if ($v instanceof ExpressionInterface) {
-                $this->items[] = OrderItem::fromExpression($v);
+                $this->items[] = OrderSpecification::fromExpression($v);
                 continue;
             }
 
@@ -54,7 +54,7 @@ final class OrderClause implements ClauseInterface
                 ? self::ORDER_DESCENDING
                 : self::ORDER_ASCENDING;
 
-            $this->items[] = OrderItem::create($k, $direction);
+            $this->items[] = OrderSpecification::create($k, $direction);
         }
 
         return $this;

@@ -11,18 +11,19 @@ use PhpDb\Adapter\Platform\Sql92;
 use PhpDb\Sql\Argument;
 use PhpDb\Sql\Argument\Identifier;
 use PhpDb\Sql\Argument\Value;
-use PhpDb\Sql\Columns;
+use PhpDb\Sql\Clause\Group as SqlGroup;
+use PhpDb\Sql\Clause\Having as Having;
+use PhpDb\Sql\Clause\Join as Join;
+use PhpDb\Sql\Clause\JoinSpecification;
+use PhpDb\Sql\Clause\JoinType;
+use PhpDb\Sql\Clause\Limit;
+use PhpDb\Sql\Clause\Offset;
+use PhpDb\Sql\Clause\Order as Order;
+use PhpDb\Sql\Clause\SelectExpression;
+use PhpDb\Sql\Clause\Where as Where;
 use PhpDb\Sql\Exception\InvalidArgumentException;
 use PhpDb\Sql\Expression;
 use PhpDb\Sql\ExpressionInterface;
-use PhpDb\Sql\Clause\GroupClause as SqlGroup;
-use PhpDb\Sql\Clause\HavingClause as Having;
-use PhpDb\Sql\Clause\JoinClause as Join;
-use PhpDb\Sql\Clause\JoinSpecification;
-use PhpDb\Sql\Clause\JoinType;
-use PhpDb\Sql\Limit;
-use PhpDb\Sql\Offset;
-use PhpDb\Sql\Clause\OrderClause as Order;
 use PhpDb\Sql\Predicate;
 use PhpDb\Sql\Predicate\In;
 use PhpDb\Sql\Predicate\IsNotNull;
@@ -30,7 +31,6 @@ use PhpDb\Sql\Predicate\Literal;
 use PhpDb\Sql\Predicate\Operator;
 use PhpDb\Sql\Select;
 use PhpDb\Sql\TableIdentifier;
-use PhpDb\Sql\Clause\WhereClause as Where;
 use PhpDbTest\AdapterTestTrait;
 use PhpDbTest\TestAsset\TrustingSql92Platform;
 use PHPUnit\Framework\Attributes\CoversMethod;
@@ -150,7 +150,7 @@ final class SelectTest extends TestCase
 
         // Verify the first mutation occurred
         $columns = $select->getRawState('columns');
-        self::assertInstanceOf(Columns::class, $columns);
+        self::assertInstanceOf(SelectExpression::class, $columns);
         self::assertEquals(['foo', 'bar'], $columns->columns);
 
         // Second mutation to verify mutability
@@ -659,7 +659,7 @@ final class SelectTest extends TestCase
         // columns
         $select->columns(['foo']);
         $columns = $select->getRawState(Select::COLUMNS);
-        self::assertInstanceOf(Columns::class, $columns);
+        self::assertInstanceOf(SelectExpression::class, $columns);
         self::assertEquals(['foo'], $columns->columns);
         $select->reset(Select::COLUMNS);
         self::assertNull($select->getRawState(Select::COLUMNS));

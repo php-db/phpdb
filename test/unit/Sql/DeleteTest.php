@@ -19,7 +19,7 @@ use PhpDb\Sql\Predicate\Literal;
 use PhpDb\Sql\Predicate\Operator;
 use PhpDb\Sql\Predicate\PredicateSet;
 use PhpDb\Sql\TableIdentifier;
-use PhpDb\Sql\Clause\WhereClause as Where;
+use PhpDb\Sql\Clause\Where as Where;
 use PhpDbTest\AdapterTestTrait;
 use PhpDbTest\DeprecatedAssertionsTrait;
 use PhpDbTest\TestAsset\DeleteIgnore;

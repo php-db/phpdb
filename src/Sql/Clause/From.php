@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace PhpDb\Sql\Clause;
 
+use PhpDb\Sql\ClauseInterface;
 use PhpDb\Sql\TableIdentifier;
 
 use function current;
 use function is_array;
 use function key;
 
-final class FromClause implements ClauseInterface
+final class From implements ClauseInterface
 {
     protected string|array|TableIdentifier $table;
     protected ?string $alias = null;

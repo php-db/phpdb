@@ -11,7 +11,7 @@ use PhpDb\Adapter\Platform\PlatformInterface;
 use PhpDb\Adapter\Platform\Sql92 as DefaultAdapterPlatform;
 use PhpDb\Sql\Argument\Select as SelectArgument;
 use PhpDb\Sql\Argument\Value;
-use PhpDb\Sql\Clause\JoinClause;
+use PhpDb\Sql\Clause\Join;
 use PhpDb\Sql\Platform\PlatformDecoratorInterface;
 
 use function count;
@@ -542,7 +542,7 @@ abstract class AbstractSql implements SqlInterface
      * Process JOIN clauses.
      */
     protected function processJoin(
-        ?JoinClause $joins,
+        ?Join $joins,
         PlatformInterface $platform,
         ?DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null

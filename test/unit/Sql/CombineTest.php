@@ -11,7 +11,7 @@ use PhpDb\Adapter\Driver\StatementInterface;
 use PhpDb\Adapter\ParameterContainer;
 use PhpDb\Adapter\StatementContainer;
 use PhpDb\Adapter\StatementContainerInterface;
-use PhpDb\Sql\Columns;
+use PhpDb\Sql\Clause\SelectExpression;
 use PhpDb\Sql\Combine;
 use PhpDb\Sql\Predicate\Expression;
 use PhpDb\Sql\Select;
@@ -154,7 +154,7 @@ final class CombineTest extends TestCase
 
         // Verify first select has NULL for missing c2
         $columns1 = $select1->getRawState('columns');
-        self::assertInstanceOf(Columns::class, $columns1);
+        self::assertInstanceOf(SelectExpression::class, $columns1);
         self::assertEquals(
             [
                 'c0' => 'c0',
@@ -166,7 +166,7 @@ final class CombineTest extends TestCase
 
         // Verify second select has NULL for missing c0
         $columns2 = $select2->getRawState('columns');
-        self::assertInstanceOf(Columns::class, $columns2);
+        self::assertInstanceOf(SelectExpression::class, $columns2);
         self::assertEquals(
             [
                 'c0' => new Expression('NULL'),

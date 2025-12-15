@@ -6,8 +6,8 @@ use Closure;
 use PhpDb\Adapter\AdapterInterface;
 use PhpDb\ResultSet\ResultSet;
 use PhpDb\ResultSet\ResultSetInterface;
-use PhpDb\Sql\Clause\JoinClause;
-use PhpDb\Sql\Clause\WhereClause;
+use PhpDb\Sql\Clause\Join;
+use PhpDb\Sql\Clause\Where;
 use PhpDb\Sql\Delete;
 use PhpDb\Sql\Insert;
 use PhpDb\Sql\Select;
@@ -163,7 +163,7 @@ abstract class AbstractTableGateway implements TableGatewayInterface
     /**
      * Select
      *
-     * @param WhereClause|Closure|string|array $where
+     * @param Where|Closure|string|array $where
      * @return ResultSetInterface
      */
     public function select($where = null)
@@ -327,7 +327,7 @@ abstract class AbstractTableGateway implements TableGatewayInterface
 
         if ($joins) {
             foreach ($joins as $join) {
-                $type = $join['type'] ?? JoinClause::JOIN_INNER;
+                $type = $join['type'] ?? Join::JOIN_INNER;
                 $update->join($join['name'], $join['on'], $type);
             }
         }
@@ -387,7 +387,7 @@ abstract class AbstractTableGateway implements TableGatewayInterface
     /**
      * Delete
      *
-     * @param WhereClause|Closure|string|array $where
+     * @param Where|Closure|string|array $where
      * @return int
      */
     public function delete($where)

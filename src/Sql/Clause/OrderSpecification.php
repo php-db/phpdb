@@ -2,12 +2,14 @@
 
 declare(strict_types=1);
 
-namespace PhpDb\Sql;
+namespace PhpDb\Sql\Clause;
+
+use PhpDb\Sql\ExpressionInterface;
 
 use function str_contains;
 use function str_replace;
 
-final readonly class OrderItem
+final readonly class OrderSpecification
 {
     public function __construct(
         public string $column,

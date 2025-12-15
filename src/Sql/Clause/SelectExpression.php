@@ -2,11 +2,15 @@
 
 declare(strict_types=1);
 
-namespace PhpDb\Sql;
+namespace PhpDb\Sql\Clause;
+
+use PhpDb\Sql\ExpressionInterface;
+use PhpDb\Sql\Select;
+use PhpDb\Sql\TableIdentifier;
 
 use function is_string;
 
-final readonly class Columns
+final readonly class SelectExpression
 {
     public const SQL_STAR = '*';
 

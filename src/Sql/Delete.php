@@ -8,20 +8,20 @@ use Closure;
 use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\ParameterContainer;
 use PhpDb\Adapter\Platform\PlatformInterface;
-use PhpDb\Sql\Clause\WhereClause;
+use PhpDb\Sql\Clause\Where;
 use PhpDb\Sql\Predicate\PredicateInterface;
 
 use function array_key_exists;
 use function strtolower;
 
 /**
- * @property WhereClause $where
+ * @property Where $where
  */
 class Delete extends AbstractPreparableSql
 {
     protected ?TableIdentifier $table = null;
 
-    protected ?WhereClause $where = null;
+    protected ?Where $where = null;
 
     protected bool $emptyWhereAllowed = false;
 
@@ -32,9 +32,9 @@ class Delete extends AbstractPreparableSql
         }
     }
 
-    private function getWhere(): WhereClause
+    private function getWhere(): Where
     {
-        return $this->where ??= new WhereClause();
+        return $this->where ??= new Where();
     }
 
     public function from(TableIdentifier|string|array $table): static
@@ -53,10 +53,10 @@ class Delete extends AbstractPreparableSql
     }
 
     public function where(
-        PredicateInterface|array|Closure|string|WhereClause $predicate,
+        PredicateInterface|array|Closure|string|Where $predicate,
         string $combination = Predicate\PredicateSet::OP_AND
     ): static {
-        if ($predicate instanceof WhereClause) {
+        if ($predicate instanceof Where) {
             $this->where = $predicate;
         } else {
             $this->getWhere()->addPredicates($predicate, $combination);
@@ -93,7 +93,7 @@ class Delete extends AbstractPreparableSql
              . ($this->where?->prepareSqlString($q, $platform) ?? '');
     }
 
-    public function __get(string $name): ?WhereClause
+    public function __get(string $name): ?Where
     {
         if (strtolower($name) === 'where') {
             return $this->getWhere();

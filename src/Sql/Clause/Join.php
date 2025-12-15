@@ -8,6 +8,7 @@ use Countable;
 use Iterator;
 use Override;
 use PhpDb\Adapter\Platform\PlatformInterface;
+use PhpDb\Sql\ClauseInterface;
 use PhpDb\Sql\Exception;
 use PhpDb\Sql\Predicate;
 use PhpDb\Sql\Select;
@@ -25,7 +26,7 @@ use function sprintf;
  *
  * @implements Iterator<int, JoinSpecification>
  */
-final class JoinClause implements Iterator, Countable, ClauseInterface
+final class Join implements Iterator, Countable, ClauseInterface
 {
     public const JOIN_INNER       = 'inner';
     public const JOIN_OUTER       = 'outer';

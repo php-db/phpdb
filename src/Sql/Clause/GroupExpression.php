@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace PhpDb\Sql;
+namespace PhpDb\Sql\Clause;
 
 use function str_contains;
 use function str_replace;
 
-final readonly class GroupColumn
+final readonly class GroupExpression
 {
     public function __construct(
         public string $column

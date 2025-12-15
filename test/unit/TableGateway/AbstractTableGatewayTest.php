@@ -11,7 +11,7 @@ use PhpDb\Adapter\Driver\StatementInterface;
 use PhpDb\ResultSet\ResultSet;
 use PhpDb\Sql\Delete;
 use PhpDb\Sql\Insert;
-use PhpDb\Sql\Clause\JoinClause as Join;
+use PhpDb\Sql\Clause\Join as Join;
 use PhpDb\Sql\Select;
 use PhpDb\Sql\Sql;
 use PhpDb\Sql\Update;

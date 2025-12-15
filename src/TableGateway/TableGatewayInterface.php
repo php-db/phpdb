@@ -4,7 +4,7 @@ namespace PhpDb\TableGateway;
 
 use Closure;
 use PhpDb\ResultSet\ResultSetInterface;
-use PhpDb\Sql\Clause\WhereClause;
+use PhpDb\Sql\Clause\Where;
 
 interface TableGatewayInterface
 {
@@ -12,7 +12,7 @@ interface TableGatewayInterface
     public function getTable();
 
     /**
-     * @param WhereClause|Closure|string|array $where
+     * @param Where|Closure|string|array $where
      * @return ResultSetInterface
      */
     public function select($where = null);
@@ -24,14 +24,14 @@ interface TableGatewayInterface
     public function insert($set);
 
     /**
-     * @param array<string, mixed> $set
-     * @param WhereClause|Closure|string|array $where
+     * @param array<string, mixed>       $set
+     * @param Where|Closure|string|array $where
      * @return int
      */
     public function update($set, $where = null);
 
     /**
-     * @param WhereClause|Closure|string|array $where
+     * @param Where|Closure|string|array $where
      * @return int
      */
     public function delete($where);

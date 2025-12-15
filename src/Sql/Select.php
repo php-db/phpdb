@@ -8,13 +8,14 @@ use Closure;
 use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\ParameterContainer;
 use PhpDb\Adapter\Platform\PlatformInterface;
-use PhpDb\Sql\Clause\GroupClause;
-use PhpDb\Sql\Clause\HavingClause;
-use PhpDb\Sql\Clause\JoinClause;
-use PhpDb\Sql\Clause\JoinSpecification;
-use PhpDb\Sql\Clause\JoinType;
-use PhpDb\Sql\Clause\OrderClause;
-use PhpDb\Sql\Clause\WhereClause;
+use PhpDb\Sql\Clause\Group;
+use PhpDb\Sql\Clause\Having;
+use PhpDb\Sql\Clause\Join;
+use PhpDb\Sql\Clause\Limit;
+use PhpDb\Sql\Clause\Offset;
+use PhpDb\Sql\Clause\Order;
+use PhpDb\Sql\Clause\SelectExpression;
+use PhpDb\Sql\Clause\Where;
 use PhpDb\Sql\Predicate\PredicateInterface;
 
 use function array_key_exists;
@@ -28,9 +29,9 @@ use function sprintf;
 use function strtolower;
 
 /**
- * @property WhereClause $where
- * @property HavingClause $having
- * @property JoinClause $joins
+ * @property Where  $where
+ * @property Having $having
+ * @property Join   $joins
  */
 class Select extends AbstractPreparableSql
 {
@@ -65,19 +66,19 @@ class Select extends AbstractPreparableSql
 
     public const QUANTIFIER_ALL = 'ALL';
 
-    public const JOIN_INNER = JoinClause::JOIN_INNER;
+    public const JOIN_INNER = Join::JOIN_INNER;
 
-    public const JOIN_OUTER = JoinClause::JOIN_OUTER;
+    public const JOIN_OUTER = Join::JOIN_OUTER;
 
-    public const JOIN_FULL_OUTER = JoinClause::JOIN_FULL_OUTER;
+    public const JOIN_FULL_OUTER = Join::JOIN_FULL_OUTER;
 
-    public const JOIN_LEFT = JoinClause::JOIN_LEFT;
+    public const JOIN_LEFT = Join::JOIN_LEFT;
 
-    public const JOIN_RIGHT = JoinClause::JOIN_RIGHT;
+    public const JOIN_RIGHT = Join::JOIN_RIGHT;
 
-    public const JOIN_RIGHT_OUTER = JoinClause::JOIN_RIGHT_OUTER;
+    public const JOIN_RIGHT_OUTER = Join::JOIN_RIGHT_OUTER;
 
-    public const JOIN_LEFT_OUTER = JoinClause::JOIN_LEFT_OUTER;
+    public const JOIN_LEFT_OUTER = Join::JOIN_LEFT_OUTER;
 
     public const SQL_STAR = '*';
 
@@ -97,17 +98,17 @@ class Select extends AbstractPreparableSql
 
     protected string|ExpressionInterface|null $quantifier = null;
 
-    protected ?Columns $columns = null;
+    protected ?SelectExpression $columns = null;
 
-    protected ?JoinClause $joins = null;
+    protected ?Join $joins = null;
 
-    protected ?WhereClause $where = null;
+    protected ?Where $where = null;
 
-    protected ?OrderClause $order = null;
+    protected ?Order $order = null;
 
-    protected ?GroupClause $group = null;
+    protected ?Group $group = null;
 
-    protected ?HavingClause $having = null;
+    protected ?Having $having = null;
 
     protected ?Limit $limit = null;
 
@@ -125,19 +126,19 @@ class Select extends AbstractPreparableSql
         }
     }
 
-    private function getWhere(): WhereClause
+    private function getWhere(): Where
     {
-        return $this->where ??= new WhereClause();
+        return $this->where ??= new Where();
     }
 
-    private function getJoins(): JoinClause
+    private function getJoins(): Join
     {
-        return $this->joins ??= new JoinClause();
+        return $this->joins ??= new Join();
     }
 
-    private function getHaving(): HavingClause
+    private function getHaving(): Having
     {
-        return $this->having ??= new HavingClause();
+        return $this->having ??= new Having();
     }
 
     /**
@@ -186,14 +187,14 @@ class Select extends AbstractPreparableSql
      */
     public function columns(array $columns, bool $prefixColumnsWithTable = true): static
     {
-        $this->columns = new Columns($columns, $prefixColumnsWithTable);
+        $this->columns = new SelectExpression($columns, $prefixColumnsWithTable);
 
         return $this;
     }
 
-    private function getColumns(): Columns
+    private function getColumns(): SelectExpression
     {
-        return $this->columns ??= new Columns();
+        return $this->columns ??= new SelectExpression();
     }
 
     /**
@@ -223,7 +224,7 @@ class Select extends AbstractPreparableSql
         PredicateInterface|array|string|Closure $predicate,
         string $combination = Predicate\PredicateSet::OP_AND
     ): self {
-        if ($predicate instanceof WhereClause) {
+        if ($predicate instanceof Where) {
             $this->where = $predicate;
         } else {
             $this->getWhere()->addPredicates($predicate, $combination);
@@ -234,7 +235,7 @@ class Select extends AbstractPreparableSql
 
     public function group(mixed $group): static
     {
-        ($this->group ??= new GroupClause())->add($group);
+        ($this->group ??= new Group())->add($group);
 
         return $this;
     }
@@ -245,10 +246,10 @@ class Select extends AbstractPreparableSql
      * @param string $combination One of the OP_* constants from Predicate\PredicateSet
      */
     public function having(
-        HavingClause|PredicateInterface|array|Closure|string $predicate,
+        Having|PredicateInterface|array|Closure|string $predicate,
         string $combination = Predicate\PredicateSet::OP_AND
     ): static {
-        if ($predicate instanceof HavingClause) {
+        if ($predicate instanceof Having) {
             $this->having = $predicate;
         } else {
             $this->getHaving()->addPredicates($predicate, $combination);
@@ -259,7 +260,7 @@ class Select extends AbstractPreparableSql
 
     public function order(ExpressionInterface|array|string $order): static
     {
-        ($this->order ??= new OrderClause())->add($order);
+        ($this->order ??= new Order())->add($order);
 
         return $this;
     }
@@ -456,7 +457,7 @@ class Select extends AbstractPreparableSql
      *
      * @throws Exception\InvalidArgumentException
      */
-    public function __get(string $name): WhereClause|JoinClause|HavingClause
+    public function __get(string $name): Where|Join|Having
     {
         return match (strtolower($name)) {
             'where' => $this->getWhere(),

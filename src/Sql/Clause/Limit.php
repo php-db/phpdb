@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace PhpDb\Sql;
+namespace PhpDb\Sql\Clause;
 
 final readonly class Limit
 {

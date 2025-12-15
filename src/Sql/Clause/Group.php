@@ -4,24 +4,24 @@ declare(strict_types=1);
 
 namespace PhpDb\Sql\Clause;
 
-use PhpDb\Sql\GroupColumn;
+use PhpDb\Sql\ClauseInterface;
 
 use function count;
 use function is_array;
 
-final class GroupClause implements ClauseInterface
+final class Group implements ClauseInterface
 {
-    /** @var GroupColumn[] */
+    /** @var GroupExpression[] */
     protected array $items = [];
 
     public function add(string|array $column): static
     {
         if (is_array($column)) {
             foreach ($column as $c) {
-                $this->items[] = new GroupColumn($c);
+                $this->items[] = new GroupExpression($c);
             }
         } else {
-            $this->items[] = new GroupColumn($column);
+            $this->items[] = new GroupExpression($column);
         }
         return $this;
     }

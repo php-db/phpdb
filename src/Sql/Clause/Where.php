@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace PhpDb\Sql\Clause;
 
+use PhpDb\Sql\ClauseInterface;
 use PhpDb\Sql\Predicate\Predicate;
 
-class WhereClause extends Predicate implements ClauseInterface
+class Where extends Predicate implements ClauseInterface
 {
     protected string $prefix = 'WHERE';
 

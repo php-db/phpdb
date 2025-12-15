@@ -8,6 +8,7 @@ use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\Driver\PdoDriverInterface;
 use PhpDb\Adapter\ParameterContainer;
 use PhpDb\Adapter\Platform\PlatformInterface;
+use PhpDb\Sql\Clause\Values;
 
 use function array_key_exists;
 use function implode;

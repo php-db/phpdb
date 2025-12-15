@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace PhpDbTest\Sql;
 
-use PhpDb\Sql\Clause\JoinClause as Join;
+use PhpDb\Sql\Clause\Join as Join;
 use PhpDb\Sql\Clause\JoinSpecification;
 use PhpDb\Sql\Clause\JoinType;
 use PhpDb\Sql\Predicate;

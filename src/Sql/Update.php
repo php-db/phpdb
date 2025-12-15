@@ -9,8 +9,9 @@ use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\Driver\PdoDriverInterface;
 use PhpDb\Adapter\ParameterContainer;
 use PhpDb\Adapter\Platform\PlatformInterface;
-use PhpDb\Sql\Clause\JoinClause;
-use PhpDb\Sql\Clause\WhereClause;
+use PhpDb\Sql\Clause\Join;
+use PhpDb\Sql\Clause\Set;
+use PhpDb\Sql\Clause\Where;
 use PhpDb\Sql\Predicate\PredicateInterface;
 
 use function array_key_exists;
@@ -19,7 +20,7 @@ use function is_scalar;
 use function strtolower;
 
 /**
- * @property WhereClause $where
+ * @property Where $where
  */
 class Update extends AbstractPreparableSql
 {
@@ -31,9 +32,9 @@ class Update extends AbstractPreparableSql
 
     protected ?Set $set = null;
 
-    protected ?WhereClause $where = null;
+    protected ?Where $where = null;
 
-    protected ?JoinClause $joins = null;
+    protected ?Join $joins = null;
 
     protected bool $emptyWhereAllowed = false;
 
@@ -49,14 +50,14 @@ class Update extends AbstractPreparableSql
         return $this->set ??= new Set();
     }
 
-    private function getWhere(): WhereClause
+    private function getWhere(): Where
     {
-        return $this->where ??= new WhereClause();
+        return $this->where ??= new Where();
     }
 
-    private function getJoins(): JoinClause
+    private function getJoins(): Join
     {
-        return $this->joins ??= new JoinClause();
+        return $this->joins ??= new Join();
     }
 
     public function table(TableIdentifier|string|array $table): static
@@ -72,10 +73,10 @@ class Update extends AbstractPreparableSql
     }
 
     public function where(
-        PredicateInterface|array|Closure|string|WhereClause $predicate,
+        PredicateInterface|array|Closure|string|Where $predicate,
         string $combination = Predicate\PredicateSet::OP_AND
     ): static {
-        if ($predicate instanceof WhereClause) {
+        if ($predicate instanceof Where) {
             $this->where = $predicate;
         } else {
             $this->getWhere()->addPredicates($predicate, $combination);
@@ -84,7 +85,7 @@ class Update extends AbstractPreparableSql
         return $this;
     }
 
-    public function join(array|string|TableIdentifier $name, string $on, string $type = JoinClause::JOIN_INNER): static
+    public function join(array|string|TableIdentifier $name, string $on, string $type = Join::JOIN_INNER): static
     {
         $this->getJoins()->join($name, $on, [], $type);
 
@@ -174,7 +175,7 @@ class Update extends AbstractPreparableSql
         return ' SET ' . implode(', ', $setSql);
     }
 
-    public function __get(string $name): ?WhereClause
+    public function __get(string $name): ?Where
     {
         if (strtolower($name) === 'where') {
             return $this->getWhere();
