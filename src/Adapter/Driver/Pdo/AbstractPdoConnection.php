@@ -78,7 +78,6 @@ abstract class AbstractPdoConnection extends AbstractConnection implements
         return $this->dsn;
     }
 
-    /** @inheritDoc */
     public function setResource(PDO $resource): PdoConnectionInterface
     {
         $this->resource   = $resource;
@@ -87,14 +86,14 @@ abstract class AbstractPdoConnection extends AbstractConnection implements
         return $this;
     }
 
-    /** @inheritDoc */
+    /** {@inheritDoc} */
     #[Override]
     public function isConnected(): bool
     {
         return $this->resource instanceof PDO;
     }
 
-    /** @inheritDoc */
+    /** {@inheritDoc} */
     #[Override]
     public function beginTransaction(): ConnectionInterface
     {
@@ -112,7 +111,7 @@ abstract class AbstractPdoConnection extends AbstractConnection implements
         return $this;
     }
 
-    /** @inheritDoc */
+    /** {@inheritDoc} */
     #[Override]
     public function commit(): ConnectionInterface
     {
@@ -137,7 +136,7 @@ abstract class AbstractPdoConnection extends AbstractConnection implements
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      * @throws Exception\RuntimeException
      */
     #[Override]
@@ -160,7 +159,7 @@ abstract class AbstractPdoConnection extends AbstractConnection implements
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      * @throws Exception\InvalidQueryException
      */
     #[Override]
@@ -170,15 +169,11 @@ abstract class AbstractPdoConnection extends AbstractConnection implements
             $this->connect();
         }
 
-        if ($this->profiler) {
-            $this->profiler->profilerStart($sql);
-        }
+        $this->profiler?->profilerStart($sql);
 
         $resultResource = $this->resource->query($sql);
 
-        if ($this->profiler) {
-            $this->profiler->profilerFinish();
-        }
+        $this->profiler?->profilerFinish();
 
         if ($resultResource === false) {
             $errorInfo = $this->resource->errorInfo();
