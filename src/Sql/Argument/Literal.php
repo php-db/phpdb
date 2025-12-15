@@ -6,6 +6,7 @@ namespace PhpDb\Sql\Argument;
 
 use PhpDb\Sql\ArgumentInterface;
 use PhpDb\Sql\ArgumentType;
+use PhpDb\Sql\PreparableSqlBuilder;
 
 /**
  * Represents a raw SQL literal expression.
@@ -30,7 +31,7 @@ final readonly class Literal implements ArgumentInterface
         return $this->literal;
     }
 
-    public function getSpecification(): string
+    public function toSql(PreparableSqlBuilder $builder): string
     {
         return $this->literal;
     }

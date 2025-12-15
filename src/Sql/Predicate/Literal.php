@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace PhpDb\Sql\Predicate;
 
 use Override;
-use PhpDb\Adapter\Platform\PlatformInterface;
 use PhpDb\Sql\Literal as BaseLiteral;
+use PhpDb\Sql\PreparableSqlBuilder;
 
 final class Literal extends BaseLiteral implements PredicateInterface
 {
@@ -14,7 +14,7 @@ final class Literal extends BaseLiteral implements PredicateInterface
 
     /** @inheritDoc */
     #[Override]
-    public function prepareSqlString(string $q, PlatformInterface $platform): string
+    public function prepareSqlString(PreparableSqlBuilder $builder): string
     {
         return $this->literal;
     }

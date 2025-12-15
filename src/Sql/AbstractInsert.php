@@ -5,13 +5,11 @@ declare(strict_types=1);
 namespace PhpDb\Sql;
 
 use PhpDb\Adapter\Driver\DriverInterface;
-use PhpDb\Adapter\Driver\PdoDriverInterface;
 use PhpDb\Adapter\ParameterContainer;
 use PhpDb\Adapter\Platform\PlatformInterface;
 use PhpDb\Sql\Clause\Values;
 
 use function array_key_exists;
-use function implode;
 use function is_scalar;
 
 abstract class AbstractInsert extends AbstractPreparableSql
@@ -96,21 +94,19 @@ abstract class AbstractInsert extends AbstractPreparableSql
         ?DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null
     ): string {
-        $this->localizeVariables();
+        $builder  = new PreparableSqlBuilder($platform, $driver, $parameterContainer, 'c_');
+        $tableSql = $this->table?->prepareSqlString($builder) ?? '';
 
-        $q        = $platform->getQuoteIdentifierSymbol();
-        $tableSql = $this->table?->prepareSqlString($q) ?? '';
-
-        if ($this->select !== null) {
-            return $this->buildInsertSelectSql($tableSql, $q, $platform, $driver, $parameterContainer);
+        if ($this->select === null) {
+            return $this->buildInsertValuesSql($tableSql, $builder, $platform, $driver, $parameterContainer);
         }
 
-        return $this->buildInsertValuesSql($tableSql, $q, $platform, $driver, $parameterContainer);
+        return $this->buildInsertSelectSql($tableSql, $builder, $platform, $driver, $parameterContainer);
     }
 
     protected function buildInsertValuesSql(
         string $tableSql,
-        string $q,
+        PreparableSqlBuilder $builder,
         PlatformInterface $platform,
         ?DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null
@@ -121,36 +117,31 @@ abstract class AbstractInsert extends AbstractPreparableSql
             throw new Exception\InvalidArgumentException('values or select should be present');
         }
 
-        $columns     = [];
-        $valueParts  = [];
-        $i           = 0;
-        $isPdoDriver = $driver instanceof PdoDriverInterface;
+        $columns    = '';
+        $valueParts = '';
+        $first      = true;
 
         foreach ($valuesObj as $column => $value) {
-            $columns[] = $q . $column . $q;
-
-            if (is_scalar($value) && $parameterContainer !== null && $driver !== null) {
-                $paramName    = $isPdoDriver ? 'c_' . $i++ : $column;
-                $valueParts[] = $driver->formatParameterName($paramName);
-                $parameterContainer->offsetSet($paramName, $value);
-            } else {
-                $valueParts[] = $this->resolveColumnValue(
-                    $value,
-                    $platform,
-                    $driver,
-                    $parameterContainer
-                );
+            if (! $first) {
+                $columns    .= ', ';
+                $valueParts .= ', ';
             }
+            $first = false;
+
+            $columns .= $builder->q . $column . $builder->q;
+
+            $valueParts .= is_scalar($value) && $builder->isParameterized()
+                ? $builder->bindValue($value)
+                : $this->resolveColumnValue($value, $platform, $driver, $parameterContainer);
         }
 
         return $this->getInsertKeyword() . ' INTO ' . $tableSql
-             . ' (' . implode(', ', $columns) . ')'
-             . ' VALUES (' . implode(', ', $valueParts) . ')';
+             . ' (' . $columns . ') VALUES (' . $valueParts . ')';
     }
 
     protected function buildInsertSelectSql(
         string $tableSql,
-        string $q,
+        PreparableSqlBuilder $builder,
         PlatformInterface $platform,
         ?DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null
@@ -160,11 +151,16 @@ abstract class AbstractInsert extends AbstractPreparableSql
         $columnsPart = '';
         $valuesObj   = $this->values;
         if ($valuesObj !== null && $valuesObj->count() > 0) {
-            $columns = [];
+            $columns = '';
+            $first   = true;
             foreach ($valuesObj->getColumns() as $col) {
-                $columns[] = $q . $col . $q;
+                if (! $first) {
+                    $columns .= ', ';
+                }
+                $first    = false;
+                $columns .= $builder->q . $col . $builder->q;
             }
-            $columnsPart = ' (' . implode(', ', $columns) . ')';
+            $columnsPart = ' (' . $columns . ')';
         }
 
         return $this->getInsertKeyword() . ' INTO ' . $tableSql . $columnsPart . ' ' . $selectSql;

@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace PhpDb\Sql\Clause;
 
-final readonly class Limit
+use PhpDb\Sql\PreparableSqlBuilder;
+use PhpDb\Sql\PreparableSqlInterface;
+
+final readonly class Limit implements PreparableSqlInterface
 {
     public int $value;
 
@@ -16,7 +19,7 @@ final readonly class Limit
     /**
      * Returns SQL part with embedded value.
      */
-    public function prepareSqlString(): string
+    public function prepareSqlString(PreparableSqlBuilder $builder): string
     {
         return ' LIMIT ' . $this->value;
     }

@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace PhpDbTest\TestAsset;
 
-use PhpDb\Adapter\Driver\DriverInterface;
-use PhpDb\Adapter\ParameterContainer;
-use PhpDb\Adapter\Platform\PlatformInterface;
 use PhpDb\Sql\Update;
 
 /**

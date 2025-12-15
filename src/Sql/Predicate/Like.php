@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace PhpDb\Sql\Predicate;
 
 use Override;
-use PhpDb\Adapter\Platform\PlatformInterface;
 use PhpDb\Sql\AbstractExpression;
 use PhpDb\Sql\Argument\Identifier;
 use PhpDb\Sql\Argument\Value;
 use PhpDb\Sql\ArgumentInterface;
 use PhpDb\Sql\Exception\InvalidArgumentException;
+use PhpDb\Sql\PreparableSqlBuilder;
 
 class Like extends AbstractExpression implements PredicateInterface
 {
@@ -84,18 +84,15 @@ class Like extends AbstractExpression implements PredicateInterface
             throw new InvalidArgumentException('Like expression must be specified');
         }
 
-        $identifierSpec = $this->identifier->getSpecification();
-        $likeSpec       = $this->like->getSpecification();
-
         return [
-            'spec'   => $this->specification ?? "{$identifierSpec} {$this->operator} {$likeSpec}",
+            'spec'   => $this->specification ?? "%s {$this->operator} %s",
             'values' => [$this->identifier, $this->like],
         ];
     }
 
     /** @inheritDoc */
     #[Override]
-    public function prepareSqlString(string $q, PlatformInterface $platform): string
+    public function prepareSqlString(PreparableSqlBuilder $builder): string
     {
         if (! $this->identifier instanceof ArgumentInterface) {
             throw new InvalidArgumentException('Identifier must be specified');
@@ -105,14 +102,6 @@ class Like extends AbstractExpression implements PredicateInterface
             throw new InvalidArgumentException('Like expression must be specified');
         }
 
-        $identifierSql = $this->identifier instanceof Identifier
-            ? $this->identifier->toSql($q)
-            : $this->identifier->getSpecification();
-
-        $likeSql = $this->like instanceof Value
-            ? $platform->quoteTrustedValue($this->like->getValue())
-            : $this->like->getSpecification();
-
-        return "{$identifierSql} {$this->operator} {$likeSql}";
+        return $this->identifier->toSql($builder) . ' ' . $this->operator . ' ' . $this->like->toSql($builder);
     }
 }

@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace PhpDb\Sql\Clause;
 
 use PhpDb\Sql\ExpressionInterface;
+use PhpDb\Sql\PreparableSqlBuilder;
+use PhpDb\Sql\PreparableSqlInterface;
 use PhpDb\Sql\Select;
 use PhpDb\Sql\TableIdentifier;
 
 use function is_string;
 
-final readonly class SelectExpression
+final readonly class SelectExpression implements PreparableSqlInterface
 {
     public const SQL_STAR = '*';
 
@@ -22,18 +24,12 @@ final readonly class SelectExpression
 
     /**
      * Build columns SQL part with quoted identifiers.
-     *
-     * @param string $q Quote character (empty string = no quoting)
-     * @param TableIdentifier|null $table The table for prefixing columns
-     * @param callable|null $expressionProcessor Callback to process ExpressionInterface/Select objects
      */
-    public function prepareSqlString(
-        string $q,
-        ?TableIdentifier $table,
-        ?callable $expressionProcessor = null
-    ): string {
+    public function prepareSqlString(PreparableSqlBuilder $builder, ?TableIdentifier $table = null): string
+    {
+        $q      = $builder->q;
         $prefix = $this->prefixWithTable && $table !== null
-            ? $q . $table->getRef() . $q . '.'
+            ? $q . $table->getReference() . $q . '.'
             : '';
 
         $result = '';
@@ -45,27 +41,26 @@ final readonly class SelectExpression
             }
             $first = false;
 
-            // Handle star separately - no alias support
-            if ($column === self::SQL_STAR) {
-                $result .= $prefix . $column;
-                continue;
-            }
-
-            // Resolve column to SQL string
-            if ($column instanceof ExpressionInterface) {
-                $columnSql = $expressionProcessor
-                ? $expressionProcessor($column)
-                : $column->getExpressionData()['spec'];
+            if (is_string($column)) {
+                if ($column !== self::SQL_STAR) {
+                    $columnSql = $prefix . $q . $column . $q;
+                    $result   .= is_string($alias)
+                        ? $columnSql . ' AS ' . $q . $alias . $q
+                        : $columnSql;
+                } else {
+                    $result .= $prefix . '*';
+                }
+            } elseif ($column instanceof ExpressionInterface) {
+                $columnSql = $builder->processExpression($column);
+                $result   .= is_string($alias)
+                    ? $columnSql . ' AS ' . $q . $alias . $q
+                    : $columnSql;
             } elseif ($column instanceof Select) {
-                $columnSql = '(' . ($expressionProcessor ? $expressionProcessor($column) : '') . ')';
-            } else {
-                $columnSql = $prefix . $q . $column . $q;
+                $columnSql = '(' . $builder->processSubSelect($column) . ')';
+                $result   .= is_string($alias)
+                    ? $columnSql . ' AS ' . $q . $alias . $q
+                    : $columnSql;
             }
-
-            // Apply alias once
-            $result .= is_string($alias)
-                ? $columnSql . ' AS ' . $q . $alias . $q
-                : $columnSql;
         }
 
         return $result;

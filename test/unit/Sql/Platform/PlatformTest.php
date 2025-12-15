@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PhpDbTest\Sql\Platform;
 
+use InvalidArgumentException;
 use PhpDb\Adapter\Adapter;
 use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\StatementContainer;
@@ -69,7 +70,7 @@ class PlatformTest extends TestCase
     {
         $platform = match ($platformName) {
             'sql92' => new TestAsset\TrustingSql92Platform(),
-            default => throw new \InvalidArgumentException("Unknown platform: $platformName"),
+            default => throw new InvalidArgumentException("Unknown platform: $platformName"),
         };
 
         /** @var DriverInterface|MockObject $mockDriver */

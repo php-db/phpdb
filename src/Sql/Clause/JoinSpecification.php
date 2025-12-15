@@ -6,6 +6,7 @@ namespace PhpDb\Sql\Clause;
 
 use PhpDb\Sql\ExpressionInterface;
 use PhpDb\Sql\Predicate\PredicateInterface;
+use PhpDb\Sql\PreparableSqlBuilder;
 use PhpDb\Sql\Select;
 use PhpDb\Sql\TableIdentifier;
 
@@ -23,27 +24,28 @@ final readonly class JoinSpecification
 
     /**
      * Build columns SQL for this join's SELECT clause.
-     *
-     * @param string $q Quote character (empty string = no quoting)
      */
-    public function toColumnsSql(string $q, ?callable $expressionProcessor = null): string
+    public function toColumnsSql(PreparableSqlBuilder $builder): string
     {
-        $prefix = $q . $this->name->getRef() . $q . '.';
+        $q      = $builder->q;
+        $prefix = $q . $this->name->getReference() . $q . '.';
         $result = '';
 
         foreach ($this->columns as $alias => $column) {
-            if ($column === Select::SQL_STAR) {
-                $result .= ', ' . $prefix . '*';
+            if (is_string($column)) {
+                if ($column !== Select::SQL_STAR) {
+                    $result .= is_string($alias)
+                        ? ', ' . $prefix . $q . $column . $q . ' AS ' . $q . $alias . $q
+                        : ', ' . $prefix . $q . $column . $q . ' AS ' . $q . $column . $q;
+                } else {
+                    $result .= ', ' . $prefix . '*';
+                }
             } elseif ($column instanceof ExpressionInterface) {
-                $col     = $expressionProcessor ? $expressionProcessor($column) : $column->getExpressionData()['spec'];
-                $result .= is_string($alias) ? ', ' . $col . ' AS ' . $q . $alias . $q : ", $col";
+                $col     = $builder->processExpression($column);
+                $result .= is_string($alias) ? ', ' . $col . ' AS ' . $q . $alias . $q : ', ' . $col;
             } elseif ($column instanceof Select) {
-                $col     = $expressionProcessor ? $expressionProcessor($column) : '';
-                $result .= is_string($alias) ? ', (' . $col . ') AS ' . $q . $alias . $q : ", ($col)";
-            } elseif (is_string($alias)) {
-                $result .= ', ' . $prefix . $q . $column . $q . ' AS ' . $q . $alias . $q;
-            } else {
-                $result .= ', ' . $prefix . $q . $column . $q . ' AS ' . $q . $column . $q;
+                $col     = $builder->processSubSelect($column);
+                $result .= is_string($alias) ? ', (' . $col . ') AS ' . $q . $alias . $q : ', (' . $col . ')';
             }
         }
 

@@ -8,6 +8,7 @@ use Countable;
 use Iterator;
 use IteratorAggregate;
 use Laminas\Stdlib\PriorityList;
+use PhpDb\Sql\Exception;
 
 use function count;
 use function is_numeric;

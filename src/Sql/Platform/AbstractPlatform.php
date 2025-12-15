@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace PhpDb\Sql\Platform;
 
-use PhpDb\Adapter\AdapterInterface;
+use Override;
 use PhpDb\Adapter\Platform\PlatformInterface;
-use PhpDb\Adapter\StatementContainerInterface;
 use PhpDb\Sql\Exception;
+use PhpDb\Sql\PreparableSqlBuilder;
 use PhpDb\Sql\PreparableSqlInterface;
 use PhpDb\Sql\SqlInterface;
 
@@ -54,23 +54,22 @@ class AbstractPlatform implements PlatformDecoratorInterface, PreparableSqlInter
         return $this->decorators;
     }
 
-    /**
-     * @throws Exception\RuntimeException
-     */
-    public function prepareStatement(
-        AdapterInterface $adapter,
-        StatementContainerInterface $statementContainer
-    ): StatementContainerInterface {
+    /** @inheritDoc */
+    #[Override]
+    public function prepareSqlString(PreparableSqlBuilder $builder): string
+    {
         if (! $this->subject instanceof PreparableSqlInterface) {
             throw new Exception\RuntimeException(
                 'The subject does not appear to implement PhpDb\Sql\PreparableSqlInterface, thus calling '
-                . 'prepareStatement() has no effect'
+                . 'prepareSqlString() has no effect'
             );
         }
 
-        $this->getTypeDecorator($this->subject)->prepareStatement($adapter, $statementContainer);
+        $decorator = $this->getTypeDecorator($this->subject);
 
-        return $statementContainer;
+        return $decorator instanceof PreparableSqlInterface
+            ? $decorator->prepareSqlString($builder)
+            : $this->subject->prepareSqlString($builder);
     }
 
     /**
@@ -83,7 +82,7 @@ class AbstractPlatform implements PlatformDecoratorInterface, PreparableSqlInter
         if (! $this->subject instanceof SqlInterface) {
             throw new Exception\RuntimeException(
                 'The subject does not appear to implement PhpDb\Sql\SqlInterface, thus calling '
-                . 'prepareStatement() has no effect'
+                . 'getSqlString() has no effect'
             );
         }
 

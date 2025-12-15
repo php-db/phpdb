@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace PhpDb\Sql\Predicate;
 
 use Override;
-use PhpDb\Adapter\Platform\PlatformInterface;
 use PhpDb\Sql\AbstractExpression;
 use PhpDb\Sql\Argument\Identifier;
 use PhpDb\Sql\Argument\Select;
@@ -13,6 +12,7 @@ use PhpDb\Sql\Argument\Value;
 use PhpDb\Sql\ArgumentInterface;
 use PhpDb\Sql\Exception\InvalidArgumentException;
 use PhpDb\Sql\ExpressionInterface;
+use PhpDb\Sql\PreparableSqlBuilder;
 use PhpDb\Sql\SqlInterface;
 
 final class Operator extends AbstractExpression implements PredicateInterface
@@ -153,18 +153,15 @@ final class Operator extends AbstractExpression implements PredicateInterface
             throw new InvalidArgumentException('Right expression must be specified');
         }
 
-        $leftSpec  = $this->left->getSpecification();
-        $rightSpec = $this->right->getSpecification();
-
         return [
-            'spec'   => $this->specification ?? "{$leftSpec} {$this->operator} {$rightSpec}",
+            'spec'   => $this->specification ?? "%s {$this->operator} %s",
             'values' => [$this->left, $this->right],
         ];
     }
 
     /** @inheritDoc */
     #[Override]
-    public function prepareSqlString(string $q, PlatformInterface $platform): string
+    public function prepareSqlString(PreparableSqlBuilder $builder): string
     {
         if (! $this->left instanceof ArgumentInterface) {
             throw new InvalidArgumentException('Left expression must be specified');
@@ -174,18 +171,6 @@ final class Operator extends AbstractExpression implements PredicateInterface
             throw new InvalidArgumentException('Right expression must be specified');
         }
 
-        $leftSql = $this->left instanceof Value
-            ? $platform->quoteTrustedValue($this->left->getValue())
-            : ($this->left instanceof Identifier
-                ? $this->left->toSql($q)
-                : $this->left->getSpecification());
-
-        $rightSql = $this->right instanceof Value
-            ? $platform->quoteTrustedValue($this->right->getValue())
-            : ($this->right instanceof Identifier
-                ? $this->right->toSql($q)
-                : $this->right->getSpecification());
-
-        return "{$leftSql} {$this->operator} {$rightSql}";
+        return $this->left->toSql($builder) . ' ' . $this->operator . ' ' . $this->right->toSql($builder);
     }
 }

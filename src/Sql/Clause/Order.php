@@ -6,6 +6,7 @@ namespace PhpDb\Sql\Clause;
 
 use PhpDb\Sql\ClauseInterface;
 use PhpDb\Sql\ExpressionInterface;
+use PhpDb\Sql\PreparableSqlBuilder;
 
 use function count;
 use function explode;
@@ -83,10 +84,8 @@ final class Order implements ClauseInterface
 
     /**
      * Build ORDER BY clause.
-     *
-     * @param string $q Quote character (empty string = no quoting)
      */
-    public function prepareSqlString(string $q): string
+    public function prepareSqlString(PreparableSqlBuilder $builder): string
     {
         if ($this->items === []) {
             return '';
@@ -98,7 +97,7 @@ final class Order implements ClauseInterface
             if (! $first) {
                 $sql .= ', ';
             }
-            $sql  .= $item->toSql($q);
+            $sql  .= $item->toSql($builder->q);
             $first = false;
         }
 

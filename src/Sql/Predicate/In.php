@@ -5,16 +5,14 @@ declare(strict_types=1);
 namespace PhpDb\Sql\Predicate;
 
 use Override;
-use PhpDb\Adapter\Platform\PlatformInterface;
 use PhpDb\Sql\AbstractExpression;
 use PhpDb\Sql\Argument\Identifier;
 use PhpDb\Sql\Argument\Select as ArgumentSelect;
 use PhpDb\Sql\Argument\Values;
 use PhpDb\Sql\ArgumentInterface;
 use PhpDb\Sql\Exception\InvalidArgumentException;
+use PhpDb\Sql\PreparableSqlBuilder;
 use PhpDb\Sql\Select;
-
-use function implode;
 
 class In extends AbstractExpression implements PredicateInterface
 {
@@ -102,18 +100,15 @@ class In extends AbstractExpression implements PredicateInterface
             throw new InvalidArgumentException('Value set must be provided for IN predicate');
         }
 
-        $identifierSpec = $this->identifier->getSpecification();
-        $valueSetSpec   = $this->valueSet->getSpecification();
-
         return [
-            'spec'   => $this->specification ?? "{$identifierSpec} {$this->operator} {$valueSetSpec}",
+            'spec'   => $this->specification ?? "%s {$this->operator} %s",
             'values' => [$this->identifier, $this->valueSet],
         ];
     }
 
     /** @inheritDoc */
     #[Override]
-    public function prepareSqlString(string $q, PlatformInterface $platform): string
+    public function prepareSqlString(PreparableSqlBuilder $builder): string
     {
         if (! $this->identifier instanceof ArgumentInterface) {
             throw new InvalidArgumentException('Identifier must be specified');
@@ -123,22 +118,10 @@ class In extends AbstractExpression implements PredicateInterface
             throw new InvalidArgumentException('Value set must be provided for IN predicate');
         }
 
-        $identifierSql = $this->identifier instanceof Identifier
-            ? $this->identifier->toSql($q)
-            : $this->identifier->getSpecification();
+        $valueSetSql = $this->valueSet instanceof ArgumentSelect
+            ? '(' . $this->valueSet->toSql($builder) . ')'
+            : $this->valueSet->toSql($builder);
 
-        if ($this->valueSet instanceof Values) {
-            $quoted = [];
-            foreach ($this->valueSet->getValue() as $v) {
-                $quoted[] = $platform->quoteTrustedValue($v);
-            }
-            $valueSetSql = '(' . implode(', ', $quoted) . ')';
-        } elseif ($this->valueSet instanceof ArgumentSelect) {
-            $valueSetSql = '(' . $this->valueSet->getValue()->getSqlString($platform) . ')';
-        } else {
-            $valueSetSql = $this->valueSet->getSpecification();
-        }
-
-        return "{$identifierSql} {$this->operator} {$valueSetSql}";
+        return $this->identifier->toSql($builder) . ' ' . $this->operator . ' ' . $valueSetSql;
     }
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace PhpDb\Sql\Clause;
 
 use PhpDb\Sql\ClauseInterface;
+use PhpDb\Sql\PreparableSqlBuilder;
 
 use function count;
 use function is_array;
@@ -47,10 +48,8 @@ final class Group implements ClauseInterface
 
     /**
      * Build GROUP BY clause.
-     *
-     * @param string $q Quote character (empty string = no quoting)
      */
-    public function prepareSqlString(string $q): string
+    public function prepareSqlString(PreparableSqlBuilder $builder): string
     {
         if ($this->items === []) {
             return '';
@@ -62,7 +61,7 @@ final class Group implements ClauseInterface
             if (! $first) {
                 $sql .= ', ';
             }
-            $sql  .= $item->toSql($q);
+            $sql  .= $item->toSql($builder->q);
             $first = false;
         }
 

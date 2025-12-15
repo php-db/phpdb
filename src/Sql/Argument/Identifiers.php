@@ -6,7 +6,7 @@ namespace PhpDb\Sql\Argument;
 
 use PhpDb\Sql\ArgumentInterface;
 use PhpDb\Sql\ArgumentType;
-use PhpDb\Sql\PreparableSqlInterface;
+use PhpDb\Sql\PreparableSqlBuilder;
 
 use function array_values;
 use function str_contains;
@@ -44,31 +44,25 @@ final readonly class Identifiers implements ArgumentInterface
         return $this->identifiers;
     }
 
-    public function getSpecification(): string
+    public function toSql(PreparableSqlBuilder $builder): string
     {
         if ($this->identifiers === []) {
             return '(NULL)';
         }
 
+        $q      = $builder->q;
         $result = '(';
         $first  = true;
+
         foreach ($this->identifiers as $id) {
             if (! $first) {
                 $result .= ', ';
             }
             $first = false;
 
-            if (! str_contains($id, '.')) {
-                $result .= PreparableSqlInterface::P_LQUOTE . $id . PreparableSqlInterface::P_RQUOTE;
-            } else {
-                $result .= PreparableSqlInterface::P_LQUOTE
-                    . str_replace(
-                        '.',
-                        PreparableSqlInterface::P_RQUOTE . '.' . PreparableSqlInterface::P_LQUOTE,
-                        $id
-                    )
-                    . PreparableSqlInterface::P_RQUOTE;
-            }
+            $result .= str_contains($id, '.')
+                ? $q . str_replace('.', $q . '.' . $q, $id) . $q
+                : $q . $id . $q;
         }
 
         return $result . ')';

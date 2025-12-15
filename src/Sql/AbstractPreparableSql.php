@@ -29,4 +29,15 @@ abstract class AbstractPreparableSql extends AbstractSql implements PreparableSq
 
         return $statementContainer;
     }
+
+    /** @inheritDoc */
+    #[Override]
+    public function prepareSqlString(PreparableSqlBuilder $builder): string
+    {
+        return $this->buildSqlString(
+            $builder->getPlatform(),
+            $builder->getDriver(),
+            $builder->getParameterContainer()
+        );
+    }
 }

@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace PhpDb\Sql\Predicate;
 
 use Override;
-use PhpDb\Adapter\Platform\PlatformInterface;
 use PhpDb\Sql\AbstractExpression;
 use PhpDb\Sql\Argument\Identifier;
 use PhpDb\Sql\ArgumentInterface;
 use PhpDb\Sql\Exception\InvalidArgumentException;
+use PhpDb\Sql\PreparableSqlBuilder;
 
 class IsNull extends AbstractExpression implements PredicateInterface
 {
@@ -57,26 +57,20 @@ class IsNull extends AbstractExpression implements PredicateInterface
             throw new InvalidArgumentException('Identifier must be specified');
         }
 
-        $identifierSpec = $this->identifier->getSpecification();
-
         return [
-            'spec'   => $this->specification ?? "{$identifierSpec} {$this->operator}",
+            'spec'   => $this->specification ?? "%s {$this->operator}",
             'values' => [$this->identifier],
         ];
     }
 
     /** @inheritDoc */
     #[Override]
-    public function prepareSqlString(string $q, PlatformInterface $platform): string
+    public function prepareSqlString(PreparableSqlBuilder $builder): string
     {
         if (! $this->identifier instanceof ArgumentInterface) {
             throw new InvalidArgumentException('Identifier must be specified');
         }
 
-        $identifierSql = $this->identifier instanceof Identifier
-            ? $this->identifier->toSql($q)
-            : $this->identifier->getSpecification();
-
-        return $identifierSql . ' ' . $this->operator;
+        return $this->identifier->toSql($builder) . ' ' . $this->operator;
     }
 }

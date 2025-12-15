@@ -125,12 +125,12 @@ class Update extends AbstractPreparableSql
             );
         }
 
-        $q = $platform->getQuoteIdentifierSymbol();
+        $builder = new PreparableSqlBuilder($platform, $driver, $parameterContainer);
 
-        return 'UPDATE ' . ($this->table?->prepareSqlString($q) ?? '')
-             . ($this->joins?->prepareSqlString($q, $platform) ?? '')
+        return 'UPDATE ' . ($this->table?->prepareSqlString($builder) ?? '')
+             . ($this->joins?->prepareSqlString($builder) ?? '')
              . $this->buildSetPart($platform, $driver, $parameterContainer)
-             . ($this->where?->prepareSqlString($q, $platform) ?? '');
+             . ($this->where?->prepareSqlString($builder) ?? '');
     }
 
     protected function buildSetPart(

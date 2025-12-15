@@ -7,10 +7,10 @@ namespace PhpDb\Sql\Clause;
 use Countable;
 use Iterator;
 use Override;
-use PhpDb\Adapter\Platform\PlatformInterface;
 use PhpDb\Sql\ClauseInterface;
 use PhpDb\Sql\Exception;
 use PhpDb\Sql\Predicate;
+use PhpDb\Sql\PreparableSqlBuilder;
 use PhpDb\Sql\Select;
 use PhpDb\Sql\TableIdentifier;
 
@@ -130,11 +130,8 @@ final class Join implements Iterator, Countable, ClauseInterface
 
     /**
      * Build SQL part string with quoted identifiers.
-     *
-     * @param string $q Quote character (empty string = no quoting)
-     * @param PlatformInterface $platform Platform for value quoting in predicates
      */
-    public function prepareSqlString(string $q, PlatformInterface $platform): string
+    public function prepareSqlString(PreparableSqlBuilder $builder): string
     {
         if ($this->joins === []) {
             return '';
@@ -142,8 +139,8 @@ final class Join implements Iterator, Countable, ClauseInterface
 
         $sql = '';
         foreach ($this->joins as $join) {
-            $sql .= ' ' . $join->type->value . ' JOIN ' . $join->name->prepareSqlString($q)
-                  . ' ON ' . $join->on->prepareSqlString($q, $platform);
+            $sql .= ' ' . $join->type->value . ' JOIN ' . $join->name->prepareSqlString($builder)
+                  . ' ON ' . $join->on->prepareSqlString($builder);
         }
 
         return $sql;
@@ -151,14 +148,12 @@ final class Join implements Iterator, Countable, ClauseInterface
 
     /**
      * Build columns SQL for SELECT clause from all joins.
-     *
-     * @param string $q Quote character (empty string = no quoting)
      */
-    public function toColumnsSqlPart(string $q, ?callable $expressionProcessor = null): string
+    public function toColumnsSqlPart(PreparableSqlBuilder $builder): string
     {
         $result = '';
         foreach ($this->joins as $join) {
-            $result .= $join->toColumnsSql($q, $expressionProcessor);
+            $result .= $join->toColumnsSql($builder);
         }
         return $result;
     }

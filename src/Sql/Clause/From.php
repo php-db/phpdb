@@ -5,71 +5,41 @@ declare(strict_types=1);
 namespace PhpDb\Sql\Clause;
 
 use PhpDb\Sql\ClauseInterface;
+use PhpDb\Sql\PreparableSqlBuilder;
 use PhpDb\Sql\TableIdentifier;
-
-use function current;
-use function is_array;
-use function key;
 
 final class From implements ClauseInterface
 {
-    protected string|array|TableIdentifier $table;
-    protected ?string $alias = null;
+    protected TableIdentifier $table;
 
     public function __construct(string|array|TableIdentifier $table)
     {
-        if (is_array($table)) {
-            $this->alias = (string) key($table);
-            $this->table = (string) current($table);
-        } else {
-            $this->table = $table;
-        }
+        $this->table = TableIdentifier::from($table);
     }
 
-    public function getTable(): string|TableIdentifier
+    public function getTable(): TableIdentifier
     {
         return $this->table;
     }
 
     public function getAlias(): ?string
     {
-        return $this->alias;
+        return $this->table->getAlias();
     }
 
     /**
      * Get the table reference name (alias if set, otherwise table name)
      */
-    public function getTableRef(): string
+    public function getTableReference(): string
     {
-        if ($this->alias !== null) {
-            return $this->alias;
-        }
-
-        if ($this->table instanceof TableIdentifier) {
-            return $this->table->getTable();
-        }
-
-        return $this->table;
+        return $this->table->getReference();
     }
 
     /**
-     * Build FROM clause with marker-based identifiers
+     * Build FROM clause.
      */
-    public function prepareSqlString(): string
+    public function prepareSqlString(PreparableSqlBuilder $builder): string
     {
-        if ($this->table instanceof TableIdentifier) {
-            [$tableName, $schema] = $this->table->getTableAndSchema();
-            $sql                  = $schema
-                ? ' FROM {"' . $schema . '"}.{"' . $tableName . '"}'
-                : ' FROM {"' . $tableName . '"}';
-        } else {
-            $sql = ' FROM {"' . $this->table . '"}';
-        }
-
-        if ($this->alias !== null) {
-            $sql .= ' AS {"' . $this->alias . '"}';
-        }
-
-        return $sql;
+        return $this->table->toFromSqlPart($builder);
     }
 }

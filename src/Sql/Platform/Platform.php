@@ -4,14 +4,17 @@ declare(strict_types=1);
 
 namespace PhpDb\Sql\Platform;
 
+use Override;
 use PhpDb\Adapter\AdapterInterface;
 use PhpDb\Adapter\Platform\PlatformInterface;
 use PhpDb\Adapter\StatementContainerInterface;
 use PhpDb\Sql\Exception;
+use PhpDb\Sql\PreparableSqlBuilder;
 use PhpDb\Sql\PreparableSqlInterface;
 use PhpDb\Sql\SqlInterface;
 
 use function is_a;
+use function method_exists;
 use function str_replace;
 use function strtolower;
 
@@ -86,9 +89,26 @@ class Platform extends AbstractPlatform
         return $this->decorators[$platformName];
     }
 
+    /** @inheritDoc */
+    #[Override]
+    public function prepareSqlString(PreparableSqlBuilder $builder): string
+    {
+        if (! $this->subject instanceof PreparableSqlInterface) {
+            throw new Exception\RuntimeException(
+                'The subject does not appear to implement PhpDb\Sql\PreparableSqlInterface, thus calling '
+                . 'prepareSqlString() has no effect'
+            );
+        }
+
+        $decorator = $this->getTypeDecorator($this->subject, $builder->getPlatform());
+
+        return $decorator instanceof PreparableSqlInterface
+            ? $decorator->prepareSqlString($builder)
+            : $this->subject->prepareSqlString($builder);
+    }
+
     /**
-     * {@inheritDoc}
-     *
+     * @deprecated Use prepareSqlString() with a PreparableSqlBuilder instead.
      * @throws Exception\RuntimeException
      */
     public function prepareStatement(
@@ -102,7 +122,12 @@ class Platform extends AbstractPlatform
             );
         }
 
-        $this->getTypeDecorator($this->subject, $adapter)->prepareStatement($adapter, $statementContainer);
+        $decorator = $this->getTypeDecorator($this->subject, $adapter);
+        if (method_exists($decorator, 'prepareStatement')) {
+            $decorator->prepareStatement($adapter, $statementContainer);
+        } elseif (method_exists($this->subject, 'prepareStatement')) {
+            $this->subject->prepareStatement($adapter, $statementContainer);
+        }
 
         return $statementContainer;
     }

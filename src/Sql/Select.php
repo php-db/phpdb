@@ -406,50 +406,34 @@ class Select extends AbstractPreparableSql
         ?DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null
     ): string {
-        $q = $platform->getQuoteIdentifierSymbol();
+        $builder = new PreparableSqlBuilder($platform, $driver, $parameterContainer);
 
-        return $this->buildSelectPart($q, $platform, $driver, $parameterContainer)
-            . ($this->joins?->prepareSqlString($q, $platform) ?? '')
-            . ($this->where?->prepareSqlString($q, $platform) ?? '')
-            . ($this->group?->prepareSqlString($q) ?? '')
-            . ($this->having?->prepareSqlString($q, $platform) ?? '')
-            . ($this->order?->prepareSqlString($q) ?? '')
-            . ($this->limit?->prepareSqlString() ?? '')
-            . ($this->offset?->prepareSqlString() ?? '');
+        return $this->buildSelectPart($builder)
+            . ($this->joins?->prepareSqlString($builder) ?? '')
+            . ($this->where?->prepareSqlString($builder) ?? '')
+            . ($this->group?->prepareSqlString($builder) ?? '')
+            . ($this->having?->prepareSqlString($builder) ?? '')
+            . ($this->order?->prepareSqlString($builder) ?? '')
+            . ($this->limit?->prepareSqlString($builder) ?? '')
+            . ($this->offset?->prepareSqlString($builder) ?? '');
     }
 
     /**
      * Build the SELECT ... FROM part of the query - optimized for speed
      */
-    protected function buildSelectPart(
-        string $q,
-        PlatformInterface $platform,
-        ?DriverInterface $driver,
-        ?ParameterContainer $parameterContainer
-    ): string {
+    protected function buildSelectPart(PreparableSqlBuilder $builder): string
+    {
         $quantifierPart = '';
         if ($this->quantifier !== null) {
             $quantifierPart = $this->quantifier instanceof ExpressionInterface
-                ? $this->processExpression(
-                    $this->quantifier,
-                    $platform,
-                    $driver,
-                    $parameterContainer,
-                    'quantifier'
-                ) . ' '
+                ? $builder->processExpression($this->quantifier) . ' '
                 : $this->quantifier . ' ';
         }
 
-        $fromPart = $this->table?->toFromSqlPart($q) ?? '';
-
-        $expressionProcessor = fn(ExpressionInterface|Select $expr) => $expr instanceof Select
-            ? $this->processSubSelect($expr, $platform, $driver, $parameterContainer)
-            : $this->processExpression($expr, $platform, $driver, $parameterContainer);
-
         return 'SELECT ' . $quantifierPart
-            . $this->getColumns()->prepareSqlString($q, $this->table, $expressionProcessor)
-            . ($this->joins?->toColumnsSqlPart($q, $expressionProcessor) ?? '')
-            . $fromPart;
+            . $this->getColumns()->prepareSqlString($builder, $this->table)
+            . ($this->joins?->toColumnsSqlPart($builder) ?? '')
+            . ($this->table?->toFromSqlPart($builder) ?? '');
     }
 
     /**

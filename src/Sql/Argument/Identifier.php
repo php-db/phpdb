@@ -6,6 +6,7 @@ namespace PhpDb\Sql\Argument;
 
 use PhpDb\Sql\ArgumentInterface;
 use PhpDb\Sql\ArgumentType;
+use PhpDb\Sql\PreparableSqlBuilder;
 
 use function str_contains;
 use function str_replace;
@@ -32,21 +33,10 @@ final readonly class Identifier implements ArgumentInterface
         return $this->identifier;
     }
 
-    /**
-     * Get raw identifier (no quoting).
-     */
-    public function getSpecification(): string
+    public function toSql(PreparableSqlBuilder $builder): string
     {
-        return $this->identifier;
-    }
+        $q = $builder->q;
 
-    /**
-     * Get the quoted identifier SQL.
-     *
-     * @param string $q Quote character (empty string = no quoting)
-     */
-    public function toSql(string $q): string
-    {
         if (! str_contains($this->identifier, '.')) {
             return $q . $this->identifier . $q;
         }

@@ -14,7 +14,7 @@ final class Sql
 {
     protected AdapterInterface $adapter;
 
-    protected TableIdentifier|string|array|null $table;
+    protected ?TableIdentifier $table;
 
     protected Platform\Platform $sqlPlatform;
 
@@ -23,7 +23,7 @@ final class Sql
         array|string|TableIdentifier|null $table = null
     ) {
         $this->adapter     = $adapter;
-        $this->table       = $table;
+        $this->table       = $table !== null ? TableIdentifier::from($table) : null;
         $this->sqlPlatform = new Platform\Platform($adapter->getPlatform());
     }
 
@@ -39,12 +39,12 @@ final class Sql
 
     public function setTable(array|string|TableIdentifier $table): self
     {
-        $this->table = $table;
+        $this->table = TableIdentifier::from($table);
 
         return $this;
     }
 
-    public function getTable(): array|string|TableIdentifier|null
+    public function getTable(): ?TableIdentifier
     {
         return $this->table;
     }
@@ -59,11 +59,11 @@ final class Sql
         if ($this->table !== null && $table !== null) {
             throw new Exception\InvalidArgumentException(sprintf(
                 'This Sql object is intended to work with only the table "%s" provided at construction time.',
-                $this->table
+                $this->table->getTable()
             ));
         }
 
-        return new Select($table ?: $this->table);
+        return new Select($table ?? $this->table);
     }
 
     public function insert(string|null|TableIdentifier $table = null): Insert
@@ -71,11 +71,11 @@ final class Sql
         if ($this->table !== null && $table !== null) {
             throw new Exception\InvalidArgumentException(sprintf(
                 'This Sql object is intended to work with only the table "%s" provided at construction time.',
-                $this->table
+                $this->table->getTable()
             ));
         }
 
-        return new Insert($table ?: $this->table);
+        return new Insert($table ?? $this->table);
     }
 
     public function update(null|string|TableIdentifier $table = null): Update
@@ -83,11 +83,11 @@ final class Sql
         if ($this->table !== null && $table !== null) {
             throw new Exception\InvalidArgumentException(sprintf(
                 'This Sql object is intended to work with only the table "%s" provided at construction time.',
-                $this->table
+                $this->table->getTable()
             ));
         }
 
-        return new Update($table ?: $this->table);
+        return new Update($table ?? $this->table);
     }
 
     public function delete(null|string|TableIdentifier $table = null): Delete
@@ -95,11 +95,11 @@ final class Sql
         if ($this->table !== null && $table !== null) {
             throw new Exception\InvalidArgumentException(sprintf(
                 'This Sql object is intended to work with only the table "%s" provided at construction time.',
-                $this->table
+                $this->table->getTable()
             ));
         }
 
-        return new Delete($table ?: $this->table);
+        return new Delete($table ?? $this->table);
     }
 
     public function prepareStatementForSqlObject(

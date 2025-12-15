@@ -162,14 +162,14 @@ abstract class AbstractSql implements SqlInterface
         }
 
         if ($parameterContainer === null || $driver === null) {
-            if (! str_contains($sql, PreparableSqlInterface::P_SELECT)) {
+            if (! str_contains($sql, '{SQL}')) {
                 return $this->quoteValuesDirect($sql, $values, $platform);
             }
 
             return $this->quoteWithSubSelects($sql, $values, $platform, null, null, $paramPrefix);
         }
 
-        if (! str_contains($sql, PreparableSqlInterface::P_SELECT)) {
+        if (! str_contains($sql, '{SQL}')) {
             return $this->quoteWithParameters($sql, $values, $driver, $parameterContainer, $paramPrefix);
         }
 
@@ -200,9 +200,9 @@ abstract class AbstractSql implements SqlInterface
         foreach ($values as $value) {
             $paramName = $fullPrefix . $paramIndex++;
             $parameterContainer->offsetSet($paramName, $value);
-            $pos = strpos($sql, PreparableSqlInterface::P_VALUE);
+            $pos = strpos($sql, '%s');
             if ($pos !== false) {
-                $sql = substr_replace($sql, $driver->formatParameterName($paramName), $pos, 3); // 3 = strlen('{?}')
+                $sql = substr_replace($sql, $driver->formatParameterName($paramName), $pos, 2);
             }
         }
 
@@ -233,7 +233,7 @@ abstract class AbstractSql implements SqlInterface
                     $parameterContainer,
                     $fullPrefix . 'sub' . $paramIndex
                 );
-                $pos    = strpos($sql, PreparableSqlInterface::P_SELECT);
+                $pos    = strpos($sql, '{SQL}');
                 if ($pos !== false) {
                     $sql = substr_replace($sql, $subSql, $pos, 5);
                 }
@@ -241,14 +241,14 @@ abstract class AbstractSql implements SqlInterface
             } elseif ($hasPrepare) {
                 $paramName = $fullPrefix . $paramIndex++;
                 $parameterContainer->offsetSet($paramName, $value);
-                $pos = strpos($sql, PreparableSqlInterface::P_VALUE);
+                $pos = strpos($sql, '%s');
                 if ($pos !== false) {
-                    $sql = substr_replace($sql, $driver->formatParameterName($paramName), $pos, 3); // 3 = strlen('{?}')
+                    $sql = substr_replace($sql, $driver->formatParameterName($paramName), $pos, 2);
                 }
             } else {
-                $pos = strpos($sql, PreparableSqlInterface::P_VALUE);
+                $pos = strpos($sql, '%s');
                 if ($pos !== false) {
-                    $sql = substr_replace($sql, $this->quoteValueForSql($value, $platform), $pos, 3);
+                    $sql = substr_replace($sql, $this->quoteValueForSql($value, $platform), $pos, 2);
                 }
             }
         }
@@ -345,9 +345,9 @@ abstract class AbstractSql implements SqlInterface
         $expressionParamIndex                                  = &$this->instanceParameterIndex[$namedParameterPrefix];
 
         if (
-            str_contains($specification, PreparableSqlInterface::P_LQUOTE)
-            || str_contains($specification, PreparableSqlInterface::P_VALUE)
-            || str_contains($specification, PreparableSqlInterface::P_SELECT)
+            str_contains($specification, '{"')
+            || str_contains($specification, '%s')
+            || str_contains($specification, '{SQL}')
         ) {
             return $this->processExpressionWithMarkers(
                 $specification,
@@ -405,10 +405,8 @@ abstract class AbstractSql implements SqlInterface
         string $namedParameterPrefix,
         int &$expressionParamIndex
     ): string {
-        $sql = strtr($specification, [
-            PreparableSqlInterface::P_LQUOTE => $platform->getQuoteIdentifierSymbol(),
-            PreparableSqlInterface::P_RQUOTE => $platform->getQuoteIdentifierSymbol(),
-        ]);
+        $q   = $platform->getQuoteIdentifierSymbol();
+        $sql = strtr($specification, ['{"' => $q, '"}' => $q]);
 
         $scalarValues = [];
         $hasSubSelect = false;
@@ -429,27 +427,16 @@ abstract class AbstractSql implements SqlInterface
             return $sql;
         }
 
-        // Fast path: no subselects - use position-based replacement
         if (! $hasSubSelect) {
             foreach ($scalarValues as $value) {
-                $pos = strpos($sql, PreparableSqlInterface::P_VALUE);
+                $pos = strpos($sql, '%s');
                 if ($pos !== false) {
                     if ($parameterContainer !== null && $driver !== null) {
                         $paramName = $namedParameterPrefix . $expressionParamIndex++;
                         $parameterContainer->offsetSet($paramName, $value);
-                        $sql = substr_replace(
-                            $sql,
-                            $driver->formatParameterName($paramName),
-                            $pos,
-                            3
-                        ); // 3 = strlen('{?}')
+                        $sql = substr_replace($sql, $driver->formatParameterName($paramName), $pos, 2);
                     } else {
-                        $sql = substr_replace(
-                            $sql,
-                            $this->quoteValueForSql($value, $platform),
-                            $pos,
-                            3
-                        ); // 3 = strlen('{?}')
+                        $sql = substr_replace($sql, $this->quoteValueForSql($value, $platform), $pos, 2);
                     }
                 }
             }
@@ -457,7 +444,6 @@ abstract class AbstractSql implements SqlInterface
             return $sql;
         }
 
-        // Slow path: has subselects - need position-aware replacement
         foreach ($scalarValues as $value) {
             if ($value instanceof SelectArgument) {
                 $subSql = $this->processSubSelectForAssembly(
@@ -467,22 +453,22 @@ abstract class AbstractSql implements SqlInterface
                     $parameterContainer,
                     $namedParameterPrefix . 'sub' . $expressionParamIndex
                 );
-                $pos    = strpos($sql, PreparableSqlInterface::P_SELECT);
+                $pos = strpos($sql, '{SQL}');
                 if ($pos !== false) {
-                    $sql = substr_replace($sql, $subSql, $pos, 5); // 5 = strlen('{SQL}')
+                    $sql = substr_replace($sql, $subSql, $pos, 5);
                 }
                 $expressionParamIndex++;
             } elseif ($parameterContainer !== null && $driver !== null) {
                 $paramName = $namedParameterPrefix . $expressionParamIndex++;
                 $parameterContainer->offsetSet($paramName, $value);
-                $pos = strpos($sql, PreparableSqlInterface::P_VALUE);
+                $pos = strpos($sql, '%s');
                 if ($pos !== false) {
-                    $sql = substr_replace($sql, $driver->formatParameterName($paramName), $pos, 3); // 3 = strlen('{?}')
+                    $sql = substr_replace($sql, $driver->formatParameterName($paramName), $pos, 2);
                 }
             } else {
-                $pos = strpos($sql, PreparableSqlInterface::P_VALUE);
+                $pos = strpos($sql, '%s');
                 if ($pos !== false) {
-                    $sql = substr_replace($sql, $this->quoteValueForSql($value, $platform), $pos, 3);
+                    $sql = substr_replace($sql, $this->quoteValueForSql($value, $platform), $pos, 2);
                 }
             }
         }
@@ -565,8 +551,8 @@ abstract class AbstractSql implements SqlInterface
 
             $joinSpecArgArray[$j] = [$join->type->value, $this->renderTable($joinName, $joinAs)];
 
-            $q                      = $platform->getQuoteIdentifierSymbol();
-            $sql                    = $join->on->prepareSqlString($q, $platform);
+            $builder                = new PreparableSqlBuilder($platform, $driver, $parameterContainer);
+            $sql                    = $join->on->prepareSqlString($builder);
             $joinSpecArgArray[$j][] = $this->quoteSqlString(
                 $sql,
                 [],

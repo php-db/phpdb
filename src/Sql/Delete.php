@@ -87,10 +87,10 @@ class Delete extends AbstractPreparableSql
             );
         }
 
-        $q = $platform->getQuoteIdentifierSymbol();
+        $builder = new PreparableSqlBuilder($platform, $driver, $parameterContainer);
 
-        return 'DELETE FROM ' . ($this->table?->prepareSqlString($q) ?? '')
-             . ($this->where?->prepareSqlString($q, $platform) ?? '');
+        return 'DELETE FROM ' . ($this->table?->prepareSqlString($builder) ?? '')
+             . ($this->where?->prepareSqlString($builder) ?? '');
     }
 
     public function __get(string $name): ?Where

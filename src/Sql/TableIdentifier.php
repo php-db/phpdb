@@ -25,7 +25,7 @@ use const E_USER_DEPRECATED;
  *   TableIdentifier::from('public.users')       // Schema.table (parsed)
  *   new TableIdentifier('users', 'public', 'u') // Full constructor
  */
-final readonly class TableIdentifier
+final readonly class TableIdentifier implements PreparableSqlInterface
 {
     /**
      * Create a TableIdentifier from various input formats.
@@ -96,7 +96,7 @@ final readonly class TableIdentifier
      * Get the reference name for this table (alias if set, otherwise table name).
      * Used for column prefixing like "users.id" or "u.id".
      */
-    public function getRef(): string
+    public function getReference(): string
     {
         return $this->alias ?? $this->table;
     }
@@ -172,11 +172,10 @@ final readonly class TableIdentifier
 
     /**
      * Generate the SQL part with quoted identifiers.
-     *
-     * @param string $q Quote character (empty string = no quoting)
      */
-    public function prepareSqlString(string $q): string
+    public function prepareSqlString(PreparableSqlBuilder $builder): string
     {
+        $q   = $builder->q;
         $sql = $this->schema !== null
             ? $q . $this->schema . $q . '.' . $q . $this->table . $q
             : $q . $this->table . $q;
@@ -191,8 +190,8 @@ final readonly class TableIdentifier
     /**
      * Generate SQL for FROM clause (includes " FROM " prefix).
      */
-    public function toFromSqlPart(string $q): string
+    public function toFromSqlPart(PreparableSqlBuilder $builder): string
     {
-        return ' FROM ' . $this->prepareSqlString($q);
+        return ' FROM ' . $this->prepareSqlString($builder);
     }
 }

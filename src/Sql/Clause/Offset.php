@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace PhpDb\Sql\Clause;
 
-final readonly class Offset
+use PhpDb\Sql\PreparableSqlBuilder;
+use PhpDb\Sql\PreparableSqlInterface;
+
+final readonly class Offset implements PreparableSqlInterface
 {
     public int $value;
 
@@ -16,7 +19,7 @@ final readonly class Offset
     /**
      * Returns SQL part with embedded value.
      */
-    public function prepareSqlString(): string
+    public function prepareSqlString(PreparableSqlBuilder $builder): string
     {
         return ' OFFSET ' . $this->value;
     }

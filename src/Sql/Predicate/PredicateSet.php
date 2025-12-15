@@ -7,11 +7,11 @@ namespace PhpDb\Sql\Predicate;
 use Closure;
 use Countable;
 use Override;
-use PhpDb\Adapter\Platform\PlatformInterface;
 use PhpDb\Sql\AbstractExpression;
 use PhpDb\Sql\Exception;
 use PhpDb\Sql\Expression;
 use PhpDb\Sql\Predicate\Expression as PredicateExpression;
+use PhpDb\Sql\PreparableSqlBuilder;
 use ReturnTypeWillChange;
 
 use function count;
@@ -219,7 +219,7 @@ class PredicateSet extends AbstractExpression implements PredicateInterface, Cou
 
     /** @inheritDoc */
     #[Override]
-    public function prepareSqlString(string $q, PlatformInterface $platform): string
+    public function prepareSqlString(PreparableSqlBuilder $builder): string
     {
         if ($this->predicates === []) {
             return '';
@@ -229,7 +229,7 @@ class PredicateSet extends AbstractExpression implements PredicateInterface, Cou
         $first  = true;
 
         foreach ($this->predicates as $predicate) {
-            $sql = $predicate->prepareSqlString($q, $platform);
+            $sql = $predicate->prepareSqlString($builder);
 
             if ($predicate instanceof self && $predicate->count() > 1) {
                 $sql = '(' . $sql . ')';
