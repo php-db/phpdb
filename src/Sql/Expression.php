@@ -31,26 +31,20 @@ class Expression extends AbstractExpression
     protected array $parameters = [];
 
     /**
-     * @todo Update documentation to show how parameters can be specifically typed
+     * @param string $expression The expression string
+     * @param null|bool|string|float|int|array|ArgumentInterface|ExpressionInterface $parameters Parameters for placeholders
      */
     public function __construct(
         string $expression = '',
-        null|bool|string|float|int|array|ArgumentInterface|ExpressionInterface $parameters = []
+        null|bool|string|float|int|array|ArgumentInterface|ExpressionInterface $parameters = null
     ) {
         if ($expression !== '') {
-            $this->setExpression($expression);
+            $this->expression = $expression;
         }
 
-        if (func_num_args() > 2) {
-            /**
-             * @deprecated
-             *
-             * @todo Make notes in documentation
-             */
-            $parameters = array_slice(func_get_args(), 1);
+        if ($parameters !== null) {
+            $this->setParameters($parameters);
         }
-
-        $this->setParameters($parameters);
     }
 
     /**

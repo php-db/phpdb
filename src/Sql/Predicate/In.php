@@ -28,11 +28,19 @@ class In extends AbstractExpression implements PredicateInterface
         null|array|Select|ArgumentInterface $valueSet = null
     ) {
         if ($identifier !== null) {
-            $this->setIdentifier($identifier);
+            $this->identifier = $identifier instanceof ArgumentInterface
+                ? $identifier
+                : new Identifier($identifier);
         }
 
         if ($valueSet !== null) {
-            $this->setValueSet($valueSet);
+            if ($valueSet instanceof ArgumentInterface) {
+                $this->valueSet = $valueSet;
+            } elseif ($valueSet instanceof Select) {
+                $this->valueSet = new ArgumentSelect($valueSet);
+            } else {
+                $this->valueSet = new Values($valueSet);
+            }
         }
     }
 

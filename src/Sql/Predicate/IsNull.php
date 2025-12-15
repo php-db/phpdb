@@ -23,7 +23,9 @@ class IsNull extends AbstractExpression implements PredicateInterface
     public function __construct(null|string|ArgumentInterface $identifier = null)
     {
         if ($identifier !== null) {
-            $this->setIdentifier($identifier);
+            $this->identifier = $identifier instanceof ArgumentInterface
+                ? $identifier
+                : new Identifier($identifier);
         }
     }
 

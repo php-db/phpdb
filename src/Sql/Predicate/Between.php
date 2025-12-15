@@ -31,15 +31,21 @@ class Between extends AbstractExpression implements PredicateInterface
         null|int|float|string|ArgumentInterface $maxValue = null
     ) {
         if ($identifier !== null) {
-            $this->setIdentifier($identifier);
+            $this->identifier = $identifier instanceof ArgumentInterface
+                ? $identifier
+                : new Identifier($identifier);
         }
 
         if ($minValue !== null) {
-            $this->setMinValue($minValue);
+            $this->minValue = $minValue instanceof ArgumentInterface
+                ? $minValue
+                : new Value($minValue);
         }
 
         if ($maxValue !== null) {
-            $this->setMaxValue($maxValue);
+            $this->maxValue = $maxValue instanceof ArgumentInterface
+                ? $maxValue
+                : new Value($maxValue);
         }
     }
 

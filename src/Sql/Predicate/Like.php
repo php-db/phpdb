@@ -26,11 +26,15 @@ class Like extends AbstractExpression implements PredicateInterface
         null|bool|float|int|string|ArgumentInterface $like = null
     ) {
         if ($identifier !== null) {
-            $this->setIdentifier($identifier);
+            $this->identifier = $identifier instanceof ArgumentInterface
+                ? $identifier
+                : new Identifier($identifier);
         }
 
         if ($like !== null) {
-            $this->setLike($like);
+            $this->like = $like instanceof ArgumentInterface
+                ? $like
+                : new Value($like);
         }
     }
 
