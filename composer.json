@@ -63,15 +63,18 @@
     "scripts": {
         "check": [
             "@cs-check",
-            "@static-analysis"
+            "@sa",
+            "@test",
+            "@test-integration"
         ],
         "cs-check": "phpcs",
         "cs-fix": "phpcbf",
         "test": "phpunit --colors=always --testsuite \"unit test\"",
         "test-coverage": "phpunit --colors=always --coverage-clover clover.xml",
         "test-integration": "phpunit --colors=always --testsuite \"integration test\"",
-        "static-analysis": "vendor/bin/phpstan analyse --memory-limit=256M",
-        "sa-generate-baseline": "vendor/bin/phpstan analyse --memory-limit=256M --generate-baseline",
+        "sa": "vendor/bin/phpstan analyse --memory-limit=256M",
+        "sa-gen-baseline": "vendor/bin/phpstan analyse --memory-limit=256M --generate-baseline",
+        "sa-verbose": "vendor/bin/phpstan analyse --memory-limit=256M -vv",
         "upload-coverage": "coveralls -v"
     },
     "conflict": {

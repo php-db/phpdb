@@ -137,6 +137,7 @@ abstract class AbstractPdoConnection extends AbstractConnection implements
 
     /**
      * {@inheritDoc}
+     *
      * @throws Exception\RuntimeException
      */
     #[Override]
@@ -160,6 +161,7 @@ abstract class AbstractPdoConnection extends AbstractConnection implements
 
     /**
      * {@inheritDoc}
+     *
      * @throws Exception\InvalidQueryException
      */
     #[Override]
