@@ -81,14 +81,12 @@ class Result implements Iterator, ResultInterface
     /** @var mixed */
     protected $generatedValue;
 
-    /** @var Closure|int */
-    protected $rowCount;
+    protected Closure|int $rowCount;
 
     /**
      * Initialize
      *
-     * @param  mixed $generatedValue
-     * @param  int   $rowCount
+     * @param mixed $generatedValue
      */
     public function initialize(
         PDOStatement $resource,
@@ -199,7 +197,7 @@ class Result implements Iterator, ResultInterface
     /**
      * Key
      *
-     * @return mixed
+     * @return int
      */
     #[ReturnTypeWillChange]
     #[Override]
@@ -252,6 +250,7 @@ class Result implements Iterator, ResultInterface
         if (is_int($this->rowCount)) {
             return $this->rowCount;
         }
+        /** @phpstan-ignore instanceof.alwaysTrue */
         if ($this->rowCount instanceof Closure) {
             $this->rowCount = (int) ($this->rowCount)();
         } else {
