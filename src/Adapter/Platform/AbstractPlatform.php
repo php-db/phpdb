@@ -36,6 +36,12 @@ abstract class AbstractPlatform implements PlatformInterface
 
     private const KEYWORDS_PATTERN = 'AND|OR|ON|IS|NOT|NULL|TRUE|FALSE|IN|LIKE|BETWEEN|AS';
 
+    /** @var array{0: string, 1: string}|null Cached regex patterns for quoteIdentifierInFragment */
+    private ?array $identifierPatterns = null;
+
+    /** @var array{0: string, 1: string}|null Cached replacements for quoteIdentifierInFragment */
+    private ?array $identifierReplacements = null;
+
     /**
      * {@inheritDoc}
      */
@@ -46,20 +52,22 @@ abstract class AbstractPlatform implements PlatformInterface
             return $identifier;
         }
 
-        $q  = $this->quoteIdentifier[0];
-        $qe = preg_quote($q, '/');
+        // Lazy-build and cache patterns/replacements on first use
+        if ($this->identifierPatterns === null) {
+            $q  = $this->quoteIdentifier[0];
+            $qe = preg_quote($q, '/');
 
-        return preg_replace(
-            [
+            $this->identifierPatterns = [
                 '/([A-Za-z_]\w*)\.([A-Za-z_]\w*)/S',
                 '/(?<!' . $qe . ')\b(?!(?:' . self::KEYWORDS_PATTERN . ')\b)([A-Za-z_]\w*+)\b(?!' . $qe . '|\s*\()/iS',
-            ],
-            [
+            ];
+            $this->identifierReplacements = [
                 $q . '$1' . $q . '.' . $q . '$2' . $q,
                 $q . '$1' . $q,
-            ],
-            $identifier
-        );
+            ];
+        }
+
+        return preg_replace($this->identifierPatterns, $this->identifierReplacements, $identifier);
     }
 
     /**
