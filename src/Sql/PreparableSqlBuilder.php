@@ -208,7 +208,7 @@ final class PreparableSqlBuilder
             } elseif ($argument instanceof Values) {
                 $values[] = '(' . $this->bindValues($argument->getValue()) . ')';
             } elseif ($argument instanceof Identifier) {
-                $values[] = $this->quoteIdentifierInFragment($argument->getValue());
+                $values[] = $argument->toSql($this);
             } elseif ($argument instanceof Literal) {
                 $values[] = $argument->getValue();
             } elseif ($argument instanceof SelectArgument) {

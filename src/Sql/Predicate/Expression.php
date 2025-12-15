@@ -18,11 +18,9 @@ final class Expression extends BaseExpression implements PredicateInterface
     public function prepareSqlString(PreparableSqlBuilder $builder): string
     {
         if ($this->parameters === []) {
-            // Quote identifiers in the raw expression string
             return $builder->quoteIdentifierInFragment($this->expression);
         }
 
-        // Start with quoted expression
         $sql = $builder->quoteIdentifierInFragment($this->expression);
 
         foreach ($this->parameters as $param) {

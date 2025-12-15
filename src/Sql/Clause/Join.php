@@ -18,10 +18,12 @@ use PhpDb\Sql\TableIdentifier;
 use function array_shift;
 use function count;
 use function current;
+use function explode;
 use function is_array;
 use function is_string;
 use function key;
 use function sprintf;
+use function str_contains;
 
 /**
  * Aggregate JOIN specifications.
@@ -94,31 +96,16 @@ final class Join implements Iterator, Countable, ClauseInterface
         array|int|string $columns = [Select::SQL_STAR],
         string $type = self::JOIN_INNER
     ): static {
-        $alias = null;
+        $alias      = null;
+        $joinTarget = null;
 
-        // Handle Select object passed directly
-        if ($name instanceof Select) {
-            if (! is_array($columns)) {
-                $columns = [$columns];
-            }
-
-            if (is_string($on)) {
-                $on = new Predicate\Expression($on);
-            }
-
-            $this->joins[] = new JoinSpecification(
-                $name,
-                $on,
-                $columns,
-                JoinType::fromString($type),
-                $alias,
-            );
-
-            return $this;
-        }
-
-        // Handle array with Select: ['alias' => Select]
-        if (is_array($name)) {
+        if (is_string($name)) {
+            $joinTarget = new TableIdentifier($name);
+        } elseif ($name instanceof TableIdentifier) {
+            $joinTarget = $name;
+        } elseif ($name instanceof Select) {
+            $joinTarget = $name;
+        } elseif (is_array($name)) {
             if (! is_string(key($name)) || count($name) !== 1) {
                 throw new Exception\InvalidArgumentException(
                     sprintf("join() expects '%s' as a single element associative array", array_shift($name))
@@ -129,39 +116,32 @@ final class Join implements Iterator, Countable, ClauseInterface
             $value = current($name);
 
             if ($value instanceof Select || $value instanceof ExpressionInterface) {
-                if (! is_array($columns)) {
-                    $columns = [$columns];
+                $joinTarget = $value;
+            } else {
+                $table = (string) $value;
+                if (str_contains($table, '.')) {
+                    $parts = explode('.', $table, 2);
+                    $joinTarget = new TableIdentifier($parts[1], $parts[0], $alias);
+                } else {
+                    $joinTarget = new TableIdentifier($table, null, $alias);
                 }
-
-                if (is_string($on)) {
-                    $on = new Predicate\Expression($on);
-                }
-
-                $this->joins[] = new JoinSpecification(
-                    $value,
-                    $on,
-                    $columns,
-                    JoinType::fromString($type),
-                    $alias,
-                );
-
-                return $this;
             }
         }
 
-        if (! is_array($columns)) {
-            $columns = [$columns];
-        }
-
-        if (is_string($on)) {
-            $on = new Predicate\Expression($on);
-        }
-
         $this->joins[] = new JoinSpecification(
-            TableIdentifier::from($name),
-            $on,
-            $columns,
-            JoinType::fromString($type),
+            $joinTarget,
+            is_string($on) ? new Predicate\Expression($on) : $on,
+            is_array($columns) ? $columns : [$columns],
+            match ($type) {
+                self::JOIN_INNER => JoinType::Inner,
+                self::JOIN_LEFT => JoinType::Left,
+                self::JOIN_RIGHT => JoinType::Right,
+                self::JOIN_OUTER => JoinType::Outer,
+                self::JOIN_LEFT_OUTER => JoinType::LeftOuter,
+                self::JOIN_RIGHT_OUTER => JoinType::RightOuter,
+                default => JoinType::fromString($type),
+            },
+            $alias,
         );
 
         return $this;

@@ -9,14 +9,12 @@ use Override;
 use function addcslashes;
 use function array_map;
 use function implode;
-use function in_array;
 use function is_bool;
 use function is_float;
 use function is_int;
 use function preg_replace;
-use function preg_replace_callback;
+use function str_contains;
 use function str_replace;
-use function strtolower;
 use function strtr;
 use function trigger_error;
 
@@ -36,6 +34,8 @@ abstract class AbstractPlatform implements PlatformInterface
     /** @var string */
     protected $quoteIdentifierFragmentPattern = '/([^0-9,a-zA-Z$_:])/i';
 
+    private const KEYWORDS_PATTERN = 'and|or|is|null|not|in|like|as|on|between|asc|desc|distinct|all|true|false|exists|case|when|then|else|end';
+
     /**
      * {@inheritDoc}
      */
@@ -46,29 +46,23 @@ abstract class AbstractPlatform implements PlatformInterface
             return $identifier;
         }
 
-        $q = $this->quoteIdentifier[0];
+        if (str_contains($identifier, '.')) {
+            $result = preg_replace(
+                '/\b([a-zA-Z_]\w*+)\.([a-zA-Z_]\w*+)/',
+                "\x00$1\x00.\x00$2\x00",
+                $identifier
+            );
+            $result = preg_replace(
+                '/(?<!\x00)\b(?!(?:' . self::KEYWORDS_PATTERN . ')\b)([a-zA-Z_]\w*+)(?!\x00|\s*\()/i',
+                "\x00$1\x00",
+                $result
+            );
+            return str_replace("\x00", $this->quoteIdentifier[0], $result);
+        }
 
-        // Quote identifiers but NOT:
-        // - SQL keywords (as, and, or, on, between, null)
-        // - Function names (word followed by '(')
-        return preg_replace_callback(
-            '/\b([a-z_]\w*)(\s*\()?/i',
-            static function ($matches) use ($q) {
-                $word = $matches[1];
-
-                // Don't quote if followed by '(' (function name)
-                if (isset($matches[2])) {
-                    return $word . $matches[2];
-                }
-
-                // Don't quote SQL keywords
-                $lcWord = strtolower($word);
-                if (in_array($lcWord, ['as', 'and', 'or', 'on', 'between', 'null', 'in', 'not', 'is', 'like'], true)) {
-                    return $word;
-                }
-
-                return $q . $word . $q;
-            },
+        return preg_replace(
+            '/\b(?!(?:' . self::KEYWORDS_PATTERN . ')\b)([a-zA-Z_]\w*+)(?!\s*\()/i',
+            $this->quoteIdentifier[0] . '$1' . $this->quoteIdentifier[0],
             $identifier
         );
     }

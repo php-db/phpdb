@@ -9,12 +9,13 @@ use PhpDb\Sql\ExpressionInterface;
 use PhpDb\Sql\PreparableSqlBuilder;
 
 use function count;
-use function explode;
 use function is_int;
 use function is_string;
 use function preg_split;
 use function str_contains;
-use function strcasecmp;
+use function strpos;
+use function strtoupper;
+use function substr;
 use function trim;
 
 final class Order implements ClauseInterface
@@ -28,34 +29,50 @@ final class Order implements ClauseInterface
     public function add(ExpressionInterface|array|string $order): static
     {
         if ($order instanceof ExpressionInterface) {
-            $this->items[] = OrderSpecification::fromExpression($order);
+            $this->items[] = new OrderSpecification('', '', true, $order);
             return $this;
         }
 
         if (is_string($order)) {
-            $order = str_contains($order, ',') ? preg_split('#,\s+#', $order) : [$order];
+            if (! str_contains($order, ',')) {
+                $spacePos = strpos($order, ' ');
+                if ($spacePos !== false) {
+                    $column    = substr($order, 0, $spacePos);
+                    $direction = strtoupper(trim(substr($order, $spacePos + 1)));
+                    $this->items[] = new OrderSpecification(
+                        $column,
+                        $direction === self::ORDER_DESCENDING ? self::ORDER_DESCENDING : self::ORDER_ASCENDING
+                    );
+                } else {
+                    $this->items[] = new OrderSpecification($order, self::ORDER_ASCENDING);
+                }
+                return $this;
+            }
+            $order = preg_split('#,\s+#', $order);
         }
 
         foreach ($order as $k => $v) {
             if ($v instanceof ExpressionInterface) {
-                $this->items[] = OrderSpecification::fromExpression($v);
+                $this->items[] = new OrderSpecification('', '', true, $v);
                 continue;
             }
 
             if (is_int($k)) {
-                if (str_contains($v, ' ')) {
-                    [$k, $v] = explode(' ', $v, 2);
+                $spacePos = strpos($v, ' ');
+                if ($spacePos !== false) {
+                    $k = substr($v, 0, $spacePos);
+                    $v = substr($v, $spacePos + 1);
                 } else {
                     $k = $v;
                     $v = self::ORDER_ASCENDING;
                 }
             }
 
-            $direction = strcasecmp(trim($v), self::ORDER_DESCENDING) === 0
+            $direction = strtoupper(trim($v)) === self::ORDER_DESCENDING
                 ? self::ORDER_DESCENDING
                 : self::ORDER_ASCENDING;
 
-            $this->items[] = OrderSpecification::create($k, $direction);
+            $this->items[] = new OrderSpecification($k, $direction);
         }
 
         return $this;
