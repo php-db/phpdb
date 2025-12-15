@@ -17,19 +17,17 @@ final class Expression extends BaseExpression implements PredicateInterface
     #[Override]
     public function prepareSqlString(PreparableSqlBuilder $builder): string
     {
-        if ($this->parameters === []) {
-            return $builder->quoteIdentifierInFragment($this->expression);
-        }
-
         $sql = $builder->quoteIdentifierInFragment($this->expression);
 
-        foreach ($this->parameters as $param) {
-            $pos = strpos($sql, '?');
-            if ($pos === false) {
-                break;
-            }
+        if ($this->parameters !== []) {
+            foreach ($this->parameters as $param) {
+                $pos = strpos($sql, '?');
+                if ($pos === false) {
+                    break;
+                }
 
-            $sql = substr_replace($sql, $param->toSql($builder), $pos, 1);
+                $sql = substr_replace($sql, $param->toSql($builder), $pos, 1);
+            }
         }
 
         return $sql;

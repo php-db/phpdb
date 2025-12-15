@@ -468,47 +468,40 @@ class Select extends AbstractPreparableSql
     }
 
     /**
-     * Build the SELECT ... FROM part of the query - optimized for speed
+     * Build the SELECT ... FROM part of the query
      */
     protected function buildSelectPart(PreparableSqlBuilder $builder): string
     {
-        $quantifierPart = '';
+        $q   = $builder->q;
+        $sql = 'SELECT ';
+
+        // Quantifier (DISTINCT/ALL)
         if ($this->quantifier !== null) {
-            $quantifierPart = $this->quantifier instanceof ExpressionInterface
-                ? $builder->processExpression($this->quantifier) . ' '
-                : $this->quantifier . ' ';
+            $sql .= ($this->quantifier instanceof ExpressionInterface
+                ? $builder->processExpression($this->quantifier)
+                : $this->quantifier) . ' ';
         }
 
-        // For column prefixing, use table OR subselect alias
-        $prefixTable = $this->table;
-        if ($prefixTable === null && $this->subselectAlias !== null) {
-            $prefixTable = new TableIdentifier($this->subselectAlias);
+        // Columns
+        $prefixTable = $this->table ?? ($this->subselectAlias !== null ? new TableIdentifier($this->subselectAlias) : null);
+        $columnsPart = $this->getColumns()->prepareSqlString($builder, $prefixTable);
+        $joinColsPart = $this->joins?->toColumnsSqlPart($builder) ?? '';
+
+        if ($columnsPart === '' && $joinColsPart !== '') {
+            $sql .= substr($joinColsPart, 2);
+        } else {
+            $sql .= $columnsPart . $joinColsPart;
         }
 
-        $columnsPart     = $this->getColumns()->prepareSqlString($builder, $prefixTable);
-        $joinColumnsPart = $this->joins?->toColumnsSqlPart($builder) ?? '';
-
-        // If main columns are empty but join columns exist, remove leading comma from join columns
-        if ($columnsPart === '' && $joinColumnsPart !== '') {
-            $joinColumnsPart = substr($joinColumnsPart, 2); // Remove leading ", "
-        }
-
-        // Handle FROM clause - either table or subselect
-        $fromPart = '';
+        // FROM clause
         if ($this->subselect !== null) {
-            $q        = $builder->q;
-            $fromPart = ' FROM (' . $builder->processSubSelect($this->subselect) . ')';
-            if ($this->subselectAlias !== null) {
-                $fromPart .= ' AS ' . $q . $this->subselectAlias . $q;
-            }
+            $sql .= ' FROM (' . $builder->processSubSelect($this->subselect) . ')'
+                . ($this->subselectAlias !== null ? ' AS ' . $q . $this->subselectAlias . $q : '');
         } elseif ($this->table !== null) {
-            $fromPart = $this->table->toFromSqlPart($builder);
+            $sql .= $this->table->toFromSqlPart($builder);
         }
 
-        return 'SELECT ' . $quantifierPart
-            . $columnsPart
-            . $joinColumnsPart
-            . $fromPart;
+        return $sql;
     }
 
     /**

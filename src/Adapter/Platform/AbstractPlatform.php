@@ -34,7 +34,7 @@ abstract class AbstractPlatform implements PlatformInterface
     /** @var string */
     protected $quoteIdentifierFragmentPattern = '/([^0-9,a-zA-Z$_:])/i';
 
-    private const KEYWORDS_PATTERN = 'and|or|is|null|not|in|like|as|on|between|asc|desc|distinct|all|true|false|exists|case|when|then|else|end';
+    private const KEYWORDS_PATTERN = 'AND|OR|ON|IS|NOT|NULL|TRUE|FALSE|IN|LIKE|BETWEEN|AS';
 
     /**
      * {@inheritDoc}
@@ -46,23 +46,18 @@ abstract class AbstractPlatform implements PlatformInterface
             return $identifier;
         }
 
-        if (str_contains($identifier, '.')) {
-            $result = preg_replace(
-                '/\b([a-zA-Z_]\w*+)\.([a-zA-Z_]\w*+)/',
-                "\x00$1\x00.\x00$2\x00",
-                $identifier
-            );
-            $result = preg_replace(
-                '/(?<!\x00)\b(?!(?:' . self::KEYWORDS_PATTERN . ')\b)([a-zA-Z_]\w*+)(?!\x00|\s*\()/i',
-                "\x00$1\x00",
-                $result
-            );
-            return str_replace("\x00", $this->quoteIdentifier[0], $result);
-        }
+        $q  = $this->quoteIdentifier[0];
+        $qe = preg_quote($q, '/');
 
         return preg_replace(
-            '/\b(?!(?:' . self::KEYWORDS_PATTERN . ')\b)([a-zA-Z_]\w*+)(?!\s*\()/i',
-            $this->quoteIdentifier[0] . '$1' . $this->quoteIdentifier[0],
+            [
+                '/([A-Za-z_]\w*)\.([A-Za-z_]\w*)/S',
+                '/(?<!' . $qe . ')\b(?!(?:' . self::KEYWORDS_PATTERN . ')\b)([A-Za-z_]\w*+)\b(?!' . $qe . '|\s*\()/iS',
+            ],
+            [
+                $q . '$1' . $q . '.' . $q . '$2' . $q,
+                $q . '$1' . $q,
+            ],
             $identifier
         );
     }
