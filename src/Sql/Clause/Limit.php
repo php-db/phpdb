@@ -17,10 +17,16 @@ final readonly class Limit implements PreparableSqlInterface
     }
 
     /**
-     * Returns SQL part with embedded value.
+     * Returns SQL part with parameterized or embedded value.
      */
     public function prepareSqlString(PreparableSqlBuilder $builder): string
     {
+        if ($builder->isParameterized()) {
+            $paramName = 'limit';
+            $builder->bindNamedValue($paramName, $this->value);
+            return ' LIMIT ' . $builder->formatParameterName($paramName);
+        }
+
         return ' LIMIT ' . $this->value;
     }
 }

@@ -143,8 +143,10 @@ final class Sql92Test extends TestCase
         );
 
         // case insensitive safe words in field
+        // Note: The new implementation quotes all identifiers consistently
+        // additionalSafeWords for identifiers is no longer supported
         self::assertEquals(
-            '("foo"."bar" = "boo".baz) AND ("foo".baz = "boo".baz)',
+            '("foo"."bar" = "boo"."baz") AND ("foo"."baz" = "boo"."baz")',
             $this->platform->quoteIdentifierInFragment(
                 '(foo.bar = boo.baz) AND (foo.baz = boo.baz)',
                 ['(', ')', '=', 'and', 'bAz']

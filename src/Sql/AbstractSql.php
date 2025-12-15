@@ -301,12 +301,6 @@ abstract class AbstractSql implements SqlInterface
         if (is_bool($value)) {
             return $value ? '1' : '0';
         }
-        if (is_int($value) || is_float($value)) {
-            return (string) $value;
-        }
-        if (is_string($value) && is_numeric($value)) {
-            return $value;
-        }
 
         return $platform->quoteTrustedValue($value);
     }
@@ -408,67 +402,60 @@ abstract class AbstractSql implements SqlInterface
         $q   = $platform->getQuoteIdentifierSymbol();
         $sql = strtr($specification, ['{"' => $q, '"}' => $q]);
 
-        $scalarValues = [];
-        $hasSubSelect = false;
+        // Process each argument in order, replacing %s markers
         foreach ($expressionValues as $argument) {
-            if ($argument instanceof Value) {
-                $scalarValues[] = $argument->getValue();
-            } elseif ($argument instanceof Argument\Values) {
-                foreach ($argument->getValue() as $v) {
-                    $scalarValues[] = $v;
-                }
+            $pos = strpos($sql, '%s');
+            if ($pos === false) {
+                break;
+            }
+
+            if ($argument instanceof Argument\Identifier) {
+                // Identifier: quote as identifier, not as value
+                $sql = substr_replace($sql, $platform->quoteIdentifierInFragment($argument->getValue()), $pos, 2);
+            } elseif ($argument instanceof Argument\Literal) {
+                // Literal: insert as-is
+                $sql = substr_replace($sql, $argument->getValue(), $pos, 2);
             } elseif ($argument instanceof SelectArgument) {
-                $scalarValues[] = $argument;
-                $hasSubSelect   = true;
-            }
-        }
-
-        if ($scalarValues === []) {
-            return $sql;
-        }
-
-        if (! $hasSubSelect) {
-            foreach ($scalarValues as $value) {
-                $pos = strpos($sql, '%s');
-                if ($pos !== false) {
-                    if ($parameterContainer !== null && $driver !== null) {
-                        $paramName = $namedParameterPrefix . $expressionParamIndex++;
-                        $parameterContainer->offsetSet($paramName, $value);
-                        $sql = substr_replace($sql, $driver->formatParameterName($paramName), $pos, 2);
-                    } else {
-                        $sql = substr_replace($sql, $this->quoteValueForSql($value, $platform), $pos, 2);
-                    }
-                }
-            }
-
-            return $sql;
-        }
-
-        foreach ($scalarValues as $value) {
-            if ($value instanceof SelectArgument) {
+                // SubSelect: process the subselect
                 $subSql = $this->processSubSelectForAssembly(
-                    $value,
+                    $argument,
                     $platform,
                     $driver,
                     $parameterContainer,
                     $namedParameterPrefix . 'sub' . $expressionParamIndex
                 );
-                $pos    = strpos($sql, '{SQL}');
-                if ($pos !== false) {
-                    $sql = substr_replace($sql, $subSql, $pos, 5);
+                // SubSelects use {SQL} marker, but if we're at %s, use that
+                $sqlPos = strpos($sql, '{SQL}');
+                if ($sqlPos !== false && $sqlPos < $pos) {
+                    $sql = substr_replace($sql, $subSql, $sqlPos, 5);
+                } else {
+                    $sql = substr_replace($sql, $subSql, $pos, 2);
                 }
                 $expressionParamIndex++;
-            } elseif ($parameterContainer !== null && $driver !== null) {
-                $paramName = $namedParameterPrefix . $expressionParamIndex++;
-                $parameterContainer->offsetSet($paramName, $value);
-                $pos = strpos($sql, '%s');
-                if ($pos !== false) {
+            } elseif ($argument instanceof Value) {
+                // Value: bind as parameter or quote directly
+                $value = $argument->getValue();
+                if ($parameterContainer !== null && $driver !== null) {
+                    $paramName = $namedParameterPrefix . $expressionParamIndex++;
+                    $parameterContainer->offsetSet($paramName, $value);
                     $sql = substr_replace($sql, $driver->formatParameterName($paramName), $pos, 2);
-                }
-            } else {
-                $pos = strpos($sql, '%s');
-                if ($pos !== false) {
+                } else {
                     $sql = substr_replace($sql, $this->quoteValueForSql($value, $platform), $pos, 2);
+                }
+            } elseif ($argument instanceof Argument\Values) {
+                // Values array: each value needs to be processed
+                foreach ($argument->getValue() as $v) {
+                    $pos = strpos($sql, '%s');
+                    if ($pos === false) {
+                        break;
+                    }
+                    if ($parameterContainer !== null && $driver !== null) {
+                        $paramName = $namedParameterPrefix . $expressionParamIndex++;
+                        $parameterContainer->offsetSet($paramName, $v);
+                        $sql = substr_replace($sql, $driver->formatParameterName($paramName), $pos, 2);
+                    } else {
+                        $sql = substr_replace($sql, $this->quoteValueForSql($v, $platform), $pos, 2);
+                    }
                 }
             }
         }

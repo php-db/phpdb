@@ -122,8 +122,8 @@ final class InTest extends TestCase
 
         $expressionData = $in->getExpressionData();
 
-        // Verify specification (uses new marker format)
-        self::assertEquals('{"foo"}.{"bar"} IN ({?}, {?}, {?})', $expressionData['spec']);
+        // Verify specification (uses %s placeholder format)
+        self::assertEquals('%s IN %s', $expressionData['spec']);
 
         // Verify expression values
         $values = $expressionData['values'];
@@ -149,8 +149,8 @@ final class InTest extends TestCase
 
         $expressionData = $in->getExpressionData();
 
-        // Verify specification (uses new marker format - typed values still produce same format)
-        self::assertEquals('{"foo"}.{"bar"} IN ({?}, {?}, {?})', $expressionData['spec']);
+        // Verify specification (uses %s placeholder format - typed values still produce same format)
+        self::assertEquals('%s IN %s', $expressionData['spec']);
 
         // Verify expression values
         $values = $expressionData['values'];
@@ -178,8 +178,8 @@ final class InTest extends TestCase
 
         $expressionData = $in->getExpressionData();
 
-        // Verify specification (uses new marker format)
-        self::assertEquals('{?} IN {SQL}', $expressionData['spec']);
+        // Verify specification (uses %s placeholder format)
+        self::assertEquals('%s IN %s', $expressionData['spec']);
 
         // Verify expression values
         $values = $expressionData['values'];
@@ -203,8 +203,8 @@ final class InTest extends TestCase
 
         $expressionData = $in->getExpressionData();
 
-        // Verify specification (uses new marker format)
-        self::assertEquals('{"foo"} IN (NULL)', $expressionData['spec']);
+        // Verify specification (uses %s placeholder format)
+        self::assertEquals('%s IN %s', $expressionData['spec']);
     }
 
     public function testGetExpressionDataWithSubselectAndIdentifier(): void
@@ -214,8 +214,8 @@ final class InTest extends TestCase
 
         $expressionData = $in->getExpressionData();
 
-        // Verify specification (uses new marker format)
-        self::assertEquals('{"foo"} IN {SQL}', $expressionData['spec']);
+        // Verify specification (uses %s placeholder format)
+        self::assertEquals('%s IN %s', $expressionData['spec']);
 
         // Verify expression values
         $values = $expressionData['values'];
@@ -239,8 +239,8 @@ final class InTest extends TestCase
 
         $expressionData = $in->getExpressionData();
 
-        // Verify specification (uses new marker format)
-        self::assertEquals('({"foo"}, {"bar"}) IN {SQL}', $expressionData['spec']);
+        // Verify specification (uses %s placeholder format)
+        self::assertEquals('%s IN %s', $expressionData['spec']);
 
         // Verify expression values
         $values = $expressionData['values'];

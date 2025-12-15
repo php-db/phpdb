@@ -93,12 +93,18 @@ final readonly class TableIdentifier implements PreparableSqlInterface
     }
 
     /**
-     * Get the reference name for this table (alias if set, otherwise table name).
-     * Used for column prefixing like "users.id" or "u.id".
+     * Get the reference name for this table (alias if set, otherwise full qualified name).
+     * Used for column prefixing like "users.id", "u.id", or "schema.table.id".
      */
     public function getReference(): string
     {
-        return $this->alias ?? $this->table;
+        if ($this->alias !== null) {
+            return $this->alias;
+        }
+
+        return $this->schema !== null
+            ? $this->schema . '"."' . $this->table
+            : $this->table;
     }
 
     /**

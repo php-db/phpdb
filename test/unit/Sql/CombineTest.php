@@ -153,27 +153,28 @@ final class CombineTest extends TestCase
                 ->alignColumns();
 
         // Verify first select has NULL for missing c2
+        // getRawState('columns') now returns the columns array directly
         $columns1 = $select1->getRawState('columns');
-        self::assertInstanceOf(SelectExpression::class, $columns1);
+        self::assertIsArray($columns1);
         self::assertEquals(
             [
                 'c0' => 'c0',
                 'c1' => 'c1',
                 'c2' => new Expression('NULL'),
             ],
-            $columns1->columns
+            $columns1
         );
 
         // Verify second select has NULL for missing c0
         $columns2 = $select2->getRawState('columns');
-        self::assertInstanceOf(SelectExpression::class, $columns2);
+        self::assertIsArray($columns2);
         self::assertEquals(
             [
                 'c0' => new Expression('NULL'),
                 'c1' => 'c1',
                 'c2' => 'c2',
             ],
-            $columns2->columns
+            $columns2
         );
     }
 
@@ -189,8 +190,8 @@ final class CombineTest extends TestCase
         self::assertCount(1, $rawState['combine']);
         self::assertSame($select, $rawState['combine'][0]['select']);
         self::assertSame(Combine::COMBINE_UNION, $rawState['combine'][0]['type']);
-        // columns is null until accessed via columns() method
-        self::assertNull($rawState['columns']);
+        // getRawState('columns') returns default ['*'] when not set explicitly
+        self::assertEquals(['*'], $rawState['columns']);
     }
 
     protected function getMockAdapter(): Adapter|MockObject

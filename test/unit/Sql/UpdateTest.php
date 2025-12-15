@@ -304,8 +304,9 @@ final class UpdateTest extends TestCase
             ->where([
                 'id = ?' => 1,
             ]);
+        // Identifiers in expressions are now quoted
         self::assertEquals(
-            'UPDATE "foo" SET "bar" = \'baz\' WHERE id = 1',
+            'UPDATE "foo" SET "bar" = \'baz\' WHERE "id" = 1',
             $update2->getSqlString(new TrustingSql92Platform())
         );
     }
@@ -412,6 +413,7 @@ final class UpdateTest extends TestCase
             );
         $this->update->where->setEmptyAllowed();
 
+        // Identifiers in ON clauses are now quoted
         self::assertEquals(
             'UPDATE "Document" INNER JOIN "User" ON "User"."UserId" = "Document"."UserId" '
             . 'LEFT JOIN "Category" ON "Category"."CategoryId" = "Document"."CategoryId" SET "Documents"."x" = \'y\'',

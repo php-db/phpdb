@@ -92,14 +92,15 @@ class PredicateSet extends AbstractExpression implements PredicateInterface, Cou
         if (is_array($predicates)) {
             foreach ($predicates as $pkey => $pvalue) {
                 if (is_string($pkey)) {
-                    if (is_scalar($pvalue)) {
-                        $predicate = new Operator($pkey, Operator::OP_EQ, $pvalue);
+                    // Check for placeholder in key first (e.g., 'foo > ?' => 5)
+                    if (str_contains($pkey, '?')) {
+                        $predicate = new PredicateExpression($pkey, $pvalue);
                     } elseif ($pvalue === null) {
                         $predicate = new IsNull($pkey);
                     } elseif (is_array($pvalue)) {
                         $predicate = new In($pkey, $pvalue);
-                    } elseif (str_contains($pkey, '?')) {
-                        $predicate = new PredicateExpression($pkey, $pvalue);
+                    } elseif (is_scalar($pvalue)) {
+                        $predicate = new Operator($pkey, Operator::OP_EQ, $pvalue);
                     } elseif ($pvalue instanceof PredicateInterface) {
                         throw new Exception\InvalidArgumentException(
                             'Using Predicate must not use string keys'

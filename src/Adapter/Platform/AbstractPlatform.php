@@ -43,7 +43,30 @@ abstract class AbstractPlatform implements PlatformInterface
 
         $q = $this->quoteIdentifier[0];
 
-        return preg_replace('/\b(?!(?:as|and|or|on|between)\b)[a-z_]\w*/i', $q . '$0' . $q, $identifier);
+        // Quote identifiers but NOT:
+        // - SQL keywords (as, and, or, on, between, null)
+        // - Function names (word followed by '(')
+        return preg_replace_callback(
+            '/\b([a-z_]\w*)(\s*\()?/i',
+            static function ($matches) use ($q) {
+                $word = $matches[1];
+                $hasParens = isset($matches[2]) && $matches[2] !== '';
+
+                // Don't quote if followed by '(' (function name)
+                if ($hasParens) {
+                    return $word . $matches[2];
+                }
+
+                // Don't quote SQL keywords
+                $lcWord = strtolower($word);
+                if (in_array($lcWord, ['as', 'and', 'or', 'on', 'between', 'null', 'in', 'not', 'is', 'like'], true)) {
+                    return $word;
+                }
+
+                return $q . $word . $q;
+            },
+            $identifier
+        );
     }
 
     /**

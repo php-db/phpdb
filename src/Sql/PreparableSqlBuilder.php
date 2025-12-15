@@ -33,6 +33,9 @@ final class PreparableSqlBuilder
     private int $paramIndex     = 1;
     private int $subselectCount = 0;
 
+    /** Whether we're currently processing a subselect (affects LIMIT/OFFSET) */
+    public bool $inSubselect = false;
+
     public function __construct(
         private readonly PlatformInterface $platform,
         private readonly ?DriverInterface $driver = null,
@@ -85,6 +88,30 @@ final class PreparableSqlBuilder
             $result .= $this->bindValue($value);
         }
         return $result;
+    }
+
+    /**
+     * Bind a value with a specific name (for LIMIT, OFFSET, etc.).
+     *
+     * @param string $name Parameter name
+     * @param mixed $value The value to bind
+     */
+    public function bindNamedValue(string $name, mixed $value): void
+    {
+        if ($this->params !== null) {
+            $this->params->offsetSet($name, $value);
+        }
+    }
+
+    /**
+     * Format a named parameter for the current driver.
+     *
+     * @param string $name Parameter name
+     * @return string Formatted parameter (e.g., :name or ?)
+     */
+    public function formatParameterName(string $name): string
+    {
+        return $this->driver?->formatParameterName($name) ?? '?';
     }
 
     /**
@@ -159,6 +186,7 @@ final class PreparableSqlBuilder
             $this->paramPrefix . $prefix
         );
         $child->subselectCount = $this->subselectCount;
+        $child->inSubselect    = $this->inSubselect;
         return $child;
     }
 
@@ -198,11 +226,22 @@ final class PreparableSqlBuilder
 
     /**
      * Process a subselect query.
+     *
+     * Subselects are rendered with embedded values (not parameterized) even when
+     * the parent query uses prepared statement parameters. This is because:
+     * 1. The old laminas-db behavior embedded subselect values
+     * 2. It avoids parameter naming conflicts between nested queries
      */
     public function processSubSelect(Select $subselect): string
     {
         $this->subselectCount++;
-        $childBuilder = $this->withPrefix('sub' . $this->subselectCount . '_');
+        // Create a child builder WITHOUT driver/params to embed values directly
+        $childBuilder = new self(
+            $this->platform,
+            null,  // No driver = no parameterization
+            null,  // No params
+            $this->paramPrefix . 'sub' . $this->subselectCount . '_'
+        );
 
         return $subselect->prepareSqlString($childBuilder);
     }

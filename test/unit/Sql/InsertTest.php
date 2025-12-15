@@ -198,7 +198,8 @@ final class InsertTest extends TestCase
         $this->assertInstanceOf(ParameterContainer::class, $parameters);
 
         $namedArray = $parameters->getNamedArray();
-        self::assertSame(['where1' => 5], $namedArray);
+        // Parameter naming convention changed from 'where1' to 'p1'
+        self::assertSame(['p1' => 5], $namedArray);
     }
 
     public function testGetSqlString(): void

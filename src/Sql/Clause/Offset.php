@@ -17,10 +17,16 @@ final readonly class Offset implements PreparableSqlInterface
     }
 
     /**
-     * Returns SQL part with embedded value.
+     * Returns SQL part with parameterized or embedded value.
      */
     public function prepareSqlString(PreparableSqlBuilder $builder): string
     {
+        if ($builder->isParameterized()) {
+            $paramName = 'offset';
+            $builder->bindNamedValue($paramName, $this->value);
+            return ' OFFSET ' . $builder->formatParameterName($paramName);
+        }
+
         return ' OFFSET ' . $this->value;
     }
 }

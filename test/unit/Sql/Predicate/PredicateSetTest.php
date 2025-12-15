@@ -82,9 +82,9 @@ final class PredicateSetTest extends TestCase
         // 4 predicates = 4 values
         self::assertCount(4, $expressionData['values']);
 
-        // Verify combinators are in spec string: AND bar AND baz OR bat
+        // Verify combinators are in spec string using %s placeholder format
         $spec = $expressionData['spec'];
-        self::assertEquals('{"foo"} IS NULL AND {"bar"} IS NULL OR {"baz"} IS NULL AND {"bat"} IS NULL', $spec);
+        self::assertEquals('%s IS NULL AND %s IS NULL OR %s IS NULL AND %s IS NULL', $spec);
     }
 
     public function testCanUseOrPredicateAndAndPredicateMethods(): void
@@ -100,9 +100,9 @@ final class PredicateSetTest extends TestCase
         // 4 predicates = 4 values
         self::assertCount(4, $expressionData['values']);
 
-        // Verify spec contains correct pattern (uses new marker format)
+        // Verify spec contains correct pattern using %s placeholder format
         $spec = $expressionData['spec'];
-        self::assertEquals('{"foo"} IS NULL AND {"bar"} IS NULL OR {"baz"} IS NULL AND {"bat"} IS NULL', $spec);
+        self::assertEquals('%s IS NULL AND %s IS NULL OR %s IS NULL AND %s IS NULL', $spec);
     }
 
     /**
@@ -123,33 +123,27 @@ final class PredicateSetTest extends TestCase
         $predicates = (array) $this->readAttribute($predicateSet, 'predicates');
         self::assertCount(7, $predicates);
 
-        self::assertIsArray($predicates[0]);
-        self::assertEquals('AND', $predicates[0][0]);
-        self::assertInstanceOf(Literal::class, $predicates[0][1]);
+        // Predicates now store combination internally via getCombination()
+        self::assertInstanceOf(Literal::class, $predicates[0]);
+        self::assertEquals('AND', $predicates[0]->getCombination());
 
-        self::assertIsArray($predicates[1]);
-        self::assertEquals('AND', $predicates[1][0]);
-        self::assertInstanceOf(Expression::class, $predicates[1][1]);
+        self::assertInstanceOf(Expression::class, $predicates[1]);
+        self::assertEquals('AND', $predicates[1]->getCombination());
 
-        self::assertIsArray($predicates[2]);
-        self::assertEquals('AND', $predicates[2][0]);
-        self::assertInstanceOf(Operator::class, $predicates[2][1]);
+        self::assertInstanceOf(Operator::class, $predicates[2]);
+        self::assertEquals('AND', $predicates[2]->getCombination());
 
-        self::assertIsArray($predicates[3]);
-        self::assertEquals('OR', $predicates[3][0]);
-        self::assertInstanceOf(Literal::class, $predicates[3][1]);
+        self::assertInstanceOf(Literal::class, $predicates[3]);
+        self::assertEquals('OR', $predicates[3]->getCombination());
 
-        self::assertIsArray($predicates[4]);
-        self::assertEquals('AND', $predicates[4][0]);
-        self::assertInstanceOf(IsNull::class, $predicates[4][1]);
+        self::assertInstanceOf(IsNull::class, $predicates[4]);
+        self::assertEquals('AND', $predicates[4]->getCombination());
 
-        self::assertIsArray($predicates[5]);
-        self::assertEquals('AND', $predicates[5][0]);
-        self::assertInstanceOf(In::class, $predicates[5][1]);
+        self::assertInstanceOf(In::class, $predicates[5]);
+        self::assertEquals('AND', $predicates[5]->getCombination());
 
-        self::assertIsArray($predicates[6]);
-        self::assertEquals('AND', $predicates[6][0]);
-        self::assertInstanceOf(IsNotNull::class, $predicates[6][1]);
+        self::assertInstanceOf(IsNotNull::class, $predicates[6]);
+        self::assertEquals('AND', $predicates[6]->getCombination());
 
         $predicateSet->addPredicates(function (PredicateSet $what) use ($predicateSet): void {
             self::assertSame($predicateSet, $what);
@@ -177,10 +171,10 @@ final class PredicateSetTest extends TestCase
         $predicates = (array) $this->readAttribute($predicateSet, 'predicates');
         self::assertCount(1, $predicates);
 
-        self::assertIsArray($predicates[0]);
-        self::assertEquals('AND', $predicates[0][0]);
+        // Predicates now store combination internally via getCombination()
         // Should be wrapped in a Predicate\Expression
-        self::assertInstanceOf(Expression::class, $predicates[0][1]);
+        self::assertInstanceOf(Expression::class, $predicates[0]);
+        self::assertEquals('AND', $predicates[0]->getCombination());
 
         // Verify the expression data is preserved
         $expressionData = $predicateSet->getExpressionData();

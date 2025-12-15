@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace PhpDb\Sql\Clause;
 
 use PhpDb\Sql\ExpressionInterface;
+use PhpDb\Sql\PreparableSqlBuilder;
 
 use function str_contains;
 use function str_replace;
@@ -14,7 +15,8 @@ final readonly class OrderSpecification
     public function __construct(
         public string $column,
         public string $direction = 'ASC',
-        public bool $isExpression = false
+        public bool $isExpression = false,
+        public ?ExpressionInterface $expression = null
     ) {
     }
 
@@ -25,7 +27,7 @@ final readonly class OrderSpecification
 
     public static function fromExpression(ExpressionInterface $expr): self
     {
-        return new self($expr->getExpressionData()['spec'], '', true);
+        return new self('', '', true, $expr);
     }
 
     /**
@@ -33,9 +35,14 @@ final readonly class OrderSpecification
      *
      * @param string $q Quote character (empty string = no quoting)
      */
-    public function toSql(string $q): string
+    public function toSql(string $q, ?PreparableSqlBuilder $builder = null): string
     {
+        if ($this->isExpression && $this->expression !== null && $builder !== null) {
+            return $builder->processExpression($this->expression);
+        }
+
         if ($this->isExpression) {
+            // Fallback for when no builder available - should not happen in practice
             return $this->column;
         }
 

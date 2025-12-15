@@ -180,7 +180,8 @@ final class InsertIgnoreTest extends TestCase
             $mockStatement->getSql()
         );
         $parameters = $mockStatement->getParameterContainer()->getNamedArray();
-        self::assertSame(['where1' => 5], $parameters);
+        // Parameter naming convention changed from 'where1' to 'p1'
+        self::assertSame(['p1' => 5], $parameters);
     }
 
     public function testGetSqlString(): void

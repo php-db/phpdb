@@ -96,6 +96,12 @@ class Select extends AbstractPreparableSql
 
     protected ?TableIdentifier $table = null;
 
+    /** Subselect in FROM clause (when from() receives a Select object) */
+    protected ?self $subselect = null;
+
+    /** Alias for subselect in FROM clause */
+    protected ?string $subselectAlias = null;
+
     protected string|ExpressionInterface|null $quantifier = null;
 
     protected ?SelectExpression $columns = null;
@@ -146,7 +152,7 @@ class Select extends AbstractPreparableSql
      *
      * @throws Exception\InvalidArgumentException
      */
-    public function from(array|string|TableIdentifier $table): static
+    public function from(array|string|TableIdentifier|self $table): static
     {
         if ($this->table?->isReadOnly()) {
             throw new Exception\InvalidArgumentException(
@@ -154,13 +160,36 @@ class Select extends AbstractPreparableSql
             );
         }
 
-        if (is_array($table) && (! is_string(key($table)) || count($table) !== 1)) {
-            throw new Exception\InvalidArgumentException(
-                'from() expects $table as an array is a single element associative array'
-            );
+        // Handle subselect passed directly
+        if ($table instanceof self) {
+            $this->subselect = $table;
+            $this->subselectAlias = null;
+            $this->table = null;
+            return $this;
+        }
+
+        // Handle array with subselect: ['alias' => Select]
+        if (is_array($table)) {
+            if (! is_string(key($table)) || count($table) !== 1) {
+                throw new Exception\InvalidArgumentException(
+                    'from() expects $table as an array is a single element associative array'
+                );
+            }
+
+            $alias = (string) key($table);
+            $value = current($table);
+
+            if ($value instanceof self) {
+                $this->subselect = $value;
+                $this->subselectAlias = $alias;
+                $this->table = null;
+                return $this;
+            }
         }
 
         $this->table = TableIdentifier::from($table);
+        $this->subselect = null;
+        $this->subselectAlias = null;
 
         return $this;
     }
@@ -335,6 +364,8 @@ class Select extends AbstractPreparableSql
                 }
 
                 $this->table = null;
+                $this->subselect = null;
+                $this->subselectAlias = null;
                 break;
             case self::QUANTIFIER:
                 $this->quantifier = null;
@@ -408,11 +439,24 @@ class Select extends AbstractPreparableSql
     ): string {
         $builder = new PreparableSqlBuilder($platform, $driver, $parameterContainer);
 
-        return $this->buildSelectPart($builder)
+        $sql = $this->buildSelectPart($builder)
             . ($this->joins?->prepareSqlString($builder) ?? '')
             . ($this->where?->prepareSqlString($builder) ?? '')
             . ($this->group?->prepareSqlString($builder) ?? '')
-            . ($this->having?->prepareSqlString($builder) ?? '')
+            . ($this->having?->prepareSqlString($builder) ?? '');
+
+        // Handle UNION/INTERSECT/EXCEPT (combine)
+        if ($this->combine !== []) {
+            /** @var Select $combineSelect */
+            $combineSelect = $this->combine['select'];
+            $combineType = strtoupper($this->combine['type']);
+            $combineModifier = $this->combine['modifier'] !== '' ? ' ' . strtoupper($this->combine['modifier']) : '';
+
+            $sql = '( ' . $sql . ' ) ' . $combineType . $combineModifier
+                . ' ( ' . $builder->processSubSelect($combineSelect) . ' )';
+        }
+
+        return $sql
             . ($this->order?->prepareSqlString($builder) ?? '')
             . ($this->limit?->prepareSqlString($builder) ?? '')
             . ($this->offset?->prepareSqlString($builder) ?? '');
@@ -430,10 +474,36 @@ class Select extends AbstractPreparableSql
                 : $this->quantifier . ' ';
         }
 
+        // For column prefixing, use table OR subselect alias
+        $prefixTable = $this->table;
+        if ($prefixTable === null && $this->subselectAlias !== null) {
+            $prefixTable = new TableIdentifier($this->subselectAlias);
+        }
+
+        $columnsPart = $this->getColumns()->prepareSqlString($builder, $prefixTable);
+        $joinColumnsPart = $this->joins?->toColumnsSqlPart($builder) ?? '';
+
+        // If main columns are empty but join columns exist, remove leading comma from join columns
+        if ($columnsPart === '' && $joinColumnsPart !== '') {
+            $joinColumnsPart = substr($joinColumnsPart, 2); // Remove leading ", "
+        }
+
+        // Handle FROM clause - either table or subselect
+        $fromPart = '';
+        if ($this->subselect !== null) {
+            $q = $builder->q;
+            $fromPart = ' FROM (' . $builder->processSubSelect($this->subselect) . ')';
+            if ($this->subselectAlias !== null) {
+                $fromPart .= ' AS ' . $q . $this->subselectAlias . $q;
+            }
+        } elseif ($this->table !== null) {
+            $fromPart = $this->table->toFromSqlPart($builder);
+        }
+
         return 'SELECT ' . $quantifierPart
-            . $this->getColumns()->prepareSqlString($builder, $this->table)
-            . ($this->joins?->toColumnsSqlPart($builder) ?? '')
-            . ($this->table?->toFromSqlPart($builder) ?? '');
+            . $columnsPart
+            . $joinColumnsPart
+            . $fromPart;
     }
 
     /**

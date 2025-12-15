@@ -28,7 +28,7 @@ final class PredicateTest extends TestCase
 
         $expressionData = $predicate->getExpressionData();
 
-        self::assertEquals('{"foo"}.{"bar"} = {?}', $expressionData['spec']);
+        self::assertEquals('%s = %s', $expressionData['spec']);
         self::assertCount(2, $expressionData['values']);
         self::assertEquals($identifier, $expressionData['values'][0]);
         self::assertEquals($expression, $expressionData['values'][1]);
@@ -44,7 +44,7 @@ final class PredicateTest extends TestCase
 
         $expressionData = $predicate->getExpressionData();
 
-        self::assertEquals('{"foo"}.{"bar"} != {?}', $expressionData['spec']);
+        self::assertEquals('%s != %s', $expressionData['spec']);
         self::assertCount(2, $expressionData['values']);
         self::assertEquals($identifier, $expressionData['values'][0]);
         self::assertEquals($expression, $expressionData['values'][1]);
@@ -60,7 +60,7 @@ final class PredicateTest extends TestCase
 
         $expressionData = $predicate->getExpressionData();
 
-        self::assertEquals('{"foo"}.{"bar"} < {?}', $expressionData['spec']);
+        self::assertEquals('%s < %s', $expressionData['spec']);
         self::assertCount(2, $expressionData['values']);
         self::assertEquals($identifier, $expressionData['values'][0]);
         self::assertEquals($expression, $expressionData['values'][1]);
@@ -76,7 +76,7 @@ final class PredicateTest extends TestCase
 
         $expressionData = $predicate->getExpressionData();
 
-        self::assertEquals('{"foo"}.{"bar"} > {?}', $expressionData['spec']);
+        self::assertEquals('%s > %s', $expressionData['spec']);
         self::assertCount(2, $expressionData['values']);
         self::assertEquals($identifier, $expressionData['values'][0]);
         self::assertEquals($expression, $expressionData['values'][1]);
@@ -92,7 +92,7 @@ final class PredicateTest extends TestCase
 
         $expressionData = $predicate->getExpressionData();
 
-        self::assertEquals('{"foo"}.{"bar"} <= {?}', $expressionData['spec']);
+        self::assertEquals('%s <= %s', $expressionData['spec']);
         self::assertCount(2, $expressionData['values']);
         self::assertEquals($identifier, $expressionData['values'][0]);
         self::assertEquals($expression, $expressionData['values'][1]);
@@ -108,7 +108,7 @@ final class PredicateTest extends TestCase
 
         $expressionData = $predicate->getExpressionData();
 
-        self::assertEquals('{"foo"}.{"bar"} >= {?}', $expressionData['spec']);
+        self::assertEquals('%s >= %s', $expressionData['spec']);
         self::assertCount(2, $expressionData['values']);
         self::assertEquals($identifier, $expressionData['values'][0]);
         self::assertEquals($expression, $expressionData['values'][1]);
@@ -124,7 +124,7 @@ final class PredicateTest extends TestCase
 
         $expressionData = $predicate->getExpressionData();
 
-        self::assertEquals('{"foo"}.{"bar"} LIKE {?}', $expressionData['spec']);
+        self::assertEquals('%s LIKE %s', $expressionData['spec']);
         self::assertCount(2, $expressionData['values']);
         self::assertEquals($identifier, $expressionData['values'][0]);
         self::assertEquals($expression, $expressionData['values'][1]);
@@ -140,7 +140,7 @@ final class PredicateTest extends TestCase
 
         $expressionData = $predicate->getExpressionData();
 
-        self::assertEquals('{"foo"}.{"bar"} NOT LIKE {?}', $expressionData['spec']);
+        self::assertEquals('%s NOT LIKE %s', $expressionData['spec']);
         self::assertCount(2, $expressionData['values']);
         self::assertEquals($identifier, $expressionData['values'][0]);
         self::assertEquals($expression, $expressionData['values'][1]);
@@ -166,7 +166,7 @@ final class PredicateTest extends TestCase
 
         $expressionData = $predicate->getExpressionData();
 
-        self::assertEquals('{"foo"}.{"bar"} IS NULL', $expressionData['spec']);
+        self::assertEquals('%s IS NULL', $expressionData['spec']);
         self::assertCount(1, $expressionData['values']);
         self::assertEquals($identifier, $expressionData['values'][0]);
     }
@@ -180,7 +180,7 @@ final class PredicateTest extends TestCase
 
         $expressionData = $predicate->getExpressionData();
 
-        self::assertEquals('{"foo"}.{"bar"} IS NOT NULL', $expressionData['spec']);
+        self::assertEquals('%s IS NOT NULL', $expressionData['spec']);
         self::assertCount(1, $expressionData['values']);
         self::assertEquals($identifier, $expressionData['values'][0]);
     }
@@ -195,7 +195,7 @@ final class PredicateTest extends TestCase
 
         $expressionData = $predicate->getExpressionData();
 
-        self::assertEquals('{"foo"}.{"bar"} IN ({?}, {?})', $expressionData['spec']);
+        self::assertEquals('%s IN %s', $expressionData['spec']);
         self::assertCount(2, $expressionData['values']);
         self::assertEquals($identifier, $expressionData['values'][0]);
         self::assertEquals($expression, $expressionData['values'][1]);
@@ -211,7 +211,7 @@ final class PredicateTest extends TestCase
 
         $expressionData = $predicate->getExpressionData();
 
-        self::assertEquals('{"foo"}.{"bar"} NOT IN ({?}, {?})', $expressionData['spec']);
+        self::assertEquals('%s NOT IN %s', $expressionData['spec']);
         self::assertCount(2, $expressionData['values']);
         self::assertEquals($identifier, $expressionData['values'][0]);
         self::assertEquals($expression, $expressionData['values'][1]);
@@ -228,7 +228,7 @@ final class PredicateTest extends TestCase
 
         $expressionData = $predicate->getExpressionData();
 
-        self::assertEquals('{"foo"}.{"bar"} BETWEEN {?} AND {?}', $expressionData['spec']);
+        self::assertEquals('%s BETWEEN %s AND %s', $expressionData['spec']);
         self::assertCount(3, $expressionData['values']);
         self::assertEquals($identifier, $expressionData['values'][0]);
         self::assertEquals($minValue, $expressionData['values'][1]);
@@ -246,7 +246,7 @@ final class PredicateTest extends TestCase
 
         $expressionData = $predicate->getExpressionData();
 
-        self::assertEquals('{"foo"}.{"bar"} NOT BETWEEN {?} AND {?}', $expressionData['spec']);
+        self::assertEquals('%s NOT BETWEEN %s AND %s', $expressionData['spec']);
         self::assertCount(3, $expressionData['values']);
         self::assertEquals($identifier, $expressionData['values'][0]);
         self::assertEquals($minValue, $expressionData['values'][1]);
@@ -273,7 +273,7 @@ final class PredicateTest extends TestCase
         self::assertCount(4, $expressionData['values']);
         // Verify combined spec
         self::assertEquals(
-            '{"foo"}.{"bar"} IS NULL OR {"bar"}.{"baz"} IS NOT NULL AND {"baz"}.{"bat"} = {?}',
+            '%s IS NULL OR %s IS NOT NULL AND %s = %s',
             $expressionData['spec']
         );
         self::assertEquals($identifier1, $expressionData['values'][0]);
@@ -303,7 +303,7 @@ final class PredicateTest extends TestCase
         self::assertCount(4, $expressionData['values']);
         // Verify combined spec with nested brackets
         self::assertEquals(
-            '{"foo"}.{"bar"} IS NULL AND ({"bar"}.{"baz"} IS NOT NULL AND {"baz"}.{"bat"} = {?})',
+            '%s IS NULL AND (%s IS NOT NULL AND %s = %s)',
             $expressionData['spec']
         );
         self::assertEquals($identifier1, $expressionData['values'][0]);
@@ -390,8 +390,9 @@ final class PredicateTest extends TestCase
 
         $where1->expression('some_expression()');
 
+        // Single predicates are no longer wrapped in extra parentheses
         self::assertSame(
-            'SELECT "a_table".* FROM "a_table" WHERE (some_expression())',
+            'SELECT "a_table".* FROM "a_table" WHERE some_expression()',
             $this->makeSqlString($where1)
         );
     }
@@ -403,10 +404,12 @@ final class PredicateTest extends TestCase
     {
         $where = new Predicate();
 
-        $where->expression('some_expression(?)', null);
+        // To pass null as a value, wrap it in an array
+        $where->expression('some_expression(?)', [null]);
 
+        // Single predicates are no longer wrapped in extra parentheses
         self::assertSame(
-            'SELECT "a_table".* FROM "a_table" WHERE (some_expression(NULL))',
+            'SELECT "a_table".* FROM "a_table" WHERE some_expression(NULL)',
             $this->makeSqlString($where)
         );
     }
@@ -420,8 +423,9 @@ final class PredicateTest extends TestCase
 
         $where->expression('some_expression(?)', 'a string');
 
+        // Single predicates are no longer wrapped in extra parentheses
         self::assertSame(
-            'SELECT "a_table".* FROM "a_table" WHERE (some_expression(\'a string\'))',
+            'SELECT "a_table".* FROM "a_table" WHERE some_expression(\'a string\')',
             $this->makeSqlString($where)
         );
     }

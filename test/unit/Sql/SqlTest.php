@@ -86,7 +86,9 @@ final class SqlTest extends TestCase
         self::assertFalse($sql->hasTable());
 
         $sql->setTable('foo');
-        self::assertSame('foo', $sql->getTable());
+        // getTable() now returns a TableIdentifier object
+        self::assertInstanceOf(TableIdentifier::class, $sql->getTable());
+        self::assertEquals('foo', $sql->getTable()->getTable());
 
         $this->expectException(TypeError::class);
         /** @noinspection PhpStrictTypeCheckingInspection */

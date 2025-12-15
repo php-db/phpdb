@@ -42,7 +42,8 @@ final class ExpressionTest extends TestCase
     #[Group('6849')]
     public function testCanPassSingleNullParameterToConstructor(): void
     {
-        $expression = new Expression('?', null);
+        // Pass null in an array to be processed as a parameter
+        $expression = new Expression('?', [null]);
         $null       = new Value(null);
         self::assertEquals([$null], $expression->getParameters());
     }
@@ -67,9 +68,8 @@ final class ExpressionTest extends TestCase
     #[Group('6849')]
     public function testCanPassMultiScalarParametersToConstructor(): void
     {
-        /** @psalm-suppress TooManyArguments */
-        /** @phpstan-ignore arguments.count */
-        $expression = new Expression('? OR ?', 'foo', 'bar');
+        // Multiple parameters must be passed as an array
+        $expression = new Expression('? OR ?', ['foo', 'bar']);
         $foo        = new Value('foo');
         $bar        = new Value('bar');
 
@@ -79,9 +79,8 @@ final class ExpressionTest extends TestCase
     #[Group('6849')]
     public function testCanPassMultiNullParametersToConstructor(): void
     {
-        /** @psalm-suppress TooManyArguments */
-        /** @phpstan-ignore arguments.count */
-        $expression = new Expression('? OR ?', null, null);
+        // Multiple null parameters must be passed as an array
+        $expression = new Expression('? OR ?', [null, null]);
         $null       = new Value(null);
 
         self::assertEquals([$null, $null], $expression->getParameters());

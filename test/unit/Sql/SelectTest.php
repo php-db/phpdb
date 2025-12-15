@@ -148,17 +148,17 @@ final class SelectTest extends TestCase
         // Verify fluent interface
         self::assertSame($select, $result);
 
-        // Verify the first mutation occurred
+        // Verify the first mutation occurred - getRawState returns the columns array
         $columns = $select->getRawState('columns');
-        self::assertInstanceOf(SelectExpression::class, $columns);
-        self::assertEquals(['foo', 'bar'], $columns->columns);
+        self::assertIsArray($columns);
+        self::assertEquals(['foo', 'bar'], $columns);
 
         // Second mutation to verify mutability
         $select->columns(['baz', 'qux']);
 
         // Verify the instance was actually mutated
         $columns = $select->getRawState('columns');
-        self::assertEquals(['baz', 'qux'], $columns->columns);
+        self::assertEquals(['baz', 'qux'], $columns);
     }
 
     #[TestDox('unit test: Test isTableReadOnly() returns correct state for read only')]
@@ -256,10 +256,10 @@ final class SelectTest extends TestCase
         $where      = $select->getRawState('where');
         $predicates = $where->getPredicates();
         self::assertCount(1, $predicates);
-        self::assertIsArray($predicates[0]);
-        self::assertInstanceOf(Predicate\Expression::class, $predicates[0][1]);
-        self::assertEquals(Predicate\PredicateSet::OP_AND, $predicates[0][0]);
-        self::assertEquals('x = ?', $predicates[0][1]->getExpression());
+        // Predicates now store combination internally via getCombination()
+        self::assertInstanceOf(Predicate\Expression::class, $predicates[0]);
+        self::assertEquals(Predicate\PredicateSet::OP_AND, $predicates[0]->getCombination());
+        self::assertEquals('x = ?', $predicates[0]->getExpression());
 
         $select = new Select();
         $select->where('x = y');
@@ -267,8 +267,7 @@ final class SelectTest extends TestCase
         /** @var Where $where */
         $where      = $select->getRawState('where');
         $predicates = $where->getPredicates();
-        self::assertIsArray($predicates[0]);
-        self::assertInstanceOf(Literal::class, $predicates[0][1]);
+        self::assertInstanceOf(Literal::class, $predicates[0]);
     }
 
     #[TestDox('unit test: Test where() will accept an array with a string key (containing ?) used as an
@@ -284,11 +283,11 @@ final class SelectTest extends TestCase
         $expression = new Value(5);
 
         self::assertCount(1, $predicates);
-        self::assertIsArray($predicates[0]);
-        self::assertInstanceOf(Predicate\Expression::class, $predicates[0][1]);
-        self::assertEquals(Predicate\PredicateSet::OP_AND, $predicates[0][0]);
-        self::assertEquals('foo > ?', $predicates[0][1]->getExpression());
-        self::assertEquals([$expression], $predicates[0][1]->getParameters());
+        // Predicates now store combination internally via getCombination()
+        self::assertInstanceOf(Predicate\Expression::class, $predicates[0]);
+        self::assertEquals(Predicate\PredicateSet::OP_AND, $predicates[0]->getCombination());
+        self::assertEquals('foo > ?', $predicates[0]->getExpression());
+        self::assertEquals([$expression], $predicates[0]->getParameters());
     }
 
     #[TestDox('unit test: Test where() will accept any array with string key (without ?) to be used
@@ -307,18 +306,17 @@ final class SelectTest extends TestCase
         $where      = $select->getRawState('where');
         $predicates = $where->getPredicates();
         self::assertCount(2, $predicates);
-        self::assertIsArray($predicates[0]);
-        self::assertIsArray($predicates[1]);
+        // Predicates now store combination internally via getCombination()
+        self::assertInstanceOf(Operator::class, $predicates[0]);
+        self::assertInstanceOf(Operator::class, $predicates[1]);
 
-        self::assertInstanceOf(Operator::class, $predicates[0][1]);
-        self::assertEquals(Predicate\PredicateSet::OP_AND, $predicates[0][0]);
-        self::assertEquals($identifier1, $predicates[0][1]->getLeft());
-        self::assertEquals($expression1, $predicates[0][1]->getRight());
+        self::assertEquals(Predicate\PredicateSet::OP_AND, $predicates[0]->getCombination());
+        self::assertEquals($identifier1, $predicates[0]->getLeft());
+        self::assertEquals($expression1, $predicates[0]->getRight());
 
-        self::assertInstanceOf(Operator::class, $predicates[1][1]);
-        self::assertEquals(Predicate\PredicateSet::OP_AND, $predicates[1][0]);
-        self::assertEquals($identifier2, $predicates[1][1]->getLeft());
-        self::assertEquals($expression2, $predicates[1][1]->getRight());
+        self::assertEquals(Predicate\PredicateSet::OP_AND, $predicates[1]->getCombination());
+        self::assertEquals($identifier2, $predicates[1]->getLeft());
+        self::assertEquals($expression2, $predicates[1]->getRight());
 
         $select = new Select();
         $select->where(['x = y']);
@@ -326,8 +324,7 @@ final class SelectTest extends TestCase
         /** @var Where $where */
         $where      = $select->getRawState('where');
         $predicates = $where->getPredicates();
-        self::assertIsArray($predicates[0]);
-        self::assertInstanceOf(Literal::class, $predicates[0][1]);
+        self::assertInstanceOf(Literal::class, $predicates[0]);
     }
 
     #[TestDox('
@@ -355,10 +352,10 @@ final class SelectTest extends TestCase
         $where      = $select->getRawState('where');
         $predicates = $where->getPredicates();
         self::assertCount(1, $predicates);
-        self::assertIsArray($predicates[0]);
-        self::assertInstanceOf(Literal::class, $predicates[0][1]);
-        self::assertEquals(Predicate\PredicateSet::OP_AND, $predicates[0][0]);
-        self::assertEquals('name = "Ralph"', $predicates[0][1]->getLiteral());
+        // Predicates now store combination internally via getCombination()
+        self::assertInstanceOf(Literal::class, $predicates[0]);
+        self::assertEquals(Predicate\PredicateSet::OP_AND, $predicates[0]->getCombination());
+        self::assertEquals('name = "Ralph"', $predicates[0]->getLiteral());
     }
 
     #[TestDox('unit test: Test where() will accept an indexed array to be used by joining string expressions,
@@ -372,10 +369,10 @@ final class SelectTest extends TestCase
         $where      = $select->getRawState('where');
         $predicates = $where->getPredicates();
         self::assertCount(1, $predicates);
-        self::assertIsArray($predicates[0]);
-        self::assertInstanceOf(Literal::class, $predicates[0][1]);
-        self::assertEquals(Predicate\PredicateSet::OP_OR, $predicates[0][0]);
-        self::assertEquals('name = "Ralph"', $predicates[0][1]->getLiteral());
+        // Predicates now store combination internally via getCombination()
+        self::assertInstanceOf(Literal::class, $predicates[0]);
+        self::assertEquals(Predicate\PredicateSet::OP_OR, $predicates[0]->getCombination());
+        self::assertEquals('name = "Ralph"', $predicates[0]->getLiteral());
     }
 
     #[TestDox('unit test: Test where() will accept a closure to be executed with Where object as argument')]
@@ -408,8 +405,8 @@ final class SelectTest extends TestCase
         /** @var Where $where */
         $where      = $select->getRawState('where');
         $predicates = $where->getPredicates();
-        self::assertIsArray($predicates[0]);
-        self::assertSame($predicate, $predicates[0][1]);
+        // Predicates now store combination internally via getCombination()
+        self::assertSame($predicate, $predicates[0]);
     }
 
     #[TestDox('unit test: Test where() will accept a Where object')]
@@ -656,13 +653,14 @@ final class SelectTest extends TestCase
         $select->reset(Select::TABLE);
         self::assertNull($select->getRawState(Select::TABLE));
 
-        // columns
+        // columns - getRawState('columns') now returns the columns array directly
         $select->columns(['foo']);
         $columns = $select->getRawState(Select::COLUMNS);
-        self::assertInstanceOf(SelectExpression::class, $columns);
-        self::assertEquals(['foo'], $columns->columns);
+        self::assertIsArray($columns);
+        self::assertEquals(['foo'], $columns);
         $select->reset(Select::COLUMNS);
-        self::assertNull($select->getRawState(Select::COLUMNS));
+        // After reset, returns default ['*']
+        self::assertEquals(['*'], $select->getRawState(Select::COLUMNS));
 
         // joins
         $select->join('foo', 'id = boo');
@@ -712,11 +710,11 @@ final class SelectTest extends TestCase
         $select->reset(Select::OFFSET);
         self::assertNull($select->getRawState(Select::OFFSET));
 
-        // order
+        // order - direction is normalized to uppercase
         $select->order('foo asc');
         $order = $select->getRawState(Select::ORDER);
         self::assertInstanceOf(Order::class, $order);
-        self::assertEquals(['foo asc'], $order->getOrders());
+        self::assertEquals(['foo ASC'], $order->getOrders());
         $select->reset(Select::ORDER);
         self::assertNull($select->getRawState(Select::ORDER));
     }
@@ -895,11 +893,11 @@ final class SelectTest extends TestCase
             'processSelect' => [[['"f".*']], '"foo" AS "f"'],
         ];
 
-        // columns
+        // columns - no alias added when key is numeric (column name = alias)
         $select4 = new Select();
         $select4->from('foo')->columns(['bar', 'baz']);
-        $sqlPrep4       = 'SELECT "foo"."bar" AS "bar", "foo"."baz" AS "baz" FROM "foo"';
-        $sqlStr4        = 'SELECT "foo"."bar" AS "bar", "foo"."baz" AS "baz" FROM "foo"';
+        $sqlPrep4       = 'SELECT "foo"."bar", "foo"."baz" FROM "foo"';
+        $sqlStr4        = 'SELECT "foo"."bar", "foo"."baz" FROM "foo"';
         $internalTests4 = [
             'processSelect' => [[['"foo"."bar"', '"bar"'], ['"foo"."baz"', '"baz"']], '"foo"'],
         ];
@@ -913,11 +911,11 @@ final class SelectTest extends TestCase
             'processSelect' => [[['"foo"."baz"', '"bar"']], '"foo"'],
         ];
 
-        // columns with AS associative array mixed
+        // columns with AS associative array mixed - alias only shown when key is string
         $select6 = new Select();
         $select6->from('foo')->columns(['bar' => 'baz', 'bam']);
-        $sqlPrep6       = 'SELECT "foo"."baz" AS "bar", "foo"."bam" AS "bam" FROM "foo"';
-        $sqlStr6        = 'SELECT "foo"."baz" AS "bar", "foo"."bam" AS "bam" FROM "foo"';
+        $sqlPrep6       = 'SELECT "foo"."baz" AS "bar", "foo"."bam" FROM "foo"';
+        $sqlStr6        = 'SELECT "foo"."baz" AS "bar", "foo"."bam" FROM "foo"';
         $internalTests6 = [
             'processSelect' => [[['"foo"."baz"', '"bar"'], ['"foo"."bam"', '"bam"']], '"foo"'],
         ];
@@ -955,8 +953,8 @@ final class SelectTest extends TestCase
             ]
         );
         $sqlPrep9       = 'SELECT (COUNT("some_column") + ?) AS "bar" FROM "foo"';
-        $sqlStr9        = 'SELECT (COUNT("some_column") + \'5\') AS "bar" FROM "foo"';
-        $params9        = ['expr2Param1' => 5];
+        $sqlStr9        = 'SELECT (COUNT("some_column") + 5) AS "bar" FROM "foo"';
+        $params9        = ['p1' => 5];
         $internalTests9 = [
             'processSelect' => [[['(COUNT("some_column") + ?) AS "bar"']], '"foo"'],
         ];
@@ -971,7 +969,7 @@ final class SelectTest extends TestCase
             'processJoins'  => [[['INNER', '"zac"', '"m" = "n"']]],
         ];
 
-        // join with columns
+        // join with columns - join columns always get AS alias
         $select11 = new Select();
         $select11->from('foo')->join('zac', 'm = n', ['bar', 'baz']);
         $sqlPrep11       = 'SELECT "foo".*, "zac"."bar" AS "bar", "zac"."baz" AS "baz" FROM "foo" INNER JOIN "zac" ON "m" = "n"';
@@ -981,7 +979,7 @@ final class SelectTest extends TestCase
             'processJoins'  => [[['INNER', '"zac"', '"m" = "n"']]],
         ];
 
-        // join with alternate type
+        // join with alternate type - join columns always get AS alias
         $select12 = new Select();
         $select12->from('foo')->join('zac', 'm = n', ['bar', 'baz'], Select::JOIN_OUTER);
         $sqlPrep12       = 'SELECT "foo".*, "zac"."bar" AS "bar", "zac"."baz" AS "baz" FROM "foo" OUTER JOIN "zac" ON "m" = "n"';
@@ -1021,12 +1019,12 @@ final class SelectTest extends TestCase
             'processWhere'  => ['x = 5'],
         ];
 
-        // where (returning parameters)
+        // where (returning parameters) - identifiers in expression are quoted
         $select16 = new Select();
         $select16->from('foo')->where(['x = ?' => 5]);
-        $sqlPrep16       = 'SELECT "foo".* FROM "foo" WHERE x = ?';
-        $sqlStr16        = 'SELECT "foo".* FROM "foo" WHERE x = 5';
-        $params16        = ['where1' => 5];
+        $sqlPrep16       = 'SELECT "foo".* FROM "foo" WHERE "x" = ?';
+        $sqlStr16        = 'SELECT "foo".* FROM "foo" WHERE "x" = 5';
+        $params16        = ['p1' => 5];
         $internalTests16 = [
             'processSelect' => [[['"foo".*']], '"foo"'],
             'processWhere'  => ['x = ?'],
@@ -1053,8 +1051,8 @@ final class SelectTest extends TestCase
 
         $select19 = new Select();
         $select19->from('foo')->group(new Expression('DAY(?)', [new Argument\Identifier('col1')]));
-        $sqlPrep19       = 'SELECT "foo".* FROM "foo" GROUP BY DAY(?)';
-        $sqlStr19        = 'SELECT "foo".* FROM "foo" GROUP BY DAY(?)';
+        $sqlPrep19       = 'SELECT "foo".* FROM "foo" GROUP BY DAY("col1")';
+        $sqlStr19        = 'SELECT "foo".* FROM "foo" GROUP BY DAY("col1")';
         $internalTests19 = [
             'processSelect' => [[['"foo".*']], '"foo"'],
             'processGroup'  => [['DAY(?)']],
@@ -1070,12 +1068,12 @@ final class SelectTest extends TestCase
             'processHaving' => ['x = 5'],
         ];
 
-        // having (returning parameters)
+        // having (returning parameters) - identifiers in expression are quoted
         $select21 = new Select();
         $select21->from('foo')->having(['x = ?' => 5]);
-        $sqlPrep21       = 'SELECT "foo".* FROM "foo" HAVING x = ?';
-        $sqlStr21        = 'SELECT "foo".* FROM "foo" HAVING x = 5';
-        $params21        = ['having1' => 5];
+        $sqlPrep21       = 'SELECT "foo".* FROM "foo" HAVING "x" = ?';
+        $sqlStr21        = 'SELECT "foo".* FROM "foo" HAVING "x" = 5';
+        $params21        = ['p1' => 5];
         $internalTests21 = [
             'processSelect' => [[['"foo".*']], '"foo"'],
             'processHaving' => ['x = ?'],
@@ -1143,11 +1141,11 @@ final class SelectTest extends TestCase
             'processOffset' => ['?'],
         ];
 
-        // joins with a few keywords in the on clause
+        // joins with a few keywords in the on clause - all identifiers get quoted
         $select28 = new Select();
         $select28->from('foo')->join('zac', '(m = n AND c.x) BETWEEN x AND y.z OR (c.x < y.z AND c.x <= y.z AND c.x > y.z AND c.x >= y.z)');
-        $sqlPrep28       = 'SELECT "foo".*, "zac".* FROM "foo" INNER JOIN "zac" ON (m = n AND "c"."x") BETWEEN x AND "y"."z" OR ("c"."x" < "y"."z" AND "c"."x" <= "y"."z" AND "c"."x" > "y"."z" AND "c"."x" >= "y"."z")';
-        $sqlStr28        = 'SELECT "foo".*, "zac".* FROM "foo" INNER JOIN "zac" ON (m = n AND "c"."x") BETWEEN x AND "y"."z" OR ("c"."x" < "y"."z" AND "c"."x" <= "y"."z" AND "c"."x" > "y"."z" AND "c"."x" >= "y"."z")';
+        $sqlPrep28       = 'SELECT "foo".*, "zac".* FROM "foo" INNER JOIN "zac" ON ("m" = "n" AND "c"."x") BETWEEN "x" AND "y"."z" OR ("c"."x" < "y"."z" AND "c"."x" <= "y"."z" AND "c"."x" > "y"."z" AND "c"."x" >= "y"."z")';
+        $sqlStr28        = 'SELECT "foo".*, "zac".* FROM "foo" INNER JOIN "zac" ON ("m" = "n" AND "c"."x") BETWEEN "x" AND "y"."z" OR ("c"."x" < "y"."z" AND "c"."x" <= "y"."z" AND "c"."x" > "y"."z" AND "c"."x" >= "y"."z")';
         $internalTests28 = [
             'processSelect' => [[['"foo".*'], ['"zac".*']], '"foo"'],
             'processJoins'  => [[['INNER', '"zac"', '(m = n AND "c"."x") BETWEEN x AND "y"."z" OR ("c"."x" < "y"."z" AND "c"."x" <= "y"."z" AND "c"."x" > "y"."z" AND "c"."x" >= "y"."z")']]],
@@ -1173,11 +1171,11 @@ final class SelectTest extends TestCase
             'processGroup'  => [['"c1"."d2"']],
         ];
 
-        // join with expression in ON part
+        // join with expression in ON part - Expression now quotes identifiers
         $select31 = new Select();
         $select31->from('foo')->join('zac', new Predicate\Expression('(m = n AND c.x) BETWEEN x AND y.z'));
-        $sqlPrep31       = 'SELECT "foo".*, "zac".* FROM "foo" INNER JOIN "zac" ON (m = n AND c.x) BETWEEN x AND y.z';
-        $sqlStr31        = 'SELECT "foo".*, "zac".* FROM "foo" INNER JOIN "zac" ON (m = n AND c.x) BETWEEN x AND y.z';
+        $sqlPrep31       = 'SELECT "foo".*, "zac".* FROM "foo" INNER JOIN "zac" ON ("m" = "n" AND "c"."x") BETWEEN "x" AND "y"."z"';
+        $sqlStr31        = 'SELECT "foo".*, "zac".* FROM "foo" INNER JOIN "zac" ON ("m" = "n" AND "c"."x") BETWEEN "x" AND "y"."z"';
         $internalTests31 = [
             'processSelect' => [[['"foo".*'], ['"zac".*']], '"foo"'],
             'processJoins'  => [[['INNER', '"zac"', '(m = n AND c.x) BETWEEN x AND y.z']]],
@@ -1188,10 +1186,11 @@ final class SelectTest extends TestCase
         $select32 = new Select();
         $select32->from(['x' => $select32subselect]);
 
-        $sqlPrep32       = 'SELECT "x".* FROM (SELECT "bar".* FROM "bar" WHERE "y" LIKE ?) AS "x"';
+        // Subselects have their values embedded (not parameterized)
+        $sqlPrep32       = 'SELECT "x".* FROM (SELECT "bar".* FROM "bar" WHERE "y" LIKE \'%Foo%\') AS "x"';
         $sqlStr32        = 'SELECT "x".* FROM (SELECT "bar".* FROM "bar" WHERE "y" LIKE \'%Foo%\') AS "x"';
         $internalTests32 = [
-            'processSelect' => [[['"x".*']], '(SELECT "bar".* FROM "bar" WHERE "y" LIKE ?) AS "x"'],
+            'processSelect' => [[['"x".*']], '(SELECT "bar".* FROM "bar" WHERE "y" LIKE \'%Foo%\') AS "x"'],
         ];
 
         $select33 = new Select();
@@ -1207,14 +1206,14 @@ final class SelectTest extends TestCase
             'processWhere'  => ['"c1" IS NULL AND "c2" IN (?, ?, ?) AND "c3" IS NOT NULL'],
         ];
 
-        // @author Demian Katz
+        // @author Demian Katz - identifier in expression is substituted
         $select34 = new Select();
         $select34->from('table')->order([
             new Expression('isnull(?) DESC', [new Argument\Identifier('name')]),
             'name',
         ]);
-        $sqlPrep34       = 'SELECT "table".* FROM "table" ORDER BY isnull(?) DESC, "name" ASC';
-        $sqlStr34        = 'SELECT "table".* FROM "table" ORDER BY isnull(?) DESC, "name" ASC';
+        $sqlPrep34       = 'SELECT "table".* FROM "table" ORDER BY isnull("name") DESC, "name" ASC';
+        $sqlStr34        = 'SELECT "table".* FROM "table" ORDER BY isnull("name") DESC, "name" ASC';
         $internalTests34 = [
             'processOrder' => [[['isnull(?) DESC'], ['"name"', Select::ORDER_ASCENDING]]],
         ];
@@ -1232,6 +1231,7 @@ final class SelectTest extends TestCase
 
         // multiple joins with expressions
         // reported by @jdolieslager
+        // Parameter names now use sequential p1, p2, etc. format
         $select36 = new Select();
         $select36->from('foo')
             ->join('tableA', new Predicate\Operator('id', '=', 1))
@@ -1241,8 +1241,8 @@ final class SelectTest extends TestCase
                 new Predicate\Operator('number', '>', 20),
             ]));
         $sqlPrep36       = 'SELECT "foo".*, "tableA".*, "tableB".*, "tableC".* FROM "foo"'
-            . ' INNER JOIN "tableA" ON "id" = :join1 INNER JOIN "tableB" ON "id" = :join2 '
-            . 'INNER JOIN "tableC" ON "id" = :join3 AND "number" > :join4';
+            . ' INNER JOIN "tableA" ON "id" = :p1 INNER JOIN "tableB" ON "id" = :p2 '
+            . 'INNER JOIN "tableC" ON "id" = :p3 AND "number" > :p4';
         $sqlStr36        = 'SELECT "foo".*, "tableA".*, "tableB".*, "tableC".* FROM "foo" '
             . 'INNER JOIN "tableA" ON "id" = 1 INNER JOIN "tableB" ON "id" = 2 '
             . 'INNER JOIN "tableC" ON "id" = 3 AND "number" > 20';
@@ -1317,7 +1317,7 @@ final class SelectTest extends TestCase
         $select42 = new Select();
         $select42->from('foo')->quantifier(new Expression('TOP ?', [10]));
         $sqlPrep42       = 'SELECT TOP ? "foo".* FROM "foo"';
-        $sqlStr42        = 'SELECT TOP \'10\' "foo".* FROM "foo"';
+        $sqlStr42        = 'SELECT TOP 10 "foo".* FROM "foo"';
         $internalTests42 = [
             'processSelect' => ['TOP ?', [['"foo".*']], '"foo"'],
         ];
@@ -1447,11 +1447,12 @@ final class SelectTest extends TestCase
         $select53 = new Select();
         $select53->from('foo')->where(new In('bar_id', $subSelect53))->limit(11)->offset(12);
         $params53        = ['limit' => 11, 'offset' => 12];
-        $sqlPrep53       = 'SELECT "foo".* FROM "foo" WHERE "bar_id" IN (SELECT "bar"."id" AS "id" FROM "bar" LIMIT 10 OFFSET 9) LIMIT :limit OFFSET :offset';
-        $sqlStr53        = 'SELECT "foo".* FROM "foo" WHERE "bar_id" IN (SELECT "bar"."id" AS "id" FROM "bar" LIMIT 10 OFFSET 9) LIMIT 11 OFFSET 12';
+        // Columns without explicit alias don't get AS added
+        $sqlPrep53       = 'SELECT "foo".* FROM "foo" WHERE "bar_id" IN (SELECT "bar"."id" FROM "bar" LIMIT 10 OFFSET 9) LIMIT :limit OFFSET :offset';
+        $sqlStr53        = 'SELECT "foo".* FROM "foo" WHERE "bar_id" IN (SELECT "bar"."id" FROM "bar" LIMIT 10 OFFSET 9) LIMIT 11 OFFSET 12';
         $internalTests53 = [
             'processSelect' => [[['"foo".*']], '"foo"'],
-            'processWhere'  => ['"bar_id" IN (SELECT "bar"."id" AS "id" FROM "bar" LIMIT 10 OFFSET 9)'],
+            'processWhere'  => ['"bar_id" IN (SELECT "bar"."id" FROM "bar" LIMIT 10 OFFSET 9)'],
             'processLimit'  => ['?'],
             'processOffset' => ['?'],
         ];

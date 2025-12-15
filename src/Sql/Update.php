@@ -119,7 +119,8 @@ class Update extends AbstractPreparableSql
     ): string {
         $this->localizeVariables();
 
-        if (! $this->emptyWhereAllowed && ($this->where === null || $this->where->count() === 0)) {
+        $emptyAllowed = $this->emptyWhereAllowed || ($this->where?->isEmptyAllowed() ?? false);
+        if (! $emptyAllowed && ($this->where === null || $this->where->count() === 0)) {
             throw new Exception\InvalidArgumentException(
                 'UPDATE requires a WHERE clause. Use ->setEmptyWhereAllowed() to allow updating all rows.'
             );

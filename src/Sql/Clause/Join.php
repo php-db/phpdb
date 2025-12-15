@@ -9,6 +9,7 @@ use Iterator;
 use Override;
 use PhpDb\Sql\ClauseInterface;
 use PhpDb\Sql\Exception;
+use PhpDb\Sql\ExpressionInterface;
 use PhpDb\Sql\Predicate;
 use PhpDb\Sql\PreparableSqlBuilder;
 use PhpDb\Sql\Select;
@@ -78,7 +79,7 @@ final class Join implements Iterator, Countable, ClauseInterface
     }
 
     /**
-     * @param array|string|TableIdentifier $name    A table name on which to join
+     * @param array|string|TableIdentifier|Select $name A table name on which to join (or Select for subquery)
      * @param string|Predicate\PredicateInterface $on A specification describing the fields to join on
      * @param array|int|string $columns Columns to include with the JOIN
      * @param string $type The JOIN type to use
@@ -87,15 +88,64 @@ final class Join implements Iterator, Countable, ClauseInterface
      */
     // phpcs:ignore Generic.NamingConventions.ConstructorName.OldStyle
     public function join(
-        array|string|TableIdentifier $name,
+        array|string|TableIdentifier|Select $name,
         string|Predicate\PredicateInterface $on,
         array|int|string $columns = [Select::SQL_STAR],
         string $type = self::JOIN_INNER
     ): static {
-        if (is_array($name) && (! is_string(key($name)) || count($name) !== 1)) {
-            throw new Exception\InvalidArgumentException(
-                sprintf("join() expects '%s' as a single element associative array", array_shift($name))
+        $alias = null;
+
+        // Handle Select object passed directly
+        if ($name instanceof Select) {
+            if (! is_array($columns)) {
+                $columns = [$columns];
+            }
+
+            if (is_string($on)) {
+                $on = new Predicate\Expression($on);
+            }
+
+            $this->joins[] = new JoinSpecification(
+                $name,
+                $on,
+                $columns,
+                JoinType::fromString($type),
+                $alias,
             );
+
+            return $this;
+        }
+
+        // Handle array with Select: ['alias' => Select]
+        if (is_array($name)) {
+            if (! is_string(key($name)) || count($name) !== 1) {
+                throw new Exception\InvalidArgumentException(
+                    sprintf("join() expects '%s' as a single element associative array", array_shift($name))
+                );
+            }
+
+            $alias = (string) key($name);
+            $value = current($name);
+
+            if ($value instanceof Select || $value instanceof ExpressionInterface) {
+                if (! is_array($columns)) {
+                    $columns = [$columns];
+                }
+
+                if (is_string($on)) {
+                    $on = new Predicate\Expression($on);
+                }
+
+                $this->joins[] = new JoinSpecification(
+                    $value,
+                    $on,
+                    $columns,
+                    JoinType::fromString($type),
+                    $alias,
+                );
+
+                return $this;
+            }
         }
 
         if (! is_array($columns)) {
@@ -137,10 +187,27 @@ final class Join implements Iterator, Countable, ClauseInterface
             return '';
         }
 
+        $q   = $builder->q;
         $sql = '';
         foreach ($this->joins as $join) {
-            $sql .= ' ' . $join->type->value . ' JOIN ' . $join->name->prepareSqlString($builder)
-                  . ' ON ' . $join->on->prepareSqlString($builder);
+            $sql .= ' ' . $join->type->value . ' JOIN ';
+
+            // Handle subselect, expression, or table name
+            if ($join->name instanceof Select) {
+                $sql .= '(' . $builder->processSubSelect($join->name) . ')';
+                if ($join->alias !== null) {
+                    $sql .= ' AS ' . $q . $join->alias . $q;
+                }
+            } elseif ($join->name instanceof ExpressionInterface) {
+                $sql .= $builder->processExpression($join->name);
+                if ($join->alias !== null) {
+                    $sql .= ' AS ' . $q . $join->alias . $q;
+                }
+            } else {
+                $sql .= $join->name->prepareSqlString($builder);
+            }
+
+            $sql .= ' ON ' . $join->on->prepareSqlString($builder);
         }
 
         return $sql;

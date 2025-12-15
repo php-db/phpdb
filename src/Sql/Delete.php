@@ -81,7 +81,8 @@ class Delete extends AbstractPreparableSql
     ): string {
         $this->localizeVariables();
 
-        if (! $this->emptyWhereAllowed && ($this->where === null || $this->where->count() === 0)) {
+        $emptyAllowed = $this->emptyWhereAllowed || ($this->where?->isEmptyAllowed() ?? false);
+        if (! $emptyAllowed && ($this->where === null || $this->where->count() === 0)) {
             throw new Exception\InvalidArgumentException(
                 'DELETE requires a WHERE clause. Use ->setEmptyWhereAllowed() to allow deletion of all rows.'
             );
