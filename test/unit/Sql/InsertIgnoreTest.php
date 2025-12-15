@@ -24,7 +24,6 @@ use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RequiresMethod;
 use PHPUnit\Framework\TestCase;
-use ReflectionException;
 use TypeError;
 
 final class InsertIgnoreTest extends TestCase
@@ -240,7 +239,7 @@ final class InsertIgnoreTest extends TestCase
     {
         // @codingStandardsIgnoreEnd
         $this->insert->foo = 'bar';
-        $values = $this->insert->getRawState('values');
+        $values            = $this->insert->getRawState('values');
         self::assertInstanceOf(Values::class, $values);
         self::assertEquals(['foo'], $values->getColumns());
         self::assertEquals(['bar'], $values->getValues());
@@ -251,7 +250,7 @@ final class InsertIgnoreTest extends TestCase
     {
         // @codingStandardsIgnoreEnd
         $this->insert->foo = 'bar';
-        $values = $this->insert->getRawState('values');
+        $values            = $this->insert->getRawState('values');
         self::assertEquals(['foo'], $values->getColumns());
         self::assertEquals(['bar'], $values->getValues());
         unset($this->insert->foo);
@@ -260,7 +259,7 @@ final class InsertIgnoreTest extends TestCase
         self::assertEquals([], $values->getValues());
 
         $this->insert->foo = null;
-        $values = $this->insert->getRawState('values');
+        $values            = $this->insert->getRawState('values');
         self::assertEquals(['foo'], $values->getColumns());
         self::assertEquals([null], $values->getValues());
 

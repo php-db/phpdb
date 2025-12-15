@@ -22,15 +22,15 @@ use function trim;
  */
 final class Combine extends AbstractPreparableSql
 {
-    final public const COLUMNS = 'columns';
+    public const COLUMNS = 'columns';
 
-    final public const COMBINE = 'combine';
+    public const COMBINE = 'combine';
 
-    final public const COMBINE_UNION = 'union';
+    public const COMBINE_UNION = 'union';
 
-    final public const COMBINE_EXCEPT = 'except';
+    public const COMBINE_EXCEPT = 'except';
 
-    final public const COMBINE_INTERSECT = 'intersect';
+    public const COMBINE_INTERSECT = 'intersect';
 
     /** @var string[] */
     protected array $specifications = [
@@ -55,7 +55,7 @@ final class Combine extends AbstractPreparableSql
      *
      * @throws Exception\InvalidArgumentException
      */
-    public function combine(Select|array $select, string $type = self::COMBINE_UNION, string $modifier = ''): static
+    public function combine(Select|array $select, string $type = self::COMBINE_UNION, string $modifier = ''): Combine
     {
         if (is_array($select)) {
             foreach ($select as $combine) {
@@ -84,7 +84,7 @@ final class Combine extends AbstractPreparableSql
     /**
      * Create union clause
      */
-    public function union(Select|array $select, string $modifier = ''): static
+    public function union(Select|array $select, string $modifier = ''): Combine
     {
         return $this->combine($select, self::COMBINE_UNION, $modifier);
     }
@@ -92,7 +92,7 @@ final class Combine extends AbstractPreparableSql
     /**
      * Create except clause
      */
-    public function except(Select|array $select, string $modifier = ''): static
+    public function except(Select|array $select, string $modifier = ''): Combine
     {
         return $this->combine($select, self::COMBINE_EXCEPT, $modifier);
     }
@@ -100,7 +100,7 @@ final class Combine extends AbstractPreparableSql
     /**
      * Create intersect clause
      */
-    public function intersect(Select|array $select, string $modifier = ''): static
+    public function intersect(Select|array $select, string $modifier = ''): Combine
     {
         return $this->combine($select, self::COMBINE_INTERSECT, $modifier);
     }
@@ -138,7 +138,7 @@ final class Combine extends AbstractPreparableSql
         return trim($sql, ' ');
     }
 
-    public function alignColumns(): static
+    public function alignColumns(): Combine
     {
         if (! $this->combine) {
             return $this;

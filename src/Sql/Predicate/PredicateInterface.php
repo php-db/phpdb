@@ -16,7 +16,7 @@ interface PredicateInterface extends ExpressionInterface
      * @param PlatformInterface $platform Platform for quoting values
      * @return string SQL fragment
      */
-    public function toSqlPart(string $q, PlatformInterface $platform): string;
+    public function prepareSqlString(string $q, PlatformInterface $platform): string;
 
     /**
      * Set the combination operator (AND/OR) for use in predicate sets

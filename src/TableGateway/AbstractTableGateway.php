@@ -6,14 +6,14 @@ use Closure;
 use PhpDb\Adapter\AdapterInterface;
 use PhpDb\ResultSet\ResultSet;
 use PhpDb\ResultSet\ResultSetInterface;
+use PhpDb\Sql\Clause\JoinClause;
+use PhpDb\Sql\Clause\WhereClause;
 use PhpDb\Sql\Delete;
 use PhpDb\Sql\Insert;
-use PhpDb\Sql\Join;
 use PhpDb\Sql\Select;
 use PhpDb\Sql\Sql;
 use PhpDb\Sql\TableIdentifier;
 use PhpDb\Sql\Update;
-use PhpDb\Sql\Where;
 use PhpDb\TableGateway\Feature\EventFeatureEventsInterface;
 
 use function array_shift;
@@ -163,7 +163,7 @@ abstract class AbstractTableGateway implements TableGatewayInterface
     /**
      * Select
      *
-     * @param Where|Closure|string|array $where
+     * @param WhereClause|Closure|string|array $where
      * @return ResultSetInterface
      */
     public function select($where = null)
@@ -327,7 +327,7 @@ abstract class AbstractTableGateway implements TableGatewayInterface
 
         if ($joins) {
             foreach ($joins as $join) {
-                $type = $join['type'] ?? Join::JOIN_INNER;
+                $type = $join['type'] ?? JoinClause::JOIN_INNER;
                 $update->join($join['name'], $join['on'], $type);
             }
         }
@@ -387,7 +387,7 @@ abstract class AbstractTableGateway implements TableGatewayInterface
     /**
      * Delete
      *
-     * @param Where|Closure|string|array $where
+     * @param WhereClause|Closure|string|array $where
      * @return int
      */
     public function delete($where)

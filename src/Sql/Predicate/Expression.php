@@ -9,7 +9,6 @@ use PhpDb\Adapter\Platform\PlatformInterface;
 use PhpDb\Sql\Argument\Value;
 use PhpDb\Sql\Argument\Values;
 use PhpDb\Sql\Expression as BaseExpression;
-use PhpDb\Sql\PreparableSqlInterface;
 
 use function implode;
 use function strpos;
@@ -19,7 +18,7 @@ final class Expression extends BaseExpression implements PredicateInterface
 {
     /** @inheritDoc */
     #[Override]
-    public function toSqlPart(string $q, PlatformInterface $platform): string
+    public function prepareSqlString(string $q, PlatformInterface $platform): string
     {
         // Fast path: no parameters, return expression directly
         if ($this->parameters === []) {

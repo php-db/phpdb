@@ -9,6 +9,8 @@ use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\Driver\PdoDriverInterface;
 use PhpDb\Adapter\ParameterContainer;
 use PhpDb\Adapter\Platform\PlatformInterface;
+use PhpDb\Sql\Clause\JoinClause;
+use PhpDb\Sql\Clause\WhereClause;
 use PhpDb\Sql\Predicate\PredicateInterface;
 
 use function array_key_exists;
@@ -17,21 +19,23 @@ use function is_scalar;
 use function strtolower;
 
 /**
- * @property Where $where
+ * @property WhereClause $where
  */
-final class Update extends AbstractPreparableSql
+class Update extends AbstractPreparableSql
 {
-    final public const VALUES_MERGE = 'merge';
+    public const VALUES_MERGE = 'merge';
 
-    final public const VALUES_SET = 'set';
+    public const VALUES_SET = 'set';
 
     protected ?TableIdentifier $table = null;
 
     protected ?Set $set = null;
 
-    protected ?Where $where = null;
+    protected ?WhereClause $where = null;
 
-    protected ?Join $joins = null;
+    protected ?JoinClause $joins = null;
+
+    protected bool $emptyWhereAllowed = false;
 
     public function __construct(string|TableIdentifier|null $table = null)
     {
@@ -45,14 +49,14 @@ final class Update extends AbstractPreparableSql
         return $this->set ??= new Set();
     }
 
-    private function getWhere(): Where
+    private function getWhere(): WhereClause
     {
-        return $this->where ??= new Where();
+        return $this->where ??= new WhereClause();
     }
 
-    private function getJoins(): Join
+    private function getJoins(): JoinClause
     {
-        return $this->joins ??= new Join();
+        return $this->joins ??= new JoinClause();
     }
 
     public function table(TableIdentifier|string|array $table): static
@@ -68,10 +72,10 @@ final class Update extends AbstractPreparableSql
     }
 
     public function where(
-        PredicateInterface|array|Closure|string|Where $predicate,
+        PredicateInterface|array|Closure|string|WhereClause $predicate,
         string $combination = Predicate\PredicateSet::OP_AND
     ): static {
-        if ($predicate instanceof Where) {
+        if ($predicate instanceof WhereClause) {
             $this->where = $predicate;
         } else {
             $this->getWhere()->addPredicates($predicate, $combination);
@@ -80,10 +84,19 @@ final class Update extends AbstractPreparableSql
         return $this;
     }
 
-    public function join(array|string|TableIdentifier $name, string $on, string $type = Join::JOIN_INNER): static
+    public function join(array|string|TableIdentifier $name, string $on, string $type = JoinClause::JOIN_INNER): static
     {
         $this->getJoins()->join($name, $on, [], $type);
 
+        return $this;
+    }
+
+    /**
+     * Allow UPDATE without a WHERE clause (updates all rows).
+     */
+    public function setEmptyWhereAllowed(bool $allowed = true): static
+    {
+        $this->emptyWhereAllowed = $allowed;
         return $this;
     }
 
@@ -105,18 +118,18 @@ final class Update extends AbstractPreparableSql
     ): string {
         $this->localizeVariables();
 
-        if (($this->where === null || $this->where->count() === 0) && !$this->where?->isEmptyAllowed()) {
+        if (! $this->emptyWhereAllowed && ($this->where === null || $this->where->count() === 0)) {
             throw new Exception\InvalidArgumentException(
-                'UPDATE requires a WHERE clause. Use ->where->setEmptyAllowed() to allow updating all rows.'
+                'UPDATE requires a WHERE clause. Use ->setEmptyWhereAllowed() to allow updating all rows.'
             );
         }
 
         $q = $platform->getQuoteIdentifierSymbol();
 
-        return 'UPDATE ' . ($this->table?->toSqlPart($q) ?? '')
-             . ($this->joins?->toSqlPart($q, $platform) ?? '')
+        return 'UPDATE ' . ($this->table?->prepareSqlString($q) ?? '')
+             . ($this->joins?->prepareSqlString($q, $platform) ?? '')
              . $this->buildSetPart($platform, $driver, $parameterContainer)
-             . ($this->where?->toSqlPart($q, $platform) ?? '');
+             . ($this->where?->prepareSqlString($q, $platform) ?? '');
     }
 
     protected function buildSetPart(
@@ -161,7 +174,7 @@ final class Update extends AbstractPreparableSql
         return ' SET ' . implode(', ', $setSql);
     }
 
-    public function __get(string $name): ?Where
+    public function __get(string $name): ?WhereClause
     {
         if (strtolower($name) === 'where') {
             return $this->getWhere();

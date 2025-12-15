@@ -161,7 +161,7 @@ final class CombineTest extends TestCase
                 'c1' => 'c1',
                 'c2' => new Expression('NULL'),
             ],
-            $columns1->getColumns()
+            $columns1->columns
         );
 
         // Verify second select has NULL for missing c0
@@ -173,7 +173,7 @@ final class CombineTest extends TestCase
                 'c1' => 'c1',
                 'c2' => 'c2',
             ],
-            $columns2->getColumns()
+            $columns2->columns
         );
     }
 

@@ -11,7 +11,8 @@ final readonly class GroupColumn
 {
     public function __construct(
         public string $column
-    ) {}
+    ) {
+    }
 
     /**
      * Build SQL for this group column.

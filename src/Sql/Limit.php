@@ -16,7 +16,7 @@ final readonly class Limit
     /**
      * Returns SQL part with embedded value.
      */
-    public function toSqlPart(): string
+    public function prepareSqlString(): string
     {
         return ' LIMIT ' . $this->value;
     }

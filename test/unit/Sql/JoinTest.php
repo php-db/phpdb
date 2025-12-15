@@ -4,8 +4,12 @@ declare(strict_types=1);
 
 namespace PhpDbTest\Sql;
 
-use PhpDb\Sql\Join;
+use PhpDb\Sql\Clause\JoinClause as Join;
+use PhpDb\Sql\Clause\JoinSpecification;
+use PhpDb\Sql\Clause\JoinType;
+use PhpDb\Sql\Predicate;
 use PhpDb\Sql\Select;
+use PhpDb\Sql\TableIdentifier;
 use PhpDbTest\DeprecatedAssertionsTrait;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\TestDox;
@@ -84,12 +88,12 @@ class JoinTest extends TestCase
         $join->join($name, $on);
 
         $current = $join->current();
-        self::assertEquals($on, $current['on']);
-        self::assertEquals([Select::SQL_STAR], $current['columns']);
-        self::assertEquals(Join::JOIN_INNER, $current['type']);
-        self::assertArrayHasKey('name', $current);
-        self::assertEquals($name, $current['name']['table']->getTable());
-        self::assertNull($current['name']['alias']);
+        self::assertInstanceOf(JoinSpecification::class, $current);
+        self::assertInstanceOf(Predicate\PredicateInterface::class, $current->on);
+        self::assertEquals([Select::SQL_STAR], $current->columns);
+        self::assertEquals(JoinType::Inner, $current->type);
+        self::assertInstanceOf(TableIdentifier::class, $current->name);
+        self::assertEquals($name, $current->name->getTable());
     }
 
     public function testValidReturnsTrueIfTheIteratorIsAtAValidPositionAndFalseIfNot(): void

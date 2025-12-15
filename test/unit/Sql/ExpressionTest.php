@@ -197,8 +197,8 @@ final class ExpressionTest extends TestCase
 
     public function testConstructorWithMultipleArguments(): void
     {
-        // Test deprecated multi-argument constructor
-        $expression = new Expression('? + ? - ?', 1, 2, 3);
+        // Parameters should be passed as an array
+        $expression = new Expression('? + ? - ?', [1, 2, 3]);
 
         $expressionData = $expression->getExpressionData();
 

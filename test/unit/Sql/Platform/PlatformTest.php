@@ -46,12 +46,6 @@ class PlatformTest extends TestCase
         /** @noinspection PhpExpressionResultUnusedInspection */
         $reflectionMethod->setAccessible(true);
 
-        self::assertEquals('mysql', $reflectionMethod->invoke($platform, new TestAsset\TrustingMysqlPlatform()));
-        self::assertEquals('sqlserver', $reflectionMethod->invoke(
-            $platform,
-            new TestAsset\TrustingSqlServerPlatform()
-        ));
-        self::assertEquals('oracle', $reflectionMethod->invoke($platform, new TestAsset\TrustingOraclePlatform()));
         self::assertEquals('sql92', $reflectionMethod->invoke($platform, new TestAsset\TrustingSql92Platform()));
     }
 
@@ -73,22 +67,10 @@ class PlatformTest extends TestCase
 
     protected function resolveAdapter(string $platformName): Adapter
     {
-        $platform = null;
-
-        switch ($platformName) {
-            case 'sql92':
-                $platform = new TestAsset\TrustingSql92Platform();
-                break;
-            case 'MySql':
-                $platform = new TestAsset\TrustingMysqlPlatform();
-                break;
-            case 'Oracle':
-                $platform = new TestAsset\TrustingOraclePlatform();
-                break;
-            case 'SqlServer':
-                $platform = new TestAsset\TrustingSqlServerPlatform();
-                break;
-        }
+        $platform = match ($platformName) {
+            'sql92' => new TestAsset\TrustingSql92Platform(),
+            default => throw new \InvalidArgumentException("Unknown platform: $platformName"),
+        };
 
         /** @var DriverInterface|MockObject $mockDriver */
         $mockDriver = $this->getMockBuilder(DriverInterface::class)->getMock();

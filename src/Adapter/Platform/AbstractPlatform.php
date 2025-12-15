@@ -7,9 +7,7 @@ namespace PhpDb\Adapter\Platform;
 use Override;
 
 use function addcslashes;
-use function array_keys;
 use function array_map;
-use function array_merge;
 use function implode;
 use function is_bool;
 use function is_float;
@@ -32,10 +30,6 @@ abstract class AbstractPlatform implements PlatformInterface
 
     /** @var string */
     protected $quoteIdentifierFragmentPattern = '/([^0-9,a-zA-Z$_:])/i';
-
-    /** @var array<string, true> */
-    private const SAFE_WORDS = ['*' => true, ' ' => true, '.' => true, 'as' => true];
-    private const IDENTIFIER_PATTERN = '/\b(?!(?:\*|as)\b)[a-z_]\w*/i';
 
     /**
      * {@inheritDoc}

@@ -23,7 +23,7 @@ final readonly class Columns
      * @param TableIdentifier|null $table The table for prefixing columns
      * @param callable|null $expressionProcessor Callback to process ExpressionInterface/Select objects
      */
-    public function toSqlPart(
+    public function prepareSqlString(
         string $q,
         ?TableIdentifier $table,
         ?callable $expressionProcessor = null
@@ -49,7 +49,9 @@ final readonly class Columns
 
             // Resolve column to SQL string
             if ($column instanceof ExpressionInterface) {
-                $columnSql = $expressionProcessor ? $expressionProcessor($column) : $column->getExpressionData()['spec'];
+                $columnSql = $expressionProcessor
+                ? $expressionProcessor($column)
+                : $column->getExpressionData()['spec'];
             } elseif ($column instanceof Select) {
                 $columnSql = '(' . ($expressionProcessor ? $expressionProcessor($column) : '') . ')';
             } else {

@@ -219,7 +219,7 @@ class PredicateSet extends AbstractExpression implements PredicateInterface, Cou
 
     /** @inheritDoc */
     #[Override]
-    public function toSqlPart(string $q, PlatformInterface $platform): string
+    public function prepareSqlString(string $q, PlatformInterface $platform): string
     {
         if ($this->predicates === []) {
             return '';
@@ -229,7 +229,7 @@ class PredicateSet extends AbstractExpression implements PredicateInterface, Cou
         $first  = true;
 
         foreach ($this->predicates as $predicate) {
-            $sql = $predicate->toSqlPart($q, $platform);
+            $sql = $predicate->prepareSqlString($q, $platform);
 
             if ($predicate instanceof self && $predicate->count() > 1) {
                 $sql = '(' . $sql . ')';

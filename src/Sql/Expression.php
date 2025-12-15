@@ -9,11 +9,8 @@ use PhpDb\Sql\Argument\Select as SelectArgument;
 use PhpDb\Sql\Argument\Value;
 use PhpDb\Sql\Argument\Values;
 
-use function array_slice;
 use function array_unique;
 use function count;
-use function func_get_args;
-use function func_num_args;
 use function is_array;
 use function preg_match_all;
 use function str_replace;
@@ -30,10 +27,6 @@ class Expression extends AbstractExpression
     /** @var ArgumentInterface[] */
     protected array $parameters = [];
 
-    /**
-     * @param string $expression The expression string
-     * @param null|bool|string|float|int|array|ArgumentInterface|ExpressionInterface $parameters Parameters for placeholders
-     */
     public function __construct(
         string $expression = '',
         null|bool|string|float|int|array|ArgumentInterface|ExpressionInterface $parameters = null

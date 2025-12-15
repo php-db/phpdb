@@ -80,8 +80,8 @@ class Predicate extends PredicateSet
     /**
      * Convert a value to an ArgumentInterface based on the deprecated type parameter.
      *
-     * @deprecated This method supports BC for legacy $leftType/$rightType parameters
      * @internal
+     * @deprecated This method supports BC for legacy $leftType/$rightType parameters
      */
     private function convertToArgument(
         mixed $value,
@@ -461,6 +461,7 @@ class Predicate extends PredicateSet
      *
      * @return $this Provides a fluent interface
      */
+    // phpcs:ignore Generic.NamingConventions.ConstructorName.OldStyle
     public function predicate(PredicateInterface $predicate): static
     {
         $this->addPredicate(

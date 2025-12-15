@@ -14,7 +14,7 @@ final class Literal extends BaseLiteral implements PredicateInterface
 
     /** @inheritDoc */
     #[Override]
-    public function toSqlPart(string $q, PlatformInterface $platform): string
+    public function prepareSqlString(string $q, PlatformInterface $platform): string
     {
         return $this->literal;
     }

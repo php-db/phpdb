@@ -272,7 +272,10 @@ final class PredicateTest extends TestCase
         // 3 predicates: IsNull, IsNotNull, Operator = 4 values (1+1+2)
         self::assertCount(4, $expressionData['values']);
         // Verify combined spec
-        self::assertEquals('{"foo"}.{"bar"} IS NULL OR {"bar"}.{"baz"} IS NOT NULL AND {"baz"}.{"bat"} = {?}', $expressionData['spec']);
+        self::assertEquals(
+            '{"foo"}.{"bar"} IS NULL OR {"bar"}.{"baz"} IS NOT NULL AND {"baz"}.{"bat"} = {?}',
+            $expressionData['spec']
+        );
         self::assertEquals($identifier1, $expressionData['values'][0]);
         self::assertEquals($identifier2, $expressionData['values'][1]);
         self::assertEquals($identifier3, $expressionData['values'][2]);
@@ -299,7 +302,10 @@ final class PredicateTest extends TestCase
         // 3 predicates: IsNull + nested(IsNotNull, Operator) = 4 values
         self::assertCount(4, $expressionData['values']);
         // Verify combined spec with nested brackets
-        self::assertEquals('{"foo"}.{"bar"} IS NULL AND ({"bar"}.{"baz"} IS NOT NULL AND {"baz"}.{"bat"} = {?})', $expressionData['spec']);
+        self::assertEquals(
+            '{"foo"}.{"bar"} IS NULL AND ({"bar"}.{"baz"} IS NOT NULL AND {"baz"}.{"bat"} = {?})',
+            $expressionData['spec']
+        );
         self::assertEquals($identifier1, $expressionData['values'][0]);
         self::assertEquals($identifier2, $expressionData['values'][1]);
         self::assertEquals($identifier3, $expressionData['values'][2]);

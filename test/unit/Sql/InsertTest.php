@@ -24,7 +24,6 @@ use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RequiresMethod;
 use PHPUnit\Framework\TestCase;
-use ReflectionException;
 use TypeError;
 
 #[CoversMethod(Insert::class, '__construct')]
@@ -259,7 +258,7 @@ final class InsertTest extends TestCase
         // @codingStandardsIgnoreEnd
         /** @psalm-suppress UndefinedMagicPropertyAssignment */
         $this->insert->foo = 'bar';
-        $values = $this->insert->getRawState('values');
+        $values            = $this->insert->getRawState('values');
         self::assertInstanceOf(Values::class, $values);
         self::assertEquals(['foo'], $values->getColumns());
         self::assertEquals(['bar'], $values->getValues());
@@ -271,7 +270,7 @@ final class InsertTest extends TestCase
         // @codingStandardsIgnoreEnd
         /** @psalm-suppress UndefinedMagicPropertyAssignment */
         $this->insert->foo = 'bar';
-        $values = $this->insert->getRawState('values');
+        $values            = $this->insert->getRawState('values');
         self::assertEquals(['foo'], $values->getColumns());
         self::assertEquals(['bar'], $values->getValues());
         unset($this->insert->foo);
@@ -281,7 +280,7 @@ final class InsertTest extends TestCase
 
         /** @psalm-suppress UndefinedMagicPropertyAssignment */
         $this->insert->foo = null;
-        $values = $this->insert->getRawState('values');
+        $values            = $this->insert->getRawState('values');
         self::assertEquals(['foo'], $values->getColumns());
         self::assertEquals([null], $values->getValues());
 

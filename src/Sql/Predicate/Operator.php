@@ -17,29 +17,29 @@ use PhpDb\Sql\SqlInterface;
 
 final class Operator extends AbstractExpression implements PredicateInterface
 {
-    final public const OPERATOR_EQUAL_TO = '=';
+    public const OPERATOR_EQUAL_TO = '=';
 
-    final public const OP_EQ = '=';
+    public const OP_EQ = '=';
 
-    final public const OPERATOR_NOT_EQUAL_TO = '!=';
+    public const OPERATOR_NOT_EQUAL_TO = '!=';
 
-    final public const OP_NE = '!=';
+    public const OP_NE = '!=';
 
-    final public const OPERATOR_LESS_THAN = '<';
+    public const OPERATOR_LESS_THAN = '<';
 
-    final public const OP_LT = '<';
+    public const OP_LT = '<';
 
-    final public const OPERATOR_LESS_THAN_OR_EQUAL_TO = '<=';
+    public const OPERATOR_LESS_THAN_OR_EQUAL_TO = '<=';
 
-    final public const OP_LTE = '<=';
+    public const OP_LTE = '<=';
 
-    final public const OPERATOR_GREATER_THAN = '>';
+    public const OPERATOR_GREATER_THAN = '>';
 
-    final public const OP_GT = '>';
+    public const OP_GT = '>';
 
-    final public const OPERATOR_GREATER_THAN_OR_EQUAL_TO = '>=';
+    public const OPERATOR_GREATER_THAN_OR_EQUAL_TO = '>=';
 
-    final public const OP_GTE = '>=';
+    public const OP_GTE = '>=';
 
     protected ?ArgumentInterface $left  = null;
     protected ?ArgumentInterface $right = null;
@@ -164,7 +164,7 @@ final class Operator extends AbstractExpression implements PredicateInterface
 
     /** @inheritDoc */
     #[Override]
-    public function toSqlPart(string $q, PlatformInterface $platform): string
+    public function prepareSqlString(string $q, PlatformInterface $platform): string
     {
         if (! $this->left instanceof ArgumentInterface) {
             throw new InvalidArgumentException('Left expression must be specified');

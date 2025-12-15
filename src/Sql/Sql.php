@@ -27,7 +27,7 @@ final class Sql
         $this->sqlPlatform = new Platform\Platform($adapter->getPlatform());
     }
 
-    public function getAdapter(): ?AdapterInterface
+    public function getAdapter(): AdapterInterface
     {
         return $this->adapter;
     }
@@ -37,9 +37,6 @@ final class Sql
         return $this->table !== null;
     }
 
-    /**
-     * @throws Exception\InvalidArgumentException
-     */
     public function setTable(array|string|TableIdentifier $table): self
     {
         $this->table = $table;
@@ -52,7 +49,7 @@ final class Sql
         return $this->table;
     }
 
-    public function getSqlPlatform(): ?Platform\Platform
+    public function getSqlPlatform(): Platform\Platform
     {
         return $this->sqlPlatform;
     }
@@ -109,7 +106,7 @@ final class Sql
         PreparableSqlInterface $sqlObject,
         ?StatementInterface $statement = null,
         ?AdapterInterface $adapter = null
-    ): ?StatementContainerInterface {
+    ): StatementContainerInterface {
         $adapter   = $adapter ?: $this->adapter;
         $statement = $statement ?: $adapter->getDriver()->createStatement();
 
@@ -121,7 +118,6 @@ final class Sql
      */
     public function buildSqlString(SqlInterface $sqlObject, ?AdapterInterface $adapter = null): string
     {
-        return '';
         return $this
             ->sqlPlatform
             ->setSubject($sqlObject)

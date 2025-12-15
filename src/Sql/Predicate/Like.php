@@ -95,7 +95,7 @@ class Like extends AbstractExpression implements PredicateInterface
 
     /** @inheritDoc */
     #[Override]
-    public function toSqlPart(string $q, PlatformInterface $platform): string
+    public function prepareSqlString(string $q, PlatformInterface $platform): string
     {
         if (! $this->identifier instanceof ArgumentInterface) {
             throw new InvalidArgumentException('Identifier must be specified');

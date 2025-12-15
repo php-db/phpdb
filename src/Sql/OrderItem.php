@@ -13,7 +13,8 @@ final readonly class OrderItem
         public string $column,
         public string $direction = 'ASC',
         public bool $isExpression = false
-    ) {}
+    ) {
+    }
 
     public static function create(string $column, string $direction = 'ASC'): self
     {
@@ -22,7 +23,7 @@ final readonly class OrderItem
 
     public static function fromExpression(ExpressionInterface $expr): self
     {
-        return new self((string) $expr, '', true);
+        return new self($expr->getExpressionData()['spec'], '', true);
     }
 
     /**

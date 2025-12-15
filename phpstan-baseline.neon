@@ -114,23 +114,6 @@ parameters:
 			count: 1
 			path: src/Sql/AbstractSql.php
 
-		-
-			message: '#^PHPDoc type array of property PhpDb\\Sql\\InsertIgnore\:\:\$specifications is not covariant with PHPDoc type array\<array\|string\> of overridden property PhpDb\\Sql\\Insert\:\:\$specifications\.$#'
-			identifier: property.phpDocType
-			count: 1
-			path: src/Sql/InsertIgnore.php
-
-		-
-			message: '#^PHPDoc tag @implements has invalid value \(Countable\)\: Unexpected token "\\n ", expected ''\<'' at offset 419 on line 12$#'
-			identifier: phpDoc.parseError
-			count: 1
-			path: src/Sql/Join.php
-
-		-
-			message: '#^PHPDoc tag @implements has invalid value \(Iterator\)\: Unexpected token "\\n \* ", expected ''\<'' at offset 394 on line 11$#'
-			identifier: phpDoc.parseError
-			count: 1
-			path: src/Sql/Join.php
 
 		-
 			message: '#^Cannot call method setSubject\(\) on class\-string\|object\.$#'

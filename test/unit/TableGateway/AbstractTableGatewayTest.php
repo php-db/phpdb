@@ -9,10 +9,11 @@ use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\Driver\ResultInterface;
 use PhpDb\Adapter\Driver\StatementInterface;
 use PhpDb\ResultSet\ResultSet;
-use PhpDb\Sql;
 use PhpDb\Sql\Delete;
 use PhpDb\Sql\Insert;
+use PhpDb\Sql\Clause\JoinClause as Join;
 use PhpDb\Sql\Select;
+use PhpDb\Sql\Sql;
 use PhpDb\Sql\Update;
 use PhpDb\TableGateway\AbstractTableGateway;
 use PhpDb\TableGateway\Feature\FeatureSet;
@@ -43,11 +44,11 @@ use ReflectionClass;
 final class AbstractTableGatewayTest extends TestCase
 {
     protected MockObject&Adapter $mockAdapter;
-    protected MockObject&Sql\Sql $mockSql;
+    protected MockObject $mockSql;
     protected AbstractTableGateway&MockObject $table;
     protected FeatureSet&MockObject $mockFeatureSet;
     protected MockObject&Select $mockSelect;
-    protected MockObject&Insert $mockInsert;
+    protected MockObject $mockInsert;
     protected MockObject&Update $mockUpdate;
     protected MockObject&Delete $mockDelete;
 
@@ -99,7 +100,7 @@ final class AbstractTableGatewayTest extends TestCase
             ->onlyMethods([])
             ->setConstructorArgs([$mockDriver])
             ->getMock();
-        $this->mockSql     = $this->getMockBuilder(Sql\Sql::class)
+        $this->mockSql     = $this->getMockBuilder(Sql::class)
             ->onlyMethods(['select', 'insert', 'update', 'delete'])
             ->setConstructorArgs([$this->mockAdapter, 'foo'])
             ->getMock();
@@ -153,7 +154,7 @@ final class AbstractTableGatewayTest extends TestCase
 
     public function testGetSql(): void
     {
-        self::assertInstanceOf(Sql\Sql::class, $this->table->getSql());
+        self::assertInstanceOf(Sql::class, $this->table->getSql());
     }
 
     public function testGetSelectResultPrototype(): void
@@ -250,7 +251,7 @@ final class AbstractTableGatewayTest extends TestCase
             [
                 'name' => 'baz',
                 'on'   => 'foo.fooId = baz.fooId',
-                'type' => Sql\Join::JOIN_LEFT,
+                'type' => Join::JOIN_LEFT,
             ],
         ];
 
@@ -285,7 +286,7 @@ final class AbstractTableGatewayTest extends TestCase
 
         $mockUpdate->expects($this->once())
             ->method('join')
-            ->with($joins[0]['name'], $joins[0]['on'], Sql\Join::JOIN_INNER);
+            ->with($joins[0]['name'], $joins[0]['on'], Join::JOIN_INNER);
 
         $affectedRows = $this->table->update(['foo.field' => 'bar'], 'id = 2', $joins);
         self::assertEquals(5, $affectedRows);

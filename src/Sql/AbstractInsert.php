@@ -97,8 +97,8 @@ abstract class AbstractInsert extends AbstractPreparableSql
     ): string {
         $this->localizeVariables();
 
-        $q = $platform->getQuoteIdentifierSymbol();
-        $tableSql = $this->table?->toSqlPart($q) ?? '';
+        $q        = $platform->getQuoteIdentifierSymbol();
+        $tableSql = $this->table?->prepareSqlString($q) ?? '';
 
         if ($this->select !== null) {
             return $this->buildInsertSelectSql($tableSql, $q, $platform, $driver, $parameterContainer);
@@ -129,7 +129,7 @@ abstract class AbstractInsert extends AbstractPreparableSql
             $columns[] = $q . $column . $q;
 
             if (is_scalar($value) && $parameterContainer !== null && $driver !== null) {
-                $paramName = $isPdoDriver ? 'c_' . $i++ : $column;
+                $paramName    = $isPdoDriver ? 'c_' . $i++ : $column;
                 $valueParts[] = $driver->formatParameterName($paramName);
                 $parameterContainer->offsetSet($paramName, $value);
             } else {
@@ -157,7 +157,7 @@ abstract class AbstractInsert extends AbstractPreparableSql
         $selectSql = $this->processSubSelect($this->select, $platform, $driver, $parameterContainer);
 
         $columnsPart = '';
-        $valuesObj = $this->values;
+        $valuesObj   = $this->values;
         if ($valuesObj !== null && $valuesObj->count() > 0) {
             $columns = [];
             foreach ($valuesObj->getColumns() as $col) {
@@ -176,7 +176,7 @@ abstract class AbstractInsert extends AbstractPreparableSql
 
     public function __unset(string $name): void
     {
-        if (!$this->getValues()->has($name)) {
+        if (! $this->getValues()->has($name)) {
             throw new Exception\InvalidArgumentException(
                 'The key ' . $name . ' was not found in this objects column list'
             );
@@ -192,7 +192,7 @@ abstract class AbstractInsert extends AbstractPreparableSql
 
     public function __get(string $name): mixed
     {
-        if ($this->values === null || !$this->values->has($name)) {
+        if ($this->values === null || ! $this->values->has($name)) {
             throw new Exception\InvalidArgumentException(
                 'The key ' . $name . ' was not found in this objects column list'
             );

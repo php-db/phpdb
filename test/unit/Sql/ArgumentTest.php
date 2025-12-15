@@ -65,7 +65,8 @@ final class ArgumentTest extends TestCase
         $this->expectException(TypeError::class);
         /** @noinspection PhpParamsInspection */
         /** @noinspection PhpExpressionResultUnusedInspection */
-        new ArgumentSelect('simple_value'); /** @phpstan-ignore-line */
+        /** @phpstan-ignore-next-line */
+        new ArgumentSelect('simple_value');
     }
 
     public function testConstructorWithArrayContainingArgumentType(): void

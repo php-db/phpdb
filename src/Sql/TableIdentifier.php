@@ -37,7 +37,7 @@ final readonly class TableIdentifier
     public static function from(string|array|self $table, ?string $alias = null, bool $readOnly = false): self
     {
         if ($table instanceof self) {
-            $needsNew = ($alias !== null && $alias !== $table->alias) || ($readOnly && !$table->readOnly);
+            $needsNew = ($alias !== null && $alias !== $table->alias) || ($readOnly && ! $table->readOnly);
             return $needsNew
                 ? new self($table->table, $table->schema, $alias ?? $table->alias, $readOnly || $table->readOnly)
                 : $table;
@@ -66,7 +66,9 @@ final readonly class TableIdentifier
             throw new Exception\InvalidArgumentException('$table must be a valid table name, empty string given');
         }
         if ($schema === '') {
-            throw new Exception\InvalidArgumentException('$schema must be a valid schema name or null, empty string given');
+            throw new Exception\InvalidArgumentException(
+                '$schema must be a valid schema name or null, empty string given'
+            );
         }
     }
 
@@ -108,7 +110,8 @@ final readonly class TableIdentifier
     }
 
     /**
-     * @deprecated Use getTable() and getSchema() or toSqlPart() instead
+     * @deprecated Use getTable() and getSchema() or prepareSqlString() instead
+     *
      * @return array{0: string, 1: null|string}
      */
     public function getTableAndSchema(): array
@@ -120,12 +123,14 @@ final readonly class TableIdentifier
      * Set the table name.
      *
      * @deprecated TableIdentifier is now immutable. Create a new instance instead.
+     *
      * @return self Returns a NEW instance with the updated table name
      */
     public function setTable(string $table): self
     {
         trigger_error(
-            'TableIdentifier::setTable() is deprecated. TableIdentifier is now immutable. Create a new instance instead.',
+            'TableIdentifier::setTable() is deprecated. '
+            . 'TableIdentifier is now immutable. Create a new instance instead.',
             E_USER_DEPRECATED
         );
 
@@ -136,12 +141,14 @@ final readonly class TableIdentifier
      * Set the schema name.
      *
      * @deprecated TableIdentifier is now immutable. Create a new instance instead.
+     *
      * @return self Returns a NEW instance with the updated schema
      */
     public function setSchema(?string $schema): self
     {
         trigger_error(
-            'TableIdentifier::setSchema() is deprecated. TableIdentifier is now immutable. Create a new instance instead.',
+            'TableIdentifier::setSchema() is deprecated. '
+            . 'TableIdentifier is now immutable. Create a new instance instead.',
             E_USER_DEPRECATED
         );
 
@@ -168,7 +175,7 @@ final readonly class TableIdentifier
      *
      * @param string $q Quote character (empty string = no quoting)
      */
-    public function toSqlPart(string $q): string
+    public function prepareSqlString(string $q): string
     {
         $sql = $this->schema !== null
             ? $q . $this->schema . $q . '.' . $q . $this->table . $q
@@ -186,6 +193,6 @@ final readonly class TableIdentifier
      */
     public function toFromSqlPart(string $q): string
     {
-        return ' FROM ' . $this->toSqlPart($q);
+        return ' FROM ' . $this->prepareSqlString($q);
     }
 }

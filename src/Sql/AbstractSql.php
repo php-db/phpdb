@@ -11,10 +11,10 @@ use PhpDb\Adapter\Platform\PlatformInterface;
 use PhpDb\Adapter\Platform\Sql92 as DefaultAdapterPlatform;
 use PhpDb\Sql\Argument\Select as SelectArgument;
 use PhpDb\Sql\Argument\Value;
+use PhpDb\Sql\Clause\JoinClause;
 use PhpDb\Sql\Platform\PlatformDecoratorInterface;
 
 use function count;
-use function explode;
 use function get_object_vars;
 use function implode;
 use function is_array;
@@ -97,7 +97,9 @@ abstract class AbstractSql implements SqlInterface
         }
 
         if (! isset($specificationString)) {
-            throw new Exception\RuntimeException('A number of parameters was found that is not supported by this specification');
+            throw new Exception\RuntimeException(
+                'A number of parameters was found that is not supported by this specification'
+            );
         }
 
         $topParameters = [];
@@ -266,7 +268,7 @@ abstract class AbstractSql implements SqlInterface
     ): string {
         $select = $selectArg->getValue();
 
-        if ($select instanceof SqlInterface) {
+        if ($select instanceof AbstractSql) {
             if ($parameterContainer !== null) {
                 $this->processInfo['subselectCount']++;
                 $select->processInfo['subselectCount'] = $this->processInfo['subselectCount'];
@@ -524,7 +526,8 @@ abstract class AbstractSql implements SqlInterface
             $processInfoContext = $decorator instanceof PlatformDecoratorInterface ? $subselect : $decorator;
             $this->processInfo['subselectCount']++;
             $processInfoContext->processInfo['subselectCount'] = $this->processInfo['subselectCount'];
-            $processInfoContext->processInfo['paramPrefix']    = 'subselect' . $processInfoContext->processInfo['subselectCount'];
+            $processInfoContext->processInfo['paramPrefix']    =
+                'subselect' . $processInfoContext->processInfo['subselectCount'];
 
             $sql                                 = $decorator->buildSqlString($platform, $driver, $parameterContainer);
             $this->processInfo['subselectCount'] = $decorator->processInfo['subselectCount'];
@@ -539,7 +542,7 @@ abstract class AbstractSql implements SqlInterface
      * Process JOIN clauses.
      */
     protected function processJoin(
-        ?Join $joins,
+        ?JoinClause $joins,
         PlatformInterface $platform,
         ?DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null
@@ -553,14 +556,17 @@ abstract class AbstractSql implements SqlInterface
             $tableId  = $join->name;
             $schema   = $tableId->getSchema();
             $joinName = $schema
-                ? $platform->quoteIdentifier($schema) . $platform->getIdentifierSeparator() . $platform->quoteIdentifier($tableId->getTable())
+                ? $platform->quoteIdentifier($schema)
+                    . $platform->getIdentifierSeparator()
+                    . $platform->quoteIdentifier($tableId->getTable())
                 : $platform->quoteIdentifier($tableId->getTable());
 
             $joinAs = $tableId->getAlias() ? $platform->quoteIdentifier($tableId->getAlias()) : null;
 
             $joinSpecArgArray[$j] = [$join->type->value, $this->renderTable($joinName, $joinAs)];
 
-            $sql                    = $join->on->toSqlPart($platform);
+            $q                      = $platform->getQuoteIdentifierSymbol();
+            $sql                    = $join->on->prepareSqlString($q, $platform);
             $joinSpecArgArray[$j][] = $this->quoteSqlString(
                 $sql,
                 [],
@@ -584,7 +590,9 @@ abstract class AbstractSql implements SqlInterface
         ?ParameterContainer $parameterContainer = null,
         ?string $namedParameterPrefix = null
     ): string {
-        $namedParameterPrefix = $namedParameterPrefix ? $this->processInfo['paramPrefix'] . $namedParameterPrefix : $namedParameterPrefix;
+        $namedParameterPrefix = $namedParameterPrefix
+            ? $this->processInfo['paramPrefix'] . $namedParameterPrefix
+            : $namedParameterPrefix;
         $isIdentifier         = false;
         $fromTable            = '';
 

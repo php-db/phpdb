@@ -68,6 +68,7 @@ final class ExpressionTest extends TestCase
     public function testCanPassMultiScalarParametersToConstructor(): void
     {
         /** @psalm-suppress TooManyArguments */
+        /** @phpstan-ignore arguments.count */
         $expression = new Expression('? OR ?', 'foo', 'bar');
         $foo        = new Value('foo');
         $bar        = new Value('bar');
@@ -79,6 +80,7 @@ final class ExpressionTest extends TestCase
     public function testCanPassMultiNullParametersToConstructor(): void
     {
         /** @psalm-suppress TooManyArguments */
+        /** @phpstan-ignore arguments.count */
         $expression = new Expression('? OR ?', null, null);
         $null       = new Value(null);
 

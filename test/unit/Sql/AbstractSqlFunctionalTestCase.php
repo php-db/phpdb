@@ -265,7 +265,6 @@ abstract class AbstractSqlFunctionalTestCase extends TestCase
                 $this->assertInstanceOf(PlatformDecoratorInterface::class, $decorator);
 
                 $platform = $sql->getSqlPlatform();
-                $this->assertNotNull($platform);
                 $platform->setTypeDecorator($type, $decorator);
             }
         }

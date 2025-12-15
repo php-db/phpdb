@@ -15,12 +15,14 @@ use PhpDb\Sql\Columns;
 use PhpDb\Sql\Exception\InvalidArgumentException;
 use PhpDb\Sql\Expression;
 use PhpDb\Sql\ExpressionInterface;
-use PhpDb\Sql\Group as SqlGroup;
-use PhpDb\Sql\Having;
-use PhpDb\Sql\Join;
+use PhpDb\Sql\Clause\GroupClause as SqlGroup;
+use PhpDb\Sql\Clause\HavingClause as Having;
+use PhpDb\Sql\Clause\JoinClause as Join;
+use PhpDb\Sql\Clause\JoinSpecification;
+use PhpDb\Sql\Clause\JoinType;
 use PhpDb\Sql\Limit;
 use PhpDb\Sql\Offset;
-use PhpDb\Sql\Order;
+use PhpDb\Sql\Clause\OrderClause as Order;
 use PhpDb\Sql\Predicate;
 use PhpDb\Sql\Predicate\In;
 use PhpDb\Sql\Predicate\IsNotNull;
@@ -28,7 +30,7 @@ use PhpDb\Sql\Predicate\Literal;
 use PhpDb\Sql\Predicate\Operator;
 use PhpDb\Sql\Select;
 use PhpDb\Sql\TableIdentifier;
-use PhpDb\Sql\Where;
+use PhpDb\Sql\Clause\WhereClause as Where;
 use PhpDbTest\AdapterTestTrait;
 use PhpDbTest\TestAsset\TrustingSql92Platform;
 use PHPUnit\Framework\Attributes\CoversMethod;
@@ -149,14 +151,14 @@ final class SelectTest extends TestCase
         // Verify the first mutation occurred
         $columns = $select->getRawState('columns');
         self::assertInstanceOf(Columns::class, $columns);
-        self::assertEquals(['foo', 'bar'], $columns->getColumns());
+        self::assertEquals(['foo', 'bar'], $columns->columns);
 
         // Second mutation to verify mutability
         $select->columns(['baz', 'qux']);
 
         // Verify the instance was actually mutated
         $columns = $select->getRawState('columns');
-        self::assertEquals(['baz', 'qux'], $columns->getColumns());
+        self::assertEquals(['baz', 'qux'], $columns->columns);
     }
 
     #[TestDox('unit test: Test isTableReadOnly() returns correct state for read only')]
@@ -185,11 +187,11 @@ final class SelectTest extends TestCase
         self::assertInstanceOf(Join::class, $joins);
         $joinSpecs = $joins->getJoins();
         self::assertCount(1, $joinSpecs);
-        self::assertEquals('foo', $joinSpecs[0]['name']['table']->getTable());
-        self::assertNull($joinSpecs[0]['name']['alias']);
-        self::assertEquals('x = y', $joinSpecs[0]['on']);
-        self::assertEquals([Select::SQL_STAR], $joinSpecs[0]['columns']);
-        self::assertEquals(Select::JOIN_INNER, $joinSpecs[0]['type']);
+        self::assertInstanceOf(JoinSpecification::class, $joinSpecs[0]);
+        self::assertEquals('foo', $joinSpecs[0]->name->getTable());
+        self::assertInstanceOf(Predicate\PredicateInterface::class, $joinSpecs[0]->on);
+        self::assertEquals([Select::SQL_STAR], $joinSpecs[0]->columns);
+        self::assertEquals(JoinType::Inner, $joinSpecs[0]->type);
 
         // Second mutation to verify mutability (joins accumulate)
         $select->join('bar', 'a = b');
@@ -197,7 +199,7 @@ final class SelectTest extends TestCase
         // Verify the instance was actually mutated
         $joins2 = $select->getRawState('joins');
         self::assertCount(2, $joins2->getJoins());
-        self::assertEquals('bar', $joins2->getJoins()[1]['name']['table']->getTable());
+        self::assertEquals('bar', $joins2->getJoins()[1]->name->getTable());
     }
 
     #[TestDox('unit test: Test join() exception with bad join')]
@@ -210,8 +212,9 @@ final class SelectTest extends TestCase
     }
 
     /**
-     * @throws ReflectionException
      * @deprecated processJoins() no longer exists in new single-pass architecture
+     *
+     * @throws ReflectionException
      */
     #[TestDox('unit test: Test processJoins() exception with bad join name')]
     #[RequiresMethod(Select::class, 'processJoins')]
@@ -472,14 +475,14 @@ final class SelectTest extends TestCase
         // Verify the first mutation occurred
         $limit = $select->getRawState(Select::LIMIT);
         self::assertInstanceOf(Limit::class, $limit);
-        self::assertEquals(5, $limit->getValue());
+        self::assertEquals(5, $limit->value);
 
         // Second mutation to verify mutability
         $select->limit(10);
 
         // Verify the instance was actually mutated
         $limit = $select->getRawState(Select::LIMIT);
-        self::assertEquals(10, $limit->getValue());
+        self::assertEquals(10, $limit->value);
     }
 
     #[TestDox(': unit test: test limit() throws exception when invalid parameter passed')]
@@ -505,14 +508,14 @@ final class SelectTest extends TestCase
         // Verify the first mutation occurred
         $offset = $select->getRawState(Select::OFFSET);
         self::assertInstanceOf(Offset::class, $offset);
-        self::assertEquals(10, $offset->getValue());
+        self::assertEquals(10, $offset->value);
 
         // Second mutation to verify mutability
         $select->offset(20);
 
         // Verify the instance was actually mutated
         $offset = $select->getRawState(Select::OFFSET);
-        self::assertEquals(20, $offset->getValue());
+        self::assertEquals(20, $offset->value);
     }
 
     #[TestDox(': unit test: test offset() throws exception when invalid parameter passed')]
@@ -657,7 +660,7 @@ final class SelectTest extends TestCase
         $select->columns(['foo']);
         $columns = $select->getRawState(Select::COLUMNS);
         self::assertInstanceOf(Columns::class, $columns);
-        self::assertEquals(['foo'], $columns->getColumns());
+        self::assertEquals(['foo'], $columns->columns);
         $select->reset(Select::COLUMNS);
         self::assertNull($select->getRawState(Select::COLUMNS));
 
@@ -697,7 +700,7 @@ final class SelectTest extends TestCase
         $select->limit(5);
         $limit = $select->getRawState(Select::LIMIT);
         self::assertInstanceOf(Limit::class, $limit);
-        self::assertEquals(5, $limit->getValue());
+        self::assertEquals(5, $limit->value);
         $select->reset(Select::LIMIT);
         self::assertNull($select->getRawState(Select::LIMIT));
 
@@ -705,7 +708,7 @@ final class SelectTest extends TestCase
         $select->offset(10);
         $offset = $select->getRawState(Select::OFFSET);
         self::assertInstanceOf(Offset::class, $offset);
-        self::assertEquals(10, $offset->getValue());
+        self::assertEquals(10, $offset->value);
         $select->reset(Select::OFFSET);
         self::assertNull($select->getRawState(Select::OFFSET));
 
@@ -798,9 +801,10 @@ final class SelectTest extends TestCase
     }
 
     /**
+     * @deprecated process*() methods no longer exist in new single-pass architecture
+     *
      * @throws ReflectionException
      * @noinspection PhpUnusedParameterInspection
-     * @deprecated process*() methods no longer exist in new single-pass architecture
      */
     #[DataProvider('providerData')]
     #[TestDox('unit test: Text process*() methods will return proper array when internally called,
@@ -1570,6 +1574,7 @@ final class SelectTest extends TestCase
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Not a valid specification name.');
+        /** @phpstan-ignore method.notFound */
         $select->setSpecification('invalid_spec', 'some spec');
     }
 

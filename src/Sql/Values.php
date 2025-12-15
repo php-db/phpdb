@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 namespace PhpDb\Sql;
 
+use ArrayIterator;
 use Countable;
 use Iterator;
 use IteratorAggregate;
 
 use function array_combine;
+use function array_flip;
+use function array_key_exists;
 use function array_keys;
 use function array_values;
 use function count;
@@ -86,7 +89,7 @@ final class Values implements Countable, IteratorAggregate
 
     public function getIterator(): Iterator
     {
-        return new \ArrayIterator($this->values);
+        return new ArrayIterator($this->values);
     }
 
     private function isAssociativeArray(array $array): bool
