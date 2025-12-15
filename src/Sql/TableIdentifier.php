@@ -102,6 +102,15 @@ final readonly class TableIdentifier implements PreparableSqlInterface
     }
 
     /**
+     * String representation for debugging and test output.
+     */
+    public function __toString(): string
+    {
+        $result = $this->schema !== null ? $this->schema . '.' . $this->table : $this->table;
+        return $this->alias !== null ? $result . ' AS ' . $this->alias : $result;
+    }
+
+    /**
      * Create a new TableIdentifier with an alias.
      */
     public function as(string $alias): self

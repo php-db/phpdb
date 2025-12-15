@@ -138,26 +138,26 @@ final class UpdateTest extends TestCase
 
         self::assertIsArray($predicates);
 
-        self::assertEquals('AND', $predicates[0][0] ?? '');
-        self::assertInstanceOf(Literal::class, $predicates[0][1] ?? null);
+        self::assertInstanceOf(Literal::class, $predicates[0]);
+        self::assertEquals('AND', $predicates[0]->getCombination());
 
-        self::assertEquals('AND', $predicates[1][0] ?? '');
-        self::assertInstanceOf(\PhpDb\Sql\Predicate\Expression::class, $predicates[1][1] ?? null);
+        self::assertInstanceOf(\PhpDb\Sql\Predicate\Expression::class, $predicates[1]);
+        self::assertEquals('AND', $predicates[1]->getCombination());
 
-        self::assertEquals('AND', $predicates[2][0] ?? '');
-        self::assertInstanceOf(Operator::class, $predicates[2][1] ?? null);
+        self::assertInstanceOf(Operator::class, $predicates[2]);
+        self::assertEquals('AND', $predicates[2]->getCombination());
 
-        self::assertEquals('OR', $predicates[3][0] ?? '');
-        self::assertInstanceOf(Literal::class, $predicates[3][1] ?? null);
+        self::assertInstanceOf(Literal::class, $predicates[3]);
+        self::assertEquals('OR', $predicates[3]->getCombination());
 
-        self::assertEquals('AND', $predicates[4][0] ?? '');
-        self::assertInstanceOf(IsNull::class, $predicates[4][1] ?? null);
+        self::assertInstanceOf(IsNull::class, $predicates[4]);
+        self::assertEquals('AND', $predicates[4]->getCombination());
 
-        self::assertEquals('AND', $predicates[5][0] ?? '');
-        self::assertInstanceOf(In::class, $predicates[5][1] ?? null);
+        self::assertInstanceOf(In::class, $predicates[5]);
+        self::assertEquals('AND', $predicates[5]->getCombination());
 
-        self::assertEquals('AND', $predicates[6][0] ?? '');
-        self::assertInstanceOf(IsNotNull::class, $predicates[6][1] ?? null);
+        self::assertInstanceOf(IsNotNull::class, $predicates[6]);
+        self::assertEquals('AND', $predicates[6]->getCombination());
 
         $where = new Where();
         $this->update->where($where);

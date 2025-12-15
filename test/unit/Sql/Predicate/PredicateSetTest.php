@@ -204,7 +204,7 @@ final class PredicateSetTest extends TestCase
         $predicates = (array) $this->readAttribute($predicateSet, 'predicates');
         self::assertCount(2, $predicates);
 
-        self::assertInstanceOf(Expression::class, $predicates[0][1]);
-        self::assertInstanceOf(Expression::class, $predicates[1][1]);
+        self::assertInstanceOf(Expression::class, $predicates[0]);
+        self::assertInstanceOf(Expression::class, $predicates[1]);
     }
 }

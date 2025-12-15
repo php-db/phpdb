@@ -7,11 +7,22 @@ namespace PhpDb\Sql;
 use Override;
 use PhpDb\Adapter\AdapterInterface;
 use PhpDb\Adapter\ParameterContainer;
+use PhpDb\Adapter\Platform\Sql92;
 use PhpDb\Adapter\StatementContainerInterface;
 
 abstract class AbstractPreparableSql extends AbstractSql implements PreparableSqlInterface
 {
-    #[Override]
+    /**
+     * String representation for debugging and test output.
+     */
+    public function __toString(): string
+    {
+        return $this->getSqlString(new Sql92());
+    }
+
+    /**
+     * @deprecated Use prepareSqlString() with a PreparableSqlBuilder instead.
+     */
     public function prepareStatement(
         AdapterInterface $adapter,
         StatementContainerInterface $statementContainer

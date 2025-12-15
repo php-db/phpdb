@@ -453,7 +453,7 @@ abstract class AbstractSql implements SqlInterface
                     $parameterContainer,
                     $namedParameterPrefix . 'sub' . $expressionParamIndex
                 );
-                $pos = strpos($sql, '{SQL}');
+                $pos    = strpos($sql, '{SQL}');
                 if ($pos !== false) {
                     $sql = substr_replace($sql, $subSql, $pos, 5);
                 }

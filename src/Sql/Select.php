@@ -376,7 +376,7 @@ class Select extends AbstractPreparableSql
         $rawState = [
             self::TABLE      => $this->table,
             self::QUANTIFIER => $this->quantifier,
-            self::COLUMNS    => $this->columns,
+            self::COLUMNS    => $this->columns?->columns ?? [SelectExpression::SQL_STAR],
             self::JOINS      => $this->joins,
             self::WHERE      => $this->where,
             self::ORDER      => $this->order,

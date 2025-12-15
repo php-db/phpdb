@@ -59,6 +59,14 @@ class Expression extends AbstractExpression
     }
 
     /**
+     * String representation for debugging and test output.
+     */
+    public function __toString(): string
+    {
+        return $this->expression;
+    }
+
+    /**
      * @throws Exception\InvalidArgumentException
      */
     public function setParameters(

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace PhpDb\Sql\Clause;
 
 use PhpDb\Sql\ClauseInterface;
+use PhpDb\Sql\ExpressionInterface;
 use PhpDb\Sql\PreparableSqlBuilder;
 
 use function count;
@@ -15,7 +16,7 @@ final class Group implements ClauseInterface
     /** @var GroupExpression[] */
     protected array $items = [];
 
-    public function add(string|array $column): static
+    public function add(string|array|ExpressionInterface $column): static
     {
         if (is_array($column)) {
             foreach ($column as $c) {
@@ -33,9 +34,9 @@ final class Group implements ClauseInterface
     }
 
     /**
-     * Get column names for testing/inspection.
+     * Get column values for testing/inspection.
      *
-     * @return string[]
+     * @return array<string|ExpressionInterface>
      */
     public function getColumns(): array
     {
@@ -61,7 +62,7 @@ final class Group implements ClauseInterface
             if (! $first) {
                 $sql .= ', ';
             }
-            $sql  .= $item->toSql($builder->q);
+            $sql  .= $item->toSql($builder->q, $builder);
             $first = false;
         }
 

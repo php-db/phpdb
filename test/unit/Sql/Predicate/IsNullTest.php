@@ -83,8 +83,8 @@ final class IsNullTest extends TestCase
 
         $expressionData = $isNotNull->getExpressionData();
 
-        // Verify specification (uses new marker format)
-        self::assertEquals('{"foo"}.{"bar"} IS NOT NULL', $expressionData['spec']);
+        // Verify specification uses %s placeholder for identifier
+        self::assertEquals('%s IS NOT NULL', $expressionData['spec']);
 
         // Verify expression values
         $values = $expressionData['values'];

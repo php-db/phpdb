@@ -109,6 +109,7 @@ class Platform extends AbstractPlatform
 
     /**
      * @deprecated Use prepareSqlString() with a PreparableSqlBuilder instead.
+     *
      * @throws Exception\RuntimeException
      */
     public function prepareStatement(

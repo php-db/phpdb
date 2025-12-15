@@ -92,8 +92,8 @@ final class NotLikeTest extends TestCase
 
         $expressionData = $notLike->getExpressionData();
 
-        // Verify specification (uses new marker format)
-        self::assertEquals('{"bar"} NOT LIKE {?}', $expressionData['spec']);
+        // Verify specification uses %s placeholders
+        self::assertEquals('%s NOT LIKE %s', $expressionData['spec']);
 
         // Verify expression values
         $values = $expressionData['values'];
