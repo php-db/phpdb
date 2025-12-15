@@ -232,14 +232,19 @@ class PredicateSet extends AbstractExpression implements PredicateInterface, Cou
         foreach ($this->predicates as $predicate) {
             $sql = $predicate->prepareSqlString($builder);
 
+            // Nested predicate sets with multiple predicates need parentheses
             if ($predicate instanceof self && $predicate->count() > 1) {
                 $sql = '(' . $sql . ')';
             }
 
-            $result .= $first ? $sql : ' ' . $predicate->getCombination() . ' ' . $sql;
-            $first   = false;
+            if ($first) {
+                $result = $sql;
+                $first  = false;
+            } else {
+                $result .= ' ' . $predicate->getCombination() . ' ' . $sql;
+            }
         }
 
-        return $this->prefix !== '' ? ' ' . $this->prefix . ' ' . $result : $result;
+        return $this->prefix === '' ? $result : ' ' . $this->prefix . ' ' . $result;
     }
 }

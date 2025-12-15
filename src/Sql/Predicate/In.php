@@ -118,9 +118,11 @@ class In extends AbstractExpression implements PredicateInterface
             throw new InvalidArgumentException('Value set must be provided for IN predicate');
         }
 
-        $valueSetSql = $this->valueSet instanceof ArgumentSelect
-            ? '(' . $this->valueSet->toSql($builder) . ')'
-            : $this->valueSet->toSql($builder);
+        // Fast path: Values (most common) already includes parentheses
+        // ArgumentSelect needs wrapping
+        $valueSetSql = ! $this->valueSet instanceof ArgumentSelect
+            ? $this->valueSet->toSql($builder)
+            : '(' . $this->valueSet->toSql($builder) . ')';
 
         return $this->identifier->toSql($builder) . ' ' . $this->operator . ' ' . $valueSetSql;
     }

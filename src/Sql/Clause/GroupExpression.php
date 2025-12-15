@@ -20,14 +20,13 @@ final readonly class GroupExpression
     /**
      * Build SQL for this group column.
      */
-    public function toSql(string $q, ?PreparableSqlBuilder $builder = null): string
+    public function toSql(PreparableSqlBuilder $builder): string
     {
         if ($this->column instanceof ExpressionInterface) {
-            return $builder !== null
-                ? $builder->processExpression($this->column)
-                : (string) $this->column;
+            return $builder->processExpression($this->column);
         }
 
+        $q = $builder->q;
         return str_contains($this->column, '.')
             ? $q . str_replace('.', $q . '.' . $q, $this->column) . $q
             : $q . $this->column . $q;

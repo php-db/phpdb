@@ -189,11 +189,14 @@ final class Join implements Iterator, Countable, ClauseInterface
 
         $q   = $builder->q;
         $sql = '';
+
         foreach ($this->joins as $join) {
             $sql .= ' ' . $join->type->value . ' JOIN ';
 
-            // Handle subselect, expression, or table name
-            if ($join->name instanceof Select) {
+            // Fast path: TableIdentifier (most common case)
+            if ($join->name instanceof TableIdentifier) {
+                $sql .= $join->name->prepareSqlString($builder);
+            } elseif ($join->name instanceof Select) {
                 $sql .= '(' . $builder->processSubSelect($join->name) . ')';
                 if ($join->alias !== null) {
                     $sql .= ' AS ' . $q . $join->alias . $q;
@@ -203,8 +206,6 @@ final class Join implements Iterator, Countable, ClauseInterface
                 if ($join->alias !== null) {
                     $sql .= ' AS ' . $q . $join->alias . $q;
                 }
-            } else {
-                $sql .= $join->name->prepareSqlString($builder);
             }
 
             $sql .= ' ON ' . $join->on->prepareSqlString($builder);

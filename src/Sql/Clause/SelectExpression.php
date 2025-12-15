@@ -36,31 +36,31 @@ final readonly class SelectExpression implements PreparableSqlInterface
         $first  = true;
 
         foreach ($this->columns as $alias => $column) {
-            if (! $first) {
+            if ($first) {
+                $first = false;
+            } else {
                 $result .= ', ';
             }
-            $first = false;
 
+            // Fast path: string column (most common)
             if (is_string($column)) {
-                if ($column !== self::SQL_STAR) {
-                    $columnSql = $prefix . $q . $column . $q;
-                    $result   .= is_string($alias)
-                        ? $columnSql . ' AS ' . $q . $alias . $q
-                        : $columnSql;
-                } else {
+                if ($column === self::SQL_STAR) {
                     $result .= $prefix . '*';
+                    continue;
                 }
+                $columnSql = $prefix . $q . $column . $q;
             } elseif ($column instanceof ExpressionInterface) {
                 $columnSql = $builder->processExpression($column);
-                $result   .= is_string($alias)
-                    ? $columnSql . ' AS ' . $q . $alias . $q
-                    : $columnSql;
             } elseif ($column instanceof Select) {
                 $columnSql = '(' . $builder->processSubSelect($column) . ')';
-                $result   .= is_string($alias)
-                    ? $columnSql . ' AS ' . $q . $alias . $q
-                    : $columnSql;
+            } else {
+                continue;
             }
+
+            // Add alias if present (string key)
+            $result .= is_string($alias)
+                ? $columnSql . ' AS ' . $q . $alias . $q
+                : $columnSql;
         }
 
         return $result;

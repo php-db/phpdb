@@ -97,7 +97,7 @@ final class Order implements ClauseInterface
             if (! $first) {
                 $sql .= ', ';
             }
-            $sql  .= $item->toSql($builder->q, $builder);
+            $sql  .= $item->toSql($builder);
             $first = false;
         }
 

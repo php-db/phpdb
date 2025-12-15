@@ -32,20 +32,19 @@ final readonly class OrderSpecification
 
     /**
      * Build SQL for this order item.
-     *
-     * @param string $q Quote character (empty string = no quoting)
      */
-    public function toSql(string $q, ?PreparableSqlBuilder $builder = null): string
+    public function toSql(PreparableSqlBuilder $builder): string
     {
-        if ($this->isExpression && $this->expression !== null && $builder !== null) {
+        if ($this->isExpression && $this->expression !== null) {
             return $builder->processExpression($this->expression);
         }
 
         if ($this->isExpression) {
-            // Fallback for when no builder available - should not happen in practice
+            // Fallback for expressions without a builder - should not happen in practice
             return $this->column;
         }
 
+        $q = $builder->q;
         $quoted = str_contains($this->column, '.')
             ? $q . str_replace('.', $q . '.' . $q, $this->column) . $q
             : $q . $this->column . $q;
