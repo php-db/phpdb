@@ -42,7 +42,7 @@ class DoctrineBench
 
     #[Bench\Warmup(10)]
     #[Bench\Revs(2000)]
-    #[Bench\Iterations(15)]
+    #[Bench\Iterations(5)]
     public function bench1a_BuildSelectSimple(): void
     {
         $qb = $this->connection->createQueryBuilder();
@@ -55,7 +55,7 @@ class DoctrineBench
 
     #[Bench\Warmup(10)]
     #[Bench\Revs(2000)]
-    #[Bench\Iterations(15)]
+    #[Bench\Iterations(5)]
     public function bench1b_BuildSelectComplex(): void
     {
         $qb = $this->connection->createQueryBuilder();
@@ -72,7 +72,7 @@ class DoctrineBench
 
     #[Bench\Warmup(10)]
     #[Bench\Revs(2000)]
-    #[Bench\Iterations(15)]
+    #[Bench\Iterations(5)]
     public function bench1c_BuildInsert(): void
     {
         $qb = $this->connection->createQueryBuilder();
@@ -86,7 +86,7 @@ class DoctrineBench
 
     #[Bench\Warmup(10)]
     #[Bench\Revs(2000)]
-    #[Bench\Iterations(15)]
+    #[Bench\Iterations(5)]
     public function bench1d_BuildUpdate(): void
     {
         $qb = $this->connection->createQueryBuilder();
@@ -100,7 +100,7 @@ class DoctrineBench
 
     #[Bench\Warmup(10)]
     #[Bench\Revs(2000)]
-    #[Bench\Iterations(15)]
+    #[Bench\Iterations(5)]
     public function bench1e_BuildDelete(): void
     {
         $qb = $this->connection->createQueryBuilder();
@@ -116,7 +116,7 @@ class DoctrineBench
 
     #[Bench\Warmup(10)]
     #[Bench\Revs(300)]
-    #[Bench\Iterations(15)]
+    #[Bench\Iterations(5)]
     public function bench2a_SelectByPrimaryKey(): void
     {
         $qb = $this->connection->createQueryBuilder();
@@ -130,7 +130,7 @@ class DoctrineBench
 
     #[Bench\Warmup(10)]
     #[Bench\Revs(300)]
-    #[Bench\Iterations(15)]
+    #[Bench\Iterations(5)]
     public function bench2b_InsertSingleRow(): void
     {
         $qb = $this->connection->createQueryBuilder();
@@ -144,7 +144,7 @@ class DoctrineBench
 
     #[Bench\Warmup(10)]
     #[Bench\Revs(300)]
-    #[Bench\Iterations(15)]
+    #[Bench\Iterations(5)]
     public function bench2c_UpdateByPrimaryKey(): void
     {
         $qb = $this->connection->createQueryBuilder();
@@ -158,7 +158,7 @@ class DoctrineBench
 
     #[Bench\Warmup(10)]
     #[Bench\Revs(300)]
-    #[Bench\Iterations(15)]
+    #[Bench\Iterations(5)]
     public function bench2d_DeleteByPrimaryKey(): void
     {
         $qb = $this->connection->createQueryBuilder();
@@ -174,7 +174,7 @@ class DoctrineBench
 
     #[Bench\Warmup(10)]
     #[Bench\Revs(300)]
-    #[Bench\Iterations(15)]
+    #[Bench\Iterations(5)]
     public function bench3a_SelectWithParams(): void
     {
         $qb = $this->connection->createQueryBuilder();
@@ -192,7 +192,7 @@ class DoctrineBench
 
     #[Bench\Warmup(10)]
     #[Bench\Revs(300)]
-    #[Bench\Iterations(15)]
+    #[Bench\Iterations(5)]
     public function bench3b_InsertWithParams(): void
     {
         $qb = $this->connection->createQueryBuilder();
@@ -206,7 +206,7 @@ class DoctrineBench
 
     #[Bench\Warmup(10)]
     #[Bench\Revs(300)]
-    #[Bench\Iterations(15)]
+    #[Bench\Iterations(5)]
     public function bench3c_UpdateWithParams(): void
     {
         $qb = $this->connection->createQueryBuilder();
@@ -226,7 +226,7 @@ class DoctrineBench
 
     #[Bench\Warmup(10)]
     #[Bench\Revs(300)]
-    #[Bench\Iterations(15)]
+    #[Bench\Iterations(5)]
     public function bench4a_SelectWithConditions(): void
     {
         $qb = $this->connection->createQueryBuilder();
@@ -244,7 +244,7 @@ class DoctrineBench
 
     #[Bench\Warmup(10)]
     #[Bench\Revs(300)]
-    #[Bench\Iterations(15)]
+    #[Bench\Iterations(5)]
     public function bench4b_UpdateWithConditions(): void
     {
         $qb = $this->connection->createQueryBuilder();
@@ -260,7 +260,7 @@ class DoctrineBench
 
     #[Bench\Warmup(10)]
     #[Bench\Revs(300)]
-    #[Bench\Iterations(15)]
+    #[Bench\Iterations(5)]
     public function bench4c_DeleteWithConditions(): void
     {
         $qb = $this->connection->createQueryBuilder();
@@ -278,7 +278,7 @@ class DoctrineBench
 
     #[Bench\Warmup(10)]
     #[Bench\Revs(300)]
-    #[Bench\Iterations(15)]
+    #[Bench\Iterations(5)]
     public function bench5a_JoinTwoTables(): void
     {
         $qb = $this->connection->createQueryBuilder();
@@ -293,7 +293,7 @@ class DoctrineBench
 
     #[Bench\Warmup(10)]
     #[Bench\Revs(300)]
-    #[Bench\Iterations(15)]
+    #[Bench\Iterations(5)]
     public function bench5b_ManyToManyJoin(): void
     {
         $qb = $this->connection->createQueryBuilder();
@@ -309,7 +309,7 @@ class DoctrineBench
 
     #[Bench\Warmup(10)]
     #[Bench\Revs(300)]
-    #[Bench\Iterations(15)]
+    #[Bench\Iterations(5)]
     public function bench5c_JoinWithAggregate(): void
     {
         $qb = $this->connection->createQueryBuilder();
@@ -328,7 +328,7 @@ class DoctrineBench
 
     #[Bench\Warmup(10)]
     #[Bench\Revs(300)]
-    #[Bench\Iterations(15)]
+    #[Bench\Iterations(5)]
     public function bench6a_Subquery(): void
     {
         $qb = $this->connection->createQueryBuilder();
@@ -346,7 +346,7 @@ class DoctrineBench
 
     #[Bench\Warmup(10)]
     #[Bench\Revs(300)]
-    #[Bench\Iterations(15)]
+    #[Bench\Iterations(5)]
     public function bench6b_AggregateGroupBy(): void
     {
         $qb = $this->connection->createQueryBuilder();
@@ -363,7 +363,7 @@ class DoctrineBench
 
     #[Bench\Warmup(10)]
     #[Bench\Revs(150)]
-    #[Bench\Iterations(15)]
+    #[Bench\Iterations(5)]
     public function bench7a_InsertBatch(): void
     {
         for ($i = 0; $i < 10; $i++) {
@@ -379,7 +379,7 @@ class DoctrineBench
 
     #[Bench\Warmup(10)]
     #[Bench\Revs(150)]
-    #[Bench\Iterations(15)]
+    #[Bench\Iterations(5)]
     public function bench7b_UpdateBatch(): void
     {
         for ($i = 1; $i <= 10; $i++) {
@@ -395,7 +395,7 @@ class DoctrineBench
 
     #[Bench\Warmup(10)]
     #[Bench\Revs(150)]
-    #[Bench\Iterations(15)]
+    #[Bench\Iterations(5)]
     public function bench7c_DeleteBatch(): void
     {
         $qb = $this->connection->createQueryBuilder();
@@ -411,7 +411,7 @@ class DoctrineBench
 
     #[Bench\Warmup(10)]
     #[Bench\Revs(300)]
-    #[Bench\Iterations(15)]
+    #[Bench\Iterations(5)]
     public function bench8a_DirectSelectByPrimaryKey(): void
     {
         $result = $this->connection->executeQuery('SELECT * FROM film WHERE film_id = ?', [1]);
@@ -420,7 +420,7 @@ class DoctrineBench
 
     #[Bench\Warmup(10)]
     #[Bench\Revs(300)]
-    #[Bench\Iterations(15)]
+    #[Bench\Iterations(5)]
     public function bench8b_DirectInsertSingleRow(): void
     {
         $this->connection->executeStatement(
@@ -431,7 +431,7 @@ class DoctrineBench
 
     #[Bench\Warmup(10)]
     #[Bench\Revs(300)]
-    #[Bench\Iterations(15)]
+    #[Bench\Iterations(5)]
     public function bench8c_DirectUpdateByPrimaryKey(): void
     {
         $this->connection->executeStatement(
@@ -442,7 +442,7 @@ class DoctrineBench
 
     #[Bench\Warmup(10)]
     #[Bench\Revs(300)]
-    #[Bench\Iterations(15)]
+    #[Bench\Iterations(5)]
     public function bench8d_DirectDeleteByPrimaryKey(): void
     {
         $this->connection->executeStatement(
@@ -453,7 +453,7 @@ class DoctrineBench
 
     #[Bench\Warmup(10)]
     #[Bench\Revs(300)]
-    #[Bench\Iterations(15)]
+    #[Bench\Iterations(5)]
     public function bench8e_DirectSelectWithConditions(): void
     {
         $result = $this->connection->executeQuery(
@@ -465,7 +465,7 @@ class DoctrineBench
 
     #[Bench\Warmup(10)]
     #[Bench\Revs(300)]
-    #[Bench\Iterations(15)]
+    #[Bench\Iterations(5)]
     public function bench8f_DirectJoinTwoTables(): void
     {
         $result = $this->connection->executeQuery(
@@ -477,7 +477,7 @@ class DoctrineBench
 
     #[Bench\Warmup(10)]
     #[Bench\Revs(300)]
-    #[Bench\Iterations(15)]
+    #[Bench\Iterations(5)]
     public function bench8g_DirectManyToManyJoin(): void
     {
         $result = $this->connection->executeQuery(
@@ -489,7 +489,7 @@ class DoctrineBench
 
     #[Bench\Warmup(10)]
     #[Bench\Revs(300)]
-    #[Bench\Iterations(15)]
+    #[Bench\Iterations(5)]
     public function bench8h_DirectAggregateGroupBy(): void
     {
         $result = $this->connection->executeQuery(

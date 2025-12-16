@@ -10,6 +10,7 @@ use PhpDb\Sql\PreparableSqlInterface;
 use PhpDb\Sql\Select;
 use PhpDb\Sql\TableIdentifier;
 
+use function implode;
 use function is_string;
 
 final readonly class SelectExpression implements PreparableSqlInterface
@@ -32,20 +33,13 @@ final readonly class SelectExpression implements PreparableSqlInterface
             ? $q . $table->getReference() . $q . '.'
             : '';
 
-        $result = '';
-        $first  = true;
+        $parts = [];
 
         foreach ($this->columns as $alias => $column) {
-            if ($first) {
-                $first = false;
-            } else {
-                $result .= ', ';
-            }
-
             // Fast path: string column (most common)
             if (is_string($column)) {
                 if ($column === self::SQL_STAR) {
-                    $result .= $prefix . '*';
+                    $parts[] = $prefix . '*';
                     continue;
                 }
                 $columnSql = $prefix . $q . $column . $q;
@@ -58,11 +52,11 @@ final readonly class SelectExpression implements PreparableSqlInterface
             }
 
             // Add alias if present (string key)
-            $result .= is_string($alias)
+            $parts[] = is_string($alias)
                 ? $columnSql . ' AS ' . $q . $alias . $q
                 : $columnSql;
         }
 
-        return $result;
+        return implode(', ', $parts);
     }
 }

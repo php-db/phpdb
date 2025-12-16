@@ -10,6 +10,7 @@ use PhpDb\Adapter\Platform\PlatformInterface;
 use PhpDb\Sql\Clause\Values;
 
 use function array_key_exists;
+use function implode;
 use function is_scalar;
 
 abstract class AbstractInsert extends AbstractPreparableSql
@@ -117,26 +118,19 @@ abstract class AbstractInsert extends AbstractPreparableSql
             throw new Exception\InvalidArgumentException('values or select should be present');
         }
 
-        $columns    = '';
-        $valueParts = '';
-        $first      = true;
+        $columnParts = [];
+        $valueParts  = [];
+        $q           = $builder->q;
 
         foreach ($valuesObj as $column => $value) {
-            if (! $first) {
-                $columns    .= ', ';
-                $valueParts .= ', ';
-            }
-            $first = false;
-
-            $columns .= $builder->q . $column . $builder->q;
-
-            $valueParts .= is_scalar($value) && $builder->isParameterized()
+            $columnParts[] = $q . $column . $q;
+            $valueParts[]  = is_scalar($value) && $builder->isParameterized()
                 ? $builder->bindValue($value)
                 : $this->resolveColumnValue($value, $platform, $driver, $parameterContainer);
         }
 
         return $this->getInsertKeyword() . ' INTO ' . $tableSql
-             . ' (' . $columns . ') VALUES (' . $valueParts . ')';
+             . ' (' . implode(', ', $columnParts) . ') VALUES (' . implode(', ', $valueParts) . ')';
     }
 
     protected function buildInsertSelectSql(
@@ -151,16 +145,12 @@ abstract class AbstractInsert extends AbstractPreparableSql
         $columnsPart = '';
         $valuesObj   = $this->values;
         if ($valuesObj !== null && $valuesObj->count() > 0) {
-            $columns = '';
-            $first   = true;
+            $q           = $builder->q;
+            $columnParts = [];
             foreach ($valuesObj->getColumns() as $col) {
-                if (! $first) {
-                    $columns .= ', ';
-                }
-                $first    = false;
-                $columns .= $builder->q . $col . $builder->q;
+                $columnParts[] = $q . $col . $q;
             }
-            $columnsPart = ' (' . $columns . ')';
+            $columnsPart = ' (' . implode(', ', $columnParts) . ')';
         }
 
         return $this->getInsertKeyword() . ' INTO ' . $tableSql . $columnsPart . ' ' . $selectSql;

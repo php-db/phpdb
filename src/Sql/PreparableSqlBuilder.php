@@ -13,6 +13,7 @@ use PhpDb\Sql\Argument\Select as SelectArgument;
 use PhpDb\Sql\Argument\Value;
 use PhpDb\Sql\Argument\Values;
 
+use function implode;
 use function is_bool;
 use function is_float;
 use function is_int;
@@ -77,16 +78,11 @@ final class PreparableSqlBuilder
      */
     public function bindValues(array $values): string
     {
-        $result = '';
-        $first  = true;
+        $parts = [];
         foreach ($values as $value) {
-            if (! $first) {
-                $result .= ', ';
-            }
-            $first   = false;
-            $result .= $this->bindValue($value);
+            $parts[] = $this->bindValue($value);
         }
-        return $result;
+        return implode(', ', $parts);
     }
 
     /**

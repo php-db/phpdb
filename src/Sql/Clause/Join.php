@@ -19,6 +19,7 @@ use function array_shift;
 use function count;
 use function current;
 use function explode;
+use function implode;
 use function is_array;
 use function is_string;
 use function key;
@@ -168,31 +169,31 @@ final class Join implements Iterator, Countable, ClauseInterface
             return '';
         }
 
-        $q   = $builder->q;
-        $sql = '';
+        $q     = $builder->q;
+        $parts = [];
 
         foreach ($this->joins as $join) {
-            $sql .= ' ' . $join->type->value . ' JOIN ';
+            $joinSql = ' ' . $join->type->value . ' JOIN ';
 
             // Fast path: TableIdentifier (most common case)
             if ($join->name instanceof TableIdentifier) {
-                $sql .= $join->name->prepareSqlString($builder);
+                $joinSql .= $join->name->prepareSqlString($builder);
             } elseif ($join->name instanceof Select) {
-                $sql .= '(' . $builder->processSubSelect($join->name) . ')';
+                $joinSql .= '(' . $builder->processSubSelect($join->name) . ')';
                 if ($join->alias !== null) {
-                    $sql .= ' AS ' . $q . $join->alias . $q;
+                    $joinSql .= ' AS ' . $q . $join->alias . $q;
                 }
             } elseif ($join->name instanceof ExpressionInterface) {
-                $sql .= $builder->processExpression($join->name);
+                $joinSql .= $builder->processExpression($join->name);
                 if ($join->alias !== null) {
-                    $sql .= ' AS ' . $q . $join->alias . $q;
+                    $joinSql .= ' AS ' . $q . $join->alias . $q;
                 }
             }
 
-            $sql .= ' ON ' . $join->on->prepareSqlString($builder);
+            $parts[] = $joinSql . ' ON ' . $join->on->prepareSqlString($builder);
         }
 
-        return $sql;
+        return implode('', $parts);
     }
 
     /**
@@ -200,10 +201,13 @@ final class Join implements Iterator, Countable, ClauseInterface
      */
     public function toColumnsSqlPart(PreparableSqlBuilder $builder): string
     {
-        $result = '';
+        $parts = [];
         foreach ($this->joins as $join) {
-            $result .= $join->toColumnsSql($builder);
+            $columnsSql = $join->toColumnsSql($builder);
+            if ($columnsSql !== '') {
+                $parts[] = $columnsSql;
+            }
         }
-        return $result;
+        return implode('', $parts);
     }
 }

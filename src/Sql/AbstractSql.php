@@ -192,18 +192,26 @@ abstract class AbstractSql implements SqlInterface
         string $paramPrefix
     ): string {
         $fullPrefix = $this->processInfo['paramPrefix'] . $paramPrefix;
-        $paramIndex = 1;
 
+        // For positional parameters (mysqli), all %s become ? - use simple str_replace
+        if ($driver->getPrepareType() === DriverInterface::PARAMETERIZATION_POSITIONAL) {
+            $paramIndex = 1;
+            foreach ($values as $value) {
+                $parameterContainer->offsetSet($fullPrefix . $paramIndex++, $value);
+            }
+            return str_replace('%s', '?', $sql);
+        }
+
+        // For named parameters (PDO), use vsprintf with pre-built replacements
+        $replacements = [];
+        $paramIndex = 1;
         foreach ($values as $value) {
             $paramName = $fullPrefix . $paramIndex++;
             $parameterContainer->offsetSet($paramName, $value);
-            $pos = strpos($sql, '%s');
-            if ($pos !== false) {
-                $sql = substr_replace($sql, $driver->formatParameterName($paramName), $pos, 2);
-            }
+            $replacements[] = $driver->formatParameterName($paramName);
         }
 
-        return $sql;
+        return vsprintf($sql, $replacements);
     }
 
     /**

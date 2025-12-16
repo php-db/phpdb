@@ -46,7 +46,7 @@ class LaminasBench
 
     #[Bench\Warmup(10)]
     #[Bench\Revs(2000)]
-    #[Bench\Iterations(15)]
+    #[Bench\Iterations(5)]
     public function bench1a_BuildSelectSimple(): void
     {
         $select = new \Laminas\Db\Sql\Select('film');
@@ -56,7 +56,7 @@ class LaminasBench
 
     #[Bench\Warmup(10)]
     #[Bench\Revs(2000)]
-    #[Bench\Iterations(15)]
+    #[Bench\Iterations(5)]
     public function bench1b_BuildSelectComplex(): void
     {
         $select = new \Laminas\Db\Sql\Select('film');
@@ -70,7 +70,7 @@ class LaminasBench
 
     #[Bench\Warmup(10)]
     #[Bench\Revs(2000)]
-    #[Bench\Iterations(15)]
+    #[Bench\Iterations(5)]
     public function bench1c_BuildInsert(): void
     {
         $insert = new \Laminas\Db\Sql\Insert('actor');
@@ -80,7 +80,7 @@ class LaminasBench
 
     #[Bench\Warmup(10)]
     #[Bench\Revs(2000)]
-    #[Bench\Iterations(15)]
+    #[Bench\Iterations(5)]
     public function bench1d_BuildUpdate(): void
     {
         $update = new \Laminas\Db\Sql\Update('actor');
@@ -91,7 +91,7 @@ class LaminasBench
 
     #[Bench\Warmup(10)]
     #[Bench\Revs(2000)]
-    #[Bench\Iterations(15)]
+    #[Bench\Iterations(5)]
     public function bench1e_BuildDelete(): void
     {
         $delete = new \Laminas\Db\Sql\Delete('actor');
@@ -105,7 +105,7 @@ class LaminasBench
 
     #[Bench\Warmup(10)]
     #[Bench\Revs(300)]
-    #[Bench\Iterations(15)]
+    #[Bench\Iterations(5)]
     public function bench2a_SelectByPrimaryKey(): void
     {
         $select = new \Laminas\Db\Sql\Select('film');
@@ -117,7 +117,7 @@ class LaminasBench
 
     #[Bench\Warmup(10)]
     #[Bench\Revs(300)]
-    #[Bench\Iterations(15)]
+    #[Bench\Iterations(5)]
     public function bench2b_InsertSingleRow(): void
     {
         $insert = new \Laminas\Db\Sql\Insert('actor');
@@ -128,7 +128,7 @@ class LaminasBench
 
     #[Bench\Warmup(10)]
     #[Bench\Revs(300)]
-    #[Bench\Iterations(15)]
+    #[Bench\Iterations(5)]
     public function bench2c_UpdateByPrimaryKey(): void
     {
         $update = new \Laminas\Db\Sql\Update('actor');
@@ -140,7 +140,7 @@ class LaminasBench
 
     #[Bench\Warmup(10)]
     #[Bench\Revs(300)]
-    #[Bench\Iterations(15)]
+    #[Bench\Iterations(5)]
     public function bench2d_DeleteByPrimaryKey(): void
     {
         $delete = new \Laminas\Db\Sql\Delete('actor');
@@ -155,7 +155,7 @@ class LaminasBench
 
     #[Bench\Warmup(10)]
     #[Bench\Revs(300)]
-    #[Bench\Iterations(15)]
+    #[Bench\Iterations(5)]
     public function bench3a_SelectWithParams(): void
     {
         $select = new \Laminas\Db\Sql\Select('film');
@@ -167,7 +167,7 @@ class LaminasBench
 
     #[Bench\Warmup(10)]
     #[Bench\Revs(300)]
-    #[Bench\Iterations(15)]
+    #[Bench\Iterations(5)]
     public function bench3b_InsertWithParams(): void
     {
         $insert = new \Laminas\Db\Sql\Insert('actor');
@@ -181,7 +181,7 @@ class LaminasBench
 
     #[Bench\Warmup(10)]
     #[Bench\Revs(300)]
-    #[Bench\Iterations(15)]
+    #[Bench\Iterations(5)]
     public function bench3c_UpdateWithParams(): void
     {
         $update = new \Laminas\Db\Sql\Update('actor');
@@ -197,7 +197,7 @@ class LaminasBench
 
     #[Bench\Warmup(10)]
     #[Bench\Revs(300)]
-    #[Bench\Iterations(15)]
+    #[Bench\Iterations(5)]
     public function bench4a_SelectWithConditions(): void
     {
         $select = new \Laminas\Db\Sql\Select('film');
@@ -211,7 +211,7 @@ class LaminasBench
 
     #[Bench\Warmup(10)]
     #[Bench\Revs(300)]
-    #[Bench\Iterations(15)]
+    #[Bench\Iterations(5)]
     public function bench4b_UpdateWithConditions(): void
     {
         $update = new \Laminas\Db\Sql\Update('film');
@@ -223,7 +223,7 @@ class LaminasBench
 
     #[Bench\Warmup(10)]
     #[Bench\Revs(300)]
-    #[Bench\Iterations(15)]
+    #[Bench\Iterations(5)]
     public function bench4c_DeleteWithConditions(): void
     {
         $delete = new \Laminas\Db\Sql\Delete('actor');
@@ -238,7 +238,7 @@ class LaminasBench
 
     #[Bench\Warmup(10)]
     #[Bench\Revs(300)]
-    #[Bench\Iterations(15)]
+    #[Bench\Iterations(5)]
     public function bench5a_JoinTwoTables(): void
     {
         $select = new \Laminas\Db\Sql\Select('film');
@@ -251,7 +251,7 @@ class LaminasBench
 
     #[Bench\Warmup(10)]
     #[Bench\Revs(300)]
-    #[Bench\Iterations(15)]
+    #[Bench\Iterations(5)]
     public function bench5b_ManyToManyJoin(): void
     {
         $select = new \Laminas\Db\Sql\Select('film');
@@ -265,7 +265,7 @@ class LaminasBench
 
     #[Bench\Warmup(10)]
     #[Bench\Revs(300)]
-    #[Bench\Iterations(15)]
+    #[Bench\Iterations(5)]
     public function bench5c_JoinWithAggregate(): void
     {
         $select = new \Laminas\Db\Sql\Select('film');
@@ -284,7 +284,7 @@ class LaminasBench
 
     #[Bench\Warmup(10)]
     #[Bench\Revs(300)]
-    #[Bench\Iterations(15)]
+    #[Bench\Iterations(5)]
     public function bench6a_Subquery(): void
     {
         $subSelect = new \Laminas\Db\Sql\Select('rental');
@@ -301,7 +301,7 @@ class LaminasBench
 
     #[Bench\Warmup(10)]
     #[Bench\Revs(300)]
-    #[Bench\Iterations(15)]
+    #[Bench\Iterations(5)]
     public function bench6b_AggregateGroupBy(): void
     {
         $select = new \Laminas\Db\Sql\Select('film');
@@ -318,7 +318,7 @@ class LaminasBench
 
     #[Bench\Warmup(10)]
     #[Bench\Revs(150)]
-    #[Bench\Iterations(15)]
+    #[Bench\Iterations(5)]
     public function bench7a_InsertBatch(): void
     {
         for ($i = 0; $i < 10; $i++) {
@@ -331,7 +331,7 @@ class LaminasBench
 
     #[Bench\Warmup(10)]
     #[Bench\Revs(150)]
-    #[Bench\Iterations(15)]
+    #[Bench\Iterations(5)]
     public function bench7b_UpdateBatch(): void
     {
         for ($i = 1; $i <= 10; $i++) {
@@ -345,7 +345,7 @@ class LaminasBench
 
     #[Bench\Warmup(10)]
     #[Bench\Revs(150)]
-    #[Bench\Iterations(15)]
+    #[Bench\Iterations(5)]
     public function bench7c_DeleteBatch(): void
     {
         $delete = new \Laminas\Db\Sql\Delete('actor');
@@ -360,7 +360,7 @@ class LaminasBench
 
     #[Bench\Warmup(10)]
     #[Bench\Revs(300)]
-    #[Bench\Iterations(15)]
+    #[Bench\Iterations(5)]
     public function bench8a_DirectSelectByPrimaryKey(): void
     {
         $result = $this->adapter->query('SELECT * FROM film WHERE film_id = ?', [1]);
@@ -369,7 +369,7 @@ class LaminasBench
 
     #[Bench\Warmup(10)]
     #[Bench\Revs(300)]
-    #[Bench\Iterations(15)]
+    #[Bench\Iterations(5)]
     public function bench8b_DirectInsertSingleRow(): void
     {
         $this->adapter->query(
@@ -380,7 +380,7 @@ class LaminasBench
 
     #[Bench\Warmup(10)]
     #[Bench\Revs(300)]
-    #[Bench\Iterations(15)]
+    #[Bench\Iterations(5)]
     public function bench8c_DirectUpdateByPrimaryKey(): void
     {
         $this->adapter->query(
@@ -391,7 +391,7 @@ class LaminasBench
 
     #[Bench\Warmup(10)]
     #[Bench\Revs(300)]
-    #[Bench\Iterations(15)]
+    #[Bench\Iterations(5)]
     public function bench8d_DirectDeleteByPrimaryKey(): void
     {
         $this->adapter->query(
@@ -402,7 +402,7 @@ class LaminasBench
 
     #[Bench\Warmup(10)]
     #[Bench\Revs(300)]
-    #[Bench\Iterations(15)]
+    #[Bench\Iterations(5)]
     public function bench8e_DirectSelectWithConditions(): void
     {
         $result = $this->adapter->query(
@@ -414,7 +414,7 @@ class LaminasBench
 
     #[Bench\Warmup(10)]
     #[Bench\Revs(300)]
-    #[Bench\Iterations(15)]
+    #[Bench\Iterations(5)]
     public function bench8f_DirectJoinTwoTables(): void
     {
         $result = $this->adapter->query(
@@ -426,7 +426,7 @@ class LaminasBench
 
     #[Bench\Warmup(10)]
     #[Bench\Revs(300)]
-    #[Bench\Iterations(15)]
+    #[Bench\Iterations(5)]
     public function bench8g_DirectManyToManyJoin(): void
     {
         $result = $this->adapter->query(
@@ -438,7 +438,7 @@ class LaminasBench
 
     #[Bench\Warmup(10)]
     #[Bench\Revs(300)]
-    #[Bench\Iterations(15)]
+    #[Bench\Iterations(5)]
     public function bench8h_DirectAggregateGroupBy(): void
     {
         $result = $this->adapter->query(
