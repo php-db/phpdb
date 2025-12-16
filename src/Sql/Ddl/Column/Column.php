@@ -9,6 +9,7 @@ use PhpDb\Sql\Argument\Identifier;
 use PhpDb\Sql\Argument\Literal;
 use PhpDb\Sql\Argument\Value;
 use PhpDb\Sql\Ddl\Constraint\ConstraintInterface;
+use PhpDb\Sql\PreparableSqlBuilder;
 
 use function implode;
 
@@ -133,5 +134,27 @@ class Column implements ColumnInterface
             'spec'   => implode(' ', $specParts),
             'values' => $values,
         ];
+    }
+
+    /** @inheritDoc */
+    #[Override]
+    public function prepareSqlString(PreparableSqlBuilder $builder): string
+    {
+        $q    = $builder->q;
+        $sql  = "{$q}{$this->name}{$q} {$this->type}";
+
+        if ($this->isNullable === false) {
+            $sql .= ' NOT NULL';
+        }
+
+        if ($this->default !== null) {
+            $sql .= ' DEFAULT ' . $builder->bindValue($this->default);
+        }
+
+        foreach ($this->constraints as $constraint) {
+            $sql .= ' ' . $constraint->prepareSqlString($builder);
+        }
+
+        return $sql;
     }
 }

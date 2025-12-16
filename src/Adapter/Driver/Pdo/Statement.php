@@ -204,11 +204,10 @@ class Statement implements StatementInterface, PdoDriverAwareInterface, Profiler
         }
 
         $parameters = $this->parameterContainer->getNamedArray();
-        $errata     = $this->parameterContainer->getErrataIterator()->getArrayCopy();
 
         foreach ($parameters as $name => &$value) {
-            if (isset($errata[$name])) {
-                $type = match ($errata[$name]) {
+            if ($this->parameterContainer->offsetHasErrata($name)) {
+                $type = match ($this->parameterContainer->offsetGetErrata($name)) {
                     ParameterContainer::TYPE_INTEGER => PDO::PARAM_INT,
                     ParameterContainer::TYPE_NULL => PDO::PARAM_NULL,
                     ParameterContainer::TYPE_LOB => PDO::PARAM_LOB,

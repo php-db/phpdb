@@ -6,6 +6,7 @@ namespace PhpDb\Sql\Ddl\Column;
 
 use Override;
 use PhpDb\Sql\Argument\Literal;
+use PhpDb\Sql\PreparableSqlBuilder;
 
 /**
  * @see doc section http://dev.mysql.com/doc/refman/5.6/en/timestamp-initialization.html
@@ -25,5 +26,18 @@ abstract class AbstractTimestampColumn extends Column
         }
 
         return $expressionData;
+    }
+
+    /** @inheritDoc */
+    #[Override]
+    public function prepareSqlString(PreparableSqlBuilder $builder): string
+    {
+        $sql = parent::prepareSqlString($builder);
+
+        if (isset($this->options['on_update'])) {
+            $sql .= ' ON UPDATE CURRENT_TIMESTAMP';
+        }
+
+        return $sql;
     }
 }

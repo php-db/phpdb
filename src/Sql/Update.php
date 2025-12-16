@@ -6,7 +6,6 @@ namespace PhpDb\Sql;
 
 use Closure;
 use PhpDb\Adapter\Driver\DriverInterface;
-use PhpDb\Adapter\Driver\PdoDriverInterface;
 use PhpDb\Adapter\ParameterContainer;
 use PhpDb\Adapter\Platform\PlatformInterface;
 use PhpDb\Sql\Clause\Join;
@@ -17,6 +16,8 @@ use PhpDb\Sql\Predicate\PredicateInterface;
 use function array_key_exists;
 use function implode;
 use function is_scalar;
+use function is_string;
+use function str_contains;
 use function strtolower;
 
 /**
@@ -62,7 +63,10 @@ class Update extends AbstractPreparableSql
 
     public function table(TableIdentifier|string|array $table): static
     {
-        $this->table = TableIdentifier::from($table);
+        // Fast path for simple string table names (most common case)
+        $this->table = is_string($table) && ! str_contains($table, '.')
+            ? new TableIdentifier($table)
+            : TableIdentifier::from($table);
         return $this;
     }
 
@@ -130,50 +134,38 @@ class Update extends AbstractPreparableSql
 
         return 'UPDATE ' . ($this->table?->prepareSqlString($builder) ?? '')
              . ($this->joins?->prepareSqlString($builder) ?? '')
-             . $this->buildSetPart($platform, $driver, $parameterContainer)
+             . $this->buildSetPart($builder)
              . ($this->where?->prepareSqlString($builder) ?? '');
     }
 
-    protected function buildSetPart(
-        PlatformInterface $platform,
-        ?DriverInterface $driver = null,
-        ?ParameterContainer $parameterContainer = null
-    ): string {
-        $setSql      = [];
-        $i           = 0;
-        $isPdoDriver = $driver instanceof PdoDriverInterface;
+    protected function buildSetPart(PreparableSqlBuilder $builder): string
+    {
+        $setSql          = [];
+        $isParameterized = $builder->isParameterized();
 
         foreach ($this->getSet() as $column => $value) {
-            $prefix  = $this->resolveColumnValue(
-                [
-                    'column'       => $column,
-                    'fromTable'    => '',
-                    'isIdentifier' => true,
-                ],
-                $platform,
-                $driver,
-                $parameterContainer,
-                'column'
-            );
-            $prefix .= ' = ';
-            if (is_scalar($value) && $parameterContainer) {
-                if ($isPdoDriver) {
-                    $column = 'c_' . $i++;
-                }
+            $columnSql = $builder->quoteIdentifierInFragment($column) . ' = ';
 
-                $setSql[] = $prefix . $driver->formatParameterName($column);
-                $parameterContainer->offsetSet($column, $value);
+            if (is_scalar($value) && $isParameterized) {
+                $setSql[] = $columnSql . $builder->bindValue($value);
+            } elseif ($value instanceof ExpressionInterface) {
+                $setSql[] = $columnSql . $builder->processExpression($value);
+            } elseif ($value instanceof Select) {
+                $setSql[] = $columnSql . '(' . $value->buildSqlString(
+                    $builder->platform,
+                    $builder->driver,
+                    $builder->parameterContainer
+                ) . ')';
+            } elseif ($value === null) {
+                $setSql[] = $columnSql . 'NULL';
             } else {
-                $setSql[] = $prefix . $this->resolveColumnValue(
-                    $value,
-                    $platform,
-                    $driver,
-                    $parameterContainer
-                );
+                $setSql[] = $columnSql . $builder->platform->quoteValue((string) $value);
             }
         }
 
-        return ' SET ' . implode(', ', $setSql);
+        $setPart = implode(', ', $setSql);
+
+        return " SET {$setPart}";
     }
 
     public function __get(string $name): ?Where

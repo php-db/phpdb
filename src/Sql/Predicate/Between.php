@@ -147,7 +147,10 @@ class Between extends AbstractExpression implements PredicateInterface
             throw new LogicException('maxValue must be specified');
         }
 
-        return $builder->argumentToSql($this->identifier) . ' ' . $this->operator . ' '
-            . $builder->argumentToSql($this->minValue) . ' AND ' . $builder->argumentToSql($this->maxValue);
+        $identifierSql = $builder->argumentToSql($this->identifier);
+        $minSql        = $builder->argumentToSql($this->minValue);
+        $maxSql        = $builder->argumentToSql($this->maxValue);
+
+        return "{$identifierSql} {$this->operator} {$minSql} AND {$maxSql}";
     }
 }

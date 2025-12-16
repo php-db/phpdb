@@ -7,6 +7,7 @@ namespace PhpDb\Sql\Ddl\Constraint;
 use Override;
 use PhpDb\Sql\Argument\Identifier;
 use PhpDb\Sql\Argument\Literal;
+use PhpDb\Sql\PreparableSqlBuilder;
 
 use function array_fill;
 use function count;
@@ -132,5 +133,32 @@ class ForeignKey extends AbstractConstraint
         $expressionData['values'][] = new Literal($this->onUpdateRule);
 
         return $expressionData;
+    }
+
+    /** @inheritDoc */
+    #[Override]
+    public function prepareSqlString(PreparableSqlBuilder $builder): string
+    {
+        $q   = $builder->q;
+        $sql = parent::prepareSqlString($builder);
+
+        // REFERENCES table
+        $sql .= " REFERENCES {$q}{$this->referenceTable}{$q}";
+
+        // Reference columns
+        $colCount = count($this->referenceColumn);
+        if ($colCount !== 0) {
+            $refCols = [];
+            foreach ($this->referenceColumn as $column) {
+                $refCols[] = "{$q}{$column}{$q}";
+            }
+            $refColsSql = implode(', ', $refCols);
+            $sql       .= " ({$refColsSql})";
+        }
+
+        // ON DELETE / ON UPDATE rules
+        $sql .= " ON DELETE {$this->onDeleteRule} ON UPDATE {$this->onUpdateRule}";
+
+        return $sql;
     }
 }

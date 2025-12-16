@@ -4,14 +4,13 @@ declare(strict_types=1);
 
 namespace PhpDb\Sql\Clause;
 
+use ArrayIterator;
 use Countable;
-use Iterator;
 use IteratorAggregate;
-use Laminas\Stdlib\PriorityList;
 use PhpDb\Sql\Exception;
+use Traversable;
 
 use function count;
-use function is_numeric;
 use function is_string;
 
 /**
@@ -19,28 +18,21 @@ use function is_string;
  */
 final class Set implements Countable, IteratorAggregate
 {
-    protected PriorityList $values;
-
-    public function __construct()
-    {
-        $this->values = new PriorityList();
-        $this->values->isLIFO(false);
-    }
+    /** @var array<string, mixed> */
+    private array $values = [];
 
     public function set(array $values, string|int $flag = 'set'): static
     {
         if ($flag === 'set') {
-            $this->values->clear();
+            $this->values = [];
         }
-
-        $priority = is_numeric($flag) ? (int) $flag : 0;
 
         foreach ($values as $column => $value) {
             if (! is_string($column)) {
                 throw new Exception\InvalidArgumentException('set() expects a string for the value key');
             }
 
-            $this->values->insert($column, $value, $priority);
+            $this->values[$column] = $value;
         }
 
         return $this;
@@ -48,7 +40,7 @@ final class Set implements Countable, IteratorAggregate
 
     public function toArray(): array
     {
-        return $this->values->toArray();
+        return $this->values;
     }
 
     public function count(): int
@@ -56,8 +48,8 @@ final class Set implements Countable, IteratorAggregate
         return count($this->values);
     }
 
-    public function getIterator(): Iterator
+    public function getIterator(): Traversable
     {
-        return $this->values;
+        return new ArrayIterator($this->values);
     }
 }

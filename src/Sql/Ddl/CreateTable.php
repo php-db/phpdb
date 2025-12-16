@@ -4,13 +4,18 @@ declare(strict_types=1);
 
 namespace PhpDb\Sql\Ddl;
 
+use Override;
+use PhpDb\Adapter\Driver\DriverInterface;
+use PhpDb\Adapter\ParameterContainer;
 use PhpDb\Adapter\Platform\PlatformInterface;
-use PhpDb\Sql\AbstractSql;
+use PhpDb\Sql\AbstractPreparableSql;
+use PhpDb\Sql\PreparableSqlBuilder;
 use PhpDb\Sql\TableIdentifier;
 
 use function array_key_exists;
+use function implode;
 
-class CreateTable extends AbstractSql implements SqlInterface
+class CreateTable extends AbstractPreparableSql implements SqlInterface
 {
     final public const COLUMNS = 'columns';
 
@@ -23,25 +28,6 @@ class CreateTable extends AbstractSql implements SqlInterface
     protected array $constraints = [];
 
     protected bool $isTemporary = false;
-
-    /**
-     * {@inheritDoc}
-     */
-    protected array $specifications = [
-        self::TABLE       => 'CREATE %1$sTABLE %2$s (',
-        self::COLUMNS     => [
-            "\n    %1\$s" => [
-                [1 => '%1$s', 'combinedby' => ",\n    "],
-            ],
-        ],
-        'combinedBy'      => ',',
-        self::CONSTRAINTS => [
-            "\n    %1\$s" => [
-                [1 => '%1$s', 'combinedby' => ",\n    "],
-            ],
-        ],
-        'statementEnd'    => '%1$s',
-    ];
 
     protected string|TableIdentifier $table = '';
 
@@ -95,67 +81,60 @@ class CreateTable extends AbstractSql implements SqlInterface
         return isset($key) && array_key_exists($key, $rawState) ? $rawState[$key] : $rawState;
     }
 
-    /**
-     * @return string[]
-     */
-    protected function processTable(?PlatformInterface $adapterPlatform = null): array
-    {
-        return [
-            $this->isTemporary ? 'TEMPORARY ' : '',
-            $this->resolveTable($this->table, $adapterPlatform),
-        ];
-    }
+    /** @inheritDoc */
+    #[Override]
+    protected function buildSqlString(
+        PlatformInterface $platform,
+        ?DriverInterface $driver = null,
+        ?ParameterContainer $parameterContainer = null
+    ): string {
+        $builder = new PreparableSqlBuilder($platform, $driver, $parameterContainer);
+        $q       = $builder->q;
 
-    /**
-     * @return string[][]|null
-     */
-    protected function processColumns(?PlatformInterface $adapterPlatform = null): ?array
-    {
-        if (! $this->columns) {
-            return null;
+        // CREATE [TEMPORARY] TABLE name
+        $sql = 'CREATE ' . ($this->isTemporary ? 'TEMPORARY ' : '') . 'TABLE ';
+
+        // Table name
+        if ($this->table instanceof TableIdentifier) {
+            $schema = $this->table->getSchema();
+            $sql   .= $schema !== null ? "{$q}{$schema}{$q}.{$q}{$this->table->getTable()}{$q}"
+                : "{$q}{$this->table->getTable()}{$q}";
+        } else {
+            $sql .= "{$q}{$this->table}{$q}";
         }
 
-        $sqls = [];
+        $sql .= ' ( ';
 
+        // Build column SQL strings
+        $columnSqls = [];
         foreach ($this->columns as $column) {
-            $sqls[] = $this->processExpression($column, $adapterPlatform);
+            $columnSqls[] = $column->prepareSqlString($builder);
         }
 
-        return [$sqls];
-    }
-
-    protected function processCombinedby(?PlatformInterface $adapterPlatform = null): string|null
-    {
-        if ($this->constraints && $this->columns) {
-            return $this->specifications['combinedBy'];
-        }
-
-        return null;
-    }
-
-    /**
-     * @return string[][]|null
-     */
-    protected function processConstraints(?PlatformInterface $adapterPlatform = null): ?array
-    {
-        if (! $this->constraints) {
-            return null;
-        }
-
-        $sqls = [];
-
+        // Build constraint SQL strings
+        $constraintSqls = [];
         foreach ($this->constraints as $constraint) {
-            $sqls[] = $this->processExpression($constraint, $adapterPlatform);
+            $constraintSqls[] = $constraint->prepareSqlString($builder);
         }
 
-        return [$sqls];
-    }
+        $hasColumns     = $columnSqls !== [];
+        $hasConstraints = $constraintSqls !== [];
 
-    /**
-     * @return string[]
-     */
-    protected function processStatementEnd(?PlatformInterface $adapterPlatform = null): array
-    {
-        return ["\n)"];
+        if ($hasColumns && $hasConstraints) {
+            // Both: columns joined with ",\n    ", then " , " separator, then constraints
+            $colPart        = implode(",\n    ", $columnSqls);
+            $constraintPart = implode(",\n    ", $constraintSqls);
+            $sql           .= "\n    {$colPart} , \n    {$constraintPart} ";
+        } elseif ($hasColumns) {
+            // Only columns
+            $colPart = implode(",\n    ", $columnSqls);
+            $sql    .= "\n    {$colPart} ";
+        } elseif ($hasConstraints) {
+            // Only constraints
+            $constraintPart = implode(",\n    ", $constraintSqls);
+            $sql           .= "\n    {$constraintPart} ";
+        }
+
+        return "{$sql}\n)";
     }
 }

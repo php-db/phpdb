@@ -37,9 +37,9 @@ final class PreparableSqlBuilder
     public bool $inSubselect = false;
 
     public function __construct(
-        private readonly PlatformInterface $platform,
-        private readonly ?DriverInterface $driver = null,
-        private readonly ?ParameterContainer $params = null,
+        public readonly PlatformInterface $platform,
+        public readonly ?DriverInterface $driver = null,
+        public readonly ?ParameterContainer $parameterContainer = null,
         private readonly string $paramPrefix = 'p'
     ) {
         $this->q = $platform->getQuoteIdentifierSymbol();
@@ -50,7 +50,7 @@ final class PreparableSqlBuilder
      */
     public function isParameterized(): bool
     {
-        return $this->driver !== null && $this->params !== null;
+        return $this->driver !== null && $this->parameterContainer !== null;
     }
 
     /**
@@ -63,7 +63,7 @@ final class PreparableSqlBuilder
     {
         if ($this->isParameterized()) {
             $name = $this->paramPrefix . $this->paramIndex++;
-            $this->params->offsetSet($name, $value);
+            $this->parameterContainer->offsetSet($name, $value);
             return $this->driver->formatParameterName($name);
         }
 
@@ -93,8 +93,8 @@ final class PreparableSqlBuilder
      */
     public function bindNamedValue(string $name, mixed $value): void
     {
-        if ($this->params !== null) {
-            $this->params->offsetSet($name, $value);
+        if ($this->parameterContainer !== null) {
+            $this->parameterContainer->offsetSet($name, $value);
         }
     }
 
@@ -134,7 +134,7 @@ final class PreparableSqlBuilder
      */
     public function quoteIdentifier(string $identifier): string
     {
-        return $this->q . $identifier . $this->q;
+        return "{$this->q}{$identifier}{$this->q}";
     }
 
     /**
@@ -166,7 +166,7 @@ final class PreparableSqlBuilder
      */
     public function getParameterContainer(): ?ParameterContainer
     {
-        return $this->params;
+        return $this->parameterContainer;
     }
 
     /**
@@ -177,7 +177,7 @@ final class PreparableSqlBuilder
         $child                 = new self(
             $this->platform,
             $this->driver,
-            $this->params,
+            $this->parameterContainer,
             $this->paramPrefix . $prefix
         );
         $child->subselectCount = $this->subselectCount;
@@ -232,8 +232,9 @@ final class PreparableSqlBuilder
         $specification    = $expressionData['spec'];
         $expressionValues = $expressionData['values'];
 
+        // Fast path: no parameters - return spec directly (no escaping needed)
         if ($expressionValues === []) {
-            return str_replace('%%', '%', $specification);
+            return $specification;
         }
 
         $values = [];

@@ -51,13 +51,14 @@ class LiteralTest extends TestCase
         );
     }
 
-    public function testGetExpressionDataWillEscapePercent(): void
+    public function testGetExpressionDataReturnsSpecDirectly(): void
     {
         $literal        = new Literal('X LIKE "foo%"');
         $expressionData = $literal->getExpressionData();
 
+        // Literal returns spec as-is (no escaping needed since vsprintf is not used)
         self::assertEquals(
-            'X LIKE "foo%%"',
+            'X LIKE "foo%"',
             $expressionData['spec']
         );
 

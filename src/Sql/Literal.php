@@ -6,8 +6,6 @@ namespace PhpDb\Sql;
 
 use Override;
 
-use function str_replace;
-
 class Literal implements ExpressionInterface
 {
     public function __construct(protected string $literal = '')
@@ -31,7 +29,7 @@ class Literal implements ExpressionInterface
     public function getExpressionData(): array
     {
         return [
-            'spec'   => str_replace('%', '%%', $this->literal),
+            'spec'   => $this->literal,
             'values' => [],
         ];
     }

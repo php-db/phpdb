@@ -102,8 +102,9 @@ class Like extends AbstractExpression implements PredicateInterface
             throw new InvalidArgumentException('Like expression must be specified');
         }
 
-        return $builder->argumentToSql($this->identifier)
-            . ' ' . $this->operator . ' '
-            . $builder->argumentToSql($this->like);
+        $identifierSql = $builder->argumentToSql($this->identifier);
+        $likeSql       = $builder->argumentToSql($this->like);
+
+        return "{$identifierSql} {$this->operator} {$likeSql}";
     }
 }

@@ -32,10 +32,7 @@ final class Combine extends AbstractPreparableSql
 
     public const COMBINE_INTERSECT = 'intersect';
 
-    /** @var string[] */
-    protected array $specifications = [
-        self::COMBINE => '%1$s (%2$s) ',
-    ];
+    private const COMBINE_SPEC = '%1$s (%2$s) ';
 
     /** @var array<array{select: Select, type: string, modifier: string}> */
     private array $combine = [];
@@ -131,7 +128,7 @@ final class Combine extends AbstractPreparableSql
             $sql   .= str_replace(
                 ['%1$s', '%2$s'],
                 [$type, $select],
-                $this->specifications[self::COMBINE]
+                self::COMBINE_SPEC
             );
         }
 

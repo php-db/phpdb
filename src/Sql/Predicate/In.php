@@ -124,6 +124,8 @@ class In extends AbstractExpression implements PredicateInterface
             ? $builder->argumentToSql($this->valueSet)
             : '(' . $builder->argumentToSql($this->valueSet) . ')';
 
-        return $builder->argumentToSql($this->identifier) . ' ' . $this->operator . ' ' . $valueSetSql;
+        $identifierSql = $builder->argumentToSql($this->identifier);
+
+        return "{$identifierSql} {$this->operator} {$valueSetSql}";
     }
 }

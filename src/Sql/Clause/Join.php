@@ -181,12 +181,12 @@ final class Join implements Iterator, Countable, ClauseInterface
             } elseif ($join->name instanceof Select) {
                 $joinSql .= '(' . $builder->processSubSelect($join->name) . ')';
                 if ($join->alias !== null) {
-                    $joinSql .= ' AS ' . $q . $join->alias . $q;
+                    $joinSql .= " AS {$q}{$join->alias}{$q}";
                 }
             } elseif ($join->name instanceof ExpressionInterface) {
                 $joinSql .= $builder->processExpression($join->name);
                 if ($join->alias !== null) {
-                    $joinSql .= ' AS ' . $q . $join->alias . $q;
+                    $joinSql .= " AS {$q}{$join->alias}{$q}";
                 }
             }
 

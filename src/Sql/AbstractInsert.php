@@ -12,6 +12,8 @@ use PhpDb\Sql\Clause\Values;
 use function array_key_exists;
 use function implode;
 use function is_scalar;
+use function is_string;
+use function str_contains;
 
 abstract class AbstractInsert extends AbstractPreparableSql
 {
@@ -39,7 +41,10 @@ abstract class AbstractInsert extends AbstractPreparableSql
 
     public function into(TableIdentifier|string|array $table): static
     {
-        $this->table = TableIdentifier::from($table);
+        // Fast path for simple string table names (most common case)
+        $this->table = is_string($table) && ! str_contains($table, '.')
+            ? new TableIdentifier($table)
+            : TableIdentifier::from($table);
         return $this;
     }
 
@@ -118,19 +123,35 @@ abstract class AbstractInsert extends AbstractPreparableSql
             throw new Exception\InvalidArgumentException('values or select should be present');
         }
 
-        $columnParts = [];
-        $valueParts  = [];
-        $q           = $builder->q;
+        $columnParts     = [];
+        $valueParts      = [];
+        $q               = $builder->q;
+        $isParameterized = $builder->isParameterized();
 
         foreach ($valuesObj as $column => $value) {
             $columnParts[] = $q . $column . $q;
-            $valueParts[]  = is_scalar($value) && $builder->isParameterized()
-                ? $builder->bindValue($value)
-                : $this->resolveColumnValue($value, $platform, $driver, $parameterContainer);
+
+            if (is_scalar($value) && $isParameterized) {
+                $valueParts[] = $builder->bindValue($value);
+            } elseif ($value instanceof ExpressionInterface) {
+                $valueParts[] = $builder->processExpression($value);
+            } elseif ($value instanceof Select) {
+                $valueParts[] = '(' . $value->buildSqlString(
+                    $builder->platform,
+                    $builder->driver,
+                    $builder->parameterContainer
+                ) . ')';
+            } elseif ($value === null) {
+                $valueParts[] = 'NULL';
+            } else {
+                $valueParts[] = $builder->platform->quoteValue((string) $value);
+            }
         }
 
-        return $this->getInsertKeyword() . ' INTO ' . $tableSql
-             . ' (' . implode(', ', $columnParts) . ') VALUES (' . implode(', ', $valueParts) . ')';
+        $columnsSql = implode(', ', $columnParts);
+        $valuesSql  = implode(', ', $valueParts);
+
+        return "{$this->getInsertKeyword()} INTO {$tableSql} ({$columnsSql}) VALUES ({$valuesSql})";
     }
 
     protected function buildInsertSelectSql(
@@ -148,12 +169,13 @@ abstract class AbstractInsert extends AbstractPreparableSql
             $q           = $builder->q;
             $columnParts = [];
             foreach ($valuesObj->getColumns() as $col) {
-                $columnParts[] = $q . $col . $q;
+                $columnParts[] = "{$q}{$col}{$q}";
             }
-            $columnsPart = ' (' . implode(', ', $columnParts) . ')';
+            $columnsSql  = implode(', ', $columnParts);
+            $columnsPart = " ({$columnsSql})";
         }
 
-        return $this->getInsertKeyword() . ' INTO ' . $tableSql . $columnsPart . ' ' . $selectSql;
+        return "{$this->getInsertKeyword()} INTO {$tableSql}{$columnsPart} {$selectSql}";
     }
 
     public function __set(string $name, mixed $value): void

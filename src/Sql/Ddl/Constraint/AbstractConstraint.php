@@ -6,6 +6,7 @@ namespace PhpDb\Sql\Ddl\Constraint;
 
 use Override;
 use PhpDb\Sql\Argument\Identifier;
+use PhpDb\Sql\PreparableSqlBuilder;
 
 use function array_fill;
 use function count;
@@ -93,5 +94,32 @@ abstract class AbstractConstraint implements ConstraintInterface
             'spec'   => implode(' ', $specParts),
             'values' => $values,
         ];
+    }
+
+    /** @inheritDoc */
+    #[Override]
+    public function prepareSqlString(PreparableSqlBuilder $builder): string
+    {
+        $q        = $builder->q;
+        $sqlParts = [];
+
+        if ($this->name !== '') {
+            $sqlParts[] = "CONSTRAINT {$q}{$this->name}{$q}";
+        }
+
+        if ($this->specification !== '') {
+            $sqlParts[] = $this->specification;
+        }
+
+        $columnCount = count($this->columns);
+        if ($columnCount !== 0) {
+            $columnsSql = [];
+            foreach ($this->columns as $column) {
+                $columnsSql[] = "{$q}{$column}{$q}";
+            }
+            $sqlParts[] = str_replace('%s', implode(', ', $columnsSql), $this->columnSpecification);
+        }
+
+        return implode(' ', $sqlParts);
     }
 }

@@ -8,6 +8,7 @@ use Override;
 use PhpDb\Sql\Argument\Identifier;
 use PhpDb\Sql\Argument\Literal;
 use PhpDb\Sql\ExpressionInterface;
+use PhpDb\Sql\PreparableSqlBuilder;
 
 use function implode;
 
@@ -28,7 +29,8 @@ class Check extends AbstractConstraint
     }
 
     /** @inheritDoc */
-    #[Override] public function getExpressionData(): array
+    #[Override]
+    public function getExpressionData(): array
     {
         $specParts = [];
         $values    = [];
@@ -47,5 +49,26 @@ class Check extends AbstractConstraint
             'spec'   => implode(' ', $specParts),
             'values' => $values,
         ];
+    }
+
+    /** @inheritDoc */
+    #[Override]
+    public function prepareSqlString(PreparableSqlBuilder $builder): string
+    {
+        $q        = $builder->q;
+        $sqlParts = [];
+
+        if ($this->name !== '') {
+            $sqlParts[] = "CONSTRAINT {$q}{$this->name}{$q}";
+        }
+
+        if ($this->expression !== '') {
+            $expr       = $this->expression instanceof ExpressionInterface
+                ? $builder->processExpression($this->expression)
+                : $this->expression;
+            $sqlParts[] = "CHECK ({$expr})";
+        }
+
+        return implode(' ', $sqlParts);
     }
 }

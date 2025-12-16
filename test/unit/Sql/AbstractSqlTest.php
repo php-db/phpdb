@@ -14,7 +14,6 @@ use PhpDb\Sql\Expression;
 use PhpDb\Sql\ExpressionInterface;
 use PhpDb\Sql\Predicate;
 use PhpDb\Sql\Select;
-use PhpDb\Sql\TableIdentifier;
 use PhpDbTest\TestAsset\TrustingSql92Platform;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Group;
@@ -32,17 +31,8 @@ use function preg_match;
 use function uniqid;
 
 #[CoversMethod(AbstractSql::class, 'getSqlString')]
-#[CoversMethod(AbstractSql::class, 'buildSqlString')]
-#[CoversMethod(AbstractSql::class, 'renderTable')]
 #[CoversMethod(AbstractSql::class, 'processExpression')]
-#[CoversMethod(AbstractSql::class, 'processExpressionValue')]
-#[CoversMethod(AbstractSql::class, 'processExpressionOrSelect')]
-#[CoversMethod(AbstractSql::class, 'processExpressionParameterName')]
-#[CoversMethod(AbstractSql::class, 'createSqlFromSpecificationAndParameters')]
 #[CoversMethod(AbstractSql::class, 'processSubSelect')]
-#[CoversMethod(AbstractSql::class, 'processJoin')]
-#[CoversMethod(AbstractSql::class, 'resolveColumnValue')]
-#[CoversMethod(AbstractSql::class, 'resolveTable')]
 #[CoversMethod(AbstractSql::class, 'localizeVariables')]
 final class AbstractSqlTest extends TestCase
 {
@@ -56,7 +46,10 @@ final class AbstractSqlTest extends TestCase
     #[Override]
     protected function setUp(): void
     {
-        $this->abstractSql = $this->getMockBuilder(AbstractSql::class)->onlyMethods([])->getMock();
+        $this->abstractSql = $this->getMockBuilder(AbstractSql::class)
+            ->onlyMethods(['buildSqlString'])
+            ->getMock();
+        $this->abstractSql->method('buildSqlString')->willReturn('');
 
         $this->mockDriver = $this->getMockBuilder(DriverInterface::class)->getMock();
         $this->mockDriver
@@ -196,122 +189,6 @@ final class AbstractSqlTest extends TestCase
         $this->invokeProcessExpressionMethod($expression, $parameterContainer, $namedParameterPrefix);
 
         self::assertSame('string__containing__white__space1', key($parameterContainer->getNamedArray()));
-    }
-
-    /**
-     * @throws ReflectionException
-     */
-    public function testResolveColumnValueWithNull(): void
-    {
-        $method = new ReflectionMethod($this->abstractSql, 'resolveColumnValue');
-        /** @noinspection PhpExpressionResultUnusedInspection */
-        $method->setAccessible(true);
-
-        $result = $method->invoke(
-            $this->abstractSql,
-            null,
-            new TrustingSql92Platform(),
-            $this->mockDriver,
-            null,
-            null
-        );
-
-        self::assertEquals('NULL', $result);
-    }
-
-    /**
-     * @throws ReflectionException
-     */
-    public function testResolveColumnValueWithSelect(): void
-    {
-        $select = new Select('foo');
-        $method = new ReflectionMethod($this->abstractSql, 'resolveColumnValue');
-        /** @noinspection PhpExpressionResultUnusedInspection */
-        $method->setAccessible(true);
-
-        $result = $method->invoke(
-            $this->abstractSql,
-            $select,
-            new TrustingSql92Platform(),
-            $this->mockDriver,
-            null,
-            null
-        );
-
-        self::assertStringContainsString('SELECT', $result);
-        self::assertStringStartsWith('(', $result);
-        self::assertStringEndsWith(')', $result);
-    }
-
-    /**
-     * @throws ReflectionException
-     */
-    public function testResolveColumnValueWithArrayAndFromTable(): void
-    {
-        $method = new ReflectionMethod($this->abstractSql, 'resolveColumnValue');
-        /** @noinspection PhpExpressionResultUnusedInspection */
-        $method->setAccessible(true);
-
-        $result = $method->invoke(
-            $this->abstractSql,
-            [
-                'column'       => 'id',
-                'isIdentifier' => true,
-                'fromTable'    => 'table.',
-            ],
-            new TrustingSql92Platform(),
-            $this->mockDriver,
-            null,
-            null
-        );
-
-        self::assertStringContainsString('table.', $result);
-        self::assertStringContainsString('id', $result);
-    }
-
-    /**
-     * @throws ReflectionException
-     */
-    public function testResolveTableWithTableIdentifierAndSchema(): void
-    {
-        $table  = new TableIdentifier('users', 'public');
-        $method = new ReflectionMethod($this->abstractSql, 'resolveTable');
-        /** @noinspection PhpExpressionResultUnusedInspection */
-        $method->setAccessible(true);
-
-        $result = $method->invoke(
-            $this->abstractSql,
-            $table,
-            new TrustingSql92Platform(),
-            $this->mockDriver,
-            null
-        );
-
-        self::assertStringContainsString('public', $result);
-        self::assertStringContainsString('users', $result);
-    }
-
-    /**
-     * @throws ReflectionException
-     */
-    public function testResolveTableWithSelect(): void
-    {
-        $select = new Select('foo');
-        $method = new ReflectionMethod($this->abstractSql, 'resolveTable');
-        /** @noinspection PhpExpressionResultUnusedInspection */
-        $method->setAccessible(true);
-
-        $result = $method->invoke(
-            $this->abstractSql,
-            $select,
-            new TrustingSql92Platform(),
-            $this->mockDriver,
-            null
-        );
-
-        self::assertStringStartsWith('(', $result);
-        self::assertStringEndsWith(')', $result);
-        self::assertStringContainsString('SELECT', $result);
     }
 
     /**

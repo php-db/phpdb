@@ -1,0 +1,121 @@
+name: Benchmark Suite - PhpDb vs Laminas vs Doctrine DBAL
+
+on:
+  push:
+    branches: [0.5.x-benchmarking]
+  pull_request:
+    branches: [0.5.x-benchmarking]
+  workflow_dispatch:  # Manual trigger
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: benchmark
+          MYSQL_DATABASE: phpdb
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: pdo, pdo_mysql, opcache
+          coverage: none  # No XDebug!
+          ini-values: opcache.enable_cli=1, opcache.jit=1255, opcache.jit_buffer_size=100M
+
+      - name: Verify environment
+        run: |
+          echo "=============================================="
+          echo "              Environment Info                "
+          echo "=============================================="
+          echo ""
+          echo "PHP Version:"
+          php -v | head -1
+          echo ""
+          echo "OPcache JIT:"
+          php -i | grep "opcache.jit " || echo "JIT info not available"
+          echo ""
+          php -m | grep -i xdebug && echo "WARNING: XDebug is installed!" || echo "XDebug: Not installed (good!)"
+          echo ""
+
+      - name: Install Composer dependencies
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Install benchmark dependencies
+        working-directory: test/benchmark
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Install Sakila database
+        run: |
+          echo "Installing Sakila sample database..."
+          mysql -h 127.0.0.1 -u root -pbenchmark phpdb < test/benchmark/data/sakila-tables.sql
+          mysql -h 127.0.0.1 -u root -pbenchmark phpdb < test/benchmark/data/sakila-data-notriggers.sql
+          echo "Verifying data loaded..."
+          mysql -h 127.0.0.1 -u root -pbenchmark phpdb -e "SELECT 'film' as tbl, COUNT(*) as cnt FROM film UNION ALL SELECT 'actor', COUNT(*) FROM actor UNION ALL SELECT 'customer', COUNT(*) FROM customer UNION ALL SELECT 'rental', COUNT(*) FROM rental;"
+
+      - name: Create database config
+        run: |
+          cat > test/benchmark/config/database.php <<'EOF'
+          <?php
+          return [
+              'hostname' => '127.0.0.1',
+              'database' => 'phpdb',
+              'username' => 'root',
+              'password' => 'benchmark',
+              'charset'  => 'utf8mb4',
+          ];
+          EOF
+
+      - name: Run Benchmarks
+        working-directory: test/benchmark
+        run: |
+          echo ""
+          echo "=============================================="
+          echo "         Running PHPBench Benchmarks          "
+          echo "=============================================="
+          echo ""
+          mkdir -p results
+          vendor/bin/phpbench run --dump-file=results/comparison.xml --progress=none
+
+      - name: Generate Comparison Report
+        working-directory: test/benchmark
+        run: |
+          echo ""
+          echo "=============================================="
+          echo "    PhpDb vs Laminas vs Doctrine DBAL         "
+          echo "=============================================="
+          echo ""
+          php bin/compare-results.php results/comparison.xml
+          echo ""
+
+      - name: Summary
+        run: |
+          echo ""
+          echo "=============================================="
+          echo "              BENCHMARK COMPLETE              "
+          echo "=============================================="
+          echo ""
+          echo "Benchmarks ran using Sakila sample database"
+          echo "with PHP 8.3, OPcache+JIT enabled, no XDebug."
+          echo ""
+          echo "Tests performed:"
+          echo "  - SQL Generation: Pure query builder performance"
+          echo "  - CRUD Operations: Insert, Update, Delete"
+          echo "  - Joins: Two-table and many-to-many joins"
+          echo "  - Complex Queries: Aggregates, subqueries"
+          echo "  - Direct SQL: Raw query execution"
+          echo ""

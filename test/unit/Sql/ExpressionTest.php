@@ -105,13 +105,14 @@ final class ExpressionTest extends TestCase
         ], $expressionData['values']);
     }
 
-    public function testGetExpressionDataWillEscapePercent(): void
+    public function testGetExpressionDataReturnsSpecDirectlyWithoutParameters(): void
     {
         $expression = new Expression('X LIKE "foo%"');
 
         $expressionData = $expression->getExpressionData();
 
-        self::assertEquals('X LIKE "foo%%"', $expressionData['spec']);
+        // Without parameters, spec is returned as-is (no escaping needed since vsprintf is not used)
+        self::assertEquals('X LIKE "foo%"', $expressionData['spec']);
     }
 
     public function testConstructorWithLiteralZero(): void

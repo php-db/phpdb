@@ -6,6 +6,7 @@ namespace PhpDb\Sql\Ddl\Index;
 
 use Override;
 use PhpDb\Sql\Argument\Identifier;
+use PhpDb\Sql\PreparableSqlBuilder;
 
 use function count;
 use function implode;
@@ -47,5 +48,26 @@ class Index extends AbstractIndex
             'spec'   => str_replace('...', implode(', ', $specParts), $this->specification),
             'values' => $values,
         ];
+    }
+
+    /** @inheritDoc */
+    #[Override]
+    public function prepareSqlString(PreparableSqlBuilder $builder): string
+    {
+        $q        = $builder->q;
+        $colCount = count($this->columns);
+        $colParts = [];
+
+        for ($i = 0; $i < $colCount; $i++) {
+            $colSql = "{$q}{$this->columns[$i]}{$q}";
+            if (isset($this->lengths[$i])) {
+                $colSql .= "({$this->lengths[$i]})";
+            }
+            $colParts[] = $colSql;
+        }
+
+        $colsSql = implode(', ', $colParts);
+
+        return "INDEX {$q}{$this->name}{$q}({$colsSql})";
     }
 }

@@ -6,6 +6,7 @@ namespace PhpDb\Sql\Ddl\Column;
 
 use Override;
 use PhpDb\Sql\Argument\Literal;
+use PhpDb\Sql\PreparableSqlBuilder;
 
 use function array_splice;
 
@@ -55,5 +56,32 @@ abstract class AbstractLengthColumn extends Column
         }
 
         return $expressionData;
+    }
+
+    /** @inheritDoc */
+    #[Override]
+    public function prepareSqlString(PreparableSqlBuilder $builder): string
+    {
+        $q         = $builder->q;
+        $lengthStr = $this->getLengthExpression();
+        $typeStr   = $lengthStr !== '' && $lengthStr !== '0'
+            ? "{$this->type}({$lengthStr})"
+            : $this->type;
+
+        $sql = "{$q}{$this->name}{$q} {$typeStr}";
+
+        if ($this->isNullable === false) {
+            $sql .= ' NOT NULL';
+        }
+
+        if ($this->default !== null) {
+            $sql .= ' DEFAULT ' . $builder->bindValue($this->default);
+        }
+
+        foreach ($this->constraints as $constraint) {
+            $sql .= ' ' . $constraint->prepareSqlString($builder);
+        }
+
+        return $sql;
     }
 }

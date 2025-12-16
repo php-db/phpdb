@@ -44,7 +44,7 @@ class LaminasBench
     // 1. SQL GENERATION ONLY (no DB, pure query builder cost)
     // =========================================================================
 
-    #[Bench\Warmup(10)]
+    #[Bench\Warmup(3)]
     #[Bench\Revs(2000)]
     #[Bench\Iterations(5)]
     public function bench1a_BuildSelectSimple(): void
@@ -54,7 +54,7 @@ class LaminasBench
         $sql = $select->getSqlString($this->platform);
     }
 
-    #[Bench\Warmup(10)]
+    #[Bench\Warmup(3)]
     #[Bench\Revs(2000)]
     #[Bench\Iterations(5)]
     public function bench1b_BuildSelectComplex(): void
@@ -68,7 +68,7 @@ class LaminasBench
         $sql = $select->getSqlString($this->platform);
     }
 
-    #[Bench\Warmup(10)]
+    #[Bench\Warmup(3)]
     #[Bench\Revs(2000)]
     #[Bench\Iterations(5)]
     public function bench1c_BuildInsert(): void
@@ -78,7 +78,7 @@ class LaminasBench
         $sql = $insert->getSqlString($this->platform);
     }
 
-    #[Bench\Warmup(10)]
+    #[Bench\Warmup(3)]
     #[Bench\Revs(2000)]
     #[Bench\Iterations(5)]
     public function bench1d_BuildUpdate(): void
@@ -89,7 +89,7 @@ class LaminasBench
         $sql = $update->getSqlString($this->platform);
     }
 
-    #[Bench\Warmup(10)]
+    #[Bench\Warmup(3)]
     #[Bench\Revs(2000)]
     #[Bench\Iterations(5)]
     public function bench1e_BuildDelete(): void
@@ -103,8 +103,8 @@ class LaminasBench
     // 2. SIMPLE OPERATIONS (single row by primary key)
     // =========================================================================
 
-    #[Bench\Warmup(10)]
-    #[Bench\Revs(300)]
+    #[Bench\Warmup(3)]
+    #[Bench\Revs(1000)]
     #[Bench\Iterations(5)]
     public function bench2a_SelectByPrimaryKey(): void
     {
@@ -115,8 +115,8 @@ class LaminasBench
         $row = $result->current();
     }
 
-    #[Bench\Warmup(10)]
-    #[Bench\Revs(300)]
+    #[Bench\Warmup(3)]
+    #[Bench\Revs(1000)]
     #[Bench\Iterations(5)]
     public function bench2b_InsertSingleRow(): void
     {
@@ -126,8 +126,8 @@ class LaminasBench
         $stmt->execute();
     }
 
-    #[Bench\Warmup(10)]
-    #[Bench\Revs(300)]
+    #[Bench\Warmup(3)]
+    #[Bench\Revs(1000)]
     #[Bench\Iterations(5)]
     public function bench2c_UpdateByPrimaryKey(): void
     {
@@ -138,8 +138,8 @@ class LaminasBench
         $stmt->execute();
     }
 
-    #[Bench\Warmup(10)]
-    #[Bench\Revs(300)]
+    #[Bench\Warmup(3)]
+    #[Bench\Revs(1000)]
     #[Bench\Iterations(5)]
     public function bench2d_DeleteByPrimaryKey(): void
     {
@@ -153,8 +153,8 @@ class LaminasBench
     // 3. PARAMETERIZED QUERIES (prepared statements with bound params)
     // =========================================================================
 
-    #[Bench\Warmup(10)]
-    #[Bench\Revs(300)]
+    #[Bench\Warmup(3)]
+    #[Bench\Revs(1000)]
     #[Bench\Iterations(5)]
     public function bench3a_SelectWithParams(): void
     {
@@ -165,8 +165,8 @@ class LaminasBench
         foreach ($result as $row) {}
     }
 
-    #[Bench\Warmup(10)]
-    #[Bench\Revs(300)]
+    #[Bench\Warmup(3)]
+    #[Bench\Revs(1000)]
     #[Bench\Iterations(5)]
     public function bench3b_InsertWithParams(): void
     {
@@ -179,8 +179,8 @@ class LaminasBench
         $stmt->execute();
     }
 
-    #[Bench\Warmup(10)]
-    #[Bench\Revs(300)]
+    #[Bench\Warmup(3)]
+    #[Bench\Revs(1000)]
     #[Bench\Iterations(5)]
     public function bench3c_UpdateWithParams(): void
     {
@@ -195,8 +195,8 @@ class LaminasBench
     // 4. FILTERED QUERIES (WHERE conditions, no joins)
     // =========================================================================
 
-    #[Bench\Warmup(10)]
-    #[Bench\Revs(300)]
+    #[Bench\Warmup(3)]
+    #[Bench\Revs(1000)]
     #[Bench\Iterations(5)]
     public function bench4a_SelectWithConditions(): void
     {
@@ -209,8 +209,8 @@ class LaminasBench
         foreach ($result as $row) {}
     }
 
-    #[Bench\Warmup(10)]
-    #[Bench\Revs(300)]
+    #[Bench\Warmup(3)]
+    #[Bench\Revs(1000)]
     #[Bench\Iterations(5)]
     public function bench4b_UpdateWithConditions(): void
     {
@@ -221,8 +221,8 @@ class LaminasBench
         $stmt->execute();
     }
 
-    #[Bench\Warmup(10)]
-    #[Bench\Revs(300)]
+    #[Bench\Warmup(3)]
+    #[Bench\Revs(1000)]
     #[Bench\Iterations(5)]
     public function bench4c_DeleteWithConditions(): void
     {
@@ -236,8 +236,8 @@ class LaminasBench
     // 5. JOINS (increasing complexity)
     // =========================================================================
 
-    #[Bench\Warmup(10)]
-    #[Bench\Revs(300)]
+    #[Bench\Warmup(3)]
+    #[Bench\Revs(1000)]
     #[Bench\Iterations(5)]
     public function bench5a_JoinTwoTables(): void
     {
@@ -249,8 +249,8 @@ class LaminasBench
         $row = $result->current();
     }
 
-    #[Bench\Warmup(10)]
-    #[Bench\Revs(300)]
+    #[Bench\Warmup(3)]
+    #[Bench\Revs(1000)]
     #[Bench\Iterations(5)]
     public function bench5b_ManyToManyJoin(): void
     {
@@ -263,8 +263,8 @@ class LaminasBench
         foreach ($result as $row) {}
     }
 
-    #[Bench\Warmup(10)]
-    #[Bench\Revs(300)]
+    #[Bench\Warmup(3)]
+    #[Bench\Revs(1000)]
     #[Bench\Iterations(5)]
     public function bench5c_JoinWithAggregate(): void
     {
@@ -282,8 +282,8 @@ class LaminasBench
     // 6. COMPLEX QUERIES
     // =========================================================================
 
-    #[Bench\Warmup(10)]
-    #[Bench\Revs(300)]
+    #[Bench\Warmup(3)]
+    #[Bench\Revs(1000)]
     #[Bench\Iterations(5)]
     public function bench6a_Subquery(): void
     {
@@ -299,8 +299,8 @@ class LaminasBench
         foreach ($result as $row) {}
     }
 
-    #[Bench\Warmup(10)]
-    #[Bench\Revs(300)]
+    #[Bench\Warmup(3)]
+    #[Bench\Revs(1000)]
     #[Bench\Iterations(5)]
     public function bench6b_AggregateGroupBy(): void
     {
@@ -316,7 +316,7 @@ class LaminasBench
     // 7. BATCH OPERATIONS
     // =========================================================================
 
-    #[Bench\Warmup(10)]
+    #[Bench\Warmup(3)]
     #[Bench\Revs(150)]
     #[Bench\Iterations(5)]
     public function bench7a_InsertBatch(): void
@@ -329,7 +329,7 @@ class LaminasBench
         }
     }
 
-    #[Bench\Warmup(10)]
+    #[Bench\Warmup(3)]
     #[Bench\Revs(150)]
     #[Bench\Iterations(5)]
     public function bench7b_UpdateBatch(): void
@@ -343,7 +343,7 @@ class LaminasBench
         }
     }
 
-    #[Bench\Warmup(10)]
+    #[Bench\Warmup(3)]
     #[Bench\Revs(150)]
     #[Bench\Iterations(5)]
     public function bench7c_DeleteBatch(): void
@@ -358,8 +358,8 @@ class LaminasBench
     // 8. DIRECT CONNECTION (raw SQL, no query builder)
     // =========================================================================
 
-    #[Bench\Warmup(10)]
-    #[Bench\Revs(300)]
+    #[Bench\Warmup(3)]
+    #[Bench\Revs(1000)]
     #[Bench\Iterations(5)]
     public function bench8a_DirectSelectByPrimaryKey(): void
     {
@@ -367,8 +367,8 @@ class LaminasBench
         $row = $result->current();
     }
 
-    #[Bench\Warmup(10)]
-    #[Bench\Revs(300)]
+    #[Bench\Warmup(3)]
+    #[Bench\Revs(1000)]
     #[Bench\Iterations(5)]
     public function bench8b_DirectInsertSingleRow(): void
     {
@@ -378,8 +378,8 @@ class LaminasBench
         );
     }
 
-    #[Bench\Warmup(10)]
-    #[Bench\Revs(300)]
+    #[Bench\Warmup(3)]
+    #[Bench\Revs(1000)]
     #[Bench\Iterations(5)]
     public function bench8c_DirectUpdateByPrimaryKey(): void
     {
@@ -389,8 +389,8 @@ class LaminasBench
         );
     }
 
-    #[Bench\Warmup(10)]
-    #[Bench\Revs(300)]
+    #[Bench\Warmup(3)]
+    #[Bench\Revs(1000)]
     #[Bench\Iterations(5)]
     public function bench8d_DirectDeleteByPrimaryKey(): void
     {
@@ -400,8 +400,8 @@ class LaminasBench
         );
     }
 
-    #[Bench\Warmup(10)]
-    #[Bench\Revs(300)]
+    #[Bench\Warmup(3)]
+    #[Bench\Revs(1000)]
     #[Bench\Iterations(5)]
     public function bench8e_DirectSelectWithConditions(): void
     {
@@ -412,8 +412,8 @@ class LaminasBench
         foreach ($result as $row) {}
     }
 
-    #[Bench\Warmup(10)]
-    #[Bench\Revs(300)]
+    #[Bench\Warmup(3)]
+    #[Bench\Revs(1000)]
     #[Bench\Iterations(5)]
     public function bench8f_DirectJoinTwoTables(): void
     {
@@ -424,8 +424,8 @@ class LaminasBench
         $row = $result->current();
     }
 
-    #[Bench\Warmup(10)]
-    #[Bench\Revs(300)]
+    #[Bench\Warmup(3)]
+    #[Bench\Revs(1000)]
     #[Bench\Iterations(5)]
     public function bench8g_DirectManyToManyJoin(): void
     {
@@ -436,8 +436,8 @@ class LaminasBench
         foreach ($result as $row) {}
     }
 
-    #[Bench\Warmup(10)]
-    #[Bench\Revs(300)]
+    #[Bench\Warmup(3)]
+    #[Bench\Revs(1000)]
     #[Bench\Iterations(5)]
     public function bench8h_DirectAggregateGroupBy(): void
     {

@@ -192,11 +192,11 @@ final readonly class TableIdentifier implements PreparableSqlInterface
     {
         $q   = $builder->q;
         $sql = $this->schema !== null
-            ? $q . $this->schema . $q . '.' . $q . $this->table . $q
-            : $q . $this->table . $q;
+            ? "{$q}{$this->schema}{$q}.{$q}{$this->table}{$q}"
+            : "{$q}{$this->table}{$q}";
 
         if ($this->alias !== null) {
-            $sql .= ' AS ' . $q . $this->alias . $q;
+            $sql .= " AS {$q}{$this->alias}{$q}";
         }
 
         return $sql;

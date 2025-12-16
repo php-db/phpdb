@@ -193,6 +193,6 @@ final class Operator extends AbstractExpression implements PredicateInterface
             $rightSql = '(' . $builder->processSubSelect($this->right) . ')';
         }
 
-        return $leftSql . ' ' . $this->operator . ' ' . $rightSql;
+        return "{$leftSql} {$this->operator} {$rightSql}";
     }
 }

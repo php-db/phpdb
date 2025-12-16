@@ -9,28 +9,29 @@ use PhpDb\Sql\ExpressionInterface;
 use PhpDb\Sql\PreparableSqlBuilder;
 
 use function count;
+use function implode;
 use function is_array;
 
 final class Group implements ClauseInterface
 {
-    /** @var GroupExpression[] */
-    protected array $items = [];
+    /** @var array<string|ExpressionInterface> */
+    protected array $columns = [];
 
     public function add(string|array|ExpressionInterface $column): static
     {
         if (is_array($column)) {
             foreach ($column as $c) {
-                $this->items[] = new GroupExpression($c);
+                $this->columns[] = $c;
             }
         } else {
-            $this->items[] = new GroupExpression($column);
+            $this->columns[] = $column;
         }
         return $this;
     }
 
     public function count(): int
     {
-        return count($this->items);
+        return count($this->columns);
     }
 
     /**
@@ -40,11 +41,7 @@ final class Group implements ClauseInterface
      */
     public function getColumns(): array
     {
-        $result = [];
-        foreach ($this->items as $item) {
-            $result[] = $item->column;
-        }
-        return $result;
+        return $this->columns;
     }
 
     /**
@@ -52,20 +49,21 @@ final class Group implements ClauseInterface
      */
     public function prepareSqlString(PreparableSqlBuilder $builder): string
     {
-        if ($this->items === []) {
+        if ($this->columns === []) {
             return '';
         }
 
-        $sql   = ' GROUP BY ';
-        $first = true;
-        foreach ($this->items as $item) {
-            if (! $first) {
-                $sql .= ', ';
-            }
-            $sql  .= $item->toSql($builder);
-            $first = false;
+        $parts = [];
+        $q     = $builder->q;
+
+        foreach ($this->columns as $column) {
+            $parts[] = $column instanceof ExpressionInterface
+                ? $builder->processExpression($column)
+                : PreparableSqlBuilder::quoteId($column, $q);
         }
 
-        return $sql;
+        $groupSql = implode(', ', $parts);
+
+        return " GROUP BY {$groupSql}";
     }
 }

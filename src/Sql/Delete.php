@@ -12,6 +12,8 @@ use PhpDb\Sql\Clause\Where;
 use PhpDb\Sql\Predicate\PredicateInterface;
 
 use function array_key_exists;
+use function is_string;
+use function str_contains;
 use function strtolower;
 
 /**
@@ -39,7 +41,10 @@ class Delete extends AbstractPreparableSql
 
     public function from(TableIdentifier|string|array $table): static
     {
-        $this->table = TableIdentifier::from($table);
+        // Fast path for simple string table names (most common case)
+        $this->table = is_string($table) && ! str_contains($table, '.')
+            ? new TableIdentifier($table)
+            : TableIdentifier::from($table);
         return $this;
     }
 

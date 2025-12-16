@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace PhpDb\Sql\Ddl;
 
+use Override;
+use PhpDb\Adapter\Driver\DriverInterface;
+use PhpDb\Adapter\ParameterContainer;
 use PhpDb\Adapter\Platform\PlatformInterface;
-use PhpDb\Sql\AbstractSql;
+use PhpDb\Sql\AbstractPreparableSql;
+use PhpDb\Sql\PreparableSqlBuilder;
 use PhpDb\Sql\TableIdentifier;
 
-class DropTable extends AbstractSql implements SqlInterface
+class DropTable extends AbstractPreparableSql implements SqlInterface
 {
     final public const TABLE = 'table';
-
-    protected array $specifications = [
-        self::TABLE => 'DROP TABLE %1$s',
-    ];
 
     protected string|TableIdentifier $table = '';
 
@@ -23,9 +23,25 @@ class DropTable extends AbstractSql implements SqlInterface
         $this->table = $table;
     }
 
-    /** @return string[] */
-    protected function processTable(?PlatformInterface $adapterPlatform = null): array
-    {
-        return [$this->resolveTable($this->table, $adapterPlatform)];
+    /** @inheritDoc */
+    #[Override]
+    protected function buildSqlString(
+        PlatformInterface $platform,
+        ?DriverInterface $driver = null,
+        ?ParameterContainer $parameterContainer = null
+    ): string {
+        $builder = new PreparableSqlBuilder($platform, $driver, $parameterContainer);
+        $q       = $builder->q;
+
+        $sql = 'DROP TABLE ';
+        if ($this->table instanceof TableIdentifier) {
+            $schema = $this->table->getSchema();
+            $sql   .= $schema !== null ? "{$q}{$schema}{$q}.{$q}{$this->table->getTable()}{$q}"
+                : "{$q}{$this->table->getTable()}{$q}";
+        } else {
+            $sql .= "{$q}{$this->table}{$q}";
+        }
+
+        return $sql;
     }
 }

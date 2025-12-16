@@ -105,16 +105,17 @@ class Expression extends AbstractExpression
     {
         $parameters      = $this->parameters;
         $parametersCount = count($parameters);
-        $specification   = str_replace('%', '%%', $this->expression);
 
+        // Fast path: no parameters - return expression as-is (no string manipulation needed)
         if ($parametersCount === 0) {
             return [
-                'spec'   => $specification,
+                'spec'   => $this->expression,
                 'values' => [],
             ];
         }
 
-        $specification = str_replace(self::PLACEHOLDER, '%s', $specification, $count);
+        // Escape % for vsprintf, then replace ? placeholders with %s
+        $specification = str_replace(['%', self::PLACEHOLDER], ['%%', '%s'], $this->expression, $count);
 
         if ($count !== $parametersCount) {
             preg_match_all('/:\w*/', $specification, $matches);

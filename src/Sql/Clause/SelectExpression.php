@@ -30,7 +30,7 @@ final readonly class SelectExpression implements PreparableSqlInterface
     {
         $q      = $builder->q;
         $prefix = $this->prefixWithTable && $table !== null
-            ? $q . $table->getReference() . $q . '.'
+            ? "{$q}{$table->getReference()}{$q}."
             : '';
 
         $parts = [];
@@ -39,10 +39,10 @@ final readonly class SelectExpression implements PreparableSqlInterface
             // Fast path: string column (most common)
             if (is_string($column)) {
                 if ($column === self::SQL_STAR) {
-                    $parts[] = $prefix . '*';
+                    $parts[] = "{$prefix}*";
                     continue;
                 }
-                $columnSql = $prefix . $q . $column . $q;
+                $columnSql = "{$prefix}{$q}{$column}{$q}";
             } elseif ($column instanceof ExpressionInterface) {
                 $columnSql = $builder->processExpression($column);
             } elseif ($column instanceof Select) {
@@ -53,7 +53,7 @@ final readonly class SelectExpression implements PreparableSqlInterface
 
             // Add alias if present (string key)
             $parts[] = is_string($alias)
-                ? $columnSql . ' AS ' . $q . $alias . $q
+                ? "{$columnSql} AS {$q}{$alias}{$q}"
                 : $columnSql;
         }
 
