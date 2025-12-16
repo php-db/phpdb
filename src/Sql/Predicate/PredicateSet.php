@@ -191,7 +191,7 @@ class PredicateSet extends AbstractExpression implements PredicateInterface, Cou
                 ? "({$expressionData['spec']})"
                 : $expressionData['spec'];
 
-            $spec .= $first ? $partSpec : ' ' . $predicate->getCombination() . ' ' . $partSpec;
+            $spec .= $first ? $partSpec : ' ' . $predicate->combination . ' ' . $partSpec;
             $first = false;
 
             $values = $expressionData['values'];
@@ -241,7 +241,7 @@ class PredicateSet extends AbstractExpression implements PredicateInterface, Cou
                 $result = $sql;
                 $first  = false;
             } else {
-                $result .= ' ' . $predicate->getCombination() . ' ' . $sql;
+                $result .= ' ' . $predicate->combination . ' ' . $sql;
             }
         }
 

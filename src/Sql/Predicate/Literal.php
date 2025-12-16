@@ -10,7 +10,7 @@ use PhpDb\Sql\PreparableSqlBuilder;
 
 final class Literal extends BaseLiteral implements PredicateInterface
 {
-    protected string $combination = 'AND';
+    public string $combination = 'AND';
 
     /** @inheritDoc */
     #[Override]

@@ -7,7 +7,7 @@ namespace PhpDb\Sql;
 abstract class AbstractExpression implements ExpressionInterface
 {
     protected ?string $specification = null;
-    protected string $combination    = 'AND';
+    public string $combination       = 'AND';
 
     /**
      * Set the combination operator (AND/OR) for use in predicate sets
