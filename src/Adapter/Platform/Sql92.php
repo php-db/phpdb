@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace PhpDb\Adapter\Platform;
 
 use Override;
+use PhpDb\Adapter\Exception\VunerablePlatformQuoteException;
 use PhpDb\Sql\Platform\Platform;
 use PhpDb\Sql\Platform\PlatformDecoratorInterface;
 
 use function addcslashes;
-use function trigger_error;
 
 class Sql92 extends AbstractPlatform
 {
@@ -28,13 +28,15 @@ class Sql92 extends AbstractPlatform
      * {@inheritDoc}
      */
     #[Override]
-    public function quoteValue($value): string
+    public function quoteValue(string $value): string
     {
-        trigger_error(
-            'Attempting to quote a value without specific driver level support'
-            . ' can introduce security vulnerabilities in a production environment.'
-        );
-        return '\'' . addcslashes($value ?? '', "\x00\n\r\\'\"\x1a") . '\'';
+        if (! isset($this->driver)) {
+            throw VunerablePlatformQuoteException::forPlatformAndMethod(
+                static::class,
+                __METHOD__
+            );
+        }
+        return '\'' . addcslashes($value, "\x00\n\r\\'\"\x1a") . '\'';
     }
 
     /**

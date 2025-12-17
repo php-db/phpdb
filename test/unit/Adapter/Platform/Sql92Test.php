@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace PhpDbTest\Adapter\Platform;
 
 use Override;
+use PhpDb\Adapter\Exception\VunerablePlatformQuoteException;
 use PhpDb\Adapter\Platform\Sql92;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
@@ -62,21 +63,13 @@ final class Sql92Test extends TestCase
 
     public function testQuoteValueRaisesNoticeWithoutPlatformSupport(): void
     {
-        /**
-         * @todo Determine if vulnerability warning is required during unit testing
-         */
-        //$this->expectNotice();
-        //$this->expectExceptionMessage(
-        //    'Attempting to quote a value without specific driver level '
-        //    . ' support can introduce security vulnerabilities'
-        //    . 'in a production environment.'
-        //);
-        $this->expectNotToPerformAssertions();
+        $this->expectException(VunerablePlatformQuoteException::class);
         $this->platform->quoteValue('value');
     }
 
     public function testQuoteValue(): void
     {
+        $this->expectException(VunerablePlatformQuoteException::class);
         self::assertEquals("'value'", @$this->platform->quoteValue('value'));
         self::assertEquals("'Foo O\\'Bar'", @$this->platform->quoteValue("Foo O'Bar"));
         self::assertEquals(
@@ -107,15 +100,7 @@ final class Sql92Test extends TestCase
 
     public function testQuoteValueList(): void
     {
-        /**
-         * @todo Determine if vulnerability warning is required during unit testing
-         */
-        //$this->expectError();
-        //$this->expectExceptionMessage(
-        //    'Attempting to quote a value without specific driver level '
-        //    . 'support can introduce security vulnerabilities '
-        //    . 'in a production environment.'
-        //);
+        $this->expectException(VunerablePlatformQuoteException::class);
         self::assertEquals("'Foo O\\'Bar'", $this->platform->quoteValueList("Foo O'Bar"));
     }
 
