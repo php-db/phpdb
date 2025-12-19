@@ -3,73 +3,23 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
     bootstrap="vendor/autoload.php"
-    colors="true">
-
-    <extensions>
-        <bootstrap class="PhpDbIntegrationTest\Extension\ListenerExtension" />
-    </extensions>
+    colors="true"
+    cacheDirectory=".phpunit.cache"
+    displayDetailsOnAllIssues="true"
+    failOnDeprecation="true"
+    failOnWarning="true">
 
     <testsuites>
         <testsuite name="unit test">
             <directory>./test/unit</directory>
-            <exclude>./test/unit/Adapter/AdapterAbstractServiceFactoryTest.php</exclude>
             <exclude>./test/unit/Adapter/AdapterServiceFactoryTest.php</exclude>
-            <exclude>./test/unit/Adapter/AdapterServiceDelegatorTest.php</exclude>
-            <exclude>./test/unit/Adapter/Driver/Pdo/PdoTest.php</exclude>
-            <exclude>./test/unit/Adapter/Driver/Pdo/ConnectionTest.php</exclude>
             <exclude>./test/unit/Adapter/Driver/Pdo/ConnectionIntegrationTest.php</exclude>
-            <exclude>./test/unit/Adapter/Driver/Pdo/StatementTest.php</exclude>
             <exclude>./test/unit/Adapter/Driver/Pdo/StatementIntegrationTest.php</exclude>
-            <exclude>./test/unit/Adapter/AdapterTest.php</exclude>
             <exclude>./test/unit/Adapter/AdapterAwareTraitTest.php</exclude>
             <exclude>./test/unit/TableGateway</exclude>
-            <exclude>./test/unit/RowGateway</exclude>
-            <exclude>./test/unit/ConfigProviderTest.php</exclude>
         </testsuite>
         <testsuite name="integration test">
             <directory>./test/integration</directory>
         </testsuite>
     </testsuites>
-
-    <php>
-        <!-- Note: the following is a FULL list of ALL POSSIBLE constants
-            currently in use in Laminas for ALL COMPONENTS; you should choose the
-            constants appropriate to the component you are migrating.
-
-            The settings in this file are appropriate for use with the
-            Vagrantfile provided. Copy this file to phpunit.xml to provide local
-            values specific to your test environment.
-        -->
-        <!-- Integration Test Variables -->
-        <env name="TESTS_PHPDB_ADAPTER_DRIVER_MYSQL" value="false"/>
-        <env name="TESTS_PHPDB_ADAPTER_DRIVER_MYSQL_HOSTNAME" value="mysql"/>
-        <env name="TESTS_PHPDB_ADAPTER_DRIVER_MYSQL_USERNAME" value="user"/>
-        <env name="TESTS_PHPDB_ADAPTER_DRIVER_MYSQL_PASSWORD" value="password"/>
-        <env name="TESTS_PHPDB_ADAPTER_DRIVER_MYSQL_DATABASE" value="laminasdb_test"/>
-
-        <!-- <env name="TESTS_LAMINAS_DB_ADAPTER_DRIVER_PGSQL" value="false"/>
-        <env name="TESTS_LAMINAS_DB_ADAPTER_DRIVER_PGSQL_HOSTNAME" value="postgresql"/>
-        <env name="TESTS_LAMINAS_DB_ADAPTER_DRIVER_PGSQL_USERNAME" value="postgres"/>
-        <env name="TESTS_LAMINAS_DB_ADAPTER_DRIVER_PGSQL_PASSWORD" value="postgres"/>
-        <env name="TESTS_LAMINAS_DB_ADAPTER_DRIVER_PGSQL_DATABASE" value="laminasdb_test"/> -->
-
-        <!-- <env name="TESTS_LAMINAS_DB_ADAPTER_DRIVER_SQLITE_MEMORY" value="false"/> -->
-        <!--
-        <env name="TESTS_LAMINAS_DB_ADAPTER_DRIVER_SQLSRV" value="false"/>
-        <env name="TESTS_LAMINAS_DB_ADAPTER_DRIVER_SQLSRV_HOSTNAME" value="192.168.20.20"/>
-        <env name="TESTS_LAMINAS_DB_ADAPTER_DRIVER_SQLSRV_USERNAME" value="sa"/>
-        <env name="TESTS_LAMINAS_DB_ADAPTER_DRIVER_SQLSRV_PASSWORD" value="Password123"/>
-        <env name="TESTS_LAMINAS_DB_ADAPTER_DRIVER_SQLSRV_DATABASE" value="laminasdb_test"/>
-        <env name="TESTS_LAMINAS_DB_ADAPTER_DRIVER_OCI8" value="false"/>
-        <env name="TESTS_LAMINAS_DB_ADAPTER_DRIVER_OCI8_HOSTNAME" value=""/>
-        <env name="TESTS_LAMINAS_DB_ADAPTER_DRIVER_OCI8_USERNAME" value=""/>
-        <env name="TESTS_LAMINAS_DB_ADAPTER_DRIVER_OCI8_PASSWORD" value=""/>
-        <env name="TESTS_LAMINAS_DB_ADAPTER_DRIVER_OCI8_DATABASE" value=""/>
-        <env name="TESTS_LAMINAS_DB_ADAPTER_DRIVER_IBMDB2" value="false"/>
-        <env name="TESTS_LAMINAS_DB_ADAPTER_DRIVER_IBMDB2_HOSTNAME" value=""/>
-        <env name="TESTS_LAMINAS_DB_ADAPTER_DRIVER_IBMDB2_USERNAME" value=""/>
-        <env name="TESTS_LAMINAS_DB_ADAPTER_DRIVER_IBMDB2_PASSWORD" value=""/>
-        <env name="TESTS_LAMINAS_DB_ADAPTER_DRIVER_IBMDB2_DATABASE" value=""/>
-        -->
-    </php>
 </phpunit>

@@ -20,10 +20,14 @@ use PhpDbTest\DeprecatedAssertionsTrait;
 use PhpDbTest\TestAsset\Replace;
 use PhpDbTest\TestAsset\TrustingSql92Platform;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\IgnoreDeprecations;
+use PHPUnit\Framework\Attributes\RequiresPhp;
 use PHPUnit\Framework\TestCase;
 use ReflectionException;
 use TypeError;
 
+#[IgnoreDeprecations]
+#[RequiresPhp('<= 8.6')]
 final class InsertIgnoreTest extends TestCase
 {
     use AdapterTestTrait;

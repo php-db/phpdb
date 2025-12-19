@@ -115,6 +115,25 @@ class FeatureSet
     }
 
     /**
+     * @param string $property
+     * @return bool
+     */
+    public function canCallMagicSet($property)
+    {
+        return false;
+    }
+
+    /**
+     * @param string $property
+     * @param mixed $value
+     * @return mixed
+     */
+    public function callMagicSet($property, $value)
+    {
+        return null;
+    }
+
+    /**
      * Is the method requested available in one of the added features
      *
      * @param string $method

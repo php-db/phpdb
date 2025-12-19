@@ -21,7 +21,11 @@ abstract class AbstractConnection implements ConnectionInterface, ProfilerAwareI
 
     protected ?ProfilerInterface $profiler = null;
 
-    /** @var resource|null */
+    /**
+     * Extending classes must be covariant
+     *
+     * @var mixed
+     */
     protected $resource;
 
     #[Override]

@@ -70,6 +70,7 @@ class Platform extends AbstractPlatform
             return $decorator;
         }
 
+        /** @var PlatformDecoratorInterface $decorator */
         foreach ($this->decorators[$platformName] as $type => $decorator) {
             if ($subject instanceof $type && is_a($decorator, $type, true)) {
                 $decorator->setSubject($subject);

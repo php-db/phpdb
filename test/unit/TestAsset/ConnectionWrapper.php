@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDbTest\TestAsset;
 
+use PDO;
 use PhpDb\Adapter\Driver\ConnectionInterface;
 use PhpDb\Adapter\Driver\Pdo\AbstractPdoConnection;
 
@@ -10,10 +13,10 @@ use PhpDb\Adapter\Driver\Pdo\AbstractPdoConnection;
  */
 final class ConnectionWrapper extends AbstractPdoConnection
 {
-    public function __construct()
-    {
-        parent::__construct();
-        $this->resource = new PdoStubDriver('foo', 'bar', 'baz');
+    public function __construct(
+        PDO $connectionParameters = new PdoStubDriver()
+    ) {
+        parent::__construct($connectionParameters);
     }
 
     public function connect(): ConnectionInterface
@@ -21,7 +24,7 @@ final class ConnectionWrapper extends AbstractPdoConnection
         return $this;
     }
 
-    public function getCurrentSchema(): string|false
+    public function getCurrentSchema(): string
     {
         return 'test_schema';
     }

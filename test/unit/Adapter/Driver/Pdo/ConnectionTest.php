@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDbTest\Adapter\Driver\Pdo;
 
 use Exception;
@@ -24,7 +26,13 @@ final class ConnectionTest extends TestCase
     #[Override]
     protected function setUp(): void
     {
-        $this->connection = new TestConnection();
+        $this->connection = new TestConnection(
+            [
+                'dsn'      => 'sqlite::memory:',
+                'username' => 'bar',
+                'password' => 'baz',
+            ]
+        );
     }
 
     /**
@@ -33,6 +41,7 @@ final class ConnectionTest extends TestCase
     public function testResource(): void
     {
         $this->markTestSkipped('Test requires concrete driver implementation with DSN building logic');
+        /** @phpstan-ignore deadCode.unreachable */
         $this->expectException(InvalidConnectionParametersException::class);
         $this->connection->getResource();
     }
@@ -57,6 +66,7 @@ final class ConnectionTest extends TestCase
     public function testArrayOfConnectionParametersCreatesCorrectDsn(): void
     {
         $this->markTestSkipped('Test requires concrete MySQL driver implementation with DSN building logic');
+        /** @phpstan-ignore deadCode.unreachable */
         $this->connection->setConnectionParameters([
             'driver'      => 'pdo_mysql',
             'charset'     => 'utf8',
@@ -80,6 +90,7 @@ final class ConnectionTest extends TestCase
     public function testHostnameAndUnixSocketThrowsInvalidConnectionParametersException(): void
     {
         $this->markTestSkipped('Test requires concrete MySQL driver implementation with parameter validation');
+        /** @phpstan-ignore deadCode.unreachable */
         $this->expectException(InvalidConnectionParametersException::class);
         $this->expectExceptionMessage(
             'Ambiguous connection parameters, both hostname and unix_socket parameters were set'
@@ -98,6 +109,7 @@ final class ConnectionTest extends TestCase
     public function testDblibArrayOfConnectionParametersCreatesCorrectDsn(): void
     {
         $this->markTestSkipped('Test requires concrete Dblib driver implementation with DSN building logic');
+        /** @phpstan-ignore deadCode.unreachable */
         $this->connection->setConnectionParameters([
             'driver'  => 'pdo_dblib',
             'charset' => 'UTF-8',

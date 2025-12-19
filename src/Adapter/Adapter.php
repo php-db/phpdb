@@ -81,7 +81,7 @@ class Adapter implements AdapterInterface, Profiler\ProfilerAwareInterface, Sche
         string $sql,
         ParameterContainer|array|string $parametersOrQueryMode = self::QUERY_MODE_PREPARE,
         ?ResultSet\ResultSetInterface $resultPrototype = null
-    ): Driver\StatementInterface|ResultSet\ResultSet|Driver\ResultInterface {
+    ): Driver\StatementInterface|ResultSet\ResultSetInterface|Driver\ResultInterface {
         if (
             is_string($parametersOrQueryMode)
             && in_array($parametersOrQueryMode, [self::QUERY_MODE_PREPARE, self::QUERY_MODE_EXECUTE])
@@ -132,15 +132,13 @@ class Adapter implements AdapterInterface, Profiler\ProfilerAwareInterface, Sche
     #[Override]
     public function createStatement(
         ?string $initialSql = null,
-        ParameterContainer|array|null $initialParameters = null
+        ParameterContainer|array $initialParameters = []
     ): Driver\StatementInterface {
         $statement = $this->driver->createStatement($initialSql);
         if (
-            $initialParameters === null
-            || ! $initialParameters instanceof ParameterContainer
-            && is_array($initialParameters)
+            is_array($initialParameters)
         ) {
-            $initialParameters = new ParameterContainer(is_array($initialParameters) ? $initialParameters : []);
+            $initialParameters = new ParameterContainer($initialParameters);
         }
         $statement->setParameterContainer($initialParameters);
         return $statement;

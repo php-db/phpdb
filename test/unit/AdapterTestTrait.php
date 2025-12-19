@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDbTest;
 
 use PhpDb\Adapter\Adapter;

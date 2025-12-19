@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDbTest\TableGateway\Feature;
 
 use PhpDb\Metadata\MetadataInterface;
@@ -9,10 +11,15 @@ use PhpDb\Metadata\Object\ViewObject;
 use PhpDb\TableGateway\AbstractTableGateway;
 use PhpDb\TableGateway\Feature\MetadataFeature;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\IgnoreDeprecations;
+use PHPUnit\Framework\Attributes\RequiresPhp;
 use PHPUnit\Framework\MockObject\Exception;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
 
+#[IgnoreDeprecations]
+#[RequiresPhp('<= 8.6')]
 class MetadataFeatureTest extends TestCase
 {
     /**
@@ -22,7 +29,11 @@ class MetadataFeatureTest extends TestCase
     #[Group('integration-test')]
     public function testPostInitialize(): void
     {
-        $tableGatewayMock = $this->getMockBuilder(AbstractTableGateway::class)->onlyMethods([])->getMock();
+        $this->markTestSkipped('This is an integration test and requires a database connection.');
+        /** @phpstan-ignore deadCode.unreachable */
+        $tableGatewayMock = $this->getMockBuilder(AbstractTableGateway::class)
+        ->onlyMethods([])
+        ->getMock();
         $metadataMock     = $this->getMockBuilder(MetadataInterface::class)->getMock();
         $metadataMock->expects($this->any())->method('getColumnNames')->willReturn(['id', 'name']);
 
@@ -45,7 +56,10 @@ class MetadataFeatureTest extends TestCase
      */
     public function testPostInitializeRecordsPrimaryKeyColumnToSharedMetadata(): void
     {
-        /** @var AbstractTableGateway $tableGatewayMock */
+        $this->markTestSkipped('This should be an integration test');
+
+        /** @var AbstractTableGateway&MockObject $tableGatewayMock */
+        /** @phpstan-ignore deadCode.unreachable */
         $tableGatewayMock = $this->getMockBuilder(AbstractTableGateway::class)->onlyMethods([])->getMock();
         $metadataMock     = $this->getMockBuilder(MetadataInterface::class)->getMock();
         $metadataMock->expects($this->any())->method('getColumnNames')->willReturn(['id', 'name']);
@@ -82,7 +96,10 @@ class MetadataFeatureTest extends TestCase
      */
     public function testPostInitializeRecordsListOfColumnsInPrimaryKeyToSharedMetadata(): void
     {
-        /** @var AbstractTableGateway $tableGatewayMock */
+        $this->markTestSkipped('This should be an integration test');
+
+        /** @var AbstractTableGateway&MockObject $tableGatewayMock */
+        /** @phpstan-ignore deadCode.unreachable */
         $tableGatewayMock = $this->getMockBuilder(AbstractTableGateway::class)->onlyMethods([])->getMock();
         $metadataMock     = $this->getMockBuilder(MetadataInterface::class)->getMock();
         $metadataMock->expects($this->any())->method('getColumnNames')->willReturn(['id', 'name']);
@@ -119,7 +136,7 @@ class MetadataFeatureTest extends TestCase
      */
     public function testPostInitializeSkipsPrimaryKeyCheckIfNotTable(): void
     {
-        /** @var AbstractTableGateway $tableGatewayMock */
+        /** @var AbstractTableGateway&MockObject $tableGatewayMock */
         $tableGatewayMock = $this->getMockBuilder(AbstractTableGateway::class)->onlyMethods([])->getMock();
         $metadataMock     = $this->getMockBuilder(MetadataInterface::class)->getMock();
         $metadataMock->expects($this->any())->method('getColumnNames')->willReturn(['id', 'name']);

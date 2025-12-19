@@ -15,6 +15,8 @@ use function sprintf;
  *
  * This trait can be used in any driver that needs to support features.
  * Primarily used in the Pdo driver, but can be adapted for others.
+ *
+ * @phpstan-ignore trait.unused
  */
 trait DriverFeatureProviderTrait
 {
