@@ -14,7 +14,6 @@ use PhpDb\Adapter\Exception;
 // phpcs:ignore SlevomatCodingStandard.Namespaces.UnusedUses.UnusedUse
 use ReturnTypeWillChange;
 
-use function call_user_func;
 use function in_array;
 use function is_int;
 
@@ -82,17 +81,18 @@ class Result implements Iterator, ResultInterface
     /** @var mixed */
     protected $generatedValue;
 
-    /** @var null */
-    protected $rowCount;
+    protected Closure|int $rowCount;
 
     /**
      * Initialize
      *
-     * @param  mixed $generatedValue
-     * @param  int   $rowCount
+     * @param mixed $generatedValue
      */
-    public function initialize(PDOStatement $resource, $generatedValue, $rowCount = null): ResultInterface&Result
-    {
+    public function initialize(
+        PDOStatement $resource,
+        $generatedValue,
+        Closure|int $rowCount = 0
+    ): ResultInterface&Result {
         $this->resource       = $resource;
         $this->generatedValue = $generatedValue;
         $this->rowCount       = $rowCount;
@@ -197,7 +197,7 @@ class Result implements Iterator, ResultInterface
     /**
      * Key
      *
-     * @return mixed
+     * @return int
      */
     #[ReturnTypeWillChange]
     #[Override]
@@ -250,8 +250,9 @@ class Result implements Iterator, ResultInterface
         if (is_int($this->rowCount)) {
             return $this->rowCount;
         }
+        /** @phpstan-ignore instanceof.alwaysTrue */
         if ($this->rowCount instanceof Closure) {
-            $this->rowCount = (int) call_user_func($this->rowCount);
+            $this->rowCount = (int) ($this->rowCount)();
         } else {
             $this->rowCount = (int) $this->resource->rowCount();
         }

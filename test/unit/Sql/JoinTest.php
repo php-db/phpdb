@@ -8,11 +8,15 @@ use PhpDb\Sql\Join;
 use PhpDb\Sql\Select;
 use PhpDbTest\DeprecatedAssertionsTrait;
 use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\IgnoreDeprecations;
+use PHPUnit\Framework\Attributes\RequiresPhp;
 use PHPUnit\Framework\Attributes\TestDox;
 use PHPUnit\Framework\TestCase;
 use ReflectionException;
 use TypeError;
 
+#[IgnoreDeprecations]
+#[RequiresPhp('<= 8.6')]
 #[CoversMethod(Join::class, '__construct')]
 #[CoversMethod(Join::class, 'rewind')]
 #[CoversMethod(Join::class, 'current')]

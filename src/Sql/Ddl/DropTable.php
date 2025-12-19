@@ -8,7 +8,7 @@ use PhpDb\Adapter\Platform\PlatformInterface;
 use PhpDb\Sql\AbstractSql;
 use PhpDb\Sql\TableIdentifier;
 
-class DropTable extends AbstractSql implements SqlInterface
+class DropTable extends AbstractSql
 {
     final public const TABLE = 'table';
 

@@ -36,7 +36,7 @@ use function vsprintf;
 
 abstract class AbstractSql implements SqlInterface
 {
-    public ?object $subject = null;
+    public SqlInterface|PreparableSqlInterface|null $subject = null;
 
     /**
      * Specifications for Sql String generation

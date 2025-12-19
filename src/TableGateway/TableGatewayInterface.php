@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDb\TableGateway;
 
 use Closure;
@@ -11,28 +13,17 @@ interface TableGatewayInterface
     /** @return string */
     public function getTable();
 
-    /**
-     * @param Where|Closure|string|array $where
-     * @return ResultSetInterface
-     */
-    public function select($where = null);
+    public function select(Where|Closure|string|array $where): ResultSetInterface;
 
     /**
      * @param array<string, mixed> $set
-     * @return int
      */
-    public function insert($set);
+    public function insert(array $set): int;
 
     /**
      * @param array<string, mixed> $set
-     * @param Where|Closure|string|array $where
-     * @return int
      */
-    public function update($set, $where = null);
+    public function update(array $set, Where|Closure|array|string $where): int;
 
-    /**
-     * @param Where|Closure|string|array $where
-     * @return int
-     */
-    public function delete($where);
+    public function delete(Where|Closure|array|string $where): int;
 }

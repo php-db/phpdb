@@ -1,11 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDbTest;
 
 use PHPUnit\Framework\Assert;
+use PHPUnit\Framework\Attributes\IgnoreDeprecations;
+use PHPUnit\Framework\Attributes\RequiresPhp;
 use ReflectionException;
 use ReflectionProperty;
 
+#[IgnoreDeprecations]
+#[RequiresPhp('<= 8.6')]
 trait DeprecatedAssertionsTrait
 {
     /**

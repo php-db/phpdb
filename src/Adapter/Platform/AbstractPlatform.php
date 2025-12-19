@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace PhpDb\Adapter\Platform;
 
 use Override;
+use PDO;
+use PhpDb\Adapter\Driver;
+use PhpDb\Adapter\Exception\VunerablePlatformQuoteException;
 
 use function addcslashes;
 use function array_map;
@@ -12,24 +15,23 @@ use function implode;
 use function preg_split;
 use function str_replace;
 use function strtolower;
-use function trigger_error;
 
 use const PREG_SPLIT_DELIM_CAPTURE;
 use const PREG_SPLIT_NO_EMPTY;
 
+/**
+ * @property Driver\DriverInterface|Driver\PdoDriverInterface|PDO $driver
+ */
 abstract class AbstractPlatform implements PlatformInterface
 {
     /** @var string[] */
-    protected $quoteIdentifier = ['"', '"'];
+    protected array $quoteIdentifier = ['"', '"'];
 
-    /** @var string */
-    protected $quoteIdentifierTo = '\'';
+    protected string $quoteIdentifierTo = '\'';
 
-    /** @var bool */
-    protected $quoteIdentifiers = true;
+    protected bool $quoteIdentifiers = true;
 
-    /** @var string */
-    protected $quoteIdentifierFragmentPattern = '/([^0-9,a-zA-Z$_:])/i';
+    protected string $quoteIdentifierFragmentPattern = '/([^0-9,a-zA-Z$_:])/i';
 
     /** @var array<string, true> */
     private const SAFE_WORDS = ['*' => true, ' ' => true, '.' => true, 'as' => true];
@@ -121,10 +123,12 @@ abstract class AbstractPlatform implements PlatformInterface
     #[Override]
     public function quoteValue(string $value): string
     {
-        trigger_error(
-            'Attempting to quote a value in ' . static::class
-            . ' without extension/driver support can introduce security vulnerabilities in a production environment'
-        );
+        if (! isset($this->driver)) {
+            throw VunerablePlatformQuoteException::forPlatformAndMethod(
+                static::class,
+                __METHOD__
+            );
+        }
         return '\'' . addcslashes($value, "\x00\n\r\\'\"\x1a") . '\'';
     }
 

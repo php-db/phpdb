@@ -29,12 +29,16 @@ use PhpDbTest\TestAsset\TrustingSql92Platform;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\IgnoreDeprecations;
+use PHPUnit\Framework\Attributes\RequiresPhp;
 use PHPUnit\Framework\Attributes\TestDox;
 use PHPUnit\Framework\TestCase;
 use ReflectionException;
 use ReflectionObject;
 use TypeError;
 
+#[IgnoreDeprecations]
+#[RequiresPhp('<= 8.6')]
 #[CoversMethod(Select::class, '__construct')]
 #[CoversMethod(Select::class, 'from')]
 #[CoversMethod(Select::class, 'quantifier')]

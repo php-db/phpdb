@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace PhpDb\Container;
 
+use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use Laminas\ServiceManager\Factory\AbstractFactoryInterface;
 use PhpDb\Adapter\Adapter;
 use PhpDb\Adapter\AdapterInterface;
+use PhpDb\Adapter\Profiler\ProfilerInterface;
 use PhpDb\ResultSet\ResultSetInterface;
 use Psr\Container\ContainerInterface;
 
@@ -55,11 +57,36 @@ class AdapterAbstractServiceFactory implements AbstractFactoryInterface
         $driverInstance  = $driverFactory::createFromConfig($container, $requestedName);
         $platformFactory = ($container->get(PlatformInterfaceFactoryFactoryInterface::class))();
 
-        return new Adapter(
-            $driverInstance,
-            $platformFactory::fromDriver($driverInstance),
-            $container->get(ResultSetInterface::class),
-        );
+        $hasResultSet = $container->has(ResultSetInterface::class);
+        $hasProfiler  = $container->has(ProfilerInterface::class);
+        $hasBoth      = $hasResultSet && $hasProfiler;
+        $hasNeither   = ! $hasResultSet && ! $hasProfiler;
+
+        return match (true) {
+            $hasNeither => new Adapter(
+                driver: $driverInstance,
+                platform: $platformFactory::fromDriver($driverInstance),
+            ),
+            $hasResultSet => new Adapter(
+                driver: $driverInstance,
+                platform: $platformFactory::fromDriver($driverInstance),
+                queryResultSetPrototype: $container->get(ResultSetInterface::class),
+            ),
+            $hasProfiler => new Adapter(
+                driver: $driverInstance,
+                platform: $platformFactory::fromDriver($driverInstance),
+                profiler: $container->get(ProfilerInterface::class),
+            ),
+            $hasBoth => new Adapter(
+                driver: $driverInstance,
+                platform: $platformFactory::fromDriver($driverInstance),
+                queryResultSetPrototype: $container->get(ResultSetInterface::class),
+                profiler: $container->get(ProfilerInterface::class),
+            ),
+            default => throw new ServiceNotCreatedException(
+                'Cannot create Named Adapter: ' . $requestedName . ' due to invalid configuration.'
+            ),
+        };
     }
 
     /**
