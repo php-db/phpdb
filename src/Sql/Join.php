@@ -25,9 +25,6 @@ use function sprintf;
  *   `Select::SQL_STAR`.
  * - type: the type of JOIN being performed; see the `JOIN_*` constants;
  *   defaults to `JOIN_INNER`
- *
- * @implements Iterator
- * @implements Countable
  */
 class Join implements Iterator, Countable
 {

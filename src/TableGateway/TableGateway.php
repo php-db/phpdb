@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDb\TableGateway;
 
 use PhpDb\Adapter\AdapterInterface;
@@ -9,56 +11,32 @@ use PhpDb\Sql\Sql;
 use PhpDb\Sql\TableIdentifier;
 
 use function is_array;
-use function is_string;
 
 class TableGateway extends AbstractTableGateway
 {
     /**
-     * Constructor
-     *
-     * @param string|TableIdentifier|array                                              $table
-     * @param Feature\AbstractFeature|Feature\FeatureSet|Feature\AbstractFeature[]|null $features
      * @throws Exception\InvalidArgumentException
      */
     public function __construct(
-        $table,
+        TableIdentifier|array|string $table,
         AdapterInterface $adapter,
-        $features = null,
-        ?ResultSetInterface $resultSetPrototype = null,
+        Feature\FeatureSet|Feature\AbstractFeature|array $features = new Feature\FeatureSet(),
+        ResultSetInterface $resultSetPrototype = new ResultSet(),
         ?Sql $sql = null
     ) {
-        // table
-        if (! (is_string($table) || $table instanceof TableIdentifier || is_array($table))) {
-            throw new Exception\InvalidArgumentException(
-                'Table name must be a string or an instance of PhpDb\Sql\TableIdentifier'
-            );
-        }
         $this->table = $table;
 
         // adapter
         $this->adapter = $adapter;
 
-        // process features
-        if ($features !== null) {
-            if ($features instanceof Feature\AbstractFeature) {
-                $features = [$features];
-            }
-            if (is_array($features)) {
-                $this->featureSet = new Feature\FeatureSet($features);
-            } elseif ($features instanceof Feature\FeatureSet) {
-                $this->featureSet = $features;
-            } else {
-                throw new Exception\InvalidArgumentException(
-                    'TableGateway expects $feature to be an instance of an AbstractFeature or a FeatureSet, or an '
-                    . 'array of AbstractFeatures'
-                );
-            }
-        } else {
-            $this->featureSet = new Feature\FeatureSet();
-        }
+        /** @phpstan-ignore match.unhandled */
+        $this->featureSet = match (true) {
+            $features instanceof Feature\AbstractFeature => new Feature\FeatureSet([$features]),
+            is_array($features) => new Feature\FeatureSet($features),
+        };
 
         // result prototype
-        $this->resultSetPrototype = $resultSetPrototype ?: new ResultSet();
+        $this->resultSetPrototype = $resultSetPrototype;
 
         // Sql object (factory for select, insert, update, delete)
         $this->sql = $sql ?: new Sql($this->adapter, $this->table);

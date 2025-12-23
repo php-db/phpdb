@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDbTest\Adapter;
 
 use PhpDb\Adapter\Adapter;
@@ -7,10 +9,14 @@ use PhpDb\Adapter\AdapterAwareTrait;
 use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\Platform\PlatformInterface;
 use PhpDbTest\DeprecatedAssertionsTrait;
+use PHPUnit\Framework\Attributes\IgnoreDeprecations;
+use PHPUnit\Framework\Attributes\RequiresPhp;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
 use ReflectionException;
 
+#[IgnoreDeprecations]
+#[RequiresPhp('<= 8.6')]
 class AdapterAwareTraitTest extends TestCase
 {
     use DeprecatedAssertionsTrait;

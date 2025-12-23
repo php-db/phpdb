@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDbTest\TestAsset;
 
 use Override;
@@ -17,12 +19,9 @@ class PdoStubDriver extends PDO
         return true;
     }
 
-    /**
-     * @param string $user
-     * @param string $password
-     */
-    public function __construct(string $dsn, $user, $password)
+    public function __construct()
     {
+        parent::__construct('sqlite::memory:');
     }
 
     #[Override] public function rollBack(): bool

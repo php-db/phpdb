@@ -44,6 +44,7 @@ final class TestPdo extends AbstractPdo
     #[Override]
     public function createResult($resource): Result
     {
+        /** @var Result $result */
         $result = clone $this->resultPrototype;
         $result->initialize($resource, $this->connection->getLastGeneratedValue());
         return $result;

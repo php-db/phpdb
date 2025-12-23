@@ -1,16 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDb\RowGateway;
 
 interface RowGatewayInterface
 {
-    /**
-     * @return int
-     */
-    public function save();
+    public function save(): int;
 
-    /**
-     * @return int
-     */
-    public function delete();
+    public function delete(): int;
 }

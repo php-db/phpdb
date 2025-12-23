@@ -30,11 +30,15 @@ use PhpDbTest\TestAsset\UpdateIgnore;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\IgnoreDeprecations;
+use PHPUnit\Framework\Attributes\RequiresPhp;
 use PHPUnit\Framework\Attributes\TestDox;
 use PHPUnit\Framework\TestCase;
 use ReflectionException;
 use TypeError;
 
+#[IgnoreDeprecations]
+#[RequiresPhp('<= 8.6')]
 #[CoversMethod(AbstractPreparableSql::class, 'prepareStatement')]
 #[CoversMethod(Update::class, 'table')]
 #[CoversMethod(Update::class, '__construct')]

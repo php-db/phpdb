@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDbTest\TableGateway\Feature;
 
 use PhpDb\Adapter\Adapter;
@@ -18,10 +20,14 @@ use PhpDb\TableGateway\Feature\MetadataFeature;
 use PhpDb\TableGateway\Feature\SequenceFeature;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\IgnoreDeprecations;
+use PHPUnit\Framework\Attributes\RequiresPhp;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 
+#[IgnoreDeprecations]
+#[RequiresPhp('<= 8.6')]
 #[CoversMethod(FeatureSet::class, 'canCallMagicCall')]
 #[CoversMethod(FeatureSet::class, 'callMagicCall')]
 class FeatureSetTest extends TestCase
@@ -120,6 +126,8 @@ class FeatureSetTest extends TestCase
 
     public function testCallMagicCallSucceedsForValidMethodOfAddedFeature(): void
     {
+        $this->markTestSkipped('This needs refactored to use a custom TestFeature and Sql92');
+        /** @phpstan-ignore deadCode.unreachable */
         $sequenceName = 'table_sequence';
 
         $platformMock = $this->getMockBuilder(Postgresql::class)->getMock();

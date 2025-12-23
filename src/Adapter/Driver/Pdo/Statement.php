@@ -37,7 +37,7 @@ class Statement implements StatementInterface, PdoDriverAwareInterface, Profiler
 
     protected bool $parametersBound = false;
 
-    protected PDOStatement|false|null $resource;
+    protected PDOStatement|false|null $resource = null;
 
     protected bool $isPrepared = false;
 
@@ -82,7 +82,7 @@ class Statement implements StatementInterface, PdoDriverAwareInterface, Profiler
 
     /** Get resource */
     #[Override]
-    public function getResource(): ?PDOStatement
+    public function getResource(): PDOStatement|false|null
     {
         return $this->resource;
     }
@@ -193,7 +193,7 @@ class Statement implements StatementInterface, PdoDriverAwareInterface, Profiler
 
         $this->profiler?->profilerFinish();
 
-        return $this->driver->createResult($this->resource, $this);
+        return $this->driver->createResult($this->resource);
     }
 
     /** Bind parameters from container */

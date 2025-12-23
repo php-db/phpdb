@@ -50,8 +50,7 @@ class MasterSlaveFeature extends AbstractFeature
         if ($this->slaveSql === null) {
             $this->slaveSql = new Sql(
                 $this->slaveAdapter,
-                $this->tableGateway->sql->getTable(),
-                $this->tableGateway->sql->getSqlPlatform()
+                $this->tableGateway->sql->getTable()
             );
         }
     }

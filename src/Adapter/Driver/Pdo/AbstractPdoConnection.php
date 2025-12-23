@@ -36,16 +36,12 @@ abstract class AbstractPdoConnection extends AbstractConnection implements
      * @throws Exception\InvalidArgumentException
      */
     public function __construct(
-        array|PDO|null $connectionParameters = null
+        PDO|array $connectionParameters
     ) {
         if (is_array($connectionParameters)) {
             $this->setConnectionParameters($connectionParameters);
         } elseif ($connectionParameters instanceof PDO) {
             $this->setResource($connectionParameters);
-        } elseif (null !== $connectionParameters) {
-            throw new Exception\InvalidArgumentException(
-                '$connection must be an array of parameters, a \PDO object or null'
-            );
         }
     }
 
@@ -82,7 +78,6 @@ abstract class AbstractPdoConnection extends AbstractConnection implements
         return $this->dsn;
     }
 
-    /** @inheritDoc */
     public function setResource(PDO $resource): PdoConnectionInterface
     {
         $this->resource   = $resource;
@@ -91,14 +86,14 @@ abstract class AbstractPdoConnection extends AbstractConnection implements
         return $this;
     }
 
-    /** @inheritDoc */
+    /** {@inheritDoc} */
     #[Override]
     public function isConnected(): bool
     {
         return $this->resource instanceof PDO;
     }
 
-    /** @inheritDoc */
+    /** {@inheritDoc} */
     #[Override]
     public function beginTransaction(): ConnectionInterface
     {
@@ -116,7 +111,7 @@ abstract class AbstractPdoConnection extends AbstractConnection implements
         return $this;
     }
 
-    /** @inheritDoc */
+    /** {@inheritDoc} */
     #[Override]
     public function commit(): ConnectionInterface
     {
@@ -141,7 +136,8 @@ abstract class AbstractPdoConnection extends AbstractConnection implements
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @throws Exception\RuntimeException
      */
     #[Override]
@@ -164,7 +160,8 @@ abstract class AbstractPdoConnection extends AbstractConnection implements
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @throws Exception\InvalidQueryException
      */
     #[Override]
@@ -174,21 +171,18 @@ abstract class AbstractPdoConnection extends AbstractConnection implements
             $this->connect();
         }
 
-        if ($this->profiler) {
-            $this->profiler->profilerStart($sql);
-        }
+        $this->profiler?->profilerStart($sql);
 
         $resultResource = $this->resource->query($sql);
 
-        if ($this->profiler) {
-            $this->profiler->profilerFinish($sql);
-        }
+        $this->profiler?->profilerFinish();
 
         if ($resultResource === false) {
             $errorInfo = $this->resource->errorInfo();
             throw new Exception\InvalidQueryException($errorInfo[2]);
         }
 
+        /** @phpstan-ignore arguments.count */
         return $this->driver->createResult($resultResource, $sql);
     }
 

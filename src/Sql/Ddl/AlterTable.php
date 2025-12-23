@@ -10,7 +10,7 @@ use PhpDb\Sql\TableIdentifier;
 
 use function array_key_exists;
 
-class AlterTable extends AbstractSql implements SqlInterface
+class AlterTable extends AbstractSql
 {
     final public const ADD_COLUMNS = 'addColumns';
 

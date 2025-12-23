@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace PhpDb\TableGateway\Feature\EventFeature;
 
-use ArrayAccess;
 use Laminas\EventManager\EventInterface;
 use PhpDb\TableGateway\AbstractTableGateway;
 
@@ -13,18 +12,12 @@ class TableGatewayEvent implements EventInterface
     /** @var AbstractTableGateway */
     protected $target;
 
-    /** @var null */
-    protected $name;
+    protected ?string $name = null;
 
-    /** @var array|ArrayAccess */
+    /** @var array|object */
     protected $params = [];
 
-    /**
-     * Get event name
-     *
-     * @return string|null
-     */
-    public function getName()
+    public function getName(): ?string
     {
         return $this->name;
     }
@@ -41,10 +34,8 @@ class TableGatewayEvent implements EventInterface
 
     /**
      * Get parameters passed to the event
-     *
-     * @return array|ArrayAccess
      */
-    public function getParams()
+    public function getParams(): array|object
     {
         return $this->params;
     }
@@ -52,11 +43,10 @@ class TableGatewayEvent implements EventInterface
     /**
      * Get a single parameter by name
      *
-     * @param  string $name
-     * @param  mixed $default Default value to return if parameter does not exist
-     * @return mixed
+     * @param string $name
+     * @param mixed $default Default value to return if parameter does not exist
      */
-    public function getParam($name, $default = null)
+    public function getParam($name, $default = null): mixed
     {
         return $this->params[$name] ?? $default;
     }
@@ -64,10 +54,9 @@ class TableGatewayEvent implements EventInterface
     /**
      * Set the event name
      *
-     * @param  string $name
-     * @return void
+     * @param string|null $name
      */
-    public function setName($name)
+    public function setName($name): void
     {
         $this->name = $name;
     }
@@ -75,21 +64,19 @@ class TableGatewayEvent implements EventInterface
     /**
      * Set the event target/context
      *
-     * @param  null|string|object $target
-     * @return void
+     * @param null|string|object $target
+     * @phpstan-ignore selfOut.type
      */
-    public function setTarget($target)
+    public function setTarget($target): void
     {
         $this->target = $target;
     }
 
     /**
-     * Set event parameters
-     *
-     * @param  string $params
-     * @return void
+     * @param array|object $params
+     * @phpstan-ignore selfOut.type
      */
-    public function setParams($params)
+    public function setParams($params): void
     {
         $this->params = $params;
     }
@@ -97,11 +84,10 @@ class TableGatewayEvent implements EventInterface
     /**
      * Set a single parameter by key
      *
-     * @param  string $name
-     * @param  mixed $value
-     * @return void
+     * @param string $name
+     * @param mixed $value
      */
-    public function setParam($name, $value)
+    public function setParam($name, $value): void
     {
         $this->params[$name] = $value;
     }
@@ -109,19 +95,16 @@ class TableGatewayEvent implements EventInterface
     /**
      * Indicate whether or not the parent EventManagerInterface should stop propagating events
      *
-     * @param  bool $flag
-     * @return void
+     * @param bool $flag
      */
-    public function stopPropagation($flag = true)
+    public function stopPropagation($flag = true): void
     {
     }
 
     /**
      * Has this event indicated event propagation should stop?
-     *
-     * @return bool
      */
-    public function propagationIsStopped()
+    public function propagationIsStopped(): false
     {
         return false;
     }

@@ -13,7 +13,7 @@ use PhpDb\Sql\SqlInterface;
 
 class AbstractPlatform implements PlatformDecoratorInterface, PreparableSqlInterface, SqlInterface
 {
-    protected ?object $subject = null;
+    protected SqlInterface|PreparableSqlInterface $subject;
 
     protected array $decorators = [];
 

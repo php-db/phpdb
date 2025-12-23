@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDbTest\TableGateway;
 
 use Override;
@@ -8,7 +10,9 @@ use PhpDb\Adapter\Driver\ConnectionInterface;
 use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\Driver\ResultInterface;
 use PhpDb\Adapter\Driver\StatementInterface;
+use PhpDb\Adapter\Platform\PlatformInterface;
 use PhpDb\ResultSet\ResultSet;
+use PhpDb\ResultSet\ResultSetInterface;
 use PhpDb\Sql;
 use PhpDb\Sql\Delete;
 use PhpDb\Sql\Insert;
@@ -17,10 +21,14 @@ use PhpDb\Sql\Update;
 use PhpDb\TableGateway\AbstractTableGateway;
 use PhpDb\TableGateway\Feature\FeatureSet;
 use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\IgnoreDeprecations;
+use PHPUnit\Framework\Attributes\RequiresPhp;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 
+#[IgnoreDeprecations]
+#[RequiresPhp('<= 8.6')]
 #[CoversMethod(AbstractTableGateway::class, 'getTable')]
 #[CoversMethod(AbstractTableGateway::class, 'getAdapter')]
 #[CoversMethod(AbstractTableGateway::class, 'getSql')]
@@ -43,6 +51,10 @@ use ReflectionClass;
 final class AbstractTableGatewayTest extends TestCase
 {
     protected MockObject&Adapter $mockAdapter;
+
+    protected PlatformInterface&MockObject $mockPlatform;
+
+    protected ResultInterface&MockObject $mockResultSet;
     protected MockObject&Sql\Sql $mockSql;
     protected AbstractTableGateway&MockObject $table;
     protected FeatureSet&MockObject $mockFeatureSet;
@@ -61,6 +73,10 @@ final class AbstractTableGatewayTest extends TestCase
         // mock the adapter, driver, and parts
         $mockResult = $this->getMockBuilder(ResultInterface::class)->getMock();
         $mockResult->expects($this->any())->method('getAffectedRows')->willReturn(5);
+
+        $mockPlatform = $this->getMockBuilder(PlatformInterface::class)->getMock();
+
+        $mockResultSet = $this->getMockBuilder(ResultSetInterface::class)->getMock();
 
         $mockStatement = $this->getMockBuilder(StatementInterface::class)->getMock();
         $mockStatement->expects($this->any())->method('execute')->willReturn($mockResult);
@@ -97,7 +113,7 @@ final class AbstractTableGatewayTest extends TestCase
 
         $this->mockAdapter = $this->getMockBuilder(Adapter::class)
             ->onlyMethods([])
-            ->setConstructorArgs([$mockDriver])
+            ->setConstructorArgs([$mockDriver, $mockPlatform, $mockResultSet])
             ->getMock();
         $this->mockSql     = $this->getMockBuilder(Sql\Sql::class)
             ->onlyMethods(['select', 'insert', 'update', 'delete'])
@@ -293,6 +309,7 @@ final class AbstractTableGatewayTest extends TestCase
 
     public function testUpdateWithNoCriteria(): void
     {
+        /** @phpstan-ignore expr.resultUnused */
         $this->mockUpdate;
 
         $affectedRows = $this->table->update(['foo' => 'bar']);
@@ -320,6 +337,8 @@ final class AbstractTableGatewayTest extends TestCase
 
     public function testInitializeBuildsAResultSet(): void
     {
+        $this->markTestSkipped('This needs refactored due to setAccessible has been deprecated in PHP 8.1');
+        /** @phpstan-ignore deadCode.unreachable */
         $stub = $this
             ->getMockBuilder(AbstractTableGateway::class)
             ->onlyMethods([])

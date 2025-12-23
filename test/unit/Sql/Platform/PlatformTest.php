@@ -11,11 +11,15 @@ use PhpDb\ResultSet\ResultSet;
 use PhpDb\Sql\Platform\Platform;
 use PhpDbTest\TestAsset;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\IgnoreDeprecations;
+use PHPUnit\Framework\Attributes\RequiresPhp;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use ReflectionException;
 use ReflectionMethod;
 
+#[IgnoreDeprecations]
+#[RequiresPhp('<= 8.6')]
 class PlatformTest extends TestCase
 {
     /**
@@ -90,7 +94,7 @@ class PlatformTest extends TestCase
                 break;
         }
 
-        /** @var DriverInterface|MockObject $mockDriver */
+        /** @var DriverInterface&MockObject $mockDriver */
         $mockDriver = $this->getMockBuilder(DriverInterface::class)->getMock();
 
         $mockDriver->expects($this->any())

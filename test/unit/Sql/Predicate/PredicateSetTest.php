@@ -15,10 +15,14 @@ use PhpDb\Sql\Predicate\Operator;
 use PhpDb\Sql\Predicate\PredicateSet;
 use PhpDbTest\DeprecatedAssertionsTrait;
 use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\IgnoreDeprecations;
+use PHPUnit\Framework\Attributes\RequiresPhp;
 use PHPUnit\Framework\TestCase;
 use ReflectionException;
 use TypeError;
 
+#[IgnoreDeprecations]
+#[RequiresPhp('<= 8.6')]
 #[CoversMethod(PredicateSet::class, '__construct')]
 #[CoversMethod(PredicateSet::class, 'addPredicate')]
 #[CoversMethod(PredicateSet::class, 'addPredicates')]

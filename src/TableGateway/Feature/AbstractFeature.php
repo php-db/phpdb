@@ -1,9 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDb\TableGateway\Feature;
 
 use PhpDb\TableGateway\AbstractTableGateway;
-use PhpDb\TableGateway\Exception;
 
 abstract class AbstractFeature extends AbstractTableGateway
 {
@@ -24,9 +25,9 @@ abstract class AbstractFeature extends AbstractTableGateway
         $this->tableGateway = $tableGateway;
     }
 
-    public function initialize()
+    public function initialize(): void
     {
-        throw new Exception\RuntimeException('This method is not intended to be called on this object.');
+        // No-op
     }
 
     /** @return string[] */

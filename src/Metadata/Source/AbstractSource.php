@@ -55,7 +55,6 @@ abstract class AbstractSource implements MetadataInterface
 
     protected string $defaultSchema;
 
-    /** @psalm-var MetadataData */
     protected array $data = [];
 
     public function __construct(

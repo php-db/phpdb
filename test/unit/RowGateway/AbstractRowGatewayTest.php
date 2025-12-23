@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDbTest\RowGateway;
 
 use Override;
@@ -8,18 +10,22 @@ use PhpDb\Adapter\Driver\ConnectionInterface;
 use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\Driver\ResultInterface;
 use PhpDb\Adapter\Driver\StatementInterface;
+use PhpDb\Adapter\Platform\PlatformInterface;
 use PhpDb\RowGateway\AbstractRowGateway;
 use PhpDb\RowGateway\Exception\RuntimeException;
 use PhpDb\RowGateway\RowGateway;
 use PhpDb\Sql\Select;
 use PhpDb\Sql\Sql;
 use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\IgnoreDeprecations;
+use PHPUnit\Framework\Attributes\RequiresPhp;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use ReflectionException;
 use ReflectionObject;
 
+#[IgnoreDeprecations]
 #[CoversMethod(RowGateway::class, 'offsetSet')]
 #[CoversMethod(RowGateway::class, '__set')]
 #[CoversMethod(RowGateway::class, '__isset')]
@@ -67,8 +73,12 @@ final class AbstractRowGatewayTest extends TestCase
         // setup mock adapter
         $this->mockAdapter = $this->getMockBuilder(Adapter::class)
             ->onlyMethods([])
-            ->setConstructorArgs([$mockDriver])
-            ->getMock();
+            ->setConstructorArgs(
+                [
+                    $mockDriver,
+                    $this->getMockBuilder(PlatformInterface::class)->getMock(),
+                ]
+            )->getMock();
 
         $this->rowGateway = $this->getMockBuilder(AbstractRowGateway::class)->onlyMethods([])->getMock();
 
@@ -170,6 +180,7 @@ final class AbstractRowGatewayTest extends TestCase
      * @throws ReflectionException
      * @throws Exception
      */
+    #[RequiresPhp('<= 8.6')]
     public function testSaveInsertMultiKey(): void
     {
         $this->rowGateway = $this->getMockBuilder(AbstractRowGateway::class)->onlyMethods([])->getMock();
@@ -293,6 +304,7 @@ final class AbstractRowGatewayTest extends TestCase
     /**
      * @throws ReflectionException
      */
+    #[RequiresPhp('<= 8.6')]
     protected function setRowGatewayState(array $properties): void
     {
         $refRowGateway = new ReflectionObject($this->rowGateway);

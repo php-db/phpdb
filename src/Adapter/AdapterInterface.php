@@ -40,14 +40,14 @@ interface AdapterInterface
 
     public function createStatement(
         ?string $initialSql = null,
-        ParameterContainer|array|null $initialParameters = null
+        ParameterContainer|array $initialParameters = []
     ): Driver\StatementInterface;
 
     public function query(
         string $sql,
         ParameterContainer|array|string $parametersOrQueryMode = self::QUERY_MODE_PREPARE,
         ?ResultSet\ResultSetInterface $resultPrototype = null
-    ): Driver\StatementInterface|ResultSet\ResultSet|Driver\ResultInterface;
+    ): Driver\StatementInterface|ResultSet\ResultSetInterface|Driver\ResultInterface;
 
     /**
      * @todo 0.3.x track down this usage!!!
