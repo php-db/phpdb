@@ -122,12 +122,25 @@ $column = new Varchar('middle_name', 100);
 $column->setNullable(true);
 ```
 
-**Constructor:** `__construct($name, $length)`
+**Constructor:**
+
+```php
+__construct(
+    string $name,
+    ?int $length = null,
+    bool $nullable = false,
+    mixed $default = null,
+    array $options = []
+)
+```
 
 **Methods:**
 
-- `setLength(int $length): self`
-- `getLength(): int`
+- `setLength(?int $length): static`
+- `getLength(): ?int`
+- `setNullable(bool $nullable): static`
+- `setDefault(string|int|null $default): static`
+- `setOption(string $name, mixed $value): static`
 
 ### Char
 
@@ -140,7 +153,17 @@ $column = new Char('country_code', 2); // ISO country codes
 $column = new Char('status', 1); // Single character status
 ```
 
-**Constructor:** `__construct($name, $length)`
+**Constructor:**
+
+```php
+__construct(
+    string $name,
+    ?int $length = null,
+    bool $nullable = false,
+    mixed $default = null,
+    array $options = []
+)
+```
 
 ### Text
 
@@ -202,7 +225,17 @@ use PhpDb\Sql\Ddl\Column\Varbinary;
 $column = new Varbinary('file_data', 65535);
 ```
 
-**Constructor:** `__construct($name, $length)`
+**Constructor:**
+
+```php
+__construct(
+    string $name,
+    ?int $length = null,
+    bool $nullable = false,
+    mixed $default = null,
+    array $options = []
+)
+```
 
 ### Blob
 
@@ -240,7 +273,16 @@ $column = new Date('birth_date');
 $column = new Date('hire_date');
 ```
 
-**Constructor:** `__construct($name)`
+**Constructor:**
+
+```php
+__construct(
+    string $name = '',
+    bool $nullable = false,
+    mixed $default = null,
+    array $options = []
+)
+```
 
 ### Time
 
@@ -253,7 +295,16 @@ $column = new Time('start_time');
 $column = new Time('duration');
 ```
 
-**Constructor:** `__construct($name)`
+**Constructor:**
+
+```php
+__construct(
+    string $name = '',
+    bool $nullable = false,
+    mixed $default = null,
+    array $options = []
+)
+```
 
 ### Datetime
 
@@ -266,7 +317,16 @@ $column = new Datetime('last_login');
 $column = new Datetime('event_time');
 ```
 
-**Constructor:** `__construct($name)`
+**Constructor:**
+
+```php
+__construct(
+    string $name = '',
+    bool $nullable = false,
+    mixed $default = null,
+    array $options = []
+)
+```
 
 ### Timestamp
 
@@ -286,7 +346,16 @@ $column->setOption('on_update', true);
 // Generates: TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ```
 
-**Constructor:** `__construct($name)`
+**Constructor:**
+
+```php
+__construct(
+    string $name = '',
+    bool $nullable = false,
+    mixed $default = null,
+    array $options = []
+)
+```
 
 **Special Options:**
 

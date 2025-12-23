@@ -147,14 +147,13 @@ The `$on` parameter accepts either a string or a `PredicateInterface`
 for complex join conditions:
 
 ```php title="JOIN with predicate conditions"
+use PhpDb\Sql\Argument;
 use PhpDb\Sql\Predicate;
 
 $where = new Predicate\Predicate();
 $where->equalTo(
-        'orders.customerId',
-        'customers.id',
-        Predicate\Predicate::TYPE_IDENTIFIER,
-        Predicate\Predicate::TYPE_IDENTIFIER
+        Argument::identifier('orders.customerId'),
+        Argument::identifier('customers.id')
     )
     ->greaterThan('orders.amount', 100);
 

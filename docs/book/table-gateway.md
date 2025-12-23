@@ -14,17 +14,11 @@ use PhpDb\Sql\Where;
 
 interface TableGatewayInterface
 {
-    public function getTable() : string;
-    public function select(
-        Where|callable|string|array $where = null
-    ) : ResultSetInterface;
-    public function insert(array $set) : int;
-    public function update(
-        array $set,
-        Where|callable|string|array $where = null,
-        array $joins = null
-    ) : int;
-    public function delete(Where|callable|string|array $where) : int;
+    public function getTable();
+    public function select(Where|Closure|string|array $where): ResultSetInterface;
+    public function insert(array $set): int;
+    public function update(array $set, Where|Closure|array|string $where): int;
+    public function delete(Where|Closure|array|string $where): int;
 }
 ```
 
@@ -72,33 +66,29 @@ class TableGateway extends AbstractTableGateway
 
     /** Inherited from AbstractTableGateway */
 
-    public function isInitialized() : bool;
-    public function initialize() : void;
-    public function getTable() : string;
-    public function getAdapter() : AdapterInterface;
-    public function getColumns() : array;
-    public function getFeatureSet() Feature\FeatureSet;
-    public function getResultSetPrototype() : ResultSetInterface;
-    public function getSql() | Sql\Sql;
+    public function isInitialized(): bool;
+    public function initialize(): void;
+    public function getTable(): TableIdentifier|array|string;
+    public function getAdapter(): AdapterInterface;
+    public function getColumns(): array;
+    public function getFeatureSet(): Feature\FeatureSet;
+    public function getResultSetPrototype(): ResultSetInterface;
+    public function getSql(): Sql\Sql;
     public function select(
-        Sql\Where|callable|string|array $where = null
-    ) : ResultSetInterface;
-    public function selectWith(
-        Sql\Select $select
-    ) : ResultSetInterface;
-    public function insert(array $set) : int;
-    public function insertWith(Sql\Insert $insert) | int;
+        Sql\Where|Closure|string|array|null $where = null
+    ): ResultSetInterface;
+    public function selectWith(Sql\Select $select): ResultSetInterface;
+    public function insert(array $set): int;
+    public function insertWith(Sql\Insert $insert): int;
     public function update(
         array $set,
-        Sql\Where|callable|string|array $where = null,
-        array $joins = null
-    ) : int;
-    public function updateWith(Sql\Update $update) : int;
-    public function delete(
-        Sql\Where|callable|string|array $where
-    ) : int;
-    public function deleteWith(Sql\Delete $delete) : int;
-    public function getLastInsertValue() : int;
+        Sql\Where|Closure|array|string|null $where = null,
+        ?array $joins = null
+    ): int;
+    public function updateWith(Sql\Update $update): int;
+    public function delete(Sql\Where|Closure|array|string $where): int;
+    public function deleteWith(Sql\Delete $delete): int;
+    public function getLastInsertValue(): int;
 }
 ```
 

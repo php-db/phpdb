@@ -181,31 +181,25 @@ Avoid manually quoting identifiers:
 $select->from('"users"');
 ```
 
-### Type Confusion in Predicates
+### Comparing Identifiers in Predicates
 
-When comparing two identifiers (column to column),
-specify both types:
-
-```php title="Column Comparison Using Type Constants"
-// Using type constants
-$where->equalTo(
-    'table1.columnA',
-    'table2.columnB',
-    Predicate\Predicate::TYPE_IDENTIFIER,
-    Predicate\Predicate::TYPE_IDENTIFIER
-);
-```
-
-Or use the Argument class for better readability:
+When comparing two identifiers (column to column), use the `Argument` class
+to wrap the column names:
 
 ```php title="Column Comparison Using Argument Class"
-// Using Argument class (recommended)
 use PhpDb\Sql\Argument;
 
 $where->equalTo(
     Argument::identifier('table1.columnA'),
     Argument::identifier('table2.columnB')
 );
+```
+
+This ensures both values are treated as column identifiers rather than
+literal values, producing SQL like:
+
+```sql
+"table1"."columnA" = "table2"."columnB"
 ```
 
 ### Debugging SQL Output

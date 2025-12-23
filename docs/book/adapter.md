@@ -208,7 +208,7 @@ namespace PhpDb\Adapter\Driver;
 interface StatementInterface extends StatementContainerInterface
 {
     public function getResource(): mixed;
-    public function prepare(?string $sql = null): void;
+    public function prepare(?string $sql = null): StatementInterface;
     public function isPrepared(): bool;
     public function execute(?array|ParameterContainer $parameters = null): ResultInterface;
 
@@ -413,20 +413,9 @@ database platform.
 
 ## Profiling
 
-The adapter supports profiling through the `ProfilerInterface`:
-
-```php title="Setting Up a Profiler"
-use PhpDb\Adapter\Profiler\Profiler;
-
-$profiler = new Profiler();
-$adapter = new Adapter($driver, $platform, profiler: $profiler);
-
-// Execute queries...
-$result = $adapter->query('SELECT * FROM users');
-
-// Get profiler data
-$profiles = $profiler->getProfiles();
-```
+The adapter supports query profiling for performance analysis and debugging. See the
+[Profiler documentation](profiler.md) for complete details on setting up profilers,
+retrieving profile data, and integrating with logging and debug tools.
 
 ## Complete Example
 

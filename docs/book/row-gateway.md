@@ -14,8 +14,8 @@ namespace PhpDb\RowGateway;
 
 interface RowGatewayInterface
 {
-    public function save();
-    public function delete();
+    public function save(): int;
+    public function delete(): int;
 }
 ```
 

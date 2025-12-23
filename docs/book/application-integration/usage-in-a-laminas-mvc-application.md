@@ -175,14 +175,10 @@ class MyDatabaseService implements AdapterAwareInterface
 {
     private AdapterInterface $adapter;
 
-    public function setDbAdapter(AdapterInterface $adapter): void
+    public function setDbAdapter(AdapterInterface $adapter): static
     {
         $this->adapter = $adapter;
-    }
-
-    public function getDbAdapter(): ?AdapterInterface
-    {
-        return $this->adapter ?? null;
+        return $this;
     }
 }
 ```
