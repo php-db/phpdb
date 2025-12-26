@@ -7,6 +7,8 @@ namespace PhpDb\Exception;
 use Psr\Container\ContainerExceptionInterface;
 use RuntimeException as SplRuntimeException;
 
+use function sprintf;
+
 final class ContainerException extends SplRuntimeException implements ContainerExceptionInterface
 {
     public static function forService(
@@ -17,9 +19,9 @@ final class ContainerException extends SplRuntimeException implements ContainerE
         return new self(
             sprintf(
                 'Failed to create service "%s" in factory %s Reason: %s',
-                 $serviceName,
-                 $factoryClass,
-                 $reason
+                $serviceName,
+                $factoryClass,
+                $reason
             ),
             0,
         );

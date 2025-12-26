@@ -15,7 +15,6 @@ use PhpDb\Adapter\Profiler\ProfilerInterface;
 use PhpDb\ConfigProvider;
 use PhpDb\Exception\ContainerException;
 use PhpDb\ResultSet\ResultSetInterface;
-use PSpell\Config;
 use Psr\Container\ContainerInterface;
 
 use function is_array;
@@ -52,10 +51,11 @@ class AbstractAdapterInterfaceFactory implements AbstractFactoryInterface
     /**
      * Create a DB adapter
      *
+     * @phpstan-param ContainerInterface&ServiceManager $container
      * @param string $requestedName
      */
     public function __invoke(
-        ContainerInterface&ServiceManager $container,
+        ContainerInterface|ServiceManager $container,
         $requestedName,
         ?array $options = null
     ): AdapterInterface&Adapter {
@@ -72,7 +72,7 @@ class AbstractAdapterInterfaceFactory implements AbstractFactoryInterface
 
         /** @var DriverInterface|PdoDriverInterface $driver */
         $driver = $container->build($driverClass, $this->config[$requestedName]);
-        /** @var PlatformInterface&Pgsql\AdapterPlatform $platform */
+        /** @var PlatformInterface $platform */
         $platform = $container->build(PlatformInterface::class, ['driver' => $driver]);
         /** @var ResultSetInterface|null $resultSet */
         $resultSet = $container->has(ResultSetInterface::class)

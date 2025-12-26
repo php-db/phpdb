@@ -6,7 +6,7 @@ namespace PhpDb;
 
 final class ConfigProvider
 {
-    public final const NAMED_ADAPTER_KEY = 'adapters';
+    public const NAMED_ADAPTER_KEY = 'adapters';
     public function __invoke(): array
     {
         return [
@@ -33,7 +33,7 @@ final class ConfigProvider
     {
         return [
             'abstract_factories' => [
-                Container\AdapterAbstractServiceFactory::class,
+                Container\AbstractAdapterInterfaceFactory::class,
             ],
             'aliases'            => [
                 Adapter\AdapterInterface::class => Adapter\Adapter::class,
