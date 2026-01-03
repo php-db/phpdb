@@ -15,7 +15,7 @@ Starting with version 0.4.x, PhpDb uses a modular package architecture. The core
 - Platform abstractions
 - SQL abstraction layer
 - Result set handling
-- Table and Row gateway implementations
+- Table/RowGateway implementations
 
 Database-specific drivers are provided as separate packages:
 
@@ -39,7 +39,7 @@ $driver = new Mysql([
     'hostname' => 'localhost',
 ]);
 
-$adapter = new Adapter($driver, new MysqlPlatform());
+$adapter = new Adapter($driver, new MysqlPlatform($driver));
 ```
 
 ```php title="SQLite Connection"
@@ -190,9 +190,6 @@ interface DriverInterface
 
 From this `DriverInterface`, you can:
 
-- Determine the name of the platform this driver supports (useful for choosing
-  the proper platform object)
-- Check that the environment can support this driver
 - Return the `Connection` instance
 - Create a `Statement` instance which is optionally seeded by an SQL statement
   (this will generally be a clone of a prototypical statement object)
