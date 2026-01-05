@@ -1,23 +1,21 @@
 # Row Gateways
 
-`PhpDb\RowGateway` is a sub-component of laminas-db that implements the Row Data
-Gateway pattern described in the book [Patterns of Enterprise Application
-Architecture](http://www.martinfowler.com/books/eaa.html). Row Data Gateways
-model individual rows of a database table, and provide methods such as `save()`
-and `delete()` that persist the row to the database. Likewise, after a row from
-the database is retrieved, it can then be manipulated and `save()`'d back to
-the database in the same position (row), or it can be `delete()`'d from the
-table.
+`PhpDb\RowGateway` implements the
+[Row Data Gateway pattern](http://www.martinfowler.com/eaaCatalog/rowDataGateway.html),
+an object that wraps a single database row, providing `save()` and `delete()`
+methods to persist changes.
 
-`RowGatewayInterface` defines the methods `save()` and `delete()`:
+`RowGatewayInterface` defines these methods:
+
+## RowGatewayInterface Definition
 
 ```php
 namespace PhpDb\RowGateway;
 
 interface RowGatewayInterface
 {
-    public function save();
-    public function delete();
+    public function save(): int;
+    public function delete(): int;
 }
 ```
 
@@ -29,11 +27,14 @@ standalone, you need an `Adapter` instance and a set of data to work with.
 
 The following demonstrates a basic use case.
 
-```php
+```php title="Standalone RowGateway Usage"
 use PhpDb\RowGateway\RowGateway;
 
 // Query the database:
-$resultSet = $adapter->query('SELECT * FROM `user` WHERE `id` = ?', [2]);
+$resultSet = $adapter->query(
+    'SELECT * FROM `user` WHERE `id` = ?',
+    [2]
+);
 
 // Get array of data:
 $rowData = $resultSet->current()->getArrayCopy();
@@ -50,14 +51,15 @@ $rowGateway->save();
 $rowGateway->delete();
 ```
 
-The workflow described above is greatly simplified when `RowGateway` is used in
-conjunction with the [TableGateway RowGatewayFeature](table-gateway.md#tablegateway-features).
-In that paradigm, `select()` operations will produce a `ResultSet` that iterates
+The workflow described above is greatly simplified when `RowGateway` is used
+in conjunction with the
+[TableGateway RowGatewayFeature](table-gateway.md#tablegateway-features). In
+that paradigm, `select()` operations will produce a `ResultSet` that iterates
 `RowGateway` instances.
 
 As an example:
 
-```php
+```php title="Using RowGateway with TableGateway"
 use PhpDb\TableGateway\Feature\RowGatewayFeature;
 use PhpDb\TableGateway\TableGateway;
 
@@ -74,10 +76,10 @@ $artistRow->save();
 If you wish to have custom behaviour in your `RowGateway` objects &mdash;
 essentially making them behave similarly to the
 [ActiveRecord](http://www.martinfowler.com/eaaCatalog/activeRecord.html)
-pattern), pass a prototype object implementing the `RowGatewayInterface` to the
-`RowGatewayFeature` constructor instead of a primary key:
+pattern), pass a prototype object implementing the `RowGatewayInterface` to
+the `RowGatewayFeature` constructor instead of a primary key:
 
-```php
+```php title="Custom ActiveRecord-Style Implementation"
 use PhpDb\TableGateway\Feature\RowGatewayFeature;
 use PhpDb\TableGateway\TableGateway;
 use PhpDb\RowGateway\RowGatewayInterface;
@@ -94,5 +96,9 @@ class Artist implements RowGatewayInterface
     // ... save() and delete() implementations
 }
 
-$table = new TableGateway('artist', $adapter, new RowGatewayFeature(new Artist($adapter)));
+$table = new TableGateway(
+    'artist',
+    $adapter,
+    new RowGatewayFeature(new Artist($adapter))
+);
 ```

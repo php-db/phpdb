@@ -1,10 +1,10 @@
-# Usage in a laminas-mvc Application
+# Usage in a Mezzio Application
 
 For installation instructions, see [Installation](../index.md#installation).
 
 ## Configuration
 
-The adapter factory is already wired into the service manager. You only
+The adapter factory is already wired into the container. You only
 need to provide the `db` configuration in `config/autoload/db.global.php`:
 
 ```php title="config/autoload/db.global.php"
@@ -87,9 +87,9 @@ return [
 
 ### Container-Managed Instantiation
 
-Once configured, retrieve the adapter from the service manager:
+Once configured, retrieve the adapter from the container:
 
-```php title="Retrieving the adapter from the service container"
+```php title="Retrieving the adapter from the container"
 use PhpDb\Adapter\AdapterInterface;
 
 $adapter = $container->get(AdapterInterface::class);
@@ -116,72 +116,6 @@ $adapter = new Adapter($driver, new MysqlPlatform());
 
 You can read more about the
 [adapter in the adapter chapter of the documentation](../adapter.md).
-
-## Adapter-Aware Services with AdapterServiceDelegator
-
-If you have services that implement `PhpDb\Adapter\AdapterAwareInterface`,
-you can use the `AdapterServiceDelegator` to automatically inject the
-database adapter.
-
-### Using the Delegator
-
-Register the delegator in your service configuration:
-
-```php title="Delegator configuration for adapter-aware services"
-use PhpDb\Adapter\AdapterInterface;
-use PhpDb\Container\AdapterServiceDelegator;
-
-return [
-    'service_manager' => [
-        'delegators' => [
-            MyDatabaseService::class => [
-                new AdapterServiceDelegator(AdapterInterface::class),
-            ],
-        ],
-    ],
-];
-```
-
-### Multiple Adapters
-
-When using multiple adapters, you can specify which adapter to inject:
-
-```php title="Delegator configuration for multiple adapters"
-use PhpDb\Container\AdapterServiceDelegator;
-
-return [
-    'service_manager' => [
-        'delegators' => [
-            ReadService::class => [
-                new AdapterServiceDelegator('db.reader'),
-            ],
-            WriteService::class => [
-                new AdapterServiceDelegator('db.writer'),
-            ],
-        ],
-    ],
-];
-```
-
-### Implementing AdapterAwareInterface
-
-Your service class must implement `AdapterAwareInterface`:
-
-```php title="Implementing AdapterAwareInterface in a service class"
-use PhpDb\Adapter\AdapterAwareInterface;
-use PhpDb\Adapter\AdapterInterface;
-
-class MyDatabaseService implements AdapterAwareInterface
-{
-    private AdapterInterface $adapter;
-
-    public function setDbAdapter(AdapterInterface $adapter): static
-    {
-        $this->adapter = $adapter;
-        return $this;
-    }
-}
-```
 
 ## Running with Docker
 
