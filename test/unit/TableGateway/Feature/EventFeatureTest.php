@@ -284,4 +284,40 @@ final class EventFeatureTest extends TestCase
         self::assertSame($stmt, $event->getParam('statement'));
         self::assertSame($result, $event->getParam('result'));
     }
+
+    public function testConstructorWithDefaults(): void
+    {
+        $feature = new EventFeature();
+
+        self::assertInstanceOf(\Laminas\EventManager\EventManagerInterface::class, $feature->getEventManager());
+        self::assertInstanceOf(EventFeature\TableGatewayEvent::class, $feature->getEvent());
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function testPreInitializeAddsIdentifiersForCustomTableGatewayClass(): void
+    {
+        // Create a custom subclass of TableGateway (using anonymous class)
+        $customTableGateway = new class extends TableGateway {
+            public function __construct()
+            {
+                // Skip parent constructor
+            }
+        };
+
+        $eventManager = new EventManager();
+        $feature = new EventFeature($eventManager);
+        $feature->setTableGateway($customTableGateway);
+
+        // The custom class name should be added as an identifier
+        $feature->preInitialize();
+
+        // Get the identifiers from the event manager
+        $identifiers = $eventManager->getIdentifiers();
+
+        // Should contain both TableGateway::class and the anonymous class name
+        self::assertContains(TableGateway::class, $identifiers);
+        self::assertContains(get_class($customTableGateway), $identifiers);
+    }
 }

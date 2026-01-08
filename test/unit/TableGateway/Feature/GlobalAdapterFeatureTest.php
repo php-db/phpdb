@@ -80,4 +80,50 @@ class GlobalAdapterFeatureTest extends TestCase
 
         self::assertSame($adapter, $result);
     }
+
+    public function testSubclassCanSetAndGetOwnAdapter(): void
+    {
+        $baseAdapter = $this->createMock(AdapterInterface::class);
+        $subclassAdapter = $this->createMock(AdapterInterface::class);
+
+        // Set default adapter on base class
+        GlobalAdapterFeature::setStaticAdapter($baseAdapter);
+
+        // Set a different adapter on the subclass
+        TestGlobalAdapterFeatureSubclass::setStaticAdapter($subclassAdapter);
+
+        // Base class should return base adapter
+        self::assertSame($baseAdapter, GlobalAdapterFeature::getStaticAdapter());
+
+        // Subclass should return its own adapter
+        self::assertSame($subclassAdapter, TestGlobalAdapterFeatureSubclass::getStaticAdapter());
+    }
+
+    public function testSubclassFallsBackToDefaultAdapterWhenNoSpecificAdapterSet(): void
+    {
+        $defaultAdapter = $this->createMock(AdapterInterface::class);
+
+        // Only set adapter on base class
+        GlobalAdapterFeature::setStaticAdapter($defaultAdapter);
+
+        // Subclass should fall back to default adapter
+        $result = TestGlobalAdapterFeatureSubclass::getStaticAdapter();
+
+        self::assertSame($defaultAdapter, $result);
+    }
+
+    public function testSubclassThrowsExceptionWhenNoAdaptersSet(): void
+    {
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('No database adapter was found in the static registry.');
+
+        TestGlobalAdapterFeatureSubclass::getStaticAdapter();
+    }
+}
+
+/**
+ * Test subclass to verify class-specific adapter behavior
+ */
+class TestGlobalAdapterFeatureSubclass extends GlobalAdapterFeature
+{
 }

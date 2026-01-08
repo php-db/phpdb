@@ -41,6 +41,7 @@ use ReflectionObject;
 #[CoversMethod(RowGateway::class, 'processPrimaryKeyData')]
 #[CoversMethod(RowGateway::class, 'count')]
 #[CoversMethod(RowGateway::class, 'toArray')]
+#[CoversMethod(RowGateway::class, 'exchangeArray')]
 final class AbstractRowGatewayTest extends TestCase
 {
     /** @var Adapter&MockObject */

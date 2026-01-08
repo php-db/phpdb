@@ -47,7 +47,13 @@ use ReflectionClass;
 #[CoversMethod(AbstractTableGateway::class, 'executeDelete')]
 #[CoversMethod(AbstractTableGateway::class, 'getLastInsertValue')]
 #[CoversMethod(AbstractTableGateway::class, '__get')]
+#[CoversMethod(AbstractTableGateway::class, '__set')]
+#[CoversMethod(AbstractTableGateway::class, '__call')]
 #[CoversMethod(AbstractTableGateway::class, '__clone')]
+#[CoversMethod(AbstractTableGateway::class, 'isInitialized')]
+#[CoversMethod(AbstractTableGateway::class, 'getColumns')]
+#[CoversMethod(AbstractTableGateway::class, 'getFeatureSet')]
+#[CoversMethod(AbstractTableGateway::class, 'initialize')]
 final class AbstractTableGatewayTest extends TestCase
 {
     protected MockObject&Adapter $mockAdapter;

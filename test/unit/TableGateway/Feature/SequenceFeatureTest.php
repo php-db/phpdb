@@ -231,4 +231,41 @@ final class SequenceFeatureTest extends TestCase
 
         $this->feature->lastSequenceId();
     }
+
+    public function testPostInsertDoesNotSetLastInsertValueWhenSequenceValueIsNull(): void
+    {
+        $tableGateway = $this->createTableGatewayWithPlatform('PostgreSQL');
+        $this->feature->setTableGateway($tableGateway);
+
+        // Set initial lastInsertValue via reflection to verify it doesn't change
+        $lastInsertValueProp = new ReflectionProperty(AbstractTableGateway::class, 'lastInsertValue');
+        $lastInsertValueProp->setValue($tableGateway, 999);
+
+        $statement = $this->createMock(StatementInterface::class);
+        $result = $this->createMock(ResultInterface::class);
+
+        // Call postInsert without calling preInsert first, so sequenceValue is null
+        $this->feature->postInsert($statement, $result);
+
+        // Verify lastInsertValue was NOT changed (still 999)
+        self::assertEquals(999, $lastInsertValueProp->getValue($tableGateway));
+    }
+
+    public function testPreInsertWithPrimaryKeyColumnButNullValue(): void
+    {
+        $tableGateway = $this->createTableGatewayWithPlatform('PostgreSQL');
+        $this->feature->setTableGateway($tableGateway);
+
+        $insert = new Insert('table');
+        $insert->columns(['id', 'name']);
+        $insert->values([null, 'test']); // Primary key exists but is null
+
+        $result = $this->feature->preInsert($insert);
+
+        self::assertSame($insert, $result);
+
+        // Verify sequenceValue was set to null from the existing value
+        $sequenceValueProp = new ReflectionProperty(SequenceFeature::class, 'sequenceValue');
+        self::assertNull($sequenceValueProp->getValue($this->feature));
+    }
 }
