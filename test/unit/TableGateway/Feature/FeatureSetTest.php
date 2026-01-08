@@ -4,16 +4,14 @@ declare(strict_types=1);
 
 namespace PhpDbTest\TableGateway\Feature;
 
-use PhpDb\Adapter\Adapter;
 use PhpDb\Adapter\AdapterInterface;
 use PhpDb\Adapter\Driver\DriverInterface;
-use PhpDb\Adapter\Driver\Pgsql\Result;
 use PhpDb\Adapter\Driver\StatementInterface;
-use PhpDb\Adapter\Platform\Postgresql;
 use PhpDb\Adapter\Platform\Sql92;
 use PhpDb\Metadata\MetadataInterface;
 use PhpDb\Metadata\Object\ConstraintObject;
 use PhpDb\TableGateway\AbstractTableGateway;
+use PhpDb\TableGateway\Feature\AbstractFeature;
 use PhpDb\TableGateway\Feature\FeatureSet;
 use PhpDb\TableGateway\Feature\MasterSlaveFeature;
 use PhpDb\TableGateway\Feature\MetadataFeature;
@@ -24,7 +22,6 @@ use PHPUnit\Framework\Attributes\IgnoreDeprecations;
 use PHPUnit\Framework\Attributes\RequiresPhp;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
-use ReflectionClass;
 
 #[IgnoreDeprecations]
 #[RequiresPhp('<= 8.6')]
@@ -137,7 +134,7 @@ class FeatureSetTest extends TestCase
     public function testCallMagicCallSucceedsForValidMethodOfAddedFeature(): void
     {
         // Create a custom feature with a simple method that can be called via magic
-        $feature = new class extends \PhpDb\TableGateway\Feature\AbstractFeature {
+        $feature = new class extends AbstractFeature {
             public function customMethod(array $args): string
             {
                 return 'result: ' . ($args[0] ?? 'default');
@@ -155,7 +152,7 @@ class FeatureSetTest extends TestCase
 
     public function testConstructorWithFeatures(): void
     {
-        $feature = new SequenceFeature('id', 'table_sequence');
+        $feature    = new SequenceFeature('id', 'table_sequence');
         $featureSet = new FeatureSet([$feature]);
 
         self::assertSame($feature, $featureSet->getFeatureByClassName(SequenceFeature::class));
@@ -167,7 +164,7 @@ class FeatureSetTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $feature = new SequenceFeature('id', 'table_sequence');
+        $feature    = new SequenceFeature('id', 'table_sequence');
         $featureSet = new FeatureSet([$feature]);
 
         $result = $featureSet->setTableGateway($tableGatewayMock);
@@ -190,7 +187,7 @@ class FeatureSetTest extends TestCase
         $feature2 = new SequenceFeature('id', 'seq2');
 
         $featureSet = new FeatureSet();
-        $result = $featureSet->addFeatures([$feature1, $feature2]);
+        $result     = $featureSet->addFeatures([$feature1, $feature2]);
 
         self::assertSame($featureSet, $result);
     }
@@ -216,7 +213,7 @@ class FeatureSetTest extends TestCase
 
     public function testApplySkipsFeatureWithoutMethod(): void
     {
-        $feature = new SequenceFeature('id', 'table_sequence');
+        $feature    = new SequenceFeature('id', 'table_sequence');
         $featureSet = new FeatureSet([$feature]);
 
         // 'nonExistentMethod' doesn't exist on SequenceFeature
@@ -262,7 +259,7 @@ class FeatureSetTest extends TestCase
 
     public function testApplyHaltsWhenFeatureReturnsHalt(): void
     {
-        $feature1 = new class extends \PhpDb\TableGateway\Feature\AbstractFeature {
+        $feature1 = new class extends AbstractFeature {
             public bool $called = false;
             public function testMethod(): string
             {
@@ -271,7 +268,7 @@ class FeatureSetTest extends TestCase
             }
         };
 
-        $feature2 = new class extends \PhpDb\TableGateway\Feature\AbstractFeature {
+        $feature2 = new class extends AbstractFeature {
             public bool $called = false;
             public function testMethod(): void
             {
@@ -290,7 +287,7 @@ class FeatureSetTest extends TestCase
 
     public function testApplyCallsAllFeaturesWhenNoHalt(): void
     {
-        $feature1 = new class extends \PhpDb\TableGateway\Feature\AbstractFeature {
+        $feature1 = new class extends AbstractFeature {
             public bool $called = false;
             public function testMethod(): void
             {
@@ -298,7 +295,7 @@ class FeatureSetTest extends TestCase
             }
         };
 
-        $feature2 = new class extends \PhpDb\TableGateway\Feature\AbstractFeature {
+        $feature2 = new class extends AbstractFeature {
             public bool $called = false;
             public function testMethod(): void
             {
@@ -316,8 +313,8 @@ class FeatureSetTest extends TestCase
 
     public function testApplyPassesArgumentsToFeatures(): void
     {
-        $feature = new class extends \PhpDb\TableGateway\Feature\AbstractFeature {
-            public mixed $receivedArg = null;
+        $feature = new class extends AbstractFeature {
+            public mixed $receivedArg;
             public function testMethod(string $arg): void
             {
                 $this->receivedArg = $arg;

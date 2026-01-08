@@ -12,7 +12,9 @@ use PhpDb\Adapter\Driver\ResultInterface;
 use PhpDb\Adapter\Driver\StatementInterface;
 use PhpDb\Adapter\Platform\PlatformInterface;
 use PhpDb\RowGateway\AbstractRowGateway;
+use PhpDb\RowGateway\Exception\InvalidArgumentException;
 use PhpDb\RowGateway\Exception\RuntimeException;
+use PhpDb\RowGateway\Feature\FeatureSet;
 use PhpDb\RowGateway\RowGateway;
 use PhpDb\Sql\Select;
 use PhpDb\Sql\Sql;
@@ -324,9 +326,11 @@ final class AbstractRowGatewayTest extends TestCase
         self::assertTrue($this->rowGateway->rowExistsInDatabase());
     }
 
+    // @codingStandardsIgnoreStart
     public function test__getThrowsExceptionForInvalidColumn(): void
     {
-        $this->expectException(\PhpDb\RowGateway\Exception\InvalidArgumentException::class);
+        // @codingStandardsIgnoreEnd
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Not a valid column in this row');
 
         // Access a column that doesn't exist
@@ -426,7 +430,7 @@ final class AbstractRowGatewayTest extends TestCase
         $rowGateway->populate(['id' => 1, 'name' => 'test'], true);
 
         // Verify featureSet was created
-        self::assertInstanceOf(\PhpDb\RowGateway\Feature\FeatureSet::class, $featureSetProp->getValue($rowGateway));
+        self::assertInstanceOf(FeatureSet::class, $featureSetProp->getValue($rowGateway));
     }
 
     /**

@@ -19,6 +19,9 @@ use PhpDb\Sql\Insert;
 use PhpDb\Sql\Select;
 use PhpDb\Sql\Update;
 use PhpDb\TableGateway\AbstractTableGateway;
+use PhpDb\TableGateway\Exception\InvalidArgumentException;
+use PhpDb\TableGateway\Exception\RuntimeException;
+use PhpDb\TableGateway\Feature\AbstractFeature;
 use PhpDb\TableGateway\Feature\FeatureSet;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\IgnoreDeprecations;
@@ -420,10 +423,10 @@ final class AbstractTableGatewayTest extends TestCase
             ->getMock();
 
         $tgReflection = new ReflectionClass(AbstractTableGateway::class);
-        $tableProp = $tgReflection->getProperty('table');
+        $tableProp    = $tgReflection->getProperty('table');
         $tableProp->setValue($stub, 'foo');
 
-        $this->expectException(\PhpDb\TableGateway\Exception\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('This table does not have an Adapter setup');
 
         $stub->initialize();
@@ -436,10 +439,10 @@ final class AbstractTableGatewayTest extends TestCase
             ->getMock();
 
         $tgReflection = new ReflectionClass(AbstractTableGateway::class);
-        $adapterProp = $tgReflection->getProperty('adapter');
+        $adapterProp  = $tgReflection->getProperty('adapter');
         $adapterProp->setValue($stub, $this->mockAdapter);
 
-        $this->expectException(\PhpDb\TableGateway\Exception\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('This table object does not have a valid table set.');
 
         $stub->initialize();
@@ -448,7 +451,7 @@ final class AbstractTableGatewayTest extends TestCase
     public function testGetColumns(): void
     {
         $tgReflection = new ReflectionClass(AbstractTableGateway::class);
-        $columnsProp = $tgReflection->getProperty('columns');
+        $columnsProp  = $tgReflection->getProperty('columns');
         $columnsProp->setValue($this->table, ['id', 'name', 'email']);
 
         self::assertEquals(['id', 'name', 'email'], $this->table->getColumns());
@@ -470,7 +473,7 @@ final class AbstractTableGatewayTest extends TestCase
             ]);
 
         $closureCalled = false;
-        $result = $this->table->select(function ($select) use (&$closureCalled) {
+        $result        = $this->table->select(function ($select) use (&$closureCalled) {
             $closureCalled = true;
             self::assertInstanceOf(Select::class, $select);
         });
@@ -523,7 +526,7 @@ final class AbstractTableGatewayTest extends TestCase
         // The closure receives the Delete object created by $this->sql->delete()
         // We verify that the closure is called with a Delete instance
         $closureCalled = false;
-        $affectedRows = $this->table->delete(function ($delete) use (&$closureCalled) {
+        $affectedRows  = $this->table->delete(function ($delete) use (&$closureCalled) {
             $closureCalled = true;
             self::assertInstanceOf(Delete::class, $delete);
         });
@@ -532,42 +535,52 @@ final class AbstractTableGatewayTest extends TestCase
         self::assertEquals(5, $affectedRows);
     }
 
+    // @codingStandardsIgnoreStart
     public function test__getTable(): void
     {
+        // @codingStandardsIgnoreEnd
         self::assertEquals('foo', $this->table->table);
     }
 
+    // @codingStandardsIgnoreStart
     public function test__getThrowsExceptionForInvalidProperty(): void
     {
-        $this->expectException(\PhpDb\TableGateway\Exception\InvalidArgumentException::class);
+        // @codingStandardsIgnoreEnd
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid magic property access');
 
         /** @phpstan-ignore expr.resultUnused */
         $this->table->invalidProperty;
     }
 
+    // @codingStandardsIgnoreStart
     public function test__setThrowsExceptionForInvalidProperty(): void
     {
-        $this->expectException(\PhpDb\TableGateway\Exception\InvalidArgumentException::class);
+        // @codingStandardsIgnoreEnd
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid magic property access');
 
         $this->table->invalidProperty = 'value';
     }
 
+    // @codingStandardsIgnoreStart
     public function test__callThrowsExceptionForInvalidMethod(): void
     {
-        $this->expectException(\PhpDb\TableGateway\Exception\InvalidArgumentException::class);
+        // @codingStandardsIgnoreEnd
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid method (invalidMethod) called');
 
         $this->table->invalidMethod();
     }
 
+    // @codingStandardsIgnoreStart
     public function test__cloneWithTableIdentifier(): void
     {
+        // @codingStandardsIgnoreEnd
         $tableIdentifier = new Sql\TableIdentifier('bar', 'schema');
 
         $tgReflection = new ReflectionClass(AbstractTableGateway::class);
-        $tableProp = $tgReflection->getProperty('table');
+        $tableProp    = $tgReflection->getProperty('table');
         $tableProp->setValue($this->table, $tableIdentifier);
 
         $cloned = clone $this->table;
@@ -577,13 +590,15 @@ final class AbstractTableGatewayTest extends TestCase
         self::assertEquals($tableIdentifier->getTable(), $cloned->getTable()->getTable());
     }
 
+    // @codingStandardsIgnoreStart
     public function test__cloneWithAliasedTableIdentifier(): void
     {
+        // @codingStandardsIgnoreEnd
         $tableIdentifier = new Sql\TableIdentifier('bar', 'schema');
-        $aliasedTable = ['alias' => $tableIdentifier];
+        $aliasedTable    = ['alias' => $tableIdentifier];
 
         $tgReflection = new ReflectionClass(AbstractTableGateway::class);
-        $tableProp = $tgReflection->getProperty('table');
+        $tableProp    = $tgReflection->getProperty('table');
         $tableProp->setValue($this->table, $aliasedTable);
 
         $cloned = clone $this->table;
@@ -605,11 +620,11 @@ final class AbstractTableGatewayTest extends TestCase
         $select->expects($this->any())
             ->method('getRawState')
             ->willReturn([
-                'table' => ['alias' => 'bar'],
+                'table'   => ['alias' => 'bar'],
                 'columns' => [Select::SQL_STAR],
             ]);
 
-        $this->expectException(\PhpDb\TableGateway\Exception\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('The table name of the provided Select object must match that of the table');
 
         $this->table->selectWith($select);
@@ -620,7 +635,7 @@ final class AbstractTableGatewayTest extends TestCase
         $insert = new Insert('bar');
         $insert->values(['name' => 'test']);
 
-        $this->expectException(\PhpDb\TableGateway\Exception\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('The table name of the provided Insert object must match that of the table');
 
         $this->table->insertWith($insert);
@@ -631,7 +646,7 @@ final class AbstractTableGatewayTest extends TestCase
         $update = new Update('bar');
         $update->set(['name' => 'test']);
 
-        $this->expectException(\PhpDb\TableGateway\Exception\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('The table name of the provided Update object must match that of the table');
 
         $this->table->updateWith($update);
@@ -642,7 +657,7 @@ final class AbstractTableGatewayTest extends TestCase
         $delete = new Delete('bar');
         $delete->where(['id' => 1]);
 
-        $this->expectException(\PhpDb\TableGateway\Exception\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('The table name of the provided Delete object must match that of the table');
 
         $this->table->deleteWith($delete);
@@ -652,7 +667,7 @@ final class AbstractTableGatewayTest extends TestCase
     {
         // Set up columns on the table
         $tgReflection = new ReflectionClass(AbstractTableGateway::class);
-        $columnsProp = $tgReflection->getProperty('columns');
+        $columnsProp  = $tgReflection->getProperty('columns');
         $columnsProp->setValue($this->table, ['id', 'name', 'email']);
 
         $select = $this->getMockBuilder(Select::class)
@@ -663,7 +678,7 @@ final class AbstractTableGatewayTest extends TestCase
         $select->expects($this->any())
             ->method('getRawState')
             ->willReturn([
-                'table' => 'foo',
+                'table'   => 'foo',
                 'columns' => [Select::SQL_STAR],
             ]);
 
@@ -674,20 +689,26 @@ final class AbstractTableGatewayTest extends TestCase
         $this->table->selectWith($select);
     }
 
+    // @codingStandardsIgnoreStart
     public function test__getLastInsertValue(): void
     {
+        // @codingStandardsIgnoreEnd
         self::assertNull($this->table->lastInsertValue);
     }
 
+    // @codingStandardsIgnoreStart
     public function test__getAdapter(): void
     {
+        // @codingStandardsIgnoreEnd
         self::assertSame($this->mockAdapter, $this->table->adapter);
     }
 
+    // @codingStandardsIgnoreStart
     public function test__getWithFeatureSetMagicGet(): void
     {
+        // @codingStandardsIgnoreEnd
         // Create a custom feature that can handle magic get
-        $feature = new class extends \PhpDb\TableGateway\Feature\AbstractFeature {
+        $feature = new class extends AbstractFeature {
             public function getMagicMethodSpecifications(): array
             {
                 return ['get' => ['customProperty']];
@@ -695,7 +716,7 @@ final class AbstractTableGatewayTest extends TestCase
         };
 
         // Create a FeatureSet mock that returns true for canCallMagicGet
-        $featureSet = $this->getMockBuilder(\PhpDb\TableGateway\Feature\FeatureSet::class)
+        $featureSet = $this->getMockBuilder(FeatureSet::class)
             ->onlyMethods(['canCallMagicGet', 'callMagicGet'])
             ->getMock();
         $featureSet->expects($this->once())
@@ -707,7 +728,7 @@ final class AbstractTableGatewayTest extends TestCase
             ->with('customProperty')
             ->willReturn('customValue');
 
-        $tgReflection = new ReflectionClass(AbstractTableGateway::class);
+        $tgReflection   = new ReflectionClass(AbstractTableGateway::class);
         $featureSetProp = $tgReflection->getProperty('featureSet');
         $featureSetProp->setValue($this->table, $featureSet);
 
@@ -716,10 +737,12 @@ final class AbstractTableGatewayTest extends TestCase
         self::assertEquals('customValue', $result);
     }
 
+    // @codingStandardsIgnoreStart
     public function test__setWithFeatureSetMagicSet(): void
     {
+        // @codingStandardsIgnoreEnd
         // Create a FeatureSet mock that returns true for canCallMagicSet
-        $featureSet = $this->getMockBuilder(\PhpDb\TableGateway\Feature\FeatureSet::class)
+        $featureSet = $this->getMockBuilder(FeatureSet::class)
             ->onlyMethods(['canCallMagicSet', 'callMagicSet'])
             ->getMock();
         $featureSet->expects($this->once())
@@ -730,17 +753,19 @@ final class AbstractTableGatewayTest extends TestCase
             ->method('callMagicSet')
             ->with('customProperty', 'customValue');
 
-        $tgReflection = new ReflectionClass(AbstractTableGateway::class);
+        $tgReflection   = new ReflectionClass(AbstractTableGateway::class);
         $featureSetProp = $tgReflection->getProperty('featureSet');
         $featureSetProp->setValue($this->table, $featureSet);
 
         $this->table->customProperty = 'customValue';
     }
 
+    // @codingStandardsIgnoreStart
     public function test__callWithFeatureSetMagicCall(): void
     {
+        // @codingStandardsIgnoreEnd
         // Create a FeatureSet mock that returns true for canCallMagicCall
-        $featureSet = $this->getMockBuilder(\PhpDb\TableGateway\Feature\FeatureSet::class)
+        $featureSet = $this->getMockBuilder(FeatureSet::class)
             ->onlyMethods(['canCallMagicCall', 'callMagicCall'])
             ->getMock();
         $featureSet->expects($this->once())
@@ -752,7 +777,7 @@ final class AbstractTableGatewayTest extends TestCase
             ->with('customMethod', ['arg1', 'arg2'])
             ->willReturn('customResult');
 
-        $tgReflection = new ReflectionClass(AbstractTableGateway::class);
+        $tgReflection   = new ReflectionClass(AbstractTableGateway::class);
         $featureSetProp = $tgReflection->getProperty('featureSet');
         $featureSetProp->setValue($this->table, $featureSet);
 
@@ -760,5 +785,4 @@ final class AbstractTableGatewayTest extends TestCase
 
         self::assertEquals('customResult', $result);
     }
-
 }

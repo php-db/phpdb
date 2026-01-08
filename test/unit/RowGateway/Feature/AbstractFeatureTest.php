@@ -9,6 +9,7 @@ use PhpDb\RowGateway\Exception\RuntimeException;
 use PhpDb\RowGateway\Feature\AbstractFeature;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use ReflectionProperty;
 
 class AbstractFeatureTest extends TestCase
 {
@@ -41,8 +42,8 @@ class AbstractFeatureTest extends TestCase
         $this->feature->setRowGateway($rowGateway);
 
         // Use reflection to verify the rowGateway was set
-        $reflection = new \ReflectionProperty(AbstractFeature::class, 'rowGateway');
-        $value = $reflection->getValue($this->feature);
+        $reflection = new ReflectionProperty(AbstractFeature::class, 'rowGateway');
+        $value      = $reflection->getValue($this->feature);
 
         self::assertSame($rowGateway, $value);
     }

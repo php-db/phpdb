@@ -7,7 +7,6 @@ namespace PhpDbTest\TableGateway\Feature;
 use PhpDb\Adapter\AdapterInterface;
 use PhpDb\ResultSet\ResultSet;
 use PhpDb\ResultSet\ResultSetInterface;
-use PhpDb\RowGateway\RowGateway;
 use PhpDb\RowGateway\RowGatewayInterface;
 use PhpDb\TableGateway\AbstractTableGateway;
 use PhpDb\TableGateway\Exception\RuntimeException;
@@ -66,7 +65,7 @@ class RowGatewayFeatureTest extends TestCase
 
     public function testPostInitializeThrowsExceptionForNonResultSet(): void
     {
-        $resultSet = $this->createMock(ResultSetInterface::class);
+        $resultSet    = $this->createMock(ResultSetInterface::class);
         $tableGateway = $this->createTableGatewayMock($resultSet);
 
         $feature = new RowGatewayFeature('id');
@@ -143,7 +142,7 @@ class RowGatewayFeatureTest extends TestCase
 
         // Use reflection to check the constructorArguments property
         $property = new ReflectionProperty(RowGatewayFeature::class, 'constructorArguments');
-        $args = $property->getValue($feature);
+        $args     = $property->getValue($feature);
 
         self::assertEquals(['id'], $args);
     }
@@ -157,7 +156,7 @@ class RowGatewayFeatureTest extends TestCase
 
         // Use reflection to check the constructorArguments property
         $property = new ReflectionProperty(RowGatewayFeature::class, 'constructorArguments');
-        $args = $property->getValue($feature);
+        $args     = $property->getValue($feature);
 
         self::assertSame($rowGateway, $args[0]);
     }
@@ -168,7 +167,7 @@ class RowGatewayFeatureTest extends TestCase
 
         // Use reflection to check the constructorArguments property
         $property = new ReflectionProperty(RowGatewayFeature::class, 'constructorArguments');
-        $args = $property->getValue($feature);
+        $args     = $property->getValue($feature);
 
         self::assertEquals([], $args);
     }

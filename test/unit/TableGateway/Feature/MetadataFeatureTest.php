@@ -8,7 +8,9 @@ use PhpDb\Metadata\MetadataInterface;
 use PhpDb\Metadata\Object\ConstraintObject;
 use PhpDb\Metadata\Object\TableObject;
 use PhpDb\Metadata\Object\ViewObject;
+use PhpDb\Sql\TableIdentifier;
 use PhpDb\TableGateway\AbstractTableGateway;
+use PhpDb\TableGateway\Exception\RuntimeException;
 use PhpDb\TableGateway\Feature\MetadataFeature;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\IgnoreDeprecations;
@@ -79,7 +81,7 @@ class MetadataFeatureTest extends TestCase
         $feature->setTableGateway($tableGatewayMock);
         $feature->postInitialize();
 
-        $r = new ReflectionProperty(MetadataFeature::class, 'sharedData');
+        $r          = new ReflectionProperty(MetadataFeature::class, 'sharedData');
         $sharedData = $r->getValue($feature);
 
         self::assertIsArray($sharedData);
@@ -119,7 +121,7 @@ class MetadataFeatureTest extends TestCase
         $feature->setTableGateway($tableGatewayMock);
         $feature->postInitialize();
 
-        $r = new ReflectionProperty(MetadataFeature::class, 'sharedData');
+        $r          = new ReflectionProperty(MetadataFeature::class, 'sharedData');
         $sharedData = $r->getValue($feature);
 
         self::assertIsArray($sharedData);
@@ -181,7 +183,7 @@ class MetadataFeatureTest extends TestCase
         $feature = new MetadataFeature($metadataMock);
         $feature->setTableGateway($tableGatewayMock);
 
-        $this->expectException(\PhpDb\TableGateway\Exception\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('A primary key for this column could not be found in the metadata.');
 
         $feature->postInitialize();
@@ -197,8 +199,8 @@ class MetadataFeatureTest extends TestCase
         $tableGatewayMock = $this->getMockBuilder(AbstractTableGateway::class)->onlyMethods([])->getMock();
 
         // Set the table property as a TableIdentifier
-        $tableIdentifier = new \PhpDb\Sql\TableIdentifier('foo', 'myschema');
-        $tableProperty = new ReflectionProperty(AbstractTableGateway::class, 'table');
+        $tableIdentifier = new TableIdentifier('foo', 'myschema');
+        $tableProperty   = new ReflectionProperty(AbstractTableGateway::class, 'table');
         $tableProperty->setValue($tableGatewayMock, $tableIdentifier);
 
         $metadataMock = $this->getMockBuilder(MetadataInterface::class)->getMock();
@@ -224,7 +226,7 @@ class MetadataFeatureTest extends TestCase
         $feature->setTableGateway($tableGatewayMock);
         $feature->postInitialize();
 
-        $r = new ReflectionProperty(MetadataFeature::class, 'sharedData');
+        $r          = new ReflectionProperty(MetadataFeature::class, 'sharedData');
         $sharedData = $r->getValue($feature);
 
         self::assertSame('id', $sharedData['metadata']['primaryKey']);
@@ -262,7 +264,7 @@ class MetadataFeatureTest extends TestCase
         $feature->setTableGateway($tableGatewayMock);
         $feature->postInitialize();
 
-        $r = new ReflectionProperty(MetadataFeature::class, 'sharedData');
+        $r          = new ReflectionProperty(MetadataFeature::class, 'sharedData');
         $sharedData = $r->getValue($feature);
 
         self::assertSame('id', $sharedData['metadata']['primaryKey']);
@@ -271,9 +273,9 @@ class MetadataFeatureTest extends TestCase
     public function testConstructorSetsInitialSharedData(): void
     {
         $metadataMock = $this->getMockBuilder(MetadataInterface::class)->getMock();
-        $feature = new MetadataFeature($metadataMock);
+        $feature      = new MetadataFeature($metadataMock);
 
-        $r = new ReflectionProperty(MetadataFeature::class, 'sharedData');
+        $r          = new ReflectionProperty(MetadataFeature::class, 'sharedData');
         $sharedData = $r->getValue($feature);
 
         self::assertIsArray($sharedData);

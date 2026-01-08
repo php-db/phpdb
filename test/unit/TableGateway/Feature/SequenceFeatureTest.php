@@ -38,8 +38,10 @@ final class SequenceFeatureTest extends TestCase
         $this->feature = new SequenceFeature($this->primaryKeyField, self::$sequenceName);
     }
 
-    private function createTableGatewayWithPlatform(string $platformName, int $sequenceValue = 2): AbstractTableGateway&MockObject
-    {
+    private function createTableGatewayWithPlatform(
+        string $platformName,
+        int $sequenceValue = 2
+    ): AbstractTableGateway&MockObject {
         $platform = $this->createMock(PlatformInterface::class);
         $platform->expects($this->any())
             ->method('getName')
@@ -182,7 +184,7 @@ final class SequenceFeatureTest extends TestCase
         $this->feature->preInsert($insert);
 
         $statement = $this->createMock(StatementInterface::class);
-        $result = $this->createMock(ResultInterface::class);
+        $result    = $this->createMock(ResultInterface::class);
 
         $this->feature->postInsert($statement, $result);
 
@@ -242,7 +244,7 @@ final class SequenceFeatureTest extends TestCase
         $lastInsertValueProp->setValue($tableGateway, 999);
 
         $statement = $this->createMock(StatementInterface::class);
-        $result = $this->createMock(ResultInterface::class);
+        $result    = $this->createMock(ResultInterface::class);
 
         // Call postInsert without calling preInsert first, so sequenceValue is null
         $this->feature->postInsert($statement, $result);

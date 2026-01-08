@@ -10,6 +10,7 @@ use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\Driver\ResultInterface;
 use PhpDb\Adapter\Driver\StatementInterface;
 use PhpDb\Adapter\Platform\Sql92;
+use PhpDb\Sql\Sql;
 use PhpDb\TableGateway\Feature\MasterSlaveFeature;
 use PhpDb\TableGateway\TableGateway;
 use PHPUnit\Framework\MockObject\Exception;
@@ -124,8 +125,8 @@ final class MasterSlaveFeatureTest extends TestCase
      */
     public function testConstructorWithSlaveSql(): void
     {
-        $slaveSql = new \PhpDb\Sql\Sql($this->mockSlaveAdapter, 'foo');
-        $feature = new MasterSlaveFeature($this->mockSlaveAdapter, $slaveSql);
+        $slaveSql = new Sql($this->mockSlaveAdapter, 'foo');
+        $feature  = new MasterSlaveFeature($this->mockSlaveAdapter, $slaveSql);
 
         self::assertSame($slaveSql, $feature->getSlaveSql());
     }
@@ -135,8 +136,8 @@ final class MasterSlaveFeatureTest extends TestCase
      */
     public function testPostInitializeWithProvidedSlaveSql(): void
     {
-        $slaveSql = new \PhpDb\Sql\Sql($this->mockSlaveAdapter, 'foo');
-        $feature = new MasterSlaveFeature($this->mockSlaveAdapter, $slaveSql);
+        $slaveSql = new Sql($this->mockSlaveAdapter, 'foo');
+        $feature  = new MasterSlaveFeature($this->mockSlaveAdapter, $slaveSql);
 
         $this->getMockBuilder(TableGateway::class)
             ->setConstructorArgs(['foo', $this->mockMasterAdapter, $feature])

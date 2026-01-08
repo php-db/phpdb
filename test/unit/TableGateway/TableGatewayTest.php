@@ -25,6 +25,8 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use ReflectionProperty;
+use TypeError;
 
 /**
  * @psalm-type AliasedTable = array{alias: string|TableIdentifier}
@@ -86,7 +88,7 @@ final class TableGatewayTest extends TestCase
         self::assertSame($sql, $table->getSql());
 
         // constructor expects exception - native type declaration throws TypeError for null table
-        $this->expectException(\TypeError::class);
+        $this->expectException(TypeError::class);
         /** @psalm-suppress NullArgument - Testing incorrect constructor */
         new TableGateway(
             null,
@@ -389,13 +391,13 @@ final class TableGatewayTest extends TestCase
         self::assertSame($feature2, $featureSet->getFeatureByClassName(Feature\GlobalAdapterFeature::class));
 
         // Clean up static adapter
-        $reflection = new \ReflectionProperty(Feature\GlobalAdapterFeature::class, 'staticAdapters');
+        $reflection = new ReflectionProperty(Feature\GlobalAdapterFeature::class, 'staticAdapters');
         $reflection->setValue(null, []);
     }
 
     public function testConstructorWithFeatureSet(): void
     {
-        $feature = new Feature\SequenceFeature('id', 'foo_seq');
+        $feature    = new Feature\SequenceFeature('id', 'foo_seq');
         $featureSet = new FeatureSet([$feature]);
 
         $table = new TableGateway('foo', $this->mockAdapter, $featureSet);

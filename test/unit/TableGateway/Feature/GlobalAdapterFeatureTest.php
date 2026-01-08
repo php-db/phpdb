@@ -8,6 +8,7 @@ use PhpDb\Adapter\AdapterInterface;
 use PhpDb\TableGateway\AbstractTableGateway;
 use PhpDb\TableGateway\Exception\RuntimeException;
 use PhpDb\TableGateway\Feature\GlobalAdapterFeature;
+use PhpDbTest\TableGateway\Feature\TestAsset\TestGlobalAdapterFeatureSubclass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
@@ -63,7 +64,7 @@ class GlobalAdapterFeatureTest extends TestCase
 
         // Verify adapter was set on table gateway
         $reflection = new ReflectionProperty(AbstractTableGateway::class, 'adapter');
-        $result = $reflection->getValue($tableGatewayMock);
+        $result     = $reflection->getValue($tableGatewayMock);
 
         self::assertSame($adapter, $result);
     }
@@ -83,7 +84,7 @@ class GlobalAdapterFeatureTest extends TestCase
 
     public function testSubclassCanSetAndGetOwnAdapter(): void
     {
-        $baseAdapter = $this->createMock(AdapterInterface::class);
+        $baseAdapter     = $this->createMock(AdapterInterface::class);
         $subclassAdapter = $this->createMock(AdapterInterface::class);
 
         // Set default adapter on base class
@@ -119,11 +120,4 @@ class GlobalAdapterFeatureTest extends TestCase
 
         TestGlobalAdapterFeatureSubclass::getStaticAdapter();
     }
-}
-
-/**
- * Test subclass to verify class-specific adapter behavior
- */
-class TestGlobalAdapterFeatureSubclass extends GlobalAdapterFeature
-{
 }

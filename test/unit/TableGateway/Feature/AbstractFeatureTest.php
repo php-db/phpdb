@@ -40,7 +40,7 @@ class AbstractFeatureTest extends TestCase
         $this->feature->setTableGateway($tableGateway);
 
         $reflection = new ReflectionProperty(AbstractFeature::class, 'tableGateway');
-        $value = $reflection->getValue($this->feature);
+        $value      = $reflection->getValue($this->feature);
 
         self::assertSame($tableGateway, $value);
     }

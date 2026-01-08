@@ -70,7 +70,7 @@ final class RowGatewayTest extends TestCase
         $rowGateway = new RowGateway('id', 'foo', $this->mockAdapter);
 
         $tableProp = new ReflectionProperty(RowGateway::class, 'table');
-        $sqlProp = new ReflectionProperty(RowGateway::class, 'sql');
+        $sqlProp   = new ReflectionProperty(RowGateway::class, 'sql');
 
         self::assertEquals('foo', $tableProp->getValue($rowGateway));
         self::assertInstanceOf(Sql::class, $sqlProp->getValue($rowGateway));
@@ -98,7 +98,7 @@ final class RowGatewayTest extends TestCase
     public function testConstructorWithTableIdentifier(): void
     {
         $tableIdentifier = new TableIdentifier('foo', 'schema');
-        $rowGateway = new RowGateway('id', $tableIdentifier, $this->mockAdapter);
+        $rowGateway      = new RowGateway('id', $tableIdentifier, $this->mockAdapter);
 
         $tableProp = new ReflectionProperty(RowGateway::class, 'table');
         self::assertSame($tableIdentifier, $tableProp->getValue($rowGateway));
@@ -106,10 +106,10 @@ final class RowGatewayTest extends TestCase
 
     public function testConstructorWithSqlObject(): void
     {
-        $sql = new Sql($this->mockAdapter, 'foo');
+        $sql        = new Sql($this->mockAdapter, 'foo');
         $rowGateway = new RowGateway('id', 'foo', $sql);
 
-        $sqlProp = new ReflectionProperty(RowGateway::class, 'sql');
+        $sqlProp   = new ReflectionProperty(RowGateway::class, 'sql');
         $tableProp = new ReflectionProperty(RowGateway::class, 'table');
 
         self::assertSame($sql, $sqlProp->getValue($rowGateway));

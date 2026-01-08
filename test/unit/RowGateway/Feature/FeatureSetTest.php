@@ -20,7 +20,7 @@ class FeatureSetTest extends TestCase
 
     public function testConstructorWithFeatures(): void
     {
-        $feature = $this->createMock(AbstractFeature::class);
+        $feature    = $this->createMock(AbstractFeature::class);
         $featureSet = new FeatureSet([$feature]);
         self::assertInstanceOf(FeatureSet::class, $featureSet);
     }
@@ -39,14 +39,14 @@ class FeatureSetTest extends TestCase
             ->method('setRowGateway');
 
         $featureSet = new FeatureSet([$feature]);
-        $result = $featureSet->setRowGateway($rowGateway);
+        $result     = $featureSet->setRowGateway($rowGateway);
 
         self::assertSame($featureSet, $result);
     }
 
     public function testGetFeatureByClassNameReturnsFeature(): void
     {
-        $feature = $this->createMock(AbstractFeature::class);
+        $feature    = $this->createMock(AbstractFeature::class);
         $featureSet = new FeatureSet([$feature]);
 
         $result = $featureSet->getFeatureByClassName(AbstractFeature::class);
@@ -69,7 +69,7 @@ class FeatureSetTest extends TestCase
         $feature2 = $this->createMock(AbstractFeature::class);
 
         $featureSet = new FeatureSet();
-        $result = $featureSet->addFeatures([$feature1, $feature2]);
+        $result     = $featureSet->addFeatures([$feature1, $feature2]);
 
         self::assertSame($featureSet, $result);
         self::assertSame($feature1, $featureSet->getFeatureByClassName(AbstractFeature::class));
@@ -80,7 +80,7 @@ class FeatureSetTest extends TestCase
         $feature = $this->createMock(AbstractFeature::class);
 
         $featureSet = new FeatureSet();
-        $result = $featureSet->addFeature($feature);
+        $result     = $featureSet->addFeature($feature);
 
         self::assertSame($featureSet, $result);
         self::assertSame($feature, $featureSet->getFeatureByClassName(AbstractFeature::class));

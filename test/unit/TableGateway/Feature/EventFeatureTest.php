@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace PhpDbTest\TableGateway\Feature;
 
 use Laminas\EventManager\EventManager;
+use Laminas\EventManager\EventManagerInterface;
 use Override;
 use PhpDb\Adapter\Driver\ResultInterface;
 use PhpDb\Adapter\Driver\StatementInterface;
@@ -289,7 +290,7 @@ final class EventFeatureTest extends TestCase
     {
         $feature = new EventFeature();
 
-        self::assertInstanceOf(\Laminas\EventManager\EventManagerInterface::class, $feature->getEventManager());
+        self::assertInstanceOf(EventManagerInterface::class, $feature->getEventManager());
         self::assertInstanceOf(EventFeature\TableGatewayEvent::class, $feature->getEvent());
     }
 
@@ -307,7 +308,7 @@ final class EventFeatureTest extends TestCase
         };
 
         $eventManager = new EventManager();
-        $feature = new EventFeature($eventManager);
+        $feature      = new EventFeature($eventManager);
         $feature->setTableGateway($customTableGateway);
 
         // The custom class name should be added as an identifier
@@ -318,6 +319,6 @@ final class EventFeatureTest extends TestCase
 
         // Should contain both TableGateway::class and the anonymous class name
         self::assertContains(TableGateway::class, $identifiers);
-        self::assertContains(get_class($customTableGateway), $identifiers);
+        self::assertContains($customTableGateway::class, $identifiers);
     }
 }

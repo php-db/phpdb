@@ -8,6 +8,7 @@ use PhpDb\TableGateway\AbstractTableGateway;
 use PhpDb\TableGateway\Feature\EventFeature\TableGatewayEvent;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 
 class TableGatewayEventTest extends TestCase
 {
@@ -51,7 +52,7 @@ class TableGatewayEventTest extends TestCase
 
     public function testSetParamsWithObject(): void
     {
-        $params = new \stdClass();
+        $params      = new stdClass();
         $params->key = 'value';
 
         $this->event->setParams($params);
