@@ -56,12 +56,14 @@ class MetadataFeatureTest extends TestCase
      */
     public function testPostInitializeRecordsPrimaryKeyColumnToSharedMetadata(): void
     {
-        $this->markTestSkipped('This should be an integration test');
-
         /** @var AbstractTableGateway&MockObject $tableGatewayMock */
-        /** @phpstan-ignore deadCode.unreachable */
         $tableGatewayMock = $this->getMockBuilder(AbstractTableGateway::class)->onlyMethods([])->getMock();
-        $metadataMock     = $this->getMockBuilder(MetadataInterface::class)->getMock();
+
+        // Set the table property on the mock using reflection
+        $tableProperty = new ReflectionProperty(AbstractTableGateway::class, 'table');
+        $tableProperty->setValue($tableGatewayMock, 'foo');
+
+        $metadataMock = $this->getMockBuilder(MetadataInterface::class)->getMock();
         $metadataMock->expects($this->any())->method('getColumnNames')->willReturn(['id', 'name']);
         $metadataMock->expects($this->any())
             ->method('getTable')
@@ -78,8 +80,6 @@ class MetadataFeatureTest extends TestCase
         $feature->postInitialize();
 
         $r = new ReflectionProperty(MetadataFeature::class, 'sharedData');
-        /** @noinspection PhpExpressionResultUnusedInspection */
-        $r->setAccessible(true);
         $sharedData = $r->getValue($feature);
 
         self::assertIsArray($sharedData);
@@ -96,12 +96,14 @@ class MetadataFeatureTest extends TestCase
      */
     public function testPostInitializeRecordsListOfColumnsInPrimaryKeyToSharedMetadata(): void
     {
-        $this->markTestSkipped('This should be an integration test');
-
         /** @var AbstractTableGateway&MockObject $tableGatewayMock */
-        /** @phpstan-ignore deadCode.unreachable */
         $tableGatewayMock = $this->getMockBuilder(AbstractTableGateway::class)->onlyMethods([])->getMock();
-        $metadataMock     = $this->getMockBuilder(MetadataInterface::class)->getMock();
+
+        // Set the table property on the mock using reflection
+        $tableProperty = new ReflectionProperty(AbstractTableGateway::class, 'table');
+        $tableProperty->setValue($tableGatewayMock, 'foo');
+
+        $metadataMock = $this->getMockBuilder(MetadataInterface::class)->getMock();
         $metadataMock->expects($this->any())->method('getColumnNames')->willReturn(['id', 'name']);
         $metadataMock->expects($this->any())
             ->method('getTable')
@@ -118,8 +120,6 @@ class MetadataFeatureTest extends TestCase
         $feature->postInitialize();
 
         $r = new ReflectionProperty(MetadataFeature::class, 'sharedData');
-        /** @noinspection PhpExpressionResultUnusedInspection */
-        $r->setAccessible(true);
         $sharedData = $r->getValue($feature);
 
         self::assertIsArray($sharedData);
@@ -154,5 +154,131 @@ class MetadataFeatureTest extends TestCase
         $feature = new MetadataFeature($metadataMock);
         $feature->setTableGateway($tableGatewayMock);
         $feature->postInitialize();
+    }
+
+    /**
+     * @throws Exception
+     * @throws \Exception
+     */
+    public function testPostInitializeThrowsExceptionWhenNoPrimaryKeyFound(): void
+    {
+        /** @var AbstractTableGateway&MockObject $tableGatewayMock */
+        $tableGatewayMock = $this->getMockBuilder(AbstractTableGateway::class)->onlyMethods([])->getMock();
+
+        // Set the table property on the mock using reflection
+        $tableProperty = new ReflectionProperty(AbstractTableGateway::class, 'table');
+        $tableProperty->setValue($tableGatewayMock, 'foo');
+
+        $metadataMock = $this->getMockBuilder(MetadataInterface::class)->getMock();
+        $metadataMock->expects($this->any())->method('getColumnNames')->willReturn(['id', 'name']);
+        $metadataMock->expects($this->any())
+            ->method('getTable')
+            ->willReturn(new TableObject('foo'));
+
+        // Return empty constraints - no PRIMARY KEY
+        $metadataMock->expects($this->any())->method('getConstraints')->willReturn([]);
+
+        $feature = new MetadataFeature($metadataMock);
+        $feature->setTableGateway($tableGatewayMock);
+
+        $this->expectException(\PhpDb\TableGateway\Exception\RuntimeException::class);
+        $this->expectExceptionMessage('A primary key for this column could not be found in the metadata.');
+
+        $feature->postInitialize();
+    }
+
+    /**
+     * @throws Exception
+     * @throws \Exception
+     */
+    public function testPostInitializeWithTableIdentifier(): void
+    {
+        /** @var AbstractTableGateway&MockObject $tableGatewayMock */
+        $tableGatewayMock = $this->getMockBuilder(AbstractTableGateway::class)->onlyMethods([])->getMock();
+
+        // Set the table property as a TableIdentifier
+        $tableIdentifier = new \PhpDb\Sql\TableIdentifier('foo', 'myschema');
+        $tableProperty = new ReflectionProperty(AbstractTableGateway::class, 'table');
+        $tableProperty->setValue($tableGatewayMock, $tableIdentifier);
+
+        $metadataMock = $this->getMockBuilder(MetadataInterface::class)->getMock();
+        $metadataMock->expects($this->any())
+            ->method('getColumnNames')
+            ->with('foo', 'myschema')
+            ->willReturn(['id', 'name']);
+        $metadataMock->expects($this->any())
+            ->method('getTable')
+            ->with('foo', 'myschema')
+            ->willReturn(new TableObject('foo'));
+
+        $constraintObject = new ConstraintObject('id_pk', 'foo');
+        $constraintObject->setColumns(['id']);
+        $constraintObject->setType('PRIMARY KEY');
+
+        $metadataMock->expects($this->any())
+            ->method('getConstraints')
+            ->with('foo', 'myschema')
+            ->willReturn([$constraintObject]);
+
+        $feature = new MetadataFeature($metadataMock);
+        $feature->setTableGateway($tableGatewayMock);
+        $feature->postInitialize();
+
+        $r = new ReflectionProperty(MetadataFeature::class, 'sharedData');
+        $sharedData = $r->getValue($feature);
+
+        self::assertSame('id', $sharedData['metadata']['primaryKey']);
+    }
+
+    /**
+     * @throws Exception
+     * @throws \Exception
+     */
+    public function testPostInitializeWithArrayTable(): void
+    {
+        /** @var AbstractTableGateway&MockObject $tableGatewayMock */
+        $tableGatewayMock = $this->getMockBuilder(AbstractTableGateway::class)->onlyMethods([])->getMock();
+
+        // Set the table property as an array (aliased table)
+        $tableProperty = new ReflectionProperty(AbstractTableGateway::class, 'table');
+        $tableProperty->setValue($tableGatewayMock, ['t' => 'foo']);
+
+        $metadataMock = $this->getMockBuilder(MetadataInterface::class)->getMock();
+        $metadataMock->expects($this->any())
+            ->method('getColumnNames')
+            ->with('foo', null)
+            ->willReturn(['id', 'name']);
+        $metadataMock->expects($this->any())
+            ->method('getTable')
+            ->willReturn(new TableObject('foo'));
+
+        $constraintObject = new ConstraintObject('id_pk', 'foo');
+        $constraintObject->setColumns(['id']);
+        $constraintObject->setType('PRIMARY KEY');
+
+        $metadataMock->expects($this->any())->method('getConstraints')->willReturn([$constraintObject]);
+
+        $feature = new MetadataFeature($metadataMock);
+        $feature->setTableGateway($tableGatewayMock);
+        $feature->postInitialize();
+
+        $r = new ReflectionProperty(MetadataFeature::class, 'sharedData');
+        $sharedData = $r->getValue($feature);
+
+        self::assertSame('id', $sharedData['metadata']['primaryKey']);
+    }
+
+    public function testConstructorSetsInitialSharedData(): void
+    {
+        $metadataMock = $this->getMockBuilder(MetadataInterface::class)->getMock();
+        $feature = new MetadataFeature($metadataMock);
+
+        $r = new ReflectionProperty(MetadataFeature::class, 'sharedData');
+        $sharedData = $r->getValue($feature);
+
+        self::assertIsArray($sharedData);
+        self::assertArrayHasKey('metadata', $sharedData);
+        self::assertNull($sharedData['metadata']['primaryKey']);
+        self::assertEquals([], $sharedData['metadata']['columns']);
     }
 }

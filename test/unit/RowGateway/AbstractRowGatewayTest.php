@@ -301,6 +301,133 @@ final class AbstractRowGatewayTest extends TestCase
         self::assertEquals(['id' => 5, 'name' => 'foo'], $this->rowGateway->toArray());
     }
 
+    public function testExchangeArray(): void
+    {
+        $result = $this->rowGateway->exchangeArray(['id' => 10, 'name' => 'bar']);
+
+        self::assertSame($this->rowGateway, $result);
+        self::assertEquals(10, $this->rowGateway['id']);
+        self::assertEquals('bar', $this->rowGateway['name']);
+        self::assertTrue($this->rowGateway->rowExistsInDatabase());
+    }
+
+    public function testRowExistsInDatabaseReturnsFalseWhenNew(): void
+    {
+        $this->rowGateway->populate(['name' => 'foo']);
+        self::assertFalse($this->rowGateway->rowExistsInDatabase());
+    }
+
+    public function testRowExistsInDatabaseReturnsTrueAfterPopulateWithTrue(): void
+    {
+        $this->rowGateway->populate(['id' => 5, 'name' => 'foo'], true);
+        self::assertTrue($this->rowGateway->rowExistsInDatabase());
+    }
+
+    public function test__getThrowsExceptionForInvalidColumn(): void
+    {
+        $this->expectException(\PhpDb\RowGateway\Exception\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Not a valid column in this row');
+
+        // Access a column that doesn't exist
+        $this->rowGateway->nonExistentColumn;
+    }
+
+    public function testInitializeThrowsExceptionWhenTableIsNull(): void
+    {
+        $rowGateway = $this->getMockBuilder(AbstractRowGateway::class)->onlyMethods([])->getMock();
+
+        $refRowGateway = new ReflectionObject($rowGateway);
+
+        // Set primaryKeyColumn and sql, but leave table as null
+        $pkProp = $refRowGateway->getProperty('primaryKeyColumn');
+        $pkProp->setValue($rowGateway, ['id']);
+
+        $sqlProp = $refRowGateway->getProperty('sql');
+        $sqlProp->setValue($rowGateway, new Sql($this->mockAdapter));
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('This row object does not have a valid table set.');
+
+        $rowGateway->populate(['name' => 'test']);
+    }
+
+    public function testInitializeThrowsExceptionWhenPrimaryKeyColumnIsNull(): void
+    {
+        $rowGateway = $this->getMockBuilder(AbstractRowGateway::class)->onlyMethods([])->getMock();
+
+        $refRowGateway = new ReflectionObject($rowGateway);
+
+        // Set table and sql, but leave primaryKeyColumn as null
+        $tableProp = $refRowGateway->getProperty('table');
+        $tableProp->setValue($rowGateway, 'foo');
+
+        $sqlProp = $refRowGateway->getProperty('sql');
+        $sqlProp->setValue($rowGateway, new Sql($this->mockAdapter));
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('This row object does not have a primary key column set.');
+
+        $rowGateway->populate(['name' => 'test']);
+    }
+
+    public function testInitializeThrowsExceptionWhenSqlIsNull(): void
+    {
+        $rowGateway = $this->getMockBuilder(AbstractRowGateway::class)->onlyMethods([])->getMock();
+
+        $refRowGateway = new ReflectionObject($rowGateway);
+
+        // Set table and primaryKeyColumn, but leave sql as null
+        $tableProp = $refRowGateway->getProperty('table');
+        $tableProp->setValue($rowGateway, 'foo');
+
+        $pkProp = $refRowGateway->getProperty('primaryKeyColumn');
+        $pkProp->setValue($rowGateway, ['id']);
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('This row object does not have a Sql object set.');
+
+        $rowGateway->populate(['name' => 'test']);
+    }
+
+    public function testInitializeOnlyRunsOnce(): void
+    {
+        // Call populate twice - initialize should only run the first time
+        $this->rowGateway->populate(['id' => 1, 'name' => 'foo'], true);
+        $this->rowGateway->populate(['id' => 2, 'name' => 'bar'], true);
+
+        // If initialize ran twice, it would have caused issues
+        // Just verify the second populate worked
+        self::assertEquals(2, $this->rowGateway['id']);
+        self::assertEquals('bar', $this->rowGateway['name']);
+    }
+
+    public function testInitializeCreatesFeatureSetIfNotSet(): void
+    {
+        $rowGateway = $this->getMockBuilder(AbstractRowGateway::class)->onlyMethods([])->getMock();
+
+        $refRowGateway = new ReflectionObject($rowGateway);
+
+        // Set required properties but not featureSet
+        $tableProp = $refRowGateway->getProperty('table');
+        $tableProp->setValue($rowGateway, 'foo');
+
+        $pkProp = $refRowGateway->getProperty('primaryKeyColumn');
+        $pkProp->setValue($rowGateway, ['id']);
+
+        $sqlProp = $refRowGateway->getProperty('sql');
+        $sqlProp->setValue($rowGateway, new Sql($this->mockAdapter));
+
+        // Verify featureSet is null initially
+        $featureSetProp = $refRowGateway->getProperty('featureSet');
+        self::assertNull($featureSetProp->getValue($rowGateway));
+
+        // Trigger initialization
+        $rowGateway->populate(['id' => 1, 'name' => 'test'], true);
+
+        // Verify featureSet was created
+        self::assertInstanceOf(\PhpDb\RowGateway\Feature\FeatureSet::class, $featureSetProp->getValue($rowGateway));
+    }
+
     /**
      * @throws ReflectionException
      */

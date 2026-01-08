@@ -587,4 +587,172 @@ final class AbstractTableGatewayTest extends TestCase
         // The TableIdentifier inside the array should be cloned
         self::assertNotSame($tableIdentifier, $clonedTable['alias']);
     }
+
+    public function testExecuteSelectThrowsExceptionWhenArrayTableDoesNotMatch(): void
+    {
+        $select = $this->getMockBuilder(Select::class)
+            ->onlyMethods(['getRawState'])
+            ->setConstructorArgs(['bar'])
+            ->getMock();
+
+        // With an array table that doesn't end with 'foo', exception should be thrown
+        $select->expects($this->any())
+            ->method('getRawState')
+            ->willReturn([
+                'table' => ['alias' => 'bar'],
+                'columns' => [Select::SQL_STAR],
+            ]);
+
+        $this->expectException(\PhpDb\TableGateway\Exception\RuntimeException::class);
+        $this->expectExceptionMessage('The table name of the provided Select object must match that of the table');
+
+        $this->table->selectWith($select);
+    }
+
+    public function testExecuteInsertThrowsExceptionWhenTableDoesNotMatch(): void
+    {
+        $insert = new Insert('bar');
+        $insert->values(['name' => 'test']);
+
+        $this->expectException(\PhpDb\TableGateway\Exception\RuntimeException::class);
+        $this->expectExceptionMessage('The table name of the provided Insert object must match that of the table');
+
+        $this->table->insertWith($insert);
+    }
+
+    public function testExecuteUpdateThrowsExceptionWhenTableDoesNotMatch(): void
+    {
+        $update = new Update('bar');
+        $update->set(['name' => 'test']);
+
+        $this->expectException(\PhpDb\TableGateway\Exception\RuntimeException::class);
+        $this->expectExceptionMessage('The table name of the provided Update object must match that of the table');
+
+        $this->table->updateWith($update);
+    }
+
+    public function testExecuteDeleteThrowsExceptionWhenTableDoesNotMatch(): void
+    {
+        $delete = new Delete('bar');
+        $delete->where(['id' => 1]);
+
+        $this->expectException(\PhpDb\TableGateway\Exception\RuntimeException::class);
+        $this->expectExceptionMessage('The table name of the provided Delete object must match that of the table');
+
+        $this->table->deleteWith($delete);
+    }
+
+    public function testSelectAppliesColumnsWhenStarSelected(): void
+    {
+        // Set up columns on the table
+        $tgReflection = new ReflectionClass(AbstractTableGateway::class);
+        $columnsProp = $tgReflection->getProperty('columns');
+        $columnsProp->setValue($this->table, ['id', 'name', 'email']);
+
+        $select = $this->getMockBuilder(Select::class)
+            ->onlyMethods(['getRawState', 'columns'])
+            ->setConstructorArgs(['foo'])
+            ->getMock();
+
+        $select->expects($this->any())
+            ->method('getRawState')
+            ->willReturn([
+                'table' => 'foo',
+                'columns' => [Select::SQL_STAR],
+            ]);
+
+        $select->expects($this->once())
+            ->method('columns')
+            ->with(['id', 'name', 'email']);
+
+        $this->table->selectWith($select);
+    }
+
+    public function test__getLastInsertValue(): void
+    {
+        self::assertNull($this->table->lastInsertValue);
+    }
+
+    public function test__getAdapter(): void
+    {
+        self::assertSame($this->mockAdapter, $this->table->adapter);
+    }
+
+    public function test__getWithFeatureSetMagicGet(): void
+    {
+        // Create a custom feature that can handle magic get
+        $feature = new class extends \PhpDb\TableGateway\Feature\AbstractFeature {
+            public function getMagicMethodSpecifications(): array
+            {
+                return ['get' => ['customProperty']];
+            }
+        };
+
+        // Create a FeatureSet mock that returns true for canCallMagicGet
+        $featureSet = $this->getMockBuilder(\PhpDb\TableGateway\Feature\FeatureSet::class)
+            ->onlyMethods(['canCallMagicGet', 'callMagicGet'])
+            ->getMock();
+        $featureSet->expects($this->once())
+            ->method('canCallMagicGet')
+            ->with('customProperty')
+            ->willReturn(true);
+        $featureSet->expects($this->once())
+            ->method('callMagicGet')
+            ->with('customProperty')
+            ->willReturn('customValue');
+
+        $tgReflection = new ReflectionClass(AbstractTableGateway::class);
+        $featureSetProp = $tgReflection->getProperty('featureSet');
+        $featureSetProp->setValue($this->table, $featureSet);
+
+        $result = $this->table->customProperty;
+
+        self::assertEquals('customValue', $result);
+    }
+
+    public function test__setWithFeatureSetMagicSet(): void
+    {
+        // Create a FeatureSet mock that returns true for canCallMagicSet
+        $featureSet = $this->getMockBuilder(\PhpDb\TableGateway\Feature\FeatureSet::class)
+            ->onlyMethods(['canCallMagicSet', 'callMagicSet'])
+            ->getMock();
+        $featureSet->expects($this->once())
+            ->method('canCallMagicSet')
+            ->with('customProperty')
+            ->willReturn(true);
+        $featureSet->expects($this->once())
+            ->method('callMagicSet')
+            ->with('customProperty', 'customValue');
+
+        $tgReflection = new ReflectionClass(AbstractTableGateway::class);
+        $featureSetProp = $tgReflection->getProperty('featureSet');
+        $featureSetProp->setValue($this->table, $featureSet);
+
+        $this->table->customProperty = 'customValue';
+    }
+
+    public function test__callWithFeatureSetMagicCall(): void
+    {
+        // Create a FeatureSet mock that returns true for canCallMagicCall
+        $featureSet = $this->getMockBuilder(\PhpDb\TableGateway\Feature\FeatureSet::class)
+            ->onlyMethods(['canCallMagicCall', 'callMagicCall'])
+            ->getMock();
+        $featureSet->expects($this->once())
+            ->method('canCallMagicCall')
+            ->with('customMethod')
+            ->willReturn(true);
+        $featureSet->expects($this->once())
+            ->method('callMagicCall')
+            ->with('customMethod', ['arg1', 'arg2'])
+            ->willReturn('customResult');
+
+        $tgReflection = new ReflectionClass(AbstractTableGateway::class);
+        $featureSetProp = $tgReflection->getProperty('featureSet');
+        $featureSetProp->setValue($this->table, $featureSet);
+
+        $result = $this->table->customMethod('arg1', 'arg2');
+
+        self::assertEquals('customResult', $result);
+    }
+
 }

@@ -28,6 +28,16 @@ use ReflectionClass;
 
 #[IgnoreDeprecations]
 #[RequiresPhp('<= 8.6')]
+#[CoversMethod(FeatureSet::class, '__construct')]
+#[CoversMethod(FeatureSet::class, 'setTableGateway')]
+#[CoversMethod(FeatureSet::class, 'getFeatureByClassName')]
+#[CoversMethod(FeatureSet::class, 'addFeatures')]
+#[CoversMethod(FeatureSet::class, 'addFeature')]
+#[CoversMethod(FeatureSet::class, 'apply')]
+#[CoversMethod(FeatureSet::class, 'canCallMagicGet')]
+#[CoversMethod(FeatureSet::class, 'callMagicGet')]
+#[CoversMethod(FeatureSet::class, 'canCallMagicSet')]
+#[CoversMethod(FeatureSet::class, 'callMagicSet')]
 #[CoversMethod(FeatureSet::class, 'canCallMagicCall')]
 #[CoversMethod(FeatureSet::class, 'callMagicCall')]
 class FeatureSetTest extends TestCase
@@ -126,50 +136,21 @@ class FeatureSetTest extends TestCase
 
     public function testCallMagicCallSucceedsForValidMethodOfAddedFeature(): void
     {
-        $this->markTestSkipped('This needs refactored to use a custom TestFeature and Sql92');
-        /** @phpstan-ignore deadCode.unreachable */
-        $sequenceName = 'table_sequence';
+        // Create a custom feature with a simple method that can be called via magic
+        $feature = new class extends \PhpDb\TableGateway\Feature\AbstractFeature {
+            public function customMethod(array $args): string
+            {
+                return 'result: ' . ($args[0] ?? 'default');
+            }
+        };
 
-        $platformMock = $this->getMockBuilder(Postgresql::class)->getMock();
-        $platformMock->expects($this->any())
-            ->method('getName')->willReturn('PostgreSQL');
-
-        $resultMock = $this->getMockBuilder(Result::class)->getMock();
-        $resultMock->expects($this->any())
-            ->method('current')
-            ->willReturn(['currval' => 1]);
-
-        $statementMock = $this->getMockBuilder(StatementInterface::class)->getMock();
-        $statementMock->expects($this->any())
-            ->method('prepare')
-            ->with('SELECT CURRVAL(\'' . $sequenceName . '\')');
-        $statementMock->expects($this->any())
-            ->method('execute')
-            ->willReturn($resultMock);
-
-        $adapterMock = $this->getMockBuilder(Adapter::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $adapterMock->expects($this->any())
-            ->method('getPlatform')->willReturn($platformMock);
-        $adapterMock->expects($this->any())
-            ->method('createStatement')->willReturn($statementMock);
-
-        $tableGatewayMock = $this->getMockBuilder(AbstractTableGateway::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $reflectionClass    = new ReflectionClass(AbstractTableGateway::class);
-        $reflectionProperty = $reflectionClass->getProperty('adapter');
-        /** @noinspection PhpExpressionResultUnusedInspection */
-        $reflectionProperty->setAccessible(true);
-        $reflectionProperty->setValue($tableGatewayMock, $adapterMock);
-
-        $feature = new SequenceFeature('id', 'table_sequence');
-        $feature->setTableGateway($tableGatewayMock);
         $featureSet = new FeatureSet();
         $featureSet->addFeature($feature);
-        self::assertEquals(1, $featureSet->callMagicCall('lastSequenceId', []));
+
+        // callMagicCall passes arguments as a single array parameter
+        $result = $featureSet->callMagicCall('customMethod', ['test_value']);
+
+        self::assertEquals('result: test_value', $result);
     }
 
     public function testConstructorWithFeatures(): void
@@ -277,5 +258,75 @@ class FeatureSetTest extends TestCase
         $featureSet = new FeatureSet();
 
         self::assertNull($featureSet->callMagicCall('nonExistentMethod', []));
+    }
+
+    public function testApplyHaltsWhenFeatureReturnsHalt(): void
+    {
+        $feature1 = new class extends \PhpDb\TableGateway\Feature\AbstractFeature {
+            public bool $called = false;
+            public function testMethod(): string
+            {
+                $this->called = true;
+                return FeatureSet::APPLY_HALT;
+            }
+        };
+
+        $feature2 = new class extends \PhpDb\TableGateway\Feature\AbstractFeature {
+            public bool $called = false;
+            public function testMethod(): void
+            {
+                $this->called = true;
+            }
+        };
+
+        $featureSet = new FeatureSet([$feature1, $feature2]);
+        $featureSet->apply('testMethod', []);
+
+        // First feature should be called
+        self::assertTrue($feature1->called);
+        // Second feature should NOT be called because first returned APPLY_HALT
+        self::assertFalse($feature2->called);
+    }
+
+    public function testApplyCallsAllFeaturesWhenNoHalt(): void
+    {
+        $feature1 = new class extends \PhpDb\TableGateway\Feature\AbstractFeature {
+            public bool $called = false;
+            public function testMethod(): void
+            {
+                $this->called = true;
+            }
+        };
+
+        $feature2 = new class extends \PhpDb\TableGateway\Feature\AbstractFeature {
+            public bool $called = false;
+            public function testMethod(): void
+            {
+                $this->called = true;
+            }
+        };
+
+        $featureSet = new FeatureSet([$feature1, $feature2]);
+        $featureSet->apply('testMethod', []);
+
+        // Both features should be called
+        self::assertTrue($feature1->called);
+        self::assertTrue($feature2->called);
+    }
+
+    public function testApplyPassesArgumentsToFeatures(): void
+    {
+        $feature = new class extends \PhpDb\TableGateway\Feature\AbstractFeature {
+            public mixed $receivedArg = null;
+            public function testMethod(string $arg): void
+            {
+                $this->receivedArg = $arg;
+            }
+        };
+
+        $featureSet = new FeatureSet([$feature]);
+        $featureSet->apply('testMethod', ['test value']);
+
+        self::assertEquals('test value', $feature->receivedArg);
     }
 }

@@ -136,4 +136,40 @@ class RowGatewayFeatureTest extends TestCase
 
         $feature->postInitialize();
     }
+
+    public function testConstructorStoresArguments(): void
+    {
+        $feature = new RowGatewayFeature('id');
+
+        // Use reflection to check the constructorArguments property
+        $property = new ReflectionProperty(RowGatewayFeature::class, 'constructorArguments');
+        $args = $property->getValue($feature);
+
+        self::assertEquals(['id'], $args);
+    }
+
+    public function testConstructorStoresRowGatewayInstance(): void
+    {
+        /** @var RowGatewayInterface&MockObject $rowGateway */
+        $rowGateway = $this->createMock(RowGatewayInterface::class);
+
+        $feature = new RowGatewayFeature($rowGateway);
+
+        // Use reflection to check the constructorArguments property
+        $property = new ReflectionProperty(RowGatewayFeature::class, 'constructorArguments');
+        $args = $property->getValue($feature);
+
+        self::assertSame($rowGateway, $args[0]);
+    }
+
+    public function testConstructorWithNoArguments(): void
+    {
+        $feature = new RowGatewayFeature();
+
+        // Use reflection to check the constructorArguments property
+        $property = new ReflectionProperty(RowGatewayFeature::class, 'constructorArguments');
+        $args = $property->getValue($feature);
+
+        self::assertEquals([], $args);
+    }
 }

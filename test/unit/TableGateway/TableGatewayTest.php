@@ -351,4 +351,64 @@ final class TableGatewayTest extends TestCase
             $state['table']
         );
     }
+
+    public function testConstructorThrowsExceptionWhenSqlTableDoesNotMatch(): void
+    {
+        $sql = new Sql($this->mockAdapter, 'bar');
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('The table inside the provided Sql object must match the table of this TableGateway');
+
+        new TableGateway('foo', $this->mockAdapter, null, null, $sql);
+    }
+
+    public function testConstructorWithSingleFeature(): void
+    {
+        $feature = new Feature\SequenceFeature('id', 'foo_seq');
+
+        $table = new TableGateway('foo', $this->mockAdapter, $feature);
+
+        $featureSet = $table->getFeatureSet();
+        self::assertInstanceOf(FeatureSet::class, $featureSet);
+        self::assertSame($feature, $featureSet->getFeatureByClassName(Feature\SequenceFeature::class));
+    }
+
+    public function testConstructorWithArrayOfFeatures(): void
+    {
+        $feature1 = new Feature\SequenceFeature('id', 'foo_seq');
+        $feature2 = new Feature\GlobalAdapterFeature();
+
+        // Set up global adapter for GlobalAdapterFeature
+        Feature\GlobalAdapterFeature::setStaticAdapter($this->mockAdapter);
+
+        $table = new TableGateway('foo', $this->mockAdapter, [$feature1, $feature2]);
+
+        $featureSet = $table->getFeatureSet();
+        self::assertInstanceOf(FeatureSet::class, $featureSet);
+        self::assertSame($feature1, $featureSet->getFeatureByClassName(Feature\SequenceFeature::class));
+        self::assertSame($feature2, $featureSet->getFeatureByClassName(Feature\GlobalAdapterFeature::class));
+
+        // Clean up static adapter
+        $reflection = new \ReflectionProperty(Feature\GlobalAdapterFeature::class, 'staticAdapters');
+        $reflection->setValue(null, []);
+    }
+
+    public function testConstructorWithFeatureSet(): void
+    {
+        $feature = new Feature\SequenceFeature('id', 'foo_seq');
+        $featureSet = new FeatureSet([$feature]);
+
+        $table = new TableGateway('foo', $this->mockAdapter, $featureSet);
+
+        self::assertSame($featureSet, $table->getFeatureSet());
+    }
+
+    public function testConstructorWithCustomResultSetPrototype(): void
+    {
+        $resultSet = new ResultSet();
+
+        $table = new TableGateway('foo', $this->mockAdapter, null, $resultSet);
+
+        self::assertSame($resultSet, $table->getResultSetPrototype());
+    }
 }
