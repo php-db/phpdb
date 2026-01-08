@@ -10,6 +10,7 @@ use PhpDb\Adapter\Driver\ConnectionInterface;
 use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\Driver\ResultInterface;
 use PhpDb\Adapter\Driver\StatementInterface;
+use PhpDb\Adapter\Platform\PlatformInterface;
 use PhpDb\ResultSet\ResultSet;
 use PhpDb\Sql\Delete;
 use PhpDb\Sql\Insert;
@@ -43,11 +44,12 @@ final class TableGatewayTest extends TestCase
         $mockDriver     = $this->getMockBuilder(DriverInterface::class)->getMock();
         $mockDriver->expects($this->any())->method('createStatement')->willReturn($mockStatement);
         $mockDriver->expects($this->any())->method('getConnection')->willReturn($mockConnection);
+        $mockPlatform = $this->getMockBuilder(PlatformInterface::class)->getMock();
 
         // setup mock adapter
         $this->mockAdapter = $this->getMockBuilder(Adapter::class)
             ->onlyMethods([])
-            ->setConstructorArgs([$mockDriver])
+            ->setConstructorArgs([$mockDriver, $mockPlatform])
             ->getMock();
     }
 
@@ -83,9 +85,8 @@ final class TableGatewayTest extends TestCase
         self::assertSame($resultSet, $table->getResultSetPrototype());
         self::assertSame($sql, $table->getSql());
 
-        // constructor expects exception
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Table name must be a string or an instance of PhpDb\Sql\TableIdentifier');
+        // constructor expects exception - native type declaration throws TypeError for null table
+        $this->expectException(\TypeError::class);
         /** @psalm-suppress NullArgument - Testing incorrect constructor */
         new TableGateway(
             null,

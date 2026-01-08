@@ -138,7 +138,12 @@ class MetadataFeatureTest extends TestCase
     {
         /** @var AbstractTableGateway&MockObject $tableGatewayMock */
         $tableGatewayMock = $this->getMockBuilder(AbstractTableGateway::class)->onlyMethods([])->getMock();
-        $metadataMock     = $this->getMockBuilder(MetadataInterface::class)->getMock();
+
+        // Set the table property on the mock using reflection
+        $tableProperty = new ReflectionProperty(AbstractTableGateway::class, 'table');
+        $tableProperty->setValue($tableGatewayMock, 'foo');
+
+        $metadataMock = $this->getMockBuilder(MetadataInterface::class)->getMock();
         $metadataMock->expects($this->any())->method('getColumnNames')->willReturn(['id', 'name']);
         $metadataMock->expects($this->any())
             ->method('getTable')

@@ -20,8 +20,8 @@ class TableGateway extends AbstractTableGateway
     public function __construct(
         TableIdentifier|array|string $table,
         AdapterInterface $adapter,
-        Feature\FeatureSet|Feature\AbstractFeature|array $features = new Feature\FeatureSet(),
-        ResultSetInterface $resultSetPrototype = new ResultSet(),
+        Feature\FeatureSet|Feature\AbstractFeature|array|null $features = null,
+        ?ResultSetInterface $resultSetPrototype = null,
         ?Sql $sql = null
     ) {
         $this->table = $table;
@@ -30,12 +30,13 @@ class TableGateway extends AbstractTableGateway
         $this->adapter = $adapter;
 
         $this->featureSet = match (true) {
+            $features instanceof Feature\FeatureSet => $features,
             $features instanceof Feature\AbstractFeature => new Feature\FeatureSet([$features]),
             is_array($features) => new Feature\FeatureSet($features),
-            default => new Feature\FeatureSet([]),
+            default => new Feature\FeatureSet(),
         };
 
-        $this->resultSetPrototype = $resultSetPrototype;
+        $this->resultSetPrototype = $resultSetPrototype ?? new ResultSet();
 
         $this->sql = $sql ?: new Sql($this->adapter, $this->table);
 

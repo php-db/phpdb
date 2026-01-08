@@ -16,7 +16,6 @@
             <exclude>./test/unit/Adapter/Driver/Pdo/ConnectionIntegrationTest.php</exclude>
             <exclude>./test/unit/Adapter/Driver/Pdo/StatementIntegrationTest.php</exclude>
             <exclude>./test/unit/Adapter/AdapterAwareTraitTest.php</exclude>
-            <exclude>./test/unit/TableGateway</exclude>
         </testsuite>
         <testsuite name="integration test">
             <directory>./test/integration</directory>
