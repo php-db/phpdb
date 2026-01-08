@@ -6,12 +6,12 @@ namespace PhpDb\TableGateway;
 
 use Closure;
 use PhpDb\ResultSet\ResultSetInterface;
+use PhpDb\Sql\TableIdentifier;
 use PhpDb\Sql\Where;
 
 interface TableGatewayInterface
 {
-    /** @return string */
-    public function getTable();
+    public function getTable(): TableIdentifier|string|array;
 
     public function select(Where|Closure|string|array $where): ResultSetInterface;
 

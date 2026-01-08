@@ -29,16 +29,14 @@ class TableGateway extends AbstractTableGateway
         // adapter
         $this->adapter = $adapter;
 
-        /** @phpstan-ignore match.unhandled */
         $this->featureSet = match (true) {
             $features instanceof Feature\AbstractFeature => new Feature\FeatureSet([$features]),
             is_array($features) => new Feature\FeatureSet($features),
+            default => new Feature\FeatureSet([]),
         };
 
-        // result prototype
         $this->resultSetPrototype = $resultSetPrototype;
 
-        // Sql object (factory for select, insert, update, delete)
         $this->sql = $sql ?: new Sql($this->adapter, $this->table);
 
         // check sql object bound to same table

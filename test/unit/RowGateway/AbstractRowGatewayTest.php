@@ -83,7 +83,7 @@ final class AbstractRowGatewayTest extends TestCase
         $this->rowGateway = $this->getMockBuilder(AbstractRowGateway::class)->onlyMethods([])->getMock();
 
         $rgPropertyValues = [
-            'primaryKeyColumn' => 'id',
+            'primaryKeyColumn' => ['id'],
             'table'            => 'foo',
             'sql'              => new Sql($this->mockAdapter),
         ];
@@ -310,8 +310,6 @@ final class AbstractRowGatewayTest extends TestCase
         $refRowGateway = new ReflectionObject($this->rowGateway);
         foreach ($properties as $rgPropertyName => $rgPropertyValue) {
             $refRowGatewayProp = $refRowGateway->getProperty($rgPropertyName);
-            /** @psalm-suppress UnusedMethodCall */
-            $refRowGatewayProp->setAccessible(true);
             $refRowGatewayProp->setValue($this->rowGateway, $rgPropertyValue);
         }
     }

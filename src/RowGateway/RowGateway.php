@@ -11,13 +11,13 @@ class RowGateway extends AbstractRowGateway
     /**
      * Constructor
      *
-     * @param string $primaryKeyColumn
-     * @param string|TableIdentifier $table
-     * @param AdapterInterface|Sql $adapterOrSql
      * @throws Exception\InvalidArgumentException
      */
-    public function __construct($primaryKeyColumn, $table, $adapterOrSql = null)
-    {
+    public function __construct(
+        string|array $primaryKeyColumn,
+        string|TableIdentifier $table,
+        Sql|AdapterInterface|null $adapterOrSql = null
+    ) {
         // setup primary key
         $this->primaryKeyColumn = empty($primaryKeyColumn) ? null : (array) $primaryKeyColumn;
 

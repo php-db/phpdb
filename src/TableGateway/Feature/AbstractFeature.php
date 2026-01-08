@@ -8,8 +8,7 @@ use PhpDb\TableGateway\AbstractTableGateway;
 
 abstract class AbstractFeature extends AbstractTableGateway
 {
-    /** @var AbstractTableGateway */
-    protected $tableGateway;
+    protected AbstractTableGateway $tableGateway;
 
     /** @var array */
     protected $sharedData = [];

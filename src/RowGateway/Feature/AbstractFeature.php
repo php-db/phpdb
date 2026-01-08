@@ -8,21 +8,16 @@ use PhpDb\RowGateway\Exception\RuntimeException;
 
 abstract class AbstractFeature extends AbstractRowGateway
 {
-    /** @var AbstractRowGateway */
-    protected $rowGateway;
+    protected AbstractRowGateway $rowGateway;
 
-    /** @var array */
-    protected $sharedData = [];
+    protected array $sharedData = [];
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): string
     {
         return static::class;
     }
 
-    public function setRowGateway(AbstractRowGateway $rowGateway)
+    public function setRowGateway(AbstractRowGateway $rowGateway): void
     {
         $this->rowGateway = $rowGateway;
     }
@@ -35,10 +30,7 @@ abstract class AbstractFeature extends AbstractRowGateway
         throw new Exception\RuntimeException('This method is not intended to be called on this object.');
     }
 
-    /**
-     * @return array
-     */
-    public function getMagicMethodSpecifications()
+    public function getMagicMethodSpecifications(): array
     {
         return [];
     }

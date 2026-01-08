@@ -26,7 +26,6 @@ use function count;
 use function end;
 use function is_array;
 use function is_object;
-use function is_string;
 use function reset;
 use function sprintf;
 use function strtolower;
@@ -38,27 +37,21 @@ use function strtolower;
  */
 abstract class AbstractTableGateway implements TableGatewayInterface
 {
-    /** @var bool */
-    protected $isInitialized = false;
+    protected bool $isInitialized = false;
 
-    /** @var AdapterInterface */
-    protected $adapter;
+    protected ?AdapterInterface $adapter = null;
 
-    /** @var string|array|TableIdentifier */
-    protected $table;
+    protected TableIdentifier|string|array|null $table = null;
 
-    /** @var array */
-    protected $columns = [];
+    protected array $columns = [];
 
-    protected Feature\FeatureSet $featureSet;
+    protected ?Feature\FeatureSet $featureSet = null;
 
-    protected ?ResultSetInterface $resultSetPrototype;
+    protected ?ResultSetInterface $resultSetPrototype = null;
 
-    /** @var Sql */
-    protected $sql;
+    protected ?Sql $sql = null;
 
-    /** @var int */
-    protected $lastInsertValue;
+    protected ?int $lastInsertValue = null;
 
     public function isInitialized(): bool
     {
@@ -76,27 +69,26 @@ abstract class AbstractTableGateway implements TableGatewayInterface
             return;
         }
 
-        /** @phpstan-ignore instanceof.alwaysTrue */
-        if (! $this->featureSet instanceof Feature\FeatureSet) {
+        if ($this->featureSet === null) {
             $this->featureSet = new Feature\FeatureSet();
         }
 
         $this->featureSet->setTableGateway($this);
         $this->featureSet->apply(EventFeatureEventsInterface::EVENT_PRE_INITIALIZE, []);
 
-        if (! $this->adapter instanceof AdapterInterface) {
+        if ($this->adapter === null) {
             throw new Exception\RuntimeException('This table does not have an Adapter setup');
         }
 
-        if (! is_string($this->table) && ! $this->table instanceof TableIdentifier && ! is_array($this->table)) {
+        if ($this->table === null) {
             throw new Exception\RuntimeException('This table object does not have a valid table set.');
         }
 
-        if (! $this->resultSetPrototype instanceof ResultSetInterface) {
+        if ($this->resultSetPrototype === null) {
             $this->resultSetPrototype = new ResultSet();
         }
 
-        if (! $this->sql instanceof Sql) {
+        if ($this->sql === null) {
             $this->sql = new Sql($this->adapter, $this->table);
         }
 
@@ -123,16 +115,28 @@ abstract class AbstractTableGateway implements TableGatewayInterface
 
     public function getFeatureSet(): Feature\FeatureSet
     {
+        if (! $this->isInitialized) {
+            $this->initialize();
+        }
+
         return $this->featureSet;
     }
 
     public function getResultSetPrototype(): ResultSetInterface
     {
+        if (! $this->isInitialized) {
+            $this->initialize();
+        }
+
         return $this->resultSetPrototype;
     }
 
     public function getSql(): Sql
     {
+        if (! $this->isInitialized) {
+            $this->initialize();
+        }
+
         return $this->sql;
     }
 
@@ -414,9 +418,11 @@ abstract class AbstractTableGateway implements TableGatewayInterface
             case 'table':
                 return $this->table;
         }
+
         if ($this->featureSet->canCallMagicGet($property)) {
             return $this->featureSet->callMagicGet($property);
         }
+
         throw new Exception\InvalidArgumentException('Invalid magic property access in ' . self::class . '::__get()');
     }
 
@@ -458,7 +464,7 @@ abstract class AbstractTableGateway implements TableGatewayInterface
             && count($this->table) === 1
             && is_object(reset($this->table))
         ) {
-            foreach ($this->table as $alias => &$tableObject) {
+            foreach ($this->table as &$tableObject) {
                 $tableObject = clone $tableObject;
             }
         }
