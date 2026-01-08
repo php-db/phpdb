@@ -51,7 +51,8 @@ class RowGatewayFeatureTest extends TestCase
     {
         $this->markTestSkipped(
             'RowGatewayFeature is incompatible with modernized ResultSet - '
-            . 'ResultSet::setArrayObjectPrototype() now requires ArrayObject, but RowGateway does not extend ArrayObject.'
+            . 'ResultSet::setArrayObjectPrototype() now requires ArrayObject, '
+            . 'but RowGateway does not extend ArrayObject.'
         );
     }
 
@@ -59,7 +60,8 @@ class RowGatewayFeatureTest extends TestCase
     {
         $this->markTestSkipped(
             'RowGatewayFeature is incompatible with modernized ResultSet - '
-            . 'ResultSet::setArrayObjectPrototype() now requires ArrayObject, but RowGatewayInterface does not extend ArrayObject.'
+            . 'ResultSet::setArrayObjectPrototype() now requires ArrayObject, '
+            . 'but RowGatewayInterface does not extend ArrayObject.'
         );
     }
 
@@ -81,7 +83,8 @@ class RowGatewayFeatureTest extends TestCase
     {
         $this->markTestSkipped(
             'RowGatewayFeature is incompatible with modernized ResultSet - '
-            . 'ResultSet::setArrayObjectPrototype() now requires ArrayObject, but RowGateway does not extend ArrayObject.'
+            . 'ResultSet::setArrayObjectPrototype() now requires ArrayObject, '
+            . 'but RowGateway does not extend ArrayObject.'
         );
     }
 

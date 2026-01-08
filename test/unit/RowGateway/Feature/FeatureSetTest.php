@@ -88,43 +88,76 @@ class FeatureSetTest extends TestCase
 
     public function testApplyCallsMethodOnFeatures(): void
     {
-        $feature = $this->getMockBuilder(AbstractFeature::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['setRowGateway', 'getName', 'initialize', 'getMagicMethodSpecifications'])
-            ->addMethods(['preInitialize'])
-            ->getMock();
+        $called       = false;
+        $receivedArgs = [];
 
-        $feature->expects($this->once())
-            ->method('preInitialize')
-            ->with('arg1', 'arg2');
+        $feature = new class ($called, $receivedArgs) extends AbstractFeature {
+            /** @var bool @phpstan-ignore property.onlyWritten */
+            private $called;
+            /** @var array<mixed> @phpstan-ignore property.onlyWritten */
+            private $receivedArgs;
+
+            public function __construct(bool &$called, array &$receivedArgs)
+            {
+                $this->called       = &$called;
+                $this->receivedArgs = &$receivedArgs;
+            }
+
+            public function preInitialize(string $arg1, string $arg2): void
+            {
+                $this->called       = true;
+                $this->receivedArgs = [$arg1, $arg2];
+            }
+        };
 
         $featureSet = new FeatureSet([$feature]);
         $featureSet->apply('preInitialize', ['arg1', 'arg2']);
+
+        self::assertTrue($called);
+        self::assertEquals(['arg1', 'arg2'], $receivedArgs);
     }
 
     public function testApplyHaltsWhenFeatureReturnsHalt(): void
     {
-        $feature1 = $this->getMockBuilder(AbstractFeature::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['setRowGateway', 'getName', 'initialize', 'getMagicMethodSpecifications'])
-            ->addMethods(['preInitialize'])
-            ->getMock();
+        $feature1Called = false;
+        $feature2Called = false;
 
-        $feature1->expects($this->once())
-            ->method('preInitialize')
-            ->willReturn(FeatureSet::APPLY_HALT);
+        $feature1 = new class ($feature1Called) extends AbstractFeature {
+            /** @var bool @phpstan-ignore property.onlyWritten */
+            private $called;
 
-        $feature2 = $this->getMockBuilder(AbstractFeature::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['setRowGateway', 'getName', 'initialize', 'getMagicMethodSpecifications'])
-            ->addMethods(['preInitialize'])
-            ->getMock();
+            public function __construct(bool &$called)
+            {
+                $this->called = &$called;
+            }
 
-        $feature2->expects($this->never())
-            ->method('preInitialize');
+            public function preInitialize(): string
+            {
+                $this->called = true;
+                return FeatureSet::APPLY_HALT;
+            }
+        };
+
+        $feature2 = new class ($feature2Called) extends AbstractFeature {
+            /** @var bool @phpstan-ignore property.onlyWritten */
+            private $called;
+
+            public function __construct(bool &$called)
+            {
+                $this->called = &$called;
+            }
+
+            public function preInitialize(): void
+            {
+                $this->called = true;
+            }
+        };
 
         $featureSet = new FeatureSet([$feature1, $feature2]);
         $featureSet->apply('preInitialize', []);
+
+        self::assertTrue($feature1Called);
+        self::assertFalse($feature2Called);
     }
 
     public function testApplySkipsFeatureWithoutMethod(): void

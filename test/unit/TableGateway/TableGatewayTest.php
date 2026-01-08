@@ -359,7 +359,9 @@ final class TableGatewayTest extends TestCase
         $sql = new Sql($this->mockAdapter, 'bar');
 
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('The table inside the provided Sql object must match the table of this TableGateway');
+        $this->expectExceptionMessage(
+            'The table inside the provided Sql object must match the table of this TableGateway'
+        );
 
         new TableGateway('foo', $this->mockAdapter, null, null, $sql);
     }
