@@ -28,6 +28,7 @@ class AbstractFeatureTest extends TestCase
         $name = $this->feature->getName();
 
         // The mock class name will contain the class name
+        /** @phpstan-ignore staticMethod.alreadyNarrowedType */
         self::assertIsString($name);
         self::assertNotEmpty($name);
     }
@@ -60,6 +61,7 @@ class AbstractFeatureTest extends TestCase
     {
         $result = $this->feature->getMagicMethodSpecifications();
 
+        /** @phpstan-ignore staticMethod.alreadyNarrowedType */
         self::assertIsArray($result);
         self::assertEmpty($result);
     }

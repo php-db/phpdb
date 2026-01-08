@@ -208,6 +208,7 @@ class FeatureSetTest extends TestCase
         // apply should not throw - just verify it works
         $featureSet->apply('preSelect', []);
 
+        /** @phpstan-ignore staticMethod.alreadyNarrowedType */
         self::assertTrue(true);
     }
 
@@ -219,6 +220,7 @@ class FeatureSetTest extends TestCase
         // 'nonExistentMethod' doesn't exist on SequenceFeature
         $featureSet->apply('nonExistentMethod', []);
 
+        /** @phpstan-ignore staticMethod.alreadyNarrowedType */
         self::assertTrue(true);
     }
 

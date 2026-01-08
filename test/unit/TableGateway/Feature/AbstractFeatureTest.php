@@ -50,6 +50,7 @@ class AbstractFeatureTest extends TestCase
         // initialize() is a no-op, just verify it doesn't throw
         $this->feature->initialize();
 
+        /** @phpstan-ignore staticMethod.alreadyNarrowedType */
         self::assertTrue(true);
     }
 

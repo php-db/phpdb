@@ -334,6 +334,7 @@ final class AbstractRowGatewayTest extends TestCase
         $this->expectExceptionMessage('Not a valid column in this row');
 
         // Access a column that doesn't exist
+        /** @phpstan-ignore property.notFound, expr.resultUnused */
         $this->rowGateway->nonExistentColumn;
     }
 

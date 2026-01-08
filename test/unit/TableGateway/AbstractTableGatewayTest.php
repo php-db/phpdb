@@ -549,7 +549,7 @@ final class AbstractTableGatewayTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid magic property access');
 
-        /** @phpstan-ignore expr.resultUnused */
+        /** @phpstan-ignore expr.resultUnused, property.notFound */
         $this->table->invalidProperty;
     }
 
@@ -560,6 +560,7 @@ final class AbstractTableGatewayTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid magic property access');
 
+        /** @phpstan-ignore property.notFound */
         $this->table->invalidProperty = 'value';
     }
 
@@ -570,6 +571,7 @@ final class AbstractTableGatewayTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid method (invalidMethod) called');
 
+        /** @phpstan-ignore method.notFound */
         $this->table->invalidMethod();
     }
 
@@ -709,6 +711,10 @@ final class AbstractTableGatewayTest extends TestCase
         // @codingStandardsIgnoreEnd
         // Create a custom feature that can handle magic get
         $feature = new class extends AbstractFeature {
+            /**
+             * @return array<string, array<int, string>>
+             * @phpstan-ignore method.childReturnType
+             */
             public function getMagicMethodSpecifications(): array
             {
                 return ['get' => ['customProperty']];
@@ -732,6 +738,7 @@ final class AbstractTableGatewayTest extends TestCase
         $featureSetProp = $tgReflection->getProperty('featureSet');
         $featureSetProp->setValue($this->table, $featureSet);
 
+        /** @phpstan-ignore property.notFound */
         $result = $this->table->customProperty;
 
         self::assertEquals('customValue', $result);
@@ -757,6 +764,7 @@ final class AbstractTableGatewayTest extends TestCase
         $featureSetProp = $tgReflection->getProperty('featureSet');
         $featureSetProp->setValue($this->table, $featureSet);
 
+        /** @phpstan-ignore property.notFound */
         $this->table->customProperty = 'customValue';
     }
 
@@ -781,6 +789,7 @@ final class AbstractTableGatewayTest extends TestCase
         $featureSetProp = $tgReflection->getProperty('featureSet');
         $featureSetProp->setValue($this->table, $featureSet);
 
+        /** @phpstan-ignore method.notFound */
         $result = $this->table->customMethod('arg1', 'arg2');
 
         self::assertEquals('customResult', $result);

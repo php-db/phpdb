@@ -83,16 +83,19 @@ class TableGatewayEventTest extends TestCase
         $this->event->stopPropagation(true);
         $this->event->stopPropagation(false);
 
+        /** @phpstan-ignore staticMethod.impossibleType */
         self::assertFalse($this->event->propagationIsStopped());
     }
 
     public function testPropagationIsStoppedAlwaysReturnsFalse(): void
     {
+        /** @phpstan-ignore staticMethod.impossibleType */
         self::assertFalse($this->event->propagationIsStopped());
 
         $this->event->stopPropagation(true);
 
         // Still returns false as per implementation
+        /** @phpstan-ignore staticMethod.impossibleType */
         self::assertFalse($this->event->propagationIsStopped());
     }
 }

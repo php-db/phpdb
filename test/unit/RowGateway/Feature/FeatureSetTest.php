@@ -135,6 +135,7 @@ class FeatureSetTest extends TestCase
         // Should not throw - just skips
         $featureSet->apply('nonExistentMethod', []);
 
+        /** @phpstan-ignore staticMethod.alreadyNarrowedType */
         self::assertTrue(true);
     }
 
