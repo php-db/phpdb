@@ -126,7 +126,7 @@ abstract class AbstractResultSet implements ResultSetInterface
      * Retrieve count of fields in individual rows of the result set
      */
     #[Override]
-    public function getFieldCount(): mixed
+    public function getFieldCount(): int
     {
         if (null !== $this->fieldCount) {
             return $this->fieldCount;

@@ -20,7 +20,7 @@ interface ResultSetInterface extends Iterator, Countable
      * from the database might be a column, and/or the result of an
      * operation or intersection of some data
      */
-    public function getFieldCount(): mixed;
+    public function getFieldCount(): int;
 
     /**
      * Set the row object prototype
