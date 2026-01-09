@@ -56,7 +56,7 @@ class SequenceFeature extends AbstractFeature
      *
      * @throws RuntimeException
      */
-    public function nextSequenceId(): int
+    public function nextSequenceId(): ?int
     {
         $platform     = $this->tableGateway->adapter->getPlatform();
         $platformName = $platform->getName();

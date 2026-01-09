@@ -61,6 +61,7 @@ class TableGatewayEvent implements EventInterface
      * Set the event target/context
      *
      * @param object|string|null $target
+     * @phpstan-ignore selfOut.type
      */
     public function setTarget($target): void
     {
@@ -71,6 +72,7 @@ class TableGatewayEvent implements EventInterface
      * Set event parameters
      *
      * @param array|object $params
+     * @phpstan-ignore selfOut.type
      */
     public function setParams($params): void
     {

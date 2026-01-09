@@ -26,7 +26,6 @@ class AbstractFeatureTest extends TestCase
     {
         $name = $this->feature->getName();
 
-        self::assertIsString($name);
         self::assertNotEmpty($name);
     }
 
@@ -58,7 +57,6 @@ class AbstractFeatureTest extends TestCase
     {
         $result = $this->feature->getMagicMethodSpecifications();
 
-        self::assertIsArray($result);
         self::assertEmpty($result);
     }
 }

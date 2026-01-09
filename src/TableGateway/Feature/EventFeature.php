@@ -105,8 +105,11 @@ class EventFeature extends AbstractFeature implements
      * - $result as "result"
      * - $resultSet as "result_set"
      */
-    public function postSelect(StatementInterface $statement, ResultInterface $result, ResultSetInterface $resultSet): void
-    {
+    public function postSelect(
+        StatementInterface $statement,
+        ResultInterface $result,
+        ResultSetInterface $resultSet
+    ): void {
         $this->event->setName(static::EVENT_POST_SELECT);
         $this->event->setParams([
             'statement'  => $statement,
