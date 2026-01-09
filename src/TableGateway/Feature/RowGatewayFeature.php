@@ -10,7 +10,6 @@ use PhpDb\RowGateway\RowGatewayInterface;
 use PhpDb\TableGateway\Exception;
 use PhpDb\TableGateway\Feature\MetadataFeature;
 
-use function func_get_args;
 use function is_string;
 
 class RowGatewayFeature extends AbstractFeature
@@ -18,9 +17,9 @@ class RowGatewayFeature extends AbstractFeature
     /** @var array */
     protected $constructorArguments = [];
 
-    public function __construct()
+    public function __construct(mixed ...$constructorArguments)
     {
-        $this->constructorArguments = func_get_args();
+        $this->constructorArguments = $constructorArguments;
     }
 
     public function postInitialize(): void
