@@ -31,7 +31,7 @@ class TableGatewayEvent implements EventInterface
     /**
      * Get parameters passed to the event
      */
-    public function getParams(): array|\ArrayAccess|object
+    public function getParams(): array|object
     {
         return $this->params;
     }
@@ -70,7 +70,7 @@ class TableGatewayEvent implements EventInterface
     /**
      * @phpstan-ignore selfOut.type, method.childParameterType
      */
-    public function setParams(array|\ArrayAccess|object $params): void
+    public function setParams(array|object $params): void
     {
         $this->params = $params;
     }
