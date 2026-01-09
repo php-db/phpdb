@@ -62,7 +62,6 @@ final class AbstractRowGatewayTest extends TestCase
     #[Override]
     protected function setUp(): void
     {
-        // mock the adapter, driver, and parts
         $mockResult = $this->getMockBuilder(ResultInterface::class)->getMock();
         $mockResult->expects($this->any())->method('getAffectedRows')->willReturn(1);
         $this->mockResult = $mockResult;
@@ -73,7 +72,6 @@ final class AbstractRowGatewayTest extends TestCase
         $mockDriver->expects($this->any())->method('createStatement')->willReturn($mockStatement);
         $mockDriver->expects($this->any())->method('getConnection')->willReturn($mockConnection);
 
-        // setup mock adapter
         $this->mockAdapter = $this->getMockBuilder(Adapter::class)
             ->onlyMethods([])
             ->setConstructorArgs(
@@ -95,7 +93,6 @@ final class AbstractRowGatewayTest extends TestCase
 
     public function testOffsetSet(): void
     {
-        // If we set with an index, both getters should retrieve the same value:
         $this->rowGateway['testColumn'] = 'test';
         self::assertEquals('test', $this->rowGateway->testColumn);
         self::assertEquals('test', $this->rowGateway['testColumn']);
@@ -105,7 +102,6 @@ final class AbstractRowGatewayTest extends TestCase
     public function test__set(): void
     {
         // @codingStandardsIgnoreEnd
-        // If we set with a property, both getters should retrieve the same value:
         $this->rowGateway->testColumn = 'test';
         self::assertEquals('test', $this->rowGateway->testColumn);
         self::assertEquals('test', $this->rowGateway['testColumn']);
@@ -115,7 +111,6 @@ final class AbstractRowGatewayTest extends TestCase
     public function test__isset(): void
     {
         // @codingStandardsIgnoreEnd
-        // Test isset before and after assigning to a property:
         self::assertFalse(isset($this->rowGateway->foo));
         $this->rowGateway->foo = 'bar';
         self::assertTrue(isset($this->rowGateway->foo));
@@ -123,7 +118,6 @@ final class AbstractRowGatewayTest extends TestCase
 
     public function testOffsetExists(): void
     {
-        // Test isset before and after assigning to an index:
         self::assertFalse(isset($this->rowGateway['foo']));
         $this->rowGateway['foo'] = 'bar';
         self::assertTrue(isset($this->rowGateway['foo']));
@@ -151,7 +145,6 @@ final class AbstractRowGatewayTest extends TestCase
 
     public function testOffsetGet(): void
     {
-        // If we set with an index, both getters should retrieve the same value:
         $this->rowGateway['testColumn'] = 'test';
         self::assertEquals('test', $this->rowGateway->testColumn);
         self::assertEquals('test', $this->rowGateway['testColumn']);
@@ -161,7 +154,6 @@ final class AbstractRowGatewayTest extends TestCase
     public function test__get(): void
     {
         // @codingStandardsIgnoreEnd
-        // If we set with a property, both getters should retrieve the same value:
         $this->rowGateway->testColumn = 'test';
         self::assertEquals('test', $this->rowGateway->testColumn);
         self::assertEquals('test', $this->rowGateway['testColumn']);
@@ -169,7 +161,6 @@ final class AbstractRowGatewayTest extends TestCase
 
     public function testSaveInsert(): void
     {
-        // test insert
         $this->mockResult->expects($this->any())->method('current')
             ->willReturn(['id' => 5, 'name' => 'foo']);
         $this->mockResult->expects($this->any())->method('getGeneratedValue')->willReturn(5);
@@ -200,7 +191,6 @@ final class AbstractRowGatewayTest extends TestCase
         ];
         $this->setRowGatewayState($rgPropertyValues);
 
-        // test insert
         $this->mockResult->expects($this->any())->method('current')
             ->willReturn(['one' => 'foo', 'two' => 'bar']);
 
@@ -215,7 +205,6 @@ final class AbstractRowGatewayTest extends TestCase
 
         self::assertNull($refRowGatewayProp->getValue($this->rowGateway));
 
-        // save should setup the primaryKeyData
         $this->rowGateway->save();
 
         self::assertEquals(['one' => 'foo', 'two' => 'bar'], $refRowGatewayProp->getValue($this->rowGateway));
@@ -223,7 +212,6 @@ final class AbstractRowGatewayTest extends TestCase
 
     public function testSaveUpdate(): void
     {
-        // test update
         $this->mockResult->expects($this->any())->method('current')
             ->willReturn(['id' => 6, 'name' => 'foo']);
         $this->rowGateway->populate(['id' => 6, 'name' => 'foo'], true);
@@ -233,7 +221,6 @@ final class AbstractRowGatewayTest extends TestCase
 
     public function testSaveUpdateChangingPrimaryKey(): void
     {
-        // this mock is the select to be used to re-fresh the rowobject's data
         $selectMock = $this->getMockBuilder(Select::class)
             ->onlyMethods(['where'])
             ->getMock();
@@ -252,12 +239,10 @@ final class AbstractRowGatewayTest extends TestCase
 
         $this->setRowGatewayState(['sql' => $sqlMock]);
 
-        // original mock returning updated data
         $this->mockResult->expects($this->any())
             ->method('current')
             ->willReturn(['id' => 7, 'name' => 'fooUpdated']);
 
-        // populate forces an update in save(), seeds with original data (from db)
         $this->rowGateway->populate(['id' => 6, 'name' => 'foo'], true);
         $this->rowGateway->id = 7;
         $this->rowGateway->save();
@@ -333,26 +318,21 @@ final class AbstractRowGatewayTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Not a valid column in this row');
 
-        // Access a column that doesn't exist
         /** @phpstan-ignore property.notFound, expr.resultUnused */
         $this->rowGateway->nonExistentColumn;
     }
 
     public function testInitializeThrowsExceptionWhenTableIsNull(): void
     {
-        // Use concrete RowGateway with null table to ensure coverage is tracked
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('This row object does not have a valid table set.');
 
-        // RowGateway constructor requires non-null table, so we must create with reflection
         $rowGateway = new RowGateway('id', 'temp_table', $this->mockAdapter);
 
-        // Now set table to null via reflection
         $refRowGateway = new ReflectionObject($rowGateway);
         $tableProp     = $refRowGateway->getProperty('table');
         $tableProp->setValue($rowGateway, null);
 
-        // Reset isInitialized to force re-initialization
         $isInitializedProp = $refRowGateway->getProperty('isInitialized');
         $isInitializedProp->setValue($rowGateway, false);
 
@@ -365,7 +345,6 @@ final class AbstractRowGatewayTest extends TestCase
 
         $refRowGateway = new ReflectionObject($rowGateway);
 
-        // Set table and sql, but leave primaryKeyColumn as null
         $tableProp = $refRowGateway->getProperty('table');
         $tableProp->setValue($rowGateway, 'foo');
 
@@ -380,7 +359,6 @@ final class AbstractRowGatewayTest extends TestCase
 
     public function testInitializeThrowsExceptionWhenSqlIsNull(): void
     {
-        // Use concrete RowGateway to ensure coverage is tracked
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('This row object does not have a Sql object set.');
 
@@ -388,11 +366,9 @@ final class AbstractRowGatewayTest extends TestCase
 
         $refRowGateway = new ReflectionObject($rowGateway);
 
-        // Set sql to null via reflection
         $sqlProp = $refRowGateway->getProperty('sql');
         $sqlProp->setValue($rowGateway, null);
 
-        // Reset isInitialized to force re-initialization
         $isInitializedProp = $refRowGateway->getProperty('isInitialized');
         $isInitializedProp->setValue($rowGateway, false);
 
@@ -401,40 +377,31 @@ final class AbstractRowGatewayTest extends TestCase
 
     public function testInitializeOnlyRunsOnce(): void
     {
-        // First call to populate triggers initialize
         $this->rowGateway->populate(['id' => 1, 'name' => 'foo'], true);
 
-        // Verify isInitialized is true after first populate
         $refRowGateway     = new ReflectionObject($this->rowGateway);
         $isInitializedProp = $refRowGateway->getProperty('isInitialized');
         self::assertTrue($isInitializedProp->getValue($this->rowGateway));
 
-        // Second call should hit the early return (line 40)
         $this->rowGateway->populate(['id' => 2, 'name' => 'bar'], true);
 
-        // Verify the second populate worked (proves initialize didn't throw)
         self::assertEquals(2, $this->rowGateway['id']);
         self::assertEquals('bar', $this->rowGateway['name']);
     }
 
     public function testInitializeEarlyReturnWhenAlreadyInitialized(): void
     {
-        // Use concrete RowGateway to ensure coverage is tracked for line 40
         $rowGateway = new RowGateway('id', 'test_table', $this->mockAdapter);
 
-        // Get the featureSet that was created during first init (constructor calls initialize)
-        $refRowGateway  = new ReflectionObject($rowGateway);
-        $featureSetProp = $refRowGateway->getProperty('featureSet');
+        $refRowGateway      = new ReflectionObject($rowGateway);
+        $featureSetProp     = $refRowGateway->getProperty('featureSet');
         $originalFeatureSet = $featureSetProp->getValue($rowGateway);
 
-        // Verify already initialized
         $isInitializedProp = $refRowGateway->getProperty('isInitialized');
         self::assertTrue($isInitializedProp->getValue($rowGateway));
 
-        // Second call to populate (triggers initialize again, but should early return on line 40)
         $rowGateway->populate(['id' => 2, 'name' => 'bar'], true);
 
-        // Verify featureSet is still the same object (proving early return was taken)
         self::assertSame($originalFeatureSet, $featureSetProp->getValue($rowGateway));
     }
 
@@ -444,7 +411,6 @@ final class AbstractRowGatewayTest extends TestCase
 
         $refRowGateway = new ReflectionObject($rowGateway);
 
-        // Set required properties but not featureSet
         $tableProp = $refRowGateway->getProperty('table');
         $tableProp->setValue($rowGateway, 'foo');
 
@@ -454,14 +420,11 @@ final class AbstractRowGatewayTest extends TestCase
         $sqlProp = $refRowGateway->getProperty('sql');
         $sqlProp->setValue($rowGateway, new Sql($this->mockAdapter));
 
-        // Verify featureSet is null initially
         $featureSetProp = $refRowGateway->getProperty('featureSet');
         self::assertNull($featureSetProp->getValue($rowGateway));
 
-        // Trigger initialization
         $rowGateway->populate(['id' => 1, 'name' => 'test'], true);
 
-        // Verify featureSet was created
         self::assertInstanceOf(FeatureSet::class, $featureSetProp->getValue($rowGateway));
     }
 

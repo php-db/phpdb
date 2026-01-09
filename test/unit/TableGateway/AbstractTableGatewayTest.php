@@ -72,14 +72,9 @@ final class AbstractTableGatewayTest extends TestCase
     protected MockObject&Update $mockUpdate;
     protected MockObject&Delete $mockDelete;
 
-    /**
-     * Sets up the fixture, for example, opens a network connection.
-     * This method is called before a test is executed.
-     */
     #[Override]
     protected function setUp(): void
     {
-        // mock the adapter, driver, and parts
         $mockResult = $this->getMockBuilder(ResultInterface::class)->getMock();
         $mockResult->expects($this->any())->method('getAffectedRows')->willReturn(5);
 
@@ -346,8 +341,6 @@ final class AbstractTableGatewayTest extends TestCase
 
     public function testInitializeBuildsAResultSet(): void
     {
-        $this->markTestSkipped('This needs refactored due to setAccessible has been deprecated in PHP 8.1');
-        /** @phpstan-ignore deadCode.unreachable */
         $stub = $this
             ->getMockBuilder(AbstractTableGateway::class)
             ->onlyMethods([])
@@ -355,8 +348,6 @@ final class AbstractTableGatewayTest extends TestCase
 
         $tgReflection = new ReflectionClass(AbstractTableGateway::class);
         foreach ($tgReflection->getProperties() as $tgPropReflection) {
-            /** @noinspection PhpExpressionResultUnusedInspection */
-            $tgPropReflection->setAccessible(true);
             switch ($tgPropReflection->getName()) {
                 case 'table':
                     $tgPropReflection->setValue($stub, 'foo');

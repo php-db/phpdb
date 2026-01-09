@@ -145,7 +145,6 @@ final class SequenceFeatureTest extends TestCase
 
         self::assertSame($insert, $result);
 
-        // Verify sequenceValue was set from the existing value
         $sequenceValueProp = new ReflectionProperty(SequenceFeature::class, 'sequenceValue');
         self::assertEquals(42, $sequenceValueProp->getValue($this->feature));
     }
@@ -163,11 +162,9 @@ final class SequenceFeatureTest extends TestCase
 
         self::assertSame($insert, $result);
 
-        // Verify sequenceValue was set from the generated sequence
         $sequenceValueProp = new ReflectionProperty(SequenceFeature::class, 'sequenceValue');
         self::assertEquals(99, $sequenceValueProp->getValue($this->feature));
 
-        // Verify the insert now includes the primary key
         $rawState = $insert->getRawState();
         self::assertContains('id', $rawState['columns']);
     }
@@ -177,7 +174,6 @@ final class SequenceFeatureTest extends TestCase
         $tableGateway = $this->createTableGatewayWithPlatform('PostgreSQL', 123);
         $this->feature->setTableGateway($tableGateway);
 
-        // Set up sequenceValue via preInsert
         $insert = new Insert('table');
         $insert->columns(['name']);
         $insert->values(['test']);
@@ -188,7 +184,6 @@ final class SequenceFeatureTest extends TestCase
 
         $this->feature->postInsert($statement, $result);
 
-        // Verify lastInsertValue was set on tableGateway
         self::assertEquals(123, $tableGateway->lastInsertValue);
     }
 
@@ -239,17 +234,14 @@ final class SequenceFeatureTest extends TestCase
         $tableGateway = $this->createTableGatewayWithPlatform('PostgreSQL');
         $this->feature->setTableGateway($tableGateway);
 
-        // Set initial lastInsertValue via reflection to verify it doesn't change
         $lastInsertValueProp = new ReflectionProperty(AbstractTableGateway::class, 'lastInsertValue');
         $lastInsertValueProp->setValue($tableGateway, 999);
 
         $statement = $this->createMock(StatementInterface::class);
         $result    = $this->createMock(ResultInterface::class);
 
-        // Call postInsert without calling preInsert first, so sequenceValue is null
         $this->feature->postInsert($statement, $result);
 
-        // Verify lastInsertValue was NOT changed (still 999)
         self::assertEquals(999, $lastInsertValueProp->getValue($tableGateway));
     }
 
@@ -260,13 +252,12 @@ final class SequenceFeatureTest extends TestCase
 
         $insert = new Insert('table');
         $insert->columns(['id', 'name']);
-        $insert->values([null, 'test']); // Primary key exists but is null
+        $insert->values([null, 'test']);
 
         $result = $this->feature->preInsert($insert);
 
         self::assertSame($insert, $result);
 
-        // Verify sequenceValue was set to null from the existing value
         $sequenceValueProp = new ReflectionProperty(SequenceFeature::class, 'sequenceValue');
         self::assertNull($sequenceValueProp->getValue($this->feature));
     }
@@ -275,7 +266,6 @@ final class SequenceFeatureTest extends TestCase
     {
         $tableGateway = $this->createTableGatewayWithPlatform('PostgreSQL');
 
-        // Create a partial mock of SequenceFeature that returns null from nextSequenceId
         $feature = $this->getMockBuilder(SequenceFeature::class)
             ->setConstructorArgs([$this->primaryKeyField, self::$sequenceName])
             ->onlyMethods(['nextSequenceId'])
@@ -293,14 +283,11 @@ final class SequenceFeatureTest extends TestCase
 
         $result = $feature->preInsert($insert);
 
-        // Should return early without modifying the insert
         self::assertSame($insert, $result);
 
-        // Verify sequenceValue is null
         $sequenceValueProp = new ReflectionProperty(SequenceFeature::class, 'sequenceValue');
         self::assertNull($sequenceValueProp->getValue($feature));
 
-        // Verify the insert was NOT modified (no primary key added)
         $rawState = $insert->getRawState();
         self::assertNotContains('id', $rawState['columns']);
     }

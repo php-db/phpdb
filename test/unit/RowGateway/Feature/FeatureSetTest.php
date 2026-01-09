@@ -33,8 +33,6 @@ class FeatureSetTest extends TestCase
             ->getMock();
 
         $feature = $this->createMock(AbstractFeature::class);
-        // setRowGateway is called once when setRowGateway is called on the FeatureSet
-        // (features added before setRowGateway is called don't have setRowGateway called on them until later)
         $feature->expects($this->once())
             ->method('setRowGateway')
             ->with($rowGateway);
@@ -99,11 +97,8 @@ class FeatureSetTest extends TestCase
             ->method('setRowGateway')
             ->with($rowGateway);
 
-        // Create FeatureSet and set rowGateway FIRST
         $featureSet = new FeatureSet();
         $featureSet->setRowGateway($rowGateway);
-
-        // Now add feature - should call setRowGateway on the feature
         $featureSet->addFeature($feature);
     }
 
@@ -186,7 +181,6 @@ class FeatureSetTest extends TestCase
         $feature = $this->createMock(AbstractFeature::class);
 
         $featureSet = new FeatureSet([$feature]);
-        // Should not throw - just skips
         $featureSet->apply('nonExistentMethod', []);
 
         /** @phpstan-ignore staticMethod.alreadyNarrowedType */

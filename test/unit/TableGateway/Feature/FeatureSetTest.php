@@ -64,7 +64,6 @@ class FeatureSetTest extends TestCase
 
         $tableGatewayMock = $this->getMockBuilder(AbstractTableGateway::class)->onlyMethods([])->getMock();
 
-        //feature doesn't have tableGateway, but FeatureSet has
         $feature = new MasterSlaveFeature($mockSlaveAdapter);
 
         $featureSet = new FeatureSet();
@@ -91,7 +90,6 @@ class FeatureSetTest extends TestCase
 
         $metadataMock->expects($this->any())->method('getConstraints')->willReturn([$constraintObject]);
 
-        //feature have tableGateway, but FeatureSet doesn't has
         $feature = new MetadataFeature($metadataMock);
         $feature->setTableGateway($tableGatewayMock);
 
@@ -133,7 +131,6 @@ class FeatureSetTest extends TestCase
 
     public function testCallMagicCallSucceedsForValidMethodOfAddedFeature(): void
     {
-        // Create a custom feature with a simple method that can be called via magic
         $feature = new class extends AbstractFeature {
             public function customMethod(array $args): string
             {
@@ -144,7 +141,6 @@ class FeatureSetTest extends TestCase
         $featureSet = new FeatureSet();
         $featureSet->addFeature($feature);
 
-        // callMagicCall passes arguments as a single array parameter
         $result = $featureSet->callMagicCall('customMethod', ['test_value']);
 
         self::assertEquals('result: test_value', $result);
@@ -205,7 +201,6 @@ class FeatureSetTest extends TestCase
         $featureSet = new FeatureSet([$feature]);
         $featureSet->setTableGateway($tableGatewayMock);
 
-        // apply should not throw - just verify it works
         $featureSet->apply('preSelect', []);
 
         /** @phpstan-ignore staticMethod.alreadyNarrowedType */
@@ -217,7 +212,6 @@ class FeatureSetTest extends TestCase
         $feature    = new SequenceFeature('id', 'table_sequence');
         $featureSet = new FeatureSet([$feature]);
 
-        // 'nonExistentMethod' doesn't exist on SequenceFeature
         $featureSet->apply('nonExistentMethod', []);
 
         /** @phpstan-ignore staticMethod.alreadyNarrowedType */
@@ -281,9 +275,7 @@ class FeatureSetTest extends TestCase
         $featureSet = new FeatureSet([$feature1, $feature2]);
         $featureSet->apply('testMethod', []);
 
-        // First feature should be called
         self::assertTrue($feature1->called);
-        // Second feature should NOT be called because first returned APPLY_HALT
         self::assertFalse($feature2->called);
     }
 
@@ -308,7 +300,6 @@ class FeatureSetTest extends TestCase
         $featureSet = new FeatureSet([$feature1, $feature2]);
         $featureSet->apply('testMethod', []);
 
-        // Both features should be called
         self::assertTrue($feature1->called);
         self::assertTrue($feature2->called);
     }
