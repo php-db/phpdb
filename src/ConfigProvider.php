@@ -38,6 +38,9 @@ final class ConfigProvider
             'aliases'            => [
                 Adapter\AdapterInterface::class => Adapter\Adapter::class,
             ],
+            'factories'          => [
+                Adapter\Adapter::class => Container\AdapterInterfaceFactory::class,
+            ],
         ];
     }
 }

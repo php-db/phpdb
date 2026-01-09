@@ -14,7 +14,7 @@ use Psr\Container\NotFoundExceptionInterface;
 
 use function sprintf;
 
-class AdapterServiceDelegator
+class AdapterInterfaceDelegator
 {
     public function __construct(
         protected readonly string $adapterName = AdapterInterface::class
