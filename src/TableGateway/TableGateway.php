@@ -29,7 +29,6 @@ class TableGateway extends AbstractTableGateway
         // adapter
         $this->adapter = $adapter;
 
-        /** @phpstan-ignore match.unhandled */
         $this->featureSet = match (true) {
             $features instanceof Feature\AbstractFeature => new Feature\FeatureSet([$features]),
             is_array($features)                          => new Feature\FeatureSet($features),
