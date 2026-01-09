@@ -1,11 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDb\TableGateway\Feature;
 
 use PhpDb\TableGateway\AbstractTableGateway;
 use PhpDb\TableGateway\TableGatewayInterface;
 
-use function call_user_func_array;
 use function method_exists;
 
 class FeatureSet
@@ -88,7 +89,7 @@ class FeatureSet
     {
         foreach ($this->features as $feature) {
             if (method_exists($feature, $method)) {
-                $return = call_user_func_array([$feature, $method], $args);
+                $return = $feature->$method(...$args);
                 if ($return === self::APPLY_HALT) {
                     break;
                 }

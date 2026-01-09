@@ -4,7 +4,6 @@ namespace PhpDb\RowGateway\Feature;
 
 use PhpDb\RowGateway\AbstractRowGateway;
 
-use function call_user_func_array;
 use function method_exists;
 
 class FeatureSet
@@ -69,7 +68,7 @@ class FeatureSet
     public function addFeature(AbstractFeature $feature): static
     {
         $this->features[] = $feature;
-        $feature->setRowGateway($feature);
+        $feature->setRowGateway($this->rowGateway);
         return $this;
     }
 
@@ -77,7 +76,7 @@ class FeatureSet
     {
         foreach ($this->features as $feature) {
             if (method_exists($feature, $method)) {
-                $return = call_user_func_array([$feature, $method], $args);
+                $return = $feature->$method(...$args);
                 if ($return === self::APPLY_HALT) {
                     break;
                 }
