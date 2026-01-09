@@ -36,7 +36,7 @@ use function vsprintf;
 
 abstract class AbstractSql implements SqlInterface
 {
-    public SqlInterface|PreparableSqlInterface|null $subject = null;
+    protected SqlInterface|PreparableSqlInterface|null $subject = null;
 
     /**
      * Specifications for Sql String generation
@@ -45,6 +45,11 @@ abstract class AbstractSql implements SqlInterface
      */
     protected array $specifications = [];
 
+    /**
+     * Information used during processing
+     *
+     * @var array{paramPrefix: string, subselectCount: int}
+     */
     protected array $processInfo = ['paramPrefix' => '', 'subselectCount' => 0];
 
     protected array $instanceParameterIndex = [];

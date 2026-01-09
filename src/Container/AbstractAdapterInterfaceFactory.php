@@ -14,6 +14,7 @@ use PhpDb\Adapter\Platform\PlatformInterface;
 use PhpDb\Adapter\Profiler\ProfilerInterface;
 use PhpDb\ConfigProvider;
 use PhpDb\Exception\ContainerException;
+use PhpDb\ResultSet\ResultSet;
 use PhpDb\ResultSet\ResultSetInterface;
 use Psr\Container\ContainerInterface;
 
@@ -26,7 +27,7 @@ use function is_array;
  *
  * @internal
  */
-class AbstractAdapterInterfaceFactory implements AbstractFactoryInterface
+final class AbstractAdapterInterfaceFactory implements AbstractFactoryInterface
 {
     protected ?array $config = null;
 
@@ -49,7 +50,7 @@ class AbstractAdapterInterfaceFactory implements AbstractFactoryInterface
     }
 
     /**
-     * Create a DB adapter
+     * Create a "Named" DB adapter
      *
      * @phpstan-param ContainerInterface&ServiceManager $container
      * @param string $requestedName
@@ -59,7 +60,7 @@ class AbstractAdapterInterfaceFactory implements AbstractFactoryInterface
         $requestedName,
         ?array $options = null
     ): AdapterInterface&Adapter {
-        /** @var string|null $driverClass */
+        /** @var class-string<DriverInterface>|class-string<PdoDriverInterface>|null $driverClass */
         $driverClass = $this->config[$requestedName]['driver'] ?? null;
 
         if ($driverClass === null) {
@@ -72,44 +73,30 @@ class AbstractAdapterInterfaceFactory implements AbstractFactoryInterface
 
         /** @var DriverInterface|PdoDriverInterface $driver */
         $driver = $container->build($driverClass, $this->config[$requestedName]);
+
         /** @var PlatformInterface $platform */
         $platform = $container->build(PlatformInterface::class, ['driver' => $driver]);
+
         /** @var ResultSetInterface|null $resultSet */
         $resultSet = $container->has(ResultSetInterface::class)
             ? $container->build(ResultSetInterface::class)
-            : null;
+            : new ResultSet();
+
         /** @var ProfilerInterface|null $profiler */
         $profiler = $container->has(ProfilerInterface::class)
             ? $container->build(ProfilerInterface::class)
             : null;
 
-        return match (true) {
-            $resultSet !== null && $profiler !== null => new Adapter(
-                driver: $driver,
-                platform: $platform,
-                queryResultSetPrototype: $resultSet,
-                profiler: $profiler,
-            ),
-            $resultSet !== null => new Adapter(
-                driver: $driver,
-                platform: $platform,
-                queryResultSetPrototype: $resultSet,
-            ),
-            $profiler !== null => new Adapter(
-                driver: $driver,
-                platform: $platform,
-                profiler: $profiler,
-            ),
-            default => new Adapter(
-                driver: $driver,
-                platform: $platform,
-            ),
-        };
+        return new Adapter(
+            driver: $driver,
+            platform: $platform,
+            queryResultSetPrototype: $resultSet,
+            profiler: $profiler,
+        );
     }
 
     /**
      * Get db configuration, if any
-     * todo: refactor to use PhpDb\ConfigProvider::NAMED_ADAPTER_KEY instead of hardcoding 'adapters'
      */
     protected function getConfig(ContainerInterface $container): array
     {

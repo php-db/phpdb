@@ -11,7 +11,7 @@ use PhpDb\Adapter\Adapter;
 use PhpDb\Adapter\AdapterInterface;
 use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\Platform\PlatformInterface;
-use PhpDb\Container\AdapterServiceDelegator;
+use PhpDb\Container\AdapterInterfaceDelegator;
 use PhpDb\Exception\RuntimeException;
 use PhpDb\ResultSet\ResultSetInterface;
 use PhpDbTest\Adapter\TestAsset\ConcreteAdapterAwareObject;
@@ -22,7 +22,7 @@ use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use stdClass;
 
-final class AdapterServiceDelegatorTest extends TestCase
+final class AdapterInterfaceDelegatorTest extends TestCase
 {
     /**
      * @throws Exception
@@ -44,7 +44,7 @@ final class AdapterServiceDelegatorTest extends TestCase
         $callback = static fn(): ConcreteAdapterAwareObject => new ConcreteAdapterAwareObject();
 
         /** @var ConcreteAdapterAwareObject $result */
-        $result = (new AdapterServiceDelegator())(
+        $result = (new AdapterInterfaceDelegator())(
             $container,
             ConcreteAdapterAwareObject::class,
             $callback
@@ -78,7 +78,7 @@ final class AdapterServiceDelegatorTest extends TestCase
         $callback = static fn(): ConcreteAdapterAwareObject => new ConcreteAdapterAwareObject();
 
         /** @var ConcreteAdapterAwareObject $result */
-        $result = (new AdapterServiceDelegator())(
+        $result = (new AdapterInterfaceDelegator())(
             $container,
             ConcreteAdapterAwareObject::class,
             $callback
@@ -110,7 +110,7 @@ final class AdapterServiceDelegatorTest extends TestCase
         $this->expectException(ServiceNotFoundException::class);
         $this->expectExceptionMessage('Service "PhpDb\Adapter\AdapterInterface" not found in container');
 
-        (new AdapterServiceDelegator())(
+        (new AdapterInterfaceDelegator())(
             $container,
             ConcreteAdapterAwareObject::class,
             $callback
@@ -134,7 +134,7 @@ final class AdapterServiceDelegatorTest extends TestCase
             'Delegated service "stdClass" must implement PhpDb\Adapter\AdapterAwareInterface'
         );
 
-        (new AdapterServiceDelegator())(
+        (new AdapterInterfaceDelegator())(
             $container,
             stdClass::class,
             $callback
@@ -163,7 +163,7 @@ final class AdapterServiceDelegatorTest extends TestCase
             ],
             'delegators' => [
                 ConcreteAdapterAwareObject::class => [
-                    AdapterServiceDelegator::class,
+                    AdapterInterfaceDelegator::class,
                 ],
             ],
         ]);
@@ -198,7 +198,7 @@ final class AdapterServiceDelegatorTest extends TestCase
             ],
             'delegators' => [
                 ConcreteAdapterAwareObject::class => [
-                    new AdapterServiceDelegator('alternate-database-adapter'),
+                    new AdapterInterfaceDelegator('alternate-database-adapter'),
                 ],
             ],
         ]);
@@ -236,7 +236,7 @@ final class AdapterServiceDelegatorTest extends TestCase
             ],
             'delegators' => [
                 ConcreteAdapterAwareObject::class => [
-                    AdapterServiceDelegator::class,
+                    AdapterInterfaceDelegator::class,
                 ],
             ],
         ];
