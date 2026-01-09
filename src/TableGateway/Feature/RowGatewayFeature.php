@@ -14,8 +14,7 @@ use function is_string;
 
 class RowGatewayFeature extends AbstractFeature
 {
-    /** @var array */
-    protected $constructorArguments = [];
+    protected array $constructorArguments = [];
 
     public function __construct(mixed ...$constructorArguments)
     {
@@ -53,7 +52,7 @@ class RowGatewayFeature extends AbstractFeature
             $metadata = $this->tableGateway->featureSet->getFeatureByClassName(
                 MetadataFeature::class
             );
-            if ($metadata === false || ! isset($metadata->sharedData['metadata'])) {
+            if ($metadata === null || ! isset($metadata->sharedData['metadata'])) {
                 throw new Exception\RuntimeException(
                     'No information was provided to the RowGatewayFeature and/or no MetadataFeature could be consulted '
                     . 'to find the primary key necessary for RowGateway object creation.'

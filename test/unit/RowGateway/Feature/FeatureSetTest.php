@@ -33,10 +33,11 @@ class FeatureSetTest extends TestCase
             ->getMock();
 
         $feature = $this->createMock(AbstractFeature::class);
-        // Note: setRowGateway is called twice - once in addFeature (with $feature itself, which is a bug)
-        // and once in setRowGateway (with the actual rowGateway)
-        $feature->expects($this->exactly(2))
-            ->method('setRowGateway');
+        // setRowGateway is called once when setRowGateway is called on the FeatureSet
+        // (features added before setRowGateway is called don't have setRowGateway called on them until later)
+        $feature->expects($this->once())
+            ->method('setRowGateway')
+            ->with($rowGateway);
 
         $featureSet = new FeatureSet([$feature]);
         $result     = $featureSet->setRowGateway($rowGateway);
@@ -54,13 +55,13 @@ class FeatureSetTest extends TestCase
         self::assertSame($feature, $result);
     }
 
-    public function testGetFeatureByClassNameReturnsFalseWhenNotFound(): void
+    public function testGetFeatureByClassNameReturnsNullWhenNotFound(): void
     {
         $featureSet = new FeatureSet();
 
         $result = $featureSet->getFeatureByClassName(AbstractFeature::class);
 
-        self::assertFalse($result);
+        self::assertNull($result);
     }
 
     public function testAddFeatures(): void

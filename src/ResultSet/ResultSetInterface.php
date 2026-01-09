@@ -27,7 +27,7 @@ interface ResultSetInterface extends Iterator, Countable
      *
      * @throws Exception\InvalidArgumentException
      */
-    public function setRowPrototype(ArrayObject $rowPrototype): ResultSetInterface;
+    public function setRowPrototype(ArrayObject|RowPrototypeInterface $rowPrototype): ResultSetInterface;
 
     /**
      * Get the row object prototype

@@ -39,10 +39,10 @@ class TableGatewayEvent implements EventInterface
     /**
      * Get a single parameter by name
      *
+     * @param string|int $name
      * @param mixed $default Default value to return if parameter does not exist
-     * @phpstan-ignore method.childParameterType
      */
-    public function getParam(int|string $name, mixed $default = null): mixed
+    public function getParam($name, $default = null): mixed
     {
         return $this->params[$name] ?? $default;
     }
@@ -50,9 +50,9 @@ class TableGatewayEvent implements EventInterface
     /**
      * Set the event name
      *
-     * @phpstan-ignore method.childParameterType
+     * @param string $name
      */
-    public function setName(string $name): void
+    public function setName($name): void
     {
         $this->name = $name;
     }
@@ -60,17 +60,19 @@ class TableGatewayEvent implements EventInterface
     /**
      * Set the event target/context
      *
-     * @phpstan-ignore selfOut.type, method.childParameterType
+     * @param object|string|null $target
      */
-    public function setTarget(null|object|string $target): void
+    public function setTarget($target): void
     {
         $this->target = $target;
     }
 
     /**
-     * @phpstan-ignore selfOut.type, method.childParameterType
+     * Set event parameters
+     *
+     * @param array|object $params
      */
-    public function setParams(array|object $params): void
+    public function setParams($params): void
     {
         $this->params = $params;
     }
@@ -78,9 +80,10 @@ class TableGatewayEvent implements EventInterface
     /**
      * Set a single parameter by key
      *
-     * @phpstan-ignore method.childParameterType
+     * @param string|int $name
+     * @param mixed $value
      */
-    public function setParam(int|string $name, mixed $value): void
+    public function setParam($name, $value): void
     {
         $this->params[$name] = $value;
     }
@@ -88,9 +91,9 @@ class TableGatewayEvent implements EventInterface
     /**
      * Indicate whether or not the parent EventManagerInterface should stop propagating events
      *
-     * @phpstan-ignore method.childParameterType
+     * @param bool $flag
      */
-    public function stopPropagation(bool $flag = true): void
+    public function stopPropagation($flag = true): void
     {
     }
 

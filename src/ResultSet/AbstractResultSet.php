@@ -293,7 +293,7 @@ abstract class AbstractResultSet implements ResultSetInterface
     /**
      * Set the row object prototype
      */
-    abstract public function setRowPrototype(ArrayObject $rowPrototype): ResultSetInterface;
+    abstract public function setRowPrototype(ArrayObject|RowPrototypeInterface $rowPrototype): ResultSetInterface;
 
     /**
      * Get the row object prototype

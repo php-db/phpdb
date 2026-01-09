@@ -49,20 +49,33 @@ class RowGatewayFeatureTest extends TestCase
 
     public function testPostInitializeWithStringPrimaryKey(): void
     {
-        $this->markTestSkipped(
-            'RowGatewayFeature is incompatible with modernized ResultSet - '
-            . 'ResultSet::setArrayObjectPrototype() now requires ArrayObject, '
-            . 'but RowGateway does not extend ArrayObject.'
-        );
+        $resultSet    = new ResultSet();
+        $tableGateway = $this->createTableGatewayMock($resultSet);
+
+        $feature = new RowGatewayFeature('id');
+        $feature->setTableGateway($tableGateway);
+
+        $feature->postInitialize();
+
+        $prototype = $resultSet->getRowPrototype();
+        self::assertInstanceOf(RowGatewayInterface::class, $prototype);
     }
 
     public function testPostInitializeWithRowGatewayInstance(): void
     {
-        $this->markTestSkipped(
-            'RowGatewayFeature is incompatible with modernized ResultSet - '
-            . 'ResultSet::setArrayObjectPrototype() now requires ArrayObject, '
-            . 'but RowGatewayInterface does not extend ArrayObject.'
-        );
+        $resultSet = new ResultSet();
+
+        /** @var RowGatewayInterface&MockObject $rowGateway */
+        $rowGateway = $this->createMock(RowGatewayInterface::class);
+
+        $tableGateway = $this->createTableGatewayMock($resultSet);
+
+        $feature = new RowGatewayFeature($rowGateway);
+        $feature->setTableGateway($tableGateway);
+
+        $feature->postInitialize();
+
+        self::assertSame($rowGateway, $resultSet->getRowPrototype());
     }
 
     public function testPostInitializeThrowsExceptionForNonResultSet(): void
@@ -81,11 +94,34 @@ class RowGatewayFeatureTest extends TestCase
 
     public function testPostInitializeWithMetadataFeature(): void
     {
-        $this->markTestSkipped(
-            'RowGatewayFeature is incompatible with modernized ResultSet - '
-            . 'ResultSet::setArrayObjectPrototype() now requires ArrayObject, '
-            . 'but RowGateway does not extend ArrayObject.'
-        );
+        $resultSet = new ResultSet();
+
+        // Create a MetadataFeature mock with primary key in sharedData
+        $metadataFeature = $this->getMockBuilder(MetadataFeature::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        // Set sharedData with metadata containing primaryKey
+        $sharedDataProperty = new ReflectionProperty(MetadataFeature::class, 'sharedData');
+        $sharedDataProperty->setValue($metadataFeature, [
+            'metadata' => ['primaryKey' => 'id'],
+        ]);
+
+        $featureSet = $this->createMock(FeatureSet::class);
+        $featureSet->expects($this->once())
+            ->method('getFeatureByClassName')
+            ->with(MetadataFeature::class)
+            ->willReturn($metadataFeature);
+
+        $tableGateway = $this->createTableGatewayMock($resultSet, $featureSet);
+
+        $feature = new RowGatewayFeature();
+        $feature->setTableGateway($tableGateway);
+
+        $feature->postInitialize();
+
+        $prototype = $resultSet->getRowPrototype();
+        self::assertInstanceOf(RowGatewayInterface::class, $prototype);
     }
 
     public function testPostInitializeThrowsExceptionWhenNoMetadataAndNoPrimaryKey(): void
@@ -96,7 +132,7 @@ class RowGatewayFeatureTest extends TestCase
         $featureSet->expects($this->once())
             ->method('getFeatureByClassName')
             ->with(MetadataFeature::class)
-            ->willReturn(false);
+            ->willReturn(null);
 
         $tableGateway = $this->createTableGatewayMock($resultSet, $featureSet);
 

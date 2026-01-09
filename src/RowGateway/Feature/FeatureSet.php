@@ -12,7 +12,7 @@ class FeatureSet
 {
     public const APPLY_HALT = 'halt';
 
-    protected AbstractRowGateway $rowGateway;
+    protected ?AbstractRowGateway $rowGateway = null;
 
     /** @var AbstractFeature[] */
     protected array $features = [];
@@ -67,7 +67,9 @@ class FeatureSet
     public function addFeature(AbstractFeature $feature): static
     {
         $this->features[] = $feature;
-        $feature->setRowGateway($this->rowGateway);
+        if ($this->rowGateway !== null) {
+            $feature->setRowGateway($this->rowGateway);
+        }
         return $this;
     }
 

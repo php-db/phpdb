@@ -18,7 +18,7 @@ class ResultSet extends AbstractResultSet
 
     public function __construct(
         private ResultSetReturnType|string $returnType = ResultSetReturnType::ArrayObject,
-        private ?ArrayObject $rowPrototype = null
+        private ArrayObject|RowPrototypeInterface|null $rowPrototype = null
     ) {
         if (is_string($this->returnType)) {
             $this->returnType = ResultSetReturnType::from($this->returnType);
@@ -27,7 +27,7 @@ class ResultSet extends AbstractResultSet
 
     /** {@inheritDoc} */
     #[Override]
-    public function setRowPrototype(ArrayObject $rowPrototype): ResultSetInterface
+    public function setRowPrototype(ArrayObject|RowPrototypeInterface $rowPrototype): ResultSetInterface
     {
         $this->rowPrototype = $rowPrototype;
         return $this;
@@ -35,7 +35,7 @@ class ResultSet extends AbstractResultSet
 
     /** {@inheritDoc} */
     #[Override]
-    public function getRowPrototype(): ArrayObject
+    public function getRowPrototype(): ArrayObject|RowPrototypeInterface
     {
         return $this->rowPrototype ??= new ArrayObject([], ArrayObject::ARRAY_AS_PROPS);
     }
@@ -52,7 +52,7 @@ class ResultSet extends AbstractResultSet
      * Iterator: get current item
      */
     #[Override]
-    public function current(): array|ArrayObject|null
+    public function current(): array|ArrayObject|RowPrototypeInterface|null
     {
         $data = parent::current();
 
@@ -68,17 +68,17 @@ class ResultSet extends AbstractResultSet
     /**
      * Set the row object prototype
      *
-     * @deprecated use setObjectPrototype()
+     * @deprecated use setRowPrototype()
      */
-    public function setArrayObjectPrototype(ArrayObject $arrayObjectPrototype): ResultSetInterface
+    public function setArrayObjectPrototype(ArrayObject|RowPrototypeInterface $arrayObjectPrototype): ResultSetInterface
     {
         return $this->setRowPrototype($arrayObjectPrototype);
     }
 
     /**
-     * @deprecated use getObjectPrototype()
+     * @deprecated use getRowPrototype()
      */
-    public function getArrayObjectPrototype(): ArrayObject
+    public function getArrayObjectPrototype(): ArrayObject|RowPrototypeInterface
     {
         return $this->getRowPrototype();
     }
