@@ -33,7 +33,7 @@ class TableGateway extends AbstractTableGateway
             $features instanceof Feature\FeatureSet => $features,
             $features instanceof Feature\AbstractFeature => new Feature\FeatureSet([$features]),
             is_array($features) => new Feature\FeatureSet($features),
-            default => new Feature\FeatureSet(),
+            default => $features,
         };
 
         $this->resultSetPrototype = $resultSetPrototype ?? new ResultSet();
