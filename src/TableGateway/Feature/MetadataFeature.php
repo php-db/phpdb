@@ -27,7 +27,7 @@ class MetadataFeature extends AbstractFeature
         ];
     }
 
-    public function postInitialize()
+    public function postInitialize(): void
     {
         // localize variable for brevity
         $t = $this->tableGateway;

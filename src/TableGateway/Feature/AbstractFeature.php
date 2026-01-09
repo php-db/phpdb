@@ -10,16 +10,14 @@ abstract class AbstractFeature extends AbstractTableGateway
 {
     protected AbstractTableGateway $tableGateway;
 
-    /** @var array */
-    protected $sharedData = [];
+    protected array $sharedData = [];
 
-    /** @return string */
-    public function getName()
+    public function getName(): string
     {
         return static::class;
     }
 
-    public function setTableGateway(AbstractTableGateway $tableGateway)
+    public function setTableGateway(AbstractTableGateway $tableGateway): void
     {
         $this->tableGateway = $tableGateway;
     }
@@ -30,7 +28,7 @@ abstract class AbstractFeature extends AbstractTableGateway
     }
 
     /** @return string[] */
-    public function getMagicMethodSpecifications()
+    public function getMagicMethodSpecifications(): array
     {
         return [];
     }

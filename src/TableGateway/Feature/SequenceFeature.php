@@ -13,14 +13,11 @@ use function array_search;
 
 class SequenceFeature extends AbstractFeature
 {
-    /** @var string */
-    protected $primaryKeyField;
+    protected string $primaryKeyField;
 
-    /** @var string */
-    protected $sequenceName;
+    protected string $sequenceName;
 
-    /** @var int */
-    protected $sequenceValue;
+    protected ?int $sequenceValue = null;
 
     public function __construct(string $primaryKeyField, string $sequenceName)
     {
@@ -28,10 +25,7 @@ class SequenceFeature extends AbstractFeature
         $this->sequenceName    = $sequenceName;
     }
 
-    /**
-     * @return Insert
-     */
-    public function preInsert(Insert $insert)
+    public function preInsert(Insert $insert): Insert
     {
         $columns = $insert->getRawState('columns');
         $values  = $insert->getRawState('values');

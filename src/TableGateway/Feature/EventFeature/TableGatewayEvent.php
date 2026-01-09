@@ -9,13 +9,11 @@ use PhpDb\TableGateway\AbstractTableGateway;
 
 class TableGatewayEvent implements EventInterface
 {
-    /** @var AbstractTableGateway */
-    protected $target;
+    protected ?AbstractTableGateway $target = null;
 
     protected ?string $name = null;
 
-    /** @var array|object */
-    protected $params = [];
+    protected array|object $params = [];
 
     public function getName(): ?string
     {
@@ -24,10 +22,8 @@ class TableGatewayEvent implements EventInterface
 
     /**
      * Get target/context from which event was triggered
-     *
-     * @return AbstractTableGateway
      */
-    public function getTarget()
+    public function getTarget(): ?AbstractTableGateway
     {
         return $this->target;
     }
@@ -43,20 +39,17 @@ class TableGatewayEvent implements EventInterface
     /**
      * Get a single parameter by name
      *
-     * @param string $name
      * @param mixed $default Default value to return if parameter does not exist
      */
-    public function getParam($name, $default = null): mixed
+    public function getParam(string $name, mixed $default = null): mixed
     {
         return $this->params[$name] ?? $default;
     }
 
     /**
      * Set the event name
-     *
-     * @param string|null $name
      */
-    public function setName($name): void
+    public function setName(?string $name): void
     {
         $this->name = $name;
     }
@@ -64,40 +57,33 @@ class TableGatewayEvent implements EventInterface
     /**
      * Set the event target/context
      *
-     * @param null|string|object $target
      * @phpstan-ignore selfOut.type
      */
-    public function setTarget($target): void
+    public function setTarget(null|string|object $target): void
     {
         $this->target = $target;
     }
 
     /**
-     * @param array|object $params
      * @phpstan-ignore selfOut.type
      */
-    public function setParams($params): void
+    public function setParams(array|object $params): void
     {
         $this->params = $params;
     }
 
     /**
      * Set a single parameter by key
-     *
-     * @param string $name
-     * @param mixed $value
      */
-    public function setParam($name, $value): void
+    public function setParam(string $name, mixed $value): void
     {
         $this->params[$name] = $value;
     }
 
     /**
      * Indicate whether or not the parent EventManagerInterface should stop propagating events
-     *
-     * @param bool $flag
      */
-    public function stopPropagation($flag = true): void
+    public function stopPropagation(bool $flag = true): void
     {
     }
 

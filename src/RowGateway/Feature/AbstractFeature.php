@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDb\RowGateway\Feature;
 
 use PhpDb\RowGateway\AbstractRowGateway;
