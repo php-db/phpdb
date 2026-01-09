@@ -137,8 +137,6 @@ final class AbstractTableGatewayTest extends TestCase
 
         $tgReflection = new ReflectionClass(AbstractTableGateway::class);
         foreach ($tgReflection->getProperties() as $tgPropReflection) {
-            /** @noinspection PhpExpressionResultUnusedInspection */
-            $tgPropReflection->setAccessible(true);
             switch ($tgPropReflection->getName()) {
                 case 'table':
                     $tgPropReflection->setValue($this->table, 'foo');
@@ -156,8 +154,6 @@ final class AbstractTableGatewayTest extends TestCase
                     $tgPropReflection->setValue($this->table, $this->mockFeatureSet);
                     break;
             }
-            /** @noinspection PhpExpressionResultUnusedInspection */
-            $tgPropReflection->setAccessible(false);
         }
     }
 

@@ -32,9 +32,6 @@ class PlatformTest extends TestCase
 
         $reflectionMethod = new ReflectionMethod($platform, 'resolvePlatform');
 
-        /** @noinspection PhpExpressionResultUnusedInspection */
-        $reflectionMethod->setAccessible(true);
-
         self::assertEquals($adapter->getPlatform(), $reflectionMethod->invoke($platform, null));
     }
 
@@ -46,9 +43,6 @@ class PlatformTest extends TestCase
         $platform = new Platform($this->resolveAdapter('sql92')->getPlatform());
 
         $reflectionMethod = new ReflectionMethod($platform, 'resolvePlatformName');
-
-        /** @noinspection PhpExpressionResultUnusedInspection */
-        $reflectionMethod->setAccessible(true);
 
         self::assertEquals('mysql', $reflectionMethod->invoke($platform, new TestAsset\TrustingMysqlPlatform()));
         self::assertEquals('sqlserver', $reflectionMethod->invoke(

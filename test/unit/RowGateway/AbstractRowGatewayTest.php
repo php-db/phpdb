@@ -198,8 +198,6 @@ final class AbstractRowGatewayTest extends TestCase
 
         $refRowGateway     = new ReflectionObject($this->rowGateway);
         $refRowGatewayProp = $refRowGateway->getProperty('primaryKeyData');
-        /** @psalm-suppress UnusedMethodCall */
-        $refRowGatewayProp->setAccessible(true);
 
         $this->rowGateway->populate(['one' => 'foo', 'two' => 'bar']);
 
