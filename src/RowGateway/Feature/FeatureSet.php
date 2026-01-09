@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDb\RowGateway\Feature;
 
 use PhpDb\RowGateway\AbstractRowGateway;
@@ -36,12 +38,9 @@ class FeatureSet
         return $this;
     }
 
-    /**
-     * @return AbstractFeature
-     */
-    public function getFeatureByClassName(string $featureClassName): AbstractFeature|false
+    public function getFeatureByClassName(string $featureClassName): ?AbstractFeature
     {
-        $feature = false;
+        $feature = null;
         foreach ($this->features as $potentialFeature) {
             if ($potentialFeature instanceof $featureClassName) {
                 $feature = $potentialFeature;
@@ -84,18 +83,12 @@ class FeatureSet
         }
     }
 
-    /**
-     * @param string $property
-     */
-    public function canCallMagicGet($property): bool
+    public function canCallMagicGet(string $property): bool
     {
         return false;
     }
 
-    /**
-     * @param string $property
-     */
-    public function callMagicGet($property): mixed
+    public function callMagicGet(string $property): mixed
     {
         return null;
     }
