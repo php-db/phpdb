@@ -125,4 +125,64 @@ final class RowGatewayTest extends TestCase
 
         new RowGateway('id', 'foo', $sql);
     }
+
+    /**
+     * Test that initialize() returns early when already initialized (covers line 40)
+     */
+    public function testInitializeReturnsEarlyWhenAlreadyInitialized(): void
+    {
+        $rowGateway = new RowGateway('id', 'foo', $this->mockAdapter);
+
+        // Verify already initialized after construction
+        $isInitializedProp = new ReflectionProperty(RowGateway::class, 'isInitialized');
+        self::assertTrue($isInitializedProp->getValue($rowGateway));
+
+        // Call initialize() again - should hit early return on line 40
+        $rowGateway->initialize();
+
+        // Still initialized (nothing changed)
+        self::assertTrue($isInitializedProp->getValue($rowGateway));
+    }
+
+    /**
+     * Test that initialize() throws when table is null (covers line 51)
+     */
+    public function testInitializeThrowsWhenTableIsNull(): void
+    {
+        $rowGateway = new RowGateway('id', 'foo', $this->mockAdapter);
+
+        // Reset state to force re-initialization
+        $isInitializedProp = new ReflectionProperty(RowGateway::class, 'isInitialized');
+        $isInitializedProp->setValue($rowGateway, false);
+
+        // Set table to null
+        $tableProp = new ReflectionProperty(RowGateway::class, 'table');
+        $tableProp->setValue($rowGateway, null);
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('This row object does not have a valid table set.');
+
+        $rowGateway->initialize();
+    }
+
+    /**
+     * Test that initialize() throws when SQL is null (covers line 59)
+     */
+    public function testInitializeThrowsWhenSqlIsNull(): void
+    {
+        $rowGateway = new RowGateway('id', 'foo', $this->mockAdapter);
+
+        // Reset state to force re-initialization
+        $isInitializedProp = new ReflectionProperty(RowGateway::class, 'isInitialized');
+        $isInitializedProp->setValue($rowGateway, false);
+
+        // Set sql to null
+        $sqlProp = new ReflectionProperty(RowGateway::class, 'sql');
+        $sqlProp->setValue($rowGateway, null);
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('This row object does not have a Sql object set.');
+
+        $rowGateway->initialize();
+    }
 }

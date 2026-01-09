@@ -87,6 +87,26 @@ class FeatureSetTest extends TestCase
         self::assertSame($feature, $featureSet->getFeatureByClassName(AbstractFeature::class));
     }
 
+    public function testAddFeatureCallsSetRowGatewayWhenRowGatewayIsSet(): void
+    {
+        /** @var AbstractRowGateway&MockObject $rowGateway */
+        $rowGateway = $this->getMockBuilder(AbstractRowGateway::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $feature = $this->createMock(AbstractFeature::class);
+        $feature->expects($this->once())
+            ->method('setRowGateway')
+            ->with($rowGateway);
+
+        // Create FeatureSet and set rowGateway FIRST
+        $featureSet = new FeatureSet();
+        $featureSet->setRowGateway($rowGateway);
+
+        // Now add feature - should call setRowGateway on the feature
+        $featureSet->addFeature($feature);
+    }
+
     public function testApplyCallsMethodOnFeatures(): void
     {
         $called       = false;

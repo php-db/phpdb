@@ -270,4 +270,38 @@ final class SequenceFeatureTest extends TestCase
         $sequenceValueProp = new ReflectionProperty(SequenceFeature::class, 'sequenceValue');
         self::assertNull($sequenceValueProp->getValue($this->feature));
     }
+
+    public function testPreInsertReturnsEarlyWhenNextSequenceIdReturnsNull(): void
+    {
+        $tableGateway = $this->createTableGatewayWithPlatform('PostgreSQL');
+
+        // Create a partial mock of SequenceFeature that returns null from nextSequenceId
+        $feature = $this->getMockBuilder(SequenceFeature::class)
+            ->setConstructorArgs([$this->primaryKeyField, self::$sequenceName])
+            ->onlyMethods(['nextSequenceId'])
+            ->getMock();
+
+        $feature->expects($this->once())
+            ->method('nextSequenceId')
+            ->willReturn(null);
+
+        $feature->setTableGateway($tableGateway);
+
+        $insert = new Insert('table');
+        $insert->columns(['name']);
+        $insert->values(['test']);
+
+        $result = $feature->preInsert($insert);
+
+        // Should return early without modifying the insert
+        self::assertSame($insert, $result);
+
+        // Verify sequenceValue is null
+        $sequenceValueProp = new ReflectionProperty(SequenceFeature::class, 'sequenceValue');
+        self::assertNull($sequenceValueProp->getValue($feature));
+
+        // Verify the insert was NOT modified (no primary key added)
+        $rawState = $insert->getRawState();
+        self::assertNotContains('id', $rawState['columns']);
+    }
 }

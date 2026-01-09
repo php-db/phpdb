@@ -416,6 +416,37 @@ final class AbstractTableGatewayTest extends TestCase
         self::assertTrue($stub->isInitialized());
     }
 
+    public function testInitializeEarlyReturnWhenAlreadyInitialized(): void
+    {
+        // Create a fresh mock without initialization
+        $stub = $this->getMockBuilder(AbstractTableGateway::class)
+            ->onlyMethods([])
+            ->getMock();
+
+        // Set required properties for initialization
+        $tgReflection = new ReflectionClass(AbstractTableGateway::class);
+
+        $tableProp = $tgReflection->getProperty('table');
+        $tableProp->setValue($stub, 'foo');
+
+        $adapterProp = $tgReflection->getProperty('adapter');
+        $adapterProp->setValue($stub, $this->mockAdapter);
+
+        // First initialization
+        $stub->initialize();
+        self::assertTrue($stub->isInitialized());
+
+        // Get the featureSet that was created during first init
+        $featureSetProp     = $tgReflection->getProperty('featureSet');
+        $originalFeatureSet = $featureSetProp->getValue($stub);
+
+        // Second initialization should early return (line 69)
+        $stub->initialize();
+
+        // Verify featureSet is still the same object (proving early return was taken)
+        self::assertSame($originalFeatureSet, $featureSetProp->getValue($stub));
+    }
+
     public function testInitializeThrowsExceptionWithoutAdapter(): void
     {
         $stub = $this->getMockBuilder(AbstractTableGateway::class)

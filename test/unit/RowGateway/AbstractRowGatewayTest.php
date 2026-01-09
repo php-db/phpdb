@@ -340,19 +340,21 @@ final class AbstractRowGatewayTest extends TestCase
 
     public function testInitializeThrowsExceptionWhenTableIsNull(): void
     {
-        $rowGateway = $this->getMockBuilder(AbstractRowGateway::class)->onlyMethods([])->getMock();
-
-        $refRowGateway = new ReflectionObject($rowGateway);
-
-        // Set primaryKeyColumn and sql, but leave table as null
-        $pkProp = $refRowGateway->getProperty('primaryKeyColumn');
-        $pkProp->setValue($rowGateway, ['id']);
-
-        $sqlProp = $refRowGateway->getProperty('sql');
-        $sqlProp->setValue($rowGateway, new Sql($this->mockAdapter));
-
+        // Use concrete RowGateway with null table to ensure coverage is tracked
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('This row object does not have a valid table set.');
+
+        // RowGateway constructor requires non-null table, so we must create with reflection
+        $rowGateway = new RowGateway('id', 'temp_table', $this->mockAdapter);
+
+        // Now set table to null via reflection
+        $refRowGateway = new ReflectionObject($rowGateway);
+        $tableProp     = $refRowGateway->getProperty('table');
+        $tableProp->setValue($rowGateway, null);
+
+        // Reset isInitialized to force re-initialization
+        $isInitializedProp = $refRowGateway->getProperty('isInitialized');
+        $isInitializedProp->setValue($rowGateway, false);
 
         $rowGateway->populate(['name' => 'test']);
     }
@@ -378,33 +380,62 @@ final class AbstractRowGatewayTest extends TestCase
 
     public function testInitializeThrowsExceptionWhenSqlIsNull(): void
     {
-        $rowGateway = $this->getMockBuilder(AbstractRowGateway::class)->onlyMethods([])->getMock();
+        // Use concrete RowGateway to ensure coverage is tracked
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('This row object does not have a Sql object set.');
+
+        $rowGateway = new RowGateway('id', 'temp_table', $this->mockAdapter);
 
         $refRowGateway = new ReflectionObject($rowGateway);
 
-        // Set table and primaryKeyColumn, but leave sql as null
-        $tableProp = $refRowGateway->getProperty('table');
-        $tableProp->setValue($rowGateway, 'foo');
+        // Set sql to null via reflection
+        $sqlProp = $refRowGateway->getProperty('sql');
+        $sqlProp->setValue($rowGateway, null);
 
-        $pkProp = $refRowGateway->getProperty('primaryKeyColumn');
-        $pkProp->setValue($rowGateway, ['id']);
-
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('This row object does not have a Sql object set.');
+        // Reset isInitialized to force re-initialization
+        $isInitializedProp = $refRowGateway->getProperty('isInitialized');
+        $isInitializedProp->setValue($rowGateway, false);
 
         $rowGateway->populate(['name' => 'test']);
     }
 
     public function testInitializeOnlyRunsOnce(): void
     {
-        // Call populate twice - initialize should only run the first time
+        // First call to populate triggers initialize
         $this->rowGateway->populate(['id' => 1, 'name' => 'foo'], true);
+
+        // Verify isInitialized is true after first populate
+        $refRowGateway     = new ReflectionObject($this->rowGateway);
+        $isInitializedProp = $refRowGateway->getProperty('isInitialized');
+        self::assertTrue($isInitializedProp->getValue($this->rowGateway));
+
+        // Second call should hit the early return (line 40)
         $this->rowGateway->populate(['id' => 2, 'name' => 'bar'], true);
 
-        // If initialize ran twice, it would have caused issues
-        // Just verify the second populate worked
+        // Verify the second populate worked (proves initialize didn't throw)
         self::assertEquals(2, $this->rowGateway['id']);
         self::assertEquals('bar', $this->rowGateway['name']);
+    }
+
+    public function testInitializeEarlyReturnWhenAlreadyInitialized(): void
+    {
+        // Use concrete RowGateway to ensure coverage is tracked for line 40
+        $rowGateway = new RowGateway('id', 'test_table', $this->mockAdapter);
+
+        // Get the featureSet that was created during first init (constructor calls initialize)
+        $refRowGateway  = new ReflectionObject($rowGateway);
+        $featureSetProp = $refRowGateway->getProperty('featureSet');
+        $originalFeatureSet = $featureSetProp->getValue($rowGateway);
+
+        // Verify already initialized
+        $isInitializedProp = $refRowGateway->getProperty('isInitialized');
+        self::assertTrue($isInitializedProp->getValue($rowGateway));
+
+        // Second call to populate (triggers initialize again, but should early return on line 40)
+        $rowGateway->populate(['id' => 2, 'name' => 'bar'], true);
+
+        // Verify featureSet is still the same object (proving early return was taken)
+        self::assertSame($originalFeatureSet, $featureSetProp->getValue($rowGateway));
     }
 
     public function testInitializeCreatesFeatureSetIfNotSet(): void
