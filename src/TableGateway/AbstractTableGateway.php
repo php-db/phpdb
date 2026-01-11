@@ -28,7 +28,6 @@ use function is_array;
 use function is_object;
 use function reset;
 use function sprintf;
-use function strtolower;
 
 /**
  * @property AdapterInterface $adapter
@@ -163,6 +162,7 @@ abstract class AbstractTableGateway implements TableGatewayInterface
         if (! $this->isInitialized) {
             $this->initialize();
         }
+
         return $this->executeSelect($select);
     }
 
@@ -217,6 +217,7 @@ abstract class AbstractTableGateway implements TableGatewayInterface
         }
         $insert = $this->sql->insert();
         $insert->values($set);
+
         return $this->executeInsert($insert);
     }
 
@@ -225,12 +226,13 @@ abstract class AbstractTableGateway implements TableGatewayInterface
         if (! $this->isInitialized) {
             $this->initialize();
         }
+
         return $this->executeInsert($insert);
     }
 
     /**
-     * @todo add $columns support
      * @throws Exception\RuntimeException
+     * @todo add $columns support
      */
     protected function executeInsert(Insert $insert): int
     {
@@ -300,12 +302,13 @@ abstract class AbstractTableGateway implements TableGatewayInterface
         if (! $this->isInitialized) {
             $this->initialize();
         }
+
         return $this->executeUpdate($update);
     }
 
     /**
-     * @todo add $columns support
      * @throws Exception\RuntimeException
+     * @todo add $columns support
      */
     protected function executeUpdate(Update $update): int
     {
@@ -353,18 +356,20 @@ abstract class AbstractTableGateway implements TableGatewayInterface
         } else {
             $delete->where($where);
         }
+
         return $this->executeDelete($delete);
     }
 
     public function deleteWith(Delete $delete): int
     {
         $this->initialize();
+
         return $this->executeDelete($delete);
     }
 
     /**
-     * @todo add $columns support
      * @throws Exception\RuntimeException
+     * @todo add $columns support
      */
     protected function executeDelete(Delete $delete): int
     {
@@ -410,20 +415,20 @@ abstract class AbstractTableGateway implements TableGatewayInterface
      */
     public function __get(string $property): mixed
     {
-        switch (strtolower($property)) {
-            case 'lastinsertvalue':
-                return $this->lastInsertValue;
-            case 'adapter':
-                return $this->adapter;
-            case 'table':
-                return $this->table;
+        try {
+            return match ($property) {
+                'lastInsertValue', 'adapter', 'table' => $this->$property,
+                default => throw new Exception\InvalidArgumentException(),
+            };
+        } catch (Exception\InvalidArgumentException) {
+            if ($this->featureSet->canCallMagicGet($property)) {
+                return $this->featureSet->callMagicGet($property);
+            }
         }
 
-        if ($this->featureSet->canCallMagicGet($property)) {
-            return $this->featureSet->callMagicGet($property);
-        }
-
-        throw new Exception\InvalidArgumentException('Invalid magic property access in ' . self::class . '::__get()');
+        throw new Exception\InvalidArgumentException(
+            'Invalid magic property access in ' . self::class . '::__get()'
+        );
     }
 
     /**
@@ -433,6 +438,7 @@ abstract class AbstractTableGateway implements TableGatewayInterface
     {
         if ($this->featureSet->canCallMagicSet($property)) {
             $this->featureSet->callMagicSet($property, $value);
+
             return;
         }
         throw new Exception\InvalidArgumentException('Invalid magic property access in ' . self::class . '::__set()');

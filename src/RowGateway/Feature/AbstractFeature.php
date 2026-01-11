@@ -8,7 +8,7 @@ use PhpDb\RowGateway\AbstractRowGateway;
 use PhpDb\RowGateway\Exception;
 use PhpDb\RowGateway\Exception\RuntimeException;
 
-abstract class AbstractFeature extends AbstractRowGateway
+abstract class AbstractFeature extends AbstractRowGateway implements FeatureInterface
 {
     protected AbstractRowGateway $rowGateway;
 
@@ -32,6 +32,7 @@ abstract class AbstractFeature extends AbstractRowGateway
         throw new Exception\RuntimeException('This method is not intended to be called on this object.');
     }
 
+    /** @return array<string, string[]> */
     public function getMagicMethodSpecifications(): array
     {
         return [];

@@ -190,6 +190,7 @@ class FeatureSetTest extends TestCase
     public function testCanCallMagicGetReturnsFalse(): void
     {
         $featureSet = new FeatureSet();
+        /** @phpstan-ignore staticMethod.impossibleType */
         self::assertFalse($featureSet->canCallMagicGet('property'));
     }
 
@@ -202,6 +203,7 @@ class FeatureSetTest extends TestCase
     public function testCanCallMagicSetReturnsFalse(): void
     {
         $featureSet = new FeatureSet();
+        /** @phpstan-ignore staticMethod.impossibleType */
         self::assertFalse($featureSet->canCallMagicSet('property'));
     }
 

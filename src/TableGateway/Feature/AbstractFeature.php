@@ -6,7 +6,7 @@ namespace PhpDb\TableGateway\Feature;
 
 use PhpDb\TableGateway\AbstractTableGateway;
 
-abstract class AbstractFeature extends AbstractTableGateway
+abstract class AbstractFeature extends AbstractTableGateway implements FeatureInterface
 {
     protected AbstractTableGateway $tableGateway;
 
@@ -27,7 +27,7 @@ abstract class AbstractFeature extends AbstractTableGateway
         // No-op
     }
 
-    /** @return string[] */
+    /** @return array<string, string[]> */
     public function getMagicMethodSpecifications(): array
     {
         return [];

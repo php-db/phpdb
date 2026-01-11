@@ -731,7 +731,6 @@ final class AbstractTableGatewayTest extends TestCase
         $feature = new class extends AbstractFeature {
             /**
              * @return array<string, array<int, string>>
-             * @phpstan-ignore method.childReturnType
              */
             public function getMagicMethodSpecifications(): array
             {

@@ -15,7 +15,7 @@ class FeatureSet
 
     protected ?AbstractTableGateway $tableGateway = null;
 
-    /** @var AbstractFeature[] */
+    /** @var FeatureInterface[] */
     protected array $features = [];
 
     protected array $magicSpecifications = [];
@@ -39,7 +39,7 @@ class FeatureSet
         return $this;
     }
 
-    public function getFeatureByClassName(string $featureClassName): ?AbstractFeature
+    public function getFeatureByClassName(string $featureClassName): ?FeatureInterface
     {
         $feature = null;
         foreach ($this->features as $potentialFeature) {
@@ -65,7 +65,7 @@ class FeatureSet
     /**
      * @return $this Provides a fluent interface
      */
-    public function addFeature(AbstractFeature $feature): static
+    public function addFeature(FeatureInterface $feature): static
     {
         if ($this->tableGateway instanceof TableGatewayInterface) {
             $feature->setTableGateway($this->tableGateway);

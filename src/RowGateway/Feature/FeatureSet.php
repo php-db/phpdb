@@ -8,13 +8,16 @@ use PhpDb\RowGateway\AbstractRowGateway;
 
 use function method_exists;
 
+/**
+ * @final
+ */
 class FeatureSet
 {
-    public const APPLY_HALT = 'halt';
+    final public const APPLY_HALT = 'halt';
 
     protected ?AbstractRowGateway $rowGateway = null;
 
-    /** @var AbstractFeature[] */
+    /** @var FeatureInterface[] */
     protected array $features = [];
 
     protected array $magicSpecifications = [];
@@ -38,7 +41,7 @@ class FeatureSet
         return $this;
     }
 
-    public function getFeatureByClassName(string $featureClassName): ?AbstractFeature
+    public function getFeatureByClassName(string $featureClassName): ?FeatureInterface
     {
         $feature = null;
         foreach ($this->features as $potentialFeature) {
@@ -64,7 +67,7 @@ class FeatureSet
     /**
      * @return $this Provides a fluent interface
      */
-    public function addFeature(AbstractFeature $feature): static
+    public function addFeature(FeatureInterface $feature): static
     {
         $this->features[] = $feature;
         if ($this->rowGateway !== null) {
@@ -85,7 +88,7 @@ class FeatureSet
         }
     }
 
-    public function canCallMagicGet(string $property): bool
+    public function canCallMagicGet(string $property): false
     {
         return false;
     }
@@ -95,7 +98,7 @@ class FeatureSet
         return null;
     }
 
-    public function canCallMagicSet(string $property): bool
+    public function canCallMagicSet(string $property): false
     {
         return false;
     }

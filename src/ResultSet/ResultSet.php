@@ -18,7 +18,10 @@ class ResultSet extends AbstractResultSet
 
     public function __construct(
         private ResultSetReturnType|string $returnType = ResultSetReturnType::ArrayObject,
-        private ArrayObject|RowPrototypeInterface|null $rowPrototype = null
+        private ArrayObject|RowPrototypeInterface|null $rowPrototype = new ArrayObject(
+            [],
+            ArrayObject::ARRAY_AS_PROPS
+        )
     ) {
         if (is_string($this->returnType)) {
             $this->returnType = ResultSetReturnType::from($this->returnType);
@@ -30,6 +33,7 @@ class ResultSet extends AbstractResultSet
     public function setRowPrototype(ArrayObject|RowPrototypeInterface $rowPrototype): ResultSetInterface
     {
         $this->rowPrototype = $rowPrototype;
+
         return $this;
     }
 
@@ -37,7 +41,7 @@ class ResultSet extends AbstractResultSet
     #[Override]
     public function getRowPrototype(): ArrayObject|RowPrototypeInterface
     {
-        return $this->rowPrototype ??= new ArrayObject([], ArrayObject::ARRAY_AS_PROPS);
+        return $this->rowPrototype;
     }
 
     /**
@@ -59,6 +63,7 @@ class ResultSet extends AbstractResultSet
         if ($this->returnType === ResultSetReturnType::ArrayObject && is_array($data)) {
             $ao = clone $this->getRowPrototype();
             $ao->exchangeArray($data);
+
             return $ao;
         }
 
