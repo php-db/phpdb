@@ -14,30 +14,25 @@ use function is_array;
 use function is_string;
 use function strtolower;
 
-class Adapter implements AdapterInterface, Profiler\ProfilerAwareInterface, SchemaAwareInterface
+readonly class Adapter implements AdapterInterface, SchemaAwareInterface
 {
-    /**
-     * @throws Exception\InvalidArgumentException
-     */
-    public function __construct(
+    final public function __construct(
         protected Driver\DriverInterface $driver,
         protected Platform\PlatformInterface $platform,
         protected ResultSet\ResultSetInterface $queryResultSetPrototype = new ResultSet\ResultSet(),
         protected ?Profiler\ProfilerInterface $profiler = null
     ) {
-        if ($profiler) {
-            $this->setProfiler($profiler);
-        }
     }
 
-    #[Override]
-    public function setProfiler(Profiler\ProfilerInterface $profiler): Profiler\ProfilerAwareInterface
-    {
-        $this->profiler = $profiler;
-        if ($this->driver instanceof Profiler\ProfilerAwareInterface) {
-            $this->driver->setProfiler($profiler);
-        }
-        return $this;
+    final public function withProfiler(
+        Profiler\ProfilerInterface $profiler
+    ): static {
+        return new static(
+            $this->driver,
+            $this->platform,
+            $this->queryResultSetPrototype,
+            $profiler,
+        );
     }
 
     #[Override]

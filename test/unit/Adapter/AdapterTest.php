@@ -14,6 +14,7 @@ use PhpDb\Adapter\Driver\StatementInterface;
 use PhpDb\Adapter\ParameterContainer;
 use PhpDb\Adapter\Platform\PlatformInterface;
 use PhpDb\Adapter\Profiler;
+use PhpDb\Adapter\SchemaAwareInterface;
 use PhpDb\ResultSet\ResultSet;
 use PhpDb\ResultSet\ResultSetInterface;
 use PhpDbTest\TestAsset\TemporaryResultSet;
@@ -24,7 +25,7 @@ use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-#[CoversMethod(Adapter::class, 'setProfiler')]
+#[CoversMethod(Adapter::class, 'withProfiler')]
 #[CoversMethod(Adapter::class, 'getProfiler')]
 #[CoversMethod(Adapter::class, 'createDriver')]
 #[CoversMethod(Adapter::class, 'createPlatform')]
@@ -45,7 +46,7 @@ final class AdapterTest extends TestCase
 
     protected StatementInterface&MockObject $mockStatement;
 
-    protected Adapter $adapter;
+    protected AdapterInterface&SchemaAwareInterface&Adapter $adapter;
 
     /**
      * @throws Exception
@@ -66,17 +67,17 @@ final class AdapterTest extends TestCase
         $this->adapter = new Adapter($this->mockDriver, $this->mockPlatform);
     }
 
-    #[TestDox('unit test: Test setProfiler() will store profiler')]
-    public function testSetProfiler(): void
+    #[TestDox('unit test: Test withProfiler() will store profiler')]
+    public function testWithProfiler(): void
     {
-        $ret = $this->adapter->setProfiler(new Profiler\Profiler());
-        self::assertSame($this->adapter, $ret);
+        $ret = $this->adapter->withProfiler(new Profiler\Profiler());
+        self::assertNotSame($this->adapter, $ret);
     }
 
     #[TestDox('unit test: Test getProfiler() will store profiler')]
     public function testGetProfiler(): void
     {
-        $this->adapter->setProfiler($profiler = new Profiler\Profiler());
+        $this->adapter = $this->adapter->withProfiler($profiler = new Profiler\Profiler());
         self::assertSame($profiler, $this->adapter->getProfiler());
 
         $adapter = new Adapter(

@@ -30,6 +30,8 @@ interface AdapterInterface
 
     public const VALUE_QUOTE_SEPARATOR = 'quoteSeparator';
 
+    public function withProfiler(Profiler\ProfilerInterface $profiler): AdapterInterface;
+
     public function getDriver(): Driver\DriverInterface;
 
     public function getPlatform(): Platform\PlatformInterface;
