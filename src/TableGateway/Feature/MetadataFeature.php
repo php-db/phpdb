@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDb\TableGateway\Feature;
 
 use PhpDb\Metadata\MetadataInterface;
@@ -25,7 +27,7 @@ class MetadataFeature extends AbstractFeature
         ];
     }
 
-    public function postInitialize()
+    public function postInitialize(): void
     {
         // localize variable for brevity
         $t = $this->tableGateway;

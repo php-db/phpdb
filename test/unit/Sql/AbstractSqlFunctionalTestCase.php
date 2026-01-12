@@ -8,7 +8,6 @@ use PhpDb\Adapter;
 use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\Driver\StatementInterface;
 use PhpDb\Adapter\ParameterContainer;
-use PhpDb\Adapter\StatementContainer;
 use PhpDb\Sql;
 use PhpDb\Sql\Ddl\Column\Column;
 use PhpDb\Sql\Ddl\CreateTable;
@@ -279,7 +278,6 @@ abstract class AbstractSqlFunctionalTestCase extends TestCase
 
         if (is_array($expected) && isset($expected['prepare'])) {
             self::assertInstanceOf(PreparableSqlInterface::class, $sqlObject);
-            /** @var StatementInterface|StatementContainer $actual */
             $actual = $sql->prepareStatementForSqlObject($sqlObject);
             self::assertEquals($expected['prepare'], $actual->getSql(), 'prepareStatement()');
             if (isset($expected['parameters'])) {

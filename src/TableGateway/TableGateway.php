@@ -20,28 +20,24 @@ class TableGateway extends AbstractTableGateway
     public function __construct(
         TableIdentifier|array|string $table,
         AdapterInterface $adapter,
-        Feature\FeatureSet|Feature\AbstractFeature|array $features = new Feature\FeatureSet(),
-        ResultSetInterface $resultSetPrototype = new ResultSet(),
+        Feature\FeatureSet|Feature\FeatureInterface|array|null $features = new Feature\FeatureSet(),
+        ResultSetInterface|null $resultSetPrototype = new ResultSet(),
         ?Sql $sql = null
     ) {
         $this->table = $table;
 
-        // adapter
         $this->adapter = $adapter;
 
         $this->featureSet = match (true) {
-            $features instanceof Feature\AbstractFeature => new Feature\FeatureSet([$features]),
-            is_array($features)                          => new Feature\FeatureSet($features),
-            default                                      => $features,
+            $features instanceof Feature\FeatureInterface => new Feature\FeatureSet([$features]),
+            is_array($features) => new Feature\FeatureSet($features),
+            default => $features,
         };
 
-        // result prototype
         $this->resultSetPrototype = $resultSetPrototype;
 
-        // Sql object (factory for select, insert, update, delete)
         $this->sql = $sql ?: new Sql($this->adapter, $this->table);
 
-        // check sql object bound to same table
         if ($this->sql->getTable() !== $this->table) {
             throw new Exception\InvalidArgumentException(
                 'The table inside the provided Sql object must match the table of this TableGateway'

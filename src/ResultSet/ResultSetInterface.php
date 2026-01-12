@@ -20,14 +20,14 @@ interface ResultSetInterface extends Iterator, Countable
      * from the database might be a column, and/or the result of an
      * operation or intersection of some data
      */
-    public function getFieldCount(): mixed;
+    public function getFieldCount(): int;
 
     /**
      * Set the row object prototype
      *
      * @throws Exception\InvalidArgumentException
      */
-    public function setRowPrototype(ArrayObject $rowPrototype): ResultSetInterface;
+    public function setRowPrototype(ArrayObject|RowPrototypeInterface $rowPrototype): ResultSetInterface;
 
     /**
      * Get the row object prototype

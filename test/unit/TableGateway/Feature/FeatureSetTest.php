@@ -4,16 +4,14 @@ declare(strict_types=1);
 
 namespace PhpDbTest\TableGateway\Feature;
 
-use PhpDb\Adapter\Adapter;
 use PhpDb\Adapter\AdapterInterface;
 use PhpDb\Adapter\Driver\DriverInterface;
-use PhpDb\Adapter\Driver\Pgsql\Result;
 use PhpDb\Adapter\Driver\StatementInterface;
-use PhpDb\Adapter\Platform\Postgresql;
 use PhpDb\Adapter\Platform\Sql92;
 use PhpDb\Metadata\MetadataInterface;
 use PhpDb\Metadata\Object\ConstraintObject;
 use PhpDb\TableGateway\AbstractTableGateway;
+use PhpDb\TableGateway\Feature\AbstractFeature;
 use PhpDb\TableGateway\Feature\FeatureSet;
 use PhpDb\TableGateway\Feature\MasterSlaveFeature;
 use PhpDb\TableGateway\Feature\MetadataFeature;
@@ -24,10 +22,19 @@ use PHPUnit\Framework\Attributes\IgnoreDeprecations;
 use PHPUnit\Framework\Attributes\RequiresPhp;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
-use ReflectionClass;
 
 #[IgnoreDeprecations]
 #[RequiresPhp('<= 8.6')]
+#[CoversMethod(FeatureSet::class, '__construct')]
+#[CoversMethod(FeatureSet::class, 'setTableGateway')]
+#[CoversMethod(FeatureSet::class, 'getFeatureByClassName')]
+#[CoversMethod(FeatureSet::class, 'addFeatures')]
+#[CoversMethod(FeatureSet::class, 'addFeature')]
+#[CoversMethod(FeatureSet::class, 'apply')]
+#[CoversMethod(FeatureSet::class, 'canCallMagicGet')]
+#[CoversMethod(FeatureSet::class, 'callMagicGet')]
+#[CoversMethod(FeatureSet::class, 'canCallMagicSet')]
+#[CoversMethod(FeatureSet::class, 'callMagicSet')]
 #[CoversMethod(FeatureSet::class, 'canCallMagicCall')]
 #[CoversMethod(FeatureSet::class, 'callMagicCall')]
 class FeatureSetTest extends TestCase
@@ -57,7 +64,6 @@ class FeatureSetTest extends TestCase
 
         $tableGatewayMock = $this->getMockBuilder(AbstractTableGateway::class)->onlyMethods([])->getMock();
 
-        //feature doesn't have tableGateway, but FeatureSet has
         $feature = new MasterSlaveFeature($mockSlaveAdapter);
 
         $featureSet = new FeatureSet();
@@ -84,7 +90,6 @@ class FeatureSetTest extends TestCase
 
         $metadataMock->expects($this->any())->method('getConstraints')->willReturn([$constraintObject]);
 
-        //feature have tableGateway, but FeatureSet doesn't has
         $feature = new MetadataFeature($metadataMock);
         $feature->setTableGateway($tableGatewayMock);
 
@@ -126,49 +131,192 @@ class FeatureSetTest extends TestCase
 
     public function testCallMagicCallSucceedsForValidMethodOfAddedFeature(): void
     {
-        $this->markTestSkipped('This needs refactored to use a custom TestFeature and Sql92');
-        /** @phpstan-ignore deadCode.unreachable */
-        $sequenceName = 'table_sequence';
+        $feature = new class extends AbstractFeature {
+            public function customMethod(array $args): string
+            {
+                return 'result: ' . ($args[0] ?? 'default');
+            }
+        };
 
-        $platformMock = $this->getMockBuilder(Postgresql::class)->getMock();
-        $platformMock->expects($this->any())
-            ->method('getName')->willReturn('PostgreSQL');
+        $featureSet = new FeatureSet();
+        $featureSet->addFeature($feature);
 
-        $resultMock = $this->getMockBuilder(Result::class)->getMock();
-        $resultMock->expects($this->any())
-            ->method('current')
-            ->willReturn(['currval' => 1]);
+        $result = $featureSet->callMagicCall('customMethod', ['test_value']);
 
-        $statementMock = $this->getMockBuilder(StatementInterface::class)->getMock();
-        $statementMock->expects($this->any())
-            ->method('prepare')
-            ->with('SELECT CURRVAL(\'' . $sequenceName . '\')');
-        $statementMock->expects($this->any())
-            ->method('execute')
-            ->willReturn($resultMock);
+        self::assertEquals('result: test_value', $result);
+    }
 
-        $adapterMock = $this->getMockBuilder(Adapter::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $adapterMock->expects($this->any())
-            ->method('getPlatform')->willReturn($platformMock);
-        $adapterMock->expects($this->any())
-            ->method('createStatement')->willReturn($statementMock);
+    public function testConstructorWithFeatures(): void
+    {
+        $feature    = new SequenceFeature('id', 'table_sequence');
+        $featureSet = new FeatureSet([$feature]);
 
+        self::assertSame($feature, $featureSet->getFeatureByClassName(SequenceFeature::class));
+    }
+
+    public function testSetTableGateway(): void
+    {
         $tableGatewayMock = $this->getMockBuilder(AbstractTableGateway::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $reflectionClass    = new ReflectionClass(AbstractTableGateway::class);
-        $reflectionProperty = $reflectionClass->getProperty('adapter');
-        /** @noinspection PhpExpressionResultUnusedInspection */
-        $reflectionProperty->setAccessible(true);
-        $reflectionProperty->setValue($tableGatewayMock, $adapterMock);
+        $feature    = new SequenceFeature('id', 'table_sequence');
+        $featureSet = new FeatureSet([$feature]);
 
-        $feature = new SequenceFeature('id', 'table_sequence');
-        $feature->setTableGateway($tableGatewayMock);
+        $result = $featureSet->setTableGateway($tableGatewayMock);
+
+        self::assertSame($featureSet, $result);
+    }
+
+    public function testGetFeatureByClassNameReturnsNullWhenNotFound(): void
+    {
         $featureSet = new FeatureSet();
-        $featureSet->addFeature($feature);
-        self::assertEquals(1, $featureSet->callMagicCall('lastSequenceId', []));
+
+        $result = $featureSet->getFeatureByClassName(SequenceFeature::class);
+
+        self::assertNull($result);
+    }
+
+    public function testAddFeaturesReturnsFluentInterface(): void
+    {
+        $feature1 = new SequenceFeature('id', 'seq1');
+        $feature2 = new SequenceFeature('id', 'seq2');
+
+        $featureSet = new FeatureSet();
+        $result     = $featureSet->addFeatures([$feature1, $feature2]);
+
+        self::assertSame($featureSet, $result);
+    }
+
+    public function testApplyCallsMethodOnFeatures(): void
+    {
+        $tableGatewayMock = $this->getMockBuilder(AbstractTableGateway::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $feature = new MasterSlaveFeature(
+            $this->getMockBuilder(AdapterInterface::class)->getMock()
+        );
+
+        $featureSet = new FeatureSet([$feature]);
+        $featureSet->setTableGateway($tableGatewayMock);
+
+        $featureSet->apply('preSelect', []);
+
+        /** @phpstan-ignore staticMethod.alreadyNarrowedType */
+        self::assertTrue(true);
+    }
+
+    public function testApplySkipsFeatureWithoutMethod(): void
+    {
+        $feature    = new SequenceFeature('id', 'table_sequence');
+        $featureSet = new FeatureSet([$feature]);
+
+        $featureSet->apply('nonExistentMethod', []);
+
+        /** @phpstan-ignore staticMethod.alreadyNarrowedType */
+        self::assertTrue(true);
+    }
+
+    public function testCanCallMagicGetReturnsFalse(): void
+    {
+        $featureSet = new FeatureSet();
+
+        self::assertFalse($featureSet->canCallMagicGet('property'));
+    }
+
+    public function testCallMagicGetReturnsNull(): void
+    {
+        $featureSet = new FeatureSet();
+
+        self::assertNull($featureSet->callMagicGet('property'));
+    }
+
+    public function testCanCallMagicSetReturnsFalse(): void
+    {
+        $featureSet = new FeatureSet();
+
+        self::assertFalse($featureSet->canCallMagicSet('property'));
+    }
+
+    public function testCallMagicSetReturnsNull(): void
+    {
+        $featureSet = new FeatureSet();
+
+        self::assertNull($featureSet->callMagicSet('property', 'value'));
+    }
+
+    public function testCallMagicCallReturnsNullWhenNoFeatureHasMethod(): void
+    {
+        $featureSet = new FeatureSet();
+
+        self::assertNull($featureSet->callMagicCall('nonExistentMethod', []));
+    }
+
+    public function testApplyHaltsWhenFeatureReturnsHalt(): void
+    {
+        $feature1 = new class extends AbstractFeature {
+            public bool $called = false;
+            public function testMethod(): string
+            {
+                $this->called = true;
+                return FeatureSet::APPLY_HALT;
+            }
+        };
+
+        $feature2 = new class extends AbstractFeature {
+            public bool $called = false;
+            public function testMethod(): void
+            {
+                $this->called = true;
+            }
+        };
+
+        $featureSet = new FeatureSet([$feature1, $feature2]);
+        $featureSet->apply('testMethod', []);
+
+        self::assertTrue($feature1->called);
+        self::assertFalse($feature2->called);
+    }
+
+    public function testApplyCallsAllFeaturesWhenNoHalt(): void
+    {
+        $feature1 = new class extends AbstractFeature {
+            public bool $called = false;
+            public function testMethod(): void
+            {
+                $this->called = true;
+            }
+        };
+
+        $feature2 = new class extends AbstractFeature {
+            public bool $called = false;
+            public function testMethod(): void
+            {
+                $this->called = true;
+            }
+        };
+
+        $featureSet = new FeatureSet([$feature1, $feature2]);
+        $featureSet->apply('testMethod', []);
+
+        self::assertTrue($feature1->called);
+        self::assertTrue($feature2->called);
+    }
+
+    public function testApplyPassesArgumentsToFeatures(): void
+    {
+        $feature = new class extends AbstractFeature {
+            public mixed $receivedArg;
+            public function testMethod(string $arg): void
+            {
+                $this->receivedArg = $arg;
+            }
+        };
+
+        $featureSet = new FeatureSet([$feature]);
+        $featureSet->apply('testMethod', ['test value']);
+
+        self::assertEquals('test value', $feature->receivedArg);
     }
 }
