@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace PhpDb\RowGateway;
 
-interface RowGatewayInterface
+use PhpDb\ResultSet\RowPrototypeInterface;
+
+interface RowGatewayInterface extends RowPrototypeInterface
 {
     public function save(): int;
 

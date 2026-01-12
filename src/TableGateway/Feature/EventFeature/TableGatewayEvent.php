@@ -9,13 +9,11 @@ use PhpDb\TableGateway\AbstractTableGateway;
 
 class TableGatewayEvent implements EventInterface
 {
-    /** @var AbstractTableGateway */
-    protected $target;
+    protected ?AbstractTableGateway $target = null;
 
     protected ?string $name = null;
 
-    /** @var array|object */
-    protected $params = [];
+    protected array|object $params = [];
 
     public function getName(): ?string
     {
@@ -24,10 +22,8 @@ class TableGatewayEvent implements EventInterface
 
     /**
      * Get target/context from which event was triggered
-     *
-     * @return AbstractTableGateway
      */
-    public function getTarget()
+    public function getTarget(): ?AbstractTableGateway
     {
         return $this->target;
     }
@@ -43,7 +39,7 @@ class TableGatewayEvent implements EventInterface
     /**
      * Get a single parameter by name
      *
-     * @param string $name
+     * @param string|int $name
      * @param mixed $default Default value to return if parameter does not exist
      */
     public function getParam($name, $default = null): mixed
@@ -54,7 +50,7 @@ class TableGatewayEvent implements EventInterface
     /**
      * Set the event name
      *
-     * @param string|null $name
+     * @param string $name
      */
     public function setName($name): void
     {
@@ -64,7 +60,7 @@ class TableGatewayEvent implements EventInterface
     /**
      * Set the event target/context
      *
-     * @param null|string|object $target
+     * @param object|string|null $target
      * @phpstan-ignore selfOut.type
      */
     public function setTarget($target): void
@@ -73,6 +69,8 @@ class TableGatewayEvent implements EventInterface
     }
 
     /**
+     * Set event parameters
+     *
      * @param array|object $params
      * @phpstan-ignore selfOut.type
      */
@@ -84,7 +82,7 @@ class TableGatewayEvent implements EventInterface
     /**
      * Set a single parameter by key
      *
-     * @param string $name
+     * @param string|int $name
      * @param mixed $value
      */
     public function setParam($name, $value): void

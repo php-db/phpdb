@@ -6,7 +6,6 @@ namespace PhpDb\RowGateway;
 
 use ArrayAccess;
 use Countable;
-// phpcs:ignore SlevomatCodingStandard.Namespaces.UnusedUses.UnusedUse
 use Override;
 use PhpDb\Sql\Sql;
 use PhpDb\Sql\TableIdentifier;
@@ -14,30 +13,22 @@ use ReturnTypeWillChange;
 
 use function array_key_exists;
 use function count;
-use function is_string;
 
 abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayInterface
 {
-    /** @var bool */
-    protected $isInitialized = false;
+    protected bool $isInitialized = false;
 
-    /** @var string|TableIdentifier */
-    protected $table;
+    protected TableIdentifier|string|null $table = null;
 
-    /** @var array */
-    protected $primaryKeyColumn;
+    protected ?array $primaryKeyColumn = null;
 
-    /** @var ?array */
-    protected $primaryKeyData;
+    protected ?array $primaryKeyData = null;
 
-    /** @var array */
-    protected $data = [];
+    protected array $data = [];
 
-    /** @var Sql */
-    protected $sql;
+    protected ?Sql $sql = null;
 
-    /** @var Feature\FeatureSet */
-    protected $featureSet;
+    protected ?Feature\FeatureSet $featureSet = null;
 
     /**
      * initialize()
@@ -55,17 +46,15 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
         $this->featureSet->setRowGateway($this);
         $this->featureSet->apply('preInitialize', []);
 
-        if (! is_string($this->table) && ! $this->table instanceof TableIdentifier) {
+        if ($this->table === null) {
             throw new Exception\RuntimeException('This row object does not have a valid table set.');
         }
 
         if ($this->primaryKeyColumn === null) {
             throw new Exception\RuntimeException('This row object does not have a primary key column set.');
-        } elseif (is_string($this->primaryKeyColumn)) {
-            $this->primaryKeyColumn = (array) $this->primaryKeyColumn;
         }
 
-        if (! $this->sql instanceof Sql) {
+        if ($this->sql === null) {
             throw new Exception\RuntimeException('This row object does not have a Sql object set.');
         }
 
@@ -76,7 +65,6 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
 
     /**
      * Populate Data
-     * todo: Refactor to a standard ArrayObject implementation - remove fluent interface
      */
     public function populate(array $rowData, bool $rowExistsInDatabase = false): RowGatewayInterface
     {
@@ -85,20 +73,26 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
         $this->data = $rowData;
         if ($rowExistsInDatabase === true) {
             $this->processPrimaryKeyData();
-            return $this;
+        } else {
+            $this->primaryKeyData = null;
         }
-
-        $this->primaryKeyData = null;
 
         return $this;
     }
 
     /**
-     * todo: Refactor to a standard ArrayObject implementation - remove proxy to populate
+     * docs: Behaviour has changed - this no longer returns RowGatewayInterface but
+     *       instead an array of the old data as per original PHP spec.
+     *
+     * @return array<string, mixed>
      */
-    public function exchangeArray(array $array): RowGatewayInterface
+    public function exchangeArray(array $array): array
     {
-        return $this->populate($array, true);
+        $oldData = $this->data;
+
+        $this->populate($array, true);
+
+        return $oldData;
     }
 
     #[Override]
@@ -106,18 +100,16 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
     {
         $this->initialize();
 
-        if ($this->rowExistsInDatabase()) {
-            // UPDATE
+        $rowsAffected = 0;
 
+        if ($this->rowExistsInDatabase()) {
             $data         = $this->data;
             $where        = [];
             $isPkModified = false;
 
-            // primary key is always an array even if its a single column
             foreach ($this->primaryKeyColumn as $pkColumn) {
                 $where[$pkColumn] = $this->primaryKeyData[$pkColumn];
-                // phpcs:ignore SlevomatCodingStandard.Operators.DisallowEqualOperators.DisallowedEqualOperator
-                if ($data[$pkColumn] == $this->primaryKeyData[$pkColumn]) {
+                if ($data[$pkColumn] === $this->primaryKeyData[$pkColumn]) {
                     unset($data[$pkColumn]);
                 } else {
                     $isPkModified = true;
@@ -127,51 +119,42 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
             $statement    = $this->sql->prepareStatementForSqlObject($this->sql->update()->set($data)->where($where));
             $result       = $statement->execute();
             $rowsAffected = $result->getAffectedRows();
-            unset($statement, $result); // cleanup
+            unset($statement, $result);
 
-            // If one or more primary keys are modified, we update the where clause
             if ($isPkModified) {
                 foreach ($this->primaryKeyColumn as $pkColumn) {
-                    // phpcs:ignore SlevomatCodingStandard.Operators.DisallowEqualOperators.DisallowedEqualOperator
                     if ($data[$pkColumn] !== $this->primaryKeyData[$pkColumn]) {
                         $where[$pkColumn] = $data[$pkColumn];
                     }
                 }
             }
         } else {
-            // INSERT
             $insert = $this->sql->insert();
             $insert->values($this->data);
 
             $statement = $this->sql->prepareStatementForSqlObject($insert);
-
-            $result = $statement->execute();
+            $result    = $statement->execute();
             if (($primaryKeyValue = $result->getGeneratedValue()) && count($this->primaryKeyColumn) === 1) {
                 $this->primaryKeyData = [$this->primaryKeyColumn[0] => $primaryKeyValue];
             } else {
-                // make primary key data available so that $where can be complete
                 $this->processPrimaryKeyData();
             }
             $rowsAffected = $result->getAffectedRows();
-            unset($statement, $result); // cleanup
+            unset($statement, $result);
 
             $where = [];
-            // primary key is always an array even if its a single column
             foreach ($this->primaryKeyColumn as $pkColumn) {
                 $where[$pkColumn] = $this->primaryKeyData[$pkColumn];
             }
         }
 
-        // refresh data
         $statement = $this->sql->prepareStatementForSqlObject($this->sql->select()->where($where));
         $result    = $statement->execute();
         $rowData   = $result->current();
-        unset($statement, $result); // cleanup
+        unset($statement, $result);
 
-        // make sure data and original data are in sync after save
         $this->populate($rowData, true);
 
-        // return rows affected
         return $rowsAffected;
     }
 
@@ -181,34 +164,32 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
         $this->initialize();
 
         $where = [];
-        // primary key is always an array even if its a single column
         foreach ($this->primaryKeyColumn as $pkColumn) {
             $where[$pkColumn] = $this->primaryKeyData[$pkColumn] ?? null;
         }
 
         // @todo determine if we need to do a select to ensure 1 row will be affected
 
-        $statement = $this->sql->prepareStatementForSqlObject($this->sql->delete()->where($where));
-        $result    = $statement->execute();
+        $rowsAffected = 0;
+        $statement    = $this->sql->prepareStatementForSqlObject($this->sql->delete()->where($where));
+        $result       = $statement->execute();
 
-        $affectedRows = $result->getAffectedRows();
-        if ($affectedRows === 1) {
-            // detach from database
+        $rowsAffected = $result->getAffectedRows();
+        if ($rowsAffected === 1) {
             $this->primaryKeyData = null;
         }
 
-        return $affectedRows;
+        return $rowsAffected;
     }
 
     /**
      * Offset Exists
      *
-     * @param  string $offset
-     * @return bool
+     * @param string $offset
      */
     #[Override]
     #[ReturnTypeWillChange]
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         return array_key_exists($offset, $this->data);
     }
@@ -216,12 +197,11 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
     /**
      * Offset get
      *
-     * @param  string $offset
-     * @return mixed
+     * @param string $offset
      */
     #[Override]
     #[ReturnTypeWillChange]
-    public function offsetGet($offset)
+    public function offsetGet($offset): mixed
     {
         return $this->data[$offset];
     }
@@ -229,38 +209,34 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
     /**
      * Offset set
      *
-     * @param  string $offset
-     * @param  mixed $value
-     * @return $this Provides a fluent interface
+     * @param string $offset
      */
     #[Override]
     #[ReturnTypeWillChange]
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, mixed $value): static
     {
         $this->data[$offset] = $value;
+
         return $this;
     }
 
     /**
      * Offset unset
      *
-     * @param  string $offset
-     * @return $this Provides a fluent interface
+     * @param string $offset
      */
     #[Override]
     #[ReturnTypeWillChange]
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): static
     {
         $this->data[$offset] = null;
+
         return $this;
     }
 
-    /**
-     * @return int
-     */
     #[Override]
     #[ReturnTypeWillChange]
-    public function count()
+    public function count(): int
     {
         return count($this->data);
     }
