@@ -16,5 +16,5 @@ interface RowPrototypeInterface
     /**
      * Exchange the current data for the provided array.
      */
-    public function exchangeArray(array $array): mixed;
+    public function exchangeArray(array $array): array;
 }

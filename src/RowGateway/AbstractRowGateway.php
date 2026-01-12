@@ -66,29 +66,26 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
 
     /**
      * Populate Data
-     *
-     * @todo: Refactor to a standard ArrayObject implementation - remove fluent interface
      */
-    public function populate(array $rowData, bool $rowExistsInDatabase = false): RowGatewayInterface
+    public function populate(array $rowData, bool $rowExistsInDatabase = false): array
     {
         $this->initialize();
 
+        $oldData    = $this->data;
         $this->data = $rowData;
         if ($rowExistsInDatabase === true) {
             $this->processPrimaryKeyData();
-
-            return $this;
+        } else {
+            $this->primaryKeyData = null;
         }
 
-        $this->primaryKeyData = null;
-
-        return $this;
+        return $oldData;
     }
 
     /**
      * todo: Refactor to a standard ArrayObject implementation - remove proxy to populate
      */
-    public function exchangeArray(array $array): RowGatewayInterface
+    public function exchangeArray(array $array): array
     {
         return $this->populate($array, true);
     }

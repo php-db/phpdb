@@ -289,9 +289,15 @@ final class AbstractRowGatewayTest extends TestCase
 
     public function testExchangeArray(): void
     {
-        $result = $this->rowGateway->exchangeArray(['id' => 10, 'name' => 'bar']);
+        $this->rowGateway->populate(['id' => 5, 'name' => 'foo'], true);
+        self::assertEquals(['id' => 5, 'name' => 'foo'], $this->rowGateway->toArray());
 
-        self::assertSame($this->rowGateway, $result);
+        $oldData = $this->rowGateway->exchangeArray(['id' => 10, 'name' => 'bar']);
+
+        /** @phpstan-ignore staticMethod.alreadyNarrowedType */
+        self::assertIsArray($oldData);
+        self::assertEquals(['id' => 5, 'name' => 'foo'], $oldData);
+
         self::assertEquals(10, $this->rowGateway['id']);
         self::assertEquals('bar', $this->rowGateway['name']);
         self::assertTrue($this->rowGateway->rowExistsInDatabase());
