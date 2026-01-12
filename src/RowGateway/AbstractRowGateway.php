@@ -82,11 +82,8 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
     }
 
     /**
-     * Exchanges internal state from the given data.
-     *
-     * @deprecated since 1.0.0 — BC layer for pre-PhpDb
-     *             Will be removed or signature changed in 1.0.0.
-     *             Consumers should treat the return value as an array.
+     * docs: Behaviour has changed - this no longer returns RowGatewayInterface but
+     *       instead an array of the old data as per original PHP spec.
      *
      * @return array<string, mixed>
      */
