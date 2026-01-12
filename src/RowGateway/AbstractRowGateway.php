@@ -133,16 +133,14 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
             $insert->values($this->data);
 
             $statement = $this->sql->prepareStatementForSqlObject($insert);
-            if ($statement instanceof StatementInterface) {
-                $result = $statement->execute();
-                if (($primaryKeyValue = $result->getGeneratedValue()) && count($this->primaryKeyColumn) === 1) {
-                    $this->primaryKeyData = [$this->primaryKeyColumn[0] => $primaryKeyValue];
-                } else {
-                    $this->processPrimaryKeyData();
-                }
-                $rowsAffected = $result->getAffectedRows();
-                unset($statement, $result);
+            $result    = $statement->execute();
+            if (($primaryKeyValue = $result->getGeneratedValue()) && count($this->primaryKeyColumn) === 1) {
+                $this->primaryKeyData = [$this->primaryKeyColumn[0] => $primaryKeyValue];
+            } else {
+                $this->processPrimaryKeyData();
             }
+            $rowsAffected = $result->getAffectedRows();
+            unset($statement, $result);
 
             $where = [];
             foreach ($this->primaryKeyColumn as $pkColumn) {
