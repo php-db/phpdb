@@ -82,7 +82,13 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
     }
 
     /**
-     * todo: Refactor to a standard ArrayObject implementation - remove proxy to populate
+     * Exchanges internal state from the given data.
+     *
+     * @deprecated since 1.0.0 — BC layer for pre-PhpDb
+     *             Will be removed or signature changed in 1.0.0.
+     *             Consumers should treat the return value as an array.
+     *
+     * @return array<string, mixed>
      */
     public function exchangeArray(array $array): array
     {
