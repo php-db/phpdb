@@ -6,7 +6,6 @@ namespace PhpDb\Sql;
 
 use PhpDb\Adapter\AdapterInterface;
 use PhpDb\Adapter\Driver\StatementInterface;
-use PhpDb\Adapter\StatementContainerInterface;
 
 use function sprintf;
 
@@ -109,11 +108,13 @@ class Sql
         PreparableSqlInterface $sqlObject,
         ?StatementInterface $statement = null,
         ?AdapterInterface $adapter = null
-    ): ?StatementContainerInterface {
-        $adapter   = $adapter ?: $this->adapter;
-        $statement = $statement ?: $adapter->getDriver()->createStatement();
+    ): StatementInterface {
+        $adapter   ??= $this->adapter;
+        $statement ??= $adapter->getDriver()->createStatement();
 
-        return $this->sqlPlatform->setSubject($sqlObject)->prepareStatement($adapter, $statement);
+        $this->sqlPlatform->setSubject($sqlObject)->prepareStatement($adapter, $statement);
+
+        return $statement;
     }
 
     /**

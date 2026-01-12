@@ -7,7 +7,6 @@ namespace PhpDb\RowGateway;
 use ArrayAccess;
 use Countable;
 use Override;
-use PhpDb\Adapter\Driver\StatementInterface;
 use PhpDb\Sql\Sql;
 use PhpDb\Sql\TableIdentifier;
 use ReturnTypeWillChange;
@@ -117,12 +116,10 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
                 }
             }
 
-            $statement = $this->sql->prepareStatementForSqlObject($this->sql->update()->set($data)->where($where));
-            if ($statement instanceof StatementInterface) {
-                $result       = $statement->execute();
-                $rowsAffected = $result->getAffectedRows();
-                unset($statement, $result);
-            }
+            $statement    = $this->sql->prepareStatementForSqlObject($this->sql->update()->set($data)->where($where));
+            $result       = $statement->execute();
+            $rowsAffected = $result->getAffectedRows();
+            unset($statement, $result);
 
             if ($isPkModified) {
                 foreach ($this->primaryKeyColumn as $pkColumn) {
@@ -154,12 +151,11 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
         }
 
         $statement = $this->sql->prepareStatementForSqlObject($this->sql->select()->where($where));
-        if ($statement instanceof StatementInterface) {
-            $result  = $statement->execute();
-            $rowData = $result->current();
-            unset($statement, $result);
-            $this->populate($rowData, true);
-        }
+        $result    = $statement->execute();
+        $rowData   = $result->current();
+        unset($statement, $result);
+
+        $this->populate($rowData, true);
 
         return $rowsAffected;
     }
@@ -178,12 +174,11 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
 
         $rowsAffected = 0;
         $statement    = $this->sql->prepareStatementForSqlObject($this->sql->delete()->where($where));
-        if ($statement instanceof StatementInterface) {
-            $result       = $statement->execute();
-            $rowsAffected = $result->getAffectedRows();
-            if ($rowsAffected === 1) {
-                $this->primaryKeyData = null;
-            }
+        $result       = $statement->execute();
+
+        $rowsAffected = $result->getAffectedRows();
+        if ($rowsAffected === 1) {
+            $this->primaryKeyData = null;
         }
 
         return $rowsAffected;

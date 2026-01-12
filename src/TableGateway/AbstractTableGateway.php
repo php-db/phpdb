@@ -7,7 +7,6 @@ namespace PhpDb\TableGateway;
 use Closure;
 use Override;
 use PhpDb\Adapter\AdapterInterface;
-use PhpDb\Adapter\Driver\StatementInterface;
 use PhpDb\ResultSet\ResultSet;
 use PhpDb\ResultSet\ResultSetInterface;
 use PhpDb\Sql\Delete;
@@ -195,7 +194,6 @@ abstract class AbstractTableGateway implements TableGatewayInterface
         $this->featureSet->apply(EventFeatureEventsInterface::EVENT_PRE_SELECT, [$select]);
 
         // prepare and execute
-        /** @var StatementInterface $statement */
         $statement = $this->sql->prepareStatementForSqlObject($select);
         $result    = $statement->execute();
 
@@ -255,7 +253,6 @@ abstract class AbstractTableGateway implements TableGatewayInterface
             $insert->into($unaliasedTable);
         }
 
-        /** @var StatementInterface $statement */
         $statement             = $this->sql->prepareStatementForSqlObject($insert);
         $result                = $statement->execute();
         $this->lastInsertValue = $this->adapter->getDriver()->getConnection()->getLastGeneratedValue();
@@ -329,7 +326,6 @@ abstract class AbstractTableGateway implements TableGatewayInterface
             $update->table($unaliasedTable);
         }
 
-        /** @var StatementInterface $statement */
         $statement = $this->sql->prepareStatementForSqlObject($update);
         $result    = $statement->execute();
 
@@ -390,7 +386,6 @@ abstract class AbstractTableGateway implements TableGatewayInterface
             $delete->from($unaliasedTable);
         }
 
-        /** @var StatementInterface $statement */
         $statement = $this->sql->prepareStatementForSqlObject($delete);
         $result    = $statement->execute();
 
