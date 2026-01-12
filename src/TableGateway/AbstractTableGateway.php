@@ -49,7 +49,7 @@ abstract class AbstractTableGateway implements TableGatewayInterface
 
     protected ?Sql $sql = null;
 
-    protected ?int $lastInsertValue = null;
+    protected string|int|false|null $lastInsertValue = null;
 
     public function isInitialized(): bool
     {
@@ -400,7 +400,7 @@ abstract class AbstractTableGateway implements TableGatewayInterface
         return $result->getAffectedRows();
     }
 
-    public function getLastInsertValue(): int
+    public function getLastInsertValue(): string|int|false|null
     {
         return $this->lastInsertValue;
     }
