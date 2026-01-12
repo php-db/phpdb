@@ -8,7 +8,6 @@ use ArrayAccess;
 use Countable;
 // phpcs:ignore SlevomatCodingStandard.Namespaces.UnusedUses.UnusedUse
 use Override;
-use PhpDb\Adapter\Driver\StatementInterface;
 use PhpDb\Sql\Sql;
 use PhpDb\Sql\TableIdentifier;
 use ReturnTypeWillChange;
@@ -125,7 +124,6 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
                 }
             }
 
-            /** @var StatementInterface $statement */
             $statement    = $this->sql->prepareStatementForSqlObject($this->sql->update()->set($data)->where($where));
             $result       = $statement->execute();
             $rowsAffected = $result->getAffectedRows();
@@ -145,7 +143,6 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
             $insert = $this->sql->insert();
             $insert->values($this->data);
 
-            /** @var StatementInterface $statement */
             $statement = $this->sql->prepareStatementForSqlObject($insert);
 
             $result = $statement->execute();
@@ -166,7 +163,6 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
         }
 
         // refresh data
-        /** @var StatementInterface $statement */
         $statement = $this->sql->prepareStatementForSqlObject($this->sql->select()->where($where));
         $result    = $statement->execute();
         $rowData   = $result->current();
@@ -192,7 +188,6 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
 
         // @todo determine if we need to do a select to ensure 1 row will be affected
 
-        /** @var StatementInterface $statement */
         $statement = $this->sql->prepareStatementForSqlObject($this->sql->delete()->where($where));
         $result    = $statement->execute();
 
