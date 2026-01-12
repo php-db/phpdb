@@ -109,8 +109,8 @@ class Sql
         ?StatementInterface $statement = null,
         ?AdapterInterface $adapter = null
     ): StatementInterface {
-        $adapter   = $adapter ?: $this->adapter;
-        $statement = $statement ?: $adapter->getDriver()->createStatement();
+        $adapter   ??= $this->adapter;
+        $statement ??= $adapter->getDriver()->createStatement();
 
         $this->sqlPlatform->setSubject($sqlObject)->prepareStatement($adapter, $statement);
 
