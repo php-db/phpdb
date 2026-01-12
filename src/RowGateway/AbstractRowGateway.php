@@ -67,11 +67,10 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
     /**
      * Populate Data
      */
-    public function populate(array $rowData, bool $rowExistsInDatabase = false): array
+    public function populate(array $rowData, bool $rowExistsInDatabase = false): RowGatewayInterface
     {
         $this->initialize();
 
-        $oldData    = $this->data;
         $this->data = $rowData;
         if ($rowExistsInDatabase === true) {
             $this->processPrimaryKeyData();
@@ -79,7 +78,7 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
             $this->primaryKeyData = null;
         }
 
-        return $oldData;
+        return $this;
     }
 
     /**
@@ -87,7 +86,11 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
      */
     public function exchangeArray(array $array): array
     {
-        return $this->populate($array, true);
+        $oldData = $this->data;
+
+        $this->populate($array, true);
+
+        return $oldData;
     }
 
     #[Override]
