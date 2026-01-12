@@ -410,20 +410,15 @@ abstract class AbstractTableGateway implements TableGatewayInterface
      */
     public function __get(string $property): mixed
     {
-        try {
-            return match ($property) {
-                'lastInsertValue', 'adapter', 'table' => $this->$property,
-                default => throw new Exception\InvalidArgumentException(),
-            };
-        } catch (Exception\InvalidArgumentException) {
-            if ($this->featureSet->canCallMagicGet($property)) {
-                return $this->featureSet->callMagicGet($property);
-            }
-        }
-
-        throw new Exception\InvalidArgumentException(
-            'Invalid magic property access in ' . self::class . '::__get()'
-        );
+        return match (true) {
+            'lastInsertValue' === $property,
+            'adapter'         === $property,
+            'table'           === $property => $this->$property,
+            $this->featureSet->canCallMagicGet($property) => $this->featureSet->callMagicGet($property),
+            default => throw new Exception\InvalidArgumentException(
+                'Invalid magic property access in ' . self::class . '::__get()'
+            ),
+        };
     }
 
     /**
