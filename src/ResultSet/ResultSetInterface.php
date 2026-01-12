@@ -8,10 +8,15 @@ use ArrayObject;
 use Countable;
 use Iterator;
 
+/**
+ * @extends Iterator<int, array<string, mixed>|object>
+ */
 interface ResultSetInterface extends Iterator, Countable
 {
     /**
      * Can be anything iterable|array
+     *
+     * @param iterable<array<string, mixed>|object> $dataSource
      */
     public function initialize(iterable $dataSource): ResultSetInterface;
 
@@ -25,6 +30,7 @@ interface ResultSetInterface extends Iterator, Countable
     /**
      * Set the row object prototype
      *
+     * @param ArrayObject<string, mixed>|RowPrototypeInterface $rowPrototype
      * @throws Exception\InvalidArgumentException
      */
     public function setRowPrototype(ArrayObject|RowPrototypeInterface $rowPrototype): ResultSetInterface;
