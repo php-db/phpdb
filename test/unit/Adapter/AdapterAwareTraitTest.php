@@ -6,38 +6,51 @@ namespace PhpDbTest\Adapter;
 
 use PhpDb\Adapter\Adapter;
 use PhpDb\Adapter\AdapterAwareTrait;
+use PhpDb\Adapter\AdapterInterface;
 use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\Platform\PlatformInterface;
-use PhpDbTest\DeprecatedAssertionsTrait;
-use PHPUnit\Framework\Attributes\IgnoreDeprecations;
-use PHPUnit\Framework\Attributes\RequiresPhp;
-use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
-use ReflectionException;
+use ReflectionProperty;
 
-#[IgnoreDeprecations]
-#[RequiresPhp('<= 8.6')]
 class AdapterAwareTraitTest extends TestCase
 {
-    use DeprecatedAssertionsTrait;
-
-    /**
-     * @throws ReflectionException
-     * @throws Exception
-     */
     public function testSetDbAdapter(): void
     {
-        $object = $this->getObjectForTrait(AdapterAwareTrait::class);
+        $object = new class {
+            use AdapterAwareTrait;
 
-        self::assertAttributeEquals(null, 'adapter', $object);
+            public function getAdapter(): ?AdapterInterface
+            {
+                return $this->adapter ?? null;
+            }
+        };
 
-        $driver   = $this->getMockBuilder(DriverInterface::class)->getMock();
-        $platform = $this->getMockBuilder(PlatformInterface::class)->getMock();
+        self::assertNull($object->getAdapter());
+
+        $driver   = $this->createMock(DriverInterface::class);
+        $platform = $this->createMock(PlatformInterface::class);
 
         $adapter = new Adapter($driver, $platform);
 
         $object->setDbAdapter($adapter);
 
-        self::assertAttributeEquals($adapter, 'adapter', $object);
+        self::assertSame($adapter, $object->getAdapter());
+    }
+
+    public function testSetDbAdapterSetsProperty(): void
+    {
+        $object = new class {
+            use AdapterAwareTrait;
+        };
+
+        $driver   = $this->createMock(DriverInterface::class);
+        $platform = $this->createMock(PlatformInterface::class);
+
+        $adapter = new Adapter($driver, $platform);
+
+        $object->setDbAdapter($adapter);
+
+        $reflection = new ReflectionProperty($object, 'adapter');
+        self::assertSame($adapter, $reflection->getValue($object));
     }
 }

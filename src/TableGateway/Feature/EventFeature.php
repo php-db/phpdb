@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDb\TableGateway\Feature;
 
 use Laminas\EventManager\EventManager;
@@ -20,11 +22,9 @@ class EventFeature extends AbstractFeature implements
     EventFeatureEventsInterface,
     EventsCapableInterface
 {
-    /** @var EventManagerInterface */
-    protected $eventManager;
+    protected EventManagerInterface $eventManager;
 
-    /** @var ?EventFeature\TableGatewayEvent */
-    protected $event;
+    protected ?EventFeature\TableGatewayEvent $event;
 
     public function __construct(
         ?EventManagerInterface $eventManager = null,
@@ -43,20 +43,16 @@ class EventFeature extends AbstractFeature implements
 
     /**
      * Retrieve composed event manager instance
-     *
-     * @return EventManagerInterface
      */
-    public function getEventManager()
+    public function getEventManager(): EventManagerInterface
     {
         return $this->eventManager;
     }
 
     /**
      * Retrieve composed event instance
-     *
-     * @return EventFeature\TableGatewayEvent
      */
-    public function getEvent()
+    public function getEvent(): EventFeature\TableGatewayEvent
     {
         return $this->event;
     }
@@ -67,10 +63,8 @@ class EventFeature extends AbstractFeature implements
      * Ensures that the composed TableGateway has identifiers based on the
      * class name, and that the event target is set to the TableGateway
      * instance. It then triggers the "preInitialize" event.
-     *
-     * @return void
      */
-    public function preInitialize()
+    public function preInitialize(): void
     {
         if (get_class($this->tableGateway) !== TableGateway::class) {
             $this->eventManager->addIdentifiers([get_class($this->tableGateway)]);
@@ -83,10 +77,8 @@ class EventFeature extends AbstractFeature implements
 
     /**
      * Trigger the "postInitialize" event
-     *
-     * @return void
      */
-    public function postInitialize()
+    public function postInitialize(): void
     {
         $this->event->setName(static::EVENT_POST_INITIALIZE);
         $this->eventManager->triggerEvent($this->event);
@@ -97,10 +89,8 @@ class EventFeature extends AbstractFeature implements
      *
      * Triggers the "preSelect" event mapping the following parameters:
      * - $select as "select"
-     *
-     * @return void
      */
-    public function preSelect(Select $select)
+    public function preSelect(Select $select): void
     {
         $this->event->setName(static::EVENT_PRE_SELECT);
         $this->event->setParams(['select' => $select]);
@@ -114,11 +104,12 @@ class EventFeature extends AbstractFeature implements
      * - $statement as "statement"
      * - $result as "result"
      * - $resultSet as "result_set"
-     *
-     * @return void
      */
-    public function postSelect(StatementInterface $statement, ResultInterface $result, ResultSetInterface $resultSet)
-    {
+    public function postSelect(
+        StatementInterface $statement,
+        ResultInterface $result,
+        ResultSetInterface $resultSet
+    ): void {
         $this->event->setName(static::EVENT_POST_SELECT);
         $this->event->setParams([
             'statement'  => $statement,
@@ -133,10 +124,8 @@ class EventFeature extends AbstractFeature implements
      *
      * Triggers the "preInsert" event mapping the following parameters:
      * - $insert as "insert"
-     *
-     * @return void
      */
-    public function preInsert(Insert $insert)
+    public function preInsert(Insert $insert): void
     {
         $this->event->setName(static::EVENT_PRE_INSERT);
         $this->event->setParams(['insert' => $insert]);
@@ -149,10 +138,8 @@ class EventFeature extends AbstractFeature implements
      * Triggers the "postInsert" event mapping the following parameters:
      * - $statement as "statement"
      * - $result as "result"
-     *
-     * @return void
      */
-    public function postInsert(StatementInterface $statement, ResultInterface $result)
+    public function postInsert(StatementInterface $statement, ResultInterface $result): void
     {
         $this->event->setName(static::EVENT_POST_INSERT);
         $this->event->setParams([
@@ -167,10 +154,8 @@ class EventFeature extends AbstractFeature implements
      *
      * Triggers the "preUpdate" event mapping the following parameters:
      * - $update as "update"
-     *
-     * @return void
      */
-    public function preUpdate(Update $update)
+    public function preUpdate(Update $update): void
     {
         $this->event->setName(static::EVENT_PRE_UPDATE);
         $this->event->setParams(['update' => $update]);
@@ -183,10 +168,8 @@ class EventFeature extends AbstractFeature implements
      * Triggers the "postUpdate" event mapping the following parameters:
      * - $statement as "statement"
      * - $result as "result"
-     *
-     * @return void
      */
-    public function postUpdate(StatementInterface $statement, ResultInterface $result)
+    public function postUpdate(StatementInterface $statement, ResultInterface $result): void
     {
         $this->event->setName(static::EVENT_POST_UPDATE);
         $this->event->setParams([
@@ -201,10 +184,8 @@ class EventFeature extends AbstractFeature implements
      *
      * Triggers the "preDelete" event mapping the following parameters:
      * - $delete as "delete"
-     *
-     * @return void
      */
-    public function preDelete(Delete $delete)
+    public function preDelete(Delete $delete): void
     {
         $this->event->setName(static::EVENT_PRE_DELETE);
         $this->event->setParams(['delete' => $delete]);
@@ -217,10 +198,8 @@ class EventFeature extends AbstractFeature implements
      * Triggers the "postDelete" event mapping the following parameters:
      * - $statement as "statement"
      * - $result as "result"
-     *
-     * @return void
      */
-    public function postDelete(StatementInterface $statement, ResultInterface $result)
+    public function postDelete(StatementInterface $statement, ResultInterface $result): void
     {
         $this->event->setName(static::EVENT_POST_DELETE);
         $this->event->setParams([

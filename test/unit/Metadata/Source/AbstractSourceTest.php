@@ -80,8 +80,6 @@ final class AbstractSourceTest extends TestCase
     private function setMockData(array $data): void
     {
         $refProp = new ReflectionProperty($this->abstractSourceMock, 'data');
-        /** @noinspection PhpExpressionResultUnusedInspection */
-        $refProp->setAccessible(true);
         $refProp->setValue($this->abstractSourceMock, $data);
     }
 
@@ -91,8 +89,6 @@ final class AbstractSourceTest extends TestCase
     private function getMockData(): array
     {
         $refProp = new ReflectionProperty($this->abstractSourceMock, 'data');
-        /** @noinspection PhpExpressionResultUnusedInspection */
-        $refProp->setAccessible(true);
         return $refProp->getValue($this->abstractSourceMock);
     }
 
@@ -110,8 +106,6 @@ final class AbstractSourceTest extends TestCase
             ->getMock();
 
         $refProp = new ReflectionProperty($source, 'defaultSchema');
-        /** @noinspection PhpExpressionResultUnusedInspection */
-        $refProp->setAccessible(true);
 
         // Verify schema is retrieved from adapter
         self::assertSame('my_schema', $refProp->getValue($source));
@@ -131,8 +125,6 @@ final class AbstractSourceTest extends TestCase
             ->getMock();
 
         $refProp = new ReflectionProperty($source, 'defaultSchema');
-        /** @noinspection PhpExpressionResultUnusedInspection */
-        $refProp->setAccessible(true);
 
         // Verify default constant is used when adapter returns false
         self::assertSame(AbstractSource::DEFAULT_SCHEMA, $refProp->getValue($source));
@@ -164,8 +156,6 @@ final class AbstractSourceTest extends TestCase
     public function testGetTableNamesWithNullSchemaUsesDefault(): void
     {
         $refProp = new ReflectionProperty($this->abstractSourceMock, 'defaultSchema');
-        /** @noinspection PhpExpressionResultUnusedInspection */
-        $refProp->setAccessible(true);
         $refProp->setValue($this->abstractSourceMock, 'default_schema');
 
         $this->setMockData([
@@ -1029,13 +1019,9 @@ final class AbstractSourceTest extends TestCase
             ->getMock();
 
         $method = new ReflectionMethod($source, 'prepareDataHierarchy');
-        /** @noinspection PhpExpressionResultUnusedInspection */
-        $method->setAccessible(true);
         $method->invoke($source, 'test_key');
 
         $refProp = new ReflectionProperty($source, 'data');
-        /** @noinspection PhpExpressionResultUnusedInspection */
-        $refProp->setAccessible(true);
 
         $data = $refProp->getValue($source);
 
@@ -1054,13 +1040,9 @@ final class AbstractSourceTest extends TestCase
             ->getMock();
 
         $method = new ReflectionMethod($source, 'prepareDataHierarchy');
-        /** @noinspection PhpExpressionResultUnusedInspection */
-        $method->setAccessible(true);
         $method->invoke($source, 'level1', 'level2', 'level3');
 
         $refProp = new ReflectionProperty($source, 'data');
-        /** @noinspection PhpExpressionResultUnusedInspection */
-        $refProp->setAccessible(true);
 
         $data = $refProp->getValue($source);
 
@@ -1082,8 +1064,6 @@ final class AbstractSourceTest extends TestCase
         ]);
 
         $method = new ReflectionMethod($this->abstractSourceMock, 'loadTableNameData');
-        /** @noinspection PhpExpressionResultUnusedInspection */
-        $method->setAccessible(true);
         $method->invoke($this->abstractSourceMock, 'public');
 
         $data = $this->getMockData();
@@ -1105,8 +1085,6 @@ final class AbstractSourceTest extends TestCase
         ]);
 
         $method = new ReflectionMethod($this->abstractSourceMock, 'loadColumnData');
-        /** @noinspection PhpExpressionResultUnusedInspection */
-        $method->setAccessible(true);
         $method->invoke($this->abstractSourceMock, 'users', 'public');
 
         $data = $this->getMockData();
@@ -1126,8 +1104,6 @@ final class AbstractSourceTest extends TestCase
         ]);
 
         $method = new ReflectionMethod($this->abstractSourceMock, 'loadConstraintData');
-        /** @noinspection PhpExpressionResultUnusedInspection */
-        $method->setAccessible(true);
         $method->invoke($this->abstractSourceMock, 'table', 'public');
 
         $data = $this->getMockData();
@@ -1147,8 +1123,6 @@ final class AbstractSourceTest extends TestCase
         ]);
 
         $method = new ReflectionMethod($this->abstractSourceMock, 'loadConstraintDataKeys');
-        /** @noinspection PhpExpressionResultUnusedInspection */
-        $method->setAccessible(true);
         $method->invoke($this->abstractSourceMock, 'public');
 
         $data = $this->getMockData();
@@ -1168,8 +1142,6 @@ final class AbstractSourceTest extends TestCase
         ]);
 
         $method = new ReflectionMethod($this->abstractSourceMock, 'loadConstraintReferences');
-        /** @noinspection PhpExpressionResultUnusedInspection */
-        $method->setAccessible(true);
         $method->invoke($this->abstractSourceMock, 'table', 'public');
 
         $data = $this->getMockData();
@@ -1189,8 +1161,6 @@ final class AbstractSourceTest extends TestCase
         ]);
 
         $method = new ReflectionMethod($this->abstractSourceMock, 'loadTriggerData');
-        /** @noinspection PhpExpressionResultUnusedInspection */
-        $method->setAccessible(true);
         $method->invoke($this->abstractSourceMock, 'public');
 
         $data = $this->getMockData();

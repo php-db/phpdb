@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDb\TableGateway\Feature;
 
 use PhpDb\Adapter\AdapterInterface;
@@ -7,18 +9,12 @@ use PhpDb\Sql\Sql;
 
 class MasterSlaveFeature extends AbstractFeature
 {
-    /** @var AdapterInterface */
-    protected $slaveAdapter;
+    protected AdapterInterface $slaveAdapter;
 
-    /** @var Sql */
-    protected $masterSql;
+    protected Sql $masterSql;
 
-    /** @var Sql */
-    protected $slaveSql;
+    protected ?Sql $slaveSql = null;
 
-    /**
-     * Constructor
-     */
     public function __construct(AdapterInterface $slaveAdapter, ?Sql $slaveSql = null)
     {
         $this->slaveAdapter = $slaveAdapter;
@@ -27,16 +23,12 @@ class MasterSlaveFeature extends AbstractFeature
         }
     }
 
-    /** @return AdapterInterface */
-    public function getSlaveAdapter()
+    public function getSlaveAdapter(): AdapterInterface
     {
         return $this->slaveAdapter;
     }
 
-    /**
-     * @return Sql
-     */
-    public function getSlaveSql()
+    public function getSlaveSql(): ?Sql
     {
         return $this->slaveSql;
     }
