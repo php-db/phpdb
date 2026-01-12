@@ -7,7 +7,6 @@ namespace PhpDbTest\ResultSet;
 use Exception;
 use Laminas\Hydrator\ArraySerializableHydrator;
 use Laminas\Hydrator\ClassMethodsHydrator;
-use Override;
 use PhpDb\ResultSet\HydratingResultSet;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
@@ -21,17 +20,6 @@ use stdClass;
 #[CoversMethod(HydratingResultSet::class, 'toArray')]
 final class HydratingResultSetTest extends TestCase
 {
-    private string $arraySerializableHydratorClass;
-
-    private string $classMethodsHydratorClass;
-
-    #[Override]
-    protected function setUp(): void
-    {
-        $this->arraySerializableHydratorClass = ArraySerializableHydrator::class;
-        $this->classMethodsHydratorClass      = ClassMethodsHydrator::class;
-    }
-
     public function testSetObjectPrototype(): void
     {
         $prototype1            = new stdClass();
@@ -66,12 +54,10 @@ final class HydratingResultSetTest extends TestCase
 
     public function testSetHydrator(): void
     {
-        $hydratingRs    = new HydratingResultSet();
-        $hydratorClass1 = $this->classMethodsHydratorClass;
-        $hydratorClass2 = $this->arraySerializableHydratorClass;
+        $hydratingRs = new HydratingResultSet();
 
-        $hydrator1 = new $hydratorClass1();
-        $hydrator2 = new $hydratorClass2();
+        $hydrator1 = new ClassMethodsHydrator();
+        $hydrator2 = new ArraySerializableHydrator();
 
         // First mutation
         $result = $hydratingRs->setHydrator($hydrator1);
@@ -94,7 +80,7 @@ final class HydratingResultSetTest extends TestCase
     {
         $hydratingRs = new HydratingResultSet();
         // Verify getHydrator() returns default ArraySerializable hydrator
-        self::assertInstanceOf($this->arraySerializableHydratorClass, $hydratingRs->getHydrator());
+        self::assertInstanceOf(ArraySerializableHydrator::class, $hydratingRs->getHydrator());
     }
 
     /**

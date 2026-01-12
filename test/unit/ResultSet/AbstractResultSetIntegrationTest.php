@@ -15,7 +15,8 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(AbstractResultSet::class, 'current')]
 final class AbstractResultSetIntegrationTest extends TestCase
 {
-    protected MockObject|AbstractResultSet $resultSet;
+    /** @var MockObject&AbstractResultSet */
+    protected MockObject $resultSet;
 
     /**
      * Sets up the fixture, for example, opens a network connection.

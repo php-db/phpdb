@@ -15,6 +15,9 @@ interface RowPrototypeInterface
 {
     /**
      * Exchange the current data for the provided array.
+     *
+     * @param array<string, mixed> $array
+     * @return array<string, mixed>
      */
     public function exchangeArray(array $array): array;
 }

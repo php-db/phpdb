@@ -16,19 +16,28 @@ class ResultSet extends AbstractResultSet
     public const TYPE_ARRAYOBJECT = 'arrayobject';
     public const TYPE_ARRAY       = 'array';
 
+    private ResultSetReturnType $returnType;
+
+    /** @var ArrayObject<string, mixed>|RowPrototypeInterface */
+    private ArrayObject|RowPrototypeInterface $rowPrototype;
+
+    /**
+     * @param ArrayObject<string, mixed>|RowPrototypeInterface|null $rowPrototype
+     */
     public function __construct(
-        private ResultSetReturnType|string $returnType = ResultSetReturnType::ArrayObject,
-        private ArrayObject|RowPrototypeInterface|null $rowPrototype = new ArrayObject(
-            [],
-            ArrayObject::ARRAY_AS_PROPS
-        )
+        ResultSetReturnType|string $returnType = ResultSetReturnType::ArrayObject,
+        ArrayObject|RowPrototypeInterface|null $rowPrototype = null
     ) {
-        if (is_string($this->returnType)) {
-            $this->returnType = ResultSetReturnType::from($this->returnType);
-        }
+        parent::__construct();
+        $this->returnType   = is_string($returnType) ? ResultSetReturnType::from($returnType) : $returnType;
+        $this->rowPrototype = $rowPrototype ?? new ArrayObject([], ArrayObject::ARRAY_AS_PROPS);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     *
+     * @param ArrayObject<string, mixed>|RowPrototypeInterface $rowPrototype
+     */
     #[Override]
     public function setRowPrototype(ArrayObject|RowPrototypeInterface $rowPrototype): ResultSetInterface
     {
@@ -37,7 +46,11 @@ class ResultSet extends AbstractResultSet
         return $this;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     *
+     * @return ArrayObject<string, mixed>|RowPrototypeInterface
+     */
     #[Override]
     public function getRowPrototype(): ArrayObject|RowPrototypeInterface
     {
@@ -54,6 +67,8 @@ class ResultSet extends AbstractResultSet
 
     /**
      * Iterator: get current item
+     *
+     * @return array<string, mixed>|ArrayObject<string, mixed>|RowPrototypeInterface|null
      */
     #[Override]
     public function current(): array|ArrayObject|RowPrototypeInterface|null
@@ -67,6 +82,10 @@ class ResultSet extends AbstractResultSet
             return $ao;
         }
 
+        if (! is_array($data) && ! $data instanceof ArrayObject && ! $data instanceof RowPrototypeInterface) {
+            return null;
+        }
+
         return $data;
     }
 
@@ -74,6 +93,8 @@ class ResultSet extends AbstractResultSet
      * Set the row object prototype
      *
      * @deprecated use setRowPrototype()
+     *
+     * @param ArrayObject<string, mixed>|RowPrototypeInterface $arrayObjectPrototype
      */
     public function setArrayObjectPrototype(ArrayObject|RowPrototypeInterface $arrayObjectPrototype): ResultSetInterface
     {
@@ -82,6 +103,8 @@ class ResultSet extends AbstractResultSet
 
     /**
      * @deprecated use getRowPrototype()
+     *
+     * @return ArrayObject<string, mixed>|RowPrototypeInterface
      */
     public function getArrayObjectPrototype(): ArrayObject|RowPrototypeInterface
     {

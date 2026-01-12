@@ -7,6 +7,8 @@ namespace PhpDbTest\ResultSet;
 use ArrayIterator;
 use ArrayObject;
 use Override;
+use PhpDb\Adapter\Driver\EmptyResult;
+use PhpDb\Adapter\Driver\IteratorResult;
 use PhpDb\Adapter\Driver\ResultInterface;
 use PhpDb\ResultSet\AbstractResultSet;
 use PhpDb\ResultSet\Exception\RuntimeException;
@@ -102,10 +104,10 @@ final class ResultSetIntegrationTest extends TestCase
         new ResultSet(ResultSet::TYPE_ARRAYOBJECT, $type);
     }
 
-    public function testDataSourceIsNullByDefault(): void
+    public function testDataSourceIsEmptyResultByDefault(): void
     {
-        // Verify data source is null before initialization
-        self::assertNull($this->resultSet->getDataSource());
+        // Verify data source is EmptyResult before initialization
+        self::assertInstanceOf(EmptyResult::class, $this->resultSet->getDataSource());
     }
 
     /**
@@ -114,9 +116,9 @@ final class ResultSetIntegrationTest extends TestCase
     public function testCanProvideIteratorAsDataSource(): void
     {
         $it = new SplStack();
-        // Initialize with iterator and verify it is stored as data source
+        // Initialize with iterator and verify it is wrapped in IteratorResult
         $this->resultSet->initialize($it);
-        self::assertSame($it, $this->resultSet->getDataSource());
+        self::assertInstanceOf(IteratorResult::class, $this->resultSet->getDataSource());
     }
 
     /**
@@ -124,7 +126,7 @@ final class ResultSetIntegrationTest extends TestCase
      */
     public function testCanProvideArrayAsDataSource(): void
     {
-        $dataSource = [['foo']];
+        $dataSource = [['name' => 'foo']];
         // Initialize with array data source and verify current row
         $this->resultSet->initialize($dataSource);
         $this->assertEquals($dataSource[0], (array) $this->resultSet->current());
@@ -143,13 +145,14 @@ final class ResultSetIntegrationTest extends TestCase
      */
     public function testCanProvideIteratorAggregateAsDataSource(): void
     {
+        $innerIterator     = new ArrayIterator([['id' => 1]]);
         $iteratorAggregate = $this->getMockBuilder('IteratorAggregate')
             ->onlyMethods(['getIterator'])
             ->getMock();
-        $iteratorAggregate->expects($this->any())->method('getIterator')->willReturn($iteratorAggregate);
-        // Initialize with IteratorAggregate and verify its iterator is used
+        $iteratorAggregate->expects($this->any())->method('getIterator')->willReturn($innerIterator);
+        // Initialize with IteratorAggregate and verify it is wrapped in IteratorResult
         $this->resultSet->initialize($iteratorAggregate);
-        self::assertSame($iteratorAggregate->getIterator(), $this->resultSet->getDataSource());
+        self::assertInstanceOf(IteratorResult::class, $this->resultSet->getDataSource());
     }
 
     /**
@@ -175,6 +178,7 @@ final class ResultSetIntegrationTest extends TestCase
         self::assertEquals(0, $this->resultSet->getFieldCount());
     }
 
+    /** @return ArrayIterator<int, array{id: int, title: string}> */
     public function getArrayDataSource(int $count): ArrayIterator
     {
         $array = [];
@@ -245,18 +249,20 @@ final class ResultSetIntegrationTest extends TestCase
      * @throws RandomException
      * @throws \Exception
      */
-    public function testToArrayRaisesExceptionForRowsThatAreNotArraysOrArrayCastable(): void
+    public function testToArraySkipsNonArrayCastableObjects(): void
     {
         $count      = random_int(3, 75);
         $dataSource = $this->getArrayDataSource($count);
-        foreach ($dataSource as $index => $row) {
-            $dataSource[$index] = (object) $row;
+        $objectData = [];
+        foreach ($dataSource as $row) {
+            $objectData[] = (object) $row;
         }
 
-        // Verify toArray() throws exception for non-array-castable objects
-        $this->resultSet->initialize($dataSource);
-        $this->expectException(RuntimeException::class);
-        $this->resultSet->toArray();
+        // Verify toArray() skips non-array-castable objects (they return as null from current())
+        $this->resultSet->initialize(new ArrayIterator($objectData));
+        $result = $this->resultSet->toArray();
+        // Since stdClass objects are returned as null by current(), they are skipped
+        self::assertCount(0, $result);
     }
 
     /**
