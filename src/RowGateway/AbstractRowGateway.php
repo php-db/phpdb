@@ -214,7 +214,6 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
      * Offset set
      *
      * @param string $offset
-     * @return $this Provides a fluent interface
      */
     #[Override]
     #[ReturnTypeWillChange]
@@ -229,7 +228,6 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
      * Offset unset
      *
      * @param string $offset
-     * @return $this Provides a fluent interface
      */
     #[Override]
     #[ReturnTypeWillChange]

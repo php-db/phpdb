@@ -27,9 +27,6 @@ class FeatureSet
         }
     }
 
-    /**
-     * @return $this Provides a fluent interface
-     */
     public function setTableGateway(AbstractTableGateway $tableGateway): static
     {
         $this->tableGateway = $tableGateway;
@@ -51,9 +48,6 @@ class FeatureSet
         return $feature;
     }
 
-    /**
-     * @return $this Provides a fluent interface
-     */
     public function addFeatures(array $features): static
     {
         foreach ($features as $feature) {
@@ -62,9 +56,6 @@ class FeatureSet
         return $this;
     }
 
-    /**
-     * @return $this Provides a fluent interface
-     */
     public function addFeature(FeatureInterface $feature): static
     {
         if ($this->tableGateway instanceof TableGatewayInterface) {
