@@ -4,14 +4,10 @@ declare(strict_types=1);
 
 namespace PhpDb\RowGateway\Feature;
 
+use PhpDb\Feature\FeatureInterface as BaseFeatureInterface;
 use PhpDb\RowGateway\AbstractRowGateway;
 
-interface FeatureInterface
+interface FeatureInterface extends BaseFeatureInterface
 {
-    public function getName(): string;
-
     public function setRowGateway(AbstractRowGateway $rowGateway): void;
-
-    /** @return array<string, string[]> */
-    public function getMagicMethodSpecifications(): array;
 }
