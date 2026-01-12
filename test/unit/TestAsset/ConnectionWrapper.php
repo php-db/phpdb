@@ -29,9 +29,9 @@ final class ConnectionWrapper extends AbstractPdoConnection
         return 'test_schema';
     }
 
-    public function getLastGeneratedValue(mixed $name = null): int|string|bool|null
+    public function getLastGeneratedValue(?string $name = null): string|int|false
     {
-        return null;
+        return false;
     }
 
     public function getNestedTransactionsCount(): int
