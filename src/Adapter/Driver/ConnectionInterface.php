@@ -25,7 +25,7 @@ interface ConnectionInterface extends SchemaAwareInterface
      *
      * $name Ignored (this is not ignored for PDO), imagine that...
      */
-    public function getLastGeneratedValue(?string $name = null): string|int|false;
+    public function getLastGeneratedValue(?string $name = null): string|int|false|null;
 
     /**
      * Get resource
