@@ -23,12 +23,9 @@ interface ConnectionInterface extends SchemaAwareInterface
     /**
      * Get last generated id
      *
-     * @param null $name Ignored (this is not ignored for PDO), imagine that...
-     *
-     * todo: narrow this to string|int|bool|null
-     * until version bumps to PHP 8.2 minimum then narrow to string|int|false
+     * $name Ignored (this is not ignored for PDO), imagine that...
      */
-    public function getLastGeneratedValue($name = null): string|int|bool|null;
+    public function getLastGeneratedValue(?string $name = null): string|int|false|null;
 
     /**
      * Get resource
