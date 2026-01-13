@@ -20,7 +20,6 @@ use PhpDb\Adapter\StatementContainerInterface;
 
 use function implode;
 use function is_array;
-use function is_bool;
 use function is_int;
 use function ltrim;
 
@@ -217,8 +216,8 @@ class Statement implements StatementInterface, PdoDriverAwareInterface, Profiler
                 };
             } else {
                 $type = match (true) {
-                    is_bool($value) => PDO::PARAM_BOOL,
                     is_int($value) => PDO::PARAM_INT,
+                    $value === false, $value === true => PDO::PARAM_BOOL,
                     $value === null => PDO::PARAM_NULL,
                     default => PDO::PARAM_STR,
                 };
