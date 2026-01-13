@@ -8,7 +8,6 @@ use ArrayIterator;
 use Exception;
 use Override;
 use PDOStatement;
-use PhpDb\Adapter\Driver\IteratorResult;
 use PhpDb\Adapter\Driver\Pdo\Result;
 use PhpDb\Adapter\Driver\ResultInterface;
 use PhpDb\ResultSet\AbstractResultSet;
@@ -20,7 +19,6 @@ use PHPUnit\Framework\TestCase;
 use TypeError;
 
 use function assert;
-use function is_array;
 
 #[CoversMethod(AbstractResultSet::class, 'initialize')]
 #[CoversMethod(AbstractResultSet::class, 'buffer')]
@@ -36,11 +34,9 @@ use function is_array;
 #[CoversMethod(AbstractResultSet::class, 'toArray')]
 final class AbstractResultSetTest extends TestCase
 {
-    /** @var MockObject&AbstractResultSet */
-    protected MockObject $resultSet;
+    protected MockObject|AbstractResultSet $resultSet;
 
-    /** @return MockObject&AbstractResultSet */
-    private function createResultSetMock(): MockObject
+    private function createResultSetMock(): MockObject|AbstractResultSet
     {
         return $this->getMockBuilder(AbstractResultSet::class)
             ->onlyMethods(['setRowPrototype', 'getRowPrototype'])
@@ -73,7 +69,7 @@ final class AbstractResultSetTest extends TestCase
 
         // Verify invalid data type throws exception
         $this->expectException(TypeError::class);
-        /** @phpstan-ignore argument.type */
+        /** @noinspection ALL */
         $resultSet->initialize('foo');
     }
 
@@ -142,8 +138,8 @@ final class AbstractResultSetTest extends TestCase
             ['id' => 2, 'name' => 'two'],
             ['id' => 3, 'name' => 'three'],
         ]));
-        // Verify getDataSource() returns the iterator wrapped in IteratorResult
-        self::assertInstanceOf(IteratorResult::class, $resultSet->getDataSource());
+        // Verify getDataSource() returns the initialized iterator
+        self::assertInstanceOf(ArrayIterator::class, $resultSet->getDataSource());
     }
 
     /**
@@ -312,25 +308,20 @@ final class AbstractResultSetTest extends TestCase
 
         // Iterate through rows and verify data
         $data = $resultSet->current();
-        assert(is_array($data));
         self::assertEquals(1, $data['id']);
         $resultSet->next();
         $data = $resultSet->current();
-        assert(is_array($data));
         self::assertEquals(2, $data['id']);
 
         // Rewind and iterate again to verify buffering allows rewind
         $resultSet->rewind();
         $data = $resultSet->current();
-        assert(is_array($data));
         self::assertEquals(1, $data['id']);
         $resultSet->next();
         $data = $resultSet->current();
-        assert(is_array($data));
         self::assertEquals(2, $data['id']);
         $resultSet->next();
         $data = $resultSet->current();
-        assert(is_array($data));
         self::assertEquals(3, $data['id']);
     }
 
@@ -369,11 +360,9 @@ final class AbstractResultSetTest extends TestCase
 
         // Iterate through rows
         $data = $resultSet->current();
-        assert(is_array($data));
         self::assertEquals(1, $data['id']);
         $resultSet->next();
         $data = $resultSet->current();
-        assert(is_array($data));
         self::assertEquals(2, $data['id']);
 
         // Rewind multiple times and iterate again to verify buffering handles multiple rewinds
@@ -381,15 +370,12 @@ final class AbstractResultSetTest extends TestCase
         $resultSet->rewind();
 
         $data = $resultSet->current();
-        assert(is_array($data));
         self::assertEquals(1, $data['id']);
         $resultSet->next();
         $data = $resultSet->current();
-        assert(is_array($data));
         self::assertEquals(2, $data['id']);
         $resultSet->next();
         $data = $resultSet->current();
-        assert(is_array($data));
         self::assertEquals(3, $data['id']);
     }
 }

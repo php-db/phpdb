@@ -10,7 +10,6 @@ use Laminas\Hydrator\HydratorInterface;
 use Override;
 
 use function is_array;
-use function is_object;
 
 class HydratingResultSet extends AbstractResultSet
 {
@@ -18,7 +17,6 @@ class HydratingResultSet extends AbstractResultSet
         private ?HydratorInterface $hydrator = null,
         private ?object $rowPrototype = null
     ) {
-        parent::__construct();
     }
 
     /**
@@ -53,12 +51,9 @@ class HydratingResultSet extends AbstractResultSet
         return $this->rowPrototype ??= new ArrayObject();
     }
 
-    /**
-     * @deprecated use setRowPrototype()
-     */
+    /** @deprecated use setRowPrototype() */
     public function setObjectPrototype(object $objectPrototype): ResultSetInterface
     {
-        /** @phpstan-ignore argument.type */
         return $this->setRowPrototype($objectPrototype);
     }
 
@@ -74,17 +69,16 @@ class HydratingResultSet extends AbstractResultSet
     #[Override]
     public function current(): ?object
     {
-        if ($this->bufferState === BufferState::None) {
-            $this->bufferState = BufferState::Disabled;
-        } elseif ($this->bufferState === BufferState::Active && isset($this->bufferData[$this->position])) {
-            $buffered = $this->bufferData[$this->position];
-            return is_object($buffered) ? $buffered : null;
+        if ($this->buffer === null) {
+            $this->buffer = -2; // implicitly disable buffering from here on
+        } elseif (is_array($this->buffer) && isset($this->buffer[$this->position])) {
+            return $this->buffer[$this->position];
         }
         $data    = $this->dataSource->current();
         $current = is_array($data) ? $this->getHydrator()->hydrate($data, clone $this->getRowPrototype()) : null;
 
-        if ($this->bufferState === BufferState::Active && $this->bufferData !== null && $current !== null) {
-            $this->bufferData[$this->position] = $current;
+        if (is_array($this->buffer)) {
+            $this->buffer[$this->position] = $current;
         }
 
         return $current;
@@ -93,7 +87,6 @@ class HydratingResultSet extends AbstractResultSet
     /**
      * Cast result set to array of arrays
      *
-     * @return array<int, array<string, mixed>>
      * @throws Exception\RuntimeException If any row is not castable to an array.
      */
     #[Override]
@@ -101,9 +94,7 @@ class HydratingResultSet extends AbstractResultSet
     {
         $return = [];
         foreach ($this as $row) {
-            if (is_object($row)) {
-                $return[] = $this->getHydrator()->extract($row);
-            }
+            $return[] = $this->getHydrator()->extract($row);
         }
         return $return;
     }
