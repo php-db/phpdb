@@ -43,4 +43,12 @@ abstract class AbstractExpression implements ExpressionInterface
     {
         return $this->specification;
     }
+
+    /**
+     * Whether this predicate needs parentheses when nested in a predicate set
+     */
+    public function hasParentheses(): bool
+    {
+        return false;
+    }
 }

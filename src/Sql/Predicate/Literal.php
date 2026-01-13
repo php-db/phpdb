@@ -33,4 +33,10 @@ final class Literal extends BaseLiteral implements PredicateInterface
     {
         return $this->combination;
     }
+
+    #[Override]
+    public function hasParentheses(): bool
+    {
+        return false;
+    }
 }

@@ -18,6 +18,8 @@ use function count;
 use function is_array;
 use function is_scalar;
 use function is_string;
+use function next;
+use function reset;
 use function str_contains;
 
 class PredicateSet extends AbstractExpression implements PredicateInterface, Countable
@@ -55,6 +57,9 @@ class PredicateSet extends AbstractExpression implements PredicateInterface, Cou
     /** SQL clause prefix (e.g., 'WHERE', 'HAVING') - override in subclasses */
     protected string $prefix = '';
 
+    /** Whether this predicate set needs parentheses when nested (cached for performance) */
+    protected bool $hasParentheses = false;
+
     /**
      * Constructor
      */
@@ -75,7 +80,8 @@ class PredicateSet extends AbstractExpression implements PredicateInterface, Cou
     public function addPredicate(PredicateInterface $predicate, ?string $combination = null): static
     {
         $predicate->setCombination($combination ?? $this->defaultCombination);
-        $this->predicates[] = $predicate;
+        $this->predicates[]   = $predicate;
+        $this->hasParentheses = $this->hasParentheses || count($this->predicates) > 1;
 
         return $this;
     }
@@ -124,18 +130,21 @@ class PredicateSet extends AbstractExpression implements PredicateInterface, Cou
                 $this->predicates[] = $predicate;
             }
 
+            $this->hasParentheses = $this->hasParentheses || count($this->predicates) > 1;
             return $this;
         }
 
         if ($predicates instanceof PredicateInterface) {
             $predicates->setCombination($combination);
-            $this->predicates[] = $predicates;
+            $this->predicates[]   = $predicates;
+            $this->hasParentheses = $this->hasParentheses || count($this->predicates) > 1;
 
             return $this;
         }
 
         if ($predicates instanceof Closure) {
             $predicates($this);
+            $this->hasParentheses = $this->hasParentheses || count($this->predicates) > 1;
 
             return $this;
         }
@@ -143,7 +152,8 @@ class PredicateSet extends AbstractExpression implements PredicateInterface, Cou
         $predicate = str_contains($predicates, Expression::PLACEHOLDER)
             ? new PredicateExpression($predicates) : new Literal($predicates);
         $predicate->setCombination($combination);
-        $this->predicates[] = $predicate;
+        $this->predicates[]   = $predicate;
+        $this->hasParentheses = $this->hasParentheses || count($this->predicates) > 1;
 
         return $this;
     }
@@ -218,6 +228,12 @@ class PredicateSet extends AbstractExpression implements PredicateInterface, Cou
         return count($this->predicates);
     }
 
+    #[Override]
+    public function hasParentheses(): bool
+    {
+        return $this->hasParentheses;
+    }
+
     /** @inheritDoc */
     #[Override]
     public function prepareSqlString(PreparableSqlBuilder $builder): string
@@ -226,23 +242,13 @@ class PredicateSet extends AbstractExpression implements PredicateInterface, Cou
             return '';
         }
 
-        $result = '';
-        $first  = true;
+        $predicate = reset($this->predicates);
+        $sql       = $predicate->prepareSqlString($builder);
+        $result    = $predicate->hasParentheses() ? "($sql)" : $sql;
 
-        foreach ($this->predicates as $predicate) {
-            $sql = $predicate->prepareSqlString($builder);
-
-            // Nested predicate sets with multiple predicates need parentheses
-            if ($predicate instanceof self && $predicate->count() > 1) {
-                $sql = '(' . $sql . ')';
-            }
-
-            if ($first) {
-                $result = $sql;
-                $first  = false;
-            } else {
-                $result .= ' ' . $predicate->combination . ' ' . $sql;
-            }
+        while ($predicate = next($this->predicates)) {
+            $sql     = $predicate->prepareSqlString($builder);
+            $result .= " $predicate->combination " . ($predicate->hasParentheses() ? "($sql)" : $sql);
         }
 
         return $this->prefix === '' ? $result : ' ' . $this->prefix . ' ' . $result;

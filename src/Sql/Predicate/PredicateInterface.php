@@ -18,4 +18,6 @@ interface PredicateInterface extends ExpressionInterface, PreparableSqlInterface
      * Get the combination operator
      */
     public function getCombination(): string;
+
+    public function hasParentheses(): bool;
 }
