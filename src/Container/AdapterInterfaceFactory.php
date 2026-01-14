@@ -29,6 +29,7 @@ final class AdapterInterfaceFactory
                 'Container is missing a config service'
             );
         }
+
         $config        = $container->get('config') ?? [];
         $adapterConfig = $config[AdapterInterface::class] ?? $config[Adapter::class] ?? [];
 
@@ -42,14 +43,6 @@ final class AdapterInterfaceFactory
 
         /** @var class-string<DriverInterface>|class-string<PdoDriverInterface>|null $driverClass */
         $driverClass = $adapterConfig['driver'] ?? null;
-
-        if ($driverClass === null || ! $container->has($driverClass)) {
-            throw ContainerException::forService(
-                AdapterInterface::class,
-                self::class,
-                'Invalid or missing driver provided for ' . $requestedName
-            );
-        }
 
         /** @var DriverInterface|PdoDriverInterface $driver */
         $driver = $container->build($driverClass, $adapterConfig);
