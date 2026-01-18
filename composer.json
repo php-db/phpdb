@@ -23,7 +23,7 @@
             "dealerdirect/phpcodesniffer-composer-installer": true
         }
     },
-        "extra": {
+    "extra": {
         "laminas": {
             "config-provider": "PhpDb\\ConfigProvider"
         }
