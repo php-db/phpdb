@@ -262,6 +262,7 @@ abstract class AbstractResultSet implements ResultSetInterface
      *
      * @throws RuntimeException If any row is not castable to an array.
      */
+    #[Override]
     public function toArray(): array
     {
         $return = [];
