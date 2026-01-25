@@ -34,7 +34,7 @@ interface ResultInterface extends
     /**
      * Get generated value
      */
-    public function getGeneratedValue(): mixed;
+    public function getGeneratedValue(): string|int|false|null;
 
     /**
      * Get the resource
