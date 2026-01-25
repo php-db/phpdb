@@ -33,4 +33,11 @@ interface ResultSetInterface extends Iterator, Countable
      * Get the row object prototype
      */
     public function getRowPrototype(): ?object;
+
+    /**
+     * Get all rows as an array
+     *
+     * @return RowPrototypeInterface[]|ArrayObject[]|array[]
+     */
+    public function toArray(): array;
 }
