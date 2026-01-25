@@ -78,7 +78,7 @@ class Result implements Iterator, ResultInterface
      */
     protected $position = -1;
 
-    /** @var mixed */
+    /** @var string|int|false|null */
     protected $generatedValue;
 
     protected Closure|int $rowCount;
@@ -86,7 +86,7 @@ class Result implements Iterator, ResultInterface
     /**
      * Initialize
      *
-     * @param mixed $generatedValue
+     * @param string|int|false|null $generatedValue
      */
     public function initialize(
         PDOStatement $resource,
@@ -287,7 +287,7 @@ class Result implements Iterator, ResultInterface
     }
 
     #[Override]
-    public function getGeneratedValue(): mixed
+    public function getGeneratedValue(): string|int|false|null
     {
         return $this->generatedValue;
     }
