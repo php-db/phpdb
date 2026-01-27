@@ -21,7 +21,7 @@ use function is_scalar;
 use function range;
 use function str_replace;
 
-class Insert extends AbstractPreparableSql
+class Insert extends AbstractPreparableSql implements RawStateInterface
 {
     /**
      * Constants

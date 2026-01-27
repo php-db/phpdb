@@ -36,7 +36,7 @@ use function trim;
  * @property Having $having
  * @property Join $joins
  */
-class Select extends AbstractPreparableSql
+class Select extends AbstractPreparableSql implements RawStateInterface
 {
     /**#@+
      * Constant

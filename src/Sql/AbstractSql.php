@@ -7,6 +7,7 @@ namespace PhpDb\Sql;
 use Override;
 use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\ParameterContainer;
+use PhpDb\Adapter\Platform\CacheAwarePlatformInterface;
 use PhpDb\Adapter\Platform\PlatformInterface;
 use PhpDb\Adapter\Platform\Sql92 as DefaultAdapterPlatform;
 use PhpDb\Sql\Argument\Identifier;
@@ -70,6 +71,23 @@ abstract class AbstractSql implements SqlInterface
         ?DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null
     ): string {
+        $cache    = null;
+        $cacheKey = null;
+
+        if (
+            $platform instanceof CacheAwarePlatformInterface
+            && ($cache = $platform->getCache()) !== null
+            && $this instanceof RawStateInterface
+        ) {
+            $keyGenerator = new CacheKeyGenerator();
+            $cacheKey     = $keyGenerator->generate($this, $platform);
+
+            $cachedSql = $cache->get($cacheKey);
+            if ($cachedSql !== null) {
+                return $cachedSql;
+            }
+        }
+
         $this->localizeVariables();
 
         $sqls = [];
@@ -88,7 +106,14 @@ abstract class AbstractSql implements SqlInterface
             }
         }
 
-        return rtrim(implode(' ', $sqls), "\n ,");
+        $sql = rtrim(implode(' ', $sqls), "\n ,");
+
+        if ($cache !== null && $cacheKey !== null) {
+            $ttl = $platform instanceof CacheAwarePlatformInterface ? $platform->getCacheTtl() : null;
+            $cache->set($cacheKey, $sql, $ttl);
+        }
+
+        return $sql;
     }
 
     /**

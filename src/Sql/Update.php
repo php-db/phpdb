@@ -26,7 +26,7 @@ use function strtolower;
 /**
  * @property Where $where
  */
-class Update extends AbstractPreparableSql
+class Update extends AbstractPreparableSql implements RawStateInterface
 {
     /**@#++
      * @const

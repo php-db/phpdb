@@ -31,7 +31,8 @@
     "require": {
         "php": "~8.2.0 || ~8.3.0 || ~8.4.0 || ~8.5.0",
         "laminas/laminas-servicemanager": "^3.0.0 || ^4.0.0",
-        "laminas/laminas-stdlib": "^3.20.0"
+        "laminas/laminas-stdlib": "^3.20.0",
+        "psr/simple-cache": "^3.0"
     },
     "require-dev": {
         "laminas/laminas-coding-standard": "^3.0.1",
@@ -41,11 +42,13 @@
         "phpstan/phpstan": "^2.1",
         "phpstan/phpstan-phpunit": "^2.0",
         "phpunit/phpunit": "^11.5.42",
-        "rector/rector": "^2.0"
+        "rector/rector": "^2.0",
+        "symfony/cache": "^7.0"
     },
     "suggest": {
         "laminas/laminas-eventmanager": "Laminas\\EventManager component",
-        "laminas/laminas-hydrator": "(^5.0.0) Laminas\\Hydrator component for using HydratingResultSets"
+        "laminas/laminas-hydrator": "(^5.0.0) Laminas\\Hydrator component for using HydratingResultSets",
+        "psr/simple-cache-implementation": "To enable SQL string caching in platform adapters"
     },
     "autoload": {
         "psr-4": {
@@ -61,6 +64,7 @@
         }
     },
     "scripts": {
+        "benchmark": "vendor/bin/phpbench run test/benchmark --report=aggregate",
         "check": [
             "@cs-check",
             "@sa",

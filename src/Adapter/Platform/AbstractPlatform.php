@@ -22,8 +22,10 @@ use const PREG_SPLIT_NO_EMPTY;
 /**
  * @property Driver\DriverInterface|Driver\PdoDriverInterface|PDO $driver
  */
-abstract class AbstractPlatform implements PlatformInterface
+abstract class AbstractPlatform implements PlatformInterface, CacheAwarePlatformInterface
 {
+    use CacheAwarePlatformTrait;
+
     /** @var string[] */
     protected array $quoteIdentifier = ['"', '"'];
 

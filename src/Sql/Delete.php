@@ -19,7 +19,7 @@ use function strtolower;
 /**
  * @property Where $where
  */
-class Delete extends AbstractPreparableSql
+class Delete extends AbstractPreparableSql implements RawStateInterface
 {
     /**@#+
      * @const
