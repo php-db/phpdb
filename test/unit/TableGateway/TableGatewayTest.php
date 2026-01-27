@@ -89,8 +89,8 @@ final class TableGatewayTest extends TestCase
 
         // constructor expects exception - native type declaration throws TypeError for null table
         $this->expectException(TypeError::class);
-        /** @psalm-suppress NullArgument - Testing incorrect constructor */
         new TableGateway(
+            /** @phpstan-ignore argument.type */
             null,
             $this->mockAdapter
         );
@@ -373,7 +373,6 @@ final class TableGatewayTest extends TestCase
         $table = new TableGateway('foo', $this->mockAdapter, $feature);
 
         $featureSet = $table->getFeatureSet();
-        self::assertInstanceOf(FeatureSet::class, $featureSet);
         self::assertSame($feature, $featureSet->getFeatureByClassName(Feature\SequenceFeature::class));
     }
 

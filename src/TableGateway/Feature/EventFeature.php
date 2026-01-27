@@ -22,23 +22,13 @@ class EventFeature extends AbstractFeature implements
     EventFeatureEventsInterface,
     EventsCapableInterface
 {
-    protected EventManagerInterface $eventManager;
-
-    protected ?EventFeature\TableGatewayEvent $event;
-
     public function __construct(
-        ?EventManagerInterface $eventManager = null,
-        ?EventFeature\TableGatewayEvent $tableGatewayEvent = null
+        protected EventManagerInterface $eventManager = new EventManager(),
+        protected EventFeature\TableGatewayEvent $event = new EventFeature\TableGatewayEvent()
     ) {
-        $this->eventManager = $eventManager instanceof EventManagerInterface
-                            ? $eventManager
-                            : new EventManager();
-
         $this->eventManager->addIdentifiers([
             TableGateway::class,
         ]);
-
-        $this->event = $tableGatewayEvent ?: new EventFeature\TableGatewayEvent();
     }
 
     /**
