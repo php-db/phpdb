@@ -10,6 +10,7 @@ use PhpBench\Attributes\Iterations;
 use PhpBench\Attributes\Revs;
 use PhpBench\Attributes\Warmup;
 use PhpDb\Adapter\Platform\Sql92;
+use PhpDb\Sql\Expression;
 use PhpDb\Sql\Select;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\Cache\Psr16Cache;
@@ -63,8 +64,38 @@ class SqlBuildBench
         return $select;
     }
 
-    #[Revs(1000)]
-    #[Iterations(10)]
+    private function createVeryComplexSelect(): Select
+    {
+        // Subquery for total order amount per user
+        $orderTotalSubquery = new Select('orders');
+        $orderTotalSubquery->columns(['total_amount' => new Expression('SUM(total)')])
+            ->where('orders.user_id = users.id');
+
+        $select = new Select('users');
+        $select->columns([
+            'id',
+            'name',
+            'email',
+            'status',
+            'created_at',
+            'order_total' => $orderTotalSubquery,
+            'order_count' => new Expression('COUNT(DISTINCT orders.id)'),
+        ])
+            ->join('orders', 'orders.user_id = users.id', [])
+            ->join('order_items', 'order_items.order_id = orders.id', [])
+            ->join('products', 'products.id = order_items.product_id', [])
+            ->join('categories', 'categories.id = products.category_id', [])
+            ->where('users.status IS NOT NULL')
+            ->where('users.created_at > 0')
+            ->group(['users.id', 'users.name', 'users.email', 'users.status', 'users.created_at'])
+            ->having('COUNT(DISTINCT orders.id) > 0')
+            ->order(['order_count DESC', 'users.name ASC']);
+
+        return $select;
+    }
+
+    #[Revs(2000)]
+    #[Iterations(20)]
     #[Warmup(2)]
     #[BeforeMethods('setUp')]
     public function benchSimpleSelectWithoutCache(): void
@@ -73,8 +104,8 @@ class SqlBuildBench
         $select->getSqlString($this->platformWithoutCache);
     }
 
-    #[Revs(1000)]
-    #[Iterations(10)]
+    #[Revs(2000)]
+    #[Iterations(20)]
     #[Warmup(2)]
     #[BeforeMethods('setUp')]
     public function benchSimpleSelectWithCache(): void
@@ -83,8 +114,8 @@ class SqlBuildBench
         $select->getSqlString($this->platformWithCache);
     }
 
-    #[Revs(1000)]
-    #[Iterations(10)]
+    #[Revs(2000)]
+    #[Iterations(20)]
     #[Warmup(2)]
     #[BeforeMethods('setUp')]
     public function benchSimpleSelectWithCacheColdStart(): void
@@ -96,8 +127,8 @@ class SqlBuildBench
         $select->getSqlString($platform);
     }
 
-    #[Revs(1000)]
-    #[Iterations(10)]
+    #[Revs(2000)]
+    #[Iterations(20)]
     #[Warmup(2)]
     #[BeforeMethods('setUp')]
     public function benchComplexSelectWithoutCache(): void
@@ -106,8 +137,8 @@ class SqlBuildBench
         $select->getSqlString($this->platformWithoutCache);
     }
 
-    #[Revs(1000)]
-    #[Iterations(10)]
+    #[Revs(2000)]
+    #[Iterations(20)]
     #[Warmup(2)]
     #[BeforeMethods('setUp')]
     public function benchComplexSelectWithCache(): void
@@ -116,8 +147,8 @@ class SqlBuildBench
         $select->getSqlString($this->platformWithCache);
     }
 
-    #[Revs(1000)]
-    #[Iterations(10)]
+    #[Revs(2000)]
+    #[Iterations(20)]
     #[Warmup(2)]
     #[BeforeMethods('setUp')]
     public function benchComplexSelectWithCacheColdStart(): void
@@ -129,8 +160,8 @@ class SqlBuildBench
         $select->getSqlString($platform);
     }
 
-    #[Revs(1000)]
-    #[Iterations(10)]
+    #[Revs(2000)]
+    #[Iterations(20)]
     #[Warmup(2)]
     #[BeforeMethods('setUp')]
     public function benchMultiJoinSelectWithoutCache(): void
@@ -139,13 +170,46 @@ class SqlBuildBench
         $select->getSqlString($this->platformWithoutCache);
     }
 
-    #[Revs(1000)]
-    #[Iterations(10)]
+    #[Revs(2000)]
+    #[Iterations(20)]
     #[Warmup(2)]
     #[BeforeMethods('setUp')]
     public function benchMultiJoinSelectWithCache(): void
     {
         $select = $this->createSelectWithMultipleJoins();
         $select->getSqlString($this->platformWithCache);
+    }
+
+    #[Revs(2000)]
+    #[Iterations(20)]
+    #[Warmup(2)]
+    #[BeforeMethods('setUp')]
+    public function benchVeryComplexSelectWithoutCache(): void
+    {
+        $select = $this->createVeryComplexSelect();
+        $select->getSqlString($this->platformWithoutCache);
+    }
+
+    #[Revs(2000)]
+    #[Iterations(20)]
+    #[Warmup(2)]
+    #[BeforeMethods('setUp')]
+    public function benchVeryComplexSelectWithCache(): void
+    {
+        $select = $this->createVeryComplexSelect();
+        $select->getSqlString($this->platformWithCache);
+    }
+
+    #[Revs(2000)]
+    #[Iterations(20)]
+    #[Warmup(2)]
+    #[BeforeMethods('setUp')]
+    public function benchVeryComplexSelectWithCacheColdStart(): void
+    {
+        $platform = new Sql92();
+        $platform->setCache(new Psr16Cache(new ArrayAdapter()));
+
+        $select = $this->createVeryComplexSelect();
+        $select->getSqlString($platform);
     }
 }
