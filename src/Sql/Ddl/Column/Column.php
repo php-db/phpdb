@@ -14,7 +14,7 @@ use function implode;
 
 class Column implements ColumnInterface
 {
-    protected string|int|null $default;
+    protected string|int|Literal|null $default;
 
     protected bool $isNullable = false;
 
@@ -65,14 +65,14 @@ class Column implements ColumnInterface
         return $this->isNullable;
     }
 
-    public function setDefault(string|int|null $default): static
+    public function setDefault(string|int|Literal|null $default): static
     {
         $this->default = $default;
         return $this;
     }
 
     #[Override]
-    public function getDefault(): string|int|null
+    public function getDefault(): string|int|Literal|null
     {
         return $this->default;
     }
@@ -118,7 +118,9 @@ class Column implements ColumnInterface
 
         if ($this->default !== null) {
             $specParts[] = 'DEFAULT %s';
-            $values[]    = new Value($this->default);
+            $values[]    = $this->default instanceof Literal
+                ? $this->default
+                : new Value($this->default);
         }
 
         foreach ($this->constraints as $constraint) {

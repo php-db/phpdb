@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace PhpDbTest\Sql\Ddl\Column;
 
 use PhpDb\Sql\Argument;
+use PhpDb\Sql\Argument\Literal;
 use PhpDb\Sql\Ddl\Column\Column;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
@@ -164,6 +165,34 @@ final class ColumnTest extends TestCase
             Argument::identifier('foo'),
             Argument::literal('INTEGER'),
             Argument::value('bar'),
+        ], $expressionData['values']);
+    }
+
+    public function testSetDefaultWithLiteral(): void
+    {
+        $column = new Column();
+        $column->setName('created_at');
+
+        $literal = new Literal('CURRENT_TIMESTAMP');
+        $result  = $column->setDefault($literal);
+
+        self::assertSame($column, $result);
+        self::assertSame($literal, $column->getDefault());
+    }
+
+    public function testGetExpressionDataWithLiteralDefault(): void
+    {
+        $column = new Column();
+        $column->setName('created_at');
+        $column->setDefault(new Literal('CURRENT_TIMESTAMP'));
+
+        $expressionData = $column->getExpressionData();
+
+        self::assertEquals('%s %s NOT NULL DEFAULT %s', $expressionData['spec']);
+        self::assertEquals([
+            Argument::identifier('created_at'),
+            Argument::literal('INTEGER'),
+            Argument::literal('CURRENT_TIMESTAMP'),
         ], $expressionData['values']);
     }
 }

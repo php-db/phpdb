@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PhpDb\Sql\Ddl\Column;
 
+use PhpDb\Sql\Argument\Literal;
 use PhpDb\Sql\ExpressionInterface;
 
 /**
@@ -15,7 +16,7 @@ interface ColumnInterface extends ExpressionInterface
 
     public function isNullable(): bool;
 
-    public function getDefault(): string|int|null;
+    public function getDefault(): string|int|Literal|null;
 
     public function getOptions(): array;
 }
