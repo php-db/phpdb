@@ -22,13 +22,15 @@ class CreateTable extends AbstractSql
 
     protected array $constraints = [];
 
+    protected bool $ifNotExists = false;
+
     protected bool $isTemporary = false;
 
     /**
      * {@inheritDoc}
      */
     protected array $specifications = [
-        self::TABLE       => 'CREATE %1$sTABLE %2$s (',
+        self::TABLE       => 'CREATE %1$sTABLE %2$s%3$s (',
         self::COLUMNS     => [
             "\n    %1\$s" => [
                 [1 => '%1$s', 'combinedby' => ",\n    "],
@@ -49,6 +51,17 @@ class CreateTable extends AbstractSql
     {
         $this->table = $table;
         $this->setTemporary($isTemporary);
+    }
+
+    public function ifNotExists(bool $ifNotExists = true): static
+    {
+        $this->ifNotExists = $ifNotExists;
+        return $this;
+    }
+
+    public function getIfNotExists(): bool
+    {
+        return $this->ifNotExists;
     }
 
     public function setTemporary(string|int|bool $temporary): static
@@ -102,6 +115,7 @@ class CreateTable extends AbstractSql
     {
         return [
             $this->isTemporary ? 'TEMPORARY ' : '',
+            $this->ifNotExists ? 'IF NOT EXISTS ' : '',
             $this->resolveTable($this->table, $adapterPlatform),
         ];
     }

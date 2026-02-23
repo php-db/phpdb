@@ -6,6 +6,7 @@ namespace PhpDb\Sql\Ddl\Index;
 
 use Override;
 use PhpDb\Sql\Argument\Identifier;
+use PhpDb\Sql\Argument\Literal;
 
 use function count;
 use function implode;
@@ -17,11 +18,24 @@ class Index extends AbstractIndex
 
     protected array $lengths;
 
+    protected ?string $type = null;
+
     public function __construct(null|array|string $columns, ?string $name = null, array $lengths = [])
     {
         parent::__construct($columns, $name);
 
         $this->lengths = $lengths;
+    }
+
+    public function setType(string $type): static
+    {
+        $this->type = $type;
+        return $this;
+    }
+
+    public function getType(): ?string
+    {
+        return $this->type;
     }
 
     /** @inheritDoc */
@@ -43,8 +57,15 @@ class Index extends AbstractIndex
             $specParts[] = $specPart;
         }
 
+        $spec = str_replace('...', implode(', ', $specParts), $this->specification);
+
+        if ($this->type !== null) {
+            $spec    .= ' USING %s';
+            $values[] = new Literal($this->type);
+        }
+
         return [
-            'spec'   => str_replace('...', implode(', ', $specParts), $this->specification),
+            'spec'   => $spec,
             'values' => $values,
         ];
     }

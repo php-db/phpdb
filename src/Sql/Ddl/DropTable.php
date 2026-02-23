@@ -12,8 +12,10 @@ class DropTable extends AbstractSql
 {
     final public const TABLE = 'table';
 
+    protected bool $ifExists = false;
+
     protected array $specifications = [
-        self::TABLE => 'DROP TABLE %1$s',
+        self::TABLE => 'DROP TABLE %1$s%2$s',
     ];
 
     protected string|TableIdentifier $table = '';
@@ -23,9 +25,23 @@ class DropTable extends AbstractSql
         $this->table = $table;
     }
 
+    public function ifExists(bool $ifExists = true): static
+    {
+        $this->ifExists = $ifExists;
+        return $this;
+    }
+
+    public function getIfExists(): bool
+    {
+        return $this->ifExists;
+    }
+
     /** @return string[] */
     protected function processTable(?PlatformInterface $adapterPlatform = null): array
     {
-        return [$this->resolveTable($this->table, $adapterPlatform)];
+        return [
+            $this->ifExists ? 'IF EXISTS ' : '',
+            $this->resolveTable($this->table, $adapterPlatform),
+        ];
     }
 }
