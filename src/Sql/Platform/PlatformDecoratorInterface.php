@@ -12,7 +12,4 @@ interface PlatformDecoratorInterface
     public function setSubject(
         SqlInterface|PreparableSqlInterface|null $subject
     ): PlatformDecoratorInterface;
-
-    /** @return array<string, PlatformDecoratorInterface> */
-    public function getDecorators(): array;
 }
