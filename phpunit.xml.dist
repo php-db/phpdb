@@ -9,6 +9,12 @@
     failOnDeprecation="true"
     failOnWarning="true">
 
+    <source>
+        <include>
+            <directory>src</directory>
+        </include>
+    </source>
+
     <testsuites>
         <testsuite name="unit test">
             <directory>./test/unit</directory>
