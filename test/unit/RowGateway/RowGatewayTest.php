@@ -16,6 +16,9 @@ use PhpDb\RowGateway\Exception\RuntimeException;
 use PhpDb\RowGateway\RowGateway;
 use PhpDb\Sql\Sql;
 use PhpDb\Sql\TableIdentifier;
+use PhpDb\Sql\Platform\PlatformDecoratorInterface;
+use PhpDb\Sql\SqlInterface;
+use PhpDb\Sql\PreparableSqlInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
@@ -46,12 +49,16 @@ final class RowGatewayTest extends TestCase
         $mockDriver->expects($this->any())->method('createStatement')->willReturn($mockStatement);
         $mockDriver->expects($this->any())->method('getConnection')->willReturn($mockConnection);
 
+        $mockPlatform = $this->createStubForIntersectionOfInterfaces(
+            [PlatformInterface::class, PlatformDecoratorInterface::class, PreparableSqlInterface::class]
+        );
+
         $this->mockAdapter = $this->getMockBuilder(Adapter::class)
             ->onlyMethods([])
             ->setConstructorArgs(
                 [
                     $mockDriver,
-                    $this->getMockBuilder(PlatformInterface::class)->getMock(),
+                    $mockPlatform,
                 ]
             )->getMock();
     }

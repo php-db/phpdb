@@ -6,6 +6,8 @@ namespace PhpDb\Sql;
 
 use PhpDb\Adapter\AdapterInterface;
 use PhpDb\Adapter\Driver\StatementInterface;
+use PhpDb\Sql\Platform\PlatformDecoratorInterface;
+use PhpDb\Sql\SqlInterface;
 
 use function sprintf;
 
@@ -15,7 +17,7 @@ class Sql
 
     protected TableIdentifier|string|array|null $table;
 
-    protected Platform\Platform $sqlPlatform;
+    protected PlatformDecoratorInterface|PreparableSqlInterface $sqlPlatform;
 
     public function __construct(
         AdapterInterface $adapter,
@@ -23,7 +25,7 @@ class Sql
     ) {
         $this->adapter     = $adapter;
         $this->table       = $table;
-        $this->sqlPlatform = new Platform\Platform($adapter->getPlatform());
+        $this->sqlPlatform = $this->adapter->getPlatform()->getSqlPlatformDecorator();
     }
 
     public function getAdapter(): ?AdapterInterface
@@ -51,7 +53,7 @@ class Sql
         return $this->table;
     }
 
-    public function getSqlPlatform(): ?Platform\Platform
+    public function getSqlPlatform(): ?PlatformDecoratorInterface
     {
         return $this->sqlPlatform;
     }
