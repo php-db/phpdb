@@ -15,15 +15,15 @@ class Sql
 
     protected TableIdentifier|string|array|null $table;
 
-    protected Platform\Platform $sqlPlatform;
+    protected Platform\PlatformDecoratorInterface $sqlPlatform;
 
     public function __construct(
         AdapterInterface $adapter,
         array|string|TableIdentifier|null $table = null
     ) {
-        $this->adapter     = $adapter;
         $this->table       = $table;
-        $this->sqlPlatform = new Platform\Platform($adapter->getPlatform());
+        $this->adapter     = $adapter;
+        $this->sqlPlatform = $adapter->getPlatform()->getSqlPlatformDecorator();
     }
 
     public function getAdapter(): ?AdapterInterface
@@ -51,7 +51,7 @@ class Sql
         return $this->table;
     }
 
-    public function getSqlPlatform(): ?Platform\Platform
+    public function getSqlPlatform(): ?Platform\PlatformDecoratorInterface
     {
         return $this->sqlPlatform;
     }
