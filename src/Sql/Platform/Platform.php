@@ -60,7 +60,7 @@ class Platform extends AbstractPlatform
         $platformName = $this->resolvePlatformName($adapterOrPlatform);
 
         if (! isset($this->decorators[$platformName])) {
-            return $subject;
+            $this->decorators[$platformName] = $this->resolveDecoratorsForPlatform();
         }
 
         $subjectClass = $subject::class;
@@ -84,7 +84,28 @@ class Platform extends AbstractPlatform
     public function getDecorators(): array
     {
         $platformName = $this->resolvePlatformName($this->getDefaultPlatform());
+
+        if (! isset($this->decorators[$platformName])) {
+            $this->decorators[$platformName] = $this->resolveDecoratorsForPlatform();
+        }
+
         return $this->decorators[$platformName];
+    }
+
+    /**
+     * Resolve decorators from the adapter platform's SQL decorator.
+     *
+     * @return array<string, PlatformDecoratorInterface>
+     */
+    private function resolveDecoratorsForPlatform(): array
+    {
+        $sqlDecorator = $this->defaultPlatform->getSqlPlatformDecorator();
+
+        if ($sqlDecorator instanceof self) {
+            return [];
+        }
+
+        return $sqlDecorator->getDecorators();
     }
 
     /**

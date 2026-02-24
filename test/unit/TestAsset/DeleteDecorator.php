@@ -19,4 +19,10 @@ final class DeleteDecorator extends Sql\Delete implements Sql\Platform\PlatformD
         $this->subject = $subject;
         return $this;
     }
+
+    /** {@inheritDoc} */
+    public function getDecorators(): array
+    {
+        return [];
+    }
 }
