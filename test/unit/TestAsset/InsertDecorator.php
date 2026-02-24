@@ -19,10 +19,4 @@ final class InsertDecorator extends Sql\Insert implements Sql\Platform\PlatformD
         $this->subject = $subject;
         return $this;
     }
-
-    /** {@inheritDoc} */
-    public function getDecorators(): array
-    {
-        return [];
-    }
 }

@@ -16,10 +16,4 @@ final class SelectDecorator extends Sql\Select implements Sql\Platform\PlatformD
         $this->subject = $subject;
         return $this;
     }
-
-    /** {@inheritDoc} */
-    public function getDecorators(): array
-    {
-        return [];
-    }
 }
