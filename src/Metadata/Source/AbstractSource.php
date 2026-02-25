@@ -263,14 +263,22 @@ abstract class AbstractSource implements MetadataInterface
 
         $column = new ColumnObject($columnName, $table, $schema);
 
-        $column->setOrdinalPosition($info['ordinal_position']);
+        $column->setOrdinalPosition($info['ordinal_position'] ? (int) $info['ordinal_position'] : null);
         $column->setColumnDefault($info['column_default']);
         $column->setIsNullable($info['is_nullable']);
         $column->setDataType($info['data_type']);
-        $column->setCharacterMaximumLength($info['character_maximum_length']);
-        $column->setCharacterOctetLength($info['character_octet_length']);
-        $column->setNumericPrecision($info['numeric_precision']);
-        $column->setNumericScale($info['numeric_scale']);
+        $column->setCharacterMaximumLength(
+            $info['character_maximum_length'] ? (int) $info['character_maximum_length'] : null
+        );
+        $column->setCharacterOctetLength(
+            $info['character_octet_length'] ? (int) $info['character_octet_length'] : null
+        );
+        $column->setNumericPrecision(
+            $info['numeric_precision'] ? (int) $info['numeric_precision'] : null
+        );
+        $column->setNumericScale(
+            $info['numeric_scale'] ? (int) $info['numeric_scale'] : null
+        );
         $column->setNumericUnsigned($info['numeric_unsigned']);
         $column->setErratas($info['erratas']);
 
