@@ -267,10 +267,18 @@ abstract class AbstractSource implements MetadataInterface
         $column->setColumnDefault($info['column_default']);
         $column->setIsNullable($info['is_nullable']);
         $column->setDataType($info['data_type']);
-        $column->setCharacterMaximumLength($info['character_maximum_length'] ? (int) $info['character_maximum_length'] : null);
-        $column->setCharacterOctetLength($info['character_octet_length'] ? (int) $info['character_octet_length'] : null);
-        $column->setNumericPrecision($info['numeric_precision'] ? (int) $info['numeric_precision'] : null);
-        $column->setNumericScale($info['numeric_scale'] ? (int) $info['numeric_scale'] : null);
+        $column->setCharacterMaximumLength(
+            $info['character_maximum_length'] ? (int) $info['character_maximum_length'] : null
+        );
+        $column->setCharacterOctetLength(
+            $info['character_octet_length'] ? (int) $info['character_octet_length'] : null
+        );
+        $column->setNumericPrecision(
+            $info['numeric_precision'] ? (int) $info['numeric_precision'] : null
+        );
+        $column->setNumericScale(
+            $info['numeric_scale'] ? (int) $info['numeric_scale'] : null
+        );
         $column->setNumericUnsigned($info['numeric_unsigned']);
         $column->setErratas($info['erratas']);
 
