@@ -7,10 +7,12 @@ namespace PhpDbTest\Adapter\Driver\Pdo;
 use Override;
 use PhpDb\Adapter\Driver\Pdo\Result;
 use PhpDb\Adapter\Driver\Pdo\Statement;
+use PhpDb\Adapter\Exception\RuntimeException;
 use PhpDb\Adapter\ParameterContainer;
 use PhpDbTest\Adapter\Driver\Pdo\TestAsset\TestConnection;
 use PhpDbTest\Adapter\Driver\Pdo\TestAsset\TestPdo;
 use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 #[CoversMethod(Statement::class, 'setDriver')]
@@ -22,6 +24,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(Statement::class, 'prepare')]
 #[CoversMethod(Statement::class, 'isPrepared')]
 #[CoversMethod(Statement::class, 'execute')]
+#[CoversMethod(Statement::class, 'bindParametersFromContainer')]
 final class StatementTest extends TestCase
 {
     protected Statement $statement;
@@ -110,5 +113,30 @@ final class StatementTest extends TestCase
         $this->statement->initialize($pdo);
         $this->statement->prepare('SELECT 1');
         self::assertInstanceOf(Result::class, $this->statement->execute());
+    }
+
+    /** @return array<string, array{string}> */
+    public static function invalidParameterNameProvider(): array
+    {
+        return [
+            'dollar sign' => ['tz$'],
+            'with colon'  => [':tz$'],
+            'hyphen'      => ['my-param'],
+            'space'       => ['my param'],
+            'dot'         => ['my.param'],
+            'at sign'     => ['param@name'],
+        ];
+    }
+
+    #[DataProvider('invalidParameterNameProvider')]
+    public function testExecuteThrowsOnInvalidParameterName(string $name): void
+    {
+        $this->statement->setDriver(new TestPdo(new TestConnection($pdo = new TestAsset\SqliteMemoryPdo())));
+        $this->statement->initialize($pdo);
+        $this->statement->prepare('SELECT 1');
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('contains invalid characters');
+        $this->statement->execute([$name => 'value']);
     }
 }
