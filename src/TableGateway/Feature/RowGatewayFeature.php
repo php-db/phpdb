@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDb\TableGateway\Feature;
 
 use PhpDb\ResultSet\ResultSet;
@@ -8,17 +10,15 @@ use PhpDb\RowGateway\RowGatewayInterface;
 use PhpDb\TableGateway\Exception;
 use PhpDb\TableGateway\Feature\MetadataFeature;
 
-use function func_get_args;
 use function is_string;
 
 class RowGatewayFeature extends AbstractFeature
 {
-    /** @var array */
-    protected $constructorArguments = [];
+    protected array $constructorArguments = [];
 
-    public function __construct()
+    public function __construct(mixed ...$constructorArguments)
     {
-        $this->constructorArguments = func_get_args();
+        $this->constructorArguments = $constructorArguments;
     }
 
     public function postInitialize(): void
@@ -52,7 +52,7 @@ class RowGatewayFeature extends AbstractFeature
             $metadata = $this->tableGateway->featureSet->getFeatureByClassName(
                 MetadataFeature::class
             );
-            if ($metadata === false || ! isset($metadata->sharedData['metadata'])) {
+            if ($metadata === null || ! isset($metadata->sharedData['metadata'])) {
                 throw new Exception\RuntimeException(
                     'No information was provided to the RowGatewayFeature and/or no MetadataFeature could be consulted '
                     . 'to find the primary key necessary for RowGateway object creation.'

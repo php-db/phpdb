@@ -78,20 +78,20 @@ class Result implements Iterator, ResultInterface
      */
     protected $position = -1;
 
-    /** @var mixed */
+    /** @var string|int|false|null */
     protected $generatedValue;
 
-    protected Closure|int $rowCount;
+    protected Closure|int|null $rowCount = null;
 
     /**
      * Initialize
      *
-     * @param mixed $generatedValue
+     * @param string|int|false|null $generatedValue
      */
     public function initialize(
         PDOStatement $resource,
         $generatedValue,
-        Closure|int $rowCount = 0
+        Closure|int|null $rowCount = null
     ): ResultInterface&Result {
         $this->resource       = $resource;
         $this->generatedValue = $generatedValue;
@@ -250,7 +250,6 @@ class Result implements Iterator, ResultInterface
         if (is_int($this->rowCount)) {
             return $this->rowCount;
         }
-        /** @phpstan-ignore instanceof.alwaysTrue */
         if ($this->rowCount instanceof Closure) {
             $this->rowCount = (int) ($this->rowCount)();
         } else {
@@ -287,7 +286,7 @@ class Result implements Iterator, ResultInterface
     }
 
     #[Override]
-    public function getGeneratedValue(): mixed
+    public function getGeneratedValue(): string|int|false|null
     {
         return $this->generatedValue;
     }

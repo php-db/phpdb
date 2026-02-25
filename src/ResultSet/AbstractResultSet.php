@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace PhpDb\ResultSet;
 
 use ArrayIterator;
-use ArrayObject;
 use Countable;
 use Exception;
 use Iterator;
@@ -126,7 +125,7 @@ abstract class AbstractResultSet implements ResultSetInterface
      * Retrieve count of fields in individual rows of the result set
      */
     #[Override]
-    public function getFieldCount(): mixed
+    public function getFieldCount(): int
     {
         if (null !== $this->fieldCount) {
             return $this->fieldCount;
@@ -263,6 +262,7 @@ abstract class AbstractResultSet implements ResultSetInterface
      *
      * @throws RuntimeException If any row is not castable to an array.
      */
+    #[Override]
     public function toArray(): array
     {
         $return = [];
@@ -289,14 +289,4 @@ abstract class AbstractResultSet implements ResultSetInterface
 
         return $return;
     }
-
-    /**
-     * Set the row object prototype
-     */
-    abstract public function setRowPrototype(ArrayObject $rowPrototype): ResultSetInterface;
-
-    /**
-     * Get the row object prototype
-     */
-    abstract public function getRowPrototype(): ?object;
 }

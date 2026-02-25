@@ -6,21 +6,18 @@ namespace PhpDb\TableGateway\Feature;
 
 use PhpDb\TableGateway\AbstractTableGateway;
 
-abstract class AbstractFeature extends AbstractTableGateway
+abstract class AbstractFeature extends AbstractTableGateway implements FeatureInterface
 {
-    /** @var AbstractTableGateway */
-    protected $tableGateway;
+    protected AbstractTableGateway $tableGateway;
 
-    /** @var array */
-    protected $sharedData = [];
+    protected array $sharedData = [];
 
-    /** @return string */
-    public function getName()
+    public function getName(): string
     {
         return static::class;
     }
 
-    public function setTableGateway(AbstractTableGateway $tableGateway)
+    public function setTableGateway(AbstractTableGateway $tableGateway): void
     {
         $this->tableGateway = $tableGateway;
     }
@@ -30,8 +27,8 @@ abstract class AbstractFeature extends AbstractTableGateway
         // No-op
     }
 
-    /** @return string[] */
-    public function getMagicMethodSpecifications()
+    /** @return array<string, string[]> */
+    public function getMagicMethodSpecifications(): array
     {
         return [];
     }

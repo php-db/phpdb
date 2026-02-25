@@ -10,6 +10,7 @@ use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\Driver\ResultInterface;
 use PhpDb\Adapter\Driver\StatementInterface;
 use PhpDb\Adapter\Platform\Sql92;
+use PhpDb\Sql\Sql;
 use PhpDb\TableGateway\Feature\MasterSlaveFeature;
 use PhpDb\TableGateway\TableGateway;
 use PHPUnit\Framework\MockObject\Exception;
@@ -112,5 +113,38 @@ final class MasterSlaveFeatureTest extends TestCase
 
         // test that the sql object is restored
         self::assertSame($masterSql, $table->getSql());
+    }
+
+    public function testGetSlaveAdapter(): void
+    {
+        self::assertSame($this->mockSlaveAdapter, $this->feature->getSlaveAdapter());
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function testConstructorWithSlaveSql(): void
+    {
+        $slaveSql = new Sql($this->mockSlaveAdapter, 'foo');
+        $feature  = new MasterSlaveFeature($this->mockSlaveAdapter, $slaveSql);
+
+        self::assertSame($slaveSql, $feature->getSlaveSql());
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function testPostInitializeWithProvidedSlaveSql(): void
+    {
+        $slaveSql = new Sql($this->mockSlaveAdapter, 'foo');
+        $feature  = new MasterSlaveFeature($this->mockSlaveAdapter, $slaveSql);
+
+        $this->getMockBuilder(TableGateway::class)
+            ->setConstructorArgs(['foo', $this->mockMasterAdapter, $feature])
+            ->onlyMethods([])
+            ->getMock();
+
+        // The provided slaveSql should be used instead of creating a new one
+        self::assertSame($slaveSql, $feature->getSlaveSql());
     }
 }

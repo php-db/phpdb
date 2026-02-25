@@ -7,7 +7,6 @@ namespace PhpDb\TableGateway;
 use Closure;
 use Override;
 use PhpDb\Adapter\AdapterInterface;
-use PhpDb\Adapter\Driver\StatementInterface;
 use PhpDb\ResultSet\ResultSet;
 use PhpDb\ResultSet\ResultSetInterface;
 use PhpDb\Sql\Delete;
@@ -26,10 +25,8 @@ use function count;
 use function end;
 use function is_array;
 use function is_object;
-use function is_string;
 use function reset;
 use function sprintf;
-use function strtolower;
 
 /**
  * @property AdapterInterface $adapter
@@ -38,27 +35,21 @@ use function strtolower;
  */
 abstract class AbstractTableGateway implements TableGatewayInterface
 {
-    /** @var bool */
-    protected $isInitialized = false;
+    protected bool $isInitialized = false;
 
-    /** @var AdapterInterface */
-    protected $adapter;
+    protected ?AdapterInterface $adapter = null;
 
-    /** @var string|array|TableIdentifier */
-    protected $table;
+    protected TableIdentifier|string|array|null $table = null;
 
-    /** @var array */
-    protected $columns = [];
+    protected array $columns = [];
 
-    protected Feature\FeatureSet $featureSet;
+    protected ?Feature\FeatureSet $featureSet = null;
 
-    protected ?ResultSetInterface $resultSetPrototype;
+    protected ?ResultSetInterface $resultSetPrototype = null;
 
-    /** @var Sql */
-    protected $sql;
+    protected ?Sql $sql = null;
 
-    /** @var int */
-    protected $lastInsertValue;
+    protected string|int|false|null $lastInsertValue = null;
 
     public function isInitialized(): bool
     {
@@ -76,27 +67,26 @@ abstract class AbstractTableGateway implements TableGatewayInterface
             return;
         }
 
-        /** @phpstan-ignore instanceof.alwaysTrue */
-        if (! $this->featureSet instanceof Feature\FeatureSet) {
+        if ($this->featureSet === null) {
             $this->featureSet = new Feature\FeatureSet();
         }
 
         $this->featureSet->setTableGateway($this);
         $this->featureSet->apply(EventFeatureEventsInterface::EVENT_PRE_INITIALIZE, []);
 
-        if (! $this->adapter instanceof AdapterInterface) {
+        if ($this->adapter === null) {
             throw new Exception\RuntimeException('This table does not have an Adapter setup');
         }
 
-        if (! is_string($this->table) && ! $this->table instanceof TableIdentifier && ! is_array($this->table)) {
+        if ($this->table === null) {
             throw new Exception\RuntimeException('This table object does not have a valid table set.');
         }
 
-        if (! $this->resultSetPrototype instanceof ResultSetInterface) {
+        if ($this->resultSetPrototype === null) {
             $this->resultSetPrototype = new ResultSet();
         }
 
-        if (! $this->sql instanceof Sql) {
+        if ($this->sql === null) {
             $this->sql = new Sql($this->adapter, $this->table);
         }
 
@@ -123,16 +113,28 @@ abstract class AbstractTableGateway implements TableGatewayInterface
 
     public function getFeatureSet(): Feature\FeatureSet
     {
+        if (! $this->isInitialized) {
+            $this->initialize();
+        }
+
         return $this->featureSet;
     }
 
     public function getResultSetPrototype(): ResultSetInterface
     {
+        if (! $this->isInitialized) {
+            $this->initialize();
+        }
+
         return $this->resultSetPrototype;
     }
 
     public function getSql(): Sql
     {
+        if (! $this->isInitialized) {
+            $this->initialize();
+        }
+
         return $this->sql;
     }
 
@@ -159,6 +161,7 @@ abstract class AbstractTableGateway implements TableGatewayInterface
         if (! $this->isInitialized) {
             $this->initialize();
         }
+
         return $this->executeSelect($select);
     }
 
@@ -191,7 +194,6 @@ abstract class AbstractTableGateway implements TableGatewayInterface
         $this->featureSet->apply(EventFeatureEventsInterface::EVENT_PRE_SELECT, [$select]);
 
         // prepare and execute
-        /** @var StatementInterface $statement */
         $statement = $this->sql->prepareStatementForSqlObject($select);
         $result    = $statement->execute();
 
@@ -213,6 +215,7 @@ abstract class AbstractTableGateway implements TableGatewayInterface
         }
         $insert = $this->sql->insert();
         $insert->values($set);
+
         return $this->executeInsert($insert);
     }
 
@@ -221,12 +224,13 @@ abstract class AbstractTableGateway implements TableGatewayInterface
         if (! $this->isInitialized) {
             $this->initialize();
         }
+
         return $this->executeInsert($insert);
     }
 
     /**
-     * @todo add $columns support
      * @throws Exception\RuntimeException
+     * @todo add $columns support
      */
     protected function executeInsert(Insert $insert): int
     {
@@ -249,7 +253,6 @@ abstract class AbstractTableGateway implements TableGatewayInterface
             $insert->into($unaliasedTable);
         }
 
-        /** @var StatementInterface $statement */
         $statement             = $this->sql->prepareStatementForSqlObject($insert);
         $result                = $statement->execute();
         $this->lastInsertValue = $this->adapter->getDriver()->getConnection()->getLastGeneratedValue();
@@ -296,12 +299,13 @@ abstract class AbstractTableGateway implements TableGatewayInterface
         if (! $this->isInitialized) {
             $this->initialize();
         }
+
         return $this->executeUpdate($update);
     }
 
     /**
-     * @todo add $columns support
      * @throws Exception\RuntimeException
+     * @todo add $columns support
      */
     protected function executeUpdate(Update $update): int
     {
@@ -322,7 +326,6 @@ abstract class AbstractTableGateway implements TableGatewayInterface
             $update->table($unaliasedTable);
         }
 
-        /** @var StatementInterface $statement */
         $statement = $this->sql->prepareStatementForSqlObject($update);
         $result    = $statement->execute();
 
@@ -349,18 +352,20 @@ abstract class AbstractTableGateway implements TableGatewayInterface
         } else {
             $delete->where($where);
         }
+
         return $this->executeDelete($delete);
     }
 
     public function deleteWith(Delete $delete): int
     {
         $this->initialize();
+
         return $this->executeDelete($delete);
     }
 
     /**
-     * @todo add $columns support
      * @throws Exception\RuntimeException
+     * @todo add $columns support
      */
     protected function executeDelete(Delete $delete): int
     {
@@ -381,7 +386,6 @@ abstract class AbstractTableGateway implements TableGatewayInterface
             $delete->from($unaliasedTable);
         }
 
-        /** @var StatementInterface $statement */
         $statement = $this->sql->prepareStatementForSqlObject($delete);
         $result    = $statement->execute();
 
@@ -396,7 +400,7 @@ abstract class AbstractTableGateway implements TableGatewayInterface
         return $result->getAffectedRows();
     }
 
-    public function getLastInsertValue(): int
+    public function getLastInsertValue(): string|int|false|null
     {
         return $this->lastInsertValue;
     }
@@ -406,18 +410,15 @@ abstract class AbstractTableGateway implements TableGatewayInterface
      */
     public function __get(string $property): mixed
     {
-        switch (strtolower($property)) {
-            case 'lastinsertvalue':
-                return $this->lastInsertValue;
-            case 'adapter':
-                return $this->adapter;
-            case 'table':
-                return $this->table;
-        }
-        if ($this->featureSet->canCallMagicGet($property)) {
-            return $this->featureSet->callMagicGet($property);
-        }
-        throw new Exception\InvalidArgumentException('Invalid magic property access in ' . self::class . '::__get()');
+        return match (true) {
+            'lastInsertValue' === $property,
+            'adapter' === $property,
+            'table' === $property => $this->$property,
+            $this->featureSet->canCallMagicGet($property) => $this->featureSet->callMagicGet($property),
+            default => throw new Exception\InvalidArgumentException(
+                'Invalid magic property access in ' . self::class . '::__get()'
+            ),
+        };
     }
 
     /**
@@ -427,6 +428,7 @@ abstract class AbstractTableGateway implements TableGatewayInterface
     {
         if ($this->featureSet->canCallMagicSet($property)) {
             $this->featureSet->callMagicSet($property, $value);
+
             return;
         }
         throw new Exception\InvalidArgumentException('Invalid magic property access in ' . self::class . '::__set()');
@@ -458,7 +460,7 @@ abstract class AbstractTableGateway implements TableGatewayInterface
             && count($this->table) === 1
             && is_object(reset($this->table))
         ) {
-            foreach ($this->table as $alias => &$tableObject) {
+            foreach ($this->table as &$tableObject) {
                 $tableObject = clone $tableObject;
             }
         }

@@ -21,8 +21,7 @@ class ConfigProviderTest extends TestCase
      * }
      * */
     private array $config = [
-        Adapter\AdapterInterface::class => [],
-        'dependencies'                  => [
+        'dependencies' => [
             'abstract_factories' => [
                 Container\AbstractAdapterInterfaceFactory::class,
             ],

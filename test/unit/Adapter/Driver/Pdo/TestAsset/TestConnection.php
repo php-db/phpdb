@@ -52,11 +52,9 @@ final class TestConnection extends AbstractPdoConnection
         };
     }
 
-    /**
-     * @param string|null $name
-     */
+    /** @phpstan-ignore return.unusedType */
     #[Override]
-    public function getLastGeneratedValue($name = null): string|bool|null
+    public function getLastGeneratedValue(?string $name = null): string|int|false
     {
         return $this->resource?->lastInsertId($name) ?? null;
     }

@@ -161,7 +161,7 @@ abstract class AbstractPdo implements PdoDriverInterface, ProfilerAwareInterface
      * {@inheritDoc}
      */
     #[Override]
-    public function getLastGeneratedValue(?string $name = null): int|string|bool|null
+    public function getLastGeneratedValue(?string $name = null): string|int|false|null
     {
         return $this->connection->getLastGeneratedValue($name);
     }
