@@ -15,6 +15,8 @@ use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 
 #[CoversMethod(CreateTable::class, '__construct')]
+#[CoversMethod(CreateTable::class, 'ifNotExists')]
+#[CoversMethod(CreateTable::class, 'getIfNotExists')]
 #[CoversMethod(CreateTable::class, 'setTemporary')]
 #[CoversMethod(CreateTable::class, 'isTemporary')]
 #[CoversMethod(CreateTable::class, 'setTable')]
@@ -420,5 +422,37 @@ class CreateTableTest extends TestCase
             "CREATE TABLE \"foo\" ( \n    \"bar\" INTEGER NOT NULL \n)",
             $ct->getSqlString()
         );
+    }
+
+    public function testIfNotExists(): void
+    {
+        $ct = new CreateTable('foo');
+        self::assertFalse($ct->getIfNotExists());
+
+        $result = $ct->ifNotExists();
+        self::assertSame($ct, $result);
+        self::assertTrue($ct->getIfNotExists());
+
+        self::assertEquals("CREATE TABLE IF NOT EXISTS \"foo\" ( \n)", $ct->getSqlString());
+    }
+
+    public function testIfNotExistsDisable(): void
+    {
+        $ct = new CreateTable('foo');
+        $ct->ifNotExists();
+        self::assertTrue($ct->getIfNotExists());
+
+        $ct->ifNotExists(false);
+        self::assertFalse($ct->getIfNotExists());
+
+        self::assertEquals("CREATE TABLE \"foo\" ( \n)", $ct->getSqlString());
+    }
+
+    public function testIfNotExistsCombinedWithTemporary(): void
+    {
+        $ct = new CreateTable('foo', true);
+        $ct->ifNotExists();
+
+        self::assertEquals("CREATE TEMPORARY TABLE IF NOT EXISTS \"foo\" ( \n)", $ct->getSqlString());
     }
 }

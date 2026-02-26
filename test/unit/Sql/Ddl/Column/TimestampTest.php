@@ -67,6 +67,38 @@ final class TimestampTest extends TestCase
         self::assertEquals(Argument::literal('TIMESTAMP'), $values[1]);
     }
 
+    public function testGetExpressionDataWithCurrentTimestampDefault(): void
+    {
+        $column = new Timestamp('created_at');
+        $column->setDefault(new Literal('CURRENT_TIMESTAMP'));
+
+        $expressionData = $column->getExpressionData();
+
+        self::assertEquals('%s %s NOT NULL DEFAULT %s', $expressionData['spec']);
+        self::assertEquals([
+            new Identifier('created_at'),
+            new Literal('TIMESTAMP'),
+            new Literal('CURRENT_TIMESTAMP'),
+        ], $expressionData['values']);
+    }
+
+    public function testGetExpressionDataWithCurrentTimestampDefaultAndOnUpdate(): void
+    {
+        $column = new Timestamp('updated_at');
+        $column->setDefault(new Literal('CURRENT_TIMESTAMP'));
+        $column->setOption('on_update', true);
+
+        $expressionData = $column->getExpressionData();
+
+        self::assertEquals('%s %s NOT NULL DEFAULT %s %s', $expressionData['spec']);
+        self::assertEquals([
+            new Identifier('updated_at'),
+            new Literal('TIMESTAMP'),
+            new Literal('CURRENT_TIMESTAMP'),
+            new Literal('ON UPDATE CURRENT_TIMESTAMP'),
+        ], $expressionData['values']);
+    }
+
     public function testInheritanceFromAbstractTimestampColumn(): void
     {
         $column = new Timestamp('test');
