@@ -10,6 +10,8 @@ use PhpDb\Sql\Literal;
 use PhpDb\Sql\TableIdentifier;
 
 use function array_key_exists;
+use function is_bool;
+use function is_int;
 use function strtoupper;
 
 class AlterTable extends AbstractSql

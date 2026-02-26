@@ -10,6 +10,9 @@ use PhpDb\Sql\Literal;
 use PhpDb\Sql\TableIdentifier;
 
 use function array_key_exists;
+use function implode;
+use function is_bool;
+use function is_int;
 use function strtoupper;
 
 class CreateTable extends AbstractSql
@@ -36,19 +39,19 @@ class CreateTable extends AbstractSql
      * {@inheritDoc}
      */
     protected array $specifications = [
-        self::TABLE       => 'CREATE %1$sTABLE %2$s%3$s (',
-        self::COLUMNS     => [
+        self::TABLE         => 'CREATE %1$sTABLE %2$s%3$s (',
+        self::COLUMNS       => [
             "\n    %1\$s" => [
                 [1 => '%1$s', 'combinedby' => ",\n    "],
             ],
         ],
-        'combinedBy'      => ',',
-        self::CONSTRAINTS => [
+        'combinedBy'        => ',',
+        self::CONSTRAINTS   => [
             "\n    %1\$s" => [
                 [1 => '%1$s', 'combinedby' => ",\n    "],
             ],
         ],
-        'statementEnd'    => '%1$s',
+        'statementEnd'      => '%1$s',
         self::TABLE_OPTIONS => '%1$s',
     ];
 
