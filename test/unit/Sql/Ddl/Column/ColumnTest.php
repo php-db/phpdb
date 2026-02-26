@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace PhpDbTest\Sql\Ddl\Column;
 
 use PhpDb\Sql\Argument;
+use PhpDb\Sql\Argument\Literal;
+use PhpDb\Sql\Argument\Value;
 use PhpDb\Sql\Ddl\Column\Column;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
@@ -164,6 +166,116 @@ final class ColumnTest extends TestCase
             Argument::identifier('foo'),
             Argument::literal('INTEGER'),
             Argument::value('bar'),
+        ], $expressionData['values']);
+    }
+
+    public function testSetDefaultWithLiteral(): void
+    {
+        $column = new Column();
+        $column->setName('created_at');
+
+        $literal = new Literal('CURRENT_TIMESTAMP');
+        $result  = $column->setDefault($literal);
+
+        self::assertSame($column, $result);
+        self::assertSame($literal, $column->getDefault());
+    }
+
+    public function testGetExpressionDataWithLiteralDefault(): void
+    {
+        $column = new Column();
+        $column->setName('created_at');
+        $column->setDefault(new Literal('CURRENT_TIMESTAMP'));
+
+        $expressionData = $column->getExpressionData();
+
+        self::assertEquals('%s %s NOT NULL DEFAULT %s', $expressionData['spec']);
+        self::assertEquals([
+            Argument::identifier('created_at'),
+            Argument::literal('INTEGER'),
+            Argument::literal('CURRENT_TIMESTAMP'),
+        ], $expressionData['values']);
+    }
+
+    public function testSetDefaultWithValue(): void
+    {
+        $column = new Column();
+        $column->setName('score');
+
+        $value  = new Value(99);
+        $result = $column->setDefault($value);
+
+        self::assertSame($column, $result);
+        self::assertSame($value, $column->getDefault());
+    }
+
+    public function testGetExpressionDataWithValueDefault(): void
+    {
+        $column = new Column();
+        $column->setName('score');
+        $column->setDefault(new Value(42));
+
+        $expressionData = $column->getExpressionData();
+
+        self::assertEquals('%s %s NOT NULL DEFAULT %s', $expressionData['spec']);
+        self::assertEquals([
+            Argument::identifier('score'),
+            Argument::literal('INTEGER'),
+            Argument::value(42),
+        ], $expressionData['values']);
+    }
+
+    public function testSetDefaultWithFloat(): void
+    {
+        $column = new Column();
+        $column->setName('rate');
+
+        $result = $column->setDefault(3.14);
+
+        self::assertSame($column, $result);
+        self::assertSame(3.14, $column->getDefault());
+    }
+
+    public function testGetExpressionDataWithFloatDefault(): void
+    {
+        $column = new Column();
+        $column->setName('rate');
+        $column->setDefault(9.99);
+
+        $expressionData = $column->getExpressionData();
+
+        self::assertEquals('%s %s NOT NULL DEFAULT %s', $expressionData['spec']);
+        self::assertEquals([
+            Argument::identifier('rate'),
+            Argument::literal('INTEGER'),
+            Argument::value(9.99),
+        ], $expressionData['values']);
+    }
+
+    public function testSetDefaultWithBool(): void
+    {
+        $column = new Column();
+        $column->setName('is_active');
+
+        $result = $column->setDefault(true);
+
+        self::assertSame($column, $result);
+        self::assertTrue($column->getDefault());
+    }
+
+    public function testGetExpressionDataWithBoolDefault(): void
+    {
+        $column = new Column();
+        $column->setName('is_active');
+        $column->setDefault(false);
+
+        $expressionData = $column->getExpressionData();
+
+        self::assertEquals('%s %s NOT NULL DEFAULT %s', $expressionData['spec']);
+        self::assertEquals([
+            Argument::identifier('is_active'),
+            Argument::literal('INTEGER'),
+            Argument::value(false),
         ], $expressionData['values']);
     }
 }
