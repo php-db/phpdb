@@ -9,6 +9,7 @@ use PhpDb\Sql\Ddl\Column\ColumnInterface;
 use PhpDb\Sql\Ddl\Constraint;
 use PhpDb\Sql\Ddl\Constraint\ConstraintInterface;
 use PhpDb\Sql\Ddl\CreateTable;
+use PhpDb\Sql\Literal;
 use PhpDb\Sql\TableIdentifier;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
@@ -26,6 +27,10 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(CreateTable::class, 'processCombinedby')]
 #[CoversMethod(CreateTable::class, 'processConstraints')]
 #[CoversMethod(CreateTable::class, 'processStatementEnd')]
+#[CoversMethod(CreateTable::class, 'setOption')]
+#[CoversMethod(CreateTable::class, 'setOptions')]
+#[CoversMethod(CreateTable::class, 'getOptions')]
+#[CoversMethod(CreateTable::class, 'processTableOptions')]
 class CreateTableTest extends TestCase
 {
     /**
@@ -307,5 +312,113 @@ class CreateTableTest extends TestCase
         $result = $ct->setTable('another_table');
         self::assertSame($ct, $result);
         self::assertEquals('another_table', $ct->getRawState(CreateTable::TABLE));
+    }
+
+    public function testSetOptionFluentInterface(): void
+    {
+        $ct     = new CreateTable('foo');
+        $result = $ct->setOption('engine', new Literal('InnoDB'));
+
+        self::assertSame($ct, $result);
+        self::assertEquals(['engine' => new Literal('InnoDB')], $ct->getOptions());
+    }
+
+    public function testSetOptionsReplacesAll(): void
+    {
+        $ct = new CreateTable('foo');
+        $ct->setOption('engine', new Literal('InnoDB'));
+
+        $ct->setOptions(['charset' => new Literal('utf8mb4')]);
+
+        self::assertEquals(['charset' => new Literal('utf8mb4')], $ct->getOptions());
+    }
+
+    public function testGetOptionsReturnsEmpty(): void
+    {
+        $ct = new CreateTable('foo');
+        self::assertEquals([], $ct->getOptions());
+    }
+
+    public function testGetRawStateIncludesTableOptions(): void
+    {
+        $ct = new CreateTable('foo');
+        $ct->setOption('engine', new Literal('InnoDB'));
+
+        $rawState = $ct->getRawState();
+
+        self::assertArrayHasKey(CreateTable::TABLE_OPTIONS, $rawState);
+        self::assertEquals(['engine' => new Literal('InnoDB')], $rawState[CreateTable::TABLE_OPTIONS]);
+    }
+
+    public function testGetSqlStringWithLiteralOption(): void
+    {
+        $ct = new CreateTable('foo');
+        $ct->addColumn(new Column('bar'));
+        $ct->setOption('engine', new Literal('InnoDB'));
+
+        self::assertEquals(
+            "CREATE TABLE \"foo\" ( \n    \"bar\" INTEGER NOT NULL \n) ENGINE = InnoDB",
+            $ct->getSqlString()
+        );
+    }
+
+    public function testGetSqlStringWithStringOption(): void
+    {
+        $ct = new CreateTable('foo');
+        $ct->addColumn(new Column('bar'));
+        $ct->setOption('comment', 'My table');
+
+        self::assertEquals(
+            "CREATE TABLE \"foo\" ( \n    \"bar\" INTEGER NOT NULL \n) COMMENT = 'My table'",
+            $ct->getSqlString()
+        );
+    }
+
+    public function testGetSqlStringWithIntOption(): void
+    {
+        $ct = new CreateTable('foo');
+        $ct->addColumn(new Column('bar'));
+        $ct->setOption('auto_increment', 100);
+
+        self::assertEquals(
+            "CREATE TABLE \"foo\" ( \n    \"bar\" INTEGER NOT NULL \n) AUTO_INCREMENT = 100",
+            $ct->getSqlString()
+        );
+    }
+
+    public function testGetSqlStringWithBoolOption(): void
+    {
+        $ct = new CreateTable('foo');
+        $ct->addColumn(new Column('bar'));
+        $ct->setOption('pack_keys', true);
+
+        self::assertEquals(
+            "CREATE TABLE \"foo\" ( \n    \"bar\" INTEGER NOT NULL \n) PACK_KEYS = 1",
+            $ct->getSqlString()
+        );
+    }
+
+    public function testGetSqlStringWithMultipleOptions(): void
+    {
+        $ct = new CreateTable('foo');
+        $ct->addColumn(new Column('bar'));
+        $ct->setOption('engine', new Literal('InnoDB'));
+        $ct->setOption('auto_increment', 100);
+
+        self::assertEquals(
+            "CREATE TABLE \"foo\" ( \n    \"bar\" INTEGER NOT NULL \n) ENGINE = InnoDB AUTO_INCREMENT = 100",
+            $ct->getSqlString()
+        );
+    }
+
+    public function testGetSqlStringWithNoOptionsUnchanged(): void
+    {
+        $ct = new CreateTable('foo');
+        $ct->addColumn(new Column('bar'));
+
+        self::assertEquals(
+            "CREATE TABLE \"foo\" ( \n    \"bar\" INTEGER NOT NULL \n)",
+            $ct->getSqlString()
+        );
     }
 }
