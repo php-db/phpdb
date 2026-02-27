@@ -83,7 +83,7 @@ class AbstractPlatform implements PlatformDecoratorInterface, PreparableSqlInter
         if (! $this->subject instanceof SqlInterface) {
             throw new Exception\RuntimeException(
                 'The subject does not appear to implement PhpDb\Sql\SqlInterface, thus calling '
-                . 'prepareStatement() has no effect'
+                . 'getSqlString() has no effect'
             );
         }
 

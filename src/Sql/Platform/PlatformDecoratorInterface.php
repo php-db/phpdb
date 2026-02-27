@@ -7,7 +7,7 @@ namespace PhpDb\Sql\Platform;
 use PhpDb\Sql\PreparableSqlInterface;
 use PhpDb\Sql\SqlInterface;
 
-interface PlatformDecoratorInterface extends PreparableSqlInterface, SqlInterface
+interface PlatformDecoratorInterface
 {
     public function setSubject(
         SqlInterface|PreparableSqlInterface|null $subject
