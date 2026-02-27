@@ -84,6 +84,7 @@ class Platform extends AbstractPlatform
     public function getDecorators(): array
     {
         $platformName = $this->resolvePlatformName($this->getDefaultPlatform());
+
         return $this->decorators[$platformName];
     }
 

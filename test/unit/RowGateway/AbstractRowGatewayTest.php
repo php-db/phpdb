@@ -10,7 +10,6 @@ use PhpDb\Adapter\Driver\ConnectionInterface;
 use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\Driver\ResultInterface;
 use PhpDb\Adapter\Driver\StatementInterface;
-use PhpDb\Adapter\Platform\PlatformInterface;
 use PhpDb\RowGateway\AbstractRowGateway;
 use PhpDb\RowGateway\Exception\InvalidArgumentException;
 use PhpDb\RowGateway\Exception\RuntimeException;
@@ -18,6 +17,7 @@ use PhpDb\RowGateway\Feature\FeatureSet;
 use PhpDb\RowGateway\RowGateway;
 use PhpDb\Sql\Select;
 use PhpDb\Sql\Sql;
+use PhpDbTest\TestAsset\TrustingSql92Platform;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\IgnoreDeprecations;
 use PHPUnit\Framework\Attributes\RequiresPhp;
@@ -77,7 +77,7 @@ final class AbstractRowGatewayTest extends TestCase
             ->setConstructorArgs(
                 [
                     $mockDriver,
-                    $this->getMockBuilder(PlatformInterface::class)->getMock(),
+                    new TrustingSql92Platform(),
                 ]
             )->getMock();
 
