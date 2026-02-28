@@ -6,9 +6,14 @@ namespace PhpDb\Sql\Ddl;
 
 use PhpDb\Adapter\Platform\PlatformInterface;
 use PhpDb\Sql\AbstractSql;
+use PhpDb\Sql\Literal;
 use PhpDb\Sql\TableIdentifier;
 
 use function array_key_exists;
+use function implode;
+use function is_bool;
+use function is_int;
+use function strtoupper;
 
 class CreateTable extends AbstractSql
 {
@@ -18,6 +23,8 @@ class CreateTable extends AbstractSql
 
     final public const TABLE = 'table';
 
+    final public const TABLE_OPTIONS = 'tableOptions';
+
     protected array $columns = [];
 
     protected array $constraints = [];
@@ -26,23 +33,26 @@ class CreateTable extends AbstractSql
 
     protected bool $isTemporary = false;
 
+    protected array $options = [];
+
     /**
      * {@inheritDoc}
      */
     protected array $specifications = [
-        self::TABLE       => 'CREATE %1$sTABLE %2$s%3$s (',
-        self::COLUMNS     => [
+        self::TABLE         => 'CREATE %1$sTABLE %2$s%3$s (',
+        self::COLUMNS       => [
             "\n    %1\$s" => [
                 [1 => '%1$s', 'combinedby' => ",\n    "],
             ],
         ],
-        'combinedBy'      => ',',
-        self::CONSTRAINTS => [
+        'combinedBy'        => ',',
+        self::CONSTRAINTS   => [
             "\n    %1\$s" => [
                 [1 => '%1$s', 'combinedby' => ",\n    "],
             ],
         ],
-        'statementEnd'    => '%1$s',
+        'statementEnd'      => '%1$s',
+        self::TABLE_OPTIONS => '%1$s',
     ];
 
     protected string|TableIdentifier $table = '';
@@ -93,6 +103,23 @@ class CreateTable extends AbstractSql
         return $this;
     }
 
+    public function setOption(string $name, Literal|bool|int|string $value): static
+    {
+        $this->options[$name] = $value;
+        return $this;
+    }
+
+    public function setOptions(array $options): static
+    {
+        $this->options = $options;
+        return $this;
+    }
+
+    public function getOptions(): array
+    {
+        return $this->options;
+    }
+
     /**
      * @return ((Column\ColumnInterface|string)[]|Column\ColumnInterface|string)[]|string
      * @psalm-return array<Column\ColumnInterface|array<Column\ColumnInterface|string>|string>|string
@@ -100,9 +127,10 @@ class CreateTable extends AbstractSql
     public function getRawState(?string $key = null): array|string
     {
         $rawState = [
-            self::COLUMNS     => $this->columns,
-            self::CONSTRAINTS => $this->constraints,
-            self::TABLE       => $this->table,
+            self::COLUMNS       => $this->columns,
+            self::CONSTRAINTS   => $this->constraints,
+            self::TABLE         => $this->table,
+            self::TABLE_OPTIONS => $this->options,
         ];
 
         return isset($key) && array_key_exists($key, $rawState) ? $rawState[$key] : $rawState;
@@ -171,5 +199,32 @@ class CreateTable extends AbstractSql
     protected function processStatementEnd(?PlatformInterface $adapterPlatform = null): array
     {
         return ["\n)"];
+    }
+
+    /**
+     * @return string[]|null
+     */
+    protected function processTableOptions(?PlatformInterface $adapterPlatform = null): ?array
+    {
+        if (! $this->options) {
+            return null;
+        }
+
+        $parts = [];
+        foreach ($this->options as $key => $value) {
+            $key = strtoupper($key);
+            if ($value instanceof Literal) {
+                $value = $value->getLiteral();
+            } elseif (is_bool($value)) {
+                $value = $value ? '1' : '0';
+            } elseif (is_int($value)) {
+                $value = (string) $value;
+            } else {
+                $value = $adapterPlatform->quoteTrustedValue($value);
+            }
+            $parts[] = $key . ' = ' . $value;
+        }
+
+        return [implode(' ', $parts)];
     }
 }

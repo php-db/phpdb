@@ -9,6 +9,7 @@ use PhpDb\Sql\Ddl\Column;
 use PhpDb\Sql\Ddl\Column\ColumnInterface;
 use PhpDb\Sql\Ddl\Constraint;
 use PhpDb\Sql\Ddl\Constraint\ConstraintInterface;
+use PhpDb\Sql\Literal;
 use PhpDb\Sql\TableIdentifier;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
@@ -31,6 +32,10 @@ use function str_replace;
 #[CoversMethod(AlterTable::class, 'processAddConstraints')]
 #[CoversMethod(AlterTable::class, 'processDropConstraints')]
 #[CoversMethod(AlterTable::class, 'processDropIndexes')]
+#[CoversMethod(AlterTable::class, 'setOption')]
+#[CoversMethod(AlterTable::class, 'setOptions')]
+#[CoversMethod(AlterTable::class, 'getOptions')]
+#[CoversMethod(AlterTable::class, 'processTableOptions')]
 class AlterTableTest extends TestCase
 {
     public function testSetTable(): void
@@ -345,5 +350,100 @@ EOS;
         $sql = $at->getSqlString();
         self::assertStringContainsString('"schema"."table"', $sql);
         self::assertStringContainsString('CHANGE COLUMN "col1" "col1_new"', $sql);
+    }
+
+    public function testSetOptionFluentInterface(): void
+    {
+        $at     = new AlterTable('foo');
+        $result = $at->setOption('engine', new Literal('InnoDB'));
+
+        self::assertSame($at, $result);
+        self::assertEquals(['engine' => new Literal('InnoDB')], $at->getOptions());
+    }
+
+    public function testSetOptionsReplacesAll(): void
+    {
+        $at = new AlterTable('foo');
+        $at->setOption('engine', new Literal('InnoDB'));
+
+        $at->setOptions(['charset' => new Literal('utf8mb4')]);
+
+        self::assertEquals(['charset' => new Literal('utf8mb4')], $at->getOptions());
+    }
+
+    public function testGetOptionsReturnsEmpty(): void
+    {
+        $at = new AlterTable('foo');
+        self::assertEquals([], $at->getOptions());
+    }
+
+    public function testGetRawStateIncludesTableOptions(): void
+    {
+        $at = new AlterTable('foo');
+        $at->setOption('engine', new Literal('InnoDB'));
+
+        $rawState = $at->getRawState();
+
+        self::assertArrayHasKey(AlterTable::TABLE_OPTIONS, $rawState);
+        self::assertEquals(['engine' => new Literal('InnoDB')], $rawState[AlterTable::TABLE_OPTIONS]);
+    }
+
+    public function testGetSqlStringWithEngineOption(): void
+    {
+        $at = new AlterTable('foo');
+        $at->setOption('engine', new Literal('InnoDB'));
+
+        $sql = $at->getSqlString();
+        self::assertStringContainsString('ALTER TABLE "foo"', $sql);
+        self::assertStringContainsString('ENGINE = InnoDB', $sql);
+    }
+
+    public function testGetSqlStringWithColumnAndEngineOption(): void
+    {
+        $at = new AlterTable('foo');
+        $at->addColumn(new Column\Column('bar'));
+        $at->setOption('engine', new Literal('InnoDB'));
+
+        $sql = $at->getSqlString();
+        self::assertStringContainsString('ADD COLUMN "bar" INTEGER NOT NULL', $sql);
+        self::assertStringContainsString('ENGINE = InnoDB', $sql);
+    }
+
+    public function testGetSqlStringWithStringOption(): void
+    {
+        $at = new AlterTable('foo');
+        $at->setOption('comment', 'My table');
+
+        $sql = $at->getSqlString();
+        self::assertStringContainsString('COMMENT = \'My table\'', $sql);
+    }
+
+    public function testGetSqlStringWithIntOption(): void
+    {
+        $at = new AlterTable('foo');
+        $at->setOption('auto_increment', 100);
+
+        $sql = $at->getSqlString();
+        self::assertStringContainsString('AUTO_INCREMENT = 100', $sql);
+    }
+
+    public function testGetSqlStringWithBoolOption(): void
+    {
+        $at = new AlterTable('foo');
+        $at->setOption('pack_keys', true);
+
+        $sql = $at->getSqlString();
+        self::assertStringContainsString('PACK_KEYS = 1', $sql);
+    }
+
+    public function testGetSqlStringWithMultipleOptions(): void
+    {
+        $at = new AlterTable('foo');
+        $at->setOption('engine', new Literal('InnoDB'));
+        $at->setOption('auto_increment', 100);
+
+        $sql = $at->getSqlString();
+        self::assertStringContainsString('ENGINE = InnoDB', $sql);
+        self::assertStringContainsString('AUTO_INCREMENT = 100', $sql);
     }
 }
