@@ -115,6 +115,8 @@ class Column implements ColumnInterface
 
         if ($this->isNullable === false) {
             $specParts[] = 'NOT NULL';
+        } else {
+            $specParts[] = 'NULL';
         }
 
         if ($this->default !== null) {
@@ -122,6 +124,8 @@ class Column implements ColumnInterface
             $values[]    = $this->default instanceof ArgumentInterface
                 ? $this->default
                 : new Value($this->default);
+        } elseif ($this->isNullable) {
+            $specParts[] = 'DEFAULT NULL';
         }
 
         foreach ($this->constraints as $constraint) {
