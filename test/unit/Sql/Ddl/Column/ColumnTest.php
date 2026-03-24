@@ -151,7 +151,7 @@ final class ColumnTest extends TestCase
 
         $expressionData = $column->getExpressionData();
 
-        self::assertEquals('%s %s', $expressionData['spec']);
+        self::assertEquals('%s %s NULL DEFAULT NULL', $expressionData['spec']);
         self::assertEquals([
             Argument::identifier('foo'),
             Argument::literal('INTEGER'),
@@ -161,7 +161,7 @@ final class ColumnTest extends TestCase
 
         $expressionData = $column->getExpressionData();
 
-        self::assertEquals('%s %s DEFAULT %s', $expressionData['spec']);
+        self::assertEquals('%s %s NULL DEFAULT %s', $expressionData['spec']);
         self::assertEquals([
             Argument::identifier('foo'),
             Argument::literal('INTEGER'),
