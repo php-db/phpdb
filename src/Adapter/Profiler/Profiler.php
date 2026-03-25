@@ -5,11 +5,9 @@ declare(strict_types=1);
 namespace PhpDb\Adapter\Profiler;
 
 use PhpDb\Adapter\Exception;
-use PhpDb\Adapter\Exception\InvalidArgumentException;
 use PhpDb\Adapter\StatementContainerInterface;
 
 use function end;
-use function is_string;
 use function microtime;
 
 class Profiler implements ProfilerInterface
@@ -20,10 +18,7 @@ class Profiler implements ProfilerInterface
     /** @var int */
     protected $currentIndex = 0;
 
-    /**
-     * @throws InvalidArgumentException
-     * @return $this Provides a fluent interface
-     */
+    /** @return $this Provides a fluent interface */
     public function profilerStart(string|StatementContainerInterface $target): ProfilerInterface
     {
         $profileInformation = [
@@ -39,12 +34,8 @@ class Profiler implements ProfilerInterface
             if ($container !== null) {
                 $profileInformation['parameters'] = clone $container;
             }
-        } elseif (is_string($target)) {
-            $profileInformation['sql'] = $target;
         } else {
-            throw new Exception\InvalidArgumentException(
-                __FUNCTION__ . ' takes either a StatementContainer or a string'
-            );
+            $profileInformation['sql'] = $target;
         }
 
         $this->profiles[$this->currentIndex] = $profileInformation;

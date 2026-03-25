@@ -80,6 +80,7 @@ abstract class AbstractResultSet implements ResultSetInterface
             /** @phpstan-ignore assign.propertyType */
             $this->dataSource = $dataSource->getIterator();
         } else {
+            /** @phpstan-ignore assign.propertyType */
             $this->dataSource = $dataSource;
         }
 

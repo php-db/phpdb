@@ -73,9 +73,11 @@ abstract class AbstractPdo implements PdoDriverInterface, ProfilerAwareInterface
     public function checkEnvironment(): bool
     {
         if (! extension_loaded('PDO')) {
+            // @codeCoverageIgnoreStart
             throw new Exception\RuntimeException(
                 'The PDO extension is required for this adapter but the extension is not loaded'
             );
+            // @codeCoverageIgnoreEnd
         }
         return true;
     }
