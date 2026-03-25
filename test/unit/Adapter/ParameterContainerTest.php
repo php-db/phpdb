@@ -312,7 +312,6 @@ final class ParameterContainerTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Keys must be string, integer or null');
 
-        /** @phpstan-ignore argument.type */
         $container->offsetSet(1.5, 'value');
     }
 

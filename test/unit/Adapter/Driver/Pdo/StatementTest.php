@@ -503,4 +503,30 @@ final class StatementTest extends TestCase
         self::assertInstanceOf(Result::class, $result);
         self::assertTrue($this->statement->isPrepared());
     }
+
+    public function testSecondExecuteSkipsBindingWhenAlreadyBound(): void
+    {
+        $pdo = new SqliteMemoryPdo();
+        $this->statement->setDriver(new TestPdo(new TestConnection($pdo)));
+        $this->statement->initialize($pdo);
+        $this->statement->setSql('SELECT :val');
+        $this->statement->setParameterContainer(new ParameterContainer(['val' => 'test']));
+
+        $result1 = $this->statement->execute();
+        self::assertInstanceOf(Result::class, $result1);
+
+        $result2 = $this->statement->execute();
+        self::assertInstanceOf(Result::class, $result2);
+    }
+
+    public function testCloneClonesParameterContainerWhenSet(): void
+    {
+        $container = new ParameterContainer(['key' => 'value']);
+        $statement = new Statement($container);
+
+        $clone = clone $statement;
+
+        self::assertNotSame($container, $clone->getParameterContainer());
+        self::assertSame('value', $clone->getParameterContainer()->offsetGet('key'));
+    }
 }

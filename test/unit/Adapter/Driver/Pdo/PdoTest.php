@@ -33,6 +33,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(AbstractPdo::class, 'getLastGeneratedValue')]
 #[CoversMethod(AbstractPdo::class, 'setProfiler')]
 #[CoversMethod(AbstractPdo::class, 'getProfiler')]
+#[CoversMethod(AbstractPdo::class, 'formatParameterName')]
 #[Group('unit')]
 final class PdoTest extends TestCase
 {
@@ -181,6 +182,7 @@ final class PdoTest extends TestCase
         $pdo = new TestPdo([]);
 
         $this->expectException(Error::class);
+        /** @phpstan-ignore method.resultUnused */
         $pdo->getProfiler();
     }
 
