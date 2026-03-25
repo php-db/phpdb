@@ -62,27 +62,24 @@ final class StatementTest extends TestCase
     {
     }
 
-    public function testSetDriver(): void
+    public function testFluentSetDriver(): void
     {
         self::assertEquals($this->statement, $this->statement->setDriver(new TestPdo([])));
     }
 
-    public function testSetParameterContainer(): void
+    public function testFluentSetParameterContainer(): void
     {
         self::assertSame($this->statement, $this->statement->setParameterContainer(new ParameterContainer()));
     }
 
-    /**
-     * @todo Implement testGetParameterContainer().
-     */
-    public function testGetParameterContainer(): void
+    public function testGetParameterContainerReturnsContainer(): void
     {
         $container = new ParameterContainer();
         $this->statement->setParameterContainer($container);
         self::assertSame($container, $this->statement->getParameterContainer());
     }
 
-    public function testGetResource(): void
+    public function testGetResourceReturnsPdoStatement(): void
     {
         $pdo  = new SqliteMemoryPdo();
         $stmt = $pdo->prepare('SELECT 1');
@@ -103,10 +100,7 @@ final class StatementTest extends TestCase
         self::assertEquals('SELECT 1', $this->statement->getSql());
     }
 
-    /**
-     * Test that prepare() returns the statement for method chaining
-     */
-    public function testPrepare(): void
+    public function testFluentPrepare(): void
     {
         $this->statement->initialize(new SqliteMemoryPdo());
         $result = $this->statement->prepare('SELECT 1');
@@ -114,7 +108,7 @@ final class StatementTest extends TestCase
         self::assertSame($this->statement, $result);
     }
 
-    public function testIsPrepared(): void
+    public function testIsPreparedReturnsTrueAfterPrepare(): void
     {
         self::assertFalse($this->statement->isPrepared());
         $this->statement->initialize(new SqliteMemoryPdo());
@@ -122,7 +116,7 @@ final class StatementTest extends TestCase
         self::assertTrue($this->statement->isPrepared());
     }
 
-    public function testExecute(): void
+    public function testExecuteReturnsResult(): void
     {
         $this->statement->setDriver(new TestPdo(new TestConnection($pdo = new SqliteMemoryPdo())));
         $this->statement->initialize($pdo);

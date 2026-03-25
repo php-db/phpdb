@@ -81,7 +81,7 @@ final class Sql92Test extends TestCase
         $this->platform->quoteValue('value');
     }
 
-    public function testQuoteValue(): void
+    public function testQuoteValueThrowsWithoutDriver(): void
     {
         $this->expectException(VunerablePlatformQuoteException::class);
         self::assertEquals("'value'", @$this->platform->quoteValue('value'));
@@ -96,7 +96,7 @@ final class Sql92Test extends TestCase
         );
     }
 
-    public function testQuoteTrustedValue(): void
+    public function testQuoteTrustedValueEscapesSpecialCharacters(): void
     {
         self::assertEquals("'value'", $this->platform->quoteTrustedValue('value'));
         self::assertEquals("'Foo O\\'Bar'", $this->platform->quoteTrustedValue("Foo O'Bar"));
@@ -112,7 +112,7 @@ final class Sql92Test extends TestCase
         );
     }
 
-    public function testQuoteValueList(): void
+    public function testQuoteValueListThrowsWithoutDriver(): void
     {
         $this->expectException(VunerablePlatformQuoteException::class);
         self::assertEquals("'Foo O\\'Bar'", $this->platform->quoteValueList("Foo O'Bar"));
