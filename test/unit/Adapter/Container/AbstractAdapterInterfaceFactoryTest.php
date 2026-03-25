@@ -173,15 +173,15 @@ final class AbstractAdapterInterfaceFactoryTest extends TestCase
         $profiler  = $this->createMock(ProfilerInterface::class);
 
         /** @var PdoDriverInterface&MockObject $driverMock */
-        $driverMock   = $this->createMock(PdoDriverInterface::class);
+        $driverMock = $this->createMock(PdoDriverInterface::class);
         /** @var PlatformInterface&MockObject $platformMock */
         $platformMock = $this->createMock(PlatformInterface::class);
 
         $container = new ServiceManager([
             'abstract_factories' => [AbstractAdapterInterfaceFactory::class],
             'factories'          => [
-                PdoStubDriver::class     => static fn() => $driverMock,
-                PlatformInterface::class => static fn() => $platformMock,
+                PdoStubDriver::class      => static fn() => $driverMock,
+                PlatformInterface::class  => static fn() => $platformMock,
                 ResultSetInterface::class => static fn() => $resultSet,
                 ProfilerInterface::class  => static fn() => $profiler,
             ],

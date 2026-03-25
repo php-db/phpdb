@@ -14,12 +14,12 @@ use PDOStatement;
 use PhpDb\Adapter\Driver\Pdo\Result;
 use PhpDb\Adapter\Driver\ResultInterface;
 use PhpDb\ResultSet\AbstractResultSet;
-use PhpDb\ResultSet\Exception\InvalidArgumentException;
 use PhpDb\ResultSet\Exception\RuntimeException;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 use TypeError;
 
 use function assert;
@@ -584,7 +584,7 @@ final class AbstractResultSetTest extends TestCase
     public function testToArrayThrowsOnNonCastableRows(): void
     {
         $resultSet = $this->createResultSetMock();
-        $resultSet->initialize(new ArrayIterator([new \stdClass()]));
+        $resultSet->initialize(new ArrayIterator([new stdClass()]));
 
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('cannot be cast to an array');

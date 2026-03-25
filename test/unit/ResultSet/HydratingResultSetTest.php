@@ -10,6 +10,7 @@ use Exception;
 use Laminas\Hydrator\ArraySerializableHydrator;
 use Laminas\Hydrator\ClassMethodsHydrator;
 use Override;
+use PhpDb\ResultSet\Exception\RuntimeException;
 use PhpDb\ResultSet\HydratingResultSet;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Group;
@@ -204,13 +205,13 @@ final class HydratingResultSetTest extends TestCase
     public function testCurrentDisablesBufferingImplicitly(): void
     {
         $hydratingRs = new HydratingResultSet();
-        $hydratingRs->initialize(new \ArrayIterator([
+        $hydratingRs->initialize(new ArrayIterator([
             ['id' => 1],
         ]));
 
         $hydratingRs->current();
 
-        $this->expectException(\PhpDb\ResultSet\Exception\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $hydratingRs->buffer();
     }
 }

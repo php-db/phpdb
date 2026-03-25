@@ -10,12 +10,13 @@ use PhpDb\Adapter\Driver\ConnectionInterface;
 use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\Driver\ResultInterface;
 use PhpDb\Adapter\Driver\StatementInterface;
+use PhpDb\Adapter\Platform\PlatformInterface;
 use PhpDb\Sql\Delete;
 use PhpDb\Sql\Exception\InvalidArgumentException;
 use PhpDb\Sql\Exception\RuntimeException;
 use PhpDb\Sql\Insert;
-use PhpDb\Sql\Select;
 use PhpDb\Sql\Platform\PlatformDecoratorInterface;
+use PhpDb\Sql\Select;
 use PhpDb\Sql\Sql;
 use PhpDb\Sql\TableIdentifier;
 use PhpDb\Sql\Update;
@@ -206,7 +207,7 @@ final class SqlTest extends TestCase
     public function testPrepareStatementThrowsWhenPlatformNotPreparable(): void
     {
         $decorator = $this->createMock(PlatformDecoratorInterface::class);
-        $platform  = $this->createMock(\PhpDb\Adapter\Platform\PlatformInterface::class);
+        $platform  = $this->createMock(PlatformInterface::class);
         $platform->method('getSqlPlatformDecorator')->willReturn($decorator);
 
         $adapter = $this->getMockBuilder(Adapter::class)
@@ -227,7 +228,7 @@ final class SqlTest extends TestCase
     public function testBuildSqlStringThrowsWhenPlatformNotSqlInterface(): void
     {
         $decorator = $this->createMock(PlatformDecoratorInterface::class);
-        $platform  = $this->createMock(\PhpDb\Adapter\Platform\PlatformInterface::class);
+        $platform  = $this->createMock(PlatformInterface::class);
         $platform->method('getSqlPlatformDecorator')->willReturn($decorator);
 
         $adapter = $this->getMockBuilder(Adapter::class)

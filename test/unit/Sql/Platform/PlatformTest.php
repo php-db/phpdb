@@ -11,6 +11,8 @@ use PhpDb\Adapter\Platform\PlatformInterface;
 use PhpDb\Adapter\StatementContainer;
 use PhpDb\ResultSet\ResultSet;
 use PhpDb\Sql\Exception\RuntimeException;
+use PhpDb\Sql\Insert;
+use PhpDb\Sql\Platform\AbstractPlatform;
 use PhpDb\Sql\Platform\Platform;
 use PhpDb\Sql\Platform\PlatformDecoratorInterface;
 use PhpDb\Sql\PreparableSqlInterface;
@@ -245,7 +247,7 @@ class PlatformTest extends TestCase
         $platform        = new Platform($adapterPlatform);
 
         $decorator = $this->createMock(PlatformDecoratorInterface::class);
-        $platform->setTypeDecorator(\PhpDb\Sql\Insert::class, $decorator);
+        $platform->setTypeDecorator(Insert::class, $decorator);
 
         $select = new Select('foo');
         $result = $platform->getTypeDecorator($select);
@@ -258,7 +260,7 @@ class PlatformTest extends TestCase
         $adapterPlatform = new TestAsset\TrustingSql92Platform();
         $platform        = new Platform($adapterPlatform);
 
-        $innerPlatform = new \PhpDb\Sql\Platform\AbstractPlatform();
+        $innerPlatform = new AbstractPlatform();
         $platform->setTypeDecorator(SqlInterface::class, $innerPlatform);
 
         $select = new Select('foo');
