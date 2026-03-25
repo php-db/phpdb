@@ -12,9 +12,12 @@ use PhpDb\Adapter\Driver\ResultInterface;
 use PhpDb\Adapter\Driver\StatementInterface;
 use PhpDb\Sql\Delete;
 use PhpDb\Sql\Exception\InvalidArgumentException;
+use PhpDb\Sql\Exception\RuntimeException;
 use PhpDb\Sql\Insert;
 use PhpDb\Sql\Select;
+use PhpDb\Sql\Platform\PlatformDecoratorInterface;
 use PhpDb\Sql\Sql;
+use PhpDb\Sql\TableIdentifier;
 use PhpDb\Sql\Update;
 use PhpDbTest\TestAsset;
 use PHPUnit\Framework\Attributes\CoversMethod;
@@ -157,5 +160,88 @@ final class SqlTest extends TestCase
         $select    = $this->sql->select()->where(['bar' => 'baz']);
         $sqlString = $this->sql->buildSqlString($select);
         self::assertEquals('SELECT "foo".* FROM "foo" WHERE "bar" = \'baz\'', $sqlString);
+    }
+
+    public function testSelectThrowsWhenTableConflicts(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage(
+            'This Sql object is intended to work with only the table "foo" provided at construction time.'
+        );
+        $this->sql->select(new TableIdentifier('bar'));
+    }
+
+    public function testInsertThrowsWhenTableConflicts(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage(
+            'This Sql object is intended to work with only the table "foo" provided at construction time.'
+        );
+        $this->sql->insert(new TableIdentifier('bar'));
+    }
+
+    public function testUpdateThrowsWhenTableConflicts(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage(
+            'This Sql object is intended to work with only the table "foo" provided at construction time.'
+        );
+        $this->sql->update(new TableIdentifier('bar'));
+    }
+
+    public function testDeleteThrowsWhenTableConflicts(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage(
+            'This Sql object is intended to work with only the table "foo" provided at construction time.'
+        );
+        $this->sql->delete(new TableIdentifier('bar'));
+    }
+
+    public function testGetSqlPlatformReturnsPlatformDecorator(): void
+    {
+        self::assertInstanceOf(PlatformDecoratorInterface::class, $this->sql->getSqlPlatform());
+    }
+
+    public function testPrepareStatementThrowsWhenPlatformNotPreparable(): void
+    {
+        $decorator = $this->createMock(PlatformDecoratorInterface::class);
+        $platform  = $this->createMock(\PhpDb\Adapter\Platform\PlatformInterface::class);
+        $platform->method('getSqlPlatformDecorator')->willReturn($decorator);
+
+        $adapter = $this->getMockBuilder(Adapter::class)
+            ->setConstructorArgs([
+                $this->createMock(DriverInterface::class),
+                $platform,
+            ])
+            ->getMock();
+        $adapter->method('getPlatform')->willReturn($platform);
+
+        $sql = new Sql($adapter);
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('does not implement PreparableSqlInterface');
+        $sql->prepareStatementForSqlObject($this->sql->select());
+    }
+
+    public function testBuildSqlStringThrowsWhenPlatformNotSqlInterface(): void
+    {
+        $decorator = $this->createMock(PlatformDecoratorInterface::class);
+        $platform  = $this->createMock(\PhpDb\Adapter\Platform\PlatformInterface::class);
+        $platform->method('getSqlPlatformDecorator')->willReturn($decorator);
+
+        $adapter = $this->getMockBuilder(Adapter::class)
+            ->setConstructorArgs([
+                $this->createMock(DriverInterface::class),
+                $platform,
+            ])
+            ->getMock();
+        $adapter->method('getPlatform')->willReturn($platform);
+
+        $sql = new Sql($adapter);
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('does not implement SqlInterface');
+        $sql->buildSqlString($this->sql->select());
     }
 }

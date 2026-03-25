@@ -8,7 +8,9 @@ use PhpDb\Sql\Argument;
 use PhpDb\Sql\Argument\Literal;
 use PhpDb\Sql\Argument\Value;
 use PhpDb\Sql\Ddl\Column\Column;
+use PhpDb\Sql\Ddl\Constraint\PrimaryKey;
 use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 
 #[CoversMethod(Column::class, '__construct')]
@@ -23,6 +25,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(Column::class, 'getOptions')]
 #[CoversMethod(Column::class, 'addConstraint')]
 #[CoversMethod(Column::class, 'getExpressionData')]
+#[Group('unit')]
 final class ColumnTest extends TestCase
 {
     public function testConstructor(): void
@@ -277,5 +280,34 @@ final class ColumnTest extends TestCase
             Argument::literal('INTEGER'),
             Argument::value(false),
         ], $expressionData['values']);
+    }
+
+    public function testAddConstraintAppendsConstraintToColumn(): void
+    {
+        $column = new Column('id');
+
+        $result = $column->addConstraint(new PrimaryKey());
+
+        self::assertSame($column, $result);
+    }
+
+    public function testGetExpressionDataIncludesConstraints(): void
+    {
+        $column = new Column('id');
+        $column->addConstraint(new PrimaryKey());
+
+        $expressionData = $column->getExpressionData();
+
+        self::assertStringContainsString('PRIMARY KEY', $expressionData['spec']);
+    }
+
+    public function testGetExpressionDataIncludesConstraintValues(): void
+    {
+        $column = new Column('id');
+        $column->addConstraint(new PrimaryKey('id', 'pk_id'));
+
+        $expressionData = $column->getExpressionData();
+
+        self::assertNotEmpty($expressionData['values']);
     }
 }

@@ -20,7 +20,6 @@ use function current;
 use function gettype;
 use function is_array;
 use function is_object;
-use function key;
 use function method_exists;
 use function reset;
 
@@ -80,12 +79,8 @@ abstract class AbstractResultSet implements ResultSetInterface
         } elseif ($dataSource instanceof IteratorAggregate) {
             /** @phpstan-ignore assign.propertyType */
             $this->dataSource = $dataSource->getIterator();
-        } elseif ($dataSource instanceof Iterator) {
-            $this->dataSource = $dataSource;
         } else {
-            throw new InvalidArgumentException(
-                'DataSource provided is not an array, nor does it implement Iterator or IteratorAggregate'
-            );
+            $this->dataSource = $dataSource;
         }
 
         return $this;
@@ -214,12 +209,7 @@ abstract class AbstractResultSet implements ResultSetInterface
             return true;
         }
 
-        if ($this->dataSource instanceof Iterator) {
-            return $this->dataSource->valid();
-        } else {
-            $key = key($this->dataSource);
-            return $key !== null;
-        }
+        return $this->dataSource->valid();
     }
 
     /**
@@ -229,11 +219,7 @@ abstract class AbstractResultSet implements ResultSetInterface
     public function rewind(): void
     {
         if (! is_array($this->buffer)) {
-            if ($this->dataSource instanceof Iterator) {
-                $this->dataSource->rewind();
-            } else {
-                reset($this->dataSource);
-            }
+            $this->dataSource->rewind();
         }
 
         $this->position = 0;

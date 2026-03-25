@@ -11,6 +11,8 @@ use PhpDb\Adapter\Driver\ConnectionInterface;
 use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\Driver\ResultInterface;
 use PhpDb\Adapter\Driver\StatementInterface;
+use PhpDb\Adapter\Exception\InvalidArgumentException;
+use PhpDb\Adapter\Exception\VunerablePlatformQuoteException;
 use PhpDb\Adapter\ParameterContainer;
 use PhpDb\Adapter\Platform\PlatformInterface;
 use PhpDb\Adapter\Profiler;
@@ -26,8 +28,6 @@ use PHPUnit\Framework\TestCase;
 
 #[CoversMethod(Adapter::class, 'setProfiler')]
 #[CoversMethod(Adapter::class, 'getProfiler')]
-#[CoversMethod(Adapter::class, 'createDriver')]
-#[CoversMethod(Adapter::class, 'createPlatform')]
 #[CoversMethod(Adapter::class, 'getDriver')]
 #[CoversMethod(Adapter::class, 'getPlatform')]
 #[CoversMethod(Adapter::class, 'getQueryResultSetPrototype')]
@@ -35,6 +35,9 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(Adapter::class, 'query')]
 #[CoversMethod(Adapter::class, 'createStatement')]
 #[CoversMethod(Adapter::class, '__get')]
+#[CoversMethod(Adapter::class, '__construct')]
+#[CoversMethod(Adapter::class, 'getHelpers')]
+#[Group('unit')]
 final class AdapterTest extends TestCase
 {
     protected DriverInterface&MockObject $mockDriver;
@@ -235,5 +238,94 @@ final class AdapterTest extends TestCase
         $this->expectExceptionMessage('Invalid magic');
         /** @phpstan-ignore property.notFound, expr.resultUnused */
         $this->adapter->foo;
+    }
+
+    public function testGetHelpersReturnsQuoteIdentifierFunction(): void
+    {
+        $functions = $this->adapter->getHelpers(Adapter::FUNCTION_QUOTE_IDENTIFIER);
+
+        self::assertCount(1, $functions);
+        self::assertIsCallable($functions[0]);
+    }
+
+    public function testGetHelpersReturnsQuoteValueFunction(): void
+    {
+        $functions = $this->adapter->getHelpers(Adapter::FUNCTION_QUOTE_VALUE);
+
+        self::assertCount(1, $functions);
+        self::assertIsCallable($functions[0]);
+    }
+
+    public function testGetHelpersReturnsBothFunctions(): void
+    {
+        $functions = $this->adapter->getHelpers(
+            Adapter::FUNCTION_QUOTE_IDENTIFIER,
+            Adapter::FUNCTION_QUOTE_VALUE
+        );
+
+        self::assertCount(2, $functions);
+        self::assertIsCallable($functions[0]);
+        self::assertIsCallable($functions[1]);
+    }
+
+    public function testConstructorWithProfilerDelegatesToSetProfiler(): void
+    {
+        $profilerMock = $this->createMock(Profiler\ProfilerInterface::class);
+        $driverMock   = $this->createMock(DriverInterface::class);
+        $platformMock = $this->createMock(PlatformInterface::class);
+
+        $adapter = new Adapter(
+            driver: $driverMock,
+            platform: $platformMock,
+            profiler: $profilerMock,
+        );
+
+        self::assertSame($profilerMock, $adapter->getProfiler());
+    }
+
+    public function testQueryThrowsOnInvalidParameterType(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Parameter 2 to this method must be a flag, an array, or ParameterContainer');
+
+        $this->adapter->query('SELECT 1', 'invalid_mode');
+    }
+
+    public function testSetProfilerDelegatesToDriverWhenProfilerAware(): void
+    {
+        $profiler = $this->createMock(Profiler\ProfilerInterface::class);
+        $driver   = $this->createMockForIntersectionOfInterfaces(
+            [DriverInterface::class, Profiler\ProfilerAwareInterface::class]
+        );
+        $driver->expects($this->once())->method('setProfiler')->with($profiler);
+
+        $platform = $this->createMock(PlatformInterface::class);
+        $adapter  = new Adapter(driver: $driver, platform: $platform);
+
+        $adapter->setProfiler($profiler);
+    }
+
+    public function testGetHelpersQuoteIdentifierClosureCallsPlatform(): void
+    {
+        $this->mockPlatform->method('quoteIdentifier')
+            ->with('test')
+            ->willReturn('"test"');
+
+        $functions = $this->adapter->getHelpers(Adapter::FUNCTION_QUOTE_IDENTIFIER);
+        $result    = $functions[0]('test');
+
+        self::assertSame('"test"', $result);
+    }
+
+    public function testGetHelpersQuoteValueClosureCallsPlatform(): void
+    {
+        $this->mockPlatform->method('quoteValue')
+            ->with('test')
+            ->willThrowException(VunerablePlatformQuoteException::forPlatformAndMethod('test', 'test'));
+
+        $functions = $this->adapter->getHelpers(Adapter::FUNCTION_QUOTE_VALUE);
+
+        $this->expectException(VunerablePlatformQuoteException::class);
+        $functions[0]('test');
     }
 }

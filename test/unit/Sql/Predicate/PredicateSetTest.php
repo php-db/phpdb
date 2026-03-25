@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace PhpDbTest\Sql\Predicate;
 
 use PhpDb\Sql\Argument;
+use PhpDb\Sql\Exception\InvalidArgumentException;
 use PhpDb\Sql\Expression as SqlExpression;
 use PhpDb\Sql\Predicate\Expression;
 use PhpDb\Sql\Predicate\In;
@@ -12,6 +13,7 @@ use PhpDb\Sql\Predicate\IsNotNull;
 use PhpDb\Sql\Predicate\IsNull;
 use PhpDb\Sql\Predicate\Literal;
 use PhpDb\Sql\Predicate\Operator;
+use PhpDb\Sql\Predicate\PredicateInterface;
 use PhpDb\Sql\Predicate\PredicateSet;
 use PhpDbTest\DeprecatedAssertionsTrait;
 use PHPUnit\Framework\Attributes\CoversMethod;
@@ -210,5 +212,34 @@ final class PredicateSetTest extends TestCase
 
         self::assertInstanceOf(Expression::class, $predicates[0][1]);
         self::assertInstanceOf(Expression::class, $predicates[1][1]);
+    }
+
+    public function testAddPredicateThrowsOnInvalidCombination(): void
+    {
+        $predicateSet = new PredicateSet();
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage("Invalid combination: expected 'AND' or 'OR'");
+        $predicateSet->addPredicate(new IsNull('foo'), 'XOR');
+    }
+
+    public function testAddPredicatesThrowsWhenStringKeyUsedWithPredicateInterface(): void
+    {
+        $predicateSet = new PredicateSet();
+        $mock         = $this->createMock(PredicateInterface::class);
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Using Predicate must not use string keys');
+        $predicateSet->addPredicates(['key' => $mock]);
+    }
+
+    public function testGetExpressionDataReturnsEmptyWhenNoPredicates(): void
+    {
+        $predicateSet = new PredicateSet();
+
+        $expressionData = $predicateSet->getExpressionData();
+
+        self::assertSame('', $expressionData['spec']);
+        self::assertSame([], $expressionData['values']);
     }
 }

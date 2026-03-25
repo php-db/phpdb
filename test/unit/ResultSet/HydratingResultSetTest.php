@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 namespace PhpDbTest\ResultSet;
 
+use ArrayIterator;
+use ArrayObject;
 use Exception;
 use Laminas\Hydrator\ArraySerializableHydrator;
 use Laminas\Hydrator\ClassMethodsHydrator;
 use Override;
 use PhpDb\ResultSet\HydratingResultSet;
 use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
@@ -19,6 +22,10 @@ use stdClass;
 #[CoversMethod(HydratingResultSet::class, 'getHydrator')]
 #[CoversMethod(HydratingResultSet::class, 'current')]
 #[CoversMethod(HydratingResultSet::class, 'toArray')]
+#[CoversMethod(HydratingResultSet::class, '__construct')]
+#[CoversMethod(HydratingResultSet::class, 'setRowPrototype')]
+#[CoversMethod(HydratingResultSet::class, 'getRowPrototype')]
+#[Group('unit')]
 final class HydratingResultSetTest extends TestCase
 {
     private string $arraySerializableHydratorClass;
@@ -137,5 +144,73 @@ final class HydratingResultSetTest extends TestCase
         // Verify toArray() returns array of hydrated objects
         $obj = $hydratingRs->toArray();
         self::assertIsArray($obj);
+    }
+
+    public function testConstructorDefaultsToArraySerializableHydrator(): void
+    {
+        $hydratingRs = new HydratingResultSet();
+
+        self::assertInstanceOf(ArraySerializableHydrator::class, $hydratingRs->getHydrator());
+    }
+
+    public function testSetRowPrototypeStoresPrototype(): void
+    {
+        $hydratingRs = new HydratingResultSet();
+        $prototype   = new stdClass();
+
+        $result = $hydratingRs->setRowPrototype($prototype);
+
+        self::assertSame($hydratingRs, $result);
+        self::assertSame($prototype, $hydratingRs->getRowPrototype());
+    }
+
+    public function testGetRowPrototypeReturnsDefaultArrayObject(): void
+    {
+        $hydratingRs = new HydratingResultSet();
+
+        self::assertInstanceOf(ArrayObject::class, $hydratingRs->getRowPrototype());
+    }
+
+    public function testCurrentWithBufferReturnsBufferedObject(): void
+    {
+        $hydratingRs = new HydratingResultSet();
+        $hydratingRs->initialize(new ArrayIterator([
+            ['id' => 1, 'name' => 'one'],
+            ['id' => 2, 'name' => 'two'],
+        ]));
+        $hydratingRs->buffer();
+
+        $first = $hydratingRs->current();
+        $hydratingRs->rewind();
+        $buffered = $hydratingRs->current();
+
+        self::assertSame($first, $buffered);
+    }
+
+    public function testToArrayUsesHydratorExtract(): void
+    {
+        $hydratingRs = new HydratingResultSet();
+        $hydratingRs->initialize([
+            ['id' => 1, 'name' => 'one'],
+        ]);
+
+        $result = $hydratingRs->toArray();
+
+        self::assertCount(1, $result);
+        self::assertArrayHasKey('id', $result[0]);
+        self::assertSame(1, $result[0]['id']);
+    }
+
+    public function testCurrentDisablesBufferingImplicitly(): void
+    {
+        $hydratingRs = new HydratingResultSet();
+        $hydratingRs->initialize(new \ArrayIterator([
+            ['id' => 1],
+        ]));
+
+        $hydratingRs->current();
+
+        $this->expectException(\PhpDb\ResultSet\Exception\RuntimeException::class);
+        $hydratingRs->buffer();
     }
 }

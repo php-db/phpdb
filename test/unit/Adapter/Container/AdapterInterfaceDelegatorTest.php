@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace PhpDbTest\Adapter\Container;
 
-use Laminas\ServiceManager\AbstractPluginManager;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use Laminas\ServiceManager\ServiceManager;
 use PhpDb\Adapter\Adapter;
@@ -15,6 +14,8 @@ use PhpDb\Container\AdapterInterfaceDelegator;
 use PhpDb\Exception\RuntimeException;
 use PhpDb\ResultSet\ResultSetInterface;
 use PhpDbTest\Adapter\TestAsset\ConcreteAdapterAwareObject;
+use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerExceptionInterface;
@@ -22,6 +23,10 @@ use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use stdClass;
 
+#[Group('unit')]
+#[CoversMethod(AdapterInterfaceDelegator::class, '__construct')]
+#[CoversMethod(AdapterInterfaceDelegator::class, '__set_state')]
+#[CoversMethod(AdapterInterfaceDelegator::class, '__invoke')]
 final class AdapterInterfaceDelegatorTest extends TestCase
 {
     /**
@@ -211,58 +216,43 @@ final class AdapterInterfaceDelegatorTest extends TestCase
         );
     }
 
-    public function testDelegatorWithPluginManager(): void
+    public function testSetStateWithDefaultAdapterName(): void
     {
-        $this->markTestSkipped(
-            'Test requires factory-based plugin manager configuration to pass options to constructor'
-        );
+        $delegator = AdapterInterfaceDelegator::__set_state([]);
 
-        /** @phpstan-ignore deadCode.unreachable */
-        $databaseAdapter = new Adapter(
-            $this->createMock(DriverInterface::class),
-            $this->createMock(PlatformInterface::class),
-            $this->createMock(ResultSetInterface::class)
-        );
+        self::assertInstanceOf(AdapterInterfaceDelegator::class, $delegator);
+    }
 
-        $container = new ServiceManager([
-            'factories' => [
-                AdapterInterface::class => static fn() => $databaseAdapter,
-            ],
-        ]);
+    public function testSetStateWithCustomAdapterName(): void
+    {
+        $delegator = AdapterInterfaceDelegator::__set_state(['adapterName' => 'custom']);
 
-        $pluginManagerConfig = [
-            'invokables' => [
-                ConcreteAdapterAwareObject::class => ConcreteAdapterAwareObject::class,
-            ],
-            'delegators' => [
-                ConcreteAdapterAwareObject::class => [
-                    AdapterInterfaceDelegator::class,
-                ],
-            ],
-        ];
+        self::assertInstanceOf(AdapterInterfaceDelegator::class, $delegator);
+    }
 
-        /** @var AbstractPluginManager $pluginManager */
-        $pluginManager = new class ($container, $pluginManagerConfig) extends AbstractPluginManager {
-            public function validate(mixed $instance): void
-            {
-            }
-        };
+    public function testInvokeReturnsInstanceWhenAdapterIsNotAdapterInterface(): void
+    {
+        $container = $this->createMock(ContainerInterface::class);
+        $container
+            ->expects(self::once())
+            ->method('has')
+            ->with(AdapterInterface::class)
+            ->willReturn(true);
+        $container
+            ->expects(self::once())
+            ->method('get')
+            ->with(AdapterInterface::class)
+            ->willReturn(new stdClass());
 
-        $options = [
-            'table' => 'foo',
-            'field' => 'bar',
-        ];
+        $callback = static fn(): ConcreteAdapterAwareObject => new ConcreteAdapterAwareObject();
 
-        /** @var ConcreteAdapterAwareObject $result */
-        $result = $pluginManager->get(
+        $result = (new AdapterInterfaceDelegator())(
+            $container,
             ConcreteAdapterAwareObject::class,
-            $options
+            $callback
         );
 
-        $this->assertInstanceOf(
-            AdapterInterface::class,
-            $result->getAdapter()
-        );
-        $this->assertSame($options, $result->getOptions());
+        self::assertInstanceOf(ConcreteAdapterAwareObject::class, $result);
+        self::assertNull($result->getAdapter());
     }
 }

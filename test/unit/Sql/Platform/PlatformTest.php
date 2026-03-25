@@ -5,12 +5,19 @@ declare(strict_types=1);
 namespace PhpDbTest\Sql\Platform;
 
 use PhpDb\Adapter\Adapter;
+use PhpDb\Adapter\AdapterInterface;
 use PhpDb\Adapter\Driver\DriverInterface;
+use PhpDb\Adapter\Platform\PlatformInterface;
 use PhpDb\Adapter\StatementContainer;
 use PhpDb\ResultSet\ResultSet;
+use PhpDb\Sql\Exception\RuntimeException;
 use PhpDb\Sql\Platform\Platform;
+use PhpDb\Sql\Platform\PlatformDecoratorInterface;
+use PhpDb\Sql\PreparableSqlInterface;
+use PhpDb\Sql\Select;
+use PhpDb\Sql\SqlInterface;
 use PhpDbTest\TestAsset;
-use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\IgnoreDeprecations;
 use PHPUnit\Framework\Attributes\RequiresPhp;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -20,6 +27,15 @@ use ReflectionMethod;
 
 #[IgnoreDeprecations]
 #[RequiresPhp('<= 8.6')]
+#[CoversMethod(Platform::class, '__construct')]
+#[CoversMethod(Platform::class, 'setTypeDecorator')]
+#[CoversMethod(Platform::class, 'getTypeDecorator')]
+#[CoversMethod(Platform::class, 'getDecorators')]
+#[CoversMethod(Platform::class, 'prepareStatement')]
+#[CoversMethod(Platform::class, 'getSqlString')]
+#[CoversMethod(Platform::class, 'resolvePlatformName')]
+#[CoversMethod(Platform::class, 'resolvePlatform')]
+#[CoversMethod(Platform::class, 'getDefaultPlatform')]
 class PlatformTest extends TestCase
 {
     /**
@@ -53,22 +69,6 @@ class PlatformTest extends TestCase
         self::assertEquals('sql92', $reflectionMethod->invoke($platform, new TestAsset\TrustingSql92Platform()));
     }
 
-    #[Group('6890')]
-    public function testAbstractPlatformCrashesGracefullyOnMissingDefaultPlatform(): void
-    {
-        $this->markTestSkipped(
-            'Cannot modify readonly properties in Adapter - test is incompatible with readonly properties'
-        );
-    }
-
-    #[Group('6890')]
-    public function testAbstractPlatformCrashesGracefullyOnMissingDefaultPlatformWithGetDecorators(): void
-    {
-        $this->markTestSkipped(
-            'Cannot modify readonly properties in Adapter - test is incompatible with readonly properties'
-        );
-    }
-
     protected function resolveAdapter(string $platformName): Adapter
     {
         $platform = null;
@@ -99,5 +99,171 @@ class PlatformTest extends TestCase
             ->willReturnCallback(fn(): StatementContainer => new StatementContainer());
 
         return new Adapter($mockDriver, $platform, new ResultSet());
+    }
+
+    public function testSetTypeDecoratorRegistersDecorator(): void
+    {
+        $adapterPlatform = new TestAsset\TrustingSql92Platform();
+        $platform        = new Platform($adapterPlatform);
+
+        $decorator = $this->createMock(PlatformDecoratorInterface::class);
+        $platform->setTypeDecorator(Select::class, $decorator);
+
+        $decorators = $platform->getDecorators();
+        self::assertArrayHasKey(Select::class, $decorators);
+        self::assertSame($decorator, $decorators[Select::class]);
+    }
+
+    public function testGetTypeDecoratorReturnsSubjectWhenNoDecoratorRegistered(): void
+    {
+        $adapterPlatform = new TestAsset\TrustingSql92Platform();
+        $platform        = new Platform($adapterPlatform);
+
+        $select = new Select('foo');
+        $result = $platform->getTypeDecorator($select);
+
+        self::assertSame($select, $result);
+    }
+
+    public function testGetDefaultPlatformReturnsInstance(): void
+    {
+        $adapterPlatform = new TestAsset\TrustingSql92Platform();
+        $platform        = new Platform($adapterPlatform);
+
+        $reflectionMethod = new ReflectionMethod($platform, 'getDefaultPlatform');
+        $result           = $reflectionMethod->invoke($platform);
+
+        self::assertSame($adapterPlatform, $result);
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    public function testResolvePlatformNameCachesResult(): void
+    {
+        $adapterPlatform = new TestAsset\TrustingSql92Platform();
+        $platform        = new Platform($adapterPlatform);
+
+        $reflectionMethod = new ReflectionMethod($platform, 'resolvePlatformName');
+
+        $first  = $reflectionMethod->invoke($platform, null);
+        $second = $reflectionMethod->invoke($platform, null);
+
+        self::assertEquals($first, $second);
+        self::assertEquals('sql92', $first);
+    }
+
+    public function testResolvePlatformWithAdapterInterface(): void
+    {
+        $adapterPlatform = new TestAsset\TrustingSql92Platform();
+        $platform        = new Platform($adapterPlatform);
+
+        $mockPlatform = $this->createMock(PlatformInterface::class);
+        $mockPlatform->method('getName')->willReturn('TestPlatform');
+
+        $mockAdapter = $this->createMock(AdapterInterface::class);
+        $mockAdapter->expects($this->once())->method('getPlatform')->willReturn($mockPlatform);
+
+        $reflectionMethod = new ReflectionMethod($platform, 'resolvePlatform');
+        $result           = $reflectionMethod->invoke($platform, $mockAdapter);
+
+        self::assertSame($mockPlatform, $result);
+    }
+
+    public function testResolvePlatformWithPlatformInterface(): void
+    {
+        $adapterPlatform = new TestAsset\TrustingSql92Platform();
+        $platform        = new Platform($adapterPlatform);
+
+        $mockPlatform = $this->createMock(PlatformInterface::class);
+
+        $reflectionMethod = new ReflectionMethod($platform, 'resolvePlatform');
+        $result           = $reflectionMethod->invoke($platform, $mockPlatform);
+
+        self::assertSame($mockPlatform, $result);
+    }
+
+    public function testPrepareStatementThrowsWhenSubjectNotPreparable(): void
+    {
+        $adapterPlatform = new TestAsset\TrustingSql92Platform();
+        $platform        = new Platform($adapterPlatform);
+
+        $subject = $this->createMock(SqlInterface::class);
+        $platform->setSubject($subject);
+
+        $adapter   = $this->resolveAdapter('sql92');
+        $statement = new StatementContainer();
+
+        $this->expectException(RuntimeException::class);
+        $platform->prepareStatement($adapter, $statement);
+    }
+
+    public function testGetSqlStringThrowsWhenSubjectNotSqlInterface(): void
+    {
+        $adapterPlatform = new TestAsset\TrustingSql92Platform();
+        $platform        = new Platform($adapterPlatform);
+
+        $subject = $this->createMock(PreparableSqlInterface::class);
+        $platform->setSubject($subject);
+
+        $this->expectException(RuntimeException::class);
+        $platform->getSqlString($adapterPlatform);
+    }
+
+    public function testGetSqlStringDelegatesToTypeDecorator(): void
+    {
+        $adapterPlatform = new TestAsset\TrustingSql92Platform();
+        $platform        = new Platform($adapterPlatform);
+
+        $select = new Select('foo');
+        $platform->setSubject($select);
+
+        $sql = $platform->getSqlString($adapterPlatform);
+
+        self::assertStringContainsString('SELECT', $sql);
+        self::assertStringContainsString('"foo"', $sql);
+    }
+
+    public function testGetTypeDecoratorMatchesExactClass(): void
+    {
+        $adapterPlatform = new TestAsset\TrustingSql92Platform();
+        $platform        = new Platform($adapterPlatform);
+
+        $decorator = $this->createMock(PlatformDecoratorInterface::class);
+        $decorator->expects(self::once())->method('setSubject');
+        $platform->setTypeDecorator(Select::class, $decorator);
+
+        $select = new Select('foo');
+        $result = $platform->getTypeDecorator($select);
+
+        self::assertSame($decorator, $result);
+    }
+
+    public function testGetTypeDecoratorFallsThroughWhenNoMatch(): void
+    {
+        $adapterPlatform = new TestAsset\TrustingSql92Platform();
+        $platform        = new Platform($adapterPlatform);
+
+        $decorator = $this->createMock(PlatformDecoratorInterface::class);
+        $platform->setTypeDecorator(\PhpDb\Sql\Insert::class, $decorator);
+
+        $select = new Select('foo');
+        $result = $platform->getTypeDecorator($select);
+
+        self::assertSame($select, $result);
+    }
+
+    public function testGetTypeDecoratorMatchesByInstanceofLoop(): void
+    {
+        $adapterPlatform = new TestAsset\TrustingSql92Platform();
+        $platform        = new Platform($adapterPlatform);
+
+        $innerPlatform = new \PhpDb\Sql\Platform\AbstractPlatform();
+        $platform->setTypeDecorator(SqlInterface::class, $innerPlatform);
+
+        $select = new Select('foo');
+        $result = $platform->getTypeDecorator($select);
+
+        self::assertSame($innerPlatform, $result);
     }
 }

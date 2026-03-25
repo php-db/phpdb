@@ -21,8 +21,8 @@ use PhpDb\Sql\Update;
 use PhpDb\TableGateway\AbstractTableGateway;
 use PhpDb\TableGateway\Exception\InvalidArgumentException;
 use PhpDb\TableGateway\Exception\RuntimeException;
-use PhpDb\TableGateway\Feature\AbstractFeature;
 use PhpDb\TableGateway\Feature\FeatureSet;
+use PhpDbTest\TableGateway\Feature\TestAsset\TestTableGatewayFeature;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\IgnoreDeprecations;
 use PHPUnit\Framework\Attributes\RequiresPhp;
@@ -732,15 +732,8 @@ final class AbstractTableGatewayTest extends TestCase
     {
         // @codingStandardsIgnoreEnd
         // Create a custom feature that can handle magic get
-        $feature = new class extends AbstractFeature {
-            /**
-             * @return array<string, array<int, string>>
-             */
-            public function getMagicMethodSpecifications(): array
-            {
-                return ['get' => ['customProperty']];
-            }
-        };
+        $feature                   = new TestTableGatewayFeature();
+        $feature->magicMethodSpecs = ['get' => ['customProperty']];
 
         // Create a FeatureSet mock that returns true for canCallMagicGet
         $featureSet = $this->getMockBuilder(FeatureSet::class)

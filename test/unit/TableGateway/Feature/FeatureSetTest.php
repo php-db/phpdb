@@ -11,11 +11,11 @@ use PhpDb\Adapter\Platform\Sql92;
 use PhpDb\Metadata\MetadataInterface;
 use PhpDb\Metadata\Object\ConstraintObject;
 use PhpDb\TableGateway\AbstractTableGateway;
-use PhpDb\TableGateway\Feature\AbstractFeature;
 use PhpDb\TableGateway\Feature\FeatureSet;
 use PhpDb\TableGateway\Feature\MasterSlaveFeature;
 use PhpDb\TableGateway\Feature\MetadataFeature;
 use PhpDb\TableGateway\Feature\SequenceFeature;
+use PhpDbTest\TableGateway\Feature\TestAsset\TestTableGatewayFeature;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\IgnoreDeprecations;
@@ -131,12 +131,7 @@ class FeatureSetTest extends TestCase
 
     public function testCallMagicCallSucceedsForValidMethodOfAddedFeature(): void
     {
-        $feature = new class extends AbstractFeature {
-            public function customMethod(array $args): string
-            {
-                return 'result: ' . ($args[0] ?? 'default');
-            }
-        };
+        $feature = new TestTableGatewayFeature();
 
         $featureSet = new FeatureSet();
         $featureSet->addFeature($feature);
@@ -255,22 +250,10 @@ class FeatureSetTest extends TestCase
 
     public function testApplyHaltsWhenFeatureReturnsHalt(): void
     {
-        $feature1 = new class extends AbstractFeature {
-            public bool $called = false;
-            public function testMethod(): string
-            {
-                $this->called = true;
-                return FeatureSet::APPLY_HALT;
-            }
-        };
+        $feature1              = new TestTableGatewayFeature();
+        $feature1->returnValue = FeatureSet::APPLY_HALT;
 
-        $feature2 = new class extends AbstractFeature {
-            public bool $called = false;
-            public function testMethod(): void
-            {
-                $this->called = true;
-            }
-        };
+        $feature2 = new TestTableGatewayFeature();
 
         $featureSet = new FeatureSet([$feature1, $feature2]);
         $featureSet->apply('testMethod', []);
@@ -281,21 +264,8 @@ class FeatureSetTest extends TestCase
 
     public function testApplyCallsAllFeaturesWhenNoHalt(): void
     {
-        $feature1 = new class extends AbstractFeature {
-            public bool $called = false;
-            public function testMethod(): void
-            {
-                $this->called = true;
-            }
-        };
-
-        $feature2 = new class extends AbstractFeature {
-            public bool $called = false;
-            public function testMethod(): void
-            {
-                $this->called = true;
-            }
-        };
+        $feature1 = new TestTableGatewayFeature();
+        $feature2 = new TestTableGatewayFeature();
 
         $featureSet = new FeatureSet([$feature1, $feature2]);
         $featureSet->apply('testMethod', []);
@@ -306,17 +276,11 @@ class FeatureSetTest extends TestCase
 
     public function testApplyPassesArgumentsToFeatures(): void
     {
-        $feature = new class extends AbstractFeature {
-            public mixed $receivedArg;
-            public function testMethod(string $arg): void
-            {
-                $this->receivedArg = $arg;
-            }
-        };
+        $feature = new TestTableGatewayFeature();
 
         $featureSet = new FeatureSet([$feature]);
         $featureSet->apply('testMethod', ['test value']);
 
-        self::assertEquals('test value', $feature->receivedArg);
+        self::assertEquals(['test value'], $feature->receivedArgs);
     }
 }
