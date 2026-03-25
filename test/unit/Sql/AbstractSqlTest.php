@@ -5,18 +5,25 @@ declare(strict_types=1);
 namespace PhpDbTest\Sql;
 
 use Override;
+use PhpDb\Adapter\Adapter;
 use PhpDb\Adapter\Driver\DriverInterface;
+use PhpDb\Adapter\Driver\StatementInterface;
 use PhpDb\Adapter\ParameterContainer;
 use PhpDb\Adapter\StatementContainer;
 use PhpDb\Sql\AbstractSql;
 use PhpDb\Sql\Argument;
 use PhpDb\Sql\Argument\Identifier;
+use PhpDb\Sql\ArgumentInterface;
+use PhpDb\Sql\ArgumentType;
+use PhpDb\Sql\Exception\InvalidArgumentException;
 use PhpDb\Sql\Exception\RuntimeException;
 use PhpDb\Sql\Expression;
 use PhpDb\Sql\ExpressionInterface;
+use PhpDb\Sql\Join;
 use PhpDb\Sql\Predicate;
 use PhpDb\Sql\Select;
 use PhpDb\Sql\TableIdentifier;
+use PhpDbTest\TestAsset\SelectDecorator;
 use PhpDbTest\TestAsset\TrustingSql92Platform;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Group;
@@ -435,7 +442,7 @@ final class AbstractSqlTest extends TestCase
      */
     public function testProcessJoinWithArrayAlias(): void
     {
-        $join = new \PhpDb\Sql\Join();
+        $join = new Join();
         $join->join(['b' => 'bar'], 'foo.id = b.foo_id');
 
         $method = new ReflectionMethod($this->abstractSql, 'processJoin');
@@ -456,8 +463,8 @@ final class AbstractSqlTest extends TestCase
      */
     public function testProcessJoinWithTableIdentifier(): void
     {
-        $join = new \PhpDb\Sql\Join();
-        $join->join(new \PhpDb\Sql\TableIdentifier('bar', 'myschema'), 'foo.id = bar.foo_id');
+        $join = new Join();
+        $join->join(new TableIdentifier('bar', 'myschema'), 'foo.id = bar.foo_id');
 
         $method = new ReflectionMethod($this->abstractSql, 'processJoin');
         $result = $method->invoke(
@@ -478,7 +485,7 @@ final class AbstractSqlTest extends TestCase
      */
     public function testProcessJoinWithPredicateExpressionOnClause(): void
     {
-        $join = new \PhpDb\Sql\Join();
+        $join = new Join();
         $join->join('bar', new Predicate\Expression('foo.id = bar.foo_id AND bar.active = 1'));
 
         $method = new ReflectionMethod($this->abstractSql, 'processJoin');
@@ -527,7 +534,7 @@ final class AbstractSqlTest extends TestCase
      */
     public function testProcessJoinWithExpressionNameViaArray(): void
     {
-        $join = new \PhpDb\Sql\Join();
+        $join = new Join();
         $join->join(['x' => new Expression('LATERAL(SELECT 1)')], 'true');
 
         $method = new ReflectionMethod($this->abstractSql, 'processJoin');
@@ -548,7 +555,7 @@ final class AbstractSqlTest extends TestCase
     public function testProcessJoinWithSelectSubqueryViaArray(): void
     {
         $subselect = new Select('bar');
-        $join      = new \PhpDb\Sql\Join();
+        $join      = new Join();
         $join->join(['b' => $subselect], 'foo.id = b.foo_id');
 
         $method = new ReflectionMethod($this->abstractSql, 'processJoin');
@@ -644,10 +651,10 @@ final class AbstractSqlTest extends TestCase
 
     public function testProcessExpressionThrowsOnUnknownArgumentType(): void
     {
-        $unknownArg = new class implements \PhpDb\Sql\ArgumentInterface {
-            public function getType(): \PhpDb\Sql\ArgumentType
+        $unknownArg = new class implements ArgumentInterface {
+            public function getType(): ArgumentType
             {
-                return \PhpDb\Sql\ArgumentType::Value;
+                return ArgumentType::Value;
             }
 
             public function getValue(): string
@@ -663,7 +670,7 @@ final class AbstractSqlTest extends TestCase
 
         $expression = new Expression('?', [$unknownArg]);
 
-        $this->expectException(\PhpDb\Sql\Exception\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Unknown argument type');
         $this->invokeProcessExpressionMethod($expression);
     }
@@ -679,11 +686,11 @@ final class AbstractSqlTest extends TestCase
             ->willReturnCallback(fn(string $name): string => ':' . $name);
 
         $parameterContainer = new ParameterContainer();
-        $mockStatement      = $this->createMock(\PhpDb\Adapter\Driver\StatementInterface::class);
+        $mockStatement      = $this->createMock(StatementInterface::class);
         $mockStatement->method('getParameterContainer')->willReturn($parameterContainer);
         $mockStatement->method('setSql')->willReturnSelf();
 
-        $adapter = $this->getMockBuilder(\PhpDb\Adapter\Adapter::class)
+        $adapter = $this->getMockBuilder(Adapter::class)
             ->setConstructorArgs([$mockDriver, new TrustingSql92Platform()])
             ->getMock();
         $adapter->method('getDriver')->willReturn($mockDriver);
@@ -696,7 +703,7 @@ final class AbstractSqlTest extends TestCase
 
     public function testLocalizeVariablesCopiesSubjectProperties(): void
     {
-        $decorator = new \PhpDbTest\TestAsset\SelectDecorator();
+        $decorator = new SelectDecorator();
         $select    = new Select('users');
         $select->columns(['id', 'name']);
         $decorator->setSubject($select);
@@ -709,7 +716,7 @@ final class AbstractSqlTest extends TestCase
 
     public function testProcessSubSelectUsesDecoratorWhenPlatformDecorator(): void
     {
-        $decorator = new \PhpDbTest\TestAsset\SelectDecorator();
+        $decorator = new SelectDecorator();
         $outer     = new Select('foo');
         $outer->where(['x' => new Select('bar')]);
 
@@ -741,10 +748,10 @@ final class AbstractSqlTest extends TestCase
             ->willReturnCallback(fn(string $name): string => ':' . $name);
 
         $parameterContainer = new ParameterContainer();
-        $mockStatement      = $this->createMock(\PhpDb\Adapter\Driver\StatementInterface::class);
+        $mockStatement      = $this->createMock(StatementInterface::class);
         $mockStatement->method('getParameterContainer')->willReturn($parameterContainer);
 
-        $adapter = $this->getMockBuilder(\PhpDb\Adapter\Adapter::class)
+        $adapter = $this->getMockBuilder(Adapter::class)
             ->setConstructorArgs([$mockDriver, new TrustingSql92Platform()])
             ->getMock();
         $adapter->method('getDriver')->willReturn($mockDriver);
