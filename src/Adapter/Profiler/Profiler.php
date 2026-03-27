@@ -6,6 +6,7 @@ namespace PhpDb\Adapter\Profiler;
 
 use PhpDb\Adapter\Exception;
 use PhpDb\Adapter\Exception\InvalidArgumentException;
+use PhpDb\Adapter\ParameterContainer;
 use PhpDb\Adapter\StatementContainerInterface;
 
 use function end;
