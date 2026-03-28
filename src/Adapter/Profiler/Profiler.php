@@ -45,14 +45,14 @@ class Profiler implements ProfilerInterface
             'elapse'     => null,
         ];
 
-        if ($target instanceof StatementContainerInterface) {
+        if (is_string($target)) {
+            $profileInformation['sql'] = $target;
+        } else {
             $profileInformation['sql'] = $target->getSql();
             $container                 = $target->getParameterContainer();
             if ($container !== null) {
                 $profileInformation['parameters'] = clone $container;
             }
-        } elseif (is_string($target)) {
-            $profileInformation['sql'] = $target;
         }
 
         $this->profiles[$this->currentIndex] = $profileInformation;
