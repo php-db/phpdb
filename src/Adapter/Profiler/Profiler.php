@@ -6,15 +6,26 @@ namespace PhpDb\Adapter\Profiler;
 
 use PhpDb\Adapter\Exception;
 use PhpDb\Adapter\Exception\InvalidArgumentException;
+use PhpDb\Adapter\ParameterContainer;
 use PhpDb\Adapter\StatementContainerInterface;
 
 use function end;
 use function is_string;
 use function microtime;
 
+/**
+ * @phpstan-type ProfileShape array{
+ *     sql: string,
+ *     parameters: ParameterContainer|null,
+ *     start: float,
+ *     end: float|null,
+ *     elapse: float|null,
+ * }
+ * @phpstan-type ProfilesShape ProfileShape[]
+ */
 class Profiler implements ProfilerInterface
 {
-    /** @var array */
+    /** @var ProfilesShape */
     protected $profiles = [];
 
     /** @var int */
@@ -33,18 +44,15 @@ class Profiler implements ProfilerInterface
             'end'        => null,
             'elapse'     => null,
         ];
-        if ($target instanceof StatementContainerInterface) {
+
+        if (is_string($target)) {
+            $profileInformation['sql'] = $target;
+        } else {
             $profileInformation['sql'] = $target->getSql();
             $container                 = $target->getParameterContainer();
             if ($container !== null) {
                 $profileInformation['parameters'] = clone $container;
             }
-        } elseif (is_string($target)) {
-            $profileInformation['sql'] = $target;
-        } else {
-            throw new Exception\InvalidArgumentException(
-                __FUNCTION__ . ' takes either a StatementContainer or a string'
-            );
         }
 
         $this->profiles[$this->currentIndex] = $profileInformation;
@@ -70,13 +78,16 @@ class Profiler implements ProfilerInterface
     }
 
     /**
-     * @return array|null
+     * @return ProfileShape|null
      */
     public function getLastProfile(): ?array
     {
         return end($this->profiles);
     }
 
+    /**
+     * @return ProfilesShape
+     */
     public function getProfiles(): array
     {
         return $this->profiles;
