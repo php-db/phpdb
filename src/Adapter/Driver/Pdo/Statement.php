@@ -44,7 +44,7 @@ class Statement implements StatementInterface, PdoDriverAwareInterface, Profiler
     protected bool $isPrepared = false;
 
     public function __construct(
-        protected ?ParameterContainer $parameterContainer = null,
+        protected ParameterContainer $parameterContainer = new ParameterContainer(),
         protected array $options = [],
     ) {
     }
@@ -114,7 +114,7 @@ class Statement implements StatementInterface, PdoDriverAwareInterface, Profiler
     #[Override]
     public function getParameterContainer(): ParameterContainer
     {
-        return $this->parameterContainer ??= new ParameterContainer();
+        return $this->parameterContainer;
     }
 
     /** @throws Exception\RuntimeException */
@@ -156,13 +156,9 @@ class Statement implements StatementInterface, PdoDriverAwareInterface, Profiler
         }
 
         /** START Standard ParameterContainer Merging Block */
-        if (! $this->parameterContainer instanceof ParameterContainer) {
-            if ($parameters instanceof ParameterContainer) {
+        if ($parameters instanceof ParameterContainer) {
                 $this->parameterContainer = $parameters;
                 $parameters               = null;
-            } else {
-                $this->parameterContainer = new ParameterContainer();
-            }
         }
 
         if (is_array($parameters)) {

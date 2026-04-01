@@ -7,8 +7,7 @@ namespace PhpDb\Adapter\Driver\Pdo;
 use Override;
 use PDO;
 use PDOStatement;
-use PhpDb\Adapter\Driver\ConnectionInterface;
-use PhpDb\Adapter\Driver\Feature\DriverFeatureProviderInterface;
+use PhpDb\Adapter\Driver\PdoConnectionInterface;
 use PhpDb\Adapter\Driver\PdoDriverAwareInterface;
 use PhpDb\Adapter\Driver\PdoDriverInterface;
 use PhpDb\Adapter\Driver\ResultInterface;
@@ -25,28 +24,15 @@ use function ltrim;
 use function preg_match;
 use function sprintf;
 
+/**
+ * @property PdoConnectionInterface|PDO $connection
+ * @property ResultInterface $resultPrototype
+ * @property StatementInterface&PdoDriverAwareInterface $statementPrototype
+ */
 abstract class AbstractPdo implements PdoDriverInterface, ProfilerAwareInterface
 {
     /** @internal */
     protected ?ProfilerInterface $profiler;
-
-    public function __construct(
-        protected AbstractPdoConnection|PDO $connection,
-        protected StatementInterface&PdoDriverAwareInterface $statementPrototype,
-        protected ResultInterface $resultPrototype,
-        array $features = [],
-    ) {
-        if ($this->connection instanceof PdoDriverAwareInterface) {
-            $this->connection->setDriver($this);
-        }
-
-        $this->statementPrototype->setDriver($this);
-
-        // $features is not constructor promoted because $this->features is defined in the trait
-        if ($features !== [] && $this instanceof DriverFeatureProviderInterface) {
-            $this->addFeatures($features);
-        }
-    }
 
     #[Override]
     public function setProfiler(ProfilerInterface $profiler): ProfilerAwareInterface
@@ -81,7 +67,7 @@ abstract class AbstractPdo implements PdoDriverInterface, ProfilerAwareInterface
     }
 
     #[Override]
-    public function getConnection(): ConnectionInterface
+    public function getConnection(): PdoConnectionInterface
     {
         return $this->connection;
     }
