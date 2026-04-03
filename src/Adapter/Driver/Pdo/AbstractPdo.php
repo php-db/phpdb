@@ -24,13 +24,14 @@ use function ltrim;
 use function preg_match;
 use function sprintf;
 
-/**
- * @property PdoConnectionInterface|PDO $connection
- * @property ResultInterface $resultPrototype
- * @property StatementInterface&PdoDriverAwareInterface $statementPrototype
- */
 abstract class AbstractPdo implements PdoDriverInterface, ProfilerAwareInterface
 {
+    protected (PdoConnectionInterface&PdoDriverAwareInterface)|PDO $connection;
+
+    protected StatementInterface&PdoDriverAwareInterface $statementPrototype;
+
+    protected ResultInterface $resultPrototype;
+
     /** @internal */
     protected ?ProfilerInterface $profiler;
 

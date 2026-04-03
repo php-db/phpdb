@@ -243,11 +243,9 @@ class Statement implements StatementInterface, PdoDriverAwareInterface, Profiler
     /** Perform a deep clone */
     public function __clone(): void
     {
-        $this->isPrepared      = false;
-        $this->parametersBound = false;
-        $this->resource        = null;
-        if ($this->parameterContainer) {
-            $this->parameterContainer = clone $this->parameterContainer;
-        }
+        $this->isPrepared         = false;
+        $this->parametersBound    = false;
+        $this->resource           = null;
+        $this->parameterContainer = clone $this->parameterContainer;
     }
 }

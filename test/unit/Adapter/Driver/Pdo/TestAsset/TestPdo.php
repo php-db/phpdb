@@ -6,6 +6,8 @@ namespace PhpDbTest\Adapter\Driver\Pdo\TestAsset;
 
 use Override;
 use PDO;
+use PhpDb\Adapter\Driver\Feature\DriverFeatureProviderInterface;
+use PhpDb\Adapter\Driver\Feature\DriverFeatureProviderTrait;
 use PhpDb\Adapter\Driver\Pdo\AbstractPdo;
 use PhpDb\Adapter\Driver\Pdo\AbstractPdoConnection;
 use PhpDb\Adapter\Driver\Pdo\Result;
@@ -16,8 +18,10 @@ use function ucfirst;
 /**
  * Test asset for AbstractPdo - provides a concrete implementation for testing
  */
-final class TestPdo extends AbstractPdo
+final class TestPdo extends AbstractPdo implements DriverFeatureProviderInterface
 {
+    use DriverFeatureProviderTrait;
+
     public function __construct(
         array|AbstractPdoConnection|PDO $connection,
         ?Statement $statement = null,
@@ -28,12 +32,20 @@ final class TestPdo extends AbstractPdo
             $connection = new TestConnection($connection);
         }
 
-        parent::__construct(
-            $connection,
-            $statement ?? new Statement(),
-            $result ?? new Result(),
-            $features
-        );
+        $this->connection         = $connection;
+        $this->statementPrototype = $statement ?? new Statement();
+        $this->resultPrototype    = $result ?? new Result();
+
+        if (! $this->connection instanceof PDO) {
+            $this->connection->setDriver($this);
+        }
+
+        $this->statementPrototype->setDriver($this);
+
+        // $features is not constructor promoted because $this->features is defined in the trait
+        if ($features !== []) {
+            $this->addFeatures($features);
+        }
     }
 
     /**
@@ -65,6 +77,7 @@ final class TestPdo extends AbstractPdo
             $pdoDriver = $this->connection->getResource()->getAttribute(PDO::ATTR_DRIVER_NAME);
         }
 
+        // todo: None of this belongs here
         return match ($nameFormat) {
             self::NAME_FORMAT_CAMELCASE => match ($pdoDriver) {
                 'sqlsrv', 'dblib', 'mssql' => 'SqlServer',
