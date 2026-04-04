@@ -7,6 +7,7 @@ namespace PhpDb\Adapter\Driver\Pdo;
 use Override;
 use PDO;
 use PDOStatement;
+use PhpDb\Adapter\Driver\AbstractConnection;
 use PhpDb\Adapter\Driver\PdoConnectionInterface;
 use PhpDb\Adapter\Driver\PdoDriverAwareInterface;
 use PhpDb\Adapter\Driver\PdoDriverInterface;
@@ -26,7 +27,7 @@ use function sprintf;
 
 abstract class AbstractPdo implements PdoDriverInterface, ProfilerAwareInterface
 {
-    protected (PdoConnectionInterface&PdoDriverAwareInterface)|PDO $connection;
+    protected (PdoConnectionInterface&AbstractConnection&PdoDriverAwareInterface)|PDO $connection;
 
     protected StatementInterface&PdoDriverAwareInterface $statementPrototype;
 
