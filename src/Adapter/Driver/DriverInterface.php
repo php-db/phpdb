@@ -10,11 +10,6 @@ interface DriverInterface
 {
     public const PARAMETERIZATION_POSITIONAL = 'positional';
     public const PARAMETERIZATION_NAMED      = 'named';
-    public const NAME_FORMAT_CAMELCASE       = 'camelCase';
-    public const NAME_FORMAT_NATURAL         = 'natural';
-
-    /** Get database platform name */
-    public function getDatabasePlatformName(string $nameFormat = DriverInterface::NAME_FORMAT_CAMELCASE): string;
 
     /**
      * Check environment

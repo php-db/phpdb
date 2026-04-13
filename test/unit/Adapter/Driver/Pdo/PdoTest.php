@@ -14,7 +14,6 @@ use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
-#[CoversMethod(AbstractPdo::class, 'getDatabasePlatformName')]
 #[CoversMethod(AbstractPdo::class, 'getResultPrototype')]
 final class PdoTest extends TestCase
 {
@@ -28,14 +27,6 @@ final class PdoTest extends TestCase
     protected function setUp(): void
     {
         $this->pdo = new TestPdo([]);
-    }
-
-    public function testGetDatabasePlatformName(): void
-    {
-        // Test platform name for SqlServer
-        $this->pdo->getConnection()->setConnectionParameters(['pdodriver' => 'sqlsrv']);
-        self::assertEquals('SqlServer', $this->pdo->getDatabasePlatformName());
-        self::assertEquals('SQLServer', $this->pdo->getDatabasePlatformName(DriverInterface::NAME_FORMAT_NATURAL));
     }
 
     /** @psalm-return array<array-key, array{0: int|string, 1: null|string, 2: string}> */

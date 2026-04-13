@@ -213,11 +213,6 @@ final class AdapterInterfaceDelegatorTest extends TestCase
 
     public function testDelegatorWithPluginManager(): void
     {
-        $this->markTestSkipped(
-            'Test requires factory-based plugin manager configuration to pass options to constructor'
-        );
-
-        /** @phpstan-ignore deadCode.unreachable */
         $databaseAdapter = new Adapter(
             $this->createMock(DriverInterface::class),
             $this->createMock(PlatformInterface::class),
@@ -241,7 +236,6 @@ final class AdapterInterfaceDelegatorTest extends TestCase
             ],
         ];
 
-        /** @var AbstractPluginManager $pluginManager */
         $pluginManager = new class ($container, $pluginManagerConfig) extends AbstractPluginManager {
             public function validate(mixed $instance): void
             {
@@ -254,7 +248,7 @@ final class AdapterInterfaceDelegatorTest extends TestCase
         ];
 
         /** @var ConcreteAdapterAwareObject $result */
-        $result = $pluginManager->get(
+        $result = $pluginManager->build(
             ConcreteAdapterAwareObject::class,
             $options
         );
