@@ -8,4 +8,5 @@ enum ResultSetReturnType: string
 {
     case ArrayObject = 'arrayobject';
     case Array       = 'array';
+    case Prototype   = 'prototype';
 }
