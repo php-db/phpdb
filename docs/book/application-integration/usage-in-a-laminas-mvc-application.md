@@ -5,24 +5,25 @@ For installation instructions, see [Installation](../index.md#installation).
 ## Configuration
 
 The adapter factory is already wired into the service manager. You only
-need to provide the `db` configuration in `config/autoload/db.global.php`:
+need to provide the `AdapterInterface::class` configuration in `config/autoload/db.global.php`:
 
 ```php title="config/autoload/db.global.php"
 <?php
 
 declare(strict_types=1);
 
-use PhpDb\Adapter\Driver\Pdo;
+use PhpDb\Adapter\AdapterInterface;
+use PhpDb\Mysql\Driver;
 
 return [
-    'db' => [
-        'driver'     => Pdo::class,
+    AdapterInterface::class => [
+        'driver'     => Driver::class,
         'connection' => [
-            'hostname'       => (string) getenv('DB_HOSTNAME') ?: 'localhost',
-            'username'       => (string) getenv('DB_USERNAME'),
-            'password'       => (string) getenv('DB_PASSWORD'),
-            'database'       => (string) getenv('DB_DATABASE'),
-            'port'           => (string) getenv('DB_PORT') ?: '3306',
+            'hostname'       => 'localhost', // or use getenv('DB_HOSTNAME') for environment variable configuration
+            'username'       => 'your_username',
+            'password'       => 'your_password',
+            'database'       => 'your_database',
+            'port'           => '3306',
             'charset'        => 'utf8',
             'driver_options' => [],
         ],
@@ -43,19 +44,20 @@ separation), use named adapters:
 
 declare(strict_types=1);
 
-use PhpDb\Adapter\Driver\Pdo;
+use PhpDb\Adapter\AdapterInterface;
+use PhpDb\Mysql\Driver;
 
 return [
-    'db' => [
+    AdapterInterface::class => [
         'adapters' => [
-            'ReadAdapter' => [
-                'driver'     => Pdo::class,
+            'ReadAdapter'  => [
+                'driver'     => Driver::class,
                 'connection' => [
-                    'hostname'       => (string) getenv('DB_READ_HOSTNAME') ?: 'localhost',
-                    'username'       => (string) getenv('DB_READ_USERNAME'),
-                    'password'       => (string) getenv('DB_READ_PASSWORD'),
-                    'database'       => (string) getenv('DB_READ_DATABASE'),
-                    'port'           => (string) getenv('DB_READ_PORT') ?: '3306',
+                    'hostname'       => 'localhost', // or use getenv('DB_READ_HOSTNAME') for environment variable configuration
+                    'username'       => 'your_username',
+                    'password'       => 'your_password',
+                    'database'       => 'your_database',
+                    'port'           => '3306',
                     'charset'        => 'utf8',
                     'driver_options' => [],
                 ],
@@ -64,13 +66,13 @@ return [
                 ],
             ],
             'WriteAdapter' => [
-                'driver'     => Pdo::class,
+                'driver'     => Driver::class,
                 'connection' => [
-                    'hostname'       => (string) getenv('DB_WRITE_HOSTNAME') ?: 'localhost',
-                    'username'       => (string) getenv('DB_WRITE_USERNAME'),
-                    'password'       => (string) getenv('DB_WRITE_PASSWORD'),
-                    'database'       => (string) getenv('DB_WRITE_DATABASE'),
-                    'port'           => (string) getenv('DB_WRITE_PORT') ?: '3306',
+                    'hostname'       => 'localhost', // or use getenv('DB_WRITE_HOSTNAME') for environment variable configuration
+                    'username'       => 'your_username',
+                    'password'       => 'your_password',
+                    'database'       => 'your_database',
+                    'port'           => '3306',
                     'charset'        => 'utf8',
                     'driver_options' => [],
                 ],
@@ -101,17 +103,21 @@ If you need to create an adapter without the container:
 
 ```php
 use PhpDb\Adapter\Adapter;
-use PhpDb\Mysql\Driver\Mysql;
-use PhpDb\Mysql\Platform\Mysql as MysqlPlatform;
+use PhpDb\Mysql\Connection;
+use PhpDb\Mysql\Driver;
+use PhpDb\Mysql\AdapterPlatform;
 
-$driver = new Mysql([
-    'hostname' => 'localhost',
-    'database' => 'my_database',
-    'username' => 'my_username',
-    'password' => 'my_password',
-]);
-
-$adapter = new Adapter($driver, new MysqlPlatform());
+$adapter = new Adapter(
+    new Driver(
+        new Connection([
+            'hostname' => 'localhost',
+            'database' => 'my_database',
+            'username' => 'my_username',
+            'password' => 'my_password',
+        ]),
+    new AdapterPlatform()
+    )
+);
 ```
 
 You can read more about the
