@@ -18,8 +18,6 @@
     <testsuites>
         <testsuite name="unit test">
             <directory>./test/unit</directory>
-            <exclude>./test/unit/Adapter/AdapterServiceFactoryTest.php</exclude>
-            <exclude>./test/unit/Adapter/Driver/Pdo/ConnectionIntegrationTest.php</exclude>
             <exclude>./test/unit/Adapter/Driver/Pdo/StatementIntegrationTest.php</exclude>
         </testsuite>
         <testsuite name="integration test">
