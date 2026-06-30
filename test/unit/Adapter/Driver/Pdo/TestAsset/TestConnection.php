@@ -9,6 +9,7 @@ use PDO;
 use PhpDb\Adapter\Driver\ConnectionInterface;
 use PhpDb\Adapter\Driver\Pdo\AbstractPdoConnection;
 
+use function is_array;
 use function sprintf;
 
 /**
@@ -16,6 +17,15 @@ use function sprintf;
  */
 final class TestConnection extends AbstractPdoConnection
 {
+    public function __construct(PDO|array $connectionParameters)
+    {
+        if (is_array($connectionParameters)) {
+            $this->setConnectionParameters($connectionParameters);
+        } elseif ($connectionParameters instanceof PDO) {
+            $this->setResource($connectionParameters);
+        }
+    }
+
     #[Override]
     public function connect(): ConnectionInterface
     {

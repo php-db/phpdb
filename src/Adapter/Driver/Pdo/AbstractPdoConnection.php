@@ -16,7 +16,6 @@ use PhpDb\Adapter\Driver\StatementInterface;
 use PhpDb\Adapter\Exception;
 use PhpDb\Adapter\Exception\RuntimeException;
 
-use function is_array;
 use function strtolower;
 
 abstract class AbstractPdoConnection extends AbstractConnection implements
@@ -29,21 +28,6 @@ abstract class AbstractPdoConnection extends AbstractConnection implements
 
     /** @var ?PDO $resource */
     protected $resource;
-
-    /**
-     * Constructor
-     *
-     * @throws Exception\InvalidArgumentException
-     */
-    public function __construct(
-        PDO|array $connectionParameters
-    ) {
-        if (is_array($connectionParameters)) {
-            $this->setConnectionParameters($connectionParameters);
-        } elseif ($connectionParameters instanceof PDO) {
-            $this->setResource($connectionParameters);
-        }
-    }
 
     #[Override]
     public function setDriver(PdoDriverInterface $driver): PdoDriverAwareInterface

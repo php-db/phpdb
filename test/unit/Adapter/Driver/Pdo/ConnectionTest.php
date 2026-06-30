@@ -23,7 +23,6 @@ use ReflectionProperty;
 
 #[CoversMethod(AbstractPdoConnection::class, 'getResource')]
 #[CoversMethod(AbstractPdoConnection::class, 'getDsn')]
-#[CoversMethod(AbstractPdoConnection::class, '__construct')]
 #[CoversMethod(AbstractPdoConnection::class, 'setDriver')]
 #[CoversMethod(AbstractPdoConnection::class, 'setConnectionParameters')]
 #[CoversMethod(AbstractPdoConnection::class, 'isConnected')]
@@ -51,6 +50,15 @@ final class ConnectionTest extends TestCase
                 'password' => 'baz',
             ]
         );
+    }
+
+    /**
+     * Test getResource method tries to connect to  the database, it should never return null
+     */
+    public function testResource(): void
+    {
+        $resource = $this->connection->getResource();
+        self::assertNotNull($resource);
     }
 
     /**

@@ -480,15 +480,6 @@ final class StatementTest extends TestCase
         self::assertInstanceOf(Result::class, $result);
     }
 
-    public function testCloneWithNullParameterContainerDoesNotClone(): void
-    {
-        $statement = new Statement(null);
-        $clone     = clone $statement;
-
-        self::assertFalse($clone->isPrepared());
-        self::assertNull($clone->getResource());
-    }
-
     public function testExecuteAutoPrepares(): void
     {
         $pdo = new SqliteMemoryPdo();

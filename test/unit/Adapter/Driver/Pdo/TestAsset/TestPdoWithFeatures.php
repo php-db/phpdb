@@ -27,12 +27,19 @@ final class TestPdoWithFeatures extends AbstractPdo implements DriverFeatureProv
             $connection = new TestConnection($connection);
         }
 
-        parent::__construct(
-            $connection,
-            $statement ?? new Statement(),
-            $result ?? new Result(),
-            $features
-        );
+        $this->connection         = $connection;
+        $this->statementPrototype = $statement ?? new Statement();
+        $this->resultPrototype    = $result ?? new Result();
+
+        if (! $this->connection instanceof PDO) {
+            $this->connection->setDriver($this);
+        }
+
+        $this->statementPrototype->setDriver($this);
+
+        if ($features !== []) {
+            $this->addFeatures($features);
+        }
     }
 
     /** @param mixed $resource */
@@ -43,11 +50,5 @@ final class TestPdoWithFeatures extends AbstractPdo implements DriverFeatureProv
         $result = clone $this->resultPrototype;
         $result->initialize($resource, $this->connection->getLastGeneratedValue());
         return $result;
-    }
-
-    #[Override]
-    public function getDatabasePlatformName(string $nameFormat = self::NAME_FORMAT_CAMELCASE): string
-    {
-        return 'TestWithFeatures';
     }
 }

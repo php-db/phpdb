@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PhpDbTest\Adapter\Container;
 
+use Laminas\ServiceManager\AbstractPluginManager;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use Laminas\ServiceManager\ServiceManager;
 use PhpDb\Adapter\Adapter;
@@ -214,6 +215,55 @@ final class AdapterInterfaceDelegatorTest extends TestCase
             AdapterInterface::class,
             $result->getAdapter()
         );
+    }
+
+    public function testDelegatorWithPluginManager(): void
+    {
+        $databaseAdapter = new Adapter(
+            $this->createMock(DriverInterface::class),
+            $this->createMock(PlatformInterface::class),
+            $this->createMock(ResultSetInterface::class)
+        );
+
+        $container = new ServiceManager([
+            'factories' => [
+                AdapterInterface::class => static fn() => $databaseAdapter,
+            ],
+        ]);
+
+        $pluginManagerConfig = [
+            'invokables' => [
+                ConcreteAdapterAwareObject::class => ConcreteAdapterAwareObject::class,
+            ],
+            'delegators' => [
+                ConcreteAdapterAwareObject::class => [
+                    AdapterInterfaceDelegator::class,
+                ],
+            ],
+        ];
+
+        $pluginManager = new class ($container, $pluginManagerConfig) extends AbstractPluginManager {
+            public function validate(mixed $instance): void
+            {
+            }
+        };
+
+        $options = [
+            'table' => 'foo',
+            'field' => 'bar',
+        ];
+
+        /** @var ConcreteAdapterAwareObject $result */
+        $result = $pluginManager->build(
+            ConcreteAdapterAwareObject::class,
+            $options
+        );
+
+        $this->assertInstanceOf(
+            AdapterInterface::class,
+            $result->getAdapter()
+        );
+        $this->assertSame($options, $result->getOptions());
     }
 
     public function testSetStateWithDefaultAdapterName(): void

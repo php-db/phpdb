@@ -44,7 +44,7 @@ class Statement implements StatementInterface, PdoDriverAwareInterface, Profiler
     protected bool $isPrepared = false;
 
     public function __construct(
-        protected ?ParameterContainer $parameterContainer = null,
+        protected ParameterContainer $parameterContainer = new ParameterContainer(),
         protected array $options = [],
     ) {
     }
@@ -114,7 +114,7 @@ class Statement implements StatementInterface, PdoDriverAwareInterface, Profiler
     #[Override]
     public function getParameterContainer(): ParameterContainer
     {
-        return $this->parameterContainer ??= new ParameterContainer();
+        return $this->parameterContainer;
     }
 
     /** @throws Exception\RuntimeException */
@@ -156,13 +156,9 @@ class Statement implements StatementInterface, PdoDriverAwareInterface, Profiler
         }
 
         /** START Standard ParameterContainer Merging Block */
-        if (! $this->parameterContainer instanceof ParameterContainer) {
-            if ($parameters instanceof ParameterContainer) {
-                $this->parameterContainer = $parameters;
-                $parameters               = null;
-            } else {
-                $this->parameterContainer = new ParameterContainer();
-            }
+        if ($parameters instanceof ParameterContainer) {
+            $this->parameterContainer = $parameters;
+            $parameters               = null;
         }
 
         if (is_array($parameters)) {
@@ -247,11 +243,9 @@ class Statement implements StatementInterface, PdoDriverAwareInterface, Profiler
     /** Perform a deep clone */
     public function __clone(): void
     {
-        $this->isPrepared      = false;
-        $this->parametersBound = false;
-        $this->resource        = null;
-        if ($this->parameterContainer) {
-            $this->parameterContainer = clone $this->parameterContainer;
-        }
+        $this->isPrepared         = false;
+        $this->parametersBound    = false;
+        $this->resource           = null;
+        $this->parameterContainer = clone $this->parameterContainer;
     }
 }
