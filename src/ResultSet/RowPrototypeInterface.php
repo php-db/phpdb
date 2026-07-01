@@ -17,4 +17,9 @@ interface RowPrototypeInterface
      * Exchange the current data for the provided array.
      */
     public function exchangeArray(array $array): array;
+
+    /**
+     * Current data as an array and match current RowGateway implementations.
+     */
+    public function toArray(): array;
 }
