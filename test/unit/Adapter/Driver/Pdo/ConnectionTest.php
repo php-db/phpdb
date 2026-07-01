@@ -23,7 +23,6 @@ use ReflectionProperty;
 
 #[CoversMethod(AbstractPdoConnection::class, 'getResource')]
 #[CoversMethod(AbstractPdoConnection::class, 'getDsn')]
-#[CoversMethod(AbstractPdoConnection::class, '__construct')]
 #[CoversMethod(AbstractPdoConnection::class, 'setDriver')]
 #[CoversMethod(AbstractPdoConnection::class, 'setConnectionParameters')]
 #[CoversMethod(AbstractPdoConnection::class, 'isConnected')]

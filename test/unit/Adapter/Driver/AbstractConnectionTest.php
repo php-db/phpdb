@@ -6,8 +6,7 @@ namespace PhpDbTest\Adapter\Driver;
 
 use PhpDb\Adapter\Driver\AbstractConnection;
 use PhpDb\Adapter\Profiler\ProfilerInterface;
-use PhpDbTest\TestAsset\ConnectionWrapper;
-use PhpDbTest\TestAsset\PdoStubDriver;
+use PhpDbTest\Adapter\Driver\TestAsset\TestConnection;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
@@ -25,7 +24,8 @@ final class AbstractConnectionTest extends TestCase
 {
     public function testDisconnectNullsResourceWhenConnected(): void
     {
-        $connection = new ConnectionWrapper(new PdoStubDriver());
+        $connection = new TestConnection();
+        $connection->connect();
 
         self::assertTrue($connection->isConnected());
 
@@ -36,8 +36,7 @@ final class AbstractConnectionTest extends TestCase
 
     public function testDisconnectIsNoOpWhenNotConnected(): void
     {
-        $connection = new ConnectionWrapper();
-        $connection->disconnect();
+        $connection = new TestConnection();
 
         $result = $connection->disconnect();
 
@@ -46,28 +45,35 @@ final class AbstractConnectionTest extends TestCase
 
     public function testGetConnectionParametersReturnsEmptyByDefault(): void
     {
-        $connection = new ConnectionWrapper();
+        $connection = new TestConnection();
 
         self::assertSame([], $connection->getConnectionParameters());
     }
 
-    public function testGetDriverNameReturnsDriverAttribute(): void
+    public function testGetDriverNameReturnsValueWhenSet(): void
     {
-        $connection = new ConnectionWrapper(new PdoStubDriver());
+        $connection = new TestConnection('sqlite');
 
         self::assertSame('sqlite', $connection->getDriverName());
     }
 
+    public function testGetDriverNameReturnsNullByDefault(): void
+    {
+        $connection = new TestConnection();
+
+        self::assertNull($connection->getDriverName());
+    }
+
     public function testGetProfilerReturnsNullByDefault(): void
     {
-        $connection = new ConnectionWrapper();
+        $connection = new TestConnection();
 
         self::assertNull($connection->getProfiler());
     }
 
     public function testSetProfilerStoresAndReturnsProfiler(): void
     {
-        $connection = new ConnectionWrapper();
+        $connection = new TestConnection();
         $profiler   = $this->createMock(ProfilerInterface::class);
 
         $result = $connection->setProfiler($profiler);
@@ -78,16 +84,19 @@ final class AbstractConnectionTest extends TestCase
 
     public function testGetResourceAutoConnectsWhenNotConnected(): void
     {
-        $connection = new ConnectionWrapper();
+        $connection = new TestConnection();
+
+        self::assertFalse($connection->isConnected());
 
         $resource = $connection->getResource();
 
-        self::assertNotNull($resource);
+        self::assertTrue($connection->isConnected());
+        self::assertSame('fake-resource', $resource);
     }
 
     public function testSetConnectionParametersStoresAndReturnsConnection(): void
     {
-        $connection = new ConnectionWrapper();
+        $connection = new TestConnection();
         $params     = ['host' => 'localhost', 'port' => 3306];
 
         $result = $connection->setConnectionParameters($params);
@@ -98,7 +107,7 @@ final class AbstractConnectionTest extends TestCase
 
     public function testInTransactionReturnsFalseByDefault(): void
     {
-        $connection = new ConnectionWrapper();
+        $connection = new TestConnection();
 
         self::assertFalse($connection->inTransaction());
     }

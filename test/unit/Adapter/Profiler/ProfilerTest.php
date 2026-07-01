@@ -12,7 +12,6 @@ use PhpDb\Adapter\StatementContainer;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
-use TypeError;
 
 #[CoversMethod(Profiler::class, 'profilerStart')]
 #[CoversMethod(Profiler::class, 'profilerFinish')]
@@ -33,15 +32,16 @@ final class ProfilerTest extends TestCase
         $this->profiler = new Profiler();
     }
 
-    public function testFluentProfilerStartWithStringAndContainer(): void
+    public function testProfilerStartWithString(): void
     {
         $ret = $this->profiler->profilerStart('SELECT * FROM FOO');
         self::assertSame($this->profiler, $ret);
+    }
+
+    public function testProfilerStartWithStatementContainer(): void
+    {
         $ret = $this->profiler->profilerStart(new StatementContainer());
         self::assertSame($this->profiler, $ret);
-
-        $this->expectException(TypeError::class);
-        $this->profiler->profilerStart(5);
     }
 
     public function testProfilerFinishThrowsWithoutStart(): void

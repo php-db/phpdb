@@ -217,46 +217,6 @@ final class AdapterInterfaceDelegatorTest extends TestCase
         );
     }
 
-    public function testSetStateWithDefaultAdapterName(): void
-    {
-        $delegator = AdapterInterfaceDelegator::__set_state([]);
-
-        self::assertInstanceOf(AdapterInterfaceDelegator::class, $delegator);
-    }
-
-    public function testSetStateWithCustomAdapterName(): void
-    {
-        $delegator = AdapterInterfaceDelegator::__set_state(['adapterName' => 'custom']);
-
-        self::assertInstanceOf(AdapterInterfaceDelegator::class, $delegator);
-    }
-
-    public function testInvokeReturnsInstanceWhenAdapterIsNotAdapterInterface(): void
-    {
-        $container = $this->createMock(ContainerInterface::class);
-        $container
-            ->expects(self::once())
-            ->method('has')
-            ->with(AdapterInterface::class)
-            ->willReturn(true);
-        $container
-            ->expects(self::once())
-            ->method('get')
-            ->with(AdapterInterface::class)
-            ->willReturn(new stdClass());
-
-        $callback = static fn(): ConcreteAdapterAwareObject => new ConcreteAdapterAwareObject();
-
-        $result = (new AdapterInterfaceDelegator())(
-            $container,
-            ConcreteAdapterAwareObject::class,
-            $callback
-        );
-
-        self::assertInstanceOf(ConcreteAdapterAwareObject::class, $result);
-        self::assertNull($result->getAdapter());
-    }
-
     public function testDelegatorWithPluginManager(): void
     {
         $databaseAdapter = new Adapter(
@@ -304,5 +264,45 @@ final class AdapterInterfaceDelegatorTest extends TestCase
             $result->getAdapter()
         );
         $this->assertSame($options, $result->getOptions());
+    }
+
+    public function testSetStateWithDefaultAdapterName(): void
+    {
+        $delegator = AdapterInterfaceDelegator::__set_state([]);
+
+        self::assertInstanceOf(AdapterInterfaceDelegator::class, $delegator);
+    }
+
+    public function testSetStateWithCustomAdapterName(): void
+    {
+        $delegator = AdapterInterfaceDelegator::__set_state(['adapterName' => 'custom']);
+
+        self::assertInstanceOf(AdapterInterfaceDelegator::class, $delegator);
+    }
+
+    public function testInvokeReturnsInstanceWhenAdapterIsNotAdapterInterface(): void
+    {
+        $container = $this->createMock(ContainerInterface::class);
+        $container
+            ->expects(self::once())
+            ->method('has')
+            ->with(AdapterInterface::class)
+            ->willReturn(true);
+        $container
+            ->expects(self::once())
+            ->method('get')
+            ->with(AdapterInterface::class)
+            ->willReturn(new stdClass());
+
+        $callback = static fn(): ConcreteAdapterAwareObject => new ConcreteAdapterAwareObject();
+
+        $result = (new AdapterInterfaceDelegator())(
+            $container,
+            ConcreteAdapterAwareObject::class,
+            $callback
+        );
+
+        self::assertInstanceOf(ConcreteAdapterAwareObject::class, $result);
+        self::assertNull($result->getAdapter());
     }
 }

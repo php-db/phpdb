@@ -9,6 +9,7 @@ use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\Exception\VunerablePlatformQuoteException;
 use PhpDb\Adapter\Platform\AbstractPlatform;
 use PhpDb\Adapter\Platform\Sql92;
+use PhpDbTest\Adapter\Platform\TestAsset\TestPlatform;
 use PhpDbTest\TestAsset\TestSql92Platform;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Group;
@@ -176,5 +177,20 @@ final class Sql92Test extends TestCase
         self::assertStringContainsString('test', $quoted);
         self::assertStringStartsWith("'", $quoted);
         self::assertStringEndsWith("'", $quoted);
+    }
+
+    public function testAbstractPlatformQuoteValueThrowsWithoutDriver(): void
+    {
+        $platform = new TestPlatform();
+
+        $this->expectException(VunerablePlatformQuoteException::class);
+        $platform->quoteValue('value');
+    }
+
+    public function testAbstractPlatformQuoteValueEscapesWithDriver(): void
+    {
+        $platform = new TestPlatform($this->createStub(DriverInterface::class));
+
+        self::assertSame("'test\\'value'", $platform->quoteValue("test'value"));
     }
 }

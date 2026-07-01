@@ -24,7 +24,6 @@ use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 
 #[CoversMethod(AbstractPdo::class, 'getResultPrototype')]
-#[CoversMethod(AbstractPdo::class, '__construct')]
 #[CoversMethod(AbstractPdo::class, 'checkEnvironment')]
 #[CoversMethod(AbstractPdo::class, 'getConnection')]
 #[CoversMethod(AbstractPdo::class, 'createStatement')]
@@ -32,6 +31,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(AbstractPdo::class, 'getLastGeneratedValue')]
 #[CoversMethod(AbstractPdo::class, 'setProfiler')]
 #[CoversMethod(AbstractPdo::class, 'getProfiler')]
+#[CoversMethod(AbstractPdo::class, 'formatParameterName')]
 #[Group('unit')]
 final class PdoTest extends TestCase
 {
