@@ -26,7 +26,7 @@ final class StatementIntegrationTest extends TestCase
     protected function setUp(): void
     {
         $driver = $this->getMockBuilder(AbstractPdo::class)
-            ->onlyMethods(['createResult', 'getDatabasePlatformName'])
+            ->onlyMethods(['createResult'])
             ->disableOriginalConstructor()
             ->getMock();
 

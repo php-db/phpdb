@@ -15,7 +15,9 @@ use PhpDb\Metadata\Object\TableObject;
 use PhpDb\Metadata\Object\TriggerObject;
 use PhpDb\Metadata\Object\ViewObject;
 use PhpDb\Metadata\Source\AbstractSource;
+use PhpDbTest\Metadata\Source\TestAsset\IncompleteSource;
 use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\IgnoreDeprecations;
 use PHPUnit\Framework\Attributes\RequiresPhp;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -50,6 +52,7 @@ use ReflectionProperty;
 #[CoversMethod(AbstractSource::class, 'loadConstraintDataKeys')]
 #[CoversMethod(AbstractSource::class, 'loadConstraintReferences')]
 #[CoversMethod(AbstractSource::class, 'loadTriggerData')]
+#[Group('unit')]
 final class AbstractSourceTest extends TestCase
 {
     protected MockObject|AbstractSource $abstractSourceMock;
@@ -1166,5 +1169,509 @@ final class AbstractSourceTest extends TestCase
         $data = $this->getMockData();
         // Verify method returns early when data exists
         self::assertArrayHasKey('existing', $data['triggers']['public']);
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    public function testGetTablesUsesDefaultSchemaWhenNull(): void
+    {
+        $refProp = new ReflectionProperty($this->abstractSourceMock, 'defaultSchema');
+        $refProp->setValue($this->abstractSourceMock, 'def');
+
+        $this->setMockData([
+            'table_names' => [
+                'def' => [
+                    'users' => ['table_type' => 'BASE TABLE'],
+                ],
+            ],
+            'columns'     => [
+                'def' => [
+                    'users' => [],
+                ],
+            ],
+            'constraints' => [
+                'def' => [
+                    'users' => [],
+                ],
+            ],
+        ]);
+
+        $tables = $this->abstractSourceMock->getTables(null);
+
+        self::assertCount(1, $tables);
+        self::assertInstanceOf(TableObject::class, $tables[0]);
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    public function testGetTableUsesDefaultSchemaWhenNull(): void
+    {
+        $refProp = new ReflectionProperty($this->abstractSourceMock, 'defaultSchema');
+        $refProp->setValue($this->abstractSourceMock, 'def');
+
+        $this->setMockData([
+            'table_names' => [
+                'def' => [
+                    'users' => ['table_type' => 'BASE TABLE'],
+                ],
+            ],
+            'columns'     => [
+                'def' => [
+                    'users' => [],
+                ],
+            ],
+            'constraints' => [
+                'def' => [
+                    'users' => [],
+                ],
+            ],
+        ]);
+
+        $table = $this->abstractSourceMock->getTable('users', null);
+
+        self::assertInstanceOf(TableObject::class, $table);
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    public function testGetViewNamesUsesDefaultSchemaWhenNull(): void
+    {
+        $refProp = new ReflectionProperty($this->abstractSourceMock, 'defaultSchema');
+        $refProp->setValue($this->abstractSourceMock, 'def');
+
+        $this->setMockData([
+            'table_names' => [
+                'def' => [
+                    'v1' => ['table_type' => 'VIEW'],
+                ],
+            ],
+        ]);
+
+        $names = $this->abstractSourceMock->getViewNames(null);
+
+        self::assertSame(['v1'], $names);
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    public function testGetViewsUsesDefaultSchemaWhenNull(): void
+    {
+        $refProp = new ReflectionProperty($this->abstractSourceMock, 'defaultSchema');
+        $refProp->setValue($this->abstractSourceMock, 'def');
+
+        $this->setMockData([
+            'table_names' => [
+                'def' => [
+                    'v1' => [
+                        'table_type'      => 'VIEW',
+                        'view_definition' => 'SELECT 1',
+                        'check_option'    => null,
+                        'is_updatable'    => true,
+                    ],
+                ],
+            ],
+            'columns'     => ['def' => ['v1' => []]],
+            'constraints' => ['def' => ['v1' => []]],
+        ]);
+
+        $views = $this->abstractSourceMock->getViews(null);
+
+        self::assertCount(1, $views);
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    public function testGetViewUsesDefaultSchemaWhenNull(): void
+    {
+        $refProp = new ReflectionProperty($this->abstractSourceMock, 'defaultSchema');
+        $refProp->setValue($this->abstractSourceMock, 'def');
+
+        $this->setMockData([
+            'table_names' => [
+                'def' => [
+                    'v1' => [
+                        'table_type'      => 'VIEW',
+                        'view_definition' => 'SELECT 1',
+                        'check_option'    => null,
+                        'is_updatable'    => false,
+                    ],
+                ],
+            ],
+            'columns'     => ['def' => ['v1' => []]],
+            'constraints' => ['def' => ['v1' => []]],
+        ]);
+
+        $view = $this->abstractSourceMock->getView('v1', null);
+
+        self::assertInstanceOf(ViewObject::class, $view);
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    public function testGetColumnNamesUsesDefaultSchemaWhenNull(): void
+    {
+        $refProp = new ReflectionProperty($this->abstractSourceMock, 'defaultSchema');
+        $refProp->setValue($this->abstractSourceMock, 'def');
+
+        $this->setMockData([
+            'columns' => [
+                'def' => [
+                    'users' => [
+                        'id'   => [],
+                        'name' => [],
+                    ],
+                ],
+            ],
+        ]);
+
+        $names = $this->abstractSourceMock->getColumnNames('users', null);
+
+        self::assertSame(['id', 'name'], $names);
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    public function testGetColumnsUsesDefaultSchemaWhenNull(): void
+    {
+        $refProp = new ReflectionProperty($this->abstractSourceMock, 'defaultSchema');
+        $refProp->setValue($this->abstractSourceMock, 'def');
+
+        $this->setMockData([
+            'columns' => [
+                'def' => [
+                    'users' => [
+                        'id' => [
+                            'ordinal_position'         => 1,
+                            'column_default'           => null,
+                            'is_nullable'              => false,
+                            'data_type'                => 'INT',
+                            'character_maximum_length' => null,
+                            'character_octet_length'   => null,
+                            'numeric_precision'        => null,
+                            'numeric_scale'            => null,
+                            'numeric_unsigned'         => null,
+                            'erratas'                  => [],
+                        ],
+                    ],
+                ],
+            ],
+        ]);
+
+        $columns = $this->abstractSourceMock->getColumns('users', null);
+
+        self::assertCount(1, $columns);
+        self::assertInstanceOf(ColumnObject::class, $columns[0]);
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    public function testGetColumnUsesDefaultSchemaWhenNull(): void
+    {
+        $refProp = new ReflectionProperty($this->abstractSourceMock, 'defaultSchema');
+        $refProp->setValue($this->abstractSourceMock, 'def');
+
+        $this->setMockData([
+            'columns' => [
+                'def' => [
+                    'users' => [
+                        'id' => [
+                            'ordinal_position'         => 1,
+                            'column_default'           => null,
+                            'is_nullable'              => false,
+                            'data_type'                => 'INT',
+                            'character_maximum_length' => null,
+                            'character_octet_length'   => null,
+                            'numeric_precision'        => null,
+                            'numeric_scale'            => null,
+                            'numeric_unsigned'         => null,
+                            'erratas'                  => [],
+                        ],
+                    ],
+                ],
+            ],
+        ]);
+
+        $column = $this->abstractSourceMock->getColumn('id', 'users', null);
+
+        self::assertInstanceOf(ColumnObject::class, $column);
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    public function testGetConstraintsUsesDefaultSchemaWhenNull(): void
+    {
+        $refProp = new ReflectionProperty($this->abstractSourceMock, 'defaultSchema');
+        $refProp->setValue($this->abstractSourceMock, 'def');
+
+        $this->setMockData([
+            'constraints' => [
+                'def' => [
+                    'users' => [
+                        'pk' => [
+                            'constraint_type' => 'PRIMARY KEY',
+                            'columns'         => ['id'],
+                        ],
+                    ],
+                ],
+            ],
+        ]);
+
+        $constraints = $this->abstractSourceMock->getConstraints('users', null);
+
+        self::assertCount(1, $constraints);
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    public function testGetConstraintUsesDefaultSchemaWhenNull(): void
+    {
+        $refProp = new ReflectionProperty($this->abstractSourceMock, 'defaultSchema');
+        $refProp->setValue($this->abstractSourceMock, 'def');
+
+        $this->setMockData([
+            'constraints' => [
+                'def' => [
+                    'users' => [
+                        'pk' => [
+                            'constraint_type' => 'PRIMARY KEY',
+                            'columns'         => ['id'],
+                        ],
+                    ],
+                ],
+            ],
+        ]);
+
+        $constraint = $this->abstractSourceMock->getConstraint('pk', 'users', null);
+
+        self::assertInstanceOf(ConstraintObject::class, $constraint);
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    public function testGetConstraintKeysUsesDefaultSchemaWhenNull(): void
+    {
+        $refProp = new ReflectionProperty($this->abstractSourceMock, 'defaultSchema');
+        $refProp->setValue($this->abstractSourceMock, 'def');
+
+        $this->setMockData([
+            'constraint_references' => [
+                'def' => [],
+            ],
+            'constraint_keys'       => [
+                'def' => [
+                    [
+                        'table_name'       => 'users',
+                        'constraint_name'  => 'pk',
+                        'column_name'      => 'id',
+                        'ordinal_position' => 1,
+                    ],
+                ],
+            ],
+        ]);
+
+        $keys = $this->abstractSourceMock->getConstraintKeys('pk', 'users', null);
+
+        self::assertCount(1, $keys);
+        self::assertInstanceOf(ConstraintKeyObject::class, $keys[0]);
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    public function testGetTriggerNamesUsesDefaultSchemaWhenNull(): void
+    {
+        $refProp = new ReflectionProperty($this->abstractSourceMock, 'defaultSchema');
+        $refProp->setValue($this->abstractSourceMock, 'def');
+
+        $this->setMockData([
+            'triggers' => [
+                'def' => [
+                    'trig1' => [],
+                ],
+            ],
+        ]);
+
+        $names = $this->abstractSourceMock->getTriggerNames(null);
+
+        self::assertSame(['trig1'], $names);
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    public function testGetTriggersUsesDefaultSchemaWhenNull(): void
+    {
+        $refProp = new ReflectionProperty($this->abstractSourceMock, 'defaultSchema');
+        $refProp->setValue($this->abstractSourceMock, 'def');
+
+        $this->setMockData([
+            'triggers' => [
+                'def' => [
+                    'trig1' => [
+                        'event_manipulation'         => 'INSERT',
+                        'event_object_catalog'       => 'cat',
+                        'event_object_schema'        => 'def',
+                        'event_object_table'         => 'users',
+                        'action_order'               => '1',
+                        'action_condition'           => null,
+                        'action_statement'           => 'BEGIN END',
+                        'action_orientation'         => 'ROW',
+                        'action_timing'              => 'BEFORE',
+                        'action_reference_old_table' => null,
+                        'action_reference_new_table' => null,
+                        'action_reference_old_row'   => 'OLD',
+                        'action_reference_new_row'   => 'NEW',
+                        'created'                    => null,
+                    ],
+                ],
+            ],
+        ]);
+
+        $triggers = $this->abstractSourceMock->getTriggers(null);
+
+        self::assertCount(1, $triggers);
+        self::assertInstanceOf(TriggerObject::class, $triggers[0]);
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    public function testGetTriggerUsesDefaultSchemaWhenNull(): void
+    {
+        $refProp = new ReflectionProperty($this->abstractSourceMock, 'defaultSchema');
+        $refProp->setValue($this->abstractSourceMock, 'def');
+
+        $this->setMockData([
+            'triggers' => [
+                'def' => [
+                    'trig1' => [
+                        'event_manipulation'         => 'INSERT',
+                        'event_object_catalog'       => 'cat',
+                        'event_object_schema'        => 'def',
+                        'event_object_table'         => 'users',
+                        'action_order'               => '1',
+                        'action_condition'           => null,
+                        'action_statement'           => 'BEGIN END',
+                        'action_orientation'         => 'ROW',
+                        'action_timing'              => 'BEFORE',
+                        'action_reference_old_table' => null,
+                        'action_reference_new_table' => null,
+                        'action_reference_old_row'   => 'OLD',
+                        'action_reference_new_row'   => 'NEW',
+                        'created'                    => null,
+                    ],
+                ],
+            ],
+        ]);
+
+        $trigger = $this->abstractSourceMock->getTrigger('trig1', null);
+
+        self::assertInstanceOf(TriggerObject::class, $trigger);
+        self::assertSame('trig1', $trigger->getName());
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    public function testLoadTableNameDataCallsPrepareDataHierarchy(): void
+    {
+        $method = new ReflectionMethod($this->abstractSourceMock, 'loadTableNameData');
+        $method->invoke($this->abstractSourceMock, 'test_schema');
+
+        $data = $this->getMockData();
+        self::assertArrayHasKey('table_names', $data);
+        self::assertArrayHasKey('test_schema', $data['table_names']);
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    public function testLoadColumnDataCallsPrepareDataHierarchy(): void
+    {
+        $method = new ReflectionMethod($this->abstractSourceMock, 'loadColumnData');
+        $method->invoke($this->abstractSourceMock, 'users', 'test_schema');
+
+        $data = $this->getMockData();
+        self::assertArrayHasKey('columns', $data);
+        self::assertArrayHasKey('test_schema', $data['columns']);
+        self::assertArrayHasKey('users', $data['columns']['test_schema']);
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    public function testLoadConstraintDataCallsPrepareDataHierarchy(): void
+    {
+        $method = new ReflectionMethod($this->abstractSourceMock, 'loadConstraintData');
+        $method->invoke($this->abstractSourceMock, 'users', 'test_schema');
+
+        $data = $this->getMockData();
+        self::assertArrayHasKey('constraints', $data);
+        self::assertArrayHasKey('test_schema', $data['constraints']);
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    public function testLoadConstraintDataKeysCallsPrepareDataHierarchy(): void
+    {
+        $method = new ReflectionMethod($this->abstractSourceMock, 'loadConstraintDataKeys');
+        $method->invoke($this->abstractSourceMock, 'test_schema');
+
+        $data = $this->getMockData();
+        self::assertArrayHasKey('constraint_keys', $data);
+        self::assertArrayHasKey('test_schema', $data['constraint_keys']);
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    public function testLoadConstraintReferencesCallsPrepareDataHierarchy(): void
+    {
+        $method = new ReflectionMethod($this->abstractSourceMock, 'loadConstraintReferences');
+        $method->invoke($this->abstractSourceMock, 'users', 'test_schema');
+
+        $data = $this->getMockData();
+        self::assertArrayHasKey('constraint_references', $data);
+        self::assertArrayHasKey('test_schema', $data['constraint_references']);
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    public function testLoadTriggerDataCallsPrepareDataHierarchy(): void
+    {
+        $method = new ReflectionMethod($this->abstractSourceMock, 'loadTriggerData');
+        $method->invoke($this->abstractSourceMock, 'test_schema');
+
+        $data = $this->getMockData();
+        self::assertArrayHasKey('triggers', $data);
+        self::assertArrayHasKey('test_schema', $data['triggers']);
+    }
+
+    public function testGetColumnNamesThrowsWhenLoadColumnDataDoesNotPopulate(): void
+    {
+        $adapter = $this->createMockForIntersectionOfInterfaces([
+            AdapterInterface::class,
+            SchemaAwareInterface::class,
+        ]);
+        $adapter->method('getCurrentSchema')->willReturn('public');
+
+        $source = new IncompleteSource($adapter);
+
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('"nonexistent" does not exist');
+        $source->getColumnNames('nonexistent', 'public');
     }
 }

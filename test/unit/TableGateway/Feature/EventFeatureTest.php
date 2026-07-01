@@ -17,6 +17,7 @@ use PhpDb\Sql\Update;
 use PhpDb\TableGateway\Feature\EventFeature;
 use PhpDb\TableGateway\Feature\EventFeatureEventsInterface;
 use PhpDb\TableGateway\TableGateway;
+use PhpDbTest\TableGateway\Feature\TestAsset\TestTableGateway;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -300,12 +301,7 @@ final class EventFeatureTest extends TestCase
     public function testPreInitializeAddsIdentifiersForCustomTableGatewayClass(): void
     {
         // Create a custom subclass of TableGateway (using anonymous class)
-        $customTableGateway = new class extends TableGateway {
-            public function __construct()
-            {
-                // Skip parent constructor
-            }
-        };
+        $customTableGateway = new TestTableGateway();
 
         $eventManager = new EventManager();
         $feature      = new EventFeature($eventManager);

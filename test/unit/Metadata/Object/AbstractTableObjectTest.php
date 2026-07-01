@@ -7,14 +7,14 @@ namespace PhpDbTest\Metadata\Object;
 use PhpDb\Metadata\Object\AbstractTableObject;
 use PhpDb\Metadata\Object\ColumnObject;
 use PhpDb\Metadata\Object\ConstraintObject;
+use PhpDbTest\Metadata\Object\TestAsset\ConcreteTableObject;
 use PHPUnit\Framework\TestCase;
 
 final class AbstractTableObjectTest extends TestCase
 {
     private function createConcreteTableObject(?string $name): AbstractTableObject
     {
-        return new class ($name) extends AbstractTableObject {
-        };
+        return new ConcreteTableObject($name);
     }
 
     public function testConstructorWithName(): void

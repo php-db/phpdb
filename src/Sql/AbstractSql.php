@@ -21,11 +21,8 @@ use ValueError;
 use function count;
 use function current;
 use function get_object_vars;
-use function gettype;
 use function implode;
 use function is_array;
-use function is_callable;
-use function is_object;
 use function is_string;
 use function key;
 use function rtrim;
@@ -151,14 +148,6 @@ abstract class AbstractSql implements SqlInterface
                     : $platform->quoteValue((string) $argument->getValue()),
                 $argument instanceof Identifier => $platform->quoteIdentifierInFragment($argument->getValue()),
                 $argument instanceof Literal => $argument->getValue(),
-                $argument instanceof Values => $this->processValuesArgument(
-                    $argument,
-                    $expressionParamIndex,
-                    $namedParameterPrefix,
-                    $platform,
-                    $driver,
-                    $parameterContainer
-                ),
                 $argument instanceof Identifiers => $this->processIdentifiersArgument($argument, $platform),
                 $argument instanceof SelectArgument => $this->processExpressionOrSelect(
                     $argument,
@@ -232,36 +221,6 @@ abstract class AbstractSql implements SqlInterface
             ),
             default => throw new ValueError('Invalid Argument type'),
         };
-    }
-
-    protected function processValuesArgument(
-        ArgumentInterface $argument,
-        int &$expressionParamIndex,
-        string $namedParameterPrefix,
-        PlatformInterface $platform,
-        ?DriverInterface $driver = null,
-        ?ParameterContainer $parameterContainer = null
-    ): string {
-        $values          = $argument->getValue();
-        $processedValues = [];
-
-        if ($parameterContainer instanceof ParameterContainer) {
-            foreach ($values as $value) {
-                $processedValues[] = $this->processExpressionParameterName(
-                    $value,
-                    $namedParameterPrefix,
-                    $expressionParamIndex,
-                    $driver,
-                    $parameterContainer
-                );
-            }
-        } else {
-            foreach ($values as $value) {
-                $processedValues[] = $platform->quoteValue((string) $value);
-            }
-        }
-
-        return implode(', ', $processedValues);
     }
 
     protected function processIdentifiersArgument(
@@ -419,13 +378,8 @@ abstract class AbstractSql implements SqlInterface
                         : '') . $platform->quoteIdentifier($joinName[0]);
             } elseif ($joinName instanceof Select) {
                 $joinName = '(' . $this->processSubSelect($joinName, $platform, $driver, $parameterContainer) . ')';
-            } elseif (is_string($joinName) || (is_object($joinName) && is_callable([$joinName, '__toString']))) {
-                $joinName = $platform->quoteIdentifier($joinName);
             } else {
-                throw new Exception\InvalidArgumentException(sprintf(
-                    'Join name expected to be Expression|TableIdentifier|Select|string, "%s" given',
-                    gettype($joinName)
-                ));
+                $joinName = $platform->quoteIdentifier($joinName);
             }
 
             $joinSpecArgArray[$j] = [
@@ -511,9 +465,6 @@ abstract class AbstractSql implements SqlInterface
         return $table;
     }
 
-    /**
-     * Copy variables from the subject into the local properties
-     */
     protected function localizeVariables(): void
     {
         if (! $this instanceof PlatformDecoratorInterface) {

@@ -16,16 +16,10 @@ use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 use TypeError;
 
-#[CoversMethod(Argument::class, '__construct')]
-#[CoversMethod(Argument::class, 'setType')]
-#[CoversMethod(Argument::class, 'getType')]
-#[CoversMethod(Argument::class, 'setValue')]
-#[CoversMethod(Argument::class, 'getValue')]
-#[CoversMethod(Argument::class, 'getValueAsString')]
-#[CoversMethod(Argument::class, 'getSpecification')]
 #[CoversMethod(Argument::class, 'value')]
 #[CoversMethod(Argument::class, 'identifier')]
 #[CoversMethod(Argument::class, 'literal')]
+#[CoversMethod(Argument::class, 'select')]
 final class ArgumentTest extends TestCase
 {
     public function testConstructorWithSimpleValue(): void
@@ -127,5 +121,14 @@ final class ArgumentTest extends TestCase
         $argument = new Value(3.14);
         self::assertEquals(3.14, $argument->getValue());
         self::assertEquals(ArgumentType::Value, $argument->getType());
+    }
+
+    public function testStaticSelectMethodCreatesSelectArgument(): void
+    {
+        $select   = new Select();
+        $argument = Argument::select($select);
+
+        self::assertSame($select, $argument->getValue());
+        self::assertEquals(ArgumentType::Select, $argument->getType());
     }
 }

@@ -7,6 +7,7 @@ namespace PhpDbTest\RowGateway\Feature;
 use PhpDb\RowGateway\AbstractRowGateway;
 use PhpDb\RowGateway\Feature\AbstractFeature;
 use PhpDb\RowGateway\Feature\FeatureSet;
+use PhpDbTest\RowGateway\Feature\TestAsset\TestRowGatewayFeature;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -104,76 +105,27 @@ class FeatureSetTest extends TestCase
 
     public function testApplyCallsMethodOnFeatures(): void
     {
-        $called       = false;
-        $receivedArgs = [];
-
-        $feature = new class ($called, $receivedArgs) extends AbstractFeature {
-            /** @var bool @phpstan-ignore property.onlyWritten */
-            private $called;
-            /** @var array<mixed> @phpstan-ignore property.onlyWritten */
-            private $receivedArgs;
-
-            public function __construct(bool &$called, array &$receivedArgs)
-            {
-                $this->called       = &$called;
-                $this->receivedArgs = &$receivedArgs;
-            }
-
-            public function preInitialize(string $arg1, string $arg2): void
-            {
-                $this->called       = true;
-                $this->receivedArgs = [$arg1, $arg2];
-            }
-        };
+        $feature = new TestRowGatewayFeature();
 
         $featureSet = new FeatureSet([$feature]);
         $featureSet->apply('preInitialize', ['arg1', 'arg2']);
 
-        self::assertTrue($called);
-        self::assertEquals(['arg1', 'arg2'], $receivedArgs);
+        self::assertTrue($feature->called);
+        self::assertEquals(['arg1', 'arg2'], $feature->receivedArgs);
     }
 
     public function testApplyHaltsWhenFeatureReturnsHalt(): void
     {
-        $feature1Called = false;
-        $feature2Called = false;
+        $feature1              = new TestRowGatewayFeature();
+        $feature1->returnValue = FeatureSet::APPLY_HALT;
 
-        $feature1 = new class ($feature1Called) extends AbstractFeature {
-            /** @var bool @phpstan-ignore property.onlyWritten */
-            private $called;
-
-            public function __construct(bool &$called)
-            {
-                $this->called = &$called;
-            }
-
-            public function preInitialize(): string
-            {
-                $this->called = true;
-                return FeatureSet::APPLY_HALT;
-            }
-        };
-
-        $feature2 = new class ($feature2Called) extends AbstractFeature {
-            /** @var bool @phpstan-ignore property.onlyWritten */
-            private $called;
-
-            public function __construct(bool &$called)
-            {
-                $this->called = &$called;
-            }
-
-            public function preInitialize(): void
-            {
-                $this->called = true;
-            }
-        };
+        $feature2 = new TestRowGatewayFeature();
 
         $featureSet = new FeatureSet([$feature1, $feature2]);
         $featureSet->apply('preInitialize', []);
 
-        self::assertTrue($feature1Called);
-        self::assertFalse($feature2Called);
+        self::assertTrue($feature1->called);
+        self::assertFalse($feature2->called);
     }
 
     public function testApplySkipsFeatureWithoutMethod(): void

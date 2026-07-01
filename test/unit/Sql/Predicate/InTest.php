@@ -5,12 +5,15 @@ declare(strict_types=1);
 namespace PhpDbTest\Sql\Predicate;
 
 use PhpDb\Sql\Argument;
+use PhpDb\Sql\Argument\Select as ArgumentSelect;
+use PhpDb\Sql\Argument\Values;
 use PhpDb\Sql\ArgumentInterface;
 use PhpDb\Sql\ArgumentType;
 use PhpDb\Sql\Exception\InvalidArgumentException;
 use PhpDb\Sql\Predicate\In;
 use PhpDb\Sql\Select;
 use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 
 #[CoversMethod(In::class, '__construct')]
@@ -19,6 +22,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(In::class, 'setValueSet')]
 #[CoversMethod(In::class, 'getValueSet')]
 #[CoversMethod(In::class, 'getExpressionData')]
+#[Group('unit')]
 final class InTest extends TestCase
 {
     public function testEmptyConstructorYieldsNullIdentifierAndValueSet(): void
@@ -274,5 +278,27 @@ final class InTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Value set must be provided for IN predicate');
         $in->getExpressionData();
+    }
+
+    public function testSetValueSetWithSelectWrapsInArgumentSelect(): void
+    {
+        $in     = new In();
+        $select = new Select('users');
+
+        $in->setValueSet($select);
+
+        $valueSet = $in->getValueSet();
+        self::assertInstanceOf(ArgumentSelect::class, $valueSet);
+        self::assertSame(ArgumentType::Select, $valueSet->getType());
+    }
+
+    public function testSetValueSetWithArgumentInterfacePassesThrough(): void
+    {
+        $in     = new In();
+        $values = new Values([1, 2, 3]);
+
+        $in->setValueSet($values);
+
+        self::assertSame($values, $in->getValueSet());
     }
 }
