@@ -9,12 +9,12 @@ use PhpDb\Adapter\AdapterAwareTrait;
 use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\Platform\PlatformInterface;
 use PhpDbTest\Adapter\TestAsset\ConcreteAdapterAwareObject;
-use PHPUnit\Framework\Attributes\CoversTrait;
+use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
 
-#[CoversTrait(AdapterAwareTrait::class)]
+#[CoversMethod(AdapterAwareTrait::class, 'setDbAdapter')]
 #[Group('unit')]
 class AdapterAwareTraitTest extends TestCase
 {

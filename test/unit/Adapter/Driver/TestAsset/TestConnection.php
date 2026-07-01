@@ -10,7 +10,9 @@ use PhpDb\Adapter\Driver\ResultInterface;
 
 final class TestConnection extends AbstractConnection
 {
-    protected ?string $driverName = null;
+    public function __construct(protected ?string $driverName = null)
+    {
+    }
 
     public function beginTransaction(): ConnectionInterface
     {

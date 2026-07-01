@@ -52,8 +52,14 @@ final class AbstractConnectionTest extends TestCase
 
     public function testGetDriverNameReturnsValueWhenSet(): void
     {
+        $connection = new TestConnection('sqlite');
+
+        self::assertSame('sqlite', $connection->getDriverName());
+    }
+
+    public function testGetDriverNameReturnsNullByDefault(): void
+    {
         $connection = new TestConnection();
-        $connection->setConnectionParameters(['driver' => 'sqlite']);
 
         self::assertNull($connection->getDriverName());
     }

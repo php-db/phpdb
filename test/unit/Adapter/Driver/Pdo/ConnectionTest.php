@@ -64,7 +64,7 @@ final class ConnectionTest extends TestCase
     /**
      * Test getConnectedDsn returns a DSN string if it has been set
      */
-    public function testGetDsn(): void
+    public function testGetDsnReturnsDsnAfterConnect(): void
     {
         $dsn = "sqlite::memory:";
         $this->connection->setConnectionParameters(['dsn' => $dsn]);
@@ -93,7 +93,7 @@ final class ConnectionTest extends TestCase
         self::assertSame($params, $connection->getConnectionParameters());
     }
 
-    public function testSetDriverReturnsInstance(): void
+    public function testFluentSetDriver(): void
     {
         $driver = $this->createMock(PdoDriverInterface::class);
 

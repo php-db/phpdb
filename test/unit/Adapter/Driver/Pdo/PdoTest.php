@@ -66,7 +66,7 @@ final class PdoTest extends TestCase
     }
 
     #[DataProvider('getParamsAndType')]
-    public function testFormatParameterName(int|string $name, ?string $type, string $expected): void
+    public function testFormatParameterNameFormatsCorrectly(int|string $name, ?string $type, string $expected): void
     {
         $result = $this->pdo->formatParameterName($name, $type);
         $this->assertEquals($expected, $result);
@@ -90,7 +90,7 @@ final class PdoTest extends TestCase
         $this->pdo->formatParameterName($name);
     }
 
-    public function testGetResultPrototype(): void
+    public function testGetResultPrototypeReturnsResult(): void
     {
         $resultPrototype = $this->pdo->getResultPrototype();
 
@@ -172,8 +172,8 @@ final class PdoTest extends TestCase
         $pdo = new TestPdo([]);
 
         $this->expectException(Error::class);
-        /** @phpstan-ignore method.resultUnused */
-        $pdo->getProfiler();
+
+        $unused = $pdo->getProfiler();
     }
 
     public function testGetProfilerReturnsSetProfiler(): void

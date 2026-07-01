@@ -70,14 +70,14 @@ final class AdapterTest extends TestCase
     }
 
     #[TestDox('unit test: Test setProfiler() will store profiler')]
-    public function testSetProfiler(): void
+    public function testFluentSetProfiler(): void
     {
         $ret = $this->adapter->setProfiler(new Profiler\Profiler());
         self::assertSame($this->adapter, $ret);
     }
 
     #[TestDox('unit test: Test getProfiler() will store profiler')]
-    public function testGetProfiler(): void
+    public function testGetProfilerReturnsProfiler(): void
     {
         $this->adapter->setProfiler($profiler = new Profiler\Profiler());
         self::assertSame($profiler, $this->adapter->getProfiler());
@@ -91,25 +91,25 @@ final class AdapterTest extends TestCase
     }
 
     #[TestDox('unit test: Test getDriver() will return driver object')]
-    public function testGetDriver(): void
+    public function testGetDriverReturnsDriver(): void
     {
         self::assertSame($this->mockDriver, $this->adapter->getDriver());
     }
 
     #[TestDox('unit test: Test getPlatform() returns platform object')]
-    public function testGetPlatform(): void
+    public function testGetPlatformReturnsPlatform(): void
     {
         self::assertSame($this->mockPlatform, $this->adapter->getPlatform());
     }
 
     #[TestDox('unit test: Test getPlatform() returns platform object')]
-    public function testGetQueryResultSetPrototype(): void
+    public function testGetQueryResultSetPrototypeReturnsResultSet(): void
     {
         self::assertInstanceOf(ResultSetInterface::class, $this->adapter->getQueryResultSetPrototype());
     }
 
     #[TestDox('unit test: Test getCurrentSchema() returns current schema from connection object')]
-    public function testGetCurrentSchema(): void
+    public function testGetCurrentSchemaDelegatesToConnection(): void
     {
         $this->mockConnection->expects($this->any())->method('getCurrentSchema')->willReturn('FooSchema');
         self::assertEquals('FooSchema', $this->adapter->getCurrentSchema());
@@ -218,15 +218,13 @@ final class AdapterTest extends TestCase
     }
 
     #[TestDox('unit test: Test createStatement() produces a statement object')]
-    public function testCreateStatement(): void
+    public function testCreateStatementDelegatesToDriver(): void
     {
         self::assertSame($this->mockStatement, $this->adapter->createStatement());
     }
 
-    // @codingStandardsIgnoreStart
-    public function test__get(): void
+    public function testMagicGetReturnsDriverAndPlatformCaseInsensitively(): void
     {
-        // @codingStandardsIgnoreEnd
         self::assertSame($this->mockDriver, $this->adapter->driver);
         /** @phpstan-ignore property.notFound */
         self::assertSame($this->mockDriver, $this->adapter->DrivER);
