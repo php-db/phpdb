@@ -19,10 +19,10 @@ use PHPUnit\Framework\TestCase;
  */
 #[CoversClass(AbstractPdoConnection::class)]
 #[CoversClass(AbstractConnection::class)]
-#[CoversMethod(AbstractPdoConnection::class, 'beginTransaction()')]
-#[CoversMethod(AbstractConnection::class, 'inTransaction()')]
-#[CoversMethod(AbstractPdoConnection::class, 'commit()')]
-#[CoversMethod(AbstractPdoConnection::class, 'rollback()')]
+#[CoversMethod(AbstractPdoConnection::class, 'beginTransaction')]
+#[CoversMethod(AbstractConnection::class, 'inTransaction')]
+#[CoversMethod(AbstractPdoConnection::class, 'commit')]
+#[CoversMethod(AbstractPdoConnection::class, 'rollback')]
 final class ConnectionTransactionsTest extends TestCase
 {
     protected ConnectionWrapper $wrapper;

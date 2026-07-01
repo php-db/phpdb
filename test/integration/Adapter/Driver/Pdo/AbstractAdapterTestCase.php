@@ -9,7 +9,8 @@ use PHPUnit\Framework\TestCase;
 use function getmypid;
 use function shell_exec;
 
-#[CoversMethod(AdapterInterface::class, '__construct()')]
+#[CoversMethod(AdapterInterface::class, 'getDriver')]
+#[CoversMethod(AdapterInterface::class, 'getPlatform')]
 abstract class AbstractAdapterTestCase extends TestCase
 {
     use AdapterTrait;

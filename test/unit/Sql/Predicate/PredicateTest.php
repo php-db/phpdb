@@ -8,12 +8,16 @@ use ErrorException;
 use PhpDb\Adapter\Exception\VunerablePlatformQuoteException;
 use PhpDb\Adapter\Platform\Sql92;
 use PhpDb\Sql\Argument;
+use PhpDb\Sql\Exception\RuntimeException;
 use PhpDb\Sql\Expression;
 use PhpDb\Sql\Predicate\Predicate;
+use PhpDb\Sql\Predicate\PredicateInterface;
 use PhpDb\Sql\Select;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\TestDox;
 use PHPUnit\Framework\TestCase;
 
+#[Group('unit')]
 final class PredicateTest extends TestCase
 {
     public function testEqualToCreatesOperatorPredicate(): void
@@ -373,28 +377,49 @@ final class PredicateTest extends TestCase
         self::assertEquals([$expression], $expressionData['values']);
     }
 
+    public function testUnnestThrowsWhenNotNested(): void
+    {
+        $predicate = new Predicate();
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Not nested');
+        $predicate->unnest();
+    }
+
+    public function testPredicateMethodAddsCustomPredicateInterface(): void
+    {
+        $predicate = new Predicate();
+        $mock      = $this->createMock(PredicateInterface::class);
+
+        $result = $predicate->predicate($mock);
+
+        self::assertSame($predicate, $result);
+        self::assertCount(1, $predicate);
+    }
+
+    public function testMagicGetNestReturnsNestedPredicate(): void
+    {
+        $predicate = new Predicate();
+
+        $nested = $predicate->nest;
+
+        self::assertInstanceOf(Predicate::class, $nested);
+        self::assertNotSame($predicate, $nested);
+    }
+
+    public function testMagicGetUnnestReturnsParentPredicate(): void
+    {
+        $predicate = new Predicate();
+
+        $nested = $predicate->nest;
+        $parent = $nested->unnest;
+
+        self::assertSame($predicate, $parent);
+    }
+
     /**
      * removed throws ErrorException to fix phpstan issue
      */
-    public function testCanCreateExpressionsWithoutAnyBoundSqlParameters(): void
-    {
-        $this->markTestSkipped(
-            'This test is skipped because it triggers exception in quoteValue(). That can not be expected currently.'
-        );
-
-        /** @phpstan-ignore deadCode.unreachable */
-        $where1 = new Predicate();
-
-        $where1->expression('some_expression()');
-
-        $actual = $this->makeSqlString($where1);
-
-        self::assertSame(
-            'SELECT "a_table".* FROM "a_table" WHERE (some_expression())',
-            $actual
-        );
-    }
-
     /**
      * @throws ErrorException
      */

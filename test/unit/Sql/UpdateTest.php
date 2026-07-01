@@ -6,8 +6,10 @@ namespace PhpDbTest\Sql;
 
 use Override;
 use PhpDb\Adapter\Driver\DriverInterface;
+use PhpDb\Adapter\Driver\PdoDriverInterface;
 use PhpDb\Adapter\Driver\StatementInterface;
 use PhpDb\Adapter\ParameterContainer;
+use PhpDb\Adapter\StatementContainer;
 use PhpDb\Sql\AbstractPreparableSql;
 use PhpDb\Sql\Argument\Identifier;
 use PhpDb\Sql\Argument\Value;
@@ -505,5 +507,53 @@ final class UpdateTest extends TestCase
         $where = $this->update->getRawState('where');
         self::assertInstanceOf(Where::class, $where);
         self::assertEquals(1, $where->count());
+    }
+
+    public function testProcessSetWithPdoDriverUsesDriverColumnQuoting(): void
+    {
+        $mockDriver = $this->getMockBuilder(PdoDriverInterface::class)->getMock();
+        $mockDriver->expects($this->any())->method('getPrepareType')->willReturn('positional');
+        $mockDriver->expects($this->any())
+            ->method('formatParameterName')
+            ->willReturnCallback(fn(string $name): string => ':' . $name);
+        $mockAdapter = $this->createMockAdapter($mockDriver);
+
+        $mockStatement = new StatementContainer();
+
+        $this->update->table('foo')
+            ->set(['bar' => 'baz', 'boo' => 'qux']);
+
+        $this->update->prepareStatement($mockAdapter, $mockStatement);
+
+        $sql = $mockStatement->getSql();
+        self::assertStringContainsString(':c_0', $sql);
+        self::assertStringContainsString(':c_1', $sql);
+    }
+
+    public function testCloneDeepCopiesSetWhereAndJoins(): void
+    {
+        $this->update->table('foo')
+            ->set(['bar' => 'baz'])
+            ->where('x = y')
+            ->join('other', 'foo.id = other.id');
+
+        $clone = clone $this->update;
+
+        $clone->set(['bar' => 'changed']);
+        $clone->where('z = w');
+        $clone->join('another', 'foo.id = another.id');
+
+        self::assertEquals(['bar' => 'baz'], $this->update->getRawState('set'));
+        self::assertEquals(['bar' => 'changed'], $clone->getRawState('set'));
+
+        self::assertNotSame(
+            $this->update->getRawState('where'),
+            $clone->getRawState('where')
+        );
+
+        self::assertNotSame(
+            $this->update->getRawState('joins'),
+            $clone->getRawState('joins')
+        );
     }
 }

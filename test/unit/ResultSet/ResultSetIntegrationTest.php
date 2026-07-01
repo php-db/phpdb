@@ -14,6 +14,7 @@ use PhpDb\ResultSet\ResultSet;
 use PhpDb\ResultSet\ResultSetReturnType;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
 use Random\RandomException;
@@ -27,6 +28,11 @@ use function var_export;
 
 #[CoversMethod(AbstractResultSet::class, 'current')]
 #[CoversMethod(AbstractResultSet::class, 'buffer')]
+#[CoversMethod(ResultSet::class, 'current')]
+#[CoversMethod(ResultSet::class, 'getReturnType')]
+#[CoversMethod(ResultSet::class, '__construct')]
+#[CoversMethod(ResultSet::class, 'getArrayObjectPrototype')]
+#[Group('unit')]
 final class ResultSetIntegrationTest extends TestCase
 {
     protected ResultSet $resultSet;
@@ -319,5 +325,57 @@ final class ResultSetIntegrationTest extends TestCase
 
         // Verify current() returns null when data source returns non-array value
         self::assertNull($this->resultSet->current());
+    }
+
+    public function testCurrentReturnsArrayObjectWhenReturnTypeIsArrayObject(): void
+    {
+        $resultSet = new ResultSet(ResultSetReturnType::ArrayObject);
+        $resultSet->initialize([['id' => 1, 'name' => 'one']]);
+
+        $current = $resultSet->current();
+
+        self::assertInstanceOf(ArrayObject::class, $current);
+        self::assertSame(1, $current['id']);
+    }
+
+    public function testCurrentReturnsArrayWhenReturnTypeIsArray(): void
+    {
+        $resultSet = new ResultSet(ResultSetReturnType::Array);
+        $resultSet->initialize([['id' => 1, 'name' => 'one']]);
+
+        $current = $resultSet->current();
+
+        self::assertIsArray($current);
+        self::assertSame(1, $current['id']);
+    }
+
+    public function testCurrentClonesRowPrototypeOnEachCall(): void
+    {
+        $resultSet = new ResultSet(ResultSetReturnType::ArrayObject);
+        $resultSet->initialize([
+            ['id' => 1, 'name' => 'one'],
+            ['id' => 2, 'name' => 'two'],
+        ]);
+
+        $first = $resultSet->current();
+        $resultSet->next();
+        $second = $resultSet->current();
+
+        self::assertNotSame($first, $second);
+    }
+
+    public function testGetReturnTypeReturnsArrayWhenSetToArray(): void
+    {
+        $resultSet = new ResultSet(ResultSetReturnType::Array);
+
+        self::assertSame(ResultSetReturnType::Array, $resultSet->getReturnType());
+    }
+
+    public function testGetArrayObjectPrototypeDelegatesToGetRowPrototype(): void
+    {
+        self::assertSame(
+            $this->resultSet->getRowPrototype(),
+            $this->resultSet->getArrayObjectPrototype()
+        );
     }
 }

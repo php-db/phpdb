@@ -193,6 +193,53 @@ final class CombineTest extends TestCase
         );
     }
 
+    public function testCombineWithArrayOfSelectAndModifier(): void
+    {
+        $this->combine->combine([
+            [new Select('t1'), 'UNION', 'ALL'],
+            [new Select('t2'), 'INTERSECT'],
+        ]);
+
+        self::assertEquals(
+            '(SELECT "t1".* FROM "t1") INTERSECT (SELECT "t2".* FROM "t2")',
+            $this->combine->getSqlString()
+        );
+    }
+
+    public function testAlignColumnsAppendsNullExpressionsForMissingColumns(): void
+    {
+        $select1 = new Select('t1');
+        $select1->columns(['a' => 'a']);
+
+        $select2 = new Select('t2');
+        $select2->columns(['a' => 'a', 'b' => 'b']);
+
+        $this->combine->union([$select1, $select2])->alignColumns();
+
+        $columns1 = $select1->getRawState('columns');
+        self::assertArrayHasKey('b', $columns1);
+        self::assertInstanceOf(Expression::class, $columns1['b']);
+    }
+
+    public function testConstructorWithSelectDelegatesToCombine(): void
+    {
+        $select  = new Select('foo');
+        $combine = new Combine($select, Combine::COMBINE_EXCEPT, 'ALL');
+
+        $rawState = $combine->getRawState();
+        self::assertCount(1, $rawState['combine']);
+        self::assertSame('except', $rawState['combine'][0]['type']);
+        self::assertSame('ALL', $rawState['combine'][0]['modifier']);
+    }
+
+    public function testAlignColumnsReturnsEarlyWhenEmpty(): void
+    {
+        $combine = new Combine();
+        $result  = $combine->alignColumns();
+
+        self::assertSame($combine, $result);
+    }
+
     protected function getMockAdapter(): Adapter|MockObject
     {
         $parameterContainer = new ParameterContainer();

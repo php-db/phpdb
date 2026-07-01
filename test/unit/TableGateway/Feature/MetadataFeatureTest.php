@@ -12,7 +12,6 @@ use PhpDb\Sql\TableIdentifier;
 use PhpDb\TableGateway\AbstractTableGateway;
 use PhpDb\TableGateway\Exception\RuntimeException;
 use PhpDb\TableGateway\Feature\MetadataFeature;
-use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\IgnoreDeprecations;
 use PHPUnit\Framework\Attributes\RequiresPhp;
 use PHPUnit\Framework\MockObject\Exception;
@@ -28,30 +27,6 @@ class MetadataFeatureTest extends TestCase
      * @throws Exception
      * @throws \Exception
      */
-    #[Group('integration-test')]
-    public function testPostInitialize(): void
-    {
-        $this->markTestSkipped('This is an integration test and requires a database connection.');
-        /** @phpstan-ignore deadCode.unreachable */
-        $tableGatewayMock = $this->getMockBuilder(AbstractTableGateway::class)
-        ->onlyMethods([])
-        ->getMock();
-        $metadataMock     = $this->getMockBuilder(MetadataInterface::class)->getMock();
-        $metadataMock->expects($this->any())->method('getColumnNames')->willReturn(['id', 'name']);
-
-        $constraintObject = new ConstraintObject('id_pk', 'table');
-        $constraintObject->setColumns(['id']);
-        $constraintObject->setType('PRIMARY KEY');
-
-        $metadataMock->expects($this->any())->method('getConstraints')->willReturn([$constraintObject]);
-
-        $feature = new MetadataFeature($metadataMock);
-        $feature->setTableGateway($tableGatewayMock);
-        $feature->postInitialize();
-
-        self::assertEquals(['id', 'name'], $tableGatewayMock->getColumns());
-    }
-
     /**
      * @throws Exception
      * @throws \Exception

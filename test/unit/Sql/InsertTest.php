@@ -6,6 +6,7 @@ namespace PhpDbTest\Sql;
 
 use Override;
 use PhpDb\Adapter\Driver\DriverInterface;
+use PhpDb\Adapter\Driver\PdoDriverInterface;
 use PhpDb\Adapter\Driver\StatementInterface;
 use PhpDb\Adapter\ParameterContainer;
 use PhpDb\Adapter\StatementContainer;
@@ -439,5 +440,26 @@ final class InsertTest extends TestCase
         $result = $this->insert->prepareStatement($mockAdapter, $mockStatement);
 
         self::assertSame($mockStatement, $result);
+    }
+
+    public function testProcessInsertWithPdoDriverUsesDriverColumnQuoting(): void
+    {
+        $mockDriver = $this->getMockBuilder(PdoDriverInterface::class)->getMock();
+        $mockDriver->expects($this->any())->method('getPrepareType')->willReturn('positional');
+        $mockDriver->expects($this->any())
+            ->method('formatParameterName')
+            ->willReturnCallback(fn(string $name): string => ':' . $name);
+        $mockAdapter = $this->createMockAdapter($mockDriver);
+
+        $mockStatement = new StatementContainer();
+
+        $this->insert->into('foo')
+            ->values(['bar' => 'baz', 'boo' => 'qux']);
+
+        $this->insert->prepareStatement($mockAdapter, $mockStatement);
+
+        $sql = $mockStatement->getSql();
+        self::assertStringContainsString(':c_0', $sql);
+        self::assertStringContainsString(':c_1', $sql);
     }
 }

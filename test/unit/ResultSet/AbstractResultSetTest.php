@@ -5,7 +5,10 @@ declare(strict_types=1);
 namespace PhpDbTest\ResultSet;
 
 use ArrayIterator;
+use ArrayObject;
 use Exception;
+use IteratorAggregate;
+use NoRewindIterator;
 use Override;
 use PDOStatement;
 use PhpDb\Adapter\Driver\Pdo\Result;
@@ -16,6 +19,7 @@ use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 use TypeError;
 
 use function assert;
@@ -290,6 +294,83 @@ final class AbstractResultSetTest extends TestCase
         );
     }
 
+    public function testCurrentReturnsBufferedDataOnSecondPass(): void
+    {
+        $resultSet = $this->createResultSetMock();
+        $resultSet->initialize(new ArrayIterator([
+            ['id' => 1, 'name' => 'one'],
+            ['id' => 2, 'name' => 'two'],
+        ]));
+        $resultSet->buffer();
+
+        $firstPass = [];
+        foreach ($resultSet as $row) {
+            $firstPass[] = $row;
+        }
+
+        $resultSet->rewind();
+
+        $secondPass = [];
+        foreach ($resultSet as $row) {
+            $secondPass[] = $row;
+        }
+
+        self::assertEquals($firstPass, $secondPass);
+    }
+
+    public function testToArrayConvertsArrayObjectsViaGetArrayCopy(): void
+    {
+        $resultSet = $this->createResultSetMock();
+        $resultSet->initialize([
+            new ArrayObject(['id' => 1, 'name' => 'one']),
+        ]);
+
+        $result = $resultSet->toArray();
+
+        self::assertSame([['id' => 1, 'name' => 'one']], $result);
+    }
+
+    public function testGetFieldCountReturnsZeroForEmptyIterator(): void
+    {
+        $resultSet = $this->createResultSetMock();
+        $resultSet->initialize(new ArrayIterator([]));
+
+        self::assertSame(0, $resultSet->getFieldCount());
+    }
+
+    public function testInitializeWithBufferedResultInterface(): void
+    {
+        $result = $this->createMock(ResultInterface::class);
+        $result->method('isBuffered')->willReturn(true);
+        $result->method('getFieldCount')->willReturn(2);
+
+        $resultSet = $this->createResultSetMock();
+        $resultSet->initialize($result);
+
+        self::assertTrue($resultSet->isBuffered());
+    }
+
+    public function testCountReturnsNullForUncountableDataSource(): void
+    {
+        $resultSet = $this->createResultSetMock();
+        $iterator  = new NoRewindIterator(new ArrayIterator([['id' => 1]]));
+        $resultSet->initialize($iterator);
+
+        self::assertNull($resultSet->count());
+    }
+
+    public function testValidReturnsFalseAfterLastElement(): void
+    {
+        $resultSet = $this->createResultSetMock();
+        $resultSet->initialize(new ArrayIterator([
+            ['id' => 1],
+        ]));
+
+        self::assertTrue($resultSet->valid());
+        $resultSet->next();
+        self::assertFalse($resultSet->valid());
+    }
+
     /**
      * Test multiple iterations with buffer
      *
@@ -377,5 +458,136 @@ final class AbstractResultSetTest extends TestCase
         $resultSet->next();
         $data = $resultSet->current();
         self::assertEquals(3, $data['id']);
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function testInitializeResetsBufferWhenAlreadyBuffered(): void
+    {
+        $resultSet = $this->createResultSetMock();
+        $resultSet->initialize(new ArrayIterator([['id' => 1]]));
+        $resultSet->buffer();
+
+        $resultSet->initialize(new ArrayIterator([['id' => 2]]));
+
+        self::assertSame(2, $resultSet->current()['id']);
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function testInitializeWithResultInterfaceRewindsWhenBuffered(): void
+    {
+        $resultSet = $this->createResultSetMock();
+        $resultSet->initialize(new ArrayIterator([['id' => 1]]));
+        $resultSet->buffer();
+
+        $result = $this->createMock(ResultInterface::class);
+        $result->method('getFieldCount')->willReturn(2);
+        $result->method('isBuffered')->willReturn(false);
+        $result->expects(self::once())->method('rewind');
+
+        $resultSet->initialize($result);
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function testInitializeWithIteratorAggregate(): void
+    {
+        $resultSet = $this->createResultSetMock();
+        $aggregate = new class implements IteratorAggregate {
+            public function getIterator(): ArrayIterator
+            {
+                return new ArrayIterator([['id' => 1], ['id' => 2]]);
+            }
+        };
+
+        $resultSet->initialize($aggregate);
+
+        self::assertSame(1, $resultSet->current()['id']);
+    }
+
+    public function testGetFieldCountReturnsCachedValue(): void
+    {
+        $resultSet = $this->createResultSetMock();
+        $resultSet->initialize([['a' => 1, 'b' => 2]]);
+
+        $first  = $resultSet->getFieldCount();
+        $second = $resultSet->getFieldCount();
+
+        self::assertSame(2, $first);
+        self::assertSame($first, $second);
+    }
+
+    public function testGetFieldCountReturnsZeroWithNoDataSource(): void
+    {
+        $resultSet = $this->createResultSetMock();
+
+        self::assertSame(0, $resultSet->getFieldCount());
+    }
+
+    public function testGetFieldCountWithCountableRow(): void
+    {
+        $resultSet = $this->createResultSetMock();
+        $resultSet->initialize(new ArrayIterator([new ArrayObject(['a' => 1, 'b' => 2, 'c' => 3])]));
+
+        self::assertSame(3, $resultSet->getFieldCount());
+    }
+
+    public function testValidWithNonIteratorDataSource(): void
+    {
+        $resultSet = $this->createResultSetMock();
+        $aggregate = new class implements IteratorAggregate {
+            public function getIterator(): ArrayIterator
+            {
+                return new ArrayIterator([['id' => 1]]);
+            }
+        };
+
+        $resultSet->initialize($aggregate);
+        $resultSet->rewind();
+
+        self::assertTrue($resultSet->valid());
+    }
+
+    public function testRewindWithNonIteratorDataSource(): void
+    {
+        $resultSet = $this->createResultSetMock();
+        $aggregate = new class implements IteratorAggregate {
+            public function getIterator(): ArrayIterator
+            {
+                return new ArrayIterator([['id' => 1], ['id' => 2]]);
+            }
+        };
+
+        $resultSet->initialize($aggregate);
+        $resultSet->next();
+        $resultSet->rewind();
+
+        self::assertSame(0, $resultSet->key());
+    }
+
+    public function testCountReturnsCachedResult(): void
+    {
+        $resultSet = $this->createResultSetMock();
+        $resultSet->initialize([['id' => 1], ['id' => 2]]);
+
+        $first  = $resultSet->count();
+        $second = $resultSet->count();
+
+        self::assertSame(2, $first);
+        self::assertSame($first, $second);
+    }
+
+    public function testToArrayThrowsOnNonCastableRows(): void
+    {
+        $resultSet = $this->createResultSetMock();
+        $resultSet->initialize(new ArrayIterator([new stdClass()]));
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('cannot be cast to an array');
+        $resultSet->toArray();
     }
 }

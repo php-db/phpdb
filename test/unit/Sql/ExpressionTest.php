@@ -197,7 +197,6 @@ final class ExpressionTest extends TestCase
 
     public function testConstructorWithMultipleArguments(): void
     {
-        // Test deprecated multi-argument constructor
         $expression = new Expression('? + ? - ?', 1, 2, 3);
 
         $expressionData = $expression->getExpressionData();
@@ -208,5 +207,36 @@ final class ExpressionTest extends TestCase
             Argument::value(2),
             Argument::value(3),
         ], $expressionData['values']);
+    }
+
+    public function testSetExpressionThrowsOnEmptyString(): void
+    {
+        $expression = new Expression();
+
+        $this->expectException(InvalidArgumentException::class);
+        $expression->setExpression('');
+    }
+
+    public function testSetParametersWrapsArrayInValuesArgument(): void
+    {
+        $expression = new Expression('? IN (?)', [Argument::identifier('id'), [1, 2, 3]]);
+
+        $data = $expression->getExpressionData();
+
+        self::assertCount(2, $data['values']);
+        self::assertInstanceOf(Argument\Values::class, $data['values'][1]);
+    }
+
+    public function testGetExpressionDataUsesRegexWhenPlaceholderCountMismatches(): void
+    {
+        $expression = new Expression('uf.user_id = :user_id OR uf.friend_id = :user_id', ['user_id' => 1]);
+
+        $expressionData = $expression->getExpressionData();
+
+        self::assertEquals(
+            'uf.user_id = :user_id OR uf.friend_id = :user_id',
+            $expressionData['spec']
+        );
+        self::assertCount(1, $expressionData['values']);
     }
 }

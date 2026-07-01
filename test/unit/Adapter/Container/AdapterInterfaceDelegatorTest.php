@@ -15,6 +15,8 @@ use PhpDb\Container\AdapterInterfaceDelegator;
 use PhpDb\Exception\RuntimeException;
 use PhpDb\ResultSet\ResultSetInterface;
 use PhpDbTest\Adapter\TestAsset\ConcreteAdapterAwareObject;
+use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerExceptionInterface;
@@ -22,6 +24,10 @@ use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use stdClass;
 
+#[Group('unit')]
+#[CoversMethod(AdapterInterfaceDelegator::class, '__construct')]
+#[CoversMethod(AdapterInterfaceDelegator::class, '__set_state')]
+#[CoversMethod(AdapterInterfaceDelegator::class, '__invoke')]
 final class AdapterInterfaceDelegatorTest extends TestCase
 {
     /**
@@ -258,5 +264,45 @@ final class AdapterInterfaceDelegatorTest extends TestCase
             $result->getAdapter()
         );
         $this->assertSame($options, $result->getOptions());
+    }
+
+    public function testSetStateWithDefaultAdapterName(): void
+    {
+        $delegator = AdapterInterfaceDelegator::__set_state([]);
+
+        self::assertInstanceOf(AdapterInterfaceDelegator::class, $delegator);
+    }
+
+    public function testSetStateWithCustomAdapterName(): void
+    {
+        $delegator = AdapterInterfaceDelegator::__set_state(['adapterName' => 'custom']);
+
+        self::assertInstanceOf(AdapterInterfaceDelegator::class, $delegator);
+    }
+
+    public function testInvokeReturnsInstanceWhenAdapterIsNotAdapterInterface(): void
+    {
+        $container = $this->createMock(ContainerInterface::class);
+        $container
+            ->expects(self::once())
+            ->method('has')
+            ->with(AdapterInterface::class)
+            ->willReturn(true);
+        $container
+            ->expects(self::once())
+            ->method('get')
+            ->with(AdapterInterface::class)
+            ->willReturn(new stdClass());
+
+        $callback = static fn(): ConcreteAdapterAwareObject => new ConcreteAdapterAwareObject();
+
+        $result = (new AdapterInterfaceDelegator())(
+            $container,
+            ConcreteAdapterAwareObject::class,
+            $callback
+        );
+
+        self::assertInstanceOf(ConcreteAdapterAwareObject::class, $result);
+        self::assertNull($result->getAdapter());
     }
 }
