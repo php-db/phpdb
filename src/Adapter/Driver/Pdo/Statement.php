@@ -157,8 +157,8 @@ class Statement implements StatementInterface, PdoDriverAwareInterface, Profiler
 
         /** START Standard ParameterContainer Merging Block */
         if ($parameters instanceof ParameterContainer) {
-                $this->parameterContainer = $parameters;
-                $parameters               = null;
+            $this->parameterContainer = $parameters;
+            $parameters               = null;
         }
 
         if (is_array($parameters)) {

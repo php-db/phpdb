@@ -5,12 +5,15 @@ declare(strict_types=1);
 namespace PhpDbTest\Sql\Predicate;
 
 use PhpDb\Sql\Argument\Identifier;
+use PhpDb\Sql\Argument\Select;
 use PhpDb\Sql\Argument\Value;
 use PhpDb\Sql\ArgumentInterface;
 use PhpDb\Sql\ArgumentType;
 use PhpDb\Sql\Exception\InvalidArgumentException;
+use PhpDb\Sql\Expression;
 use PhpDb\Sql\Predicate\Operator;
 use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 
 #[CoversMethod(Operator::class, '__construct')]
@@ -21,6 +24,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(Operator::class, 'getRight')]
 #[CoversMethod(Operator::class, 'setRight')]
 #[CoversMethod(Operator::class, 'getExpressionData')]
+#[Group('unit')]
 final class OperatorTest extends TestCase
 {
     public function testEmptyConstructorYieldsNullLeftAndRightValues(): void
@@ -186,5 +190,29 @@ final class OperatorTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Right expression must be specified');
         $operator->getExpressionData();
+    }
+
+    public function testSetLeftWithExpressionInterfaceWrapsInSelect(): void
+    {
+        $operator   = new Operator();
+        $expression = new Expression('NOW()');
+
+        $operator->setLeft($expression);
+
+        $left = $operator->getLeft();
+        self::assertInstanceOf(Select::class, $left);
+        self::assertSame(ArgumentType::Select, $left->getType());
+    }
+
+    public function testSetRightWithExpressionInterfaceWrapsInSelect(): void
+    {
+        $operator   = new Operator();
+        $expression = new Expression('NOW()');
+
+        $operator->setRight($expression);
+
+        $right = $operator->getRight();
+        self::assertInstanceOf(Select::class, $right);
+        self::assertSame(ArgumentType::Select, $right->getType());
     }
 }

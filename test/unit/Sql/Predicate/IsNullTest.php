@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace PhpDbTest\Sql\Predicate;
 
+use PhpDb\Sql\Argument\Identifier;
 use PhpDb\Sql\ArgumentInterface;
 use PhpDb\Sql\ArgumentType;
 use PhpDb\Sql\Exception\InvalidArgumentException;
 use PhpDb\Sql\Predicate\IsNotNull;
 use PhpDb\Sql\Predicate\IsNull;
 use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 
 #[CoversMethod(IsNull::class, '__construct')]
@@ -18,6 +20,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(IsNull::class, 'setSpecification')]
 #[CoversMethod(IsNull::class, 'getSpecification')]
 #[CoversMethod(IsNull::class, 'getExpressionData')]
+#[Group('unit')]
 final class IsNullTest extends TestCase
 {
     public function testEmptyConstructorYieldsNullIdentifier(): void
@@ -103,5 +106,26 @@ final class IsNullTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Identifier must be specified');
         $isNull->getExpressionData();
+    }
+
+    public function testSetIdentifierWithStringConvertsToIdentifier(): void
+    {
+        $isNull = new IsNull();
+
+        $isNull->setIdentifier('foo');
+
+        $identifier = $isNull->getIdentifier();
+        self::assertInstanceOf(Identifier::class, $identifier);
+        self::assertSame('foo', $identifier->getValue());
+    }
+
+    public function testSetIdentifierWithArgumentInterfacePassesThrough(): void
+    {
+        $isNull     = new IsNull();
+        $identifier = new Identifier('bar');
+
+        $isNull->setIdentifier($identifier);
+
+        self::assertSame($identifier, $isNull->getIdentifier());
     }
 }

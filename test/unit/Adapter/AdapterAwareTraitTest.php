@@ -6,24 +6,21 @@ namespace PhpDbTest\Adapter;
 
 use PhpDb\Adapter\Adapter;
 use PhpDb\Adapter\AdapterAwareTrait;
-use PhpDb\Adapter\AdapterInterface;
 use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\Platform\PlatformInterface;
+use PhpDbTest\Adapter\TestAsset\ConcreteAdapterAwareObject;
+use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
 
+#[CoversMethod(AdapterAwareTrait::class, 'setDbAdapter')]
+#[Group('unit')]
 class AdapterAwareTraitTest extends TestCase
 {
     public function testSetDbAdapter(): void
     {
-        $object = new class {
-            use AdapterAwareTrait;
-
-            public function getAdapter(): ?AdapterInterface
-            {
-                return $this->adapter ?? null;
-            }
-        };
+        $object = new ConcreteAdapterAwareObject();
 
         self::assertNull($object->getAdapter());
 
@@ -39,9 +36,7 @@ class AdapterAwareTraitTest extends TestCase
 
     public function testSetDbAdapterSetsProperty(): void
     {
-        $object = new class {
-            use AdapterAwareTrait;
-        };
+        $object = new ConcreteAdapterAwareObject();
 
         $driver   = $this->createMock(DriverInterface::class);
         $platform = $this->createMock(PlatformInterface::class);
