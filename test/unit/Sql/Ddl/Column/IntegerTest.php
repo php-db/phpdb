@@ -9,10 +9,13 @@ use PhpDb\Sql\Ddl\Column\Column;
 use PhpDb\Sql\Ddl\Column\Integer;
 use PhpDb\Sql\Ddl\Constraint\PrimaryKey;
 use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 
 #[CoversMethod(Integer::class, '__construct')]
+#[CoversMethod(Integer::class, 'getExpressionData')]
 #[CoversMethod(Column::class, 'getExpressionData')]
+#[Group('unit')]
 final class IntegerTest extends TestCase
 {
     public function testObjectConstruction(): void
@@ -43,5 +46,24 @@ final class IntegerTest extends TestCase
             Argument::identifier('foo'),
             Argument::literal('INTEGER'),
         ], $expressionData['values']);
+    }
+
+    public function testGetExpressionDataIncludesLengthWhenOptionSet(): void
+    {
+        $column = new Integer('id');
+        $column->setOption('length', '11');
+
+        $expressionData = $column->getExpressionData();
+
+        self::assertStringContainsString('(11)', $expressionData['spec']);
+    }
+
+    public function testGetExpressionDataExcludesLengthWhenNotSet(): void
+    {
+        $column = new Integer('id');
+
+        $expressionData = $column->getExpressionData();
+
+        self::assertStringNotContainsString('(', $expressionData['spec']);
     }
 }

@@ -5,9 +5,13 @@ declare(strict_types=1);
 namespace PhpDbTest\Adapter\Platform;
 
 use Override;
+use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\Exception\VunerablePlatformQuoteException;
+use PhpDb\Adapter\Platform\AbstractPlatform;
 use PhpDb\Adapter\Platform\Sql92;
+use PhpDbTest\TestAsset\TestSql92Platform;
 use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 
 #[CoversMethod(Sql92::class, 'getName')]
@@ -20,6 +24,16 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(Sql92::class, 'quoteValueList')]
 #[CoversMethod(Sql92::class, 'getIdentifierSeparator')]
 #[CoversMethod(Sql92::class, 'quoteIdentifierInFragment')]
+#[CoversMethod(AbstractPlatform::class, 'quoteIdentifier')]
+#[CoversMethod(AbstractPlatform::class, 'quoteIdentifierInFragment')]
+#[CoversMethod(AbstractPlatform::class, 'quoteValue')]
+#[CoversMethod(AbstractPlatform::class, 'quoteIdentifierChain')]
+#[CoversMethod(AbstractPlatform::class, 'getQuoteIdentifierSymbol')]
+#[CoversMethod(AbstractPlatform::class, 'getQuoteValueSymbol')]
+#[CoversMethod(AbstractPlatform::class, 'quoteTrustedValue')]
+#[CoversMethod(AbstractPlatform::class, 'quoteValueList')]
+#[CoversMethod(AbstractPlatform::class, 'getIdentifierSeparator')]
+#[Group('unit')]
 final class Sql92Test extends TestCase
 {
     protected Sql92 $platform;
@@ -67,7 +81,7 @@ final class Sql92Test extends TestCase
         $this->platform->quoteValue('value');
     }
 
-    public function testQuoteValue(): void
+    public function testQuoteValueThrowsWithoutDriver(): void
     {
         $this->expectException(VunerablePlatformQuoteException::class);
         self::assertEquals("'value'", @$this->platform->quoteValue('value'));
@@ -82,7 +96,7 @@ final class Sql92Test extends TestCase
         );
     }
 
-    public function testQuoteTrustedValue(): void
+    public function testQuoteTrustedValueEscapesSpecialCharacters(): void
     {
         self::assertEquals("'value'", $this->platform->quoteTrustedValue('value'));
         self::assertEquals("'Foo O\\'Bar'", $this->platform->quoteTrustedValue("Foo O'Bar"));
@@ -98,7 +112,7 @@ final class Sql92Test extends TestCase
         );
     }
 
-    public function testQuoteValueList(): void
+    public function testQuoteValueListThrowsWithoutDriver(): void
     {
         $this->expectException(VunerablePlatformQuoteException::class);
         self::assertEquals("'Foo O\\'Bar'", $this->platform->quoteValueList("Foo O'Bar"));
@@ -137,5 +151,30 @@ final class Sql92Test extends TestCase
                 ['(', ')', '=', 'and', 'bAz']
             )
         );
+    }
+
+    public function testQuoteIdentifierReturnsUnquotedWhenQuotingDisabled(): void
+    {
+        $platform = new TestSql92Platform(quoteIdentifiers: false);
+
+        self::assertSame('test', $platform->quoteIdentifier('test'));
+    }
+
+    public function testQuoteIdentifierInFragmentReturnsUnquotedWhenQuotingDisabled(): void
+    {
+        $platform = new TestSql92Platform(quoteIdentifiers: false);
+
+        self::assertSame('foo.bar', $platform->quoteIdentifierInFragment('foo.bar'));
+    }
+
+    public function testQuoteValueEscapesSpecialCharacters(): void
+    {
+        $platform = new TestSql92Platform(driver: $this->createStub(DriverInterface::class));
+
+        $quoted = $platform->quoteValue("test'value");
+
+        self::assertStringContainsString('test', $quoted);
+        self::assertStringStartsWith("'", $quoted);
+        self::assertStringEndsWith("'", $quoted);
     }
 }

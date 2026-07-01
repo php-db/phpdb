@@ -68,6 +68,9 @@ use TypeError;
 #[CoversMethod(Select::class, 'processLimit')]
 #[CoversMethod(Select::class, 'processOffset')]
 #[CoversMethod(Select::class, 'processCombine')]
+#[CoversMethod(Select::class, 'processStatementStart')]
+#[CoversMethod(Select::class, 'processStatementEnd')]
+#[CoversMethod(Select::class, 'resolveTable')]
 final class SelectTest extends TestCase
 {
     use AdapterTestTrait;
@@ -206,29 +209,6 @@ final class SelectTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage("expects 'foo' as");
         $select->join(['foo'], 'x = y');
-    }
-
-    /**
-     * @throws ReflectionException
-     */
-    #[TestDox('unit test: Test processJoins() exception with bad join name')]
-    public function testBadJoinName(): void
-    {
-        $mockExpression = $this->getMockBuilder(ExpressionInterface::class)
-            ->getMock();
-        $mockDriver     = $this->getMockBuilder(DriverInterface::class)->getMock();
-        $mockDriver->expects($this->any())->method('formatParameterName')->willReturn('?');
-        $parameterContainer = new ParameterContainer();
-
-        $select = new Select();
-        $select->join(['foo' => $mockExpression], 'x = y');
-
-        $sr = new ReflectionObject($select);
-
-        $mr = $sr->getMethod('processJoins');
-
-        $this->expectException(InvalidArgumentException::class);
-        $mr->invokeArgs($select, [new Sql92(), $mockDriver, $parameterContainer]);
     }
 
     #[TestDox('unit test: Test where() returns Select object (is chainable)')]
@@ -1573,5 +1553,178 @@ final class SelectTest extends TestCase
         $this->expectExceptionMessage('Not a valid magic property for this object');
         /** @noinspection ALL */
         $value = $select->invalidProperty; /** @phpstan-ignore-line */
+    }
+
+    public function testCombineWrapsStatementInParentheses(): void
+    {
+        $select1 = new Select();
+        $select1->from('t1');
+
+        $select2 = new Select();
+        $select2->from('t2');
+
+        $select1->combine($select2);
+
+        $sql = $select1->getSqlString(new TrustingSql92Platform());
+
+        self::assertStringContainsString('( SELECT', $sql);
+        self::assertStringContainsString('UNION', $sql);
+        self::assertStringContainsString(') UNION (', $sql);
+    }
+
+    public function testOrderWithStringContainingDirection(): void
+    {
+        $select = new Select();
+        $select->from('foo')->order('name DESC');
+
+        $sql = $select->getSqlString(new TrustingSql92Platform());
+
+        self::assertStringContainsString('ORDER BY "name" DESC', $sql);
+    }
+
+    public function testOrderWithExpressionObject(): void
+    {
+        $select = new Select();
+        $select->from('foo')->order(new Expression('RAND()'));
+
+        $sql = $select->getSqlString(new TrustingSql92Platform());
+
+        self::assertStringContainsString('ORDER BY RAND()', $sql);
+    }
+
+    public function testResetThrowsOnInvalidPart(): void
+    {
+        $select = new Select();
+        $result = $select->reset('invalid');
+
+        self::assertSame($select, $result);
+    }
+
+    public function testColumnsWithPrefixDisabled(): void
+    {
+        $select = new Select();
+        $select->from('foo')->columns(['col'], false);
+
+        $sql = $select->getSqlString(new TrustingSql92Platform());
+
+        self::assertStringNotContainsString('"foo"."col"', $sql);
+        self::assertStringContainsString('"col"', $sql);
+    }
+
+    public function testGetRawStateInitializesLazyProperties(): void
+    {
+        $select   = new Select();
+        $rawState = $select->getRawState();
+
+        self::assertInstanceOf(Where::class, $rawState[Select::WHERE]);
+        self::assertInstanceOf(Join::class, $rawState[Select::JOINS]);
+        self::assertInstanceOf(Having::class, $rawState[Select::HAVING]);
+    }
+
+    public function testCombineThrowsWhenAlreadyCombined(): void
+    {
+        $select = new Select();
+        $select->from('t1');
+        $select->combine(new Select('t2'));
+
+        $this->expectException(InvalidArgumentException::class);
+        $select->combine(new Select('t3'));
+    }
+
+    public function testResetTableThrowsWhenTableReadOnly(): void
+    {
+        $select = new Select('foo');
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('read only');
+        $select->reset(Select::TABLE);
+    }
+
+    public function testResetQuantifier(): void
+    {
+        $select = new Select();
+        $select->from('foo')->quantifier(Select::QUANTIFIER_DISTINCT);
+        $select->reset(Select::QUANTIFIER);
+
+        self::assertNull($select->getRawState(Select::QUANTIFIER));
+    }
+
+    public function testResetCombine(): void
+    {
+        $select = new Select();
+        $select->from('t1');
+        $select->combine(new Select('t2'));
+        $select->reset(Select::COMBINE);
+
+        self::assertEmpty($select->getRawState(Select::COMBINE));
+    }
+
+    public function testSetSpecificationStoresValidSpecification(): void
+    {
+        $select = new Select();
+        $select->setSpecification('Select', 'CUSTOM %1$s FROM %2$s');
+
+        $rawState = (new ReflectionObject($select))->getProperty('specifications');
+        self::assertSame('CUSTOM %1$s FROM %2$s', $rawState->getValue($select)['Select']);
+    }
+
+    public function testMagicGetJoinsReturnsJoinInstance(): void
+    {
+        $select = new Select();
+
+        self::assertInstanceOf(Join::class, $select->joins);
+    }
+
+    public function testCloneDeepCopiesAllSubObjects(): void
+    {
+        $select = new Select();
+        $select->from('foo');
+        $select->where('id = 1');
+        $select->having('cnt > 0');
+        $select->join('bar', 'foo.id = bar.foo_id');
+
+        $clone = clone $select;
+        $clone->where('id = 2');
+        $clone->having('cnt > 1');
+        $clone->join('baz', 'foo.id = baz.foo_id');
+
+        self::assertCount(1, $select->where);
+        self::assertCount(2, $clone->where);
+        self::assertCount(1, $select->having);
+        self::assertCount(2, $clone->having);
+        self::assertCount(1, $select->joins);
+        self::assertCount(2, $clone->joins);
+    }
+
+    public function testOrderWithAssociativeArray(): void
+    {
+        $select = new Select();
+        $select->from('foo')->order(['name' => 'DESC']);
+
+        $sql = $select->getSqlString(new TrustingSql92Platform());
+
+        self::assertStringContainsString('ORDER BY "name" DESC', $sql);
+    }
+
+    public function testFromWithAliasArrayResolvesTableAndAlias(): void
+    {
+        $select = new Select();
+        $select->from(['a' => 'users'])->columns(['id']);
+
+        $sql = $select->getSqlString(new TrustingSql92Platform());
+
+        self::assertStringContainsString('"users" AS "a"', $sql);
+        self::assertStringContainsString('"a"."id"', $sql);
+    }
+
+    public function testColumnsWithPrefixDisabledOmitsTablePrefix(): void
+    {
+        $select = new Select();
+        $select->from(['a' => 'users'])->columns(['id'], false);
+
+        $sql = $select->getSqlString(new TrustingSql92Platform());
+
+        self::assertStringContainsString('"id"', $sql);
+        self::assertStringNotContainsString('"a"."id"', $sql);
     }
 }

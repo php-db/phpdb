@@ -6,9 +6,11 @@ namespace PhpDbTest\Adapter\Profiler;
 
 use Override;
 use PhpDb\Adapter\Exception\RuntimeException;
+use PhpDb\Adapter\ParameterContainer;
 use PhpDb\Adapter\Profiler\Profiler;
 use PhpDb\Adapter\StatementContainer;
 use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 use TypeError;
 
@@ -16,6 +18,7 @@ use TypeError;
 #[CoversMethod(Profiler::class, 'profilerFinish')]
 #[CoversMethod(Profiler::class, 'getLastProfile')]
 #[CoversMethod(Profiler::class, 'getProfiles')]
+#[Group('unit')]
 final class ProfilerTest extends TestCase
 {
     protected Profiler $profiler;
@@ -30,7 +33,7 @@ final class ProfilerTest extends TestCase
         $this->profiler = new Profiler();
     }
 
-    public function testProfilerStart(): void
+    public function testFluentProfilerStartWithStringAndContainer(): void
     {
         $ret = $this->profiler->profilerStart('SELECT * FROM FOO');
         self::assertSame($this->profiler, $ret);
@@ -41,7 +44,7 @@ final class ProfilerTest extends TestCase
         $this->profiler->profilerStart(5);
     }
 
-    public function testProfilerFinish(): void
+    public function testProfilerFinishThrowsWithoutStart(): void
     {
         $this->profiler->profilerStart('SELECT * FROM FOO');
         $ret = $this->profiler->profilerFinish();
@@ -53,7 +56,7 @@ final class ProfilerTest extends TestCase
         $profiler->profilerFinish();
     }
 
-    public function testGetLastProfile(): void
+    public function testGetLastProfileReturnsSqlAndTimings(): void
     {
         $this->profiler->profilerStart('SELECT * FROM FOO');
         $this->profiler->profilerFinish();
@@ -65,7 +68,7 @@ final class ProfilerTest extends TestCase
         self::assertIsFloat($profile['elapse']);
     }
 
-    public function testGetProfiles(): void
+    public function testGetProfilesReturnsAllRecordedProfiles(): void
     {
         $this->profiler->profilerStart('SELECT * FROM FOO1');
         $this->profiler->profilerFinish();
@@ -73,5 +76,20 @@ final class ProfilerTest extends TestCase
         $this->profiler->profilerFinish();
 
         self::assertCount(2, $this->profiler->getProfiles());
+    }
+
+    public function testProfilerStartClonesParameterContainerFromStatementContainer(): void
+    {
+        $parameterContainer = new ParameterContainer(['key' => 'value']);
+        $statementContainer = new StatementContainer('SELECT ?', $parameterContainer);
+
+        $this->profiler->profilerStart($statementContainer);
+        $this->profiler->profilerFinish();
+
+        $profile = $this->profiler->getLastProfile();
+
+        self::assertSame('SELECT ?', $profile['sql']);
+        self::assertInstanceOf(ParameterContainer::class, $profile['parameters']);
+        self::assertNotSame($parameterContainer, $profile['parameters']);
     }
 }

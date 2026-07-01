@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PhpDbTest\Sql;
 
+use PhpDb\Sql\Exception\InvalidArgumentException;
 use PhpDb\Sql\Join;
 use PhpDb\Sql\Select;
 use PhpDbTest\DeprecatedAssertionsTrait;
@@ -17,7 +18,6 @@ use TypeError;
 
 #[IgnoreDeprecations]
 #[RequiresPhp('<= 8.6')]
-#[CoversMethod(Join::class, '__construct')]
 #[CoversMethod(Join::class, 'rewind')]
 #[CoversMethod(Join::class, 'current')]
 #[CoversMethod(Join::class, 'key')]
@@ -153,5 +153,14 @@ class JoinTest extends TestCase
         $join->reset();
 
         self::assertEquals(0, $join->count());
+    }
+
+    public function testJoinThrowsOnInvalidMultiElementArray(): void
+    {
+        $join = new Join();
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage("expects 'b' as a single element associative array");
+        $join->join(['a' => 'b', 'c' => 'd'], 'on');
     }
 }

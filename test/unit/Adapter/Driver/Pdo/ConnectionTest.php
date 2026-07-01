@@ -6,15 +6,33 @@ namespace PhpDbTest\Adapter\Driver\Pdo;
 
 use Exception;
 use Override;
+use PDO;
 use PhpDb\Adapter\Driver\Pdo\AbstractPdoConnection;
-use PhpDb\Adapter\Exception\InvalidConnectionParametersException;
+use PhpDb\Adapter\Driver\Pdo\Statement;
+use PhpDb\Adapter\Driver\PdoDriverInterface;
+use PhpDb\Adapter\Exception\InvalidQueryException;
+use PhpDb\Adapter\Exception\RuntimeException;
+use PhpDb\Adapter\Profiler\ProfilerInterface;
+use PhpDbTest\Adapter\Driver\Pdo\TestAsset\SqliteMemoryPdo;
 use PhpDbTest\Adapter\Driver\Pdo\TestAsset\TestConnection;
+use PhpDbTest\Adapter\Driver\Pdo\TestAsset\TestPdo;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
+use ReflectionProperty;
 
 #[CoversMethod(AbstractPdoConnection::class, 'getResource')]
 #[CoversMethod(AbstractPdoConnection::class, 'getDsn')]
+#[CoversMethod(AbstractPdoConnection::class, '__construct')]
+#[CoversMethod(AbstractPdoConnection::class, 'setDriver')]
+#[CoversMethod(AbstractPdoConnection::class, 'setConnectionParameters')]
+#[CoversMethod(AbstractPdoConnection::class, 'isConnected')]
+#[CoversMethod(AbstractPdoConnection::class, 'execute')]
+#[CoversMethod(AbstractPdoConnection::class, 'beginTransaction')]
+#[CoversMethod(AbstractPdoConnection::class, 'commit')]
+#[CoversMethod(AbstractPdoConnection::class, 'setResource')]
+#[CoversMethod(AbstractPdoConnection::class, 'prepare')]
+#[Group('unit')]
 final class ConnectionTest extends TestCase
 {
     protected TestConnection $connection;
@@ -47,7 +65,7 @@ final class ConnectionTest extends TestCase
     /**
      * Test getConnectedDsn returns a DSN string if it has been set
      */
-    public function testGetDsn(): void
+    public function testGetDsnReturnsDsnAfterConnect(): void
     {
         $dsn = "sqlite::memory:";
         $this->connection->setConnectionParameters(['dsn' => $dsn]);
@@ -60,71 +78,131 @@ final class ConnectionTest extends TestCase
         self::assertEquals($dsn, $responseString);
     }
 
-    #[Group('2622')]
-    public function testArrayOfConnectionParametersCreatesCorrectDsn(): void
+    public function testConstructorWithPdoResourceSetsConnected(): void
     {
-        $this->markTestSkipped('This test will pass with current sqlite::memory: prefix, but shouldn\'t.');
-        /** @phpstan-ignore deadCode.unreachable */
-        $this->connection->setConnectionParameters([
-            'driver'      => 'pdo_mysql',
-            'charset'     => 'utf8',
-            'dbname'      => 'foo',
-            'port'        => '3306',
-            'unix_socket' => '/var/run/mysqld/mysqld.sock',
-        ]);
-        try {
-            $this->connection->connect();
-        } catch (Exception) {
-        }
-        $responseString = $this->connection->getDsn();
+        $pdo        = new SqliteMemoryPdo();
+        $connection = new TestConnection($pdo);
 
-        self::assertStringStartsWith('sqlite::memory:', $responseString);
-        self::assertStringContainsString('charset=utf8', $responseString);
-        self::assertStringContainsString('dbname=foo', $responseString);
-        self::assertStringContainsString('port=3306', $responseString);
-        self::assertStringContainsString('unix_socket=/var/run/mysqld/mysqld.sock', $responseString);
+        self::assertTrue($connection->isConnected());
     }
 
-    public function testHostnameAndUnixSocketThrowsInvalidConnectionParametersException(): void
+    public function testConstructorWithArraySetsConnectionParameters(): void
     {
-        $this->markTestSkipped('Test requires concrete MySQL driver implementation with parameter validation');
-        /** @phpstan-ignore deadCode.unreachable */
-        $this->expectException(InvalidConnectionParametersException::class);
-        $this->expectExceptionMessage(
-            'Ambiguous connection parameters, both hostname and unix_socket parameters were set'
-        );
+        $params     = ['dsn' => 'sqlite::memory:', 'username' => 'user'];
+        $connection = new TestConnection($params);
 
-        $this->connection->setConnectionParameters([
-            'driver'      => 'pdo_mysql',
-            'host'        => '127.0.0.1',
-            'dbname'      => 'foo',
-            'port'        => '3306',
-            'unix_socket' => '/var/run/mysqld/mysqld.sock',
-        ]);
-        $this->connection->connect();
+        self::assertSame($params, $connection->getConnectionParameters());
     }
 
-    public function testDblibArrayOfConnectionParametersCreatesCorrectDsn(): void
+    public function testFluentSetDriver(): void
     {
-        $this->markTestSkipped('Test requires concrete Dblib driver implementation with DSN building logic');
-        /** @phpstan-ignore deadCode.unreachable */
-        $this->connection->setConnectionParameters([
-            'driver'  => 'pdo_dblib',
-            'charset' => 'UTF-8',
-            'dbname'  => 'foo',
-            'port'    => '1433',
-            'version' => '7.3',
-        ]);
-        try {
-            $this->connection->connect();
-        } catch (Exception) {
-        }
-        $responseString = $this->connection->getDsn();
+        $driver = $this->createMock(PdoDriverInterface::class);
 
-        $this->assertStringStartsWith('dblib:', $responseString);
-        $this->assertStringContainsString('charset=UTF-8', $responseString);
-        $this->assertStringContainsString('dbname=foo', $responseString);
-        $this->assertStringContainsString('port=1433', $responseString);
-        $this->assertStringContainsString('version=7.3', $responseString);
+        $result = $this->connection->setDriver($driver);
+
+        self::assertSame($this->connection, $result);
+    }
+
+    public function testSetConnectionParametersStoresParams(): void
+    {
+        $params = ['dsn' => 'sqlite::memory:', 'username' => 'test'];
+
+        $this->connection->setConnectionParameters($params);
+
+        self::assertSame($params, $this->connection->getConnectionParameters());
+    }
+
+    public function testExecuteCallsProfilerStartAndFinish(): void
+    {
+        $profiler = $this->createMock(ProfilerInterface::class);
+        $profiler->expects($this->once())->method('profilerStart')->willReturnSelf();
+        $profiler->expects($this->once())->method('profilerFinish')->willReturnSelf();
+
+        $pdo        = new SqliteMemoryPdo();
+        $connection = new TestConnection($pdo);
+        $driver     = new TestPdo($connection);
+        $connection->setProfiler($profiler);
+
+        $connection->execute('SELECT 1');
+    }
+
+    public function testExecuteCallsProfilerFinishBeforeThrowingOnError(): void
+    {
+        $profiler = $this->createMock(ProfilerInterface::class);
+        $profiler->expects($this->once())->method('profilerStart')->willReturnSelf();
+        $profiler->expects($this->once())->method('profilerFinish')->willReturnSelf();
+
+        $pdo = new SqliteMemoryPdo();
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
+        $connection = new TestConnection($pdo);
+        $driver     = new TestPdo($connection);
+        $connection->setProfiler($profiler);
+
+        $this->expectException(InvalidQueryException::class);
+        @$connection->execute('INVALID SQL STATEMENT HERE %%%');
+    }
+
+    public function testGetDsnThrowsWhenDsnIsNull(): void
+    {
+        $connection = new TestConnection(['dsn' => 'sqlite::memory:']);
+        $connection->connect();
+
+        $reflection = new ReflectionProperty($connection, 'dsn');
+        $reflection->setValue($connection, null);
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('The DSN has not been set');
+
+        $connection->getDsn();
+    }
+
+    public function testBeginTransactionAutoConnectsWhenNotConnected(): void
+    {
+        $connection = new TestConnection(['dsn' => 'sqlite::memory:']);
+
+        self::assertFalse($connection->isConnected());
+
+        $connection->beginTransaction();
+
+        self::assertTrue($connection->isConnected());
+    }
+
+    public function testCommitAutoConnectsWhenNotConnected(): void
+    {
+        $connection = new TestConnection(new SqliteMemoryPdo());
+        $connection->beginTransaction();
+        $connection->beginTransaction();
+        $connection->disconnect();
+
+        self::assertFalse($connection->isConnected());
+
+        $connection->commit();
+
+        self::assertTrue($connection->isConnected());
+    }
+
+    public function testExecuteAutoConnectsWhenNotConnected(): void
+    {
+        $connection = new TestConnection(['dsn' => 'sqlite::memory:']);
+        $driver     = new TestPdo($connection);
+
+        self::assertFalse($connection->isConnected());
+
+        $connection->execute('SELECT 1');
+
+        self::assertTrue($connection->isConnected());
+    }
+
+    public function testPrepareAutoConnectsAndReturnsStatement(): void
+    {
+        $connection = new TestConnection(['dsn' => 'sqlite::memory:']);
+        $driver     = new TestPdo($connection);
+
+        self::assertFalse($connection->isConnected());
+
+        $statement = $connection->prepare('SELECT 1');
+
+        self::assertTrue($connection->isConnected());
+        self::assertInstanceOf(Statement::class, $statement);
     }
 }
