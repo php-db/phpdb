@@ -17,12 +17,6 @@ class TestFeatureDriver implements DriverInterface, DriverFeatureProviderInterfa
     use DriverFeatureProviderTrait;
 
     #[Override]
-    public function getDatabasePlatformName(string $nameFormat = self::NAME_FORMAT_CAMELCASE): string
-    {
-        return 'test';
-    }
-
-    #[Override]
     public function checkEnvironment(): bool
     {
         return true;

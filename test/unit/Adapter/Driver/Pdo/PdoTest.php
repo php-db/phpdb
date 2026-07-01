@@ -23,7 +23,6 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 
-#[CoversMethod(AbstractPdo::class, 'getDatabasePlatformName')]
 #[CoversMethod(AbstractPdo::class, 'getResultPrototype')]
 #[CoversMethod(AbstractPdo::class, '__construct')]
 #[CoversMethod(AbstractPdo::class, 'checkEnvironment')]
@@ -46,14 +45,6 @@ final class PdoTest extends TestCase
     protected function setUp(): void
     {
         $this->pdo = new TestPdo([]);
-    }
-
-    public function testGetDatabasePlatformNameReturnsCamelAndNaturalFormats(): void
-    {
-        // Test platform name for SqlServer
-        $this->pdo->getConnection()->setConnectionParameters(['pdodriver' => 'sqlsrv']);
-        self::assertEquals('SqlServer', $this->pdo->getDatabasePlatformName());
-        self::assertEquals('SQLServer', $this->pdo->getDatabasePlatformName(DriverInterface::NAME_FORMAT_NATURAL));
     }
 
     /** @psalm-return array<array-key, array{0: int|string, 1: null|string, 2: string}> */

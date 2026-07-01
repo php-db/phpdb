@@ -7,12 +7,6 @@ parameters:
 			path: src/Sql/AbstractSql.php
 
 		-
-			message: '#^Cannot call method getAttribute\(\) on resource\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: test/unit/Adapter/Driver/Pdo/TestAsset/TestPdo.php
-
-		-
 			message: '#^Parameter \#1 \$attribute \(string\) of method PhpDbTest\\Adapter\\Driver\\TestAsset\\PdoMock\:\:getAttribute\(\) should be compatible with parameter \$attribute \(int\) of method PDO\:\:getAttribute\(\)$#'
 			identifier: method.childParameterType
 			count: 1

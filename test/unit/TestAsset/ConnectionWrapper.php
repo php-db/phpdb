@@ -16,7 +16,7 @@ final class ConnectionWrapper extends AbstractPdoConnection
     public function __construct(
         PDO $connectionParameters = new PdoStubDriver()
     ) {
-        parent::__construct($connectionParameters);
+        $this->setResource($connectionParameters);
     }
 
     public function connect(): ConnectionInterface

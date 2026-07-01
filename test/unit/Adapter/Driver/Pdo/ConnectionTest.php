@@ -54,6 +54,15 @@ final class ConnectionTest extends TestCase
     }
 
     /**
+     * Test getResource method tries to connect to  the database, it should never return null
+     */
+    public function testResource(): void
+    {
+        $resource = $this->connection->getResource();
+        self::assertNotNull($resource);
+    }
+
+    /**
      * Test getConnectedDsn returns a DSN string if it has been set
      */
     public function testGetDsnReturnsDsnAfterConnect(): void
