@@ -9,8 +9,8 @@ use PhpDb\Sql\Argument\Select;
 use PhpDb\Sql\Argument\Value;
 use PhpDb\Sql\ArgumentInterface;
 use PhpDb\Sql\ArgumentType;
-use PhpDb\Sql\Exception\InvalidArgumentException;
 use PhpDb\Sql\Expression;
+use PhpDb\Sql\Predicate\Exception\InvalidArgumentException;
 use PhpDb\Sql\Predicate\Operator;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Group;
@@ -81,8 +81,8 @@ final class OperatorTest extends TestCase
         $operator = new Operator();
         $operator->setRight('value');
 
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Left expression must be specified');
+        self::expectException(InvalidArgumentException::class);
+        self::expectExceptionMessage(InvalidArgumentException::MISSING_LEFT_EXPRESSION);
         $operator->getExpressionData();
     }
 
@@ -91,8 +91,8 @@ final class OperatorTest extends TestCase
         $operator = new Operator();
         $operator->setLeft('left');
 
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Right expression must be specified');
+        self::expectException(InvalidArgumentException::class);
+        self::expectExceptionMessage(InvalidArgumentException::MISSING_RIGHT_EXPRESSION);
         $operator->getExpressionData();
     }
 

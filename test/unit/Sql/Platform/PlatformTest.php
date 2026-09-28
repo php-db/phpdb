@@ -73,7 +73,7 @@ class PlatformTest extends TestCase
         $subject = $this->createMock(PreparableSqlInterface::class);
         $platform->setSubject($subject);
 
-        $this->expectException(RuntimeException::class);
+        self::expectException(RuntimeException::class);
         $platform->getSqlString($adapterPlatform);
     }
 
@@ -142,7 +142,7 @@ class PlatformTest extends TestCase
         $adapter   = $this->resolveAdapter('sql92');
         $statement = new StatementContainer();
 
-        $this->expectException(RuntimeException::class);
+        self::expectException(RuntimeException::class);
         $platform->prepareStatement($adapter, $statement);
     }
 

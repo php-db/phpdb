@@ -115,7 +115,7 @@ class Update extends AbstractPreparableSql
         $priority = is_numeric($flag) ? $flag : 0;
         foreach ($values as $k => $v) {
             if (! is_string($k)) {
-                throw new Exception\InvalidArgumentException('set() expects a string for the value key');
+                throw Exception\InvalidArgumentException::forNonStringValueKey();
             }
 
             $set->insert($k, $v, $priority);

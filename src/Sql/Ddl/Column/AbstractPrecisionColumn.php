@@ -7,8 +7,6 @@ namespace PhpDb\Sql\Ddl\Column;
 use Override;
 use PhpDb\Sql\Exception\InvalidArgumentException;
 
-use function sprintf;
-
 abstract class AbstractPrecisionColumn extends AbstractLengthColumn
 {
     protected ?int $decimal;
@@ -59,11 +57,7 @@ abstract class AbstractPrecisionColumn extends AbstractLengthColumn
         }
 
         if (null === $this->length) {
-            throw new InvalidArgumentException(sprintf(
-                'Column "%s" of type %s has a decimal scale but no digits',
-                $this->name,
-                $this->type,
-            ));
+            throw InvalidArgumentException::forMissingDecimalDigits($this->name, $this->type);
         }
 
         return "{$this->length},{$this->decimal}";

@@ -59,7 +59,7 @@ final class SqlTest extends TestCase
         $sql->setTable('foo');
         self::assertSame('foo', $sql->getTable());
 
-        $this->expectException(TypeError::class);
+        self::expectException(TypeError::class);
         /** @noinspection PhpStrictTypeCheckingInspection */
         $sql->setTable(null);
     }
@@ -87,8 +87,8 @@ final class SqlTest extends TestCase
 
         $sql = new Sql($adapter);
 
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('does not implement SqlInterface');
+        self::expectException(RuntimeException::class);
+        self::expectExceptionMessage(RuntimeException::SUBJECT_NOT_SQL_INTERFACE);
         $sql->buildSqlString($this->sql->select());
     }
 
@@ -99,8 +99,8 @@ final class SqlTest extends TestCase
         self::assertInstanceOf(Delete::class, $delete);
         self::assertSame('foo', $delete->getRawState('table'));
 
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage(
+        self::expectException(InvalidArgumentException::class);
+        self::expectExceptionMessage(
             'This Sql object is intended to work with only the table "foo" provided at construction time.',
         );
         $this->sql->delete('bar');
@@ -108,8 +108,8 @@ final class SqlTest extends TestCase
 
     public function testDeleteThrowsWhenTableConflicts(): void
     {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage(
+        self::expectException(InvalidArgumentException::class);
+        self::expectExceptionMessage(
             'This Sql object is intended to work with only the table "foo" provided at construction time.',
         );
         $this->sql->delete(new TableIdentifier('bar'));
@@ -126,8 +126,8 @@ final class SqlTest extends TestCase
         self::assertInstanceOf(Insert::class, $insert);
         self::assertSame('foo', $insert->getRawState('table'));
 
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage(
+        self::expectException(InvalidArgumentException::class);
+        self::expectExceptionMessage(
             'This Sql object is intended to work with only the table "foo" provided at construction time.',
         );
         $this->sql->insert('bar');
@@ -135,8 +135,8 @@ final class SqlTest extends TestCase
 
     public function testInsertThrowsWhenTableConflicts(): void
     {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage(
+        self::expectException(InvalidArgumentException::class);
+        self::expectExceptionMessage(
             'This Sql object is intended to work with only the table "foo" provided at construction time.',
         );
         $this->sql->insert(new TableIdentifier('bar'));
@@ -165,8 +165,8 @@ final class SqlTest extends TestCase
 
         $sql = new Sql($adapter);
 
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('does not implement PreparableSqlInterface');
+        self::expectException(RuntimeException::class);
+        self::expectExceptionMessage(RuntimeException::SUBJECT_NOT_PREPARABLE_SQL_INTERFACE);
         $sql->prepareStatementForSqlObject($this->sql->select());
     }
 
@@ -176,8 +176,8 @@ final class SqlTest extends TestCase
         self::assertInstanceOf(Select::class, $select);
         self::assertSame('foo', $select->getRawState('table'));
 
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage(
+        self::expectException(InvalidArgumentException::class);
+        self::expectExceptionMessage(
             'This Sql object is intended to work with only the table "foo" provided at construction time.',
         );
         $this->sql->select('bar');
@@ -185,8 +185,8 @@ final class SqlTest extends TestCase
 
     public function testSelectThrowsWhenTableConflicts(): void
     {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage(
+        self::expectException(InvalidArgumentException::class);
+        self::expectExceptionMessage(
             'This Sql object is intended to work with only the table "foo" provided at construction time.',
         );
         $this->sql->select(new TableIdentifier('bar'));
@@ -198,8 +198,8 @@ final class SqlTest extends TestCase
         self::assertInstanceOf(Update::class, $update);
         self::assertSame('foo', $update->getRawState('table'));
 
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage(
+        self::expectException(InvalidArgumentException::class);
+        self::expectExceptionMessage(
             'This Sql object is intended to work with only the table "foo" provided at construction time.',
         );
         $this->sql->update('bar');
@@ -207,8 +207,8 @@ final class SqlTest extends TestCase
 
     public function testUpdateThrowsWhenTableConflicts(): void
     {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage(
+        self::expectException(InvalidArgumentException::class);
+        self::expectExceptionMessage(
             'This Sql object is intended to work with only the table "foo" provided at construction time.',
         );
         $this->sql->update(new TableIdentifier('bar'));

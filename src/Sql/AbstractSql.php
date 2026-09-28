@@ -16,7 +16,6 @@ use PhpDb\Sql\Argument\Select as SelectArgument;
 use PhpDb\Sql\Argument\Value;
 use PhpDb\Sql\Argument\Values;
 use PhpDb\Sql\Platform\PlatformDecoratorInterface;
-use ValueError;
 
 use function count;
 use function current;
@@ -26,7 +25,6 @@ use function is_array;
 use function is_string;
 use function key;
 use function rtrim;
-use function sprintf;
 use function str_replace;
 use function strtoupper;
 use function vsprintf;
@@ -108,9 +106,7 @@ abstract class AbstractSql implements SqlInterface
         }
 
         if (! isset($specificationString)) {
-            throw new Exception\RuntimeException(
-                'A number of parameters was found that is not supported by this specification',
-            );
+            throw Exception\RuntimeException::forUnsupportedParameterCount();
         }
 
         $topParameters = [];
@@ -126,10 +122,7 @@ abstract class AbstractSql implements SqlInterface
                     }
 
                     if (! isset($paramSpecs[$position][$ppCount])) {
-                        throw new Exception\RuntimeException(sprintf(
-                            'A number of parameters (%d) was found that is not supported by this specification',
-                            $ppCount,
-                        ));
+                        throw Exception\RuntimeException::forUnsupportedParameterCountOf($ppCount);
                     }
 
                     $multiParamValues[] = vsprintf($paramSpecs[$position][$ppCount], $multiParamsForPosition);
@@ -139,10 +132,7 @@ abstract class AbstractSql implements SqlInterface
             } elseif (null !== $paramSpecs[$position]) {
                 $ppCount = count($paramsForPosition);
                 if (! isset($paramSpecs[$position][$ppCount])) {
-                    throw new Exception\RuntimeException(sprintf(
-                        'A number of parameters (%d) was found that is not supported by this specification',
-                        $ppCount,
-                    ));
+                    throw Exception\RuntimeException::forUnsupportedParameterCountOf($ppCount);
                 }
 
                 $topParameters[] = vsprintf($paramSpecs[$position][$ppCount], $paramsForPosition);
@@ -261,7 +251,7 @@ abstract class AbstractSql implements SqlInterface
                     $driver,
                     $parameterContainer,
                 ),
-                default => throw new Exception\InvalidArgumentException('Unknown argument type'),
+                default => throw Exception\InvalidArgumentException::forUnknownArgumentType(),
             };
         }
 
@@ -287,7 +277,7 @@ abstract class AbstractSql implements SqlInterface
                 $parameterContainer,
                 "{$namedParameterPrefix}{$vIndex}subpart",
             ),
-            default => throw new ValueError('Invalid Argument type'),
+            default => throw Exception\InvalidArgumentException::forInvalidArgumentType(),
         };
     }
 

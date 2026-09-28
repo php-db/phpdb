@@ -40,6 +40,7 @@ use function current;
 use function key;
 use function next;
 use function preg_match;
+use function sprintf;
 use function uniqid;
 
 #[IgnoreDeprecations]
@@ -78,8 +79,8 @@ final class AbstractSqlTest extends TestCase
             ],
         ];
 
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('A number of parameters was found that is not supported by this specification');
+        self::expectException(RuntimeException::class);
+        self::expectExceptionMessage(RuntimeException::UNSUPPORTED_PARAMETER_COUNT);
         $method->invoke($this->abstractSql, $specifications, ['col1', 'table', 'extra']);
     }
 
@@ -97,8 +98,8 @@ final class AbstractSqlTest extends TestCase
         ];
         $params = [['a', 'b']];
 
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('A number of parameters (2)');
+        self::expectException(RuntimeException::class);
+        self::expectExceptionMessage(sprintf(RuntimeException::UNSUPPORTED_PARAMETER_COUNT_OF, 2));
         $method->invoke($this->abstractSql, $spec, $params);
     }
 
@@ -137,8 +138,8 @@ final class AbstractSqlTest extends TestCase
         ];
         $params = [[['a', 'b']], 'table1'];
 
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('A number of parameters (2)');
+        self::expectException(RuntimeException::class);
+        self::expectExceptionMessage(sprintf(RuntimeException::UNSUPPORTED_PARAMETER_COUNT_OF, 2));
         $method->invoke($this->abstractSql, $spec, $params);
     }
 
@@ -229,8 +230,8 @@ final class AbstractSqlTest extends TestCase
 
         $expression = new Expression('?', [$unknownArg]);
 
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Unknown argument type');
+        self::expectException(InvalidArgumentException::class);
+        self::expectExceptionMessage(InvalidArgumentException::UNKNOWN_ARGUMENT_TYPE);
         $this->invokeProcessExpressionMethod($expression);
     }
 

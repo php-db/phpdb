@@ -9,7 +9,6 @@ use PhpDb\Sql\Argument\Literal;
 use PhpDb\Sql\Exception\InvalidArgumentException;
 
 use function array_splice;
-use function sprintf;
 use function strlen;
 use function substr;
 
@@ -48,11 +47,7 @@ abstract class AbstractLengthColumn extends Column
         $hasLength        = '' !== $lengthExpression && '0' !== $lengthExpression;
 
         if (! $hasLength && $this->lengthRequired) {
-            throw new InvalidArgumentException(sprintf(
-                'Column "%s" of type %s requires a length',
-                $this->name,
-                $this->type,
-            ));
+            throw InvalidArgumentException::forMissingColumnLength($this->name, $this->type);
         }
 
         $expressionData = parent::getExpressionData();
