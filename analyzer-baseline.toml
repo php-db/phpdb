@@ -1958,8 +1958,8 @@ count = 14
 
 [[issues]]
 file = "src/RowGateway/AbstractRowGateway.php"
-code = "mixed-operand"
-message = "Invalid middle operand: type `mixed` cannot be reliably used in string concatenation."
+code = "mixed-argument"
+message = 'Invalid argument type for argument #1 of `PhpDb\RowGateway\Exception\RuntimeException::forMissingPrimaryKeyData`: expected `string`, but found `mixed`.'
 count = 1
 
 [[issues]]

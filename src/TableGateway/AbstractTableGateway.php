@@ -26,7 +26,6 @@ use function end;
 use function is_array;
 use function is_object;
 use function reset;
-use function sprintf;
 
 /**
  * @property AdapterInterface $adapter
@@ -146,11 +145,11 @@ abstract class AbstractTableGateway implements TableGatewayInterface
         $this->featureSet->apply(EventFeatureEventsInterface::EVENT_PRE_INITIALIZE, []);
 
         if (null === $this->adapter) {
-            throw new Exception\RuntimeException('This table does not have an Adapter setup');
+            throw Exception\RuntimeException::forMissingAdapter();
         }
 
         if (null === $this->table) {
-            throw new Exception\RuntimeException('This table object does not have a valid table set.');
+            throw Exception\RuntimeException::forMissingTable();
         }
 
         if (null === $this->resultSetPrototype) {
@@ -268,9 +267,7 @@ abstract class AbstractTableGateway implements TableGatewayInterface
     {
         $deleteState = $delete->getRawState();
         if ($deleteState['table'] !== $this->table) {
-            throw new Exception\RuntimeException(
-                'The table name of the provided Delete object must match that of the table',
-            );
+            throw Exception\RuntimeException::forTableMismatch('Delete');
         }
 
         // pre delete update
@@ -305,9 +302,7 @@ abstract class AbstractTableGateway implements TableGatewayInterface
     {
         $insertState = $insert->getRawState();
         if ($insertState['table'] !== $this->table) {
-            throw new Exception\RuntimeException(
-                'The table name of the provided Insert object must match that of the table',
-            );
+            throw Exception\RuntimeException::forTableMismatch('Insert');
         }
 
         // apply preInsert features
@@ -351,9 +346,7 @@ abstract class AbstractTableGateway implements TableGatewayInterface
                 && end($selectState['table']) !== $this->table
             )
         ) {
-            throw new Exception\RuntimeException(
-                'The table name of the provided Select object must match that of the table',
-            );
+            throw Exception\RuntimeException::forTableMismatch('Select');
         }
 
         if (
@@ -389,9 +382,7 @@ abstract class AbstractTableGateway implements TableGatewayInterface
     {
         $updateState = $update->getRawState();
         if ($updateState['table'] !== $this->table) {
-            throw new Exception\RuntimeException(
-                'The table name of the provided Update object must match that of the table',
-            );
+            throw Exception\RuntimeException::forTableMismatch('Update');
         }
 
         // apply preUpdate features
@@ -426,11 +417,7 @@ abstract class AbstractTableGateway implements TableGatewayInterface
         if ($this->featureSet->canCallMagicCall($method)) {
             return $this->featureSet->callMagicCall($method, $arguments);
         }
-        throw new Exception\InvalidArgumentException(sprintf(
-            'Invalid method (%s) called, caught by %s::__call()',
-            $method,
-            self::class,
-        ));
+        throw Exception\InvalidArgumentException::forInvalidMagicCall($method, static::class);
     }
 
     public function __clone(): void
@@ -458,9 +445,7 @@ abstract class AbstractTableGateway implements TableGatewayInterface
         return match (true) {
             'lastInsertValue' === $property, 'adapter' === $property, 'table' === $property => $this->$property,
             $this->featureSet->canCallMagicGet($property) => $this->featureSet->callMagicGet($property),
-            default => throw new Exception\InvalidArgumentException(
-                'Invalid magic property access in ' . self::class . '::__get()',
-            ),
+            default => throw Exception\InvalidArgumentException::forInvalidMagicGet(static::class),
         };
     }
 
@@ -474,6 +459,6 @@ abstract class AbstractTableGateway implements TableGatewayInterface
 
             return;
         }
-        throw new Exception\InvalidArgumentException('Invalid magic property access in ' . self::class . '::__set()');
+        throw Exception\InvalidArgumentException::forInvalidMagicSet(static::class);
     }
 }

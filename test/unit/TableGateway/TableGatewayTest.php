@@ -83,7 +83,7 @@ final class TableGatewayTest extends TestCase
         self::assertSame($sql, $table->getSql());
 
         // constructor expects exception - native type declaration throws TypeError for null table
-        $this->expectException(TypeError::class);
+        self::expectException(TypeError::class);
         /** @psalm-suppress NullArgument - Testing incorrect constructor */
         new TableGateway(
             null,
@@ -95,8 +95,8 @@ final class TableGatewayTest extends TestCase
     {
         $sql = new Sql($this->mockAdapter, 'bar');
 
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage(
+        self::expectException(InvalidArgumentException::class);
+        self::expectExceptionMessage(
             'The table inside the provided Sql object must match the table of this TableGateway',
         );
 
