@@ -260,7 +260,7 @@ final class ResultTest extends TestCase
         $result = new Result();
         $result->initialize($stub, null);
 
-        $this->expectException(RuntimeException::class);
+        self::expectException(RuntimeException::class);
         $result->getQueryResult();
     }
 
@@ -371,7 +371,7 @@ final class ResultTest extends TestCase
         $result->rewind();
         $result->next();
 
-        $this->expectException(RuntimeException::class);
+        self::expectException(RuntimeException::class);
         $result->rewind();
     }
 
@@ -387,8 +387,8 @@ final class ResultTest extends TestCase
     {
         $result = new Result();
 
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('The fetch mode must be one of the PDO::FETCH_* constants.');
+        self::expectException(InvalidArgumentException::class);
+        self::expectExceptionMessage(InvalidArgumentException::INVALID_FETCH_MODE);
 
         $result->setFetchMode(9999);
     }
@@ -397,7 +397,7 @@ final class ResultTest extends TestCase
     {
         $result = new Result();
 
-        $this->expectException(InvalidArgumentException::class);
+        self::expectException(InvalidArgumentException::class);
         $result->setFetchMode(13);
     }
 
@@ -405,7 +405,7 @@ final class ResultTest extends TestCase
     {
         $result = new Result();
 
-        $this->expectException(InvalidArgumentException::class);
+        self::expectException(InvalidArgumentException::class);
         $result->setStatementMode('invalid');
     }
 

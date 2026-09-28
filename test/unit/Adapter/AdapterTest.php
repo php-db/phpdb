@@ -13,7 +13,6 @@ use PhpDb\Adapter\Driver\ResultInterface;
 use PhpDb\Adapter\Driver\StatementInterface;
 use PhpDb\Adapter\Exception\InvalidArgumentException;
 use PhpDb\Adapter\Exception\RuntimeException;
-use PhpDb\Adapter\Exception\VunerablePlatformQuoteException;
 use PhpDb\Adapter\ParameterContainer;
 use PhpDb\Adapter\Platform\PlatformInterface;
 use PhpDb\Adapter\Profiler;
@@ -32,6 +31,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(Adapter::class, 'getDriver')]
 #[CoversMethod(Adapter::class, 'getPlatform')]
 #[CoversMethod(Adapter::class, 'getQueryResultSetPrototype')]
+#[CoversMethod(Adapter::class, 'executeQuery')]
 #[CoversMethod(Adapter::class, 'getCurrentSchema')]
 #[CoversMethod(Adapter::class, 'query')]
 #[CoversMethod(Adapter::class, 'createStatement')]
@@ -91,8 +91,8 @@ final class AdapterTest extends TestCase
         $sql = 'SELECT foo';
         $this->mockConnection->method('execute')->willReturn(null);
 
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('Query execution did not produce a result');
+        self::expectException(RuntimeException::class);
+        self::expectExceptionMessage(RuntimeException::MISSING_QUERY_RESULT);
 
         $this->adapter->executeQuery($sql);
     }
@@ -155,11 +155,11 @@ final class AdapterTest extends TestCase
         $this->mockPlatform
             ->method('quoteValue')
             ->with('test')
-            ->willThrowException(VunerablePlatformQuoteException::forPlatformAndMethod('test', 'test'));
+            ->willThrowException(RuntimeException::forVulnerablePlatformQuote('test', 'test'));
 
         $functions = $this->adapter->getHelpers(Adapter::FUNCTION_QUOTE_VALUE);
 
-        $this->expectException(VunerablePlatformQuoteException::class);
+        self::expectException(RuntimeException::class);
         $functions[0]('test');
     }
 
@@ -226,8 +226,8 @@ final class AdapterTest extends TestCase
         self::assertSame($this->mockPlatform, $this->adapter->PlatForm);
         self::assertSame($this->mockPlatform, $this->adapter->platform);
 
-        $this->expectException('InvalidArgumentException');
-        $this->expectExceptionMessage('Invalid magic');
+        self::expectException('InvalidArgumentException');
+        self::expectExceptionMessage(InvalidArgumentException::INVALID_MAGIC_PROPERTY);
         /** @phpstan-ignore property.notFound, expr.resultUnused */
         $this->adapter->foo;
     }
@@ -294,8 +294,8 @@ final class AdapterTest extends TestCase
 
     public function testQueryThrowsOnInvalidParameterType(): void
     {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Flag incorrectly set');
+        self::expectException(InvalidArgumentException::class);
+        self::expectExceptionMessage(InvalidArgumentException::INCORRECT_FLAG);
 
         $this->adapter->query('SELECT 1', 'invalid_mode');
     }

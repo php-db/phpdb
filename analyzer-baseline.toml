@@ -441,7 +441,7 @@ count = 1
 [[issues]]
 file = "src/Adapter/Driver/Pdo/AbstractPdoConnection.php"
 code = "mixed-argument"
-message = "Invalid argument type for argument #1 of `Exception::__construct`: expected `string`, but found `mixed`."
+message = 'Invalid argument type for argument #1 of `PhpDb\Adapter\Exception\InvalidQueryException::forDriverError`: expected `string`, but found `mixed`.'
 count = 1
 
 [[issues]]
@@ -1125,7 +1125,7 @@ count = 2
 [[issues]]
 file = "src/Adapter/Platform/AbstractPlatform.php"
 code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `PhpDb\Adapter\Exception\VunerablePlatformQuoteException` in `PhpDb\Adapter\Platform\AbstractPlatform::quoteValue`.'
+message = 'Potentially unhandled exception `PhpDb\Adapter\Exception\RuntimeException` in `PhpDb\Adapter\Platform\AbstractPlatform::quoteValue`.'
 count = 1
 
 [[issues]]
@@ -1155,7 +1155,7 @@ count = 1
 [[issues]]
 file = "src/Adapter/Platform/Sql92.php"
 code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `PhpDb\Adapter\Exception\VunerablePlatformQuoteException` in `PhpDb\Adapter\Platform\Sql92::quoteValue`.'
+message = 'Potentially unhandled exception `PhpDb\Adapter\Exception\RuntimeException` in `PhpDb\Adapter\Platform\Sql92::quoteValue`.'
 count = 1
 
 [[issues]]

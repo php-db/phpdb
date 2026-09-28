@@ -91,7 +91,7 @@ abstract class AbstractPdoConnection extends AbstractConnection implements
 
         if (false === $resultResource) {
             $errorInfo = $this->resource->errorInfo();
-            throw new Exception\InvalidQueryException($errorInfo[2]);
+            throw Exception\InvalidQueryException::forDriverError($errorInfo[2]);
         }
 
         /** @phpstan-ignore arguments.count */
@@ -107,9 +107,7 @@ abstract class AbstractPdoConnection extends AbstractConnection implements
     final public function getDsn(): string
     {
         if (! $this->dsn) {
-            throw new Exception\RuntimeException(
-                'The DSN has not been set or constructed from parameters in connect() for this Connection',
-            );
+            throw Exception\RuntimeException::forMissingDsn();
         }
 
         return $this->dsn;
@@ -141,11 +139,11 @@ abstract class AbstractPdoConnection extends AbstractConnection implements
     public function rollback(): ConnectionInterface
     {
         if (! $this->isConnected()) {
-            throw new Exception\RuntimeException('Must be connected before you can rollback');
+            throw Exception\RuntimeException::forDisconnectedRollback();
         }
 
         if (! $this->inTransaction()) {
-            throw new Exception\RuntimeException('Must call beginTransaction() before you can rollback');
+            throw Exception\RuntimeException::forRollbackWithoutTransaction();
         }
 
         $this->resource->rollBack();

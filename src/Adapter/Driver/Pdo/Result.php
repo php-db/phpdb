@@ -167,10 +167,7 @@ class Result implements Iterator, ResultInterface
     public function getQueryResult(?ResultSetInterface $resultPrototype = null): ResultSetInterface
     {
         if (! $this->isQueryResult()) {
-            throw new Exception\RuntimeException(
-                'Cannot produce a query result set from a result that is not a query result;'
-                    . ' check isQueryResult() first',
-            );
+            throw Exception\RuntimeException::forNonQueryResult();
         }
 
         $resultPrototype ??= new ResultSet();
@@ -265,9 +262,7 @@ class Result implements Iterator, ResultInterface
     public function rewind()
     {
         if (self::STATEMENT_MODE_FORWARD === $this->statementMode && $this->position > 0) {
-            throw new Exception\RuntimeException(
-                'This result is a forward only result set, calling rewind() after moving forward is not supported',
-            );
+            throw Exception\RuntimeException::forForwardOnlyRewind();
         }
         if (! $this->currentComplete) {
             $this->currentData     = $this->resource->fetch($this->fetchMode);
@@ -282,9 +277,7 @@ class Result implements Iterator, ResultInterface
     public function setFetchMode(int $fetchMode): void
     {
         if (! in_array($fetchMode, self::VALID_FETCH_MODES, true)) {
-            throw new Exception\InvalidArgumentException(
-                'The fetch mode must be one of the PDO::FETCH_* constants.',
-            );
+            throw Exception\InvalidArgumentException::forInvalidFetchMode();
         }
 
         $this->fetchMode = (int) $fetchMode;
@@ -293,9 +286,7 @@ class Result implements Iterator, ResultInterface
     public function setStatementMode(string $statementMode = self::STATEMENT_MODE_FORWARD): void
     {
         if (! in_array($statementMode, [self::STATEMENT_MODE_SCROLLABLE, self::STATEMENT_MODE_FORWARD], true)) {
-            throw new Exception\InvalidArgumentException(
-                'The statement mode must be one of the defined constants.',
-            );
+            throw Exception\InvalidArgumentException::forInvalidStatementMode();
         }
 
         $this->statementMode = $statementMode;

@@ -60,7 +60,6 @@ final class ExceptionHierarchyTest extends TestCase
         AdapterException\InvalidQueryException::class                => UnexpectedValueException::class,
         AdapterException\RuntimeException::class                     => RuntimeException::class,
         AdapterException\UnexpectedValueException::class             => UnexpectedValueException::class,
-        AdapterException\VunerablePlatformQuoteException::class      => RuntimeException::class,
         DbException\ContainerException::class                        => RuntimeException::class,
         DbException\ErrorException::class                            => Exception::class,
         DbException\InvalidArgumentException::class                  => InvalidArgumentException::class,
@@ -75,12 +74,6 @@ final class ExceptionHierarchyTest extends TestCase
         TableGatewayException\InvalidArgumentException::class        => InvalidArgumentException::class,
         TableGatewayException\RuntimeException::class                => RuntimeException::class,
     ];
-
-    /**
-     * Exempt from the naming guard: its factory is named for its arguments rather than the
-     * fault, and holds its message inline.
-     */
-    private const string UNCONVERTED_CLASS = AdapterException\VunerablePlatformQuoteException::class;
 
     /** @return array<string, array{string, string}> */
     public static function exceptionClassProvider(): array
@@ -100,10 +93,6 @@ final class ExceptionHierarchyTest extends TestCase
     {
         $cases = [];
         foreach (array_keys(self::EXCEPTION_CLASSES) as $class) {
-            if (self::UNCONVERTED_CLASS === $class) {
-                continue;
-            }
-
             foreach (self::namedConstructors($class) as $method) {
                 $cases["{$class}::{$method}()"] = [
                     $class,

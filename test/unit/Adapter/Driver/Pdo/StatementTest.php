@@ -23,6 +23,8 @@ use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
 
+use function sprintf;
+
 #[CoversMethod(Statement::class, 'setDriver')]
 #[CoversMethod(Statement::class, 'setParameterContainer')]
 #[CoversMethod(Statement::class, 'getParameterContainer')]
@@ -255,7 +257,7 @@ final class StatementTest extends TestCase
         $reflection = new ReflectionProperty($this->statement, 'resource');
         $reflection->setValue($this->statement, $pdoStmt);
 
-        $this->expectException(InvalidQueryException::class);
+        self::expectException(InvalidQueryException::class);
         $this->statement->execute();
     }
 
@@ -324,7 +326,7 @@ final class StatementTest extends TestCase
         $reflection = new ReflectionProperty($this->statement, 'resource');
         $reflection->setValue($this->statement, $pdoStmt);
 
-        $this->expectException(InvalidQueryException::class);
+        self::expectException(InvalidQueryException::class);
         $this->statement->execute();
     }
 
@@ -335,8 +337,8 @@ final class StatementTest extends TestCase
         $this->statement->initialize($pdo);
         $this->statement->prepare('SELECT 1');
 
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('contains invalid characters');
+        self::expectException(RuntimeException::class);
+        self::expectExceptionMessage(sprintf(RuntimeException::INVALID_PDO_PARAM, $name));
         $this->statement->execute([$name => 'value']);
     }
 
@@ -443,7 +445,7 @@ final class StatementTest extends TestCase
         $this->statement->initialize($pdo);
         $this->statement->setSql('INVALID SQL');
 
-        $this->expectException(RuntimeException::class);
+        self::expectException(RuntimeException::class);
         $this->statement->prepare();
     }
 
@@ -452,8 +454,8 @@ final class StatementTest extends TestCase
         $this->statement->initialize(new SqliteMemoryPdo());
         $this->statement->prepare('SELECT 1');
 
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('This statement has been prepared already');
+        self::expectException(RuntimeException::class);
+        self::expectExceptionMessage(RuntimeException::ALREADY_PREPARED);
 
         $this->statement->prepare('SELECT 2');
     }

@@ -11,6 +11,13 @@ parentheses-around-new-in-member-access = true
 [linter]
 baseline = "lint-baseline.toml"
 
+[linter.rules]
+# Exception classes are message catalogues: one template and one named constructor per
+# condition, per the convention in docs/book/exceptions.md. The method count tracks the
+# number of distinct failures a component can report, so the maintainability signal does
+# not apply. "test/" repeats the phpdb-qa-tools default, which this key replaces.
+too-many-methods = { exclude = ["test/", "src/Adapter/Exception/"] }
+
 [analyzer]
 baseline = "analyzer-baseline.toml"
 class-initializers = [

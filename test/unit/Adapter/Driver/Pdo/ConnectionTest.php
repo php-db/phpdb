@@ -101,7 +101,7 @@ final class ConnectionTest extends TestCase
         $driver     = new TestPdo($connection);
         $connection->setProfiler($profiler);
 
-        $this->expectException(InvalidQueryException::class);
+        self::expectException(InvalidQueryException::class);
         @$connection->execute('INVALID SQL STATEMENT HERE %%%');
     }
 
@@ -152,8 +152,8 @@ final class ConnectionTest extends TestCase
         $reflection = new ReflectionProperty($connection, 'dsn');
         $reflection->setValue($connection, null);
 
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('The DSN has not been set');
+        self::expectException(RuntimeException::class);
+        self::expectExceptionMessage(RuntimeException::MISSING_DSN);
 
         $connection->getDsn();
     }
