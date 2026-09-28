@@ -7,10 +7,14 @@ namespace PhpDb\TableGateway\Feature;
 use Override;
 use PhpDb\TableGateway\AbstractTableGateway;
 
+/**
+ * @api
+ */
 abstract class AbstractFeature extends AbstractTableGateway implements FeatureInterface
 {
     protected AbstractTableGateway $tableGateway;
 
+    /** @var array<string, mixed> */
     protected array $sharedData = [];
 
     /** @return array<string, string[]> */

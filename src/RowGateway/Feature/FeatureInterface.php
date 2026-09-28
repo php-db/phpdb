@@ -7,6 +7,9 @@ namespace PhpDb\RowGateway\Feature;
 use PhpDb\Feature\FeatureInterface as BaseFeatureInterface;
 use PhpDb\RowGateway\AbstractRowGateway;
 
+/**
+ * @api
+ */
 interface FeatureInterface extends BaseFeatureInterface
 {
     public function setRowGateway(AbstractRowGateway $rowGateway): void;

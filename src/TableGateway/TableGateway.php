@@ -15,6 +15,8 @@ use function is_array;
 class TableGateway extends AbstractTableGateway
 {
     /**
+     * @param Feature\FeatureSet|Feature\FeatureInterface|Feature\FeatureInterface[]|null $features
+     *
      * @throws Exception\InvalidArgumentException
      */
     public function __construct(

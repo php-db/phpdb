@@ -6,6 +6,7 @@ namespace PhpDbTest\TableGateway\Feature\EventFeature;
 
 use PhpDb\TableGateway\AbstractTableGateway;
 use PhpDb\TableGateway\Feature\EventFeature\TableGatewayEvent;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use stdClass;
@@ -14,65 +15,72 @@ class TableGatewayEventTest extends TestCase
 {
     private TableGatewayEvent $event;
 
-    public function testGetParamWithDefault(): void
+    #[Test]
+    public function getParamWithDefault(): void
     {
         $result = $this->event->getParam('nonExistent', 'defaultValue');
 
-        self::assertEquals('defaultValue', $result);
+        static::assertSame('defaultValue', $result);
     }
 
-    public function testPropagationIsStoppedAlwaysReturnsFalse(): void
+    #[Test]
+    public function propagationIsStoppedAlwaysReturnsFalse(): void
     {
         /** @phpstan-ignore staticMethod.impossibleType */
-        self::assertFalse($this->event->propagationIsStopped());
+        static::assertFalse($this->event->propagationIsStopped());
 
         $this->event->stopPropagation(true);
 
         // Still returns false as per implementation
         /** @phpstan-ignore staticMethod.impossibleType */
-        self::assertFalse($this->event->propagationIsStopped());
+        static::assertFalse($this->event->propagationIsStopped());
     }
 
-    public function testSetNameAndGetName(): void
+    #[Test]
+    public function setNameAndGetName(): void
     {
-        self::assertNull($this->event->getName());
+        static::assertNull($this->event->getName());
 
         $this->event->setName('test.event');
 
-        self::assertEquals('test.event', $this->event->getName());
+        static::assertSame('test.event', $this->event->getName());
     }
 
-    public function testSetParamAndGetParam(): void
+    #[Test]
+    public function setParamAndGetParam(): void
     {
-        self::assertNull($this->event->getParam('unknown'));
-        self::assertEquals('default', $this->event->getParam('unknown', 'default'));
+        static::assertNull($this->event->getParam('unknown'));
+        static::assertSame('default', $this->event->getParam('unknown', 'default'));
 
         $this->event->setParam('myParam', 'myValue');
 
-        self::assertEquals('myValue', $this->event->getParam('myParam'));
+        static::assertSame('myValue', $this->event->getParam('myParam'));
     }
 
-    public function testSetParamsAndGetParams(): void
+    #[Test]
+    public function setParamsAndGetParams(): void
     {
-        self::assertEquals([], $this->event->getParams());
+        static::assertEquals([], $this->event->getParams());
 
         $params = ['key1' => 'value1', 'key2' => 'value2'];
         $this->event->setParams($params);
 
-        self::assertEquals($params, $this->event->getParams());
+        static::assertEquals($params, $this->event->getParams());
     }
 
-    public function testSetParamsWithObject(): void
+    #[Test]
+    public function setParamsWithObject(): void
     {
         $params      = new stdClass();
         $params->key = 'value';
 
         $this->event->setParams($params);
 
-        self::assertSame($params, $this->event->getParams());
+        static::assertSame($params, $this->event->getParams());
     }
 
-    public function testSetTargetAndGetTarget(): void
+    #[Test]
+    public function setTargetAndGetTarget(): void
     {
         /** @var AbstractTableGateway&MockObject $tableGateway */
         $tableGateway = $this->getMockBuilder(AbstractTableGateway::class)
@@ -81,17 +89,18 @@ class TableGatewayEventTest extends TestCase
 
         $this->event->setTarget($tableGateway);
 
-        self::assertSame($tableGateway, $this->event->getTarget());
+        static::assertSame($tableGateway, $this->event->getTarget());
     }
 
-    public function testStopPropagation(): void
+    #[Test]
+    public function stopPropagation(): void
     {
         // stopPropagation should do nothing, just ensure it doesn't throw
         $this->event->stopPropagation(true);
         $this->event->stopPropagation(false);
 
         /** @phpstan-ignore staticMethod.impossibleType */
-        self::assertFalse($this->event->propagationIsStopped());
+        static::assertFalse($this->event->propagationIsStopped());
     }
 
     protected function setUp(): void

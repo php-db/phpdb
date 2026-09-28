@@ -7,6 +7,7 @@ namespace PhpDbTest\RowGateway\Feature;
 use PhpDb\RowGateway\AbstractRowGateway;
 use PhpDb\RowGateway\Exception\RuntimeException;
 use PhpDb\RowGateway\Feature\AbstractFeature;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
@@ -15,26 +16,29 @@ class AbstractFeatureTest extends TestCase
 {
     private AbstractFeature&MockObject $feature;
 
-    public function testGetMagicMethodSpecificationsReturnsEmptyArray(): void
+    #[Test]
+    public function getMagicMethodSpecificationsReturnsEmptyArray(): void
     {
         $result = $this->feature->getMagicMethodSpecifications();
 
         /** @phpstan-ignore staticMethod.alreadyNarrowedType */
-        self::assertIsArray($result);
-        self::assertEmpty($result);
+        static::assertIsArray($result);
+        static::assertEmpty($result);
     }
 
-    public function testGetNameReturnsClassName(): void
+    #[Test]
+    public function getNameReturnsClassName(): void
     {
         $name = $this->feature->getName();
 
         // The mock class name will contain the class name
         /** @phpstan-ignore staticMethod.alreadyNarrowedType */
-        self::assertIsString($name);
-        self::assertNotEmpty($name);
+        static::assertIsString($name);
+        static::assertNotEmpty($name);
     }
 
-    public function testInitializeThrowsRuntimeException(): void
+    #[Test]
+    public function initializeThrowsRuntimeException(): void
     {
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('This method is not intended to be called on this object.');
@@ -42,7 +46,8 @@ class AbstractFeatureTest extends TestCase
         $this->feature->initialize();
     }
 
-    public function testSetRowGateway(): void
+    #[Test]
+    public function setRowGateway(): void
     {
         /** @var AbstractRowGateway&MockObject $rowGateway */
         $rowGateway = $this->getMockBuilder(AbstractRowGateway::class)
@@ -55,7 +60,7 @@ class AbstractFeatureTest extends TestCase
         $reflection = new ReflectionProperty(AbstractFeature::class, 'rowGateway');
         $value      = $reflection->getValue($this->feature);
 
-        self::assertSame($rowGateway, $value);
+        static::assertSame($rowGateway, $value);
     }
 
     protected function setUp(): void

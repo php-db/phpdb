@@ -10,7 +10,12 @@ use PhpDb\Exception\RuntimeException;
 use PhpDb\Sql\Insert;
 
 use function array_search;
+use function is_array;
+use function is_int;
 
+/**
+ * @api
+ */
 class SequenceFeature extends AbstractFeature
 {
     protected string $primaryKeyField;
@@ -29,26 +34,35 @@ class SequenceFeature extends AbstractFeature
      * Return the most recent value from the specified sequence in the database.
      *
      * @throws RuntimeException
+     *
+     * @mago-expect analysis:mixed-assignment
      */
     public function lastSequenceId(): int
     {
         $platform     = $this->tableGateway->adapter->getPlatform();
         $platformName = $platform->getName();
 
-        // todo: Remove string usage
+        // TODO(@simon-mundy): Remove string usage
         $sql = match ($platformName) {
-            'Oracle' => 'SELECT '
-                . $platform->quoteIdentifier($this->sequenceName)
-                . '.CURRVAL as "currval" FROM dual',
+            'Oracle'     => "SELECT {$platform->quoteIdentifier($this->sequenceName)}.CURRVAL as \"currval\" FROM dual",
             'PostgreSQL' => 'SELECT LAST_INSERT_ROWID() as "currval"',
             default      => throw new RuntimeException('Unsupported platform for retrieving last sequence id'),
         };
 
         $statement = $this->tableGateway->adapter->createStatement();
         $statement->prepare($sql);
-        $result   = $statement->execute();
+        $result = $statement->execute();
+        if (! $result instanceof ResultInterface) {
+            throw new RuntimeException('The sequence statement did not produce a result.');
+        }
+
         $sequence = $result->current();
         unset($statement, $result);
+
+        if (! is_array($sequence) || ! is_int($sequence['currval'] ?? null)) {
+            throw new RuntimeException('The sequence did not return a current value.');
+        }
+
         return $sequence['currval'];
     }
 
@@ -56,6 +70,8 @@ class SequenceFeature extends AbstractFeature
      * Generate a new value from the specified sequence in the database, and return it.
      *
      * @throws RuntimeException
+     *
+     * @mago-expect analysis:mixed-assignment
      */
     public function nextSequenceId(): ?int
     {
@@ -63,21 +79,33 @@ class SequenceFeature extends AbstractFeature
         $platformName = $platform->getName();
 
         $sql = match ($platformName) {
-            'Oracle' => 'SELECT '
-                . $platform->quoteIdentifier($this->sequenceName)
-                . '.NEXTVAL as "nextval" FROM dual',
-            'PostgreSQL' => 'SELECT NEXTVAL(\'"' . $this->sequenceName . '"\')',
+            'Oracle'     => "SELECT {$platform->quoteIdentifier($this->sequenceName)}.NEXTVAL as \"nextval\" FROM dual",
+            'PostgreSQL' => "SELECT NEXTVAL('\"{$this->sequenceName}\"')",
             default      => throw new RuntimeException('Unsupported platform for retrieving next sequence id'),
         };
 
         $statement = $this->tableGateway->adapter->createStatement();
         $statement->prepare($sql);
-        $result   = $statement->execute();
+        $result = $statement->execute();
+        if (! $result instanceof ResultInterface) {
+            throw new RuntimeException('The sequence statement did not produce a result.');
+        }
+
         $sequence = $result->current();
         unset($statement, $result);
-        return $sequence['nextval'];
+
+        if (! is_array($sequence)) {
+            throw new RuntimeException('The sequence did not return a next value.');
+        }
+
+        $nextValue = $sequence['nextval'] ?? null;
+
+        return is_int($nextValue) ? $nextValue : null;
     }
 
+    /**
+     * @mago-expect analysis:unused-parameter
+     */
     public function postInsert(StatementInterface $statement, ResultInterface $result): void
     {
         if (null !== $this->sequenceValue) {
@@ -85,13 +113,22 @@ class SequenceFeature extends AbstractFeature
         }
     }
 
+    /**
+     * @throws RuntimeException
+     */
     public function preInsert(Insert $insert): Insert
     {
         $columns = $insert->getRawState('columns');
         $values  = $insert->getRawState('values');
-        $key     = array_search($this->primaryKeyField, $columns);
+
+        if (! is_array($columns) || ! is_array($values)) {
+            throw new RuntimeException('The insert does not expose columns and values as arrays.');
+        }
+
+        $key = array_search($this->primaryKeyField, $columns, strict: true);
         if (false !== $key) {
-            $this->sequenceValue = $values[$key] ?? null;
+            $sequenceValue       = $values[$key] ?? null;
+            $this->sequenceValue = is_int($sequenceValue) ? $sequenceValue : null;
             return $insert;
         }
 

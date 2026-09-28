@@ -6,6 +6,7 @@ namespace PhpDbTest\TableGateway\Feature;
 
 use PhpDb\TableGateway\AbstractTableGateway;
 use PhpDb\TableGateway\Feature\AbstractFeature;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
@@ -14,30 +15,34 @@ class AbstractFeatureTest extends TestCase
 {
     private AbstractFeature&MockObject $feature;
 
-    public function testGetMagicMethodSpecificationsReturnsEmptyArray(): void
+    #[Test]
+    public function getMagicMethodSpecificationsReturnsEmptyArray(): void
     {
         $result = $this->feature->getMagicMethodSpecifications();
 
-        self::assertEmpty($result);
+        static::assertEmpty($result);
     }
 
-    public function testGetNameReturnsClassName(): void
+    #[Test]
+    public function getNameReturnsClassName(): void
     {
         $name = $this->feature->getName();
 
-        self::assertNotEmpty($name);
+        static::assertNotEmpty($name);
     }
 
-    public function testInitializeDoesNothing(): void
+    #[Test]
+    public function initializeDoesNothing(): void
     {
         // initialize() is a no-op, just verify it doesn't throw
         $this->feature->initialize();
 
         /** @phpstan-ignore staticMethod.alreadyNarrowedType */
-        self::assertTrue(true);
+        static::assertTrue(true);
     }
 
-    public function testSetTableGateway(): void
+    #[Test]
+    public function setTableGateway(): void
     {
         /** @var AbstractTableGateway&MockObject $tableGateway */
         $tableGateway = $this->getMockBuilder(AbstractTableGateway::class)
@@ -49,7 +54,7 @@ class AbstractFeatureTest extends TestCase
         $reflection = new ReflectionProperty(AbstractFeature::class, 'tableGateway');
         $value      = $reflection->getValue($this->feature);
 
-        self::assertSame($tableGateway, $value);
+        static::assertSame($tableGateway, $value);
     }
 
     protected function setUp(): void
