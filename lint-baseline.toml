@@ -2869,24 +2869,6 @@ message = "Use `#[Test]` attribute instead of `test` prefix on method `testInvok
 count = 1
 
 [[issues]]
-file = "test/unit/Exception/ContainerExceptionTest.php"
-code = "assertion-style"
-message = "Inconsistent assertions style."
-count = 4
-
-[[issues]]
-file = "test/unit/Exception/ContainerExceptionTest.php"
-code = "prefer-test-attribute"
-message = "Use `#[Test]` attribute instead of `test` prefix on method `testForServiceCreatesFormattedExceptionMessage`."
-count = 1
-
-[[issues]]
-file = "test/unit/Exception/ContainerExceptionTest.php"
-code = "prefer-test-attribute"
-message = "Use `#[Test]` attribute instead of `test` prefix on method `testImplementsContainerExceptionInterface`."
-count = 1
-
-[[issues]]
 file = "test/unit/ResultSet/AbstractResultSetIntegrationTest.php"
 code = "assertion-style"
 message = "Inconsistent assertions style."

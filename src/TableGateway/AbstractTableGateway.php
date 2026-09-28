@@ -51,6 +51,7 @@ abstract class AbstractTableGateway implements TableGatewayInterface
 
     protected string|int|false|null $lastInsertValue = null;
 
+    /** @throws Exception\RuntimeException */
     #[Override]
     public function delete(Where|Closure|array|string $where): int
     {
@@ -67,6 +68,7 @@ abstract class AbstractTableGateway implements TableGatewayInterface
         return $this->executeDelete($delete);
     }
 
+    /** @throws Exception\RuntimeException */
     public function deleteWith(Delete $delete): int
     {
         $this->initialize();
@@ -84,6 +86,7 @@ abstract class AbstractTableGateway implements TableGatewayInterface
         return $this->columns;
     }
 
+    /** @throws Exception\RuntimeException */
     public function getFeatureSet(): Feature\FeatureSet
     {
         if (! $this->isInitialized) {
@@ -98,6 +101,7 @@ abstract class AbstractTableGateway implements TableGatewayInterface
         return $this->lastInsertValue;
     }
 
+    /** @throws Exception\RuntimeException */
     public function getResultSetPrototype(): ResultSetInterface
     {
         if (! $this->isInitialized) {
@@ -107,6 +111,7 @@ abstract class AbstractTableGateway implements TableGatewayInterface
         return $this->resultSetPrototype;
     }
 
+    /** @throws Exception\RuntimeException */
     public function getSql(): Sql
     {
         if (! $this->isInitialized) {
@@ -161,6 +166,7 @@ abstract class AbstractTableGateway implements TableGatewayInterface
         $this->isInitialized = true;
     }
 
+    /** @throws Exception\RuntimeException */
     #[Override]
     public function insert(array $set): int
     {
@@ -173,6 +179,7 @@ abstract class AbstractTableGateway implements TableGatewayInterface
         return $this->executeInsert($insert);
     }
 
+    /** @throws Exception\RuntimeException */
     public function insertWith(Insert $insert): int
     {
         if (! $this->isInitialized) {
@@ -187,6 +194,7 @@ abstract class AbstractTableGateway implements TableGatewayInterface
         return $this->isInitialized;
     }
 
+    /** @throws Exception\RuntimeException */
     #[Override]
     public function select(Where|Closure|string|array|null $where = null): ResultSetInterface
     {
@@ -205,6 +213,7 @@ abstract class AbstractTableGateway implements TableGatewayInterface
         return $this->selectWith($select);
     }
 
+    /** @throws Exception\RuntimeException */
     public function selectWith(Select $select): ResultSetInterface
     {
         if (! $this->isInitialized) {
@@ -214,6 +223,7 @@ abstract class AbstractTableGateway implements TableGatewayInterface
         return $this->executeSelect($select);
     }
 
+    /** @throws Exception\RuntimeException */
     #[Override]
     public function update(
         array $set,
@@ -240,6 +250,7 @@ abstract class AbstractTableGateway implements TableGatewayInterface
         return $this->executeUpdate($update);
     }
 
+    /** @throws Exception\RuntimeException */
     public function updateWith(Update $update): int
     {
         if (! $this->isInitialized) {

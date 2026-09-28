@@ -31,6 +31,7 @@ nav:
         - Metadata Objects: metadata/objects.md
         - Examples: metadata/examples.md
     - Profiler: profiler.md
+    - Exceptions: exceptions.md
     - "Application Integration":
         - "Integrating in a Laminas MVC application": application-integration/usage-in-a-laminas-mvc-application.md
         - "Integrating in a Mezzio application": application-integration/usage-in-a-mezzio-application.md
