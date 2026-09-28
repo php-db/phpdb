@@ -347,8 +347,8 @@ abstract class AbstractTableGateway implements TableGatewayInterface
 
         if (
             isset($selectState['columns'])
-                && [Select::SQL_STAR] === $selectState['columns']
-                && [] !== $this->columns
+            && [Select::SQL_STAR] === $selectState['columns']
+            && [] !== $this->columns
         ) {
             $select->columns($this->columns);
         }
@@ -430,8 +430,8 @@ abstract class AbstractTableGateway implements TableGatewayInterface
             $this->table = clone $this->table;
         } elseif (
             is_array($this->table)
-                && count($this->table) === 1
-                && is_object(reset($this->table))
+            && count($this->table) === 1
+            && is_object(reset($this->table))
         ) {
             foreach ($this->table as &$tableObject) {
                 $tableObject = clone $tableObject;

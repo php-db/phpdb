@@ -8,14 +8,71 @@ use PhpDb\Sql\Argument\Identifier;
 use PhpDb\Sql\Argument\Literal;
 use PhpDb\Sql\Ddl\Column\AbstractLengthColumn;
 use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
 
 #[CoversMethod(AbstractLengthColumn::class, 'setLength')]
 #[CoversMethod(AbstractLengthColumn::class, 'getLength')]
+#[CoversMethod(AbstractLengthColumn::class, 'getLengthExpression')]
 #[CoversMethod(AbstractLengthColumn::class, 'getExpressionData')]
+#[Group('unit')]
 final class AbstractLengthColumnTest extends TestCase
 {
+    use ColumnAssertionsTrait;
+
+    /**
+     * @throws Exception
+     */
+    #[Test]
+    public function getExpressionDataOmitsLengthPlaceholderWhenLengthIsNotSet(): void
+    {
+        $column = $this->getMockBuilder(AbstractLengthColumn::class)
+            ->setConstructorArgs(['foo'])
+            ->onlyMethods([])
+            ->getMock();
+
+        $expressionData = $column->getExpressionData();
+
+        static::assertSame('%s %s NOT NULL', $expressionData['spec']);
+        static::assertEquals(
+            [
+                new Identifier('foo'),
+                new Literal('INTEGER'),
+            ],
+            $expressionData['values'],
+        );
+    }
+
+    /**
+     * @throws Exception
+     */
+    #[Test]
+    public function rendersLengthDirectlyAfterType(): void
+    {
+        $column = $this->getMockBuilder(AbstractLengthColumn::class)
+            ->setConstructorArgs(['foo', 4, true])
+            ->onlyMethods([])
+            ->getMock();
+
+        static::assertColumnRenders('"foo" INTEGER(4) NULL DEFAULT NULL', $column);
+    }
+
+    /**
+     * @throws Exception
+     */
+    #[Test]
+    public function rendersWithoutParenthesesWhenLengthIsNotSet(): void
+    {
+        $column = $this->getMockBuilder(AbstractLengthColumn::class)
+            ->setConstructorArgs(['foo'])
+            ->onlyMethods([])
+            ->getMock();
+
+        static::assertColumnRenders('"foo" INTEGER NOT NULL', $column);
+    }
+
     /**
      * @throws Exception
      */

@@ -6,12 +6,19 @@ namespace PhpDb\Sql\Ddl\Column;
 
 use Override;
 use PhpDb\Sql\Argument\Literal;
+use PhpDb\Sql\Exception\InvalidArgumentException;
 
 use function array_splice;
+use function sprintf;
+use function strlen;
+use function substr;
 
 abstract class AbstractLengthColumn extends Column
 {
-    protected string $specification = '%s %s(%s)';
+    /**
+     * Whether the type is invalid without a length, as VARCHAR and VARBINARY are in SQL-92 and MySQL.
+     */
+    protected bool $lengthRequired = false;
 
     protected ?int $length = null;
 
@@ -27,15 +34,37 @@ abstract class AbstractLengthColumn extends Column
         parent::__construct($name, $nullable, $default, $options);
     }
 
-    /** @inheritDoc */
+    /**
+     * Renders the length in parentheses directly after the type when one is set. Without a length
+     * the column renders bare, unless the type requires one.
+     *
+     * @inheritDoc
+     * @throws InvalidArgumentException When the type requires a length and none is set.
+     */
     #[Override]
     public function getExpressionData(): array
     {
+        $lengthExpression = $this->getLengthExpression();
+        $hasLength        = '' !== $lengthExpression && '0' !== $lengthExpression;
+
+        if (! $hasLength && $this->lengthRequired) {
+            throw new InvalidArgumentException(sprintf(
+                'Column "%s" of type %s requires a length',
+                $this->name,
+                $this->type,
+            ));
+        }
+
         $expressionData = parent::getExpressionData();
 
-        if ($this->getLengthExpression() !== '' && $this->getLengthExpression() !== '0') {
-            array_splice($expressionData['values'], 2, 0, [new Literal($this->getLengthExpression())]);
+        if (! $hasLength) {
+            return $expressionData;
         }
+
+        $attributes = substr($expressionData['spec'], strlen($this->specification));
+
+        $expressionData['spec'] = "{$this->specification}(%s){$attributes}";
+        array_splice($expressionData['values'], 2, 0, [new Literal($lengthExpression)]);
 
         return $expressionData;
     }

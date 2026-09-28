@@ -86,6 +86,10 @@ $column->setDecimal(3); // Change scale
 - `setDecimal(int $decimal): self` - Set scale
 - `getDecimal(): int` - Get scale
 
+Digits and scale are both optional. Without digits the column renders as a bare `DECIMAL`,
+leaving the precision to the database default. A scale without digits cannot be rendered and
+throws `PhpDb\Sql\Exception\InvalidArgumentException`.
+
 ### Floating
 
 Floating-point numbers.
@@ -101,6 +105,10 @@ $column->setDecimal(4);
 ```
 
 **Constructor:** `__construct($name, $digits, $decimal)`
+
+Digits and scale are both optional and render the same way as for `Decimal`: without digits the
+column renders as a bare `FLOAT`, and a scale without digits throws
+`PhpDb\Sql\Exception\InvalidArgumentException`.
 
 > The class is named `Floating` rather than `Float` because `float` is a reserved
 > keyword in PHP.
@@ -142,6 +150,9 @@ __construct(
 - `setDefault(string|int|null $default): static`
 - `setOption(string $name, mixed $value): static`
 
+A length is required. SQL-92 and MySQL both reject a bare `VARCHAR`, so rendering a `Varchar`
+without a length throws `PhpDb\Sql\Exception\InvalidArgumentException` naming the column.
+
 ### Char
 
 Fixed-length character string.
@@ -152,6 +163,9 @@ use PhpDb\Sql\Ddl\Column\Char;
 $column = new Char('country_code', 2); // ISO country codes
 $column = new Char('status', 1); // Single character status
 ```
+
+The length is optional. Without one the column renders as a bare `CHAR`, which databases treat as
+`CHAR(1)`.
 
 **Constructor:**
 
@@ -203,6 +217,9 @@ use PhpDb\Sql\Ddl\Column\Binary;
 $column = new Binary('hash', 32); // 32-byte hash
 ```
 
+The length is optional. Without one the column renders as a bare `BINARY`, which databases treat as
+`BINARY(1)`.
+
 **Constructor:**
 
 ```php
@@ -224,6 +241,9 @@ use PhpDb\Sql\Ddl\Column\Varbinary;
 
 $column = new Varbinary('file_data', 65535);
 ```
+
+A length is required. As with `Varchar`, rendering a `Varbinary` without a length throws
+`PhpDb\Sql\Exception\InvalidArgumentException` naming the column.
 
 **Constructor:**
 

@@ -1286,18 +1286,6 @@ count = 10
 
 [[issues]]
 file = "test/unit/Adapter/Container/AdapterInterfaceDelegatorTest.php"
-code = "no-redundant-variable"
-message = "Variable `$container` is assigned but never used."
-count = 1
-
-[[issues]]
-file = "test/unit/Adapter/Container/AdapterInterfaceDelegatorTest.php"
-code = "no-redundant-variable"
-message = "Variable `$pluginManagerConfig` is assigned but never used."
-count = 1
-
-[[issues]]
-file = "test/unit/Adapter/Container/AdapterInterfaceDelegatorTest.php"
 code = "prefer-test-attribute"
 message = "Use `#[Test]` attribute instead of `test` prefix on method `testDelegatorWithPluginManager`."
 count = 1
@@ -4918,13 +4906,7 @@ count = 1
 file = "test/unit/Sql/Ddl/Column/VarcharTest.php"
 code = "assertion-style"
 message = "Inconsistent assertions style."
-count = 9
-
-[[issues]]
-file = "test/unit/Sql/Ddl/Column/VarcharTest.php"
-code = "prefer-test-attribute"
-message = "Use `#[Test]` attribute instead of `test` prefix on method `testGetExpressionDataWithNullLength`."
-count = 1
+count = 7
 
 [[issues]]
 file = "test/unit/Sql/Ddl/Column/VarcharTest.php"
@@ -4948,7 +4930,7 @@ count = 1
 file = "test/unit/Sql/Ddl/Column/VarcharTest.php"
 code = "strict-assertions"
 message = "Use strict assertions in PHPUnit tests."
-count = 4
+count = 3
 
 [[issues]]
 file = "test/unit/Sql/Ddl/Constraint/AbstractConstraintTest.php"

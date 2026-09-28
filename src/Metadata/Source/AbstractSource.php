@@ -693,15 +693,17 @@ abstract class AbstractSource implements MetadataInterface
      * Prepare data hierarchy
      *
      * The by-reference walk builds arbitrary depths of the hierarchy, which
-     * cannot be expressed against the MetadataData shape.
+     * cannot be expressed against the MetadataData shape. The reference is
+     * re-typed as a plain array so the analyzer does not re-derive the shape
+     * on every iteration, which does not terminate in useful time on Mago
+     * 1.47.5 and later.
      *
-     * @mago-expect analysis:possibly-undefined-string-array-index
-     * @mago-expect analysis:possibly-undefined-int-array-index
-     * @mago-expect analysis:possibly-null-array-access
+     * @mago-expect analysis:mixed-assignment
      * @mago-expect lint:no-isset
      */
     protected function prepareDataHierarchy(string $type, string ...$keys): void
     {
+        /** @var array<array-key, mixed> $data */
         $data = &$this->data;
         foreach ([$type, ...$keys] as $key) {
             if (! isset($data[$key])) {

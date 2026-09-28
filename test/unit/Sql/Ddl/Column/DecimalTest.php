@@ -5,9 +5,13 @@ declare(strict_types=1);
 namespace PhpDbTest\Sql\Ddl\Column;
 
 use PhpDb\Sql\Argument;
+use PhpDb\Sql\Ddl\Column\AbstractLengthColumn;
 use PhpDb\Sql\Ddl\Column\AbstractPrecisionColumn;
 use PhpDb\Sql\Ddl\Column\Decimal;
+use PhpDb\Sql\Exception\InvalidArgumentException;
 use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 #[CoversMethod(Decimal::class, 'getExpressionData')]
@@ -17,8 +21,45 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(AbstractPrecisionColumn::class, 'setDecimal')]
 #[CoversMethod(AbstractPrecisionColumn::class, 'getDecimal')]
 #[CoversMethod(AbstractPrecisionColumn::class, 'getLengthExpression')]
+#[CoversMethod(AbstractLengthColumn::class, 'getExpressionData')]
+#[Group('unit')]
 final class DecimalTest extends TestCase
 {
+    use ColumnAssertionsTrait;
+
+    #[Test]
+    public function getExpressionDataOmitsLengthPlaceholderWhenPrecisionIsNotSet(): void
+    {
+        $expressionData = (new Decimal('amount'))->getExpressionData();
+
+        static::assertSame('%s %s NOT NULL', $expressionData['spec']);
+        static::assertEquals(
+            [
+                Argument::identifier('amount'),
+                Argument::literal('DECIMAL'),
+            ],
+            $expressionData['values'],
+        );
+    }
+
+    #[Test]
+    public function rendersDigitsAndDecimalDirectlyAfterType(): void
+    {
+        static::assertColumnRenders('"price" DECIMAL(10,2) NOT NULL', new Decimal('price', 10, 2));
+    }
+
+    #[Test]
+    public function rendersDigitsOnlyWhenDecimalIsNotSet(): void
+    {
+        static::assertColumnRenders('"price" DECIMAL(10) NOT NULL', new Decimal('price', 10));
+    }
+
+    #[Test]
+    public function rendersWithoutParenthesesWhenPrecisionIsNotSet(): void
+    {
+        static::assertColumnRenders('"price" DECIMAL NOT NULL', new Decimal('price'));
+    }
+
     public function testConstructorSetsDigitsAndDecimal(): void
     {
         $column = new Decimal('price', 10, 2);
@@ -82,5 +123,16 @@ final class DecimalTest extends TestCase
 
         self::assertSame($column, $result); // Fluent interface
         self::assertEquals(15, $column->getDigits());
+    }
+
+    #[Test]
+    public function throwsWhenDecimalIsSetWithoutDigits(): void
+    {
+        $column = new Decimal('price', null, 2);
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Column "price" of type DECIMAL has a decimal scale but no digits');
+
+        $column->getExpressionData();
     }
 }
