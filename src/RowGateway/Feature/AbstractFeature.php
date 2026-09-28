@@ -9,10 +9,14 @@ use PhpDb\RowGateway\AbstractRowGateway;
 use PhpDb\RowGateway\Exception;
 use PhpDb\RowGateway\Exception\RuntimeException;
 
+/**
+ * @api
+ */
 abstract class AbstractFeature extends AbstractRowGateway implements FeatureInterface
 {
     protected AbstractRowGateway $rowGateway;
 
+    /** @var array<string, mixed> */
     protected array $sharedData = [];
 
     /** @return array<string, string[]> */

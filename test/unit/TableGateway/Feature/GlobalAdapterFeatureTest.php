@@ -9,13 +9,15 @@ use PhpDb\TableGateway\AbstractTableGateway;
 use PhpDb\TableGateway\Exception\RuntimeException;
 use PhpDb\TableGateway\Feature\GlobalAdapterFeature;
 use PhpDbTest\TableGateway\Feature\TestAsset\TestGlobalAdapterFeatureSubclass;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
 
 class GlobalAdapterFeatureTest extends TestCase
 {
-    public function testGetStaticAdapterReturnsDefaultAdapterWhenClassSpecificNotSet(): void
+    #[Test]
+    public function getStaticAdapterReturnsDefaultAdapterWhenClassSpecificNotSet(): void
     {
         $adapter = $this->createMock(AdapterInterface::class);
 
@@ -25,10 +27,11 @@ class GlobalAdapterFeatureTest extends TestCase
         // Get adapter should return the default adapter
         $result = GlobalAdapterFeature::getStaticAdapter();
 
-        self::assertSame($adapter, $result);
+        static::assertSame($adapter, $result);
     }
 
-    public function testGetStaticAdapterThrowsExceptionWhenNoAdapterSet(): void
+    #[Test]
+    public function getStaticAdapterThrowsExceptionWhenNoAdapterSet(): void
     {
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('No database adapter was found in the static registry.');
@@ -36,7 +39,8 @@ class GlobalAdapterFeatureTest extends TestCase
         GlobalAdapterFeature::getStaticAdapter();
     }
 
-    public function testPreInitializeSetsAdapterOnTableGateway(): void
+    #[Test]
+    public function preInitializeSetsAdapterOnTableGateway(): void
     {
         $adapter = $this->createMock(AdapterInterface::class);
         GlobalAdapterFeature::setStaticAdapter($adapter);
@@ -55,20 +59,22 @@ class GlobalAdapterFeatureTest extends TestCase
         $reflection = new ReflectionProperty(AbstractTableGateway::class, 'adapter');
         $result     = $reflection->getValue($tableGatewayMock);
 
-        self::assertSame($adapter, $result);
+        static::assertSame($adapter, $result);
     }
 
-    public function testSetStaticAdapter(): void
+    #[Test]
+    public function setStaticAdapter(): void
     {
         $adapter = $this->createMock(AdapterInterface::class);
 
         GlobalAdapterFeature::setStaticAdapter($adapter);
 
         $result = GlobalAdapterFeature::getStaticAdapter();
-        self::assertSame($adapter, $result);
+        static::assertSame($adapter, $result);
     }
 
-    public function testSubclassCanSetAndGetOwnAdapter(): void
+    #[Test]
+    public function subclassCanSetAndGetOwnAdapter(): void
     {
         $baseAdapter     = $this->createMock(AdapterInterface::class);
         $subclassAdapter = $this->createMock(AdapterInterface::class);
@@ -80,13 +86,14 @@ class GlobalAdapterFeatureTest extends TestCase
         TestGlobalAdapterFeatureSubclass::setStaticAdapter($subclassAdapter);
 
         // Base class should return base adapter
-        self::assertSame($baseAdapter, GlobalAdapterFeature::getStaticAdapter());
+        static::assertSame($baseAdapter, GlobalAdapterFeature::getStaticAdapter());
 
         // Subclass should return its own adapter
-        self::assertSame($subclassAdapter, TestGlobalAdapterFeatureSubclass::getStaticAdapter());
+        static::assertSame($subclassAdapter, TestGlobalAdapterFeatureSubclass::getStaticAdapter());
     }
 
-    public function testSubclassFallsBackToDefaultAdapterWhenNoSpecificAdapterSet(): void
+    #[Test]
+    public function subclassFallsBackToDefaultAdapterWhenNoSpecificAdapterSet(): void
     {
         $defaultAdapter = $this->createMock(AdapterInterface::class);
 
@@ -96,10 +103,11 @@ class GlobalAdapterFeatureTest extends TestCase
         // Subclass should fall back to default adapter
         $result = TestGlobalAdapterFeatureSubclass::getStaticAdapter();
 
-        self::assertSame($defaultAdapter, $result);
+        static::assertSame($defaultAdapter, $result);
     }
 
-    public function testSubclassThrowsExceptionWhenNoAdaptersSet(): void
+    #[Test]
+    public function subclassThrowsExceptionWhenNoAdaptersSet(): void
     {
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('No database adapter was found in the static registry.');

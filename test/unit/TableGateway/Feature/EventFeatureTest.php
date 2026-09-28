@@ -18,6 +18,7 @@ use PhpDb\TableGateway\Feature\EventFeature;
 use PhpDb\TableGateway\Feature\EventFeatureEventsInterface;
 use PhpDb\TableGateway\TableGateway;
 use PhpDbTest\TableGateway\Feature\TestAsset\TestTableGateway;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -32,25 +33,29 @@ final class EventFeatureTest extends TestCase
 
     protected TableGateway&MockObject $tableGateway;
 
-    public function testConstructorWithDefaults(): void
+    #[Test]
+    public function constructorWithDefaults(): void
     {
         $feature = new EventFeature();
 
-        self::assertInstanceOf(EventManagerInterface::class, $feature->getEventManager());
-        self::assertInstanceOf(EventFeature\TableGatewayEvent::class, $feature->getEvent());
+        static::assertInstanceOf(EventManagerInterface::class, $feature->getEventManager());
+        static::assertInstanceOf(EventFeature\TableGatewayEvent::class, $feature->getEvent());
     }
 
-    public function testGetEvent(): void
+    #[Test]
+    public function getEvent(): void
     {
-        self::assertSame($this->event, $this->feature->getEvent());
+        static::assertSame($this->event, $this->feature->getEvent());
     }
 
-    public function testGetEventManager(): void
+    #[Test]
+    public function getEventManager(): void
     {
-        self::assertSame($this->eventManager, $this->feature->getEventManager());
+        static::assertSame($this->eventManager, $this->feature->getEventManager());
     }
 
-    public function testPostDelete(): void
+    #[Test]
+    public function postDelete(): void
     {
         $closureHasRun = false;
 
@@ -64,18 +69,19 @@ final class EventFeatureTest extends TestCase
             },
         );
 
-        $this->feature->postDelete(
-            $stmt = $this->getMockBuilder(StatementInterface::class)->getMock(),
-            $result = $this->getMockBuilder(ResultInterface::class)->getMock(),
-        );
-        self::assertTrue($closureHasRun);
-        self::assertInstanceOf(TableGateway::class, $event->getTarget());
-        self::assertEquals(EventFeatureEventsInterface::EVENT_POST_DELETE, $event->getName());
-        self::assertSame($stmt, $event->getParam('statement'));
-        self::assertSame($result, $event->getParam('result'));
+        $stmt   = $this->getMockBuilder(StatementInterface::class)->getMock();
+        $result = $this->getMockBuilder(ResultInterface::class)->getMock();
+
+        $this->feature->postDelete($stmt, $result);
+        static::assertTrue($closureHasRun);
+        static::assertInstanceOf(TableGateway::class, $event->getTarget());
+        static::assertEquals(EventFeatureEventsInterface::EVENT_POST_DELETE, $event->getName());
+        static::assertSame($stmt, $event->getParam('statement'));
+        static::assertSame($result, $event->getParam('result'));
     }
 
-    public function testPostInitialize(): void
+    #[Test]
+    public function postInitialize(): void
     {
         $closureHasRun = false;
 
@@ -90,12 +96,13 @@ final class EventFeatureTest extends TestCase
         );
 
         $this->feature->postInitialize();
-        self::assertTrue($closureHasRun);
-        self::assertInstanceOf(TableGateway::class, $event->getTarget());
-        self::assertEquals(EventFeatureEventsInterface::EVENT_POST_INITIALIZE, $event->getName());
+        static::assertTrue($closureHasRun);
+        static::assertInstanceOf(TableGateway::class, $event->getTarget());
+        static::assertEquals(EventFeatureEventsInterface::EVENT_POST_INITIALIZE, $event->getName());
     }
 
-    public function testPostInsert(): void
+    #[Test]
+    public function postInsert(): void
     {
         $closureHasRun = false;
 
@@ -109,18 +116,19 @@ final class EventFeatureTest extends TestCase
             },
         );
 
-        $this->feature->postInsert(
-            $stmt = $this->getMockBuilder(StatementInterface::class)->getMock(),
-            $result = $this->getMockBuilder(ResultInterface::class)->getMock(),
-        );
-        self::assertTrue($closureHasRun);
-        self::assertInstanceOf(TableGateway::class, $event->getTarget());
-        self::assertEquals(EventFeatureEventsInterface::EVENT_POST_INSERT, $event->getName());
-        self::assertSame($stmt, $event->getParam('statement'));
-        self::assertSame($result, $event->getParam('result'));
+        $stmt   = $this->getMockBuilder(StatementInterface::class)->getMock();
+        $result = $this->getMockBuilder(ResultInterface::class)->getMock();
+
+        $this->feature->postInsert($stmt, $result);
+        static::assertTrue($closureHasRun);
+        static::assertInstanceOf(TableGateway::class, $event->getTarget());
+        static::assertEquals(EventFeatureEventsInterface::EVENT_POST_INSERT, $event->getName());
+        static::assertSame($stmt, $event->getParam('statement'));
+        static::assertSame($result, $event->getParam('result'));
     }
 
-    public function testPostSelect(): void
+    #[Test]
+    public function postSelect(): void
     {
         $closureHasRun = false;
 
@@ -134,20 +142,21 @@ final class EventFeatureTest extends TestCase
             },
         );
 
-        $this->feature->postSelect(
-            $stmt = $this->getMockBuilder(StatementInterface::class)->getMock(),
-            $result = $this->getMockBuilder(ResultInterface::class)->getMock(),
-            $resultset = $this->getMockBuilder(ResultSet::class)->getMock(),
-        );
-        self::assertTrue($closureHasRun);
-        self::assertInstanceOf(TableGateway::class, $event->getTarget());
-        self::assertEquals(EventFeatureEventsInterface::EVENT_POST_SELECT, $event->getName());
-        self::assertSame($stmt, $event->getParam('statement'));
-        self::assertSame($result, $event->getParam('result'));
-        self::assertSame($resultset, $event->getParam('result_set'));
+        $stmt      = $this->getMockBuilder(StatementInterface::class)->getMock();
+        $result    = $this->getMockBuilder(ResultInterface::class)->getMock();
+        $resultset = $this->getMockBuilder(ResultSet::class)->getMock();
+
+        $this->feature->postSelect($stmt, $result, $resultset);
+        static::assertTrue($closureHasRun);
+        static::assertInstanceOf(TableGateway::class, $event->getTarget());
+        static::assertEquals(EventFeatureEventsInterface::EVENT_POST_SELECT, $event->getName());
+        static::assertSame($stmt, $event->getParam('statement'));
+        static::assertSame($result, $event->getParam('result'));
+        static::assertSame($resultset, $event->getParam('result_set'));
     }
 
-    public function testPostUpdate(): void
+    #[Test]
+    public function postUpdate(): void
     {
         $closureHasRun = false;
 
@@ -161,18 +170,19 @@ final class EventFeatureTest extends TestCase
             },
         );
 
-        $this->feature->postUpdate(
-            $stmt = $this->getMockBuilder(StatementInterface::class)->getMock(),
-            $result = $this->getMockBuilder(ResultInterface::class)->getMock(),
-        );
-        self::assertTrue($closureHasRun);
-        self::assertInstanceOf(TableGateway::class, $event->getTarget());
-        self::assertEquals(EventFeatureEventsInterface::EVENT_POST_UPDATE, $event->getName());
-        self::assertSame($stmt, $event->getParam('statement'));
-        self::assertSame($result, $event->getParam('result'));
+        $stmt   = $this->getMockBuilder(StatementInterface::class)->getMock();
+        $result = $this->getMockBuilder(ResultInterface::class)->getMock();
+
+        $this->feature->postUpdate($stmt, $result);
+        static::assertTrue($closureHasRun);
+        static::assertInstanceOf(TableGateway::class, $event->getTarget());
+        static::assertEquals(EventFeatureEventsInterface::EVENT_POST_UPDATE, $event->getName());
+        static::assertSame($stmt, $event->getParam('statement'));
+        static::assertSame($result, $event->getParam('result'));
     }
 
-    public function testPreDelete(): void
+    #[Test]
+    public function preDelete(): void
     {
         $closureHasRun = false;
 
@@ -186,14 +196,17 @@ final class EventFeatureTest extends TestCase
             },
         );
 
-        $this->feature->preDelete($delete = $this->getMockBuilder(Delete::class)->getMock());
-        self::assertTrue($closureHasRun);
-        self::assertInstanceOf(TableGateway::class, $event->getTarget());
-        self::assertEquals(EventFeatureEventsInterface::EVENT_PRE_DELETE, $event->getName());
-        self::assertSame($delete, $event->getParam('delete'));
+        $delete = $this->getMockBuilder(Delete::class)->getMock();
+
+        $this->feature->preDelete($delete);
+        static::assertTrue($closureHasRun);
+        static::assertInstanceOf(TableGateway::class, $event->getTarget());
+        static::assertEquals(EventFeatureEventsInterface::EVENT_PRE_DELETE, $event->getName());
+        static::assertSame($delete, $event->getParam('delete'));
     }
 
-    public function testPreInitialize(): void
+    #[Test]
+    public function preInitialize(): void
     {
         $closureHasRun = false;
 
@@ -208,15 +221,16 @@ final class EventFeatureTest extends TestCase
         );
 
         $this->feature->preInitialize();
-        self::assertTrue($closureHasRun);
-        self::assertInstanceOf(TableGateway::class, $event->getTarget());
-        self::assertEquals(EventFeatureEventsInterface::EVENT_PRE_INITIALIZE, $event->getName());
+        static::assertTrue($closureHasRun);
+        static::assertInstanceOf(TableGateway::class, $event->getTarget());
+        static::assertEquals(EventFeatureEventsInterface::EVENT_PRE_INITIALIZE, $event->getName());
     }
 
     /**
      * @throws Exception
      */
-    public function testPreInitializeAddsIdentifiersForCustomTableGatewayClass(): void
+    #[Test]
+    public function preInitializeAddsIdentifiersForCustomTableGatewayClass(): void
     {
         // Create a custom subclass of TableGateway (using anonymous class)
         $customTableGateway = new TestTableGateway();
@@ -232,11 +246,12 @@ final class EventFeatureTest extends TestCase
         $identifiers = $eventManager->getIdentifiers();
 
         // Should contain both TableGateway::class and the anonymous class name
-        self::assertContains(TableGateway::class, $identifiers);
-        self::assertContains($customTableGateway::class, $identifiers);
+        static::assertContains(TableGateway::class, $identifiers);
+        static::assertContains($customTableGateway::class, $identifiers);
     }
 
-    public function testPreInsert(): void
+    #[Test]
+    public function preInsert(): void
     {
         $closureHasRun = false;
 
@@ -250,14 +265,17 @@ final class EventFeatureTest extends TestCase
             },
         );
 
-        $this->feature->preInsert($insert = $this->getMockBuilder(Insert::class)->getMock());
-        self::assertTrue($closureHasRun);
-        self::assertInstanceOf(TableGateway::class, $event->getTarget());
-        self::assertEquals(EventFeatureEventsInterface::EVENT_PRE_INSERT, $event->getName());
-        self::assertSame($insert, $event->getParam('insert'));
+        $insert = $this->getMockBuilder(Insert::class)->getMock();
+
+        $this->feature->preInsert($insert);
+        static::assertTrue($closureHasRun);
+        static::assertInstanceOf(TableGateway::class, $event->getTarget());
+        static::assertEquals(EventFeatureEventsInterface::EVENT_PRE_INSERT, $event->getName());
+        static::assertSame($insert, $event->getParam('insert'));
     }
 
-    public function testPreSelect(): void
+    #[Test]
+    public function preSelect(): void
     {
         $closureHasRun = false;
 
@@ -271,14 +289,17 @@ final class EventFeatureTest extends TestCase
             },
         );
 
-        $this->feature->preSelect($select = $this->getMockBuilder(Select::class)->getMock());
-        self::assertTrue($closureHasRun);
-        self::assertInstanceOf(TableGateway::class, $event->getTarget());
-        self::assertEquals(EventFeatureEventsInterface::EVENT_PRE_SELECT, $event->getName());
-        self::assertSame($select, $event->getParam('select'));
+        $select = $this->getMockBuilder(Select::class)->getMock();
+
+        $this->feature->preSelect($select);
+        static::assertTrue($closureHasRun);
+        static::assertInstanceOf(TableGateway::class, $event->getTarget());
+        static::assertEquals(EventFeatureEventsInterface::EVENT_PRE_SELECT, $event->getName());
+        static::assertSame($select, $event->getParam('select'));
     }
 
-    public function testPreUpdate(): void
+    #[Test]
+    public function preUpdate(): void
     {
         $closureHasRun = false;
 
@@ -292,11 +313,13 @@ final class EventFeatureTest extends TestCase
             },
         );
 
-        $this->feature->preUpdate($update = $this->getMockBuilder(Update::class)->getMock());
-        self::assertTrue($closureHasRun);
-        self::assertInstanceOf(TableGateway::class, $event->getTarget());
-        self::assertEquals(EventFeatureEventsInterface::EVENT_PRE_UPDATE, $event->getName());
-        self::assertSame($update, $event->getParam('update'));
+        $update = $this->getMockBuilder(Update::class)->getMock();
+
+        $this->feature->preUpdate($update);
+        static::assertTrue($closureHasRun);
+        static::assertInstanceOf(TableGateway::class, $event->getTarget());
+        static::assertEquals(EventFeatureEventsInterface::EVENT_PRE_UPDATE, $event->getName());
+        static::assertSame($update, $event->getParam('update'));
     }
 
     /**
