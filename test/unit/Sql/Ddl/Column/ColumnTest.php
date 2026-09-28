@@ -11,6 +11,7 @@ use PhpDb\Sql\Ddl\Column\Column;
 use PhpDb\Sql\Ddl\Constraint\PrimaryKey;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 #[CoversMethod(Column::class, '__construct')]
@@ -28,6 +29,17 @@ use PHPUnit\Framework\TestCase;
 #[Group('unit')]
 final class ColumnTest extends TestCase
 {
+    #[Test]
+    public function setOptionAcceptsIntegerValue(): void
+    {
+        $column = new Column();
+
+        $result = $column->setOption('length', 11);
+
+        static::assertSame($column, $result);
+        static::assertSame(['length' => 11], $column->getOptions());
+    }
+
     public function testAddConstraintAppendsConstraintToColumn(): void
     {
         $column = new Column('id');

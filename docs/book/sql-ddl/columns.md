@@ -14,10 +14,15 @@ use PhpDb\Sql\Ddl\Column\Integer;
 $column = new Integer('user_id');
 $column = new Integer('count', false, 0); // NOT NULL with default 0
 
-// With display length (platform-specific)
+// With display width (platform-specific)
 $column = new Integer('user_id');
-$column->setOption('length', 11);
+$column->setOption('length', 11); // INTEGER(11)
 ```
+
+The `length` option is a display width rendered directly after the type, as `INTEGER(11)`. It
+accepts an `int` or a string of digits. MySQL deprecated integer display widths in 8.0.17, and the
+MySQL platform decorator drops the attribute (see phpdb-mysql#81); other platforms render it as
+given.
 
 **Constructor:**
 

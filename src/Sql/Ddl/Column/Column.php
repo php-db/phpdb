@@ -130,7 +130,7 @@ class Column implements ColumnInterface
         return $this;
     }
 
-    public function setOption(string $name, bool|string $value): static
+    public function setOption(string $name, bool|int|string $value): static
     {
         $this->options[$name] = $value;
         return $this;
