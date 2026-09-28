@@ -6,12 +6,13 @@ namespace PhpDb\TableGateway\Feature;
 
 use PhpDb\Adapter\AdapterInterface;
 use PhpDb\Sql\Sql;
+use PhpDb\TableGateway\Exception;
 
-class MasterSlaveFeature extends AbstractFeature
+final class MasterSlaveFeature extends AbstractFeature
 {
     protected AdapterInterface $slaveAdapter;
 
-    protected Sql $masterSql;
+    protected ?Sql $masterSql = null;
 
     protected ?Sql $slaveSql = null;
 
@@ -35,14 +36,23 @@ class MasterSlaveFeature extends AbstractFeature
 
     /**
      * after initialization, retrieve the original adapter as "master"
+     *
+     * @throws Exception\RuntimeException
      */
     public function postInitialize(): void
     {
-        $this->masterSql = $this->tableGateway->sql;
+        $masterSql = $this->tableGateway->sql;
+        if (! $masterSql instanceof Sql) {
+            throw new Exception\RuntimeException(
+                'The table gateway must be initialized with a Sql instance before this feature is applied.',
+            );
+        }
+
+        $this->masterSql = $masterSql;
         if (null === $this->slaveSql) {
             $this->slaveSql = new Sql(
                 $this->slaveAdapter,
-                $this->tableGateway->sql->getTable(),
+                $masterSql->getTable(),
             );
         }
     }
@@ -50,9 +60,17 @@ class MasterSlaveFeature extends AbstractFeature
     /**
      * postSelect()
      * Ensure to return to the master adapter
+     *
+     * @throws Exception\RuntimeException
      */
     public function postSelect(): void
     {
+        if (! $this->masterSql instanceof Sql) {
+            throw new Exception\RuntimeException(
+                'The master Sql instance is not available; postInitialize() has not been run.',
+            );
+        }
+
         $this->tableGateway->sql = $this->masterSql;
     }
 

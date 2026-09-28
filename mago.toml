@@ -15,4 +15,6 @@ baseline = "lint-baseline.toml"
 baseline = "analyzer-baseline.toml"
 class-initializers = [
     "PhpDb\\ResultSet\\AbstractResultSet::initialize",
+    "PhpDb\\TableGateway\\Feature\\AbstractFeature::setTableGateway",
+    "PhpDb\\RowGateway\\Feature\\AbstractFeature::setRowGateway",
 ]

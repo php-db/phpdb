@@ -11,21 +11,23 @@ namespace PhpDb\TableGateway\Feature;
  * into a separate interface that EventFeature implements; the change keeps
  * backwards compatibility, while simultaneously removing the need to add
  * another hard dependency to the component.
+ *
+ * @api
  */
 interface EventFeatureEventsInterface
 {
-    public const EVENT_PRE_INITIALIZE  = 'preInitialize';
-    public const EVENT_POST_INITIALIZE = 'postInitialize';
+    public const string EVENT_PRE_INITIALIZE  = 'preInitialize';
+    public const string EVENT_POST_INITIALIZE = 'postInitialize';
 
-    public const EVENT_PRE_SELECT  = 'preSelect';
-    public const EVENT_POST_SELECT = 'postSelect';
+    public const string EVENT_PRE_SELECT  = 'preSelect';
+    public const string EVENT_POST_SELECT = 'postSelect';
 
-    public const EVENT_PRE_INSERT  = 'preInsert';
-    public const EVENT_POST_INSERT = 'postInsert';
+    public const string EVENT_PRE_INSERT  = 'preInsert';
+    public const string EVENT_POST_INSERT = 'postInsert';
 
-    public const EVENT_PRE_DELETE  = 'preDelete';
-    public const EVENT_POST_DELETE = 'postDelete';
+    public const string EVENT_PRE_DELETE  = 'preDelete';
+    public const string EVENT_POST_DELETE = 'postDelete';
 
-    public const EVENT_PRE_UPDATE  = 'preUpdate';
-    public const EVENT_POST_UPDATE = 'postUpdate';
+    public const string EVENT_PRE_UPDATE  = 'preUpdate';
+    public const string EVENT_POST_UPDATE = 'postUpdate';
 }

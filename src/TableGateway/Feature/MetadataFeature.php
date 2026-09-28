@@ -12,7 +12,12 @@ use PhpDb\TableGateway\Exception;
 use function count;
 use function current;
 use function is_array;
+use function is_string;
+use function reset;
 
+/**
+ * @api
+ */
 class MetadataFeature extends AbstractFeature
 {
     /**
@@ -27,28 +32,43 @@ class MetadataFeature extends AbstractFeature
         ];
     }
 
+    /**
+     * @throws Exception\RuntimeException
+     */
     public function postInitialize(): void
     {
         // localize variable for brevity
         $t = $this->tableGateway;
         $m = $this->metadata;
 
-        $tableGatewayTable = is_array($t->table) ? current($t->table) : $t->table;
-
-        if ($tableGatewayTable instanceof TableIdentifier) {
-            $table  = $tableGatewayTable->getTable();
-            $schema = $tableGatewayTable->getSchema();
-        } else {
-            $table  = $tableGatewayTable;
-            $schema = null;
+        $tableGatewayTable = $t->getTable();
+        if (is_array($tableGatewayTable)) {
+            $tableGatewayTable = current($tableGatewayTable);
         }
+
+        if (! $tableGatewayTable instanceof TableIdentifier && ! is_string($tableGatewayTable)) {
+            throw new Exception\RuntimeException(
+                'The table gateway must reference a named table before metadata can be resolved.',
+            );
+        }
+
+        $table = $tableGatewayTable instanceof TableIdentifier
+            ? $tableGatewayTable->getTable()
+            : $tableGatewayTable;
+
+        $schema = $tableGatewayTable instanceof TableIdentifier
+            ? $tableGatewayTable->getSchema()
+            : null;
 
         // get column named
         $columns    = $m->getColumnNames($table, $schema);
         $t->columns = $columns;
 
         // set locally
-        $this->sharedData['metadata']['columns'] = $columns;
+        $metadata                     = $this->sharedData['metadata'] ?? [];
+        $metadata                     = is_array($metadata) ? $metadata : [];
+        $metadata['columns']          = $columns;
+        $this->sharedData['metadata'] = $metadata;
 
         // process primary key only if table is a table; there are no PK constraints on views
         if (! $m->getTable($table, $schema) instanceof TableObject) {
@@ -71,12 +91,9 @@ class MetadataFeature extends AbstractFeature
         }
 
         $pkcColumns = $pkc->getColumns();
-        if (count($pkcColumns) === 1) {
-            $primaryKey = $pkcColumns[0];
-        } else {
-            $primaryKey = $pkcColumns;
-        }
+        $primaryKey = 1 === count($pkcColumns) ? reset($pkcColumns) : $pkcColumns;
 
-        $this->sharedData['metadata']['primaryKey'] = $primaryKey;
+        $metadata['primaryKey']       = $primaryKey;
+        $this->sharedData['metadata'] = $metadata;
     }
 }

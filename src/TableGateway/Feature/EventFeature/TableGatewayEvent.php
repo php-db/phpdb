@@ -8,12 +8,16 @@ use Laminas\EventManager\EventInterface;
 use Override;
 use PhpDb\TableGateway\AbstractTableGateway;
 
-class TableGatewayEvent implements EventInterface
+/**
+ * @implements EventInterface<AbstractTableGateway|null, array<array-key, mixed>|object>
+ */
+final class TableGatewayEvent implements EventInterface
 {
     protected ?AbstractTableGateway $target = null;
 
     protected ?string $name = null;
 
+    /** @var array<array-key, mixed>|object */
     protected array|object $params = [];
 
     #[Override]
@@ -77,6 +81,8 @@ class TableGatewayEvent implements EventInterface
      *
      * @param string|int $name
      * @param mixed $value
+     *
+     * @mago-expect analysis:possibly-invalid-array-access
      */
     #[Override]
     public function setParam($name, $value): void
@@ -87,8 +93,10 @@ class TableGatewayEvent implements EventInterface
     /**
      * Set event parameters
      *
-     * @param array|object $params
+     * @param array<array-key, mixed>|object $params
      * @phpstan-ignore selfOut.type
+     *
+     * @mago-expect analysis:unused-template-parameter
      */
     #[Override]
     public function setParams($params): void
@@ -101,6 +109,9 @@ class TableGatewayEvent implements EventInterface
      *
      * @param object|string|null $target
      * @phpstan-ignore selfOut.type
+     *
+     * @mago-expect analysis:unused-template-parameter
+     * @mago-expect analysis:property-type-coercion
      */
     #[Override]
     public function setTarget($target): void

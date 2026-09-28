@@ -7,6 +7,9 @@ namespace PhpDb\TableGateway\Feature;
 use PhpDb\Feature\FeatureInterface as BaseFeatureInterface;
 use PhpDb\TableGateway\AbstractTableGateway;
 
+/**
+ * @api
+ */
 interface FeatureInterface extends BaseFeatureInterface
 {
     public function setTableGateway(AbstractTableGateway $tableGateway): void;

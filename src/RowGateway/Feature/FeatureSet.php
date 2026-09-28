@@ -13,15 +13,17 @@ use function method_exists;
  */
 class FeatureSet
 {
-    final public const APPLY_HALT = 'halt';
+    final public const string APPLY_HALT = 'halt';
 
     protected ?AbstractRowGateway $rowGateway = null;
 
     /** @var FeatureInterface[] */
     protected array $features = [];
 
+    /** @var array<array-key, mixed> */
     protected array $magicSpecifications = [];
 
+    /** @param FeatureInterface[] $features */
     public function __construct(array $features = [])
     {
         if ([] !== $features) {
@@ -38,6 +40,7 @@ class FeatureSet
         return $this;
     }
 
+    /** @param FeatureInterface[] $features */
     public function addFeatures(array $features): static
     {
         foreach ($features as $feature) {
@@ -46,6 +49,12 @@ class FeatureSet
         return $this;
     }
 
+    /**
+     * @param array<array-key, mixed> $args
+     *
+     * @mago-expect analysis:string-member-selector
+     * @mago-expect analysis:mixed-assignment
+     */
     public function apply(string $method, array $args): void
     {
         foreach ($this->features as $feature) {
@@ -60,31 +69,51 @@ class FeatureSet
         }
     }
 
+    /**
+     * @mago-expect analysis:unused-parameter
+     *
+     * @param array<array-key, mixed> $arguments
+     */
     public function callMagicCall(string $method, array $arguments): mixed
     {
         return null;
     }
 
+    /**
+     * @mago-expect analysis:unused-parameter
+     */
     public function callMagicGet(string $property): mixed
     {
         return null;
     }
 
+    /**
+     * @mago-expect analysis:unused-parameter
+     */
     public function callMagicSet(string $property, mixed $value): mixed
     {
         return null;
     }
 
+    /**
+     * @mago-expect analysis:unused-parameter
+     */
     public function canCallMagicCall(string $method): bool
     {
         return false;
     }
 
+    /**
+     * @mago-expect analysis:unused-parameter
+     */
     public function canCallMagicGet(string $property): false
     {
         return false;
     }
 
+    /**
+     * @mago-expect analysis:unused-parameter
+     */
     public function canCallMagicSet(string $property): false
     {
         return false;

@@ -81,7 +81,6 @@
         "upload-coverage": "coveralls -v"
     },
     "conflict": {
-        "zendframework/zend-db": "*",
-        "laminas/laminas-db": "*"
+        "zendframework/zend-db": "*"
     }
 }

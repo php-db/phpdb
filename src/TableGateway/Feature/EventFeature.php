@@ -19,11 +19,14 @@ use PhpDb\TableGateway\TableGateway;
 
 use function get_class;
 
+/**
+ * @api
+ */
 class EventFeature extends AbstractFeature implements EventFeatureEventsInterface, EventsCapableInterface
 {
     protected EventManagerInterface $eventManager;
 
-    protected ?EventFeature\TableGatewayEvent $event;
+    protected EventFeature\TableGatewayEvent $event;
 
     public function __construct(
         ?EventManagerInterface $eventManager = null,
@@ -37,7 +40,9 @@ class EventFeature extends AbstractFeature implements EventFeatureEventsInterfac
             TableGateway::class,
         ]);
 
-        $this->event = $tableGatewayEvent ?: new EventFeature\TableGatewayEvent();
+        $this->event = $tableGatewayEvent instanceof EventFeature\TableGatewayEvent
+            ? $tableGatewayEvent
+            : new EventFeature\TableGatewayEvent();
     }
 
     /**
