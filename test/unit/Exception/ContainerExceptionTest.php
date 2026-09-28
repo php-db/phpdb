@@ -7,6 +7,7 @@ namespace PhpDbTest\Exception;
 use PhpDb\Exception\ContainerException;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerExceptionInterface;
 
@@ -14,6 +15,15 @@ use Psr\Container\ContainerExceptionInterface;
 #[CoversMethod(ContainerException::class, 'forService')]
 final class ContainerExceptionTest extends TestCase
 {
+    /**
+     * The factory pins the code to zero; callers distinguish these by type, not by code.
+     */
+    #[Test]
+    public function forServiceCreatesExceptionWithoutACode(): void
+    {
+        static::assertSame(0, ContainerException::forService('Svc', 'Factory', 'reason')->getCode());
+    }
+
     public function testForServiceCreatesFormattedExceptionMessage(): void
     {
         $exception = ContainerException::forService('Svc', 'Factory', 'reason');

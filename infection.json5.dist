@@ -16,7 +16,51 @@
         }
     },
     "mutators": {
-        "@default": true
+        "@default": true,
+        "DecrementInteger": {
+            "ignore": [
+                // implode() discards keys, so array_fill()'s start index cannot be observed.
+                "PhpDb\\Sql\\Argument\\Identifiers::getSpecification",
+                "PhpDb\\Sql\\Argument\\Values::getSpecification",
+                "PhpDb\\Sql\\Ddl\\Constraint\\ForeignKey::getExpressionData"
+            ]
+        },
+        "IncrementInteger": {
+            "ignore": [
+                // implode() discards keys, so array_fill()'s start index cannot be observed.
+                "PhpDb\\Sql\\Argument\\Identifiers::getSpecification",
+                "PhpDb\\Sql\\Argument\\Values::getSpecification",
+                "PhpDb\\Sql\\Ddl\\Constraint\\ForeignKey::getExpressionData"
+            ]
+        },
+        "MethodCallRemoval": {
+            "ignore": [
+                // Delegates to getColumnNames(), which loads the same data itself.
+                "PhpDb\\Metadata\\Source\\AbstractSource::getColumns"
+            ]
+        },
+        "ReturnRemoval": {
+            "ignore": [
+                // The guard short-circuits prepareDataHierarchy(), which is itself
+                // idempotent, so falling through to it has no observable effect.
+                "PhpDb\\Metadata\\Source\\AbstractSource::loadColumnData",
+                "PhpDb\\Metadata\\Source\\AbstractSource::loadConstraintData",
+                "PhpDb\\Metadata\\Source\\AbstractSource::loadConstraintDataKeys",
+                "PhpDb\\Metadata\\Source\\AbstractSource::loadConstraintReferences",
+                "PhpDb\\Metadata\\Source\\AbstractSource::loadTableNameData",
+                "PhpDb\\Metadata\\Source\\AbstractSource::loadTriggerData",
+                // A RowGatewayInterface is neither null nor a string, so the next guard
+                // returns for exactly the inputs this one does.
+                "PhpDb\\TableGateway\\Feature\\RowGatewayFeature::postInitialize"
+            ]
+        },
+        "TrueValue": {
+            "ignore": [
+                // The method body is empty; the flag is accepted for interface
+                // compatibility and never read.
+                "PhpDb\\TableGateway\\Feature\\EventFeature\\TableGatewayEvent::stopPropagation"
+            ]
+        }
     },
     "staticAnalysisTool": "mago"
 }

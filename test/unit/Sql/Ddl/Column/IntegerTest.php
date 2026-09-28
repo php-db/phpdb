@@ -51,6 +51,31 @@ final class IntegerTest extends TestCase
         );
     }
 
+    /**
+     * The display width is inserted directly after the type. Values contributed by a
+     * default and by a named constraint sit after that point, so they must be pushed
+     * along rather than overwritten.
+     */
+    #[Test]
+    public function getExpressionDataInsertsLengthWithoutDisplacingLaterValues(): void
+    {
+        $column = new Integer('i', true, 7, ['length' => 11]);
+        $column->addConstraint(new PrimaryKey(null, 'pk_i'));
+
+        $expressionData = $column->getExpressionData();
+
+        static::assertEquals(
+            [
+                Argument::identifier('i'),
+                Argument::literal('INTEGER'),
+                Argument::literal('11'),
+                Argument::value(7),
+                Argument::identifier('pk_i'),
+            ],
+            $expressionData['values'],
+        );
+    }
+
     #[Test]
     public function getExpressionDataPlacesLengthDirectlyAfterType(): void
     {
@@ -65,6 +90,16 @@ final class IntegerTest extends TestCase
             ],
             $expressionData['values'],
         );
+    }
+
+    /**
+     * Zero is a non-negative integer, so it is a width like any other rather than a
+     * rejected value.
+     */
+    #[Test]
+    public function rendersAZeroDisplayWidth(): void
+    {
+        static::assertColumnRenders('"i" INTEGER(0) NOT NULL', new Integer('i', false, null, ['length' => 0]));
     }
 
     #[Test]

@@ -7,6 +7,7 @@ namespace PhpDbTest\TableGateway\Feature;
 use PhpDb\Adapter\AdapterInterface;
 use PhpDb\ResultSet\ResultSetInterface;
 use PhpDb\ResultSet\RowPrototypeResultSet;
+use PhpDb\RowGateway\RowGateway;
 use PhpDb\RowGateway\RowGatewayInterface;
 use PhpDb\TableGateway\AbstractTableGateway;
 use PhpDb\TableGateway\Exception\RuntimeException;
@@ -267,8 +268,7 @@ class RowGatewayFeatureTest extends TestCase
 
         $feature->postInitialize();
 
-        $prototype = $resultSet->getRowPrototype();
-        static::assertInstanceOf(RowGatewayInterface::class, $prototype);
+        static::assertInstanceOf(RowGateway::class, $resultSet->getRowPrototype());
     }
 
     #[Test]
@@ -300,8 +300,7 @@ class RowGatewayFeatureTest extends TestCase
 
         $feature->postInitialize();
 
-        $prototype = $resultSet->getRowPrototype();
-        static::assertInstanceOf(RowGatewayInterface::class, $prototype);
+        static::assertInstanceOf(RowGateway::class, $resultSet->getRowPrototype());
     }
 
     /**

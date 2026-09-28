@@ -43,6 +43,15 @@ final class SequenceFeatureTest extends TestCase
     }
 
     /** @psalm-return array<array-key, array{0: string, 1: string}> */
+    public static function lastSequenceIdSqlProvider(): array
+    {
+        return [
+            ['PostgreSQL', 'SELECT LAST_INSERT_ROWID() as "currval"'],
+            ['Oracle', 'SELECT ' . self::$sequenceName . '.CURRVAL as "currval" FROM dual'],
+        ];
+    }
+
+    /** @psalm-return array<array-key, array{0: string, 1: string}> */
     public static function nextSequenceIdProvider(): array
     {
         return [
@@ -61,6 +70,42 @@ final class SequenceFeatureTest extends TestCase
         $result = $this->feature->lastSequenceId();
 
         static::assertSame(55, $result);
+    }
+
+    /**
+     * @throws Exception
+     */
+    #[Test]
+    #[DataProvider('lastSequenceIdSqlProvider')]
+    public function lastSequenceIdPreparesThePlatformStatement(string $platformName, string $statementSql): void
+    {
+        $platform = $this->createMock(PlatformInterface::class);
+        $platform->expects($this->any())->method('getName')->willReturn($platformName);
+        $platform->expects($this->any())
+            ->method('quoteIdentifier')
+            ->willReturnCallback(static fn($name) => $name);
+
+        $result = $this->createMock(ResultInterface::class);
+        $result->expects($this->any())->method('current')->willReturn(['currval' => 7]);
+
+        $statement = $this->createMock(StatementInterface::class);
+        $statement->expects($this->any())->method('execute')->willReturn($result);
+        $statement->expects($this->once())->method('prepare')->with($statementSql);
+
+        $adapter = $this->getMockBuilder(Adapter::class)
+            ->onlyMethods(['getPlatform', 'createStatement'])
+            ->disableOriginalConstructor()
+            ->getMock();
+        $adapter->expects($this->any())->method('getPlatform')->willReturn($platform);
+        $adapter->expects($this->once())->method('createStatement')->willReturn($statement);
+
+        $tableGateway = $this->getMockBuilder(TableGateway::class)
+            ->setConstructorArgs(['table', $adapter])
+            ->onlyMethods([])
+            ->getMock();
+
+        $this->feature->setTableGateway($tableGateway);
+        $this->feature->lastSequenceId();
     }
 
     #[Test]
@@ -126,7 +171,7 @@ final class SequenceFeatureTest extends TestCase
         $statement->expects($this->any())
             ->method('execute')
             ->willReturn($result);
-        $statement->expects($this->any())
+        $statement->expects($this->once())
             ->method('prepare')
             ->with($statementSql);
         $adapter->expects($this->once())

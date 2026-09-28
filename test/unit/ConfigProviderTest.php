@@ -10,6 +10,7 @@ use PhpDb\Container;
 use PhpDb\Sql;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 #[CoversClass(ConfigProvider::class)]
@@ -39,6 +40,12 @@ class ConfigProviderTest extends TestCase
             ],
         ],
     ];
+
+    #[Test]
+    public function getDependenciesIsCallableAsPartOfThePublicApi(): void
+    {
+        static::assertEquals($this->config['dependencies'], (new ConfigProvider())->getDependencies());
+    }
 
     public function testInvocationProvidesDependencyConfiguration(): void
     {

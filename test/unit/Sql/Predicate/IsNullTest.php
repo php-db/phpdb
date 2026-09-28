@@ -12,6 +12,7 @@ use PhpDb\Sql\Predicate\IsNotNull;
 use PhpDb\Sql\Predicate\IsNull;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 #[CoversMethod(IsNull::class, '__construct')]
@@ -23,6 +24,19 @@ use PHPUnit\Framework\TestCase;
 #[Group('unit')]
 final class IsNullTest extends TestCase
 {
+    /**
+     * A custom specification replaces the generated one rather than sitting unused
+     * behind it.
+     */
+    #[Test]
+    public function getExpressionDataPrefersACustomSpecification(): void
+    {
+        $isNotNull = new IsNotNull('foo.bar');
+        $isNotNull->setSpecification('%1$s NOT NULL');
+
+        static::assertSame('%1$s NOT NULL', $isNotNull->getExpressionData()['spec']);
+    }
+
     public function testCanPassIdentifierToConstructor(): void
     {
         $isnull = new IsNotNull('foo.bar');
