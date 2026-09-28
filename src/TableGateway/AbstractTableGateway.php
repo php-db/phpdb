@@ -31,7 +31,7 @@ use function sprintf;
 /**
  * @property AdapterInterface $adapter
  * @property int $lastInsertValue
- * @property string $table
+ * @property TableIdentifier|string|array|null $table
  */
 abstract class AbstractTableGateway implements TableGatewayInterface
 {

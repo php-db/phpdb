@@ -31,7 +31,7 @@ class TestTableGatewayFeature extends AbstractFeature
         return $this->magicMethodSpecs;
     }
 
-    public function testMethod(mixed ...$args): mixed
+    public function recordCall(mixed ...$args): mixed
     {
         $this->called       = true;
         $this->receivedArgs = $args;
