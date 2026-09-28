@@ -12,8 +12,8 @@ use PhpDb\Metadata\MetadataInterface;
 use PhpDb\Metadata\Object\ConstraintObject;
 use PhpDb\TableGateway\AbstractTableGateway;
 use PhpDb\TableGateway\Feature\FeatureSet;
-use PhpDb\TableGateway\Feature\MasterSlaveFeature;
 use PhpDb\TableGateway\Feature\MetadataFeature;
+use PhpDb\TableGateway\Feature\PrimaryReplicaFeature;
 use PhpDb\TableGateway\Feature\SequenceFeature;
 use PhpDbTest\TableGateway\Feature\TestAsset\TestTableGatewayFeature;
 use PHPUnit\Framework\Attributes\CoversMethod;
@@ -68,17 +68,17 @@ class FeatureSetTest extends TestCase
         $mockMasterAdapter->expects($this->any())->method('getDriver')->willReturn($mockDriver);
         $mockMasterAdapter->expects($this->any())->method('getPlatform')->willReturn(new Sql92());
 
-        $mockSlaveAdapter = $this->getMockBuilder(AdapterInterface::class)->getMock();
+        $mockReplicaAdapter = $this->getMockBuilder(AdapterInterface::class)->getMock();
 
         $mockStatement = $this->getMockBuilder(StatementInterface::class)->getMock();
         $mockDriver    = $this->getMockBuilder(DriverInterface::class)->getMock();
         $mockDriver->expects($this->any())->method('createStatement')->willReturn($mockStatement);
-        $mockSlaveAdapter->expects($this->any())->method('getDriver')->willReturn($mockDriver);
-        $mockSlaveAdapter->expects($this->any())->method('getPlatform')->willReturn(new Sql92());
+        $mockReplicaAdapter->expects($this->any())->method('getDriver')->willReturn($mockDriver);
+        $mockReplicaAdapter->expects($this->any())->method('getPlatform')->willReturn(new Sql92());
 
         $tableGatewayMock = $this->getMockBuilder(AbstractTableGateway::class)->onlyMethods([])->getMock();
 
-        $feature = new MasterSlaveFeature($mockSlaveAdapter);
+        $feature = new PrimaryReplicaFeature($mockReplicaAdapter);
 
         $featureSet = new FeatureSet();
         $featureSet->setTableGateway($tableGatewayMock);
@@ -132,7 +132,7 @@ class FeatureSetTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $feature = new MasterSlaveFeature(
+        $feature = new PrimaryReplicaFeature(
             $this->getMockBuilder(AdapterInterface::class)->getMock(),
         );
 

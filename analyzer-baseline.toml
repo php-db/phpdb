@@ -1501,6 +1501,12 @@ message = "Class constant `DEFAULT_SCHEMA` is missing a type hint."
 count = 1
 
 [[issues]]
+file = "src/Metadata/Source/AbstractSource.php"
+code = "unfulfilled-expect"
+message = "This pragma was not used and may be removed."
+count = 3
+
+[[issues]]
 file = "src/ResultSet/AbstractResultSet.php"
 code = "imprecise-type"
 message = "Type `array` in property `$buffer` is imprecise, equivalent to `array<array-key, mixed>`."
@@ -2998,18 +3004,6 @@ count = 1
 file = "src/Sql/Ddl/Constraint/Check.php"
 code = "class-must-be-final"
 message = 'Class `PhpDb\Sql\Ddl\Constraint\Check` should be declared `final`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/Constraint/Check.php"
-code = "missing-parameter-type"
-message = "Parameter `$expression` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/Constraint/Check.php"
-code = "possibly-invalid-argument"
-message = 'Possible argument type mismatch for argument #1 of `PhpDb\Sql\Argument\Literal::__construct`: expected `string`, but possibly received `PhpDb\Sql\ExpressionInterface|non-empty-string`.'
 count = 1
 
 [[issues]]
