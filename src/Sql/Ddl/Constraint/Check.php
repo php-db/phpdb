@@ -7,9 +7,11 @@ namespace PhpDb\Sql\Ddl\Constraint;
 use Override;
 use PhpDb\Sql\Argument\Identifier;
 use PhpDb\Sql\Argument\Literal;
+use PhpDb\Sql\Exception\InvalidArgumentException;
 use PhpDb\Sql\ExpressionInterface;
 
 use function implode;
+use function sprintf;
 
 class Check extends AbstractConstraint
 {
@@ -18,10 +20,17 @@ class Check extends AbstractConstraint
     protected string $specification = 'CHECK (%s)';
 
     /**
-     * @param string|ExpressionInterface $expression
+     * A string expression is rendered verbatim as a literal SQL fragment. An ExpressionInterface
+     * expression is rendered through the platform, so its identifiers and values are quoted.
+     *
+     * @throws InvalidArgumentException When the expression is an empty string.
      */
-    public function __construct($expression, ?string $name)
+    public function __construct(string|ExpressionInterface $expression, ?string $name = null)
     {
+        if ('' === $expression) {
+            throw new InvalidArgumentException('Check constraint expression must not be an empty string.');
+        }
+
         parent::__construct(null, $name);
 
         $this->expression = $expression;
@@ -31,6 +40,10 @@ class Check extends AbstractConstraint
     #[Override]
     public function getExpressionData(): array
     {
+        $checkData = $this->expression instanceof ExpressionInterface
+            ? $this->expression->getExpressionData()
+            : ['spec' => '%s', 'values' => [new Literal($this->expression)]];
+
         $specParts = [];
         $values    = [];
 
@@ -39,9 +52,9 @@ class Check extends AbstractConstraint
             $values[]    = new Identifier($this->name);
         }
 
-        if ('' !== $this->expression) {
-            $specParts[] = $this->specification;
-            $values[]    = new Literal($this->expression);
+        $specParts[] = sprintf($this->specification, $checkData['spec']);
+        foreach ($checkData['values'] as $value) {
+            $values[] = $value;
         }
 
         return [

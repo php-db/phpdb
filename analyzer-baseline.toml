@@ -3007,18 +3007,6 @@ message = 'Class `PhpDb\Sql\Ddl\Constraint\Check` should be declared `final`.'
 count = 1
 
 [[issues]]
-file = "src/Sql/Ddl/Constraint/Check.php"
-code = "missing-parameter-type"
-message = "Parameter `$expression` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/Constraint/Check.php"
-code = "possibly-invalid-argument"
-message = 'Possible argument type mismatch for argument #1 of `PhpDb\Sql\Argument\Literal::__construct`: expected `string`, but possibly received `PhpDb\Sql\ExpressionInterface|non-empty-string`.'
-count = 1
-
-[[issues]]
 file = "src/Sql/Ddl/Constraint/ConstraintInterface.php"
 code = "imprecise-type"
 message = "Type `array` in return type of `getColumns` is imprecise, equivalent to `array<array-key, mixed>`."

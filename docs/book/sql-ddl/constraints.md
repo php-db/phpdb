@@ -217,26 +217,43 @@ $check = new Check(
 
 ### Using Expressions in Check Constraints
 
-Check constraints can accept either string expressions or `Expression` objects.
+Check constraints accept either a string or any `ExpressionInterface` implementation such as
+`PhpDb\Sql\Expression`. The name is optional; without one the constraint renders as a bare
+`CHECK (...)` clause.
 
 #### String Expressions (Simple)
 
-For simple constraints, use strings:
+A string is an expression slot by design: it is rendered verbatim as a literal SQL fragment, so
+identifiers and values inside it are not quoted or escaped. Only pass trusted input. An empty
+string throws `PhpDb\Sql\Exception\InvalidArgumentException` at construction.
 
 ```php
 use PhpDb\Sql\Ddl\Constraint\Check;
 
-// Simple string expression
+// Named
 $check = new Check('age >= 18', 'check_adult');
 $check = new Check('price > 0', 'check_positive_price');
 $check = new Check("status IN ('active', 'pending', 'completed')", 'check_valid_status');
+
+// Unnamed
+$check = new Check('price > 0');
+```
+
+**Generated SQL:**
+
+```sql
+CONSTRAINT "check_adult" CHECK (age >= 18)
+CHECK (price > 0)
 ```
 
 #### Expression Objects (Advanced)
 
-For complex or parameterized constraints, use `Expression` objects:
+An `Expression` is rendered through the platform, so its identifier and value arguments are
+quoted. Values are always inlined into the DDL statement: DDL is never prepared, and MySQL rejects
+parameter markers inside a `CHECK` clause.
 
 ```php
+use PhpDb\Sql\Argument\Identifier;
 use PhpDb\Sql\Expression;
 use PhpDb\Sql\Ddl\Constraint\Check;
 
@@ -247,12 +264,19 @@ $expr = new Expression(
 );
 $check = new Check($expr, 'check_valid_age_range');
 
-// Complex expression
+// Expression with quoted identifiers
 $expr = new Expression(
-    'discount_percent BETWEEN ? AND ?',
-    [0, 100]
+    '? > ?',
+    [new Identifier('end_date'), new Identifier('start_date')]
 );
-$check = new Check($expr, 'check_discount_range');
+$check = new Check($expr, 'check_date_range');
+```
+
+**Generated SQL:**
+
+```sql
+CONSTRAINT "check_valid_age_range" CHECK (age >= '18' AND age <= '120')
+CONSTRAINT "check_date_range" CHECK ("end_date" > "start_date")
 ```
 
 ## Indexes
