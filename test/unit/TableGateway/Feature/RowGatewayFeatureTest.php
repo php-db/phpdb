@@ -19,8 +19,14 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
 
+use function sprintf;
+
 class RowGatewayFeatureTest extends TestCase
 {
+    private const string NO_PRIMARY_KEY_MESSAGE =
+        'No information was provided to the RowGatewayFeature and/or no MetadataFeature could be consulted '
+            . 'to find the primary key necessary for RowGateway object creation.';
+
     #[Test]
     public function constructorStoresArguments(): void
     {
@@ -85,7 +91,11 @@ class RowGatewayFeatureTest extends TestCase
         $feature->setTableGateway($tableGateway);
 
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('expects the ResultSet to be an instance of');
+        $this->expectExceptionMessage(sprintf(
+            'This feature %s expects the ResultSet to be an instance of %s',
+            RowGatewayFeature::class,
+            RowPrototypeResultSet::class,
+        ));
 
         $feature->postInitialize();
     }
@@ -116,7 +126,7 @@ class RowGatewayFeatureTest extends TestCase
         $feature->setTableGateway($tableGateway);
 
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('No information was provided to the RowGatewayFeature');
+        $this->expectExceptionMessage(self::NO_PRIMARY_KEY_MESSAGE);
 
         $feature->postInitialize();
     }
@@ -138,7 +148,7 @@ class RowGatewayFeatureTest extends TestCase
         $feature->setTableGateway($tableGateway);
 
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('No information was provided to the RowGatewayFeature');
+        $this->expectExceptionMessage(self::NO_PRIMARY_KEY_MESSAGE);
 
         $feature->postInitialize();
     }
@@ -214,7 +224,7 @@ class RowGatewayFeatureTest extends TestCase
         $feature->setTableGateway($tableGateway);
 
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('No information was provided to the RowGatewayFeature');
+        $this->expectExceptionMessage(self::NO_PRIMARY_KEY_MESSAGE);
 
         $feature->postInitialize();
     }
