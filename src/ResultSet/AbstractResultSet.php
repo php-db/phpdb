@@ -45,7 +45,7 @@ abstract class AbstractResultSet implements ResultSetInterface
     public function buffer(): ResultSetInterface
     {
         if ($this->buffer === -2) {
-            throw new RuntimeException('Buffering must be enabled before iteration is started');
+            throw RuntimeException::forUnbufferedIteration();
         } elseif ($this->buffer === null) {
             $this->buffer = [];
             if ($this->dataSource instanceof ResultInterface) {
