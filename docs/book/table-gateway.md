@@ -185,18 +185,29 @@ PhpDb\TableGateway\Feature\GlobalAdapterFeature::setStaticAdapter(
 $table = new MyTableGateway(); // adapter is statically loaded
 ```
 
-### MasterSlaveFeature
+### PrimaryReplicaFeature
 
-Use a master adapter for `insert()`, `update()`, and `delete()`, but switch
-to a slave adapter for all `select()` operations:
+Use a primary adapter for `insert()`, `update()`, and `delete()`, but switch
+to a replica adapter for all `select()` operations:
 
 ```php
 $table = new TableGateway(
     'artist',
     $adapter,
-    new Feature\MasterSlaveFeature($slaveAdapter)
+    new Feature\PrimaryReplicaFeature($replicaAdapter)
 );
 ```
+
+### MasterSlaveFeature
+
+> ### Deprecated
+>
+> `MasterSlaveFeature` is deprecated as of 0.6.0 and will be removed in the next
+> major release. Use [PrimaryReplicaFeature](#primaryreplicafeature) instead.
+
+`MasterSlaveFeature` extends `PrimaryReplicaFeature` and retains the original
+API; `getSlaveAdapter()` and `getSlaveSql()` proxy to `getReplicaAdapter()` and
+`getReplicaSql()` respectively.
 
 ### MetadataFeature
 

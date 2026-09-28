@@ -415,6 +415,12 @@ message = "Use Yoda condition style for safer comparisons"
 count = 6
 
 [[issues]]
+file = "src/RowGateway/Feature/FeatureSet.php"
+code = "too-many-methods"
+message = "Class has too many methods."
+count = 1
+
+[[issues]]
 file = "src/RowGateway/RowGateway.php"
 code = "no-else-clause"
 message = "Avoid `else` clauses."
@@ -967,6 +973,24 @@ message = "Class has too many methods."
 count = 1
 
 [[issues]]
+file = "src/TableGateway/Feature/EventFeature.php"
+code = "too-many-methods"
+message = "Class has too many methods."
+count = 1
+
+[[issues]]
+file = "src/TableGateway/Feature/FeatureSet.php"
+code = "kan-defect"
+message = "Class has a high kan defect score."
+count = 1
+
+[[issues]]
+file = "src/TableGateway/Feature/FeatureSet.php"
+code = "too-many-methods"
+message = "Class has too many methods."
+count = 1
+
+[[issues]]
 file = "src/TableGateway/TableGateway.php"
 code = "no-shorthand-ternary"
 message = "Use of the shorthand ternary operator."
@@ -1283,18 +1307,6 @@ file = "test/unit/Adapter/Container/AdapterInterfaceDelegatorTest.php"
 code = "assertion-style"
 message = "Inconsistent assertions style."
 count = 10
-
-[[issues]]
-file = "test/unit/Adapter/Container/AdapterInterfaceDelegatorTest.php"
-code = "no-redundant-variable"
-message = "Variable `$container` is assigned but never used."
-count = 1
-
-[[issues]]
-file = "test/unit/Adapter/Container/AdapterInterfaceDelegatorTest.php"
-code = "no-redundant-variable"
-message = "Variable `$pluginManagerConfig` is assigned but never used."
-count = 1
 
 [[issues]]
 file = "test/unit/Adapter/Container/AdapterInterfaceDelegatorTest.php"
@@ -4918,13 +4930,7 @@ count = 1
 file = "test/unit/Sql/Ddl/Column/VarcharTest.php"
 code = "assertion-style"
 message = "Inconsistent assertions style."
-count = 9
-
-[[issues]]
-file = "test/unit/Sql/Ddl/Column/VarcharTest.php"
-code = "prefer-test-attribute"
-message = "Use `#[Test]` attribute instead of `test` prefix on method `testGetExpressionDataWithNullLength`."
-count = 1
+count = 7
 
 [[issues]]
 file = "test/unit/Sql/Ddl/Column/VarcharTest.php"
@@ -4948,7 +4954,7 @@ count = 1
 file = "test/unit/Sql/Ddl/Column/VarcharTest.php"
 code = "strict-assertions"
 message = "Use strict assertions in PHPUnit tests."
-count = 4
+count = 3
 
 [[issues]]
 file = "test/unit/Sql/Ddl/Constraint/AbstractConstraintTest.php"
@@ -8483,27 +8489,3 @@ file = "test/unit/TableGateway/TableGatewayTest.php"
 code = "strict-assertions"
 message = "Use strict assertions in PHPUnit tests."
 count = 2
-
-[[issues]]
-file = "src/RowGateway/Feature/FeatureSet.php"
-code = "too-many-methods"
-message = 'Class has too many methods.'
-count = 1
-
-[[issues]]
-file = "src/TableGateway/Feature/FeatureSet.php"
-code = "kan-defect"
-message = 'Class has a high kan defect score.'
-count = 1
-
-[[issues]]
-file = "src/TableGateway/Feature/FeatureSet.php"
-code = "too-many-methods"
-message = 'Class has too many methods.'
-count = 1
-
-[[issues]]
-file = "src/TableGateway/Feature/EventFeature.php"
-code = "too-many-methods"
-message = 'Class has too many methods.'
-count = 1

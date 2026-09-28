@@ -7,7 +7,11 @@ namespace PhpDbTest\Sql\Ddl\Column;
 use PhpDb\Sql\Argument;
 use PhpDb\Sql\Ddl\Column\AbstractLengthColumn;
 use PhpDb\Sql\Ddl\Column\Varchar;
+use PhpDb\Sql\Exception\InvalidArgumentException;
 use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 #[CoversMethod(Varchar::class, 'getExpressionData')]
@@ -16,8 +20,23 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(AbstractLengthColumn::class, 'getLength')]
 #[CoversMethod(AbstractLengthColumn::class, 'getLengthExpression')]
 #[CoversMethod(AbstractLengthColumn::class, 'getExpressionData')]
+#[Group('unit')]
 final class VarcharTest extends TestCase
 {
+    use ColumnAssertionsTrait;
+
+    #[Test]
+    public function rendersLengthBeforeNullabilityAndDefault(): void
+    {
+        static::assertColumnRenders('"name" VARCHAR(20) NULL DEFAULT NULL', new Varchar('name', 20, true));
+    }
+
+    #[Test]
+    public function rendersLengthDirectlyAfterType(): void
+    {
+        static::assertColumnRenders('"name" VARCHAR(20) NOT NULL', new Varchar('name', 20));
+    }
+
     public function testGetExpressionData(): void
     {
         $column = new Varchar('foo', 20);
@@ -50,31 +69,6 @@ final class VarcharTest extends TestCase
         );
     }
 
-    public function testGetExpressionDataWithNullLength(): void
-    {
-        $column = new Varchar('name');
-
-        $expressionData = $column->getExpressionData();
-
-        // When length is null, getLengthExpression() returns empty string
-        // The condition in getExpressionData checks: getLengthExpression() !== '' && !== '0'
-        // Empty string fails the first check, so length value is NOT added
-        // But specification still has (%s) placeholder - need to verify actual behavior
-        $spec   = $expressionData['spec'];
-        $values = $expressionData['values'];
-
-        // The specification format is defined in AbstractLengthColumn as '%s %s(%s)'
-        // But when length value is not added, we need to check if placeholder remains
-        self::assertEquals('%s %s(%s) NOT NULL', $spec);
-        self::assertEquals(
-            [
-                Argument::identifier('name'),
-                Argument::literal('VARCHAR'),
-            ],
-            $values,
-        );
-    }
-
     public function testInheritanceFromAbstractLengthColumn(): void
     {
         $column = new Varchar('test');
@@ -88,5 +82,17 @@ final class VarcharTest extends TestCase
         $result = $column->setLength(100);
         self::assertSame($column, $result); // Fluent interface
         self::assertEquals(100, $column->getLength());
+    }
+
+    #[Test]
+    #[DataProvider('missingLengthProvider')]
+    public function throwsWhenRenderedWithoutLength(?int $length): void
+    {
+        $column = new Varchar('name', $length);
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Column "name" of type VARCHAR requires a length');
+
+        $column->getExpressionData();
     }
 }

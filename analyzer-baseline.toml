@@ -1501,6 +1501,12 @@ message = "Class constant `DEFAULT_SCHEMA` is missing a type hint."
 count = 1
 
 [[issues]]
+file = "src/Metadata/Source/AbstractSource.php"
+code = "unfulfilled-expect"
+message = "This pragma was not used and may be removed."
+count = 3
+
+[[issues]]
 file = "src/ResultSet/AbstractResultSet.php"
 code = "imprecise-type"
 message = "Type `array` in property `$buffer` is imprecise, equivalent to `array<array-key, mixed>`."
