@@ -2228,12 +2228,6 @@ count = 1
 
 [[issues]]
 file = "src/Sql/AbstractSql.php"
-code = "invalid-member-selector"
-message = "Invalid type `array-key` used as a member selector; a string is expected."
-count = 1
-
-[[issues]]
-file = "src/Sql/AbstractSql.php"
 code = "invalid-operand"
 message = "Invalid type for left operand."
 count = 1
@@ -2458,6 +2452,12 @@ count = 1
 file = "src/Sql/AbstractSql.php"
 code = "string-member-selector"
 message = "This member selector uses a non-literal string type (`non-empty-string`); its specific value cannot be statically determined."
+count = 1
+
+[[issues]]
+file = "src/Sql/AbstractSql.php"
+code = "string-member-selector"
+message = "This member selector uses a non-literal string type (`string`); its specific value cannot be statically determined."
 count = 1
 
 [[issues]]
@@ -3992,12 +3992,6 @@ count = 1
 
 [[issues]]
 file = "src/Sql/Platform/Platform.php"
-code = "imprecise-type"
-message = "Type `array` in return type of `getDecorators` is imprecise, equivalent to `array<array-key, mixed>`."
-count = 1
-
-[[issues]]
-file = "src/Sql/Platform/Platform.php"
 code = "invalid-iterator"
 message = "The expression provided to `foreach` is not iterable. It resolved to type `nonnull`, which is not iterable."
 count = 1
@@ -4606,12 +4600,6 @@ count = 1
 file = "src/Sql/Select.php"
 code = "invalid-property-assignment-value"
 message = 'Invalid type for property `$joins`: expected `PhpDb\Sql\Join`, but got `null`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Select.php"
-code = "invalid-property-assignment-value"
-message = "Invalid type for property `$specifications`: expected `array<array-key, array<array-key, mixed>>|array<array-key, string>`, but got `non-empty-array<array-key, array<array-key, mixed>|string>`."
 count = 1
 
 [[issues]]
@@ -5440,19 +5428,19 @@ count = 1
 file = "src/TableGateway/AbstractTableGateway.php"
 code = "mixed-argument"
 message = 'Invalid argument type for argument #1 of `PhpDb\Sql\Delete::from`: expected `PhpDb\Sql\TableIdentifier|array<array-key, mixed>|string`, but found `mixed`.'
-count = 2
+count = 1
 
 [[issues]]
 file = "src/TableGateway/AbstractTableGateway.php"
 code = "mixed-argument"
 message = 'Invalid argument type for argument #1 of `PhpDb\Sql\Insert::into`: expected `PhpDb\Sql\TableIdentifier|array<array-key, mixed>|string`, but found `mixed`.'
-count = 2
+count = 1
 
 [[issues]]
 file = "src/TableGateway/AbstractTableGateway.php"
 code = "mixed-argument"
 message = 'Invalid argument type for argument #1 of `PhpDb\Sql\Update::table`: expected `PhpDb\Sql\TableIdentifier|array<array-key, mixed>|string`, but found `mixed`.'
-count = 2
+count = 1
 
 [[issues]]
 file = "src/TableGateway/AbstractTableGateway.php"
@@ -5482,7 +5470,7 @@ count = 1
 file = "src/TableGateway/AbstractTableGateway.php"
 code = "mixed-array-access"
 message = "Unsafe array access on type `mixed`."
-count = 6
+count = 4
 
 [[issues]]
 file = "src/TableGateway/AbstractTableGateway.php"
@@ -5596,7 +5584,7 @@ count = 1
 file = "src/TableGateway/AbstractTableGateway.php"
 code = "possibly-undefined-string-array-index"
 message = "Possibly undefined array key `string('table')` accessed on `array<array-key, mixed>`."
-count = 2
+count = 1
 
 [[issues]]
 file = "src/TableGateway/AbstractTableGateway.php"
