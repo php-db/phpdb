@@ -1173,7 +1173,7 @@ count = 1
 [[issues]]
 file = "src/Adapter/Profiler/Profiler.php"
 code = "invalid-property-assignment-value"
-message = '''Invalid type for property `$profiles`: expected `array<array-key, array{'elapse': float|null, 'end': float|null, 'parameters': PhpDb\Adapter\ParameterContainer|null, 'sql': string, 'start': float}>`, but got `array<array-key, array{'elapse': float|null, 'end': float|null, 'parameters': PhpDb\Adapter\ParameterContainer|null, 'sql': null|string, 'start': float}>`.'''
+message = '''Invalid type for property `$profiles`: expected `array<array-key, array{'elapse': float|null, 'end': float|null, 'parameters': PhpDb\Adapter\ParameterContainer|null, 'sql': string, 'start': float}>`, but got `non-empty-array<array-key, array{'elapse': float|null, 'end': float|null, 'parameters': PhpDb\Adapter\ParameterContainer|null, 'sql': null|string, 'start': float}>`.'''
 count = 1
 
 [[issues]]
@@ -1192,24 +1192,6 @@ count = 1
 file = "src/Adapter/Profiler/Profiler.php"
 code = "missing-property-type"
 message = "Property `$profiles` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "src/Adapter/Profiler/Profiler.php"
-code = "possibly-null-operand"
-message = "Right operand in arithmetic operation might be `null` (type `float|null`)."
-count = 1
-
-[[issues]]
-file = "src/Adapter/Profiler/Profiler.php"
-code = "possibly-undefined-int-array-index"
-message = '''Possibly undefined array key `int` accessed on `array<array-key, array{'elapse': float|null, 'end': float|null, 'parameters': PhpDb\Adapter\ParameterContainer|null, 'sql': string, 'start': float}>`.'''
-count = 1
-
-[[issues]]
-file = "src/Adapter/Profiler/Profiler.php"
-code = "possibly-undefined-string-array-index"
-message = '''Possibly undefined array key accessed on `array{'elapse': float|null, 'end': float, 'parameters': PhpDb\Adapter\ParameterContainer|null, 'sql': string, 'start': float}|array{'end': float}`.'''
 count = 1
 
 [[issues]]
@@ -1517,6 +1499,12 @@ file = "src/Metadata/Source/AbstractSource.php"
 code = "missing-constant-type"
 message = "Class constant `DEFAULT_SCHEMA` is missing a type hint."
 count = 1
+
+[[issues]]
+file = "src/Metadata/Source/AbstractSource.php"
+code = "unfulfilled-expect"
+message = "This pragma was not used and may be removed."
+count = 3
 
 [[issues]]
 file = "src/ResultSet/AbstractResultSet.php"
@@ -2077,6 +2065,12 @@ message = 'Class `PhpDb\RowGateway\Exception\RuntimeException` should be declare
 count = 1
 
 [[issues]]
+file = "src/RowGateway/Feature/FeatureSet.php"
+code = "unused-property"
+message = "Property `$magicSpecifications` is never used."
+count = 1
+
+[[issues]]
 file = "src/RowGateway/RowGateway.php"
 code = "class-must-be-final"
 message = 'Class `PhpDb\RowGateway\RowGateway` should be declared `final`.'
@@ -2144,12 +2138,6 @@ count = 1
 
 [[issues]]
 file = "src/Sql/AbstractSql.php"
-code = "invalid-member-selector"
-message = "Invalid type `array-key` used as a member selector; a string is expected."
-count = 1
-
-[[issues]]
-file = "src/Sql/AbstractSql.php"
 code = "invalid-operand"
 message = "Invalid type for left operand."
 count = 1
@@ -2187,7 +2175,7 @@ count = 1
 [[issues]]
 file = "src/Sql/AbstractSql.php"
 code = "less-specific-nested-argument-type"
-message = "Argument type mismatch for argument #2 of `vsprintf`: expected `array<array-key, Stringable|null|scalar>`, but provided type `array{}|non-empty-list<mixed>` is less specific."
+message = "Argument type mismatch for argument #2 of `vsprintf`: expected `array<array-key, Stringable|null|scalar>`, but provided type `list<mixed>` is less specific."
 count = 1
 
 [[issues]]
@@ -2374,6 +2362,12 @@ count = 1
 file = "src/Sql/AbstractSql.php"
 code = "string-member-selector"
 message = "This member selector uses a non-literal string type (`non-empty-string`); its specific value cannot be statically determined."
+count = 1
+
+[[issues]]
+file = "src/Sql/AbstractSql.php"
+code = "string-member-selector"
+message = "This member selector uses a non-literal string type (`string`); its specific value cannot be statically determined."
 count = 1
 
 [[issues]]
@@ -3219,7 +3213,13 @@ count = 1
 [[issues]]
 file = "src/Sql/Ddl/CreateTable.php"
 code = "possibly-undefined-string-array-index"
-message = "Possibly undefined array key `string('combinedBy')` accessed on `array<array-key, array<array-key, mixed>|string>`."
+message = "Possibly undefined array key `string('combinedBy')` accessed on `array<array-key, array<array-key, mixed>>`."
+count = 1
+
+[[issues]]
+file = "src/Sql/Ddl/CreateTable.php"
+code = "possibly-undefined-string-array-index"
+message = "Possibly undefined array key `string('combinedBy')` accessed on `array<array-key, string>`."
 count = 1
 
 [[issues]]
@@ -3902,12 +3902,6 @@ count = 1
 
 [[issues]]
 file = "src/Sql/Platform/Platform.php"
-code = "imprecise-type"
-message = "Type `array` in return type of `getDecorators` is imprecise, equivalent to `array<array-key, mixed>`."
-count = 1
-
-[[issues]]
-file = "src/Sql/Platform/Platform.php"
 code = "invalid-iterator"
 message = "The expression provided to `foreach` is not iterable. It resolved to type `nonnull`, which is not iterable."
 count = 1
@@ -4251,7 +4245,7 @@ count = 1
 [[issues]]
 file = "src/Sql/Predicate/PredicateSet.php"
 code = "less-specific-nested-argument-type"
-message = "Argument type mismatch for argument #2 of `implode`: expected `array<array-key, Stringable|null|scalar>|null`, but provided type `array{}|non-empty-list<mixed>` is less specific."
+message = "Argument type mismatch for argument #2 of `implode`: expected `array<array-key, Stringable|null|scalar>|null`, but provided type `list<mixed>` is less specific."
 count = 1
 
 [[issues]]
@@ -4263,7 +4257,7 @@ count = 1
 [[issues]]
 file = "src/Sql/Predicate/PredicateSet.php"
 code = "less-specific-nested-return-statement"
-message = '''Returned type `array{'spec': string, 'values': array{}|list<mixed>}` is less specific than the declared return type `array{'spec': string, 'values': array<array-key, PhpDb\Sql\ArgumentInterface>}` for function `PhpDb\Sql\Predicate\PredicateSet::getExpressionData` due to nested 'mixed'.'''
+message = '''Returned type `array{'spec': string, 'values': list<mixed>}` is less specific than the declared return type `array{'spec': string, 'values': array<array-key, PhpDb\Sql\ArgumentInterface>}` for function `PhpDb\Sql\Predicate\PredicateSet::getExpressionData` due to nested 'mixed'.'''
 count = 1
 
 [[issues]]
@@ -4516,12 +4510,6 @@ count = 1
 file = "src/Sql/Select.php"
 code = "invalid-property-assignment-value"
 message = 'Invalid type for property `$joins`: expected `PhpDb\Sql\Join`, but got `null`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Select.php"
-code = "invalid-property-assignment-value"
-message = "Invalid type for property `$specifications`: expected `array<array-key, array<array-key, mixed>>|array<array-key, string>`, but got `array<array-key, array<array-key, mixed>|string>`."
 count = 1
 
 [[issues]]
@@ -5218,36 +5206,6 @@ count = 1
 file = "src/TableGateway/AbstractTableGateway.php"
 code = "impossible-condition"
 message = "This condition (type `false`) will always evaluate to false."
-count = 7
-
-[[issues]]
-file = "src/TableGateway/AbstractTableGateway.php"
-code = "impossible-type-comparison"
-message = "Impossible type assertion: `$deleteState['table']` of type `string` can never be `array<array-key, mixed>`."
-count = 1
-
-[[issues]]
-file = "src/TableGateway/AbstractTableGateway.php"
-code = "impossible-type-comparison"
-message = "Impossible type assertion: `$insertState['table']` of type `string` can never be `array<array-key, mixed>`."
-count = 1
-
-[[issues]]
-file = "src/TableGateway/AbstractTableGateway.php"
-code = "impossible-type-comparison"
-message = "Impossible type assertion: `$this->table` of type `string` can never be `array<array-key, mixed>`."
-count = 1
-
-[[issues]]
-file = "src/TableGateway/AbstractTableGateway.php"
-code = "impossible-type-comparison"
-message = "Impossible type assertion: `$this->table` of type `string` can never be `object`."
-count = 1
-
-[[issues]]
-file = "src/TableGateway/AbstractTableGateway.php"
-code = "impossible-type-comparison"
-message = "Impossible type assertion: `$updateState['table']` of type `string` can never be `array<array-key, mixed>`."
 count = 1
 
 [[issues]]
@@ -5294,9 +5252,9 @@ count = 1
 
 [[issues]]
 file = "src/TableGateway/AbstractTableGateway.php"
-code = "invalid-clone"
-message = "Invalid `clone` operation on non-cloneable type `never`."
-count = 1
+code = "invalid-array-access"
+message = 'Cannot access array index on object `PhpDb\Sql\TableIdentifier` that does not implement `ArrayAccess`.'
+count = 3
 
 [[issues]]
 file = "src/TableGateway/AbstractTableGateway.php"
@@ -5326,6 +5284,12 @@ count = 1
 file = "src/TableGateway/AbstractTableGateway.php"
 code = "invalid-return-statement"
 message = 'Invalid return type for function `PhpDb\TableGateway\AbstractTableGateway::getSql`: expected `PhpDb\Sql\Sql`, but found `PhpDb\Sql\Sql|null`.'
+count = 1
+
+[[issues]]
+file = "src/TableGateway/AbstractTableGateway.php"
+code = "invalid-return-statement"
+message = 'Invalid return type for function `PhpDb\TableGateway\AbstractTableGateway::getTable`: expected `PhpDb\Sql\TableIdentifier|array<array-key, mixed>|string`, but found `PhpDb\Sql\TableIdentifier|array<array-key, mixed>|null|string`.'
 count = 1
 
 [[issues]]
@@ -5432,24 +5396,6 @@ count = 1
 
 [[issues]]
 file = "src/TableGateway/AbstractTableGateway.php"
-code = "no-value"
-message = "Argument #1 passed to function `array_values` has type `never`, meaning it cannot produce a value."
-count = 3
-
-[[issues]]
-file = "src/TableGateway/AbstractTableGateway.php"
-code = "no-value"
-message = "Argument #1 passed to function `count` has type `never`, meaning it cannot produce a value."
-count = 1
-
-[[issues]]
-file = "src/TableGateway/AbstractTableGateway.php"
-code = "no-value"
-message = "Argument #1 passed to function `reset` has type `never`, meaning it cannot produce a value."
-count = 1
-
-[[issues]]
-file = "src/TableGateway/AbstractTableGateway.php"
 code = "nullable-return-statement"
 message = 'Function `PhpDb\TableGateway\AbstractTableGateway::executeSelect` is declared to return `PhpDb\ResultSet\ResultSetInterface` but possibly returns a nullable value (inferred as `PhpDb\ResultSet\ResultSetInterface|null`).'
 count = 1
@@ -5470,6 +5416,12 @@ count = 1
 file = "src/TableGateway/AbstractTableGateway.php"
 code = "nullable-return-statement"
 message = 'Function `PhpDb\TableGateway\AbstractTableGateway::getSql` is declared to return `PhpDb\Sql\Sql` but possibly returns a nullable value (inferred as `PhpDb\Sql\Sql|null`).'
+count = 1
+
+[[issues]]
+file = "src/TableGateway/AbstractTableGateway.php"
+code = "nullable-return-statement"
+message = 'Function `PhpDb\TableGateway\AbstractTableGateway::getTable` is declared to return `PhpDb\Sql\TableIdentifier|array<array-key, mixed>|string` but possibly returns a nullable value (inferred as `PhpDb\Sql\TableIdentifier|array<array-key, mixed>|null|string`).'
 count = 1
 
 [[issues]]
@@ -5498,15 +5450,15 @@ count = 1
 
 [[issues]]
 file = "src/TableGateway/AbstractTableGateway.php"
-code = "redundant-comparison"
-message = "Redundant `===` comparison: left-hand side is never identical to right-hand side."
-count = 2
+code = "possibly-undefined-string-array-index"
+message = "Possibly undefined array key `string('table')` accessed on `array<array-key, mixed>`."
+count = 3
 
 [[issues]]
 file = "src/TableGateway/AbstractTableGateway.php"
-code = "redundant-logical-operation"
-message = "Redundant `&&` operation: left operand is always falsy and right operand is not evaluated."
-count = 2
+code = "redundant-comparison"
+message = "Redundant `===` comparison: left-hand side is never identical to right-hand side."
+count = 1
 
 [[issues]]
 file = "src/TableGateway/Exception/ExceptionInterface.php"
@@ -5527,6 +5479,30 @@ message = 'Class `PhpDb\TableGateway\Exception\RuntimeException` should be decla
 count = 1
 
 [[issues]]
+file = "src/TableGateway/Feature/MetadataFeature.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "src/TableGateway/Feature/MetadataFeature.php"
+code = "mixed-assignment"
+message = "Assigning `nonnull` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "src/TableGateway/Feature/RowGatewayFeature.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
+file = "src/TableGateway/Feature/SequenceFeature.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 1
+
+[[issues]]
 file = "src/TableGateway/TableGateway.php"
 code = "class-must-be-final"
 message = 'Class `PhpDb\TableGateway\TableGateway` should be declared `final`.'
@@ -5535,19 +5511,7 @@ count = 1
 [[issues]]
 file = "src/TableGateway/TableGateway.php"
 code = "imprecise-type"
-message = "Type `array` in parameter `$features` is imprecise, equivalent to `array<array-key, mixed>`."
-count = 1
-
-[[issues]]
-file = "src/TableGateway/TableGateway.php"
-code = "imprecise-type"
 message = "Type `array` in parameter `$table` is imprecise, equivalent to `array<array-key, mixed>`."
-count = 1
-
-[[issues]]
-file = "src/TableGateway/TableGateway.php"
-code = "invalid-property-assignment-value"
-message = 'Invalid type for property `$table`: expected `string`, but got `PhpDb\Sql\TableIdentifier|array<array-key, mixed>|string`.'
 count = 1
 
 [[issues]]
@@ -5567,28 +5531,3 @@ file = "src/TableGateway/TableGatewayInterface.php"
 code = "missing-api-or-internal"
 message = 'Interface `PhpDb\TableGateway\TableGatewayInterface` is missing an `@api` or `@internal` annotation.'
 count = 1
-
-[[issues]]
-file = "src/TableGateway/AbstractTableGateway.php"
-code = "nullable-return-statement"
-message = 'Function `PhpDb\TableGateway\AbstractTableGateway::getTable` is declared to return `PhpDb\Sql\TableIdentifier|array<array-key, mixed>|string` but possibly returns a nullable value (inferred as `PhpDb\Sql\TableIdentifier|array<array-key, mixed>|null|string`).'
-count = 1
-
-[[issues]]
-file = "src/TableGateway/AbstractTableGateway.php"
-code = "invalid-return-statement"
-message = 'Invalid return type for function `PhpDb\TableGateway\AbstractTableGateway::getTable`: expected `PhpDb\Sql\TableIdentifier|array<array-key, mixed>|string`, but found `PhpDb\Sql\TableIdentifier|array<array-key, mixed>|null|string`.'
-count = 1
-
-
-[[issues]]
-file = "src/TableGateway/AbstractTableGateway.php"
-code = "invalid-array-access"
-message = 'Cannot access array index on object `PhpDb\Sql\TableIdentifier` that does not implement `ArrayAccess`.'
-count = 3
-
-[[issues]]
-file = "src/TableGateway/AbstractTableGateway.php"
-code = "possibly-undefined-string-array-index"
-message = "Possibly undefined array key `string('table')` accessed on `array<array-key, mixed>`."
-count = 3
