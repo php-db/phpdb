@@ -18,6 +18,8 @@ use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
+use function sprintf;
+
 #[CoversMethod(Integer::class, '__construct')]
 #[CoversMethod(Integer::class, 'getExpressionData')]
 #[CoversMethod(Integer::class, 'normaliseDisplayWidth')]
@@ -160,8 +162,8 @@ final class IntegerTest extends TestCase
     {
         $column = new Integer('i', false, null, ['length' => $length]);
 
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Column "i" length option must be a non-negative integer');
+        self::expectException(InvalidArgumentException::class);
+        self::expectExceptionMessage(sprintf(InvalidArgumentException::INVALID_COLUMN_LENGTH, 'i'));
 
         $column->getExpressionData();
     }

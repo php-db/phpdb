@@ -8,8 +8,8 @@ use ErrorException;
 use PhpDb\Adapter\Exception\VunerablePlatformQuoteException;
 use PhpDb\Adapter\Platform\Sql92;
 use PhpDb\Sql\Argument;
-use PhpDb\Sql\Exception\RuntimeException;
 use PhpDb\Sql\Expression;
+use PhpDb\Sql\Predicate\Exception\RuntimeException;
 use PhpDb\Sql\Predicate\Predicate;
 use PhpDb\Sql\Predicate\PredicateInterface;
 use PhpDb\Sql\Select;
@@ -409,8 +409,8 @@ final class PredicateTest extends TestCase
     {
         $predicate = new Predicate();
 
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('Not nested');
+        self::expectException(RuntimeException::class);
+        self::expectExceptionMessage(RuntimeException::NOT_NESTED);
         $predicate->unnest();
     }
 
@@ -469,7 +469,7 @@ final class PredicateTest extends TestCase
         // } finally {
         //     ErrorHandler::stop();
         // }
-        $this->expectException(VunerablePlatformQuoteException::class);
+        self::expectException(VunerablePlatformQuoteException::class);
         return $select->getSqlString(new Sql92());
     }
 }

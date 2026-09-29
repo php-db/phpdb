@@ -126,8 +126,8 @@ final class CheckTest extends TestCase
     #[Test]
     public function throwsWhenExpressionIsEmpty(): void
     {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Check constraint expression must not be an empty string.');
+        self::expectException(InvalidArgumentException::class);
+        self::expectExceptionMessage(InvalidArgumentException::EMPTY_CHECK_EXPRESSION);
 
         new Check('');
     }

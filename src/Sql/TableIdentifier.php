@@ -18,27 +18,19 @@ final readonly class TableIdentifier
         protected ?string $separator = self::SEPARATOR,
     ) {
         if ('' === $table) {
-            throw new Exception\InvalidArgumentException(
-                '$table must be a valid table name, empty string given',
-            );
+            throw Exception\InvalidArgumentException::forEmptyTable();
         }
 
         if ('' === $schema) {
-            throw new Exception\InvalidArgumentException(
-                '$schema must be a valid schema name or null, empty string given',
-            );
+            throw Exception\InvalidArgumentException::forEmptySchema();
         }
 
         if ('' === $prefix) {
-            throw new Exception\InvalidArgumentException(
-                '$prefix must be a valid table prefix or null, empty string given',
-            );
+            throw Exception\InvalidArgumentException::forEmptyPrefix();
         }
 
         if ('' === $separator) {
-            throw new Exception\InvalidArgumentException(
-                '$separator must be a valid table separator, empty string given',
-            );
+            throw Exception\InvalidArgumentException::forEmptySeparator();
         }
     }
 

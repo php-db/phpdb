@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace PhpDbTest\Metadata\Source;
 
-use Exception;
 use Override;
 use PhpDb\Adapter\AdapterInterface;
 use PhpDb\Adapter\SchemaAwareInterface;
+use PhpDb\Metadata\Exception\RuntimeException;
 use PhpDb\Metadata\Object\ColumnObject;
 use PhpDb\Metadata\Object\ConstraintKeyObject;
 use PhpDb\Metadata\Object\ConstraintObject;
@@ -26,6 +26,8 @@ use PHPUnit\Framework\TestCase;
 use ReflectionException;
 use ReflectionMethod;
 use ReflectionProperty;
+
+use function sprintf;
 
 #[IgnoreDeprecations]
 #[RequiresPhp('<= 8.6')]
@@ -181,8 +183,8 @@ final class AbstractSourceTest extends TestCase
 
         $source = new IncompleteSource($adapter);
 
-        $this->expectException(Exception::class);
-        $this->expectExceptionMessage('"nonexistent" does not exist');
+        self::expectException(RuntimeException::class);
+        self::expectExceptionMessage(sprintf(RuntimeException::UNKNOWN_TABLE, 'nonexistent'));
         $source->getColumnNames('nonexistent', 'public');
     }
 
@@ -296,8 +298,8 @@ final class AbstractSourceTest extends TestCase
             ],
         ]);
 
-        $this->expectException(Exception::class);
-        $this->expectExceptionMessage('A column by that name was not found.');
+        self::expectException(RuntimeException::class);
+        self::expectExceptionMessage(RuntimeException::UNKNOWN_COLUMN);
 
         $this->abstractSourceMock->getColumn('non_existent', 'users', 'public');
 
@@ -614,8 +616,8 @@ final class AbstractSourceTest extends TestCase
             ],
         ]);
 
-        $this->expectException(Exception::class);
-        $this->expectExceptionMessage('Cannot find a constraint by that name in this table');
+        self::expectException(RuntimeException::class);
+        self::expectExceptionMessage(RuntimeException::UNKNOWN_CONSTRAINT);
 
         $this->abstractSourceMock->getConstraint('non_existent', 'users', 'public');
 
@@ -937,8 +939,8 @@ final class AbstractSourceTest extends TestCase
             ],
         ]);
 
-        $this->expectException(Exception::class);
-        $this->expectExceptionMessage('Table "non_existent" does not exist');
+        self::expectException(RuntimeException::class);
+        self::expectExceptionMessage(sprintf(RuntimeException::UNKNOWN_TABLE, 'non_existent'));
 
         $this->abstractSourceMock->getTable('non_existent', 'public');
 
@@ -959,8 +961,10 @@ final class AbstractSourceTest extends TestCase
             ],
         ]);
 
-        $this->expectException(Exception::class);
-        $this->expectExceptionMessage('Table "special_table" is of an unsupported type "UNSUPPORTED_TYPE"');
+        self::expectException(RuntimeException::class);
+        self::expectExceptionMessage(
+            sprintf(RuntimeException::UNSUPPORTED_TABLE_TYPE, 'special_table', 'UNSUPPORTED_TYPE'),
+        );
 
         $this->abstractSourceMock->getTable('special_table', 'public');
 
@@ -1181,8 +1185,8 @@ final class AbstractSourceTest extends TestCase
             ],
         ]);
 
-        $this->expectException(Exception::class);
-        $this->expectExceptionMessage('Trigger "non_existent" does not exist');
+        self::expectException(RuntimeException::class);
+        self::expectExceptionMessage(sprintf(RuntimeException::UNKNOWN_TRIGGER, 'non_existent'));
 
         $this->abstractSourceMock->getTrigger('non_existent', 'public');
 
@@ -1387,8 +1391,8 @@ final class AbstractSourceTest extends TestCase
             ],
         ]);
 
-        $this->expectException(Exception::class);
-        $this->expectExceptionMessage('View "non_existent_view" does not exist');
+        self::expectException(RuntimeException::class);
+        self::expectExceptionMessage(sprintf(RuntimeException::UNKNOWN_VIEW, 'non_existent_view'));
 
         $this->abstractSourceMock->getView('non_existent_view', 'public');
 
@@ -1409,8 +1413,8 @@ final class AbstractSourceTest extends TestCase
             ],
         ]);
 
-        $this->expectException(Exception::class);
-        $this->expectExceptionMessage('View "users" does not exist');
+        self::expectException(RuntimeException::class);
+        self::expectExceptionMessage(sprintf(RuntimeException::UNKNOWN_VIEW, 'users'));
 
         $this->abstractSourceMock->getView('users', 'public');
 

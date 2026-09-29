@@ -28,6 +28,8 @@ use PHPUnit\Framework\TestCase;
 use ReflectionException;
 use TypeError;
 
+use function sprintf;
+
 #[IgnoreDeprecations]
 #[RequiresPhp('<= 8.6')]
 #[CoversMethod(Insert::class, '__construct')]
@@ -170,8 +172,8 @@ final class InsertTest extends TestCase
     {
         $this->insert->into('foo');
 
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('values or select should be present');
+        self::expectException(InvalidArgumentException::class);
+        self::expectExceptionMessage(InvalidArgumentException::MISSING_VALUES_OR_SELECT);
         $this->insert->getSqlString(new TrustingSql92Platform());
     }
 
@@ -190,8 +192,8 @@ final class InsertTest extends TestCase
 
     public function testGetThrowsExceptionForNonExistentColumn(): void
     {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('The key nonexistent was not found in this objects column list');
+        self::expectException(InvalidArgumentException::class);
+        self::expectExceptionMessage(sprintf(InvalidArgumentException::UNKNOWN_COLUMN_KEY, 'nonexistent'));
         $value = $this->insert->nonexistent;
     }
 
@@ -387,8 +389,8 @@ final class InsertTest extends TestCase
 
     public function testUnsetThrowsExceptionForNonExistentColumn(): void
     {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('The key nonexistent was not found in this objects column list');
+        self::expectException(InvalidArgumentException::class);
+        self::expectExceptionMessage(sprintf(InvalidArgumentException::UNKNOWN_COLUMN_KEY, 'nonexistent'));
         unset($this->insert->nonexistent);
     }
 
@@ -426,8 +428,8 @@ final class InsertTest extends TestCase
     {
         $this->insert->values(new Select());
 
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage(
+        self::expectException(InvalidArgumentException::class);
+        self::expectExceptionMessage(
             'An array of values cannot be provided with the merge flag when a PhpDb\Sql\Select instance already '
                 . 'exists as the value source',
         );
@@ -436,7 +438,7 @@ final class InsertTest extends TestCase
 
     public function testValuesThrowsExceptionWhenNotArrayOrSelect(): void
     {
-        $this->expectException(TypeError::class);
+        self::expectException(TypeError::class);
         /** @psalm-suppress InvalidArgument */
         $this->insert->values(5);
     }
@@ -445,8 +447,8 @@ final class InsertTest extends TestCase
     {
         $this->insert->values(['foo' => 'bar']);
 
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('A PhpDb\Sql\Select instance cannot be provided with the merge flag');
+        self::expectException(InvalidArgumentException::class);
+        self::expectExceptionMessage(InvalidArgumentException::SELECT_WITH_MERGE_FLAG);
         $this->insert->values(new Select(), Insert::VALUES_MERGE);
     }
 
