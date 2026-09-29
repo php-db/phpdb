@@ -12,138 +12,155 @@ use PhpDb\Sql\ArgumentType;
 use PhpDb\Sql\Predicate\Expression;
 use PhpDb\Sql\Predicate\IsNull;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 final class ExpressionTest extends TestCase
 {
+    #[Test]
     #[Group('6849')]
-    public function testCanPassArrayOfMultiNullsParameterToConstructor(): void
+    public function canPassArrayOfMultiNullsParameterToConstructor(): void
     {
         $expression = new Expression('? OR ?', [null, null]);
         $null       = new Value(null);
-        self::assertEquals([$null, $null], $expression->getParameters());
+        static::assertEquals([$null, $null], $expression->getParameters());
     }
 
+    #[Test]
     #[Group('6849')]
-    public function testCanPassArrayOfMultiPredicatesParameterToConstructor(): void
+    public function canPassArrayOfMultiPredicatesParameterToConstructor(): void
     {
         $predicate  = new IsNull('foo.baz');
         $expression = new Expression('? OR ?', [$predicate, $predicate]);
         $isNull     = new Select($predicate);
-        self::assertEquals([$isNull, $isNull], $expression->getParameters());
+        static::assertEquals([$isNull, $isNull], $expression->getParameters());
     }
 
+    #[Test]
     #[Group('6849')]
-    public function testCanPassArrayOfMultiScalarsParameterToConstructor(): void
+    public function canPassArrayOfMultiScalarsParameterToConstructor(): void
     {
         $expression = new Expression('? OR ?', ['foo', 'bar']);
         $foo        = new Value('foo');
         $bar        = new Value('bar');
-        self::assertEquals([$foo, $bar], $expression->getParameters());
+        static::assertEquals([$foo, $bar], $expression->getParameters());
     }
 
+    #[Test]
     #[Group('6849')]
-    public function testCanPassArrayOfOneNullParameterToConstructor(): void
+    public function canPassArrayOfOneNullParameterToConstructor(): void
     {
         $expression = new Expression('?', [null]);
         $null       = new Value(null);
-        self::assertEquals([$null], $expression->getParameters());
+        static::assertEquals([$null], $expression->getParameters());
     }
 
+    #[Test]
     #[Group('6849')]
-    public function testCanPassArrayOfOnePredicateParameterToConstructor(): void
+    public function canPassArrayOfOnePredicateParameterToConstructor(): void
     {
         $predicate  = new IsNull('foo.baz');
         $expression = new Expression('?', [$predicate]);
         $isNull     = new Select($predicate);
-        self::assertEquals([$isNull], $expression->getParameters());
+        static::assertEquals([$isNull], $expression->getParameters());
     }
 
+    #[Test]
     #[Group('6849')]
-    public function testCanPassArrayOfOneScalarParameterToConstructor(): void
+    public function canPassArrayOfOneScalarParameterToConstructor(): void
     {
         $expression = new Expression('?', ['foo']);
         $foo        = new Value('foo');
-        self::assertEquals([$foo], $expression->getParameters());
+        static::assertEquals([$foo], $expression->getParameters());
     }
 
+    #[Test]
     #[Group('6849')]
-    public function testCanPassLiteralAndSingleScalarParameterToConstructor(): void
+    public function canPassLiteralAndSingleScalarParameterToConstructor(): void
     {
         $expression = new Expression('foo.bar = ?', 'bar');
         $bar        = new Value('bar');
-        self::assertEquals('foo.bar = ?', $expression->getExpression());
-        self::assertEquals([$bar], $expression->getParameters());
+        static::assertSame('foo.bar = ?', $expression->getExpression());
+        static::assertEquals([$bar], $expression->getParameters());
     }
 
+    #[Test]
     #[Group('6849')]
-    public function testCanPassMultiNullParametersToConstructor(): void
+    public function canPassMultiNullParametersToConstructor(): void
     {
         /** @psalm-suppress TooManyArguments */
         $expression = new Expression('? OR ?', null, null);
         $null       = new Value(null);
 
-        self::assertEquals([$null, $null], $expression->getParameters());
+        static::assertEquals([$null, $null], $expression->getParameters());
     }
 
+    #[Test]
     #[Group('6849')]
-    public function testCanPassMultiScalarParametersToConstructor(): void
+    public function canPassMultiScalarParametersToConstructor(): void
     {
         /** @psalm-suppress TooManyArguments */
         $expression = new Expression('? OR ?', 'foo', 'bar');
         $foo        = new Value('foo');
         $bar        = new Value('bar');
 
-        self::assertEquals([$foo, $bar], $expression->getParameters());
+        static::assertEquals([$foo, $bar], $expression->getParameters());
     }
 
+    #[Test]
     #[Group('6849')]
-    public function testCanPassNoParameterToConstructor(): void
+    public function canPassNoParameterToConstructor(): void
     {
         $expression = new Expression('foo.bar');
-        self::assertEquals([], $expression->getParameters());
+        static::assertEquals([], $expression->getParameters());
     }
 
+    #[Test]
     #[Group('6849')]
-    public function testCanPassSingleNullParameterToConstructor(): void
+    public function canPassSingleNullParameterToConstructor(): void
     {
         $expression = new Expression('?', null);
         $null       = new Value(null);
-        self::assertEquals([$null], $expression->getParameters());
+        static::assertEquals([$null], $expression->getParameters());
     }
 
+    #[Test]
     #[Group('6849')]
-    public function testCanPassSinglePredicateParameterToConstructor(): void
+    public function canPassSinglePredicateParameterToConstructor(): void
     {
         $predicate  = new IsNull('foo.baz');
         $expression = new Expression('?', $predicate);
         $isNull     = new Select($predicate);
-        self::assertEquals([$isNull], $expression->getParameters());
+        static::assertEquals([$isNull], $expression->getParameters());
     }
 
+    #[Test]
     #[Group('6849')]
-    public function testCanPassSingleZeroParameterValueToConstructor(): void
+    public function canPassSingleZeroParameterValueToConstructor(): void
     {
         $predicate  = new Expression('?', 0);
         $expression = new Value(0);
-        self::assertEquals([$expression], $predicate->getParameters());
+        static::assertEquals([$expression], $predicate->getParameters());
     }
 
-    public function testEmptyConstructorYieldsEmptyLiteralAndParameter(): void
+    #[Test]
+    public function emptyConstructorYieldsEmptyLiteralAndParameter(): void
     {
         $expression = new Expression();
-        self::assertEquals('', $expression->getExpression());
-        self::assertEmpty($expression->getParameters());
+        static::assertSame('', $expression->getExpression());
+        static::assertEmpty($expression->getParameters());
     }
 
-    public function testLiteralIsMutable(): void
+    #[Test]
+    public function literalIsMutable(): void
     {
         $expression = new Expression();
         $expression->setExpression('foo.bar = ?');
-        self::assertEquals('foo.bar = ?', $expression->getExpression());
+        static::assertSame('foo.bar = ?', $expression->getExpression());
     }
 
-    public function testParameterIsMutable(): void
+    #[Test]
+    public function parameterIsMutable(): void
     {
         $expression = new Expression();
 
@@ -151,40 +168,41 @@ final class ExpressionTest extends TestCase
         $result = $expression->setParameters(['foo', 'bar']);
 
         // Verify fluent interface
-        self::assertSame($expression, $result);
+        static::assertSame($expression, $result);
 
         // Verify the first mutation occurred - getParameters returns an array
         $parameters1 = $expression->getParameters();
-        self::assertCount(2, $parameters1);
-        self::assertInstanceOf(ArgumentInterface::class, $parameters1[0]);
-        self::assertEquals('foo', $parameters1[0]->getValue());
-        self::assertEquals(ArgumentType::Value, $parameters1[0]->getType());
-        self::assertInstanceOf(ArgumentInterface::class, $parameters1[1]);
-        self::assertEquals('bar', $parameters1[1]->getValue());
-        self::assertEquals(ArgumentType::Value, $parameters1[1]->getType());
+        static::assertCount(2, $parameters1);
+        static::assertInstanceOf(ArgumentInterface::class, $parameters1[0]);
+        static::assertSame('foo', $parameters1[0]->getValue());
+        static::assertEquals(ArgumentType::Value, $parameters1[0]->getType());
+        static::assertInstanceOf(ArgumentInterface::class, $parameters1[1]);
+        static::assertSame('bar', $parameters1[1]->getValue());
+        static::assertEquals(ArgumentType::Value, $parameters1[1]->getType());
 
         // Second mutation with different data to verify mutability
         $expression->setParameters(['baz', 'qux', 'quux']);
 
         // Verify the instance was actually mutated - parameters are accumulated
         $parameters2 = $expression->getParameters();
-        self::assertCount(5, $parameters2); // 2 original + 3 new = 5 total
+        static::assertCount(5, $parameters2); // 2 original + 3 new = 5 total
         // First two are still there
-        self::assertEquals('foo', $parameters2[0]->getValue());
-        self::assertEquals('bar', $parameters2[1]->getValue());
+        static::assertSame('foo', $parameters2[0]->getValue());
+        static::assertSame('bar', $parameters2[1]->getValue());
         // New ones were appended
-        self::assertInstanceOf(ArgumentInterface::class, $parameters2[2]);
-        self::assertEquals('baz', $parameters2[2]->getValue());
-        self::assertEquals(ArgumentType::Value, $parameters2[2]->getType());
-        self::assertInstanceOf(ArgumentInterface::class, $parameters2[3]);
-        self::assertEquals('qux', $parameters2[3]->getValue());
-        self::assertEquals(ArgumentType::Value, $parameters2[3]->getType());
-        self::assertInstanceOf(ArgumentInterface::class, $parameters2[4]);
-        self::assertEquals('quux', $parameters2[4]->getValue());
-        self::assertEquals(ArgumentType::Value, $parameters2[4]->getType());
+        static::assertInstanceOf(ArgumentInterface::class, $parameters2[2]);
+        static::assertSame('baz', $parameters2[2]->getValue());
+        static::assertEquals(ArgumentType::Value, $parameters2[2]->getType());
+        static::assertInstanceOf(ArgumentInterface::class, $parameters2[3]);
+        static::assertSame('qux', $parameters2[3]->getValue());
+        static::assertEquals(ArgumentType::Value, $parameters2[3]->getType());
+        static::assertInstanceOf(ArgumentInterface::class, $parameters2[4]);
+        static::assertSame('quux', $parameters2[4]->getValue());
+        static::assertEquals(ArgumentType::Value, $parameters2[4]->getType());
     }
 
-    public function testRetrievingWherePartsReturnsSpecificationArrayOfLiteralAndParametersAndArrayOfTypes(): void
+    #[Test]
+    public function retrievingWherePartsReturnsSpecificationArrayOfLiteralAndParametersAndArrayOfTypes(): void
     {
         $expression = new Expression();
         $expression->setExpression('foo.bar = ? AND id != ?')
@@ -195,7 +213,7 @@ final class ExpressionTest extends TestCase
 
         $expressionData = $expression->getExpressionData();
 
-        self::assertEquals('foo.bar = %s AND id != %s', $expressionData['spec']);
-        self::assertEquals([$parameter1, $parameter2], $expressionData['values']);
+        static::assertSame('foo.bar = %s AND id != %s', $expressionData['spec']);
+        static::assertEquals([$parameter1, $parameter2], $expressionData['values']);
     }
 }

@@ -13,6 +13,7 @@ use PhpDbTest\Adapter\Platform\TestAsset\TestPlatform;
 use PhpDbTest\TestAsset\TestSql92Platform;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 #[CoversMethod(Sql92::class, 'getName')]
@@ -39,14 +40,16 @@ final class Sql92Test extends TestCase
 {
     protected Sql92 $platform;
 
-    public function testAbstractPlatformQuoteValueEscapesWithDriver(): void
+    #[Test]
+    public function abstractPlatformQuoteValueEscapesWithDriver(): void
     {
         $platform = new TestPlatform($this->createStub(DriverInterface::class));
 
-        self::assertSame("'test\\'value'", $platform->quoteValue("test'value"));
+        static::assertSame("'test\\'value'", $platform->quoteValue("test'value"));
     }
 
-    public function testAbstractPlatformQuoteValueThrowsWithoutDriver(): void
+    #[Test]
+    public function abstractPlatformQuoteValueThrowsWithoutDriver(): void
     {
         $platform = new TestPlatform();
 
@@ -54,51 +57,58 @@ final class Sql92Test extends TestCase
         $platform->quoteValue('value');
     }
 
-    public function testGetIdentifierSeparator(): void
+    #[Test]
+    public function getIdentifierSeparator(): void
     {
-        self::assertEquals('.', $this->platform->getIdentifierSeparator());
+        static::assertSame('.', $this->platform->getIdentifierSeparator());
     }
 
-    public function testGetName(): void
+    #[Test]
+    public function getName(): void
     {
-        self::assertEquals('SQL92', $this->platform->getName());
+        static::assertSame('SQL92', $this->platform->getName());
     }
 
-    public function testGetQuoteIdentifierSymbol(): void
+    #[Test]
+    public function getQuoteIdentifierSymbol(): void
     {
-        self::assertEquals('"', $this->platform->getQuoteIdentifierSymbol());
+        static::assertSame('"', $this->platform->getQuoteIdentifierSymbol());
     }
 
-    public function testGetQuoteValueSymbol(): void
+    #[Test]
+    public function getQuoteValueSymbol(): void
     {
-        self::assertEquals("'", $this->platform->getQuoteValueSymbol());
+        static::assertSame("'", $this->platform->getQuoteValueSymbol());
     }
 
-    public function testQuoteIdentifier(): void
+    #[Test]
+    public function quoteIdentifier(): void
     {
-        self::assertEquals('"identifier"', $this->platform->quoteIdentifier('identifier'));
+        static::assertSame('"identifier"', $this->platform->quoteIdentifier('identifier'));
     }
 
-    public function testQuoteIdentifierChain(): void
+    #[Test]
+    public function quoteIdentifierChain(): void
     {
-        self::assertEquals('"identifier"', $this->platform->quoteIdentifierChain('identifier'));
-        self::assertEquals('"identifier"', $this->platform->quoteIdentifierChain(['identifier']));
-        self::assertEquals('"schema"."identifier"', $this->platform->quoteIdentifierChain(['schema', 'identifier']));
+        static::assertSame('"identifier"', $this->platform->quoteIdentifierChain('identifier'));
+        static::assertSame('"identifier"', $this->platform->quoteIdentifierChain(['identifier']));
+        static::assertSame('"schema"."identifier"', $this->platform->quoteIdentifierChain(['schema', 'identifier']));
     }
 
-    public function testQuoteIdentifierInFragment(): void
+    #[Test]
+    public function quoteIdentifierInFragment(): void
     {
-        self::assertEquals('"foo"."bar"', $this->platform->quoteIdentifierInFragment('foo.bar'));
-        self::assertEquals('"foo" as "bar"', $this->platform->quoteIdentifierInFragment('foo as bar'));
+        static::assertSame('"foo"."bar"', $this->platform->quoteIdentifierInFragment('foo.bar'));
+        static::assertSame('"foo" as "bar"', $this->platform->quoteIdentifierInFragment('foo as bar'));
 
         // single char words
-        self::assertEquals(
+        static::assertSame(
             '("foo"."bar" = "boo"."baz")',
             $this->platform->quoteIdentifierInFragment('(foo.bar = boo.baz)', ['(', ')', '=']),
         );
 
         // case insensitive safe words
-        self::assertEquals(
+        static::assertSame(
             '("foo"."bar" = "boo"."baz") AND ("foo"."baz" = "boo"."baz")',
             $this->platform->quoteIdentifierInFragment(
                 '(foo.bar = boo.baz) AND (foo.baz = boo.baz)',
@@ -107,7 +117,7 @@ final class Sql92Test extends TestCase
         );
 
         // case insensitive safe words in field
-        self::assertEquals(
+        static::assertSame(
             '("foo"."bar" = "boo".baz) AND ("foo".baz = "boo".baz)',
             $this->platform->quoteIdentifierInFragment(
                 '(foo.bar = boo.baz) AND (foo.baz = boo.baz)',
@@ -116,69 +126,76 @@ final class Sql92Test extends TestCase
         );
     }
 
-    public function testQuoteIdentifierInFragmentReturnsUnquotedWhenQuotingDisabled(): void
+    #[Test]
+    public function quoteIdentifierInFragmentReturnsUnquotedWhenQuotingDisabled(): void
     {
         $platform = new TestSql92Platform(quoteIdentifiers: false);
 
-        self::assertSame('foo.bar', $platform->quoteIdentifierInFragment('foo.bar'));
+        static::assertSame('foo.bar', $platform->quoteIdentifierInFragment('foo.bar'));
     }
 
-    public function testQuoteIdentifierReturnsUnquotedWhenQuotingDisabled(): void
+    #[Test]
+    public function quoteIdentifierReturnsUnquotedWhenQuotingDisabled(): void
     {
         $platform = new TestSql92Platform(quoteIdentifiers: false);
 
-        self::assertSame('test', $platform->quoteIdentifier('test'));
+        static::assertSame('test', $platform->quoteIdentifier('test'));
     }
 
-    public function testQuoteTrustedValueEscapesSpecialCharacters(): void
+    #[Test]
+    public function quoteTrustedValueEscapesSpecialCharacters(): void
     {
-        self::assertEquals("'value'", $this->platform->quoteTrustedValue('value'));
-        self::assertEquals("'Foo O\\'Bar'", $this->platform->quoteTrustedValue("Foo O'Bar"));
-        self::assertEquals(
+        static::assertSame("'value'", $this->platform->quoteTrustedValue('value'));
+        static::assertSame("'Foo O\\'Bar'", $this->platform->quoteTrustedValue("Foo O'Bar"));
+        static::assertSame(
             '\'\\\'; DELETE FROM some_table; -- \'',
             $this->platform->quoteTrustedValue("'; DELETE FROM some_table; -- "),
         );
 
         //                   '\\\'; DELETE FROM some_table; -- '  <- actual below
-        self::assertEquals(
+        static::assertSame(
             "'\\\\\\'; DELETE FROM some_table; -- '",
             $this->platform->quoteTrustedValue('\\\'; DELETE FROM some_table; -- '),
         );
     }
 
-    public function testQuoteValueEscapesSpecialCharacters(): void
+    #[Test]
+    public function quoteValueEscapesSpecialCharacters(): void
     {
         $platform = new TestSql92Platform(driver: $this->createStub(DriverInterface::class));
 
         $quoted = $platform->quoteValue("test'value");
 
-        self::assertStringContainsString('test', $quoted);
-        self::assertStringStartsWith("'", $quoted);
-        self::assertStringEndsWith("'", $quoted);
+        static::assertStringContainsString('test', $quoted);
+        static::assertStringStartsWith("'", $quoted);
+        static::assertStringEndsWith("'", $quoted);
     }
 
-    public function testQuoteValueListThrowsWithoutDriver(): void
+    #[Test]
+    public function quoteValueListThrowsWithoutDriver(): void
     {
         $this->expectException(RuntimeException::class);
-        self::assertEquals("'Foo O\\'Bar'", $this->platform->quoteValueList("Foo O'Bar"));
+        static::assertSame("'Foo O\\'Bar'", $this->platform->quoteValueList("Foo O'Bar"));
     }
 
-    public function testQuoteValueRaisesNoticeWithoutPlatformSupport(): void
+    #[Test]
+    public function quoteValueRaisesNoticeWithoutPlatformSupport(): void
     {
         $this->expectException(RuntimeException::class);
         $this->platform->quoteValue('value');
     }
 
-    public function testQuoteValueThrowsWithoutDriver(): void
+    #[Test]
+    public function quoteValueThrowsWithoutDriver(): void
     {
         $this->expectException(RuntimeException::class);
-        self::assertEquals("'value'", @$this->platform->quoteValue('value'));
-        self::assertEquals("'Foo O\\'Bar'", @$this->platform->quoteValue("Foo O'Bar"));
-        self::assertEquals(
+        static::assertSame("'value'", @$this->platform->quoteValue('value'));
+        static::assertSame("'Foo O\\'Bar'", @$this->platform->quoteValue("Foo O'Bar"));
+        static::assertSame(
             '\'\\\'; DELETE FROM some_table; -- \'',
             @$this->platform->quoteValue("'; DELETE FROM some_table; -- "),
         );
-        self::assertEquals(
+        static::assertSame(
             "'\\\\\\'; DELETE FROM some_table; -- '",
             @$this->platform->quoteValue('\\\'; DELETE FROM some_table; -- '),
         );

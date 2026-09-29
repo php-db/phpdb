@@ -8,6 +8,7 @@ use PhpDb\Sql\Argument\Literal;
 use PhpDb\Sql\ArgumentType;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 #[Group('unit')]
@@ -17,24 +18,27 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(Literal::class, 'getSpecification')]
 final class LiteralTest extends TestCase
 {
-    public function testGetSpecificationReturnsPlaceholder(): void
+    #[Test]
+    public function getSpecificationReturnsPlaceholder(): void
     {
         $literal = new Literal('test');
 
-        self::assertSame('%s', $literal->getSpecification());
+        static::assertSame('%s', $literal->getSpecification());
     }
 
-    public function testGetTypeReturnsLiteral(): void
+    #[Test]
+    public function getTypeReturnsLiteral(): void
     {
         $literal = new Literal('test');
 
-        self::assertSame(ArgumentType::Literal, $literal->getType());
+        static::assertSame(ArgumentType::Literal, $literal->getType());
     }
 
-    public function testGetValueReturnsLiteralString(): void
+    #[Test]
+    public function getValueReturnsLiteralString(): void
     {
         $literal = new Literal('NOW()');
 
-        self::assertSame('NOW()', $literal->getValue());
+        static::assertSame('NOW()', $literal->getValue());
     }
 }

@@ -14,13 +14,15 @@ use PhpDb\Sql\Predicate\Predicate;
 use PhpDb\Sql\Predicate\PredicateInterface;
 use PhpDb\Sql\Select;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestDox;
 use PHPUnit\Framework\TestCase;
 
 #[Group('unit')]
 final class PredicateTest extends TestCase
 {
-    public function testBetweenCreatesBetweenPredicate(): void
+    #[Test]
+    public function betweenCreatesBetweenPredicate(): void
     {
         $predicate = new Predicate();
         $predicate->between('foo.bar', 1, 10);
@@ -31,14 +33,15 @@ final class PredicateTest extends TestCase
 
         $expressionData = $predicate->getExpressionData();
 
-        self::assertEquals('%s BETWEEN %s AND %s', $expressionData['spec']);
-        self::assertCount(3, $expressionData['values']);
-        self::assertEquals($identifier, $expressionData['values'][0]);
-        self::assertEquals($minValue, $expressionData['values'][1]);
-        self::assertEquals($maxValue, $expressionData['values'][2]);
+        static::assertSame('%s BETWEEN %s AND %s', $expressionData['spec']);
+        static::assertCount(3, $expressionData['values']);
+        static::assertEquals($identifier, $expressionData['values'][0]);
+        static::assertEquals($minValue, $expressionData['values'][1]);
+        static::assertEquals($maxValue, $expressionData['values'][2]);
     }
 
-    public function testBetweenCreatesNotBetweenPredicate(): void
+    #[Test]
+    public function betweenCreatesNotBetweenPredicate(): void
     {
         $predicate = new Predicate();
         $predicate->notBetween('foo.bar', 1, 10);
@@ -49,14 +52,15 @@ final class PredicateTest extends TestCase
 
         $expressionData = $predicate->getExpressionData();
 
-        self::assertEquals('%s NOT BETWEEN %s AND %s', $expressionData['spec']);
-        self::assertCount(3, $expressionData['values']);
-        self::assertEquals($identifier, $expressionData['values'][0]);
-        self::assertEquals($minValue, $expressionData['values'][1]);
-        self::assertEquals($maxValue, $expressionData['values'][2]);
+        static::assertSame('%s NOT BETWEEN %s AND %s', $expressionData['spec']);
+        static::assertCount(3, $expressionData['values']);
+        static::assertEquals($identifier, $expressionData['values'][0]);
+        static::assertEquals($minValue, $expressionData['values'][1]);
+        static::assertEquals($maxValue, $expressionData['values'][2]);
     }
 
-    public function testCanChainPredicateFactoriesBetweenOperators(): void
+    #[Test]
+    public function canChainPredicateFactoriesBetweenOperators(): void
     {
         $predicate = new Predicate();
         $predicate->isNull('foo.bar')->or->isNotNull('bar.baz')
@@ -70,16 +74,17 @@ final class PredicateTest extends TestCase
         $expressionData = $predicate->getExpressionData();
 
         // 3 predicates: IsNull, IsNotNull, Operator = 4 values (1+1+2)
-        self::assertCount(4, $expressionData['values']);
+        static::assertCount(4, $expressionData['values']);
         // Verify combined spec
-        self::assertEquals('%s IS NULL OR %s IS NOT NULL AND %s = %s', $expressionData['spec']);
-        self::assertEquals($identifier1, $expressionData['values'][0]);
-        self::assertEquals($identifier2, $expressionData['values'][1]);
-        self::assertEquals($identifier3, $expressionData['values'][2]);
-        self::assertEquals($expression3, $expressionData['values'][3]);
+        static::assertSame('%s IS NULL OR %s IS NOT NULL AND %s = %s', $expressionData['spec']);
+        static::assertEquals($identifier1, $expressionData['values'][0]);
+        static::assertEquals($identifier2, $expressionData['values'][1]);
+        static::assertEquals($identifier3, $expressionData['values'][2]);
+        static::assertEquals($expression3, $expressionData['values'][3]);
     }
 
-    public function testCanNestPredicates(): void
+    #[Test]
+    public function canNestPredicates(): void
     {
         $predicate = new Predicate();
         $predicate->isNull('foo.bar')
@@ -97,16 +102,17 @@ final class PredicateTest extends TestCase
         $expressionData = $predicate->getExpressionData();
 
         // 3 predicates: IsNull + nested(IsNotNull, Operator) = 4 values
-        self::assertCount(4, $expressionData['values']);
+        static::assertCount(4, $expressionData['values']);
         // Verify combined spec with nested brackets
-        self::assertEquals('%s IS NULL AND (%s IS NOT NULL AND %s = %s)', $expressionData['spec']);
-        self::assertEquals($identifier1, $expressionData['values'][0]);
-        self::assertEquals($identifier2, $expressionData['values'][1]);
-        self::assertEquals($identifier3, $expressionData['values'][2]);
-        self::assertEquals($expression3, $expressionData['values'][3]);
+        static::assertSame('%s IS NULL AND (%s IS NOT NULL AND %s = %s)', $expressionData['spec']);
+        static::assertEquals($identifier1, $expressionData['values'][0]);
+        static::assertEquals($identifier2, $expressionData['values'][1]);
+        static::assertEquals($identifier3, $expressionData['values'][2]);
+        static::assertEquals($expression3, $expressionData['values'][3]);
     }
 
-    public function testEqualToCreatesOperatorPredicate(): void
+    #[Test]
+    public function equalToCreatesOperatorPredicate(): void
     {
         $predicate = new Predicate();
         $predicate->equalTo('foo.bar', 'bar');
@@ -116,28 +122,30 @@ final class PredicateTest extends TestCase
 
         $expressionData = $predicate->getExpressionData();
 
-        self::assertEquals('%s = %s', $expressionData['spec']);
-        self::assertCount(2, $expressionData['values']);
-        self::assertEquals($identifier, $expressionData['values'][0]);
-        self::assertEquals($expression, $expressionData['values'][1]);
+        static::assertSame('%s = %s', $expressionData['spec']);
+        static::assertCount(2, $expressionData['values']);
+        static::assertEquals($identifier, $expressionData['values'][0]);
+        static::assertEquals($expression, $expressionData['values'][1]);
     }
 
+    #[Test]
     #[TestDox('Unit test: Test expression() is chainable and returns proper values')]
-    public function testExpression(): void
+    public function expression(): void
     {
         $predicate = new Predicate();
         $value     = Argument::value(0);
 
         // is chainable
-        self::assertSame($predicate, $predicate->expression('foo = ?', 0));
+        static::assertSame($predicate, $predicate->expression('foo = ?', 0));
         $expressionData = $predicate->getExpressionData();
         // with parameter
-        self::assertEquals('foo = %s', $expressionData['spec']);
-        self::assertEquals([$value], $expressionData['values']);
+        static::assertSame('foo = %s', $expressionData['spec']);
+        static::assertEquals([$value], $expressionData['values']);
     }
 
+    #[Test]
     #[TestDox('Unit test: Test expression() allows null $parameters')]
-    public function testExpressionNullParameters(): void
+    public function expressionNullParameters(): void
     {
         $predicate = new Predicate();
 
@@ -147,14 +155,15 @@ final class PredicateTest extends TestCase
 
         if (isset($predicates[0][1])) {
             $expression = $predicates[0][1];
-            $this->assertInstanceOf(Expression::class, $expression);
-            self::assertEquals([], $expression->getParameters());
+            static::assertInstanceOf(Expression::class, $expression);
+            static::assertEquals([], $expression->getParameters());
         } else {
-            $this->fail('Expression not found');
+            static::fail('Expression not found');
         }
     }
 
-    public function testGreaterThanCreatesOperatorPredicate(): void
+    #[Test]
+    public function greaterThanCreatesOperatorPredicate(): void
     {
         $predicate = new Predicate();
         $predicate->greaterThan('foo.bar', 'bar');
@@ -164,13 +173,14 @@ final class PredicateTest extends TestCase
 
         $expressionData = $predicate->getExpressionData();
 
-        self::assertEquals('%s > %s', $expressionData['spec']);
-        self::assertCount(2, $expressionData['values']);
-        self::assertEquals($identifier, $expressionData['values'][0]);
-        self::assertEquals($expression, $expressionData['values'][1]);
+        static::assertSame('%s > %s', $expressionData['spec']);
+        static::assertCount(2, $expressionData['values']);
+        static::assertEquals($identifier, $expressionData['values'][0]);
+        static::assertEquals($expression, $expressionData['values'][1]);
     }
 
-    public function testGreaterThanOrEqualToCreatesOperatorPredicate(): void
+    #[Test]
+    public function greaterThanOrEqualToCreatesOperatorPredicate(): void
     {
         $predicate = new Predicate();
         $predicate->greaterThanOrEqualTo('foo.bar', 'bar');
@@ -180,13 +190,14 @@ final class PredicateTest extends TestCase
 
         $expressionData = $predicate->getExpressionData();
 
-        self::assertEquals('%s >= %s', $expressionData['spec']);
-        self::assertCount(2, $expressionData['values']);
-        self::assertEquals($identifier, $expressionData['values'][0]);
-        self::assertEquals($expression, $expressionData['values'][1]);
+        static::assertSame('%s >= %s', $expressionData['spec']);
+        static::assertCount(2, $expressionData['values']);
+        static::assertEquals($identifier, $expressionData['values'][0]);
+        static::assertEquals($expression, $expressionData['values'][1]);
     }
 
-    public function testInCreatesInPredicate(): void
+    #[Test]
+    public function inCreatesInPredicate(): void
     {
         $predicate = new Predicate();
         $predicate->in('foo.bar', ['foo', 'bar']);
@@ -196,13 +207,14 @@ final class PredicateTest extends TestCase
 
         $expressionData = $predicate->getExpressionData();
 
-        self::assertEquals('%s IN (%s, %s)', $expressionData['spec']);
-        self::assertCount(2, $expressionData['values']);
-        self::assertEquals($identifier, $expressionData['values'][0]);
-        self::assertEquals($expression, $expressionData['values'][1]);
+        static::assertSame('%s IN (%s, %s)', $expressionData['spec']);
+        static::assertCount(2, $expressionData['values']);
+        static::assertEquals($identifier, $expressionData['values'][0]);
+        static::assertEquals($expression, $expressionData['values'][1]);
     }
 
-    public function testIsNotNullCreatesIsNotNullPredicate(): void
+    #[Test]
+    public function isNotNullCreatesIsNotNullPredicate(): void
     {
         $predicate = new Predicate();
         $predicate->isNotNull('foo.bar');
@@ -211,12 +223,13 @@ final class PredicateTest extends TestCase
 
         $expressionData = $predicate->getExpressionData();
 
-        self::assertEquals('%s IS NOT NULL', $expressionData['spec']);
-        self::assertCount(1, $expressionData['values']);
-        self::assertEquals($identifier, $expressionData['values'][0]);
+        static::assertSame('%s IS NOT NULL', $expressionData['spec']);
+        static::assertCount(1, $expressionData['values']);
+        static::assertEquals($identifier, $expressionData['values'][0]);
     }
 
-    public function testIsNullCreatesIsNullPredicate(): void
+    #[Test]
+    public function isNullCreatesIsNullPredicate(): void
     {
         $predicate = new Predicate();
         $predicate->isNull('foo.bar');
@@ -225,12 +238,13 @@ final class PredicateTest extends TestCase
 
         $expressionData = $predicate->getExpressionData();
 
-        self::assertEquals('%s IS NULL', $expressionData['spec']);
-        self::assertCount(1, $expressionData['values']);
-        self::assertEquals($identifier, $expressionData['values'][0]);
+        static::assertSame('%s IS NULL', $expressionData['spec']);
+        static::assertCount(1, $expressionData['values']);
+        static::assertEquals($identifier, $expressionData['values'][0]);
     }
 
-    public function testLessThanCreatesOperatorPredicate(): void
+    #[Test]
+    public function lessThanCreatesOperatorPredicate(): void
     {
         $predicate = new Predicate();
         $predicate->lessThan('foo.bar', 'bar');
@@ -240,13 +254,14 @@ final class PredicateTest extends TestCase
 
         $expressionData = $predicate->getExpressionData();
 
-        self::assertEquals('%s < %s', $expressionData['spec']);
-        self::assertCount(2, $expressionData['values']);
-        self::assertEquals($identifier, $expressionData['values'][0]);
-        self::assertEquals($expression, $expressionData['values'][1]);
+        static::assertSame('%s < %s', $expressionData['spec']);
+        static::assertCount(2, $expressionData['values']);
+        static::assertEquals($identifier, $expressionData['values'][0]);
+        static::assertEquals($expression, $expressionData['values'][1]);
     }
 
-    public function testLessThanOrEqualToCreatesOperatorPredicate(): void
+    #[Test]
+    public function lessThanOrEqualToCreatesOperatorPredicate(): void
     {
         $predicate = new Predicate();
         $predicate->lessThanOrEqualTo('foo.bar', 'bar');
@@ -256,13 +271,14 @@ final class PredicateTest extends TestCase
 
         $expressionData = $predicate->getExpressionData();
 
-        self::assertEquals('%s <= %s', $expressionData['spec']);
-        self::assertCount(2, $expressionData['values']);
-        self::assertEquals($identifier, $expressionData['values'][0]);
-        self::assertEquals($expression, $expressionData['values'][1]);
+        static::assertSame('%s <= %s', $expressionData['spec']);
+        static::assertCount(2, $expressionData['values']);
+        static::assertEquals($identifier, $expressionData['values'][0]);
+        static::assertEquals($expression, $expressionData['values'][1]);
     }
 
-    public function testLikeCreatesLikePredicate(): void
+    #[Test]
+    public function likeCreatesLikePredicate(): void
     {
         $predicate = new Predicate();
         $predicate->like('foo.bar', 'bar%');
@@ -272,25 +288,26 @@ final class PredicateTest extends TestCase
 
         $expressionData = $predicate->getExpressionData();
 
-        self::assertEquals('%s LIKE %s', $expressionData['spec']);
-        self::assertCount(2, $expressionData['values']);
-        self::assertEquals($identifier, $expressionData['values'][0]);
-        self::assertEquals($expression, $expressionData['values'][1]);
+        static::assertSame('%s LIKE %s', $expressionData['spec']);
+        static::assertCount(2, $expressionData['values']);
+        static::assertEquals($identifier, $expressionData['values'][0]);
+        static::assertEquals($expression, $expressionData['values'][1]);
     }
 
+    #[Test]
     #[TestDox('Unit test: Test literal() is chainable, returns proper values, and is backwards compatible with 2.0.*')]
-    public function testLiteral(): void
+    public function literal(): void
     {
         $predicate = new Predicate();
 
         // is chainable
-        self::assertSame($predicate, $predicate->literal('foo = bar'));
+        static::assertSame($predicate, $predicate->literal('foo = bar'));
 
         $expressionData = $predicate->getExpressionData();
 
         // with parameter
-        self::assertEquals('foo = bar', $expressionData['spec']);
-        self::assertEquals([], $expressionData['values']);
+        static::assertSame('foo = bar', $expressionData['spec']);
+        static::assertEquals([], $expressionData['values']);
 
         // test literal() is backwards-compatible, and works with with parameters
         $predicate = new Predicate();
@@ -300,8 +317,8 @@ final class PredicateTest extends TestCase
         $expressionData = $predicate->getExpressionData();
 
         // with parameter
-        self::assertEquals('foo = %s', $expressionData['spec']);
-        self::assertEquals([$expression], $expressionData['values']);
+        static::assertSame('foo = %s', $expressionData['spec']);
+        static::assertEquals([$expression], $expressionData['values']);
 
         // test literal() is backwards-compatible, and works with with parameters, even 0 which tests as false
         $predicate = new Predicate();
@@ -311,42 +328,46 @@ final class PredicateTest extends TestCase
         $expressionData = $predicate->getExpressionData();
 
         // with parameter
-        self::assertEquals('foo = %s', $expressionData['spec']);
-        self::assertEquals([$expression], $expressionData['values']);
+        static::assertSame('foo = %s', $expressionData['spec']);
+        static::assertEquals([$expression], $expressionData['values']);
     }
 
-    public function testLiteralCreatesLiteralPredicate(): void
+    #[Test]
+    public function literalCreatesLiteralPredicate(): void
     {
         $predicate = new Predicate();
         $predicate->literal('foo.bar = ?');
 
         $expressionData = $predicate->getExpressionData();
 
-        self::assertCount(0, $expressionData['values']);
-        self::assertEquals('foo.bar = ?', $expressionData['spec']);
+        static::assertCount(0, $expressionData['values']);
+        static::assertSame('foo.bar = ?', $expressionData['spec']);
     }
 
-    public function testMagicGetNestReturnsNestedPredicate(): void
+    #[Test]
+    public function magicGetNestReturnsNestedPredicate(): void
     {
         $predicate = new Predicate();
 
         $nested = $predicate->nest;
 
-        self::assertInstanceOf(Predicate::class, $nested);
-        self::assertNotSame($predicate, $nested);
+        static::assertInstanceOf(Predicate::class, $nested);
+        static::assertNotSame($predicate, $nested);
     }
 
-    public function testMagicGetUnnestReturnsParentPredicate(): void
+    #[Test]
+    public function magicGetUnnestReturnsParentPredicate(): void
     {
         $predicate = new Predicate();
 
         $nested = $predicate->nest;
         $parent = $nested->unnest;
 
-        self::assertSame($predicate, $parent);
+        static::assertSame($predicate, $parent);
     }
 
-    public function testNotEqualToCreatesOperatorPredicate(): void
+    #[Test]
+    public function notEqualToCreatesOperatorPredicate(): void
     {
         $predicate = new Predicate();
         $predicate->notEqualTo('foo.bar', 'bar');
@@ -356,13 +377,14 @@ final class PredicateTest extends TestCase
 
         $expressionData = $predicate->getExpressionData();
 
-        self::assertEquals('%s != %s', $expressionData['spec']);
-        self::assertCount(2, $expressionData['values']);
-        self::assertEquals($identifier, $expressionData['values'][0]);
-        self::assertEquals($expression, $expressionData['values'][1]);
+        static::assertSame('%s != %s', $expressionData['spec']);
+        static::assertCount(2, $expressionData['values']);
+        static::assertEquals($identifier, $expressionData['values'][0]);
+        static::assertEquals($expression, $expressionData['values'][1]);
     }
 
-    public function testNotInCreatesNotInPredicate(): void
+    #[Test]
+    public function notInCreatesNotInPredicate(): void
     {
         $predicate = new Predicate();
         $predicate->notIn('foo.bar', ['foo', 'bar']);
@@ -372,13 +394,14 @@ final class PredicateTest extends TestCase
 
         $expressionData = $predicate->getExpressionData();
 
-        self::assertEquals('%s NOT IN (%s, %s)', $expressionData['spec']);
-        self::assertCount(2, $expressionData['values']);
-        self::assertEquals($identifier, $expressionData['values'][0]);
-        self::assertEquals($expression, $expressionData['values'][1]);
+        static::assertSame('%s NOT IN (%s, %s)', $expressionData['spec']);
+        static::assertCount(2, $expressionData['values']);
+        static::assertEquals($identifier, $expressionData['values'][0]);
+        static::assertEquals($expression, $expressionData['values'][1]);
     }
 
-    public function testNotLikeCreatesLikePredicate(): void
+    #[Test]
+    public function notLikeCreatesLikePredicate(): void
     {
         $predicate = new Predicate();
         $predicate->notLike('foo.bar', 'bar%');
@@ -388,24 +411,26 @@ final class PredicateTest extends TestCase
 
         $expressionData = $predicate->getExpressionData();
 
-        self::assertEquals('%s NOT LIKE %s', $expressionData['spec']);
-        self::assertCount(2, $expressionData['values']);
-        self::assertEquals($identifier, $expressionData['values'][0]);
-        self::assertEquals($expression, $expressionData['values'][1]);
+        static::assertSame('%s NOT LIKE %s', $expressionData['spec']);
+        static::assertCount(2, $expressionData['values']);
+        static::assertEquals($identifier, $expressionData['values'][0]);
+        static::assertEquals($expression, $expressionData['values'][1]);
     }
 
-    public function testPredicateMethodAddsCustomPredicateInterface(): void
+    #[Test]
+    public function predicateMethodAddsCustomPredicateInterface(): void
     {
         $predicate = new Predicate();
         $mock      = $this->createMock(PredicateInterface::class);
 
         $result = $predicate->predicate($mock);
 
-        self::assertSame($predicate, $result);
-        self::assertCount(1, $predicate);
+        static::assertSame($predicate, $result);
+        static::assertCount(1, $predicate);
     }
 
-    public function testUnnestThrowsWhenNotNested(): void
+    #[Test]
+    public function unnestThrowsWhenNotNested(): void
     {
         $predicate = new Predicate();
 
@@ -420,7 +445,8 @@ final class PredicateTest extends TestCase
     /**
      * @throws ErrorException
      */
-    public function testWillBindSqlParametersToExpressionsWithGivenParameter(): void
+    #[Test]
+    public function willBindSqlParametersToExpressionsWithGivenParameter(): void
     {
         $where = new Predicate();
 
@@ -428,7 +454,7 @@ final class PredicateTest extends TestCase
 
         $actual = $this->makeSqlString($where);
 
-        self::assertSame(
+        static::assertSame(
             'SELECT "a_table".* FROM "a_table" WHERE (some_expression(\'\'))',
             $actual,
         );
@@ -437,7 +463,8 @@ final class PredicateTest extends TestCase
     /**
      * @throws ErrorException
      */
-    public function testWillBindSqlParametersToExpressionsWithGivenStringParameter(): void
+    #[Test]
+    public function willBindSqlParametersToExpressionsWithGivenStringParameter(): void
     {
         $where = new Predicate();
 
@@ -445,7 +472,7 @@ final class PredicateTest extends TestCase
 
         $actual = $this->makeSqlString($where);
 
-        self::assertSame(
+        static::assertSame(
             'SELECT "a_table".* FROM "a_table" WHERE (some_expression(\'a string\'))',
             $actual,
         );

@@ -12,6 +12,7 @@ use PhpDb\Sql\Ddl\CreateTable;
 use PhpDb\Sql\Literal;
 use PhpDb\Sql\TableIdentifier;
 use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 #[CoversMethod(CreateTable::class, '__construct')]
@@ -35,7 +36,8 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(CreateTable::class, 'processTableOptions')]
 class CreateTableTest extends TestCase
 {
-    public function testAddColumn(): void
+    #[Test]
+    public function addColumn(): void
     {
         $column = $this->getMockBuilder(ColumnInterface::class)->getMock();
         $ct     = new CreateTable();
@@ -44,13 +46,13 @@ class CreateTableTest extends TestCase
         $result = $ct->addColumn($column);
 
         // Verify fluent interface
-        self::assertSame($ct, $result);
+        static::assertSame($ct, $result);
 
         // Verify the first mutation occurred
         $state = $ct->getRawState('columns');
-        self::assertIsArray($state);
-        self::assertCount(1, $state);
-        self::assertInstanceOf(ColumnInterface::class, $state[0]);
+        static::assertIsArray($state);
+        static::assertCount(1, $state);
+        static::assertInstanceOf(ColumnInterface::class, $state[0]);
 
         // Second mutation to verify mutability (columns accumulate)
         $column2 = $this->getMockBuilder(ColumnInterface::class)->getMock();
@@ -58,11 +60,12 @@ class CreateTableTest extends TestCase
 
         // Verify the instance was actually mutated
         $state2 = $ct->getRawState('columns');
-        self::assertCount(2, $state2);
-        self::assertInstanceOf(ColumnInterface::class, $state2[1]);
+        static::assertCount(2, $state2);
+        static::assertInstanceOf(ColumnInterface::class, $state2[1]);
     }
 
-    public function testAddConstraint(): void
+    #[Test]
+    public function addConstraint(): void
     {
         $constraint = $this->getMockBuilder(ConstraintInterface::class)->getMock();
         $ct         = new CreateTable();
@@ -71,13 +74,13 @@ class CreateTableTest extends TestCase
         $result = $ct->addConstraint($constraint);
 
         // Verify fluent interface
-        self::assertSame($ct, $result);
+        static::assertSame($ct, $result);
 
         // Verify the first mutation occurred
         $state = $ct->getRawState('constraints');
-        self::assertIsArray($state);
-        self::assertCount(1, $state);
-        self::assertInstanceOf(ConstraintInterface::class, $state[0]);
+        static::assertIsArray($state);
+        static::assertCount(1, $state);
+        static::assertInstanceOf(ConstraintInterface::class, $state[0]);
 
         // Second mutation to verify mutability (constraints accumulate)
         $constraint2 = $this->getMockBuilder(ConstraintInterface::class)->getMock();
@@ -85,11 +88,12 @@ class CreateTableTest extends TestCase
 
         // Verify the instance was actually mutated
         $state2 = $ct->getRawState('constraints');
-        self::assertCount(2, $state2);
-        self::assertInstanceOf(ConstraintInterface::class, $state2[1]);
+        static::assertCount(2, $state2);
+        static::assertInstanceOf(ConstraintInterface::class, $state2[1]);
     }
 
-    public function testChainedOperations(): void
+    #[Test]
+    public function chainedOperations(): void
     {
         $ct   = new CreateTable();
         $col1 = $this->getMockBuilder(ColumnInterface::class)->getMock();
@@ -102,59 +106,65 @@ class CreateTableTest extends TestCase
             ->addColumn($col2)
             ->addConstraint($con);
 
-        self::assertSame($ct, $result);
-        self::assertEquals('products', $ct->getRawState(CreateTable::TABLE));
-        self::assertTrue($ct->isTemporary());
-        self::assertCount(2, $ct->getRawState(CreateTable::COLUMNS));
-        self::assertCount(1, $ct->getRawState(CreateTable::CONSTRAINTS));
+        static::assertSame($ct, $result);
+        static::assertSame('products', $ct->getRawState(CreateTable::TABLE));
+        static::assertTrue($ct->isTemporary());
+        static::assertCount(2, $ct->getRawState(CreateTable::COLUMNS));
+        static::assertCount(1, $ct->getRawState(CreateTable::CONSTRAINTS));
     }
 
-    public function testConstructorWithTableIdentifier(): void
+    #[Test]
+    public function constructorWithTableIdentifier(): void
     {
         $tableId = new TableIdentifier('bar', 'foo');
         $ct      = new CreateTable($tableId);
 
         $rawState = $ct->getRawState();
-        self::assertSame($tableId, $rawState[CreateTable::TABLE]);
+        static::assertSame($tableId, $rawState[CreateTable::TABLE]);
     }
 
-    public function testConstructorWithTemporaryFlag(): void
+    #[Test]
+    public function constructorWithTemporaryFlag(): void
     {
         $ct = new CreateTable('test', true);
-        self::assertTrue($ct->isTemporary());
-        self::assertEquals('test', $ct->getRawState(CreateTable::TABLE));
+        static::assertTrue($ct->isTemporary());
+        static::assertSame('test', $ct->getRawState(CreateTable::TABLE));
 
         $ct2 = new CreateTable('test', false);
-        self::assertFalse($ct2->isTemporary());
+        static::assertFalse($ct2->isTemporary());
     }
 
-    public function testEmptyTableConstruction(): void
+    #[Test]
+    public function emptyTableConstruction(): void
     {
         $ct = new CreateTable();
-        self::assertEquals('', $ct->getRawState(CreateTable::TABLE));
-        self::assertFalse($ct->isTemporary());
-        self::assertEmpty($ct->getRawState(CreateTable::COLUMNS));
-        self::assertEmpty($ct->getRawState(CreateTable::CONSTRAINTS));
+        static::assertSame('', $ct->getRawState(CreateTable::TABLE));
+        static::assertFalse($ct->isTemporary());
+        static::assertEmpty($ct->getRawState(CreateTable::COLUMNS));
+        static::assertEmpty($ct->getRawState(CreateTable::CONSTRAINTS));
     }
 
-    public function testGetOptionsReturnsEmpty(): void
+    #[Test]
+    public function getOptionsReturnsEmpty(): void
     {
         $ct = new CreateTable('foo');
-        self::assertEquals([], $ct->getOptions());
+        static::assertEquals([], $ct->getOptions());
     }
 
-    public function testGetRawStateIncludesTableOptions(): void
+    #[Test]
+    public function getRawStateIncludesTableOptions(): void
     {
         $ct = new CreateTable('foo');
         $ct->setOption('engine', new Literal('InnoDB'));
 
         $rawState = $ct->getRawState();
 
-        self::assertArrayHasKey(CreateTable::TABLE_OPTIONS, $rawState);
-        self::assertEquals(['engine' => new Literal('InnoDB')], $rawState[CreateTable::TABLE_OPTIONS]);
+        static::assertArrayHasKey(CreateTable::TABLE_OPTIONS, $rawState);
+        static::assertEquals(['engine' => new Literal('InnoDB')], $rawState[CreateTable::TABLE_OPTIONS]);
     }
 
-    public function testGetRawStateReturnsAllState(): void
+    #[Test]
+    public function getRawStateReturnsAllState(): void
     {
         $ct  = new CreateTable('users');
         $col = $this->getMockBuilder(ColumnInterface::class)->getMock();
@@ -165,47 +175,49 @@ class CreateTableTest extends TestCase
 
         $rawState = $ct->getRawState();
 
-        self::assertIsArray($rawState);
-        self::assertArrayHasKey(CreateTable::TABLE, $rawState);
-        self::assertArrayHasKey(CreateTable::COLUMNS, $rawState);
-        self::assertArrayHasKey(CreateTable::CONSTRAINTS, $rawState);
+        static::assertIsArray($rawState);
+        static::assertArrayHasKey(CreateTable::TABLE, $rawState);
+        static::assertArrayHasKey(CreateTable::COLUMNS, $rawState);
+        static::assertArrayHasKey(CreateTable::CONSTRAINTS, $rawState);
 
-        self::assertEquals('users', $rawState[CreateTable::TABLE]);
-        self::assertEquals([$col], $rawState[CreateTable::COLUMNS]);
-        self::assertEquals([$con], $rawState[CreateTable::CONSTRAINTS]);
+        static::assertSame('users', $rawState[CreateTable::TABLE]);
+        static::assertEquals([$col], $rawState[CreateTable::COLUMNS]);
+        static::assertEquals([$con], $rawState[CreateTable::CONSTRAINTS]);
     }
 
-    public function testGetRawStateWithInvalidKey(): void
+    #[Test]
+    public function getRawStateWithInvalidKey(): void
     {
         $ct = new CreateTable('test');
         $ct->addColumn($this->getMockBuilder(ColumnInterface::class)->getMock());
 
         // Non-existent key should return full array
         $rawState = $ct->getRawState('invalid_key');
-        self::assertIsArray($rawState);
-        self::assertArrayHasKey(CreateTable::TABLE, $rawState);
+        static::assertIsArray($rawState);
+        static::assertArrayHasKey(CreateTable::TABLE, $rawState);
     }
 
-    public function testGetSqlString(): void
+    #[Test]
+    public function getSqlString(): void
     {
         $ct = new CreateTable('foo');
-        self::assertEquals("CREATE TABLE \"foo\" ( \n)", $ct->getSqlString());
+        static::assertSame("CREATE TABLE \"foo\" ( \n)", $ct->getSqlString());
 
         $ct = new CreateTable('foo', true);
-        self::assertEquals("CREATE TEMPORARY TABLE \"foo\" ( \n)", $ct->getSqlString());
+        static::assertSame("CREATE TEMPORARY TABLE \"foo\" ( \n)", $ct->getSqlString());
 
         $ct = new CreateTable('foo');
         $ct->addColumn(new Column('bar'));
-        self::assertEquals("CREATE TABLE \"foo\" ( \n    \"bar\" INTEGER NOT NULL \n)", $ct->getSqlString());
+        static::assertSame("CREATE TABLE \"foo\" ( \n    \"bar\" INTEGER NOT NULL \n)", $ct->getSqlString());
 
         $ct = new CreateTable('foo', true);
         $ct->addColumn(new Column('bar'));
-        self::assertEquals("CREATE TEMPORARY TABLE \"foo\" ( \n    \"bar\" INTEGER NOT NULL \n)", $ct->getSqlString());
+        static::assertSame("CREATE TEMPORARY TABLE \"foo\" ( \n    \"bar\" INTEGER NOT NULL \n)", $ct->getSqlString());
 
         $ct = new CreateTable('foo', true);
         $ct->addColumn(new Column('bar'));
         $ct->addColumn(new Column('baz'));
-        self::assertEquals(
+        static::assertSame(
             "CREATE TEMPORARY TABLE \"foo\" ( \n    \"bar\" INTEGER NOT NULL,\n    \"baz\" INTEGER NOT NULL \n)",
             $ct->getSqlString(),
         );
@@ -213,7 +225,7 @@ class CreateTableTest extends TestCase
         $ct = new CreateTable('foo');
         $ct->addColumn(new Column('bar'));
         $ct->addConstraint(new Constraint\PrimaryKey('bat'));
-        self::assertEquals(
+        static::assertSame(
             "CREATE TABLE \"foo\" ( \n    \"bar\" INTEGER NOT NULL , \n    PRIMARY KEY (\"bat\") \n)",
             $ct->getSqlString(),
         );
@@ -221,133 +233,144 @@ class CreateTableTest extends TestCase
         $ct = new CreateTable('foo');
         $ct->addConstraint(new Constraint\PrimaryKey('bar'));
         $ct->addConstraint(new Constraint\PrimaryKey('bat'));
-        self::assertEquals(
+        static::assertSame(
             "CREATE TABLE \"foo\" ( \n    PRIMARY KEY (\"bar\"),\n    PRIMARY KEY (\"bat\") \n)",
             $ct->getSqlString(),
         );
 
         $ct = new CreateTable(new TableIdentifier('foo'));
         $ct->addColumn(new Column('bar'));
-        self::assertEquals("CREATE TABLE \"foo\" ( \n    \"bar\" INTEGER NOT NULL \n)", $ct->getSqlString());
+        static::assertSame("CREATE TABLE \"foo\" ( \n    \"bar\" INTEGER NOT NULL \n)", $ct->getSqlString());
 
         $ct = new CreateTable(new TableIdentifier('bar', 'foo'));
         $ct->addColumn(new Column('baz'));
-        self::assertEquals("CREATE TABLE \"foo\".\"bar\" ( \n    \"baz\" INTEGER NOT NULL \n)", $ct->getSqlString());
+        static::assertSame("CREATE TABLE \"foo\".\"bar\" ( \n    \"baz\" INTEGER NOT NULL \n)", $ct->getSqlString());
     }
 
-    public function testGetSqlStringWithBoolOption(): void
+    #[Test]
+    public function getSqlStringWithBoolOption(): void
     {
         $ct = new CreateTable('foo');
         $ct->addColumn(new Column('bar'));
         $ct->setOption('pack_keys', true);
 
-        self::assertEquals(
+        static::assertSame(
             "CREATE TABLE \"foo\" ( \n    \"bar\" INTEGER NOT NULL \n) PACK_KEYS = 1",
             $ct->getSqlString(),
         );
     }
 
-    public function testGetSqlStringWithIntOption(): void
+    #[Test]
+    public function getSqlStringWithIntOption(): void
     {
         $ct = new CreateTable('foo');
         $ct->addColumn(new Column('bar'));
         $ct->setOption('auto_increment', 100);
 
-        self::assertEquals(
+        static::assertSame(
             "CREATE TABLE \"foo\" ( \n    \"bar\" INTEGER NOT NULL \n) AUTO_INCREMENT = 100",
             $ct->getSqlString(),
         );
     }
 
-    public function testGetSqlStringWithLiteralOption(): void
+    #[Test]
+    public function getSqlStringWithLiteralOption(): void
     {
         $ct = new CreateTable('foo');
         $ct->addColumn(new Column('bar'));
         $ct->setOption('engine', new Literal('InnoDB'));
 
-        self::assertEquals(
+        static::assertSame(
             "CREATE TABLE \"foo\" ( \n    \"bar\" INTEGER NOT NULL \n) ENGINE = InnoDB",
             $ct->getSqlString(),
         );
     }
 
-    public function testGetSqlStringWithMultipleOptions(): void
+    #[Test]
+    public function getSqlStringWithMultipleOptions(): void
     {
         $ct = new CreateTable('foo');
         $ct->addColumn(new Column('bar'));
         $ct->setOption('engine', new Literal('InnoDB'));
         $ct->setOption('auto_increment', 100);
 
-        self::assertEquals(
+        static::assertSame(
             "CREATE TABLE \"foo\" ( \n    \"bar\" INTEGER NOT NULL \n) ENGINE = InnoDB AUTO_INCREMENT = 100",
             $ct->getSqlString(),
         );
     }
 
-    public function testGetSqlStringWithNoOptionsUnchanged(): void
+    #[Test]
+    public function getSqlStringWithNoOptionsUnchanged(): void
     {
         $ct = new CreateTable('foo');
         $ct->addColumn(new Column('bar'));
 
-        self::assertEquals(
+        static::assertSame(
             "CREATE TABLE \"foo\" ( \n    \"bar\" INTEGER NOT NULL \n)",
             $ct->getSqlString(),
         );
     }
 
-    public function testGetSqlStringWithStringOption(): void
+    #[Test]
+    public function getSqlStringWithStringOption(): void
     {
         $ct = new CreateTable('foo');
         $ct->addColumn(new Column('bar'));
         $ct->setOption('comment', 'My table');
 
-        self::assertEquals(
+        static::assertSame(
             "CREATE TABLE \"foo\" ( \n    \"bar\" INTEGER NOT NULL \n) COMMENT = 'My table'",
             $ct->getSqlString(),
         );
     }
 
-    public function testIfNotExists(): void
+    #[Test]
+    public function ifNotExists(): void
     {
         $ct = new CreateTable('foo');
-        self::assertFalse($ct->getIfNotExists());
+        static::assertFalse($ct->getIfNotExists());
 
         $result = $ct->ifNotExists();
-        self::assertSame($ct, $result);
-        self::assertTrue($ct->getIfNotExists());
+        static::assertSame($ct, $result);
+        static::assertTrue($ct->getIfNotExists());
 
-        self::assertEquals("CREATE TABLE IF NOT EXISTS \"foo\" ( \n)", $ct->getSqlString());
+        static::assertSame("CREATE TABLE IF NOT EXISTS \"foo\" ( \n)", $ct->getSqlString());
     }
 
-    public function testIfNotExistsCombinedWithTemporary(): void
+    #[Test]
+    public function ifNotExistsCombinedWithTemporary(): void
     {
         $ct = new CreateTable('foo', true);
         $ct->ifNotExists();
 
-        self::assertEquals("CREATE TEMPORARY TABLE IF NOT EXISTS \"foo\" ( \n)", $ct->getSqlString());
+        static::assertSame("CREATE TEMPORARY TABLE IF NOT EXISTS \"foo\" ( \n)", $ct->getSqlString());
     }
 
-    public function testIfNotExistsDisable(): void
+    #[Test]
+    public function ifNotExistsDisable(): void
     {
         $ct = new CreateTable('foo');
         $ct->ifNotExists();
-        self::assertTrue($ct->getIfNotExists());
+        static::assertTrue($ct->getIfNotExists());
 
         $ct->ifNotExists(false);
-        self::assertFalse($ct->getIfNotExists());
+        static::assertFalse($ct->getIfNotExists());
 
-        self::assertEquals("CREATE TABLE \"foo\" ( \n)", $ct->getSqlString());
+        static::assertSame("CREATE TABLE \"foo\" ( \n)", $ct->getSqlString());
     }
 
-    public function testIsTemporary(): void
+    #[Test]
+    public function isTemporary(): void
     {
         $ct = new CreateTable();
-        self::assertFalse($ct->isTemporary());
+        static::assertFalse($ct->isTemporary());
         $ct->setTemporary(true);
-        self::assertTrue($ct->isTemporary());
+        static::assertTrue($ct->isTemporary());
     }
 
-    public function testMultipleColumns(): void
+    #[Test]
+    public function multipleColumns(): void
     {
         $ct = new CreateTable('users');
         $ct->addColumn(new Column('id'));
@@ -355,104 +378,111 @@ class CreateTableTest extends TestCase
         $ct->addColumn(new Column('email'));
 
         $columns = $ct->getRawState(CreateTable::COLUMNS);
-        self::assertCount(3, $columns);
+        static::assertCount(3, $columns);
 
         $sql = $ct->getSqlString();
-        self::assertStringContainsString('"id"', $sql);
-        self::assertStringContainsString('"name"', $sql);
-        self::assertStringContainsString('"email"', $sql);
+        static::assertStringContainsString('"id"', $sql);
+        static::assertStringContainsString('"name"', $sql);
+        static::assertStringContainsString('"email"', $sql);
     }
 
-    public function testMultipleConstraints(): void
+    #[Test]
+    public function multipleConstraints(): void
     {
         $ct = new CreateTable('orders');
         $ct->addConstraint(new Constraint\PrimaryKey('id'));
         $ct->addConstraint(new Constraint\UniqueKey('order_number'));
 
         $constraints = $ct->getRawState(CreateTable::CONSTRAINTS);
-        self::assertCount(2, $constraints);
+        static::assertCount(2, $constraints);
 
         $sql = $ct->getSqlString();
-        self::assertStringContainsString('PRIMARY KEY', $sql);
-        self::assertStringContainsString('UNIQUE', $sql);
+        static::assertStringContainsString('PRIMARY KEY', $sql);
+        static::assertStringContainsString('UNIQUE', $sql);
     }
 
     /**
      * test object construction
      */
-    public function testObjectConstruction(): void
+    #[Test]
+    public function objectConstruction(): void
     {
         $ct = new CreateTable('foo', true);
-        self::assertEquals('foo', $ct->getRawState(CreateTable::TABLE));
-        self::assertTrue($ct->isTemporary());
+        static::assertSame('foo', $ct->getRawState(CreateTable::TABLE));
+        static::assertTrue($ct->isTemporary());
     }
 
-    public function testSetOptionFluentInterface(): void
+    #[Test]
+    public function setOptionFluentInterface(): void
     {
         $ct     = new CreateTable('foo');
         $result = $ct->setOption('engine', new Literal('InnoDB'));
 
-        self::assertSame($ct, $result);
-        self::assertEquals(['engine' => new Literal('InnoDB')], $ct->getOptions());
+        static::assertSame($ct, $result);
+        static::assertEquals(['engine' => new Literal('InnoDB')], $ct->getOptions());
     }
 
-    public function testSetOptionsReplacesAll(): void
+    #[Test]
+    public function setOptionsReplacesAll(): void
     {
         $ct = new CreateTable('foo');
         $ct->setOption('engine', new Literal('InnoDB'));
 
         $ct->setOptions(['charset' => new Literal('utf8mb4')]);
 
-        self::assertEquals(['charset' => new Literal('utf8mb4')], $ct->getOptions());
+        static::assertEquals(['charset' => new Literal('utf8mb4')], $ct->getOptions());
     }
 
-    public function testSetTable(): void
+    #[Test]
+    public function setTable(): void
     {
         $ct = new CreateTable();
 
         // Verify initial state
-        self::assertEquals('', $ct->getRawState('table'));
+        static::assertSame('', $ct->getRawState('table'));
 
         // First mutation
         $result = $ct->setTable('test');
 
         // Verify fluent interface
-        self::assertSame($ct, $result);
+        static::assertSame($ct, $result);
 
         // Verify the first mutation occurred
-        self::assertEquals('test', $ct->getRawState('table'));
+        static::assertSame('test', $ct->getRawState('table'));
 
         // Second mutation to verify mutability
         $ct->setTable('another_table');
 
         // Verify the instance was actually mutated
-        self::assertEquals('another_table', $ct->getRawState('table'));
+        static::assertSame('another_table', $ct->getRawState('table'));
     }
 
-    public function testSetTableAfterConstruction(): void
+    #[Test]
+    public function setTableAfterConstruction(): void
     {
         $ct = new CreateTable();
-        self::assertEquals('', $ct->getRawState(CreateTable::TABLE));
+        static::assertSame('', $ct->getRawState(CreateTable::TABLE));
 
         $ct->setTable('new_table');
-        self::assertEquals('new_table', $ct->getRawState(CreateTable::TABLE));
+        static::assertSame('new_table', $ct->getRawState(CreateTable::TABLE));
 
         // Test that setTable is chainable
         $result = $ct->setTable('another_table');
-        self::assertSame($ct, $result);
-        self::assertEquals('another_table', $ct->getRawState(CreateTable::TABLE));
+        static::assertSame($ct, $result);
+        static::assertSame('another_table', $ct->getRawState(CreateTable::TABLE));
     }
 
-    public function testSetTemporary(): void
+    #[Test]
+    public function setTemporary(): void
     {
         $ct = new CreateTable();
-        self::assertSame($ct, $ct->setTemporary(false));
-        self::assertFalse($ct->isTemporary());
+        static::assertSame($ct, $ct->setTemporary(false));
+        static::assertFalse($ct->isTemporary());
         $ct->setTemporary(true);
-        self::assertTrue($ct->isTemporary());
+        static::assertTrue($ct->isTemporary());
         $ct->setTemporary('yes');
-        self::assertTrue($ct->isTemporary());
+        static::assertTrue($ct->isTemporary());
 
-        self::assertStringStartsWith('CREATE TEMPORARY TABLE', $ct->getSqlString());
+        static::assertStringStartsWith('CREATE TEMPORARY TABLE', $ct->getSqlString());
     }
 }

@@ -16,6 +16,7 @@ use PhpDb\RowGateway\Exception\RuntimeException;
 use PhpDb\RowGateway\RowGateway;
 use PhpDb\Sql\Sql;
 use PhpDb\Sql\TableIdentifier;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
@@ -30,7 +31,8 @@ final class RowGatewayTest extends TestCase
     /** @var ResultInterface&MockObject */
     protected ResultInterface|MockObject $mockResult;
 
-    public function testConstructorThrowsExceptionWhenSqlTableDoesNotMatch(): void
+    #[Test]
+    public function constructorThrowsExceptionWhenSqlTableDoesNotMatch(): void
     {
         $sql = new Sql($this->mockAdapter, 'bar');
 
@@ -40,18 +42,20 @@ final class RowGatewayTest extends TestCase
         new RowGateway('id', 'foo', $sql);
     }
 
-    public function testConstructorWithArrayPrimaryKey(): void
+    #[Test]
+    public function constructorWithArrayPrimaryKey(): void
     {
         $rowGateway = new RowGateway(['id', 'name'], 'foo', $this->mockAdapter);
 
         $tableProp = new ReflectionProperty(RowGateway::class, 'table');
-        self::assertEquals('foo', $tableProp->getValue($rowGateway));
+        static::assertSame('foo', $tableProp->getValue($rowGateway));
 
         $pkProp = new ReflectionProperty(RowGateway::class, 'primaryKeyColumn');
-        self::assertEquals(['id', 'name'], $pkProp->getValue($rowGateway));
+        static::assertEquals(['id', 'name'], $pkProp->getValue($rowGateway));
     }
 
-    public function testConstructorWithNullPrimaryKey(): void
+    #[Test]
+    public function constructorWithNullPrimaryKey(): void
     {
         self::expectException(RuntimeException::class);
         self::expectExceptionMessage(RuntimeException::MISSING_PRIMARY_KEY_COLUMN);
@@ -59,7 +63,8 @@ final class RowGatewayTest extends TestCase
         new RowGateway(null, 'foo', $this->mockAdapter);
     }
 
-    public function testConstructorWithSqlObject(): void
+    #[Test]
+    public function constructorWithSqlObject(): void
     {
         $sql        = new Sql($this->mockAdapter, 'foo');
         $rowGateway = new RowGateway('id', 'foo', $sql);
@@ -67,50 +72,55 @@ final class RowGatewayTest extends TestCase
         $sqlProp   = new ReflectionProperty(RowGateway::class, 'sql');
         $tableProp = new ReflectionProperty(RowGateway::class, 'table');
 
-        self::assertSame($sql, $sqlProp->getValue($rowGateway));
-        self::assertEquals('foo', $tableProp->getValue($rowGateway));
+        static::assertSame($sql, $sqlProp->getValue($rowGateway));
+        static::assertSame('foo', $tableProp->getValue($rowGateway));
     }
 
-    public function testConstructorWithStringPrimaryKey(): void
+    #[Test]
+    public function constructorWithStringPrimaryKey(): void
     {
         $rowGateway = new RowGateway('id', 'foo', $this->mockAdapter);
 
         $tableProp = new ReflectionProperty(RowGateway::class, 'table');
         $sqlProp   = new ReflectionProperty(RowGateway::class, 'sql');
 
-        self::assertEquals('foo', $tableProp->getValue($rowGateway));
-        self::assertInstanceOf(Sql::class, $sqlProp->getValue($rowGateway));
+        static::assertSame('foo', $tableProp->getValue($rowGateway));
+        static::assertInstanceOf(Sql::class, $sqlProp->getValue($rowGateway));
     }
 
-    public function testConstructorWithTableIdentifier(): void
+    #[Test]
+    public function constructorWithTableIdentifier(): void
     {
         $tableIdentifier = new TableIdentifier('foo', 'schema');
         $rowGateway      = new RowGateway('id', $tableIdentifier, $this->mockAdapter);
 
         $tableProp = new ReflectionProperty(RowGateway::class, 'table');
-        self::assertSame($tableIdentifier, $tableProp->getValue($rowGateway));
+        static::assertSame($tableIdentifier, $tableProp->getValue($rowGateway));
     }
 
-    public function testEmptyPrimaryKey(): void
+    #[Test]
+    public function emptyPrimaryKey(): void
     {
         self::expectException(RuntimeException::class);
         self::expectExceptionMessage(RuntimeException::MISSING_PRIMARY_KEY_COLUMN);
         $this->rowGateway = new RowGateway('', 'foo', $this->mockAdapter);
     }
 
-    public function testInitializeReturnsEarlyWhenAlreadyInitialized(): void
+    #[Test]
+    public function initializeReturnsEarlyWhenAlreadyInitialized(): void
     {
         $rowGateway = new RowGateway('id', 'foo', $this->mockAdapter);
 
         $isInitializedProp = new ReflectionProperty(RowGateway::class, 'isInitialized');
-        self::assertTrue($isInitializedProp->getValue($rowGateway));
+        static::assertTrue($isInitializedProp->getValue($rowGateway));
 
         $rowGateway->initialize();
 
-        self::assertTrue($isInitializedProp->getValue($rowGateway));
+        static::assertTrue($isInitializedProp->getValue($rowGateway));
     }
 
-    public function testInitializeThrowsWhenSqlIsNull(): void
+    #[Test]
+    public function initializeThrowsWhenSqlIsNull(): void
     {
         $rowGateway = new RowGateway('id', 'foo', $this->mockAdapter);
 
@@ -126,7 +136,8 @@ final class RowGatewayTest extends TestCase
         $rowGateway->initialize();
     }
 
-    public function testInitializeThrowsWhenTableIsNull(): void
+    #[Test]
+    public function initializeThrowsWhenTableIsNull(): void
     {
         $rowGateway = new RowGateway('id', 'foo', $this->mockAdapter);
 

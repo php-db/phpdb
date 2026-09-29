@@ -9,6 +9,7 @@ use PhpDb\Adapter\Profiler\ProfilerInterface;
 use PhpDbTest\Adapter\Driver\TestAsset\TestConnection;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 #[CoversMethod(AbstractConnection::class, 'disconnect')]
@@ -22,93 +23,103 @@ use PHPUnit\Framework\TestCase;
 #[Group('unit')]
 final class AbstractConnectionTest extends TestCase
 {
-    public function testDisconnectIsNoOpWhenNotConnected(): void
+    #[Test]
+    public function disconnectIsNoOpWhenNotConnected(): void
     {
         $connection = new TestConnection();
 
         $result = $connection->disconnect();
 
-        self::assertSame($connection, $result);
+        static::assertSame($connection, $result);
     }
 
-    public function testDisconnectNullsResourceWhenConnected(): void
+    #[Test]
+    public function disconnectNullsResourceWhenConnected(): void
     {
         $connection = new TestConnection();
         $connection->connect();
 
-        self::assertTrue($connection->isConnected());
+        static::assertTrue($connection->isConnected());
 
         $connection->disconnect();
 
-        self::assertFalse($connection->isConnected());
+        static::assertFalse($connection->isConnected());
     }
 
-    public function testGetConnectionParametersReturnsEmptyByDefault(): void
+    #[Test]
+    public function getConnectionParametersReturnsEmptyByDefault(): void
     {
         $connection = new TestConnection();
 
-        self::assertSame([], $connection->getConnectionParameters());
+        static::assertSame([], $connection->getConnectionParameters());
     }
 
-    public function testGetDriverNameReturnsNullByDefault(): void
+    #[Test]
+    public function getDriverNameReturnsNullByDefault(): void
     {
         $connection = new TestConnection();
 
-        self::assertNull($connection->getDriverName());
+        static::assertNull($connection->getDriverName());
     }
 
-    public function testGetDriverNameReturnsValueWhenSet(): void
+    #[Test]
+    public function getDriverNameReturnsValueWhenSet(): void
     {
         $connection = new TestConnection('sqlite');
 
-        self::assertSame('sqlite', $connection->getDriverName());
+        static::assertSame('sqlite', $connection->getDriverName());
     }
 
-    public function testGetProfilerReturnsNullByDefault(): void
+    #[Test]
+    public function getProfilerReturnsNullByDefault(): void
     {
         $connection = new TestConnection();
 
-        self::assertNull($connection->getProfiler());
+        static::assertNull($connection->getProfiler());
     }
 
-    public function testGetResourceAutoConnectsWhenNotConnected(): void
+    #[Test]
+    public function getResourceAutoConnectsWhenNotConnected(): void
     {
         $connection = new TestConnection();
 
-        self::assertFalse($connection->isConnected());
+        static::assertFalse($connection->isConnected());
 
         $resource = $connection->getResource();
 
-        self::assertTrue($connection->isConnected());
-        self::assertSame('fake-resource', $resource);
+        static::assertTrue($connection->isConnected());
+        static::assertSame('fake-resource', $resource);
     }
 
-    public function testInTransactionReturnsFalseByDefault(): void
+    #[Test]
+    public function inTransactionReturnsFalseByDefault(): void
     {
         $connection = new TestConnection();
 
-        self::assertFalse($connection->inTransaction());
+        static::assertFalse($connection->inTransaction());
     }
 
-    public function testSetConnectionParametersStoresAndReturnsConnection(): void
+    #[Test]
+    public function setConnectionParametersStoresAndReturnsConnection(): void
     {
         $connection = new TestConnection();
         $params     = ['host' => 'localhost', 'port' => 3306];
 
         $result = $connection->setConnectionParameters($params);
 
-        self::assertSame($connection, $result);
-        self::assertSame($params, $connection->getConnectionParameters());
+        static::assertSame($connection, $result);
+        static::assertSame($params, $connection->getConnectionParameters());
     }
 
-    public function testSetProfilerStoresAndReturnsProfiler(): void
+    #[Test]
+    public function setProfilerStoresAndReturnsProfiler(): void
     {
         $connection = new TestConnection();
         $profiler   = $this->createMock(ProfilerInterface::class);
 
         $result = $connection->setProfiler($profiler);
 
-        self::assertSame($connection, $result);
-        self::assertSame($profiler, $connection->getProfiler());
+        static::assertSame($connection, $result);
+        static::assertSame($profiler, $connection->getProfiler());
     }
 }

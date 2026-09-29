@@ -47,8 +47,9 @@ class ConfigProviderTest extends TestCase
         static::assertEquals($this->config['dependencies'], (new ConfigProvider())->getDependencies());
     }
 
-    public function testInvocationProvidesDependencyConfiguration(): void
+    #[Test]
+    public function invocationProvidesDependencyConfiguration(): void
     {
-        self::assertEquals($this->config, (new ConfigProvider())());
+        static::assertEquals($this->config, (new ConfigProvider())());
     }
 }

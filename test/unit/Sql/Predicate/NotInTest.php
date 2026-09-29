@@ -9,11 +9,13 @@ use PhpDb\Sql\ArgumentInterface;
 use PhpDb\Sql\ArgumentType;
 use PhpDb\Sql\Predicate\NotIn;
 use PhpDb\Sql\Select;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 final class NotInTest extends TestCase
 {
-    public function testGetExpressionDataWithSubselect(): void
+    #[Test]
+    public function getExpressionDataWithSubselect(): void
     {
         $select = new Select();
         $in     = new NotIn('foo', $select);
@@ -21,24 +23,25 @@ final class NotInTest extends TestCase
         $expressionData = $in->getExpressionData();
 
         // Verify specification
-        self::assertEquals('%s NOT IN %s', $expressionData['spec']);
+        static::assertSame('%s NOT IN %s', $expressionData['spec']);
 
         // Verify expression values
         $values = $expressionData['values'];
-        self::assertCount(2, $values);
+        static::assertCount(2, $values);
 
         // Verify identifier argument
-        self::assertInstanceOf(ArgumentInterface::class, $values[0]);
-        self::assertEquals('foo', $values[0]->getValue());
-        self::assertEquals(ArgumentType::Identifier, $values[0]->getType());
+        static::assertInstanceOf(ArgumentInterface::class, $values[0]);
+        static::assertSame('foo', $values[0]->getValue());
+        static::assertEquals(ArgumentType::Identifier, $values[0]->getType());
 
         // Verify subselect argument
-        self::assertInstanceOf(ArgumentInterface::class, $values[1]);
-        self::assertSame($select, $values[1]->getValue());
-        self::assertEquals(ArgumentType::Select, $values[1]->getType());
+        static::assertInstanceOf(ArgumentInterface::class, $values[1]);
+        static::assertSame($select, $values[1]->getValue());
+        static::assertEquals(ArgumentType::Select, $values[1]->getType());
     }
 
-    public function testGetExpressionDataWithSubselectAndArrayIdentifier(): void
+    #[Test]
+    public function getExpressionDataWithSubselectAndArrayIdentifier(): void
     {
         $select = new Select();
         $in     = new NotIn(Argument::identifiers(['foo', 'bar']), $select);
@@ -46,24 +49,25 @@ final class NotInTest extends TestCase
         $expressionData = $in->getExpressionData();
 
         // Verify specification
-        self::assertEquals('(%s, %s) NOT IN %s', $expressionData['spec']);
+        static::assertSame('(%s, %s) NOT IN %s', $expressionData['spec']);
 
         // Verify expression values
         $values = $expressionData['values'];
-        self::assertCount(2, $values);
+        static::assertCount(2, $values);
 
         // Verify array identifier argument
-        self::assertInstanceOf(ArgumentInterface::class, $values[0]);
-        self::assertEquals(['foo', 'bar'], $values[0]->getValue());
-        self::assertEquals(ArgumentType::Identifiers, $values[0]->getType());
+        static::assertInstanceOf(ArgumentInterface::class, $values[0]);
+        static::assertEquals(['foo', 'bar'], $values[0]->getValue());
+        static::assertEquals(ArgumentType::Identifiers, $values[0]->getType());
 
         // Verify subselect argument
-        self::assertInstanceOf(ArgumentInterface::class, $values[1]);
-        self::assertSame($select, $values[1]->getValue());
-        self::assertEquals(ArgumentType::Select, $values[1]->getType());
+        static::assertInstanceOf(ArgumentInterface::class, $values[1]);
+        static::assertSame($select, $values[1]->getValue());
+        static::assertEquals(ArgumentType::Select, $values[1]->getType());
     }
 
-    public function testGetExpressionDataWithSubselectAndIdentifier(): void
+    #[Test]
+    public function getExpressionDataWithSubselectAndIdentifier(): void
     {
         $select = new Select();
         $in     = new NotIn('foo', $select);
@@ -71,24 +75,25 @@ final class NotInTest extends TestCase
         $expressionData = $in->getExpressionData();
 
         // Verify specification
-        self::assertEquals('%s NOT IN %s', $expressionData['spec']);
+        static::assertSame('%s NOT IN %s', $expressionData['spec']);
 
         // Verify expression values
         $values = $expressionData['values'];
-        self::assertCount(2, $values);
+        static::assertCount(2, $values);
 
         // Verify identifier argument
-        self::assertInstanceOf(ArgumentInterface::class, $values[0]);
-        self::assertEquals('foo', $values[0]->getValue());
-        self::assertEquals(ArgumentType::Identifier, $values[0]->getType());
+        static::assertInstanceOf(ArgumentInterface::class, $values[0]);
+        static::assertSame('foo', $values[0]->getValue());
+        static::assertEquals(ArgumentType::Identifier, $values[0]->getType());
 
         // Verify subselect argument
-        self::assertInstanceOf(ArgumentInterface::class, $values[1]);
-        self::assertSame($select, $values[1]->getValue());
-        self::assertEquals(ArgumentType::Select, $values[1]->getType());
+        static::assertInstanceOf(ArgumentInterface::class, $values[1]);
+        static::assertSame($select, $values[1]->getValue());
+        static::assertEquals(ArgumentType::Select, $values[1]->getType());
     }
 
-    public function testRetrievingWherePartsReturnsSpecificationArrayOfIdentifierAndValuesAndArrayOfTypes(): void
+    #[Test]
+    public function retrievingWherePartsReturnsSpecificationArrayOfIdentifierAndValuesAndArrayOfTypes(): void
     {
         $in = new NotIn();
         $in->setIdentifier('foo.bar')
@@ -97,20 +102,20 @@ final class NotInTest extends TestCase
         $expressionData = $in->getExpressionData();
 
         // Verify specification
-        self::assertEquals('%s NOT IN (%s, %s, %s)', $expressionData['spec']);
+        static::assertSame('%s NOT IN (%s, %s, %s)', $expressionData['spec']);
 
         // Verify expression values
         $values = $expressionData['values'];
-        self::assertCount(2, $values);
+        static::assertCount(2, $values);
 
         // Verify identifier argument
-        self::assertInstanceOf(ArgumentInterface::class, $values[0]);
-        self::assertEquals('foo.bar', $values[0]->getValue());
-        self::assertEquals(ArgumentType::Identifier, $values[0]->getType());
+        static::assertInstanceOf(ArgumentInterface::class, $values[0]);
+        static::assertSame('foo.bar', $values[0]->getValue());
+        static::assertEquals(ArgumentType::Identifier, $values[0]->getType());
 
         // Verify value set argument
-        self::assertInstanceOf(ArgumentInterface::class, $values[1]);
-        self::assertEquals([1, 2, 3], $values[1]->getValue());
-        self::assertEquals(ArgumentType::Values, $values[1]->getType());
+        static::assertInstanceOf(ArgumentInterface::class, $values[1]);
+        static::assertEquals([1, 2, 3], $values[1]->getValue());
+        static::assertEquals(ArgumentType::Values, $values[1]->getType());
     }
 }

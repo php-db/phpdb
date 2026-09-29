@@ -8,6 +8,7 @@ use ArrayIterator;
 use Exception;
 use PhpDb\ResultSet\HydratingResultSet;
 use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 #[CoversMethod(HydratingResultSet::class, 'current')]
@@ -16,7 +17,8 @@ class HydratingResultSetIntegrationTest extends TestCase
     /**
      * @throws Exception
      */
-    public function testCurrentWillReturnBufferedRow(): void
+    #[Test]
+    public function currentWillReturnBufferedRow(): void
     {
         $hydratingRs = new HydratingResultSet();
         $hydratingRs->initialize(new ArrayIterator([
@@ -29,6 +31,6 @@ class HydratingResultSetIntegrationTest extends TestCase
         $obj1 = $hydratingRs->current();
         $hydratingRs->rewind();
         $obj2 = $hydratingRs->current();
-        self::assertSame($obj1, $obj2);
+        static::assertSame($obj1, $obj2);
     }
 }

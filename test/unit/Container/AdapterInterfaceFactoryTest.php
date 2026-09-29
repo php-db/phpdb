@@ -16,13 +16,15 @@ use PhpDb\ResultSet\ResultSet;
 use PhpDb\ResultSet\ResultSetInterface;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 #[Group('unit')]
 #[CoversMethod(AdapterInterfaceFactory::class, '__invoke')]
 final class AdapterInterfaceFactoryTest extends TestCase
 {
-    public function testInvokeCreatesAdapterWithAllDependencies(): void
+    #[Test]
+    public function invokeCreatesAdapterWithAllDependencies(): void
     {
         $driverMock   = $this->createMock(DriverInterface::class);
         $platformMock = $this->createMock(PlatformInterface::class);
@@ -46,10 +48,11 @@ final class AdapterInterfaceFactoryTest extends TestCase
         $factory = new AdapterInterfaceFactory();
         $adapter = $factory($container, AdapterInterface::class);
 
-        self::assertInstanceOf(Adapter::class, $adapter);
+        static::assertInstanceOf(Adapter::class, $adapter);
     }
 
-    public function testInvokeCreatesAdapterWithDefaultResultSet(): void
+    #[Test]
+    public function invokeCreatesAdapterWithDefaultResultSet(): void
     {
         $driverMock   = $this->createMock(DriverInterface::class);
         $platformMock = $this->createMock(PlatformInterface::class);
@@ -69,10 +72,11 @@ final class AdapterInterfaceFactoryTest extends TestCase
         $factory = new AdapterInterfaceFactory();
         $adapter = $factory($container, AdapterInterface::class);
 
-        self::assertInstanceOf(ResultSet::class, $adapter->getQueryResultSetPrototype());
+        static::assertInstanceOf(ResultSet::class, $adapter->getQueryResultSetPrototype());
     }
 
-    public function testInvokeCreatesAdapterWithoutOptionalProfiler(): void
+    #[Test]
+    public function invokeCreatesAdapterWithoutOptionalProfiler(): void
     {
         $driverMock   = $this->createMock(DriverInterface::class);
         $platformMock = $this->createMock(PlatformInterface::class);
@@ -92,11 +96,12 @@ final class AdapterInterfaceFactoryTest extends TestCase
         $factory = new AdapterInterfaceFactory();
         $adapter = $factory($container, AdapterInterface::class);
 
-        self::assertInstanceOf(Adapter::class, $adapter);
-        self::assertNull($adapter->getProfiler());
+        static::assertInstanceOf(Adapter::class, $adapter);
+        static::assertNull($adapter->getProfiler());
     }
 
-    public function testInvokeThrowsWhenAdapterConfigIsEmpty(): void
+    #[Test]
+    public function invokeThrowsWhenAdapterConfigIsEmpty(): void
     {
         $driverMock   = $this->createMock(DriverInterface::class);
         $platformMock = $this->createMock(PlatformInterface::class);
@@ -116,7 +121,8 @@ final class AdapterInterfaceFactoryTest extends TestCase
         $factory($container, AdapterInterface::class);
     }
 
-    public function testInvokeThrowsWhenContainerHasNoConfig(): void
+    #[Test]
+    public function invokeThrowsWhenContainerHasNoConfig(): void
     {
         $driverMock   = $this->createMock(DriverInterface::class);
         $platformMock = $this->createMock(PlatformInterface::class);

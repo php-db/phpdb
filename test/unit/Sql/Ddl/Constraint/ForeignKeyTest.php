@@ -9,6 +9,7 @@ use PhpDb\Sql\ArgumentType;
 use PhpDb\Sql\Ddl\Constraint\AbstractConstraint;
 use PhpDb\Sql\Ddl\Constraint\ForeignKey;
 use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 #[CoversMethod(AbstractConstraint::class, '__construct')]
@@ -32,54 +33,56 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(ForeignKey::class, 'getExpressionData')]
 final class ForeignKeyTest extends TestCase
 {
-    public function testGetExpressionData(): void
+    #[Test]
+    public function getExpressionData(): void
     {
         $fk = new ForeignKey('foo', 'bar', 'baz', 'bam', 'CASCADE', 'SET NULL');
 
         $expressionData = $fk->getExpressionData();
 
         // Verify specification
-        self::assertEquals(
+        static::assertSame(
             'CONSTRAINT %s FOREIGN KEY (%s) REFERENCES %s (%s) ON DELETE %s ON UPDATE %s',
             $expressionData['spec'],
         );
 
         // Verify expression values
         $values = $expressionData['values'];
-        self::assertCount(6, $values);
+        static::assertCount(6, $values);
 
         // Verify constraint name
-        self::assertInstanceOf(ArgumentInterface::class, $values[0]);
-        self::assertEquals('foo', $values[0]->getValue());
-        self::assertEquals(ArgumentType::Identifier, $values[0]->getType());
+        static::assertInstanceOf(ArgumentInterface::class, $values[0]);
+        static::assertSame('foo', $values[0]->getValue());
+        static::assertEquals(ArgumentType::Identifier, $values[0]->getType());
 
         // Verify column name
-        self::assertInstanceOf(ArgumentInterface::class, $values[1]);
-        self::assertEquals('bar', $values[1]->getValue());
-        self::assertEquals(ArgumentType::Identifier, $values[1]->getType());
+        static::assertInstanceOf(ArgumentInterface::class, $values[1]);
+        static::assertSame('bar', $values[1]->getValue());
+        static::assertEquals(ArgumentType::Identifier, $values[1]->getType());
 
         // Verify reference table
-        self::assertInstanceOf(ArgumentInterface::class, $values[2]);
-        self::assertEquals('baz', $values[2]->getValue());
-        self::assertEquals(ArgumentType::Identifier, $values[2]->getType());
+        static::assertInstanceOf(ArgumentInterface::class, $values[2]);
+        static::assertSame('baz', $values[2]->getValue());
+        static::assertEquals(ArgumentType::Identifier, $values[2]->getType());
 
         // Verify reference column
-        self::assertInstanceOf(ArgumentInterface::class, $values[3]);
-        self::assertEquals('bam', $values[3]->getValue());
-        self::assertEquals(ArgumentType::Identifier, $values[3]->getType());
+        static::assertInstanceOf(ArgumentInterface::class, $values[3]);
+        static::assertSame('bam', $values[3]->getValue());
+        static::assertEquals(ArgumentType::Identifier, $values[3]->getType());
 
         // Verify on delete rule
-        self::assertInstanceOf(ArgumentInterface::class, $values[4]);
-        self::assertEquals('CASCADE', $values[4]->getValue());
-        self::assertEquals(ArgumentType::Literal, $values[4]->getType());
+        static::assertInstanceOf(ArgumentInterface::class, $values[4]);
+        static::assertSame('CASCADE', $values[4]->getValue());
+        static::assertEquals(ArgumentType::Literal, $values[4]->getType());
 
         // Verify on update rule
-        self::assertInstanceOf(ArgumentInterface::class, $values[5]);
-        self::assertEquals('SET NULL', $values[5]->getValue());
-        self::assertEquals(ArgumentType::Literal, $values[5]->getType());
+        static::assertInstanceOf(ArgumentInterface::class, $values[5]);
+        static::assertSame('SET NULL', $values[5]->getValue());
+        static::assertEquals(ArgumentType::Literal, $values[5]->getType());
     }
 
-    public function testSetName(): void
+    #[Test]
+    public function setName(): void
     {
         $fk = new ForeignKey('foo', 'bar', 'baz', 'bam');
 
@@ -87,19 +90,20 @@ final class ForeignKeyTest extends TestCase
         $result = $fk->setName('xxxx');
 
         // Verify fluent interface
-        self::assertSame($fk, $result);
+        static::assertSame($fk, $result);
 
         // Verify the first mutation occurred
-        self::assertEquals('xxxx', $fk->getName());
+        static::assertSame('xxxx', $fk->getName());
 
         // Second mutation to verify mutability
         $fk->setName('yyyy');
 
         // Verify the instance was actually mutated
-        self::assertEquals('yyyy', $fk->getName());
+        static::assertSame('yyyy', $fk->getName());
     }
 
-    public function testSetOnDeleteRule(): void
+    #[Test]
+    public function setOnDeleteRule(): void
     {
         $fk = new ForeignKey('foo', 'bar', 'baz', 'bam');
 
@@ -107,19 +111,20 @@ final class ForeignKeyTest extends TestCase
         $result = $fk->setOnDeleteRule('CASCADE');
 
         // Verify fluent interface
-        self::assertSame($fk, $result);
+        static::assertSame($fk, $result);
 
         // Verify the first mutation occurred
-        self::assertEquals('CASCADE', $fk->getOnDeleteRule());
+        static::assertSame('CASCADE', $fk->getOnDeleteRule());
 
         // Second mutation to verify mutability
         $fk->setOnDeleteRule('SET NULL');
 
         // Verify the instance was actually mutated
-        self::assertEquals('SET NULL', $fk->getOnDeleteRule());
+        static::assertSame('SET NULL', $fk->getOnDeleteRule());
     }
 
-    public function testSetOnUpdateRule(): void
+    #[Test]
+    public function setOnUpdateRule(): void
     {
         $fk = new ForeignKey('foo', 'bar', 'baz', 'bam');
 
@@ -127,19 +132,20 @@ final class ForeignKeyTest extends TestCase
         $result = $fk->setOnUpdateRule('CASCADE');
 
         // Verify fluent interface
-        self::assertSame($fk, $result);
+        static::assertSame($fk, $result);
 
         // Verify the first mutation occurred
-        self::assertEquals('CASCADE', $fk->getOnUpdateRule());
+        static::assertSame('CASCADE', $fk->getOnUpdateRule());
 
         // Second mutation to verify mutability
         $fk->setOnUpdateRule('RESTRICT');
 
         // Verify the instance was actually mutated
-        self::assertEquals('RESTRICT', $fk->getOnUpdateRule());
+        static::assertSame('RESTRICT', $fk->getOnUpdateRule());
     }
 
-    public function testSetReferenceColumn(): void
+    #[Test]
+    public function setReferenceColumn(): void
     {
         $fk = new ForeignKey('foo', 'bar', 'baz', 'bam');
 
@@ -147,19 +153,20 @@ final class ForeignKeyTest extends TestCase
         $result = $fk->setReferenceColumn('xxxx');
 
         // Verify fluent interface
-        self::assertSame($fk, $result);
+        static::assertSame($fk, $result);
 
         // Verify the first mutation occurred
-        self::assertEquals(['xxxx'], $fk->getReferenceColumn());
+        static::assertEquals(['xxxx'], $fk->getReferenceColumn());
 
         // Second mutation to verify mutability
         $fk->setReferenceColumn('yyyy');
 
         // Verify the instance was actually mutated
-        self::assertEquals(['yyyy'], $fk->getReferenceColumn());
+        static::assertEquals(['yyyy'], $fk->getReferenceColumn());
     }
 
-    public function testSetReferenceTable(): void
+    #[Test]
+    public function setReferenceTable(): void
     {
         $fk = new ForeignKey('foo', 'bar', 'baz', 'bam');
 
@@ -167,15 +174,15 @@ final class ForeignKeyTest extends TestCase
         $result = $fk->setReferenceTable('xxxx');
 
         // Verify fluent interface
-        self::assertSame($fk, $result);
+        static::assertSame($fk, $result);
 
         // Verify the first mutation occurred
-        self::assertEquals('xxxx', $fk->getReferenceTable());
+        static::assertSame('xxxx', $fk->getReferenceTable());
 
         // Second mutation to verify mutability
         $fk->setReferenceTable('yyyy');
 
         // Verify the instance was actually mutated
-        self::assertEquals('yyyy', $fk->getReferenceTable());
+        static::assertSame('yyyy', $fk->getReferenceTable());
     }
 }

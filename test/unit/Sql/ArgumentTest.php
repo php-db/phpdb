@@ -13,6 +13,7 @@ use PhpDb\Sql\ArgumentType;
 use PhpDb\Sql\Expression;
 use PhpDb\Sql\Select;
 use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use TypeError;
 
@@ -22,7 +23,8 @@ use TypeError;
 #[CoversMethod(Argument::class, 'select')]
 final class ArgumentTest extends TestCase
 {
-    public function testConstructorThrowsExceptionForInvalidSelectType(): void
+    #[Test]
+    public function constructorThrowsExceptionForInvalidSelectType(): void
     {
         self::expectException(TypeError::class);
         /** @noinspection PhpParamsInspection */
@@ -30,105 +32,118 @@ final class ArgumentTest extends TestCase
         new ArgumentSelect('simple_value'); /** @phpstan-ignore-line */
     }
 
-    public function testConstructorWithArrayContainingArgumentType(): void
+    #[Test]
+    public function constructorWithArrayContainingArgumentType(): void
     {
         $argument = new Identifier('column');
 
-        self::assertEquals('column', $argument->getValue());
-        self::assertEquals(ArgumentType::Identifier, $argument->getType());
+        static::assertSame('column', $argument->getValue());
+        static::assertEquals(ArgumentType::Identifier, $argument->getType());
     }
 
-    public function testConstructorWithBooleanValue(): void
+    #[Test]
+    public function constructorWithBooleanValue(): void
     {
         $argument = new Value(true);
-        self::assertTrue($argument->getValue());
-        self::assertEquals(ArgumentType::Value, $argument->getType());
+        static::assertTrue($argument->getValue());
+        static::assertEquals(ArgumentType::Value, $argument->getType());
     }
 
-    public function testConstructorWithExplicitType(): void
+    #[Test]
+    public function constructorWithExplicitType(): void
     {
         $argument = new Identifier('column_name');
-        self::assertEquals('column_name', $argument->getValue());
-        self::assertEquals(ArgumentType::Identifier, $argument->getType());
+        static::assertSame('column_name', $argument->getValue());
+        static::assertEquals(ArgumentType::Identifier, $argument->getType());
     }
 
-    public function testConstructorWithExpressionInterface(): void
+    #[Test]
+    public function constructorWithExpressionInterface(): void
     {
         $expression = new Expression('NOW()');
         $argument   = new ArgumentSelect($expression);
 
-        self::assertSame($expression, $argument->getValue());
-        self::assertEquals(ArgumentType::Select, $argument->getType());
+        static::assertSame($expression, $argument->getValue());
+        static::assertEquals(ArgumentType::Select, $argument->getType());
     }
 
-    public function testConstructorWithFloatValue(): void
+    #[Test]
+    public function constructorWithFloatValue(): void
     {
         $argument = new Value(3.14);
-        self::assertEquals(3.14, $argument->getValue());
-        self::assertEquals(ArgumentType::Value, $argument->getType());
+        static::assertSame(3.14, $argument->getValue());
+        static::assertEquals(ArgumentType::Value, $argument->getType());
     }
 
-    public function testConstructorWithNullValue(): void
+    #[Test]
+    public function constructorWithNullValue(): void
     {
         $argument = new Value(null);
-        self::assertNull($argument->getValue());
-        self::assertEquals(ArgumentType::Value, $argument->getType());
+        static::assertNull($argument->getValue());
+        static::assertEquals(ArgumentType::Value, $argument->getType());
     }
 
-    public function testConstructorWithSimpleArray(): void
+    #[Test]
+    public function constructorWithSimpleArray(): void
     {
         $argument = new Values([1, 2, 3]);
 
-        self::assertEquals([1, 2, 3], $argument->getValue());
-        self::assertEquals(ArgumentType::Values, $argument->getType());
+        static::assertEquals([1, 2, 3], $argument->getValue());
+        static::assertEquals(ArgumentType::Values, $argument->getType());
     }
 
-    public function testConstructorWithSimpleValue(): void
+    #[Test]
+    public function constructorWithSimpleValue(): void
     {
         $argument = new Value('test');
-        self::assertEquals('test', $argument->getValue());
-        self::assertEquals(ArgumentType::Value, $argument->getType());
+        static::assertSame('test', $argument->getValue());
+        static::assertEquals(ArgumentType::Value, $argument->getType());
     }
 
-    public function testConstructorWithSqlInterface(): void
+    #[Test]
+    public function constructorWithSqlInterface(): void
     {
         $select   = new Select();
         $argument = new ArgumentSelect($select);
 
-        self::assertSame($select, $argument->getValue());
-        self::assertEquals(ArgumentType::Select, $argument->getType());
+        static::assertSame($select, $argument->getValue());
+        static::assertEquals(ArgumentType::Select, $argument->getType());
     }
 
-    public function testStaticIdentifierMethod(): void
+    #[Test]
+    public function staticIdentifierMethod(): void
     {
         $argument = Argument::identifier('column_name');
 
-        self::assertEquals('column_name', $argument->getValue());
-        self::assertEquals(ArgumentType::Identifier, $argument->getType());
+        static::assertSame('column_name', $argument->getValue());
+        static::assertEquals(ArgumentType::Identifier, $argument->getType());
     }
 
-    public function testStaticLiteralMethod(): void
+    #[Test]
+    public function staticLiteralMethod(): void
     {
         $argument = Argument::literal('LITERAL_VALUE');
 
-        self::assertEquals('LITERAL_VALUE', $argument->getValue());
-        self::assertEquals(ArgumentType::Literal, $argument->getType());
+        static::assertSame('LITERAL_VALUE', $argument->getValue());
+        static::assertEquals(ArgumentType::Literal, $argument->getType());
     }
 
-    public function testStaticSelectMethodCreatesSelectArgument(): void
+    #[Test]
+    public function staticSelectMethodCreatesSelectArgument(): void
     {
         $select   = new Select();
         $argument = Argument::select($select);
 
-        self::assertSame($select, $argument->getValue());
-        self::assertEquals(ArgumentType::Select, $argument->getType());
+        static::assertSame($select, $argument->getValue());
+        static::assertEquals(ArgumentType::Select, $argument->getType());
     }
 
-    public function testStaticValueMethod(): void
+    #[Test]
+    public function staticValueMethod(): void
     {
         $argument = Argument::value('test_value');
 
-        self::assertEquals('test_value', $argument->getValue());
-        self::assertEquals(ArgumentType::Value, $argument->getType());
+        static::assertSame('test_value', $argument->getValue());
+        static::assertEquals(ArgumentType::Value, $argument->getType());
     }
 }

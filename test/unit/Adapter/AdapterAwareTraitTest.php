@@ -11,6 +11,7 @@ use PhpDb\Adapter\Platform\PlatformInterface;
 use PhpDbTest\Adapter\TestAsset\ConcreteAdapterAwareObject;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
 
@@ -18,11 +19,12 @@ use ReflectionProperty;
 #[Group('unit')]
 class AdapterAwareTraitTest extends TestCase
 {
-    public function testSetDbAdapter(): void
+    #[Test]
+    public function setDbAdapter(): void
     {
         $object = new ConcreteAdapterAwareObject();
 
-        self::assertNull($object->getAdapter());
+        static::assertNull($object->getAdapter());
 
         $driver   = $this->createMock(DriverInterface::class);
         $platform = $this->createMock(PlatformInterface::class);
@@ -31,10 +33,11 @@ class AdapterAwareTraitTest extends TestCase
 
         $object->setDbAdapter($adapter);
 
-        self::assertSame($adapter, $object->getAdapter());
+        static::assertSame($adapter, $object->getAdapter());
     }
 
-    public function testSetDbAdapterSetsProperty(): void
+    #[Test]
+    public function setDbAdapterSetsProperty(): void
     {
         $object = new ConcreteAdapterAwareObject();
 
@@ -46,6 +49,6 @@ class AdapterAwareTraitTest extends TestCase
         $object->setDbAdapter($adapter);
 
         $reflection = new ReflectionProperty($object, 'adapter');
-        self::assertSame($adapter, $reflection->getValue($object));
+        static::assertSame($adapter, $reflection->getValue($object));
     }
 }

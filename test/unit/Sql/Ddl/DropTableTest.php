@@ -7,6 +7,7 @@ namespace PhpDbTest\Sql\Ddl;
 use PhpDb\Sql\Ddl\DropTable;
 use PhpDb\Sql\TableIdentifier;
 use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 #[CoversMethod(DropTable::class, '__construct')]
@@ -16,47 +17,51 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(DropTable::class, 'processTable')]
 class DropTableTest extends TestCase
 {
-    public function testGetSqlString(): void
+    #[Test]
+    public function getSqlString(): void
     {
         $dt = new DropTable('foo');
-        self::assertEquals('DROP TABLE "foo"', $dt->getSqlString());
+        static::assertSame('DROP TABLE "foo"', $dt->getSqlString());
 
         $dt = new DropTable(new TableIdentifier('foo'));
-        self::assertEquals('DROP TABLE "foo"', $dt->getSqlString());
+        static::assertSame('DROP TABLE "foo"', $dt->getSqlString());
 
         $dt = new DropTable(new TableIdentifier('bar', 'foo'));
-        self::assertEquals('DROP TABLE "foo"."bar"', $dt->getSqlString());
+        static::assertSame('DROP TABLE "foo"."bar"', $dt->getSqlString());
     }
 
-    public function testIfExists(): void
+    #[Test]
+    public function ifExists(): void
     {
         $dt = new DropTable('foo');
-        self::assertFalse($dt->getIfExists());
+        static::assertFalse($dt->getIfExists());
 
         $result = $dt->ifExists();
-        self::assertSame($dt, $result);
-        self::assertTrue($dt->getIfExists());
+        static::assertSame($dt, $result);
+        static::assertTrue($dt->getIfExists());
 
-        self::assertEquals('DROP TABLE IF EXISTS "foo"', $dt->getSqlString());
+        static::assertSame('DROP TABLE IF EXISTS "foo"', $dt->getSqlString());
     }
 
-    public function testIfExistsDisable(): void
+    #[Test]
+    public function ifExistsDisable(): void
     {
         $dt = new DropTable('foo');
         $dt->ifExists();
-        self::assertTrue($dt->getIfExists());
+        static::assertTrue($dt->getIfExists());
 
         $dt->ifExists(false);
-        self::assertFalse($dt->getIfExists());
+        static::assertFalse($dt->getIfExists());
 
-        self::assertEquals('DROP TABLE "foo"', $dt->getSqlString());
+        static::assertSame('DROP TABLE "foo"', $dt->getSqlString());
     }
 
-    public function testIfExistsWithTableIdentifier(): void
+    #[Test]
+    public function ifExistsWithTableIdentifier(): void
     {
         $dt = new DropTable(new TableIdentifier('bar', 'foo'));
         $dt->ifExists();
 
-        self::assertEquals('DROP TABLE IF EXISTS "foo"."bar"', $dt->getSqlString());
+        static::assertSame('DROP TABLE IF EXISTS "foo"."bar"', $dt->getSqlString());
     }
 }

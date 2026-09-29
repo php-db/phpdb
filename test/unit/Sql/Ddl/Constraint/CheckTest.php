@@ -38,6 +38,23 @@ final class CheckTest extends TestCase
     }
 
     #[Test]
+    public function getExpressionData(): void
+    {
+        $check = new Check('id>0', 'foo');
+
+        $expressionData = $check->getExpressionData();
+
+        static::assertSame('CONSTRAINT %s CHECK (%s)', $expressionData['spec']);
+        static::assertEquals(
+            [
+                Argument::identifier('foo'),
+                Argument::literal('id>0'),
+            ],
+            $expressionData['values'],
+        );
+    }
+
+    #[Test]
     public function getExpressionDataMergesExpressionSpecAndValues(): void
     {
         $check = new Check(new Expression('a > ?', [1]), 'chk');
@@ -105,22 +122,6 @@ final class CheckTest extends TestCase
     public function rendersWithoutConstraintClauseWhenUnnamed(): void
     {
         static::assertConstraintRenders('CHECK (id > 0)', new Check('id > 0'));
-    }
-
-    public function testGetExpressionData(): void
-    {
-        $check = new Check('id>0', 'foo');
-
-        $expressionData = $check->getExpressionData();
-
-        self::assertEquals('CONSTRAINT %s CHECK (%s)', $expressionData['spec']);
-        self::assertEquals(
-            [
-                Argument::identifier('foo'),
-                Argument::literal('id>0'),
-            ],
-            $expressionData['values'],
-        );
     }
 
     #[Test]

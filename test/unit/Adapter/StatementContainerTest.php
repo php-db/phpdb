@@ -8,6 +8,7 @@ use PhpDb\Adapter\ParameterContainer;
 use PhpDb\Adapter\StatementContainer;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 #[Group('unit')]
@@ -18,38 +19,42 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(StatementContainer::class, 'getParameterContainer')]
 final class StatementContainerTest extends TestCase
 {
-    public function testConstructorWithoutSqlDoesNotSetSql(): void
+    #[Test]
+    public function constructorWithoutSqlDoesNotSetSql(): void
     {
         $container = new StatementContainer();
 
-        self::assertSame('', $container->getSql());
+        static::assertSame('', $container->getSql());
     }
 
-    public function testConstructorWithSqlSetsSql(): void
+    #[Test]
+    public function constructorWithSqlSetsSql(): void
     {
         $container = new StatementContainer('SELECT 1');
 
-        self::assertSame('SELECT 1', $container->getSql());
+        static::assertSame('SELECT 1', $container->getSql());
     }
 
-    public function testSetAndGetParameterContainer(): void
+    #[Test]
+    public function setAndGetParameterContainer(): void
     {
         $container          = new StatementContainer();
         $parameterContainer = new ParameterContainer(['a' => 1]);
 
         $result = $container->setParameterContainer($parameterContainer);
 
-        self::assertSame($container, $result);
-        self::assertSame($parameterContainer, $container->getParameterContainer());
+        static::assertSame($container, $result);
+        static::assertSame($parameterContainer, $container->getParameterContainer());
     }
 
-    public function testSetAndGetSql(): void
+    #[Test]
+    public function setAndGetSql(): void
     {
         $container = new StatementContainer();
 
         $result = $container->setSql('test');
 
-        self::assertSame($container, $result);
-        self::assertSame('test', $container->getSql());
+        static::assertSame($container, $result);
+        static::assertSame('test', $container->getSql());
     }
 }

@@ -24,6 +24,7 @@ use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\IgnoreDeprecations;
 use PHPUnit\Framework\Attributes\RequiresPhp;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use ReflectionException;
 use TypeError;
@@ -54,87 +55,94 @@ final class InsertTest extends TestCase
     protected Insert $insert;
 
     // @codingStandardsIgnoreStart
-    public function test__get(): void
+    #[Test]
+    public function _get(): void
     {
         // @codingStandardsIgnoreEnd
         /** @psalm-suppress UndefinedMagicPropertyAssignment */
         $this->insert->foo = 'bar';
-        self::assertEquals('bar', $this->insert->foo);
+        static::assertSame('bar', $this->insert->foo);
 
         /** @psalm-suppress UndefinedMagicPropertyAssignment */
         $this->insert->foo = null;
-        self::assertNull($this->insert->foo);
+        static::assertNull($this->insert->foo);
     }
 
     // @codingStandardsIgnoreStart
-    public function test__isset(): void
+    #[Test]
+    public function _isset(): void
     {
         // @codingStandardsIgnoreEnd
         /** @psalm-suppress UndefinedMagicPropertyAssignment */
         $this->insert->foo = 'bar';
         /** @psalm-suppress RedundantCondition */
-        self::assertTrue(isset($this->insert->foo));
+        static::assertTrue(isset($this->insert->foo));
 
         /** @psalm-suppress UndefinedMagicPropertyAssignment */
         $this->insert->foo = null;
         /** @psalm-suppress TypeDoesNotContainType */
-        self::assertTrue(isset($this->insert->foo));
+        static::assertTrue(isset($this->insert->foo));
     }
 
     // @codingStandardsIgnoreStart
-    public function test__set(): void
+    #[Test]
+    public function _set(): void
     {
         // @codingStandardsIgnoreEnd
         /** @psalm-suppress UndefinedMagicPropertyAssignment */
         $this->insert->foo = 'bar';
-        self::assertEquals(['foo'], $this->insert->getRawState('columns'));
-        self::assertEquals(['bar'], $this->insert->getRawState('values'));
+        static::assertEquals(['foo'], $this->insert->getRawState('columns'));
+        static::assertEquals(['bar'], $this->insert->getRawState('values'));
     }
 
     // @codingStandardsIgnoreStart
-    public function test__unset(): void
+    #[Test]
+    public function _unset(): void
     {
         // @codingStandardsIgnoreEnd
         /** @psalm-suppress UndefinedMagicPropertyAssignment */
         $this->insert->foo = 'bar';
-        self::assertEquals(['foo'], $this->insert->getRawState('columns'));
-        self::assertEquals(['bar'], $this->insert->getRawState('values'));
+        static::assertEquals(['foo'], $this->insert->getRawState('columns'));
+        static::assertEquals(['bar'], $this->insert->getRawState('values'));
         unset($this->insert->foo);
-        self::assertEquals([], $this->insert->getRawState('columns'));
-        self::assertEquals([], $this->insert->getRawState('values'));
+        static::assertEquals([], $this->insert->getRawState('columns'));
+        static::assertEquals([], $this->insert->getRawState('values'));
 
         /** @psalm-suppress UndefinedMagicPropertyAssignment */
         $this->insert->foo = null;
-        self::assertEquals(['foo'], $this->insert->getRawState('columns'));
-        self::assertEquals([null], $this->insert->getRawState('values'));
+        static::assertEquals(['foo'], $this->insert->getRawState('columns'));
+        static::assertEquals([null], $this->insert->getRawState('values'));
 
         unset($this->insert->foo);
-        self::assertEquals([], $this->insert->getRawState('columns'));
-        self::assertEquals([], $this->insert->getRawState('values'));
+        static::assertEquals([], $this->insert->getRawState('columns'));
+        static::assertEquals([], $this->insert->getRawState('values'));
     }
 
-    public function testColumns(): void
+    #[Test]
+    public function columns(): void
     {
         $columns = ['foo', 'bar'];
         $this->insert->columns($columns);
-        self::assertEquals($columns, $this->insert->getRawState('columns'));
+        static::assertEquals($columns, $this->insert->getRawState('columns'));
     }
 
     /**
      * @throws ReflectionException
      */
+    #[Test]
     #[Group('Laminas-4926')]
-    public function testEmptyArrayValues(): void
+    public function emptyArrayValues(): void
     {
         $this->insert->values([]);
-        self::assertEquals([], $this->readAttribute($this->insert, 'columns'));
+        static::assertEquals([], static::readAttribute($this->insert, 'columns'));
     }
 
-    public function testGetSqlString(): void
+    #[Test]
+    public function getSqlString(): void
     {
         $this->insert->into('foo')->values(['bar' => 'baz', 'boo' => new Expression('NOW()'), 'bam' => null]);
 
-        self::assertEquals(
+        static::assertSame(
             'INSERT INTO "foo" ("bar", "boo", "bam") VALUES (\'baz\', NOW(), NULL)',
             $this->insert->getSqlString(new TrustingSql92Platform()),
         );
@@ -145,7 +153,7 @@ final class InsertTest extends TestCase
             ->into(new TableIdentifier('foo', 'sch'))
             ->values(['bar' => 'baz', 'boo' => new Expression('NOW()'), 'bam' => null]);
 
-        self::assertEquals(
+        static::assertSame(
             'INSERT INTO "sch"."foo" ("bar", "boo", "bam") VALUES (\'baz\', NOW(), NULL)',
             $this->insert->getSqlString(new TrustingSql92Platform()),
         );
@@ -155,20 +163,21 @@ final class InsertTest extends TestCase
         $select       = new Select();
         $this->insert->into('foo')->select($select->from('bar'));
 
-        self::assertEquals(
+        static::assertSame(
             'INSERT INTO "foo"  SELECT "bar".* FROM "bar"',
             $this->insert->getSqlString(new TrustingSql92Platform()),
         );
 
         // with Select and columns
         $this->insert->columns(['col1', 'col2']);
-        self::assertEquals(
+        static::assertSame(
             'INSERT INTO "foo" ("col1", "col2") SELECT "bar".* FROM "bar"',
             $this->insert->getSqlString(new TrustingSql92Platform()),
         );
     }
 
-    public function testGetSqlStringThrowsExceptionWhenNoValuesOrSelect(): void
+    #[Test]
+    public function getSqlStringThrowsExceptionWhenNoValuesOrSelect(): void
     {
         $this->insert->into('foo');
 
@@ -177,37 +186,41 @@ final class InsertTest extends TestCase
         $this->insert->getSqlString(new TrustingSql92Platform());
     }
 
-    public function testGetSqlStringUsingColumnsAndValuesMethods(): void
+    #[Test]
+    public function getSqlStringUsingColumnsAndValuesMethods(): void
     {
         // With columns() and values()
         $this->insert
             ->into('foo')
             ->columns(['col1', 'col2', 'col3'])
             ->values(['val1', 'val2', 'val3']);
-        self::assertEquals(
+        static::assertSame(
             'INSERT INTO "foo" ("col1", "col2", "col3") VALUES (\'val1\', \'val2\', \'val3\')',
             $this->insert->getSqlString(new TrustingSql92Platform()),
         );
     }
 
-    public function testGetThrowsExceptionForNonExistentColumn(): void
+    #[Test]
+    public function getThrowsExceptionForNonExistentColumn(): void
     {
         self::expectException(InvalidArgumentException::class);
         self::expectExceptionMessage(sprintf(InvalidArgumentException::UNKNOWN_COLUMN_KEY, 'nonexistent'));
         $value = $this->insert->nonexistent;
     }
 
-    public function testInto(): void
+    #[Test]
+    public function into(): void
     {
         $this->insert->into('table');
-        self::assertEquals('table', $this->insert->getRawState('table'));
+        static::assertSame('table', $this->insert->getRawState('table'));
 
         $tableIdentifier = new TableIdentifier('table', 'schema');
         $this->insert->into($tableIdentifier);
-        self::assertEquals($tableIdentifier, $this->insert->getRawState('table'));
+        static::assertEquals($tableIdentifier, $this->insert->getRawState('table'));
     }
 
-    public function testPrepareStatement(): void
+    #[Test]
+    public function prepareStatement(): void
     {
         $mockDriver = $this->getMockBuilder(DriverInterface::class)->getMock();
         $mockDriver->expects($this->any())->method('getPrepareType')->willReturn('positional');
@@ -219,7 +232,7 @@ final class InsertTest extends TestCase
         $mockStatement->expects($this->any())->method('getParameterContainer')->willReturn($pContainer);
         $mockStatement->expects($this->once())
             ->method('setSql')
-            ->with($this->equalTo('INSERT INTO "foo" ("bar", "boo") VALUES (?, NOW())'));
+            ->with(static::equalTo('INSERT INTO "foo" ("bar", "boo") VALUES (?, NOW())'));
 
         $this->insert->into('foo')->values(['bar' => 'baz', 'boo' => new Expression('NOW()')]);
 
@@ -238,7 +251,7 @@ final class InsertTest extends TestCase
         $mockStatement->expects($this->any())->method('getParameterContainer')->willReturn($pContainer);
         $mockStatement->expects($this->once())
             ->method('setSql')
-            ->with($this->equalTo('INSERT INTO "sch"."foo" ("bar", "boo") VALUES (?, NOW())'));
+            ->with(static::equalTo('INSERT INTO "sch"."foo" ("bar", "boo") VALUES (?, NOW())'));
 
         $this->insert
             ->into(new TableIdentifier('foo', 'sch'))
@@ -247,7 +260,8 @@ final class InsertTest extends TestCase
         $this->insert->prepareStatement($mockAdapter, $mockStatement);
     }
 
-    public function testPrepareStatementCreatesParameterContainerWhenNotPresent(): void
+    #[Test]
+    public function prepareStatementCreatesParameterContainerWhenNotPresent(): void
     {
         $mockDriver = $this->getMockBuilder(DriverInterface::class)->getMock();
         $mockDriver->expects($this->any())->method('getPrepareType')->willReturn('positional');
@@ -260,21 +274,22 @@ final class InsertTest extends TestCase
             ->willReturn(null);
         $mockStatement->expects($this->once())
             ->method('setParameterContainer')
-            ->with($this->isInstanceOf(ParameterContainer::class))
+            ->with(static::isInstanceOf(ParameterContainer::class))
             ->willReturnSelf();
         $mockStatement->expects($this->once())
             ->method('setSql')
-            ->with($this->stringContains('INSERT INTO'))
+            ->with(static::stringContains('INSERT INTO'))
             ->willReturnSelf();
 
         $this->insert->into('foo')->values(['bar' => 'baz']);
 
         $result = $this->insert->prepareStatement($mockAdapter, $mockStatement);
 
-        self::assertSame($mockStatement, $result);
+        static::assertSame($mockStatement, $result);
     }
 
-    public function testPrepareStatementWithSelect(): void
+    #[Test]
+    public function prepareStatementWithSelect(): void
     {
         $mockDriver = $this->getMockBuilder(DriverInterface::class)->getMock();
         $mockDriver->expects($this->any())->method('getPrepareType')->willReturn('positional');
@@ -290,18 +305,19 @@ final class InsertTest extends TestCase
             ->select($select->where(['x' => 5]))
             ->prepareStatement($mockAdapter, $mockStatement);
 
-        self::assertEquals(
+        static::assertSame(
             'INSERT INTO "foo" ("col1") SELECT "bar".* FROM "bar" WHERE "x" = ?',
             $mockStatement->getSql(),
         );
         $parameters = $mockStatement->getParameterContainer();
-        $this->assertInstanceOf(ParameterContainer::class, $parameters);
+        static::assertInstanceOf(ParameterContainer::class, $parameters);
 
         $namedArray = $parameters->getNamedArray();
-        self::assertSame(['subselect1where1' => 5], $namedArray);
+        static::assertSame(['subselect1where1' => 5], $namedArray);
     }
 
-    public function testProcessInsertWithPdoDriverUsesDriverColumnQuoting(): void
+    #[Test]
+    public function processInsertWithPdoDriverUsesDriverColumnQuoting(): void
     {
         $mockDriver = $this->getMockBuilder(PdoDriverInterface::class)->getMock();
         $mockDriver->expects($this->any())->method('getPrepareType')->willReturn('positional');
@@ -317,18 +333,19 @@ final class InsertTest extends TestCase
         $this->insert->prepareStatement($mockAdapter, $mockStatement);
 
         $sql = $mockStatement->getSql();
-        self::assertStringContainsString(':c_0', $sql);
-        self::assertStringContainsString(':c_1', $sql);
+        static::assertStringContainsString(':c_0', $sql);
+        static::assertStringContainsString(':c_1', $sql);
     }
 
+    #[Test]
     #[CoversNothing]
-    public function testSpecificationconstantsCouldBeOverridedByExtensionInGetSqlString(): void
+    public function specificationconstantsCouldBeOverridedByExtensionInGetSqlString(): void
     {
         $replace = new Replace();
         $replace->into('foo')
             ->values(['bar' => 'baz', 'boo' => new Expression('NOW()'), 'bam' => null]);
 
-        self::assertEquals(
+        static::assertSame(
             'REPLACE INTO "foo" ("bar", "boo", "bam") VALUES (\'baz\', NOW(), NULL)',
             $replace->getSqlString(new TrustingSql92Platform()),
         );
@@ -338,14 +355,15 @@ final class InsertTest extends TestCase
         $replace->into(new TableIdentifier('foo', 'sch'))
             ->values(['bar' => 'baz', 'boo' => new Expression('NOW()'), 'bam' => null]);
 
-        self::assertEquals(
+        static::assertSame(
             'REPLACE INTO "sch"."foo" ("bar", "boo", "bam") VALUES (\'baz\', NOW(), NULL)',
             $replace->getSqlString(new TrustingSql92Platform()),
         );
     }
 
+    #[Test]
     #[CoversNothing]
-    public function testSpecificationconstantsCouldBeOverridedByExtensionInPrepareStatement(): void
+    public function specificationconstantsCouldBeOverridedByExtensionInPrepareStatement(): void
     {
         $replace = new Replace();
 
@@ -359,7 +377,7 @@ final class InsertTest extends TestCase
         $mockStatement->expects($this->any())->method('getParameterContainer')->willReturn($pContainer);
         $mockStatement->expects($this->once())
             ->method('setSql')
-            ->with($this->equalTo('REPLACE INTO "foo" ("bar", "boo") VALUES (?, NOW())'));
+            ->with(static::equalTo('REPLACE INTO "foo" ("bar", "boo") VALUES (?, NOW())'));
 
         $replace->into('foo')
             ->values(['bar' => 'baz', 'boo' => new Expression('NOW()')]);
@@ -379,7 +397,7 @@ final class InsertTest extends TestCase
         $mockStatement->expects($this->any())->method('getParameterContainer')->willReturn($pContainer);
         $mockStatement->expects($this->once())
             ->method('setSql')
-            ->with($this->equalTo('REPLACE INTO "sch"."foo" ("bar", "boo") VALUES (?, NOW())'));
+            ->with(static::equalTo('REPLACE INTO "sch"."foo" ("bar", "boo") VALUES (?, NOW())'));
 
         $replace->into(new TableIdentifier('foo', 'sch'))
             ->values(['bar' => 'baz', 'boo' => new Expression('NOW()')]);
@@ -387,44 +405,48 @@ final class InsertTest extends TestCase
         $replace->prepareStatement($mockAdapter, $mockStatement);
     }
 
-    public function testUnsetThrowsExceptionForNonExistentColumn(): void
+    #[Test]
+    public function unsetThrowsExceptionForNonExistentColumn(): void
     {
         self::expectException(InvalidArgumentException::class);
         self::expectExceptionMessage(sprintf(InvalidArgumentException::UNKNOWN_COLUMN_KEY, 'nonexistent'));
         unset($this->insert->nonexistent);
     }
 
-    public function testValues(): void
+    #[Test]
+    public function values(): void
     {
         $this->insert->values(['foo' => 'bar']);
-        self::assertEquals(['foo'], $this->insert->getRawState('columns'));
-        self::assertEquals(['bar'], $this->insert->getRawState('values'));
+        static::assertEquals(['foo'], $this->insert->getRawState('columns'));
+        static::assertEquals(['bar'], $this->insert->getRawState('values'));
 
         // test will merge cols and values of previously set stuff
         $this->insert->values(['foo' => 'bax'], Insert::VALUES_MERGE);
         $this->insert->values(['boom' => 'bam'], Insert::VALUES_MERGE);
-        self::assertEquals(['foo', 'boom'], $this->insert->getRawState('columns'));
-        self::assertEquals(['bax', 'bam'], $this->insert->getRawState('values'));
+        static::assertEquals(['foo', 'boom'], $this->insert->getRawState('columns'));
+        static::assertEquals(['bax', 'bam'], $this->insert->getRawState('values'));
 
         $this->insert->values(['foo' => 'bax']);
-        self::assertEquals(['foo'], $this->insert->getRawState('columns'));
-        self::assertEquals(['bax'], $this->insert->getRawState('values'));
+        static::assertEquals(['foo'], $this->insert->getRawState('columns'));
+        static::assertEquals(['bax'], $this->insert->getRawState('values'));
     }
 
+    #[Test]
     #[Group('Laminas-536')]
-    public function testValuesMerge(): void
+    public function valuesMerge(): void
     {
         $this->insert->into('foo')->values(['bar' => 'baz', 'boo' => new Expression('NOW()'), 'bam' => null]);
         $this->insert->into('foo')
             ->values(['qux' => 100], Insert::VALUES_MERGE);
 
-        self::assertEquals(
+        static::assertSame(
             'INSERT INTO "foo" ("bar", "boo", "bam", "qux") VALUES (\'baz\', NOW(), NULL, \'100\')',
             $this->insert->getSqlString(new TrustingSql92Platform()),
         );
     }
 
-    public function testValuesThrowsExceptionWhenArrayMergeOverSelect(): void
+    #[Test]
+    public function valuesThrowsExceptionWhenArrayMergeOverSelect(): void
     {
         $this->insert->values(new Select());
 
@@ -436,14 +458,16 @@ final class InsertTest extends TestCase
         $this->insert->values(['foo' => 'bar'], Insert::VALUES_MERGE);
     }
 
-    public function testValuesThrowsExceptionWhenNotArrayOrSelect(): void
+    #[Test]
+    public function valuesThrowsExceptionWhenNotArrayOrSelect(): void
     {
         self::expectException(TypeError::class);
         /** @psalm-suppress InvalidArgument */
         $this->insert->values(5);
     }
 
-    public function testValuesThrowsExceptionWhenSelectMergeOverArray(): void
+    #[Test]
+    public function valuesThrowsExceptionWhenSelectMergeOverArray(): void
     {
         $this->insert->values(['foo' => 'bar']);
 

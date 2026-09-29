@@ -21,6 +21,24 @@ final class BinaryTest extends TestCase
     use ColumnAssertionsTrait;
 
     #[Test]
+    public function getExpressionData(): void
+    {
+        $column = new Binary('foo', 10_000_000);
+
+        $expressionData = $column->getExpressionData();
+
+        static::assertSame('%s %s(%s) NOT NULL', $expressionData['spec']);
+        static::assertEquals(
+            [
+                Argument::identifier('foo'),
+                Argument::literal('BINARY'),
+                Argument::literal('10000000'),
+            ],
+            $expressionData['values'],
+        );
+    }
+
+    #[Test]
     public function getExpressionDataOmitsLengthPlaceholderWhenLengthIsNotSet(): void
     {
         $expressionData = (new Binary('hash'))->getExpressionData();
@@ -46,22 +64,5 @@ final class BinaryTest extends TestCase
     public function rendersWithoutParenthesesWhenLengthIsNotSet(?int $length): void
     {
         static::assertColumnRenders('"hash" BINARY NOT NULL', new Binary('hash', $length));
-    }
-
-    public function testGetExpressionData(): void
-    {
-        $column = new Binary('foo', 10_000_000);
-
-        $expressionData = $column->getExpressionData();
-
-        self::assertEquals('%s %s(%s) NOT NULL', $expressionData['spec']);
-        self::assertEquals(
-            [
-                Argument::identifier('foo'),
-                Argument::literal('BINARY'),
-                Argument::literal('10000000'),
-            ],
-            $expressionData['values'],
-        );
     }
 }

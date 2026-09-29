@@ -10,20 +10,22 @@ use PhpDb\Adapter\Driver\Feature\DriverFeatureInterface;
 use PhpDbTest\Adapter\Driver\Feature\TestAsset\TestDriverFeature;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 #[Group('unit')]
 #[CoversMethod(AbstractFeature::class, 'setDriver')]
 final class AbstractFeatureTest extends TestCase
 {
-    public function testSetDriverStoresDriverAndReturnsInstance(): void
+    #[Test]
+    public function setDriverStoresDriverAndReturnsInstance(): void
     {
         $feature = new TestDriverFeature();
         $driver  = $this->createMock(DriverInterface::class);
 
         $result = $feature->setDriver($driver);
 
-        self::assertInstanceOf(DriverFeatureInterface::class, $result);
-        self::assertSame($feature, $result);
+        static::assertInstanceOf(DriverFeatureInterface::class, $result);
+        static::assertSame($feature, $result);
     }
 }

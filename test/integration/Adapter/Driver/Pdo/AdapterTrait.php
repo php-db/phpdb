@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDbIntegrationTest\Adapter\Driver\Pdo;
 
 use PhpDb\Adapter\AdapterInterface;

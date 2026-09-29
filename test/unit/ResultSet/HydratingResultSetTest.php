@@ -14,6 +14,7 @@ use PhpDb\ResultSet\Exception\RuntimeException;
 use PhpDb\ResultSet\HydratingResultSet;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
@@ -33,14 +34,16 @@ final class HydratingResultSetTest extends TestCase
 
     private string $classMethodsHydratorClass;
 
-    public function testConstructorDefaultsToArraySerializableHydrator(): void
+    #[Test]
+    public function constructorDefaultsToArraySerializableHydrator(): void
     {
         $hydratingRs = new HydratingResultSet();
 
-        self::assertInstanceOf(ArraySerializableHydrator::class, $hydratingRs->getHydrator());
+        static::assertInstanceOf(ArraySerializableHydrator::class, $hydratingRs->getHydrator());
     }
 
-    public function testCurrentDisablesBufferingImplicitly(): void
+    #[Test]
+    public function currentDisablesBufferingImplicitly(): void
     {
         $hydratingRs = new HydratingResultSet();
         $hydratingRs->initialize(new ArrayIterator([
@@ -56,20 +59,22 @@ final class HydratingResultSetTest extends TestCase
     /**
      * @throws Exception
      */
-    public function testCurrentDoesnotHasData(): void
+    #[Test]
+    public function currentDoesnotHasData(): void
     {
         $hydratingRs = new HydratingResultSet();
         $hydratingRs->initialize([]);
 
         // Verify current() returns null when no data exists
         $result = $hydratingRs->current();
-        self::assertNull($result);
+        static::assertNull($result);
     }
 
     /**
      * @throws Exception
      */
-    public function testCurrentHasData(): void
+    #[Test]
+    public function currentHasData(): void
     {
         $hydratingRs = new HydratingResultSet();
         $hydratingRs->initialize([
@@ -77,10 +82,11 @@ final class HydratingResultSetTest extends TestCase
         ]);
         // Verify current() returns hydrated object when data exists
         $obj = $hydratingRs->current();
-        self::assertInstanceOf('ArrayObject', $obj);
+        static::assertInstanceOf('ArrayObject', $obj);
     }
 
-    public function testCurrentWithBufferReturnsBufferedObject(): void
+    #[Test]
+    public function currentWithBufferReturnsBufferedObject(): void
     {
         $hydratingRs = new HydratingResultSet();
         $hydratingRs->initialize(new ArrayIterator([
@@ -93,31 +99,35 @@ final class HydratingResultSetTest extends TestCase
         $hydratingRs->rewind();
         $buffered = $hydratingRs->current();
 
-        self::assertSame($first, $buffered);
+        static::assertSame($first, $buffered);
     }
 
-    public function testGetHydrator(): void
+    #[Test]
+    public function getHydrator(): void
     {
         $hydratingRs = new HydratingResultSet();
         // Verify getHydrator() returns default ArraySerializable hydrator
-        self::assertInstanceOf($this->arraySerializableHydratorClass, $hydratingRs->getHydrator());
+        static::assertInstanceOf($this->arraySerializableHydratorClass, $hydratingRs->getHydrator());
     }
 
-    public function testGetObjectPrototype(): void
+    #[Test]
+    public function getObjectPrototype(): void
     {
         $hydratingRs = new HydratingResultSet();
         // Verify getObjectPrototype() returns default ArrayObject prototype
-        self::assertInstanceOf('ArrayObject', $hydratingRs->getObjectPrototype());
+        static::assertInstanceOf('ArrayObject', $hydratingRs->getObjectPrototype());
     }
 
-    public function testGetRowPrototypeReturnsDefaultArrayObject(): void
+    #[Test]
+    public function getRowPrototypeReturnsDefaultArrayObject(): void
     {
         $hydratingRs = new HydratingResultSet();
 
-        self::assertInstanceOf(ArrayObject::class, $hydratingRs->getRowPrototype());
+        static::assertInstanceOf(ArrayObject::class, $hydratingRs->getRowPrototype());
     }
 
-    public function testSetHydrator(): void
+    #[Test]
+    public function setHydrator(): void
     {
         $hydratingRs    = new HydratingResultSet();
         $hydratorClass1 = $this->classMethodsHydratorClass;
@@ -130,20 +140,21 @@ final class HydratingResultSetTest extends TestCase
         $result = $hydratingRs->setHydrator($hydrator1);
 
         // Verify fluent interface
-        self::assertSame($hydratingRs, $result);
+        static::assertSame($hydratingRs, $result);
 
         // Verify the first mutation occurred
-        self::assertSame($hydrator1, $hydratingRs->getHydrator());
+        static::assertSame($hydrator1, $hydratingRs->getHydrator());
 
         // Second mutation to verify mutability
         $hydratingRs->setHydrator($hydrator2);
 
         // Verify the instance was actually mutated
-        self::assertSame($hydrator2, $hydratingRs->getHydrator());
-        self::assertNotSame($hydrator1, $hydratingRs->getHydrator());
+        static::assertSame($hydrator2, $hydratingRs->getHydrator());
+        static::assertNotSame($hydrator1, $hydratingRs->getHydrator());
     }
 
-    public function testSetObjectPrototype(): void
+    #[Test]
+    public function setObjectPrototype(): void
     {
         $prototype1            = new stdClass();
         $prototype1->property1 = 'value1';
@@ -155,35 +166,37 @@ final class HydratingResultSetTest extends TestCase
         $result = $hydratingRs->setObjectPrototype($prototype1);
 
         // Verify fluent interface
-        self::assertSame($hydratingRs, $result);
+        static::assertSame($hydratingRs, $result);
 
         // Verify the first mutation occurred
-        self::assertSame($prototype1, $hydratingRs->getObjectPrototype());
+        static::assertSame($prototype1, $hydratingRs->getObjectPrototype());
 
         // Second mutation to verify mutability
         $hydratingRs->setObjectPrototype($prototype2);
 
         // Verify the instance was actually mutated
-        self::assertSame($prototype2, $hydratingRs->getObjectPrototype());
-        self::assertNotSame($prototype1, $hydratingRs->getObjectPrototype());
+        static::assertSame($prototype2, $hydratingRs->getObjectPrototype());
+        static::assertNotSame($prototype1, $hydratingRs->getObjectPrototype());
     }
 
-    public function testSetRowPrototypeStoresPrototype(): void
+    #[Test]
+    public function setRowPrototypeStoresPrototype(): void
     {
         $hydratingRs = new HydratingResultSet();
         $prototype   = new stdClass();
 
         $result = $hydratingRs->setRowPrototype($prototype);
 
-        self::assertSame($hydratingRs, $result);
-        self::assertSame($prototype, $hydratingRs->getRowPrototype());
+        static::assertSame($hydratingRs, $result);
+        static::assertSame($prototype, $hydratingRs->getRowPrototype());
     }
 
     /**
      * @throws Exception
      * @todo Implement testToArray().
      */
-    public function testToArray(): void
+    #[Test]
+    public function toArray(): void
     {
         $hydratingRs = new HydratingResultSet();
         $hydratingRs->initialize([
@@ -191,10 +204,11 @@ final class HydratingResultSetTest extends TestCase
         ]);
         // Verify toArray() returns array of hydrated objects
         $obj = $hydratingRs->toArray();
-        self::assertIsArray($obj);
+        static::assertIsArray($obj);
     }
 
-    public function testToArrayUsesHydratorExtract(): void
+    #[Test]
+    public function toArrayUsesHydratorExtract(): void
     {
         $hydratingRs = new HydratingResultSet();
         $hydratingRs->initialize([
@@ -203,9 +217,9 @@ final class HydratingResultSetTest extends TestCase
 
         $result = $hydratingRs->toArray();
 
-        self::assertCount(1, $result);
-        self::assertArrayHasKey('id', $result[0]);
-        self::assertSame(1, $result[0]['id']);
+        static::assertCount(1, $result);
+        static::assertArrayHasKey('id', $result[0]);
+        static::assertSame(1, $result[0]['id']);
     }
 
     #[Override]

@@ -18,6 +18,7 @@ use PhpDbTest\Adapter\Driver\Pdo\TestAsset\TestConnection;
 use PhpDbTest\Adapter\Driver\Pdo\TestAsset\TestPdo;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
 
@@ -36,60 +37,66 @@ final class ConnectionTest extends TestCase
 {
     protected TestConnection $connection;
 
-    public function testBeginTransactionAutoConnectsWhenNotConnected(): void
+    #[Test]
+    public function beginTransactionAutoConnectsWhenNotConnected(): void
     {
         $connection = new TestConnection(['dsn' => 'sqlite::memory:']);
 
-        self::assertFalse($connection->isConnected());
+        static::assertFalse($connection->isConnected());
 
         $connection->beginTransaction();
 
-        self::assertTrue($connection->isConnected());
+        static::assertTrue($connection->isConnected());
     }
 
-    public function testCommitAutoConnectsWhenNotConnected(): void
+    #[Test]
+    public function commitAutoConnectsWhenNotConnected(): void
     {
         $connection = new TestConnection(new SqliteMemoryPdo());
         $connection->beginTransaction();
         $connection->beginTransaction();
         $connection->disconnect();
 
-        self::assertFalse($connection->isConnected());
+        static::assertFalse($connection->isConnected());
 
         $connection->commit();
 
-        self::assertTrue($connection->isConnected());
+        static::assertTrue($connection->isConnected());
     }
 
-    public function testConstructorWithArraySetsConnectionParameters(): void
+    #[Test]
+    public function constructorWithArraySetsConnectionParameters(): void
     {
         $params     = ['dsn' => 'sqlite::memory:', 'username' => 'user'];
         $connection = new TestConnection($params);
 
-        self::assertSame($params, $connection->getConnectionParameters());
+        static::assertSame($params, $connection->getConnectionParameters());
     }
 
-    public function testConstructorWithPdoResourceSetsConnected(): void
+    #[Test]
+    public function constructorWithPdoResourceSetsConnected(): void
     {
         $pdo        = new SqliteMemoryPdo();
         $connection = new TestConnection($pdo);
 
-        self::assertTrue($connection->isConnected());
+        static::assertTrue($connection->isConnected());
     }
 
-    public function testExecuteAutoConnectsWhenNotConnected(): void
+    #[Test]
+    public function executeAutoConnectsWhenNotConnected(): void
     {
         $connection = new TestConnection(['dsn' => 'sqlite::memory:']);
         $driver     = new TestPdo($connection);
 
-        self::assertFalse($connection->isConnected());
+        static::assertFalse($connection->isConnected());
 
         $connection->execute('SELECT 1');
 
-        self::assertTrue($connection->isConnected());
+        static::assertTrue($connection->isConnected());
     }
 
-    public function testExecuteCallsProfilerFinishBeforeThrowingOnError(): void
+    #[Test]
+    public function executeCallsProfilerFinishBeforeThrowingOnError(): void
     {
         $profiler = $this->createMock(ProfilerInterface::class);
         $profiler->expects($this->once())->method('profilerStart')->willReturnSelf();
@@ -105,7 +112,8 @@ final class ConnectionTest extends TestCase
         @$connection->execute('INVALID SQL STATEMENT HERE %%%');
     }
 
-    public function testExecuteCallsProfilerStartAndFinish(): void
+    #[Test]
+    public function executeCallsProfilerStartAndFinish(): void
     {
         $profiler = $this->createMock(ProfilerInterface::class);
         $profiler->expects($this->once())->method('profilerStart')->willReturnSelf();
@@ -119,19 +127,21 @@ final class ConnectionTest extends TestCase
         $connection->execute('SELECT 1');
     }
 
-    public function testFluentSetDriver(): void
+    #[Test]
+    public function fluentSetDriver(): void
     {
         $driver = $this->createMock(PdoDriverInterface::class);
 
         $result = $this->connection->setDriver($driver);
 
-        self::assertSame($this->connection, $result);
+        static::assertSame($this->connection, $result);
     }
 
     /**
      * Test getConnectedDsn returns a DSN string if it has been set
      */
-    public function testGetDsnReturnsDsnAfterConnect(): void
+    #[Test]
+    public function getDsnReturnsDsnAfterConnect(): void
     {
         $dsn = 'sqlite::memory:';
         $this->connection->setConnectionParameters(['dsn' => $dsn]);
@@ -141,10 +151,11 @@ final class ConnectionTest extends TestCase
         }
         $responseString = $this->connection->getDsn();
 
-        self::assertEquals($dsn, $responseString);
+        static::assertEquals($dsn, $responseString);
     }
 
-    public function testGetDsnThrowsWhenDsnIsNull(): void
+    #[Test]
+    public function getDsnThrowsWhenDsnIsNull(): void
     {
         $connection = new TestConnection(['dsn' => 'sqlite::memory:']);
         $connection->connect();
@@ -158,35 +169,38 @@ final class ConnectionTest extends TestCase
         $connection->getDsn();
     }
 
-    public function testPrepareAutoConnectsAndReturnsStatement(): void
+    #[Test]
+    public function prepareAutoConnectsAndReturnsStatement(): void
     {
         $connection = new TestConnection(['dsn' => 'sqlite::memory:']);
         $driver     = new TestPdo($connection);
 
-        self::assertFalse($connection->isConnected());
+        static::assertFalse($connection->isConnected());
 
         $statement = $connection->prepare('SELECT 1');
 
-        self::assertTrue($connection->isConnected());
-        self::assertInstanceOf(Statement::class, $statement);
+        static::assertTrue($connection->isConnected());
+        static::assertInstanceOf(Statement::class, $statement);
     }
 
     /**
      * Test getResource method tries to connect to  the database, it should never return null
      */
-    public function testResource(): void
+    #[Test]
+    public function resource(): void
     {
         $resource = $this->connection->getResource();
-        self::assertNotNull($resource);
+        static::assertNotNull($resource);
     }
 
-    public function testSetConnectionParametersStoresParams(): void
+    #[Test]
+    public function setConnectionParametersStoresParams(): void
     {
         $params = ['dsn' => 'sqlite::memory:', 'username' => 'test'];
 
         $this->connection->setConnectionParameters($params);
 
-        self::assertSame($params, $this->connection->getConnectionParameters());
+        static::assertSame($params, $this->connection->getConnectionParameters());
     }
 
     /**

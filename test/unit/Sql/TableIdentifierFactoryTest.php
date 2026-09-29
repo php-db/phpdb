@@ -8,102 +8,114 @@ use PhpDb\Sql\Exception\InvalidArgumentException;
 use PhpDb\Sql\TableIdentifierFactory;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 #[Group('unit')]
 #[CoversClass(TableIdentifierFactory::class)]
 final class TableIdentifierFactoryTest extends TestCase
 {
-    public function testCallTimePrefixIsAppliedWhenNonePreconfigured(): void
+    #[Test]
+    public function callTimePrefixIsAppliedWhenNonePreconfigured(): void
     {
         $factory         = new TableIdentifierFactory();
         $tableIdentifier = $factory('users', null, 'archive');
 
-        self::assertSame('archive', $tableIdentifier->getPrefix());
-        self::assertSame('archive_users', $tableIdentifier->getTable());
+        static::assertSame('archive', $tableIdentifier->getPrefix());
+        static::assertSame('archive_users', $tableIdentifier->getTable());
     }
 
-    public function testCallTimePrefixOverridesConfiguredPrefix(): void
+    #[Test]
+    public function callTimePrefixOverridesConfiguredPrefix(): void
     {
         $factory         = new TableIdentifierFactory('backup');
         $tableIdentifier = $factory('users', null, 'archive');
 
-        self::assertSame('archive', $tableIdentifier->getPrefix());
-        self::assertSame('archive_users', $tableIdentifier->getTable());
+        static::assertSame('archive', $tableIdentifier->getPrefix());
+        static::assertSame('archive_users', $tableIdentifier->getTable());
     }
 
-    public function testCallTimeSeparatorIsAppliedWhenNonePreconfigured(): void
+    #[Test]
+    public function callTimeSeparatorIsAppliedWhenNonePreconfigured(): void
     {
         $factory         = new TableIdentifierFactory();
         $tableIdentifier = $factory('users', null, 'archive', '__');
 
-        self::assertSame('__', $tableIdentifier->getSeparator());
-        self::assertSame('archive__users', $tableIdentifier->getTable());
+        static::assertSame('__', $tableIdentifier->getSeparator());
+        static::assertSame('archive__users', $tableIdentifier->getTable());
     }
 
-    public function testCallTimeSeparatorOverridesConfiguredSeparator(): void
+    #[Test]
+    public function callTimeSeparatorOverridesConfiguredSeparator(): void
     {
         $factory         = new TableIdentifierFactory('backup', '__');
         $tableIdentifier = $factory('users', null, null, '_');
 
-        self::assertSame('_', $tableIdentifier->getSeparator());
-        self::assertSame('backup_users', $tableIdentifier->getTable());
+        static::assertSame('_', $tableIdentifier->getSeparator());
+        static::assertSame('backup_users', $tableIdentifier->getTable());
     }
 
-    public function testConfiguredSeparatorIsCarriedButUnusedWhenNoPrefixApplies(): void
+    #[Test]
+    public function configuredSeparatorIsCarriedButUnusedWhenNoPrefixApplies(): void
     {
         $factory         = new TableIdentifierFactory(null, '__');
         $tableIdentifier = $factory('users');
 
-        self::assertSame('__', $tableIdentifier->getSeparator());
-        self::assertNull($tableIdentifier->getPrefix());
-        self::assertSame('users', $tableIdentifier->getTable());
+        static::assertSame('__', $tableIdentifier->getSeparator());
+        static::assertNull($tableIdentifier->getPrefix());
+        static::assertSame('users', $tableIdentifier->getTable());
     }
 
-    public function testCreatesIdentifierWithConfiguredPrefix(): void
+    #[Test]
+    public function createsIdentifierWithConfiguredPrefix(): void
     {
         $factory         = new TableIdentifierFactory('backup');
         $tableIdentifier = $factory('users');
 
-        self::assertSame('backup', $tableIdentifier->getPrefix());
-        self::assertSame('backup_users', $tableIdentifier->getTable());
-        self::assertNull($tableIdentifier->getSchema());
+        static::assertSame('backup', $tableIdentifier->getPrefix());
+        static::assertSame('backup_users', $tableIdentifier->getTable());
+        static::assertNull($tableIdentifier->getSchema());
     }
 
-    public function testCreatesIdentifierWithConfiguredSeparator(): void
+    #[Test]
+    public function createsIdentifierWithConfiguredSeparator(): void
     {
         $factory         = new TableIdentifierFactory('backup', '__');
         $tableIdentifier = $factory('users');
 
-        self::assertSame('__', $tableIdentifier->getSeparator());
-        self::assertSame('backup__users', $tableIdentifier->getTable());
+        static::assertSame('__', $tableIdentifier->getSeparator());
+        static::assertSame('backup__users', $tableIdentifier->getTable());
     }
 
-    public function testCreatesIdentifierWithoutPrefixWhenNoneConfigured(): void
+    #[Test]
+    public function createsIdentifierWithoutPrefixWhenNoneConfigured(): void
     {
         $factory         = new TableIdentifierFactory();
         $tableIdentifier = $factory('users', 'public');
 
-        self::assertNull($tableIdentifier->getPrefix());
-        self::assertSame('users', $tableIdentifier->getTable());
+        static::assertNull($tableIdentifier->getPrefix());
+        static::assertSame('users', $tableIdentifier->getTable());
     }
 
-    public function testCreatesIdentifierWithSchema(): void
+    #[Test]
+    public function createsIdentifierWithSchema(): void
     {
         $factory         = new TableIdentifierFactory('backup');
         $tableIdentifier = $factory('users', 'public');
 
-        self::assertSame(['backup_users', 'public'], $tableIdentifier->getTableAndSchema());
+        static::assertSame(['backup_users', 'public'], $tableIdentifier->getTableAndSchema());
     }
 
-    public function testPrefixIsNullByDefault(): void
+    #[Test]
+    public function prefixIsNullByDefault(): void
     {
         $factory = new TableIdentifierFactory();
 
-        self::assertNull($factory->getPrefix());
+        static::assertNull($factory->getPrefix());
     }
 
-    public function testRejectsEmptyStringCallTimePrefix(): void
+    #[Test]
+    public function rejectsEmptyStringCallTimePrefix(): void
     {
         $factory = new TableIdentifierFactory('backup');
 
@@ -112,7 +124,8 @@ final class TableIdentifierFactoryTest extends TestCase
         $factory('users', null, '');
     }
 
-    public function testRejectsEmptyStringCallTimeSeparator(): void
+    #[Test]
+    public function rejectsEmptyStringCallTimeSeparator(): void
     {
         $factory = new TableIdentifierFactory('backup');
 
@@ -121,59 +134,67 @@ final class TableIdentifierFactoryTest extends TestCase
         $factory('users', null, null, '');
     }
 
-    public function testRejectsEmptyStringPrefix(): void
+    #[Test]
+    public function rejectsEmptyStringPrefix(): void
     {
         self::expectException(InvalidArgumentException::class);
         self::expectExceptionMessage(InvalidArgumentException::EMPTY_PREFIX);
         new TableIdentifierFactory('');
     }
 
-    public function testRejectsEmptyStringSeparator(): void
+    #[Test]
+    public function rejectsEmptyStringSeparator(): void
     {
         self::expectException(InvalidArgumentException::class);
         self::expectExceptionMessage(InvalidArgumentException::EMPTY_SEPARATOR);
         new TableIdentifierFactory('backup', '');
     }
 
-    public function testRejectsEmptyStringSeparatorWithoutPrefix(): void
+    #[Test]
+    public function rejectsEmptyStringSeparatorWithoutPrefix(): void
     {
         self::expectException(InvalidArgumentException::class);
         self::expectExceptionMessage(InvalidArgumentException::EMPTY_SEPARATOR);
         new TableIdentifierFactory(null, '');
     }
 
-    public function testReturnsConfiguredPrefix(): void
+    #[Test]
+    public function returnsConfiguredPrefix(): void
     {
         $factory = new TableIdentifierFactory('backup');
 
-        self::assertSame('backup', $factory->getPrefix());
+        static::assertSame('backup', $factory->getPrefix());
     }
 
-    public function testReturnsConfiguredSeparator(): void
+    #[Test]
+    public function returnsConfiguredSeparator(): void
     {
         $factory = new TableIdentifierFactory('backup', '__');
 
-        self::assertSame('__', $factory->getSeparator());
+        static::assertSame('__', $factory->getSeparator());
     }
 
-    public function testSeparatorDefaultsToUnderscore(): void
+    #[Test]
+    public function separatorDefaultsToUnderscore(): void
     {
         $factory = new TableIdentifierFactory('backup');
 
-        self::assertSame('_', $factory->getSeparator());
+        static::assertSame('_', $factory->getSeparator());
     }
 
-    public function testSeparatorDefaultsToUnderscoreWhenNoPrefixConfigured(): void
+    #[Test]
+    public function separatorDefaultsToUnderscoreWhenNoPrefixConfigured(): void
     {
         $factory = new TableIdentifierFactory();
 
-        self::assertSame('_', $factory->getSeparator());
+        static::assertSame('_', $factory->getSeparator());
     }
 
-    public function testSeparatorFallsBackToDefaultWhenPassedAsNull(): void
+    #[Test]
+    public function separatorFallsBackToDefaultWhenPassedAsNull(): void
     {
         $factory = new TableIdentifierFactory('backup', null);
 
-        self::assertSame('_', $factory->getSeparator());
+        static::assertSame('_', $factory->getSeparator());
     }
 }

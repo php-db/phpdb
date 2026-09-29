@@ -10,6 +10,7 @@ use PhpDbTest\TestAsset\ObjectToString;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 use TypeError;
@@ -48,151 +49,171 @@ class TableIdentifierTest extends TestCase
         ];
     }
 
-    public function testGetDefaultPrefix(): void
+    #[Test]
+    public function getDefaultPrefix(): void
     {
         $tableIdentifier = new TableIdentifier('foo');
 
-        self::assertNull($tableIdentifier->getPrefix());
+        static::assertNull($tableIdentifier->getPrefix());
     }
 
-    public function testGetDefaultSchema(): void
+    #[Test]
+    public function getDefaultSchema(): void
     {
         $tableIdentifier = new TableIdentifier('foo');
 
-        self::assertNull($tableIdentifier->getSchema());
+        static::assertNull($tableIdentifier->getSchema());
     }
 
-    public function testGetDefaultSeparator(): void
+    #[Test]
+    public function getDefaultSeparator(): void
     {
         $tableIdentifier = new TableIdentifier('foo');
 
-        self::assertSame('_', $tableIdentifier->getSeparator());
+        static::assertSame('_', $tableIdentifier->getSeparator());
     }
 
-    public function testGetPrefix(): void
+    #[Test]
+    public function getPrefix(): void
     {
         $tableIdentifier = new TableIdentifier('foo', null, 'backup');
 
-        self::assertSame('backup', $tableIdentifier->getPrefix());
+        static::assertSame('backup', $tableIdentifier->getPrefix());
     }
 
-    public function testGetSchema(): void
+    #[Test]
+    public function getSchema(): void
     {
         $tableIdentifier = new TableIdentifier('foo', 'bar');
 
-        self::assertSame('bar', $tableIdentifier->getSchema());
+        static::assertSame('bar', $tableIdentifier->getSchema());
     }
 
     /**
      * @todo Review test to see if relevant?
      */
-    public function testGetSchemaFromObjectStringCast(): void
+    #[Test]
+    public function getSchemaFromObjectStringCast(): void
     {
         $schema          = new ObjectToString('castResult');
         $tableIdentifier = new TableIdentifier('foo', (string) $schema);
 
-        self::assertSame('castResult', $tableIdentifier->getSchema());
-        self::assertSame('castResult', $tableIdentifier->getSchema());
+        static::assertSame('castResult', $tableIdentifier->getSchema());
+        static::assertSame('castResult', $tableIdentifier->getSchema());
     }
 
-    public function testGetSeparator(): void
+    #[Test]
+    public function getSeparator(): void
     {
         $tableIdentifier = new TableIdentifier('foo', null, 'backup', '__');
 
-        self::assertSame('__', $tableIdentifier->getSeparator());
+        static::assertSame('__', $tableIdentifier->getSeparator());
     }
 
-    public function testGetTable(): void
+    #[Test]
+    public function getTable(): void
     {
         $tableIdentifier = new TableIdentifier('foo');
 
-        self::assertSame('foo', $tableIdentifier->getTable());
+        static::assertSame('foo', $tableIdentifier->getTable());
     }
 
-    public function testGetTableAndSchemaAppliesPrefix(): void
+    #[Test]
+    public function getTableAndSchemaAppliesPrefix(): void
     {
         $tableIdentifier = new TableIdentifier('foo', 'bar', 'backup');
 
-        self::assertSame(['backup_foo', 'bar'], $tableIdentifier->getTableAndSchema());
+        static::assertSame(['backup_foo', 'bar'], $tableIdentifier->getTableAndSchema());
     }
 
-    public function testGetTableAndSchemaWithoutPrefix(): void
+    #[Test]
+    public function getTableAndSchemaWithoutPrefix(): void
     {
         $tableIdentifier = new TableIdentifier('foo', 'bar');
 
-        self::assertSame(['foo', 'bar'], $tableIdentifier->getTableAndSchema());
+        static::assertSame(['foo', 'bar'], $tableIdentifier->getTableAndSchema());
     }
 
-    public function testGetTableAppliesPrefixWithCustomSeparator(): void
+    #[Test]
+    public function getTableAppliesPrefixWithCustomSeparator(): void
     {
         $tableIdentifier = new TableIdentifier('foo', null, 'backup', '__');
 
-        self::assertSame('backup__foo', $tableIdentifier->getTable());
+        static::assertSame('backup__foo', $tableIdentifier->getTable());
     }
 
-    public function testGetTableAppliesPrefixWithDefaultSeparator(): void
+    #[Test]
+    public function getTableAppliesPrefixWithDefaultSeparator(): void
     {
         $tableIdentifier = new TableIdentifier('foo', null, 'backup');
 
-        self::assertSame('backup_foo', $tableIdentifier->getTable());
+        static::assertSame('backup_foo', $tableIdentifier->getTable());
     }
 
-    public function testGetTableFromObjectStringCast(): void
+    #[Test]
+    public function getTableFromObjectStringCast(): void
     {
         $table           = new ObjectToString('castResult');
         $tableIdentifier = new TableIdentifier((string) $table);
 
-        self::assertSame('castResult', $tableIdentifier->getTable());
-        self::assertSame('castResult', $tableIdentifier->getTable());
+        static::assertSame('castResult', $tableIdentifier->getTable());
+        static::assertSame('castResult', $tableIdentifier->getTable());
     }
 
-    public function testGetTableIgnoresSeparatorWithoutPrefix(): void
+    #[Test]
+    public function getTableIgnoresSeparatorWithoutPrefix(): void
     {
         $tableIdentifier = new TableIdentifier('foo', null, null, '__');
 
-        self::assertSame('foo', $tableIdentifier->getTable());
+        static::assertSame('foo', $tableIdentifier->getTable());
     }
 
-    public function testGetUnprefixedTableReturnsTableAsGiven(): void
+    #[Test]
+    public function getUnprefixedTableReturnsTableAsGiven(): void
     {
         $tableIdentifier = new TableIdentifier('foo', null, 'backup');
 
-        self::assertSame('foo', $tableIdentifier->getUnprefixedTable());
+        static::assertSame('foo', $tableIdentifier->getUnprefixedTable());
     }
 
-    public function testRejectsEmptyStringSeparatorWithoutPrefix(): void
+    #[Test]
+    public function rejectsEmptyStringSeparatorWithoutPrefix(): void
     {
         self::expectException(InvalidArgumentException::class);
         self::expectExceptionMessage(InvalidArgumentException::EMPTY_SEPARATOR);
         new TableIdentifier('foo', null, null, '');
     }
 
+    #[Test]
     #[DataProvider('invalidNameArgumentProvider')]
-    public function testRejectsInvalidPrefix(mixed $invalidPrefix): void
+    public function rejectsInvalidPrefix(mixed $invalidPrefix): void
     {
         self::expectException('' === $invalidPrefix ? InvalidArgumentException::class : TypeError::class);
         /** @psalm-suppress MixedArgument */
         new TableIdentifier('foo', 'bar', $invalidPrefix);
     }
 
+    #[Test]
     #[DataProvider('invalidNameArgumentProvider')]
-    public function testRejectsInvalidSchema(mixed $invalidSchema): void
+    public function rejectsInvalidSchema(mixed $invalidSchema): void
     {
         self::expectException('' === $invalidSchema ? InvalidArgumentException::class : TypeError::class);
         /** @psalm-suppress MixedArgument */
         new TableIdentifier('foo', $invalidSchema);
     }
 
+    #[Test]
     #[DataProvider('invalidNameArgumentProvider')]
-    public function testRejectsInvalidSeparator(mixed $invalidSeparator): void
+    public function rejectsInvalidSeparator(mixed $invalidSeparator): void
     {
         self::expectException('' === $invalidSeparator ? InvalidArgumentException::class : TypeError::class);
         /** @psalm-suppress MixedArgument */
         new TableIdentifier('foo', 'bar', 'backup', $invalidSeparator);
     }
 
+    #[Test]
     #[DataProvider('invalidTableProvider')]
-    public function testRejectsInvalidTable(mixed $invalidTable): void
+    public function rejectsInvalidTable(mixed $invalidTable): void
     {
         self::expectException('' === $invalidTable ? InvalidArgumentException::class : TypeError::class);
         /** @psalm-suppress MixedArgument */

@@ -32,6 +32,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\IgnoreDeprecations;
 use PHPUnit\Framework\Attributes\RequiresPhp;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestDox;
 use PHPUnit\Framework\TestCase;
 use ReflectionException;
@@ -833,8 +834,9 @@ final class SelectTest extends TestCase
         // phpcs:enable Generic.Files.LineLength.TooLong
     }
 
+    #[Test]
     #[TestDox('unit test: Test join() exception with bad join')]
-    public function testBadJoin(): void
+    public function badJoin(): void
     {
         $select = new Select();
         self::expectException(InvalidArgumentException::class);
@@ -842,7 +844,8 @@ final class SelectTest extends TestCase
         $select->join(['foo'], 'x = y');
     }
 
-    public function testCloneDeepCopiesAllSubObjects(): void
+    #[Test]
+    public function cloneDeepCopiesAllSubObjects(): void
     {
         $select = new Select();
         $select->from('foo');
@@ -855,32 +858,34 @@ final class SelectTest extends TestCase
         $clone->having('cnt > 1');
         $clone->join('baz', 'foo.id = baz.foo_id');
 
-        self::assertCount(1, $select->where);
-        self::assertCount(2, $clone->where);
-        self::assertCount(1, $select->having);
-        self::assertCount(2, $clone->having);
-        self::assertCount(1, $select->joins);
-        self::assertCount(2, $clone->joins);
+        static::assertCount(1, $select->where);
+        static::assertCount(2, $clone->where);
+        static::assertCount(1, $select->having);
+        static::assertCount(2, $clone->having);
+        static::assertCount(1, $select->joins);
+        static::assertCount(2, $clone->joins);
     }
 
+    #[Test]
     #[TestDox('unit test: Test __clone() will clone the where object so that this select can be used
                     in multiple contexts')]
-    public function testCloning(): void
+    public function cloning(): void
     {
         $select  = new Select();
         $select1 = clone $select;
         $select1->where('id = foo');
         $select1->having('id = foo');
 
-        self::assertEquals(0, $select->where->count());
-        self::assertEquals(1, $select1->where->count());
+        static::assertSame(0, $select->where->count());
+        static::assertSame(1, $select1->where->count());
 
-        self::assertEquals(0, $select->having->count());
-        self::assertEquals(1, $select1->having->count());
+        static::assertSame(0, $select->having->count());
+        static::assertSame(1, $select1->having->count());
     }
 
+    #[Test]
     #[TestDox('unit test: Test columns() returns Select object (is chainable)')]
-    public function testColumns(): void
+    public function columns(): void
     {
         $select = new Select();
 
@@ -888,42 +893,45 @@ final class SelectTest extends TestCase
         $result = $select->columns(['foo', 'bar']);
 
         // Verify fluent interface
-        self::assertSame($select, $result);
+        static::assertSame($select, $result);
 
         // Verify the first mutation occurred
-        self::assertEquals(['foo', 'bar'], $select->getRawState('columns'));
+        static::assertEquals(['foo', 'bar'], $select->getRawState('columns'));
 
         // Second mutation to verify mutability
         $select->columns(['baz', 'qux']);
 
         // Verify the instance was actually mutated
-        self::assertEquals(['baz', 'qux'], $select->getRawState('columns'));
+        static::assertEquals(['baz', 'qux'], $select->getRawState('columns'));
     }
 
-    public function testColumnsWithPrefixDisabled(): void
+    #[Test]
+    public function columnsWithPrefixDisabled(): void
     {
         $select = new Select();
         $select->from('foo')->columns(['col'], false);
 
         $sql = $select->getSqlString(new TrustingSql92Platform());
 
-        self::assertStringNotContainsString('"foo"."col"', $sql);
-        self::assertStringContainsString('"col"', $sql);
+        static::assertStringNotContainsString('"foo"."col"', $sql);
+        static::assertStringContainsString('"col"', $sql);
     }
 
-    public function testColumnsWithPrefixDisabledOmitsTablePrefix(): void
+    #[Test]
+    public function columnsWithPrefixDisabledOmitsTablePrefix(): void
     {
         $select = new Select();
         $select->from(['a' => 'users'])->columns(['id'], false);
 
         $sql = $select->getSqlString(new TrustingSql92Platform());
 
-        self::assertStringContainsString('"id"', $sql);
-        self::assertStringNotContainsString('"a"."id"', $sql);
+        static::assertStringContainsString('"id"', $sql);
+        static::assertStringNotContainsString('"a"."id"', $sql);
     }
 
+    #[Test]
     #[TestDox('unit test: Test combine() returns same Select object (is chainable)')]
-    public function testCombine(): void
+    public function combine(): void
     {
         $select  = new Select();
         $combine = new Select();
@@ -932,14 +940,14 @@ final class SelectTest extends TestCase
         $result = $select->combine($combine, Select::COMBINE_UNION, 'ALL');
 
         // Verify fluent interface
-        self::assertSame($select, $result);
+        static::assertSame($select, $result);
 
         // Verify the first mutation occurred
         $state = $select->getRawState('combine');
-        self::assertInstanceOf(Select::class, $state['select']);
-        self::assertNotSame($select, $state['select']);
-        self::assertEquals(Select::COMBINE_UNION, $state['type']);
-        self::assertEquals('ALL', $state['modifier']);
+        static::assertInstanceOf(Select::class, $state['select']);
+        static::assertNotSame($select, $state['select']);
+        static::assertEquals(Select::COMBINE_UNION, $state['type']);
+        static::assertSame('ALL', $state['modifier']);
 
         // Second mutation to verify mutability using a fresh Select
         $select2  = new Select();
@@ -948,11 +956,12 @@ final class SelectTest extends TestCase
 
         // Verify the instance was actually mutated
         $state2 = $select2->getRawState('combine');
-        self::assertEquals(Select::COMBINE_INTERSECT, $state2['type']);
-        self::assertEquals('DISTINCT', $state2['modifier']);
+        static::assertEquals(Select::COMBINE_INTERSECT, $state2['type']);
+        static::assertSame('DISTINCT', $state2['modifier']);
     }
 
-    public function testCombineThrowsWhenAlreadyCombined(): void
+    #[Test]
+    public function combineThrowsWhenAlreadyCombined(): void
     {
         $select = new Select();
         $select->from('t1');
@@ -962,7 +971,8 @@ final class SelectTest extends TestCase
         $select->combine(new Select('t3'));
     }
 
-    public function testCombineWrapsStatementInParentheses(): void
+    #[Test]
+    public function combineWrapsStatementInParentheses(): void
     {
         $select1 = new Select();
         $select1->from('t1');
@@ -974,19 +984,21 @@ final class SelectTest extends TestCase
 
         $sql = $select1->getSqlString(new TrustingSql92Platform());
 
-        self::assertStringContainsString('( SELECT', $sql);
-        self::assertStringContainsString('UNION', $sql);
-        self::assertStringContainsString(') UNION (', $sql);
+        static::assertStringContainsString('( SELECT', $sql);
+        static::assertStringContainsString('UNION', $sql);
+        static::assertStringContainsString(') UNION (', $sql);
     }
 
-    public function testConstruct(): void
+    #[Test]
+    public function construct(): void
     {
         $select = new Select('foo');
-        self::assertEquals('foo', $select->getRawState('table'));
+        static::assertSame('foo', $select->getRawState('table'));
     }
 
+    #[Test]
     #[TestDox('unit test: Test from() returns Select object (is chainable)')]
-    public function testFrom(): void
+    public function from(): void
     {
         $select = new Select();
 
@@ -994,19 +1006,20 @@ final class SelectTest extends TestCase
         $result = $select->from('foo');
 
         // Verify fluent interface
-        self::assertSame($select, $result);
+        static::assertSame($select, $result);
 
         // Verify the first mutation occurred
-        self::assertEquals('foo', $select->getRawState('table'));
+        static::assertSame('foo', $select->getRawState('table'));
 
         // Second mutation to verify mutability
         $select->from('bar');
 
         // Verify the instance was actually mutated
-        self::assertEquals('bar', $select->getRawState('table'));
+        static::assertSame('bar', $select->getRawState('table'));
     }
 
-    public function testFromThrowsExceptionForInvalidArrayFormat(): void
+    #[Test]
+    public function fromThrowsExceptionForInvalidArrayFormat(): void
     {
         $select = new Select();
 
@@ -1015,7 +1028,8 @@ final class SelectTest extends TestCase
         $select->from(['foo', 'bar']); // Numeric array instead of associative
     }
 
-    public function testFromThrowsExceptionForInvalidTableType(): void
+    #[Test]
+    public function fromThrowsExceptionForInvalidTableType(): void
     {
         $select = new Select();
 
@@ -1024,7 +1038,8 @@ final class SelectTest extends TestCase
         $select->from(123);
     }
 
-    public function testFromThrowsExceptionWhenTableReadOnly(): void
+    #[Test]
+    public function fromThrowsExceptionWhenTableReadOnly(): void
     {
         $select = new Select('foo'); // Creating with table makes it read-only
 
@@ -1035,37 +1050,41 @@ final class SelectTest extends TestCase
         $select->from('bar');
     }
 
-    public function testFromWithAliasArrayResolvesTableAndAlias(): void
+    #[Test]
+    public function fromWithAliasArrayResolvesTableAndAlias(): void
     {
         $select = new Select();
         $select->from(['a' => 'users'])->columns(['id']);
 
         $sql = $select->getSqlString(new TrustingSql92Platform());
 
-        self::assertStringContainsString('"users" AS "a"', $sql);
-        self::assertStringContainsString('"a"."id"', $sql);
+        static::assertStringContainsString('"users" AS "a"', $sql);
+        static::assertStringContainsString('"a"."id"', $sql);
     }
 
-    public function testGetRawStateInitializesLazyProperties(): void
+    #[Test]
+    public function getRawStateInitializesLazyProperties(): void
     {
         $select   = new Select();
         $rawState = $select->getRawState();
 
-        self::assertInstanceOf(Where::class, $rawState[Select::WHERE]);
-        self::assertInstanceOf(Join::class, $rawState[Select::JOINS]);
-        self::assertInstanceOf(Having::class, $rawState[Select::HAVING]);
+        static::assertInstanceOf(Where::class, $rawState[Select::WHERE]);
+        static::assertInstanceOf(Join::class, $rawState[Select::JOINS]);
+        static::assertInstanceOf(Having::class, $rawState[Select::HAVING]);
     }
 
     /** @noinspection PhpUnusedParameterInspection */
+    #[Test]
     #[DataProvider('providerData')]
     #[TestDox('unit test: Test getSqlString() will produce expected sql and parameters based on
                     a variety of provided arguments [uses data provider]')]
-    public function testGetSqlString(Select $select, mixed $unused, mixed $unused2, string $expectedSqlString): void
+    public function getSqlString(Select $select, mixed $unused, mixed $unused2, string $expectedSqlString): void
     {
-        self::assertEquals($expectedSqlString, $select->getSqlString(new TrustingSql92Platform()));
+        static::assertEquals($expectedSqlString, $select->getSqlString(new TrustingSql92Platform()));
     }
 
-    public function testGetThrowsExceptionForInvalidProperty(): void
+    #[Test]
+    public function getThrowsExceptionForInvalidProperty(): void
     {
         $select = new Select();
 
@@ -1075,8 +1094,9 @@ final class SelectTest extends TestCase
         $value = $select->invalidProperty; /** @phpstan-ignore-line */
     }
 
+    #[Test]
     #[TestDox('unit test: Test group() returns same Select object (is chainable)')]
-    public function testGroup(): void
+    public function group(): void
     {
         $select = new Select();
 
@@ -1084,20 +1104,21 @@ final class SelectTest extends TestCase
         $result = $select->group(['col1', 'col2']);
 
         // Verify fluent interface
-        self::assertSame($select, $result);
+        static::assertSame($select, $result);
 
         // Verify the first mutation occurred
-        self::assertEquals(['col1', 'col2'], $select->getRawState('group'));
+        static::assertEquals(['col1', 'col2'], $select->getRawState('group'));
 
         // Second mutation to verify mutability (group accumulates)
         $select->group('col3');
 
         // Verify the instance was actually mutated
-        self::assertEquals(['col1', 'col2', 'col3'], $select->getRawState('group'));
+        static::assertEquals(['col1', 'col2', 'col3'], $select->getRawState('group'));
     }
 
+    #[Test]
     #[TestDox('unit test: Test having() returns same Select object (is chainable)')]
-    public function testHaving(): void
+    public function having(): void
     {
         $select = new Select();
 
@@ -1105,22 +1126,23 @@ final class SelectTest extends TestCase
         $result = $select->having(['x = ?' => 5]);
 
         // Verify fluent interface
-        self::assertSame($select, $result);
+        static::assertSame($select, $result);
 
         // Verify the first mutation occurred
         $having = $select->getRawState('having');
-        self::assertInstanceOf(Having::class, $having);
-        self::assertEquals(1, $having->count());
+        static::assertInstanceOf(Having::class, $having);
+        static::assertSame(1, $having->count());
 
         // Second mutation to verify mutability (having predicates accumulate)
         $select->having(['y = ?' => 10]);
 
         // Verify the instance was actually mutated
-        self::assertEquals(2, $select->getRawState('having')->count());
+        static::assertSame(2, $select->getRawState('having')->count());
     }
 
+    #[Test]
     #[TestDox('unit test: Test having() accepts Expression (ExpressionInterface) in array')]
-    public function testHavingAcceptsExpressionInterface(): void
+    public function havingAcceptsExpressionInterface(): void
     {
         $select = new Select();
         $select->from('foo')
@@ -1130,32 +1152,35 @@ final class SelectTest extends TestCase
             ]);
 
         $having = $select->getRawState('having');
-        self::assertInstanceOf(Having::class, $having);
-        self::assertEquals(1, $having->count());
+        static::assertInstanceOf(Having::class, $having);
+        static::assertSame(1, $having->count());
     }
 
+    #[Test]
     #[TestDox('unit test: Test having() returns same Select object (is chainable)')]
-    public function testHavingArgument1IsHavingObject(): void
+    public function havingArgument1IsHavingObject(): void
     {
         $select = new Select();
         $having = new Having();
         $return = $select->having($having);
-        self::assertSame($select, $return);
-        self::assertSame($having, $select->getRawState('having'));
+        static::assertSame($select, $return);
+        static::assertSame($having, $select->getRawState('having'));
     }
 
+    #[Test]
     #[TestDox('unit test: Test isTableReadOnly() returns correct state for read only')]
-    public function testIsTableReadOnly(): void
+    public function isTableReadOnly(): void
     {
         $select = new Select('foo');
-        self::assertTrue($select->isTableReadOnly());
+        static::assertTrue($select->isTableReadOnly());
 
         $select = new Select();
-        self::assertFalse($select->isTableReadOnly());
+        static::assertFalse($select->isTableReadOnly());
     }
 
+    #[Test]
     #[TestDox('unit test: Test join() returns same Select object (is chainable)')]
-    public function testJoin(): void
+    public function join(): void
     {
         $select = new Select();
 
@@ -1163,12 +1188,12 @@ final class SelectTest extends TestCase
         $result = $select->join('foo', 'x = y');
 
         // Verify fluent interface
-        self::assertSame($select, $result);
+        static::assertSame($select, $result);
 
         // Verify the first mutation occurred
         $joins = $select->getRawState('joins');
-        self::assertInstanceOf(Join::class, $joins);
-        self::assertEquals(
+        static::assertInstanceOf(Join::class, $joins);
+        static::assertEquals(
             [
                 [
                     'name'    => 'foo',
@@ -1185,12 +1210,13 @@ final class SelectTest extends TestCase
 
         // Verify the instance was actually mutated
         $joins2 = $select->getRawState('joins');
-        self::assertCount(2, $joins2->getJoins());
-        self::assertEquals('bar', $joins2->getJoins()[1]['name']);
+        static::assertCount(2, $joins2->getJoins());
+        static::assertSame('bar', $joins2->getJoins()[1]['name']);
     }
 
+    #[Test]
     #[TestDox(': unit test: test limit()')]
-    public function testLimit(): void
+    public function limit(): void
     {
         $select = new Select();
 
@@ -1198,22 +1224,23 @@ final class SelectTest extends TestCase
         $result = $select->limit(5);
 
         // Verify fluent interface
-        self::assertSame($select, $result);
+        static::assertSame($select, $result);
 
         // Verify the first mutation occurred
         $limit = $select->getRawState(Select::LIMIT);
-        self::assertIsNumeric($limit);
-        self::assertEquals(5, $limit);
+        static::assertIsNumeric($limit);
+        static::assertSame(5, $limit);
 
         // Second mutation to verify mutability
         $select->limit(10);
 
         // Verify the instance was actually mutated
-        self::assertEquals(10, $select->getRawState(Select::LIMIT));
+        static::assertSame(10, $select->getRawState(Select::LIMIT));
     }
 
+    #[Test]
     #[TestDox(': unit test: test limit() throws exception when invalid parameter passed')]
-    public function testLimitExceptionOnInvalidParameter(): void
+    public function limitExceptionOnInvalidParameter(): void
     {
         $select = new Select();
         self::expectException(InvalidArgumentException::class);
@@ -1221,22 +1248,25 @@ final class SelectTest extends TestCase
         $select->limit('foobar');
     }
 
+    #[Test]
     #[TestDox('unit test: Test __get() returns expected objects magically')]
-    public function testMagicAccessor(): void
+    public function magicAccessor(): void
     {
         $select = new Select();
-        self::assertInstanceOf(Where::class, $select->where);
+        static::assertInstanceOf(Where::class, $select->where);
     }
 
-    public function testMagicGetJoinsReturnsJoinInstance(): void
+    #[Test]
+    public function magicGetJoinsReturnsJoinInstance(): void
     {
         $select = new Select();
 
-        self::assertInstanceOf(Join::class, $select->joins);
+        static::assertInstanceOf(Join::class, $select->joins);
     }
 
+    #[Test]
     #[TestDox(': unit test: test offset()')]
-    public function testOffset(): void
+    public function offset(): void
     {
         $select = new Select();
 
@@ -1244,22 +1274,23 @@ final class SelectTest extends TestCase
         $result = $select->offset(10);
 
         // Verify fluent interface
-        self::assertSame($select, $result);
+        static::assertSame($select, $result);
 
         // Verify the first mutation occurred
         $offset = $select->getRawState(Select::OFFSET);
-        self::assertIsNumeric($offset);
-        self::assertEquals(10, $offset);
+        static::assertIsNumeric($offset);
+        static::assertSame(10, $offset);
 
         // Second mutation to verify mutability
         $select->offset(20);
 
         // Verify the instance was actually mutated
-        self::assertEquals(20, $select->getRawState(Select::OFFSET));
+        static::assertSame(20, $select->getRawState(Select::OFFSET));
     }
 
+    #[Test]
     #[TestDox(': unit test: test offset() throws exception when invalid parameter passed')]
-    public function testOffsetExceptionOnInvalidParameter(): void
+    public function offsetExceptionOnInvalidParameter(): void
     {
         $select = new Select();
         self::expectException(InvalidArgumentException::class);
@@ -1270,29 +1301,30 @@ final class SelectTest extends TestCase
     /**
      * @throws ReflectionException
      */
+    #[Test]
     #[TestDox('unit test: Test order()')]
-    public function testOrder(): void
+    public function order(): void
     {
         $select = new Select();
         $return = $select->order('id DESC');
-        self::assertSame($select, $return); // test fluent interface
-        self::assertEquals(['id DESC'], $select->getRawState('order'));
+        static::assertSame($select, $return); // test fluent interface
+        static::assertEquals(['id DESC'], $select->getRawState('order'));
 
         $select = new Select();
         $select->order('id DESC')
             ->order('name ASC, age DESC');
-        self::assertEquals(['id DESC', 'name ASC', 'age DESC'], $select->getRawState('order'));
+        static::assertEquals(['id DESC', 'name ASC', 'age DESC'], $select->getRawState('order'));
 
         $select = new Select();
         $select->order(['name ASC', 'age DESC']);
-        self::assertEquals(['name ASC', 'age DESC'], $select->getRawState('order'));
+        static::assertEquals(['name ASC', 'age DESC'], $select->getRawState('order'));
 
         $select = new Select();
         $select->order(new Expression('RAND()'));
 
         $sr     = new ReflectionObject($select);
         $method = $sr->getMethod('processOrder');
-        self::assertEquals(
+        static::assertEquals(
             [[['RAND()']]],
             $method->invokeArgs($select, [new TrustingSql92Platform()]),
         );
@@ -1307,58 +1339,63 @@ final class SelectTest extends TestCase
         );
         $sr     = new ReflectionObject($select);
         $method = $sr->getMethod('processOrder');
-        self::assertEquals(
+        static::assertEquals(
             [[['"rating" < \'10\'']]],
             $method->invokeArgs($select, [new TrustingSql92Platform()]),
         );
     }
 
+    #[Test]
     #[TestDox('unit test: Test order() correctly splits parameters.')]
-    public function testOrderCorrectlySplitsParameter(): void
+    public function orderCorrectlySplitsParameter(): void
     {
         $select = new Select();
         $select->order('name  desc');
-        self::assertEquals(
+        static::assertSame(
             'SELECT * ORDER BY "name" DESC',
             $select->getSqlString(new TrustingSql92Platform()),
         );
     }
 
-    public function testOrderWithAssociativeArray(): void
+    #[Test]
+    public function orderWithAssociativeArray(): void
     {
         $select = new Select();
         $select->from('foo')->order(['name' => 'DESC']);
 
         $sql = $select->getSqlString(new TrustingSql92Platform());
 
-        self::assertStringContainsString('ORDER BY "name" DESC', $sql);
+        static::assertStringContainsString('ORDER BY "name" DESC', $sql);
     }
 
-    public function testOrderWithExpressionObject(): void
+    #[Test]
+    public function orderWithExpressionObject(): void
     {
         $select = new Select();
         $select->from('foo')->order(new Expression('RAND()'));
 
         $sql = $select->getSqlString(new TrustingSql92Platform());
 
-        self::assertStringContainsString('ORDER BY RAND()', $sql);
+        static::assertStringContainsString('ORDER BY RAND()', $sql);
     }
 
-    public function testOrderWithStringContainingDirection(): void
+    #[Test]
+    public function orderWithStringContainingDirection(): void
     {
         $select = new Select();
         $select->from('foo')->order('name DESC');
 
         $sql = $select->getSqlString(new TrustingSql92Platform());
 
-        self::assertStringContainsString('ORDER BY "name" DESC', $sql);
+        static::assertStringContainsString('ORDER BY "name" DESC', $sql);
     }
 
     /** @noinspection PhpUnusedParameterInspection */
+    #[Test]
     #[DataProvider('providerData')]
     #[TestDox('unit test: Test prepareStatement() will produce expected sql and parameters based on
                     a variety of provided arguments [uses data provider]')]
-    public function testPrepareStatement(
+    public function prepareStatement(
         Select $select,
         string $expectedSqlString,
         array $expectedParameters,
@@ -1377,12 +1414,12 @@ final class SelectTest extends TestCase
 
         $mockStatement = $this->getMockBuilder(StatementInterface::class)->getMock();
         $mockStatement->expects($this->any())->method('getParameterContainer')->willReturn($parameterContainer);
-        $mockStatement->expects($this->any())->method('setSql')->with($this->equalTo($expectedSqlString));
+        $mockStatement->expects($this->any())->method('setSql')->with(static::equalTo($expectedSqlString));
 
         $select->prepareStatement($mockAdapter, $mockStatement);
 
         if ([] !== $expectedParameters) {
-            self::assertEquals($expectedParameters, $parameterContainer->getNamedArray());
+            static::assertEquals($expectedParameters, $parameterContainer->getNamedArray());
         }
     }
 
@@ -1390,10 +1427,11 @@ final class SelectTest extends TestCase
      * @throws ReflectionException
      * @noinspection PhpUnusedParameterInspection
      */
+    #[Test]
     #[DataProvider('providerData')]
     #[TestDox('unit test: Text process*() methods will return proper array when internally called,
                     part of extension API')]
-    public function testProcessMethods(
+    public function processMethods(
         Select $select,
         mixed $unused,
         mixed $unused2,
@@ -1419,12 +1457,13 @@ final class SelectTest extends TestCase
             $mr = $sr->getMethod($method);
             /** @psalm-suppress MixedAssignment */
             $return = $mr->invokeArgs($select, [new Sql92(), $mockDriver, $parameterContainer]);
-            self::assertEquals($expected, $return);
+            static::assertEquals($expected, $return);
         }
     }
 
+    #[Test]
     #[TestDox('unit test: Test quantifier() returns Select object (is chainable)')]
-    public function testQuantifier(): void
+    public function quantifier(): void
     {
         $select = new Select();
 
@@ -1432,128 +1471,133 @@ final class SelectTest extends TestCase
         $result = $select->quantifier(Select::QUANTIFIER_DISTINCT);
 
         // Verify fluent interface
-        self::assertSame($select, $result);
+        static::assertSame($select, $result);
 
         // Verify the first mutation occurred
-        self::assertEquals(Select::QUANTIFIER_DISTINCT, $select->getRawState('quantifier'));
+        static::assertEquals(Select::QUANTIFIER_DISTINCT, $select->getRawState('quantifier'));
 
         // Second mutation to verify mutability
         $select->quantifier(Select::QUANTIFIER_ALL);
 
         // Verify the instance was actually mutated
-        self::assertEquals(Select::QUANTIFIER_ALL, $select->getRawState('quantifier'));
+        static::assertEquals(Select::QUANTIFIER_ALL, $select->getRawState('quantifier'));
     }
 
+    #[Test]
     #[TestDox('unit test: Test quantifier() accepts expression')]
-    public function testQuantifierParameterExpressionInterface(): void
+    public function quantifierParameterExpressionInterface(): void
     {
         $expr   = $this->getMockBuilder(ExpressionInterface::class)->onlyMethods([])->getMock();
         $select = new Select();
         /** @psalm-suppress InvalidArgument */
         $select->quantifier($expr);
-        self::assertSame(
+        static::assertSame(
             $expr,
             $select->getRawState(Select::QUANTIFIER),
         );
     }
 
+    #[Test]
     #[TestDox('unit test: Test reset() resets internal stat of Select object, based on input')]
-    public function testReset(): void
+    public function reset(): void
     {
         $select = new Select();
 
         // table
         $select->from('foo');
-        self::assertEquals('foo', $select->getRawState(Select::TABLE));
+        static::assertSame('foo', $select->getRawState(Select::TABLE));
         $select->reset(Select::TABLE);
-        self::assertNull($select->getRawState(Select::TABLE));
+        static::assertNull($select->getRawState(Select::TABLE));
 
         // columns
         $select->columns(['foo']);
-        self::assertEquals(['foo'], $select->getRawState(Select::COLUMNS));
+        static::assertEquals(['foo'], $select->getRawState(Select::COLUMNS));
         $select->reset(Select::COLUMNS);
-        self::assertEmpty($select->getRawState(Select::COLUMNS));
+        static::assertEmpty($select->getRawState(Select::COLUMNS));
 
         // joins
         $select->join('foo', 'id = boo');
         $joins = $select->getRawState(Select::JOINS);
-        self::assertInstanceOf(Join::class, $joins);
-        self::assertEquals(
+        static::assertInstanceOf(Join::class, $joins);
+        static::assertEquals(
             [['name' => 'foo', 'on' => 'id = boo', 'columns' => ['*'], 'type' => 'inner']],
             $joins->getJoins(),
         );
         $select->reset(Select::JOINS);
         $emptyJoins = $select->getRawState(Select::JOINS);
-        self::assertInstanceOf(Join::class, $emptyJoins);
-        self::assertEmpty($emptyJoins->getJoins());
+        static::assertInstanceOf(Join::class, $emptyJoins);
+        static::assertEmpty($emptyJoins->getJoins());
 
         // where
         $select->where('foo = bar');
         /** @var Where $where1 */
         $where1 = $select->getRawState(Select::WHERE);
-        self::assertEquals(1, $where1->count());
+        static::assertSame(1, $where1->count());
         $select->reset(Select::WHERE);
         /** @var Where $where2 */
         $where2 = $select->getRawState(Select::WHERE);
-        self::assertEquals(0, $where2->count());
-        self::assertNotSame($where1, $where2);
+        static::assertSame(0, $where2->count());
+        static::assertNotSame($where1, $where2);
 
         // group
         $select->group(['foo']);
-        self::assertEquals(['foo'], $select->getRawState(Select::GROUP));
+        static::assertEquals(['foo'], $select->getRawState(Select::GROUP));
         $select->reset(Select::GROUP);
-        self::assertEmpty($select->getRawState(Select::GROUP));
+        static::assertEmpty($select->getRawState(Select::GROUP));
 
         // having
         $select->having('foo = bar');
         /** @var Having $having1 */
         $having1 = $select->getRawState(Select::HAVING);
-        self::assertEquals(1, $having1->count());
+        static::assertSame(1, $having1->count());
         $select->reset(Select::HAVING);
         /** @var Having $having2 */
         $having2 = $select->getRawState(Select::HAVING);
-        self::assertEquals(0, $having2->count());
-        self::assertNotSame($having1, $having2);
+        static::assertSame(0, $having2->count());
+        static::assertNotSame($having1, $having2);
 
         // limit
         $select->limit(5);
-        self::assertEquals(5, $select->getRawState(Select::LIMIT));
+        static::assertSame(5, $select->getRawState(Select::LIMIT));
         $select->reset(Select::LIMIT);
-        self::assertNull($select->getRawState(Select::LIMIT));
+        static::assertNull($select->getRawState(Select::LIMIT));
 
         // offset
         $select->offset(10);
-        self::assertEquals(10, $select->getRawState(Select::OFFSET));
+        static::assertSame(10, $select->getRawState(Select::OFFSET));
         $select->reset(Select::OFFSET);
-        self::assertNull($select->getRawState(Select::OFFSET));
+        static::assertNull($select->getRawState(Select::OFFSET));
 
         // order
         $select->order('foo asc');
-        self::assertEquals(['foo asc'], $select->getRawState(Select::ORDER));
+        static::assertEquals(['foo asc'], $select->getRawState(Select::ORDER));
         $select->reset(Select::ORDER);
-        self::assertEmpty($select->getRawState(Select::ORDER));
+        static::assertEmpty($select->getRawState(Select::ORDER));
     }
 
-    public function testResetCombine(): void
+    #[Test]
+    public function resetCombine(): void
     {
         $select = new Select();
         $select->from('t1');
         $select->combine(new Select('t2'));
         $select->reset(Select::COMBINE);
 
-        self::assertEmpty($select->getRawState(Select::COMBINE));
+        static::assertEmpty($select->getRawState(Select::COMBINE));
     }
 
-    public function testResetQuantifier(): void
+    #[Test]
+    public function resetQuantifier(): void
     {
         $select = new Select();
         $select->from('foo')->quantifier(Select::QUANTIFIER_DISTINCT);
         $select->reset(Select::QUANTIFIER);
 
-        self::assertNull($select->getRawState(Select::QUANTIFIER));
+        static::assertNull($select->getRawState(Select::QUANTIFIER));
     }
 
-    public function testResetTableThrowsWhenTableReadOnly(): void
+    #[Test]
+    public function resetTableThrowsWhenTableReadOnly(): void
     {
         $select = new Select('foo');
 
@@ -1562,37 +1606,41 @@ final class SelectTest extends TestCase
         $select->reset(Select::TABLE);
     }
 
-    public function testResetThrowsOnInvalidPart(): void
+    #[Test]
+    public function resetThrowsOnInvalidPart(): void
     {
         $select = new Select();
         $result = $select->reset('invalid');
 
-        self::assertSame($select, $result);
+        static::assertSame($select, $result);
     }
 
+    #[Test]
     #[Group('Laminas-5192')]
-    public function testSelectUsingTableIdentifierWithEmptyScheme(): void
+    public function selectUsingTableIdentifierWithEmptyScheme(): void
     {
         $select = new Select();
         $select->from(new TableIdentifier('foo'));
         $select->join(new TableIdentifier('bar'), 'foo.id = bar.fooid');
 
-        self::assertEquals(
+        static::assertSame(
             'SELECT "foo".*, "bar".* FROM "foo" INNER JOIN "bar" ON "foo"."id" = "bar"."fooid"',
             $select->getSqlString(new TrustingSql92Platform()),
         );
     }
 
-    public function testSetSpecificationStoresValidSpecification(): void
+    #[Test]
+    public function setSpecificationStoresValidSpecification(): void
     {
         $select = new Select();
         $select->setSpecification('Select', 'CUSTOM %1$s FROM %2$s');
 
         $rawState = (new ReflectionObject($select))->getProperty('specifications');
-        self::assertSame('CUSTOM %1$s FROM %2$s', $rawState->getValue($select)['Select']);
+        static::assertSame('CUSTOM %1$s FROM %2$s', $rawState->getValue($select)['Select']);
     }
 
-    public function testSetSpecificationThrowsExceptionForInvalidName(): void
+    #[Test]
+    public function setSpecificationThrowsExceptionForInvalidName(): void
     {
         $select = new Select();
 
@@ -1601,8 +1649,9 @@ final class SelectTest extends TestCase
         $select->setSpecification('invalid_spec', 'some spec');
     }
 
+    #[Test]
     #[TestDox('unit test: Test where() accepts Expression (ExpressionInterface) in array')]
-    public function testWhereAcceptsExpressionInterface(): void
+    public function whereAcceptsExpressionInterface(): void
     {
         $select = new Select();
         $select->from('foo')
@@ -1611,13 +1660,14 @@ final class SelectTest extends TestCase
             ]);
 
         $where = $select->getRawState('where');
-        self::assertInstanceOf(Where::class, $where);
-        self::assertEquals(1, $where->count());
+        static::assertInstanceOf(Where::class, $where);
+        static::assertSame(1, $where->count());
     }
 
+    #[Test]
     #[TestDox('unit test: Test where() will accept an array with a string key (containing ?) used as an
                     expression with placeholder')]
-    public function testWhereArgument1IsAssociativeArrayContainingReplacementCharacter(): void
+    public function whereArgument1IsAssociativeArrayContainingReplacementCharacter(): void
     {
         $select = new Select();
         $select->where(['foo > ?' => 5]);
@@ -1627,18 +1677,19 @@ final class SelectTest extends TestCase
         $predicates = $where->getPredicates();
         $expression = new Value(5);
 
-        self::assertCount(1, $predicates);
-        self::assertIsArray($predicates[0]);
-        self::assertInstanceOf(Predicate\Expression::class, $predicates[0][1]);
-        self::assertEquals(Predicate\PredicateSet::OP_AND, $predicates[0][0]);
-        self::assertEquals('foo > ?', $predicates[0][1]->getExpression());
-        self::assertEquals([$expression], $predicates[0][1]->getParameters());
+        static::assertCount(1, $predicates);
+        static::assertIsArray($predicates[0]);
+        static::assertInstanceOf(Predicate\Expression::class, $predicates[0][1]);
+        static::assertEquals(Predicate\PredicateSet::OP_AND, $predicates[0][0]);
+        static::assertSame('foo > ?', $predicates[0][1]->getExpression());
+        static::assertEquals([$expression], $predicates[0][1]->getParameters());
     }
 
+    #[Test]
     #[TestDox('
         unit test: Test where() will accept any array with string key (without ?) with Predicate throw Exception
     ')]
-    public function testWhereArgument1IsAssociativeArrayIsPredicate(): void
+    public function whereArgument1IsAssociativeArrayIsPredicate(): void
     {
         $select = new Select();
         $where  = [
@@ -1650,9 +1701,10 @@ final class SelectTest extends TestCase
         $select->where($where);
     }
 
+    #[Test]
     #[TestDox('unit test: Test where() will accept any array with string key (without ?) to be used
                     as Operator predicate')]
-    public function testWhereArgument1IsAssociativeArrayNotContainingReplacementCharacter(): void
+    public function whereArgument1IsAssociativeArrayNotContainingReplacementCharacter(): void
     {
         $select = new Select();
         $select->where(['name' => 'Ralph', 'age' => 33]);
@@ -1665,19 +1717,19 @@ final class SelectTest extends TestCase
         /** @var Where $where */
         $where      = $select->getRawState('where');
         $predicates = $where->getPredicates();
-        self::assertCount(2, $predicates);
-        self::assertIsArray($predicates[0]);
-        self::assertIsArray($predicates[1]);
+        static::assertCount(2, $predicates);
+        static::assertIsArray($predicates[0]);
+        static::assertIsArray($predicates[1]);
 
-        self::assertInstanceOf(Operator::class, $predicates[0][1]);
-        self::assertEquals(Predicate\PredicateSet::OP_AND, $predicates[0][0]);
-        self::assertEquals($identifier1, $predicates[0][1]->getLeft());
-        self::assertEquals($expression1, $predicates[0][1]->getRight());
+        static::assertInstanceOf(Operator::class, $predicates[0][1]);
+        static::assertEquals(Predicate\PredicateSet::OP_AND, $predicates[0][0]);
+        static::assertEquals($identifier1, $predicates[0][1]->getLeft());
+        static::assertEquals($expression1, $predicates[0][1]->getRight());
 
-        self::assertInstanceOf(Operator::class, $predicates[1][1]);
-        self::assertEquals(Predicate\PredicateSet::OP_AND, $predicates[1][0]);
-        self::assertEquals($identifier2, $predicates[1][1]->getLeft());
-        self::assertEquals($expression2, $predicates[1][1]->getRight());
+        static::assertInstanceOf(Operator::class, $predicates[1][1]);
+        static::assertEquals(Predicate\PredicateSet::OP_AND, $predicates[1][0]);
+        static::assertEquals($identifier2, $predicates[1][1]->getLeft());
+        static::assertEquals($expression2, $predicates[1][1]->getRight());
 
         $select = new Select();
         $select->where(['x = y']);
@@ -1685,12 +1737,13 @@ final class SelectTest extends TestCase
         /** @var Where $where */
         $where      = $select->getRawState('where');
         $predicates = $where->getPredicates();
-        self::assertIsArray($predicates[0]);
-        self::assertInstanceOf(Literal::class, $predicates[0][1]);
+        static::assertIsArray($predicates[0]);
+        static::assertInstanceOf(Literal::class, $predicates[0][1]);
     }
 
+    #[Test]
     #[TestDox('unit test: Test where() will accept a closure to be executed with Where object as argument')]
-    public function testWhereArgument1IsClosure(): void
+    public function whereArgument1IsClosure(): void
     {
         $select = new Select();
         /** @var Where $where */
@@ -1701,8 +1754,9 @@ final class SelectTest extends TestCase
         });
     }
 
+    #[Test]
     #[TestDox('unit test: Test where() will accept an indexed array to be used by joining string expressions')]
-    public function testWhereArgument1IsIndexedArray(): void
+    public function whereArgument1IsIndexedArray(): void
     {
         $select = new Select();
         $select->where(['name = "Ralph"']);
@@ -1710,16 +1764,17 @@ final class SelectTest extends TestCase
         /** @var Where $where */
         $where      = $select->getRawState('where');
         $predicates = $where->getPredicates();
-        self::assertCount(1, $predicates);
-        self::assertIsArray($predicates[0]);
-        self::assertInstanceOf(Literal::class, $predicates[0][1]);
-        self::assertEquals(Predicate\PredicateSet::OP_AND, $predicates[0][0]);
-        self::assertEquals('name = "Ralph"', $predicates[0][1]->getLiteral());
+        static::assertCount(1, $predicates);
+        static::assertIsArray($predicates[0]);
+        static::assertInstanceOf(Literal::class, $predicates[0][1]);
+        static::assertEquals(Predicate\PredicateSet::OP_AND, $predicates[0][0]);
+        static::assertSame('name = "Ralph"', $predicates[0][1]->getLiteral());
     }
 
+    #[Test]
     #[TestDox('unit test: Test where() will accept an indexed array to be used by joining string expressions,
                     combined by OR')]
-    public function testWhereArgument1IsIndexedArrayArgument2IsOr(): void
+    public function whereArgument1IsIndexedArrayArgument2IsOr(): void
     {
         $select = new Select();
         $select->where(['name = "Ralph"'], Predicate\PredicateSet::OP_OR);
@@ -1727,15 +1782,16 @@ final class SelectTest extends TestCase
         /** @var Where $where */
         $where      = $select->getRawState('where');
         $predicates = $where->getPredicates();
-        self::assertCount(1, $predicates);
-        self::assertIsArray($predicates[0]);
-        self::assertInstanceOf(Literal::class, $predicates[0][1]);
-        self::assertEquals(Predicate\PredicateSet::OP_OR, $predicates[0][0]);
-        self::assertEquals('name = "Ralph"', $predicates[0][1]->getLiteral());
+        static::assertCount(1, $predicates);
+        static::assertIsArray($predicates[0]);
+        static::assertInstanceOf(Literal::class, $predicates[0][1]);
+        static::assertEquals(Predicate\PredicateSet::OP_OR, $predicates[0][0]);
+        static::assertSame('name = "Ralph"', $predicates[0][1]->getLiteral());
     }
 
+    #[Test]
     #[TestDox('unit test: Test where() will accept any Predicate object as-is')]
-    public function testWhereArgument1IsPredicate(): void
+    public function whereArgument1IsPredicate(): void
     {
         $select    = new Select();
         $predicate = new Predicate\Predicate([
@@ -1747,12 +1803,13 @@ final class SelectTest extends TestCase
         /** @var Where $where */
         $where      = $select->getRawState('where');
         $predicates = $where->getPredicates();
-        self::assertIsArray($predicates[0]);
-        self::assertSame($predicate, $predicates[0][1]);
+        static::assertIsArray($predicates[0]);
+        static::assertSame($predicate, $predicates[0][1]);
     }
 
+    #[Test]
     #[TestDox('unit test: Test where() will accept a string for the predicate to create an expression predicate')]
-    public function testWhereArgument1IsString(): void
+    public function whereArgument1IsString(): void
     {
         $select = new Select();
         $select->where('x = ?');
@@ -1760,11 +1817,11 @@ final class SelectTest extends TestCase
         /** @var Where $where */
         $where      = $select->getRawState('where');
         $predicates = $where->getPredicates();
-        self::assertCount(1, $predicates);
-        self::assertIsArray($predicates[0]);
-        self::assertInstanceOf(Predicate\Expression::class, $predicates[0][1]);
-        self::assertEquals(Predicate\PredicateSet::OP_AND, $predicates[0][0]);
-        self::assertEquals('x = ?', $predicates[0][1]->getExpression());
+        static::assertCount(1, $predicates);
+        static::assertIsArray($predicates[0]);
+        static::assertInstanceOf(Predicate\Expression::class, $predicates[0][1]);
+        static::assertEquals(Predicate\PredicateSet::OP_AND, $predicates[0][0]);
+        static::assertSame('x = ?', $predicates[0][1]->getExpression());
 
         $select = new Select();
         $select->where('x = y');
@@ -1772,22 +1829,24 @@ final class SelectTest extends TestCase
         /** @var Where $where */
         $where      = $select->getRawState('where');
         $predicates = $where->getPredicates();
-        self::assertIsArray($predicates[0]);
-        self::assertInstanceOf(Literal::class, $predicates[0][1]);
+        static::assertIsArray($predicates[0]);
+        static::assertInstanceOf(Literal::class, $predicates[0][1]);
     }
 
+    #[Test]
     #[TestDox('unit test: Test where() will accept a Where object')]
-    public function testWhereArgument1IsWhereObject(): void
+    public function whereArgument1IsWhereObject(): void
     {
         $select = new Select();
         $select->where($newWhere = new Where());
-        self::assertSame($newWhere, $select->getRawState('where'));
+        static::assertSame($newWhere, $select->getRawState('where'));
     }
 
+    #[Test]
     #[TestDox('unit test: Test where() returns Select object (is chainable)')]
-    public function testWhereReturnsSameSelectObject(): void
+    public function whereReturnsSameSelectObject(): void
     {
         $select = new Select();
-        self::assertSame($select, $select->where('x = y'));
+        static::assertSame($select, $select->where('x = y'));
     }
 }

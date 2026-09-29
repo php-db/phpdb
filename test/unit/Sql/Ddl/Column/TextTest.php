@@ -19,6 +19,23 @@ final class TextTest extends TestCase
     use ColumnAssertionsTrait;
 
     #[Test]
+    public function getExpressionData(): void
+    {
+        $column = new Text('foo');
+
+        $expressionData = $column->getExpressionData();
+
+        static::assertSame('%s %s NOT NULL', $expressionData['spec']);
+        static::assertEquals(
+            [
+                Argument::identifier('foo'),
+                Argument::literal('TEXT'),
+            ],
+            $expressionData['values'],
+        );
+    }
+
+    #[Test]
     public function getExpressionDataOmitsConfiguredLength(): void
     {
         $expressionData = (new Text('foo', 65_535))->getExpressionData();
@@ -37,21 +54,5 @@ final class TextTest extends TestCase
     public function rendersWithoutConfiguredLength(): void
     {
         static::assertColumnRenders('"foo" TEXT NOT NULL', new Text('foo', 65_535));
-    }
-
-    public function testGetExpressionData(): void
-    {
-        $column = new Text('foo');
-
-        $expressionData = $column->getExpressionData();
-
-        self::assertEquals('%s %s NOT NULL', $expressionData['spec']);
-        self::assertEquals(
-            [
-                Argument::identifier('foo'),
-                Argument::literal('TEXT'),
-            ],
-            $expressionData['values'],
-        );
     }
 }

@@ -16,6 +16,7 @@ use PhpDb\Sql\Select;
 use PhpDb\Sql\SqlInterface;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 use function sprintf;
@@ -31,18 +32,20 @@ final class AbstractPlatformTest extends TestCase
 {
     private AbstractPlatform $platform;
 
-    public function testGetSqlStringDelegatesToDecoratorSubject(): void
+    #[Test]
+    public function getSqlStringDelegatesToDecoratorSubject(): void
     {
         $select = new Select('foo');
         $this->platform->setSubject($select);
 
         $sql = $this->platform->getSqlString();
 
-        self::assertStringContainsString('SELECT', $sql);
-        self::assertStringContainsString('"foo"', $sql);
+        static::assertStringContainsString('SELECT', $sql);
+        static::assertStringContainsString('"foo"', $sql);
     }
 
-    public function testGetSqlStringThrowsWhenSubjectNotSqlInterface(): void
+    #[Test]
+    public function getSqlStringThrowsWhenSubjectNotSqlInterface(): void
     {
         $subject = $this->createMock(PreparableSqlInterface::class);
         $this->platform->setSubject($subject);
@@ -56,7 +59,8 @@ final class AbstractPlatformTest extends TestCase
         $this->platform->getSqlString();
     }
 
-    public function testGetTypeDecoratorLoopMatchesByInstanceof(): void
+    #[Test]
+    public function getTypeDecoratorLoopMatchesByInstanceof(): void
     {
         $decorator = $this->createMock(PlatformDecoratorInterface::class);
         $decorator->method('setSubject')->willReturnSelf();
@@ -66,19 +70,21 @@ final class AbstractPlatformTest extends TestCase
         $subject = new Select('foo');
         $result  = $this->platform->getTypeDecorator($subject);
 
-        self::assertSame($decorator, $result);
+        static::assertSame($decorator, $result);
     }
 
-    public function testGetTypeDecoratorReturnsSubjectWhenNoMatch(): void
+    #[Test]
+    public function getTypeDecoratorReturnsSubjectWhenNoMatch(): void
     {
         $subject = $this->createMock(SqlInterface::class);
 
         $result = $this->platform->getTypeDecorator($subject);
 
-        self::assertSame($subject, $result);
+        static::assertSame($subject, $result);
     }
 
-    public function testPrepareStatementDelegatesToDecoratorSubject(): void
+    #[Test]
+    public function prepareStatementDelegatesToDecoratorSubject(): void
     {
         $select = new Select('foo');
         $select->where(['id' => 1]);
@@ -100,11 +106,12 @@ final class AbstractPlatformTest extends TestCase
         $statement = new StatementContainer();
         $result    = $this->platform->prepareStatement($adapter, $statement);
 
-        self::assertSame($statement, $result);
-        self::assertStringContainsString('SELECT', $statement->getSql());
+        static::assertSame($statement, $result);
+        static::assertStringContainsString('SELECT', $statement->getSql());
     }
 
-    public function testPrepareStatementThrowsWhenSubjectNotPreparable(): void
+    #[Test]
+    public function prepareStatementThrowsWhenSubjectNotPreparable(): void
     {
         $subject = $this->createMock(SqlInterface::class);
         $this->platform->setSubject($subject);
@@ -121,23 +128,25 @@ final class AbstractPlatformTest extends TestCase
         $this->platform->prepareStatement($adapter, $statement);
     }
 
-    public function testSetAndGetTypeDecorator(): void
+    #[Test]
+    public function setAndGetTypeDecorator(): void
     {
         $decorator = $this->createMock(PlatformDecoratorInterface::class);
         $this->platform->setTypeDecorator(Select::class, $decorator);
 
         $decorators = $this->platform->getDecorators();
 
-        self::assertArrayHasKey(Select::class, $decorators);
-        self::assertSame($decorator, $decorators[Select::class]);
+        static::assertArrayHasKey(Select::class, $decorators);
+        static::assertSame($decorator, $decorators[Select::class]);
     }
 
-    public function testSetSubjectReturnsStatic(): void
+    #[Test]
+    public function setSubjectReturnsStatic(): void
     {
         $subject = $this->createMock(SqlInterface::class);
         $result  = $this->platform->setSubject($subject);
 
-        self::assertSame($this->platform, $result);
+        static::assertSame($this->platform, $result);
     }
 
     protected function setUp(): void

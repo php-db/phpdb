@@ -8,6 +8,7 @@ use Override;
 use PhpDb\Adapter\Driver\ResultInterface;
 use PhpDb\ResultSet\AbstractResultSet;
 use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -20,7 +21,8 @@ final class AbstractResultSetIntegrationTest extends TestCase
     /**
      * @throws \Exception
      */
-    public function testCurrentCallsDataSourceCurrentAsManyTimesWithoutBuffer(): void
+    #[Test]
+    public function currentCallsDataSourceCurrentAsManyTimesWithoutBuffer(): void
     {
         $result = $this->getMockBuilder(ResultInterface::class)->getMock();
         $this->resultSet->initialize($result);
@@ -29,13 +31,14 @@ final class AbstractResultSetIntegrationTest extends TestCase
         $value1 = $this->resultSet->current();
         $value2 = $this->resultSet->current();
         $this->resultSet->current();
-        self::assertEquals($value1, $value2);
+        static::assertEquals($value1, $value2);
     }
 
     /**
      * @throws \Exception
      */
-    public function testCurrentCallsDataSourceCurrentOnceWithBuffer(): void
+    #[Test]
+    public function currentCallsDataSourceCurrentOnceWithBuffer(): void
     {
         $result = $this->getMockBuilder(ResultInterface::class)->getMock();
         $this->resultSet->buffer();
@@ -45,7 +48,7 @@ final class AbstractResultSetIntegrationTest extends TestCase
         $value1 = $this->resultSet->current();
         $value2 = $this->resultSet->current();
         $this->resultSet->current();
-        self::assertEquals($value1, $value2);
+        static::assertEquals($value1, $value2);
     }
 
     /**

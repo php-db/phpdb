@@ -5,26 +5,30 @@ declare(strict_types=1);
 namespace PhpDbTest\Sql\Predicate;
 
 use PhpDb\Sql\Predicate\Literal;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 class LiteralTest extends TestCase
 {
-    public function testGetExpressionData(): void
+    #[Test]
+    public function getExpressionData(): void
     {
         $literal = new Literal('bar');
 
         $expressionData = $literal->getExpressionData();
 
-        self::assertEquals('bar', $expressionData['spec']);
+        static::assertSame('bar', $expressionData['spec']);
     }
 
-    public function testGetLiteral(): void
+    #[Test]
+    public function getLiteral(): void
     {
         $literal = new Literal('bar');
-        self::assertEquals('bar', $literal->getLiteral());
+        static::assertSame('bar', $literal->getLiteral());
     }
 
-    public function testSetLiteral(): void
+    #[Test]
+    public function setLiteral(): void
     {
         $literal = new Literal('bar');
 
@@ -32,15 +36,15 @@ class LiteralTest extends TestCase
         $result = $literal->setLiteral('foo');
 
         // Verify fluent interface
-        self::assertSame($literal, $result);
+        static::assertSame($literal, $result);
 
         // Verify the first mutation occurred
-        self::assertEquals('foo', $literal->getLiteral());
+        static::assertSame('foo', $literal->getLiteral());
 
         // Second mutation to verify mutability
         $literal->setLiteral('baz');
 
         // Verify the instance was actually mutated
-        self::assertEquals('baz', $literal->getLiteral());
+        static::assertSame('baz', $literal->getLiteral());
     }
 }

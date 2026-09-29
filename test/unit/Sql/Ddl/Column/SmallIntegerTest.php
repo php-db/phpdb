@@ -21,25 +21,17 @@ use PHPUnit\Framework\TestCase;
 final class SmallIntegerTest extends TestCase
 {
     #[Test]
-    public function rendersLengthDirectlyAfterType(): void
-    {
-        $createTable = new CreateTable('t');
-        $createTable->addColumn(new SmallInteger('i', false, null, ['length' => 6]));
-
-        static::assertSame("CREATE TABLE \"t\" ( \n    \"i\" SMALLINT(6) NOT NULL \n)", $createTable->getSqlString());
-    }
-
-    public function testGetExpressionData(): void
+    public function getExpressionData(): void
     {
         $column         = new SmallInteger('foo');
         $expressionData = $column->getExpressionData();
 
-        self::assertEquals(
+        static::assertSame(
             '%s %s NOT NULL',
             $expressionData['spec'],
         );
 
-        self::assertEquals(
+        static::assertEquals(
             [
                 Argument::Identifier('foo'),
                 Argument::Literal('SMALLINT'),
@@ -48,9 +40,19 @@ final class SmallIntegerTest extends TestCase
         );
     }
 
-    public function testObjectConstruction(): void
+    #[Test]
+    public function objectConstruction(): void
     {
         $integer = new SmallInteger('foo');
-        self::assertEquals('foo', $integer->getName());
+        static::assertSame('foo', $integer->getName());
+    }
+
+    #[Test]
+    public function rendersLengthDirectlyAfterType(): void
+    {
+        $createTable = new CreateTable('t');
+        $createTable->addColumn(new SmallInteger('i', false, null, ['length' => 6]));
+
+        static::assertSame("CREATE TABLE \"t\" ( \n    \"i\" SMALLINT(6) NOT NULL \n)", $createTable->getSqlString());
     }
 }

@@ -22,6 +22,7 @@ use PhpDbTest\TestAsset;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\IgnoreDeprecations;
 use PHPUnit\Framework\Attributes\RequiresPhp;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use ReflectionException;
@@ -40,7 +41,8 @@ use ReflectionMethod;
 #[CoversMethod(Platform::class, 'getDefaultPlatform')]
 class PlatformTest extends TestCase
 {
-    public function testGetDefaultPlatformReturnsInstance(): void
+    #[Test]
+    public function getDefaultPlatformReturnsInstance(): void
     {
         $adapterPlatform = new TestAsset\TrustingSql92Platform();
         $platform        = new Platform($adapterPlatform);
@@ -48,10 +50,11 @@ class PlatformTest extends TestCase
         $reflectionMethod = new ReflectionMethod($platform, 'getDefaultPlatform');
         $result           = $reflectionMethod->invoke($platform);
 
-        self::assertSame($adapterPlatform, $result);
+        static::assertSame($adapterPlatform, $result);
     }
 
-    public function testGetSqlStringDelegatesToTypeDecorator(): void
+    #[Test]
+    public function getSqlStringDelegatesToTypeDecorator(): void
     {
         $adapterPlatform = new TestAsset\TrustingSql92Platform();
         $platform        = new Platform($adapterPlatform);
@@ -61,11 +64,12 @@ class PlatformTest extends TestCase
 
         $sql = $platform->getSqlString($adapterPlatform);
 
-        self::assertStringContainsString('SELECT', $sql);
-        self::assertStringContainsString('"foo"', $sql);
+        static::assertStringContainsString('SELECT', $sql);
+        static::assertStringContainsString('"foo"', $sql);
     }
 
-    public function testGetSqlStringThrowsWhenSubjectNotSqlInterface(): void
+    #[Test]
+    public function getSqlStringThrowsWhenSubjectNotSqlInterface(): void
     {
         $adapterPlatform = new TestAsset\TrustingSql92Platform();
         $platform        = new Platform($adapterPlatform);
@@ -77,7 +81,8 @@ class PlatformTest extends TestCase
         $platform->getSqlString($adapterPlatform);
     }
 
-    public function testGetTypeDecoratorFallsThroughWhenNoMatch(): void
+    #[Test]
+    public function getTypeDecoratorFallsThroughWhenNoMatch(): void
     {
         $adapterPlatform = new TestAsset\TrustingSql92Platform();
         $platform        = new Platform($adapterPlatform);
@@ -88,10 +93,11 @@ class PlatformTest extends TestCase
         $select = new Select('foo');
         $result = $platform->getTypeDecorator($select);
 
-        self::assertSame($select, $result);
+        static::assertSame($select, $result);
     }
 
-    public function testGetTypeDecoratorMatchesByInstanceofLoop(): void
+    #[Test]
+    public function getTypeDecoratorMatchesByInstanceofLoop(): void
     {
         $adapterPlatform = new TestAsset\TrustingSql92Platform();
         $platform        = new Platform($adapterPlatform);
@@ -102,10 +108,11 @@ class PlatformTest extends TestCase
         $select = new Select('foo');
         $result = $platform->getTypeDecorator($select);
 
-        self::assertSame($innerPlatform, $result);
+        static::assertSame($innerPlatform, $result);
     }
 
-    public function testGetTypeDecoratorMatchesExactClass(): void
+    #[Test]
+    public function getTypeDecoratorMatchesExactClass(): void
     {
         $adapterPlatform = new TestAsset\TrustingSql92Platform();
         $platform        = new Platform($adapterPlatform);
@@ -117,10 +124,11 @@ class PlatformTest extends TestCase
         $select = new Select('foo');
         $result = $platform->getTypeDecorator($select);
 
-        self::assertSame($decorator, $result);
+        static::assertSame($decorator, $result);
     }
 
-    public function testGetTypeDecoratorReturnsSubjectWhenNoDecoratorRegistered(): void
+    #[Test]
+    public function getTypeDecoratorReturnsSubjectWhenNoDecoratorRegistered(): void
     {
         $adapterPlatform = new TestAsset\TrustingSql92Platform();
         $platform        = new Platform($adapterPlatform);
@@ -128,10 +136,11 @@ class PlatformTest extends TestCase
         $select = new Select('foo');
         $result = $platform->getTypeDecorator($select);
 
-        self::assertSame($select, $result);
+        static::assertSame($select, $result);
     }
 
-    public function testPrepareStatementThrowsWhenSubjectNotPreparable(): void
+    #[Test]
+    public function prepareStatementThrowsWhenSubjectNotPreparable(): void
     {
         $adapterPlatform = new TestAsset\TrustingSql92Platform();
         $platform        = new Platform($adapterPlatform);
@@ -149,38 +158,41 @@ class PlatformTest extends TestCase
     /**
      * @throws ReflectionException
      */
-    public function testResolveDefaultPlatform(): void
+    #[Test]
+    public function resolveDefaultPlatform(): void
     {
         $adapter  = $this->resolveAdapter('sql92');
         $platform = new Platform($adapter->getPlatform());
 
         $reflectionMethod = new ReflectionMethod($platform, 'resolvePlatform');
 
-        self::assertEquals($adapter->getPlatform(), $reflectionMethod->invoke($platform, null));
+        static::assertEquals($adapter->getPlatform(), $reflectionMethod->invoke($platform, null));
     }
 
     /**
      * @throws ReflectionException
      */
-    public function testResolvePlatformName(): void
+    #[Test]
+    public function resolvePlatformName(): void
     {
         $platform = new Platform($this->resolveAdapter('sql92')->getPlatform());
 
         $reflectionMethod = new ReflectionMethod($platform, 'resolvePlatformName');
 
-        self::assertEquals('mysql', $reflectionMethod->invoke($platform, new TestAsset\TrustingMysqlPlatform()));
-        self::assertEquals('sqlserver', $reflectionMethod->invoke(
+        static::assertSame('mysql', $reflectionMethod->invoke($platform, new TestAsset\TrustingMysqlPlatform()));
+        static::assertSame('sqlserver', $reflectionMethod->invoke(
             $platform,
             new TestAsset\TrustingSqlServerPlatform(),
         ));
-        self::assertEquals('oracle', $reflectionMethod->invoke($platform, new TestAsset\TrustingOraclePlatform()));
-        self::assertEquals('sql92', $reflectionMethod->invoke($platform, new TestAsset\TrustingSql92Platform()));
+        static::assertSame('oracle', $reflectionMethod->invoke($platform, new TestAsset\TrustingOraclePlatform()));
+        static::assertSame('sql92', $reflectionMethod->invoke($platform, new TestAsset\TrustingSql92Platform()));
     }
 
     /**
      * @throws ReflectionException
      */
-    public function testResolvePlatformNameCachesResult(): void
+    #[Test]
+    public function resolvePlatformNameCachesResult(): void
     {
         $adapterPlatform = new TestAsset\TrustingSql92Platform();
         $platform        = new Platform($adapterPlatform);
@@ -190,11 +202,12 @@ class PlatformTest extends TestCase
         $first  = $reflectionMethod->invoke($platform, null);
         $second = $reflectionMethod->invoke($platform, null);
 
-        self::assertEquals($first, $second);
-        self::assertEquals('sql92', $first);
+        static::assertEquals($first, $second);
+        static::assertSame('sql92', $first);
     }
 
-    public function testResolvePlatformWithAdapterInterface(): void
+    #[Test]
+    public function resolvePlatformWithAdapterInterface(): void
     {
         $adapterPlatform = new TestAsset\TrustingSql92Platform();
         $platform        = new Platform($adapterPlatform);
@@ -208,10 +221,11 @@ class PlatformTest extends TestCase
         $reflectionMethod = new ReflectionMethod($platform, 'resolvePlatform');
         $result           = $reflectionMethod->invoke($platform, $mockAdapter);
 
-        self::assertSame($mockPlatform, $result);
+        static::assertSame($mockPlatform, $result);
     }
 
-    public function testResolvePlatformWithPlatformInterface(): void
+    #[Test]
+    public function resolvePlatformWithPlatformInterface(): void
     {
         $adapterPlatform = new TestAsset\TrustingSql92Platform();
         $platform        = new Platform($adapterPlatform);
@@ -221,10 +235,11 @@ class PlatformTest extends TestCase
         $reflectionMethod = new ReflectionMethod($platform, 'resolvePlatform');
         $result           = $reflectionMethod->invoke($platform, $mockPlatform);
 
-        self::assertSame($mockPlatform, $result);
+        static::assertSame($mockPlatform, $result);
     }
 
-    public function testSetTypeDecoratorRegistersDecorator(): void
+    #[Test]
+    public function setTypeDecoratorRegistersDecorator(): void
     {
         $adapterPlatform = new TestAsset\TrustingSql92Platform();
         $platform        = new Platform($adapterPlatform);
@@ -233,8 +248,8 @@ class PlatformTest extends TestCase
         $platform->setTypeDecorator(Select::class, $decorator);
 
         $decorators = $platform->getDecorators();
-        self::assertArrayHasKey(Select::class, $decorators);
-        self::assertSame($decorator, $decorators[Select::class]);
+        static::assertArrayHasKey(Select::class, $decorators);
+        static::assertSame($decorator, $decorators[Select::class]);
     }
 
     protected function resolveAdapter(string $platformName): Adapter
