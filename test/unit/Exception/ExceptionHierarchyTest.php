@@ -12,6 +12,7 @@ use PhpDb\Metadata\Exception as MetadataException;
 use PhpDb\ResultSet\Exception as ResultSetException;
 use PhpDb\RowGateway\Exception as RowGatewayException;
 use PhpDb\Sql\Exception as SqlException;
+use PhpDb\Sql\Predicate\Exception as PredicateException;
 use PhpDb\TableGateway\Exception as TableGatewayException;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -67,6 +68,8 @@ final class ExceptionHierarchyTest extends TestCase
         DbException\InvalidArgumentException::class                  => InvalidArgumentException::class,
         DbException\RuntimeException::class                          => RuntimeException::class,
         DbException\UnexpectedValueException::class                  => UnexpectedValueException::class,
+        PredicateException\InvalidArgumentException::class           => InvalidArgumentException::class,
+        PredicateException\RuntimeException::class                   => RuntimeException::class,
         MetadataException\InvalidArgumentException::class            => InvalidArgumentException::class,
         MetadataException\RuntimeException::class                    => RuntimeException::class,
         ResultSetException\InvalidArgumentException::class           => InvalidArgumentException::class,

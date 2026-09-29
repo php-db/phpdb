@@ -14,6 +14,8 @@ use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
+use function sprintf;
+
 #[CoversMethod(Floating::class, 'getExpressionData')]
 #[CoversMethod(AbstractPrecisionColumn::class, 'getLengthExpression')]
 #[CoversMethod(AbstractLengthColumn::class, 'getExpressionData')]
@@ -62,8 +64,8 @@ final class FloatingTest extends TestCase
     {
         $column = new Floating('f', null, 2);
 
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Column "f" of type FLOAT has a decimal scale but no digits');
+        self::expectException(InvalidArgumentException::class);
+        self::expectExceptionMessage(sprintf(InvalidArgumentException::MISSING_DECIMAL_DIGITS, 'f', 'FLOAT'));
 
         $column->getExpressionData();
     }

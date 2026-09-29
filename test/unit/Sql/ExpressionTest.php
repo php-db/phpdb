@@ -56,7 +56,7 @@ final class ExpressionTest extends TestCase
 
     public function testConstructorWithInvalidParameter(): void
     {
-        $this->expectException(TypeError::class);
+        self::expectException(TypeError::class);
         new Expression('?', (object) []);
     }
 
@@ -111,8 +111,8 @@ final class ExpressionTest extends TestCase
     {
         $expression = new Expression('? AND ?', [1]); // Two placeholders but only one parameter
 
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage(
+        self::expectException(RuntimeException::class);
+        self::expectExceptionMessage(
             'The number of replacements in the expression does not match the number of parameters',
         );
         $expression->getExpressionData();
@@ -198,13 +198,13 @@ final class ExpressionTest extends TestCase
     public function testSetExpressionException(): void
     {
         $expression = new Expression();
-        $this->expectException(TypeError::class);
+        self::expectException(TypeError::class);
         /** @noinspection PhpStrictTypeCheckingInspection */
         $expression->setExpression(null);
 
         $expression = new Expression();
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Supplied expression must not be an empty string.');
+        self::expectException(InvalidArgumentException::class);
+        self::expectExceptionMessage(InvalidArgumentException::EMPTY_EXPRESSION);
         $expression->setExpression('');
     }
 
@@ -212,7 +212,7 @@ final class ExpressionTest extends TestCase
     {
         $expression = new Expression();
 
-        $this->expectException(InvalidArgumentException::class);
+        self::expectException(InvalidArgumentException::class);
         $expression->setExpression('');
     }
 

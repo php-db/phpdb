@@ -7,7 +7,7 @@ namespace PhpDbTest\Sql\Predicate;
 use PhpDb\Sql\Argument;
 use PhpDb\Sql\ArgumentInterface;
 use PhpDb\Sql\ArgumentType;
-use PhpDb\Sql\Exception\InvalidArgumentException;
+use PhpDb\Sql\Predicate\Exception\InvalidArgumentException;
 use PhpDb\Sql\Predicate\Like;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
@@ -146,8 +146,8 @@ final class LikeTest extends TestCase
         $like = new Like();
         $like->setLike('foo%');
 
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Identifier must be specified');
+        self::expectException(InvalidArgumentException::class);
+        self::expectExceptionMessage(InvalidArgumentException::MISSING_IDENTIFIER);
         $like->getExpressionData();
     }
 
@@ -156,8 +156,8 @@ final class LikeTest extends TestCase
         $like = new Like();
         $like->setIdentifier('bar');
 
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Like expression must be specified');
+        self::expectException(InvalidArgumentException::class);
+        self::expectExceptionMessage(InvalidArgumentException::MISSING_LIKE_EXPRESSION);
         $like->getExpressionData();
     }
 

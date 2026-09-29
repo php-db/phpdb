@@ -28,7 +28,7 @@ class Check extends AbstractConstraint
     public function __construct(string|ExpressionInterface $expression, ?string $name = null)
     {
         if ('' === $expression) {
-            throw new InvalidArgumentException('Check constraint expression must not be an empty string.');
+            throw InvalidArgumentException::forEmptyCheckExpression();
         }
 
         parent::__construct(null, $name);

@@ -3819,7 +3819,7 @@ count = 1
 [[issues]]
 file = "src/Sql/Join.php"
 code = "mixed-argument"
-message = "Invalid argument type for argument #2 of `sprintf`: expected `Stringable|null|scalar`, but found `mixed`."
+message = "Invalid argument type for argument #1 of `PhpDb\\Sql\\Exception\\InvalidArgumentException::forInvalidJoinName`: expected `string`, but found `mixed`."
 count = 1
 
 [[issues]]
@@ -4917,7 +4917,7 @@ count = 1
 [[issues]]
 file = "src/Sql/Sql.php"
 code = "possibly-invalid-argument"
-message = 'Possible argument type mismatch for argument #2 of `sprintf`: expected `Stringable|null|scalar`, but possibly received `PhpDb\Sql\TableIdentifier|array<array-key, mixed>|string`.'
+message = 'Possible argument type mismatch for argument #1 of `PhpDb\Sql\Exception\InvalidArgumentException::forForeignTable`: expected `string`, but possibly received `PhpDb\Sql\TableIdentifier|array<array-key, mixed>|string`.'
 count = 4
 
 [[issues]]
@@ -5536,4 +5536,22 @@ count = 1
 file = "src/TableGateway/TableGatewayInterface.php"
 code = "missing-api-or-internal"
 message = 'Interface `PhpDb\TableGateway\TableGatewayInterface` is missing an `@api` or `@internal` annotation.'
+count = 1
+
+[[issues]]
+file = "src/Sql/Predicate/Exception/ExceptionInterface.php"
+code = "missing-api-or-internal"
+message = 'Interface `PhpDb\Sql\Predicate\Exception\ExceptionInterface` is missing an `@api` or `@internal` annotation.'
+count = 1
+
+[[issues]]
+file = "src/Sql/Predicate/Exception/InvalidArgumentException.php"
+code = "class-must-be-final"
+message = 'Class `PhpDb\Sql\Predicate\Exception\InvalidArgumentException` should be declared `final`.'
+count = 1
+
+[[issues]]
+file = "src/Sql/Predicate/Exception/RuntimeException.php"
+code = "class-must-be-final"
+message = 'Class `PhpDb\Sql\Predicate\Exception\RuntimeException` should be declared `final`.'
 count = 1

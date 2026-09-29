@@ -14,6 +14,8 @@ use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
+use function sprintf;
+
 #[CoversMethod(Decimal::class, 'getExpressionData')]
 #[CoversMethod(AbstractPrecisionColumn::class, '__construct')]
 #[CoversMethod(AbstractPrecisionColumn::class, 'setDigits')]
@@ -130,8 +132,8 @@ final class DecimalTest extends TestCase
     {
         $column = new Decimal('price', null, 2);
 
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Column "price" of type DECIMAL has a decimal scale but no digits');
+        self::expectException(InvalidArgumentException::class);
+        self::expectExceptionMessage(sprintf(InvalidArgumentException::MISSING_DECIMAL_DIGITS, 'price', 'DECIMAL'));
 
         $column->getExpressionData();
     }

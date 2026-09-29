@@ -9,7 +9,7 @@ use PhpDb\Sql\AbstractExpression;
 use PhpDb\Sql\Argument\Identifier;
 use PhpDb\Sql\Argument\Value;
 use PhpDb\Sql\ArgumentInterface;
-use PhpDb\Sql\Exception\InvalidArgumentException;
+use PhpDb\Sql\Predicate\Exception\InvalidArgumentException;
 
 class Like extends AbstractExpression implements PredicateInterface
 {
@@ -38,11 +38,11 @@ class Like extends AbstractExpression implements PredicateInterface
     public function getExpressionData(): array
     {
         if (! $this->identifier instanceof ArgumentInterface) {
-            throw new InvalidArgumentException('Identifier must be specified');
+            throw InvalidArgumentException::forMissingIdentifier();
         }
 
         if (! $this->like instanceof ArgumentInterface) {
-            throw new InvalidArgumentException('Like expression must be specified');
+            throw InvalidArgumentException::forMissingLikeExpression();
         }
 
         $identifierSpec = $this->identifier->getSpecification();
