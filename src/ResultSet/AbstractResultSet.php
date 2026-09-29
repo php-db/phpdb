@@ -19,6 +19,7 @@ use function array_key_exists;
 use function count;
 use function current;
 use function is_array;
+use function is_object;
 use function reset;
 
 /**
@@ -144,7 +145,7 @@ abstract class AbstractResultSet implements ResultSetInterface
             $this->buffer[$this->position] = $data;
         }
 
-        return is_array($data) ? $data : null;
+        return is_array($data) || is_object($data) ? $data : null;
     }
 
     /**
