@@ -291,6 +291,21 @@ final class AdapterInterfaceDelegatorTest extends TestCase
         $delegator = AdapterInterfaceDelegator::__set_state(['adapterName' => 'custom']);
 
         self::assertInstanceOf(AdapterInterfaceDelegator::class, $delegator);
+
+        $container = $this->createMock(ContainerInterface::class);
+        $container->expects(self::once())
+            ->method('has')
+            ->with('custom')
+            ->willReturn(false);
+
+        self::expectException(ServiceNotFoundException::class);
+        self::expectExceptionMessage(sprintf(ContainerException::MISSING_SERVICE, 'custom'));
+
+        $delegator(
+            $container,
+            ConcreteAdapterAwareObject::class,
+            static fn(): ConcreteAdapterAwareObject => new ConcreteAdapterAwareObject(),
+        );
     }
 
     public function testSetStateWithDefaultAdapterName(): void
