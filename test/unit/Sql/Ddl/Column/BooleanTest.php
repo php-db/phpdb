@@ -15,14 +15,15 @@ use PHPUnit\Framework\TestCase;
 #[CoversClass(Boolean::class)]
 final class BooleanTest extends TestCase
 {
-    public function testGetExpressionData(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function getExpressionData(): void
     {
         $column = new Boolean('foo');
 
         $expressionData = $column->getExpressionData();
 
-        self::assertEquals('%s %s NOT NULL', $expressionData['spec']);
-        self::assertEquals(
+        static::assertSame('%s %s NOT NULL', $expressionData['spec']);
+        static::assertEquals(
             [
                 Argument::identifier('foo'),
                 Argument::literal('BOOLEAN'),
@@ -31,15 +32,16 @@ final class BooleanTest extends TestCase
         );
     }
 
+    #[\PHPUnit\Framework\Attributes\Test]
     #[Group('6257')]
-    public function testIsAlwaysNotNullable(): void
+    public function isAlwaysNotNullable(): void
     {
         $column = new Boolean('foo', true);
 
-        self::assertFalse($column->isNullable());
+        static::assertFalse($column->isNullable());
 
         $column->setNullable(true);
 
-        self::assertFalse($column->isNullable());
+        static::assertFalse($column->isNullable());
     }
 }

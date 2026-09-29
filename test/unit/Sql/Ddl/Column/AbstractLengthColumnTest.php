@@ -25,6 +25,30 @@ final class AbstractLengthColumnTest extends TestCase
     use ColumnAssertionsTrait;
 
     /**
+     * @throws Exception
+     */
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function getExpressionData(): void
+    {
+        $column = $this->getMockBuilder(AbstractLengthColumn::class)
+            ->setConstructorArgs(['foo', 4])
+            ->onlyMethods([])
+            ->getMock();
+
+        $expressionData = $column->getExpressionData();
+
+        static::assertSame('%s %s(%s) NOT NULL', $expressionData['spec']);
+        static::assertEquals(
+            [
+                new Identifier('foo'),
+                new Literal('INTEGER'),
+                new Literal('4'),
+            ],
+            $expressionData['values'],
+        );
+    }
+
+    /**
      * The length is inserted directly after the type. Values contributed by a default and
      * by a constraint sit after that point, so they must be pushed along rather than
      * overwritten.
@@ -80,6 +104,19 @@ final class AbstractLengthColumnTest extends TestCase
     /**
      * @throws Exception
      */
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function getLength(): void
+    {
+        $column = $this->getMockBuilder(AbstractLengthColumn::class)
+            ->setConstructorArgs(['foo', 55])
+            ->onlyMethods([])
+            ->getMock();
+        static::assertSame(55, $column->getLength());
+    }
+
+    /**
+     * @throws Exception
+     */
     #[Test]
     public function rendersLengthDirectlyAfterType(): void
     {
@@ -108,6 +145,21 @@ final class AbstractLengthColumnTest extends TestCase
     /**
      * @throws Exception
      */
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function setLength(): void
+    {
+        $column = $this->getMockBuilder(AbstractLengthColumn::class)
+            ->setConstructorArgs(['foo', 55])
+            ->onlyMethods([])
+            ->getMock();
+        static::assertSame(55, $column->getLength());
+        static::assertSame($column, $column->setLength(20));
+        static::assertSame(20, $column->getLength());
+    }
+
+    /**
+     * @throws Exception
+     */
     #[Test]
     public function setLengthWithoutAnArgumentResetsTheLengthToZero(): void
     {
@@ -119,54 +171,5 @@ final class AbstractLengthColumnTest extends TestCase
         $column->setLength();
 
         static::assertSame(0, $column->getLength());
-    }
-
-    /**
-     * @throws Exception
-     */
-    public function testGetExpressionData(): void
-    {
-        $column = $this->getMockBuilder(AbstractLengthColumn::class)
-            ->setConstructorArgs(['foo', 4])
-            ->onlyMethods([])
-            ->getMock();
-
-        $expressionData = $column->getExpressionData();
-
-        self::assertEquals('%s %s(%s) NOT NULL', $expressionData['spec']);
-        self::assertEquals(
-            [
-                new Identifier('foo'),
-                new Literal('INTEGER'),
-                new Literal('4'),
-            ],
-            $expressionData['values'],
-        );
-    }
-
-    /**
-     * @throws Exception
-     */
-    public function testGetLength(): void
-    {
-        $column = $this->getMockBuilder(AbstractLengthColumn::class)
-            ->setConstructorArgs(['foo', 55])
-            ->onlyMethods([])
-            ->getMock();
-        self::assertEquals(55, $column->getLength());
-    }
-
-    /**
-     * @throws Exception
-     */
-    public function testSetLength(): void
-    {
-        $column = $this->getMockBuilder(AbstractLengthColumn::class)
-            ->setConstructorArgs(['foo', 55])
-            ->onlyMethods([])
-            ->getMock();
-        self::assertEquals(55, $column->getLength());
-        self::assertSame($column, $column->setLength(20));
-        self::assertEquals(20, $column->getLength());
     }
 }

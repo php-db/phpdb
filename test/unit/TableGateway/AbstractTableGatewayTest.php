@@ -74,13 +74,15 @@ final class AbstractTableGatewayTest extends TestCase
     protected MockObject&Update $mockUpdate;
     protected MockObject&Delete $mockDelete;
 
-    public function testCloneKeepsTheAdapter(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function cloneKeepsTheAdapter(): void
     {
         $cTable = clone $this->table;
-        self::assertSame($this->mockAdapter, $cTable->getAdapter());
+        static::assertSame($this->mockAdapter, $cTable->getAdapter());
     }
 
-    public function testCloneWithAnAliasedTableIdentifier(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function cloneWithAnAliasedTableIdentifier(): void
     {
         $tableIdentifier = new Sql\TableIdentifier('bar', 'schema');
         $aliasedTable    = ['alias' => $tableIdentifier];
@@ -92,12 +94,13 @@ final class AbstractTableGatewayTest extends TestCase
         $cloned = clone $this->table;
 
         $clonedTable = $cloned->getTable();
-        self::assertIsArray($clonedTable);
+        static::assertIsArray($clonedTable);
         // The TableIdentifier inside the array should be cloned
-        self::assertNotSame($tableIdentifier, $clonedTable['alias']);
+        static::assertNotSame($tableIdentifier, $clonedTable['alias']);
     }
 
-    public function testCloneWithATableIdentifier(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function cloneWithATableIdentifier(): void
     {
         $tableIdentifier = new Sql\TableIdentifier('bar', 'schema');
 
@@ -108,24 +111,26 @@ final class AbstractTableGatewayTest extends TestCase
         $cloned = clone $this->table;
 
         // The table should be cloned, not the same instance
-        self::assertNotSame($tableIdentifier, $cloned->getTable());
-        self::assertEquals($tableIdentifier->getTable(), $cloned->getTable()->getTable());
+        static::assertNotSame($tableIdentifier, $cloned->getTable());
+        static::assertEquals($tableIdentifier->getTable(), $cloned->getTable()->getTable());
     }
 
-    public function testDelete(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function delete(): void
     {
         $mockDelete = $this->mockDelete;
 
         // assert select::from() is called
         $mockDelete->expects($this->once())
             ->method('where')
-            ->with($this->equalTo('foo'));
+            ->with(static::equalTo('foo'));
 
         $affectedRows = $this->table->delete('foo');
-        self::assertEquals(5, $affectedRows);
+        static::assertSame(5, $affectedRows);
     }
 
-    public function testDeleteWith(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function deleteWith(): void
     {
         $delete = $this->getMockBuilder(Delete::class)
             ->onlyMethods(['getRawState'])
@@ -137,10 +142,11 @@ final class AbstractTableGatewayTest extends TestCase
             ->willReturn(['table' => 'foo']);
 
         $affectedRows = $this->table->deleteWith($delete);
-        self::assertEquals(5, $affectedRows);
+        static::assertSame(5, $affectedRows);
     }
 
-    public function testDeleteWithClosure(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function deleteWithClosure(): void
     {
         // The closure receives the Delete object created by $this->sql->delete()
         // We verify that the closure is called with a Delete instance
@@ -150,11 +156,12 @@ final class AbstractTableGatewayTest extends TestCase
             self::assertInstanceOf(Delete::class, $delete);
         });
 
-        self::assertTrue($closureCalled);
-        self::assertEquals(5, $affectedRows);
+        static::assertTrue($closureCalled);
+        static::assertSame(5, $affectedRows);
     }
 
-    public function testExecuteDeleteThrowsExceptionWhenTableDoesNotMatch(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function executeDeleteThrowsExceptionWhenTableDoesNotMatch(): void
     {
         $delete = new Delete('bar');
         $delete->where(['id' => 1]);
@@ -165,7 +172,8 @@ final class AbstractTableGatewayTest extends TestCase
         $this->table->deleteWith($delete);
     }
 
-    public function testExecuteInsertThrowsExceptionWhenTableDoesNotMatch(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function executeInsertThrowsExceptionWhenTableDoesNotMatch(): void
     {
         $insert = new Insert('bar');
         $insert->values(['name' => 'test']);
@@ -176,7 +184,8 @@ final class AbstractTableGatewayTest extends TestCase
         $this->table->insertWith($insert);
     }
 
-    public function testExecuteSelectThrowsExceptionWhenArrayTableDoesNotMatch(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function executeSelectThrowsExceptionWhenArrayTableDoesNotMatch(): void
     {
         $select = $this->getMockBuilder(Select::class)
             ->onlyMethods(['getRawState'])
@@ -197,7 +206,8 @@ final class AbstractTableGatewayTest extends TestCase
         $this->table->selectWith($select);
     }
 
-    public function testExecuteUpdateThrowsExceptionWhenTableDoesNotMatch(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function executeUpdateThrowsExceptionWhenTableDoesNotMatch(): void
     {
         $update = new Update('bar');
         $update->set(['name' => 'test']);
@@ -208,47 +218,55 @@ final class AbstractTableGatewayTest extends TestCase
         $this->table->updateWith($update);
     }
 
-    public function testGetAdapter(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function getAdapter(): void
     {
-        self::assertSame($this->mockAdapter, $this->table->getAdapter());
+        static::assertSame($this->mockAdapter, $this->table->getAdapter());
     }
 
-    public function testGetColumns(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function getColumns(): void
     {
         $tgReflection = new ReflectionClass(AbstractTableGateway::class);
         $columnsProp  = $tgReflection->getProperty('columns');
         $columnsProp->setValue($this->table, ['id', 'name', 'email']);
 
-        self::assertEquals(['id', 'name', 'email'], $this->table->getColumns());
+        static::assertEquals(['id', 'name', 'email'], $this->table->getColumns());
     }
 
-    public function testGetFeatureSet(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function getFeatureSet(): void
     {
-        self::assertSame($this->mockFeatureSet, $this->table->getFeatureSet());
+        static::assertSame($this->mockFeatureSet, $this->table->getFeatureSet());
     }
 
-    public function testGetLastInsertValue(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function getLastInsertValue(): void
     {
         $this->table->insert(['foo' => 'bar']);
-        self::assertEquals(10, $this->table->getLastInsertValue());
+        static::assertSame(10, $this->table->getLastInsertValue());
     }
 
-    public function testGetSelectResultPrototype(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function getSelectResultPrototype(): void
     {
-        self::assertInstanceOf(ResultSet::class, $this->table->getResultSetPrototype());
+        static::assertInstanceOf(ResultSet::class, $this->table->getResultSetPrototype());
     }
 
-    public function testGetSql(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function getSql(): void
     {
-        self::assertInstanceOf(Sql\Sql::class, $this->table->getSql());
+        static::assertInstanceOf(Sql\Sql::class, $this->table->getSql());
     }
 
-    public function testGetTable(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function getTable(): void
     {
-        self::assertEquals('foo', $this->table->getTable());
+        static::assertSame('foo', $this->table->getTable());
     }
 
-    public function testInitializeBuildsAResultSet(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function initializeBuildsAResultSet(): void
     {
         $stub = $this->getMockBuilder(AbstractTableGateway::class)
             ->onlyMethods([])
@@ -270,10 +288,11 @@ final class AbstractTableGatewayTest extends TestCase
         }
 
         $stub->initialize();
-        $this->assertInstanceOf(ResultSet::class, $stub->getResultSetPrototype());
+        static::assertInstanceOf(ResultSet::class, $stub->getResultSetPrototype());
     }
 
-    public function testInitializeEarlyReturnWhenAlreadyInitialized(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function initializeEarlyReturnWhenAlreadyInitialized(): void
     {
         // Create a fresh mock without initialization
         $stub = $this->getMockBuilder(AbstractTableGateway::class)
@@ -291,7 +310,7 @@ final class AbstractTableGatewayTest extends TestCase
 
         // First initialization
         $stub->initialize();
-        self::assertTrue($stub->isInitialized());
+        static::assertTrue($stub->isInitialized());
 
         // Get the featureSet that was created during first init
         $featureSetProp     = $tgReflection->getProperty('featureSet');
@@ -301,10 +320,11 @@ final class AbstractTableGatewayTest extends TestCase
         $stub->initialize();
 
         // Verify featureSet is still the same object (proving early return was taken)
-        self::assertSame($originalFeatureSet, $featureSetProp->getValue($stub));
+        static::assertSame($originalFeatureSet, $featureSetProp->getValue($stub));
     }
 
-    public function testInitializeThrowsExceptionWithoutAdapter(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function initializeThrowsExceptionWithoutAdapter(): void
     {
         $stub = $this->getMockBuilder(AbstractTableGateway::class)
             ->onlyMethods([])
@@ -320,7 +340,8 @@ final class AbstractTableGatewayTest extends TestCase
         $stub->initialize();
     }
 
-    public function testInitializeThrowsExceptionWithoutTable(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function initializeThrowsExceptionWithoutTable(): void
     {
         $stub = $this->getMockBuilder(AbstractTableGateway::class)
             ->onlyMethods([])
@@ -336,7 +357,8 @@ final class AbstractTableGatewayTest extends TestCase
         $stub->initialize();
     }
 
-    public function testInsert(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function insert(): void
     {
         $mockInsert = $this->mockInsert;
 
@@ -346,29 +368,31 @@ final class AbstractTableGatewayTest extends TestCase
 
         $mockInsert->expects($this->once())
             ->method('values')
-            ->with($this->equalTo(['foo' => 'bar']));
+            ->with(static::equalTo(['foo' => 'bar']));
 
         $affectedRows = $this->table->insert(['foo' => 'bar']);
-        self::assertEquals(5, $affectedRows);
+        static::assertSame(5, $affectedRows);
     }
 
-    public function testInsertWith(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function insertWith(): void
     {
         $insert = new Insert('foo');
         $insert->values(['column' => 'value']);
 
         $affectedRows = $this->table->insertWith($insert);
-        self::assertEquals(5, $affectedRows);
+        static::assertSame(5, $affectedRows);
     }
 
-    public function testIsInitialized(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function isInitialized(): void
     {
         // Create a fresh mock without initialization
         $stub = $this->getMockBuilder(AbstractTableGateway::class)
             ->onlyMethods([])
             ->getMock();
 
-        self::assertFalse($stub->isInitialized());
+        static::assertFalse($stub->isInitialized());
 
         // Set required properties for initialization
         $tgReflection = new ReflectionClass(AbstractTableGateway::class);
@@ -381,10 +405,11 @@ final class AbstractTableGatewayTest extends TestCase
 
         $stub->initialize();
 
-        self::assertTrue($stub->isInitialized());
+        static::assertTrue($stub->isInitialized());
     }
 
-    public function testMagicCallDelegatesToTheFeatureSet(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function magicCallDelegatesToTheFeatureSet(): void
     {
         // Create a FeatureSet mock that returns true for canCallMagicCall
         $featureSet = $this->getMockBuilder(FeatureSet::class)
@@ -406,10 +431,11 @@ final class AbstractTableGatewayTest extends TestCase
         /** @phpstan-ignore method.notFound */
         $result = $this->table->customMethod('arg1', 'arg2');
 
-        self::assertEquals('customResult', $result);
+        static::assertSame('customResult', $result);
     }
 
-    public function testMagicCallThrowsForUnknownMethod(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function magicCallThrowsForUnknownMethod(): void
     {
         self::expectException(InvalidArgumentException::class);
         self::expectExceptionMessage(
@@ -420,7 +446,8 @@ final class AbstractTableGatewayTest extends TestCase
         $this->table->invalidMethod();
     }
 
-    public function testMagicGetDelegatesToTheFeatureSet(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function magicGetDelegatesToTheFeatureSet(): void
     {
         // Create a custom feature that can handle magic get
         $feature                   = new TestTableGatewayFeature();
@@ -446,35 +473,40 @@ final class AbstractTableGatewayTest extends TestCase
         /** @phpstan-ignore property.notFound */
         $result = $this->table->customProperty;
 
-        self::assertEquals('customValue', $result);
+        static::assertSame('customValue', $result);
     }
 
-    public function testMagicGetReturnsTheAdapter(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function magicGetReturnsTheAdapter(): void
     {
-        self::assertSame($this->mockAdapter, $this->table->adapter);
+        static::assertSame($this->mockAdapter, $this->table->adapter);
     }
 
-    public function testMagicGetReturnsTheLastInsertValue(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function magicGetReturnsTheLastInsertValue(): void
     {
-        self::assertNull($this->table->lastInsertValue);
+        static::assertNull($this->table->lastInsertValue);
     }
 
-    public function testMagicGetReturnsTheLastInsertValueAndAdapter(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function magicGetReturnsTheLastInsertValueAndAdapter(): void
     {
         $this->table->insert(['foo']); // trigger last insert id update
 
-        self::assertEquals(10, $this->table->lastInsertValue);
-        self::assertSame($this->mockAdapter, $this->table->adapter);
+        static::assertSame(10, $this->table->lastInsertValue);
+        static::assertSame($this->mockAdapter, $this->table->adapter);
 
         //self::assertEquals('foo', $this->table->table);
     }
 
-    public function testMagicGetReturnsTheTable(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function magicGetReturnsTheTable(): void
     {
-        self::assertEquals('foo', $this->table->table);
+        static::assertSame('foo', $this->table->table);
     }
 
-    public function testMagicGetThrowsForUnknownProperty(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function magicGetThrowsForUnknownProperty(): void
     {
         self::expectException(InvalidArgumentException::class);
         self::expectExceptionMessage(
@@ -485,7 +517,8 @@ final class AbstractTableGatewayTest extends TestCase
         $this->table->invalidProperty;
     }
 
-    public function testMagicSetDelegatesToTheFeatureSet(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function magicSetDelegatesToTheFeatureSet(): void
     {
         // Create a FeatureSet mock that returns true for canCallMagicSet
         $featureSet = $this->getMockBuilder(FeatureSet::class)
@@ -507,7 +540,8 @@ final class AbstractTableGatewayTest extends TestCase
         $this->table->customProperty = 'customValue';
     }
 
-    public function testMagicSetThrowsForUnknownProperty(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function magicSetThrowsForUnknownProperty(): void
     {
         self::expectException(InvalidArgumentException::class);
         self::expectExceptionMessage(
@@ -518,7 +552,8 @@ final class AbstractTableGatewayTest extends TestCase
         $this->table->invalidProperty = 'value';
     }
 
-    public function testSelectAppliesColumnsWhenStarSelected(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function selectAppliesColumnsWhenStarSelected(): void
     {
         // Set up columns on the table
         $tgReflection = new ReflectionClass(AbstractTableGateway::class);
@@ -544,7 +579,8 @@ final class AbstractTableGatewayTest extends TestCase
         $this->table->selectWith($select);
     }
 
-    public function testSelectWithArrayTable(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function selectWithArrayTable(): void
     {
         // Case 1
         $select1 = $this->getMockBuilder(Select::class)->onlyMethods(['getRawState'])->getMock();
@@ -555,7 +591,7 @@ final class AbstractTableGatewayTest extends TestCase
                 'columns' => null,
             ]);
         $return = $this->table->selectWith($select1);
-        $this->assertInstanceOf(ResultSet::class, $return);
+        static::assertInstanceOf(ResultSet::class, $return);
 
         // Case 2
         $select1 = $this->getMockBuilder(Select::class)->onlyMethods(['getRawState'])->getMock();
@@ -566,10 +602,11 @@ final class AbstractTableGatewayTest extends TestCase
                 'columns' => null,
             ]);
         $return = $this->table->selectWith($select1);
-        $this->assertInstanceOf(ResultSet::class, $return);
+        static::assertInstanceOf(ResultSet::class, $return);
     }
 
-    public function testSelectWithClosure(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function selectWithClosure(): void
     {
         $mockSelect = $this->mockSelect;
         $mockSelect->expects($this->any())
@@ -585,20 +622,22 @@ final class AbstractTableGatewayTest extends TestCase
             self::assertInstanceOf(Select::class, $select);
         });
 
-        self::assertTrue($closureCalled);
-        self::assertInstanceOf(ResultSet::class, $result);
+        static::assertTrue($closureCalled);
+        static::assertInstanceOf(ResultSet::class, $result);
     }
 
-    public function testSelectWithNoWhere(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function selectWithNoWhere(): void
     {
         $resultSet = $this->table->select();
 
         // check return types
-        self::assertInstanceOf(ResultSet::class, $resultSet);
-        self::assertNotSame($this->table->getResultSetPrototype(), $resultSet);
+        static::assertInstanceOf(ResultSet::class, $resultSet);
+        static::assertNotSame($this->table->getResultSetPrototype(), $resultSet);
     }
 
-    public function testSelectWithWhereString(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function selectWithWhereString(): void
     {
         $mockSelect = $this->mockSelect;
         $mockSelect->expects($this->any())
@@ -611,25 +650,27 @@ final class AbstractTableGatewayTest extends TestCase
         // assert select::from() is called
         $mockSelect->expects($this->once())
             ->method('where')
-            ->with($this->equalTo('foo'));
+            ->with(static::equalTo('foo'));
 
         $this->table->select('foo');
     }
 
-    public function testUpdate(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function update(): void
     {
         $mockUpdate = $this->mockUpdate;
 
         // assert select::from() is called
         $mockUpdate->expects($this->once())
             ->method('where')
-            ->with($this->equalTo('id = 2'));
+            ->with(static::equalTo('id = 2'));
 
         $affectedRows = $this->table->update(['foo' => 'bar'], 'id = 2');
-        self::assertEquals(5, $affectedRows);
+        static::assertSame(5, $affectedRows);
     }
 
-    public function testUpdateWith(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function updateWith(): void
     {
         $update = $this->getMockBuilder(Update::class)
             ->onlyMethods(['getRawState'])
@@ -641,10 +682,11 @@ final class AbstractTableGatewayTest extends TestCase
             ->willReturn(['table' => 'foo']);
 
         $affectedRows = $this->table->updateWith($update);
-        self::assertEquals(5, $affectedRows);
+        static::assertSame(5, $affectedRows);
     }
 
-    public function testUpdateWithJoin(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function updateWithJoin(): void
     {
         $mockUpdate = $this->mockUpdate;
 
@@ -659,17 +701,18 @@ final class AbstractTableGatewayTest extends TestCase
         // assert select::from() is called
         $mockUpdate->expects($this->once())
             ->method('where')
-            ->with($this->equalTo('id = 2'));
+            ->with(static::equalTo('id = 2'));
 
         $mockUpdate->expects($this->once())
             ->method('join')
             ->with($joins[0]['name'], $joins[0]['on'], $joins[0]['type']);
 
         $affectedRows = $this->table->update(['foo.field' => 'bar'], 'id = 2', $joins);
-        self::assertEquals(5, $affectedRows);
+        static::assertSame(5, $affectedRows);
     }
 
-    public function testUpdateWithJoinDefaultType(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function updateWithJoinDefaultType(): void
     {
         $mockUpdate = $this->mockUpdate;
 
@@ -683,23 +726,24 @@ final class AbstractTableGatewayTest extends TestCase
         // assert select::from() is called
         $mockUpdate->expects($this->once())
             ->method('where')
-            ->with($this->equalTo('id = 2'));
+            ->with(static::equalTo('id = 2'));
 
         $mockUpdate->expects($this->once())
             ->method('join')
             ->with($joins[0]['name'], $joins[0]['on'], Sql\Join::JOIN_INNER);
 
         $affectedRows = $this->table->update(['foo.field' => 'bar'], 'id = 2', $joins);
-        self::assertEquals(5, $affectedRows);
+        static::assertSame(5, $affectedRows);
     }
 
-    public function testUpdateWithNoCriteria(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function updateWithNoCriteria(): void
     {
         /** @phpstan-ignore expr.resultUnused */
         $this->mockUpdate;
 
         $affectedRows = $this->table->update(['foo' => 'bar']);
-        self::assertEquals(5, $affectedRows);
+        static::assertSame(5, $affectedRows);
     }
 
     #[Override]

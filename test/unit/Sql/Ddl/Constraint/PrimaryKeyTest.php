@@ -12,14 +12,15 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(PrimaryKey::class, 'getExpressionData')]
 final class PrimaryKeyTest extends TestCase
 {
-    public function testGetExpressionData(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function getExpressionData(): void
     {
         $pk = new PrimaryKey('foo');
 
         $expressionData = $pk->getExpressionData();
 
-        self::assertEquals('PRIMARY KEY (%s)', $expressionData['spec']);
-        self::assertEquals(
+        static::assertSame('PRIMARY KEY (%s)', $expressionData['spec']);
+        static::assertEquals(
             [
                 Argument::identifier('foo'),
             ],

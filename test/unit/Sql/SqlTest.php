@@ -49,29 +49,32 @@ final class SqlTest extends TestCase
     protected Sql $sql;
 
     // @codingStandardsIgnoreStart
-    public function test__construct(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function _construct(): void
     {
         // @codingStandardsIgnoreEnd
         $sql = new Sql($this->mockAdapter);
 
-        self::assertFalse($sql->hasTable());
+        static::assertFalse($sql->hasTable());
 
         $sql->setTable('foo');
-        self::assertSame('foo', $sql->getTable());
+        static::assertSame('foo', $sql->getTable());
 
         self::expectException(TypeError::class);
         /** @noinspection PhpStrictTypeCheckingInspection */
         $sql->setTable(null);
     }
 
-    public function testBuildSqlString(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function buildSqlString(): void
     {
         $select    = $this->sql->select()->where(['bar' => 'baz']);
         $sqlString = $this->sql->buildSqlString($select);
-        self::assertEquals('SELECT "foo".* FROM "foo" WHERE "bar" = \'baz\'', $sqlString);
+        static::assertSame('SELECT "foo".* FROM "foo" WHERE "bar" = \'baz\'', $sqlString);
     }
 
-    public function testBuildSqlStringThrowsWhenPlatformNotSqlInterface(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function buildSqlStringThrowsWhenPlatformNotSqlInterface(): void
     {
         $decorator = $this->createMock(PlatformDecoratorInterface::class);
         $platform  = $this->createMock(PlatformInterface::class);
@@ -92,12 +95,13 @@ final class SqlTest extends TestCase
         $sql->buildSqlString($this->sql->select());
     }
 
-    public function testDelete(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function delete(): void
     {
         $delete = $this->sql->delete();
 
-        self::assertInstanceOf(Delete::class, $delete);
-        self::assertSame('foo', $delete->getRawState('table'));
+        static::assertInstanceOf(Delete::class, $delete);
+        static::assertSame('foo', $delete->getRawState('table'));
 
         self::expectException(InvalidArgumentException::class);
         self::expectExceptionMessage(
@@ -106,7 +110,8 @@ final class SqlTest extends TestCase
         $this->sql->delete('bar');
     }
 
-    public function testDeleteThrowsWhenTableConflicts(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function deleteThrowsWhenTableConflicts(): void
     {
         self::expectException(InvalidArgumentException::class);
         self::expectExceptionMessage(
@@ -115,16 +120,18 @@ final class SqlTest extends TestCase
         $this->sql->delete(new TableIdentifier('bar'));
     }
 
-    public function testGetSqlPlatformReturnsPlatformDecorator(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function getSqlPlatformReturnsPlatformDecorator(): void
     {
-        self::assertInstanceOf(PlatformDecoratorInterface::class, $this->sql->getSqlPlatform());
+        static::assertInstanceOf(PlatformDecoratorInterface::class, $this->sql->getSqlPlatform());
     }
 
-    public function testInsert(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function insert(): void
     {
         $insert = $this->sql->insert();
-        self::assertInstanceOf(Insert::class, $insert);
-        self::assertSame('foo', $insert->getRawState('table'));
+        static::assertInstanceOf(Insert::class, $insert);
+        static::assertSame('foo', $insert->getRawState('table'));
 
         self::expectException(InvalidArgumentException::class);
         self::expectExceptionMessage(
@@ -133,7 +140,8 @@ final class SqlTest extends TestCase
         $this->sql->insert('bar');
     }
 
-    public function testInsertThrowsWhenTableConflicts(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function insertThrowsWhenTableConflicts(): void
     {
         self::expectException(InvalidArgumentException::class);
         self::expectExceptionMessage(
@@ -142,14 +150,16 @@ final class SqlTest extends TestCase
         $this->sql->insert(new TableIdentifier('bar'));
     }
 
-    public function testPrepareStatementForSqlObject(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function prepareStatementForSqlObject(): void
     {
         $insert = $this->sql->insert()->columns(['foo'])->values(['foo' => 'bar']);
         $stmt   = $this->sql->prepareStatementForSqlObject($insert);
-        self::assertInstanceOf(StatementInterface::class, $stmt);
+        static::assertInstanceOf(StatementInterface::class, $stmt);
     }
 
-    public function testPrepareStatementThrowsWhenPlatformNotPreparable(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function prepareStatementThrowsWhenPlatformNotPreparable(): void
     {
         $decorator = $this->createMock(PlatformDecoratorInterface::class);
         $platform  = $this->createMock(PlatformInterface::class);
@@ -170,11 +180,12 @@ final class SqlTest extends TestCase
         $sql->prepareStatementForSqlObject($this->sql->select());
     }
 
-    public function testSelect(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function select(): void
     {
         $select = $this->sql->select();
-        self::assertInstanceOf(Select::class, $select);
-        self::assertSame('foo', $select->getRawState('table'));
+        static::assertInstanceOf(Select::class, $select);
+        static::assertSame('foo', $select->getRawState('table'));
 
         self::expectException(InvalidArgumentException::class);
         self::expectExceptionMessage(
@@ -183,7 +194,8 @@ final class SqlTest extends TestCase
         $this->sql->select('bar');
     }
 
-    public function testSelectThrowsWhenTableConflicts(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function selectThrowsWhenTableConflicts(): void
     {
         self::expectException(InvalidArgumentException::class);
         self::expectExceptionMessage(
@@ -192,11 +204,12 @@ final class SqlTest extends TestCase
         $this->sql->select(new TableIdentifier('bar'));
     }
 
-    public function testUpdate(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function update(): void
     {
         $update = $this->sql->update();
-        self::assertInstanceOf(Update::class, $update);
-        self::assertSame('foo', $update->getRawState('table'));
+        static::assertInstanceOf(Update::class, $update);
+        static::assertSame('foo', $update->getRawState('table'));
 
         self::expectException(InvalidArgumentException::class);
         self::expectExceptionMessage(
@@ -205,7 +218,8 @@ final class SqlTest extends TestCase
         $this->sql->update('bar');
     }
 
-    public function testUpdateThrowsWhenTableConflicts(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function updateThrowsWhenTableConflicts(): void
     {
         self::expectException(InvalidArgumentException::class);
         self::expectExceptionMessage(

@@ -43,37 +43,41 @@ final class ExpressionTest extends TestCase
         ];
     }
 
+    #[\PHPUnit\Framework\Attributes\Test]
     #[DataProvider('falsyExpressionParametersProvider')]
-    public function testConstructorWithFalsyValidParameters(mixed $falsyParameter): void
+    public function constructorWithFalsyValidParameters(mixed $falsyParameter): void
     {
         $expression = new Expression('?', $falsyParameter);
         $falsyValue = Argument::value($falsyParameter);
 
         $expressionData = $expression->getExpressionData();
 
-        self::assertEquals([$falsyValue], $expressionData['values']);
+        static::assertEquals([$falsyValue], $expressionData['values']);
     }
 
-    public function testConstructorWithInvalidParameter(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function constructorWithInvalidParameter(): void
     {
         self::expectException(TypeError::class);
         new Expression('?', (object) []);
     }
 
-    public function testConstructorWithLiteralZero(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function constructorWithLiteralZero(): void
     {
         $expression = new Expression('0');
-        self::assertSame('0', $expression->getExpression());
+        static::assertSame('0', $expression->getExpression());
     }
 
-    public function testConstructorWithMultipleArguments(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function constructorWithMultipleArguments(): void
     {
         $expression = new Expression('? + ? - ?', 1, 2, 3);
 
         $expressionData = $expression->getExpressionData();
 
-        self::assertEquals('%s + %s - %s', $expressionData['spec']);
-        self::assertEquals(
+        static::assertSame('%s + %s - %s', $expressionData['spec']);
+        static::assertEquals(
             [
                 Argument::value(1),
                 Argument::value(2),
@@ -83,7 +87,8 @@ final class ExpressionTest extends TestCase
         );
     }
 
-    public function testGetExpressionData(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function getExpressionData(): void
     {
         $expression = new Expression(
             'X SAME AS ? AND Y = ? BUT LITERALLY ?',
@@ -96,8 +101,8 @@ final class ExpressionTest extends TestCase
 
         $expressionData = $expression->getExpressionData();
 
-        self::assertEquals('X SAME AS %s AND Y = %s BUT LITERALLY %s', $expressionData['spec']);
-        self::assertEquals(
+        static::assertSame('X SAME AS %s AND Y = %s BUT LITERALLY %s', $expressionData['spec']);
+        static::assertEquals(
             [
                 new Identifier('foo'),
                 new Value(5),
@@ -107,7 +112,8 @@ final class ExpressionTest extends TestCase
         );
     }
 
-    public function testGetExpressionDataThrowsExceptionWhenParameterCountMismatch(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function getExpressionDataThrowsExceptionWhenParameterCountMismatch(): void
     {
         $expression = new Expression('? AND ?', [1]); // Two placeholders but only one parameter
 
@@ -118,52 +124,57 @@ final class ExpressionTest extends TestCase
         $expression->getExpressionData();
     }
 
-    public function testGetExpressionDataUsesRegexWhenPlaceholderCountMismatches(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function getExpressionDataUsesRegexWhenPlaceholderCountMismatches(): void
     {
         $expression = new Expression('uf.user_id = :user_id OR uf.friend_id = :user_id', ['user_id' => 1]);
 
         $expressionData = $expression->getExpressionData();
 
-        self::assertEquals(
+        static::assertSame(
             'uf.user_id = :user_id OR uf.friend_id = :user_id',
             $expressionData['spec'],
         );
-        self::assertCount(1, $expressionData['values']);
+        static::assertCount(1, $expressionData['values']);
     }
 
-    public function testGetExpressionDataWillEscapePercent(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function getExpressionDataWillEscapePercent(): void
     {
         $expression = new Expression('X LIKE "foo%"');
 
         $expressionData = $expression->getExpressionData();
 
-        self::assertEquals('X LIKE "foo%%"', $expressionData['spec']);
+        static::assertSame('X LIKE "foo%%"', $expressionData['spec']);
     }
 
+    #[\PHPUnit\Framework\Attributes\Test]
     #[Group('7407')]
-    public function testGetExpressionPreservesPercentageSignInFromUnixtime(): void
+    public function getExpressionPreservesPercentageSignInFromUnixtime(): void
     {
         $expressionString = 'FROM_UNIXTIME(date, "%Y-%m")';
         $expression       = new Expression($expressionString);
 
-        self::assertSame($expressionString, $expression->getExpression());
+        static::assertSame($expressionString, $expression->getExpression());
     }
 
-    public function testNumberOfReplacementsConsidersWhenSameVariableIsUsedManyTimes(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function numberOfReplacementsConsidersWhenSameVariableIsUsedManyTimes(): void
     {
         $expression = new Expression('uf.user_id = :user_id OR uf.friend_id = :user_id', ['user_id' => 1]);
         $value      = new Value(1);
 
         $expressionData = $expression->getExpressionData();
 
-        self::assertEquals(
+        static::assertSame(
             'uf.user_id = :user_id OR uf.friend_id = :user_id',
             $expressionData['spec'],
         );
-        self::assertEquals([$value], $expressionData['values']);
+        static::assertEquals([$value], $expressionData['values']);
     }
 
-    public function testNumberOfReplacementsForExpressionWithParameters(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function numberOfReplacementsForExpressionWithParameters(): void
     {
         $expression = new Expression(':a + :b', ['a' => 1, 'b' => 2]);
         $value1     = Argument::value(1);
@@ -171,11 +182,12 @@ final class ExpressionTest extends TestCase
 
         $expressionData = $expression->getExpressionData();
 
-        self::assertEquals(':a + :b', $expressionData['spec']);
-        self::assertEquals([$value1, $value2], $expressionData['values']);
+        static::assertSame(':a + :b', $expressionData['spec']);
+        static::assertEquals([$value1, $value2], $expressionData['values']);
     }
 
-    public function testSetExpression(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function setExpression(): void
     {
         $expression = new Expression();
 
@@ -183,19 +195,20 @@ final class ExpressionTest extends TestCase
         $result = $expression->setExpression('Foo Bar');
 
         // Verify fluent interface
-        self::assertSame($expression, $result);
+        static::assertSame($expression, $result);
 
         // Verify the first mutation occurred
-        self::assertEquals('Foo Bar', $expression->getExpression());
+        static::assertSame('Foo Bar', $expression->getExpression());
 
         // Second mutation to verify mutability
         $expression->setExpression('Baz Qux');
 
         // Verify the instance was actually mutated
-        self::assertEquals('Baz Qux', $expression->getExpression());
+        static::assertSame('Baz Qux', $expression->getExpression());
     }
 
-    public function testSetExpressionException(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function setExpressionException(): void
     {
         $expression = new Expression();
         self::expectException(TypeError::class);
@@ -208,7 +221,8 @@ final class ExpressionTest extends TestCase
         $expression->setExpression('');
     }
 
-    public function testSetExpressionThrowsOnEmptyString(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function setExpressionThrowsOnEmptyString(): void
     {
         $expression = new Expression();
 
@@ -216,7 +230,8 @@ final class ExpressionTest extends TestCase
         $expression->setExpression('');
     }
 
-    public function testSetParameters(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function setParameters(): void
     {
         $expression = new Expression();
 
@@ -224,25 +239,26 @@ final class ExpressionTest extends TestCase
         $result = $expression->setParameters('foo');
 
         // Verify fluent interface
-        self::assertSame($expression, $result);
+        static::assertSame($expression, $result);
 
         // Verify the first mutation occurred
-        self::assertEquals([new Value('foo')], $expression->getParameters());
+        static::assertEquals([new Value('foo')], $expression->getParameters());
 
         // Second mutation to verify mutability (setParameters appends)
         $expression->setParameters('bar');
 
         // Verify the instance was actually mutated (now has both parameters)
-        self::assertEquals([new Value('foo'), new Value('bar')], $expression->getParameters());
+        static::assertEquals([new Value('foo'), new Value('bar')], $expression->getParameters());
     }
 
-    public function testSetParametersWrapsArrayInValuesArgument(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function setParametersWrapsArrayInValuesArgument(): void
     {
         $expression = new Expression('? IN (?)', [Argument::identifier('id'), [1, 2, 3]]);
 
         $data = $expression->getExpressionData();
 
-        self::assertCount(2, $data['values']);
-        self::assertInstanceOf(Argument\Values::class, $data['values'][1]);
+        static::assertCount(2, $data['values']);
+        static::assertInstanceOf(Argument\Values::class, $data['values'][1]);
     }
 }

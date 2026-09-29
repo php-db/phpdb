@@ -29,44 +29,36 @@ use PHPUnit\Framework\TestCase;
 #[Group('unit')]
 final class ColumnTest extends TestCase
 {
-    #[Test]
-    public function setOptionAcceptsIntegerValue(): void
-    {
-        $column = new Column();
-
-        $result = $column->setOption('length', 11);
-
-        static::assertSame($column, $result);
-        static::assertSame(['length' => 11], $column->getOptions());
-    }
-
-    public function testAddConstraintAppendsConstraintToColumn(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function addConstraintAppendsConstraintToColumn(): void
     {
         $column = new Column('id');
 
         $result = $column->addConstraint(new PrimaryKey());
 
-        self::assertSame($column, $result);
+        static::assertSame($column, $result);
     }
 
-    public function testConstructor(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function constructor(): void
     {
         $column = new Column('test_col', true, 'default_val', ['option1' => 'value1']);
-        self::assertEquals('test_col', $column->getName());
-        self::assertTrue($column->isNullable());
-        self::assertEquals('default_val', $column->getDefault());
-        self::assertEquals(['option1' => 'value1'], $column->getOptions());
+        static::assertSame('test_col', $column->getName());
+        static::assertTrue($column->isNullable());
+        static::assertSame('default_val', $column->getDefault());
+        static::assertEquals(['option1' => 'value1'], $column->getOptions());
     }
 
-    public function testGetExpressionData(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function getExpressionData(): void
     {
         $column = new Column();
         $column->setName('foo');
 
         $expressionData = $column->getExpressionData();
 
-        self::assertEquals('%s %s NOT NULL', $expressionData['spec']);
-        self::assertEquals(
+        static::assertSame('%s %s NOT NULL', $expressionData['spec']);
+        static::assertEquals(
             [
                 Argument::identifier('foo'),
                 Argument::literal('INTEGER'),
@@ -78,8 +70,8 @@ final class ColumnTest extends TestCase
 
         $expressionData = $column->getExpressionData();
 
-        self::assertEquals('%s %s NULL DEFAULT NULL', $expressionData['spec']);
-        self::assertEquals(
+        static::assertSame('%s %s NULL DEFAULT NULL', $expressionData['spec']);
+        static::assertEquals(
             [
                 Argument::identifier('foo'),
                 Argument::literal('INTEGER'),
@@ -91,8 +83,8 @@ final class ColumnTest extends TestCase
 
         $expressionData = $column->getExpressionData();
 
-        self::assertEquals('%s %s NULL DEFAULT %s', $expressionData['spec']);
-        self::assertEquals(
+        static::assertSame('%s %s NULL DEFAULT %s', $expressionData['spec']);
+        static::assertEquals(
             [
                 Argument::identifier('foo'),
                 Argument::literal('INTEGER'),
@@ -102,27 +94,30 @@ final class ColumnTest extends TestCase
         );
     }
 
-    public function testGetExpressionDataIncludesConstraints(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function getExpressionDataIncludesConstraints(): void
     {
         $column = new Column('id');
         $column->addConstraint(new PrimaryKey());
 
         $expressionData = $column->getExpressionData();
 
-        self::assertStringContainsString('PRIMARY KEY', $expressionData['spec']);
+        static::assertStringContainsString('PRIMARY KEY', $expressionData['spec']);
     }
 
-    public function testGetExpressionDataIncludesConstraintValues(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function getExpressionDataIncludesConstraintValues(): void
     {
         $column = new Column('id');
         $column->addConstraint(new PrimaryKey('id', 'pk_id'));
 
         $expressionData = $column->getExpressionData();
 
-        self::assertNotEmpty($expressionData['values']);
+        static::assertNotEmpty($expressionData['values']);
     }
 
-    public function testGetExpressionDataWithBoolDefault(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function getExpressionDataWithBoolDefault(): void
     {
         $column = new Column();
         $column->setName('is_active');
@@ -130,8 +125,8 @@ final class ColumnTest extends TestCase
 
         $expressionData = $column->getExpressionData();
 
-        self::assertEquals('%s %s NOT NULL DEFAULT %s', $expressionData['spec']);
-        self::assertEquals(
+        static::assertSame('%s %s NOT NULL DEFAULT %s', $expressionData['spec']);
+        static::assertEquals(
             [
                 Argument::identifier('is_active'),
                 Argument::literal('INTEGER'),
@@ -141,7 +136,8 @@ final class ColumnTest extends TestCase
         );
     }
 
-    public function testGetExpressionDataWithFloatDefault(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function getExpressionDataWithFloatDefault(): void
     {
         $column = new Column();
         $column->setName('rate');
@@ -149,8 +145,8 @@ final class ColumnTest extends TestCase
 
         $expressionData = $column->getExpressionData();
 
-        self::assertEquals('%s %s NOT NULL DEFAULT %s', $expressionData['spec']);
-        self::assertEquals(
+        static::assertSame('%s %s NOT NULL DEFAULT %s', $expressionData['spec']);
+        static::assertEquals(
             [
                 Argument::identifier('rate'),
                 Argument::literal('INTEGER'),
@@ -160,7 +156,8 @@ final class ColumnTest extends TestCase
         );
     }
 
-    public function testGetExpressionDataWithLiteralDefault(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function getExpressionDataWithLiteralDefault(): void
     {
         $column = new Column();
         $column->setName('created_at');
@@ -168,8 +165,8 @@ final class ColumnTest extends TestCase
 
         $expressionData = $column->getExpressionData();
 
-        self::assertEquals('%s %s NOT NULL DEFAULT %s', $expressionData['spec']);
-        self::assertEquals(
+        static::assertSame('%s %s NOT NULL DEFAULT %s', $expressionData['spec']);
+        static::assertEquals(
             [
                 Argument::identifier('created_at'),
                 Argument::literal('INTEGER'),
@@ -179,7 +176,8 @@ final class ColumnTest extends TestCase
         );
     }
 
-    public function testGetExpressionDataWithValueDefault(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function getExpressionDataWithValueDefault(): void
     {
         $column = new Column();
         $column->setName('score');
@@ -187,8 +185,8 @@ final class ColumnTest extends TestCase
 
         $expressionData = $column->getExpressionData();
 
-        self::assertEquals('%s %s NOT NULL DEFAULT %s', $expressionData['spec']);
-        self::assertEquals(
+        static::assertSame('%s %s NOT NULL DEFAULT %s', $expressionData['spec']);
+        static::assertEquals(
             [
                 Argument::identifier('score'),
                 Argument::literal('INTEGER'),
@@ -198,7 +196,8 @@ final class ColumnTest extends TestCase
         );
     }
 
-    public function testSetDefault(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function setDefault(): void
     {
         $column = new Column();
 
@@ -206,41 +205,44 @@ final class ColumnTest extends TestCase
         $result = $column->setDefault('foo bar');
 
         // Verify fluent interface
-        self::assertSame($column, $result);
+        static::assertSame($column, $result);
 
         // Verify the first mutation occurred
-        self::assertEquals('foo bar', $column->getDefault());
+        static::assertSame('foo bar', $column->getDefault());
 
         // Second mutation to verify mutability
         $column->setDefault('baz qux');
 
         // Verify the instance was actually mutated
-        self::assertEquals('baz qux', $column->getDefault());
+        static::assertSame('baz qux', $column->getDefault());
     }
 
-    public function testSetDefaultWithBool(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function setDefaultWithBool(): void
     {
         $column = new Column();
         $column->setName('is_active');
 
         $result = $column->setDefault(true);
 
-        self::assertSame($column, $result);
-        self::assertTrue($column->getDefault());
+        static::assertSame($column, $result);
+        static::assertTrue($column->getDefault());
     }
 
-    public function testSetDefaultWithFloat(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function setDefaultWithFloat(): void
     {
         $column = new Column();
         $column->setName('rate');
 
         $result = $column->setDefault(3.14);
 
-        self::assertSame($column, $result);
-        self::assertSame(3.14, $column->getDefault());
+        static::assertSame($column, $result);
+        static::assertSame(3.14, $column->getDefault());
     }
 
-    public function testSetDefaultWithLiteral(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function setDefaultWithLiteral(): void
     {
         $column = new Column();
         $column->setName('created_at');
@@ -248,11 +250,12 @@ final class ColumnTest extends TestCase
         $literal = new Literal('CURRENT_TIMESTAMP');
         $result  = $column->setDefault($literal);
 
-        self::assertSame($column, $result);
-        self::assertSame($literal, $column->getDefault());
+        static::assertSame($column, $result);
+        static::assertSame($literal, $column->getDefault());
     }
 
-    public function testSetDefaultWithValue(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function setDefaultWithValue(): void
     {
         $column = new Column();
         $column->setName('score');
@@ -260,11 +263,12 @@ final class ColumnTest extends TestCase
         $value  = new Value(99);
         $result = $column->setDefault($value);
 
-        self::assertSame($column, $result);
-        self::assertSame($value, $column->getDefault());
+        static::assertSame($column, $result);
+        static::assertSame($value, $column->getDefault());
     }
 
-    public function testSetName(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function setName(): void
     {
         $column = new Column();
 
@@ -272,19 +276,20 @@ final class ColumnTest extends TestCase
         $result = $column->setName('foo');
 
         // Verify fluent interface
-        self::assertSame($column, $result);
+        static::assertSame($column, $result);
 
         // Verify the first mutation occurred
-        self::assertEquals('foo', $column->getName());
+        static::assertSame('foo', $column->getName());
 
         // Second mutation to verify mutability
         $column->setName('bar');
 
         // Verify the instance was actually mutated
-        self::assertEquals('bar', $column->getName());
+        static::assertSame('bar', $column->getName());
     }
 
-    public function testSetNullable(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function setNullable(): void
     {
         $column = new Column();
 
@@ -292,19 +297,20 @@ final class ColumnTest extends TestCase
         $result = $column->setNullable(true);
 
         // Verify fluent interface
-        self::assertSame($column, $result);
+        static::assertSame($column, $result);
 
         // Verify the first mutation occurred
-        self::assertTrue($column->isNullable());
+        static::assertTrue($column->isNullable());
 
         // Second mutation to verify mutability
         $column->setNullable(false);
 
         // Verify the instance was actually mutated
-        self::assertFalse($column->isNullable());
+        static::assertFalse($column->isNullable());
     }
 
-    public function testSetOption(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function setOption(): void
     {
         $column = new Column();
 
@@ -312,19 +318,31 @@ final class ColumnTest extends TestCase
         $result = $column->setOption('primary', true);
 
         // Verify fluent interface
-        self::assertSame($column, $result);
+        static::assertSame($column, $result);
 
         // Verify the first mutation occurred
-        self::assertEquals(['primary' => true], $column->getOptions());
+        static::assertEquals(['primary' => true], $column->getOptions());
 
         // Second mutation to verify mutability
         $column->setOption('unsigned', true);
 
         // Verify the instance was actually mutated
-        self::assertEquals(['primary' => true, 'unsigned' => true], $column->getOptions());
+        static::assertEquals(['primary' => true, 'unsigned' => true], $column->getOptions());
     }
 
-    public function testSetOptions(): void
+    #[Test]
+    public function setOptionAcceptsIntegerValue(): void
+    {
+        $column = new Column();
+
+        $result = $column->setOption('length', 11);
+
+        static::assertSame($column, $result);
+        static::assertSame(['length' => 11], $column->getOptions());
+    }
+
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function setOptions(): void
     {
         $column = new Column();
 
@@ -332,15 +350,15 @@ final class ColumnTest extends TestCase
         $result = $column->setOptions(['autoincrement' => true]);
 
         // Verify fluent interface
-        self::assertSame($column, $result);
+        static::assertSame($column, $result);
 
         // Verify the first mutation occurred
-        self::assertEquals(['autoincrement' => true], $column->getOptions());
+        static::assertEquals(['autoincrement' => true], $column->getOptions());
 
         // Second mutation to verify mutability
         $column->setOptions(['primary' => true, 'unsigned' => true]);
 
         // Verify the instance was actually mutated
-        self::assertEquals(['primary' => true, 'unsigned' => true], $column->getOptions());
+        static::assertEquals(['primary' => true, 'unsigned' => true], $column->getOptions());
     }
 }

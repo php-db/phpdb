@@ -25,48 +25,52 @@ use PHPUnit\Framework\TestCase;
 #[Group('unit')]
 final class InTest extends TestCase
 {
-    public function testCanPassIdentifierAndEmptyValueSetToConstructor(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function canPassIdentifierAndEmptyValueSetToConstructor(): void
     {
         $in = new In('foo.bar', []);
 
         // Verify identifier was set correctly
         $identifier = $in->getIdentifier();
-        self::assertInstanceOf(ArgumentInterface::class, $identifier);
-        self::assertEquals('foo.bar', $identifier->getValue());
-        self::assertEquals(ArgumentType::Identifier, $identifier->getType());
+        static::assertInstanceOf(ArgumentInterface::class, $identifier);
+        static::assertSame('foo.bar', $identifier->getValue());
+        static::assertEquals(ArgumentType::Identifier, $identifier->getType());
 
         // Verify empty value set was set correctly
         $valueSet = $in->getValueSet();
-        self::assertInstanceOf(ArgumentInterface::class, $valueSet);
-        self::assertEquals([], $valueSet->getValue());
-        self::assertEquals(ArgumentType::Values, $valueSet->getType());
+        static::assertInstanceOf(ArgumentInterface::class, $valueSet);
+        static::assertEquals([], $valueSet->getValue());
+        static::assertEquals(ArgumentType::Values, $valueSet->getType());
     }
 
-    public function testCanPassIdentifierAndValueSetToConstructor(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function canPassIdentifierAndValueSetToConstructor(): void
     {
         $in = new In('foo.bar', [1, 2]);
 
         // Verify identifier was set correctly
         $identifier = $in->getIdentifier();
-        self::assertInstanceOf(ArgumentInterface::class, $identifier);
-        self::assertEquals('foo.bar', $identifier->getValue());
-        self::assertEquals(ArgumentType::Identifier, $identifier->getType());
+        static::assertInstanceOf(ArgumentInterface::class, $identifier);
+        static::assertSame('foo.bar', $identifier->getValue());
+        static::assertEquals(ArgumentType::Identifier, $identifier->getType());
 
         // Verify value set was set correctly
         $valueSet = $in->getValueSet();
-        self::assertInstanceOf(ArgumentInterface::class, $valueSet);
-        self::assertEquals([1, 2], $valueSet->getValue());
-        self::assertEquals(ArgumentType::Values, $valueSet->getType());
+        static::assertInstanceOf(ArgumentInterface::class, $valueSet);
+        static::assertEquals([1, 2], $valueSet->getValue());
+        static::assertEquals(ArgumentType::Values, $valueSet->getType());
     }
 
-    public function testEmptyConstructorYieldsNullIdentifierAndValueSet(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function emptyConstructorYieldsNullIdentifierAndValueSet(): void
     {
         $in = new In();
-        self::assertNull($in->getIdentifier());
-        self::assertNull($in->getValueSet());
+        static::assertNull($in->getIdentifier());
+        static::assertNull($in->getValueSet());
     }
 
-    public function testGetExpressionDataThrowsExceptionWhenIdentifierNotSet(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function getExpressionDataThrowsExceptionWhenIdentifierNotSet(): void
     {
         $in = new In();
         $in->setValueSet([1, 2]);
@@ -76,7 +80,8 @@ final class InTest extends TestCase
         $in->getExpressionData();
     }
 
-    public function testGetExpressionDataThrowsExceptionWhenValueSetNotSet(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function getExpressionDataThrowsExceptionWhenValueSetNotSet(): void
     {
         $in = new In();
         $in->setIdentifier('foo');
@@ -86,17 +91,19 @@ final class InTest extends TestCase
         $in->getExpressionData();
     }
 
-    public function testGetExpressionDataWithEmptyValues(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function getExpressionDataWithEmptyValues(): void
     {
         new Select();
         $in = new In('foo', []);
 
         $expressionData = $in->getExpressionData();
 
-        self::assertEquals('%s IN (NULL)', $expressionData['spec']);
+        static::assertSame('%s IN (NULL)', $expressionData['spec']);
     }
 
-    public function testGetExpressionDataWithSubselect(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function getExpressionDataWithSubselect(): void
     {
         $select = new Select();
         $in     = new In(Argument::value('foo'), $select);
@@ -104,24 +111,25 @@ final class InTest extends TestCase
         $expressionData = $in->getExpressionData();
 
         // Verify specification
-        self::assertEquals('%s IN %s', $expressionData['spec']);
+        static::assertSame('%s IN %s', $expressionData['spec']);
 
         // Verify expression values
         $values = $expressionData['values'];
-        self::assertCount(2, $values);
+        static::assertCount(2, $values);
 
         // Verify value argument (passed as value type)
-        self::assertInstanceOf(ArgumentInterface::class, $values[0]);
-        self::assertEquals('foo', $values[0]->getValue());
-        self::assertEquals(ArgumentType::Value, $values[0]->getType());
+        static::assertInstanceOf(ArgumentInterface::class, $values[0]);
+        static::assertSame('foo', $values[0]->getValue());
+        static::assertEquals(ArgumentType::Value, $values[0]->getType());
 
         // Verify subselect argument
-        self::assertInstanceOf(ArgumentInterface::class, $values[1]);
-        self::assertSame($select, $values[1]->getValue());
-        self::assertEquals(ArgumentType::Select, $values[1]->getType());
+        static::assertInstanceOf(ArgumentInterface::class, $values[1]);
+        static::assertSame($select, $values[1]->getValue());
+        static::assertEquals(ArgumentType::Select, $values[1]->getType());
     }
 
-    public function testGetExpressionDataWithSubselectAndArrayIdentifier(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function getExpressionDataWithSubselectAndArrayIdentifier(): void
     {
         $select = new Select();
         $in     = new In(Argument::identifiers(['foo', 'bar']), $select);
@@ -129,24 +137,25 @@ final class InTest extends TestCase
         $expressionData = $in->getExpressionData();
 
         // Verify specification
-        self::assertEquals('(%s, %s) IN %s', $expressionData['spec']);
+        static::assertSame('(%s, %s) IN %s', $expressionData['spec']);
 
         // Verify expression values
         $values = $expressionData['values'];
-        self::assertCount(2, $values);
+        static::assertCount(2, $values);
 
         // Verify array identifiers argument
-        self::assertInstanceOf(ArgumentInterface::class, $values[0]);
-        self::assertEquals(['foo', 'bar'], $values[0]->getValue());
-        self::assertEquals(ArgumentType::Identifiers, $values[0]->getType());
+        static::assertInstanceOf(ArgumentInterface::class, $values[0]);
+        static::assertEquals(['foo', 'bar'], $values[0]->getValue());
+        static::assertEquals(ArgumentType::Identifiers, $values[0]->getType());
 
         // Verify subselect argument
-        self::assertInstanceOf(ArgumentInterface::class, $values[1]);
-        self::assertSame($select, $values[1]->getValue());
-        self::assertEquals(ArgumentType::Select, $values[1]->getType());
+        static::assertInstanceOf(ArgumentInterface::class, $values[1]);
+        static::assertSame($select, $values[1]->getValue());
+        static::assertEquals(ArgumentType::Select, $values[1]->getType());
     }
 
-    public function testGetExpressionDataWithSubselectAndIdentifier(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function getExpressionDataWithSubselectAndIdentifier(): void
     {
         $select = new Select();
         $in     = new In(Argument::identifier('foo'), $select);
@@ -154,24 +163,25 @@ final class InTest extends TestCase
         $expressionData = $in->getExpressionData();
 
         // Verify specification
-        self::assertEquals('%s IN %s', $expressionData['spec']);
+        static::assertSame('%s IN %s', $expressionData['spec']);
 
         // Verify expression values
         $values = $expressionData['values'];
-        self::assertCount(2, $values);
+        static::assertCount(2, $values);
 
         // Verify identifier argument
-        self::assertInstanceOf(ArgumentInterface::class, $values[0]);
-        self::assertEquals('foo', $values[0]->getValue());
-        self::assertEquals(ArgumentType::Identifier, $values[0]->getType());
+        static::assertInstanceOf(ArgumentInterface::class, $values[0]);
+        static::assertSame('foo', $values[0]->getValue());
+        static::assertEquals(ArgumentType::Identifier, $values[0]->getType());
 
         // Verify subselect argument
-        self::assertInstanceOf(ArgumentInterface::class, $values[1]);
-        self::assertSame($select, $values[1]->getValue());
-        self::assertEquals(ArgumentType::Select, $values[1]->getType());
+        static::assertInstanceOf(ArgumentInterface::class, $values[1]);
+        static::assertSame($select, $values[1]->getValue());
+        static::assertEquals(ArgumentType::Select, $values[1]->getType());
     }
 
-    public function testIdentifierIsMutable(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function identifierIsMutable(): void
     {
         $in = new In();
 
@@ -179,25 +189,26 @@ final class InTest extends TestCase
         $result = $in->setIdentifier('foo.bar');
 
         // Verify fluent interface
-        self::assertSame($in, $result);
+        static::assertSame($in, $result);
 
         // Verify the first mutation occurred
         $identifier1 = $in->getIdentifier();
-        self::assertInstanceOf(ArgumentInterface::class, $identifier1);
-        self::assertEquals('foo.bar', $identifier1->getValue());
-        self::assertEquals(ArgumentType::Identifier, $identifier1->getType());
+        static::assertInstanceOf(ArgumentInterface::class, $identifier1);
+        static::assertSame('foo.bar', $identifier1->getValue());
+        static::assertEquals(ArgumentType::Identifier, $identifier1->getType());
 
         // Second mutation with different data to verify mutability
         $in->setIdentifier('baz.qux');
 
         // Verify the instance was actually mutated
         $identifier2 = $in->getIdentifier();
-        self::assertInstanceOf(ArgumentInterface::class, $identifier2);
-        self::assertEquals('baz.qux', $identifier2->getValue());
-        self::assertEquals(ArgumentType::Identifier, $identifier2->getType());
+        static::assertInstanceOf(ArgumentInterface::class, $identifier2);
+        static::assertSame('baz.qux', $identifier2->getValue());
+        static::assertEquals(ArgumentType::Identifier, $identifier2->getType());
     }
 
-    public function testRetrievingWherePartsReturnsSpecificationArrayOfIdentifierAndValuesAndArrayOfTypes(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function retrievingWherePartsReturnsSpecificationArrayOfIdentifierAndValuesAndArrayOfTypes(): void
     {
         $in = new In();
         $in->setIdentifier('foo.bar')
@@ -206,21 +217,21 @@ final class InTest extends TestCase
         $expressionData = $in->getExpressionData();
 
         // Verify specification
-        self::assertEquals('%s IN (%s, %s, %s)', $expressionData['spec']);
+        static::assertSame('%s IN (%s, %s, %s)', $expressionData['spec']);
 
         // Verify expression values
         $values = $expressionData['values'];
-        self::assertCount(2, $values);
+        static::assertCount(2, $values);
 
         // Verify identifier argument
-        self::assertInstanceOf(ArgumentInterface::class, $values[0]);
-        self::assertEquals('foo.bar', $values[0]->getValue());
-        self::assertEquals(ArgumentType::Identifier, $values[0]->getType());
+        static::assertInstanceOf(ArgumentInterface::class, $values[0]);
+        static::assertSame('foo.bar', $values[0]->getValue());
+        static::assertEquals(ArgumentType::Identifier, $values[0]->getType());
 
         // Verify value set argument
-        self::assertInstanceOf(ArgumentInterface::class, $values[1]);
-        self::assertEquals([1, 2, 3], $values[1]->getValue());
-        self::assertEquals(ArgumentType::Values, $values[1]->getType());
+        static::assertInstanceOf(ArgumentInterface::class, $values[1]);
+        static::assertEquals([1, 2, 3], $values[1]->getValue());
+        static::assertEquals(ArgumentType::Values, $values[1]->getType());
 
         // Test with typed value sets
         $in->setIdentifier('foo.bar')
@@ -233,20 +244,20 @@ final class InTest extends TestCase
         $expressionData = $in->getExpressionData();
 
         // Verify specification
-        self::assertEquals('%s IN (%s, %s, %s)', $expressionData['spec']);
+        static::assertSame('%s IN (%s, %s, %s)', $expressionData['spec']);
 
         // Verify expression values
         $values = $expressionData['values'];
-        self::assertCount(2, $values);
+        static::assertCount(2, $values);
 
         // Verify identifier argument
-        self::assertInstanceOf(ArgumentInterface::class, $values[0]);
-        self::assertEquals('foo.bar', $values[0]->getValue());
-        self::assertEquals(ArgumentType::Identifier, $values[0]->getType());
+        static::assertInstanceOf(ArgumentInterface::class, $values[0]);
+        static::assertSame('foo.bar', $values[0]->getValue());
+        static::assertEquals(ArgumentType::Identifier, $values[0]->getType());
 
         // Verify value set argument with types
-        self::assertInstanceOf(ArgumentInterface::class, $values[1]);
-        self::assertEquals(
+        static::assertInstanceOf(ArgumentInterface::class, $values[1]);
+        static::assertEquals(
             [
                 [1 => ArgumentType::Literal],
                 [2 => ArgumentType::Value],
@@ -254,20 +265,22 @@ final class InTest extends TestCase
             ],
             $values[1]->getValue(),
         );
-        self::assertEquals(ArgumentType::Values, $values[1]->getType());
+        static::assertEquals(ArgumentType::Values, $values[1]->getType());
     }
 
-    public function testSetValueSetWithArgumentInterfacePassesThrough(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function setValueSetWithArgumentInterfacePassesThrough(): void
     {
         $in     = new In();
         $values = new Values([1, 2, 3]);
 
         $in->setValueSet($values);
 
-        self::assertSame($values, $in->getValueSet());
+        static::assertSame($values, $in->getValueSet());
     }
 
-    public function testSetValueSetWithSelectWrapsInArgumentSelect(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function setValueSetWithSelectWrapsInArgumentSelect(): void
     {
         $in     = new In();
         $select = new Select('users');
@@ -275,11 +288,12 @@ final class InTest extends TestCase
         $in->setValueSet($select);
 
         $valueSet = $in->getValueSet();
-        self::assertInstanceOf(ArgumentSelect::class, $valueSet);
-        self::assertSame(ArgumentType::Select, $valueSet->getType());
+        static::assertInstanceOf(ArgumentSelect::class, $valueSet);
+        static::assertSame(ArgumentType::Select, $valueSet->getType());
     }
 
-    public function testValueSetIsMutable(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function valueSetIsMutable(): void
     {
         $in = new In();
 
@@ -287,21 +301,21 @@ final class InTest extends TestCase
         $result = $in->setValueSet([1, 2]);
 
         // Verify fluent interface
-        self::assertSame($in, $result);
+        static::assertSame($in, $result);
 
         // Verify the first mutation occurred
         $valueSet1 = $in->getValueSet();
-        self::assertInstanceOf(ArgumentInterface::class, $valueSet1);
-        self::assertEquals([1, 2], $valueSet1->getValue());
-        self::assertEquals(ArgumentType::Values, $valueSet1->getType());
+        static::assertInstanceOf(ArgumentInterface::class, $valueSet1);
+        static::assertEquals([1, 2], $valueSet1->getValue());
+        static::assertEquals(ArgumentType::Values, $valueSet1->getType());
 
         // Second mutation with different data to verify mutability
         $in->setValueSet([3, 4, 5]);
 
         // Verify the instance was actually mutated
         $valueSet2 = $in->getValueSet();
-        self::assertInstanceOf(ArgumentInterface::class, $valueSet2);
-        self::assertEquals([3, 4, 5], $valueSet2->getValue());
-        self::assertEquals(ArgumentType::Values, $valueSet2->getType());
+        static::assertInstanceOf(ArgumentInterface::class, $valueSet2);
+        static::assertEquals([3, 4, 5], $valueSet2->getValue());
+        static::assertEquals(ArgumentType::Values, $valueSet2->getType());
     }
 }

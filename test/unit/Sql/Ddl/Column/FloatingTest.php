@@ -24,6 +24,24 @@ final class FloatingTest extends TestCase
 {
     use ColumnAssertionsTrait;
 
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function getExpressionData(): void
+    {
+        $column = new Floating('foo', 10, 5);
+
+        $expressionData = $column->getExpressionData();
+
+        static::assertSame('%s %s(%s) NOT NULL', $expressionData['spec']);
+        static::assertEquals(
+            [
+                Argument::identifier('foo'),
+                Argument::literal('FLOAT'),
+                Argument::literal('10,5'),
+            ],
+            $expressionData['values'],
+        );
+    }
+
     #[Test]
     public function rendersDigitsAndDecimalDirectlyAfterType(): void
     {
@@ -40,23 +58,6 @@ final class FloatingTest extends TestCase
     public function rendersWithoutParenthesesWhenPrecisionIsNotSet(): void
     {
         static::assertColumnRenders('"f" FLOAT NOT NULL', new Floating('f'));
-    }
-
-    public function testGetExpressionData(): void
-    {
-        $column = new Floating('foo', 10, 5);
-
-        $expressionData = $column->getExpressionData();
-
-        self::assertEquals('%s %s(%s) NOT NULL', $expressionData['spec']);
-        self::assertEquals(
-            [
-                Argument::identifier('foo'),
-                Argument::literal('FLOAT'),
-                Argument::literal('10,5'),
-            ],
-            $expressionData['values'],
-        );
     }
 
     #[Test]

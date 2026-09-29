@@ -53,6 +53,66 @@ final class IntegerTest extends TestCase
         );
     }
 
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function getExpressionData(): void
+    {
+        $column = new Integer('foo');
+
+        $expressionData = $column->getExpressionData();
+
+        static::assertSame('%s %s NOT NULL', $expressionData['spec']);
+        static::assertEquals(
+            [
+                Argument::identifier('foo'),
+                Argument::literal('INTEGER'),
+            ],
+            $expressionData['values'],
+        );
+
+        $column = new Integer('foo');
+        $column->addConstraint(new PrimaryKey());
+
+        $expressionData = $column->getExpressionData();
+
+        static::assertSame('%s %s NOT NULL PRIMARY KEY', $expressionData['spec']);
+        static::assertEquals(
+            [
+                Argument::identifier('foo'),
+                Argument::literal('INTEGER'),
+            ],
+            $expressionData['values'],
+        );
+    }
+
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function getExpressionDataExcludesLengthWhenNotSet(): void
+    {
+        $column = new Integer('id');
+
+        $expressionData = $column->getExpressionData();
+
+        static::assertStringNotContainsString('(', $expressionData['spec']);
+    }
+
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function getExpressionDataIncludesLengthWhenOptionSet(): void
+    {
+        $column = new Integer('id');
+        $column->setOption('length', '11');
+
+        $expressionData = $column->getExpressionData();
+
+        static::assertSame('%s %s(%s) NOT NULL', $expressionData['spec']);
+        static::assertEquals(
+            [
+                Argument::identifier('id'),
+                Argument::literal('INTEGER'),
+                Argument::literal('11'),
+            ],
+            $expressionData['values'],
+        );
+    }
+
     /**
      * The display width is inserted directly after the type. Values contributed by a
      * default and by a named constraint sit after that point, so they must be pushed
@@ -94,6 +154,13 @@ final class IntegerTest extends TestCase
         );
     }
 
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function objectConstruction(): void
+    {
+        $integer = new Integer('foo');
+        static::assertSame('foo', $integer->getName());
+    }
+
     /**
      * Zero is a non-negative integer, so it is a width like any other rather than a
      * rejected value.
@@ -126,69 +193,6 @@ final class IntegerTest extends TestCase
         $column->setOption('length', 11);
 
         static::assertColumnRenders('"i" INTEGER(11) NOT NULL', $column);
-    }
-
-    public function testGetExpressionData(): void
-    {
-        $column = new Integer('foo');
-
-        $expressionData = $column->getExpressionData();
-
-        self::assertEquals('%s %s NOT NULL', $expressionData['spec']);
-        self::assertEquals(
-            [
-                Argument::identifier('foo'),
-                Argument::literal('INTEGER'),
-            ],
-            $expressionData['values'],
-        );
-
-        $column = new Integer('foo');
-        $column->addConstraint(new PrimaryKey());
-
-        $expressionData = $column->getExpressionData();
-
-        self::assertEquals('%s %s NOT NULL PRIMARY KEY', $expressionData['spec']);
-        self::assertEquals(
-            [
-                Argument::identifier('foo'),
-                Argument::literal('INTEGER'),
-            ],
-            $expressionData['values'],
-        );
-    }
-
-    public function testGetExpressionDataExcludesLengthWhenNotSet(): void
-    {
-        $column = new Integer('id');
-
-        $expressionData = $column->getExpressionData();
-
-        self::assertStringNotContainsString('(', $expressionData['spec']);
-    }
-
-    public function testGetExpressionDataIncludesLengthWhenOptionSet(): void
-    {
-        $column = new Integer('id');
-        $column->setOption('length', '11');
-
-        $expressionData = $column->getExpressionData();
-
-        static::assertSame('%s %s(%s) NOT NULL', $expressionData['spec']);
-        static::assertEquals(
-            [
-                Argument::identifier('id'),
-                Argument::literal('INTEGER'),
-                Argument::literal('11'),
-            ],
-            $expressionData['values'],
-        );
-    }
-
-    public function testObjectConstruction(): void
-    {
-        $integer = new Integer('foo');
-        self::assertEquals('foo', $integer->getName());
     }
 
     #[Test]

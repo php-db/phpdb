@@ -17,14 +17,15 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(AbstractTimestampColumn::class, 'getExpressionData')]
 final class TimestampTest extends TestCase
 {
-    public function testGetExpressionData(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function getExpressionData(): void
     {
         $column = new Timestamp('foo');
 
         $expressionData = $column->getExpressionData();
 
-        self::assertEquals('%s %s NOT NULL', $expressionData['spec']);
-        self::assertEquals(
+        static::assertSame('%s %s NOT NULL', $expressionData['spec']);
+        static::assertEquals(
             [
                 new Identifier('foo'),
                 new Literal('TIMESTAMP'),
@@ -33,15 +34,16 @@ final class TimestampTest extends TestCase
         );
     }
 
-    public function testGetExpressionDataWithCurrentTimestampDefault(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function getExpressionDataWithCurrentTimestampDefault(): void
     {
         $column = new Timestamp('created_at');
         $column->setDefault(new Literal('CURRENT_TIMESTAMP'));
 
         $expressionData = $column->getExpressionData();
 
-        self::assertEquals('%s %s NOT NULL DEFAULT %s', $expressionData['spec']);
-        self::assertEquals(
+        static::assertSame('%s %s NOT NULL DEFAULT %s', $expressionData['spec']);
+        static::assertEquals(
             [
                 new Identifier('created_at'),
                 new Literal('TIMESTAMP'),
@@ -51,7 +53,8 @@ final class TimestampTest extends TestCase
         );
     }
 
-    public function testGetExpressionDataWithCurrentTimestampDefaultAndOnUpdate(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function getExpressionDataWithCurrentTimestampDefaultAndOnUpdate(): void
     {
         $column = new Timestamp('updated_at');
         $column->setDefault(new Literal('CURRENT_TIMESTAMP'));
@@ -59,8 +62,8 @@ final class TimestampTest extends TestCase
 
         $expressionData = $column->getExpressionData();
 
-        self::assertEquals('%s %s NOT NULL DEFAULT %s %s', $expressionData['spec']);
-        self::assertEquals(
+        static::assertSame('%s %s NOT NULL DEFAULT %s %s', $expressionData['spec']);
+        static::assertEquals(
             [
                 new Identifier('updated_at'),
                 new Literal('TIMESTAMP'),
@@ -71,7 +74,8 @@ final class TimestampTest extends TestCase
         );
     }
 
-    public function testGetExpressionDataWithOnUpdateOption(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function getExpressionDataWithOnUpdateOption(): void
     {
         $column = new Timestamp('created_at');
         $column->setOption('on_update', true);
@@ -80,22 +84,23 @@ final class TimestampTest extends TestCase
 
         // Verify specification includes ON UPDATE
         $spec = $expressionData['spec'];
-        self::assertEquals('%s %s NOT NULL %s', $spec);
+        static::assertSame('%s %s NOT NULL %s', $spec);
 
         $values = $expressionData['values'];
 
         // Should have 3 values: identifier, type, and ON UPDATE argument
-        self::assertCount(3, $values);
-        self::assertEquals(new Identifier('created_at'), $values[0]);
-        self::assertEquals(new Literal('TIMESTAMP'), $values[1]);
+        static::assertCount(3, $values);
+        static::assertEquals(new Identifier('created_at'), $values[0]);
+        static::assertEquals(new Literal('TIMESTAMP'), $values[1]);
 
         // Third value should be the ON UPDATE argument
-        self::assertInstanceOf(ArgumentInterface::class, $values[2]);
+        static::assertInstanceOf(ArgumentInterface::class, $values[2]);
         // Verify it equals the expected Argument using factory method for consistency
-        self::assertEquals(new Literal('ON UPDATE CURRENT_TIMESTAMP'), $values[2]);
+        static::assertEquals(new Literal('ON UPDATE CURRENT_TIMESTAMP'), $values[2]);
     }
 
-    public function testGetExpressionDataWithoutOnUpdateOption(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function getExpressionDataWithoutOnUpdateOption(): void
     {
         $column = new Timestamp('updated_at');
 
@@ -103,14 +108,15 @@ final class TimestampTest extends TestCase
 
         // Should have 2 values: identifier and type (no ON UPDATE)
         $values = $expressionData['values'];
-        self::assertCount(2, $values);
-        self::assertEquals(new Identifier('updated_at'), $values[0]);
-        self::assertEquals(Argument::literal('TIMESTAMP'), $values[1]);
+        static::assertCount(2, $values);
+        static::assertEquals(new Identifier('updated_at'), $values[0]);
+        static::assertEquals(Argument::literal('TIMESTAMP'), $values[1]);
     }
 
-    public function testInheritanceFromAbstractTimestampColumn(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function inheritanceFromAbstractTimestampColumn(): void
     {
         $column = new Timestamp('test');
-        self::assertInstanceOf(AbstractTimestampColumn::class, $column);
+        static::assertInstanceOf(AbstractTimestampColumn::class, $column);
     }
 }

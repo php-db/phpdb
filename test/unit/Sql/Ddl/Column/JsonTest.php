@@ -12,14 +12,15 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(Json::class, 'getExpressionData')]
 final class JsonTest extends TestCase
 {
-    public function testGetExpressionData(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function getExpressionData(): void
     {
         $column = new Json('foo');
 
         $expressionData = $column->getExpressionData();
 
-        self::assertEquals('%s %s NOT NULL', $expressionData['spec']);
-        self::assertEquals(
+        static::assertSame('%s %s NOT NULL', $expressionData['spec']);
+        static::assertEquals(
             [
                 Argument::identifier('foo'),
                 Argument::literal('JSON'),

@@ -27,26 +27,15 @@ final class VarcharTest extends TestCase
 {
     use ColumnAssertionsTrait;
 
-    #[Test]
-    public function rendersLengthBeforeNullabilityAndDefault(): void
-    {
-        static::assertColumnRenders('"name" VARCHAR(20) NULL DEFAULT NULL', new Varchar('name', 20, true));
-    }
-
-    #[Test]
-    public function rendersLengthDirectlyAfterType(): void
-    {
-        static::assertColumnRenders('"name" VARCHAR(20) NOT NULL', new Varchar('name', 20));
-    }
-
-    public function testGetExpressionData(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function getExpressionData(): void
     {
         $column = new Varchar('foo', 20);
 
         $expressionData = $column->getExpressionData();
 
-        self::assertEquals('%s %s(%s) NOT NULL', $expressionData['spec']);
-        self::assertEquals(
+        static::assertSame('%s %s(%s) NOT NULL', $expressionData['spec']);
+        static::assertEquals(
             [
                 Argument::identifier('foo'),
                 Argument::literal('VARCHAR'),
@@ -59,8 +48,8 @@ final class VarcharTest extends TestCase
 
         $expressionData = $column->getExpressionData();
 
-        self::assertEquals('%s %s(%s) NOT NULL DEFAULT %s', $expressionData['spec']);
-        self::assertEquals(
+        static::assertSame('%s %s(%s) NOT NULL DEFAULT %s', $expressionData['spec']);
+        static::assertEquals(
             [
                 Argument::identifier('foo'),
                 Argument::literal('VARCHAR'),
@@ -71,19 +60,33 @@ final class VarcharTest extends TestCase
         );
     }
 
-    public function testInheritanceFromAbstractLengthColumn(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function inheritanceFromAbstractLengthColumn(): void
     {
         $column = new Varchar('test');
-        self::assertInstanceOf(AbstractLengthColumn::class, $column);
+        static::assertInstanceOf(AbstractLengthColumn::class, $column);
     }
 
-    public function testSetLengthAndGetLength(): void
+    #[Test]
+    public function rendersLengthBeforeNullabilityAndDefault(): void
+    {
+        static::assertColumnRenders('"name" VARCHAR(20) NULL DEFAULT NULL', new Varchar('name', 20, true));
+    }
+
+    #[Test]
+    public function rendersLengthDirectlyAfterType(): void
+    {
+        static::assertColumnRenders('"name" VARCHAR(20) NOT NULL', new Varchar('name', 20));
+    }
+
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function setLengthAndGetLength(): void
     {
         $column = new Varchar('name');
 
         $result = $column->setLength(100);
-        self::assertSame($column, $result); // Fluent interface
-        self::assertEquals(100, $column->getLength());
+        static::assertSame($column, $result); // Fluent interface
+        static::assertSame(100, $column->getLength());
     }
 
     #[Test]

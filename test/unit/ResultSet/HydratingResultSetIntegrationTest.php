@@ -16,7 +16,8 @@ class HydratingResultSetIntegrationTest extends TestCase
     /**
      * @throws Exception
      */
-    public function testCurrentWillReturnBufferedRow(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function currentWillReturnBufferedRow(): void
     {
         $hydratingRs = new HydratingResultSet();
         $hydratingRs->initialize(new ArrayIterator([
@@ -29,6 +30,6 @@ class HydratingResultSetIntegrationTest extends TestCase
         $obj1 = $hydratingRs->current();
         $hydratingRs->rewind();
         $obj2 = $hydratingRs->current();
-        self::assertSame($obj1, $obj2);
+        static::assertSame($obj1, $obj2);
     }
 }

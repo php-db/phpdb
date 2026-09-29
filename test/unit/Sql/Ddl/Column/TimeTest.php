@@ -13,14 +13,15 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(Time::class, 'getExpressionData')]
 final class TimeTest extends TestCase
 {
-    public function testGetExpressionData(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function getExpressionData(): void
     {
         $column = new Time('foo');
 
         $expressionData = $column->getExpressionData();
 
-        self::assertEquals('%s %s NOT NULL', $expressionData['spec']);
-        self::assertEquals(
+        static::assertSame('%s %s NOT NULL', $expressionData['spec']);
+        static::assertEquals(
             [
                 new Identifier('foo'),
                 new Literal('TIME'),

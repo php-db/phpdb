@@ -22,7 +22,8 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(AdapterInterfaceFactory::class, '__invoke')]
 final class AdapterInterfaceFactoryTest extends TestCase
 {
-    public function testInvokeCreatesAdapterWithAllDependencies(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function invokeCreatesAdapterWithAllDependencies(): void
     {
         $driverMock   = $this->createMock(DriverInterface::class);
         $platformMock = $this->createMock(PlatformInterface::class);
@@ -46,10 +47,11 @@ final class AdapterInterfaceFactoryTest extends TestCase
         $factory = new AdapterInterfaceFactory();
         $adapter = $factory($container, AdapterInterface::class);
 
-        self::assertInstanceOf(Adapter::class, $adapter);
+        static::assertInstanceOf(Adapter::class, $adapter);
     }
 
-    public function testInvokeCreatesAdapterWithDefaultResultSet(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function invokeCreatesAdapterWithDefaultResultSet(): void
     {
         $driverMock   = $this->createMock(DriverInterface::class);
         $platformMock = $this->createMock(PlatformInterface::class);
@@ -69,10 +71,11 @@ final class AdapterInterfaceFactoryTest extends TestCase
         $factory = new AdapterInterfaceFactory();
         $adapter = $factory($container, AdapterInterface::class);
 
-        self::assertInstanceOf(ResultSet::class, $adapter->getQueryResultSetPrototype());
+        static::assertInstanceOf(ResultSet::class, $adapter->getQueryResultSetPrototype());
     }
 
-    public function testInvokeCreatesAdapterWithoutOptionalProfiler(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function invokeCreatesAdapterWithoutOptionalProfiler(): void
     {
         $driverMock   = $this->createMock(DriverInterface::class);
         $platformMock = $this->createMock(PlatformInterface::class);
@@ -92,11 +95,12 @@ final class AdapterInterfaceFactoryTest extends TestCase
         $factory = new AdapterInterfaceFactory();
         $adapter = $factory($container, AdapterInterface::class);
 
-        self::assertInstanceOf(Adapter::class, $adapter);
-        self::assertNull($adapter->getProfiler());
+        static::assertInstanceOf(Adapter::class, $adapter);
+        static::assertNull($adapter->getProfiler());
     }
 
-    public function testInvokeThrowsWhenAdapterConfigIsEmpty(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function invokeThrowsWhenAdapterConfigIsEmpty(): void
     {
         $driverMock   = $this->createMock(DriverInterface::class);
         $platformMock = $this->createMock(PlatformInterface::class);
@@ -116,7 +120,8 @@ final class AdapterInterfaceFactoryTest extends TestCase
         $factory($container, AdapterInterface::class);
     }
 
-    public function testInvokeThrowsWhenContainerHasNoConfig(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function invokeThrowsWhenContainerHasNoConfig(): void
     {
         $driverMock   = $this->createMock(DriverInterface::class);
         $platformMock = $this->createMock(PlatformInterface::class);

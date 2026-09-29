@@ -24,33 +24,36 @@ final class ProfilerTest extends TestCase
 {
     protected Profiler $profiler;
 
-    public function testGetLastProfileReturnsSqlAndTimings(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function getLastProfileReturnsSqlAndTimings(): void
     {
         $this->profiler->profilerStart('SELECT * FROM FOO');
         $this->profiler->profilerFinish();
         $profile = $this->profiler->getLastProfile();
-        self::assertEquals('SELECT * FROM FOO', $profile['sql']);
-        self::assertNull($profile['parameters']);
-        self::assertIsFloat($profile['start']);
-        self::assertIsFloat($profile['end']);
-        self::assertIsFloat($profile['elapse']);
+        static::assertSame('SELECT * FROM FOO', $profile['sql']);
+        static::assertNull($profile['parameters']);
+        static::assertIsFloat($profile['start']);
+        static::assertIsFloat($profile['end']);
+        static::assertIsFloat($profile['elapse']);
     }
 
-    public function testGetProfilesReturnsAllRecordedProfiles(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function getProfilesReturnsAllRecordedProfiles(): void
     {
         $this->profiler->profilerStart('SELECT * FROM FOO1');
         $this->profiler->profilerFinish();
         $this->profiler->profilerStart('SELECT * FROM FOO2');
         $this->profiler->profilerFinish();
 
-        self::assertCount(2, $this->profiler->getProfiles());
+        static::assertCount(2, $this->profiler->getProfiles());
     }
 
-    public function testProfilerFinishThrowsWithoutStart(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function profilerFinishThrowsWithoutStart(): void
     {
         $this->profiler->profilerStart('SELECT * FROM FOO');
         $ret = $this->profiler->profilerFinish();
-        self::assertSame($this->profiler, $ret);
+        static::assertSame($this->profiler, $ret);
 
         $profiler = new Profiler();
         self::expectException(RuntimeException::class);
@@ -58,7 +61,8 @@ final class ProfilerTest extends TestCase
         $profiler->profilerFinish();
     }
 
-    public function testProfilerStartClonesParameterContainerFromStatementContainer(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function profilerStartClonesParameterContainerFromStatementContainer(): void
     {
         $parameterContainer = new ParameterContainer(['key' => 'value']);
         $statementContainer = new StatementContainer('SELECT ?', $parameterContainer);
@@ -68,21 +72,23 @@ final class ProfilerTest extends TestCase
 
         $profile = $this->profiler->getLastProfile();
 
-        self::assertSame('SELECT ?', $profile['sql']);
-        self::assertInstanceOf(ParameterContainer::class, $profile['parameters']);
-        self::assertNotSame($parameterContainer, $profile['parameters']);
+        static::assertSame('SELECT ?', $profile['sql']);
+        static::assertInstanceOf(ParameterContainer::class, $profile['parameters']);
+        static::assertNotSame($parameterContainer, $profile['parameters']);
     }
 
-    public function testProfilerStartWithStatementContainer(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function profilerStartWithStatementContainer(): void
     {
         $ret = $this->profiler->profilerStart(new StatementContainer());
-        self::assertSame($this->profiler, $ret);
+        static::assertSame($this->profiler, $ret);
     }
 
-    public function testProfilerStartWithString(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function profilerStartWithString(): void
     {
         $ret = $this->profiler->profilerStart('SELECT * FROM FOO');
-        self::assertSame($this->profiler, $ret);
+        static::assertSame($this->profiler, $ret);
     }
 
     /**

@@ -18,11 +18,12 @@ use ReflectionProperty;
 #[Group('unit')]
 class AdapterAwareTraitTest extends TestCase
 {
-    public function testSetDbAdapter(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function setDbAdapter(): void
     {
         $object = new ConcreteAdapterAwareObject();
 
-        self::assertNull($object->getAdapter());
+        static::assertNull($object->getAdapter());
 
         $driver   = $this->createMock(DriverInterface::class);
         $platform = $this->createMock(PlatformInterface::class);
@@ -31,10 +32,11 @@ class AdapterAwareTraitTest extends TestCase
 
         $object->setDbAdapter($adapter);
 
-        self::assertSame($adapter, $object->getAdapter());
+        static::assertSame($adapter, $object->getAdapter());
     }
 
-    public function testSetDbAdapterSetsProperty(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function setDbAdapterSetsProperty(): void
     {
         $object = new ConcreteAdapterAwareObject();
 
@@ -46,6 +48,6 @@ class AdapterAwareTraitTest extends TestCase
         $object->setDbAdapter($adapter);
 
         $reflection = new ReflectionProperty($object, 'adapter');
-        self::assertSame($adapter, $reflection->getValue($object));
+        static::assertSame($adapter, $reflection->getValue($object));
     }
 }

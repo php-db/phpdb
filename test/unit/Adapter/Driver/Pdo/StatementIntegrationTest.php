@@ -18,54 +18,58 @@ final class StatementIntegrationTest extends TestCase
 
     protected PDOStatement|MockObject $pdoStatementMock;
 
-    public function testStatementExecuteWillConvertPhpBoolToPdoBoolWhenBinding(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function statementExecuteWillConvertPhpBoolToPdoBoolWhenBinding(): void
     {
         $this->pdoStatementMock
             ->expects($this->any())
             ->method('bindParam')
             ->with(
-                $this->equalTo(':foo'),
-                $this->equalTo(false),
-                $this->equalTo(PDO::PARAM_BOOL),
+                static::equalTo(':foo'),
+                static::equalTo(false),
+                static::equalTo(PDO::PARAM_BOOL),
             );
         $this->statement->execute(['foo' => false]);
     }
 
-    public function testStatementExecuteWillUsePdoIntForIntWhenBinding(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function statementExecuteWillUsePdoIntForIntWhenBinding(): void
     {
         $this->pdoStatementMock
             ->expects($this->any())
             ->method('bindParam')
             ->with(
-                $this->equalTo(':foo'),
-                $this->equalTo(123),
-                $this->equalTo(PDO::PARAM_INT),
+                static::equalTo(':foo'),
+                static::equalTo(123),
+                static::equalTo(PDO::PARAM_INT),
             );
         $this->statement->execute(['foo' => 123]);
     }
 
-    public function testStatementExecuteWillUsePdoStrByDefaultWhenBinding(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function statementExecuteWillUsePdoStrByDefaultWhenBinding(): void
     {
         $this->pdoStatementMock
             ->expects($this->any())
             ->method('bindParam')
             ->with(
-                $this->equalTo(':foo'),
-                $this->equalTo('bar'),
-                $this->equalTo(PDO::PARAM_STR),
+                static::equalTo(':foo'),
+                static::equalTo('bar'),
+                static::equalTo(PDO::PARAM_STR),
             );
         $this->statement->execute(['foo' => 'bar']);
     }
 
-    public function testStatementExecuteWillUsePdoStrForStringIntegerWhenBinding(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function statementExecuteWillUsePdoStrForStringIntegerWhenBinding(): void
     {
         $this->pdoStatementMock
             ->expects($this->any())
             ->method('bindParam')
             ->with(
-                $this->equalTo(':foo'),
-                $this->equalTo('123'),
-                $this->equalTo(PDO::PARAM_STR),
+                static::equalTo(':foo'),
+                static::equalTo('123'),
+                static::equalTo(PDO::PARAM_STR),
             );
         $this->statement->execute(['foo' => '123']);
     }

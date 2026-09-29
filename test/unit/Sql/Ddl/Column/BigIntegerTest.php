@@ -20,26 +20,18 @@ use PHPUnit\Framework\TestCase;
 #[Group('unit')]
 final class BigIntegerTest extends TestCase
 {
-    #[Test]
-    public function rendersLengthDirectlyAfterType(): void
-    {
-        $createTable = new CreateTable('t');
-        $createTable->addColumn(new BigInteger('i', false, null, ['length' => 20]));
-
-        static::assertSame("CREATE TABLE \"t\" ( \n    \"i\" BIGINT(20) NOT NULL \n)", $createTable->getSqlString());
-    }
-
-    public function testGetExpressionData(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function getExpressionData(): void
     {
         $column         = new BigInteger('foo');
         $expressionData = $column->getExpressionData();
 
-        self::assertEquals(
+        static::assertSame(
             '%s %s NOT NULL',
             $expressionData['spec'],
         );
 
-        self::assertEquals(
+        static::assertEquals(
             [
                 Argument::Identifier('foo'),
                 Argument::Literal('BIGINT'),
@@ -48,9 +40,19 @@ final class BigIntegerTest extends TestCase
         );
     }
 
-    public function testObjectConstruction(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function objectConstruction(): void
     {
         $integer = new BigInteger('foo');
-        self::assertEquals('foo', $integer->getName());
+        static::assertSame('foo', $integer->getName());
+    }
+
+    #[Test]
+    public function rendersLengthDirectlyAfterType(): void
+    {
+        $createTable = new CreateTable('t');
+        $createTable->addColumn(new BigInteger('i', false, null, ['length' => 20]));
+
+        static::assertSame("CREATE TABLE \"t\" ( \n    \"i\" BIGINT(20) NOT NULL \n)", $createTable->getSqlString());
     }
 }

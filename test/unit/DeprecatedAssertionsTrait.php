@@ -30,6 +30,19 @@ trait DeprecatedAssertionsTrait
     /**
      * @throws ReflectionException
      */
+    public static function assertAttributeSame(
+        mixed $expected,
+        string $attribute,
+        object $instance,
+        string $message = '',
+    ): void {
+        $r = new ReflectionProperty($instance, $attribute);
+        Assert::assertSame($expected, $r->getValue($instance), $message);
+    }
+
+    /**
+     * @throws ReflectionException
+     */
     public function readAttribute(object $instance, string $attribute): mixed
     {
         $r = new ReflectionProperty($instance, $attribute);

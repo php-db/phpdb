@@ -289,6 +289,7 @@ abstract class AbstractSqlFunctionalTestCase extends TestCase
         return new Sql\Update($sqlString);
     }
 
+    #[\PHPUnit\Framework\Attributes\Test]
     #[DataProvider('dataProvider')]
     public function test(PreparableSqlInterface|SqlInterface $sqlObject, string $platform, string|array $expected): void
     {
@@ -351,7 +352,7 @@ abstract class AbstractSqlFunctionalTestCase extends TestCase
                     });
                 $mockStatement->expects($this->any())
                     ->method('getSql')
-                    ->willReturnCallback(static fn(): ?string => $container->getSql());
+                    ->willReturnCallback($container->getSql(...));
                 $mockStatement->expects($this->any())
                     ->method('setParameterContainer')
                     ->willReturnCallback(
@@ -362,7 +363,7 @@ abstract class AbstractSqlFunctionalTestCase extends TestCase
                     );
                 $mockStatement->expects($this->any())
                     ->method('getParameterContainer')
-                    ->willReturnCallback(static fn(): ?ParameterContainer => $container->getParameterContainer());
+                    ->willReturnCallback($container->getParameterContainer(...));
                 return $mockStatement;
             });
 

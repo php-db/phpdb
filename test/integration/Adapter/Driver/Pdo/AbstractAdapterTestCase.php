@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDbIntegrationTest\Adapter\Driver\Pdo;
 
 use PhpDb\Adapter\AdapterInterface;
@@ -17,43 +19,45 @@ abstract class AbstractAdapterTestCase extends TestCase
 
     public ?int $port = null;
 
-    public function testConnection(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function connection(): void
     {
-        $this->assertInstanceOf(AdapterInterface::class, $this->adapter);
+        static::assertInstanceOf(AdapterInterface::class, $this->adapter);
     }
 
-    public function testDriverDisconnectAfterQuoteWithPlatform(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function driverDisconnectAfterQuoteWithPlatform(): void
     {
         $isTcpConnection = $this->isTcpConnection();
 
         $this->getAdapter()->getDriver()->getConnection()->connect();
 
-        self::assertTrue($this->getAdapter()->getDriver()->getConnection()->isConnected());
+        static::assertTrue($this->getAdapter()->getDriver()->getConnection()->isConnected());
         if ($isTcpConnection) {
-            self::assertTrue($this->isConnectedTcp());
+            static::assertTrue($this->isConnectedTcp());
         }
 
         $this->getAdapter()->getDriver()->getConnection()->disconnect();
 
-        self::assertFalse($this->getAdapter()->getDriver()->getConnection()->isConnected());
+        static::assertFalse($this->getAdapter()->getDriver()->getConnection()->isConnected());
         if ($isTcpConnection) {
-            self::assertFalse($this->isConnectedTcp());
+            static::assertFalse($this->isConnectedTcp());
         }
 
         $this->getAdapter()->getDriver()->getConnection()->connect();
 
-        self::assertTrue($this->getAdapter()->getDriver()->getConnection()->isConnected());
+        static::assertTrue($this->getAdapter()->getDriver()->getConnection()->isConnected());
         if ($isTcpConnection) {
-            self::assertTrue($this->isConnectedTcp());
+            static::assertTrue($this->isConnectedTcp());
         }
 
         $this->getAdapter()->getPlatform()->quoteValue('test');
 
         $this->getAdapter()->getDriver()->getConnection()->disconnect();
 
-        self::assertFalse($this->getAdapter()->getDriver()->getConnection()->isConnected());
+        static::assertFalse($this->getAdapter()->getDriver()->getConnection()->isConnected());
         if ($isTcpConnection) {
-            self::assertFalse($this->isConnectedTcp());
+            static::assertFalse($this->isConnectedTcp());
         }
     }
 

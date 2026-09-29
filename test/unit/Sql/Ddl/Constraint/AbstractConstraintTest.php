@@ -18,22 +18,25 @@ final class AbstractConstraintTest extends TestCase
 {
     protected MockObject $ac;
 
-    public function testAddColumn(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function addColumn(): void
     {
-        self::assertSame($this->ac, $this->ac->addColumn('foo'));
-        self::assertEquals(['foo'], $this->ac->getColumns());
+        static::assertSame($this->ac, $this->ac->addColumn('foo'));
+        static::assertEquals(['foo'], $this->ac->getColumns());
     }
 
-    public function testGetColumns(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function getColumns(): void
     {
         $this->ac->setColumns(['foo', 'bar']);
-        self::assertEquals(['foo', 'bar'], $this->ac->getColumns());
+        static::assertEquals(['foo', 'bar'], $this->ac->getColumns());
     }
 
-    public function testSetColumns(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function setColumns(): void
     {
-        self::assertSame($this->ac, $this->ac->setColumns(['foo', 'bar']));
-        self::assertEquals(['foo', 'bar'], $this->ac->getColumns());
+        static::assertSame($this->ac, $this->ac->setColumns(['foo', 'bar']));
+        static::assertEquals(['foo', 'bar'], $this->ac->getColumns());
     }
 
     /**

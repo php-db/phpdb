@@ -21,6 +21,24 @@ final class CharTest extends TestCase
 {
     use ColumnAssertionsTrait;
 
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function getExpressionData(): void
+    {
+        $column = new Char('foo', 20);
+
+        $expressionData = $column->getExpressionData();
+
+        static::assertSame('%s %s(%s) NOT NULL', $expressionData['spec']);
+        static::assertEquals(
+            [
+                new Identifier('foo'),
+                new Literal('CHAR'),
+                new Literal('20'),
+            ],
+            $expressionData['values'],
+        );
+    }
+
     #[Test]
     public function getExpressionDataOmitsLengthPlaceholderWhenLengthIsNotSet(): void
     {
@@ -47,22 +65,5 @@ final class CharTest extends TestCase
     public function rendersWithoutParenthesesWhenLengthIsNotSet(?int $length): void
     {
         static::assertColumnRenders('"code" CHAR NOT NULL', new Char('code', $length));
-    }
-
-    public function testGetExpressionData(): void
-    {
-        $column = new Char('foo', 20);
-
-        $expressionData = $column->getExpressionData();
-
-        self::assertEquals('%s %s(%s) NOT NULL', $expressionData['spec']);
-        self::assertEquals(
-            [
-                new Identifier('foo'),
-                new Literal('CHAR'),
-                new Literal('20'),
-            ],
-            $expressionData['values'],
-        );
     }
 }

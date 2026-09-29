@@ -48,151 +48,171 @@ class TableIdentifierTest extends TestCase
         ];
     }
 
-    public function testGetDefaultPrefix(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function getDefaultPrefix(): void
     {
         $tableIdentifier = new TableIdentifier('foo');
 
-        self::assertNull($tableIdentifier->getPrefix());
+        static::assertNull($tableIdentifier->getPrefix());
     }
 
-    public function testGetDefaultSchema(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function getDefaultSchema(): void
     {
         $tableIdentifier = new TableIdentifier('foo');
 
-        self::assertNull($tableIdentifier->getSchema());
+        static::assertNull($tableIdentifier->getSchema());
     }
 
-    public function testGetDefaultSeparator(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function getDefaultSeparator(): void
     {
         $tableIdentifier = new TableIdentifier('foo');
 
-        self::assertSame('_', $tableIdentifier->getSeparator());
+        static::assertSame('_', $tableIdentifier->getSeparator());
     }
 
-    public function testGetPrefix(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function getPrefix(): void
     {
         $tableIdentifier = new TableIdentifier('foo', null, 'backup');
 
-        self::assertSame('backup', $tableIdentifier->getPrefix());
+        static::assertSame('backup', $tableIdentifier->getPrefix());
     }
 
-    public function testGetSchema(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function getSchema(): void
     {
         $tableIdentifier = new TableIdentifier('foo', 'bar');
 
-        self::assertSame('bar', $tableIdentifier->getSchema());
+        static::assertSame('bar', $tableIdentifier->getSchema());
     }
 
     /**
      * @todo Review test to see if relevant?
      */
-    public function testGetSchemaFromObjectStringCast(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function getSchemaFromObjectStringCast(): void
     {
         $schema          = new ObjectToString('castResult');
         $tableIdentifier = new TableIdentifier('foo', (string) $schema);
 
-        self::assertSame('castResult', $tableIdentifier->getSchema());
-        self::assertSame('castResult', $tableIdentifier->getSchema());
+        static::assertSame('castResult', $tableIdentifier->getSchema());
+        static::assertSame('castResult', $tableIdentifier->getSchema());
     }
 
-    public function testGetSeparator(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function getSeparator(): void
     {
         $tableIdentifier = new TableIdentifier('foo', null, 'backup', '__');
 
-        self::assertSame('__', $tableIdentifier->getSeparator());
+        static::assertSame('__', $tableIdentifier->getSeparator());
     }
 
-    public function testGetTable(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function getTable(): void
     {
         $tableIdentifier = new TableIdentifier('foo');
 
-        self::assertSame('foo', $tableIdentifier->getTable());
+        static::assertSame('foo', $tableIdentifier->getTable());
     }
 
-    public function testGetTableAndSchemaAppliesPrefix(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function getTableAndSchemaAppliesPrefix(): void
     {
         $tableIdentifier = new TableIdentifier('foo', 'bar', 'backup');
 
-        self::assertSame(['backup_foo', 'bar'], $tableIdentifier->getTableAndSchema());
+        static::assertSame(['backup_foo', 'bar'], $tableIdentifier->getTableAndSchema());
     }
 
-    public function testGetTableAndSchemaWithoutPrefix(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function getTableAndSchemaWithoutPrefix(): void
     {
         $tableIdentifier = new TableIdentifier('foo', 'bar');
 
-        self::assertSame(['foo', 'bar'], $tableIdentifier->getTableAndSchema());
+        static::assertSame(['foo', 'bar'], $tableIdentifier->getTableAndSchema());
     }
 
-    public function testGetTableAppliesPrefixWithCustomSeparator(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function getTableAppliesPrefixWithCustomSeparator(): void
     {
         $tableIdentifier = new TableIdentifier('foo', null, 'backup', '__');
 
-        self::assertSame('backup__foo', $tableIdentifier->getTable());
+        static::assertSame('backup__foo', $tableIdentifier->getTable());
     }
 
-    public function testGetTableAppliesPrefixWithDefaultSeparator(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function getTableAppliesPrefixWithDefaultSeparator(): void
     {
         $tableIdentifier = new TableIdentifier('foo', null, 'backup');
 
-        self::assertSame('backup_foo', $tableIdentifier->getTable());
+        static::assertSame('backup_foo', $tableIdentifier->getTable());
     }
 
-    public function testGetTableFromObjectStringCast(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function getTableFromObjectStringCast(): void
     {
         $table           = new ObjectToString('castResult');
         $tableIdentifier = new TableIdentifier((string) $table);
 
-        self::assertSame('castResult', $tableIdentifier->getTable());
-        self::assertSame('castResult', $tableIdentifier->getTable());
+        static::assertSame('castResult', $tableIdentifier->getTable());
+        static::assertSame('castResult', $tableIdentifier->getTable());
     }
 
-    public function testGetTableIgnoresSeparatorWithoutPrefix(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function getTableIgnoresSeparatorWithoutPrefix(): void
     {
         $tableIdentifier = new TableIdentifier('foo', null, null, '__');
 
-        self::assertSame('foo', $tableIdentifier->getTable());
+        static::assertSame('foo', $tableIdentifier->getTable());
     }
 
-    public function testGetUnprefixedTableReturnsTableAsGiven(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function getUnprefixedTableReturnsTableAsGiven(): void
     {
         $tableIdentifier = new TableIdentifier('foo', null, 'backup');
 
-        self::assertSame('foo', $tableIdentifier->getUnprefixedTable());
+        static::assertSame('foo', $tableIdentifier->getUnprefixedTable());
     }
 
-    public function testRejectsEmptyStringSeparatorWithoutPrefix(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function rejectsEmptyStringSeparatorWithoutPrefix(): void
     {
         self::expectException(InvalidArgumentException::class);
         self::expectExceptionMessage(InvalidArgumentException::EMPTY_SEPARATOR);
         new TableIdentifier('foo', null, null, '');
     }
 
+    #[\PHPUnit\Framework\Attributes\Test]
     #[DataProvider('invalidNameArgumentProvider')]
-    public function testRejectsInvalidPrefix(mixed $invalidPrefix): void
+    public function rejectsInvalidPrefix(mixed $invalidPrefix): void
     {
         self::expectException('' === $invalidPrefix ? InvalidArgumentException::class : TypeError::class);
         /** @psalm-suppress MixedArgument */
         new TableIdentifier('foo', 'bar', $invalidPrefix);
     }
 
+    #[\PHPUnit\Framework\Attributes\Test]
     #[DataProvider('invalidNameArgumentProvider')]
-    public function testRejectsInvalidSchema(mixed $invalidSchema): void
+    public function rejectsInvalidSchema(mixed $invalidSchema): void
     {
         self::expectException('' === $invalidSchema ? InvalidArgumentException::class : TypeError::class);
         /** @psalm-suppress MixedArgument */
         new TableIdentifier('foo', $invalidSchema);
     }
 
+    #[\PHPUnit\Framework\Attributes\Test]
     #[DataProvider('invalidNameArgumentProvider')]
-    public function testRejectsInvalidSeparator(mixed $invalidSeparator): void
+    public function rejectsInvalidSeparator(mixed $invalidSeparator): void
     {
         self::expectException('' === $invalidSeparator ? InvalidArgumentException::class : TypeError::class);
         /** @psalm-suppress MixedArgument */
         new TableIdentifier('foo', 'bar', 'backup', $invalidSeparator);
     }
 
+    #[\PHPUnit\Framework\Attributes\Test]
     #[DataProvider('invalidTableProvider')]
-    public function testRejectsInvalidTable(mixed $invalidTable): void
+    public function rejectsInvalidTable(mixed $invalidTable): void
     {
         self::expectException('' === $invalidTable ? InvalidArgumentException::class : TypeError::class);
         /** @psalm-suppress MixedArgument */

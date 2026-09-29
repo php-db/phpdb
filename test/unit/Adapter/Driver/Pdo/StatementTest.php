@@ -59,7 +59,8 @@ final class StatementTest extends TestCase
         ];
     }
 
-    public function testBindParametersDetectsBooleanValueType(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function bindParametersDetectsBooleanValueType(): void
     {
         $pdo = new SqliteMemoryPdo();
         $this->statement->setDriver(new TestPdo(new TestConnection($pdo)));
@@ -72,10 +73,11 @@ final class StatementTest extends TestCase
 
         $result = $this->statement->execute();
 
-        self::assertInstanceOf(Result::class, $result);
+        static::assertInstanceOf(Result::class, $result);
     }
 
-    public function testBindParametersDetectsNullValueType(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function bindParametersDetectsNullValueType(): void
     {
         $pdo = new SqliteMemoryPdo();
         $this->statement->setDriver(new TestPdo(new TestConnection($pdo)));
@@ -88,10 +90,11 @@ final class StatementTest extends TestCase
 
         $result = $this->statement->execute();
 
-        self::assertInstanceOf(Result::class, $result);
+        static::assertInstanceOf(Result::class, $result);
     }
 
-    public function testBindParametersFromContainerSkipsWhenAlreadyBound(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function bindParametersFromContainerSkipsWhenAlreadyBound(): void
     {
         $pdo = new SqliteMemoryPdo();
         $this->statement->setDriver(new TestPdo(new TestConnection($pdo)));
@@ -100,10 +103,11 @@ final class StatementTest extends TestCase
         $this->statement->setParameterContainer(new ParameterContainer(['val' => 'first']));
 
         $result1 = $this->statement->execute();
-        self::assertInstanceOf(Result::class, $result1);
+        static::assertInstanceOf(Result::class, $result1);
     }
 
-    public function testBindParametersWithErrataTypeDefaultsToString(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function bindParametersWithErrataTypeDefaultsToString(): void
     {
         $pdo = new SqliteMemoryPdo();
         $this->statement->setDriver(new TestPdo(new TestConnection($pdo)));
@@ -116,10 +120,11 @@ final class StatementTest extends TestCase
 
         $result = $this->statement->execute();
 
-        self::assertInstanceOf(Result::class, $result);
+        static::assertInstanceOf(Result::class, $result);
     }
 
-    public function testBindParametersWithErrataTypeInteger(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function bindParametersWithErrataTypeInteger(): void
     {
         $pdo = new SqliteMemoryPdo();
         $this->statement->setDriver(new TestPdo(new TestConnection($pdo)));
@@ -132,10 +137,11 @@ final class StatementTest extends TestCase
 
         $result = $this->statement->execute();
 
-        self::assertInstanceOf(Result::class, $result);
+        static::assertInstanceOf(Result::class, $result);
     }
 
-    public function testBindParametersWithErrataTypeLob(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function bindParametersWithErrataTypeLob(): void
     {
         $pdo = new SqliteMemoryPdo();
         $this->statement->setDriver(new TestPdo(new TestConnection($pdo)));
@@ -148,10 +154,11 @@ final class StatementTest extends TestCase
 
         $result = $this->statement->execute();
 
-        self::assertInstanceOf(Result::class, $result);
+        static::assertInstanceOf(Result::class, $result);
     }
 
-    public function testBindParametersWithErrataTypeNull(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function bindParametersWithErrataTypeNull(): void
     {
         $pdo = new SqliteMemoryPdo();
         $this->statement->setDriver(new TestPdo(new TestConnection($pdo)));
@@ -164,10 +171,11 @@ final class StatementTest extends TestCase
 
         $result = $this->statement->execute();
 
-        self::assertInstanceOf(Result::class, $result);
+        static::assertInstanceOf(Result::class, $result);
     }
 
-    public function testBindParametersWithPositionalIntegers(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function bindParametersWithPositionalIntegers(): void
     {
         $pdo = new SqliteMemoryPdo();
         $this->statement->setDriver(new TestPdo(new TestConnection($pdo)));
@@ -182,21 +190,23 @@ final class StatementTest extends TestCase
 
         $result = $this->statement->execute();
 
-        self::assertInstanceOf(Result::class, $result);
+        static::assertInstanceOf(Result::class, $result);
     }
 
-    public function testCloneClonesParameterContainerWhenSet(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function cloneClonesParameterContainerWhenSet(): void
     {
         $container = new ParameterContainer(['key' => 'value']);
         $statement = new Statement($container);
 
         $clone = clone $statement;
 
-        self::assertNotSame($container, $clone->getParameterContainer());
-        self::assertSame('value', $clone->getParameterContainer()->offsetGet('key'));
+        static::assertNotSame($container, $clone->getParameterContainer());
+        static::assertSame('value', $clone->getParameterContainer()->offsetGet('key'));
     }
 
-    public function testCloneResetsState(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function cloneResetsState(): void
     {
         $pdo = new SqliteMemoryPdo();
         $this->statement->setDriver(new TestPdo(new TestConnection($pdo)));
@@ -206,38 +216,41 @@ final class StatementTest extends TestCase
 
         $clone = clone $this->statement;
 
-        self::assertFalse($clone->isPrepared());
-        self::assertNull($clone->getResource());
-        self::assertNotSame(
+        static::assertFalse($clone->isPrepared());
+        static::assertNull($clone->getResource());
+        static::assertNotSame(
             $this->statement->getParameterContainer(),
             $clone->getParameterContainer(),
         );
     }
 
-    public function testConstructorAcceptsParameterContainerAndOptions(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function constructorAcceptsParameterContainerAndOptions(): void
     {
         $container = new ParameterContainer(['key' => 'value']);
         $statement = new Statement($container, ['option' => true]);
 
-        self::assertSame($container, $statement->getParameterContainer());
+        static::assertSame($container, $statement->getParameterContainer());
     }
 
-    public function testExecuteAutoPrepares(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function executeAutoPrepares(): void
     {
         $pdo = new SqliteMemoryPdo();
         $this->statement->setDriver(new TestPdo(new TestConnection($pdo)));
         $this->statement->initialize($pdo);
         $this->statement->setSql('SELECT 1');
 
-        self::assertFalse($this->statement->isPrepared());
+        static::assertFalse($this->statement->isPrepared());
 
         $result = $this->statement->execute();
 
-        self::assertInstanceOf(Result::class, $result);
-        self::assertTrue($this->statement->isPrepared());
+        static::assertInstanceOf(Result::class, $result);
+        static::assertTrue($this->statement->isPrepared());
     }
 
-    public function testExecuteCallsProfilerFinishOnFailure(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function executeCallsProfilerFinishOnFailure(): void
     {
         $profiler = $this->createMock(ProfilerInterface::class);
         $profiler->expects($this->once())->method('profilerStart')->willReturnSelf();
@@ -261,7 +274,8 @@ final class StatementTest extends TestCase
         $this->statement->execute();
     }
 
-    public function testExecuteCallsProfilerOnSuccess(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function executeCallsProfilerOnSuccess(): void
     {
         $profiler = $this->createMock(ProfilerInterface::class);
         $profiler->expects($this->once())->method('profilerStart')->willReturnSelf();
@@ -276,7 +290,8 @@ final class StatementTest extends TestCase
         $this->statement->execute();
     }
 
-    public function testExecuteCastsNonIntErrorCodeToZero(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function executeCastsNonIntErrorCodeToZero(): void
     {
         $pdoException = new PDOException('fail');
         $ref          = new ReflectionProperty($pdoException, 'code');
@@ -297,21 +312,23 @@ final class StatementTest extends TestCase
 
         try {
             $this->statement->execute();
-            self::fail('Expected InvalidQueryException');
+            static::fail('Expected InvalidQueryException');
         } catch (InvalidQueryException $e) {
-            self::assertSame(0, $e->getCode());
+            static::assertSame(0, $e->getCode());
         }
     }
 
-    public function testExecuteReturnsResult(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function executeReturnsResult(): void
     {
         $this->statement->setDriver(new TestPdo(new TestConnection($pdo = new SqliteMemoryPdo())));
         $this->statement->initialize($pdo);
         $this->statement->prepare('SELECT 1');
-        self::assertInstanceOf(Result::class, $this->statement->execute());
+        static::assertInstanceOf(Result::class, $this->statement->execute());
     }
 
-    public function testExecuteThrowsInvalidQueryExceptionOnPdoException(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function executeThrowsInvalidQueryExceptionOnPdoException(): void
     {
         $pdoStmt = $this->createMock(PDOStatement::class);
         $pdoStmt->method('execute')->willThrowException(new PDOException('execute failed'));
@@ -330,8 +347,9 @@ final class StatementTest extends TestCase
         $this->statement->execute();
     }
 
+    #[\PHPUnit\Framework\Attributes\Test]
     #[DataProvider('invalidParameterNameProvider')]
-    public function testExecuteThrowsOnInvalidParameterName(string $name): void
+    public function executeThrowsOnInvalidParameterName(string $name): void
     {
         $this->statement->setDriver(new TestPdo(new TestConnection($pdo = new SqliteMemoryPdo())));
         $this->statement->initialize($pdo);
@@ -342,7 +360,8 @@ final class StatementTest extends TestCase
         $this->statement->execute([$name => 'value']);
     }
 
-    public function testExecuteWithArrayParametersMergesIntoContainer(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function executeWithArrayParametersMergesIntoContainer(): void
     {
         $pdo       = new SqliteMemoryPdo();
         $statement = new Statement();
@@ -352,10 +371,11 @@ final class StatementTest extends TestCase
 
         $result = $statement->execute(['name' => 'test']);
 
-        self::assertInstanceOf(Result::class, $result);
+        static::assertInstanceOf(Result::class, $result);
     }
 
-    public function testExecuteWithParameterContainerSetsContainer(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function executeWithParameterContainerSetsContainer(): void
     {
         $pdo       = new SqliteMemoryPdo();
         $statement = new Statement();
@@ -368,56 +388,64 @@ final class StatementTest extends TestCase
 
         $result = $statement->execute($container);
 
-        self::assertInstanceOf(Result::class, $result);
-        self::assertSame($container, $statement->getParameterContainer());
+        static::assertInstanceOf(Result::class, $result);
+        static::assertSame($container, $statement->getParameterContainer());
     }
 
-    public function testFluentPrepare(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function fluentPrepare(): void
     {
         $this->statement->initialize(new SqliteMemoryPdo());
         $result = $this->statement->prepare('SELECT 1');
-        self::assertInstanceOf(Statement::class, $result);
-        self::assertSame($this->statement, $result);
+        static::assertInstanceOf(Statement::class, $result);
+        static::assertSame($this->statement, $result);
     }
 
-    public function testFluentSetDriver(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function fluentSetDriver(): void
     {
-        self::assertEquals($this->statement, $this->statement->setDriver(new TestPdo([])));
+        static::assertEquals($this->statement, $this->statement->setDriver(new TestPdo([])));
     }
 
-    public function testFluentSetParameterContainer(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function fluentSetParameterContainer(): void
     {
-        self::assertSame($this->statement, $this->statement->setParameterContainer(new ParameterContainer()));
+        static::assertSame($this->statement, $this->statement->setParameterContainer(new ParameterContainer()));
     }
 
-    public function testGetParameterContainerReturnsContainer(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function getParameterContainerReturnsContainer(): void
     {
         $container = new ParameterContainer();
         $this->statement->setParameterContainer($container);
-        self::assertSame($container, $this->statement->getParameterContainer());
+        static::assertSame($container, $this->statement->getParameterContainer());
     }
 
-    public function testGetProfilerReturnsNullByDefault(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function getProfilerReturnsNullByDefault(): void
     {
-        self::assertNull($this->statement->getProfiler());
+        static::assertNull($this->statement->getProfiler());
     }
 
-    public function testGetResourceReturnsPdoStatement(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function getResourceReturnsPdoStatement(): void
     {
         $pdo  = new SqliteMemoryPdo();
         $stmt = $pdo->prepare('SELECT 1');
         $this->statement->setResource($stmt);
 
-        self::assertSame($stmt, $this->statement->getResource());
+        static::assertSame($stmt, $this->statement->getResource());
     }
 
-    public function testGetSql(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function getSql(): void
     {
         $this->statement->setSql('SELECT 1');
-        self::assertEquals('SELECT 1', $this->statement->getSql());
+        static::assertSame('SELECT 1', $this->statement->getSql());
     }
 
-    public function testInitializeSetsPdoResource(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function initializeSetsPdoResource(): void
     {
         $pdo = new SqliteMemoryPdo();
 
@@ -425,18 +453,20 @@ final class StatementTest extends TestCase
         $this->statement->setSql('SELECT 1');
         $this->statement->prepare();
 
-        self::assertTrue($this->statement->isPrepared());
+        static::assertTrue($this->statement->isPrepared());
     }
 
-    public function testIsPreparedReturnsTrueAfterPrepare(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function isPreparedReturnsTrueAfterPrepare(): void
     {
-        self::assertFalse($this->statement->isPrepared());
+        static::assertFalse($this->statement->isPrepared());
         $this->statement->initialize(new SqliteMemoryPdo());
         $this->statement->prepare('SELECT 1');
-        self::assertTrue($this->statement->isPrepared());
+        static::assertTrue($this->statement->isPrepared());
     }
 
-    public function testPrepareThrowsRuntimeExceptionOnPdoFailure(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function prepareThrowsRuntimeExceptionOnPdoFailure(): void
     {
         $pdo = $this->createMock(PDO::class);
         $pdo->method('prepare')->willReturn(false);
@@ -449,7 +479,8 @@ final class StatementTest extends TestCase
         $this->statement->prepare();
     }
 
-    public function testPrepareThrowsWhenAlreadyPrepared(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function prepareThrowsWhenAlreadyPrepared(): void
     {
         $this->statement->initialize(new SqliteMemoryPdo());
         $this->statement->prepare('SELECT 1');
@@ -460,7 +491,8 @@ final class StatementTest extends TestCase
         $this->statement->prepare('SELECT 2');
     }
 
-    public function testSecondExecuteSkipsBindingWhenAlreadyBound(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function secondExecuteSkipsBindingWhenAlreadyBound(): void
     {
         $pdo = new SqliteMemoryPdo();
         $this->statement->setDriver(new TestPdo(new TestConnection($pdo)));
@@ -469,34 +501,37 @@ final class StatementTest extends TestCase
         $this->statement->setParameterContainer(new ParameterContainer(['val' => 'test']));
 
         $result1 = $this->statement->execute();
-        self::assertInstanceOf(Result::class, $result1);
+        static::assertInstanceOf(Result::class, $result1);
 
         $result2 = $this->statement->execute();
-        self::assertInstanceOf(Result::class, $result2);
+        static::assertInstanceOf(Result::class, $result2);
     }
 
-    public function testSetProfilerStoresProfiler(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function setProfilerStoresProfiler(): void
     {
         $profiler = $this->createMock(ProfilerInterface::class);
 
         $this->statement->setProfiler($profiler);
 
-        self::assertSame($profiler, $this->statement->getProfiler());
+        static::assertSame($profiler, $this->statement->getProfiler());
     }
 
-    public function testSetResourceStoresPdoStatement(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function setResourceStoresPdoStatement(): void
     {
         $pdoStmt = $this->createMock(PDOStatement::class);
 
         $this->statement->setResource($pdoStmt);
 
-        self::assertSame($pdoStmt, $this->statement->getResource());
+        static::assertSame($pdoStmt, $this->statement->getResource());
     }
 
-    public function testSetSql(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function setSql(): void
     {
         $this->statement->setSql('SELECT 1');
-        self::assertEquals('SELECT 1', $this->statement->getSql());
+        static::assertSame('SELECT 1', $this->statement->getSql());
     }
 
     /**

@@ -29,6 +29,33 @@ final class DecimalTest extends TestCase
 {
     use ColumnAssertionsTrait;
 
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function constructorSetsDigitsAndDecimal(): void
+    {
+        $column = new Decimal('price', 10, 2);
+
+        static::assertSame(10, $column->getDigits());
+        static::assertSame(2, $column->getDecimal());
+    }
+
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function getExpressionData(): void
+    {
+        $column = new Decimal('foo', 10, 5);
+
+        $expressionData = $column->getExpressionData();
+
+        static::assertSame('%s %s(%s) NOT NULL', $expressionData['spec']);
+        static::assertEquals(
+            [
+                Argument::identifier('foo'),
+                Argument::literal('DECIMAL'),
+                Argument::literal('10,5'),
+            ],
+            $expressionData['values'],
+        );
+    }
+
     #[Test]
     public function getExpressionDataOmitsLengthPlaceholderWhenPrecisionIsNotSet(): void
     {
@@ -42,6 +69,30 @@ final class DecimalTest extends TestCase
             ],
             $expressionData['values'],
         );
+    }
+
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function getExpressionDataWithNullDecimal(): void
+    {
+        $column = new Decimal('amount', 10);
+        $column->setDecimal(null);
+
+        $expressionData = $column->getExpressionData();
+
+        // Without decimal, length expression should be just the digits (as string)
+        $values = $expressionData['values'];
+        static::assertCount(3, $values);
+        static::assertEquals(Argument::identifier('amount'), $values[0]);
+        static::assertEquals(Argument::literal('DECIMAL'), $values[1]);
+        // The third value should be "10" (string representation)
+        static::assertEquals(Argument::literal((string) 10), $values[2]);
+    }
+
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function inheritanceFromAbstractPrecisionColumn(): void
+    {
+        $column = new Decimal('test');
+        static::assertInstanceOf(AbstractPrecisionColumn::class, $column);
     }
 
     #[Test]
@@ -62,69 +113,24 @@ final class DecimalTest extends TestCase
         static::assertColumnRenders('"price" DECIMAL NOT NULL', new Decimal('price'));
     }
 
-    public function testConstructorSetsDigitsAndDecimal(): void
-    {
-        $column = new Decimal('price', 10, 2);
-
-        self::assertEquals(10, $column->getDigits());
-        self::assertEquals(2, $column->getDecimal());
-    }
-
-    public function testGetExpressionData(): void
-    {
-        $column = new Decimal('foo', 10, 5);
-
-        $expressionData = $column->getExpressionData();
-
-        self::assertEquals('%s %s(%s) NOT NULL', $expressionData['spec']);
-        self::assertEquals(
-            [
-                Argument::identifier('foo'),
-                Argument::literal('DECIMAL'),
-                Argument::literal('10,5'),
-            ],
-            $expressionData['values'],
-        );
-    }
-
-    public function testGetExpressionDataWithNullDecimal(): void
-    {
-        $column = new Decimal('amount', 10);
-        $column->setDecimal(null);
-
-        $expressionData = $column->getExpressionData();
-
-        // Without decimal, length expression should be just the digits (as string)
-        $values = $expressionData['values'];
-        self::assertCount(3, $values);
-        self::assertEquals(Argument::identifier('amount'), $values[0]);
-        self::assertEquals(Argument::literal('DECIMAL'), $values[1]);
-        // The third value should be "10" (string representation)
-        self::assertEquals(Argument::literal((string) 10), $values[2]);
-    }
-
-    public function testInheritanceFromAbstractPrecisionColumn(): void
-    {
-        $column = new Decimal('test');
-        self::assertInstanceOf(AbstractPrecisionColumn::class, $column);
-    }
-
-    public function testSetDecimalAndGetDecimal(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function setDecimalAndGetDecimal(): void
     {
         $column = new Decimal('value');
         $result = $column->setDecimal(4);
 
-        self::assertSame($column, $result); // Fluent interface
-        self::assertEquals(4, $column->getDecimal());
+        static::assertSame($column, $result); // Fluent interface
+        static::assertSame(4, $column->getDecimal());
     }
 
-    public function testSetDigitsAndGetDigits(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function setDigitsAndGetDigits(): void
     {
         $column = new Decimal('amount');
         $result = $column->setDigits(15);
 
-        self::assertSame($column, $result); // Fluent interface
-        self::assertEquals(15, $column->getDigits());
+        static::assertSame($column, $result); // Fluent interface
+        static::assertSame(15, $column->getDigits());
     }
 
     #[Test]

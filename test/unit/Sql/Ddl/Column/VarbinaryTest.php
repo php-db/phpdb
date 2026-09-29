@@ -23,20 +23,15 @@ final class VarbinaryTest extends TestCase
 {
     use ColumnAssertionsTrait;
 
-    #[Test]
-    public function rendersLengthDirectlyAfterType(): void
-    {
-        static::assertColumnRenders('"data" VARBINARY(20) NOT NULL', new Varbinary('data', 20));
-    }
-
-    public function testGetExpressionData(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function getExpressionData(): void
     {
         $column = new Varbinary('foo', 20);
 
         $expressionData = $column->getExpressionData();
 
-        self::assertEquals('%s %s(%s) NOT NULL', $expressionData['spec']);
-        self::assertEquals(
+        static::assertSame('%s %s(%s) NOT NULL', $expressionData['spec']);
+        static::assertEquals(
             [
                 Argument::identifier('foo'),
                 Argument::literal('VARBINARY'),
@@ -44,6 +39,12 @@ final class VarbinaryTest extends TestCase
             ],
             $expressionData['values'],
         );
+    }
+
+    #[Test]
+    public function rendersLengthDirectlyAfterType(): void
+    {
+        static::assertColumnRenders('"data" VARBINARY(20) NOT NULL', new Varbinary('data', 20));
     }
 
     #[Test]

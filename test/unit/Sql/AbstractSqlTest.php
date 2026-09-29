@@ -68,7 +68,8 @@ final class AbstractSqlTest extends TestCase
     /**
      * @throws ReflectionException
      */
-    public function testCreateSqlFromSpecificationThrowsOnParameterCountMismatch(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function createSqlFromSpecificationThrowsOnParameterCountMismatch(): void
     {
         $method = new ReflectionMethod($this->abstractSql, 'createSqlFromSpecificationAndParameters');
 
@@ -87,7 +88,8 @@ final class AbstractSqlTest extends TestCase
     /**
      * @throws ReflectionException
      */
-    public function testCreateSqlFromSpecNonCombinedByThrowsOnUnsupportedCount(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function createSqlFromSpecNonCombinedByThrowsOnUnsupportedCount(): void
     {
         $method = new ReflectionMethod($this->abstractSql, 'createSqlFromSpecificationAndParameters');
 
@@ -106,7 +108,8 @@ final class AbstractSqlTest extends TestCase
     /**
      * @throws ReflectionException
      */
-    public function testCreateSqlFromSpecWithCombinedByScalarParam(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function createSqlFromSpecWithCombinedByScalarParam(): void
     {
         $method = new ReflectionMethod($this->abstractSql, 'createSqlFromSpecificationAndParameters');
 
@@ -120,13 +123,14 @@ final class AbstractSqlTest extends TestCase
 
         $result = $method->invoke($this->abstractSql, $spec, $params);
 
-        self::assertSame('SELECT col1 FROM table1', $result);
+        static::assertSame('SELECT col1 FROM table1', $result);
     }
 
     /**
      * @throws ReflectionException
      */
-    public function testCreateSqlFromSpecWithCombinedByThrowsOnUnsupportedCount(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function createSqlFromSpecWithCombinedByThrowsOnUnsupportedCount(): void
     {
         $method = new ReflectionMethod($this->abstractSql, 'createSqlFromSpecificationAndParameters');
 
@@ -146,7 +150,8 @@ final class AbstractSqlTest extends TestCase
     /**
      * @throws ReflectionException
      */
-    public function testCreateSqlFromSpecWithNonCombinedByParam(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function createSqlFromSpecWithNonCombinedByParam(): void
     {
         $method = new ReflectionMethod($this->abstractSql, 'createSqlFromSpecificationAndParameters');
 
@@ -159,20 +164,22 @@ final class AbstractSqlTest extends TestCase
 
         $result = $method->invoke($this->abstractSql, $spec, $params);
 
-        self::assertSame('FROM my_table', $result);
+        static::assertSame('FROM my_table', $result);
     }
 
-    public function testFlattenExpressionValuesViaInPredicate(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function flattenExpressionValuesViaInPredicate(): void
     {
         $select = new Select('users');
         $select->where(new Predicate\In('id', [1, 2, 3]));
 
         $sql = $select->getSqlString(new TrustingSql92Platform());
 
-        self::assertStringContainsString("\"id\" IN ('1', '2', '3')", $sql);
+        static::assertStringContainsString("\"id\" IN ('1', '2', '3')", $sql);
     }
 
-    public function testFlattenExpressionValuesViaInPredicateWithParameterContainer(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function flattenExpressionValuesViaInPredicateWithParameterContainer(): void
     {
         $select = new Select('users');
         $select->where(new Predicate\In('id', [1, 2, 3]));
@@ -193,10 +200,11 @@ final class AbstractSqlTest extends TestCase
 
         $select->prepareStatement($adapter, $mockStatement);
 
-        self::assertSame(3, $parameterContainer->count());
+        static::assertSame(3, $parameterContainer->count());
     }
 
-    public function testLocalizeVariablesCopiesSubjectProperties(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function localizeVariablesCopiesSubjectProperties(): void
     {
         $decorator = new SelectDecorator();
         $select    = new Select('users');
@@ -205,11 +213,12 @@ final class AbstractSqlTest extends TestCase
 
         $sql = $decorator->getSqlString(new TrustingSql92Platform());
 
-        self::assertStringContainsString('"users"', $sql);
-        self::assertStringContainsString('"id"', $sql);
+        static::assertStringContainsString('"users"', $sql);
+        static::assertStringContainsString('"id"', $sql);
     }
 
-    public function testProcessExpressionThrowsOnUnknownArgumentType(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function processExpressionThrowsOnUnknownArgumentType(): void
     {
         $unknownArg = new class implements ArgumentInterface {
             public function getSpecification(): string
@@ -238,7 +247,8 @@ final class AbstractSqlTest extends TestCase
     /**
      * @throws ReflectionException
      */
-    public function testProcessExpressionWithIdentifiersArgument(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function processExpressionWithIdentifiersArgument(): void
     {
         $expression = new Expression('? IN (SELECT col1, col2 FROM bar)', [
             Argument::identifiers(['col1', 'col2']),
@@ -246,25 +256,27 @@ final class AbstractSqlTest extends TestCase
 
         $sqlAndParams = $this->invokeProcessExpressionMethod($expression);
 
-        self::assertStringContainsString('"col1"', $sqlAndParams);
-        self::assertStringContainsString('"col2"', $sqlAndParams);
+        static::assertStringContainsString('"col1"', $sqlAndParams);
+        static::assertStringContainsString('"col2"', $sqlAndParams);
     }
 
     /**
      * @throws ReflectionException
      */
-    public function testProcessExpressionWithoutParameterContainer(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function processExpressionWithoutParameterContainer(): void
     {
         $expression   = new Expression('? > ? AND y < ?', [new Identifier('x'), 5, 10]);
         $sqlAndParams = $this->invokeProcessExpressionMethod($expression);
 
-        self::assertEquals("\"x\" > '5' AND y < '10'", $sqlAndParams);
+        static::assertSame("\"x\" > '5' AND y < '10'", $sqlAndParams);
     }
 
     /**
      * @throws ReflectionException
      */
-    public function testProcessExpressionWithParameterContainerAndParameterizationTypeNamed(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function processExpressionWithParameterContainerAndParameterizationTypeNamed(): void
     {
         $parameterContainer = new ParameterContainer();
         $expression         = new Expression('? > ? AND y < ?', [new Identifier('x'), 5, 10]);
@@ -273,17 +285,17 @@ final class AbstractSqlTest extends TestCase
         $parameters = $parameterContainer->getNamedArray();
 
         // Verify SQL uses named parameters
-        self::assertMatchesRegularExpression('#"x" > :expr\d+Param1 AND y < :expr\d+Param2#', $sqlAndParams);
+        static::assertMatchesRegularExpression('#"x" > :expr\d+Param1 AND y < :expr\d+Param2#', $sqlAndParams);
 
         // Verify parameter names and values
         preg_match('#expr(\d+)Param1#', key($parameters), $matches);
         $expressionNumber = $matches[1];
 
-        self::assertMatchesRegularExpression('#expr\d+Param1#', key($parameters));
-        self::assertEquals(5, current($parameters));
+        static::assertMatchesRegularExpression('#expr\d+Param1#', key($parameters));
+        static::assertSame(5, current($parameters));
         next($parameters);
-        self::assertMatchesRegularExpression('#expr\d+Param2#', key($parameters));
-        self::assertEquals(10, current($parameters));
+        static::assertMatchesRegularExpression('#expr\d+Param2#', key($parameters));
+        static::assertSame(10, current($parameters));
 
         // Verify next invocation increments expression number
         $parameterContainer = new ParameterContainer();
@@ -294,13 +306,14 @@ final class AbstractSqlTest extends TestCase
         preg_match('#expr(\d+)Param1#', key($parameters), $matches);
         $expressionNumberNext = $matches[1];
 
-        self::assertEquals(1, (int) $expressionNumberNext - (int) $expressionNumber);
+        static::assertSame(1, (int) $expressionNumberNext - (int) $expressionNumber);
     }
 
     /**
      * @throws ReflectionException
      */
-    public function testProcessExpressionWithValuesArgument(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function processExpressionWithValuesArgument(): void
     {
         $expression = new Expression(
             '? IN (?, ?, ?)',
@@ -314,16 +327,17 @@ final class AbstractSqlTest extends TestCase
 
         $sqlAndParams = $this->invokeProcessExpressionMethod($expression);
 
-        self::assertStringContainsString("'1'", $sqlAndParams);
-        self::assertStringContainsString("'2'", $sqlAndParams);
-        self::assertStringContainsString("'3'", $sqlAndParams);
-        self::assertStringContainsString('"id"', $sqlAndParams);
+        static::assertStringContainsString("'1'", $sqlAndParams);
+        static::assertStringContainsString("'2'", $sqlAndParams);
+        static::assertStringContainsString("'3'", $sqlAndParams);
+        static::assertStringContainsString('"id"', $sqlAndParams);
     }
 
     /**
      * @throws ReflectionException
      */
-    public function testProcessExpressionWorksWithExpressionContainingExpressionObject(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function processExpressionWorksWithExpressionContainingExpressionObject(): void
     {
         $expression = new Predicate\Operator(
             'release_date',
@@ -332,13 +346,14 @@ final class AbstractSqlTest extends TestCase
         );
 
         $sqlAndParams = $this->invokeProcessExpressionMethod($expression);
-        self::assertEquals('"release_date" = FROM_UNIXTIME(\'100000000\')', $sqlAndParams);
+        static::assertSame('"release_date" = FROM_UNIXTIME(\'100000000\')', $sqlAndParams);
     }
 
     /**
      * @throws ReflectionException
      */
-    public function testProcessExpressionWorksWithExpressionContainingSelectObject(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function processExpressionWorksWithExpressionContainingSelectObject(): void
     {
         $select = new Select();
         $select->from('x')->where->like('bar', 'Foo%');
@@ -347,65 +362,70 @@ final class AbstractSqlTest extends TestCase
         $predicateSet = new Predicate\PredicateSet([new Predicate\PredicateSet([$expression])]);
         $sqlAndParams = $this->invokeProcessExpressionMethod($predicateSet);
 
-        self::assertEquals('("x" IN (SELECT "x".* FROM "x" WHERE "bar" LIKE \'Foo%\'))', $sqlAndParams);
+        static::assertSame('("x" IN (SELECT "x".* FROM "x" WHERE "bar" LIKE \'Foo%\'))', $sqlAndParams);
     }
 
     /**
      * @throws ReflectionException
      */
-    public function testProcessExpressionWorksWithExpressionContainingStringParts(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function processExpressionWorksWithExpressionContainingStringParts(): void
     {
         $expression = new Predicate\Expression('x = ?', 5);
 
         $predicateSet = new Predicate\PredicateSet([new Predicate\PredicateSet([$expression])]);
         $sqlAndParams = $this->invokeProcessExpressionMethod($predicateSet);
 
-        self::assertEquals("(x = '5')", $sqlAndParams);
+        static::assertSame("(x = '5')", $sqlAndParams);
     }
 
     /**
      * @throws ReflectionException
      */
+    #[\PHPUnit\Framework\Attributes\Test]
     #[Group('7407')]
-    public function testProcessExpressionWorksWithExpressionObjectWithPercentageSigns(): void
+    public function processExpressionWorksWithExpressionObjectWithPercentageSigns(): void
     {
         $expressionString = 'FROM_UNIXTIME(date, "%Y-%m")';
         $expression       = new Expression($expressionString);
         $sqlString        = $this->invokeProcessExpressionMethod($expression);
 
-        self::assertSame($expressionString, $sqlString);
+        static::assertSame($expressionString, $sqlString);
     }
 
     /**
      * @throws ReflectionException
      */
-    public function testProcessExpressionWorksWithNamedParameterPrefix(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function processExpressionWorksWithNamedParameterPrefix(): void
     {
         $parameterContainer   = new ParameterContainer();
         $namedParameterPrefix = uniqid();
         $expression           = new Expression('FROM_UNIXTIME(?)', [10_000_000]);
         $this->invokeProcessExpressionMethod($expression, $parameterContainer, $namedParameterPrefix);
 
-        self::assertSame("{$namedParameterPrefix}1", (string) key($parameterContainer->getNamedArray()));
+        static::assertSame("{$namedParameterPrefix}1", (string) key($parameterContainer->getNamedArray()));
     }
 
     /**
      * @throws ReflectionException
      */
-    public function testProcessExpressionWorksWithNamedParameterPrefixContainingWhitespace(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function processExpressionWorksWithNamedParameterPrefixContainingWhitespace(): void
     {
         $parameterContainer   = new ParameterContainer();
         $namedParameterPrefix = "string\ncontaining white space";
         $expression           = new Expression('FROM_UNIXTIME(?)', [10_000_000]);
         $this->invokeProcessExpressionMethod($expression, $parameterContainer, $namedParameterPrefix);
 
-        self::assertSame('string__containing__white__space1', key($parameterContainer->getNamedArray()));
+        static::assertSame('string__containing__white__space1', key($parameterContainer->getNamedArray()));
     }
 
     /**
      * @throws ReflectionException
      */
-    public function testProcessJoinReturnsNullWhenEmpty(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function processJoinReturnsNullWhenEmpty(): void
     {
         $method = new ReflectionMethod($this->abstractSql, 'processJoin');
         $result = $method->invoke(
@@ -416,13 +436,14 @@ final class AbstractSqlTest extends TestCase
             null,
         );
 
-        self::assertNull($result);
+        static::assertNull($result);
     }
 
     /**
      * @throws ReflectionException
      */
-    public function testProcessJoinWithArrayAlias(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function processJoinWithArrayAlias(): void
     {
         $join = new Join();
         $join->join(['b' => 'bar'], 'foo.id = b.foo_id');
@@ -436,14 +457,15 @@ final class AbstractSqlTest extends TestCase
             null,
         );
 
-        self::assertNotNull($result);
-        self::assertStringContainsString('AS', $result[0][0][1]);
+        static::assertNotNull($result);
+        static::assertStringContainsString('AS', $result[0][0][1]);
     }
 
     /**
      * @throws ReflectionException
      */
-    public function testProcessJoinWithExpressionNameViaArray(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function processJoinWithExpressionNameViaArray(): void
     {
         $join = new Join();
         $join->join(['x' => new Expression('LATERAL(SELECT 1)')], 'true');
@@ -457,13 +479,14 @@ final class AbstractSqlTest extends TestCase
             null,
         );
 
-        self::assertStringContainsString('LATERAL(SELECT 1)', $result[0][0][1]);
+        static::assertStringContainsString('LATERAL(SELECT 1)', $result[0][0][1]);
     }
 
     /**
      * @throws ReflectionException
      */
-    public function testProcessJoinWithPredicateExpressionOnClause(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function processJoinWithPredicateExpressionOnClause(): void
     {
         $join = new Join();
         $join->join('bar', new Predicate\Expression('foo.id = bar.foo_id AND bar.active = 1'));
@@ -477,14 +500,15 @@ final class AbstractSqlTest extends TestCase
             null,
         );
 
-        self::assertNotNull($result);
-        self::assertStringContainsString('foo.id = bar.foo_id', $result[0][0][2]);
+        static::assertNotNull($result);
+        static::assertStringContainsString('foo.id = bar.foo_id', $result[0][0][2]);
     }
 
     /**
      * @throws ReflectionException
      */
-    public function testProcessJoinWithSelectSubqueryViaArray(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function processJoinWithSelectSubqueryViaArray(): void
     {
         $subselect = new Select('bar');
         $join      = new Join();
@@ -499,14 +523,15 @@ final class AbstractSqlTest extends TestCase
             null,
         );
 
-        self::assertStringContainsString('SELECT', $result[0][0][1]);
-        self::assertStringContainsString('AS', $result[0][0][1]);
+        static::assertStringContainsString('SELECT', $result[0][0][1]);
+        static::assertStringContainsString('AS', $result[0][0][1]);
     }
 
     /**
      * @throws ReflectionException
      */
-    public function testProcessJoinWithTableIdentifier(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function processJoinWithTableIdentifier(): void
     {
         $join = new Join();
         $join->join(new TableIdentifier('bar', 'myschema'), 'foo.id = bar.foo_id');
@@ -520,12 +545,13 @@ final class AbstractSqlTest extends TestCase
             null,
         );
 
-        self::assertNotNull($result);
-        self::assertStringContainsString('"myschema"', $result[0][0][1]);
-        self::assertStringContainsString('"bar"', $result[0][0][1]);
+        static::assertNotNull($result);
+        static::assertStringContainsString('"myschema"', $result[0][0][1]);
+        static::assertStringContainsString('"bar"', $result[0][0][1]);
     }
 
-    public function testProcessSubSelectUsesDecoratorWhenPlatformDecorator(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function processSubSelectUsesDecoratorWhenPlatformDecorator(): void
     {
         $decorator = new SelectDecorator();
         $outer     = new Select('foo');
@@ -535,14 +561,15 @@ final class AbstractSqlTest extends TestCase
 
         $sql = $decorator->getSqlString(new TrustingSql92Platform());
 
-        self::assertStringContainsString('SELECT "bar"', $sql);
-        self::assertStringContainsString('SELECT "foo"', $sql);
+        static::assertStringContainsString('SELECT "bar"', $sql);
+        static::assertStringContainsString('SELECT "foo"', $sql);
     }
 
     /**
      * @throws ReflectionException
      */
-    public function testProcessSubSelectWithoutParameterContainer(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function processSubSelectWithoutParameterContainer(): void
     {
         $select = new Select('foo');
 
@@ -556,13 +583,14 @@ final class AbstractSqlTest extends TestCase
             null,
         );
 
-        self::assertStringContainsString('SELECT', $result);
+        static::assertStringContainsString('SELECT', $result);
     }
 
     /**
      * @throws ReflectionException
      */
-    public function testProcessSubSelectWithParameterContainer(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function processSubSelectWithParameterContainer(): void
     {
         $select = new Select('foo');
         $select->where(['id' => 5]);
@@ -578,25 +606,27 @@ final class AbstractSqlTest extends TestCase
             $parameterContainer,
         );
 
-        self::assertStringContainsString('SELECT', $result);
-        self::assertGreaterThan(0, count($parameterContainer->getNamedArray()));
+        static::assertStringContainsString('SELECT', $result);
+        static::assertGreaterThan(0, count($parameterContainer->getNamedArray()));
     }
 
     /**
      * @throws ReflectionException
      */
-    public function testRenderTableWithAlias(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function renderTableWithAlias(): void
     {
         $method = new ReflectionMethod($this->abstractSql, 'renderTable');
         $result = $method->invoke($this->abstractSql, '"foo"', '"f"');
 
-        self::assertSame('"foo" AS "f"', $result);
+        static::assertSame('"foo" AS "f"', $result);
     }
 
     /**
      * @throws ReflectionException
      */
-    public function testResolveColumnValueWithArrayAndFromTable(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function resolveColumnValueWithArrayAndFromTable(): void
     {
         $method = new ReflectionMethod($this->abstractSql, 'resolveColumnValue');
 
@@ -613,11 +643,12 @@ final class AbstractSqlTest extends TestCase
             null,
         );
 
-        self::assertStringContainsString('table.', $result);
-        self::assertStringContainsString('id', $result);
+        static::assertStringContainsString('table.', $result);
+        static::assertStringContainsString('id', $result);
     }
 
-    public function testResolveColumnValueWithNamedParameterPrefix(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function resolveColumnValueWithNamedParameterPrefix(): void
     {
         $select = new Select('users');
         $select->columns(['id']);
@@ -640,13 +671,14 @@ final class AbstractSqlTest extends TestCase
 
         $select->prepareStatement($adapter, $mockStatement);
 
-        self::assertGreaterThanOrEqual(2, $parameterContainer->count());
+        static::assertGreaterThanOrEqual(2, $parameterContainer->count());
     }
 
     /**
      * @throws ReflectionException
      */
-    public function testResolveColumnValueWithNull(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function resolveColumnValueWithNull(): void
     {
         $method = new ReflectionMethod($this->abstractSql, 'resolveColumnValue');
 
@@ -659,13 +691,14 @@ final class AbstractSqlTest extends TestCase
             null,
         );
 
-        self::assertEquals('NULL', $result);
+        static::assertSame('NULL', $result);
     }
 
     /**
      * @throws ReflectionException
      */
-    public function testResolveColumnValueWithSelect(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function resolveColumnValueWithSelect(): void
     {
         $select = new Select('foo');
         $method = new ReflectionMethod($this->abstractSql, 'resolveColumnValue');
@@ -679,15 +712,16 @@ final class AbstractSqlTest extends TestCase
             null,
         );
 
-        self::assertStringContainsString('SELECT', $result);
-        self::assertStringStartsWith('(', $result);
-        self::assertStringEndsWith(')', $result);
+        static::assertStringContainsString('SELECT', $result);
+        static::assertStringStartsWith('(', $result);
+        static::assertStringEndsWith(')', $result);
     }
 
     /**
      * @throws ReflectionException
      */
-    public function testResolveTableWithSelect(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function resolveTableWithSelect(): void
     {
         $select = new Select('foo');
         $method = new ReflectionMethod($this->abstractSql, 'resolveTable');
@@ -700,15 +734,16 @@ final class AbstractSqlTest extends TestCase
             null,
         );
 
-        self::assertStringStartsWith('(', $result);
-        self::assertStringEndsWith(')', $result);
-        self::assertStringContainsString('SELECT', $result);
+        static::assertStringStartsWith('(', $result);
+        static::assertStringEndsWith(')', $result);
+        static::assertStringContainsString('SELECT', $result);
     }
 
     /**
      * @throws ReflectionException
      */
-    public function testResolveTableWithTableIdentifierAndSchema(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function resolveTableWithTableIdentifierAndSchema(): void
     {
         $table  = new TableIdentifier('users', 'public');
         $method = new ReflectionMethod($this->abstractSql, 'resolveTable');
@@ -721,8 +756,8 @@ final class AbstractSqlTest extends TestCase
             null,
         );
 
-        self::assertStringContainsString('public', $result);
-        self::assertStringContainsString('users', $result);
+        static::assertStringContainsString('public', $result);
+        static::assertStringContainsString('users', $result);
     }
 
     /**

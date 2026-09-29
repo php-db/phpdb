@@ -28,6 +28,69 @@ final class BetweenTest extends TestCase
 {
     protected Between $between;
 
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function constructorCanPassIdentifierMinimumAndMaximumValues(): void
+    {
+        $between = new Between('foo.bar', 1, 300);
+
+        $identifier = $between->getIdentifier();
+        static::assertInstanceOf(ArgumentInterface::class, $identifier);
+        static::assertSame('foo.bar', $identifier->getValue());
+        static::assertEquals(ArgumentType::Identifier, $identifier->getType());
+
+        $minValue = $between->getMinValue();
+        static::assertInstanceOf(ArgumentInterface::class, $minValue);
+        static::assertSame(1, $minValue->getValue());
+        static::assertEquals(ArgumentType::Value, $minValue->getType());
+
+        $maxValue = $between->getMaxValue();
+        static::assertInstanceOf(ArgumentInterface::class, $maxValue);
+        static::assertSame(300, $maxValue->getValue());
+        static::assertEquals(ArgumentType::Value, $maxValue->getType());
+
+        $between = new Between('foo.bar', 0, 1);
+
+        $identifier = $between->getIdentifier();
+        static::assertInstanceOf(ArgumentInterface::class, $identifier);
+        static::assertSame('foo.bar', $identifier->getValue());
+        static::assertEquals(ArgumentType::Identifier, $identifier->getType());
+
+        $minValue = $between->getMinValue();
+        static::assertInstanceOf(ArgumentInterface::class, $minValue);
+        static::assertSame(0, $minValue->getValue());
+        static::assertEquals(ArgumentType::Value, $minValue->getType());
+
+        $maxValue = $between->getMaxValue();
+        static::assertInstanceOf(ArgumentInterface::class, $maxValue);
+        static::assertSame(1, $maxValue->getValue());
+        static::assertEquals(ArgumentType::Value, $maxValue->getType());
+
+        $between = new Between('foo.bar', -1, 0);
+
+        $identifier = $between->getIdentifier();
+        static::assertInstanceOf(ArgumentInterface::class, $identifier);
+        static::assertSame('foo.bar', $identifier->getValue());
+        static::assertEquals(ArgumentType::Identifier, $identifier->getType());
+
+        $minValue = $between->getMinValue();
+        static::assertInstanceOf(ArgumentInterface::class, $minValue);
+        static::assertEquals(-1, $minValue->getValue());
+        static::assertEquals(ArgumentType::Value, $minValue->getType());
+
+        $maxValue = $between->getMaxValue();
+        static::assertInstanceOf(ArgumentInterface::class, $maxValue);
+        static::assertSame(0, $maxValue->getValue());
+        static::assertEquals(ArgumentType::Value, $maxValue->getType());
+    }
+
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function constructorYieldsNullIdentifierMinimumAndMaximumValues(): void
+    {
+        static::assertNull($this->between->getIdentifier());
+        static::assertNull($this->between->getMinValue());
+        static::assertNull($this->between->getMaxValue());
+    }
+
     /**
      * A custom specification replaces the generated one rather than sitting unused
      * behind it.
@@ -41,68 +104,8 @@ final class BetweenTest extends TestCase
         static::assertSame('%1$s IS INBETWEEN %2$s AND %3$s', $between->getExpressionData()['spec']);
     }
 
-    public function testConstructorCanPassIdentifierMinimumAndMaximumValues(): void
-    {
-        $between = new Between('foo.bar', 1, 300);
-
-        $identifier = $between->getIdentifier();
-        self::assertInstanceOf(ArgumentInterface::class, $identifier);
-        self::assertEquals('foo.bar', $identifier->getValue());
-        self::assertEquals(ArgumentType::Identifier, $identifier->getType());
-
-        $minValue = $between->getMinValue();
-        self::assertInstanceOf(ArgumentInterface::class, $minValue);
-        self::assertEquals(1, $minValue->getValue());
-        self::assertEquals(ArgumentType::Value, $minValue->getType());
-
-        $maxValue = $between->getMaxValue();
-        self::assertInstanceOf(ArgumentInterface::class, $maxValue);
-        self::assertEquals(300, $maxValue->getValue());
-        self::assertEquals(ArgumentType::Value, $maxValue->getType());
-
-        $between = new Between('foo.bar', 0, 1);
-
-        $identifier = $between->getIdentifier();
-        self::assertInstanceOf(ArgumentInterface::class, $identifier);
-        self::assertEquals('foo.bar', $identifier->getValue());
-        self::assertEquals(ArgumentType::Identifier, $identifier->getType());
-
-        $minValue = $between->getMinValue();
-        self::assertInstanceOf(ArgumentInterface::class, $minValue);
-        self::assertEquals(0, $minValue->getValue());
-        self::assertEquals(ArgumentType::Value, $minValue->getType());
-
-        $maxValue = $between->getMaxValue();
-        self::assertInstanceOf(ArgumentInterface::class, $maxValue);
-        self::assertEquals(1, $maxValue->getValue());
-        self::assertEquals(ArgumentType::Value, $maxValue->getType());
-
-        $between = new Between('foo.bar', -1, 0);
-
-        $identifier = $between->getIdentifier();
-        self::assertInstanceOf(ArgumentInterface::class, $identifier);
-        self::assertEquals('foo.bar', $identifier->getValue());
-        self::assertEquals(ArgumentType::Identifier, $identifier->getType());
-
-        $minValue = $between->getMinValue();
-        self::assertInstanceOf(ArgumentInterface::class, $minValue);
-        self::assertEquals(-1, $minValue->getValue());
-        self::assertEquals(ArgumentType::Value, $minValue->getType());
-
-        $maxValue = $between->getMaxValue();
-        self::assertInstanceOf(ArgumentInterface::class, $maxValue);
-        self::assertEquals(0, $maxValue->getValue());
-        self::assertEquals(ArgumentType::Value, $maxValue->getType());
-    }
-
-    public function testConstructorYieldsNullIdentifierMinimumAndMaximumValues(): void
-    {
-        self::assertNull($this->between->getIdentifier());
-        self::assertNull($this->between->getMinValue());
-        self::assertNull($this->between->getMaxValue());
-    }
-
-    public function testGetExpressionDataThrowsExceptionWhenIdentifierNotSet(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function getExpressionDataThrowsExceptionWhenIdentifierNotSet(): void
     {
         $between = new Between();
         $between->setMinValue(1)->setMaxValue(10);
@@ -112,7 +115,8 @@ final class BetweenTest extends TestCase
         $between->getExpressionData();
     }
 
-    public function testGetExpressionDataThrowsExceptionWhenMaxValueNotSet(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function getExpressionDataThrowsExceptionWhenMaxValueNotSet(): void
     {
         $between = new Between();
         $between->setIdentifier('foo')->setMinValue(1);
@@ -122,7 +126,8 @@ final class BetweenTest extends TestCase
         $between->getExpressionData();
     }
 
-    public function testGetExpressionDataThrowsExceptionWhenMinValueNotSet(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function getExpressionDataThrowsExceptionWhenMinValueNotSet(): void
     {
         $between = new Between();
         $between->setIdentifier('foo')->setMaxValue(10);
@@ -132,79 +137,83 @@ final class BetweenTest extends TestCase
         $between->getExpressionData();
     }
 
-    public function testIdentifierIsMutable(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function identifierIsMutable(): void
     {
         // First mutation
         $result = $this->between->setIdentifier('foo.bar');
 
         // Verify fluent interface
-        self::assertSame($this->between, $result);
+        static::assertSame($this->between, $result);
 
         // Verify the first mutation occurred
         $identifier1 = $this->between->getIdentifier();
-        self::assertInstanceOf(ArgumentInterface::class, $identifier1);
-        self::assertEquals('foo.bar', $identifier1->getValue());
-        self::assertEquals(ArgumentType::Identifier, $identifier1->getType());
+        static::assertInstanceOf(ArgumentInterface::class, $identifier1);
+        static::assertSame('foo.bar', $identifier1->getValue());
+        static::assertEquals(ArgumentType::Identifier, $identifier1->getType());
 
         // Second mutation with different data to verify mutability
         $this->between->setIdentifier('baz.qux');
 
         // Verify the instance was actually mutated
         $identifier2 = $this->between->getIdentifier();
-        self::assertInstanceOf(ArgumentInterface::class, $identifier2);
-        self::assertEquals('baz.qux', $identifier2->getValue());
-        self::assertEquals(ArgumentType::Identifier, $identifier2->getType());
+        static::assertInstanceOf(ArgumentInterface::class, $identifier2);
+        static::assertSame('baz.qux', $identifier2->getValue());
+        static::assertEquals(ArgumentType::Identifier, $identifier2->getType());
     }
 
-    public function testMaxValueIsMutable(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function maxValueIsMutable(): void
     {
         // First mutation
         $result = $this->between->setMaxValue(10);
 
         // Verify fluent interface
-        self::assertSame($this->between, $result);
+        static::assertSame($this->between, $result);
 
         // Verify the first mutation occurred
         $maxValue1 = $this->between->getMaxValue();
-        self::assertInstanceOf(ArgumentInterface::class, $maxValue1);
-        self::assertEquals(10, $maxValue1->getValue());
-        self::assertEquals(ArgumentType::Value, $maxValue1->getType());
+        static::assertInstanceOf(ArgumentInterface::class, $maxValue1);
+        static::assertSame(10, $maxValue1->getValue());
+        static::assertEquals(ArgumentType::Value, $maxValue1->getType());
 
         // Second mutation with different data to verify mutability
         $this->between->setMaxValue(30);
 
         // Verify the instance was actually mutated
         $maxValue2 = $this->between->getMaxValue();
-        self::assertInstanceOf(ArgumentInterface::class, $maxValue2);
-        self::assertEquals(30, $maxValue2->getValue());
-        self::assertEquals(ArgumentType::Value, $maxValue2->getType());
+        static::assertInstanceOf(ArgumentInterface::class, $maxValue2);
+        static::assertSame(30, $maxValue2->getValue());
+        static::assertEquals(ArgumentType::Value, $maxValue2->getType());
     }
 
-    public function testMinValueIsMutable(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function minValueIsMutable(): void
     {
         // First mutation
         $result = $this->between->setMinValue(10);
 
         // Verify fluent interface
-        self::assertSame($this->between, $result);
+        static::assertSame($this->between, $result);
 
         // Verify the first mutation occurred
         $minValue1 = $this->between->getMinValue();
-        self::assertInstanceOf(ArgumentInterface::class, $minValue1);
-        self::assertEquals(10, $minValue1->getValue());
-        self::assertEquals(ArgumentType::Value, $minValue1->getType());
+        static::assertInstanceOf(ArgumentInterface::class, $minValue1);
+        static::assertSame(10, $minValue1->getValue());
+        static::assertEquals(ArgumentType::Value, $minValue1->getType());
 
         // Second mutation with different data to verify mutability
         $this->between->setMinValue(20);
 
         // Verify the instance was actually mutated
         $minValue2 = $this->between->getMinValue();
-        self::assertInstanceOf(ArgumentInterface::class, $minValue2);
-        self::assertEquals(20, $minValue2->getValue());
-        self::assertEquals(ArgumentType::Value, $minValue2->getType());
+        static::assertInstanceOf(ArgumentInterface::class, $minValue2);
+        static::assertSame(20, $minValue2->getValue());
+        static::assertEquals(ArgumentType::Value, $minValue2->getType());
     }
 
-    public function testRetrievingWherePartsReturnsSpecificationArrayOfIdentifierAndValuesAndArrayOfTypes(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function retrievingWherePartsReturnsSpecificationArrayOfIdentifierAndValuesAndArrayOfTypes(): void
     {
         $this->between
             ->setIdentifier('foo.bar')
@@ -214,26 +223,26 @@ final class BetweenTest extends TestCase
         $expressionData = $this->between->getExpressionData();
 
         // Verify specification (default built from arguments)
-        self::assertEquals('%s BETWEEN %s AND %s', $expressionData['spec']);
+        static::assertSame('%s BETWEEN %s AND %s', $expressionData['spec']);
 
         // Verify expression values
         $values = $expressionData['values'];
-        self::assertCount(3, $values);
+        static::assertCount(3, $values);
 
         // Verify identifier argument
-        self::assertInstanceOf(ArgumentInterface::class, $values[0]);
-        self::assertEquals('foo.bar', $values[0]->getValue());
-        self::assertEquals(ArgumentType::Identifier, $values[0]->getType());
+        static::assertInstanceOf(ArgumentInterface::class, $values[0]);
+        static::assertSame('foo.bar', $values[0]->getValue());
+        static::assertEquals(ArgumentType::Identifier, $values[0]->getType());
 
         // Verify min value argument
-        self::assertInstanceOf(ArgumentInterface::class, $values[1]);
-        self::assertEquals(10, $values[1]->getValue());
-        self::assertEquals(ArgumentType::Value, $values[1]->getType());
+        static::assertInstanceOf(ArgumentInterface::class, $values[1]);
+        static::assertSame(10, $values[1]->getValue());
+        static::assertEquals(ArgumentType::Value, $values[1]->getType());
 
         // Verify max value argument
-        self::assertInstanceOf(ArgumentInterface::class, $values[2]);
-        self::assertEquals(19, $values[2]->getValue());
-        self::assertEquals(ArgumentType::Value, $values[2]->getType());
+        static::assertInstanceOf(ArgumentInterface::class, $values[2]);
+        static::assertSame(19, $values[2]->getValue());
+        static::assertEquals(ArgumentType::Value, $values[2]->getType());
 
         $this->between
             ->setIdentifier(Argument::value(10))
@@ -243,37 +252,39 @@ final class BetweenTest extends TestCase
         $expressionData = $this->between->getExpressionData();
 
         // Verify specification (default built from arguments)
-        self::assertEquals('%s BETWEEN %s AND %s', $expressionData['spec']);
+        static::assertSame('%s BETWEEN %s AND %s', $expressionData['spec']);
 
         // Verify expression values with custom types
         $values = $expressionData['values'];
-        self::assertCount(3, $values);
+        static::assertCount(3, $values);
 
         // Verify identifier argument (passed as Value type)
-        self::assertInstanceOf(ArgumentInterface::class, $values[0]);
-        self::assertEquals(10, $values[0]->getValue());
-        self::assertEquals(ArgumentType::Value, $values[0]->getType());
+        static::assertInstanceOf(ArgumentInterface::class, $values[0]);
+        static::assertSame(10, $values[0]->getValue());
+        static::assertEquals(ArgumentType::Value, $values[0]->getType());
 
         // Verify min value argument (passed as Identifier type)
-        self::assertInstanceOf(ArgumentInterface::class, $values[1]);
-        self::assertEquals('foo.bar', $values[1]->getValue());
-        self::assertEquals(ArgumentType::Identifier, $values[1]->getType());
+        static::assertInstanceOf(ArgumentInterface::class, $values[1]);
+        static::assertSame('foo.bar', $values[1]->getValue());
+        static::assertEquals(ArgumentType::Identifier, $values[1]->getType());
 
         // Verify max value argument (passed as Identifier type)
-        self::assertInstanceOf(ArgumentInterface::class, $values[2]);
-        self::assertEquals('foo.baz', $values[2]->getValue());
-        self::assertEquals(ArgumentType::Identifier, $values[2]->getType());
+        static::assertInstanceOf(ArgumentInterface::class, $values[2]);
+        static::assertSame('foo.baz', $values[2]->getValue());
+        static::assertEquals(ArgumentType::Identifier, $values[2]->getType());
     }
 
-    public function testSpecificationIsMutable(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function specificationIsMutable(): void
     {
         $this->between->setSpecification('%1$s IS INBETWEEN %2$s AND %3$s');
-        self::assertEquals('%1$s IS INBETWEEN %2$s AND %3$s', $this->between->getSpecification());
+        static::assertSame('%1$s IS INBETWEEN %2$s AND %3$s', $this->between->getSpecification());
     }
 
-    public function testSpecificationIsNullByDefault(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function specificationIsNullByDefault(): void
     {
-        self::assertNull($this->between->getSpecification());
+        static::assertNull($this->between->getSpecification());
     }
 
     #[Override]

@@ -47,91 +47,101 @@ final class DeleteTest extends TestCase
 
     protected Delete $delete;
 
-    public function testConstructorWithTable(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function constructorWithTable(): void
     {
         $delete = new Delete('foo');
-        self::assertEquals('foo', $delete->getRawState('table'));
+        static::assertSame('foo', $delete->getRawState('table'));
     }
 
-    public function testConstructorWithTableIdentifier(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function constructorWithTableIdentifier(): void
     {
         $tableIdentifier = new TableIdentifier('foo', 'bar');
         $delete          = new Delete($tableIdentifier);
-        self::assertEquals($tableIdentifier, $delete->getRawState('table'));
+        static::assertEquals($tableIdentifier, $delete->getRawState('table'));
     }
 
     /**
      * @throws ReflectionException
      */
-    public function testFrom(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function from(): void
     {
         // Set table with string
         $this->delete->from('foo');
-        self::assertEquals('foo', $this->readAttribute($this->delete, 'table'));
+        static::assertSame('foo', static::readAttribute($this->delete, 'table'));
 
         // Set table with TableIdentifier
         $tableIdentifier = new TableIdentifier('foo', 'bar');
         $this->delete->from($tableIdentifier);
-        self::assertEquals($tableIdentifier, $this->readAttribute($this->delete, 'table'));
+        static::assertEquals($tableIdentifier, static::readAttribute($this->delete, 'table'));
     }
 
-    public function testGetRawState(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function getRawState(): void
     {
         $this->delete->from('foo')->where('x = y');
 
         $rawState = $this->delete->getRawState();
 
-        self::assertIsArray($rawState);
-        self::assertArrayHasKey('table', $rawState);
-        self::assertArrayHasKey('where', $rawState);
-        self::assertArrayHasKey('emptyWhereProtection', $rawState);
+        static::assertIsArray($rawState);
+        static::assertArrayHasKey('table', $rawState);
+        static::assertArrayHasKey('where', $rawState);
+        static::assertArrayHasKey('emptyWhereProtection', $rawState);
 
-        self::assertEquals('foo', $rawState['table']);
-        self::assertInstanceOf(Where::class, $rawState['where']);
-        self::assertTrue($rawState['emptyWhereProtection']);
+        static::assertSame('foo', $rawState['table']);
+        static::assertInstanceOf(Where::class, $rawState['where']);
+        static::assertTrue($rawState['emptyWhereProtection']);
     }
 
-    public function testGetRawStateWithKey(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function getRawStateWithKey(): void
     {
         $this->delete->from('foo');
 
-        self::assertEquals('foo', $this->delete->getRawState('table'));
-        self::assertInstanceOf(Where::class, $this->delete->getRawState('where'));
-        self::assertTrue($this->delete->getRawState('emptyWhereProtection'));
+        static::assertSame('foo', $this->delete->getRawState('table'));
+        static::assertInstanceOf(Where::class, $this->delete->getRawState('where'));
+        static::assertTrue($this->delete->getRawState('emptyWhereProtection'));
     }
 
-    public function testGetSqlString(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function getSqlString(): void
     {
         $this->delete->from('foo')->where('x = y');
-        self::assertEquals('DELETE FROM "foo" WHERE x = y', $this->delete->getSqlString());
+        static::assertSame('DELETE FROM "foo" WHERE x = y', $this->delete->getSqlString());
 
         // Test with TableIdentifier
         $this->delete = new Delete();
         $this->delete->from(new TableIdentifier('foo', 'sch'))->where('x = y');
-        self::assertEquals('DELETE FROM "sch"."foo" WHERE x = y', $this->delete->getSqlString());
+        static::assertSame('DELETE FROM "sch"."foo" WHERE x = y', $this->delete->getSqlString());
     }
 
-    public function testGetSqlStringWithEmptyWhere(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function getSqlStringWithEmptyWhere(): void
     {
         $this->delete->from('foo');
         // Empty where should not add WHERE clause
-        self::assertEquals('DELETE FROM "foo"', $this->delete->getSqlString());
+        static::assertSame('DELETE FROM "foo"', $this->delete->getSqlString());
     }
 
-    public function testMagicGetReturnsNullForUnknownProperty(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function magicGetReturnsNullForUnknownProperty(): void
     {
         /** @noinspection PhpUndefinedFieldInspection */
-        self::assertNull($this->delete->unknown); // @phpstan-ignore-line
-        self::assertNull($this->delete->table); // @phpstan-ignore-line
+        static::assertNull($this->delete->unknown); // @phpstan-ignore-line
+        static::assertNull($this->delete->table); // @phpstan-ignore-line
     }
 
-    public function testMagicGetReturnsWhereClause(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function magicGetReturnsWhereClause(): void
     {
         $where = $this->delete->where;
-        self::assertInstanceOf(Where::class, $where);
+        static::assertInstanceOf(Where::class, $where);
     }
 
-    public function testPrepareStatement(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function prepareStatement(): void
     {
         $mockDriver  = $this->getMockBuilder(DriverInterface::class)->getMock();
         $mockAdapter = $this->createMockAdapter($mockDriver);
@@ -139,7 +149,7 @@ final class DeleteTest extends TestCase
         $mockStatement = $this->getMockBuilder(StatementInterface::class)->getMock();
         $mockStatement->expects($this->once())
             ->method('setSql')
-            ->with($this->equalTo('DELETE FROM "foo" WHERE x = y'));
+            ->with(static::equalTo('DELETE FROM "foo" WHERE x = y'));
 
         $this->delete->from('foo')->where('x = y');
 
@@ -154,31 +164,33 @@ final class DeleteTest extends TestCase
         $mockStatement = $this->getMockBuilder(StatementInterface::class)->getMock();
         $mockStatement->expects($this->once())
             ->method('setSql')
-            ->with($this->equalTo('DELETE FROM "sch"."foo" WHERE x = y'));
+            ->with(static::equalTo('DELETE FROM "sch"."foo" WHERE x = y'));
 
         $this->delete->from(new TableIdentifier('foo', 'sch'))->where('x = y');
 
         $this->delete->prepareStatement($mockAdapter, $mockStatement);
     }
 
+    #[\PHPUnit\Framework\Attributes\Test]
     #[CoversNothing]
-    public function testSpecificationconstantsCouldBeOverridedByExtensionInGetSqlString(): void
+    public function specificationconstantsCouldBeOverridedByExtensionInGetSqlString(): void
     {
         $deleteIgnore = new DeleteIgnore();
 
         $deleteIgnore->from('foo')
             ->where('x = y');
-        self::assertEquals('DELETE IGNORE FROM "foo" WHERE x = y', $deleteIgnore->getSqlString());
+        static::assertSame('DELETE IGNORE FROM "foo" WHERE x = y', $deleteIgnore->getSqlString());
 
         // with TableIdentifier
         $deleteIgnore = new DeleteIgnore();
         $deleteIgnore->from(new TableIdentifier('foo', 'sch'))
             ->where('x = y');
-        self::assertEquals('DELETE IGNORE FROM "sch"."foo" WHERE x = y', $deleteIgnore->getSqlString());
+        static::assertSame('DELETE IGNORE FROM "sch"."foo" WHERE x = y', $deleteIgnore->getSqlString());
     }
 
+    #[\PHPUnit\Framework\Attributes\Test]
     #[CoversNothing]
-    public function testSpecificationconstantsCouldBeOverridedByExtensionInPrepareStatement(): void
+    public function specificationconstantsCouldBeOverridedByExtensionInPrepareStatement(): void
     {
         $deleteIgnore = new DeleteIgnore();
 
@@ -188,7 +200,7 @@ final class DeleteTest extends TestCase
         $mockStatement = $this->getMockBuilder(StatementInterface::class)->getMock();
         $mockStatement->expects($this->once())
             ->method('setSql')
-            ->with($this->equalTo('DELETE IGNORE FROM "foo" WHERE x = y'));
+            ->with(static::equalTo('DELETE IGNORE FROM "foo" WHERE x = y'));
 
         $deleteIgnore->from('foo')
             ->where('x = y');
@@ -204,7 +216,7 @@ final class DeleteTest extends TestCase
         $mockStatement = $this->getMockBuilder(StatementInterface::class)->getMock();
         $mockStatement->expects($this->once())
             ->method('setSql')
-            ->with($this->equalTo('DELETE IGNORE FROM "sch"."foo" WHERE x = y'));
+            ->with(static::equalTo('DELETE IGNORE FROM "sch"."foo" WHERE x = y'));
 
         $deleteIgnore->from(new TableIdentifier('foo', 'sch'))
             ->where('x = y');
@@ -216,7 +228,8 @@ final class DeleteTest extends TestCase
      * @throws ReflectionException
      * @todo REMOVE THIS IN 3.x
      */
-    public function testWhere(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function where(): void
     {
         $this->delete->where('x = y');
         $this->delete->where(['foo > ?' => 5]);
@@ -229,45 +242,46 @@ final class DeleteTest extends TestCase
 
         $where = $this->delete->where;
 
-        $predicates = $this->readAttribute($where, 'predicates');
-        self::assertEquals('AND', $predicates[0][0]);
-        self::assertInstanceOf(Literal::class, $predicates[0][1]);
+        $predicates = static::readAttribute($where, 'predicates');
+        static::assertSame('AND', $predicates[0][0]);
+        static::assertInstanceOf(Literal::class, $predicates[0][1]);
 
-        self::assertEquals('AND', $predicates[1][0]);
-        self::assertInstanceOf(Expression::class, $predicates[1][1]);
+        static::assertSame('AND', $predicates[1][0]);
+        static::assertInstanceOf(Expression::class, $predicates[1][1]);
 
-        self::assertEquals('AND', $predicates[2][0]);
-        self::assertInstanceOf(Operator::class, $predicates[2][1]);
+        static::assertSame('AND', $predicates[2][0]);
+        static::assertInstanceOf(Operator::class, $predicates[2][1]);
 
-        self::assertEquals('OR', $predicates[3][0]);
-        self::assertInstanceOf(Literal::class, $predicates[3][1]);
+        static::assertSame('OR', $predicates[3][0]);
+        static::assertInstanceOf(Literal::class, $predicates[3][1]);
 
-        self::assertEquals('AND', $predicates[4][0]);
-        self::assertInstanceOf(IsNull::class, $predicates[4][1]);
+        static::assertSame('AND', $predicates[4][0]);
+        static::assertInstanceOf(IsNull::class, $predicates[4][1]);
 
-        self::assertEquals('AND', $predicates[5][0]);
-        self::assertInstanceOf(In::class, $predicates[5][1]);
+        static::assertSame('AND', $predicates[5][0]);
+        static::assertInstanceOf(In::class, $predicates[5][1]);
 
-        self::assertEquals('AND', $predicates[6][0]);
-        self::assertInstanceOf(IsNotNull::class, $predicates[6][1]);
+        static::assertSame('AND', $predicates[6][0]);
+        static::assertInstanceOf(IsNotNull::class, $predicates[6][1]);
 
-        self::assertEquals('AND', $predicates[7][0]);
-        self::assertInstanceOf(Operator::class, $predicates[7][1]);
+        static::assertSame('AND', $predicates[7][0]);
+        static::assertInstanceOf(Operator::class, $predicates[7][1]);
 
-        self::assertEquals('AND', $predicates[8][0]);
-        self::assertInstanceOf(Operator::class, $predicates[8][1]);
+        static::assertSame('AND', $predicates[8][0]);
+        static::assertInstanceOf(Operator::class, $predicates[8][1]);
 
         $where = new Where();
         $this->delete->where($where);
-        self::assertSame($where, $this->delete->where);
+        static::assertSame($where, $this->delete->where);
 
         $this->delete->where(static function ($what) use ($where): void {
             self::assertSame($where, $what);
         });
     }
 
+    #[\PHPUnit\Framework\Attributes\Test]
     #[TestDox('unit test: Test where() accepts Expression (ExpressionInterface) in array')]
-    public function testWhereAcceptsExpressionInterface(): void
+    public function whereAcceptsExpressionInterface(): void
     {
         $this->delete
             ->from('foo')
@@ -276,8 +290,8 @@ final class DeleteTest extends TestCase
             ]);
 
         $where = $this->delete->getRawState('where');
-        self::assertInstanceOf(Where::class, $where);
-        self::assertEquals(1, $where->count());
+        static::assertInstanceOf(Where::class, $where);
+        static::assertSame(1, $where->count());
     }
 
     /**

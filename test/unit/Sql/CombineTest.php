@@ -34,7 +34,8 @@ final class CombineTest extends TestCase
 
     protected Combine $combine;
 
-    public function testAlignColumns(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function alignColumns(): void
     {
         $select1 = new Select('t1');
         $select1->columns([
@@ -52,7 +53,7 @@ final class CombineTest extends TestCase
             ->alignColumns();
 
         // Verify first select has NULL for missing c2
-        self::assertEquals(
+        static::assertEquals(
             [
                 'c0' => 'c0',
                 'c1' => 'c1',
@@ -62,7 +63,7 @@ final class CombineTest extends TestCase
         );
 
         // Verify second select has NULL for missing c0
-        self::assertEquals(
+        static::assertEquals(
             [
                 'c0' => new Expression('NULL'),
                 'c1' => 'c1',
@@ -72,7 +73,8 @@ final class CombineTest extends TestCase
         );
     }
 
-    public function testAlignColumnsAppendsNullExpressionsForMissingColumns(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function alignColumnsAppendsNullExpressionsForMissingColumns(): void
     {
         $select1 = new Select('t1');
         $select1->columns(['a' => 'a']);
@@ -83,47 +85,51 @@ final class CombineTest extends TestCase
         $this->combine->union([$select1, $select2])->alignColumns();
 
         $columns1 = $select1->getRawState('columns');
-        self::assertArrayHasKey('b', $columns1);
-        self::assertInstanceOf(Expression::class, $columns1['b']);
+        static::assertArrayHasKey('b', $columns1);
+        static::assertInstanceOf(Expression::class, $columns1['b']);
     }
 
-    public function testAlignColumnsReturnsEarlyWhenEmpty(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function alignColumnsReturnsEarlyWhenEmpty(): void
     {
         $combine = new Combine();
         $result  = $combine->alignColumns();
 
-        self::assertSame($combine, $result);
+        static::assertSame($combine, $result);
     }
 
-    public function testCombineWithArrayOfSelectAndModifier(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function combineWithArrayOfSelectAndModifier(): void
     {
         $this->combine->combine([
             [new Select('t1'), 'UNION', 'ALL'],
             [new Select('t2'), 'INTERSECT'],
         ]);
 
-        self::assertEquals(
+        static::assertSame(
             '(SELECT "t1".* FROM "t1") INTERSECT (SELECT "t2".* FROM "t2")',
             $this->combine->getSqlString(),
         );
     }
 
-    public function testConstructorWithSelectDelegatesToCombine(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function constructorWithSelectDelegatesToCombine(): void
     {
         $select  = new Select('foo');
         $combine = new Combine($select, Combine::COMBINE_EXCEPT, 'ALL');
 
         $rawState = $combine->getRawState();
-        self::assertCount(1, $rawState['combine']);
-        self::assertSame('except', $rawState['combine'][0]['type']);
-        self::assertSame('ALL', $rawState['combine'][0]['modifier']);
+        static::assertCount(1, $rawState['combine']);
+        static::assertSame('except', $rawState['combine'][0]['type']);
+        static::assertSame('ALL', $rawState['combine'][0]['modifier']);
     }
 
-    public function testGetRawState(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function getRawState(): void
     {
         $select = new Select('t1');
         $this->combine->combine($select);
-        self::assertSame(
+        static::assertSame(
             [
                 'combine' => [
                     [
@@ -140,7 +146,8 @@ final class CombineTest extends TestCase
         );
     }
 
-    public function testGetSqlString(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function getSqlString(): void
     {
         $this->combine
             ->union(new Select('t1'))
@@ -148,7 +155,7 @@ final class CombineTest extends TestCase
             ->except(new Select('t3'))
             ->union(new Select('t4'));
 
-        self::assertEquals(
+        static::assertSame(
             // @codingStandardsIgnoreStart
             '(SELECT "t1".* FROM "t1") INTERSECT (SELECT "t2".* FROM "t2") EXCEPT (SELECT "t3".* FROM "t3") UNION (SELECT "t4".* FROM "t4")',
             // @codingStandardsIgnoreEnd
@@ -156,12 +163,14 @@ final class CombineTest extends TestCase
         );
     }
 
-    public function testGetSqlStringEmpty(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function getSqlStringEmpty(): void
     {
-        self::assertEmpty($this->combine->getSqlString());
+        static::assertEmpty($this->combine->getSqlString());
     }
 
-    public function testGetSqlStringFromArray(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function getSqlStringFromArray(): void
     {
         $this->combine->combine([
             [new Select('t1')],
@@ -169,7 +178,7 @@ final class CombineTest extends TestCase
             [new Select('t3'), Combine::COMBINE_EXCEPT],
         ]);
 
-        self::assertEquals(
+        static::assertSame(
             '(SELECT "t1".* FROM "t1") INTERSECT ALL (SELECT "t2".* FROM "t2") EXCEPT (SELECT "t3".* FROM "t3")',
             $this->combine->getSqlString(),
         );
@@ -181,25 +190,27 @@ final class CombineTest extends TestCase
             new Select('t3'),
         ]);
 
-        self::assertEquals(
+        static::assertSame(
             '(SELECT "t1".* FROM "t1") UNION (SELECT "t2".* FROM "t2") UNION (SELECT "t3".* FROM "t3")',
             $this->combine->getSqlString(),
         );
     }
 
-    public function testGetSqlStringWithModifier(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function getSqlStringWithModifier(): void
     {
         $this->combine
             ->union(new Select('t1'))
             ->union(new Select('t2'), 'ALL');
 
-        self::assertEquals(
+        static::assertSame(
             '(SELECT "t1".* FROM "t1") UNION ALL (SELECT "t2".* FROM "t2")',
             $this->combine->getSqlString(),
         );
     }
 
-    public function testPrepareStatementWithModifier(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function prepareStatementWithModifier(): void
     {
         $select1 = new Select('t1');
         $select1->where(['x1' => 10]);
@@ -215,14 +226,15 @@ final class CombineTest extends TestCase
         $adapter = $this->getMockAdapter();
 
         $statement = $this->combine->prepareStatement($adapter, new StatementContainer());
-        self::assertInstanceOf(StatementContainerInterface::class, $statement);
-        self::assertEquals(
+        static::assertInstanceOf(StatementContainerInterface::class, $statement);
+        static::assertSame(
             '(SELECT "t1".* FROM "t1" WHERE "x1" = ?) UNION (SELECT "t2".* FROM "t2" WHERE "x2" = ?)',
             $statement->getSql(),
         );
     }
 
-    public function testRejectsInvalidStatement(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function rejectsInvalidStatement(): void
     {
         self::expectException(TypeError::class);
 

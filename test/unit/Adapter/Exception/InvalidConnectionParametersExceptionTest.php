@@ -13,10 +13,11 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(InvalidConnectionParametersException::class, '__construct')]
 final class InvalidConnectionParametersExceptionTest extends TestCase
 {
-    public function testConstructorStoresMessageAndParameters(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function constructorStoresMessageAndParameters(): void
     {
         $exception = new InvalidConnectionParametersException('msg', ['host', 'port']);
 
-        self::assertSame('msg', $exception->getMessage());
+        static::assertSame('msg', $exception->getMessage());
     }
 }

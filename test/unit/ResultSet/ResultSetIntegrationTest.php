@@ -54,24 +54,12 @@ final class ResultSetIntegrationTest extends TestCase
         ];
     }
 
-    public function getArrayDataSource(int $count): ArrayIterator
-    {
-        $array = [];
-        for ($i = 0; $i < $count; $i++) {
-            $array[] = [
-                'id'    => $i,
-                'title' => 'title ' . $i,
-            ];
-        }
-
-        return new ArrayIterator($array);
-    }
-
     /**
      * @throws Exception
      * @throws \Exception
      */
-    public function testBufferCalledAfterIterationThrowsException(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function bufferCalledAfterIterationThrowsException(): void
     {
         $this->resultSet->initialize($this->createMock(ResultInterface::class));
         $this->resultSet->current();
@@ -85,26 +73,28 @@ final class ResultSetIntegrationTest extends TestCase
     /**
      * @throws \Exception
      */
-    public function testCanProvideArrayAsDataSource(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function canProvideArrayAsDataSource(): void
     {
         $dataSource = [['foo']];
         // Initialize with array data source and verify current row
         $this->resultSet->initialize($dataSource);
-        $this->assertEquals($dataSource[0], (array) $this->resultSet->current());
+        static::assertEquals($dataSource[0], (array) $this->resultSet->current());
 
         $returnType = new ArrayObject([], ArrayObject::ARRAY_AS_PROPS);
         $dataSource = [$returnType];
         // Test with custom ArrayObject prototype
         $this->resultSet->setArrayObjectPrototype($returnType);
         $this->resultSet->initialize($dataSource);
-        $this->assertEquals($dataSource[0], $this->resultSet->current());
-        $this->assertContains($dataSource[0], $this->resultSet);
+        static::assertEquals($dataSource[0], $this->resultSet->current());
+        static::assertContains($dataSource[0], $this->resultSet);
     }
 
     /**
      * @throws \Exception
      */
-    public function testCanProvideIteratorAggregateAsDataSource(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function canProvideIteratorAggregateAsDataSource(): void
     {
         $iteratorAggregate = $this->getMockBuilder('IteratorAggregate')
             ->onlyMethods(['getIterator'])
@@ -112,34 +102,37 @@ final class ResultSetIntegrationTest extends TestCase
         $iteratorAggregate->expects($this->any())->method('getIterator')->willReturn($iteratorAggregate);
         // Initialize with IteratorAggregate and verify its iterator is used
         $this->resultSet->initialize($iteratorAggregate);
-        self::assertSame($iteratorAggregate->getIterator(), $this->resultSet->getDataSource());
+        static::assertSame($iteratorAggregate->getIterator(), $this->resultSet->getDataSource());
     }
 
     /**
      * @throws \Exception
      */
-    public function testCanProvideIteratorAsDataSource(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function canProvideIteratorAsDataSource(): void
     {
         $it = new SplStack();
         // Initialize with iterator and verify it is stored as data source
         $this->resultSet->initialize($it);
-        self::assertSame($it, $this->resultSet->getDataSource());
+        static::assertSame($it, $this->resultSet->getDataSource());
     }
 
     /**
      * @throws RandomException
      * @throws \Exception
      */
-    public function testCountReturnsCountOfRows(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function countReturnsCountOfRows(): void
     {
         $count      = random_int(3, 75);
         $dataSource = $this->getArrayDataSource($count);
         // Verify count() returns correct number of rows
         $this->resultSet->initialize($dataSource);
-        self::assertEquals($count, $this->resultSet->count());
+        static::assertEquals($count, $this->resultSet->count());
     }
 
-    public function testCurrentClonesRowPrototypeOnEachCall(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function currentClonesRowPrototypeOnEachCall(): void
     {
         $resultSet = new ResultSet(ResultSetReturnType::ArrayObject);
         $resultSet->initialize([
@@ -151,36 +144,39 @@ final class ResultSetIntegrationTest extends TestCase
         $resultSet->next();
         $second = $resultSet->current();
 
-        self::assertNotSame($first, $second);
+        static::assertNotSame($first, $second);
     }
 
-    public function testCurrentReturnsArrayObjectWhenReturnTypeIsArrayObject(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function currentReturnsArrayObjectWhenReturnTypeIsArrayObject(): void
     {
         $resultSet = new ResultSet(ResultSetReturnType::ArrayObject);
         $resultSet->initialize([['id' => 1, 'name' => 'one']]);
 
         $current = $resultSet->current();
 
-        self::assertInstanceOf(ArrayObject::class, $current);
-        self::assertSame(1, $current['id']);
+        static::assertInstanceOf(ArrayObject::class, $current);
+        static::assertSame(1, $current['id']);
     }
 
-    public function testCurrentReturnsArrayWhenReturnTypeIsArray(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function currentReturnsArrayWhenReturnTypeIsArray(): void
     {
         $resultSet = new ResultSet(ResultSetReturnType::Array);
         $resultSet->initialize([['id' => 1, 'name' => 'one']]);
 
         $current = $resultSet->current();
 
-        self::assertIsArray($current);
-        self::assertSame(1, $current['id']);
+        static::assertIsArray($current);
+        static::assertSame(1, $current['id']);
     }
 
     /**
      * @throws Exception
      * @throws \Exception
      */
-    public function testCurrentReturnsNullForNonExistingValues(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function currentReturnsNullForNonExistingValues(): void
     {
         $mockResult = $this->createMock(ResultInterface::class);
         $mockResult->expects($this->once())->method('current')->willReturn('Not an Array');
@@ -189,13 +185,14 @@ final class ResultSetIntegrationTest extends TestCase
         $this->resultSet->buffer();
 
         // Verify current() returns null when data source returns non-array value
-        self::assertNull($this->resultSet->current());
+        static::assertNull($this->resultSet->current());
     }
 
     /**
      * @throws \Exception
      */
-    public function testCurrentWithBufferingCallsDataSourceCurrentOnce(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function currentWithBufferingCallsDataSourceCurrentOnce(): void
     {
         $mockResult = $this->getMockBuilder(ResultInterface::class)->getMock();
         $mockResult->expects($this->once())->method('current')->willReturn(['foo' => 'bar']);
@@ -209,50 +206,69 @@ final class ResultSetIntegrationTest extends TestCase
         $this->resultSet->current();
     }
 
-    public function testDataSourceIsNullByDefault(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function dataSourceIsNullByDefault(): void
     {
         // Verify data source is null before initialization
-        self::assertNull($this->resultSet->getDataSource());
+        static::assertNull($this->resultSet->getDataSource());
     }
 
-    public function testFieldCountIsZeroWithNoDataSourcePresent(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function fieldCountIsZeroWithNoDataSourcePresent(): void
     {
         // Verify field count is 0 when no data source is set
-        self::assertEquals(0, $this->resultSet->getFieldCount());
+        static::assertSame(0, $this->resultSet->getFieldCount());
     }
 
     /**
      * @throws \Exception
      */
-    public function testFieldCountRepresentsNumberOfFieldsInARowOfData(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function fieldCountRepresentsNumberOfFieldsInARowOfData(): void
     {
         $resultSet  = new ResultSet(ResultSet::TYPE_ARRAY);
         $dataSource = $this->getArrayDataSource(10);
         // Verify field count matches number of columns in row data
         $resultSet->initialize($dataSource);
-        self::assertEquals(2, $resultSet->getFieldCount());
+        static::assertSame(2, $resultSet->getFieldCount());
     }
 
-    public function testGetArrayObjectPrototypeDelegatesToGetRowPrototype(): void
+    public function getArrayDataSource(int $count): ArrayIterator
     {
-        self::assertSame(
+        $array = [];
+        for ($i = 0; $i < $count; $i++) {
+            $array[] = [
+                'id'    => $i,
+                'title' => "title {$i}",
+            ];
+        }
+
+        return new ArrayIterator($array);
+    }
+
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function getArrayObjectPrototypeDelegatesToGetRowPrototype(): void
+    {
+        static::assertSame(
             $this->resultSet->getRowPrototype(),
             $this->resultSet->getArrayObjectPrototype(),
         );
     }
 
-    public function testGetReturnTypeReturnsArrayWhenSetToArray(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function getReturnTypeReturnsArrayWhenSetToArray(): void
     {
         $resultSet = new ResultSet(ResultSetReturnType::Array);
 
-        self::assertSame(ResultSetReturnType::Array, $resultSet->getReturnType());
+        static::assertSame(ResultSetReturnType::Array, $resultSet->getReturnType());
     }
 
     /**
      * @throws \Exception
      */
+    #[\PHPUnit\Framework\Attributes\Test]
     #[DataProvider('invalidReturnTypes')]
-    public function testInvalidDataSourceRaisesException(mixed $dataSource): void
+    public function invalidDataSourceRaisesException(mixed $dataSource): void
     {
         if (is_array($dataSource)) {
             $this->expectNotToPerformAssertions();
@@ -265,13 +281,15 @@ final class ResultSetIntegrationTest extends TestCase
         $this->resultSet->initialize($dataSource);
     }
 
-    public function testReturnTypeIsObjectByDefault(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function returnTypeIsObjectByDefault(): void
     {
         // Verify default return type is ArrayObject
-        self::assertEquals(ResultSetReturnType::ArrayObject, $this->resultSet->getReturnType());
+        static::assertEquals(ResultSetReturnType::ArrayObject, $this->resultSet->getReturnType());
     }
 
-    public function testRowObjectPrototypeIsMutable(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function rowObjectPrototypeIsMutable(): void
     {
         $row1 = new ArrayObject(['test1' => 'value1']);
         $row2 = new ArrayObject(['test2' => 'value2']);
@@ -280,33 +298,36 @@ final class ResultSetIntegrationTest extends TestCase
         $this->resultSet->setArrayObjectPrototype($row1);
 
         // Verify the first mutation occurred
-        self::assertSame($row1, $this->resultSet->getArrayObjectPrototype());
+        static::assertSame($row1, $this->resultSet->getArrayObjectPrototype());
 
         // Second mutation to verify mutability
         $this->resultSet->setArrayObjectPrototype($row2);
 
         // Verify the instance was actually mutated
-        self::assertSame($row2, $this->resultSet->getArrayObjectPrototype());
-        self::assertNotSame($row1, $this->resultSet->getArrayObjectPrototype());
+        static::assertSame($row2, $this->resultSet->getArrayObjectPrototype());
+        static::assertNotSame($row1, $this->resultSet->getArrayObjectPrototype());
     }
 
-    public function testRowObjectPrototypeIsPopulatedByRowObjectByDefault(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function rowObjectPrototypeIsPopulatedByRowObjectByDefault(): void
     {
         // Verify default row object prototype is ArrayObject
         $row = $this->resultSet->getArrayObjectPrototype();
-        self::assertInstanceOf('ArrayObject', $row);
+        static::assertInstanceOf('ArrayObject', $row);
     }
 
-    public function testRowObjectPrototypeMayBePassedToConstructor(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function rowObjectPrototypeMayBePassedToConstructor(): void
     {
         $row = new ArrayObject();
         // Verify prototype can be passed to constructor
         $resultSet = new ResultSet(ResultSet::TYPE_ARRAYOBJECT, $row);
-        self::assertSame($row, $resultSet->getArrayObjectPrototype());
+        static::assertSame($row, $resultSet->getArrayObjectPrototype());
     }
 
+    #[\PHPUnit\Framework\Attributes\Test]
     #[DataProvider('invalidReturnTypes')]
-    public function testSettingInvalidReturnTypeRaisesException(mixed $type): void
+    public function settingInvalidReturnTypeRaisesException(mixed $type): void
     {
         // Verify invalid return type throws TypeError
         self::expectException(TypeError::class);
@@ -317,41 +338,44 @@ final class ResultSetIntegrationTest extends TestCase
      * @throws RandomException
      * @throws \Exception
      */
-    public function testToArrayCreatesArrayOfArraysRepresentingRows(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function toArrayCreatesArrayOfArraysRepresentingRows(): void
     {
         $count      = random_int(3, 75);
         $dataSource = $this->getArrayDataSource($count);
         // Verify toArray() returns array representation of all rows
         $this->resultSet->initialize($dataSource);
         $test = $this->resultSet->toArray();
-        self::assertEquals($dataSource->getArrayCopy(), $test, var_export($test, true));
+        static::assertEquals($dataSource->getArrayCopy(), $test, var_export($test, true));
     }
 
     /**
      * @throws \Exception
      */
-    public function testWhenReturnTypeIsArrayThenIterationReturnsArrays(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function whenReturnTypeIsArrayThenIterationReturnsArrays(): void
     {
         $resultSet  = new ResultSet(ResultSet::TYPE_ARRAY);
         $dataSource = $this->getArrayDataSource(10);
         $resultSet->initialize($dataSource);
         // Iterate and verify each row is returned as array
         foreach ($resultSet as $index => $row) {
-            self::assertEquals($dataSource[$index], $row);
+            static::assertEquals($dataSource[$index], $row);
         }
     }
 
     /**
      * @throws \Exception
      */
-    public function testWhenReturnTypeIsObjectThenIterationReturnsRowObjects(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function whenReturnTypeIsObjectThenIterationReturnsRowObjects(): void
     {
         $dataSource = $this->getArrayDataSource(10);
         $this->resultSet->initialize($dataSource);
         // Iterate and verify each row is returned as ArrayObject
         foreach ($this->resultSet as $index => $row) {
-            self::assertInstanceOf('ArrayObject', $row);
-            self::assertEquals($dataSource[$index], $row->getArrayCopy());
+            static::assertInstanceOf('ArrayObject', $row);
+            static::assertEquals($dataSource[$index], $row->getArrayCopy());
         }
     }
 

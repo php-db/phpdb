@@ -24,6 +24,24 @@ final class DoubleTest extends TestCase
 {
     use ColumnAssertionsTrait;
 
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function getExpressionData(): void
+    {
+        $column = new Double('foo', 10, 5);
+
+        $expressionData = $column->getExpressionData();
+
+        static::assertSame('%s %s(%s) NOT NULL', $expressionData['spec']);
+        static::assertEquals(
+            [
+                Argument::identifier('foo'),
+                Argument::literal('DOUBLE'),
+                Argument::literal('10,5'),
+            ],
+            $expressionData['values'],
+        );
+    }
+
     #[Test]
     public function rendersDigitsAndDecimalDirectlyAfterType(): void
     {
@@ -40,23 +58,6 @@ final class DoubleTest extends TestCase
     public function rendersWithoutParenthesesWhenPrecisionIsNotSet(): void
     {
         static::assertColumnRenders('"f" DOUBLE NOT NULL', new Double('f'));
-    }
-
-    public function testGetExpressionData(): void
-    {
-        $column = new Double('foo', 10, 5);
-
-        $expressionData = $column->getExpressionData();
-
-        self::assertEquals('%s %s(%s) NOT NULL', $expressionData['spec']);
-        self::assertEquals(
-            [
-                Argument::identifier('foo'),
-                Argument::literal('DOUBLE'),
-                Argument::literal('10,5'),
-            ],
-            $expressionData['values'],
-        );
     }
 
     #[Test]

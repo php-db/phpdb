@@ -20,7 +20,8 @@ final class AbstractResultSetIntegrationTest extends TestCase
     /**
      * @throws \Exception
      */
-    public function testCurrentCallsDataSourceCurrentAsManyTimesWithoutBuffer(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function currentCallsDataSourceCurrentAsManyTimesWithoutBuffer(): void
     {
         $result = $this->getMockBuilder(ResultInterface::class)->getMock();
         $this->resultSet->initialize($result);
@@ -29,13 +30,14 @@ final class AbstractResultSetIntegrationTest extends TestCase
         $value1 = $this->resultSet->current();
         $value2 = $this->resultSet->current();
         $this->resultSet->current();
-        self::assertEquals($value1, $value2);
+        static::assertEquals($value1, $value2);
     }
 
     /**
      * @throws \Exception
      */
-    public function testCurrentCallsDataSourceCurrentOnceWithBuffer(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function currentCallsDataSourceCurrentOnceWithBuffer(): void
     {
         $result = $this->getMockBuilder(ResultInterface::class)->getMock();
         $this->resultSet->buffer();
@@ -45,7 +47,7 @@ final class AbstractResultSetIntegrationTest extends TestCase
         $value1 = $this->resultSet->current();
         $value2 = $this->resultSet->current();
         $this->resultSet->current();
-        self::assertEquals($value1, $value2);
+        static::assertEquals($value1, $value2);
     }
 
     /**

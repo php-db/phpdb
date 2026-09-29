@@ -16,14 +16,15 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(AbstractFeature::class, 'setDriver')]
 final class AbstractFeatureTest extends TestCase
 {
-    public function testSetDriverStoresDriverAndReturnsInstance(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function setDriverStoresDriverAndReturnsInstance(): void
     {
         $feature = new TestDriverFeature();
         $driver  = $this->createMock(DriverInterface::class);
 
         $result = $feature->setDriver($driver);
 
-        self::assertInstanceOf(DriverFeatureInterface::class, $result);
-        self::assertSame($feature, $result);
+        static::assertInstanceOf(DriverFeatureInterface::class, $result);
+        static::assertSame($feature, $result);
     }
 }

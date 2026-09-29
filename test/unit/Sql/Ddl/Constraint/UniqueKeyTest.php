@@ -12,14 +12,15 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(UniqueKey::class, 'getExpressionData')]
 final class UniqueKeyTest extends TestCase
 {
-    public function testGetExpressionData(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function getExpressionData(): void
     {
         $uk = new UniqueKey('foo', 'my_uk');
 
         $expressionData = $uk->getExpressionData();
 
-        self::assertEquals('CONSTRAINT %s UNIQUE (%s)', $expressionData['spec']);
-        self::assertEquals(
+        static::assertSame('CONSTRAINT %s UNIQUE (%s)', $expressionData['spec']);
+        static::assertEquals(
             [
                 Argument::identifier('my_uk'),
                 Argument::identifier('foo'),

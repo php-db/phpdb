@@ -53,7 +53,8 @@ final class TableGatewayTest extends TestCase
     /**
      * Beside other tests checks for plain string table identifier
      */
-    public function testConstructor(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function constructor(): void
     {
         // constructor with only required args
         $table = new TableGateway(
@@ -61,11 +62,11 @@ final class TableGatewayTest extends TestCase
             $this->mockAdapter,
         );
 
-        self::assertEquals('foo', $table->getTable());
-        self::assertSame($this->mockAdapter, $table->getAdapter());
-        self::assertInstanceOf(FeatureSet::class, $table->getFeatureSet());
-        self::assertInstanceOf(ResultSet::class, $table->getResultSetPrototype());
-        self::assertInstanceOf(Sql::class, $table->getSql());
+        static::assertSame('foo', $table->getTable());
+        static::assertSame($this->mockAdapter, $table->getAdapter());
+        static::assertInstanceOf(FeatureSet::class, $table->getFeatureSet());
+        static::assertInstanceOf(ResultSet::class, $table->getResultSetPrototype());
+        static::assertInstanceOf(Sql::class, $table->getSql());
 
         // injecting all args
         $table = new TableGateway(
@@ -76,11 +77,11 @@ final class TableGatewayTest extends TestCase
             $sql = new Sql($this->mockAdapter, 'foo'),
         );
 
-        self::assertEquals('foo', $table->getTable());
-        self::assertSame($this->mockAdapter, $table->getAdapter());
-        self::assertSame($featureSet, $table->getFeatureSet());
-        self::assertSame($resultSet, $table->getResultSetPrototype());
-        self::assertSame($sql, $table->getSql());
+        static::assertSame('foo', $table->getTable());
+        static::assertSame($this->mockAdapter, $table->getAdapter());
+        static::assertSame($featureSet, $table->getFeatureSet());
+        static::assertSame($resultSet, $table->getResultSetPrototype());
+        static::assertSame($sql, $table->getSql());
 
         // constructor expects exception - native type declaration throws TypeError for null table
         self::expectException(TypeError::class);
@@ -91,7 +92,8 @@ final class TableGatewayTest extends TestCase
         );
     }
 
-    public function testConstructorThrowsExceptionWhenSqlTableDoesNotMatch(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function constructorThrowsExceptionWhenSqlTableDoesNotMatch(): void
     {
         $sql = new Sql($this->mockAdapter, 'bar');
 
@@ -103,7 +105,8 @@ final class TableGatewayTest extends TestCase
         new TableGateway('foo', $this->mockAdapter, null, null, $sql);
     }
 
-    public function testConstructorWithArrayOfFeatures(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function constructorWithArrayOfFeatures(): void
     {
         $feature1 = new Feature\SequenceFeature('id', 'foo_seq');
         $feature2 = new Feature\GlobalAdapterFeature();
@@ -114,50 +117,54 @@ final class TableGatewayTest extends TestCase
         $table = new TableGateway('foo', $this->mockAdapter, [$feature1, $feature2]);
 
         $featureSet = $table->getFeatureSet();
-        self::assertInstanceOf(FeatureSet::class, $featureSet);
-        self::assertSame($feature1, $featureSet->getFeatureByClassName(Feature\SequenceFeature::class));
-        self::assertSame($feature2, $featureSet->getFeatureByClassName(Feature\GlobalAdapterFeature::class));
+        static::assertInstanceOf(FeatureSet::class, $featureSet);
+        static::assertSame($feature1, $featureSet->getFeatureByClassName(Feature\SequenceFeature::class));
+        static::assertSame($feature2, $featureSet->getFeatureByClassName(Feature\GlobalAdapterFeature::class));
 
         // Clean up static adapter
         $reflection = new ReflectionProperty(Feature\GlobalAdapterFeature::class, 'staticAdapters');
         $reflection->setValue(null, []);
     }
 
-    public function testConstructorWithCustomResultSetPrototype(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function constructorWithCustomResultSetPrototype(): void
     {
         $resultSet = new ResultSet();
 
         $table = new TableGateway('foo', $this->mockAdapter, null, $resultSet);
 
-        self::assertSame($resultSet, $table->getResultSetPrototype());
+        static::assertSame($resultSet, $table->getResultSetPrototype());
     }
 
-    public function testConstructorWithFeatureSet(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function constructorWithFeatureSet(): void
     {
         $feature    = new Feature\SequenceFeature('id', 'foo_seq');
         $featureSet = new FeatureSet([$feature]);
 
         $table = new TableGateway('foo', $this->mockAdapter, $featureSet);
 
-        self::assertSame($featureSet, $table->getFeatureSet());
+        static::assertSame($featureSet, $table->getFeatureSet());
     }
 
-    public function testConstructorWithSingleFeature(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function constructorWithSingleFeature(): void
     {
         $feature = new Feature\SequenceFeature('id', 'foo_seq');
 
         $table = new TableGateway('foo', $this->mockAdapter, $feature);
 
         $featureSet = $table->getFeatureSet();
-        self::assertInstanceOf(FeatureSet::class, $featureSet);
-        self::assertSame($feature, $featureSet->getFeatureByClassName(Feature\SequenceFeature::class));
+        static::assertInstanceOf(FeatureSet::class, $featureSet);
+        static::assertSame($feature, $featureSet->getFeatureByClassName(Feature\SequenceFeature::class));
     }
 
     /**
      * @param AliasedTable           $tableValue
      */
+    #[\PHPUnit\Framework\Attributes\Test]
     #[DataProvider('aliasedTables')]
-    public function testDeleteShouldResetTableToUnaliasedTable(
+    public function deleteShouldResetTableToUnaliasedTable(
         array $tableValue,
         string|TableIdentifier $expected,
     ): void {
@@ -194,7 +201,7 @@ final class TableGatewayTest extends TestCase
             ->willReturn($delete);
         $sql->expects($this->once())
             ->method('prepareStatementForSqlObject')
-            ->with($this->equalTo($delete))
+            ->with(static::equalTo($delete))
             ->willReturnCallback($statementExpectation);
 
         $table = new TableGateway(
@@ -211,9 +218,9 @@ final class TableGatewayTest extends TestCase
 
         $state = $delete->getRawState();
 
-        $this->assertIsArray($state);
-        $this->assertIsArray($state['table']);
-        $this->assertEquals(
+        static::assertIsArray($state);
+        static::assertIsArray($state['table']);
+        static::assertEquals(
             $tableValue,
             $state['table'],
         );
@@ -222,9 +229,10 @@ final class TableGatewayTest extends TestCase
     /**
      * @param AliasedTable           $tableValue
      */
+    #[\PHPUnit\Framework\Attributes\Test]
     #[DataProvider('aliasedTables')]
     #[Group('7311')]
-    public function testInsertShouldResetTableToUnaliasedTable(
+    public function insertShouldResetTableToUnaliasedTable(
         array $tableValue,
         string|TableIdentifier $expected,
     ): void {
@@ -261,7 +269,7 @@ final class TableGatewayTest extends TestCase
             ->willReturn($insert);
         $sql->expects($this->once())
             ->method('prepareStatementForSqlObject')
-            ->with($this->equalTo($insert))
+            ->with(static::equalTo($insert))
             ->willReturnCallback($statementExpectation);
 
         $table = new TableGateway(
@@ -277,17 +285,18 @@ final class TableGatewayTest extends TestCase
         ]);
 
         $state = $insert->getRawState();
-        $this->assertIsArray($state);
-        $this->assertIsArray($state['table']);
-        $this->assertEquals(
+        static::assertIsArray($state);
+        static::assertIsArray($state['table']);
+        static::assertEquals(
             $tableValue,
             $state['table'],
         );
     }
 
+    #[\PHPUnit\Framework\Attributes\Test]
     #[Group('6726')]
     #[Group('6740')]
-    public function testTableAsAliasedTableIdentifierObject(): void
+    public function tableAsAliasedTableIdentifierObject(): void
     {
         // phpcs:disable WebimpressCodingStandard.NamingConventions.ValidVariableName.NotCamelCaps
         $aliasedTI = ['foo' => new TableIdentifier('fooTable', 'barSchema')];
@@ -297,14 +306,15 @@ final class TableGatewayTest extends TestCase
             $this->mockAdapter,
         );
 
-        self::assertEquals($aliasedTI, $table->getTable());
+        static::assertEquals($aliasedTI, $table->getTable());
 
         // phpcs:enable WebimpressCodingStandard.NamingConventions.ValidVariableName.NotCamelCaps
     }
 
+    #[\PHPUnit\Framework\Attributes\Test]
     #[Group('6726')]
     #[Group('6740')]
-    public function testTableAsString(): void
+    public function tableAsString(): void
     {
         $ti = 'fooTable.barSchema';
         // constructor with only required args
@@ -313,12 +323,13 @@ final class TableGatewayTest extends TestCase
             $this->mockAdapter,
         );
 
-        self::assertEquals($ti, $table->getTable());
+        static::assertEquals($ti, $table->getTable());
     }
 
+    #[\PHPUnit\Framework\Attributes\Test]
     #[Group('6726')]
     #[Group('6740')]
-    public function testTableAsTableIdentifierObject(): void
+    public function tableAsTableIdentifierObject(): void
     {
         $ti = new TableIdentifier('fooTable', 'barSchema');
         // constructor with only required args
@@ -327,14 +338,15 @@ final class TableGatewayTest extends TestCase
             $this->mockAdapter,
         );
 
-        self::assertEquals($ti, $table->getTable());
+        static::assertEquals($ti, $table->getTable());
     }
 
     /**
      * @param AliasedTable           $tableValue
      */
+    #[\PHPUnit\Framework\Attributes\Test]
     #[DataProvider('aliasedTables')]
-    public function testUpdateShouldResetTableToUnaliasedTable(
+    public function updateShouldResetTableToUnaliasedTable(
         array $tableValue,
         string|TableIdentifier $expected,
     ): void {
@@ -371,7 +383,7 @@ final class TableGatewayTest extends TestCase
             ->willReturn($update);
         $sql->expects($this->once())
             ->method('prepareStatementForSqlObject')
-            ->with($this->equalTo($update))
+            ->with(static::equalTo($update))
             ->willReturnCallback($statementExpectation);
 
         $table = new TableGateway(
@@ -389,9 +401,9 @@ final class TableGatewayTest extends TestCase
         ]);
 
         $state = $update->getRawState();
-        $this->assertIsArray($state);
-        $this->assertIsArray($state['table']);
-        $this->assertEquals(
+        static::assertIsArray($state);
+        static::assertIsArray($state['table']);
+        static::assertEquals(
             $tableValue,
             $state['table'],
         );

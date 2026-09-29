@@ -22,7 +22,8 @@ use function sprintf;
 #[CoversMethod(DriverFeatureProviderTrait::class, 'getFeature')]
 final class DriverFeatureProviderTraitTest extends TestCase
 {
-    public function testAddFeaturesAddsMultipleFeatures(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function addFeaturesAddsMultipleFeatures(): void
     {
         $driver   = new TestFeatureDriver();
         $feature1 = $this->createMock(DriverFeatureInterface::class);
@@ -30,10 +31,11 @@ final class DriverFeatureProviderTraitTest extends TestCase
 
         $driver->addFeatures([$feature1, $feature2]);
 
-        self::assertNotFalse($driver->getFeature($feature1::class));
+        static::assertNotFalse($driver->getFeature($feature1::class));
     }
 
-    public function testAddFeatureSetsDriverAndStoresFeature(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function addFeatureSetsDriverAndStoresFeature(): void
     {
         $driver  = new TestFeatureDriver();
         $feature = $this->createMock(DriverFeatureInterface::class);
@@ -41,10 +43,11 @@ final class DriverFeatureProviderTraitTest extends TestCase
 
         $driver->addFeature($feature);
 
-        self::assertSame($feature, $driver->getFeature($feature::class));
+        static::assertSame($feature, $driver->getFeature($feature::class));
     }
 
-    public function testAddFeatureThrowsWhenUsedOutsideDriverInterface(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function addFeatureThrowsWhenUsedOutsideDriverInterface(): void
     {
         $nonDriver = new class implements DriverFeatureProviderInterface {
             use DriverFeatureProviderTrait;
@@ -62,20 +65,22 @@ final class DriverFeatureProviderTraitTest extends TestCase
         $nonDriver->addFeature($feature);
     }
 
-    public function testGetFeatureReturnsFalseWhenNotFound(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function getFeatureReturnsFalseWhenNotFound(): void
     {
         $driver = new TestFeatureDriver();
 
-        self::assertFalse($driver->getFeature('NonExistent'));
+        static::assertFalse($driver->getFeature('NonExistent'));
     }
 
-    public function testGetFeatureReturnsFeatureByClassName(): void
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function getFeatureReturnsFeatureByClassName(): void
     {
         $driver  = new TestFeatureDriver();
         $feature = $this->createMock(DriverFeatureInterface::class);
 
         $driver->addFeature($feature);
 
-        self::assertSame($feature, $driver->getFeature($feature::class));
+        static::assertSame($feature, $driver->getFeature($feature::class));
     }
 }
