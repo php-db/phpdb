@@ -8,10 +8,12 @@ use Laminas\ServiceManager\AbstractPluginManager;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use Laminas\ServiceManager\ServiceManager;
 use PhpDb\Adapter\Adapter;
+use PhpDb\Adapter\AdapterAwareInterface;
 use PhpDb\Adapter\AdapterInterface;
 use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\Platform\PlatformInterface;
 use PhpDb\Container\AdapterInterfaceDelegator;
+use PhpDb\Exception\ContainerException;
 use PhpDb\Exception\RuntimeException;
 use PhpDb\ResultSet\ResultSetInterface;
 use PhpDbTest\Adapter\TestAsset\ConcreteAdapterAwareObject;
@@ -23,6 +25,8 @@ use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use stdClass;
+
+use function sprintf;
 
 #[Group('unit')]
 #[CoversMethod(AdapterInterfaceDelegator::class, '__construct')]
@@ -247,8 +251,8 @@ final class AdapterInterfaceDelegatorTest extends TestCase
 
         $callback = static fn(): ConcreteAdapterAwareObject => new ConcreteAdapterAwareObject();
 
-        $this->expectException(ServiceNotFoundException::class);
-        $this->expectExceptionMessage('Service "PhpDb\Adapter\AdapterInterface" not found in container');
+        self::expectException(ServiceNotFoundException::class);
+        self::expectExceptionMessage(sprintf(ContainerException::MISSING_SERVICE, AdapterInterface::class));
 
         (new AdapterInterfaceDelegator())(
             $container,
@@ -268,10 +272,12 @@ final class AdapterInterfaceDelegatorTest extends TestCase
 
         $callback = static fn(): stdClass => new stdClass();
 
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage(
-            'Delegated service "stdClass" must implement PhpDb\Adapter\AdapterAwareInterface',
-        );
+        self::expectException(RuntimeException::class);
+        self::expectExceptionMessage(sprintf(
+            ContainerException::NON_ADAPTER_AWARE_DELEGATE,
+            stdClass::class,
+            AdapterAwareInterface::class,
+        ));
 
         (new AdapterInterfaceDelegator())(
             $container,

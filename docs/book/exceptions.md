@@ -64,6 +64,14 @@ a named constructor cannot:
 
 Everything else is a named constructor on the component's SPL-shaped class.
 
+### The one exception to the rule
+
+`PhpDb\Container\AdapterInterfaceDelegator` renders a template at the throw site rather than
+calling a named constructor. The ServiceManager decides the type it must throw, and Laminas
+annotates `ServiceNotFoundException` `@final`, so this package cannot own the class. It owns
+the wording instead, as `PhpDb\Exception\ContainerException::MISSING_SERVICE`. Anywhere the
+thrown type is ours, the rule above applies without exception.
+
 ## Component namespaces
 
 There is exactly one marker interface, `PhpDb\Exception\ExceptionInterface`, and every

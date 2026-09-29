@@ -93,7 +93,7 @@ final class AbstractAdapterInterfaceFactoryTest extends TestCase
     #[DataProvider('providerInvalidService')]
     public function testInvalidService(string $service): void
     {
-        $this->expectException(ServiceNotFoundException::class);
+        self::expectException(ServiceNotFoundException::class);
         $this->serviceManager->get($service);
     }
 
@@ -111,8 +111,8 @@ final class AbstractAdapterInterfaceFactoryTest extends TestCase
         $factory = new AbstractAdapterInterfaceFactory();
         $factory->canCreate($container, 'PhpDb\Adapter\NoDriver');
 
-        $this->expectException(ContainerException::class);
-        $this->expectExceptionMessage('no driver configured');
+        self::expectException(ContainerException::class);
+        self::expectExceptionMessage(ContainerException::MISSING_DRIVER);
         $factory($container, 'PhpDb\Adapter\NoDriver');
     }
 

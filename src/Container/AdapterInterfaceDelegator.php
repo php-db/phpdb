@@ -7,7 +7,7 @@ namespace PhpDb\Container;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use PhpDb\Adapter\AdapterAwareInterface;
 use PhpDb\Adapter\AdapterInterface;
-use PhpDb\Exception;
+use PhpDb\Exception\ContainerException;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
@@ -33,18 +33,11 @@ class AdapterInterfaceDelegator
         $instance = $callback();
 
         if (! $instance instanceof AdapterAwareInterface) {
-            throw new Exception\RuntimeException(sprintf(
-                'Delegated service "%s" must implement %s',
-                $name,
-                AdapterAwareInterface::class,
-            ));
+            throw ContainerException::forNonAdapterAwareDelegate($name, AdapterAwareInterface::class);
         }
 
         if (! $container->has($this->adapterName)) {
-            throw new ServiceNotFoundException(sprintf(
-                'Service "%s" not found in container',
-                $this->adapterName,
-            ));
+            throw new ServiceNotFoundException(sprintf(ContainerException::MISSING_SERVICE, $this->adapterName));
         }
 
         $databaseAdapter = $container->get($this->adapterName);

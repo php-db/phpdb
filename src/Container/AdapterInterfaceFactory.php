@@ -23,22 +23,14 @@ final class AdapterInterfaceFactory
         string $requestedName,
     ): AdapterInterface&Adapter {
         if (! $container->has('config')) {
-            throw ContainerException::forService(
-                $requestedName,
-                self::class,
-                'Container is missing a config service',
-            );
+            throw ContainerException::forMissingConfigService($requestedName, self::class);
         }
 
         $config        = $container->get('config') ?? [];
         $adapterConfig = $config[AdapterInterface::class] ?? $config[Adapter::class] ?? [];
 
         if ([] === $adapterConfig) {
-            throw ContainerException::forService(
-                AdapterInterface::class,
-                self::class,
-                "No configuration found for {$requestedName}",
-            );
+            throw ContainerException::forMissingConfiguration(AdapterInterface::class, self::class, $requestedName);
         }
 
         /** @var class-string<DriverInterface>|class-string<PdoDriverInterface>|null $driverClass */
