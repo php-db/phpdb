@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PhpDbTest\TableGateway\Feature\TestAsset;
 
+use PhpDb\TableGateway\AbstractTableGateway;
 use PhpDb\TableGateway\Feature\AbstractFeature;
 
 class TestTableGatewayFeature extends AbstractFeature
@@ -29,6 +30,11 @@ class TestTableGatewayFeature extends AbstractFeature
     public function getMagicMethodSpecifications(): array
     {
         return $this->magicMethodSpecs;
+    }
+
+    public function receivedTableGateway(): ?AbstractTableGateway
+    {
+        return $this->tableGateway ?? null;
     }
 
     public function recordCall(mixed ...$args): mixed

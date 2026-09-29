@@ -10,6 +10,7 @@ use PhpDb\Sql\ArgumentType;
 use PhpDb\Sql\Predicate\Exception\InvalidArgumentException;
 use PhpDb\Sql\Predicate\Like;
 use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 #[CoversMethod(Like::class, '__construct')]
@@ -22,6 +23,19 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(Like::class, 'getExpressionData')]
 final class LikeTest extends TestCase
 {
+    /**
+     * A custom specification replaces the generated one rather than sitting unused
+     * behind it.
+     */
+    #[Test]
+    public function getExpressionDataPrefersACustomSpecification(): void
+    {
+        $like = new Like('foo.bar', 'baz%');
+        $like->setSpecification('%1$s SOUNDS LIKE %2$s');
+
+        static::assertSame('%1$s SOUNDS LIKE %2$s', $like->getExpressionData()['spec']);
+    }
+
     public function testAccessorsMutators(): void
     {
         $like = new Like();

@@ -70,6 +70,21 @@ class FeatureSetTest extends TestCase
         static::assertEquals(['arg1', 'arg2'], $feature->receivedArgs);
     }
 
+    /**
+     * A feature that does not implement the method is skipped, not treated as the end
+     * of the list.
+     */
+    #[Test]
+    public function applyContinuesPastFeaturesLackingTheMethod(): void
+    {
+        $feature = new TestRowGatewayFeature();
+
+        $featureSet = new FeatureSet([$this->createMock(AbstractFeature::class), $feature]);
+        $featureSet->apply('preInitialize', []);
+
+        static::assertTrue($feature->called);
+    }
+
     #[Test]
     public function applyHaltsWhenFeatureReturnsHalt(): void
     {

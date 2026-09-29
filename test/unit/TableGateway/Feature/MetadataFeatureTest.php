@@ -12,6 +12,7 @@ use PhpDb\Sql\TableIdentifier;
 use PhpDb\TableGateway\AbstractTableGateway;
 use PhpDb\TableGateway\Exception\RuntimeException;
 use PhpDb\TableGateway\Feature\MetadataFeature;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\IgnoreDeprecations;
 use PHPUnit\Framework\Attributes\RequiresPhp;
 use PHPUnit\Framework\Attributes\Test;
@@ -22,6 +23,7 @@ use ReflectionProperty;
 
 #[IgnoreDeprecations]
 #[RequiresPhp('<= 8.6')]
+#[Group('unit')]
 class MetadataFeatureTest extends TestCase
 {
     #[Test]
@@ -37,6 +39,41 @@ class MetadataFeatureTest extends TestCase
         static::assertArrayHasKey('metadata', $sharedData);
         static::assertNull($sharedData['metadata']['primaryKey']);
         static::assertEquals([], $sharedData['metadata']['columns']);
+    }
+
+    /**
+     * A view never reaches the primary key scan, so the null placeholder the constructor
+     * seeded must survive the column write rather than being dropped.
+     *
+     * @throws Exception
+     * @throws \Exception
+     */
+    #[Test]
+    public function postInitializeKeepsTheSeededPrimaryKeyPlaceholderForAView(): void
+    {
+        /** @var AbstractTableGateway&MockObject $tableGatewayMock */
+        $tableGatewayMock = $this->getMockBuilder(AbstractTableGateway::class)->onlyMethods([])->getMock();
+
+        $tableProperty = new ReflectionProperty(AbstractTableGateway::class, 'table');
+        $tableProperty->setValue($tableGatewayMock, 'foo');
+
+        $metadataMock = $this->getMockBuilder(MetadataInterface::class)->getMock();
+        $metadataMock->expects($this->any())->method('getColumnNames')->willReturn(['id', 'name']);
+        $metadataMock->expects($this->any())
+            ->method('getTable')
+            ->willReturn(new ViewObject('foo'));
+
+        $feature = new MetadataFeature($metadataMock);
+        $feature->setTableGateway($tableGatewayMock);
+        $feature->postInitialize();
+
+        $sharedData = (new ReflectionProperty(MetadataFeature::class, 'sharedData'))->getValue($feature);
+
+        static::assertIsArray($sharedData);
+        static::assertSame(
+            ['primaryKey' => null, 'columns' => ['id', 'name']],
+            $sharedData['metadata'],
+        );
     }
 
     /**
@@ -246,6 +283,49 @@ class MetadataFeatureTest extends TestCase
         );
 
         $feature->postInitialize();
+    }
+
+    /**
+     * The first PRIMARY KEY constraint wins; the scan stops rather than running on and
+     * overwriting it with a later one.
+     *
+     * @throws Exception
+     * @throws \Exception
+     */
+    #[Test]
+    public function postInitializeUsesTheFirstPrimaryKeyConstraint(): void
+    {
+        /** @var AbstractTableGateway&MockObject $tableGatewayMock */
+        $tableGatewayMock = $this->getMockBuilder(AbstractTableGateway::class)->onlyMethods([])->getMock();
+
+        $tableProperty = new ReflectionProperty(AbstractTableGateway::class, 'table');
+        $tableProperty->setValue($tableGatewayMock, 'foo');
+
+        $metadataMock = $this->getMockBuilder(MetadataInterface::class)->getMock();
+        $metadataMock->expects($this->any())->method('getColumnNames')->willReturn(['id', 'name']);
+        $metadataMock->expects($this->any())
+            ->method('getTable')
+            ->willReturn(new TableObject('foo'));
+
+        $first = new ConstraintObject('id_pk', 'table');
+        $first->setColumns(['id']);
+        $first->setType('PRIMARY KEY');
+
+        $later = new ConstraintObject('name_pk', 'table');
+        $later->setColumns(['name']);
+        $later->setType('PRIMARY KEY');
+
+        $metadataMock->expects($this->any())->method('getConstraints')->willReturn([$first, $later]);
+
+        $feature = new MetadataFeature($metadataMock);
+        $feature->setTableGateway($tableGatewayMock);
+        $feature->postInitialize();
+
+        $sharedData = (new ReflectionProperty(MetadataFeature::class, 'sharedData'))->getValue($feature);
+
+        static::assertIsArray($sharedData);
+        static::assertIsArray($sharedData['metadata']);
+        static::assertSame('id', $sharedData['metadata']['primaryKey']);
     }
 
     /**

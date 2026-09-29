@@ -7,6 +7,7 @@ namespace PhpDbTest\TableGateway\Feature;
 use PhpDb\Adapter\AdapterInterface;
 use PhpDb\ResultSet\ResultSetInterface;
 use PhpDb\ResultSet\RowPrototypeResultSet;
+use PhpDb\RowGateway\RowGateway;
 use PhpDb\RowGateway\RowGatewayInterface;
 use PhpDb\TableGateway\AbstractTableGateway;
 use PhpDb\TableGateway\Exception\RuntimeException;
@@ -22,6 +23,10 @@ use function sprintf;
 
 class RowGatewayFeatureTest extends TestCase
 {
+    private const string NO_PRIMARY_KEY_MESSAGE =
+        'No information was provided to the RowGatewayFeature and/or no MetadataFeature could be consulted '
+            . 'to find the primary key necessary for RowGateway object creation.';
+
     #[Test]
     public function constructorStoresArguments(): void
     {
@@ -273,8 +278,7 @@ class RowGatewayFeatureTest extends TestCase
 
         $feature->postInitialize();
 
-        $prototype = $resultSet->getRowPrototype();
-        static::assertInstanceOf(RowGatewayInterface::class, $prototype);
+        static::assertInstanceOf(RowGateway::class, $resultSet->getRowPrototype());
     }
 
     #[Test]
@@ -306,8 +310,7 @@ class RowGatewayFeatureTest extends TestCase
 
         $feature->postInitialize();
 
-        $prototype = $resultSet->getRowPrototype();
-        static::assertInstanceOf(RowGatewayInterface::class, $prototype);
+        static::assertInstanceOf(RowGateway::class, $resultSet->getRowPrototype());
     }
 
     /**

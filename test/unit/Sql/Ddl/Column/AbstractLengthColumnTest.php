@@ -6,7 +6,9 @@ namespace PhpDbTest\Sql\Ddl\Column;
 
 use PhpDb\Sql\Argument\Identifier;
 use PhpDb\Sql\Argument\Literal;
+use PhpDb\Sql\Argument\Value;
 use PhpDb\Sql\Ddl\Column\AbstractLengthColumn;
+use PhpDb\Sql\Ddl\Constraint\UniqueKey;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
@@ -21,6 +23,36 @@ use PHPUnit\Framework\TestCase;
 final class AbstractLengthColumnTest extends TestCase
 {
     use ColumnAssertionsTrait;
+
+    /**
+     * The length is inserted directly after the type. Values contributed by a default and
+     * by a constraint sit after that point, so they must be pushed along rather than
+     * overwritten.
+     *
+     * @throws Exception
+     */
+    #[Test]
+    public function getExpressionDataInsertsLengthWithoutDisplacingLaterValues(): void
+    {
+        $column = $this->getMockBuilder(AbstractLengthColumn::class)
+            ->setConstructorArgs(['foo', 4, false, 'bar'])
+            ->onlyMethods([])
+            ->getMock();
+        $column->addConstraint(new UniqueKey(null, 'uq_foo'));
+
+        $expressionData = $column->getExpressionData();
+
+        static::assertEquals(
+            [
+                new Identifier('foo'),
+                new Literal('INTEGER'),
+                new Literal('4'),
+                new Value('bar'),
+                new Identifier('uq_foo'),
+            ],
+            $expressionData['values'],
+        );
+    }
 
     /**
      * @throws Exception
@@ -71,6 +103,22 @@ final class AbstractLengthColumnTest extends TestCase
             ->getMock();
 
         static::assertColumnRenders('"foo" INTEGER NOT NULL', $column);
+    }
+
+    /**
+     * @throws Exception
+     */
+    #[Test]
+    public function setLengthWithoutAnArgumentResetsTheLengthToZero(): void
+    {
+        $column = $this->getMockBuilder(AbstractLengthColumn::class)
+            ->setConstructorArgs(['foo', 55])
+            ->onlyMethods([])
+            ->getMock();
+
+        $column->setLength();
+
+        static::assertSame(0, $column->getLength());
     }
 
     /**

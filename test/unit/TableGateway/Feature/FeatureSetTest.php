@@ -40,6 +40,25 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(FeatureSet::class, 'callMagicCall')]
 class FeatureSetTest extends TestCase
 {
+    /**
+     * A feature added after the table gateway is known receives it on the way in.
+     */
+    #[Test]
+    public function addFeaturePropagatesAKnownTableGateway(): void
+    {
+        $feature = new TestTableGatewayFeature();
+
+        $tableGateway = $this->getMockBuilder(AbstractTableGateway::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $featureSet = new FeatureSet();
+        $featureSet->setTableGateway($tableGateway);
+        $featureSet->addFeature($feature);
+
+        static::assertSame($tableGateway, $feature->receivedTableGateway());
+    }
+
     #[Test]
     public function addFeaturesReturnsFluentInterface(): void
     {
@@ -143,6 +162,21 @@ class FeatureSetTest extends TestCase
 
         /** @phpstan-ignore staticMethod.alreadyNarrowedType */
         static::assertTrue(true);
+    }
+
+    /**
+     * A feature that does not implement the method is skipped, not treated as the end
+     * of the list.
+     */
+    #[Test]
+    public function applyContinuesPastFeaturesLackingTheMethod(): void
+    {
+        $feature = new TestTableGatewayFeature();
+
+        $featureSet = new FeatureSet([new SequenceFeature('id', 'seq'), $feature]);
+        $featureSet->apply('recordCall', []);
+
+        static::assertTrue($feature->called);
     }
 
     #[Test]
@@ -290,6 +324,21 @@ class FeatureSetTest extends TestCase
         static::assertNull($result);
     }
 
+    /**
+     * The first feature of the requested class wins; the scan stops rather than
+     * running on to a later one.
+     */
+    #[Test]
+    public function getFeatureByClassNameReturnsTheFirstMatch(): void
+    {
+        $first  = new TestTableGatewayFeature();
+        $second = new TestTableGatewayFeature();
+
+        $featureSet = new FeatureSet([$first, $second]);
+
+        static::assertSame($first, $featureSet->getFeatureByClassName(TestTableGatewayFeature::class));
+    }
+
     #[Test]
     public function getFeatureByClassNameSkipsFeaturesOfAnotherClass(): void
     {
@@ -314,5 +363,22 @@ class FeatureSetTest extends TestCase
         $result = $featureSet->setTableGateway($tableGatewayMock);
 
         static::assertSame($featureSet, $result);
+    }
+
+    /**
+     * Features added before the table gateway is known must still receive it.
+     */
+    #[Test]
+    public function setTableGatewayPropagatesToFeaturesAddedEarlier(): void
+    {
+        $feature = new TestTableGatewayFeature();
+
+        $tableGateway = $this->getMockBuilder(AbstractTableGateway::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        (new FeatureSet([$feature]))->setTableGateway($tableGateway);
+
+        static::assertSame($tableGateway, $feature->receivedTableGateway());
     }
 }

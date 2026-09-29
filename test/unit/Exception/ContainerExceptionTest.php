@@ -69,6 +69,12 @@ final class ContainerExceptionTest extends TestCase
     }
 
     #[Test]
+    public function forServiceCreatesExceptionWithoutACode(): void
+    {
+        self::assertSame(0, ContainerException::forService('Svc', 'Factory', 'reason')->getCode());
+    }
+
+    #[Test]
     public function forServiceIsAPsrContainerException(): void
     {
         $exception = ContainerException::forService('Svc', 'Factory', 'reason');

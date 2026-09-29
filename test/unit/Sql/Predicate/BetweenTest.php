@@ -11,6 +11,7 @@ use PhpDb\Sql\ArgumentType;
 use PhpDb\Sql\Predicate\Between;
 use PhpDb\Sql\Predicate\Exception\InvalidArgumentException;
 use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 #[CoversMethod(Between::class, '__construct')]
@@ -26,6 +27,19 @@ use PHPUnit\Framework\TestCase;
 final class BetweenTest extends TestCase
 {
     protected Between $between;
+
+    /**
+     * A custom specification replaces the generated one rather than sitting unused
+     * behind it.
+     */
+    #[Test]
+    public function getExpressionDataPrefersACustomSpecification(): void
+    {
+        $between = new Between('foo.bar', 1, 10);
+        $between->setSpecification('%1$s IS INBETWEEN %2$s AND %3$s');
+
+        static::assertSame('%1$s IS INBETWEEN %2$s AND %3$s', $between->getExpressionData()['spec']);
+    }
 
     public function testConstructorCanPassIdentifierMinimumAndMaximumValues(): void
     {

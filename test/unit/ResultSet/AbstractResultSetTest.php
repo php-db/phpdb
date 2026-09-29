@@ -17,6 +17,7 @@ use PhpDb\ResultSet\AbstractResultSet;
 use PhpDb\ResultSet\Exception\RuntimeException;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use TypeError;
@@ -529,6 +530,35 @@ final class AbstractResultSetTest extends TestCase
     }
 
     /**
+     * A buffered result set must answer from its buffer once the data source is spent,
+     * rather than deferring to the exhausted source. That second pass is what buffering
+     * exists for.
+     *
+     * @throws Exception
+     */
+    #[Test]
+    public function validAnswersFromTheBufferAfterTheDataSourceIsExhausted(): void
+    {
+        $resultSet = $this->drainIntoBuffer();
+
+        $resultSet->rewind();
+
+        static::assertTrue($resultSet->valid());
+    }
+
+    /**
+     * @throws Exception
+     */
+    #[Test]
+    public function validReturnsFalseBeyondTheEndOfTheBuffer(): void
+    {
+        $resultSet = $this->drainIntoBuffer();
+
+        // Left sitting one past the last buffered row, with nothing left in the source.
+        static::assertFalse($resultSet->valid());
+    }
+
+    /**
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
@@ -543,5 +573,28 @@ final class AbstractResultSetTest extends TestCase
         return $this->getMockBuilder(AbstractResultSet::class)
             ->onlyMethods(['toArray'])
             ->getMock();
+    }
+
+    /**
+     * Walks a buffered result set to the end of its data source without iterating, so a
+     * valid() that never goes false cannot spin here.
+     *
+     * @throws Exception
+     */
+    private function drainIntoBuffer(): MockObject|AbstractResultSet
+    {
+        $resultSet = $this->createResultSetMock();
+        $resultSet->initialize(new ArrayIterator([
+            ['id' => 1, 'name' => 'one'],
+            ['id' => 2, 'name' => 'two'],
+        ]));
+        $resultSet->buffer();
+
+        $resultSet->current();
+        $resultSet->next();
+        $resultSet->current();
+        $resultSet->next();
+
+        return $resultSet;
     }
 }

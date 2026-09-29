@@ -207,6 +207,24 @@ final class ColumnObjectTest extends TestCase
         static::assertSame('value2', $column->getErrata('key2'));
     }
 
+    /**
+     * Erratas accumulate: a second call adds to what is already there rather than
+     * replacing it.
+     */
+    #[Test]
+    public function setErratasMergesIntoTheExistingErrata(): void
+    {
+        $column = new ColumnObject('column', 'table', 'schema');
+
+        $column->setErratas(['auto_increment' => true]);
+        $column->setErratas(['comment' => 'Primary key']);
+
+        static::assertSame(
+            ['auto_increment' => true, 'comment' => 'Primary key'],
+            $column->getErratas(),
+        );
+    }
+
     #[Test]
     public function setErratasWithArrayAndGetErratas(): void
     {

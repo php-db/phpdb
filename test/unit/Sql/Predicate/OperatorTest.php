@@ -14,6 +14,7 @@ use PhpDb\Sql\Predicate\Exception\InvalidArgumentException;
 use PhpDb\Sql\Predicate\Operator;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 #[CoversMethod(Operator::class, '__construct')]
@@ -27,6 +28,19 @@ use PHPUnit\Framework\TestCase;
 #[Group('unit')]
 final class OperatorTest extends TestCase
 {
+    /**
+     * A custom specification replaces the generated one rather than sitting unused
+     * behind it.
+     */
+    #[Test]
+    public function getExpressionDataPrefersACustomSpecification(): void
+    {
+        $operator = new Operator('foo.bar', Operator::OPERATOR_EQUAL_TO, 'baz');
+        $operator->setSpecification('%1$s IS NOT DISTINCT FROM %2$s');
+
+        static::assertSame('%1$s IS NOT DISTINCT FROM %2$s', $operator->getExpressionData()['spec']);
+    }
+
     public function testCanPassAllValuesToConstructor(): void
     {
         $operator = new Operator('bar', '>=', 'foo.bar');
