@@ -8,7 +8,7 @@ use Override;
 
 use function is_array;
 
-class RowPrototypeResultSet extends AbstractResultSet implements RowPrototypeResultSetInterface
+final class RowPrototypeResultSet extends AbstractResultSet implements RowPrototypeResultSetInterface
 {
     public function __construct(
         private RowPrototypeInterface $rowPrototype,
@@ -18,7 +18,7 @@ class RowPrototypeResultSet extends AbstractResultSet implements RowPrototypeRes
      * Iterator: get current item
      */
     #[Override]
-    public function current(): array|RowPrototypeInterface|null
+    public function current(): array|object|null
     {
         $data = parent::current();
 
@@ -38,7 +38,7 @@ class RowPrototypeResultSet extends AbstractResultSet implements RowPrototypeRes
 
     /** {@inheritDoc} */
     #[Override]
-    public function setRowPrototype(RowPrototypeInterface $rowPrototype): ResultSetInterface&RowPrototypeResultSetInterface
+    public function setRowPrototype(RowPrototypeInterface $rowPrototype): self
     {
         $this->rowPrototype = $rowPrototype;
 

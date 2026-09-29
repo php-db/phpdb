@@ -6,10 +6,12 @@ namespace PhpDb\ResultSet;
 
 /**
  * Capability interface for a ResultSet whose rows are hydrated onto an arbitrary object prototype.
+ *
+ * @api
  */
-interface HydratingResultSetInterface
+interface HydratingResultSetInterface extends ResultSetInterface
 {
     public function getRowPrototype(): object;
 
-    public function setRowPrototype(object $rowPrototype): ResultSetInterface&HydratingResultSetInterface;
+    public function setRowPrototype(object $rowPrototype): self;
 }

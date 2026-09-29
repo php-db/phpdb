@@ -8,10 +8,12 @@ use ArrayObject;
 
 /**
  * Capability interface for a ResultSet whose rows clone an ArrayObject prototype.
+ *
+ * @api
  */
-interface ArrayObjectResultSetInterface
+interface ArrayObjectResultSetInterface extends ResultSetInterface
 {
     public function getRowPrototype(): ArrayObject;
 
-    public function setRowPrototype(ArrayObject $rowPrototype): ResultSetInterface&ArrayObjectResultSetInterface;
+    public function setRowPrototype(ArrayObject $rowPrototype): self;
 }

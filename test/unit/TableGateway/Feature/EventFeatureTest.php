@@ -9,7 +9,7 @@ use Laminas\EventManager\EventManagerInterface;
 use Override;
 use PhpDb\Adapter\Driver\ResultInterface;
 use PhpDb\Adapter\Driver\StatementInterface;
-use PhpDb\ResultSet\ResultSet;
+use PhpDb\ResultSet\ResultSetInterface;
 use PhpDb\Sql\Delete;
 use PhpDb\Sql\Insert;
 use PhpDb\Sql\Select;
@@ -144,7 +144,7 @@ final class EventFeatureTest extends TestCase
 
         $stmt      = $this->getMockBuilder(StatementInterface::class)->getMock();
         $result    = $this->getMockBuilder(ResultInterface::class)->getMock();
-        $resultset = $this->getMockBuilder(ResultSet::class)->getMock();
+        $resultset = $this->getMockBuilder(ResultSetInterface::class)->getMock();
 
         $this->feature->postSelect($stmt, $result, $resultset);
         static::assertTrue($closureHasRun);

@@ -23,6 +23,7 @@ use PHPUnit\Framework\TestCase;
 use TypeError;
 
 use function assert;
+use function count;
 
 #[CoversMethod(AbstractResultSet::class, 'initialize')]
 #[CoversMethod(AbstractResultSet::class, 'buffer')]
@@ -98,6 +99,18 @@ final class AbstractResultSetTest extends TestCase
         static::assertSame(3, $data['id']);
     }
 
+    /**
+     * @throws Exception
+     */
+    #[Test]
+    public function countHonoursTheCountableContractForUncountableDataSource(): void
+    {
+        $resultSet = $this->createResultSetMock();
+        $resultSet->initialize(new NoRewindIterator(new ArrayIterator([['id' => 1]])));
+
+        static::assertSame($resultSet->count(), count($resultSet));
+    }
+
     #[Test]
     public function countReturnsCachedResult(): void
     {
@@ -112,13 +125,13 @@ final class AbstractResultSetTest extends TestCase
     }
 
     #[Test]
-    public function countReturnsNullForUncountableDataSource(): void
+    public function countReturnsZeroForUncountableDataSource(): void
     {
         $resultSet = $this->createResultSetMock();
         $iterator  = new NoRewindIterator(new ArrayIterator([['id' => 1]]));
         $resultSet->initialize($iterator);
 
-        static::assertNull($resultSet->count());
+        static::assertSame(0, $resultSet->count());
     }
 
     /**

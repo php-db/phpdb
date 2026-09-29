@@ -10,13 +10,15 @@ namespace PhpDb\ResultSet;
  * Row prototypes are cloned (but do not have to be) for each row and populated via populate().
  * This interface allows custom row objects (like RowGateway) to be used
  * as prototypes without depending on ArrayObject.
+ *
+ * @api
  */
 interface RowPrototypeInterface
 {
     /**
      * Populate the prototype with row data. Mutating vs. returning a new instance is up to the implementation.
      */
-    public function populate(array $data): RowPrototypeInterface;
+    public function populate(array $data): self;
 
     /**
      * Current data as an array and match current RowGateway implementations.

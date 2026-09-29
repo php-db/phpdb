@@ -6,7 +6,7 @@ namespace PhpDb\ResultSet;
 
 use Override;
 
-class ArrayResultSet extends AbstractResultSet
+final class ArrayResultSet extends AbstractResultSet
 {
     /** {@inheritDoc} */
     #[Override]
