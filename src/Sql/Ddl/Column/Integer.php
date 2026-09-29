@@ -12,7 +12,6 @@ use function array_splice;
 use function ctype_digit;
 use function is_int;
 use function is_string;
-use function sprintf;
 use function strlen;
 use function substr;
 
@@ -57,9 +56,6 @@ class Integer extends Column
             return $length;
         }
 
-        throw new InvalidArgumentException(sprintf(
-            'Column "%s" length option must be a non-negative integer',
-            $this->name,
-        ));
+        throw InvalidArgumentException::forInvalidColumnLength($this->name);
     }
 }

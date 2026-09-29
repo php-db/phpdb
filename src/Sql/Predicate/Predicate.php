@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace PhpDb\Sql\Predicate;
 
 use PhpDb\Sql\ArgumentInterface;
-use PhpDb\Sql\Exception\RuntimeException;
 use PhpDb\Sql\ExpressionInterface;
+use PhpDb\Sql\Predicate\Exception\RuntimeException;
 
 /**
  * @property Predicate $and
@@ -347,11 +347,13 @@ class Predicate extends PredicateSet
 
     /**
      * Indicate end of nested predicate
+     *
+     * @throws RuntimeException If this predicate is not nested.
      */
     public function unnest(): self
     {
         if (! $this->unnest instanceof Predicate) {
-            throw new RuntimeException('Not nested');
+            throw RuntimeException::forNotNested();
         }
 
         $unnest = $this->unnest;
@@ -372,6 +374,8 @@ class Predicate extends PredicateSet
     /**
      * Overloading
      * Overloads "or", "and", "nest", and "unnest"
+     *
+     * @throws RuntimeException If "unnest" is accessed on a predicate that is not nested.
      */
     public function __get(string $name): self
     {

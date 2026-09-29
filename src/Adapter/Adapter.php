@@ -63,7 +63,7 @@ class Adapter implements AdapterInterface, Profiler\ProfilerAwareInterface, Sche
             : $this->driver->getConnection()->execute($sql);
 
         if (! $result instanceof Driver\ResultInterface) {
-            throw new Exception\RuntimeException('Query execution did not produce a result');
+            throw Exception\RuntimeException::forMissingQueryResult();
         }
 
         return $result;
@@ -171,9 +171,7 @@ class Adapter implements AdapterInterface, Profiler\ProfilerAwareInterface, Sche
             $parametersOrQueryMode instanceof ParameterContainer,
             is_array($parametersOrQueryMode),
                 => $this->prepareQuery($sql, $parametersOrQueryMode),
-            default => throw new Exception\InvalidArgumentException(
-                'Flag incorrectly set',
-            ),
+            default => throw Exception\InvalidArgumentException::forIncorrectFlag(),
         };
 
         $result = $this->executeQuery($sql);
@@ -199,7 +197,7 @@ class Adapter implements AdapterInterface, Profiler\ProfilerAwareInterface, Sche
         return match (strtolower($name)) {
             'driver'   => $this->driver,
             'platform' => $this->platform,
-            default    => throw new Exception\InvalidArgumentException('Invalid magic property on adapter'),
+            default    => throw Exception\InvalidArgumentException::forInvalidMagicProperty(),
         };
     }
 }

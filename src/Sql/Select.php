@@ -24,7 +24,6 @@ use function is_string;
 use function key;
 use function method_exists;
 use function preg_split;
-use function sprintf;
 use function str_contains;
 use function strcasecmp;
 use function stripos;
@@ -198,9 +197,7 @@ class Select extends AbstractPreparableSql
     public function combine(Select $select, string $type = self::COMBINE_UNION, string $modifier = ''): static
     {
         if ([] !== $this->combine) {
-            throw new Exception\InvalidArgumentException(
-                'This Select object is already combined and cannot be combined with multiple Selects objects',
-            );
+            throw Exception\InvalidArgumentException::forAlreadyCombined();
         }
 
         $this->combine = [
@@ -219,15 +216,11 @@ class Select extends AbstractPreparableSql
     public function from(array|string|TableIdentifier $table): static
     {
         if ($this->tableReadOnly) {
-            throw new Exception\InvalidArgumentException(
-                'Since this object was created with a table and/or schema in the constructor, it is read only.',
-            );
+            throw Exception\InvalidArgumentException::forReadOnlyConstructorState();
         }
 
         if (is_array($table) && (! is_string(key($table)) || count($table) !== 1)) {
-            throw new Exception\InvalidArgumentException(
-                'from() expects $table as an array is a single element associative array',
-            );
+            throw Exception\InvalidArgumentException::forInvalidFromArray();
         }
 
         $this->table = $table;
@@ -314,11 +307,7 @@ class Select extends AbstractPreparableSql
     public function limit(int|string $limit): static
     {
         if (! is_numeric($limit)) {
-            throw new Exception\InvalidArgumentException(sprintf(
-                '%s expects parameter to be numeric, "%s" given',
-                __METHOD__,
-                gettype($limit),
-            ));
+            throw Exception\InvalidArgumentException::forNonNumericParameter(__METHOD__, gettype($limit));
         }
 
         $this->limit = $limit;
@@ -331,11 +320,7 @@ class Select extends AbstractPreparableSql
     public function offset(int|string $offset): static
     {
         if (! is_numeric($offset)) {
-            throw new Exception\InvalidArgumentException(sprintf(
-                '%s expects parameter to be numeric, "%s" given',
-                __METHOD__,
-                gettype($offset),
-            ));
+            throw Exception\InvalidArgumentException::forNonNumericParameter(__METHOD__, gettype($offset));
         }
 
         $this->offset = $offset;
@@ -379,9 +364,7 @@ class Select extends AbstractPreparableSql
         switch ($part) {
             case self::TABLE:
                 if ($this->tableReadOnly) {
-                    throw new Exception\InvalidArgumentException(
-                        'Since this object was created with a table and/or schema in the constructor, it is read only.',
-                    );
+                    throw Exception\InvalidArgumentException::forReadOnlyConstructorState();
                 }
 
                 $this->table = null;
@@ -427,7 +410,7 @@ class Select extends AbstractPreparableSql
     public function setSpecification(string $index, array|string $specification): static
     {
         if (! method_exists($this, "process{$index}")) {
-            throw new Exception\InvalidArgumentException('Not a valid specification name.');
+            throw Exception\InvalidArgumentException::forInvalidSpecificationName();
         }
 
         $this->specifications[$index] = $specification;
@@ -799,7 +782,7 @@ class Select extends AbstractPreparableSql
             'where'  => $this->getWhere(),
             'having' => $this->getHaving(),
             'joins'  => $this->getJoins(),
-            default  => throw new Exception\InvalidArgumentException('Not a valid magic property for this object'),
+            default  => throw Exception\InvalidArgumentException::forInvalidMagicProperty(),
         };
     }
 }

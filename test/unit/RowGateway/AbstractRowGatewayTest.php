@@ -27,6 +27,8 @@ use PHPUnit\Framework\TestCase;
 use ReflectionException;
 use ReflectionObject;
 
+use function sprintf;
+
 #[IgnoreDeprecations]
 #[CoversMethod(RowGateway::class, 'offsetSet')]
 #[CoversMethod(RowGateway::class, '__set')]
@@ -54,55 +56,6 @@ final class AbstractRowGatewayTest extends TestCase
 
     /** @var ResultInterface&MockObject */
     protected ResultInterface|MockObject $mockResult;
-
-    // @codingStandardsIgnoreStart
-    public function test__get(): void
-    {
-        // @codingStandardsIgnoreEnd
-        $this->rowGateway->testColumn = 'test';
-        self::assertEquals('test', $this->rowGateway->testColumn);
-        self::assertEquals('test', $this->rowGateway['testColumn']);
-    }
-
-    // @codingStandardsIgnoreStart
-    public function test__getThrowsExceptionForInvalidColumn(): void
-    {
-        // @codingStandardsIgnoreEnd
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Not a valid column in this row');
-
-        /** @phpstan-ignore property.notFound, expr.resultUnused */
-        $this->rowGateway->nonExistentColumn;
-    }
-
-    // @codingStandardsIgnoreStart
-    public function test__isset(): void
-    {
-        // @codingStandardsIgnoreEnd
-        self::assertFalse(isset($this->rowGateway->foo));
-        $this->rowGateway->foo = 'bar';
-        self::assertTrue(isset($this->rowGateway->foo));
-    }
-
-    // @codingStandardsIgnoreStart
-    public function test__set(): void
-    {
-        // @codingStandardsIgnoreEnd
-        $this->rowGateway->testColumn = 'test';
-        self::assertEquals('test', $this->rowGateway->testColumn);
-        self::assertEquals('test', $this->rowGateway['testColumn']);
-    }
-
-    // @codingStandardsIgnoreStart
-    public function test__unset(): void
-    {
-        // @codingStandardsIgnoreEnd
-        $this->rowGateway->foo = 'bar';
-        self::assertEquals('bar', $this->rowGateway->foo);
-        unset($this->rowGateway->foo);
-        self::assertEmpty($this->rowGateway->foo);
-        self::assertEmpty($this->rowGateway['foo']);
-    }
 
     public function testCount(): void
     {
@@ -199,16 +152,16 @@ final class AbstractRowGatewayTest extends TestCase
         $sqlProp = $refRowGateway->getProperty('sql');
         $sqlProp->setValue($rowGateway, new Sql($this->mockAdapter));
 
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('This row object does not have a primary key column set.');
+        self::expectException(RuntimeException::class);
+        self::expectExceptionMessage(RuntimeException::MISSING_PRIMARY_KEY_COLUMN);
 
         $rowGateway->populate(['name' => 'test']);
     }
 
     public function testInitializeThrowsExceptionWhenSqlIsNull(): void
     {
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('This row object does not have a Sql object set.');
+        self::expectException(RuntimeException::class);
+        self::expectExceptionMessage(RuntimeException::MISSING_SQL_OBJECT);
 
         $rowGateway = new RowGateway('id', 'temp_table', $this->mockAdapter);
 
@@ -225,8 +178,8 @@ final class AbstractRowGatewayTest extends TestCase
 
     public function testInitializeThrowsExceptionWhenTableIsNull(): void
     {
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('This row object does not have a valid table set.');
+        self::expectException(RuntimeException::class);
+        self::expectExceptionMessage(RuntimeException::MISSING_TABLE);
 
         $rowGateway = new RowGateway('id', 'temp_table', $this->mockAdapter);
 
@@ -238,6 +191,45 @@ final class AbstractRowGatewayTest extends TestCase
         $isInitializedProp->setValue($rowGateway, false);
 
         $rowGateway->populate(['name' => 'test']);
+    }
+
+    public function testMagicGetReturnsTheColumnValue(): void
+    {
+        $this->rowGateway->testColumn = 'test';
+        self::assertEquals('test', $this->rowGateway->testColumn);
+        self::assertEquals('test', $this->rowGateway['testColumn']);
+    }
+
+    public function testMagicGetThrowsForUnknownColumn(): void
+    {
+        self::expectException(InvalidArgumentException::class);
+        self::expectExceptionMessage(sprintf(InvalidArgumentException::INVALID_COLUMN, 'nonExistentColumn'));
+
+        /** @phpstan-ignore property.notFound, expr.resultUnused */
+        $this->rowGateway->nonExistentColumn;
+    }
+
+    public function testMagicIssetReportsWhetherAColumnIsSet(): void
+    {
+        self::assertFalse(isset($this->rowGateway->foo));
+        $this->rowGateway->foo = 'bar';
+        self::assertTrue(isset($this->rowGateway->foo));
+    }
+
+    public function testMagicSetAssignsTheColumnValue(): void
+    {
+        $this->rowGateway->testColumn = 'test';
+        self::assertEquals('test', $this->rowGateway->testColumn);
+        self::assertEquals('test', $this->rowGateway['testColumn']);
+    }
+
+    public function testMagicUnsetClearsTheColumnValue(): void
+    {
+        $this->rowGateway->foo = 'bar';
+        self::assertEquals('bar', $this->rowGateway->foo);
+        unset($this->rowGateway->foo);
+        self::assertEmpty($this->rowGateway->foo);
+        self::assertEmpty($this->rowGateway['foo']);
     }
 
     public function testOffsetExists(): void
@@ -285,8 +277,8 @@ final class AbstractRowGatewayTest extends TestCase
     {
         $this->rowGateway->populate(['id' => 5, 'name' => 'foo'], true);
 
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('a known key id was not found');
+        self::expectException(RuntimeException::class);
+        self::expectExceptionMessage(sprintf(RuntimeException::MISSING_PRIMARY_KEY_DATA, 'id'));
         $this->rowGateway->populate(['boo' => 5, 'name' => 'foo'], true);
     }
 

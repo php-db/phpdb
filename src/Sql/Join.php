@@ -14,7 +14,6 @@ use function count;
 use function is_array;
 use function is_string;
 use function key;
-use function sprintf;
 
 /**
  * Aggregate JOIN specifications.
@@ -95,9 +94,7 @@ class Join implements Iterator, Countable
         string $type = self::JOIN_INNER,
     ): static {
         if (is_array($name) && (! is_string(key($name)) || count($name) !== 1)) {
-            throw new Exception\InvalidArgumentException(
-                sprintf("join() expects '%s' as a single element associative array", array_shift($name)),
-            );
+            throw Exception\InvalidArgumentException::forInvalidJoinName(array_shift($name));
         }
 
         if (! is_array($columns)) {

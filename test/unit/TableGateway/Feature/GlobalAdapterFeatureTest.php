@@ -33,8 +33,8 @@ class GlobalAdapterFeatureTest extends TestCase
     #[Test]
     public function getStaticAdapterThrowsExceptionWhenNoAdapterSet(): void
     {
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('No database adapter was found in the static registry.');
+        self::expectException(RuntimeException::class);
+        self::expectExceptionMessage(RuntimeException::MISSING_STATIC_ADAPTER);
 
         GlobalAdapterFeature::getStaticAdapter();
     }
@@ -109,8 +109,8 @@ class GlobalAdapterFeatureTest extends TestCase
     #[Test]
     public function subclassThrowsExceptionWhenNoAdaptersSet(): void
     {
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('No database adapter was found in the static registry.');
+        self::expectException(RuntimeException::class);
+        self::expectExceptionMessage(RuntimeException::MISSING_STATIC_ADAPTER);
 
         TestGlobalAdapterFeatureSubclass::getStaticAdapter();
     }

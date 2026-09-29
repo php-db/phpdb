@@ -8,9 +8,11 @@ use Exception;
 use InvalidArgumentException;
 use PhpDb\Adapter\Exception as AdapterException;
 use PhpDb\Exception as DbException;
+use PhpDb\Metadata\Exception as MetadataException;
 use PhpDb\ResultSet\Exception as ResultSetException;
 use PhpDb\RowGateway\Exception as RowGatewayException;
 use PhpDb\Sql\Exception as SqlException;
+use PhpDb\Sql\Predicate\Exception as PredicateException;
 use PhpDb\TableGateway\Exception as TableGatewayException;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -60,12 +62,15 @@ final class ExceptionHierarchyTest extends TestCase
         AdapterException\InvalidQueryException::class                => UnexpectedValueException::class,
         AdapterException\RuntimeException::class                     => RuntimeException::class,
         AdapterException\UnexpectedValueException::class             => UnexpectedValueException::class,
-        AdapterException\VunerablePlatformQuoteException::class      => RuntimeException::class,
         DbException\ContainerException::class                        => RuntimeException::class,
         DbException\ErrorException::class                            => Exception::class,
         DbException\InvalidArgumentException::class                  => InvalidArgumentException::class,
         DbException\RuntimeException::class                          => RuntimeException::class,
         DbException\UnexpectedValueException::class                  => UnexpectedValueException::class,
+        PredicateException\InvalidArgumentException::class           => InvalidArgumentException::class,
+        PredicateException\RuntimeException::class                   => RuntimeException::class,
+        MetadataException\InvalidArgumentException::class            => InvalidArgumentException::class,
+        MetadataException\RuntimeException::class                    => RuntimeException::class,
         ResultSetException\InvalidArgumentException::class           => InvalidArgumentException::class,
         ResultSetException\RuntimeException::class                   => RuntimeException::class,
         RowGatewayException\InvalidArgumentException::class          => InvalidArgumentException::class,
@@ -75,12 +80,6 @@ final class ExceptionHierarchyTest extends TestCase
         TableGatewayException\InvalidArgumentException::class        => InvalidArgumentException::class,
         TableGatewayException\RuntimeException::class                => RuntimeException::class,
     ];
-
-    /**
-     * Exempt from the naming guard: its factory is named for its arguments rather than the
-     * fault, and holds its message inline.
-     */
-    private const string UNCONVERTED_CLASS = AdapterException\VunerablePlatformQuoteException::class;
 
     /** @return array<string, array{string, string}> */
     public static function exceptionClassProvider(): array
@@ -100,10 +99,6 @@ final class ExceptionHierarchyTest extends TestCase
     {
         $cases = [];
         foreach (array_keys(self::EXCEPTION_CLASSES) as $class) {
-            if (self::UNCONVERTED_CLASS === $class) {
-                continue;
-            }
-
             foreach (self::namedConstructors($class) as $method) {
                 $cases["{$class}::{$method}()"] = [
                     $class,

@@ -18,6 +18,8 @@ use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 
+use function sprintf;
+
 #[Group('unit')]
 #[CoversMethod(AbstractPlatform::class, 'setSubject')]
 #[CoversMethod(AbstractPlatform::class, 'setTypeDecorator')]
@@ -45,8 +47,12 @@ final class AbstractPlatformTest extends TestCase
         $subject = $this->createMock(PreparableSqlInterface::class);
         $this->platform->setSubject($subject);
 
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('The subject does not appear to implement');
+        self::expectException(RuntimeException::class);
+        self::expectExceptionMessage(sprintf(
+            RuntimeException::SUBJECT_NOT_IMPLEMENTING,
+            SqlInterface::class,
+            'getSqlString()',
+        ));
         $this->platform->getSqlString();
     }
 
@@ -106,8 +112,12 @@ final class AbstractPlatformTest extends TestCase
         $adapter   = $this->createMock(AdapterInterface::class);
         $statement = new StatementContainer();
 
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('The subject does not appear to implement');
+        self::expectException(RuntimeException::class);
+        self::expectExceptionMessage(sprintf(
+            RuntimeException::SUBJECT_NOT_IMPLEMENTING,
+            PreparableSqlInterface::class,
+            'prepareStatement()',
+        ));
         $this->platform->prepareStatement($adapter, $statement);
     }
 

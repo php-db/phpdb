@@ -17,6 +17,7 @@ use PhpDb\Sql\ExpressionInterface;
 use PhpDb\Sql\Having;
 use PhpDb\Sql\Join;
 use PhpDb\Sql\Predicate;
+use PhpDb\Sql\Predicate\Exception\InvalidArgumentException as PredicateInvalidArgumentException;
 use PhpDb\Sql\Predicate\In;
 use PhpDb\Sql\Predicate\IsNotNull;
 use PhpDb\Sql\Predicate\Literal;
@@ -836,8 +837,8 @@ final class SelectTest extends TestCase
     public function testBadJoin(): void
     {
         $select = new Select();
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage("expects 'foo' as");
+        self::expectException(InvalidArgumentException::class);
+        self::expectExceptionMessage("expects 'foo' as");
         $select->join(['foo'], 'x = y');
     }
 
@@ -957,7 +958,7 @@ final class SelectTest extends TestCase
         $select->from('t1');
         $select->combine(new Select('t2'));
 
-        $this->expectException(InvalidArgumentException::class);
+        self::expectException(InvalidArgumentException::class);
         $select->combine(new Select('t3'));
     }
 
@@ -1009,8 +1010,8 @@ final class SelectTest extends TestCase
     {
         $select = new Select();
 
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('from() expects $table as an array is a single element associative array');
+        self::expectException(InvalidArgumentException::class);
+        self::expectExceptionMessage(InvalidArgumentException::INVALID_FROM_ARRAY);
         $select->from(['foo', 'bar']); // Numeric array instead of associative
     }
 
@@ -1018,7 +1019,7 @@ final class SelectTest extends TestCase
     {
         $select = new Select();
 
-        $this->expectException(TypeError::class);
+        self::expectException(TypeError::class);
         /** @noinspection ALL */
         $select->from(123);
     }
@@ -1027,8 +1028,8 @@ final class SelectTest extends TestCase
     {
         $select = new Select('foo'); // Creating with table makes it read-only
 
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage(
+        self::expectException(InvalidArgumentException::class);
+        self::expectExceptionMessage(
             'Since this object was created with a table and/or schema in the constructor, it is read only.',
         );
         $select->from('bar');
@@ -1068,8 +1069,8 @@ final class SelectTest extends TestCase
     {
         $select = new Select();
 
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Not a valid magic property for this object');
+        self::expectException(InvalidArgumentException::class);
+        self::expectExceptionMessage(InvalidArgumentException::INVALID_MAGIC_PROPERTY);
         /** @noinspection ALL */
         $value = $select->invalidProperty; /** @phpstan-ignore-line */
     }
@@ -1215,8 +1216,8 @@ final class SelectTest extends TestCase
     public function testLimitExceptionOnInvalidParameter(): void
     {
         $select = new Select();
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage(Select::class . '::limit expects parameter to be numeric');
+        self::expectException(InvalidArgumentException::class);
+        self::expectExceptionMessage(Select::class . '::limit expects parameter to be numeric');
         $select->limit('foobar');
     }
 
@@ -1261,8 +1262,8 @@ final class SelectTest extends TestCase
     public function testOffsetExceptionOnInvalidParameter(): void
     {
         $select = new Select();
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage(Select::class . '::offset expects parameter to be numeric');
+        self::expectException(InvalidArgumentException::class);
+        self::expectExceptionMessage(Select::class . '::offset expects parameter to be numeric');
         $select->offset('foobar');
     }
 
@@ -1556,8 +1557,8 @@ final class SelectTest extends TestCase
     {
         $select = new Select('foo');
 
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('read only');
+        self::expectException(InvalidArgumentException::class);
+        self::expectExceptionMessage(InvalidArgumentException::READ_ONLY_CONSTRUCTOR_STATE);
         $select->reset(Select::TABLE);
     }
 
@@ -1595,8 +1596,8 @@ final class SelectTest extends TestCase
     {
         $select = new Select();
 
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Not a valid specification name.');
+        self::expectException(InvalidArgumentException::class);
+        self::expectExceptionMessage(InvalidArgumentException::INVALID_SPECIFICATION_NAME);
         $select->setSpecification('invalid_spec', 'some spec');
     }
 
@@ -1644,8 +1645,8 @@ final class SelectTest extends TestCase
             'name' => new Predicate\Literal("name = 'Ralph'"),
             'age'  => new Predicate\Expression('age = ?', 33),
         ];
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Using Predicate must not use string keys');
+        self::expectException(InvalidArgumentException::class);
+        self::expectExceptionMessage(PredicateInvalidArgumentException::PREDICATE_WITH_STRING_KEY);
         $select->where($where);
     }
 

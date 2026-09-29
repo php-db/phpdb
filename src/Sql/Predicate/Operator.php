@@ -10,8 +10,8 @@ use PhpDb\Sql\Argument\Identifier;
 use PhpDb\Sql\Argument\Select;
 use PhpDb\Sql\Argument\Value;
 use PhpDb\Sql\ArgumentInterface;
-use PhpDb\Sql\Exception\InvalidArgumentException;
 use PhpDb\Sql\ExpressionInterface;
+use PhpDb\Sql\Predicate\Exception\InvalidArgumentException;
 use PhpDb\Sql\SqlInterface;
 
 class Operator extends AbstractExpression implements PredicateInterface
@@ -70,11 +70,11 @@ class Operator extends AbstractExpression implements PredicateInterface
     public function getExpressionData(): array
     {
         if (! $this->left instanceof ArgumentInterface) {
-            throw new InvalidArgumentException('Left expression must be specified');
+            throw InvalidArgumentException::forMissingLeftExpression();
         }
 
         if (! $this->right instanceof ArgumentInterface) {
-            throw new InvalidArgumentException('Right expression must be specified');
+            throw InvalidArgumentException::forMissingRightExpression();
         }
 
         $leftSpec  = $this->left->getSpecification();

@@ -70,10 +70,8 @@ final class PrimaryReplicaFeatureTest extends TestCase
         $feature = new PrimaryReplicaFeature($this->mockReplicaAdapter);
         $feature->setTableGateway($tableGateway);
 
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage(
-            'The table gateway must be initialized with a Sql instance before this feature is applied.',
-        );
+        self::expectException(RuntimeException::class);
+        self::expectExceptionMessage(RuntimeException::MISSING_SQL_INSTANCE);
 
         $feature->postInitialize();
     }
@@ -132,8 +130,8 @@ final class PrimaryReplicaFeatureTest extends TestCase
     {
         $feature = new PrimaryReplicaFeature($this->mockReplicaAdapter);
 
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('The primary Sql instance is not available; postInitialize() has not been run.');
+        self::expectException(RuntimeException::class);
+        self::expectExceptionMessage(RuntimeException::MISSING_PRIMARY_SQL);
 
         $feature->postSelect();
     }

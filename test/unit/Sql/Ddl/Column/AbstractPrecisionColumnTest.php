@@ -13,6 +13,8 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
 
+use function sprintf;
+
 #[CoversMethod(AbstractPrecisionColumn::class, 'setDigits')]
 #[CoversMethod(AbstractPrecisionColumn::class, 'getDigits')]
 #[CoversMethod(AbstractPrecisionColumn::class, 'setDecimal')]
@@ -155,8 +157,8 @@ final class AbstractPrecisionColumnTest extends TestCase
             ->onlyMethods([])
             ->getMock();
 
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Column "foo" of type INTEGER has a decimal scale but no digits');
+        self::expectException(InvalidArgumentException::class);
+        self::expectExceptionMessage(sprintf(InvalidArgumentException::MISSING_DECIMAL_DIGITS, 'foo', 'INTEGER'));
 
         $column->getExpressionData();
     }
