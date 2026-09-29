@@ -43,9 +43,7 @@ class PrimaryReplicaFeature extends AbstractFeature
     {
         $primarySql = $this->tableGateway->sql;
         if (! $primarySql instanceof Sql) {
-            throw new Exception\RuntimeException(
-                'The table gateway must be initialized with a Sql instance before this feature is applied.',
-            );
+            throw Exception\RuntimeException::forMissingSqlInstance();
         }
 
         $this->primarySql = $primarySql;
@@ -66,9 +64,7 @@ class PrimaryReplicaFeature extends AbstractFeature
     public function postSelect(): void
     {
         if (! $this->primarySql instanceof Sql) {
-            throw new Exception\RuntimeException(
-                'The primary Sql instance is not available; postInitialize() has not been run.',
-            );
+            throw Exception\RuntimeException::forMissingPrimarySql();
         }
 
         $this->tableGateway->sql = $this->primarySql;

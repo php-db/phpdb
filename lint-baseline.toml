@@ -3362,36 +3362,6 @@ count = 48
 
 [[issues]]
 file = "test/unit/RowGateway/AbstractRowGatewayTest.php"
-code = "method-name"
-message = "Method name `test__getThrowsExceptionForInvalidColumn` should be in camel case."
-count = 1
-
-[[issues]]
-file = "test/unit/RowGateway/AbstractRowGatewayTest.php"
-code = "method-name"
-message = "Method name `test__get` should be in camel case."
-count = 1
-
-[[issues]]
-file = "test/unit/RowGateway/AbstractRowGatewayTest.php"
-code = "method-name"
-message = "Method name `test__isset` should be in camel case."
-count = 1
-
-[[issues]]
-file = "test/unit/RowGateway/AbstractRowGatewayTest.php"
-code = "method-name"
-message = "Method name `test__set` should be in camel case."
-count = 1
-
-[[issues]]
-file = "test/unit/RowGateway/AbstractRowGatewayTest.php"
-code = "method-name"
-message = "Method name `test__unset` should be in camel case."
-count = 1
-
-[[issues]]
-file = "test/unit/RowGateway/AbstractRowGatewayTest.php"
 code = "no-isset"
 message = "Use of the `isset` construct."
 count = 4
@@ -3531,31 +3501,31 @@ count = 1
 [[issues]]
 file = "test/unit/RowGateway/AbstractRowGatewayTest.php"
 code = "prefer-test-attribute"
-message = "Use `#[Test]` attribute instead of `test` prefix on method `test__getThrowsExceptionForInvalidColumn`."
+message = "Use `#[Test]` attribute instead of `test` prefix on method `testMagicGetThrowsForUnknownColumn`."
 count = 1
 
 [[issues]]
 file = "test/unit/RowGateway/AbstractRowGatewayTest.php"
 code = "prefer-test-attribute"
-message = "Use `#[Test]` attribute instead of `test` prefix on method `test__get`."
+message = "Use `#[Test]` attribute instead of `test` prefix on method `testMagicGetReturnsTheColumnValue`."
 count = 1
 
 [[issues]]
 file = "test/unit/RowGateway/AbstractRowGatewayTest.php"
 code = "prefer-test-attribute"
-message = "Use `#[Test]` attribute instead of `test` prefix on method `test__isset`."
+message = "Use `#[Test]` attribute instead of `test` prefix on method `testMagicIssetReportsWhetherAColumnIsSet`."
 count = 1
 
 [[issues]]
 file = "test/unit/RowGateway/AbstractRowGatewayTest.php"
 code = "prefer-test-attribute"
-message = "Use `#[Test]` attribute instead of `test` prefix on method `test__set`."
+message = "Use `#[Test]` attribute instead of `test` prefix on method `testMagicSetAssignsTheColumnValue`."
 count = 1
 
 [[issues]]
 file = "test/unit/RowGateway/AbstractRowGatewayTest.php"
 code = "prefer-test-attribute"
-message = "Use `#[Test]` attribute instead of `test` prefix on method `test__unset`."
+message = "Use `#[Test]` attribute instead of `test` prefix on method `testMagicUnsetClearsTheColumnValue`."
 count = 1
 
 [[issues]]
@@ -8036,84 +8006,6 @@ count = 47
 
 [[issues]]
 file = "test/unit/TableGateway/AbstractTableGatewayTest.php"
-code = "method-name"
-message = "Method name `test__callThrowsExceptionForInvalidMethod` should be in camel case."
-count = 1
-
-[[issues]]
-file = "test/unit/TableGateway/AbstractTableGatewayTest.php"
-code = "method-name"
-message = "Method name `test__callWithFeatureSetMagicCall` should be in camel case."
-count = 1
-
-[[issues]]
-file = "test/unit/TableGateway/AbstractTableGatewayTest.php"
-code = "method-name"
-message = "Method name `test__cloneWithAliasedTableIdentifier` should be in camel case."
-count = 1
-
-[[issues]]
-file = "test/unit/TableGateway/AbstractTableGatewayTest.php"
-code = "method-name"
-message = "Method name `test__cloneWithTableIdentifier` should be in camel case."
-count = 1
-
-[[issues]]
-file = "test/unit/TableGateway/AbstractTableGatewayTest.php"
-code = "method-name"
-message = "Method name `test__clone` should be in camel case."
-count = 1
-
-[[issues]]
-file = "test/unit/TableGateway/AbstractTableGatewayTest.php"
-code = "method-name"
-message = "Method name `test__getAdapter` should be in camel case."
-count = 1
-
-[[issues]]
-file = "test/unit/TableGateway/AbstractTableGatewayTest.php"
-code = "method-name"
-message = "Method name `test__getLastInsertValue` should be in camel case."
-count = 1
-
-[[issues]]
-file = "test/unit/TableGateway/AbstractTableGatewayTest.php"
-code = "method-name"
-message = "Method name `test__getTable` should be in camel case."
-count = 1
-
-[[issues]]
-file = "test/unit/TableGateway/AbstractTableGatewayTest.php"
-code = "method-name"
-message = "Method name `test__getThrowsExceptionForInvalidProperty` should be in camel case."
-count = 1
-
-[[issues]]
-file = "test/unit/TableGateway/AbstractTableGatewayTest.php"
-code = "method-name"
-message = "Method name `test__getWithFeatureSetMagicGet` should be in camel case."
-count = 1
-
-[[issues]]
-file = "test/unit/TableGateway/AbstractTableGatewayTest.php"
-code = "method-name"
-message = "Method name `test__get` should be in camel case."
-count = 1
-
-[[issues]]
-file = "test/unit/TableGateway/AbstractTableGatewayTest.php"
-code = "method-name"
-message = "Method name `test__setThrowsExceptionForInvalidProperty` should be in camel case."
-count = 1
-
-[[issues]]
-file = "test/unit/TableGateway/AbstractTableGatewayTest.php"
-code = "method-name"
-message = "Method name `test__setWithFeatureSetMagicSet` should be in camel case."
-count = 1
-
-[[issues]]
-file = "test/unit/TableGateway/AbstractTableGatewayTest.php"
 code = "prefer-test-attribute"
 message = "Use `#[Test]` attribute instead of `test` prefix on method `testDeleteWithClosure`."
 count = 1
@@ -8301,79 +8193,79 @@ count = 1
 [[issues]]
 file = "test/unit/TableGateway/AbstractTableGatewayTest.php"
 code = "prefer-test-attribute"
-message = "Use `#[Test]` attribute instead of `test` prefix on method `test__callThrowsExceptionForInvalidMethod`."
+message = "Use `#[Test]` attribute instead of `test` prefix on method `testMagicCallThrowsForUnknownMethod`."
 count = 1
 
 [[issues]]
 file = "test/unit/TableGateway/AbstractTableGatewayTest.php"
 code = "prefer-test-attribute"
-message = "Use `#[Test]` attribute instead of `test` prefix on method `test__callWithFeatureSetMagicCall`."
+message = "Use `#[Test]` attribute instead of `test` prefix on method `testMagicCallDelegatesToTheFeatureSet`."
 count = 1
 
 [[issues]]
 file = "test/unit/TableGateway/AbstractTableGatewayTest.php"
 code = "prefer-test-attribute"
-message = "Use `#[Test]` attribute instead of `test` prefix on method `test__cloneWithAliasedTableIdentifier`."
+message = "Use `#[Test]` attribute instead of `test` prefix on method `testCloneWithAnAliasedTableIdentifier`."
 count = 1
 
 [[issues]]
 file = "test/unit/TableGateway/AbstractTableGatewayTest.php"
 code = "prefer-test-attribute"
-message = "Use `#[Test]` attribute instead of `test` prefix on method `test__cloneWithTableIdentifier`."
+message = "Use `#[Test]` attribute instead of `test` prefix on method `testCloneWithATableIdentifier`."
 count = 1
 
 [[issues]]
 file = "test/unit/TableGateway/AbstractTableGatewayTest.php"
 code = "prefer-test-attribute"
-message = "Use `#[Test]` attribute instead of `test` prefix on method `test__clone`."
+message = "Use `#[Test]` attribute instead of `test` prefix on method `testCloneKeepsTheAdapter`."
 count = 1
 
 [[issues]]
 file = "test/unit/TableGateway/AbstractTableGatewayTest.php"
 code = "prefer-test-attribute"
-message = "Use `#[Test]` attribute instead of `test` prefix on method `test__getAdapter`."
+message = "Use `#[Test]` attribute instead of `test` prefix on method `testMagicGetReturnsTheAdapter`."
 count = 1
 
 [[issues]]
 file = "test/unit/TableGateway/AbstractTableGatewayTest.php"
 code = "prefer-test-attribute"
-message = "Use `#[Test]` attribute instead of `test` prefix on method `test__getLastInsertValue`."
+message = "Use `#[Test]` attribute instead of `test` prefix on method `testMagicGetReturnsTheLastInsertValue`."
 count = 1
 
 [[issues]]
 file = "test/unit/TableGateway/AbstractTableGatewayTest.php"
 code = "prefer-test-attribute"
-message = "Use `#[Test]` attribute instead of `test` prefix on method `test__getTable`."
+message = "Use `#[Test]` attribute instead of `test` prefix on method `testMagicGetReturnsTheTable`."
 count = 1
 
 [[issues]]
 file = "test/unit/TableGateway/AbstractTableGatewayTest.php"
 code = "prefer-test-attribute"
-message = "Use `#[Test]` attribute instead of `test` prefix on method `test__getThrowsExceptionForInvalidProperty`."
+message = "Use `#[Test]` attribute instead of `test` prefix on method `testMagicGetThrowsForUnknownProperty`."
 count = 1
 
 [[issues]]
 file = "test/unit/TableGateway/AbstractTableGatewayTest.php"
 code = "prefer-test-attribute"
-message = "Use `#[Test]` attribute instead of `test` prefix on method `test__getWithFeatureSetMagicGet`."
+message = "Use `#[Test]` attribute instead of `test` prefix on method `testMagicGetDelegatesToTheFeatureSet`."
 count = 1
 
 [[issues]]
 file = "test/unit/TableGateway/AbstractTableGatewayTest.php"
 code = "prefer-test-attribute"
-message = "Use `#[Test]` attribute instead of `test` prefix on method `test__get`."
+message = "Use `#[Test]` attribute instead of `test` prefix on method `testMagicGetReturnsTheLastInsertValueAndAdapter`."
 count = 1
 
 [[issues]]
 file = "test/unit/TableGateway/AbstractTableGatewayTest.php"
 code = "prefer-test-attribute"
-message = "Use `#[Test]` attribute instead of `test` prefix on method `test__setThrowsExceptionForInvalidProperty`."
+message = "Use `#[Test]` attribute instead of `test` prefix on method `testMagicSetThrowsForUnknownProperty`."
 count = 1
 
 [[issues]]
 file = "test/unit/TableGateway/AbstractTableGatewayTest.php"
 code = "prefer-test-attribute"
-message = "Use `#[Test]` attribute instead of `test` prefix on method `test__setWithFeatureSetMagicSet`."
+message = "Use `#[Test]` attribute instead of `test` prefix on method `testMagicSetDelegatesToTheFeatureSet`."
 count = 1
 
 [[issues]]
@@ -8471,6 +8363,12 @@ file = "test/unit/TableGateway/TableGatewayTest.php"
 code = "strict-assertions"
 message = "Use strict assertions in PHPUnit tests."
 count = 2
+[[issues]]
+file = "src/TableGateway/AbstractTableGateway.php"
+code = "halstead"
+message = "Method has a high halstead difficulty"
+count = 1
+
 [[issues]]
 file = "src/Sql/AbstractSql.php"
 code = "halstead"

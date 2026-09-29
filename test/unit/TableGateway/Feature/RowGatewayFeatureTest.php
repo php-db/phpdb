@@ -18,6 +18,8 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
 
+use function sprintf;
+
 class RowGatewayFeatureTest extends TestCase
 {
     #[Test]
@@ -83,8 +85,12 @@ class RowGatewayFeatureTest extends TestCase
         $feature = new RowGatewayFeature('id');
         $feature->setTableGateway($tableGateway);
 
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('expects the ResultSet to be an instance of');
+        self::expectException(RuntimeException::class);
+        self::expectExceptionMessage(sprintf(
+            RuntimeException::UNEXPECTED_RESULT_SET,
+            RowGatewayFeature::class,
+            RowPrototypeResultSet::class,
+        ));
 
         $feature->postInitialize();
     }
@@ -114,8 +120,8 @@ class RowGatewayFeatureTest extends TestCase
         $feature = new RowGatewayFeature();
         $feature->setTableGateway($tableGateway);
 
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('No information was provided to the RowGatewayFeature');
+        self::expectException(RuntimeException::class);
+        self::expectExceptionMessage(RuntimeException::MISSING_PRIMARY_KEY);
 
         $feature->postInitialize();
     }
@@ -136,8 +142,8 @@ class RowGatewayFeatureTest extends TestCase
         $feature = new RowGatewayFeature();
         $feature->setTableGateway($tableGateway);
 
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('No information was provided to the RowGatewayFeature');
+        self::expectException(RuntimeException::class);
+        self::expectExceptionMessage(RuntimeException::MISSING_PRIMARY_KEY);
 
         $feature->postInitialize();
     }
@@ -163,8 +169,8 @@ class RowGatewayFeatureTest extends TestCase
         $feature = new RowGatewayFeature();
         $feature->setTableGateway($this->createTableGatewayMock($resultSet, $featureSet));
 
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('The MetadataFeature did not expose its metadata as an array.');
+        self::expectException(RuntimeException::class);
+        self::expectExceptionMessage(RuntimeException::NON_ARRAY_METADATA);
 
         $feature->postInitialize();
     }
@@ -192,8 +198,8 @@ class RowGatewayFeatureTest extends TestCase
         $feature = new RowGatewayFeature();
         $feature->setTableGateway($this->createTableGatewayMock($resultSet, $featureSet));
 
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage(
+        self::expectException(RuntimeException::class);
+        self::expectExceptionMessage(
             'The MetadataFeature did not expose a usable primary key for RowGateway object creation.',
         );
 
@@ -212,8 +218,8 @@ class RowGatewayFeatureTest extends TestCase
         $feature = new RowGatewayFeature();
         $feature->setTableGateway($tableGateway);
 
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('No information was provided to the RowGatewayFeature');
+        self::expectException(RuntimeException::class);
+        self::expectExceptionMessage(RuntimeException::MISSING_PRIMARY_KEY);
 
         $feature->postInitialize();
     }
@@ -230,8 +236,8 @@ class RowGatewayFeatureTest extends TestCase
         $feature = new RowGatewayFeature('id');
         $feature->setTableGateway($tableGateway);
 
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage(
+        self::expectException(RuntimeException::class);
+        self::expectExceptionMessage(
             'The table gateway must reference a named table before a RowGateway prototype can be created.',
         );
 

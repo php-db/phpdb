@@ -42,9 +42,7 @@ class TableGateway extends AbstractTableGateway
         $this->sql = $sql ?: new Sql($this->adapter, $this->table);
 
         if ($this->sql->getTable() !== $this->table) {
-            throw new Exception\InvalidArgumentException(
-                'The table inside the provided Sql object must match the table of this TableGateway',
-            );
+            throw Exception\InvalidArgumentException::forSqlTableMismatch();
         }
 
         $this->initialize();
