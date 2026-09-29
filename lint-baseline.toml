@@ -8363,6 +8363,7 @@ file = "test/unit/TableGateway/TableGatewayTest.php"
 code = "strict-assertions"
 message = "Use strict assertions in PHPUnit tests."
 count = 2
+
 [[issues]]
 file = "src/TableGateway/AbstractTableGateway.php"
 code = "halstead"
@@ -8377,6 +8378,12 @@ count = 1
 
 [[issues]]
 file = "src/Sql/Ddl/Column/AbstractPrecisionColumn.php"
+code = "halstead"
+message = "Method has a high halstead difficulty"
+count = 1
+
+[[issues]]
+file = "src/Adapter/Driver/Pdo/Statement.php"
 code = "halstead"
 message = "Method has a high halstead difficulty"
 count = 1

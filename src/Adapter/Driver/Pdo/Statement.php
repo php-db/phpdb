@@ -23,7 +23,6 @@ use function is_array;
 use function is_int;
 use function ltrim;
 use function preg_match;
-use function sprintf;
 
 class Statement implements StatementInterface, PdoDriverAwareInterface, ProfilerAwareInterface
 {
@@ -83,8 +82,8 @@ class Statement implements StatementInterface, PdoDriverAwareInterface, Profiler
                 $code = 0;
             }
 
-            throw new Exception\InvalidQueryException(
-                'Statement could not be executed (' . implode(' - ', $this->resource->errorInfo()) . ')',
+            throw Exception\InvalidQueryException::forFailedStatement(
+                implode(' - ', $this->resource->errorInfo()),
                 $code,
                 $e,
             );
@@ -138,7 +137,7 @@ class Statement implements StatementInterface, PdoDriverAwareInterface, Profiler
     public function prepare(?string $sql = null): StatementInterface
     {
         if ($this->isPrepared) {
-            throw new Exception\RuntimeException('This statement has been prepared already');
+            throw Exception\RuntimeException::forAlreadyPrepared();
         }
 
         if (null === $sql) {
@@ -149,7 +148,7 @@ class Statement implements StatementInterface, PdoDriverAwareInterface, Profiler
 
         if (false === $this->resource) {
             $error = $this->pdo->errorInfo();
-            throw new Exception\RuntimeException($error[2]);
+            throw Exception\RuntimeException::forDriverError($error[2]);
         }
 
         $this->isPrepared = true;
@@ -224,11 +223,7 @@ class Statement implements StatementInterface, PdoDriverAwareInterface, Profiler
                 $parameter = $name + 1;
             } else {
                 if (! preg_match('/^:?[a-zA-Z0-9_]+$/', $name)) {
-                    throw new Exception\RuntimeException(sprintf(
-                        'The PDO param "%s" contains invalid characters.'
-                            . ' Only alphabetic characters, digits, and underscores (_) are allowed.',
-                        $name,
-                    ));
+                    throw Exception\RuntimeException::forInvalidPdoParam($name);
                 }
                 $parameter = ':' . ltrim($name, ':');
             }

@@ -8,8 +8,6 @@ use Override;
 use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\Exception\RuntimeException;
 
-use function sprintf;
-
 /**
  * Trait implementation of DriverFeatureProviderInterface.
  *
@@ -27,11 +25,7 @@ trait DriverFeatureProviderTrait
     public function addFeature(DriverFeatureInterface $feature): DriverFeatureProviderInterface
     {
         if (! $this instanceof DriverInterface) {
-            throw new RuntimeException(sprintf(
-                '%s can only be composed into %s',
-                __TRAIT__,
-                DriverInterface::class,
-            ));
+            throw RuntimeException::forUncomposableTrait(__TRAIT__, DriverInterface::class);
         }
 
         $feature->setDriver($this);

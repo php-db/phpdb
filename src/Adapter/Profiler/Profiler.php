@@ -55,9 +55,7 @@ class Profiler implements ProfilerInterface
     public function profilerFinish(): ProfilerInterface
     {
         if (! isset($this->profiles[$this->currentIndex])) {
-            throw new Exception\RuntimeException(
-                'A profile must be started before ' . __FUNCTION__ . ' can be called.',
-            );
+            throw Exception\RuntimeException::forUnstartedProfile(__FUNCTION__);
         }
         $current           = &$this->profiles[$this->currentIndex];
         $current['end']    = microtime(true);

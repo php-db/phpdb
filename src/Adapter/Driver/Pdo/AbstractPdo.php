@@ -23,7 +23,6 @@ use function is_numeric;
 use function is_string;
 use function ltrim;
 use function preg_match;
-use function sprintf;
 
 abstract class AbstractPdo implements PdoDriverInterface, ProfilerAwareInterface
 {
@@ -44,9 +43,7 @@ abstract class AbstractPdo implements PdoDriverInterface, ProfilerAwareInterface
     {
         if (! extension_loaded('PDO')) {
             // @codeCoverageIgnoreStart
-            throw new Exception\RuntimeException(
-                'The PDO extension is required for this adapter but the extension is not loaded',
-            );
+            throw Exception\RuntimeException::forMissingPdoExtension();
 
             // @codeCoverageIgnoreEnd
         }
@@ -94,12 +91,7 @@ abstract class AbstractPdo implements PdoDriverInterface, ProfilerAwareInterface
             $name = ltrim($name, ':');
             // @see https://bugs.php.net/bug.php?id=43130
             if (preg_match('/[^a-zA-Z0-9_]/', $name)) {
-                throw new Exception\RuntimeException(sprintf(
-                    'The PDO param %s contains invalid characters.'
-                        . ' Only alphabetic characters, digits, and underscores (_)'
-                        . ' are allowed.',
-                    $name,
-                ));
+                throw Exception\RuntimeException::forInvalidPdoParam($name);
             }
             return ":{$name}";
         }

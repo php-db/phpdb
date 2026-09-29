@@ -7,7 +7,7 @@ namespace PhpDb\Adapter\Platform;
 use Override;
 use PDO;
 use PhpDb\Adapter\Driver;
-use PhpDb\Adapter\Exception\VunerablePlatformQuoteException;
+use PhpDb\Adapter\Exception;
 
 use function addcslashes;
 use function array_map;
@@ -144,10 +144,7 @@ abstract class AbstractPlatform implements PlatformInterface
     public function quoteValue(string $value): string
     {
         if (! isset($this->driver)) {
-            throw VunerablePlatformQuoteException::forPlatformAndMethod(
-                static::class,
-                __METHOD__,
-            );
+            throw Exception\RuntimeException::forVulnerablePlatformQuote(static::class, __METHOD__);
         }
         return '\'' . addcslashes($value, "\x00\n\r\\'\"\x1a") . '\'';
     }

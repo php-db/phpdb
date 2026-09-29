@@ -13,6 +13,8 @@ use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 
+use function sprintf;
+
 #[CoversMethod(Profiler::class, 'profilerStart')]
 #[CoversMethod(Profiler::class, 'profilerFinish')]
 #[CoversMethod(Profiler::class, 'getLastProfile')]
@@ -51,8 +53,8 @@ final class ProfilerTest extends TestCase
         self::assertSame($this->profiler, $ret);
 
         $profiler = new Profiler();
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('A profile must be started before profilerFinish can be called');
+        self::expectException(RuntimeException::class);
+        self::expectExceptionMessage(sprintf(RuntimeException::UNSTARTED_PROFILE, 'profilerFinish'));
         $profiler->profilerFinish();
     }
 
