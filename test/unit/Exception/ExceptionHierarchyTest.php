@@ -77,9 +77,8 @@ final class ExceptionHierarchyTest extends TestCase
     ];
 
     /**
-     * Exempt from the naming guard: its factory is named for its arguments rather than
-     * the fault, and holds its message inline. PR 5 of the exception RFC removes the
-     * class, resolving both.
+     * Exempt from the naming guard: its factory is named for its arguments rather than the
+     * fault, and holds its message inline.
      */
     private const string UNCONVERTED_CLASS = AdapterException\VunerablePlatformQuoteException::class;
 

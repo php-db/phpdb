@@ -24,7 +24,6 @@ final class ContainerException extends RuntimeException implements ContainerExce
                 $factoryClass,
                 $reason,
             ),
-            0,
         );
     }
 }
