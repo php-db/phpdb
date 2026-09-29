@@ -4,4 +4,7 @@ declare(strict_types=1);
 
 namespace PhpDb\Exception;
 
-interface ExceptionInterface {}
+use Throwable;
+
+/** Marker for every exception this package throws. */
+interface ExceptionInterface extends Throwable {}

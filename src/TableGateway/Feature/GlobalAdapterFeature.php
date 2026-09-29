@@ -48,6 +48,7 @@ class GlobalAdapterFeature extends AbstractFeature
 
     /**
      * after initialization, retrieve the original adapter as "master"
+     * @throws Exception\RuntimeException
      */
     public function preInitialize(): void
     {

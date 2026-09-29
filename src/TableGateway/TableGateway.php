@@ -18,6 +18,7 @@ class TableGateway extends AbstractTableGateway
      * @param Feature\FeatureSet|Feature\FeatureInterface|Feature\FeatureInterface[]|null $features
      *
      * @throws Exception\InvalidArgumentException
+     * @throws Exception\RuntimeException
      */
     public function __construct(
         TableIdentifier|array|string $table,
