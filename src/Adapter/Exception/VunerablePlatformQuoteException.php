@@ -6,7 +6,7 @@ namespace PhpDb\Adapter\Exception;
 
 use function sprintf;
 
-final class VunerablePlatformQuoteException extends RuntimeException implements ExceptionInterface
+final class VunerablePlatformQuoteException extends RuntimeException
 {
     public static function forPlatformAndMethod(string $platformName, string $methodName): self
     {

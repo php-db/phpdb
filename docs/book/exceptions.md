@@ -66,8 +66,22 @@ Everything else is a named constructor on the component's SPL-shaped class.
 
 ## Component namespaces
 
-Each component owns an `Exception` namespace holding an `ExceptionInterface` that extends
-`PhpDb\Exception\ExceptionInterface`, plus the SPL-shaped classes it needs. A class named
-after an SPL exception extends that SPL exception, so `catch (\RuntimeException)` and
+There is exactly one marker interface, `PhpDb\Exception\ExceptionInterface`, and every
+exception this package throws implements it. It extends `Throwable`, so it can be used as a
+type and not only in a `catch` clause.
+
+Components do **not** declare their own `ExceptionInterface`. Each owns an `Exception`
+namespace holding the SPL-shaped classes it needs, and those extend their counterparts in
+`PhpDb\Exception`, which is where the marker is declared — so a component class inherits it
+rather than restating it. A sub-namespace such as `PhpDb\Sql\Predicate\Exception` does the
+same through its parent component.
+
+To catch every failure from one component, name its classes:
+
+```php
+catch (PhpDb\Sql\Exception\InvalidArgumentException | PhpDb\Sql\Exception\RuntimeException $e)
+```
+
+A class named after an SPL exception extends that SPL exception, so `catch (\RuntimeException)` and
 `catch (PhpDb\Exception\ExceptionInterface)` both behave as a reader expects.
-`PhpDbTest\Exception\ExceptionHierarchyTest` enforces both rules across `src/`.
+`PhpDbTest\Exception\ExceptionHierarchyTest` enforces both rules across `src/`, for every class listed in its `EXCEPTION_CLASSES` map.

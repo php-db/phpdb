@@ -190,4 +190,13 @@ final class ExceptionHierarchyTest extends TestCase
             "{$class}::{$method}() has no {$expectedConstant} template constant",
         );
     }
+
+    #[Test]
+    public function theMarkerInterfaceIsAThrowableSubtype(): void
+    {
+        self::assertTrue(
+            (new ReflectionClass(DbException\ExceptionInterface::class))->isSubclassOf(Throwable::class),
+            DbException\ExceptionInterface::class . ' must extend Throwable, or it cannot be used as a type',
+        );
+    }
 }

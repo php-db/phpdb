@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace PhpDb\Adapter\Exception;
 
-class InvalidConnectionParametersException extends RuntimeException implements ExceptionInterface
+class InvalidConnectionParametersException extends RuntimeException
 {
     protected array $parameters;
 
