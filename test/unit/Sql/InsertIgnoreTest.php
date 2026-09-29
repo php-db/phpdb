@@ -326,8 +326,8 @@ final class InsertIgnoreTest extends TestCase
     {
         $this->insert->values(new Select());
 
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage(
+        self::expectException(InvalidArgumentException::class);
+        self::expectExceptionMessage(
             'An array of values cannot be provided with the merge flag when a PhpDb\Sql\Select instance already '
                 . 'exists as the value source',
         );
@@ -336,7 +336,7 @@ final class InsertIgnoreTest extends TestCase
 
     public function testValuesThrowsExceptionWhenNotArrayOrSelect(): void
     {
-        $this->expectException(TypeError::class);
+        self::expectException(TypeError::class);
         $this->insert->values(5);
     }
 
@@ -344,8 +344,8 @@ final class InsertIgnoreTest extends TestCase
     {
         $this->insert->values(['foo' => 'bar']);
 
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('A PhpDb\Sql\Select instance cannot be provided with the merge flag');
+        self::expectException(InvalidArgumentException::class);
+        self::expectExceptionMessage(InvalidArgumentException::SELECT_WITH_MERGE_FLAG);
         $this->insert->values(new Select(), Insert::VALUES_MERGE);
     }
 

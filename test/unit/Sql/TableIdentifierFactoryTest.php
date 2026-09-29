@@ -107,8 +107,8 @@ final class TableIdentifierFactoryTest extends TestCase
     {
         $factory = new TableIdentifierFactory('backup');
 
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('$prefix must be a valid table prefix or null, empty string given');
+        self::expectException(InvalidArgumentException::class);
+        self::expectExceptionMessage(InvalidArgumentException::EMPTY_PREFIX);
         $factory('users', null, '');
     }
 
@@ -116,29 +116,29 @@ final class TableIdentifierFactoryTest extends TestCase
     {
         $factory = new TableIdentifierFactory('backup');
 
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('$separator must be a valid table separator, empty string given');
+        self::expectException(InvalidArgumentException::class);
+        self::expectExceptionMessage(InvalidArgumentException::EMPTY_SEPARATOR);
         $factory('users', null, null, '');
     }
 
     public function testRejectsEmptyStringPrefix(): void
     {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('$prefix must be a valid table prefix or null, empty string given');
+        self::expectException(InvalidArgumentException::class);
+        self::expectExceptionMessage(InvalidArgumentException::EMPTY_PREFIX);
         new TableIdentifierFactory('');
     }
 
     public function testRejectsEmptyStringSeparator(): void
     {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('$separator must be a valid table separator, empty string given');
+        self::expectException(InvalidArgumentException::class);
+        self::expectExceptionMessage(InvalidArgumentException::EMPTY_SEPARATOR);
         new TableIdentifierFactory('backup', '');
     }
 
     public function testRejectsEmptyStringSeparatorWithoutPrefix(): void
     {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('$separator must be a valid table separator, empty string given');
+        self::expectException(InvalidArgumentException::class);
+        self::expectExceptionMessage(InvalidArgumentException::EMPTY_SEPARATOR);
         new TableIdentifierFactory(null, '');
     }
 

@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace PhpDbTest\Sql\Predicate;
 
 use PhpDb\Sql\Argument;
-use PhpDb\Sql\Exception\InvalidArgumentException;
 use PhpDb\Sql\Expression as SqlExpression;
+use PhpDb\Sql\Predicate\Exception\InvalidArgumentException;
 use PhpDb\Sql\Predicate\Expression;
 use PhpDb\Sql\Predicate\In;
 use PhpDb\Sql\Predicate\IsNotNull;
@@ -87,7 +87,7 @@ final class PredicateSetTest extends TestCase
             self::assertSame($predicateSet, $what);
         });
 
-        $this->expectException(TypeError::class);
+        self::expectException(TypeError::class);
         /** @noinspection PhpStrictTypeCheckingInspection */
         $predicateSet->addPredicates(null);
     }
@@ -97,8 +97,8 @@ final class PredicateSetTest extends TestCase
         $predicateSet = new PredicateSet();
         $mock         = $this->createMock(PredicateInterface::class);
 
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Using Predicate must not use string keys');
+        self::expectException(InvalidArgumentException::class);
+        self::expectExceptionMessage(InvalidArgumentException::PREDICATE_WITH_STRING_KEY);
         $predicateSet->addPredicates(['key' => $mock]);
     }
 
@@ -154,8 +154,8 @@ final class PredicateSetTest extends TestCase
     {
         $predicateSet = new PredicateSet();
 
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage("Invalid combination: expected 'AND' or 'OR'");
+        self::expectException(InvalidArgumentException::class);
+        self::expectExceptionMessage("Invalid combination: expected 'AND' or 'OR'");
         $predicateSet->addPredicate(new IsNull('foo'), 'XOR');
     }
 

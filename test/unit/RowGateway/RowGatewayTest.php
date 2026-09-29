@@ -34,8 +34,8 @@ final class RowGatewayTest extends TestCase
     {
         $sql = new Sql($this->mockAdapter, 'bar');
 
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('The Sql object provided does not have a table that matches this row object');
+        self::expectException(InvalidArgumentException::class);
+        self::expectExceptionMessage(InvalidArgumentException::SQL_TABLE_MISMATCH);
 
         new RowGateway('id', 'foo', $sql);
     }
@@ -53,8 +53,8 @@ final class RowGatewayTest extends TestCase
 
     public function testConstructorWithNullPrimaryKey(): void
     {
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('This row object does not have a primary key column set.');
+        self::expectException(RuntimeException::class);
+        self::expectExceptionMessage(RuntimeException::MISSING_PRIMARY_KEY_COLUMN);
 
         new RowGateway(null, 'foo', $this->mockAdapter);
     }
@@ -93,8 +93,8 @@ final class RowGatewayTest extends TestCase
 
     public function testEmptyPrimaryKey(): void
     {
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('This row object does not have a primary key column set.');
+        self::expectException(RuntimeException::class);
+        self::expectExceptionMessage(RuntimeException::MISSING_PRIMARY_KEY_COLUMN);
         $this->rowGateway = new RowGateway('', 'foo', $this->mockAdapter);
     }
 
@@ -120,8 +120,8 @@ final class RowGatewayTest extends TestCase
         $sqlProp = new ReflectionProperty(RowGateway::class, 'sql');
         $sqlProp->setValue($rowGateway, null);
 
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('This row object does not have a Sql object set.');
+        self::expectException(RuntimeException::class);
+        self::expectExceptionMessage(RuntimeException::MISSING_SQL_OBJECT);
 
         $rowGateway->initialize();
     }
@@ -136,8 +136,8 @@ final class RowGatewayTest extends TestCase
         $tableProp = new ReflectionProperty(RowGateway::class, 'table');
         $tableProp->setValue($rowGateway, null);
 
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('This row object does not have a valid table set.');
+        self::expectException(RuntimeException::class);
+        self::expectExceptionMessage(RuntimeException::MISSING_TABLE);
 
         $rowGateway->initialize();
     }

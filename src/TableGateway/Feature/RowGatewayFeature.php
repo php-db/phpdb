@@ -30,12 +30,7 @@ final class RowGatewayFeature extends AbstractFeature
     {
         $resultSetPrototype = $this->tableGateway->resultSetPrototype;
         if (! $resultSetPrototype instanceof RowPrototypeResultSet) {
-            throw new Exception\RuntimeException(
-                'This feature '
-                    . self::class
-                    . ' expects the ResultSet to be an instance of '
-                    . RowPrototypeResultSet::class,
-            );
+            throw Exception\RuntimeException::forUnexpectedResultSet(self::class, RowPrototypeResultSet::class);
         }
 
         $firstArgument = $this->constructorArguments[0] ?? null;
@@ -53,9 +48,7 @@ final class RowGatewayFeature extends AbstractFeature
 
         $table = $this->tableGateway->table;
         if (! is_string($table) && ! $table instanceof TableIdentifier) {
-            throw new Exception\RuntimeException(
-                'The table gateway must reference a named table before a RowGateway prototype can be created.',
-            );
+            throw Exception\RuntimeException::forUnnamedTableInRowGateway();
         }
 
         $resultSetPrototype->setRowPrototype(new RowGateway(
@@ -81,21 +74,16 @@ final class RowGatewayFeature extends AbstractFeature
             : null;
 
         if (null === $metadataData) {
-            throw new Exception\RuntimeException(
-                'No information was provided to the RowGatewayFeature and/or no MetadataFeature could be consulted '
-                    . 'to find the primary key necessary for RowGateway object creation.',
-            );
+            throw Exception\RuntimeException::forMissingPrimaryKey();
         }
 
         if (! is_array($metadataData)) {
-            throw new Exception\RuntimeException('The MetadataFeature did not expose its metadata as an array.');
+            throw Exception\RuntimeException::forNonArrayMetadata();
         }
 
         $primaryKey = $metadataData['primaryKey'] ?? null;
         if (! is_string($primaryKey) && ! is_array($primaryKey)) {
-            throw new Exception\RuntimeException(
-                'The MetadataFeature did not expose a usable primary key for RowGateway object creation.',
-            );
+            throw Exception\RuntimeException::forUnusablePrimaryKey();
         }
 
         return $primaryKey;

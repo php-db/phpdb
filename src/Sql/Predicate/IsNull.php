@@ -8,7 +8,7 @@ use Override;
 use PhpDb\Sql\AbstractExpression;
 use PhpDb\Sql\Argument\Identifier;
 use PhpDb\Sql\ArgumentInterface;
-use PhpDb\Sql\Exception\InvalidArgumentException;
+use PhpDb\Sql\Predicate\Exception\InvalidArgumentException;
 
 class IsNull extends AbstractExpression implements PredicateInterface
 {
@@ -31,7 +31,7 @@ class IsNull extends AbstractExpression implements PredicateInterface
     public function getExpressionData(): array
     {
         if (! $this->identifier instanceof ArgumentInterface) {
-            throw new InvalidArgumentException('Identifier must be specified');
+            throw InvalidArgumentException::forMissingIdentifier();
         }
 
         $identifierSpec = $this->identifier->getSpecification();

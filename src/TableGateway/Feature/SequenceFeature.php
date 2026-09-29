@@ -6,8 +6,8 @@ namespace PhpDb\TableGateway\Feature;
 
 use PhpDb\Adapter\Driver\ResultInterface;
 use PhpDb\Adapter\Driver\StatementInterface;
-use PhpDb\Exception\RuntimeException;
 use PhpDb\Sql\Insert;
+use PhpDb\TableGateway\Exception\RuntimeException;
 
 use function array_search;
 use function is_array;
@@ -46,21 +46,21 @@ class SequenceFeature extends AbstractFeature
         $sql = match ($platformName) {
             'Oracle'     => "SELECT {$platform->quoteIdentifier($this->sequenceName)}.CURRVAL as \"currval\" FROM dual",
             'PostgreSQL' => 'SELECT LAST_INSERT_ROWID() as "currval"',
-            default      => throw new RuntimeException('Unsupported platform for retrieving last sequence id'),
+            default      => throw RuntimeException::forUnsupportedLastSequencePlatform(),
         };
 
         $statement = $this->tableGateway->adapter->createStatement();
         $statement->prepare($sql);
         $result = $statement->execute();
         if (! $result instanceof ResultInterface) {
-            throw new RuntimeException('The sequence statement did not produce a result.');
+            throw RuntimeException::forMissingSequenceResult();
         }
 
         $sequence = $result->current();
         unset($statement, $result);
 
         if (! is_array($sequence) || ! is_int($sequence['currval'] ?? null)) {
-            throw new RuntimeException('The sequence did not return a current value.');
+            throw RuntimeException::forMissingCurrentSequenceValue();
         }
 
         return $sequence['currval'];
@@ -81,21 +81,21 @@ class SequenceFeature extends AbstractFeature
         $sql = match ($platformName) {
             'Oracle'     => "SELECT {$platform->quoteIdentifier($this->sequenceName)}.NEXTVAL as \"nextval\" FROM dual",
             'PostgreSQL' => "SELECT NEXTVAL('\"{$this->sequenceName}\"')",
-            default      => throw new RuntimeException('Unsupported platform for retrieving next sequence id'),
+            default      => throw RuntimeException::forUnsupportedNextSequencePlatform(),
         };
 
         $statement = $this->tableGateway->adapter->createStatement();
         $statement->prepare($sql);
         $result = $statement->execute();
         if (! $result instanceof ResultInterface) {
-            throw new RuntimeException('The sequence statement did not produce a result.');
+            throw RuntimeException::forMissingSequenceResult();
         }
 
         $sequence = $result->current();
         unset($statement, $result);
 
         if (! is_array($sequence)) {
-            throw new RuntimeException('The sequence did not return a next value.');
+            throw RuntimeException::forMissingNextSequenceValue();
         }
 
         $nextValue = $sequence['nextval'] ?? null;
@@ -122,7 +122,7 @@ class SequenceFeature extends AbstractFeature
         $values  = $insert->getRawState('values');
 
         if (! is_array($columns) || ! is_array($values)) {
-            throw new RuntimeException('The insert does not expose columns and values as arrays.');
+            throw RuntimeException::forNonArrayInsertData();
         }
 
         $key = array_search($this->primaryKeyField, $columns, strict: true);

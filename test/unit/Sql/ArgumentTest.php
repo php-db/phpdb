@@ -24,7 +24,7 @@ final class ArgumentTest extends TestCase
 {
     public function testConstructorThrowsExceptionForInvalidSelectType(): void
     {
-        $this->expectException(TypeError::class);
+        self::expectException(TypeError::class);
         /** @noinspection PhpParamsInspection */
         /** @noinspection PhpExpressionResultUnusedInspection */
         new ArgumentSelect('simple_value'); /** @phpstan-ignore-line */

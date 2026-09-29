@@ -40,8 +40,8 @@ class AbstractFeatureTest extends TestCase
     #[Test]
     public function initializeThrowsRuntimeException(): void
     {
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('This method is not intended to be called on this object.');
+        self::expectException(RuntimeException::class);
+        self::expectExceptionMessage(RuntimeException::UNCALLABLE_METHOD);
 
         $this->feature->initialize();
     }

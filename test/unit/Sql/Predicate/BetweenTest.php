@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace PhpDbTest\Sql\Predicate;
 
-use LogicException;
 use Override;
 use PhpDb\Sql\Argument;
 use PhpDb\Sql\ArgumentInterface;
 use PhpDb\Sql\ArgumentType;
 use PhpDb\Sql\Predicate\Between;
+use PhpDb\Sql\Predicate\Exception\InvalidArgumentException;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 
@@ -93,8 +93,8 @@ final class BetweenTest extends TestCase
         $between = new Between();
         $between->setMinValue(1)->setMaxValue(10);
 
-        $this->expectException(LogicException::class);
-        $this->expectExceptionMessage('Identifier must be specified');
+        self::expectException(InvalidArgumentException::class);
+        self::expectExceptionMessage(InvalidArgumentException::MISSING_IDENTIFIER);
         $between->getExpressionData();
     }
 
@@ -103,8 +103,8 @@ final class BetweenTest extends TestCase
         $between = new Between();
         $between->setIdentifier('foo')->setMinValue(1);
 
-        $this->expectException(LogicException::class);
-        $this->expectExceptionMessage('maxValue must be specified');
+        self::expectException(InvalidArgumentException::class);
+        self::expectExceptionMessage(InvalidArgumentException::MISSING_MAX_VALUE);
         $between->getExpressionData();
     }
 
@@ -113,8 +113,8 @@ final class BetweenTest extends TestCase
         $between = new Between();
         $between->setIdentifier('foo')->setMaxValue(10);
 
-        $this->expectException(LogicException::class);
-        $this->expectExceptionMessage('minValue must be specified');
+        self::expectException(InvalidArgumentException::class);
+        self::expectExceptionMessage(InvalidArgumentException::MISSING_MIN_VALUE);
         $between->getExpressionData();
     }
 

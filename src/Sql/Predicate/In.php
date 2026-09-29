@@ -10,7 +10,7 @@ use PhpDb\Sql\Argument\Identifier;
 use PhpDb\Sql\Argument\Select as ArgumentSelect;
 use PhpDb\Sql\Argument\Values;
 use PhpDb\Sql\ArgumentInterface;
-use PhpDb\Sql\Exception\InvalidArgumentException;
+use PhpDb\Sql\Predicate\Exception\InvalidArgumentException;
 use PhpDb\Sql\Select;
 
 class In extends AbstractExpression implements PredicateInterface
@@ -40,11 +40,11 @@ class In extends AbstractExpression implements PredicateInterface
     public function getExpressionData(): array
     {
         if (! $this->identifier instanceof ArgumentInterface) {
-            throw new InvalidArgumentException('Identifier must be specified');
+            throw InvalidArgumentException::forMissingIdentifier();
         }
 
         if (! $this->valueSet instanceof ArgumentInterface) {
-            throw new InvalidArgumentException('Value set must be provided for IN predicate');
+            throw InvalidArgumentException::forMissingValueSet();
         }
 
         $identifierSpec = $this->identifier->getSpecification();
