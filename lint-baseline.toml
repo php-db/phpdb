@@ -229,24 +229,6 @@ message = "Use of the `isset` construct."
 count = 1
 
 [[issues]]
-file = "src/Exception/InvalidArgumentException.php"
-code = "no-fully-qualified-global-class-like"
-message = "Fully-qualified class-like reference detected."
-count = 1
-
-[[issues]]
-file = "src/Exception/RuntimeException.php"
-code = "no-fully-qualified-global-class-like"
-message = "Fully-qualified class-like reference detected."
-count = 1
-
-[[issues]]
-file = "src/Exception/UnexpectedValueException.php"
-code = "no-fully-qualified-global-class-like"
-message = "Fully-qualified class-like reference detected."
-count = 1
-
-[[issues]]
 file = "src/ResultSet/AbstractResultSet.php"
 code = "cyclomatic-complexity"
 message = "Class has high complexity."

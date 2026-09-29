@@ -1447,60 +1447,6 @@ message = 'Potentially unhandled exception `Psr\Container\NotFoundExceptionInter
 count = 1
 
 [[issues]]
-file = "src/Exception/ExceptionInterface.php"
-code = "missing-api-or-internal"
-message = 'Interface `PhpDb\Exception\ExceptionInterface` is missing an `@api` or `@internal` annotation.'
-count = 1
-
-[[issues]]
-file = "src/Metadata/Exception/InvalidArgumentException.php"
-code = "class-must-be-final"
-message = 'Class `PhpDb\Metadata\Exception\InvalidArgumentException` should be declared `final`.'
-count = 1
-
-[[issues]]
-file = "src/Metadata/Exception/RuntimeException.php"
-code = "class-must-be-final"
-message = 'Class `PhpDb\Metadata\Exception\RuntimeException` should be declared `final`.'
-count = 1
-
-[[issues]]
-file = "src/Metadata/Object/ConstraintKeyObject.php"
-code = "missing-constant-type"
-message = "Class constant `FK_CASCADE` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "src/Metadata/Object/ConstraintKeyObject.php"
-code = "missing-constant-type"
-message = "Class constant `FK_NO_ACTION` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "src/Metadata/Object/ConstraintKeyObject.php"
-code = "missing-constant-type"
-message = "Class constant `FK_RESTRICT` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "src/Metadata/Object/ConstraintKeyObject.php"
-code = "missing-constant-type"
-message = "Class constant `FK_SET_DEFAULT` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "src/Metadata/Object/ConstraintKeyObject.php"
-code = "missing-constant-type"
-message = "Class constant `FK_SET_NULL` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "src/Metadata/Source/AbstractSource.php"
-code = "missing-constant-type"
-message = "Class constant `DEFAULT_SCHEMA` is missing a type hint."
-count = 1
-
-[[issues]]
 file = "src/ResultSet/AbstractResultSet.php"
 code = "imprecise-type"
 message = "Type `array` in property `$buffer` is imprecise, equivalent to `array<array-key, mixed>`."
