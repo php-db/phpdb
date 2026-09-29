@@ -74,7 +74,13 @@ abstract class AbstractResultSet implements ResultSetInterface
             return $dataSource;
         }
 
+        // Userland cannot implement Traversable without Iterator or IteratorAggregate, and the
+        // internal classes that do (PDOStatement, DOMNodeList, DatePeriod) are all aggregates
+        // the loop above has already unwrapped. Kept so the return type cannot be violated.
+        // @codeCoverageIgnoreStart
         throw InvalidArgumentException::forNonIteratorDataSource($dataSource::class);
+
+        // @codeCoverageIgnoreEnd
     }
 
     /**

@@ -29,6 +29,7 @@ use function random_int;
 use function var_export;
 
 #[CoversMethod(AbstractResultSet::class, 'current')]
+#[CoversMethod(AbstractResultSet::class, 'resolveIterator')]
 #[CoversMethod(AbstractResultSet::class, 'buffer')]
 #[CoversMethod(ResultSet::class, 'current')]
 #[CoversMethod(ResultSet::class, 'getReturnType')]

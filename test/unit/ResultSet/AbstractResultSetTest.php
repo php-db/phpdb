@@ -26,6 +26,8 @@ use function assert;
 use function count;
 
 #[CoversMethod(AbstractResultSet::class, 'initialize')]
+#[CoversMethod(AbstractResultSet::class, 'resolveIterator')]
+#[CoversMethod(AbstractResultSet::class, 'dataSource')]
 #[CoversMethod(AbstractResultSet::class, 'buffer')]
 #[CoversMethod(AbstractResultSet::class, 'isBuffered')]
 #[CoversMethod(AbstractResultSet::class, 'getDataSource')]
@@ -164,6 +166,17 @@ final class AbstractResultSetTest extends TestCase
         ]));
         // Verify current() returns the current row
         static::assertEquals(['id' => 1, 'name' => 'one'], $resultSet->current());
+    }
+
+    #[Test]
+    public function currentReportsAnUninitialisedDataSourceRatherThanFailingOnNull(): void
+    {
+        $resultSet = $this->createResultSetMock();
+
+        self::expectException(RuntimeException::class);
+        self::expectExceptionMessage(RuntimeException::UNINITIALISED_DATA_SOURCE);
+
+        $resultSet->current();
     }
 
     #[Test]
@@ -556,6 +569,17 @@ final class AbstractResultSetTest extends TestCase
         $resultSet->rewind();
 
         static::assertTrue($resultSet->valid());
+    }
+
+    #[Test]
+    public function validReportsAnUninitialisedDataSourceRatherThanFailingOnNull(): void
+    {
+        $resultSet = $this->createResultSetMock();
+
+        self::expectException(RuntimeException::class);
+        self::expectExceptionMessage(RuntimeException::UNINITIALISED_DATA_SOURCE);
+
+        $resultSet->valid();
     }
 
     #[Test]
