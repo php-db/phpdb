@@ -162,15 +162,15 @@ class TableIdentifierTest extends TestCase
 
     public function testRejectsEmptyStringSeparatorWithoutPrefix(): void
     {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('$separator must be a valid table separator, empty string given');
+        self::expectException(InvalidArgumentException::class);
+        self::expectExceptionMessage(InvalidArgumentException::EMPTY_SEPARATOR);
         new TableIdentifier('foo', null, null, '');
     }
 
     #[DataProvider('invalidNameArgumentProvider')]
     public function testRejectsInvalidPrefix(mixed $invalidPrefix): void
     {
-        $this->expectException('' === $invalidPrefix ? InvalidArgumentException::class : TypeError::class);
+        self::expectException('' === $invalidPrefix ? InvalidArgumentException::class : TypeError::class);
         /** @psalm-suppress MixedArgument */
         new TableIdentifier('foo', 'bar', $invalidPrefix);
     }
@@ -178,7 +178,7 @@ class TableIdentifierTest extends TestCase
     #[DataProvider('invalidNameArgumentProvider')]
     public function testRejectsInvalidSchema(mixed $invalidSchema): void
     {
-        $this->expectException('' === $invalidSchema ? InvalidArgumentException::class : TypeError::class);
+        self::expectException('' === $invalidSchema ? InvalidArgumentException::class : TypeError::class);
         /** @psalm-suppress MixedArgument */
         new TableIdentifier('foo', $invalidSchema);
     }
@@ -186,7 +186,7 @@ class TableIdentifierTest extends TestCase
     #[DataProvider('invalidNameArgumentProvider')]
     public function testRejectsInvalidSeparator(mixed $invalidSeparator): void
     {
-        $this->expectException('' === $invalidSeparator ? InvalidArgumentException::class : TypeError::class);
+        self::expectException('' === $invalidSeparator ? InvalidArgumentException::class : TypeError::class);
         /** @psalm-suppress MixedArgument */
         new TableIdentifier('foo', 'bar', 'backup', $invalidSeparator);
     }
@@ -194,7 +194,7 @@ class TableIdentifierTest extends TestCase
     #[DataProvider('invalidTableProvider')]
     public function testRejectsInvalidTable(mixed $invalidTable): void
     {
-        $this->expectException('' === $invalidTable ? InvalidArgumentException::class : TypeError::class);
+        self::expectException('' === $invalidTable ? InvalidArgumentException::class : TypeError::class);
         /** @psalm-suppress MixedArgument */
         new TableIdentifier($invalidTable);
     }

@@ -27,7 +27,7 @@ class GlobalAdapterFeature extends AbstractFeature
         $adapter = static::$staticAdapters[$class] ?? static::$staticAdapters[self::class] ?? null;
 
         if (! $adapter instanceof AdapterInterface) {
-            throw new Exception\RuntimeException('No database adapter was found in the static registry.');
+            throw Exception\RuntimeException::forMissingStaticAdapter();
         }
 
         return $adapter;
@@ -48,6 +48,7 @@ class GlobalAdapterFeature extends AbstractFeature
 
     /**
      * after initialization, retrieve the original adapter as "master"
+     * @throws Exception\RuntimeException
      */
     public function preInitialize(): void
     {

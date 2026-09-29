@@ -84,9 +84,7 @@ class Expression extends AbstractExpression
         if ($count !== $parametersCount) {
             preg_match_all('/:\w*/', $specification, $matches);
             if (count(array_unique($matches[0])) !== $parametersCount) {
-                throw new Exception\RuntimeException(
-                    'The number of replacements in the expression does not match the number of parameters',
-                );
+                throw Exception\RuntimeException::forReplacementMismatch();
             }
         }
 
@@ -107,7 +105,7 @@ class Expression extends AbstractExpression
     public function setExpression(string $expression): self
     {
         if ('' === $expression) {
-            throw new Exception\InvalidArgumentException('Supplied expression must not be an empty string.');
+            throw Exception\InvalidArgumentException::forEmptyExpression();
         }
 
         $this->expression = $expression;

@@ -7,7 +7,7 @@ namespace PhpDbTest\Sql\Predicate;
 use PhpDb\Sql\Argument\Identifier;
 use PhpDb\Sql\ArgumentInterface;
 use PhpDb\Sql\ArgumentType;
-use PhpDb\Sql\Exception\InvalidArgumentException;
+use PhpDb\Sql\Predicate\Exception\InvalidArgumentException;
 use PhpDb\Sql\Predicate\IsNotNull;
 use PhpDb\Sql\Predicate\IsNull;
 use PHPUnit\Framework\Attributes\CoversMethod;
@@ -58,8 +58,8 @@ final class IsNullTest extends TestCase
     {
         $isNull = new IsNull();
 
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Identifier must be specified');
+        self::expectException(InvalidArgumentException::class);
+        self::expectExceptionMessage(InvalidArgumentException::MISSING_IDENTIFIER);
         $isNull->getExpressionData();
     }
 

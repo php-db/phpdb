@@ -107,9 +107,7 @@ class Insert extends AbstractPreparableSql
     {
         if ($values instanceof Select) {
             if (self::VALUES_MERGE === $flag) {
-                throw new Exception\InvalidArgumentException(
-                    'A PhpDb\Sql\Select instance cannot be provided with the merge flag',
-                );
+                throw Exception\InvalidArgumentException::forSelectWithMergeFlag();
             }
 
             $this->select = $values;
@@ -117,10 +115,7 @@ class Insert extends AbstractPreparableSql
         }
 
         if (null !== $this->select && self::VALUES_MERGE === $flag) {
-            throw new Exception\InvalidArgumentException(
-                'An array of values cannot be provided with the merge flag when a PhpDb\Sql\Select'
-                    . ' instance already exists as the value source',
-            );
+            throw Exception\InvalidArgumentException::forValuesWithMergeFlag();
         }
 
         if (self::VALUES_SET === $flag) {
@@ -146,7 +141,7 @@ class Insert extends AbstractPreparableSql
         }
 
         if (! $this->columns) {
-            throw new Exception\InvalidArgumentException('values or select should be present');
+            throw Exception\InvalidArgumentException::forMissingValuesOrSelect();
         }
 
         $columns     = [];
@@ -231,9 +226,7 @@ class Insert extends AbstractPreparableSql
     public function __get(string $name): mixed
     {
         if (! array_key_exists($name, $this->columns)) {
-            throw new Exception\InvalidArgumentException(
-                "The key {$name} was not found in this objects column list",
-            );
+            throw Exception\InvalidArgumentException::forUnknownColumnKey($name);
         }
 
         return $this->columns[$name];
@@ -272,9 +265,7 @@ class Insert extends AbstractPreparableSql
     public function __unset(string $name)
     {
         if (! array_key_exists($name, $this->columns)) {
-            throw new Exception\InvalidArgumentException(
-                "The key {$name} was not found in this objects column list",
-            );
+            throw Exception\InvalidArgumentException::forUnknownColumnKey($name);
         }
 
         unset($this->columns[$name]);

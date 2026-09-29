@@ -111,8 +111,8 @@ final class AdapterInterfaceFactoryTest extends TestCase
 
         $factory = new AdapterInterfaceFactory();
 
-        $this->expectException(ContainerException::class);
-        $this->expectExceptionMessage('No configuration found for');
+        self::expectException(ContainerException::class);
+        self::expectExceptionMessage('No configuration found for');
         $factory($container, AdapterInterface::class);
     }
 
@@ -130,8 +130,8 @@ final class AdapterInterfaceFactoryTest extends TestCase
 
         $factory = new AdapterInterfaceFactory();
 
-        $this->expectException(ContainerException::class);
-        $this->expectExceptionMessage('Container is missing a config service');
+        self::expectException(ContainerException::class);
+        self::expectExceptionMessage(ContainerException::MISSING_CONFIG_SERVICE);
         $factory($container, AdapterInterface::class);
     }
 }

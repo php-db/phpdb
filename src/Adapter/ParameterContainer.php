@@ -196,7 +196,7 @@ class ParameterContainer implements Iterator, ArrayAccess, Countable
             $name = $this->positions[$name];
         }
         if (! array_key_exists($name, $this->data)) {
-            throw new Exception\InvalidArgumentException('Data does not exist for this name/position');
+            throw Exception\InvalidArgumentException::forMissingData();
         }
         return $this->errata[$name];
     }
@@ -212,7 +212,7 @@ class ParameterContainer implements Iterator, ArrayAccess, Countable
             $name = $this->positions[$name];
         }
         if (! array_key_exists($name, $this->data)) {
-            throw new Exception\InvalidArgumentException('Data does not exist for this name/position');
+            throw Exception\InvalidArgumentException::forMissingData();
         }
         return $this->maxLength[$name];
     }
@@ -276,7 +276,7 @@ class ParameterContainer implements Iterator, ArrayAccess, Countable
         } elseif (null === $name) {
             $name = (string) count($this->data);
         } else {
-            throw new Exception\InvalidArgumentException('Keys must be string, integer or null');
+            throw Exception\InvalidArgumentException::forInvalidKeyType();
         }
 
         if ($isNewPosition) {
@@ -345,7 +345,7 @@ class ParameterContainer implements Iterator, ArrayAccess, Countable
             $name = $this->positions[$name];
         }
         if (! array_key_exists($name, $this->errata)) {
-            throw new Exception\InvalidArgumentException('Data does not exist for this name/position');
+            throw Exception\InvalidArgumentException::forMissingData();
         }
         $this->errata[$name] = null;
     }
@@ -361,7 +361,7 @@ class ParameterContainer implements Iterator, ArrayAccess, Countable
             $name = $this->positions[$name];
         }
         if (! array_key_exists($name, $this->maxLength)) {
-            throw new Exception\InvalidArgumentException('Data does not exist for this name/position');
+            throw Exception\InvalidArgumentException::forMissingData();
         }
         $this->maxLength[$name] = null;
     }

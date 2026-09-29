@@ -62,10 +62,7 @@ class Platform extends AbstractPlatform
     public function getSqlString(?PlatformInterface $adapterPlatform = null): string
     {
         if (! $this->subject instanceof SqlInterface) {
-            throw new Exception\RuntimeException(
-                'The subject does not appear to implement PhpDb\Sql\SqlInterface, thus calling '
-                    . 'prepareStatement() has no effect',
-            );
+            throw Exception\RuntimeException::forSubjectNotImplementing(SqlInterface::class, 'getSqlString()');
         }
 
         $adapterPlatform = $this->resolvePlatform($adapterPlatform);
@@ -115,9 +112,9 @@ class Platform extends AbstractPlatform
         StatementContainerInterface $statementContainer,
     ): StatementContainerInterface {
         if (! $this->subject instanceof PreparableSqlInterface) {
-            throw new Exception\RuntimeException(
-                'The subject does not appear to implement PhpDb\Sql\PreparableSqlInterface, thus calling '
-                    . 'prepareStatement() has no effect',
+            throw Exception\RuntimeException::forSubjectNotImplementing(
+                PreparableSqlInterface::class,
+                'prepareStatement()',
             );
         }
 

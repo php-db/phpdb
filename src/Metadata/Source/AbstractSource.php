@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace PhpDb\Metadata\Source;
 
 use DateTime;
-use Exception;
 use Override;
 use PhpDb\Adapter\AdapterInterface;
 use PhpDb\Adapter\SchemaAwareInterface;
+use PhpDb\Metadata\Exception;
 use PhpDb\Metadata\MetadataInterface;
 use PhpDb\Metadata\Object\ColumnObject;
 use PhpDb\Metadata\Object\ConstraintKeyObject;
@@ -115,7 +115,7 @@ abstract class AbstractSource implements MetadataInterface
     }
 
     /**
-     * @throws Exception If the column does not exist.
+     * @throws Exception\RuntimeException If the column does not exist.
      */
     #[Override]
     public function getColumn(string $columnName, string $table, ?string $schema = null): ColumnObject
@@ -128,7 +128,7 @@ abstract class AbstractSource implements MetadataInterface
 
         $info = $this->data['columns'][$schema][$table][$columnName] ?? null;
         if (null === $info) {
-            throw new Exception('A column by that name was not found.');
+            throw Exception\RuntimeException::forUnknownColumn();
         }
 
         $column = new ColumnObject($columnName, $table, $schema);
@@ -157,7 +157,7 @@ abstract class AbstractSource implements MetadataInterface
     /**
      * @return list<string>
      *
-     * @throws Exception If the table does not exist.
+     * @throws Exception\RuntimeException If the table does not exist.
      */
     #[Override]
     public function getColumnNames(string $table, ?string $schema = null): array
@@ -170,7 +170,7 @@ abstract class AbstractSource implements MetadataInterface
 
         $columns = $this->data['columns'][$schema][$table] ?? null;
         if (null === $columns) {
-            throw new Exception("\"{$table}\" does not exist");
+            throw Exception\RuntimeException::forUnknownTable($table);
         }
 
         return array_keys($columns);
@@ -181,7 +181,7 @@ abstract class AbstractSource implements MetadataInterface
      *
      * @return list<ColumnObject>
      *
-     * @throws Exception If the table does not exist.
+     * @throws Exception\RuntimeException If the table does not exist.
      */
     #[Override]
     public function getColumns(string $table, ?string $schema = null): array
@@ -201,7 +201,7 @@ abstract class AbstractSource implements MetadataInterface
     }
 
     /**
-     * @throws Exception If the constraint does not exist.
+     * @throws Exception\RuntimeException If the constraint does not exist.
      */
     #[Override]
     public function getConstraint(
@@ -217,7 +217,7 @@ abstract class AbstractSource implements MetadataInterface
 
         $info = $this->data['constraints'][$schema][$table][$constraintName] ?? null;
         if (null === $info) {
-            throw new Exception('Cannot find a constraint by that name in this table');
+            throw Exception\RuntimeException::forUnknownConstraint();
         }
 
         $constraint = new ConstraintObject($constraintName, $table, $schema);
@@ -331,7 +331,7 @@ abstract class AbstractSource implements MetadataInterface
      *
      * @return list<ConstraintObject>
      *
-     * @throws Exception If a constraint cannot be loaded.
+     * @throws Exception\RuntimeException If a constraint cannot be loaded.
      */
     #[Override]
     public function getConstraints(string $table, ?string $schema = null): array
@@ -364,7 +364,7 @@ abstract class AbstractSource implements MetadataInterface
     }
 
     /**
-     * @throws Exception If the table does not exist or is of an unsupported type.
+     * @throws Exception\RuntimeException If the table does not exist or is of an unsupported type.
      */
     #[Override]
     public function getTable(string $tableName, ?string $schema = null): TableObject|ViewObject
@@ -377,7 +377,7 @@ abstract class AbstractSource implements MetadataInterface
 
         $data = $this->data['table_names'][$schema][$tableName] ?? null;
         if (null === $data) {
-            throw new Exception("Table \"{$tableName}\" does not exist");
+            throw Exception\RuntimeException::forUnknownTable($tableName);
         }
 
         switch ($data['table_type']) {
@@ -391,9 +391,7 @@ abstract class AbstractSource implements MetadataInterface
                 $table->setIsUpdatable($data['is_updatable'] ?? null);
                 break;
             default:
-                throw new Exception(
-                    "Table \"{$tableName}\" is of an unsupported type \"{$data['table_type']}\"",
-                );
+                throw Exception\RuntimeException::forUnsupportedTableType($tableName, $data['table_type']);
         }
 
         $table->setColumns($this->getColumns($tableName, $schema));
@@ -440,7 +438,7 @@ abstract class AbstractSource implements MetadataInterface
      *
      * @return list<TableObject|ViewObject>
      *
-     * @throws Exception If a table cannot be loaded.
+     * @throws Exception\RuntimeException If a table cannot be loaded.
      */
     #[Override]
     public function getTables(?string $schema = null, bool $includeViews = false): array
@@ -458,7 +456,7 @@ abstract class AbstractSource implements MetadataInterface
     }
 
     /**
-     * @throws Exception If the trigger does not exist.
+     * @throws Exception\RuntimeException If the trigger does not exist.
      */
     #[Override]
     public function getTrigger(string $triggerName, ?string $schema = null): TriggerObject
@@ -471,7 +469,7 @@ abstract class AbstractSource implements MetadataInterface
 
         $info = $this->data['triggers'][$schema][$triggerName] ?? null;
         if (null === $info) {
-            throw new Exception("Trigger \"{$triggerName}\" does not exist");
+            throw Exception\RuntimeException::forUnknownTrigger($triggerName);
         }
 
         $trigger = new TriggerObject();
@@ -517,7 +515,7 @@ abstract class AbstractSource implements MetadataInterface
      *
      * @return list<TriggerObject>
      *
-     * @throws Exception If a trigger cannot be loaded.
+     * @throws Exception\RuntimeException If a trigger cannot be loaded.
      */
     #[Override]
     public function getTriggers(?string $schema = null): array
@@ -535,7 +533,7 @@ abstract class AbstractSource implements MetadataInterface
     }
 
     /**
-     * @throws Exception If the view does not exist.
+     * @throws Exception\RuntimeException If the view does not exist.
      */
     #[Override]
     public function getView(string $viewName, ?string $schema = null): ViewObject|TableObject
@@ -551,7 +549,7 @@ abstract class AbstractSource implements MetadataInterface
             return $this->getTable($viewName, $schema);
         }
 
-        throw new Exception("View \"{$viewName}\" does not exist");
+        throw Exception\RuntimeException::forUnknownView($viewName);
     }
 
     /**
@@ -585,7 +583,7 @@ abstract class AbstractSource implements MetadataInterface
      *
      * @return list<TableObject|ViewObject>
      *
-     * @throws Exception If a view cannot be loaded.
+     * @throws Exception\RuntimeException If a view cannot be loaded.
      */
     #[Override]
     public function getViews(?string $schema = null): array

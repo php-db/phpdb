@@ -24,15 +24,11 @@ final readonly class TableIdentifierFactory
         private ?string $separator = TableIdentifier::SEPARATOR,
     ) {
         if ('' === $prefix) {
-            throw new Exception\InvalidArgumentException(
-                '$prefix must be a valid table prefix or null, empty string given',
-            );
+            throw Exception\InvalidArgumentException::forEmptyPrefix();
         }
 
         if ('' === $separator) {
-            throw new Exception\InvalidArgumentException(
-                '$separator must be a valid table separator, empty string given',
-            );
+            throw Exception\InvalidArgumentException::forEmptySeparator();
         }
     }
 

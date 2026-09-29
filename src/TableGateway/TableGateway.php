@@ -18,6 +18,7 @@ class TableGateway extends AbstractTableGateway
      * @param Feature\FeatureSet|Feature\FeatureInterface|Feature\FeatureInterface[]|null $features
      *
      * @throws Exception\InvalidArgumentException
+     * @throws Exception\RuntimeException
      */
     public function __construct(
         TableIdentifier|array|string $table,
@@ -41,9 +42,7 @@ class TableGateway extends AbstractTableGateway
         $this->sql = $sql ?: new Sql($this->adapter, $this->table);
 
         if ($this->sql->getTable() !== $this->table) {
-            throw new Exception\InvalidArgumentException(
-                'The table inside the provided Sql object must match the table of this TableGateway',
-            );
+            throw Exception\InvalidArgumentException::forSqlTableMismatch();
         }
 
         $this->initialize();

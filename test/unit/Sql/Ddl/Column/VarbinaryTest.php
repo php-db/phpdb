@@ -14,6 +14,8 @@ use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
+use function sprintf;
+
 #[CoversMethod(Varbinary::class, 'getExpressionData')]
 #[CoversMethod(AbstractLengthColumn::class, 'getExpressionData')]
 #[Group('unit')]
@@ -50,8 +52,8 @@ final class VarbinaryTest extends TestCase
     {
         $column = new Varbinary('data', $length);
 
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Column "data" of type VARBINARY requires a length');
+        self::expectException(InvalidArgumentException::class);
+        self::expectExceptionMessage(sprintf(InvalidArgumentException::MISSING_COLUMN_LENGTH, 'data', 'VARBINARY'));
 
         $column->getExpressionData();
     }

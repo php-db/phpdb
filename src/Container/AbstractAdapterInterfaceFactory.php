@@ -88,11 +88,7 @@ final class AbstractAdapterInterfaceFactory implements AbstractFactoryInterface
         $driverClass = $this->config[$requestedName]['driver'] ?? null;
 
         if (null === $driverClass) {
-            throw ContainerException::forService(
-                $requestedName,
-                self::class,
-                'no driver configured',
-            );
+            throw ContainerException::forMissingDriver($requestedName, self::class);
         }
 
         /** @var DriverInterface|PdoDriverInterface $driver */

@@ -35,10 +35,7 @@ class AbstractPlatform implements PlatformDecoratorInterface, PreparableSqlInter
     public function getSqlString(?PlatformInterface $adapterPlatform = null): string
     {
         if (! $this->subject instanceof SqlInterface) {
-            throw new Exception\RuntimeException(
-                'The subject does not appear to implement PhpDb\Sql\SqlInterface, thus calling '
-                    . 'getSqlString() has no effect',
-            );
+            throw Exception\RuntimeException::forSubjectNotImplementing(SqlInterface::class, 'getSqlString()');
         }
 
         return $this->getTypeDecorator($this->subject)->getSqlString($adapterPlatform);
@@ -69,9 +66,9 @@ class AbstractPlatform implements PlatformDecoratorInterface, PreparableSqlInter
         StatementContainerInterface $statementContainer,
     ): StatementContainerInterface {
         if (! $this->subject instanceof PreparableSqlInterface) {
-            throw new Exception\RuntimeException(
-                'The subject does not appear to implement PhpDb\Sql\PreparableSqlInterface, thus calling '
-                    . 'prepareStatement() has no effect',
+            throw Exception\RuntimeException::forSubjectNotImplementing(
+                PreparableSqlInterface::class,
+                'prepareStatement()',
             );
         }
 

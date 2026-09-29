@@ -14,6 +14,8 @@ use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
+use function sprintf;
+
 #[CoversMethod(Varchar::class, 'getExpressionData')]
 #[CoversMethod(AbstractLengthColumn::class, '__construct')]
 #[CoversMethod(AbstractLengthColumn::class, 'setLength')]
@@ -90,8 +92,8 @@ final class VarcharTest extends TestCase
     {
         $column = new Varchar('name', $length);
 
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Column "name" of type VARCHAR requires a length');
+        self::expectException(InvalidArgumentException::class);
+        self::expectExceptionMessage(sprintf(InvalidArgumentException::MISSING_COLUMN_LENGTH, 'name', 'VARCHAR'));
 
         $column->getExpressionData();
     }

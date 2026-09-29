@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PhpDbTest\Adapter\Driver\Feature;
 
+use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\Driver\Feature\DriverFeatureInterface;
 use PhpDb\Adapter\Driver\Feature\DriverFeatureProviderInterface;
 use PhpDb\Adapter\Driver\Feature\DriverFeatureProviderTrait;
@@ -12,6 +13,8 @@ use PhpDbTest\Adapter\Driver\TestAsset\TestFeatureDriver;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
+
+use function sprintf;
 
 #[Group('unit')]
 #[CoversMethod(DriverFeatureProviderTrait::class, 'addFeature')]
@@ -49,8 +52,12 @@ final class DriverFeatureProviderTraitTest extends TestCase
 
         $feature = $this->createMock(DriverFeatureInterface::class);
 
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('can only be composed into');
+        self::expectException(RuntimeException::class);
+        self::expectExceptionMessage(sprintf(
+            RuntimeException::UNCOMPOSABLE_TRAIT,
+            DriverFeatureProviderTrait::class,
+            DriverInterface::class,
+        ));
 
         $nonDriver->addFeature($feature);
     }

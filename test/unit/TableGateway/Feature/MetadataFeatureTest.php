@@ -256,8 +256,8 @@ class MetadataFeatureTest extends TestCase
         $feature = new MetadataFeature($metadataMock);
         $feature->setTableGateway($tableGatewayMock);
 
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('A primary key for this column could not be found in the metadata.');
+        self::expectException(RuntimeException::class);
+        self::expectExceptionMessage(RuntimeException::MISSING_PRIMARY_KEY_IN_METADATA);
 
         $feature->postInitialize();
     }
@@ -277,8 +277,8 @@ class MetadataFeatureTest extends TestCase
         $feature = new MetadataFeature($metadataMock);
         $feature->setTableGateway($tableGatewayMock);
 
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage(
+        self::expectException(RuntimeException::class);
+        self::expectExceptionMessage(
             'The table gateway must reference a named table before metadata can be resolved.',
         );
 

@@ -56,8 +56,8 @@ final class AbstractResultSetTest extends TestCase
         ]));
         $resultSet->next(); // start iterator
         // Verify buffer() throws exception when called after iteration starts
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('Buffering must be enabled before iteration is started');
+        self::expectException(RuntimeException::class);
+        self::expectExceptionMessage(RuntimeException::UNBUFFERED_ITERATION);
         $resultSet->buffer();
     }
 
@@ -249,7 +249,7 @@ final class AbstractResultSetTest extends TestCase
         ]));
 
         // Verify invalid data type throws exception
-        $this->expectException(TypeError::class);
+        self::expectException(TypeError::class);
         /** @noinspection ALL */
         $resultSet->initialize('foo');
     }

@@ -112,8 +112,8 @@ final class ConnectionTransactionsTest extends TestCase
     {
         $this->wrapper->disconnect();
 
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('Must be connected before you can rollback');
+        self::expectException(RuntimeException::class);
+        self::expectExceptionMessage(RuntimeException::DISCONNECTED_ROLLBACK);
         $this->wrapper->rollback();
     }
 
@@ -132,8 +132,8 @@ final class ConnectionTransactionsTest extends TestCase
 
     public function testRollbackWithoutBeginThrowsException(): void
     {
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('Must call beginTransaction() before you can rollback');
+        self::expectException(RuntimeException::class);
+        self::expectExceptionMessage(RuntimeException::ROLLBACK_WITHOUT_TRANSACTION);
         $this->wrapper->rollback();
     }
 

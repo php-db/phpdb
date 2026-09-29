@@ -9,9 +9,9 @@ use PhpDb\Adapter\Adapter;
 use PhpDb\Adapter\Driver\ResultInterface;
 use PhpDb\Adapter\Driver\StatementInterface;
 use PhpDb\Adapter\Platform\PlatformInterface;
-use PhpDb\Exception\RuntimeException;
 use PhpDb\Sql\Insert;
 use PhpDb\TableGateway\AbstractTableGateway;
+use PhpDb\TableGateway\Exception\RuntimeException;
 use PhpDb\TableGateway\Feature\SequenceFeature;
 use PhpDb\TableGateway\TableGateway;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -114,8 +114,8 @@ final class SequenceFeatureTest extends TestCase
         $tableGateway = $this->createTableGatewayWithPlatform('MySQL');
         $this->feature->setTableGateway($tableGateway);
 
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('Unsupported platform for retrieving last sequence id');
+        self::expectException(RuntimeException::class);
+        self::expectExceptionMessage(RuntimeException::UNSUPPORTED_LAST_SEQUENCE_PLATFORM);
 
         $this->feature->lastSequenceId();
     }
@@ -125,8 +125,8 @@ final class SequenceFeatureTest extends TestCase
     {
         $this->feature->setTableGateway($this->createTableGatewayReturning('Oracle', []));
 
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('The sequence did not return a current value.');
+        self::expectException(RuntimeException::class);
+        self::expectExceptionMessage(RuntimeException::MISSING_CURRENT_SEQUENCE_VALUE);
 
         $this->feature->lastSequenceId();
     }
@@ -136,8 +136,8 @@ final class SequenceFeatureTest extends TestCase
     {
         $this->feature->setTableGateway($this->createTableGatewayReturning('Oracle', null));
 
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('The sequence statement did not produce a result.');
+        self::expectException(RuntimeException::class);
+        self::expectExceptionMessage(RuntimeException::MISSING_SEQUENCE_RESULT);
 
         $this->feature->lastSequenceId();
     }
@@ -199,8 +199,8 @@ final class SequenceFeatureTest extends TestCase
         $tableGateway = $this->createTableGatewayWithPlatform('MySQL');
         $this->feature->setTableGateway($tableGateway);
 
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('Unsupported platform for retrieving next sequence id');
+        self::expectException(RuntimeException::class);
+        self::expectExceptionMessage(RuntimeException::UNSUPPORTED_NEXT_SEQUENCE_PLATFORM);
 
         $this->feature->nextSequenceId();
     }
@@ -210,8 +210,8 @@ final class SequenceFeatureTest extends TestCase
     {
         $this->feature->setTableGateway($this->createTableGatewayReturning('Oracle', 'not-an-array'));
 
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('The sequence did not return a next value.');
+        self::expectException(RuntimeException::class);
+        self::expectExceptionMessage(RuntimeException::MISSING_NEXT_SEQUENCE_VALUE);
 
         $this->feature->nextSequenceId();
     }
@@ -221,8 +221,8 @@ final class SequenceFeatureTest extends TestCase
     {
         $this->feature->setTableGateway($this->createTableGatewayReturning('Oracle', null));
 
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('The sequence statement did not produce a result.');
+        self::expectException(RuntimeException::class);
+        self::expectExceptionMessage(RuntimeException::MISSING_SEQUENCE_RESULT);
 
         $this->feature->nextSequenceId();
     }
@@ -323,8 +323,8 @@ final class SequenceFeatureTest extends TestCase
             ->method('getRawState')
             ->willReturn('not-an-array');
 
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('The insert does not expose columns and values as arrays.');
+        self::expectException(RuntimeException::class);
+        self::expectExceptionMessage(RuntimeException::NON_ARRAY_INSERT_DATA);
 
         $this->feature->preInsert($insert);
     }

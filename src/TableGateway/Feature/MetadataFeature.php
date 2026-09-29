@@ -47,9 +47,7 @@ class MetadataFeature extends AbstractFeature
         }
 
         if (! $tableGatewayTable instanceof TableIdentifier && ! is_string($tableGatewayTable)) {
-            throw new Exception\RuntimeException(
-                'The table gateway must reference a named table before metadata can be resolved.',
-            );
+            throw Exception\RuntimeException::forUnnamedTableInMetadata();
         }
 
         $table = $tableGatewayTable instanceof TableIdentifier
@@ -87,7 +85,7 @@ class MetadataFeature extends AbstractFeature
         }
 
         if (null === $pkc) {
-            throw new Exception\RuntimeException('A primary key for this column could not be found in the metadata.');
+            throw Exception\RuntimeException::forMissingPrimaryKeyInMetadata();
         }
 
         $pkcColumns = $pkc->getColumns();

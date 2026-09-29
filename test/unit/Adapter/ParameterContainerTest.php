@@ -147,8 +147,8 @@ final class ParameterContainerTest extends TestCase
     {
         $container = new ParameterContainer();
 
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Data does not exist for this name/position');
+        self::expectException(InvalidArgumentException::class);
+        self::expectExceptionMessage(InvalidArgumentException::MISSING_DATA);
 
         $container->offsetGetErrata('nonexistent');
     }
@@ -165,8 +165,8 @@ final class ParameterContainerTest extends TestCase
     {
         $container = new ParameterContainer();
 
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Data does not exist for this name/position');
+        self::expectException(InvalidArgumentException::class);
+        self::expectExceptionMessage(InvalidArgumentException::MISSING_DATA);
 
         $container->offsetGetMaxLength('nonexistent');
     }
@@ -294,8 +294,8 @@ final class ParameterContainerTest extends TestCase
     {
         $container = new ParameterContainer();
 
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Keys must be string, integer or null');
+        self::expectException(InvalidArgumentException::class);
+        self::expectExceptionMessage(InvalidArgumentException::INVALID_KEY_TYPE);
 
         $container->offsetSet(1.5, 'value');
     }
@@ -357,8 +357,8 @@ final class ParameterContainerTest extends TestCase
     {
         $container = new ParameterContainer(['foo' => 'bar']);
 
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Data does not exist for this name/position');
+        self::expectException(InvalidArgumentException::class);
+        self::expectExceptionMessage(InvalidArgumentException::MISSING_DATA);
 
         $container->offsetUnsetErrata('foo');
     }
@@ -384,8 +384,8 @@ final class ParameterContainerTest extends TestCase
     {
         $container = new ParameterContainer(['foo' => 'bar']);
 
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Data does not exist for this name/position');
+        self::expectException(InvalidArgumentException::class);
+        self::expectExceptionMessage(InvalidArgumentException::MISSING_DATA);
 
         $container->offsetUnsetMaxLength('foo');
     }

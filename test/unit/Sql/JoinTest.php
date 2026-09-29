@@ -89,8 +89,8 @@ class JoinTest extends TestCase
     {
         $join = new Join();
 
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage("expects 'b' as a single element associative array");
+        self::expectException(InvalidArgumentException::class);
+        self::expectExceptionMessage("expects 'b' as a single element associative array");
         $join->join(['a' => 'b', 'c' => 'd'], 'on');
     }
 
@@ -98,7 +98,7 @@ class JoinTest extends TestCase
     {
         $join = new Join();
 
-        $this->expectException(TypeError::class);
+        self::expectException(TypeError::class);
         /** @noinspection PhpArgumentWithoutNamedIdentifierInspection */
         $join->join([], false);
     }

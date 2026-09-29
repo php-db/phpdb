@@ -7,8 +7,6 @@ namespace PhpDb\Sql;
 use PhpDb\Adapter\AdapterInterface;
 use PhpDb\Adapter\Driver\StatementInterface;
 
-use function sprintf;
-
 class Sql
 {
     protected AdapterInterface $adapter;
@@ -32,9 +30,7 @@ class Sql
     public function buildSqlString(SqlInterface $sqlObject, ?AdapterInterface $adapter = null): string
     {
         if (! $this->sqlPlatform instanceof SqlInterface) {
-            throw new Exception\RuntimeException(
-                'The subject does not implement SqlInterface',
-            );
+            throw Exception\RuntimeException::forSubjectNotSqlInterface();
         }
 
         $this->sqlPlatform->setSubject($sqlObject);
@@ -47,10 +43,7 @@ class Sql
     public function delete(string|TableIdentifier|null $table = null): Delete
     {
         if (null !== $this->table && null !== $table) {
-            throw new Exception\InvalidArgumentException(sprintf(
-                'This Sql object is intended to work with only the table "%s" provided at construction time.',
-                $this->table,
-            ));
+            throw Exception\InvalidArgumentException::forForeignTable($this->table);
         }
 
         return new Delete($table ?: $this->table);
@@ -79,10 +72,7 @@ class Sql
     public function insert(string|TableIdentifier|null $table = null): Insert
     {
         if (null !== $this->table && null !== $table) {
-            throw new Exception\InvalidArgumentException(sprintf(
-                'This Sql object is intended to work with only the table "%s" provided at construction time.',
-                $this->table,
-            ));
+            throw Exception\InvalidArgumentException::forForeignTable($this->table);
         }
 
         return new Insert($table ?: $this->table);
@@ -94,9 +84,7 @@ class Sql
         ?AdapterInterface $adapter = null,
     ): StatementInterface {
         if (! $this->sqlPlatform instanceof PreparableSqlInterface) {
-            throw new Exception\RuntimeException(
-                'The subject does not implement PreparableSqlInterface',
-            );
+            throw Exception\RuntimeException::forSubjectNotPreparableSqlInterface();
         }
 
         $adapter   ??= $this->adapter;
@@ -111,10 +99,7 @@ class Sql
     public function select(string|TableIdentifier|null $table = null): Select
     {
         if (null !== $this->table && null !== $table) {
-            throw new Exception\InvalidArgumentException(sprintf(
-                'This Sql object is intended to work with only the table "%s" provided at construction time.',
-                $this->table,
-            ));
+            throw Exception\InvalidArgumentException::forForeignTable($this->table);
         }
 
         return new Select($table ?: $this->table);
@@ -133,10 +118,7 @@ class Sql
     public function update(string|TableIdentifier|null $table = null): Update
     {
         if (null !== $this->table && null !== $table) {
-            throw new Exception\InvalidArgumentException(sprintf(
-                'This Sql object is intended to work with only the table "%s" provided at construction time.',
-                $this->table,
-            ));
+            throw Exception\InvalidArgumentException::forForeignTable($this->table);
         }
 
         return new Update($table ?: $this->table);

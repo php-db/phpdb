@@ -392,8 +392,8 @@ final class UpdateTest extends TestCase
 
     public function testSetWithNonStringKeyThrowsException(): void
     {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('set() expects a string for the value key');
+        self::expectException(InvalidArgumentException::class);
+        self::expectExceptionMessage(InvalidArgumentException::NON_STRING_VALUE_KEY);
 
         /** @psalm-suppress InvalidArgument - Testing invalid argument handling */
         $this->update->set([0 => 'value']);
@@ -541,7 +541,7 @@ final class UpdateTest extends TestCase
             self::assertSame($where, $what);
         });
 
-        $this->expectException(TypeError::class);
+        self::expectException(TypeError::class);
         /** @noinspection PhpStrictTypeCheckingInspection */
         $this->update->where(null);
     }

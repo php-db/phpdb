@@ -77,8 +77,8 @@ final class ResultSetIntegrationTest extends TestCase
         $this->resultSet->current();
 
         // Verify buffer() throws exception when called after iteration has started
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('Buffering must be enabled before iteration is started');
+        self::expectException(RuntimeException::class);
+        self::expectExceptionMessage(RuntimeException::UNBUFFERED_ITERATION);
         $this->resultSet->buffer();
     }
 
@@ -261,7 +261,7 @@ final class ResultSetIntegrationTest extends TestCase
         }
 
         // Verify invalid data source throws TypeError
-        $this->expectException(TypeError::class);
+        self::expectException(TypeError::class);
         $this->resultSet->initialize($dataSource);
     }
 
@@ -309,7 +309,7 @@ final class ResultSetIntegrationTest extends TestCase
     public function testSettingInvalidReturnTypeRaisesException(mixed $type): void
     {
         // Verify invalid return type throws TypeError
-        $this->expectException(TypeError::class);
+        self::expectException(TypeError::class);
         new ResultSet(ResultSet::TYPE_ARRAYOBJECT, $type);
     }
 

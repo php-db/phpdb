@@ -6,7 +6,7 @@ namespace PhpDbTest\Adapter\Platform;
 
 use Override;
 use PhpDb\Adapter\Driver\DriverInterface;
-use PhpDb\Adapter\Exception\VunerablePlatformQuoteException;
+use PhpDb\Adapter\Exception\RuntimeException;
 use PhpDb\Adapter\Platform\AbstractPlatform;
 use PhpDb\Adapter\Platform\Sql92;
 use PhpDbTest\Adapter\Platform\TestAsset\TestPlatform;
@@ -50,7 +50,7 @@ final class Sql92Test extends TestCase
     {
         $platform = new TestPlatform();
 
-        $this->expectException(VunerablePlatformQuoteException::class);
+        $this->expectException(RuntimeException::class);
         $platform->quoteValue('value');
     }
 
@@ -159,19 +159,19 @@ final class Sql92Test extends TestCase
 
     public function testQuoteValueListThrowsWithoutDriver(): void
     {
-        $this->expectException(VunerablePlatformQuoteException::class);
+        $this->expectException(RuntimeException::class);
         self::assertEquals("'Foo O\\'Bar'", $this->platform->quoteValueList("Foo O'Bar"));
     }
 
     public function testQuoteValueRaisesNoticeWithoutPlatformSupport(): void
     {
-        $this->expectException(VunerablePlatformQuoteException::class);
+        $this->expectException(RuntimeException::class);
         $this->platform->quoteValue('value');
     }
 
     public function testQuoteValueThrowsWithoutDriver(): void
     {
-        $this->expectException(VunerablePlatformQuoteException::class);
+        $this->expectException(RuntimeException::class);
         self::assertEquals("'value'", @$this->platform->quoteValue('value'));
         self::assertEquals("'Foo O\\'Bar'", @$this->platform->quoteValue("Foo O'Bar"));
         self::assertEquals(

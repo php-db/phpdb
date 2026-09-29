@@ -7,7 +7,6 @@ namespace PhpDb\Sql\Predicate;
 use Closure;
 use Countable;
 use Override;
-use PhpDb\Sql\Exception;
 use PhpDb\Sql\Expression;
 use PhpDb\Sql\Predicate\Expression as PredicateExpression;
 use ReturnTypeWillChange;
@@ -60,9 +59,7 @@ class PredicateSet implements PredicateInterface, Countable
         match ($combination) {
             self::OP_AND => $this->andPredicate($predicate),
             self::OP_OR => $this->orPredicate($predicate),
-            default => throw new Exception\InvalidArgumentException(
-                "Invalid combination: expected 'AND' or 'OR'",
-            ),
+            default => throw Exception\InvalidArgumentException::forInvalidCombination(),
         };
 
         return $this;
@@ -107,9 +104,7 @@ class PredicateSet implements PredicateInterface, Countable
                 } elseif (is_array($pvalue)) {
                     $predicate = new In($pkey, $pvalue);
                 } elseif ($pvalue instanceof PredicateInterface) {
-                    throw new Exception\InvalidArgumentException(
-                        'Using Predicate must not use string keys',
-                    );
+                    throw Exception\InvalidArgumentException::forPredicateWithStringKey();
                 } else {
                     $predicate = new Operator($pkey, Operator::OP_EQ, $pvalue);
                 }

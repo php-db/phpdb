@@ -93,15 +93,15 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
         $this->featureSet->apply('preInitialize', []);
 
         if ($this->table === null) {
-            throw new Exception\RuntimeException('This row object does not have a valid table set.');
+            throw Exception\RuntimeException::forMissingTable();
         }
 
         if ($this->primaryKeyColumn === null) {
-            throw new Exception\RuntimeException('This row object does not have a primary key column set.');
+            throw Exception\RuntimeException::forMissingPrimaryKeyColumn();
         }
 
         if ($this->sql === null) {
-            throw new Exception\RuntimeException('This row object does not have a Sql object set.');
+            throw Exception\RuntimeException::forMissingSqlObject();
         }
 
         $this->featureSet->apply('postInitialize', []);
@@ -259,9 +259,7 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
         $this->primaryKeyData = [];
         foreach ($this->primaryKeyColumn as $column) {
             if (! isset($this->data[$column])) {
-                throw new Exception\RuntimeException(
-                    'While processing primary key data, a known key ' . $column . ' was not found in the data array',
-                );
+                throw Exception\RuntimeException::forMissingPrimaryKeyData($column);
             }
             $this->primaryKeyData[$column] = $this->data[$column];
         }
@@ -275,7 +273,7 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
         if (array_key_exists($name, $this->data)) {
             return $this->data[$name];
         }
-        throw new Exception\InvalidArgumentException('Not a valid column in this row: ' . $name);
+        throw Exception\InvalidArgumentException::forInvalidColumn($name);
     }
 
     public function __isset(string $name): bool

@@ -224,7 +224,7 @@ final class CombineTest extends TestCase
 
     public function testRejectsInvalidStatement(): void
     {
-        $this->expectException(TypeError::class);
+        self::expectException(TypeError::class);
 
         /** @noinspection PhpParamsInspection */
         $this->combine->combine('foo');

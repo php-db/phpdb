@@ -9,7 +9,7 @@ use PhpDb\Sql\Argument\Select as ArgumentSelect;
 use PhpDb\Sql\Argument\Values;
 use PhpDb\Sql\ArgumentInterface;
 use PhpDb\Sql\ArgumentType;
-use PhpDb\Sql\Exception\InvalidArgumentException;
+use PhpDb\Sql\Predicate\Exception\InvalidArgumentException;
 use PhpDb\Sql\Predicate\In;
 use PhpDb\Sql\Select;
 use PHPUnit\Framework\Attributes\CoversMethod;
@@ -71,8 +71,8 @@ final class InTest extends TestCase
         $in = new In();
         $in->setValueSet([1, 2]);
 
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Identifier must be specified');
+        self::expectException(InvalidArgumentException::class);
+        self::expectExceptionMessage(InvalidArgumentException::MISSING_IDENTIFIER);
         $in->getExpressionData();
     }
 
@@ -81,8 +81,8 @@ final class InTest extends TestCase
         $in = new In();
         $in->setIdentifier('foo');
 
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Value set must be provided for IN predicate');
+        self::expectException(InvalidArgumentException::class);
+        self::expectExceptionMessage(InvalidArgumentException::MISSING_VALUE_SET);
         $in->getExpressionData();
     }
 
