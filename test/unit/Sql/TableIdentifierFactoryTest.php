@@ -8,13 +8,14 @@ use PhpDb\Sql\Exception\InvalidArgumentException;
 use PhpDb\Sql\TableIdentifierFactory;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 #[Group('unit')]
 #[CoversClass(TableIdentifierFactory::class)]
 final class TableIdentifierFactoryTest extends TestCase
 {
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function callTimePrefixIsAppliedWhenNonePreconfigured(): void
     {
         $factory         = new TableIdentifierFactory();
@@ -24,7 +25,7 @@ final class TableIdentifierFactoryTest extends TestCase
         static::assertSame('archive_users', $tableIdentifier->getTable());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function callTimePrefixOverridesConfiguredPrefix(): void
     {
         $factory         = new TableIdentifierFactory('backup');
@@ -34,7 +35,7 @@ final class TableIdentifierFactoryTest extends TestCase
         static::assertSame('archive_users', $tableIdentifier->getTable());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function callTimeSeparatorIsAppliedWhenNonePreconfigured(): void
     {
         $factory         = new TableIdentifierFactory();
@@ -44,7 +45,7 @@ final class TableIdentifierFactoryTest extends TestCase
         static::assertSame('archive__users', $tableIdentifier->getTable());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function callTimeSeparatorOverridesConfiguredSeparator(): void
     {
         $factory         = new TableIdentifierFactory('backup', '__');
@@ -54,7 +55,7 @@ final class TableIdentifierFactoryTest extends TestCase
         static::assertSame('backup_users', $tableIdentifier->getTable());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function configuredSeparatorIsCarriedButUnusedWhenNoPrefixApplies(): void
     {
         $factory         = new TableIdentifierFactory(null, '__');
@@ -65,7 +66,7 @@ final class TableIdentifierFactoryTest extends TestCase
         static::assertSame('users', $tableIdentifier->getTable());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function createsIdentifierWithConfiguredPrefix(): void
     {
         $factory         = new TableIdentifierFactory('backup');
@@ -76,7 +77,7 @@ final class TableIdentifierFactoryTest extends TestCase
         static::assertNull($tableIdentifier->getSchema());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function createsIdentifierWithConfiguredSeparator(): void
     {
         $factory         = new TableIdentifierFactory('backup', '__');
@@ -86,7 +87,7 @@ final class TableIdentifierFactoryTest extends TestCase
         static::assertSame('backup__users', $tableIdentifier->getTable());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function createsIdentifierWithoutPrefixWhenNoneConfigured(): void
     {
         $factory         = new TableIdentifierFactory();
@@ -96,7 +97,7 @@ final class TableIdentifierFactoryTest extends TestCase
         static::assertSame('users', $tableIdentifier->getTable());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function createsIdentifierWithSchema(): void
     {
         $factory         = new TableIdentifierFactory('backup');
@@ -105,7 +106,7 @@ final class TableIdentifierFactoryTest extends TestCase
         static::assertSame(['backup_users', 'public'], $tableIdentifier->getTableAndSchema());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function prefixIsNullByDefault(): void
     {
         $factory = new TableIdentifierFactory();
@@ -113,7 +114,7 @@ final class TableIdentifierFactoryTest extends TestCase
         static::assertNull($factory->getPrefix());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function rejectsEmptyStringCallTimePrefix(): void
     {
         $factory = new TableIdentifierFactory('backup');
@@ -123,7 +124,7 @@ final class TableIdentifierFactoryTest extends TestCase
         $factory('users', null, '');
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function rejectsEmptyStringCallTimeSeparator(): void
     {
         $factory = new TableIdentifierFactory('backup');
@@ -133,7 +134,7 @@ final class TableIdentifierFactoryTest extends TestCase
         $factory('users', null, null, '');
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function rejectsEmptyStringPrefix(): void
     {
         self::expectException(InvalidArgumentException::class);
@@ -141,7 +142,7 @@ final class TableIdentifierFactoryTest extends TestCase
         new TableIdentifierFactory('');
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function rejectsEmptyStringSeparator(): void
     {
         self::expectException(InvalidArgumentException::class);
@@ -149,7 +150,7 @@ final class TableIdentifierFactoryTest extends TestCase
         new TableIdentifierFactory('backup', '');
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function rejectsEmptyStringSeparatorWithoutPrefix(): void
     {
         self::expectException(InvalidArgumentException::class);
@@ -157,7 +158,7 @@ final class TableIdentifierFactoryTest extends TestCase
         new TableIdentifierFactory(null, '');
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function returnsConfiguredPrefix(): void
     {
         $factory = new TableIdentifierFactory('backup');
@@ -165,7 +166,7 @@ final class TableIdentifierFactoryTest extends TestCase
         static::assertSame('backup', $factory->getPrefix());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function returnsConfiguredSeparator(): void
     {
         $factory = new TableIdentifierFactory('backup', '__');
@@ -173,7 +174,7 @@ final class TableIdentifierFactoryTest extends TestCase
         static::assertSame('__', $factory->getSeparator());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function separatorDefaultsToUnderscore(): void
     {
         $factory = new TableIdentifierFactory('backup');
@@ -181,7 +182,7 @@ final class TableIdentifierFactoryTest extends TestCase
         static::assertSame('_', $factory->getSeparator());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function separatorDefaultsToUnderscoreWhenNoPrefixConfigured(): void
     {
         $factory = new TableIdentifierFactory();
@@ -189,7 +190,7 @@ final class TableIdentifierFactoryTest extends TestCase
         static::assertSame('_', $factory->getSeparator());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function separatorFallsBackToDefaultWhenPassedAsNull(): void
     {
         $factory = new TableIdentifierFactory('backup', null);

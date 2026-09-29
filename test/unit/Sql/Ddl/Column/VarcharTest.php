@@ -27,7 +27,7 @@ final class VarcharTest extends TestCase
 {
     use ColumnAssertionsTrait;
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getExpressionData(): void
     {
         $column = new Varchar('foo', 20);
@@ -60,7 +60,7 @@ final class VarcharTest extends TestCase
         );
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function inheritanceFromAbstractLengthColumn(): void
     {
         $column = new Varchar('test');
@@ -79,7 +79,7 @@ final class VarcharTest extends TestCase
         static::assertColumnRenders('"name" VARCHAR(20) NOT NULL', new Varchar('name', 20));
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function setLengthAndGetLength(): void
     {
         $column = new Varchar('name');

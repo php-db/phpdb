@@ -42,7 +42,7 @@ final class AbstractResultSetTest extends TestCase
     /**
      * @throws Exception
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function buffer(): void
     {
         $resultSet = $this->createResultSetMock();
@@ -67,7 +67,7 @@ final class AbstractResultSetTest extends TestCase
      *
      * @throws Exception
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[Group('issue-6845')]
     public function bufferIterations(): void
     {
@@ -98,7 +98,7 @@ final class AbstractResultSetTest extends TestCase
         static::assertSame(3, $data['id']);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function countReturnsCachedResult(): void
     {
         $resultSet = $this->createResultSetMock();
@@ -111,7 +111,7 @@ final class AbstractResultSetTest extends TestCase
         static::assertSame($first, $second);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function countReturnsNullForUncountableDataSource(): void
     {
         $resultSet = $this->createResultSetMock();
@@ -124,7 +124,7 @@ final class AbstractResultSetTest extends TestCase
     /**
      * @throws Exception
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function countsRowsInDataSource(): void
     {
         $resultSet = $this->createResultSetMock();
@@ -140,7 +140,7 @@ final class AbstractResultSetTest extends TestCase
     /**
      * @throws Exception
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function current(): void
     {
         $resultSet = $this->createResultSetMock();
@@ -153,7 +153,7 @@ final class AbstractResultSetTest extends TestCase
         static::assertEquals(['id' => 1, 'name' => 'one'], $resultSet->current());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function currentReturnsBufferedDataOnSecondPass(): void
     {
         $resultSet = $this->createResultSetMock();
@@ -181,7 +181,7 @@ final class AbstractResultSetTest extends TestCase
     /**
      * @throws Exception
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getDataSource(): void
     {
         $resultSet = $this->createResultSetMock();
@@ -197,7 +197,7 @@ final class AbstractResultSetTest extends TestCase
     /**
      * @throws Exception
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getFieldCount(): void
     {
         $resultSet = $this->createResultSetMock();
@@ -208,7 +208,7 @@ final class AbstractResultSetTest extends TestCase
         static::assertSame(2, $resultSet->getFieldCount());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getFieldCountReturnsCachedValue(): void
     {
         $resultSet = $this->createResultSetMock();
@@ -221,7 +221,7 @@ final class AbstractResultSetTest extends TestCase
         static::assertSame($first, $second);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getFieldCountReturnsZeroForEmptyIterator(): void
     {
         $resultSet = $this->createResultSetMock();
@@ -230,7 +230,7 @@ final class AbstractResultSetTest extends TestCase
         static::assertSame(0, $resultSet->getFieldCount());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getFieldCountReturnsZeroWithNoDataSource(): void
     {
         $resultSet = $this->createResultSetMock();
@@ -238,7 +238,7 @@ final class AbstractResultSetTest extends TestCase
         static::assertSame(0, $resultSet->getFieldCount());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getFieldCountWithCountableRow(): void
     {
         $resultSet = $this->createResultSetMock();
@@ -250,7 +250,7 @@ final class AbstractResultSetTest extends TestCase
     /**
      * @throws Exception
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function initialize(): void
     {
         $resultSet = $this->createResultSetMock();
@@ -271,7 +271,7 @@ final class AbstractResultSetTest extends TestCase
     /**
      * @throws Exception
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function initializeDoesNotCallCount(): void
     {
         $resultSet = $this->createResultSetMock();
@@ -284,7 +284,7 @@ final class AbstractResultSetTest extends TestCase
     /**
      * @throws Exception
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function initializeResetsBufferWhenAlreadyBuffered(): void
     {
         $resultSet = $this->createResultSetMock();
@@ -296,7 +296,7 @@ final class AbstractResultSetTest extends TestCase
         static::assertSame(2, $resultSet->current()['id']);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function initializeWithBufferedResultInterface(): void
     {
         $result = $this->createMock(ResultInterface::class);
@@ -312,7 +312,7 @@ final class AbstractResultSetTest extends TestCase
     /**
      * @throws Exception
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function initializeWithEmptyArray(): void
     {
         $resultSet = $this->createResultSetMock();
@@ -323,7 +323,7 @@ final class AbstractResultSetTest extends TestCase
     /**
      * @throws Exception
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function initializeWithIteratorAggregate(): void
     {
         $resultSet = $this->createResultSetMock();
@@ -342,7 +342,7 @@ final class AbstractResultSetTest extends TestCase
     /**
      * @throws Exception
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function initializeWithResultInterfaceRewindsWhenBuffered(): void
     {
         $resultSet = $this->createResultSetMock();
@@ -357,7 +357,7 @@ final class AbstractResultSetTest extends TestCase
         $resultSet->initialize($result);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function isBuffered(): void
     {
         $resultSet = $this->createResultSetMock();
@@ -371,7 +371,7 @@ final class AbstractResultSetTest extends TestCase
     /**
      * @throws Exception
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function key(): void
     {
         $resultSet = $this->createResultSetMock();
@@ -394,7 +394,7 @@ final class AbstractResultSetTest extends TestCase
      *
      * @throws Exception
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[Group('issue-6845')]
     public function multipleRewindBufferIterations(): void
     {
@@ -447,7 +447,7 @@ final class AbstractResultSetTest extends TestCase
     /**
      * @throws Exception
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function next(): void
     {
         $rows = [
@@ -468,7 +468,7 @@ final class AbstractResultSetTest extends TestCase
     /**
      * @throws Exception
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function rewindResetsIteratorPosition(): void
     {
         $rows = [
@@ -489,7 +489,7 @@ final class AbstractResultSetTest extends TestCase
         static::assertEquals($rows[0], $this->resultSet->current());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function rewindWithNonIteratorDataSource(): void
     {
         $resultSet = $this->createResultSetMock();
@@ -510,7 +510,7 @@ final class AbstractResultSetTest extends TestCase
     /**
      * @throws Exception
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function valid(): void
     {
         $resultSet = $this->createResultSetMock();
@@ -545,7 +545,7 @@ final class AbstractResultSetTest extends TestCase
         static::assertTrue($resultSet->valid());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function validReturnsFalseAfterLastElement(): void
     {
         $resultSet = $this->createResultSetMock();
@@ -570,7 +570,7 @@ final class AbstractResultSetTest extends TestCase
         static::assertFalse($resultSet->valid());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function validWithNonIteratorDataSource(): void
     {
         $resultSet = $this->createResultSetMock();

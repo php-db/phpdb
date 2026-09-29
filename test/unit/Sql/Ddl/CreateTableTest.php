@@ -12,6 +12,7 @@ use PhpDb\Sql\Ddl\CreateTable;
 use PhpDb\Sql\Literal;
 use PhpDb\Sql\TableIdentifier;
 use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 #[CoversMethod(CreateTable::class, '__construct')]
@@ -35,7 +36,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(CreateTable::class, 'processTableOptions')]
 class CreateTableTest extends TestCase
 {
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function addColumn(): void
     {
         $column = $this->getMockBuilder(ColumnInterface::class)->getMock();
@@ -63,7 +64,7 @@ class CreateTableTest extends TestCase
         static::assertInstanceOf(ColumnInterface::class, $state2[1]);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function addConstraint(): void
     {
         $constraint = $this->getMockBuilder(ConstraintInterface::class)->getMock();
@@ -91,7 +92,7 @@ class CreateTableTest extends TestCase
         static::assertInstanceOf(ConstraintInterface::class, $state2[1]);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function chainedOperations(): void
     {
         $ct   = new CreateTable();
@@ -112,7 +113,7 @@ class CreateTableTest extends TestCase
         static::assertCount(1, $ct->getRawState(CreateTable::CONSTRAINTS));
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function constructorWithTableIdentifier(): void
     {
         $tableId = new TableIdentifier('bar', 'foo');
@@ -122,7 +123,7 @@ class CreateTableTest extends TestCase
         static::assertSame($tableId, $rawState[CreateTable::TABLE]);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function constructorWithTemporaryFlag(): void
     {
         $ct = new CreateTable('test', true);
@@ -133,7 +134,7 @@ class CreateTableTest extends TestCase
         static::assertFalse($ct2->isTemporary());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function emptyTableConstruction(): void
     {
         $ct = new CreateTable();
@@ -143,14 +144,14 @@ class CreateTableTest extends TestCase
         static::assertEmpty($ct->getRawState(CreateTable::CONSTRAINTS));
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getOptionsReturnsEmpty(): void
     {
         $ct = new CreateTable('foo');
         static::assertEquals([], $ct->getOptions());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getRawStateIncludesTableOptions(): void
     {
         $ct = new CreateTable('foo');
@@ -162,7 +163,7 @@ class CreateTableTest extends TestCase
         static::assertEquals(['engine' => new Literal('InnoDB')], $rawState[CreateTable::TABLE_OPTIONS]);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getRawStateReturnsAllState(): void
     {
         $ct  = new CreateTable('users');
@@ -184,7 +185,7 @@ class CreateTableTest extends TestCase
         static::assertEquals([$con], $rawState[CreateTable::CONSTRAINTS]);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getRawStateWithInvalidKey(): void
     {
         $ct = new CreateTable('test');
@@ -196,7 +197,7 @@ class CreateTableTest extends TestCase
         static::assertArrayHasKey(CreateTable::TABLE, $rawState);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getSqlString(): void
     {
         $ct = new CreateTable('foo');
@@ -246,7 +247,7 @@ class CreateTableTest extends TestCase
         static::assertSame("CREATE TABLE \"foo\".\"bar\" ( \n    \"baz\" INTEGER NOT NULL \n)", $ct->getSqlString());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getSqlStringWithBoolOption(): void
     {
         $ct = new CreateTable('foo');
@@ -259,7 +260,7 @@ class CreateTableTest extends TestCase
         );
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getSqlStringWithIntOption(): void
     {
         $ct = new CreateTable('foo');
@@ -272,7 +273,7 @@ class CreateTableTest extends TestCase
         );
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getSqlStringWithLiteralOption(): void
     {
         $ct = new CreateTable('foo');
@@ -285,7 +286,7 @@ class CreateTableTest extends TestCase
         );
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getSqlStringWithMultipleOptions(): void
     {
         $ct = new CreateTable('foo');
@@ -299,7 +300,7 @@ class CreateTableTest extends TestCase
         );
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getSqlStringWithNoOptionsUnchanged(): void
     {
         $ct = new CreateTable('foo');
@@ -311,7 +312,7 @@ class CreateTableTest extends TestCase
         );
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getSqlStringWithStringOption(): void
     {
         $ct = new CreateTable('foo');
@@ -324,7 +325,7 @@ class CreateTableTest extends TestCase
         );
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function ifNotExists(): void
     {
         $ct = new CreateTable('foo');
@@ -337,7 +338,7 @@ class CreateTableTest extends TestCase
         static::assertSame("CREATE TABLE IF NOT EXISTS \"foo\" ( \n)", $ct->getSqlString());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function ifNotExistsCombinedWithTemporary(): void
     {
         $ct = new CreateTable('foo', true);
@@ -346,7 +347,7 @@ class CreateTableTest extends TestCase
         static::assertSame("CREATE TEMPORARY TABLE IF NOT EXISTS \"foo\" ( \n)", $ct->getSqlString());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function ifNotExistsDisable(): void
     {
         $ct = new CreateTable('foo');
@@ -359,7 +360,7 @@ class CreateTableTest extends TestCase
         static::assertSame("CREATE TABLE \"foo\" ( \n)", $ct->getSqlString());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function isTemporary(): void
     {
         $ct = new CreateTable();
@@ -368,7 +369,7 @@ class CreateTableTest extends TestCase
         static::assertTrue($ct->isTemporary());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function multipleColumns(): void
     {
         $ct = new CreateTable('users');
@@ -385,7 +386,7 @@ class CreateTableTest extends TestCase
         static::assertStringContainsString('"email"', $sql);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function multipleConstraints(): void
     {
         $ct = new CreateTable('orders');
@@ -403,7 +404,7 @@ class CreateTableTest extends TestCase
     /**
      * test object construction
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function objectConstruction(): void
     {
         $ct = new CreateTable('foo', true);
@@ -411,7 +412,7 @@ class CreateTableTest extends TestCase
         static::assertTrue($ct->isTemporary());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function setOptionFluentInterface(): void
     {
         $ct     = new CreateTable('foo');
@@ -421,7 +422,7 @@ class CreateTableTest extends TestCase
         static::assertEquals(['engine' => new Literal('InnoDB')], $ct->getOptions());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function setOptionsReplacesAll(): void
     {
         $ct = new CreateTable('foo');
@@ -432,7 +433,7 @@ class CreateTableTest extends TestCase
         static::assertEquals(['charset' => new Literal('utf8mb4')], $ct->getOptions());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function setTable(): void
     {
         $ct = new CreateTable();
@@ -456,7 +457,7 @@ class CreateTableTest extends TestCase
         static::assertSame('another_table', $ct->getRawState('table'));
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function setTableAfterConstruction(): void
     {
         $ct = new CreateTable();
@@ -471,7 +472,7 @@ class CreateTableTest extends TestCase
         static::assertSame('another_table', $ct->getRawState(CreateTable::TABLE));
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function setTemporary(): void
     {
         $ct = new CreateTable();

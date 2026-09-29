@@ -11,6 +11,7 @@ use PhpDb\Adapter\Profiler\Profiler;
 use PhpDb\Adapter\StatementContainer;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 use function sprintf;
@@ -24,7 +25,7 @@ final class ProfilerTest extends TestCase
 {
     protected Profiler $profiler;
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getLastProfileReturnsSqlAndTimings(): void
     {
         $this->profiler->profilerStart('SELECT * FROM FOO');
@@ -37,7 +38,7 @@ final class ProfilerTest extends TestCase
         static::assertIsFloat($profile['elapse']);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getProfilesReturnsAllRecordedProfiles(): void
     {
         $this->profiler->profilerStart('SELECT * FROM FOO1');
@@ -48,7 +49,7 @@ final class ProfilerTest extends TestCase
         static::assertCount(2, $this->profiler->getProfiles());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function profilerFinishThrowsWithoutStart(): void
     {
         $this->profiler->profilerStart('SELECT * FROM FOO');
@@ -61,7 +62,7 @@ final class ProfilerTest extends TestCase
         $profiler->profilerFinish();
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function profilerStartClonesParameterContainerFromStatementContainer(): void
     {
         $parameterContainer = new ParameterContainer(['key' => 'value']);
@@ -77,14 +78,14 @@ final class ProfilerTest extends TestCase
         static::assertNotSame($parameterContainer, $profile['parameters']);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function profilerStartWithStatementContainer(): void
     {
         $ret = $this->profiler->profilerStart(new StatementContainer());
         static::assertSame($this->profiler, $ret);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function profilerStartWithString(): void
     {
         $ret = $this->profiler->profilerStart('SELECT * FROM FOO');

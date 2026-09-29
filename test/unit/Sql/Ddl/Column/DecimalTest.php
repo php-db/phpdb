@@ -29,7 +29,7 @@ final class DecimalTest extends TestCase
 {
     use ColumnAssertionsTrait;
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function constructorSetsDigitsAndDecimal(): void
     {
         $column = new Decimal('price', 10, 2);
@@ -38,7 +38,7 @@ final class DecimalTest extends TestCase
         static::assertSame(2, $column->getDecimal());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getExpressionData(): void
     {
         $column = new Decimal('foo', 10, 5);
@@ -71,7 +71,7 @@ final class DecimalTest extends TestCase
         );
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getExpressionDataWithNullDecimal(): void
     {
         $column = new Decimal('amount', 10);
@@ -88,7 +88,7 @@ final class DecimalTest extends TestCase
         static::assertEquals(Argument::literal((string) 10), $values[2]);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function inheritanceFromAbstractPrecisionColumn(): void
     {
         $column = new Decimal('test');
@@ -113,7 +113,7 @@ final class DecimalTest extends TestCase
         static::assertColumnRenders('"price" DECIMAL NOT NULL', new Decimal('price'));
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function setDecimalAndGetDecimal(): void
     {
         $column = new Decimal('value');
@@ -123,7 +123,7 @@ final class DecimalTest extends TestCase
         static::assertSame(4, $column->getDecimal());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function setDigitsAndGetDigits(): void
     {
         $column = new Decimal('amount');

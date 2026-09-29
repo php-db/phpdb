@@ -21,6 +21,7 @@ use PhpDbTest\TestAsset\TrustingSql92Platform;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\IgnoreDeprecations;
 use PHPUnit\Framework\Attributes\RequiresPhp;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -57,14 +58,14 @@ final class AbstractRowGatewayTest extends TestCase
     /** @var ResultInterface&MockObject */
     protected ResultInterface|MockObject $mockResult;
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function countsPopulatedColumns(): void
     {
         $this->rowGateway->populate(['id' => 5, 'name' => 'foo'], true);
         static::assertSame(2, $this->rowGateway->count());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function delete(): void
     {
         $this->rowGateway->foo = 'bar';
@@ -73,7 +74,7 @@ final class AbstractRowGatewayTest extends TestCase
         static::assertSame(1, $affectedRows);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function exchangeArray(): void
     {
         $this->rowGateway->populate(['id' => 5, 'name' => 'foo'], true);
@@ -90,7 +91,7 @@ final class AbstractRowGatewayTest extends TestCase
         static::assertTrue($this->rowGateway->rowExistsInDatabase());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function initializeCreatesFeatureSetIfNotSet(): void
     {
         $rowGateway = $this->getMockBuilder(AbstractRowGateway::class)->onlyMethods([])->getMock();
@@ -114,7 +115,7 @@ final class AbstractRowGatewayTest extends TestCase
         static::assertInstanceOf(FeatureSet::class, $featureSetProp->getValue($rowGateway));
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function initializeEarlyReturnWhenAlreadyInitialized(): void
     {
         $rowGateway = new RowGateway('id', 'test_table', $this->mockAdapter);
@@ -131,7 +132,7 @@ final class AbstractRowGatewayTest extends TestCase
         static::assertSame($originalFeatureSet, $featureSetProp->getValue($rowGateway));
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function initializeOnlyRunsOnce(): void
     {
         $this->rowGateway->populate(['id' => 1, 'name' => 'foo'], true);
@@ -146,7 +147,7 @@ final class AbstractRowGatewayTest extends TestCase
         static::assertSame('bar', $this->rowGateway['name']);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function initializeThrowsExceptionWhenPrimaryKeyColumnIsNull(): void
     {
         $rowGateway = $this->getMockBuilder(AbstractRowGateway::class)->onlyMethods([])->getMock();
@@ -165,7 +166,7 @@ final class AbstractRowGatewayTest extends TestCase
         $rowGateway->populate(['name' => 'test']);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function initializeThrowsExceptionWhenSqlIsNull(): void
     {
         self::expectException(RuntimeException::class);
@@ -184,7 +185,7 @@ final class AbstractRowGatewayTest extends TestCase
         $rowGateway->populate(['name' => 'test']);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function initializeThrowsExceptionWhenTableIsNull(): void
     {
         self::expectException(RuntimeException::class);
@@ -202,7 +203,7 @@ final class AbstractRowGatewayTest extends TestCase
         $rowGateway->populate(['name' => 'test']);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function magicGetReturnsTheColumnValue(): void
     {
         $this->rowGateway->testColumn = 'test';
@@ -210,7 +211,7 @@ final class AbstractRowGatewayTest extends TestCase
         static::assertSame('test', $this->rowGateway['testColumn']);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function magicGetThrowsForUnknownColumn(): void
     {
         self::expectException(InvalidArgumentException::class);
@@ -220,7 +221,7 @@ final class AbstractRowGatewayTest extends TestCase
         $this->rowGateway->nonExistentColumn;
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function magicIssetReportsWhetherAColumnIsSet(): void
     {
         static::assertFalse(isset($this->rowGateway->foo));
@@ -228,7 +229,7 @@ final class AbstractRowGatewayTest extends TestCase
         static::assertTrue(isset($this->rowGateway->foo));
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function magicSetAssignsTheColumnValue(): void
     {
         $this->rowGateway->testColumn = 'test';
@@ -236,7 +237,7 @@ final class AbstractRowGatewayTest extends TestCase
         static::assertSame('test', $this->rowGateway['testColumn']);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function magicUnsetClearsTheColumnValue(): void
     {
         $this->rowGateway->foo = 'bar';
@@ -246,7 +247,7 @@ final class AbstractRowGatewayTest extends TestCase
         static::assertEmpty($this->rowGateway['foo']);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function offsetExists(): void
     {
         static::assertFalse(isset($this->rowGateway['foo']));
@@ -254,7 +255,7 @@ final class AbstractRowGatewayTest extends TestCase
         static::assertTrue(isset($this->rowGateway['foo']));
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function offsetGet(): void
     {
         $this->rowGateway['testColumn'] = 'test';
@@ -262,7 +263,7 @@ final class AbstractRowGatewayTest extends TestCase
         static::assertSame('test', $this->rowGateway['testColumn']);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function offsetSet(): void
     {
         $this->rowGateway['testColumn'] = 'test';
@@ -270,7 +271,7 @@ final class AbstractRowGatewayTest extends TestCase
         static::assertSame('test', $this->rowGateway['testColumn']);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function offsetUnset(): void
     {
         $this->rowGateway['foo'] = 'bar';
@@ -280,7 +281,7 @@ final class AbstractRowGatewayTest extends TestCase
         static::assertEmpty($this->rowGateway['foo']);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function populate(): void
     {
         $this->rowGateway->populate(['id' => 5, 'name' => 'foo']);
@@ -292,7 +293,7 @@ final class AbstractRowGatewayTest extends TestCase
         static::assertTrue($this->rowGateway->rowExistsInDatabase());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function processPrimaryKeyData(): void
     {
         $this->rowGateway->populate(['id' => 5, 'name' => 'foo'], true);
@@ -302,21 +303,21 @@ final class AbstractRowGatewayTest extends TestCase
         $this->rowGateway->populate(['boo' => 5, 'name' => 'foo'], true);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function rowExistsInDatabaseReturnsFalseWhenNew(): void
     {
         $this->rowGateway->populate(['name' => 'foo']);
         static::assertFalse($this->rowGateway->rowExistsInDatabase());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function rowExistsInDatabaseReturnsTrueAfterPopulateWithTrue(): void
     {
         $this->rowGateway->populate(['id' => 5, 'name' => 'foo'], true);
         static::assertTrue($this->rowGateway->rowExistsInDatabase());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function saveInsert(): void
     {
         $this->mockResult->expects($this->any())->method('current')->willReturn(['id' => 5, 'name' => 'foo']);
@@ -331,7 +332,7 @@ final class AbstractRowGatewayTest extends TestCase
      * @throws ReflectionException
      * @throws Exception
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[RequiresPhp('<= 8.6')]
     public function saveInsertMultiKey(): void
     {
@@ -365,7 +366,7 @@ final class AbstractRowGatewayTest extends TestCase
         static::assertEquals(['one' => 'foo', 'two' => 'bar'], $refRowGatewayProp->getValue($this->rowGateway));
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function saveUpdate(): void
     {
         $this->mockResult->expects($this->any())->method('current')->willReturn(['id' => 6, 'name' => 'foo']);
@@ -374,7 +375,7 @@ final class AbstractRowGatewayTest extends TestCase
         static::assertSame(6, $this->rowGateway['id']);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function saveUpdateChangingPrimaryKey(): void
     {
         $selectMock = $this->getMockBuilder(Select::class)
@@ -406,7 +407,7 @@ final class AbstractRowGatewayTest extends TestCase
         static::assertEquals(['id' => 7, 'name' => 'fooUpdated'], $this->rowGateway->toArray());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function toArray(): void
     {
         $this->rowGateway->populate(['id' => 5, 'name' => 'foo'], true);

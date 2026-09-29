@@ -8,6 +8,7 @@ use ArrayIterator;
 use Exception;
 use PhpDb\ResultSet\HydratingResultSet;
 use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 #[CoversMethod(HydratingResultSet::class, 'current')]
@@ -16,7 +17,7 @@ class HydratingResultSetIntegrationTest extends TestCase
     /**
      * @throws Exception
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function currentWillReturnBufferedRow(): void
     {
         $hydratingRs = new HydratingResultSet();

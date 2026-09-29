@@ -10,6 +10,7 @@ use PhpDb\Sql\ArgumentInterface;
 use PhpDb\Sql\ArgumentType;
 use PhpDb\Sql\Predicate\NotBetween;
 use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 #[CoversMethod(NotBetween::class, 'getSpecification')]
@@ -18,7 +19,7 @@ final class NotBetweenTest extends TestCase
 {
     protected NotBetween $notBetween;
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function retrievingWherePartsReturnsSpecificationArrayOfIdentifierAndValuesAndArrayOfTypes(): void
     {
         $this->notBetween
@@ -80,7 +81,7 @@ final class NotBetweenTest extends TestCase
         static::assertEquals(ArgumentType::Identifier, $values[2]->getType());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function specificationIsNullByDefault(): void
     {
         static::assertNull($this->notBetween->getSpecification());

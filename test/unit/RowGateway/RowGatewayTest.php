@@ -16,6 +16,7 @@ use PhpDb\RowGateway\Exception\RuntimeException;
 use PhpDb\RowGateway\RowGateway;
 use PhpDb\Sql\Sql;
 use PhpDb\Sql\TableIdentifier;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
@@ -30,7 +31,7 @@ final class RowGatewayTest extends TestCase
     /** @var ResultInterface&MockObject */
     protected ResultInterface|MockObject $mockResult;
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function constructorThrowsExceptionWhenSqlTableDoesNotMatch(): void
     {
         $sql = new Sql($this->mockAdapter, 'bar');
@@ -41,7 +42,7 @@ final class RowGatewayTest extends TestCase
         new RowGateway('id', 'foo', $sql);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function constructorWithArrayPrimaryKey(): void
     {
         $rowGateway = new RowGateway(['id', 'name'], 'foo', $this->mockAdapter);
@@ -53,7 +54,7 @@ final class RowGatewayTest extends TestCase
         static::assertEquals(['id', 'name'], $pkProp->getValue($rowGateway));
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function constructorWithNullPrimaryKey(): void
     {
         self::expectException(RuntimeException::class);
@@ -62,7 +63,7 @@ final class RowGatewayTest extends TestCase
         new RowGateway(null, 'foo', $this->mockAdapter);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function constructorWithSqlObject(): void
     {
         $sql        = new Sql($this->mockAdapter, 'foo');
@@ -75,7 +76,7 @@ final class RowGatewayTest extends TestCase
         static::assertSame('foo', $tableProp->getValue($rowGateway));
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function constructorWithStringPrimaryKey(): void
     {
         $rowGateway = new RowGateway('id', 'foo', $this->mockAdapter);
@@ -87,7 +88,7 @@ final class RowGatewayTest extends TestCase
         static::assertInstanceOf(Sql::class, $sqlProp->getValue($rowGateway));
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function constructorWithTableIdentifier(): void
     {
         $tableIdentifier = new TableIdentifier('foo', 'schema');
@@ -97,7 +98,7 @@ final class RowGatewayTest extends TestCase
         static::assertSame($tableIdentifier, $tableProp->getValue($rowGateway));
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function emptyPrimaryKey(): void
     {
         self::expectException(RuntimeException::class);
@@ -105,7 +106,7 @@ final class RowGatewayTest extends TestCase
         $this->rowGateway = new RowGateway('', 'foo', $this->mockAdapter);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function initializeReturnsEarlyWhenAlreadyInitialized(): void
     {
         $rowGateway = new RowGateway('id', 'foo', $this->mockAdapter);
@@ -118,7 +119,7 @@ final class RowGatewayTest extends TestCase
         static::assertTrue($isInitializedProp->getValue($rowGateway));
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function initializeThrowsWhenSqlIsNull(): void
     {
         $rowGateway = new RowGateway('id', 'foo', $this->mockAdapter);
@@ -135,7 +136,7 @@ final class RowGatewayTest extends TestCase
         $rowGateway->initialize();
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function initializeThrowsWhenTableIsNull(): void
     {
         $rowGateway = new RowGateway('id', 'foo', $this->mockAdapter);

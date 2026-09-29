@@ -21,7 +21,7 @@ final class CharTest extends TestCase
 {
     use ColumnAssertionsTrait;
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getExpressionData(): void
     {
         $column = new Char('foo', 20);

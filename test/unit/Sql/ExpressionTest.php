@@ -14,6 +14,7 @@ use PhpDb\Sql\Expression;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use TypeError;
 
@@ -43,7 +44,7 @@ final class ExpressionTest extends TestCase
         ];
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[DataProvider('falsyExpressionParametersProvider')]
     public function constructorWithFalsyValidParameters(mixed $falsyParameter): void
     {
@@ -55,21 +56,21 @@ final class ExpressionTest extends TestCase
         static::assertEquals([$falsyValue], $expressionData['values']);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function constructorWithInvalidParameter(): void
     {
         self::expectException(TypeError::class);
         new Expression('?', (object) []);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function constructorWithLiteralZero(): void
     {
         $expression = new Expression('0');
         static::assertSame('0', $expression->getExpression());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function constructorWithMultipleArguments(): void
     {
         $expression = new Expression('? + ? - ?', 1, 2, 3);
@@ -87,7 +88,7 @@ final class ExpressionTest extends TestCase
         );
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getExpressionData(): void
     {
         $expression = new Expression(
@@ -112,7 +113,7 @@ final class ExpressionTest extends TestCase
         );
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getExpressionDataThrowsExceptionWhenParameterCountMismatch(): void
     {
         $expression = new Expression('? AND ?', [1]); // Two placeholders but only one parameter
@@ -124,7 +125,7 @@ final class ExpressionTest extends TestCase
         $expression->getExpressionData();
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getExpressionDataUsesRegexWhenPlaceholderCountMismatches(): void
     {
         $expression = new Expression('uf.user_id = :user_id OR uf.friend_id = :user_id', ['user_id' => 1]);
@@ -138,7 +139,7 @@ final class ExpressionTest extends TestCase
         static::assertCount(1, $expressionData['values']);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getExpressionDataWillEscapePercent(): void
     {
         $expression = new Expression('X LIKE "foo%"');
@@ -148,7 +149,7 @@ final class ExpressionTest extends TestCase
         static::assertSame('X LIKE "foo%%"', $expressionData['spec']);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[Group('7407')]
     public function getExpressionPreservesPercentageSignInFromUnixtime(): void
     {
@@ -158,7 +159,7 @@ final class ExpressionTest extends TestCase
         static::assertSame($expressionString, $expression->getExpression());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function numberOfReplacementsConsidersWhenSameVariableIsUsedManyTimes(): void
     {
         $expression = new Expression('uf.user_id = :user_id OR uf.friend_id = :user_id', ['user_id' => 1]);
@@ -173,7 +174,7 @@ final class ExpressionTest extends TestCase
         static::assertEquals([$value], $expressionData['values']);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function numberOfReplacementsForExpressionWithParameters(): void
     {
         $expression = new Expression(':a + :b', ['a' => 1, 'b' => 2]);
@@ -186,7 +187,7 @@ final class ExpressionTest extends TestCase
         static::assertEquals([$value1, $value2], $expressionData['values']);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function setExpression(): void
     {
         $expression = new Expression();
@@ -207,7 +208,7 @@ final class ExpressionTest extends TestCase
         static::assertSame('Baz Qux', $expression->getExpression());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function setExpressionException(): void
     {
         $expression = new Expression();
@@ -221,7 +222,7 @@ final class ExpressionTest extends TestCase
         $expression->setExpression('');
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function setExpressionThrowsOnEmptyString(): void
     {
         $expression = new Expression();
@@ -230,7 +231,7 @@ final class ExpressionTest extends TestCase
         $expression->setExpression('');
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function setParameters(): void
     {
         $expression = new Expression();
@@ -251,7 +252,7 @@ final class ExpressionTest extends TestCase
         static::assertEquals([new Value('foo'), new Value('bar')], $expression->getParameters());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function setParametersWrapsArrayInValuesArgument(): void
     {
         $expression = new Expression('? IN (?)', [Argument::identifier('id'), [1, 2, 3]]);

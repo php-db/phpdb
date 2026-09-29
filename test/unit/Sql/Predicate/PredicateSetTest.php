@@ -19,6 +19,7 @@ use PhpDbTest\DeprecatedAssertionsTrait;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\IgnoreDeprecations;
 use PHPUnit\Framework\Attributes\RequiresPhp;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use ReflectionException;
 use TypeError;
@@ -40,7 +41,7 @@ final class PredicateSetTest extends TestCase
     /**
      * @throws ReflectionException
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function addPredicates(): void
     {
         $predicateSet = new PredicateSet();
@@ -93,7 +94,7 @@ final class PredicateSetTest extends TestCase
         $predicateSet->addPredicates(null);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function addPredicatesThrowsWhenStringKeyUsedWithPredicateInterface(): void
     {
         $predicateSet = new PredicateSet();
@@ -109,7 +110,7 @@ final class PredicateSetTest extends TestCase
      *
      * @throws ReflectionException
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function addPredicatesWithExpression(): void
     {
         $predicateSet = new PredicateSet();
@@ -137,7 +138,7 @@ final class PredicateSetTest extends TestCase
      *
      * @throws ReflectionException
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function addPredicatesWithMultipleExpressions(): void
     {
         $predicateSet = new PredicateSet();
@@ -154,7 +155,7 @@ final class PredicateSetTest extends TestCase
         static::assertInstanceOf(Expression::class, $predicates[1][1]);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function addPredicateThrowsOnInvalidCombination(): void
     {
         $predicateSet = new PredicateSet();
@@ -164,7 +165,7 @@ final class PredicateSetTest extends TestCase
         $predicateSet->addPredicate(new IsNull('foo'), 'XOR');
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function canPassBothPredicateAndCombinationToAddPredicate(): void
     {
         $predicateSet = new PredicateSet();
@@ -183,7 +184,7 @@ final class PredicateSetTest extends TestCase
         static::assertSame('%s IS NULL AND %s IS NULL OR %s IS NULL AND %s IS NULL', $spec);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function canPassPredicatesAndDefaultCombinationViaConstructor(): void
     {
         new PredicateSet();
@@ -200,7 +201,7 @@ final class PredicateSetTest extends TestCase
         static::assertStringNotContainsString('AND', $expressionData['spec']);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function canUseOrPredicateAndAndPredicateMethods(): void
     {
         $predicateSet = new PredicateSet();
@@ -219,7 +220,7 @@ final class PredicateSetTest extends TestCase
         static::assertSame('%s IS NULL AND %s IS NULL OR %s IS NULL AND %s IS NULL', $spec);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function combinationIsAndByDefault(): void
     {
         $predicateSet = new PredicateSet();
@@ -234,14 +235,14 @@ final class PredicateSetTest extends TestCase
         static::assertStringNotContainsString('OR', $expressionData['spec']);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function emptyConstructorYieldsCountOfZero(): void
     {
         $predicateSet = new PredicateSet();
         static::assertCount(0, $predicateSet);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getExpressionDataReturnsEmptyWhenNoPredicates(): void
     {
         $predicateSet = new PredicateSet();

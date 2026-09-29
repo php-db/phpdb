@@ -24,7 +24,7 @@ final class DoubleTest extends TestCase
 {
     use ColumnAssertionsTrait;
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getExpressionData(): void
     {
         $column = new Double('foo', 10, 5);

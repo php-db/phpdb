@@ -11,6 +11,7 @@ use PhpDb\Adapter\Platform\PlatformInterface;
 use PhpDbTest\Adapter\TestAsset\ConcreteAdapterAwareObject;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
 
@@ -18,7 +19,7 @@ use ReflectionProperty;
 #[Group('unit')]
 class AdapterAwareTraitTest extends TestCase
 {
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function setDbAdapter(): void
     {
         $object = new ConcreteAdapterAwareObject();
@@ -35,7 +36,7 @@ class AdapterAwareTraitTest extends TestCase
         static::assertSame($adapter, $object->getAdapter());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function setDbAdapterSetsProperty(): void
     {
         $object = new ConcreteAdapterAwareObject();

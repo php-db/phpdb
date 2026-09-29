@@ -29,7 +29,7 @@ use PHPUnit\Framework\TestCase;
 #[Group('unit')]
 final class ColumnTest extends TestCase
 {
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function addConstraintAppendsConstraintToColumn(): void
     {
         $column = new Column('id');
@@ -39,7 +39,7 @@ final class ColumnTest extends TestCase
         static::assertSame($column, $result);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function constructor(): void
     {
         $column = new Column('test_col', true, 'default_val', ['option1' => 'value1']);
@@ -49,7 +49,7 @@ final class ColumnTest extends TestCase
         static::assertEquals(['option1' => 'value1'], $column->getOptions());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getExpressionData(): void
     {
         $column = new Column();
@@ -94,7 +94,7 @@ final class ColumnTest extends TestCase
         );
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getExpressionDataIncludesConstraints(): void
     {
         $column = new Column('id');
@@ -105,7 +105,7 @@ final class ColumnTest extends TestCase
         static::assertStringContainsString('PRIMARY KEY', $expressionData['spec']);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getExpressionDataIncludesConstraintValues(): void
     {
         $column = new Column('id');
@@ -116,7 +116,7 @@ final class ColumnTest extends TestCase
         static::assertNotEmpty($expressionData['values']);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getExpressionDataWithBoolDefault(): void
     {
         $column = new Column();
@@ -136,7 +136,7 @@ final class ColumnTest extends TestCase
         );
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getExpressionDataWithFloatDefault(): void
     {
         $column = new Column();
@@ -156,7 +156,7 @@ final class ColumnTest extends TestCase
         );
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getExpressionDataWithLiteralDefault(): void
     {
         $column = new Column();
@@ -176,7 +176,7 @@ final class ColumnTest extends TestCase
         );
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getExpressionDataWithValueDefault(): void
     {
         $column = new Column();
@@ -196,7 +196,7 @@ final class ColumnTest extends TestCase
         );
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function setDefault(): void
     {
         $column = new Column();
@@ -217,7 +217,7 @@ final class ColumnTest extends TestCase
         static::assertSame('baz qux', $column->getDefault());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function setDefaultWithBool(): void
     {
         $column = new Column();
@@ -229,7 +229,7 @@ final class ColumnTest extends TestCase
         static::assertTrue($column->getDefault());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function setDefaultWithFloat(): void
     {
         $column = new Column();
@@ -241,7 +241,7 @@ final class ColumnTest extends TestCase
         static::assertSame(3.14, $column->getDefault());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function setDefaultWithLiteral(): void
     {
         $column = new Column();
@@ -254,7 +254,7 @@ final class ColumnTest extends TestCase
         static::assertSame($literal, $column->getDefault());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function setDefaultWithValue(): void
     {
         $column = new Column();
@@ -267,7 +267,7 @@ final class ColumnTest extends TestCase
         static::assertSame($value, $column->getDefault());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function setName(): void
     {
         $column = new Column();
@@ -288,7 +288,7 @@ final class ColumnTest extends TestCase
         static::assertSame('bar', $column->getName());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function setNullable(): void
     {
         $column = new Column();
@@ -309,7 +309,7 @@ final class ColumnTest extends TestCase
         static::assertFalse($column->isNullable());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function setOption(): void
     {
         $column = new Column();
@@ -341,7 +341,7 @@ final class ColumnTest extends TestCase
         static::assertSame(['length' => 11], $column->getOptions());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function setOptions(): void
     {
         $column = new Column();

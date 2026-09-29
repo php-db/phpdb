@@ -6,6 +6,7 @@ namespace PhpDbIntegrationTest\Adapter\Driver\Pdo;
 
 use PhpDb\Adapter\AdapterInterface;
 use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 use function getmypid;
@@ -19,13 +20,13 @@ abstract class AbstractAdapterTestCase extends TestCase
 
     public ?int $port = null;
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function connection(): void
     {
         static::assertInstanceOf(AdapterInterface::class, $this->adapter);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function driverDisconnectAfterQuoteWithPlatform(): void
     {
         $isTcpConnection = $this->isTcpConnection();

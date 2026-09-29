@@ -7,12 +7,13 @@ namespace PhpDbTest\Sql\Ddl\Column;
 use PhpDb\Sql\Argument;
 use PhpDb\Sql\Ddl\Column\Date;
 use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 #[CoversMethod(Date::class, 'getExpressionData')]
 final class DateTest extends TestCase
 {
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getExpressionData(): void
     {
         $column = new Date('foo');

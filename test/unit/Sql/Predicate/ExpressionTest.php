@@ -12,11 +12,12 @@ use PhpDb\Sql\ArgumentType;
 use PhpDb\Sql\Predicate\Expression;
 use PhpDb\Sql\Predicate\IsNull;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 final class ExpressionTest extends TestCase
 {
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[Group('6849')]
     public function canPassArrayOfMultiNullsParameterToConstructor(): void
     {
@@ -25,7 +26,7 @@ final class ExpressionTest extends TestCase
         static::assertEquals([$null, $null], $expression->getParameters());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[Group('6849')]
     public function canPassArrayOfMultiPredicatesParameterToConstructor(): void
     {
@@ -35,7 +36,7 @@ final class ExpressionTest extends TestCase
         static::assertEquals([$isNull, $isNull], $expression->getParameters());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[Group('6849')]
     public function canPassArrayOfMultiScalarsParameterToConstructor(): void
     {
@@ -45,7 +46,7 @@ final class ExpressionTest extends TestCase
         static::assertEquals([$foo, $bar], $expression->getParameters());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[Group('6849')]
     public function canPassArrayOfOneNullParameterToConstructor(): void
     {
@@ -54,7 +55,7 @@ final class ExpressionTest extends TestCase
         static::assertEquals([$null], $expression->getParameters());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[Group('6849')]
     public function canPassArrayOfOnePredicateParameterToConstructor(): void
     {
@@ -64,7 +65,7 @@ final class ExpressionTest extends TestCase
         static::assertEquals([$isNull], $expression->getParameters());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[Group('6849')]
     public function canPassArrayOfOneScalarParameterToConstructor(): void
     {
@@ -73,7 +74,7 @@ final class ExpressionTest extends TestCase
         static::assertEquals([$foo], $expression->getParameters());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[Group('6849')]
     public function canPassLiteralAndSingleScalarParameterToConstructor(): void
     {
@@ -83,7 +84,7 @@ final class ExpressionTest extends TestCase
         static::assertEquals([$bar], $expression->getParameters());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[Group('6849')]
     public function canPassMultiNullParametersToConstructor(): void
     {
@@ -94,7 +95,7 @@ final class ExpressionTest extends TestCase
         static::assertEquals([$null, $null], $expression->getParameters());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[Group('6849')]
     public function canPassMultiScalarParametersToConstructor(): void
     {
@@ -106,7 +107,7 @@ final class ExpressionTest extends TestCase
         static::assertEquals([$foo, $bar], $expression->getParameters());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[Group('6849')]
     public function canPassNoParameterToConstructor(): void
     {
@@ -114,7 +115,7 @@ final class ExpressionTest extends TestCase
         static::assertEquals([], $expression->getParameters());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[Group('6849')]
     public function canPassSingleNullParameterToConstructor(): void
     {
@@ -123,7 +124,7 @@ final class ExpressionTest extends TestCase
         static::assertEquals([$null], $expression->getParameters());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[Group('6849')]
     public function canPassSinglePredicateParameterToConstructor(): void
     {
@@ -133,7 +134,7 @@ final class ExpressionTest extends TestCase
         static::assertEquals([$isNull], $expression->getParameters());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[Group('6849')]
     public function canPassSingleZeroParameterValueToConstructor(): void
     {
@@ -142,7 +143,7 @@ final class ExpressionTest extends TestCase
         static::assertEquals([$expression], $predicate->getParameters());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function emptyConstructorYieldsEmptyLiteralAndParameter(): void
     {
         $expression = new Expression();
@@ -150,7 +151,7 @@ final class ExpressionTest extends TestCase
         static::assertEmpty($expression->getParameters());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function literalIsMutable(): void
     {
         $expression = new Expression();
@@ -158,7 +159,7 @@ final class ExpressionTest extends TestCase
         static::assertSame('foo.bar = ?', $expression->getExpression());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function parameterIsMutable(): void
     {
         $expression = new Expression();
@@ -200,7 +201,7 @@ final class ExpressionTest extends TestCase
         static::assertEquals(ArgumentType::Value, $parameters2[4]->getType());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function retrievingWherePartsReturnsSpecificationArrayOfLiteralAndParametersAndArrayOfTypes(): void
     {
         $expression = new Expression();

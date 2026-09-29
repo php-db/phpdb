@@ -16,6 +16,7 @@ use PhpDb\Sql\Predicate\Expression;
 use PhpDb\Sql\Select;
 use PhpDbTest\AdapterTestTrait;
 use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use TypeError;
@@ -34,7 +35,7 @@ final class CombineTest extends TestCase
 
     protected Combine $combine;
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function alignColumns(): void
     {
         $select1 = new Select('t1');
@@ -73,7 +74,7 @@ final class CombineTest extends TestCase
         );
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function alignColumnsAppendsNullExpressionsForMissingColumns(): void
     {
         $select1 = new Select('t1');
@@ -89,7 +90,7 @@ final class CombineTest extends TestCase
         static::assertInstanceOf(Expression::class, $columns1['b']);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function alignColumnsReturnsEarlyWhenEmpty(): void
     {
         $combine = new Combine();
@@ -98,7 +99,7 @@ final class CombineTest extends TestCase
         static::assertSame($combine, $result);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function combineWithArrayOfSelectAndModifier(): void
     {
         $this->combine->combine([
@@ -112,7 +113,7 @@ final class CombineTest extends TestCase
         );
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function constructorWithSelectDelegatesToCombine(): void
     {
         $select  = new Select('foo');
@@ -124,7 +125,7 @@ final class CombineTest extends TestCase
         static::assertSame('ALL', $rawState['combine'][0]['modifier']);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getRawState(): void
     {
         $select = new Select('t1');
@@ -146,7 +147,7 @@ final class CombineTest extends TestCase
         );
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getSqlString(): void
     {
         $this->combine
@@ -163,13 +164,13 @@ final class CombineTest extends TestCase
         );
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getSqlStringEmpty(): void
     {
         static::assertEmpty($this->combine->getSqlString());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getSqlStringFromArray(): void
     {
         $this->combine->combine([
@@ -196,7 +197,7 @@ final class CombineTest extends TestCase
         );
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getSqlStringWithModifier(): void
     {
         $this->combine
@@ -209,7 +210,7 @@ final class CombineTest extends TestCase
         );
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function prepareStatementWithModifier(): void
     {
         $select1 = new Select('t1');
@@ -233,7 +234,7 @@ final class CombineTest extends TestCase
         );
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function rejectsInvalidStatement(): void
     {
         self::expectException(TypeError::class);

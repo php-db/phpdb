@@ -32,6 +32,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\IgnoreDeprecations;
 use PHPUnit\Framework\Attributes\RequiresPhp;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestDox;
 use PHPUnit\Framework\TestCase;
 use ReflectionException;
@@ -833,7 +834,7 @@ final class SelectTest extends TestCase
         // phpcs:enable Generic.Files.LineLength.TooLong
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[TestDox('unit test: Test join() exception with bad join')]
     public function badJoin(): void
     {
@@ -843,7 +844,7 @@ final class SelectTest extends TestCase
         $select->join(['foo'], 'x = y');
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function cloneDeepCopiesAllSubObjects(): void
     {
         $select = new Select();
@@ -865,7 +866,7 @@ final class SelectTest extends TestCase
         static::assertCount(2, $clone->joins);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[TestDox('unit test: Test __clone() will clone the where object so that this select can be used
                     in multiple contexts')]
     public function cloning(): void
@@ -882,7 +883,7 @@ final class SelectTest extends TestCase
         static::assertSame(1, $select1->having->count());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[TestDox('unit test: Test columns() returns Select object (is chainable)')]
     public function columns(): void
     {
@@ -904,7 +905,7 @@ final class SelectTest extends TestCase
         static::assertEquals(['baz', 'qux'], $select->getRawState('columns'));
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function columnsWithPrefixDisabled(): void
     {
         $select = new Select();
@@ -916,7 +917,7 @@ final class SelectTest extends TestCase
         static::assertStringContainsString('"col"', $sql);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function columnsWithPrefixDisabledOmitsTablePrefix(): void
     {
         $select = new Select();
@@ -928,7 +929,7 @@ final class SelectTest extends TestCase
         static::assertStringNotContainsString('"a"."id"', $sql);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[TestDox('unit test: Test combine() returns same Select object (is chainable)')]
     public function combine(): void
     {
@@ -959,7 +960,7 @@ final class SelectTest extends TestCase
         static::assertSame('DISTINCT', $state2['modifier']);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function combineThrowsWhenAlreadyCombined(): void
     {
         $select = new Select();
@@ -970,7 +971,7 @@ final class SelectTest extends TestCase
         $select->combine(new Select('t3'));
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function combineWrapsStatementInParentheses(): void
     {
         $select1 = new Select();
@@ -988,14 +989,14 @@ final class SelectTest extends TestCase
         static::assertStringContainsString(') UNION (', $sql);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function construct(): void
     {
         $select = new Select('foo');
         static::assertSame('foo', $select->getRawState('table'));
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[TestDox('unit test: Test from() returns Select object (is chainable)')]
     public function from(): void
     {
@@ -1017,7 +1018,7 @@ final class SelectTest extends TestCase
         static::assertSame('bar', $select->getRawState('table'));
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function fromThrowsExceptionForInvalidArrayFormat(): void
     {
         $select = new Select();
@@ -1027,7 +1028,7 @@ final class SelectTest extends TestCase
         $select->from(['foo', 'bar']); // Numeric array instead of associative
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function fromThrowsExceptionForInvalidTableType(): void
     {
         $select = new Select();
@@ -1037,7 +1038,7 @@ final class SelectTest extends TestCase
         $select->from(123);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function fromThrowsExceptionWhenTableReadOnly(): void
     {
         $select = new Select('foo'); // Creating with table makes it read-only
@@ -1049,7 +1050,7 @@ final class SelectTest extends TestCase
         $select->from('bar');
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function fromWithAliasArrayResolvesTableAndAlias(): void
     {
         $select = new Select();
@@ -1061,7 +1062,7 @@ final class SelectTest extends TestCase
         static::assertStringContainsString('"a"."id"', $sql);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getRawStateInitializesLazyProperties(): void
     {
         $select   = new Select();
@@ -1073,7 +1074,7 @@ final class SelectTest extends TestCase
     }
 
     /** @noinspection PhpUnusedParameterInspection */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[DataProvider('providerData')]
     #[TestDox('unit test: Test getSqlString() will produce expected sql and parameters based on
                     a variety of provided arguments [uses data provider]')]
@@ -1082,7 +1083,7 @@ final class SelectTest extends TestCase
         static::assertEquals($expectedSqlString, $select->getSqlString(new TrustingSql92Platform()));
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getThrowsExceptionForInvalidProperty(): void
     {
         $select = new Select();
@@ -1093,7 +1094,7 @@ final class SelectTest extends TestCase
         $value = $select->invalidProperty; /** @phpstan-ignore-line */
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[TestDox('unit test: Test group() returns same Select object (is chainable)')]
     public function group(): void
     {
@@ -1115,7 +1116,7 @@ final class SelectTest extends TestCase
         static::assertEquals(['col1', 'col2', 'col3'], $select->getRawState('group'));
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[TestDox('unit test: Test having() returns same Select object (is chainable)')]
     public function having(): void
     {
@@ -1139,7 +1140,7 @@ final class SelectTest extends TestCase
         static::assertSame(2, $select->getRawState('having')->count());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[TestDox('unit test: Test having() accepts Expression (ExpressionInterface) in array')]
     public function havingAcceptsExpressionInterface(): void
     {
@@ -1155,7 +1156,7 @@ final class SelectTest extends TestCase
         static::assertSame(1, $having->count());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[TestDox('unit test: Test having() returns same Select object (is chainable)')]
     public function havingArgument1IsHavingObject(): void
     {
@@ -1166,7 +1167,7 @@ final class SelectTest extends TestCase
         static::assertSame($having, $select->getRawState('having'));
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[TestDox('unit test: Test isTableReadOnly() returns correct state for read only')]
     public function isTableReadOnly(): void
     {
@@ -1177,7 +1178,7 @@ final class SelectTest extends TestCase
         static::assertFalse($select->isTableReadOnly());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[TestDox('unit test: Test join() returns same Select object (is chainable)')]
     public function join(): void
     {
@@ -1213,7 +1214,7 @@ final class SelectTest extends TestCase
         static::assertSame('bar', $joins2->getJoins()[1]['name']);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[TestDox(': unit test: test limit()')]
     public function limit(): void
     {
@@ -1237,7 +1238,7 @@ final class SelectTest extends TestCase
         static::assertSame(10, $select->getRawState(Select::LIMIT));
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[TestDox(': unit test: test limit() throws exception when invalid parameter passed')]
     public function limitExceptionOnInvalidParameter(): void
     {
@@ -1247,7 +1248,7 @@ final class SelectTest extends TestCase
         $select->limit('foobar');
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[TestDox('unit test: Test __get() returns expected objects magically')]
     public function magicAccessor(): void
     {
@@ -1255,7 +1256,7 @@ final class SelectTest extends TestCase
         static::assertInstanceOf(Where::class, $select->where);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function magicGetJoinsReturnsJoinInstance(): void
     {
         $select = new Select();
@@ -1263,7 +1264,7 @@ final class SelectTest extends TestCase
         static::assertInstanceOf(Join::class, $select->joins);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[TestDox(': unit test: test offset()')]
     public function offset(): void
     {
@@ -1287,7 +1288,7 @@ final class SelectTest extends TestCase
         static::assertSame(20, $select->getRawState(Select::OFFSET));
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[TestDox(': unit test: test offset() throws exception when invalid parameter passed')]
     public function offsetExceptionOnInvalidParameter(): void
     {
@@ -1300,7 +1301,7 @@ final class SelectTest extends TestCase
     /**
      * @throws ReflectionException
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[TestDox('unit test: Test order()')]
     public function order(): void
     {
@@ -1344,7 +1345,7 @@ final class SelectTest extends TestCase
         );
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[TestDox('unit test: Test order() correctly splits parameters.')]
     public function orderCorrectlySplitsParameter(): void
     {
@@ -1356,7 +1357,7 @@ final class SelectTest extends TestCase
         );
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function orderWithAssociativeArray(): void
     {
         $select = new Select();
@@ -1367,7 +1368,7 @@ final class SelectTest extends TestCase
         static::assertStringContainsString('ORDER BY "name" DESC', $sql);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function orderWithExpressionObject(): void
     {
         $select = new Select();
@@ -1378,7 +1379,7 @@ final class SelectTest extends TestCase
         static::assertStringContainsString('ORDER BY RAND()', $sql);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function orderWithStringContainingDirection(): void
     {
         $select = new Select();
@@ -1390,7 +1391,7 @@ final class SelectTest extends TestCase
     }
 
     /** @noinspection PhpUnusedParameterInspection */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[DataProvider('providerData')]
     #[TestDox('unit test: Test prepareStatement() will produce expected sql and parameters based on
                     a variety of provided arguments [uses data provider]')]
@@ -1426,7 +1427,7 @@ final class SelectTest extends TestCase
      * @throws ReflectionException
      * @noinspection PhpUnusedParameterInspection
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[DataProvider('providerData')]
     #[TestDox('unit test: Text process*() methods will return proper array when internally called,
                     part of extension API')]
@@ -1460,7 +1461,7 @@ final class SelectTest extends TestCase
         }
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[TestDox('unit test: Test quantifier() returns Select object (is chainable)')]
     public function quantifier(): void
     {
@@ -1482,7 +1483,7 @@ final class SelectTest extends TestCase
         static::assertEquals(Select::QUANTIFIER_ALL, $select->getRawState('quantifier'));
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[TestDox('unit test: Test quantifier() accepts expression')]
     public function quantifierParameterExpressionInterface(): void
     {
@@ -1496,7 +1497,7 @@ final class SelectTest extends TestCase
         );
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[TestDox('unit test: Test reset() resets internal stat of Select object, based on input')]
     public function reset(): void
     {
@@ -1574,7 +1575,7 @@ final class SelectTest extends TestCase
         static::assertEmpty($select->getRawState(Select::ORDER));
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function resetCombine(): void
     {
         $select = new Select();
@@ -1585,7 +1586,7 @@ final class SelectTest extends TestCase
         static::assertEmpty($select->getRawState(Select::COMBINE));
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function resetQuantifier(): void
     {
         $select = new Select();
@@ -1595,7 +1596,7 @@ final class SelectTest extends TestCase
         static::assertNull($select->getRawState(Select::QUANTIFIER));
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function resetTableThrowsWhenTableReadOnly(): void
     {
         $select = new Select('foo');
@@ -1605,7 +1606,7 @@ final class SelectTest extends TestCase
         $select->reset(Select::TABLE);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function resetThrowsOnInvalidPart(): void
     {
         $select = new Select();
@@ -1614,7 +1615,7 @@ final class SelectTest extends TestCase
         static::assertSame($select, $result);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[Group('Laminas-5192')]
     public function selectUsingTableIdentifierWithEmptyScheme(): void
     {
@@ -1628,7 +1629,7 @@ final class SelectTest extends TestCase
         );
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function setSpecificationStoresValidSpecification(): void
     {
         $select = new Select();
@@ -1638,7 +1639,7 @@ final class SelectTest extends TestCase
         static::assertSame('CUSTOM %1$s FROM %2$s', $rawState->getValue($select)['Select']);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function setSpecificationThrowsExceptionForInvalidName(): void
     {
         $select = new Select();
@@ -1648,7 +1649,7 @@ final class SelectTest extends TestCase
         $select->setSpecification('invalid_spec', 'some spec');
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[TestDox('unit test: Test where() accepts Expression (ExpressionInterface) in array')]
     public function whereAcceptsExpressionInterface(): void
     {
@@ -1663,7 +1664,7 @@ final class SelectTest extends TestCase
         static::assertSame(1, $where->count());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[TestDox('unit test: Test where() will accept an array with a string key (containing ?) used as an
                     expression with placeholder')]
     public function whereArgument1IsAssociativeArrayContainingReplacementCharacter(): void
@@ -1684,7 +1685,7 @@ final class SelectTest extends TestCase
         static::assertEquals([$expression], $predicates[0][1]->getParameters());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[TestDox('
         unit test: Test where() will accept any array with string key (without ?) with Predicate throw Exception
     ')]
@@ -1700,7 +1701,7 @@ final class SelectTest extends TestCase
         $select->where($where);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[TestDox('unit test: Test where() will accept any array with string key (without ?) to be used
                     as Operator predicate')]
     public function whereArgument1IsAssociativeArrayNotContainingReplacementCharacter(): void
@@ -1740,7 +1741,7 @@ final class SelectTest extends TestCase
         static::assertInstanceOf(Literal::class, $predicates[0][1]);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[TestDox('unit test: Test where() will accept a closure to be executed with Where object as argument')]
     public function whereArgument1IsClosure(): void
     {
@@ -1753,7 +1754,7 @@ final class SelectTest extends TestCase
         });
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[TestDox('unit test: Test where() will accept an indexed array to be used by joining string expressions')]
     public function whereArgument1IsIndexedArray(): void
     {
@@ -1770,7 +1771,7 @@ final class SelectTest extends TestCase
         static::assertSame('name = "Ralph"', $predicates[0][1]->getLiteral());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[TestDox('unit test: Test where() will accept an indexed array to be used by joining string expressions,
                     combined by OR')]
     public function whereArgument1IsIndexedArrayArgument2IsOr(): void
@@ -1788,7 +1789,7 @@ final class SelectTest extends TestCase
         static::assertSame('name = "Ralph"', $predicates[0][1]->getLiteral());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[TestDox('unit test: Test where() will accept any Predicate object as-is')]
     public function whereArgument1IsPredicate(): void
     {
@@ -1806,7 +1807,7 @@ final class SelectTest extends TestCase
         static::assertSame($predicate, $predicates[0][1]);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[TestDox('unit test: Test where() will accept a string for the predicate to create an expression predicate')]
     public function whereArgument1IsString(): void
     {
@@ -1832,7 +1833,7 @@ final class SelectTest extends TestCase
         static::assertInstanceOf(Literal::class, $predicates[0][1]);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[TestDox('unit test: Test where() will accept a Where object')]
     public function whereArgument1IsWhereObject(): void
     {
@@ -1841,7 +1842,7 @@ final class SelectTest extends TestCase
         static::assertSame($newWhere, $select->getRawState('where'));
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[TestDox('unit test: Test where() returns Select object (is chainable)')]
     public function whereReturnsSameSelectObject(): void
     {

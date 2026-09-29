@@ -10,13 +10,14 @@ use PhpDb\Adapter\Driver\Feature\DriverFeatureInterface;
 use PhpDbTest\Adapter\Driver\Feature\TestAsset\TestDriverFeature;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 #[Group('unit')]
 #[CoversMethod(AbstractFeature::class, 'setDriver')]
 final class AbstractFeatureTest extends TestCase
 {
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function setDriverStoresDriverAndReturnsInstance(): void
     {
         $feature = new TestDriverFeature();

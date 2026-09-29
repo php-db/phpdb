@@ -7,6 +7,7 @@ namespace PhpDbTest\Sql\Ddl;
 use PhpDb\Sql\Ddl\DropTable;
 use PhpDb\Sql\TableIdentifier;
 use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 #[CoversMethod(DropTable::class, '__construct')]
@@ -16,7 +17,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(DropTable::class, 'processTable')]
 class DropTableTest extends TestCase
 {
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getSqlString(): void
     {
         $dt = new DropTable('foo');
@@ -29,7 +30,7 @@ class DropTableTest extends TestCase
         static::assertSame('DROP TABLE "foo"."bar"', $dt->getSqlString());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function ifExists(): void
     {
         $dt = new DropTable('foo');
@@ -42,7 +43,7 @@ class DropTableTest extends TestCase
         static::assertSame('DROP TABLE IF EXISTS "foo"', $dt->getSqlString());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function ifExistsDisable(): void
     {
         $dt = new DropTable('foo');
@@ -55,7 +56,7 @@ class DropTableTest extends TestCase
         static::assertSame('DROP TABLE "foo"', $dt->getSqlString());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function ifExistsWithTableIdentifier(): void
     {
         $dt = new DropTable(new TableIdentifier('bar', 'foo'));

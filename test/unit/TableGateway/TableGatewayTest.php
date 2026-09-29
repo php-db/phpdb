@@ -23,6 +23,7 @@ use PhpDb\TableGateway\Feature\FeatureSet;
 use PhpDb\TableGateway\TableGateway;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
@@ -53,7 +54,7 @@ final class TableGatewayTest extends TestCase
     /**
      * Beside other tests checks for plain string table identifier
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function constructor(): void
     {
         // constructor with only required args
@@ -92,7 +93,7 @@ final class TableGatewayTest extends TestCase
         );
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function constructorThrowsExceptionWhenSqlTableDoesNotMatch(): void
     {
         $sql = new Sql($this->mockAdapter, 'bar');
@@ -105,7 +106,7 @@ final class TableGatewayTest extends TestCase
         new TableGateway('foo', $this->mockAdapter, null, null, $sql);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function constructorWithArrayOfFeatures(): void
     {
         $feature1 = new Feature\SequenceFeature('id', 'foo_seq');
@@ -126,7 +127,7 @@ final class TableGatewayTest extends TestCase
         $reflection->setValue(null, []);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function constructorWithCustomResultSetPrototype(): void
     {
         $resultSet = new ResultSet();
@@ -136,7 +137,7 @@ final class TableGatewayTest extends TestCase
         static::assertSame($resultSet, $table->getResultSetPrototype());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function constructorWithFeatureSet(): void
     {
         $feature    = new Feature\SequenceFeature('id', 'foo_seq');
@@ -147,7 +148,7 @@ final class TableGatewayTest extends TestCase
         static::assertSame($featureSet, $table->getFeatureSet());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function constructorWithSingleFeature(): void
     {
         $feature = new Feature\SequenceFeature('id', 'foo_seq');
@@ -162,7 +163,7 @@ final class TableGatewayTest extends TestCase
     /**
      * @param AliasedTable           $tableValue
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[DataProvider('aliasedTables')]
     public function deleteShouldResetTableToUnaliasedTable(
         array $tableValue,
@@ -229,7 +230,7 @@ final class TableGatewayTest extends TestCase
     /**
      * @param AliasedTable           $tableValue
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[DataProvider('aliasedTables')]
     #[Group('7311')]
     public function insertShouldResetTableToUnaliasedTable(
@@ -293,7 +294,7 @@ final class TableGatewayTest extends TestCase
         );
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[Group('6726')]
     #[Group('6740')]
     public function tableAsAliasedTableIdentifierObject(): void
@@ -311,7 +312,7 @@ final class TableGatewayTest extends TestCase
         // phpcs:enable WebimpressCodingStandard.NamingConventions.ValidVariableName.NotCamelCaps
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[Group('6726')]
     #[Group('6740')]
     public function tableAsString(): void
@@ -326,7 +327,7 @@ final class TableGatewayTest extends TestCase
         static::assertEquals($ti, $table->getTable());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[Group('6726')]
     #[Group('6740')]
     public function tableAsTableIdentifierObject(): void
@@ -344,7 +345,7 @@ final class TableGatewayTest extends TestCase
     /**
      * @param AliasedTable           $tableValue
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[DataProvider('aliasedTables')]
     public function updateShouldResetTableToUnaliasedTable(
         array $tableValue,

@@ -13,6 +13,7 @@ use PhpDb\Sql\ArgumentType;
 use PhpDb\Sql\Expression;
 use PhpDb\Sql\Select;
 use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use TypeError;
 
@@ -22,7 +23,7 @@ use TypeError;
 #[CoversMethod(Argument::class, 'select')]
 final class ArgumentTest extends TestCase
 {
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function constructorThrowsExceptionForInvalidSelectType(): void
     {
         self::expectException(TypeError::class);
@@ -31,7 +32,7 @@ final class ArgumentTest extends TestCase
         new ArgumentSelect('simple_value'); /** @phpstan-ignore-line */
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function constructorWithArrayContainingArgumentType(): void
     {
         $argument = new Identifier('column');
@@ -40,7 +41,7 @@ final class ArgumentTest extends TestCase
         static::assertEquals(ArgumentType::Identifier, $argument->getType());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function constructorWithBooleanValue(): void
     {
         $argument = new Value(true);
@@ -48,7 +49,7 @@ final class ArgumentTest extends TestCase
         static::assertEquals(ArgumentType::Value, $argument->getType());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function constructorWithExplicitType(): void
     {
         $argument = new Identifier('column_name');
@@ -56,7 +57,7 @@ final class ArgumentTest extends TestCase
         static::assertEquals(ArgumentType::Identifier, $argument->getType());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function constructorWithExpressionInterface(): void
     {
         $expression = new Expression('NOW()');
@@ -66,7 +67,7 @@ final class ArgumentTest extends TestCase
         static::assertEquals(ArgumentType::Select, $argument->getType());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function constructorWithFloatValue(): void
     {
         $argument = new Value(3.14);
@@ -74,7 +75,7 @@ final class ArgumentTest extends TestCase
         static::assertEquals(ArgumentType::Value, $argument->getType());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function constructorWithNullValue(): void
     {
         $argument = new Value(null);
@@ -82,7 +83,7 @@ final class ArgumentTest extends TestCase
         static::assertEquals(ArgumentType::Value, $argument->getType());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function constructorWithSimpleArray(): void
     {
         $argument = new Values([1, 2, 3]);
@@ -91,7 +92,7 @@ final class ArgumentTest extends TestCase
         static::assertEquals(ArgumentType::Values, $argument->getType());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function constructorWithSimpleValue(): void
     {
         $argument = new Value('test');
@@ -99,7 +100,7 @@ final class ArgumentTest extends TestCase
         static::assertEquals(ArgumentType::Value, $argument->getType());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function constructorWithSqlInterface(): void
     {
         $select   = new Select();
@@ -109,7 +110,7 @@ final class ArgumentTest extends TestCase
         static::assertEquals(ArgumentType::Select, $argument->getType());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function staticIdentifierMethod(): void
     {
         $argument = Argument::identifier('column_name');
@@ -118,7 +119,7 @@ final class ArgumentTest extends TestCase
         static::assertEquals(ArgumentType::Identifier, $argument->getType());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function staticLiteralMethod(): void
     {
         $argument = Argument::literal('LITERAL_VALUE');
@@ -127,7 +128,7 @@ final class ArgumentTest extends TestCase
         static::assertEquals(ArgumentType::Literal, $argument->getType());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function staticSelectMethodCreatesSelectArgument(): void
     {
         $select   = new Select();
@@ -137,7 +138,7 @@ final class ArgumentTest extends TestCase
         static::assertEquals(ArgumentType::Select, $argument->getType());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function staticValueMethod(): void
     {
         $argument = Argument::value('test_value');

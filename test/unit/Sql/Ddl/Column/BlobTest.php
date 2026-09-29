@@ -19,7 +19,7 @@ final class BlobTest extends TestCase
 {
     use ColumnAssertionsTrait;
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getExpressionData(): void
     {
         $column = new Blob('foo');

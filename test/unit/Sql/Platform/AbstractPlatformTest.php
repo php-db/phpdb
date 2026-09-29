@@ -16,6 +16,7 @@ use PhpDb\Sql\Select;
 use PhpDb\Sql\SqlInterface;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 use function sprintf;
@@ -31,7 +32,7 @@ final class AbstractPlatformTest extends TestCase
 {
     private AbstractPlatform $platform;
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getSqlStringDelegatesToDecoratorSubject(): void
     {
         $select = new Select('foo');
@@ -43,7 +44,7 @@ final class AbstractPlatformTest extends TestCase
         static::assertStringContainsString('"foo"', $sql);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getSqlStringThrowsWhenSubjectNotSqlInterface(): void
     {
         $subject = $this->createMock(PreparableSqlInterface::class);
@@ -58,7 +59,7 @@ final class AbstractPlatformTest extends TestCase
         $this->platform->getSqlString();
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getTypeDecoratorLoopMatchesByInstanceof(): void
     {
         $decorator = $this->createMock(PlatformDecoratorInterface::class);
@@ -72,7 +73,7 @@ final class AbstractPlatformTest extends TestCase
         static::assertSame($decorator, $result);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getTypeDecoratorReturnsSubjectWhenNoMatch(): void
     {
         $subject = $this->createMock(SqlInterface::class);
@@ -82,7 +83,7 @@ final class AbstractPlatformTest extends TestCase
         static::assertSame($subject, $result);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function prepareStatementDelegatesToDecoratorSubject(): void
     {
         $select = new Select('foo');
@@ -109,7 +110,7 @@ final class AbstractPlatformTest extends TestCase
         static::assertStringContainsString('SELECT', $statement->getSql());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function prepareStatementThrowsWhenSubjectNotPreparable(): void
     {
         $subject = $this->createMock(SqlInterface::class);
@@ -127,7 +128,7 @@ final class AbstractPlatformTest extends TestCase
         $this->platform->prepareStatement($adapter, $statement);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function setAndGetTypeDecorator(): void
     {
         $decorator = $this->createMock(PlatformDecoratorInterface::class);
@@ -139,7 +140,7 @@ final class AbstractPlatformTest extends TestCase
         static::assertSame($decorator, $decorators[Select::class]);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function setSubjectReturnsStatic(): void
     {
         $subject = $this->createMock(SqlInterface::class);

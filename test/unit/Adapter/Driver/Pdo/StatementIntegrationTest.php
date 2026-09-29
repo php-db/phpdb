@@ -9,6 +9,7 @@ use PDO;
 use PDOStatement;
 use PhpDb\Adapter\Driver\Pdo\AbstractPdo;
 use PhpDb\Adapter\Driver\Pdo\Statement;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -18,7 +19,7 @@ final class StatementIntegrationTest extends TestCase
 
     protected PDOStatement|MockObject $pdoStatementMock;
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function statementExecuteWillConvertPhpBoolToPdoBoolWhenBinding(): void
     {
         $this->pdoStatementMock
@@ -32,7 +33,7 @@ final class StatementIntegrationTest extends TestCase
         $this->statement->execute(['foo' => false]);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function statementExecuteWillUsePdoIntForIntWhenBinding(): void
     {
         $this->pdoStatementMock
@@ -46,7 +47,7 @@ final class StatementIntegrationTest extends TestCase
         $this->statement->execute(['foo' => 123]);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function statementExecuteWillUsePdoStrByDefaultWhenBinding(): void
     {
         $this->pdoStatementMock
@@ -60,7 +61,7 @@ final class StatementIntegrationTest extends TestCase
         $this->statement->execute(['foo' => 'bar']);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function statementExecuteWillUsePdoStrForStringIntegerWhenBinding(): void
     {
         $this->pdoStatementMock

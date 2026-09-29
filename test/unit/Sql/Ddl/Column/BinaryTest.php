@@ -20,7 +20,7 @@ final class BinaryTest extends TestCase
 {
     use ColumnAssertionsTrait;
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getExpressionData(): void
     {
         $column = new Binary('foo', 10_000_000);

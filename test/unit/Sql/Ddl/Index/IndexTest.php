@@ -8,6 +8,7 @@ use PhpDb\Sql\Argument\Identifier;
 use PhpDb\Sql\Argument\Literal;
 use PhpDb\Sql\Ddl\Index\Index;
 use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 #[CoversMethod(Index::class, '__construct')]
@@ -16,7 +17,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(Index::class, 'getExpressionData')]
 final class IndexTest extends TestCase
 {
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getExpressionData(): void
     {
         $uk = new Index('foo', 'my_uk');
@@ -33,7 +34,7 @@ final class IndexTest extends TestCase
         );
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getExpressionDataWithBtreeType(): void
     {
         $index = new Index('foo', 'my_idx');
@@ -52,7 +53,7 @@ final class IndexTest extends TestCase
         );
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getExpressionDataWithHashType(): void
     {
         $index = new Index('foo', 'my_idx');
@@ -71,7 +72,7 @@ final class IndexTest extends TestCase
         );
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getExpressionDataWithLength(): void
     {
         $key = new Index(['foo', 'bar'], 'my_uk', [10, 5]);
@@ -89,7 +90,7 @@ final class IndexTest extends TestCase
         );
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getExpressionDataWithLengthUnmatched(): void
     {
         $key = new Index(['foo', 'bar'], 'my_uk', [10]);
@@ -107,7 +108,7 @@ final class IndexTest extends TestCase
         );
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getExpressionDataWithTypeAndLengths(): void
     {
         $index = new Index(['foo', 'bar'], 'my_idx', [10, 5]);
@@ -127,7 +128,7 @@ final class IndexTest extends TestCase
         );
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function setTypeAndGetType(): void
     {
         $index = new Index('foo', 'my_idx');

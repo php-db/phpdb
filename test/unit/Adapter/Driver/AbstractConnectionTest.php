@@ -9,6 +9,7 @@ use PhpDb\Adapter\Profiler\ProfilerInterface;
 use PhpDbTest\Adapter\Driver\TestAsset\TestConnection;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 #[CoversMethod(AbstractConnection::class, 'disconnect')]
@@ -22,7 +23,7 @@ use PHPUnit\Framework\TestCase;
 #[Group('unit')]
 final class AbstractConnectionTest extends TestCase
 {
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function disconnectIsNoOpWhenNotConnected(): void
     {
         $connection = new TestConnection();
@@ -32,7 +33,7 @@ final class AbstractConnectionTest extends TestCase
         static::assertSame($connection, $result);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function disconnectNullsResourceWhenConnected(): void
     {
         $connection = new TestConnection();
@@ -45,7 +46,7 @@ final class AbstractConnectionTest extends TestCase
         static::assertFalse($connection->isConnected());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getConnectionParametersReturnsEmptyByDefault(): void
     {
         $connection = new TestConnection();
@@ -53,7 +54,7 @@ final class AbstractConnectionTest extends TestCase
         static::assertSame([], $connection->getConnectionParameters());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getDriverNameReturnsNullByDefault(): void
     {
         $connection = new TestConnection();
@@ -61,7 +62,7 @@ final class AbstractConnectionTest extends TestCase
         static::assertNull($connection->getDriverName());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getDriverNameReturnsValueWhenSet(): void
     {
         $connection = new TestConnection('sqlite');
@@ -69,7 +70,7 @@ final class AbstractConnectionTest extends TestCase
         static::assertSame('sqlite', $connection->getDriverName());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getProfilerReturnsNullByDefault(): void
     {
         $connection = new TestConnection();
@@ -77,7 +78,7 @@ final class AbstractConnectionTest extends TestCase
         static::assertNull($connection->getProfiler());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getResourceAutoConnectsWhenNotConnected(): void
     {
         $connection = new TestConnection();
@@ -90,7 +91,7 @@ final class AbstractConnectionTest extends TestCase
         static::assertSame('fake-resource', $resource);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function inTransactionReturnsFalseByDefault(): void
     {
         $connection = new TestConnection();
@@ -98,7 +99,7 @@ final class AbstractConnectionTest extends TestCase
         static::assertFalse($connection->inTransaction());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function setConnectionParametersStoresAndReturnsConnection(): void
     {
         $connection = new TestConnection();
@@ -110,7 +111,7 @@ final class AbstractConnectionTest extends TestCase
         static::assertSame($params, $connection->getConnectionParameters());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function setProfilerStoresAndReturnsProfiler(): void
     {
         $connection = new TestConnection();

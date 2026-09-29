@@ -22,6 +22,7 @@ use PhpDbTest\TestAsset\TrustingSql92Platform;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\IgnoreDeprecations;
 use PHPUnit\Framework\Attributes\RequiresPhp;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use ReflectionException;
 use TypeError;
@@ -36,7 +37,7 @@ final class InsertIgnoreTest extends TestCase
     protected InsertIgnore $insert;
 
     // @codingStandardsIgnoreStart
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function _get(): void
     {
         // @codingStandardsIgnoreEnd
@@ -48,7 +49,7 @@ final class InsertIgnoreTest extends TestCase
     }
 
     // @codingStandardsIgnoreStart
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function _isset(): void
     {
         // @codingStandardsIgnoreEnd
@@ -60,7 +61,7 @@ final class InsertIgnoreTest extends TestCase
     }
 
     // @codingStandardsIgnoreStart
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function _set(): void
     {
         // @codingStandardsIgnoreEnd
@@ -70,7 +71,7 @@ final class InsertIgnoreTest extends TestCase
     }
 
     // @codingStandardsIgnoreStart
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function _unset(): void
     {
         // @codingStandardsIgnoreEnd
@@ -90,7 +91,7 @@ final class InsertIgnoreTest extends TestCase
         static::assertEquals([], $this->insert->getRawState('values'));
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function columns(): void
     {
         $columns = ['foo', 'bar'];
@@ -101,7 +102,7 @@ final class InsertIgnoreTest extends TestCase
     /**
      * @throws ReflectionException
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[Group('Laminas-4926')]
     public function emptyArrayValues(): void
     {
@@ -109,7 +110,7 @@ final class InsertIgnoreTest extends TestCase
         static::assertEquals([], static::readAttribute($this->insert, 'columns'));
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getSqlString(): void
     {
         $this->insert->into('foo')->values(['bar' => 'baz', 'boo' => new Expression('NOW()'), 'bam' => null]);
@@ -148,7 +149,7 @@ final class InsertIgnoreTest extends TestCase
         );
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getSqlStringUsingColumnsAndValuesMethods(): void
     {
         // With columns() and values()
@@ -162,7 +163,7 @@ final class InsertIgnoreTest extends TestCase
         );
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function into(): void
     {
         $this->insert->into('table');
@@ -173,7 +174,7 @@ final class InsertIgnoreTest extends TestCase
         static::assertEquals($tableIdentifier, $this->insert->getRawState('table'));
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function prepareStatement(): void
     {
         $mockDriver = $this->getMockBuilder(DriverInterface::class)->getMock();
@@ -214,7 +215,7 @@ final class InsertIgnoreTest extends TestCase
         $this->insert->prepareStatement($mockAdapter, $mockStatement);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function prepareStatementWithSelect(): void
     {
         $mockDriver = $this->getMockBuilder(DriverInterface::class)->getMock();
@@ -239,7 +240,7 @@ final class InsertIgnoreTest extends TestCase
         static::assertSame(['subselect1where1' => 5], $parameters);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function specificationconstantsCouldBeOverridedByExtensionInGetSqlString(): void
     {
         $replace = new Replace();
@@ -262,7 +263,7 @@ final class InsertIgnoreTest extends TestCase
         );
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function specificationconstantsCouldBeOverridedByExtensionInPrepareStatement(): void
     {
         $replace = new Replace();
@@ -305,7 +306,7 @@ final class InsertIgnoreTest extends TestCase
         $replace->prepareStatement($mockAdapter, $mockStatement);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function values(): void
     {
         $this->insert->values(['foo' => 'bar']);
@@ -323,7 +324,7 @@ final class InsertIgnoreTest extends TestCase
         static::assertEquals(['bax'], $this->insert->getRawState('values'));
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[Group('Laminas-536')]
     public function valuesMerge(): void
     {
@@ -337,7 +338,7 @@ final class InsertIgnoreTest extends TestCase
         );
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function valuesThrowsExceptionWhenArrayMergeOverSelect(): void
     {
         $this->insert->values(new Select());
@@ -350,14 +351,14 @@ final class InsertIgnoreTest extends TestCase
         $this->insert->values(['foo' => 'bar'], Insert::VALUES_MERGE);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function valuesThrowsExceptionWhenNotArrayOrSelect(): void
     {
         self::expectException(TypeError::class);
         $this->insert->values(5);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function valuesThrowsExceptionWhenSelectMergeOverArray(): void
     {
         $this->insert->values(['foo' => 'bar']);

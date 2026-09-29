@@ -12,6 +12,7 @@ use PhpDb\Adapter\Exception\RuntimeException;
 use PhpDbTest\Adapter\Driver\TestAsset\TestFeatureDriver;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 use function sprintf;
@@ -22,7 +23,7 @@ use function sprintf;
 #[CoversMethod(DriverFeatureProviderTrait::class, 'getFeature')]
 final class DriverFeatureProviderTraitTest extends TestCase
 {
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function addFeaturesAddsMultipleFeatures(): void
     {
         $driver   = new TestFeatureDriver();
@@ -34,7 +35,7 @@ final class DriverFeatureProviderTraitTest extends TestCase
         static::assertNotFalse($driver->getFeature($feature1::class));
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function addFeatureSetsDriverAndStoresFeature(): void
     {
         $driver  = new TestFeatureDriver();
@@ -46,7 +47,7 @@ final class DriverFeatureProviderTraitTest extends TestCase
         static::assertSame($feature, $driver->getFeature($feature::class));
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function addFeatureThrowsWhenUsedOutsideDriverInterface(): void
     {
         $nonDriver = new class implements DriverFeatureProviderInterface {
@@ -65,7 +66,7 @@ final class DriverFeatureProviderTraitTest extends TestCase
         $nonDriver->addFeature($feature);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getFeatureReturnsFalseWhenNotFound(): void
     {
         $driver = new TestFeatureDriver();
@@ -73,7 +74,7 @@ final class DriverFeatureProviderTraitTest extends TestCase
         static::assertFalse($driver->getFeature('NonExistent'));
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getFeatureReturnsFeatureByClassName(): void
     {
         $driver  = new TestFeatureDriver();

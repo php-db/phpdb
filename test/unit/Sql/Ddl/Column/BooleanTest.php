@@ -9,13 +9,14 @@ use PhpDb\Sql\Ddl\Column\Boolean;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 #[CoversMethod(Boolean::class, 'getExpressionData')]
 #[CoversClass(Boolean::class)]
 final class BooleanTest extends TestCase
 {
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getExpressionData(): void
     {
         $column = new Boolean('foo');
@@ -32,7 +33,7 @@ final class BooleanTest extends TestCase
         );
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[Group('6257')]
     public function isAlwaysNotNullable(): void
     {

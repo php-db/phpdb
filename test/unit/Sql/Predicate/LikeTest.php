@@ -23,7 +23,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(Like::class, 'getExpressionData')]
 final class LikeTest extends TestCase
 {
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function accessorsMutators(): void
     {
         $like = new Like();
@@ -76,7 +76,7 @@ final class LikeTest extends TestCase
         static::assertSame('custom spec', $like->getSpecification());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function constructEmptyArgs(): void
     {
         $like = new Like();
@@ -84,7 +84,7 @@ final class LikeTest extends TestCase
         static::assertNull($like->getLike());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function constructWithArgs(): void
     {
         $like = new Like('bar', 'Foo%');
@@ -100,7 +100,7 @@ final class LikeTest extends TestCase
         static::assertEquals(ArgumentType::Value, $likeValue->getType());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getExpressionData(): void
     {
         $like = new Like('bar', 'Foo%');
@@ -159,7 +159,7 @@ final class LikeTest extends TestCase
         static::assertSame('%1$s SOUNDS LIKE %2$s', $like->getExpressionData()['spec']);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getExpressionDataThrowsExceptionWhenIdentifierNotSet(): void
     {
         $like = new Like();
@@ -170,7 +170,7 @@ final class LikeTest extends TestCase
         $like->getExpressionData();
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getExpressionDataThrowsExceptionWhenLikeNotSet(): void
     {
         $like = new Like();
@@ -181,7 +181,7 @@ final class LikeTest extends TestCase
         $like->getExpressionData();
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function instanceOfPerSetters(): void
     {
         $like = new Like();

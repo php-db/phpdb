@@ -23,7 +23,7 @@ final class VarbinaryTest extends TestCase
 {
     use ColumnAssertionsTrait;
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getExpressionData(): void
     {
         $column = new Varbinary('foo', 20);

@@ -18,6 +18,7 @@ use PhpDbTest\Adapter\Driver\Pdo\TestAsset\TestConnection;
 use PhpDbTest\Adapter\Driver\Pdo\TestAsset\TestPdo;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
 
@@ -36,7 +37,7 @@ final class ConnectionTest extends TestCase
 {
     protected TestConnection $connection;
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function beginTransactionAutoConnectsWhenNotConnected(): void
     {
         $connection = new TestConnection(['dsn' => 'sqlite::memory:']);
@@ -48,7 +49,7 @@ final class ConnectionTest extends TestCase
         static::assertTrue($connection->isConnected());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function commitAutoConnectsWhenNotConnected(): void
     {
         $connection = new TestConnection(new SqliteMemoryPdo());
@@ -63,7 +64,7 @@ final class ConnectionTest extends TestCase
         static::assertTrue($connection->isConnected());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function constructorWithArraySetsConnectionParameters(): void
     {
         $params     = ['dsn' => 'sqlite::memory:', 'username' => 'user'];
@@ -72,7 +73,7 @@ final class ConnectionTest extends TestCase
         static::assertSame($params, $connection->getConnectionParameters());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function constructorWithPdoResourceSetsConnected(): void
     {
         $pdo        = new SqliteMemoryPdo();
@@ -81,7 +82,7 @@ final class ConnectionTest extends TestCase
         static::assertTrue($connection->isConnected());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function executeAutoConnectsWhenNotConnected(): void
     {
         $connection = new TestConnection(['dsn' => 'sqlite::memory:']);
@@ -94,7 +95,7 @@ final class ConnectionTest extends TestCase
         static::assertTrue($connection->isConnected());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function executeCallsProfilerFinishBeforeThrowingOnError(): void
     {
         $profiler = $this->createMock(ProfilerInterface::class);
@@ -111,7 +112,7 @@ final class ConnectionTest extends TestCase
         @$connection->execute('INVALID SQL STATEMENT HERE %%%');
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function executeCallsProfilerStartAndFinish(): void
     {
         $profiler = $this->createMock(ProfilerInterface::class);
@@ -126,7 +127,7 @@ final class ConnectionTest extends TestCase
         $connection->execute('SELECT 1');
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function fluentSetDriver(): void
     {
         $driver = $this->createMock(PdoDriverInterface::class);
@@ -139,7 +140,7 @@ final class ConnectionTest extends TestCase
     /**
      * Test getConnectedDsn returns a DSN string if it has been set
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getDsnReturnsDsnAfterConnect(): void
     {
         $dsn = 'sqlite::memory:';
@@ -153,7 +154,7 @@ final class ConnectionTest extends TestCase
         static::assertEquals($dsn, $responseString);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getDsnThrowsWhenDsnIsNull(): void
     {
         $connection = new TestConnection(['dsn' => 'sqlite::memory:']);
@@ -168,7 +169,7 @@ final class ConnectionTest extends TestCase
         $connection->getDsn();
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function prepareAutoConnectsAndReturnsStatement(): void
     {
         $connection = new TestConnection(['dsn' => 'sqlite::memory:']);
@@ -185,14 +186,14 @@ final class ConnectionTest extends TestCase
     /**
      * Test getResource method tries to connect to  the database, it should never return null
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function resource(): void
     {
         $resource = $this->connection->getResource();
         static::assertNotNull($resource);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function setConnectionParametersStoresParams(): void
     {
         $params = ['dsn' => 'sqlite::memory:', 'username' => 'test'];

@@ -27,6 +27,7 @@ use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\IgnoreDeprecations;
 use PHPUnit\Framework\Attributes\RequiresPhp;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestDox;
 use PHPUnit\Framework\TestCase;
 use ReflectionException;
@@ -47,14 +48,14 @@ final class DeleteTest extends TestCase
 
     protected Delete $delete;
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function constructorWithTable(): void
     {
         $delete = new Delete('foo');
         static::assertSame('foo', $delete->getRawState('table'));
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function constructorWithTableIdentifier(): void
     {
         $tableIdentifier = new TableIdentifier('foo', 'bar');
@@ -65,7 +66,7 @@ final class DeleteTest extends TestCase
     /**
      * @throws ReflectionException
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function from(): void
     {
         // Set table with string
@@ -78,7 +79,7 @@ final class DeleteTest extends TestCase
         static::assertEquals($tableIdentifier, static::readAttribute($this->delete, 'table'));
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getRawState(): void
     {
         $this->delete->from('foo')->where('x = y');
@@ -95,7 +96,7 @@ final class DeleteTest extends TestCase
         static::assertTrue($rawState['emptyWhereProtection']);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getRawStateWithKey(): void
     {
         $this->delete->from('foo');
@@ -105,7 +106,7 @@ final class DeleteTest extends TestCase
         static::assertTrue($this->delete->getRawState('emptyWhereProtection'));
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getSqlString(): void
     {
         $this->delete->from('foo')->where('x = y');
@@ -117,7 +118,7 @@ final class DeleteTest extends TestCase
         static::assertSame('DELETE FROM "sch"."foo" WHERE x = y', $this->delete->getSqlString());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getSqlStringWithEmptyWhere(): void
     {
         $this->delete->from('foo');
@@ -125,7 +126,7 @@ final class DeleteTest extends TestCase
         static::assertSame('DELETE FROM "foo"', $this->delete->getSqlString());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function magicGetReturnsNullForUnknownProperty(): void
     {
         /** @noinspection PhpUndefinedFieldInspection */
@@ -133,14 +134,14 @@ final class DeleteTest extends TestCase
         static::assertNull($this->delete->table); // @phpstan-ignore-line
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function magicGetReturnsWhereClause(): void
     {
         $where = $this->delete->where;
         static::assertInstanceOf(Where::class, $where);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function prepareStatement(): void
     {
         $mockDriver  = $this->getMockBuilder(DriverInterface::class)->getMock();
@@ -171,7 +172,7 @@ final class DeleteTest extends TestCase
         $this->delete->prepareStatement($mockAdapter, $mockStatement);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[CoversNothing]
     public function specificationconstantsCouldBeOverridedByExtensionInGetSqlString(): void
     {
@@ -188,7 +189,7 @@ final class DeleteTest extends TestCase
         static::assertSame('DELETE IGNORE FROM "sch"."foo" WHERE x = y', $deleteIgnore->getSqlString());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[CoversNothing]
     public function specificationconstantsCouldBeOverridedByExtensionInPrepareStatement(): void
     {
@@ -228,7 +229,7 @@ final class DeleteTest extends TestCase
      * @throws ReflectionException
      * @todo REMOVE THIS IN 3.x
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function where(): void
     {
         $this->delete->where('x = y');
@@ -279,7 +280,7 @@ final class DeleteTest extends TestCase
         });
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[TestDox('unit test: Test where() accepts Expression (ExpressionInterface) in array')]
     public function whereAcceptsExpressionInterface(): void
     {

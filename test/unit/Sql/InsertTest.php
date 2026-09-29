@@ -24,6 +24,7 @@ use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\IgnoreDeprecations;
 use PHPUnit\Framework\Attributes\RequiresPhp;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use ReflectionException;
 use TypeError;
@@ -54,7 +55,7 @@ final class InsertTest extends TestCase
     protected Insert $insert;
 
     // @codingStandardsIgnoreStart
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function _get(): void
     {
         // @codingStandardsIgnoreEnd
@@ -68,7 +69,7 @@ final class InsertTest extends TestCase
     }
 
     // @codingStandardsIgnoreStart
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function _isset(): void
     {
         // @codingStandardsIgnoreEnd
@@ -84,7 +85,7 @@ final class InsertTest extends TestCase
     }
 
     // @codingStandardsIgnoreStart
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function _set(): void
     {
         // @codingStandardsIgnoreEnd
@@ -95,7 +96,7 @@ final class InsertTest extends TestCase
     }
 
     // @codingStandardsIgnoreStart
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function _unset(): void
     {
         // @codingStandardsIgnoreEnd
@@ -117,7 +118,7 @@ final class InsertTest extends TestCase
         static::assertEquals([], $this->insert->getRawState('values'));
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function columns(): void
     {
         $columns = ['foo', 'bar'];
@@ -128,7 +129,7 @@ final class InsertTest extends TestCase
     /**
      * @throws ReflectionException
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[Group('Laminas-4926')]
     public function emptyArrayValues(): void
     {
@@ -136,7 +137,7 @@ final class InsertTest extends TestCase
         static::assertEquals([], static::readAttribute($this->insert, 'columns'));
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getSqlString(): void
     {
         $this->insert->into('foo')->values(['bar' => 'baz', 'boo' => new Expression('NOW()'), 'bam' => null]);
@@ -175,7 +176,7 @@ final class InsertTest extends TestCase
         );
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getSqlStringThrowsExceptionWhenNoValuesOrSelect(): void
     {
         $this->insert->into('foo');
@@ -185,7 +186,7 @@ final class InsertTest extends TestCase
         $this->insert->getSqlString(new TrustingSql92Platform());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getSqlStringUsingColumnsAndValuesMethods(): void
     {
         // With columns() and values()
@@ -199,7 +200,7 @@ final class InsertTest extends TestCase
         );
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getThrowsExceptionForNonExistentColumn(): void
     {
         self::expectException(InvalidArgumentException::class);
@@ -207,7 +208,7 @@ final class InsertTest extends TestCase
         $value = $this->insert->nonexistent;
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function into(): void
     {
         $this->insert->into('table');
@@ -218,7 +219,7 @@ final class InsertTest extends TestCase
         static::assertEquals($tableIdentifier, $this->insert->getRawState('table'));
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function prepareStatement(): void
     {
         $mockDriver = $this->getMockBuilder(DriverInterface::class)->getMock();
@@ -259,7 +260,7 @@ final class InsertTest extends TestCase
         $this->insert->prepareStatement($mockAdapter, $mockStatement);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function prepareStatementCreatesParameterContainerWhenNotPresent(): void
     {
         $mockDriver = $this->getMockBuilder(DriverInterface::class)->getMock();
@@ -287,7 +288,7 @@ final class InsertTest extends TestCase
         static::assertSame($mockStatement, $result);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function prepareStatementWithSelect(): void
     {
         $mockDriver = $this->getMockBuilder(DriverInterface::class)->getMock();
@@ -315,7 +316,7 @@ final class InsertTest extends TestCase
         static::assertSame(['subselect1where1' => 5], $namedArray);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function processInsertWithPdoDriverUsesDriverColumnQuoting(): void
     {
         $mockDriver = $this->getMockBuilder(PdoDriverInterface::class)->getMock();
@@ -336,7 +337,7 @@ final class InsertTest extends TestCase
         static::assertStringContainsString(':c_1', $sql);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[CoversNothing]
     public function specificationconstantsCouldBeOverridedByExtensionInGetSqlString(): void
     {
@@ -360,7 +361,7 @@ final class InsertTest extends TestCase
         );
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[CoversNothing]
     public function specificationconstantsCouldBeOverridedByExtensionInPrepareStatement(): void
     {
@@ -404,7 +405,7 @@ final class InsertTest extends TestCase
         $replace->prepareStatement($mockAdapter, $mockStatement);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function unsetThrowsExceptionForNonExistentColumn(): void
     {
         self::expectException(InvalidArgumentException::class);
@@ -412,7 +413,7 @@ final class InsertTest extends TestCase
         unset($this->insert->nonexistent);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function values(): void
     {
         $this->insert->values(['foo' => 'bar']);
@@ -430,7 +431,7 @@ final class InsertTest extends TestCase
         static::assertEquals(['bax'], $this->insert->getRawState('values'));
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[Group('Laminas-536')]
     public function valuesMerge(): void
     {
@@ -444,7 +445,7 @@ final class InsertTest extends TestCase
         );
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function valuesThrowsExceptionWhenArrayMergeOverSelect(): void
     {
         $this->insert->values(new Select());
@@ -457,7 +458,7 @@ final class InsertTest extends TestCase
         $this->insert->values(['foo' => 'bar'], Insert::VALUES_MERGE);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function valuesThrowsExceptionWhenNotArrayOrSelect(): void
     {
         self::expectException(TypeError::class);
@@ -465,7 +466,7 @@ final class InsertTest extends TestCase
         $this->insert->values(5);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function valuesThrowsExceptionWhenSelectMergeOverArray(): void
     {
         $this->insert->values(['foo' => 'bar']);

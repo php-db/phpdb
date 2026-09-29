@@ -53,7 +53,7 @@ final class IntegerTest extends TestCase
         );
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getExpressionData(): void
     {
         $column = new Integer('foo');
@@ -84,7 +84,7 @@ final class IntegerTest extends TestCase
         );
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getExpressionDataExcludesLengthWhenNotSet(): void
     {
         $column = new Integer('id');
@@ -94,7 +94,7 @@ final class IntegerTest extends TestCase
         static::assertStringNotContainsString('(', $expressionData['spec']);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getExpressionDataIncludesLengthWhenOptionSet(): void
     {
         $column = new Integer('id');
@@ -154,7 +154,7 @@ final class IntegerTest extends TestCase
         );
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function objectConstruction(): void
     {
         $integer = new Integer('foo');

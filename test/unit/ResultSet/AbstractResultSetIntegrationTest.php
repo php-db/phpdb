@@ -8,6 +8,7 @@ use Override;
 use PhpDb\Adapter\Driver\ResultInterface;
 use PhpDb\ResultSet\AbstractResultSet;
 use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -20,7 +21,7 @@ final class AbstractResultSetIntegrationTest extends TestCase
     /**
      * @throws \Exception
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function currentCallsDataSourceCurrentAsManyTimesWithoutBuffer(): void
     {
         $result = $this->getMockBuilder(ResultInterface::class)->getMock();
@@ -36,7 +37,7 @@ final class AbstractResultSetIntegrationTest extends TestCase
     /**
      * @throws \Exception
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function currentCallsDataSourceCurrentOnceWithBuffer(): void
     {
         $result = $this->getMockBuilder(ResultInterface::class)->getMock();

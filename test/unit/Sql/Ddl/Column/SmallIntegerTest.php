@@ -20,7 +20,7 @@ use PHPUnit\Framework\TestCase;
 #[Group('unit')]
 final class SmallIntegerTest extends TestCase
 {
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getExpressionData(): void
     {
         $column         = new SmallInteger('foo');
@@ -40,7 +40,7 @@ final class SmallIntegerTest extends TestCase
         );
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function objectConstruction(): void
     {
         $integer = new SmallInteger('foo');

@@ -8,6 +8,7 @@ use PhpDb\Adapter\ParameterContainer;
 use PhpDb\Adapter\StatementContainer;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 #[Group('unit')]
@@ -18,7 +19,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(StatementContainer::class, 'getParameterContainer')]
 final class StatementContainerTest extends TestCase
 {
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function constructorWithoutSqlDoesNotSetSql(): void
     {
         $container = new StatementContainer();
@@ -26,7 +27,7 @@ final class StatementContainerTest extends TestCase
         static::assertSame('', $container->getSql());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function constructorWithSqlSetsSql(): void
     {
         $container = new StatementContainer('SELECT 1');
@@ -34,7 +35,7 @@ final class StatementContainerTest extends TestCase
         static::assertSame('SELECT 1', $container->getSql());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function setAndGetParameterContainer(): void
     {
         $container          = new StatementContainer();
@@ -46,7 +47,7 @@ final class StatementContainerTest extends TestCase
         static::assertSame($parameterContainer, $container->getParameterContainer());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function setAndGetSql(): void
     {
         $container = new StatementContainer();

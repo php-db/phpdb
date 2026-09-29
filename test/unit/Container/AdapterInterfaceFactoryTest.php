@@ -16,13 +16,14 @@ use PhpDb\ResultSet\ResultSet;
 use PhpDb\ResultSet\ResultSetInterface;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 #[Group('unit')]
 #[CoversMethod(AdapterInterfaceFactory::class, '__invoke')]
 final class AdapterInterfaceFactoryTest extends TestCase
 {
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function invokeCreatesAdapterWithAllDependencies(): void
     {
         $driverMock   = $this->createMock(DriverInterface::class);
@@ -50,7 +51,7 @@ final class AdapterInterfaceFactoryTest extends TestCase
         static::assertInstanceOf(Adapter::class, $adapter);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function invokeCreatesAdapterWithDefaultResultSet(): void
     {
         $driverMock   = $this->createMock(DriverInterface::class);
@@ -74,7 +75,7 @@ final class AdapterInterfaceFactoryTest extends TestCase
         static::assertInstanceOf(ResultSet::class, $adapter->getQueryResultSetPrototype());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function invokeCreatesAdapterWithoutOptionalProfiler(): void
     {
         $driverMock   = $this->createMock(DriverInterface::class);
@@ -99,7 +100,7 @@ final class AdapterInterfaceFactoryTest extends TestCase
         static::assertNull($adapter->getProfiler());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function invokeThrowsWhenAdapterConfigIsEmpty(): void
     {
         $driverMock   = $this->createMock(DriverInterface::class);
@@ -120,7 +121,7 @@ final class AdapterInterfaceFactoryTest extends TestCase
         $factory($container, AdapterInterface::class);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function invokeThrowsWhenContainerHasNoConfig(): void
     {
         $driverMock   = $this->createMock(DriverInterface::class);

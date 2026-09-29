@@ -14,6 +14,7 @@ use PhpDb\Sql\Predicate\In;
 use PhpDb\Sql\Select;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 #[CoversMethod(In::class, '__construct')]
@@ -25,7 +26,7 @@ use PHPUnit\Framework\TestCase;
 #[Group('unit')]
 final class InTest extends TestCase
 {
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function canPassIdentifierAndEmptyValueSetToConstructor(): void
     {
         $in = new In('foo.bar', []);
@@ -43,7 +44,7 @@ final class InTest extends TestCase
         static::assertEquals(ArgumentType::Values, $valueSet->getType());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function canPassIdentifierAndValueSetToConstructor(): void
     {
         $in = new In('foo.bar', [1, 2]);
@@ -61,7 +62,7 @@ final class InTest extends TestCase
         static::assertEquals(ArgumentType::Values, $valueSet->getType());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function emptyConstructorYieldsNullIdentifierAndValueSet(): void
     {
         $in = new In();
@@ -69,7 +70,7 @@ final class InTest extends TestCase
         static::assertNull($in->getValueSet());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getExpressionDataThrowsExceptionWhenIdentifierNotSet(): void
     {
         $in = new In();
@@ -80,7 +81,7 @@ final class InTest extends TestCase
         $in->getExpressionData();
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getExpressionDataThrowsExceptionWhenValueSetNotSet(): void
     {
         $in = new In();
@@ -91,7 +92,7 @@ final class InTest extends TestCase
         $in->getExpressionData();
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getExpressionDataWithEmptyValues(): void
     {
         new Select();
@@ -102,7 +103,7 @@ final class InTest extends TestCase
         static::assertSame('%s IN (NULL)', $expressionData['spec']);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getExpressionDataWithSubselect(): void
     {
         $select = new Select();
@@ -128,7 +129,7 @@ final class InTest extends TestCase
         static::assertEquals(ArgumentType::Select, $values[1]->getType());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getExpressionDataWithSubselectAndArrayIdentifier(): void
     {
         $select = new Select();
@@ -154,7 +155,7 @@ final class InTest extends TestCase
         static::assertEquals(ArgumentType::Select, $values[1]->getType());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getExpressionDataWithSubselectAndIdentifier(): void
     {
         $select = new Select();
@@ -180,7 +181,7 @@ final class InTest extends TestCase
         static::assertEquals(ArgumentType::Select, $values[1]->getType());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function identifierIsMutable(): void
     {
         $in = new In();
@@ -207,7 +208,7 @@ final class InTest extends TestCase
         static::assertEquals(ArgumentType::Identifier, $identifier2->getType());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function retrievingWherePartsReturnsSpecificationArrayOfIdentifierAndValuesAndArrayOfTypes(): void
     {
         $in = new In();
@@ -268,7 +269,7 @@ final class InTest extends TestCase
         static::assertEquals(ArgumentType::Values, $values[1]->getType());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function setValueSetWithArgumentInterfacePassesThrough(): void
     {
         $in     = new In();
@@ -279,7 +280,7 @@ final class InTest extends TestCase
         static::assertSame($values, $in->getValueSet());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function setValueSetWithSelectWrapsInArgumentSelect(): void
     {
         $in     = new In();
@@ -292,7 +293,7 @@ final class InTest extends TestCase
         static::assertSame(ArgumentType::Select, $valueSet->getType());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function valueSetIsMutable(): void
     {
         $in = new In();

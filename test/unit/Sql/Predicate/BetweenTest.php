@@ -28,7 +28,7 @@ final class BetweenTest extends TestCase
 {
     protected Between $between;
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function constructorCanPassIdentifierMinimumAndMaximumValues(): void
     {
         $between = new Between('foo.bar', 1, 300);
@@ -83,7 +83,7 @@ final class BetweenTest extends TestCase
         static::assertEquals(ArgumentType::Value, $maxValue->getType());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function constructorYieldsNullIdentifierMinimumAndMaximumValues(): void
     {
         static::assertNull($this->between->getIdentifier());
@@ -104,7 +104,7 @@ final class BetweenTest extends TestCase
         static::assertSame('%1$s IS INBETWEEN %2$s AND %3$s', $between->getExpressionData()['spec']);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getExpressionDataThrowsExceptionWhenIdentifierNotSet(): void
     {
         $between = new Between();
@@ -115,7 +115,7 @@ final class BetweenTest extends TestCase
         $between->getExpressionData();
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getExpressionDataThrowsExceptionWhenMaxValueNotSet(): void
     {
         $between = new Between();
@@ -126,7 +126,7 @@ final class BetweenTest extends TestCase
         $between->getExpressionData();
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getExpressionDataThrowsExceptionWhenMinValueNotSet(): void
     {
         $between = new Between();
@@ -137,7 +137,7 @@ final class BetweenTest extends TestCase
         $between->getExpressionData();
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function identifierIsMutable(): void
     {
         // First mutation
@@ -162,7 +162,7 @@ final class BetweenTest extends TestCase
         static::assertEquals(ArgumentType::Identifier, $identifier2->getType());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function maxValueIsMutable(): void
     {
         // First mutation
@@ -187,7 +187,7 @@ final class BetweenTest extends TestCase
         static::assertEquals(ArgumentType::Value, $maxValue2->getType());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function minValueIsMutable(): void
     {
         // First mutation
@@ -212,7 +212,7 @@ final class BetweenTest extends TestCase
         static::assertEquals(ArgumentType::Value, $minValue2->getType());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function retrievingWherePartsReturnsSpecificationArrayOfIdentifierAndValuesAndArrayOfTypes(): void
     {
         $this->between
@@ -274,14 +274,14 @@ final class BetweenTest extends TestCase
         static::assertEquals(ArgumentType::Identifier, $values[2]->getType());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function specificationIsMutable(): void
     {
         $this->between->setSpecification('%1$s IS INBETWEEN %2$s AND %3$s');
         static::assertSame('%1$s IS INBETWEEN %2$s AND %3$s', $this->between->getSpecification());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function specificationIsNullByDefault(): void
     {
         static::assertNull($this->between->getSpecification());

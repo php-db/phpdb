@@ -13,6 +13,7 @@ use PhpDb\ResultSet\ResultSet;
 use PhpDbTest\TestAsset\TemporaryResultSet;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
@@ -42,7 +43,7 @@ use function uniqid;
 #[Group('unit')]
 final class ResultTest extends TestCase
 {
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function bufferIsCallableWithNoEffect(): void
     {
         $result = new Result();
@@ -51,7 +52,7 @@ final class ResultTest extends TestCase
         static::assertFalse($result->isBuffered());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function countCachesResultFromClosure(): void
     {
         $callCount = 0;
@@ -71,7 +72,7 @@ final class ResultTest extends TestCase
         static::assertSame(1, $callCount);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function countCachesResultFromStatementRowCount(): void
     {
         $stub = $this->getMockBuilder(PDOStatement::class)->getMock();
@@ -86,7 +87,7 @@ final class ResultTest extends TestCase
         static::assertSame(3, $result->count());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function countWithClosureInvokesClosureAndReturnsValue(): void
     {
         $stub = $this->getMockBuilder(PDOStatement::class)->getMock();
@@ -100,7 +101,7 @@ final class ResultTest extends TestCase
         static::assertSame(42, $result->count());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function countWithIntReturnsProvidedValue(): void
     {
         $stub = $this->getMockBuilder(PDOStatement::class)->getMock();
@@ -112,7 +113,7 @@ final class ResultTest extends TestCase
         static::assertSame(10, $result->count());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function countWithNoRowCountFallsBackToStatementRowCount(): void
     {
         $stub = $this->getMockBuilder(PDOStatement::class)->getMock();
@@ -129,7 +130,7 @@ final class ResultTest extends TestCase
     /**
      * Tests current method returns same data on consecutive calls.
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function currentReturnsSameDataOnConsecutiveCalls(): void
     {
         $stub = $this->getMockBuilder('PDOStatement')->getMock();
@@ -146,7 +147,7 @@ final class ResultTest extends TestCase
     /**
      * Tests whether the fetch mode has a broader range
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function fetchModeAcceptsNamedMode(): void
     {
         $stub = $this->getMockBuilder('PDOStatement')->getMock();
@@ -163,7 +164,7 @@ final class ResultTest extends TestCase
     /**
      * Tests whether the fetch mode was set properly and
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function fetchModeObjReturnsStdClass(): void
     {
         $stub = $this->getMockBuilder('PDOStatement')->getMock();
@@ -179,7 +180,7 @@ final class ResultTest extends TestCase
         static::assertInstanceOf('stdClass', $result->current());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getAffectedRowsDelegatesToRowCount(): void
     {
         $stub = $this->createMock(PDOStatement::class);
@@ -191,7 +192,7 @@ final class ResultTest extends TestCase
         static::assertSame(5, $result->getAffectedRows());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getFetchModeDefaultIsAssoc(): void
     {
         $result = new Result();
@@ -199,7 +200,7 @@ final class ResultTest extends TestCase
         static::assertSame(PDO::FETCH_ASSOC, $result->getFetchMode());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getFieldCountDelegatesToColumnCount(): void
     {
         $stub = $this->createMock(PDOStatement::class);
@@ -211,7 +212,7 @@ final class ResultTest extends TestCase
         static::assertSame(3, $result->getFieldCount());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getGeneratedValueReturnsInitializedValue(): void
     {
         $stub   = $this->createMock(PDOStatement::class);
@@ -221,7 +222,7 @@ final class ResultTest extends TestCase
         static::assertSame(42, $result->getGeneratedValue());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getGeneratedValueReturnsNullByDefault(): void
     {
         $result = new Result();
@@ -229,7 +230,7 @@ final class ResultTest extends TestCase
         static::assertNull($result->getGeneratedValue());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getQueryResultClonesGivenPrototypeRatherThanMutatingIt(): void
     {
         $stub = $this->createMock(PDOStatement::class);
@@ -245,7 +246,7 @@ final class ResultTest extends TestCase
         static::assertNotSame($prototype, $returned);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getQueryResultInitializesReturnedResultSetWithThisResult(): void
     {
         $stub = $this->createMock(PDOStatement::class);
@@ -257,7 +258,7 @@ final class ResultTest extends TestCase
         static::assertSame($result->getFieldCount(), $result->getQueryResult()->getFieldCount());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getQueryResultReturnsDefaultResultSetPrototypeWhenNoneGiven(): void
     {
         $stub = $this->createMock(PDOStatement::class);
@@ -269,7 +270,7 @@ final class ResultTest extends TestCase
         static::assertInstanceOf(ResultSet::class, $result->getQueryResult());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getQueryResultThrowsWhenResultIsNotAQueryResult(): void
     {
         $stub = $this->createMock(PDOStatement::class);
@@ -282,7 +283,7 @@ final class ResultTest extends TestCase
         $result->getQueryResult();
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getResourceReturnsPdoStatement(): void
     {
         $stub   = $this->createMock(PDOStatement::class);
@@ -292,7 +293,7 @@ final class ResultTest extends TestCase
         static::assertSame($stub, $result->getResource());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function initializeStoresResourceAndValues(): void
     {
         $stub   = $this->createMock(PDOStatement::class);
@@ -304,7 +305,7 @@ final class ResultTest extends TestCase
         static::assertSame(5, $result->count());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function isBufferedReturnsFalse(): void
     {
         $result = new Result();
@@ -312,7 +313,7 @@ final class ResultTest extends TestCase
         static::assertFalse($result->isBuffered());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function isQueryResultReturnsFalseWhenNoColumns(): void
     {
         $stub = $this->createMock(PDOStatement::class);
@@ -324,7 +325,7 @@ final class ResultTest extends TestCase
         static::assertFalse($result->isQueryResult());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function isQueryResultReturnsTrueWhenColumnsExist(): void
     {
         $stub = $this->createMock(PDOStatement::class);
@@ -336,7 +337,7 @@ final class ResultTest extends TestCase
         static::assertTrue($result->isQueryResult());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function nextAdvancesPositionAndFetchesData(): void
     {
         $stub = $this->createMock(PDOStatement::class);
@@ -352,7 +353,7 @@ final class ResultTest extends TestCase
         static::assertSame(1, $result->key());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function rewindResetsIterationToStart(): void
     {
         $data = [
@@ -384,7 +385,7 @@ final class ResultTest extends TestCase
         static::assertEquals($data[1], $result->current());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function rewindThrowsExceptionOnForwardOnlyAfterAdvancing(): void
     {
         $stub = $this->createMock(PDOStatement::class);
@@ -401,7 +402,7 @@ final class ResultTest extends TestCase
         $result->rewind();
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function setFetchModeStoresValidMode(): void
     {
         $result = new Result();
@@ -410,7 +411,7 @@ final class ResultTest extends TestCase
         static::assertSame(PDO::FETCH_NUM, $result->getFetchMode());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function setFetchModeThrowsOnInvalidFetchMode(): void
     {
         $result = new Result();
@@ -421,7 +422,7 @@ final class ResultTest extends TestCase
         $result->setFetchMode(9999);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function setFetchModeThrowsOnInvalidMode(): void
     {
         $result = new Result();
@@ -430,7 +431,7 @@ final class ResultTest extends TestCase
         $result->setFetchMode(13);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function setStatementModeThrowsOnInvalidMode(): void
     {
         $result = new Result();
@@ -439,7 +440,7 @@ final class ResultTest extends TestCase
         $result->setStatementMode('invalid');
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function setStatementModeToForward(): void
     {
         $result = new Result();
@@ -449,7 +450,7 @@ final class ResultTest extends TestCase
         static::assertSame(Result::STATEMENT_MODE_FORWARD, $result->getStatementMode());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function setStatementModeToScrollable(): void
     {
         $result = new Result();
@@ -459,7 +460,7 @@ final class ResultTest extends TestCase
         static::assertSame(Result::STATEMENT_MODE_SCROLLABLE, $result->getStatementMode());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function validReturnsFalseWhenCurrentDataIsFalse(): void
     {
         $stub = $this->createMock(PDOStatement::class);
@@ -472,7 +473,7 @@ final class ResultTest extends TestCase
         static::assertFalse($result->valid());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function validReturnsTrueWhenCurrentDataExists(): void
     {
         $stub = $this->createMock(PDOStatement::class);

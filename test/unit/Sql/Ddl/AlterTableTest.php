@@ -12,6 +12,7 @@ use PhpDb\Sql\Ddl\Constraint\ConstraintInterface;
 use PhpDb\Sql\Literal;
 use PhpDb\Sql\TableIdentifier;
 use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 use function str_replace;
@@ -38,7 +39,7 @@ use function str_replace;
 #[CoversMethod(AlterTable::class, 'processTableOptions')]
 class AlterTableTest extends TestCase
 {
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function addColumn(): void
     {
         $at = new AlterTable();
@@ -48,7 +49,7 @@ class AlterTableTest extends TestCase
         static::assertEquals([$colMock], $at->getRawState(AlterTable::ADD_COLUMNS));
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function addConstraint(): void
     {
         $at = new AlterTable();
@@ -58,7 +59,7 @@ class AlterTableTest extends TestCase
         static::assertEquals([$conMock], $at->getRawState(AlterTable::ADD_CONSTRAINTS));
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function addConstraintGeneratesCorrectSql(): void
     {
         $at = new AlterTable('orders');
@@ -71,7 +72,7 @@ class AlterTableTest extends TestCase
         static::assertStringContainsString('FOREIGN KEY', $sql);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function chainedOperations(): void
     {
         $at  = new AlterTable();
@@ -89,7 +90,7 @@ class AlterTableTest extends TestCase
         static::assertSame('test', $at->getRawState(AlterTable::TABLE));
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function changeColumn(): void
     {
         $at = new AlterTable();
@@ -99,7 +100,7 @@ class AlterTableTest extends TestCase
         static::assertEquals(['newname' => $colMock], $at->getRawState(AlterTable::CHANGE_COLUMNS));
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function changeColumnGeneratesCorrectSql(): void
     {
         $at = new AlterTable('users');
@@ -112,21 +113,21 @@ class AlterTableTest extends TestCase
         static::assertStringContainsString('VARCHAR(100)', $sql);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function constructorWithEmptyTable(): void
     {
         $at = new AlterTable();
         static::assertSame('', $at->getRawState('table'));
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function constructorWithTable(): void
     {
         $at = new AlterTable('test_table');
         static::assertSame('test_table', $at->getRawState('table'));
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function constructorWithTableIdentifier(): void
     {
         $tableId = new TableIdentifier('bar', 'foo');
@@ -137,7 +138,7 @@ class AlterTableTest extends TestCase
         static::assertSame($tableId, $rawState['table']);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function dropColumn(): void
     {
         $at = new AlterTable();
@@ -145,7 +146,7 @@ class AlterTableTest extends TestCase
         static::assertEquals(['foo'], $at->getRawState(AlterTable::DROP_COLUMNS));
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function dropConstraint(): void
     {
         $at = new AlterTable();
@@ -153,7 +154,7 @@ class AlterTableTest extends TestCase
         static::assertEquals(['foo'], $at->getRawState(AlterTable::DROP_CONSTRAINTS));
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function dropIndex(): void
     {
         $at = new AlterTable();
@@ -161,7 +162,7 @@ class AlterTableTest extends TestCase
         static::assertEquals(['foo'], $at->getRawState(AlterTable::DROP_INDEXES));
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function emptyAlterTableGeneratesMinimalSql(): void
     {
         $at  = new AlterTable('test_table');
@@ -171,14 +172,14 @@ class AlterTableTest extends TestCase
         static::assertStringContainsString('ALTER TABLE "test_table"', $sql);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getOptionsReturnsEmpty(): void
     {
         $at = new AlterTable('foo');
         static::assertEquals([], $at->getOptions());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getRawStateIncludesTableOptions(): void
     {
         $at = new AlterTable('foo');
@@ -190,7 +191,7 @@ class AlterTableTest extends TestCase
         static::assertEquals(['engine' => new Literal('InnoDB')], $rawState[AlterTable::TABLE_OPTIONS]);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getRawStateReturnsAllState(): void
     {
         $at      = new AlterTable('test');
@@ -224,7 +225,7 @@ class AlterTableTest extends TestCase
         static::assertEquals(['drop_idx'], $rawState[AlterTable::DROP_INDEXES]);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getRawStateWithInvalidKey(): void
     {
         $at     = new AlterTable('test');
@@ -235,7 +236,7 @@ class AlterTableTest extends TestCase
         static::assertArrayHasKey(AlterTable::TABLE, $result);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getRawStateWithSpecificKey(): void
     {
         $at = new AlterTable('my_table');
@@ -250,7 +251,7 @@ class AlterTableTest extends TestCase
     /**
      * @todo Implement testGetSqlString().
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getSqlString(): void
     {
         $at = new AlterTable('foo');
@@ -286,7 +287,7 @@ class AlterTableTest extends TestCase
         static::assertSame("ALTER TABLE \"foo\".\"bar\"\n ADD COLUMN \"baz\" INTEGER NOT NULL", $at->getSqlString());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getSqlStringWithBoolOption(): void
     {
         $at = new AlterTable('foo');
@@ -296,7 +297,7 @@ class AlterTableTest extends TestCase
         static::assertStringContainsString('PACK_KEYS = 1', $sql);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getSqlStringWithColumnAndEngineOption(): void
     {
         $at = new AlterTable('foo');
@@ -308,7 +309,7 @@ class AlterTableTest extends TestCase
         static::assertStringContainsString('ENGINE = InnoDB', $sql);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getSqlStringWithEngineOption(): void
     {
         $at = new AlterTable('foo');
@@ -319,7 +320,7 @@ class AlterTableTest extends TestCase
         static::assertStringContainsString('ENGINE = InnoDB', $sql);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getSqlStringWithIntOption(): void
     {
         $at = new AlterTable('foo');
@@ -329,7 +330,7 @@ class AlterTableTest extends TestCase
         static::assertStringContainsString('AUTO_INCREMENT = 100', $sql);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getSqlStringWithMultipleOptions(): void
     {
         $at = new AlterTable('foo');
@@ -341,7 +342,7 @@ class AlterTableTest extends TestCase
         static::assertStringContainsString('AUTO_INCREMENT = 100', $sql);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getSqlStringWithStringOption(): void
     {
         $at = new AlterTable('foo');
@@ -351,7 +352,7 @@ class AlterTableTest extends TestCase
         static::assertStringContainsString('COMMENT = \'My table\'', $sql);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function mixedOperationsInCorrectOrder(): void
     {
         $at = new AlterTable('complex_table');
@@ -375,7 +376,7 @@ class AlterTableTest extends TestCase
         static::assertStringContainsString('DROP INDEX "old_index"', $sql);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function multipleChangeColumns(): void
     {
         $at = new AlterTable('products');
@@ -387,7 +388,7 @@ class AlterTableTest extends TestCase
         static::assertStringContainsString('CHANGE COLUMN "name" "title"', $sql);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function multipleColumnsAndConstraints(): void
     {
         $at = new AlterTable('users');
@@ -408,7 +409,7 @@ class AlterTableTest extends TestCase
         static::assertStringContainsString('ADD COLUMN "bio"', $sql);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function multipleConstraints(): void
     {
         $at  = new AlterTable('orders');
@@ -423,7 +424,7 @@ class AlterTableTest extends TestCase
         static::assertStringContainsString('"fk_product"', $sql);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function multipleDropOperations(): void
     {
         $at = new AlterTable('products');
@@ -440,7 +441,7 @@ class AlterTableTest extends TestCase
         static::assertStringContainsString('DROP INDEX "old_idx"', $sql);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function setOptionFluentInterface(): void
     {
         $at     = new AlterTable('foo');
@@ -450,7 +451,7 @@ class AlterTableTest extends TestCase
         static::assertEquals(['engine' => new Literal('InnoDB')], $at->getOptions());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function setOptionsReplacesAll(): void
     {
         $at = new AlterTable('foo');
@@ -461,7 +462,7 @@ class AlterTableTest extends TestCase
         static::assertEquals(['charset' => new Literal('utf8mb4')], $at->getOptions());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function setTable(): void
     {
         $at = new AlterTable();
@@ -470,7 +471,7 @@ class AlterTableTest extends TestCase
         static::assertSame('test', $at->getRawState('table'));
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function tableIdentifierInChangeColumn(): void
     {
         $at = new AlterTable(new TableIdentifier('table', 'schema'));

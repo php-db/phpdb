@@ -13,6 +13,7 @@ use PhpDbTest\Adapter\Platform\TestAsset\TestPlatform;
 use PhpDbTest\TestAsset\TestSql92Platform;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 #[CoversMethod(Sql92::class, 'getName')]
@@ -39,7 +40,7 @@ final class Sql92Test extends TestCase
 {
     protected Sql92 $platform;
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function abstractPlatformQuoteValueEscapesWithDriver(): void
     {
         $platform = new TestPlatform($this->createStub(DriverInterface::class));
@@ -47,7 +48,7 @@ final class Sql92Test extends TestCase
         static::assertSame("'test\\'value'", $platform->quoteValue("test'value"));
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function abstractPlatformQuoteValueThrowsWithoutDriver(): void
     {
         $platform = new TestPlatform();
@@ -56,37 +57,37 @@ final class Sql92Test extends TestCase
         $platform->quoteValue('value');
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getIdentifierSeparator(): void
     {
         static::assertSame('.', $this->platform->getIdentifierSeparator());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getName(): void
     {
         static::assertSame('SQL92', $this->platform->getName());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getQuoteIdentifierSymbol(): void
     {
         static::assertSame('"', $this->platform->getQuoteIdentifierSymbol());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getQuoteValueSymbol(): void
     {
         static::assertSame("'", $this->platform->getQuoteValueSymbol());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function quoteIdentifier(): void
     {
         static::assertSame('"identifier"', $this->platform->quoteIdentifier('identifier'));
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function quoteIdentifierChain(): void
     {
         static::assertSame('"identifier"', $this->platform->quoteIdentifierChain('identifier'));
@@ -94,7 +95,7 @@ final class Sql92Test extends TestCase
         static::assertSame('"schema"."identifier"', $this->platform->quoteIdentifierChain(['schema', 'identifier']));
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function quoteIdentifierInFragment(): void
     {
         static::assertSame('"foo"."bar"', $this->platform->quoteIdentifierInFragment('foo.bar'));
@@ -125,7 +126,7 @@ final class Sql92Test extends TestCase
         );
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function quoteIdentifierInFragmentReturnsUnquotedWhenQuotingDisabled(): void
     {
         $platform = new TestSql92Platform(quoteIdentifiers: false);
@@ -133,7 +134,7 @@ final class Sql92Test extends TestCase
         static::assertSame('foo.bar', $platform->quoteIdentifierInFragment('foo.bar'));
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function quoteIdentifierReturnsUnquotedWhenQuotingDisabled(): void
     {
         $platform = new TestSql92Platform(quoteIdentifiers: false);
@@ -141,7 +142,7 @@ final class Sql92Test extends TestCase
         static::assertSame('test', $platform->quoteIdentifier('test'));
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function quoteTrustedValueEscapesSpecialCharacters(): void
     {
         static::assertSame("'value'", $this->platform->quoteTrustedValue('value'));
@@ -158,7 +159,7 @@ final class Sql92Test extends TestCase
         );
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function quoteValueEscapesSpecialCharacters(): void
     {
         $platform = new TestSql92Platform(driver: $this->createStub(DriverInterface::class));
@@ -170,21 +171,21 @@ final class Sql92Test extends TestCase
         static::assertStringEndsWith("'", $quoted);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function quoteValueListThrowsWithoutDriver(): void
     {
         $this->expectException(RuntimeException::class);
         static::assertSame("'Foo O\\'Bar'", $this->platform->quoteValueList("Foo O'Bar"));
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function quoteValueRaisesNoticeWithoutPlatformSupport(): void
     {
         $this->expectException(RuntimeException::class);
         $this->platform->quoteValue('value');
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function quoteValueThrowsWithoutDriver(): void
     {
         $this->expectException(RuntimeException::class);

@@ -29,6 +29,7 @@ use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\IgnoreDeprecations;
 use PHPUnit\Framework\Attributes\RequiresPhp;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -68,7 +69,7 @@ final class AbstractSqlTest extends TestCase
     /**
      * @throws ReflectionException
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function createSqlFromSpecificationThrowsOnParameterCountMismatch(): void
     {
         $method = new ReflectionMethod($this->abstractSql, 'createSqlFromSpecificationAndParameters');
@@ -88,7 +89,7 @@ final class AbstractSqlTest extends TestCase
     /**
      * @throws ReflectionException
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function createSqlFromSpecNonCombinedByThrowsOnUnsupportedCount(): void
     {
         $method = new ReflectionMethod($this->abstractSql, 'createSqlFromSpecificationAndParameters');
@@ -108,7 +109,7 @@ final class AbstractSqlTest extends TestCase
     /**
      * @throws ReflectionException
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function createSqlFromSpecWithCombinedByScalarParam(): void
     {
         $method = new ReflectionMethod($this->abstractSql, 'createSqlFromSpecificationAndParameters');
@@ -129,7 +130,7 @@ final class AbstractSqlTest extends TestCase
     /**
      * @throws ReflectionException
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function createSqlFromSpecWithCombinedByThrowsOnUnsupportedCount(): void
     {
         $method = new ReflectionMethod($this->abstractSql, 'createSqlFromSpecificationAndParameters');
@@ -150,7 +151,7 @@ final class AbstractSqlTest extends TestCase
     /**
      * @throws ReflectionException
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function createSqlFromSpecWithNonCombinedByParam(): void
     {
         $method = new ReflectionMethod($this->abstractSql, 'createSqlFromSpecificationAndParameters');
@@ -167,7 +168,7 @@ final class AbstractSqlTest extends TestCase
         static::assertSame('FROM my_table', $result);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function flattenExpressionValuesViaInPredicate(): void
     {
         $select = new Select('users');
@@ -178,7 +179,7 @@ final class AbstractSqlTest extends TestCase
         static::assertStringContainsString("\"id\" IN ('1', '2', '3')", $sql);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function flattenExpressionValuesViaInPredicateWithParameterContainer(): void
     {
         $select = new Select('users');
@@ -203,7 +204,7 @@ final class AbstractSqlTest extends TestCase
         static::assertSame(3, $parameterContainer->count());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function localizeVariablesCopiesSubjectProperties(): void
     {
         $decorator = new SelectDecorator();
@@ -217,7 +218,7 @@ final class AbstractSqlTest extends TestCase
         static::assertStringContainsString('"id"', $sql);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function processExpressionThrowsOnUnknownArgumentType(): void
     {
         $unknownArg = new class implements ArgumentInterface {
@@ -247,7 +248,7 @@ final class AbstractSqlTest extends TestCase
     /**
      * @throws ReflectionException
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function processExpressionWithIdentifiersArgument(): void
     {
         $expression = new Expression('? IN (SELECT col1, col2 FROM bar)', [
@@ -263,7 +264,7 @@ final class AbstractSqlTest extends TestCase
     /**
      * @throws ReflectionException
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function processExpressionWithoutParameterContainer(): void
     {
         $expression   = new Expression('? > ? AND y < ?', [new Identifier('x'), 5, 10]);
@@ -275,7 +276,7 @@ final class AbstractSqlTest extends TestCase
     /**
      * @throws ReflectionException
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function processExpressionWithParameterContainerAndParameterizationTypeNamed(): void
     {
         $parameterContainer = new ParameterContainer();
@@ -312,7 +313,7 @@ final class AbstractSqlTest extends TestCase
     /**
      * @throws ReflectionException
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function processExpressionWithValuesArgument(): void
     {
         $expression = new Expression(
@@ -336,7 +337,7 @@ final class AbstractSqlTest extends TestCase
     /**
      * @throws ReflectionException
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function processExpressionWorksWithExpressionContainingExpressionObject(): void
     {
         $expression = new Predicate\Operator(
@@ -352,7 +353,7 @@ final class AbstractSqlTest extends TestCase
     /**
      * @throws ReflectionException
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function processExpressionWorksWithExpressionContainingSelectObject(): void
     {
         $select = new Select();
@@ -368,7 +369,7 @@ final class AbstractSqlTest extends TestCase
     /**
      * @throws ReflectionException
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function processExpressionWorksWithExpressionContainingStringParts(): void
     {
         $expression = new Predicate\Expression('x = ?', 5);
@@ -382,7 +383,7 @@ final class AbstractSqlTest extends TestCase
     /**
      * @throws ReflectionException
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[Group('7407')]
     public function processExpressionWorksWithExpressionObjectWithPercentageSigns(): void
     {
@@ -396,7 +397,7 @@ final class AbstractSqlTest extends TestCase
     /**
      * @throws ReflectionException
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function processExpressionWorksWithNamedParameterPrefix(): void
     {
         $parameterContainer   = new ParameterContainer();
@@ -410,7 +411,7 @@ final class AbstractSqlTest extends TestCase
     /**
      * @throws ReflectionException
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function processExpressionWorksWithNamedParameterPrefixContainingWhitespace(): void
     {
         $parameterContainer   = new ParameterContainer();
@@ -424,7 +425,7 @@ final class AbstractSqlTest extends TestCase
     /**
      * @throws ReflectionException
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function processJoinReturnsNullWhenEmpty(): void
     {
         $method = new ReflectionMethod($this->abstractSql, 'processJoin');
@@ -442,7 +443,7 @@ final class AbstractSqlTest extends TestCase
     /**
      * @throws ReflectionException
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function processJoinWithArrayAlias(): void
     {
         $join = new Join();
@@ -464,7 +465,7 @@ final class AbstractSqlTest extends TestCase
     /**
      * @throws ReflectionException
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function processJoinWithExpressionNameViaArray(): void
     {
         $join = new Join();
@@ -485,7 +486,7 @@ final class AbstractSqlTest extends TestCase
     /**
      * @throws ReflectionException
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function processJoinWithPredicateExpressionOnClause(): void
     {
         $join = new Join();
@@ -507,7 +508,7 @@ final class AbstractSqlTest extends TestCase
     /**
      * @throws ReflectionException
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function processJoinWithSelectSubqueryViaArray(): void
     {
         $subselect = new Select('bar');
@@ -530,7 +531,7 @@ final class AbstractSqlTest extends TestCase
     /**
      * @throws ReflectionException
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function processJoinWithTableIdentifier(): void
     {
         $join = new Join();
@@ -550,7 +551,7 @@ final class AbstractSqlTest extends TestCase
         static::assertStringContainsString('"bar"', $result[0][0][1]);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function processSubSelectUsesDecoratorWhenPlatformDecorator(): void
     {
         $decorator = new SelectDecorator();
@@ -568,7 +569,7 @@ final class AbstractSqlTest extends TestCase
     /**
      * @throws ReflectionException
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function processSubSelectWithoutParameterContainer(): void
     {
         $select = new Select('foo');
@@ -589,7 +590,7 @@ final class AbstractSqlTest extends TestCase
     /**
      * @throws ReflectionException
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function processSubSelectWithParameterContainer(): void
     {
         $select = new Select('foo');
@@ -613,7 +614,7 @@ final class AbstractSqlTest extends TestCase
     /**
      * @throws ReflectionException
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function renderTableWithAlias(): void
     {
         $method = new ReflectionMethod($this->abstractSql, 'renderTable');
@@ -625,7 +626,7 @@ final class AbstractSqlTest extends TestCase
     /**
      * @throws ReflectionException
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function resolveColumnValueWithArrayAndFromTable(): void
     {
         $method = new ReflectionMethod($this->abstractSql, 'resolveColumnValue');
@@ -647,7 +648,7 @@ final class AbstractSqlTest extends TestCase
         static::assertStringContainsString('id', $result);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function resolveColumnValueWithNamedParameterPrefix(): void
     {
         $select = new Select('users');
@@ -677,7 +678,7 @@ final class AbstractSqlTest extends TestCase
     /**
      * @throws ReflectionException
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function resolveColumnValueWithNull(): void
     {
         $method = new ReflectionMethod($this->abstractSql, 'resolveColumnValue');
@@ -697,7 +698,7 @@ final class AbstractSqlTest extends TestCase
     /**
      * @throws ReflectionException
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function resolveColumnValueWithSelect(): void
     {
         $select = new Select('foo');
@@ -720,7 +721,7 @@ final class AbstractSqlTest extends TestCase
     /**
      * @throws ReflectionException
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function resolveTableWithSelect(): void
     {
         $select = new Select('foo');
@@ -742,7 +743,7 @@ final class AbstractSqlTest extends TestCase
     /**
      * @throws ReflectionException
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function resolveTableWithTableIdentifierAndSchema(): void
     {
         $table  = new TableIdentifier('users', 'public');

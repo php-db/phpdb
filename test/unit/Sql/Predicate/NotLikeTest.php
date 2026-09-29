@@ -8,11 +8,12 @@ use PhpDb\Sql\ArgumentInterface;
 use PhpDb\Sql\ArgumentType;
 use PhpDb\Sql\Predicate\Like;
 use PhpDb\Sql\Predicate\NotLike;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 final class NotLikeTest extends TestCase
 {
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function accessorsMutators(): void
     {
         $notLike = new NotLike();
@@ -65,7 +66,7 @@ final class NotLikeTest extends TestCase
         static::assertSame('custom spec', $notLike->getSpecification());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function constructEmptyArgs(): void
     {
         $notLike = new NotLike();
@@ -73,7 +74,7 @@ final class NotLikeTest extends TestCase
         static::assertNull($notLike->getLike());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function constructWithArgs(): void
     {
         $notLike = new NotLike('bar', 'Foo%');
@@ -89,7 +90,7 @@ final class NotLikeTest extends TestCase
         static::assertEquals(ArgumentType::Value, $likeValue->getType());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getExpressionData(): void
     {
         $notLike = new NotLike('bar', 'Foo%');
@@ -114,7 +115,7 @@ final class NotLikeTest extends TestCase
         static::assertEquals(ArgumentType::Value, $values[1]->getType());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function instanceOfPerSetters(): void
     {
         $notLike = new NotLike();

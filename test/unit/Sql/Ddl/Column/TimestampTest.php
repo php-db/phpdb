@@ -11,13 +11,14 @@ use PhpDb\Sql\ArgumentInterface;
 use PhpDb\Sql\Ddl\Column\AbstractTimestampColumn;
 use PhpDb\Sql\Ddl\Column\Timestamp;
 use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 #[CoversMethod(Timestamp::class, 'getExpressionData')]
 #[CoversMethod(AbstractTimestampColumn::class, 'getExpressionData')]
 final class TimestampTest extends TestCase
 {
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getExpressionData(): void
     {
         $column = new Timestamp('foo');
@@ -34,7 +35,7 @@ final class TimestampTest extends TestCase
         );
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getExpressionDataWithCurrentTimestampDefault(): void
     {
         $column = new Timestamp('created_at');
@@ -53,7 +54,7 @@ final class TimestampTest extends TestCase
         );
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getExpressionDataWithCurrentTimestampDefaultAndOnUpdate(): void
     {
         $column = new Timestamp('updated_at');
@@ -74,7 +75,7 @@ final class TimestampTest extends TestCase
         );
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getExpressionDataWithOnUpdateOption(): void
     {
         $column = new Timestamp('created_at');
@@ -99,7 +100,7 @@ final class TimestampTest extends TestCase
         static::assertEquals(new Literal('ON UPDATE CURRENT_TIMESTAMP'), $values[2]);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getExpressionDataWithoutOnUpdateOption(): void
     {
         $column = new Timestamp('updated_at');
@@ -113,7 +114,7 @@ final class TimestampTest extends TestCase
         static::assertEquals(Argument::literal('TIMESTAMP'), $values[1]);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function inheritanceFromAbstractTimestampColumn(): void
     {
         $column = new Timestamp('test');

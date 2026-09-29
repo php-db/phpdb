@@ -22,6 +22,7 @@ use PhpDbTest\TestAsset;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\IgnoreDeprecations;
 use PHPUnit\Framework\Attributes\RequiresPhp;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use ReflectionException;
@@ -40,7 +41,7 @@ use ReflectionMethod;
 #[CoversMethod(Platform::class, 'getDefaultPlatform')]
 class PlatformTest extends TestCase
 {
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getDefaultPlatformReturnsInstance(): void
     {
         $adapterPlatform = new TestAsset\TrustingSql92Platform();
@@ -52,7 +53,7 @@ class PlatformTest extends TestCase
         static::assertSame($adapterPlatform, $result);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getSqlStringDelegatesToTypeDecorator(): void
     {
         $adapterPlatform = new TestAsset\TrustingSql92Platform();
@@ -67,7 +68,7 @@ class PlatformTest extends TestCase
         static::assertStringContainsString('"foo"', $sql);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getSqlStringThrowsWhenSubjectNotSqlInterface(): void
     {
         $adapterPlatform = new TestAsset\TrustingSql92Platform();
@@ -80,7 +81,7 @@ class PlatformTest extends TestCase
         $platform->getSqlString($adapterPlatform);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getTypeDecoratorFallsThroughWhenNoMatch(): void
     {
         $adapterPlatform = new TestAsset\TrustingSql92Platform();
@@ -95,7 +96,7 @@ class PlatformTest extends TestCase
         static::assertSame($select, $result);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getTypeDecoratorMatchesByInstanceofLoop(): void
     {
         $adapterPlatform = new TestAsset\TrustingSql92Platform();
@@ -110,7 +111,7 @@ class PlatformTest extends TestCase
         static::assertSame($innerPlatform, $result);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getTypeDecoratorMatchesExactClass(): void
     {
         $adapterPlatform = new TestAsset\TrustingSql92Platform();
@@ -126,7 +127,7 @@ class PlatformTest extends TestCase
         static::assertSame($decorator, $result);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getTypeDecoratorReturnsSubjectWhenNoDecoratorRegistered(): void
     {
         $adapterPlatform = new TestAsset\TrustingSql92Platform();
@@ -138,7 +139,7 @@ class PlatformTest extends TestCase
         static::assertSame($select, $result);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function prepareStatementThrowsWhenSubjectNotPreparable(): void
     {
         $adapterPlatform = new TestAsset\TrustingSql92Platform();
@@ -157,7 +158,7 @@ class PlatformTest extends TestCase
     /**
      * @throws ReflectionException
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function resolveDefaultPlatform(): void
     {
         $adapter  = $this->resolveAdapter('sql92');
@@ -171,7 +172,7 @@ class PlatformTest extends TestCase
     /**
      * @throws ReflectionException
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function resolvePlatformName(): void
     {
         $platform = new Platform($this->resolveAdapter('sql92')->getPlatform());
@@ -190,7 +191,7 @@ class PlatformTest extends TestCase
     /**
      * @throws ReflectionException
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function resolvePlatformNameCachesResult(): void
     {
         $adapterPlatform = new TestAsset\TrustingSql92Platform();
@@ -205,7 +206,7 @@ class PlatformTest extends TestCase
         static::assertSame('sql92', $first);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function resolvePlatformWithAdapterInterface(): void
     {
         $adapterPlatform = new TestAsset\TrustingSql92Platform();
@@ -223,7 +224,7 @@ class PlatformTest extends TestCase
         static::assertSame($mockPlatform, $result);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function resolvePlatformWithPlatformInterface(): void
     {
         $adapterPlatform = new TestAsset\TrustingSql92Platform();
@@ -237,7 +238,7 @@ class PlatformTest extends TestCase
         static::assertSame($mockPlatform, $result);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function setTypeDecoratorRegistersDecorator(): void
     {
         $adapterPlatform = new TestAsset\TrustingSql92Platform();

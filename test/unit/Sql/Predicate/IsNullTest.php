@@ -24,7 +24,7 @@ use PHPUnit\Framework\TestCase;
 #[Group('unit')]
 final class IsNullTest extends TestCase
 {
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function canPassIdentifierToConstructor(): void
     {
         $isnull = new IsNotNull('foo.bar');
@@ -36,7 +36,7 @@ final class IsNullTest extends TestCase
         static::assertEquals(ArgumentType::Identifier, $identifier->getType());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function emptyConstructorYieldsNullIdentifier(): void
     {
         $isNotNull = new IsNotNull();
@@ -56,7 +56,7 @@ final class IsNullTest extends TestCase
         static::assertSame('%1$s NOT NULL', $isNotNull->getExpressionData()['spec']);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getExpressionDataThrowsExceptionWhenIdentifierNotSet(): void
     {
         $isNull = new IsNull();
@@ -66,7 +66,7 @@ final class IsNullTest extends TestCase
         $isNull->getExpressionData();
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function identifierIsMutable(): void
     {
         $isNotNull = new IsNotNull();
@@ -93,7 +93,7 @@ final class IsNullTest extends TestCase
         static::assertEquals(ArgumentType::Identifier, $identifier2->getType());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function retrievingWherePartsReturnsSpecificationArrayOfIdentifierAndArrayOfTypes(): void
     {
         $isNotNull = new IsNotNull();
@@ -114,7 +114,7 @@ final class IsNullTest extends TestCase
         static::assertEquals(ArgumentType::Identifier, $values[0]->getType());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function setIdentifierWithArgumentInterfacePassesThrough(): void
     {
         $isNull     = new IsNull();
@@ -125,7 +125,7 @@ final class IsNullTest extends TestCase
         static::assertSame($identifier, $isNull->getIdentifier());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function setIdentifierWithStringConvertsToIdentifier(): void
     {
         $isNull = new IsNull();
@@ -137,7 +137,7 @@ final class IsNullTest extends TestCase
         static::assertSame('foo', $identifier->getValue());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function specificationIsMutable(): void
     {
         $isNotNull = new IsNotNull();
@@ -145,7 +145,7 @@ final class IsNullTest extends TestCase
         static::assertSame('%1$s NOT NULL', $isNotNull->getSpecification());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function specificationIsNullByDefault(): void
     {
         $isNotNull = new IsNotNull();

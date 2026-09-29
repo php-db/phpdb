@@ -9,11 +9,12 @@ use PhpDb\Sql\ArgumentInterface;
 use PhpDb\Sql\ArgumentType;
 use PhpDb\Sql\Predicate\NotIn;
 use PhpDb\Sql\Select;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 final class NotInTest extends TestCase
 {
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getExpressionDataWithSubselect(): void
     {
         $select = new Select();
@@ -39,7 +40,7 @@ final class NotInTest extends TestCase
         static::assertEquals(ArgumentType::Select, $values[1]->getType());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getExpressionDataWithSubselectAndArrayIdentifier(): void
     {
         $select = new Select();
@@ -65,7 +66,7 @@ final class NotInTest extends TestCase
         static::assertEquals(ArgumentType::Select, $values[1]->getType());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getExpressionDataWithSubselectAndIdentifier(): void
     {
         $select = new Select();
@@ -91,7 +92,7 @@ final class NotInTest extends TestCase
         static::assertEquals(ArgumentType::Select, $values[1]->getType());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function retrievingWherePartsReturnsSpecificationArrayOfIdentifierAndValuesAndArrayOfTypes(): void
     {
         $in = new NotIn();

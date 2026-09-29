@@ -22,6 +22,7 @@ use PhpDb\Sql\TableIdentifier;
 use PhpDb\Sql\Update;
 use PhpDbTest\TestAsset;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -289,7 +290,7 @@ abstract class AbstractSqlFunctionalTestCase extends TestCase
         return new Sql\Update($sqlString);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[DataProvider('dataProvider')]
     public function test(PreparableSqlInterface|SqlInterface $sqlObject, string $platform, string|array $expected): void
     {

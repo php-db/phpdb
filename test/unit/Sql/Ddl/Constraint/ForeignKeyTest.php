@@ -9,6 +9,7 @@ use PhpDb\Sql\ArgumentType;
 use PhpDb\Sql\Ddl\Constraint\AbstractConstraint;
 use PhpDb\Sql\Ddl\Constraint\ForeignKey;
 use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 #[CoversMethod(AbstractConstraint::class, '__construct')]
@@ -32,7 +33,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(ForeignKey::class, 'getExpressionData')]
 final class ForeignKeyTest extends TestCase
 {
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getExpressionData(): void
     {
         $fk = new ForeignKey('foo', 'bar', 'baz', 'bam', 'CASCADE', 'SET NULL');
@@ -80,7 +81,7 @@ final class ForeignKeyTest extends TestCase
         static::assertEquals(ArgumentType::Literal, $values[5]->getType());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function setName(): void
     {
         $fk = new ForeignKey('foo', 'bar', 'baz', 'bam');
@@ -101,7 +102,7 @@ final class ForeignKeyTest extends TestCase
         static::assertSame('yyyy', $fk->getName());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function setOnDeleteRule(): void
     {
         $fk = new ForeignKey('foo', 'bar', 'baz', 'bam');
@@ -122,7 +123,7 @@ final class ForeignKeyTest extends TestCase
         static::assertSame('SET NULL', $fk->getOnDeleteRule());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function setOnUpdateRule(): void
     {
         $fk = new ForeignKey('foo', 'bar', 'baz', 'bam');
@@ -143,7 +144,7 @@ final class ForeignKeyTest extends TestCase
         static::assertSame('RESTRICT', $fk->getOnUpdateRule());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function setReferenceColumn(): void
     {
         $fk = new ForeignKey('foo', 'bar', 'baz', 'bam');
@@ -164,7 +165,7 @@ final class ForeignKeyTest extends TestCase
         static::assertEquals(['yyyy'], $fk->getReferenceColumn());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function setReferenceTable(): void
     {
         $fk = new ForeignKey('foo', 'bar', 'baz', 'bam');

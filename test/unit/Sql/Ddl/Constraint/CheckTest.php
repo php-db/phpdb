@@ -37,7 +37,7 @@ final class CheckTest extends TestCase
         );
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getExpressionData(): void
     {
         $check = new Check('id>0', 'foo');

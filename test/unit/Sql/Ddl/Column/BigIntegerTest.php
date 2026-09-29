@@ -20,7 +20,7 @@ use PHPUnit\Framework\TestCase;
 #[Group('unit')]
 final class BigIntegerTest extends TestCase
 {
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getExpressionData(): void
     {
         $column         = new BigInteger('foo');
@@ -40,7 +40,7 @@ final class BigIntegerTest extends TestCase
         );
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function objectConstruction(): void
     {
         $integer = new BigInteger('foo');

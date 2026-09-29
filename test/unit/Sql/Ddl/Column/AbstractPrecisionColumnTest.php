@@ -27,7 +27,7 @@ final class AbstractPrecisionColumnTest extends TestCase
     /**
      * @throws Exception
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getDecimal(): void
     {
         $column = $this->getMockBuilder(AbstractPrecisionColumn::class)
@@ -40,7 +40,7 @@ final class AbstractPrecisionColumnTest extends TestCase
     /**
      * @throws Exception
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getDigits(): void
     {
         $column = $this->getMockBuilder(AbstractPrecisionColumn::class)
@@ -53,7 +53,7 @@ final class AbstractPrecisionColumnTest extends TestCase
     /**
      * @throws Exception
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getExpressionData(): void
     {
         $column = $this->getMockBuilder(AbstractPrecisionColumn::class)
@@ -124,7 +124,7 @@ final class AbstractPrecisionColumnTest extends TestCase
     /**
      * @throws Exception
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function setDecimal(): void
     {
         $column = $this->getMockBuilder(AbstractPrecisionColumn::class)
@@ -139,7 +139,7 @@ final class AbstractPrecisionColumnTest extends TestCase
     /**
      * @throws Exception
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function setDigits(): void
     {
         $column = $this->getMockBuilder(AbstractPrecisionColumn::class)

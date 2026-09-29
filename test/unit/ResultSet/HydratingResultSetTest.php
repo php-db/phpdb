@@ -14,6 +14,7 @@ use PhpDb\ResultSet\Exception\RuntimeException;
 use PhpDb\ResultSet\HydratingResultSet;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
@@ -33,7 +34,7 @@ final class HydratingResultSetTest extends TestCase
 
     private string $classMethodsHydratorClass;
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function constructorDefaultsToArraySerializableHydrator(): void
     {
         $hydratingRs = new HydratingResultSet();
@@ -41,7 +42,7 @@ final class HydratingResultSetTest extends TestCase
         static::assertInstanceOf(ArraySerializableHydrator::class, $hydratingRs->getHydrator());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function currentDisablesBufferingImplicitly(): void
     {
         $hydratingRs = new HydratingResultSet();
@@ -58,7 +59,7 @@ final class HydratingResultSetTest extends TestCase
     /**
      * @throws Exception
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function currentDoesnotHasData(): void
     {
         $hydratingRs = new HydratingResultSet();
@@ -72,7 +73,7 @@ final class HydratingResultSetTest extends TestCase
     /**
      * @throws Exception
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function currentHasData(): void
     {
         $hydratingRs = new HydratingResultSet();
@@ -84,7 +85,7 @@ final class HydratingResultSetTest extends TestCase
         static::assertInstanceOf('ArrayObject', $obj);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function currentWithBufferReturnsBufferedObject(): void
     {
         $hydratingRs = new HydratingResultSet();
@@ -101,7 +102,7 @@ final class HydratingResultSetTest extends TestCase
         static::assertSame($first, $buffered);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getHydrator(): void
     {
         $hydratingRs = new HydratingResultSet();
@@ -109,7 +110,7 @@ final class HydratingResultSetTest extends TestCase
         static::assertInstanceOf($this->arraySerializableHydratorClass, $hydratingRs->getHydrator());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getObjectPrototype(): void
     {
         $hydratingRs = new HydratingResultSet();
@@ -117,7 +118,7 @@ final class HydratingResultSetTest extends TestCase
         static::assertInstanceOf('ArrayObject', $hydratingRs->getObjectPrototype());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getRowPrototypeReturnsDefaultArrayObject(): void
     {
         $hydratingRs = new HydratingResultSet();
@@ -125,7 +126,7 @@ final class HydratingResultSetTest extends TestCase
         static::assertInstanceOf(ArrayObject::class, $hydratingRs->getRowPrototype());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function setHydrator(): void
     {
         $hydratingRs    = new HydratingResultSet();
@@ -152,7 +153,7 @@ final class HydratingResultSetTest extends TestCase
         static::assertNotSame($hydrator1, $hydratingRs->getHydrator());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function setObjectPrototype(): void
     {
         $prototype1            = new stdClass();
@@ -178,7 +179,7 @@ final class HydratingResultSetTest extends TestCase
         static::assertNotSame($prototype1, $hydratingRs->getObjectPrototype());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function setRowPrototypeStoresPrototype(): void
     {
         $hydratingRs = new HydratingResultSet();
@@ -194,7 +195,7 @@ final class HydratingResultSetTest extends TestCase
      * @throws Exception
      * @todo Implement testToArray().
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function toArray(): void
     {
         $hydratingRs = new HydratingResultSet();
@@ -206,7 +207,7 @@ final class HydratingResultSetTest extends TestCase
         static::assertIsArray($obj);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function toArrayUsesHydratorExtract(): void
     {
         $hydratingRs = new HydratingResultSet();

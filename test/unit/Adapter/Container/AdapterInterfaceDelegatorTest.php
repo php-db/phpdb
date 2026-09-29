@@ -19,6 +19,7 @@ use PhpDb\ResultSet\ResultSetInterface;
 use PhpDbTest\Adapter\TestAsset\ConcreteAdapterAwareObject;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerExceptionInterface;
@@ -34,7 +35,7 @@ use function sprintf;
 #[CoversMethod(AdapterInterfaceDelegator::class, '__invoke')]
 final class AdapterInterfaceDelegatorTest extends TestCase
 {
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function delegatorWithPluginManager(): void
     {
         $databaseAdapter = new Adapter(
@@ -87,7 +88,7 @@ final class AdapterInterfaceDelegatorTest extends TestCase
      * @throws NotFoundExceptionInterface
      * @throws Exception
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function delegatorWithServiceManager(): void
     {
         $databaseAdapter = new Adapter(
@@ -123,7 +124,7 @@ final class AdapterInterfaceDelegatorTest extends TestCase
      * @throws NotFoundExceptionInterface
      * @throws Exception
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function delegatorWithServiceManagerAndCustomAdapterName(): void
     {
         $databaseAdapter = new Adapter(
@@ -154,7 +155,7 @@ final class AdapterInterfaceDelegatorTest extends TestCase
         );
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function invokeReturnsInstanceWhenAdapterIsNotAdapterInterface(): void
     {
         $container = $this->createMock(ContainerInterface::class);
@@ -182,7 +183,7 @@ final class AdapterInterfaceDelegatorTest extends TestCase
     /**
      * @throws Exception
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function setAdapterShouldBeCalledForExistingAdapter(): void
     {
         $container = $this->createMock(ContainerInterface::class);
@@ -213,7 +214,7 @@ final class AdapterInterfaceDelegatorTest extends TestCase
     /**
      * @throws Exception
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function setAdapterShouldBeCalledForOnlyConcreteAdapter(): void
     {
         $container = $this->createMock(ContainerInterface::class);
@@ -245,7 +246,7 @@ final class AdapterInterfaceDelegatorTest extends TestCase
     /**
      * @throws Exception
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function setAdapterShouldNotBeCalledForMissingAdapter(): void
     {
         $container = $this->createMock(ContainerInterface::class);
@@ -271,7 +272,7 @@ final class AdapterInterfaceDelegatorTest extends TestCase
     /**
      * @throws Exception
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function setAdapterShouldNotBeCalledForWrongClassInstance(): void
     {
         $container = $this->createMock(ContainerInterface::class);
@@ -294,7 +295,7 @@ final class AdapterInterfaceDelegatorTest extends TestCase
         );
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function setStateWithCustomAdapterName(): void
     {
         $delegator = AdapterInterfaceDelegator::__set_state(['adapterName' => 'custom']);
@@ -317,7 +318,7 @@ final class AdapterInterfaceDelegatorTest extends TestCase
         );
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function setStateWithDefaultAdapterName(): void
     {
         $delegator = AdapterInterfaceDelegator::__set_state([]);

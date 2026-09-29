@@ -10,6 +10,7 @@ use PhpDbTest\TestAsset\ObjectToString;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 use TypeError;
@@ -48,7 +49,7 @@ class TableIdentifierTest extends TestCase
         ];
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getDefaultPrefix(): void
     {
         $tableIdentifier = new TableIdentifier('foo');
@@ -56,7 +57,7 @@ class TableIdentifierTest extends TestCase
         static::assertNull($tableIdentifier->getPrefix());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getDefaultSchema(): void
     {
         $tableIdentifier = new TableIdentifier('foo');
@@ -64,7 +65,7 @@ class TableIdentifierTest extends TestCase
         static::assertNull($tableIdentifier->getSchema());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getDefaultSeparator(): void
     {
         $tableIdentifier = new TableIdentifier('foo');
@@ -72,7 +73,7 @@ class TableIdentifierTest extends TestCase
         static::assertSame('_', $tableIdentifier->getSeparator());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getPrefix(): void
     {
         $tableIdentifier = new TableIdentifier('foo', null, 'backup');
@@ -80,7 +81,7 @@ class TableIdentifierTest extends TestCase
         static::assertSame('backup', $tableIdentifier->getPrefix());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getSchema(): void
     {
         $tableIdentifier = new TableIdentifier('foo', 'bar');
@@ -91,7 +92,7 @@ class TableIdentifierTest extends TestCase
     /**
      * @todo Review test to see if relevant?
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getSchemaFromObjectStringCast(): void
     {
         $schema          = new ObjectToString('castResult');
@@ -101,7 +102,7 @@ class TableIdentifierTest extends TestCase
         static::assertSame('castResult', $tableIdentifier->getSchema());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getSeparator(): void
     {
         $tableIdentifier = new TableIdentifier('foo', null, 'backup', '__');
@@ -109,7 +110,7 @@ class TableIdentifierTest extends TestCase
         static::assertSame('__', $tableIdentifier->getSeparator());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getTable(): void
     {
         $tableIdentifier = new TableIdentifier('foo');
@@ -117,7 +118,7 @@ class TableIdentifierTest extends TestCase
         static::assertSame('foo', $tableIdentifier->getTable());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getTableAndSchemaAppliesPrefix(): void
     {
         $tableIdentifier = new TableIdentifier('foo', 'bar', 'backup');
@@ -125,7 +126,7 @@ class TableIdentifierTest extends TestCase
         static::assertSame(['backup_foo', 'bar'], $tableIdentifier->getTableAndSchema());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getTableAndSchemaWithoutPrefix(): void
     {
         $tableIdentifier = new TableIdentifier('foo', 'bar');
@@ -133,7 +134,7 @@ class TableIdentifierTest extends TestCase
         static::assertSame(['foo', 'bar'], $tableIdentifier->getTableAndSchema());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getTableAppliesPrefixWithCustomSeparator(): void
     {
         $tableIdentifier = new TableIdentifier('foo', null, 'backup', '__');
@@ -141,7 +142,7 @@ class TableIdentifierTest extends TestCase
         static::assertSame('backup__foo', $tableIdentifier->getTable());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getTableAppliesPrefixWithDefaultSeparator(): void
     {
         $tableIdentifier = new TableIdentifier('foo', null, 'backup');
@@ -149,7 +150,7 @@ class TableIdentifierTest extends TestCase
         static::assertSame('backup_foo', $tableIdentifier->getTable());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getTableFromObjectStringCast(): void
     {
         $table           = new ObjectToString('castResult');
@@ -159,7 +160,7 @@ class TableIdentifierTest extends TestCase
         static::assertSame('castResult', $tableIdentifier->getTable());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getTableIgnoresSeparatorWithoutPrefix(): void
     {
         $tableIdentifier = new TableIdentifier('foo', null, null, '__');
@@ -167,7 +168,7 @@ class TableIdentifierTest extends TestCase
         static::assertSame('foo', $tableIdentifier->getTable());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getUnprefixedTableReturnsTableAsGiven(): void
     {
         $tableIdentifier = new TableIdentifier('foo', null, 'backup');
@@ -175,7 +176,7 @@ class TableIdentifierTest extends TestCase
         static::assertSame('foo', $tableIdentifier->getUnprefixedTable());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function rejectsEmptyStringSeparatorWithoutPrefix(): void
     {
         self::expectException(InvalidArgumentException::class);
@@ -183,7 +184,7 @@ class TableIdentifierTest extends TestCase
         new TableIdentifier('foo', null, null, '');
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[DataProvider('invalidNameArgumentProvider')]
     public function rejectsInvalidPrefix(mixed $invalidPrefix): void
     {
@@ -192,7 +193,7 @@ class TableIdentifierTest extends TestCase
         new TableIdentifier('foo', 'bar', $invalidPrefix);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[DataProvider('invalidNameArgumentProvider')]
     public function rejectsInvalidSchema(mixed $invalidSchema): void
     {
@@ -201,7 +202,7 @@ class TableIdentifierTest extends TestCase
         new TableIdentifier('foo', $invalidSchema);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[DataProvider('invalidNameArgumentProvider')]
     public function rejectsInvalidSeparator(mixed $invalidSeparator): void
     {
@@ -210,7 +211,7 @@ class TableIdentifierTest extends TestCase
         new TableIdentifier('foo', 'bar', 'backup', $invalidSeparator);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[DataProvider('invalidTableProvider')]
     public function rejectsInvalidTable(mixed $invalidTable): void
     {

@@ -15,6 +15,7 @@ use PhpDb\ResultSet\ResultSetReturnType;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
 use Random\RandomException;
@@ -58,7 +59,7 @@ final class ResultSetIntegrationTest extends TestCase
      * @throws Exception
      * @throws \Exception
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function bufferCalledAfterIterationThrowsException(): void
     {
         $this->resultSet->initialize($this->createMock(ResultInterface::class));
@@ -73,7 +74,7 @@ final class ResultSetIntegrationTest extends TestCase
     /**
      * @throws \Exception
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function canProvideArrayAsDataSource(): void
     {
         $dataSource = [['foo']];
@@ -93,7 +94,7 @@ final class ResultSetIntegrationTest extends TestCase
     /**
      * @throws \Exception
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function canProvideIteratorAggregateAsDataSource(): void
     {
         $iteratorAggregate = $this->getMockBuilder('IteratorAggregate')
@@ -108,7 +109,7 @@ final class ResultSetIntegrationTest extends TestCase
     /**
      * @throws \Exception
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function canProvideIteratorAsDataSource(): void
     {
         $it = new SplStack();
@@ -121,7 +122,7 @@ final class ResultSetIntegrationTest extends TestCase
      * @throws RandomException
      * @throws \Exception
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function countReturnsCountOfRows(): void
     {
         $count      = random_int(3, 75);
@@ -131,7 +132,7 @@ final class ResultSetIntegrationTest extends TestCase
         static::assertEquals($count, $this->resultSet->count());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function currentClonesRowPrototypeOnEachCall(): void
     {
         $resultSet = new ResultSet(ResultSetReturnType::ArrayObject);
@@ -147,7 +148,7 @@ final class ResultSetIntegrationTest extends TestCase
         static::assertNotSame($first, $second);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function currentReturnsArrayObjectWhenReturnTypeIsArrayObject(): void
     {
         $resultSet = new ResultSet(ResultSetReturnType::ArrayObject);
@@ -159,7 +160,7 @@ final class ResultSetIntegrationTest extends TestCase
         static::assertSame(1, $current['id']);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function currentReturnsArrayWhenReturnTypeIsArray(): void
     {
         $resultSet = new ResultSet(ResultSetReturnType::Array);
@@ -175,7 +176,7 @@ final class ResultSetIntegrationTest extends TestCase
      * @throws Exception
      * @throws \Exception
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function currentReturnsNullForNonExistingValues(): void
     {
         $mockResult = $this->createMock(ResultInterface::class);
@@ -191,7 +192,7 @@ final class ResultSetIntegrationTest extends TestCase
     /**
      * @throws \Exception
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function currentWithBufferingCallsDataSourceCurrentOnce(): void
     {
         $mockResult = $this->getMockBuilder(ResultInterface::class)->getMock();
@@ -206,14 +207,14 @@ final class ResultSetIntegrationTest extends TestCase
         $this->resultSet->current();
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function dataSourceIsNullByDefault(): void
     {
         // Verify data source is null before initialization
         static::assertNull($this->resultSet->getDataSource());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function fieldCountIsZeroWithNoDataSourcePresent(): void
     {
         // Verify field count is 0 when no data source is set
@@ -223,7 +224,7 @@ final class ResultSetIntegrationTest extends TestCase
     /**
      * @throws \Exception
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function fieldCountRepresentsNumberOfFieldsInARowOfData(): void
     {
         $resultSet  = new ResultSet(ResultSet::TYPE_ARRAY);
@@ -246,7 +247,7 @@ final class ResultSetIntegrationTest extends TestCase
         return new ArrayIterator($array);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getArrayObjectPrototypeDelegatesToGetRowPrototype(): void
     {
         static::assertSame(
@@ -255,7 +256,7 @@ final class ResultSetIntegrationTest extends TestCase
         );
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getReturnTypeReturnsArrayWhenSetToArray(): void
     {
         $resultSet = new ResultSet(ResultSetReturnType::Array);
@@ -266,7 +267,7 @@ final class ResultSetIntegrationTest extends TestCase
     /**
      * @throws \Exception
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[DataProvider('invalidReturnTypes')]
     public function invalidDataSourceRaisesException(mixed $dataSource): void
     {
@@ -281,14 +282,14 @@ final class ResultSetIntegrationTest extends TestCase
         $this->resultSet->initialize($dataSource);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function returnTypeIsObjectByDefault(): void
     {
         // Verify default return type is ArrayObject
         static::assertEquals(ResultSetReturnType::ArrayObject, $this->resultSet->getReturnType());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function rowObjectPrototypeIsMutable(): void
     {
         $row1 = new ArrayObject(['test1' => 'value1']);
@@ -308,7 +309,7 @@ final class ResultSetIntegrationTest extends TestCase
         static::assertNotSame($row1, $this->resultSet->getArrayObjectPrototype());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function rowObjectPrototypeIsPopulatedByRowObjectByDefault(): void
     {
         // Verify default row object prototype is ArrayObject
@@ -316,7 +317,7 @@ final class ResultSetIntegrationTest extends TestCase
         static::assertInstanceOf('ArrayObject', $row);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function rowObjectPrototypeMayBePassedToConstructor(): void
     {
         $row = new ArrayObject();
@@ -325,7 +326,7 @@ final class ResultSetIntegrationTest extends TestCase
         static::assertSame($row, $resultSet->getArrayObjectPrototype());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[DataProvider('invalidReturnTypes')]
     public function settingInvalidReturnTypeRaisesException(mixed $type): void
     {
@@ -338,7 +339,7 @@ final class ResultSetIntegrationTest extends TestCase
      * @throws RandomException
      * @throws \Exception
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function toArrayCreatesArrayOfArraysRepresentingRows(): void
     {
         $count      = random_int(3, 75);
@@ -352,7 +353,7 @@ final class ResultSetIntegrationTest extends TestCase
     /**
      * @throws \Exception
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function whenReturnTypeIsArrayThenIterationReturnsArrays(): void
     {
         $resultSet  = new ResultSet(ResultSet::TYPE_ARRAY);
@@ -367,7 +368,7 @@ final class ResultSetIntegrationTest extends TestCase
     /**
      * @throws \Exception
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function whenReturnTypeIsObjectThenIterationReturnsRowObjects(): void
     {
         $dataSource = $this->getArrayDataSource(10);

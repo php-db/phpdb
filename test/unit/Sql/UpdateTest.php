@@ -34,6 +34,7 @@ use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\IgnoreDeprecations;
 use PHPUnit\Framework\Attributes\RequiresPhp;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestDox;
 use PHPUnit\Framework\TestCase;
 use ReflectionException;
@@ -63,7 +64,7 @@ final class UpdateTest extends TestCase
 
     protected Update $update;
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function cloneDeepCopiesSetWhereAndJoins(): void
     {
         $this->update
@@ -92,7 +93,7 @@ final class UpdateTest extends TestCase
         );
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function cloneUpdate(): void
     {
         $update1 = clone $this->update;
@@ -115,14 +116,14 @@ final class UpdateTest extends TestCase
     /**
      * @throws ReflectionException
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function construct(): void
     {
         $update = new Update('foo');
         static::assertSame('foo', static::readAttribute($update, 'table'));
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function constructWithTableIdentifier(): void
     {
         $tableIdentifier = new TableIdentifier('foo', 'bar');
@@ -131,7 +132,7 @@ final class UpdateTest extends TestCase
         static::assertEquals($tableIdentifier, $update->getRawState('table'));
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getRawState(): void
     {
         $this->update
@@ -145,7 +146,7 @@ final class UpdateTest extends TestCase
         static::assertInstanceOf(Where::class, $this->update->getRawState('where'));
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getRawStateReturnsAllState(): void
     {
         $this->update
@@ -169,7 +170,7 @@ final class UpdateTest extends TestCase
         static::assertTrue($rawState['emptyWhereProtection']);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getSqlString(): void
     {
         $this->update
@@ -195,7 +196,7 @@ final class UpdateTest extends TestCase
         );
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[Group('6768')]
     #[Group('6773')]
     public function getSqlStringForFalseUpdateValueParameter(): void
@@ -211,7 +212,7 @@ final class UpdateTest extends TestCase
         );
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getSqlStringWithEmptyWhere(): void
     {
         $this->update->table('foo')
@@ -223,14 +224,14 @@ final class UpdateTest extends TestCase
         );
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getUpdate(): void
     {
         $getWhere = $this->update->__get('where');
         static::assertInstanceOf(Where::class, $getWhere);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getUpdateFails(): void
     {
         /** @psalm-suppress UndefinedThisPropertyFetch - Ensure non-existent property returns null */
@@ -238,7 +239,7 @@ final class UpdateTest extends TestCase
         static::assertNull($getWhat);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function join(): void
     {
         $this->update->table('Document');
@@ -262,7 +263,7 @@ final class UpdateTest extends TestCase
         );
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[TestDox('unit test: Test join() returns Update object (is chainable)')]
     public function joinChainable(): void
     {
@@ -275,7 +276,7 @@ final class UpdateTest extends TestCase
      * Important when we're updating fields that are existing in several tables in one query.
      * The same test as above but here we will specify table in update params
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function joinMultiUpdate(): void
     {
         $this->update->table('Document');
@@ -298,7 +299,7 @@ final class UpdateTest extends TestCase
         );
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function joinWithTableIdentifier(): void
     {
         $this->update
@@ -310,7 +311,7 @@ final class UpdateTest extends TestCase
         static::assertStringContainsString('JOIN "schema"."bar"', $sql);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[Group('Laminas-240')]
     public function passingMultipleKeyValueInWhereClause(): void
     {
@@ -324,7 +325,7 @@ final class UpdateTest extends TestCase
         );
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function prepareStatement(): void
     {
         $mockDriver = $this->getMockBuilder(DriverInterface::class)->getMock();
@@ -371,7 +372,7 @@ final class UpdateTest extends TestCase
         $this->update->prepareStatement($mockAdapter, $mockStatement);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function processSetWithPdoDriverUsesDriverColumnQuoting(): void
     {
         $mockDriver = $this->getMockBuilder(PdoDriverInterface::class)->getMock();
@@ -393,14 +394,14 @@ final class UpdateTest extends TestCase
         static::assertStringContainsString(':c_1', $sql);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function set(): void
     {
         $this->update->set(['foo' => 'bar']);
         static::assertEquals(['foo' => 'bar'], $this->update->getRawState('set'));
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function setWithMergeFlag(): void
     {
         $this->update->set(['foo' => 'bar']);
@@ -410,7 +411,7 @@ final class UpdateTest extends TestCase
         static::assertEquals(['foo' => 'bar', 'baz' => 'qux'], $set);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function setWithNonStringKeyThrowsException(): void
     {
         self::expectException(InvalidArgumentException::class);
@@ -420,7 +421,7 @@ final class UpdateTest extends TestCase
         $this->update->set([0 => 'value']);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function setWithNumericPriority(): void
     {
         $this->update->set(['three' => 'c'], 30);
@@ -431,7 +432,7 @@ final class UpdateTest extends TestCase
         static::assertEquals(['one' => 'a', 'two' => 'b', 'three' => 'c'], $set);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function sortableSet(): void
     {
         $this->update->set([
@@ -450,7 +451,7 @@ final class UpdateTest extends TestCase
         );
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[CoversNothing]
     public function specificationconstantsCouldBeOverridedByExtensionInGetSqlString(): void
     {
@@ -479,7 +480,7 @@ final class UpdateTest extends TestCase
         );
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[CoversNothing]
     public function specificationconstantsCouldBeOverridedByExtensionInPrepareStatement(): void
     {
@@ -508,7 +509,7 @@ final class UpdateTest extends TestCase
     /**
      * @throws ReflectionException
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function table(): void
     {
         $this->update->table('foo');
@@ -522,7 +523,7 @@ final class UpdateTest extends TestCase
     /**
      * @throws ReflectionException
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function where(): void
     {
         $this->update->where('x = y');
@@ -573,7 +574,7 @@ final class UpdateTest extends TestCase
         $this->update->where(null);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[TestDox('unit test: Test where() accepts Expression (ExpressionInterface) in array')]
     public function whereAcceptsExpressionInterface(): void
     {

@@ -28,7 +28,7 @@ use PHPUnit\Framework\TestCase;
 #[Group('unit')]
 final class OperatorTest extends TestCase
 {
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function canPassAllValuesToConstructor(): void
     {
         $operator = new Operator('bar', '>=', 'foo.bar');
@@ -65,14 +65,14 @@ final class OperatorTest extends TestCase
         static::assertEquals(ArgumentType::Value, $right->getType());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function emptyConstructorYieldsDefaultsForOperatorAndLeftAndRightTypes(): void
     {
         $operator = new Operator();
         static::assertEquals(Operator::OP_EQ, $operator->getOperator());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function emptyConstructorYieldsNullLeftAndRightValues(): void
     {
         $operator = new Operator();
@@ -93,7 +93,7 @@ final class OperatorTest extends TestCase
         static::assertSame('%1$s IS NOT DISTINCT FROM %2$s', $operator->getExpressionData()['spec']);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getExpressionDataThrowsExceptionWhenLeftNotSet(): void
     {
         $operator = new Operator();
@@ -104,7 +104,7 @@ final class OperatorTest extends TestCase
         $operator->getExpressionData();
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getExpressionDataThrowsExceptionWhenRightNotSet(): void
     {
         $operator = new Operator();
@@ -115,7 +115,7 @@ final class OperatorTest extends TestCase
         $operator->getExpressionData();
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function leftIsMutable(): void
     {
         $operator = new Operator();
@@ -142,7 +142,7 @@ final class OperatorTest extends TestCase
         static::assertEquals(ArgumentType::Identifier, $left2->getType());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function operatorIsMutable(): void
     {
         $operator = new Operator();
@@ -150,7 +150,7 @@ final class OperatorTest extends TestCase
         static::assertEquals(Operator::OP_LTE, $operator->getOperator());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function retrievingWherePartsReturnsSpecificationArrayOfLeftAndRightAndArrayOfTypes(): void
     {
         $operator = new Operator();
@@ -178,7 +178,7 @@ final class OperatorTest extends TestCase
         static::assertEquals(ArgumentType::Identifier, $values[1]->getType());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function rightIsMutable(): void
     {
         $operator = new Operator();
@@ -214,7 +214,7 @@ final class OperatorTest extends TestCase
         static::assertEquals(ArgumentType::Value, $right3->getType());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function setLeftWithExpressionInterfaceWrapsInSelect(): void
     {
         $operator   = new Operator();
@@ -227,7 +227,7 @@ final class OperatorTest extends TestCase
         static::assertSame(ArgumentType::Select, $left->getType());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function setRightWithExpressionInterfaceWrapsInSelect(): void
     {
         $operator   = new Operator();

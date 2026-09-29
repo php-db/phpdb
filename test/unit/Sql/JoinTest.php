@@ -11,6 +11,7 @@ use PhpDbTest\DeprecatedAssertionsTrait;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\IgnoreDeprecations;
 use PHPUnit\Framework\Attributes\RequiresPhp;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestDox;
 use PHPUnit\Framework\TestCase;
 use ReflectionException;
@@ -31,7 +32,7 @@ class JoinTest extends TestCase
 {
     use DeprecatedAssertionsTrait;
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[TestDox('unit test: Test count() returns correct count')]
     public function countsJoinedTables(): void
     {
@@ -43,7 +44,7 @@ class JoinTest extends TestCase
         static::assertCount($join->count(), $join->getJoins());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function currentReturnsTheCurrentJoinSpecification(): void
     {
         $name = 'baz';
@@ -65,7 +66,7 @@ class JoinTest extends TestCase
     /**
      * @throws ReflectionException
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function initialPositionIsZero(): void
     {
         $join = new Join();
@@ -73,7 +74,7 @@ class JoinTest extends TestCase
         static::assertAttributeSame(0, 'position', $join);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[TestDox('unit test: Test join() returns Join object (is chainable)')]
     public function join(): void
     {
@@ -82,7 +83,7 @@ class JoinTest extends TestCase
         static::assertSame($join, $return);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function joinFullOuter(): void
     {
         $join   = new Join();
@@ -90,7 +91,7 @@ class JoinTest extends TestCase
         static::assertSame($join, $return);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function joinThrowsOnInvalidMultiElementArray(): void
     {
         $join = new Join();
@@ -100,7 +101,7 @@ class JoinTest extends TestCase
         $join->join(['a' => 'b', 'c' => 'd'], 'on');
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function joinWillThrowAnExceptionIfNameIsNoValid(): void
     {
         $join = new Join();
@@ -110,7 +111,7 @@ class JoinTest extends TestCase
         $join->join([], false);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function keyReturnsTheCurrentPosition(): void
     {
         $join = new Join();
@@ -125,7 +126,7 @@ class JoinTest extends TestCase
     /**
      * @throws ReflectionException
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function nextIncrementsThePosition(): void
     {
         $join = new Join();
@@ -135,7 +136,7 @@ class JoinTest extends TestCase
         static::assertAttributeSame(1, 'position', $join);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[TestDox('unit test: Test reset() resets the joins')]
     public function reset(): void
     {
@@ -150,7 +151,7 @@ class JoinTest extends TestCase
     /**
      * @throws ReflectionException
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function rewindResetsPositionToZero(): void
     {
         $join = new Join();
@@ -163,7 +164,7 @@ class JoinTest extends TestCase
         static::assertAttributeSame(0, 'position', $join);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function validReturnsTrueIfTheIteratorIsAtAValidPositionAndFalseIfNot(): void
     {
         $join = new Join();

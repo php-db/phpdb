@@ -27,7 +27,7 @@ final class AbstractLengthColumnTest extends TestCase
     /**
      * @throws Exception
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getExpressionData(): void
     {
         $column = $this->getMockBuilder(AbstractLengthColumn::class)
@@ -104,7 +104,7 @@ final class AbstractLengthColumnTest extends TestCase
     /**
      * @throws Exception
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getLength(): void
     {
         $column = $this->getMockBuilder(AbstractLengthColumn::class)
@@ -145,7 +145,7 @@ final class AbstractLengthColumnTest extends TestCase
     /**
      * @throws Exception
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function setLength(): void
     {
         $column = $this->getMockBuilder(AbstractLengthColumn::class)

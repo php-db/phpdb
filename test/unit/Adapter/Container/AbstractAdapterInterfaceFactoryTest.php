@@ -19,6 +19,7 @@ use PhpDbTest\TestAsset\PdoStubDriver;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerExceptionInterface;
@@ -48,7 +49,7 @@ final class AbstractAdapterInterfaceFactoryTest extends TestCase
         ];
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function canCreateReturnsFalseForEmptyConfig(): void
     {
         $container = new ServiceManager();
@@ -59,7 +60,7 @@ final class AbstractAdapterInterfaceFactoryTest extends TestCase
         static::assertFalse($factory->canCreate($container, 'PhpDb\Adapter\Writer'));
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getConfigCachesResult(): void
     {
         $container = $this->createMock(ContainerInterface::class);
@@ -78,7 +79,7 @@ final class AbstractAdapterInterfaceFactoryTest extends TestCase
         $factory->canCreate($container, 'anything');
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getConfigReturnsEmptyWhenContainerHasNoConfig(): void
     {
         $container = $this->createMock(ContainerInterface::class);
@@ -93,7 +94,7 @@ final class AbstractAdapterInterfaceFactoryTest extends TestCase
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[DataProvider('providerInvalidService')]
     public function invalidService(string $service): void
     {
@@ -101,7 +102,7 @@ final class AbstractAdapterInterfaceFactoryTest extends TestCase
         $this->serviceManager->get($service);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function invokeThrowsWhenDriverNotConfigured(): void
     {
         $container = new ServiceManager();
@@ -121,7 +122,7 @@ final class AbstractAdapterInterfaceFactoryTest extends TestCase
         $factory($container, 'PhpDb\Adapter\NoDriver');
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function invokeUsesResultSetFromContainer(): void
     {
         $resultSet = new ResultSet();
@@ -163,7 +164,7 @@ final class AbstractAdapterInterfaceFactoryTest extends TestCase
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[DataProvider('providerValidService')]
     public function validService(string $service): void
     {

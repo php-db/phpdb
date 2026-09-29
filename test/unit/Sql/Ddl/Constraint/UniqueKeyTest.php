@@ -7,12 +7,13 @@ namespace PhpDbTest\Sql\Ddl\Constraint;
 use PhpDb\Sql\Argument;
 use PhpDb\Sql\Ddl\Constraint\UniqueKey;
 use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 #[CoversMethod(UniqueKey::class, 'getExpressionData')]
 final class UniqueKeyTest extends TestCase
 {
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getExpressionData(): void
     {
         $uk = new UniqueKey('foo', 'my_uk');

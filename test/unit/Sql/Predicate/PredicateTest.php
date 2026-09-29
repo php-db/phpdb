@@ -14,13 +14,14 @@ use PhpDb\Sql\Predicate\Predicate;
 use PhpDb\Sql\Predicate\PredicateInterface;
 use PhpDb\Sql\Select;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestDox;
 use PHPUnit\Framework\TestCase;
 
 #[Group('unit')]
 final class PredicateTest extends TestCase
 {
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function betweenCreatesBetweenPredicate(): void
     {
         $predicate = new Predicate();
@@ -39,7 +40,7 @@ final class PredicateTest extends TestCase
         static::assertEquals($maxValue, $expressionData['values'][2]);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function betweenCreatesNotBetweenPredicate(): void
     {
         $predicate = new Predicate();
@@ -58,7 +59,7 @@ final class PredicateTest extends TestCase
         static::assertEquals($maxValue, $expressionData['values'][2]);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function canChainPredicateFactoriesBetweenOperators(): void
     {
         $predicate = new Predicate();
@@ -82,7 +83,7 @@ final class PredicateTest extends TestCase
         static::assertEquals($expression3, $expressionData['values'][3]);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function canNestPredicates(): void
     {
         $predicate = new Predicate();
@@ -110,7 +111,7 @@ final class PredicateTest extends TestCase
         static::assertEquals($expression3, $expressionData['values'][3]);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function equalToCreatesOperatorPredicate(): void
     {
         $predicate = new Predicate();
@@ -127,7 +128,7 @@ final class PredicateTest extends TestCase
         static::assertEquals($expression, $expressionData['values'][1]);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[TestDox('Unit test: Test expression() is chainable and returns proper values')]
     public function expression(): void
     {
@@ -142,7 +143,7 @@ final class PredicateTest extends TestCase
         static::assertEquals([$value], $expressionData['values']);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[TestDox('Unit test: Test expression() allows null $parameters')]
     public function expressionNullParameters(): void
     {
@@ -161,7 +162,7 @@ final class PredicateTest extends TestCase
         }
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function greaterThanCreatesOperatorPredicate(): void
     {
         $predicate = new Predicate();
@@ -178,7 +179,7 @@ final class PredicateTest extends TestCase
         static::assertEquals($expression, $expressionData['values'][1]);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function greaterThanOrEqualToCreatesOperatorPredicate(): void
     {
         $predicate = new Predicate();
@@ -195,7 +196,7 @@ final class PredicateTest extends TestCase
         static::assertEquals($expression, $expressionData['values'][1]);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function inCreatesInPredicate(): void
     {
         $predicate = new Predicate();
@@ -212,7 +213,7 @@ final class PredicateTest extends TestCase
         static::assertEquals($expression, $expressionData['values'][1]);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function isNotNullCreatesIsNotNullPredicate(): void
     {
         $predicate = new Predicate();
@@ -227,7 +228,7 @@ final class PredicateTest extends TestCase
         static::assertEquals($identifier, $expressionData['values'][0]);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function isNullCreatesIsNullPredicate(): void
     {
         $predicate = new Predicate();
@@ -242,7 +243,7 @@ final class PredicateTest extends TestCase
         static::assertEquals($identifier, $expressionData['values'][0]);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function lessThanCreatesOperatorPredicate(): void
     {
         $predicate = new Predicate();
@@ -259,7 +260,7 @@ final class PredicateTest extends TestCase
         static::assertEquals($expression, $expressionData['values'][1]);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function lessThanOrEqualToCreatesOperatorPredicate(): void
     {
         $predicate = new Predicate();
@@ -276,7 +277,7 @@ final class PredicateTest extends TestCase
         static::assertEquals($expression, $expressionData['values'][1]);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function likeCreatesLikePredicate(): void
     {
         $predicate = new Predicate();
@@ -293,7 +294,7 @@ final class PredicateTest extends TestCase
         static::assertEquals($expression, $expressionData['values'][1]);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[TestDox('Unit test: Test literal() is chainable, returns proper values, and is backwards compatible with 2.0.*')]
     public function literal(): void
     {
@@ -331,7 +332,7 @@ final class PredicateTest extends TestCase
         static::assertEquals([$expression], $expressionData['values']);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function literalCreatesLiteralPredicate(): void
     {
         $predicate = new Predicate();
@@ -343,7 +344,7 @@ final class PredicateTest extends TestCase
         static::assertSame('foo.bar = ?', $expressionData['spec']);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function magicGetNestReturnsNestedPredicate(): void
     {
         $predicate = new Predicate();
@@ -354,7 +355,7 @@ final class PredicateTest extends TestCase
         static::assertNotSame($predicate, $nested);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function magicGetUnnestReturnsParentPredicate(): void
     {
         $predicate = new Predicate();
@@ -365,7 +366,7 @@ final class PredicateTest extends TestCase
         static::assertSame($predicate, $parent);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function notEqualToCreatesOperatorPredicate(): void
     {
         $predicate = new Predicate();
@@ -382,7 +383,7 @@ final class PredicateTest extends TestCase
         static::assertEquals($expression, $expressionData['values'][1]);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function notInCreatesNotInPredicate(): void
     {
         $predicate = new Predicate();
@@ -399,7 +400,7 @@ final class PredicateTest extends TestCase
         static::assertEquals($expression, $expressionData['values'][1]);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function notLikeCreatesLikePredicate(): void
     {
         $predicate = new Predicate();
@@ -416,7 +417,7 @@ final class PredicateTest extends TestCase
         static::assertEquals($expression, $expressionData['values'][1]);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function predicateMethodAddsCustomPredicateInterface(): void
     {
         $predicate = new Predicate();
@@ -428,7 +429,7 @@ final class PredicateTest extends TestCase
         static::assertCount(1, $predicate);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function unnestThrowsWhenNotNested(): void
     {
         $predicate = new Predicate();
@@ -444,7 +445,7 @@ final class PredicateTest extends TestCase
     /**
      * @throws ErrorException
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function willBindSqlParametersToExpressionsWithGivenParameter(): void
     {
         $where = new Predicate();
@@ -462,7 +463,7 @@ final class PredicateTest extends TestCase
     /**
      * @throws ErrorException
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function willBindSqlParametersToExpressionsWithGivenStringParameter(): void
     {
         $where = new Predicate();

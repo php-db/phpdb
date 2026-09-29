@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace PhpDbTest\Sql\Predicate;
 
 use PhpDb\Sql\Predicate\Literal;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 class LiteralTest extends TestCase
 {
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getExpressionData(): void
     {
         $literal = new Literal('bar');
@@ -19,14 +20,14 @@ class LiteralTest extends TestCase
         static::assertSame('bar', $expressionData['spec']);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getLiteral(): void
     {
         $literal = new Literal('bar');
         static::assertSame('bar', $literal->getLiteral());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function setLiteral(): void
     {
         $literal = new Literal('bar');

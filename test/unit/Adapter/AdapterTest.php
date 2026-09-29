@@ -21,6 +21,7 @@ use PhpDb\ResultSet\ResultSetInterface;
 use PhpDbTest\TestAsset\TemporaryResultSet;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestDox;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -51,7 +52,7 @@ final class AdapterTest extends TestCase
 
     protected Adapter $adapter;
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function constructorWithProfilerDelegatesToSetProfiler(): void
     {
         $profilerMock = $this->createMock(Profiler\ProfilerInterface::class);
@@ -67,14 +68,14 @@ final class AdapterTest extends TestCase
         static::assertSame($profilerMock, $adapter->getProfiler());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[TestDox('unit test: Test createStatement() produces a statement object')]
     public function createStatementDelegatesToDriver(): void
     {
         static::assertSame($this->mockStatement, $this->adapter->createStatement());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[TestDox('unit test: Test executeQuery() returns the raw result without wrapping query results')]
     public function executeQueryReturnsRawResultWithoutWrappingQueryResults(): void
     {
@@ -88,7 +89,7 @@ final class AdapterTest extends TestCase
         static::assertSame($result, $this->adapter->executeQuery($sql));
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[TestDox('unit test: Test executeQuery() throws when execution does not produce a result')]
     public function executeQueryThrowsWhenExecutionDoesNotProduceAResult(): void
     {
@@ -101,7 +102,7 @@ final class AdapterTest extends TestCase
         $this->adapter->executeQuery($sql);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[TestDox('unit test: Test executeQuery() with raw SQL delegates to connection execute')]
     public function executeQueryWithRawSqlDelegatesToConnectionExecute(): void
     {
@@ -112,7 +113,7 @@ final class AdapterTest extends TestCase
         static::assertSame($result, $this->adapter->executeQuery($sql));
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[TestDox('unit test: Test executeQuery() with a prepared statement executes the statement')]
     public function executeQueryWithStatementExecutesStatement(): void
     {
@@ -123,7 +124,7 @@ final class AdapterTest extends TestCase
         static::assertSame($result, $this->adapter->executeQuery($this->mockStatement));
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[TestDox('unit test: Test setProfiler() will store profiler')]
     public function fluentSetProfiler(): void
     {
@@ -131,7 +132,7 @@ final class AdapterTest extends TestCase
         static::assertSame($this->adapter, $ret);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[TestDox('unit test: Test getCurrentSchema() returns current schema from connection object')]
     public function getCurrentSchemaDelegatesToConnection(): void
     {
@@ -139,14 +140,14 @@ final class AdapterTest extends TestCase
         static::assertSame('FooSchema', $this->adapter->getCurrentSchema());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[TestDox('unit test: Test getDriver() will return driver object')]
     public function getDriverReturnsDriver(): void
     {
         static::assertSame($this->mockDriver, $this->adapter->getDriver());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getHelpersQuoteIdentifierClosureCallsPlatform(): void
     {
         $this->mockPlatform
@@ -160,7 +161,7 @@ final class AdapterTest extends TestCase
         static::assertSame('"test"', $result);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getHelpersQuoteValueClosureCallsPlatform(): void
     {
         $this->mockPlatform
@@ -174,7 +175,7 @@ final class AdapterTest extends TestCase
         $functions[0]('test');
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getHelpersReturnsBothFunctions(): void
     {
         $functions = $this->adapter->getHelpers(
@@ -187,7 +188,7 @@ final class AdapterTest extends TestCase
         static::assertIsCallable($functions[1]);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getHelpersReturnsQuoteIdentifierFunction(): void
     {
         $functions = $this->adapter->getHelpers(Adapter::FUNCTION_QUOTE_IDENTIFIER);
@@ -196,7 +197,7 @@ final class AdapterTest extends TestCase
         static::assertIsCallable($functions[0]);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getHelpersReturnsQuoteValueFunction(): void
     {
         $functions = $this->adapter->getHelpers(Adapter::FUNCTION_QUOTE_VALUE);
@@ -205,14 +206,14 @@ final class AdapterTest extends TestCase
         static::assertIsCallable($functions[0]);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[TestDox('unit test: Test getPlatform() returns platform object')]
     public function getPlatformReturnsPlatform(): void
     {
         static::assertSame($this->mockPlatform, $this->adapter->getPlatform());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[TestDox('unit test: Test getProfiler() will store profiler')]
     public function getProfilerReturnsProfiler(): void
     {
@@ -227,14 +228,14 @@ final class AdapterTest extends TestCase
         static::assertInstanceOf(Profiler\Profiler::class, $adapter->getProfiler());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[TestDox('unit test: Test getPlatform() returns platform object')]
     public function getQueryResultSetPrototypeReturnsResultSet(): void
     {
         static::assertInstanceOf(ResultSetInterface::class, $this->adapter->getQueryResultSetPrototype());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function magicGetReturnsDriverAndPlatformCaseInsensitively(): void
     {
         static::assertSame($this->mockDriver, $this->adapter->driver);
@@ -250,7 +251,7 @@ final class AdapterTest extends TestCase
         $this->adapter->foo;
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[TestDox('unit test: Test prepareQuery() binds an array of parameters as a ParameterContainer')]
     public function prepareQueryBindsParameterArray(): void
     {
@@ -264,7 +265,7 @@ final class AdapterTest extends TestCase
         $this->adapter->prepareQuery('SELECT foo, :bar', ['bar' => 'foo']);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[TestDox('unit test: Test prepareQuery() binds a ParameterContainer directly')]
     public function prepareQueryBindsParameterContainerDirectly(): void
     {
@@ -278,7 +279,7 @@ final class AdapterTest extends TestCase
         $this->adapter->prepareQuery('SELECT foo, :bar', $parameterContainer);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[TestDox('unit test: Test prepareQuery() prepares a statement without executing it')]
     public function prepareQueryPreparesStatementWithoutExecuting(): void
     {
@@ -294,7 +295,7 @@ final class AdapterTest extends TestCase
      * @throws Exception
      * @throws \Exception
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[Group('#210')]
     public function producedResultSetPrototypeIsDifferentForEachQuery(): void
     {
@@ -314,7 +315,7 @@ final class AdapterTest extends TestCase
         );
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function queryThrowsOnInvalidParameterType(): void
     {
         self::expectException(InvalidArgumentException::class);
@@ -326,7 +327,7 @@ final class AdapterTest extends TestCase
     /**
      * @throws \Exception
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[TestDox('unit test: Test query() in execute mode produces a driver result object')]
     public function queryWhenExecutedProducesAResult(): void
     {
@@ -341,7 +342,7 @@ final class AdapterTest extends TestCase
     /**
      * @throws \Exception
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[TestDox('unit test: Test query() in execute mode produces a resultset object')]
     public function queryWhenExecutedProducesAResultSetObjectWhenResultIsQuery(): void
     {
@@ -370,7 +371,7 @@ final class AdapterTest extends TestCase
     /**
      * @throws \Exception
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[TestDox('unit test: Test query() in prepare mode produces a statement object')]
     public function queryWhenPreparedProducesStatement(): void
     {
@@ -381,7 +382,7 @@ final class AdapterTest extends TestCase
     /**
      * @throws \Exception
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[TestDox('unit test: Test query() in prepare mode, with array of parameters, produces a result object')]
     public function queryWhenPreparedWithParameterArrayProducesResult(): void
     {
@@ -403,7 +404,7 @@ final class AdapterTest extends TestCase
     /**
      * @throws \Exception
      */
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     #[TestDox('unit test: Test query() in prepare mode, with ParameterContainer, produces a result object')]
     public function queryWhenPreparedWithParameterContainerProducesResult(): void
     {
@@ -423,7 +424,7 @@ final class AdapterTest extends TestCase
         static::assertInstanceOf(ResultSet::class, $r);
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function setProfilerDelegatesToDriverWhenProfilerAware(): void
     {
         $profiler = $this->createMock(Profiler\ProfilerInterface::class);

@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace PhpDbTest\Sql;
 
 use PhpDb\Sql\Literal;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 class LiteralTest extends TestCase
 {
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getExpressionData(): void
     {
         $literal        = new Literal('bar');
@@ -26,7 +27,7 @@ class LiteralTest extends TestCase
         );
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getExpressionDataWillEscapePercent(): void
     {
         $literal        = new Literal('X LIKE "foo%"');
@@ -43,14 +44,14 @@ class LiteralTest extends TestCase
         );
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function getLiteral(): void
     {
         $literal = new Literal('bar');
         static::assertSame('bar', $literal->getLiteral());
     }
 
-    #[\PHPUnit\Framework\Attributes\Test]
+    #[Test]
     public function setLiteral(): void
     {
         $literal = new Literal('bar');
