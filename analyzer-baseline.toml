@@ -441,13 +441,13 @@ count = 1
 [[issues]]
 file = "src/Adapter/Driver/Pdo/AbstractPdoConnection.php"
 code = "mixed-argument"
-message = 'Invalid argument type for argument #1 of `PhpDb\Adapter\Exception\InvalidQueryException::forDriverError`: expected `string`, but found `mixed`.'
+message = 'Invalid argument type for argument #1 of `PhpDb\Adapter\Driver\DriverInterface::createResult`: expected `resource`, but found `mixed`.'
 count = 1
 
 [[issues]]
 file = "src/Adapter/Driver/Pdo/AbstractPdoConnection.php"
 code = "mixed-argument"
-message = 'Invalid argument type for argument #1 of `PhpDb\Adapter\Driver\DriverInterface::createResult`: expected `resource`, but found `mixed`.'
+message = 'Invalid argument type for argument #1 of `PhpDb\Adapter\Exception\InvalidQueryException::forDriverError`: expected `string`, but found `mixed`.'
 count = 1
 
 [[issues]]
@@ -832,12 +832,6 @@ count = 1
 file = "src/Adapter/Exception/ErrorException.php"
 code = "class-must-be-final"
 message = 'Class `PhpDb\Adapter\Exception\ErrorException` should be declared `final`.'
-count = 1
-
-[[issues]]
-file = "src/Adapter/Exception/ExceptionInterface.php"
-code = "missing-api-or-internal"
-message = 'Interface `PhpDb\Adapter\Exception\ExceptionInterface` is missing an `@api` or `@internal` annotation.'
 count = 1
 
 [[issues]]
@@ -1388,12 +1382,6 @@ count = 2
 
 [[issues]]
 file = "src/Container/AdapterInterfaceDelegator.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `PhpDb\Exception\RuntimeException` in `PhpDb\Container\AdapterInterfaceDelegator::__invoke`.'
-count = 1
-
-[[issues]]
-file = "src/Container/AdapterInterfaceDelegator.php"
 code = "unused-parameter"
 message = "Parameter `$options` is never used."
 count = 1
@@ -1465,12 +1453,6 @@ message = 'Interface `PhpDb\Exception\ExceptionInterface` is missing an `@api` o
 count = 1
 
 [[issues]]
-file = "src/Metadata/Exception/ExceptionInterface.php"
-code = "missing-api-or-internal"
-message = 'Interface `PhpDb\Metadata\Exception\ExceptionInterface` is missing an `@api` or `@internal` annotation.'
-count = 1
-
-[[issues]]
 file = "src/Metadata/Exception/InvalidArgumentException.php"
 code = "class-must-be-final"
 message = 'Class `PhpDb\Metadata\Exception\InvalidArgumentException` should be declared `final`.'
@@ -1517,12 +1499,6 @@ file = "src/Metadata/Source/AbstractSource.php"
 code = "missing-constant-type"
 message = "Class constant `DEFAULT_SCHEMA` is missing a type hint."
 count = 1
-
-[[issues]]
-file = "src/Metadata/Source/AbstractSource.php"
-code = "unfulfilled-expect"
-message = "This pragma was not used and may be removed."
-count = 3
 
 [[issues]]
 file = "src/ResultSet/AbstractResultSet.php"
@@ -1660,12 +1636,6 @@ count = 1
 file = "src/ResultSet/ArrayResultSet.php"
 code = "imprecise-type"
 message = "Type `array` in return type of `toArray` is imprecise, equivalent to `array<array-key, mixed>`."
-count = 1
-
-[[issues]]
-file = "src/ResultSet/Exception/ExceptionInterface.php"
-code = "missing-api-or-internal"
-message = 'Interface `PhpDb\ResultSet\Exception\ExceptionInterface` is missing an `@api` or `@internal` annotation.'
 count = 1
 
 [[issues]]
@@ -1959,6 +1929,12 @@ count = 1
 [[issues]]
 file = "src/RowGateway/AbstractRowGateway.php"
 code = "mixed-argument"
+message = 'Invalid argument type for argument #1 of `PhpDb\RowGateway\Exception\RuntimeException::forMissingPrimaryKeyData`: expected `string`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = "src/RowGateway/AbstractRowGateway.php"
+code = "mixed-argument"
 message = 'Invalid argument type for argument #1 of `PhpDb\Sql\Sql::prepareStatementForSqlObject`: expected `PhpDb\Sql\PreparableSqlInterface`, but found `mixed`.'
 count = 4
 
@@ -1973,12 +1949,6 @@ file = "src/RowGateway/AbstractRowGateway.php"
 code = "mixed-method-access"
 message = "Attempting to access a method on a non-object type (`mixed`)."
 count = 14
-
-[[issues]]
-file = "src/RowGateway/AbstractRowGateway.php"
-code = "mixed-argument"
-message = 'Invalid argument type for argument #1 of `PhpDb\RowGateway\Exception\RuntimeException::forMissingPrimaryKeyData`: expected `string`, but found `mixed`.'
-count = 1
 
 [[issues]]
 file = "src/RowGateway/AbstractRowGateway.php"
@@ -2062,12 +2032,6 @@ count = 1
 file = "src/RowGateway/AbstractRowGateway.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `PhpDb\RowGateway\Exception\RuntimeException` in `PhpDb\RowGateway\AbstractRowGateway::save`.'
-count = 1
-
-[[issues]]
-file = "src/RowGateway/Exception/ExceptionInterface.php"
-code = "missing-api-or-internal"
-message = 'Interface `PhpDb\RowGateway\Exception\ExceptionInterface` is missing an `@api` or `@internal` annotation.'
 count = 1
 
 [[issues]]
@@ -3427,24 +3391,6 @@ message = "Redundant null coalesce: left-hand side can never be `null` or undefi
 count = 1
 
 [[issues]]
-file = "src/Sql/Exception/ExceptionInterface.php"
-code = "missing-api-or-internal"
-message = 'Interface `PhpDb\Sql\Exception\ExceptionInterface` is missing an `@api` or `@internal` annotation.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Exception/InvalidArgumentException.php"
-code = "class-must-be-final"
-message = 'Class `PhpDb\Sql\Exception\InvalidArgumentException` should be declared `final`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Exception/RuntimeException.php"
-code = "class-must-be-final"
-message = 'Class `PhpDb\Sql\Exception\RuntimeException` should be declared `final`.'
-count = 1
-
-[[issues]]
 file = "src/Sql/Expression.php"
 code = "imprecise-type"
 message = "Type `array` in parameter `$parameters` is imprecise, equivalent to `array<array-key, mixed>`."
@@ -3819,7 +3765,7 @@ count = 1
 [[issues]]
 file = "src/Sql/Join.php"
 code = "mixed-argument"
-message = "Invalid argument type for argument #1 of `PhpDb\\Sql\\Exception\\InvalidArgumentException::forInvalidJoinName`: expected `string`, but found `mixed`."
+message = 'Invalid argument type for argument #1 of `PhpDb\Sql\Exception\InvalidArgumentException::forInvalidJoinName`: expected `string`, but found `mixed`.'
 count = 1
 
 [[issues]]
@@ -3988,6 +3934,18 @@ count = 1
 file = "src/Sql/Platform/PlatformDecoratorInterface.php"
 code = "missing-api-or-internal"
 message = 'Interface `PhpDb\Sql\Platform\PlatformDecoratorInterface` is missing an `@api` or `@internal` annotation.'
+count = 1
+
+[[issues]]
+file = "src/Sql/Predicate/Exception/InvalidArgumentException.php"
+code = "class-must-be-final"
+message = 'Class `PhpDb\Sql\Predicate\Exception\InvalidArgumentException` should be declared `final`.'
+count = 1
+
+[[issues]]
+file = "src/Sql/Predicate/Exception/RuntimeException.php"
+code = "class-must-be-final"
+message = 'Class `PhpDb\Sql\Predicate\Exception\RuntimeException` should be declared `final`.'
 count = 1
 
 [[issues]]
@@ -4205,12 +4163,6 @@ file = "src/Sql/Predicate/Predicate.php"
 code = "possibly-invalid-argument"
 message = 'Possible argument type mismatch for argument #3 of `PhpDb\Sql\Predicate\Between::__construct`: expected `PhpDb\Sql\ArgumentInterface|float|int|null|string`, but possibly received `PhpDb\Sql\ArgumentInterface|array<array-key, mixed>|float|int|null|string`.'
 count = 2
-
-[[issues]]
-file = "src/Sql/Predicate/Predicate.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `PhpDb\Sql\Exception\RuntimeException` in `PhpDb\Sql\Predicate\Predicate::unnest`.'
-count = 1
 
 [[issues]]
 file = "src/Sql/Predicate/PredicateInterface.php"
@@ -4905,6 +4857,12 @@ count = 1
 [[issues]]
 file = "src/Sql/Sql.php"
 code = "possibly-invalid-argument"
+message = 'Possible argument type mismatch for argument #1 of `PhpDb\Sql\Exception\InvalidArgumentException::forForeignTable`: expected `string`, but possibly received `PhpDb\Sql\TableIdentifier|array<array-key, mixed>|string`.'
+count = 4
+
+[[issues]]
+file = "src/Sql/Sql.php"
+code = "possibly-invalid-argument"
 message = 'Possible argument type mismatch for argument #1 of `PhpDb\Sql\Insert::__construct`: expected `PhpDb\Sql\TableIdentifier|null|string`, but possibly received `PhpDb\Sql\TableIdentifier|array<array-key, mixed>|null|string`.'
 count = 1
 
@@ -4913,12 +4871,6 @@ file = "src/Sql/Sql.php"
 code = "possibly-invalid-argument"
 message = 'Possible argument type mismatch for argument #1 of `PhpDb\Sql\Update::__construct`: expected `PhpDb\Sql\TableIdentifier|null|string`, but possibly received `PhpDb\Sql\TableIdentifier|array<array-key, mixed>|null|string`.'
 count = 1
-
-[[issues]]
-file = "src/Sql/Sql.php"
-code = "possibly-invalid-argument"
-message = 'Possible argument type mismatch for argument #1 of `PhpDb\Sql\Exception\InvalidArgumentException::forForeignTable`: expected `string`, but possibly received `PhpDb\Sql\TableIdentifier|array<array-key, mixed>|string`.'
-count = 4
 
 [[issues]]
 file = "src/Sql/Sql.php"
@@ -5467,12 +5419,6 @@ message = "Redundant `===` comparison: left-hand side is never identical to righ
 count = 1
 
 [[issues]]
-file = "src/TableGateway/Exception/ExceptionInterface.php"
-code = "missing-api-or-internal"
-message = 'Interface `PhpDb\TableGateway\Exception\ExceptionInterface` is missing an `@api` or `@internal` annotation.'
-count = 1
-
-[[issues]]
 file = "src/TableGateway/Exception/InvalidArgumentException.php"
 code = "class-must-be-final"
 message = 'Class `PhpDb\TableGateway\Exception\InvalidArgumentException` should be declared `final`.'
@@ -5536,22 +5482,4 @@ count = 1
 file = "src/TableGateway/TableGatewayInterface.php"
 code = "missing-api-or-internal"
 message = 'Interface `PhpDb\TableGateway\TableGatewayInterface` is missing an `@api` or `@internal` annotation.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Predicate/Exception/ExceptionInterface.php"
-code = "missing-api-or-internal"
-message = 'Interface `PhpDb\Sql\Predicate\Exception\ExceptionInterface` is missing an `@api` or `@internal` annotation.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Predicate/Exception/InvalidArgumentException.php"
-code = "class-must-be-final"
-message = 'Class `PhpDb\Sql\Predicate\Exception\InvalidArgumentException` should be declared `final`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Predicate/Exception/RuntimeException.php"
-code = "class-must-be-final"
-message = 'Class `PhpDb\Sql\Predicate\Exception\RuntimeException` should be declared `final`.'
 count = 1
