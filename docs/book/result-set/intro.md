@@ -145,6 +145,52 @@ For more information, see the
 documentation to get a better sense of the different strategies that can be
 employed in order to populate a target object.
 
+## ObjectResultSet
+
+`PhpDb\ResultSet\ObjectResultSet` is for fetch modes that yield objects, such as
+`PDO::FETCH_OBJ` and `PDO::FETCH_LAZY`. Rows leave it as the very instances the driver
+produced: nothing is cloned, hydrated or reshaped.
+
+```php title="Using ObjectResultSet with PDO::FETCH_OBJ"
+use PDO;
+use PhpDb\ResultSet\ObjectResultSet;
+
+$result = $statement->execute();
+$result->setFetchMode(PDO::FETCH_OBJ);
+
+$resultSet = new ObjectResultSet();
+$resultSet->initialize($result);
+
+foreach ($resultSet as $user) {
+    printf("%s %s\n", $user->first_name, $user->last_name);
+}
+```
+
+`toArray()` reads each row's values, either by traversing it or by reading its public
+properties. A row that exposes neither — a `PDORow` from `PDO::FETCH_LAZY`, for
+instance — throws rather than yielding an empty array, so iterate such a result set
+instead of calling `toArray()` on it.
+
+## Choosing a Result Set
+
+A result set fills its rows from row data, meaning an `array` or an `ArrayObject`. It
+will not transform a row the driver handed it into some other shape, so the fetch mode
+and the result set have to agree; where they do not, the row is refused with a
+`PhpDb\ResultSet\Exception\ValueError` naming both types.
+
+| Result set | Rows arrive as | Rows leave as |
+|---|---|---|
+| `ResultSet` | row data, or an `ArrayObject` | a filled `ArrayObject` prototype, an array, or that same `ArrayObject` |
+| `ArrayResultSet` | row data | an array |
+| `ObjectResultSet` | any object | that same object |
+| `HydratingResultSet` | row data | the hydrated row prototype |
+| `RowPrototypeResultSet` | row data, or a `RowPrototypeInterface` | a populated `RowPrototypeInterface` |
+
+With PDO that means `FETCH_ASSOC`, `FETCH_NUM`, `FETCH_BOTH`, `FETCH_NAMED` and
+`FETCH_KEY_PAIR` suit the row-data sets, while `FETCH_OBJ` and `FETCH_LAZY` need
+`ObjectResultSet`. `FETCH_BOUND` yields only a success flag and binds its columns by
+reference, so no result set accepts its rows; read the bound variables instead.
+
 ## Data Source Types
 
 The `initialize()` method accepts arrays, `Iterator`, `IteratorAggregate`,
