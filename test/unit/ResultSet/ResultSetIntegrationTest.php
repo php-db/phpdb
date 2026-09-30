@@ -9,6 +9,7 @@ use ArrayObject;
 use Override;
 use PhpDb\Adapter\Driver\ResultInterface;
 use PhpDb\ResultSet\AbstractResultSet;
+use PhpDb\ResultSet\Exception\InvalidArgumentException;
 use PhpDb\ResultSet\Exception\RuntimeException;
 use PhpDb\ResultSet\ResultSet;
 use PhpDb\ResultSet\ResultSetReturnType;
@@ -28,6 +29,7 @@ use function random_int;
 use function var_export;
 
 #[CoversMethod(AbstractResultSet::class, 'current')]
+#[CoversMethod(AbstractResultSet::class, 'resolveIterator')]
 #[CoversMethod(AbstractResultSet::class, 'buffer')]
 #[CoversMethod(ResultSet::class, 'current')]
 #[CoversMethod(ResultSet::class, 'getReturnType')]
@@ -97,13 +99,14 @@ final class ResultSetIntegrationTest extends TestCase
     #[Test]
     public function canProvideIteratorAggregateAsDataSource(): void
     {
+        $iterator          = new ArrayIterator([['id' => 1, 'name' => 'one']]);
         $iteratorAggregate = $this->getMockBuilder('IteratorAggregate')
             ->onlyMethods(['getIterator'])
             ->getMock();
-        $iteratorAggregate->expects($this->any())->method('getIterator')->willReturn($iteratorAggregate);
-        // Initialize with IteratorAggregate and verify its iterator is used
+        $iteratorAggregate->expects($this->any())->method('getIterator')->willReturn($iterator);
+        // Initialize with IteratorAggregate and verify the iterator it wraps is stored
         $this->resultSet->initialize($iteratorAggregate);
-        static::assertSame($iteratorAggregate->getIterator(), $this->resultSet->getDataSource());
+        static::assertSame($iterator, $this->resultSet->getDataSource());
     }
 
     /**
@@ -280,6 +283,21 @@ final class ResultSetIntegrationTest extends TestCase
         // Verify invalid data source throws TypeError
         self::expectException(TypeError::class);
         $this->resultSet->initialize($dataSource);
+    }
+
+    /**
+     * @throws \Exception
+     */
+    #[Test]
+    public function rejectsAnIteratorAggregateThatNeverResolvesToAnIterator(): void
+    {
+        $iteratorAggregate = $this->getMockBuilder('IteratorAggregate')
+            ->onlyMethods(['getIterator'])
+            ->getMock();
+        $iteratorAggregate->expects($this->any())->method('getIterator')->willReturn($iteratorAggregate);
+
+        self::expectException(InvalidArgumentException::class);
+        $this->resultSet->initialize($iteratorAggregate);
     }
 
     #[Test]

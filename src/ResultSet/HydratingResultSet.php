@@ -8,8 +8,12 @@ use ArrayObject;
 use Laminas\Hydrator\ArraySerializableHydrator;
 use Laminas\Hydrator\HydratorInterface;
 use Override;
+use PhpDb\ResultSet\Exception\RuntimeException;
 
+use function array_key_exists;
+use function get_debug_type;
 use function is_array;
+use function is_object;
 
 class HydratingResultSet extends AbstractResultSet implements HydratingResultSetInterface
 {
@@ -20,16 +24,25 @@ class HydratingResultSet extends AbstractResultSet implements HydratingResultSet
 
     /**
      * Iterator: get current item
+     *
+     * @throws RuntimeException
      */
     #[Override]
     public function current(): ?object
     {
-        if ($this->buffer === null) {
+        if (null === $this->buffer) {
             $this->buffer = -2; // implicitly disable buffering from here on
-        } elseif (is_array($this->buffer) && isset($this->buffer[$this->position])) {
+        }
+
+        if (
+            is_array($this->buffer)
+            && array_key_exists($this->position, $this->buffer)
+            && null !== $this->buffer[$this->position]
+        ) {
             return $this->buffer[$this->position];
         }
-        $data    = $this->dataSource->current();
+
+        $data    = $this->dataSource()->current();
         $current = is_array($data) ? $this->getHydrator()->hydrate($data, clone $this->getRowPrototype()) : null;
 
         if (is_array($this->buffer)) {
@@ -77,8 +90,9 @@ class HydratingResultSet extends AbstractResultSet implements HydratingResultSet
 
     /** {@inheritDoc} */
     #[Override]
-    public function setRowPrototype(object $rowPrototype): ResultSetInterface&HydratingResultSetInterface
-    {
+    public function setRowPrototype(
+        object $rowPrototype,
+    ): ResultSetInterface&HydratingResultSetInterface {
         $this->rowPrototype = $rowPrototype;
         return $this;
     }
@@ -93,8 +107,13 @@ class HydratingResultSet extends AbstractResultSet implements HydratingResultSet
     {
         $return = [];
         foreach ($this as $row) {
+            if (! is_object($row)) {
+                throw RuntimeException::forUnhydratableRow(get_debug_type($row));
+            }
+
             $return[] = $this->getHydrator()->extract($row);
         }
+
         return $return;
     }
 }

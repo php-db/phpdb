@@ -16,27 +16,27 @@ class ResultSet extends AbstractResultSet implements ArrayObjectResultSetInterfa
     public const TYPE_ARRAYOBJECT = 'arrayobject';
     public const TYPE_ARRAY       = 'array';
 
+    private ResultSetReturnType $returnType;
+
     public function __construct(
-        private ResultSetReturnType|string $returnType = ResultSetReturnType::ArrayObject,
+        ResultSetReturnType|string $returnType = ResultSetReturnType::ArrayObject,
         private ArrayObject $rowPrototype = new ArrayObject(
             [],
             ArrayObject::ARRAY_AS_PROPS,
         ),
     ) {
-        if (is_string($this->returnType)) {
-            $this->returnType = ResultSetReturnType::from($this->returnType);
-        }
+        $this->returnType = is_string($returnType) ? ResultSetReturnType::from($returnType) : $returnType;
     }
 
     /**
      * Iterator: get current item
      */
     #[Override]
-    public function current(): array|ArrayObject|null
+    public function current(): array|object|null
     {
         $data = parent::current();
 
-        if ($this->returnType === ResultSetReturnType::ArrayObject && is_array($data)) {
+        if (ResultSetReturnType::ArrayObject === $this->returnType && is_array($data)) {
             $ao = clone $this->getRowPrototype();
             $ao->exchangeArray($data);
 
@@ -74,15 +74,17 @@ class ResultSet extends AbstractResultSet implements ArrayObjectResultSetInterfa
      *
      * @deprecated use setRowPrototype()
      */
-    public function setArrayObjectPrototype(ArrayObject $arrayObjectPrototype): ResultSetInterface&ArrayObjectResultSetInterface
-    {
+    public function setArrayObjectPrototype(
+        ArrayObject $arrayObjectPrototype,
+    ): ResultSetInterface&ArrayObjectResultSetInterface {
         return $this->setRowPrototype($arrayObjectPrototype);
     }
 
     /** {@inheritDoc} */
     #[Override]
-    public function setRowPrototype(ArrayObject $rowPrototype): ResultSetInterface&ArrayObjectResultSetInterface
-    {
+    public function setRowPrototype(
+        ArrayObject $rowPrototype,
+    ): ResultSetInterface&ArrayObjectResultSetInterface {
         $this->rowPrototype = $rowPrototype;
 
         return $this;

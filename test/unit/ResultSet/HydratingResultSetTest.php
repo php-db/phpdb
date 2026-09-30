@@ -208,6 +208,19 @@ final class HydratingResultSetTest extends TestCase
     }
 
     #[Test]
+    public function toArrayReportsARowTheHydratorCannotExtract(): void
+    {
+        $hydratingRs = new HydratingResultSet();
+        // Scalars never hydrate into an object, so current() yields null for each row.
+        $hydratingRs->initialize(new ArrayIterator([1, 2]));
+
+        self::expectException(RuntimeException::class);
+        self::expectExceptionMessage('null');
+
+        $hydratingRs->toArray();
+    }
+
+    #[Test]
     public function toArrayUsesHydratorExtract(): void
     {
         $hydratingRs = new HydratingResultSet();

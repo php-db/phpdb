@@ -18,7 +18,7 @@ class RowPrototypeResultSet extends AbstractResultSet implements RowPrototypeRes
      * Iterator: get current item
      */
     #[Override]
-    public function current(): array|RowPrototypeInterface|null
+    public function current(): array|object|null
     {
         $data = parent::current();
 
@@ -38,8 +38,9 @@ class RowPrototypeResultSet extends AbstractResultSet implements RowPrototypeRes
 
     /** {@inheritDoc} */
     #[Override]
-    public function setRowPrototype(RowPrototypeInterface $rowPrototype): ResultSetInterface&RowPrototypeResultSetInterface
-    {
+    public function setRowPrototype(
+        RowPrototypeInterface $rowPrototype,
+    ): ResultSetInterface&RowPrototypeResultSetInterface {
         $this->rowPrototype = $rowPrototype;
 
         return $this;

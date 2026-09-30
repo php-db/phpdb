@@ -542,6 +542,18 @@ count = 1
 
 [[issues]]
 file = "src/Adapter/Driver/Pdo/Result.php"
+code = "less-specific-nested-argument-type"
+message = 'Argument type mismatch for argument #1 of `PhpDb\ResultSet\AbstractResultSet::initialize`: expected `iterable<array-key, mixed>`, but provided type `$this(PhpDb\Adapter\Driver\Pdo\Result)` is less specific.'
+count = 1
+
+[[issues]]
+file = "src/Adapter/Driver/Pdo/Result.php"
+code = "less-specific-nested-argument-type"
+message = 'Argument type mismatch for argument #1 of `PhpDb\ResultSet\ResultSetInterface::initialize`: expected `iterable<array-key, mixed>`, but provided type `$this(PhpDb\Adapter\Driver\Pdo\Result)` is less specific.'
+count = 1
+
+[[issues]]
+file = "src/Adapter/Driver/Pdo/Result.php"
 code = "missing-constant-type"
 message = "Class constant `STATEMENT_MODE_FORWARD` is missing a type hint."
 count = 1
@@ -1503,19 +1515,7 @@ count = 1
 [[issues]]
 file = "src/ResultSet/AbstractResultSet.php"
 code = "imprecise-type"
-message = "Type `array` in property `$buffer` is imprecise, equivalent to `array<array-key, mixed>`."
-count = 1
-
-[[issues]]
-file = "src/ResultSet/AbstractResultSet.php"
-code = "imprecise-type"
 message = "Type `array` in return type of `current` is imprecise, equivalent to `array<array-key, mixed>`."
-count = 1
-
-[[issues]]
-file = "src/ResultSet/AbstractResultSet.php"
-code = "imprecise-type"
-message = "Type `iterable` in parameter `$dataSource` is imprecise, equivalent to `iterable<mixed, mixed>`."
 count = 1
 
 [[issues]]
@@ -1526,8 +1526,14 @@ count = 1
 
 [[issues]]
 file = "src/ResultSet/AbstractResultSet.php"
-code = "invalid-property-assignment-value"
-message = 'Invalid type for property `$dataSource`: expected `Iterator<mixed, mixed>|IteratorAggregate<mixed, mixed>|PhpDb\Adapter\Driver\ResultInterface|null`, but got `iterable<mixed, mixed>`.'
+code = "invalid-return-statement"
+message = 'Invalid return type for function `PhpDb\ResultSet\AbstractResultSet::dataSource`: expected `Iterator<mixed, mixed>`, but found `Iterator<mixed, mixed>|IteratorAggregate<mixed, mixed>|PhpDb\Adapter\Driver\ResultInterface`.'
+count = 1
+
+[[issues]]
+file = "src/ResultSet/AbstractResultSet.php"
+code = "invalid-return-statement"
+message = 'Invalid return type for function `PhpDb\ResultSet\AbstractResultSet::resolveIterator`: expected `Iterator<mixed, mixed>`, but found `DOMNodeList<mixed, mixed>|DatePeriod<mixed, mixed>|Ds\Collection<mixed, mixed>|Generator<mixed, mixed, mixed, mixed>|Iterator<mixed, mixed>|PDOStatement<mixed, mixed>`.'
 count = 1
 
 [[issues]]
@@ -1538,21 +1544,15 @@ count = 1
 
 [[issues]]
 file = "src/ResultSet/AbstractResultSet.php"
-code = "missing-api-or-internal"
-message = 'Abstract class `PhpDb\ResultSet\AbstractResultSet` is missing an `@api` or `@internal` annotation.'
-count = 1
-
-[[issues]]
-file = "src/ResultSet/AbstractResultSet.php"
-code = "mixed-argument"
-message = "Invalid argument type for argument #1 of `count`: expected `Countable|array<array-key, mixed>`, but found `mixed`."
-count = 1
-
-[[issues]]
-file = "src/ResultSet/AbstractResultSet.php"
 code = "mixed-assignment"
 message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
 count = 3
+
+[[issues]]
+file = "src/ResultSet/AbstractResultSet.php"
+code = "mixed-property-type-coercion"
+message = "A value with a less specific type `mixed` is being assigned to property `$fieldCount` (int|null)."
+count = 1
 
 [[issues]]
 file = "src/ResultSet/AbstractResultSet.php"
@@ -1568,45 +1568,9 @@ count = 1
 
 [[issues]]
 file = "src/ResultSet/AbstractResultSet.php"
-code = "mixed-return-statement"
-message = 'Could not infer a precise return type for function `PhpDb\ResultSet\AbstractResultSet::valid`. Saw type `mixed`.'
-count = 1
-
-[[issues]]
-file = "src/ResultSet/AbstractResultSet.php"
-code = "non-existent-method"
-message = "Method `current` does not exist on type `IteratorAggregate`."
-count = 3
-
-[[issues]]
-file = "src/ResultSet/AbstractResultSet.php"
-code = "non-existent-method"
-message = "Method `key` does not exist on type `IteratorAggregate`."
-count = 1
-
-[[issues]]
-file = "src/ResultSet/AbstractResultSet.php"
-code = "non-existent-method"
-message = "Method `next` does not exist on type `IteratorAggregate`."
-count = 1
-
-[[issues]]
-file = "src/ResultSet/AbstractResultSet.php"
 code = "non-existent-method"
 message = "Method `rewind` does not exist on type `IteratorAggregate`."
-count = 3
-
-[[issues]]
-file = "src/ResultSet/AbstractResultSet.php"
-code = "non-existent-method"
-message = "Method `valid` does not exist on type `IteratorAggregate`."
-count = 2
-
-[[issues]]
-file = "src/ResultSet/AbstractResultSet.php"
-code = "possible-method-access-on-null"
-message = "Attempting to call a method on `null`."
-count = 6
+count = 1
 
 [[issues]]
 file = "src/ResultSet/AbstractResultSet.php"
@@ -1615,27 +1579,9 @@ message = 'Possible argument type mismatch for argument #1 of `count`: expected 
 count = 1
 
 [[issues]]
-file = "src/ResultSet/AbstractResultSet.php"
-code = "property-type-coercion"
-message = 'A value of a less specific type `Traversable<mixed, mixed>` is being assigned to property `$dataSource` (Iterator<mixed, mixed>|IteratorAggregate<mixed, mixed>|PhpDb\Adapter\Driver\ResultInterface|null).'
-count = 1
-
-[[issues]]
-file = "src/ResultSet/ArrayObjectResultSetInterface.php"
-code = "missing-api-or-internal"
-message = 'Interface `PhpDb\ResultSet\ArrayObjectResultSetInterface` is missing an `@api` or `@internal` annotation.'
-count = 1
-
-[[issues]]
 file = "src/ResultSet/ArrayResultSet.php"
 code = "class-must-be-final"
 message = 'Class `PhpDb\ResultSet\ArrayResultSet` should be declared `final`.'
-count = 1
-
-[[issues]]
-file = "src/ResultSet/ArrayResultSet.php"
-code = "imprecise-type"
-message = "Type `array` in return type of `toArray` is imprecise, equivalent to `array<array-key, mixed>`."
 count = 1
 
 [[issues]]
@@ -1658,12 +1604,6 @@ count = 1
 
 [[issues]]
 file = "src/ResultSet/HydratingResultSet.php"
-code = "imprecise-type"
-message = "Type `array` in return type of `toArray` is imprecise, equivalent to `array<array-key, mixed>`."
-count = 1
-
-[[issues]]
-file = "src/ResultSet/HydratingResultSet.php"
 code = "mixed-assignment"
 message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
 count = 1
@@ -1676,32 +1616,8 @@ count = 1
 
 [[issues]]
 file = "src/ResultSet/HydratingResultSet.php"
-code = "non-existent-method"
-message = "Method `current` does not exist on type `IteratorAggregate`."
-count = 1
-
-[[issues]]
-file = "src/ResultSet/HydratingResultSet.php"
 code = "overly-wide-return-type"
 message = "Declared return type `null|object` for `getobjectprototype` has unused branches: `null`."
-count = 1
-
-[[issues]]
-file = "src/ResultSet/HydratingResultSet.php"
-code = "possible-method-access-on-null"
-message = "Attempting to call a method on `null`."
-count = 1
-
-[[issues]]
-file = "src/ResultSet/HydratingResultSet.php"
-code = "possibly-null-argument"
-message = 'Argument #1 of method `Laminas\Hydrator\ExtractionInterface::extract` is possibly `null`, but parameter type `object` does not accept it.'
-count = 1
-
-[[issues]]
-file = "src/ResultSet/HydratingResultSetInterface.php"
-code = "missing-api-or-internal"
-message = 'Interface `PhpDb\ResultSet\HydratingResultSetInterface` is missing an `@api` or `@internal` annotation.'
 count = 1
 
 [[issues]]
@@ -1718,24 +1634,6 @@ count = 1
 
 [[issues]]
 file = "src/ResultSet/ResultSet.php"
-code = "imprecise-type"
-message = "Type `array` in return type of `toArray` is imprecise, equivalent to `array<array-key, mixed>`."
-count = 1
-
-[[issues]]
-file = "src/ResultSet/ResultSet.php"
-code = "invalid-return-statement"
-message = 'Invalid return type for function `PhpDb\ResultSet\ResultSet::getReturnType`: expected `enum(PhpDb\ResultSet\ResultSetReturnType)`, but found `enum(PhpDb\ResultSet\ResultSetReturnType)|string`.'
-count = 1
-
-[[issues]]
-file = "src/ResultSet/ResultSet.php"
-code = "less-specific-return-statement"
-message = 'Returned type `array<array-key, mixed>|null|object` is less specific than the declared return type `ArrayObject<array-key, mixed>|array<array-key, mixed>|null` for function `PhpDb\ResultSet\ResultSet::current`.'
-count = 1
-
-[[issues]]
-file = "src/ResultSet/ResultSet.php"
 code = "missing-constant-type"
 message = "Class constant `TYPE_ARRAYOBJECT` is missing a type hint."
 count = 1
@@ -1744,30 +1642,6 @@ count = 1
 file = "src/ResultSet/ResultSet.php"
 code = "missing-constant-type"
 message = "Class constant `TYPE_ARRAY` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "src/ResultSet/ResultSetInterface.php"
-code = "imprecise-type"
-message = "Type `array` in return type of `toArray` is imprecise, equivalent to `array<array-key, mixed>`."
-count = 1
-
-[[issues]]
-file = "src/ResultSet/ResultSetInterface.php"
-code = "imprecise-type"
-message = "Type `iterable` in parameter `$dataSource` is imprecise, equivalent to `iterable<mixed, mixed>`."
-count = 1
-
-[[issues]]
-file = "src/ResultSet/ResultSetInterface.php"
-code = "missing-api-or-internal"
-message = 'Interface `PhpDb\ResultSet\ResultSetInterface` is missing an `@api` or `@internal` annotation.'
-count = 1
-
-[[issues]]
-file = "src/ResultSet/ResultSetInterface.php"
-code = "missing-template-parameter"
-message = "Too few template arguments for `Iterator`: expected at least 2, but found 0."
 count = 1
 
 [[issues]]
@@ -1783,12 +1657,6 @@ message = "Type `array` in return type of `toArray` is imprecise, equivalent to 
 count = 1
 
 [[issues]]
-file = "src/ResultSet/RowPrototypeInterface.php"
-code = "missing-api-or-internal"
-message = 'Interface `PhpDb\ResultSet\RowPrototypeInterface` is missing an `@api` or `@internal` annotation.'
-count = 1
-
-[[issues]]
 file = "src/ResultSet/RowPrototypeResultSet.php"
 code = "class-must-be-final"
 message = 'Class `PhpDb\ResultSet\RowPrototypeResultSet` should be declared `final`.'
@@ -1798,24 +1666,6 @@ count = 1
 file = "src/ResultSet/RowPrototypeResultSet.php"
 code = "imprecise-type"
 message = "Type `array` in return type of `current` is imprecise, equivalent to `array<array-key, mixed>`."
-count = 1
-
-[[issues]]
-file = "src/ResultSet/RowPrototypeResultSet.php"
-code = "imprecise-type"
-message = "Type `array` in return type of `toArray` is imprecise, equivalent to `array<array-key, mixed>`."
-count = 1
-
-[[issues]]
-file = "src/ResultSet/RowPrototypeResultSet.php"
-code = "less-specific-return-statement"
-message = 'Returned type `null|object` is less specific than the declared return type `PhpDb\ResultSet\RowPrototypeInterface|array<array-key, mixed>|null` for function `PhpDb\ResultSet\RowPrototypeResultSet::current`.'
-count = 1
-
-[[issues]]
-file = "src/ResultSet/RowPrototypeResultSetInterface.php"
-code = "missing-api-or-internal"
-message = 'Interface `PhpDb\ResultSet\RowPrototypeResultSetInterface` is missing an `@api` or `@internal` annotation.'
 count = 1
 
 [[issues]]
@@ -5259,7 +5109,7 @@ count = 1
 [[issues]]
 file = "src/TableGateway/AbstractTableGateway.php"
 code = "mixed-argument"
-message = 'Invalid argument type for argument #1 of `PhpDb\ResultSet\ResultSetInterface::initialize`: expected `iterable<mixed, mixed>`, but found `mixed`.'
+message = 'Invalid argument type for argument #1 of `PhpDb\ResultSet\ResultSetInterface::initialize`: expected `iterable<array-key, mixed>`, but found `mixed`.'
 count = 1
 
 [[issues]]

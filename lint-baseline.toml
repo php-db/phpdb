@@ -260,33 +260,15 @@ count = 2
 
 [[issues]]
 file = "src/ResultSet/AbstractResultSet.php"
-code = "no-else-clause"
-message = "Avoid `else` clauses."
+code = "kan-defect"
+message = "Class has a high kan defect score."
 count = 1
 
 [[issues]]
 file = "src/ResultSet/AbstractResultSet.php"
-code = "no-else-clause"
-message = "Avoid `elseif` clauses."
-count = 3
-
-[[issues]]
-file = "src/ResultSet/AbstractResultSet.php"
-code = "no-isset"
-message = "Use of the `isset` construct."
-count = 2
-
-[[issues]]
-file = "src/ResultSet/AbstractResultSet.php"
-code = "no-redundant-else"
-message = "The `if` branch always terminates; the trailing branches can be extracted."
+code = "too-many-methods"
+message = "Class has too many methods."
 count = 1
-
-[[issues]]
-file = "src/ResultSet/AbstractResultSet.php"
-code = "yoda-conditions"
-message = "Use Yoda condition style for safer comparisons"
-count = 5
 
 [[issues]]
 file = "src/ResultSet/ArrayObjectResultSetInterface.php"
@@ -295,51 +277,9 @@ message = "Return type `ArrayObjectResultSetInterface` refers to the enclosing c
 count = 1
 
 [[issues]]
-file = "src/ResultSet/HydratingResultSet.php"
-code = "halstead"
-message = "Method has a high halstead difficulty"
-count = 1
-
-[[issues]]
-file = "src/ResultSet/HydratingResultSet.php"
-code = "no-else-clause"
-message = "Avoid `elseif` clauses."
-count = 1
-
-[[issues]]
-file = "src/ResultSet/HydratingResultSet.php"
-code = "no-isset"
-message = "Use of the `isset` construct."
-count = 1
-
-[[issues]]
-file = "src/ResultSet/HydratingResultSet.php"
-code = "yoda-conditions"
-message = "Use Yoda condition style for safer comparisons"
-count = 1
-
-[[issues]]
 file = "src/ResultSet/HydratingResultSetInterface.php"
 code = "prefer-self-return-type"
 message = "Return type `HydratingResultSetInterface` refers to the enclosing class; use `self` instead."
-count = 1
-
-[[issues]]
-file = "src/ResultSet/ResultSet.php"
-code = "yoda-conditions"
-message = "Use Yoda condition style for safer comparisons"
-count = 1
-
-[[issues]]
-file = "src/ResultSet/ResultSetInterface.php"
-code = "prefer-self-return-type"
-message = "Return type `ResultSetInterface` refers to the enclosing class; use `self` instead."
-count = 1
-
-[[issues]]
-file = "src/ResultSet/RowPrototypeInterface.php"
-code = "prefer-self-return-type"
-message = "Return type `RowPrototypeInterface` refers to the enclosing class; use `self` instead."
 count = 1
 
 [[issues]]
