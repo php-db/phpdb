@@ -1657,12 +1657,6 @@ message = 'Class `PhpDb\ResultSet\RowPrototypeResultSet` should be declared `fin
 count = 1
 
 [[issues]]
-file = "src/ResultSet/RowPrototypeResultSet.php"
-code = "imprecise-type"
-message = "Type `array` in return type of `current` is imprecise, equivalent to `array<array-key, mixed>`."
-count = 1
-
-[[issues]]
 file = "src/RowGateway/AbstractRowGateway.php"
 code = "imprecise-type"
 message = "Type `array` in parameter `$array` is imprecise, equivalent to `array<array-key, mixed>`."

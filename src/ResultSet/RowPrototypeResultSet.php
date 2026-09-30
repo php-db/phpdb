@@ -21,7 +21,7 @@ class RowPrototypeResultSet extends AbstractResultSet implements RowPrototypeRes
      * @throws Exception\RuntimeException If a row cannot fill the prototype.
      */
     #[Override]
-    public function current(): array|RowPrototypeInterface|null
+    public function current(): ?RowPrototypeInterface
     {
         $data = parent::current();
 
@@ -38,7 +38,9 @@ class RowPrototypeResultSet extends AbstractResultSet implements RowPrototypeRes
             return (clone $this->getRowPrototype())->populate($data);
         }
 
-        return $data;
+        // every array fills the prototype and every object is reduced to one, so
+        // anything reaching here is the exhausted-or-unusable row the parent nulls
+        return null;
     }
 
     /** {@inheritDoc} */
