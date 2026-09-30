@@ -40,7 +40,6 @@ class ResultSet extends AbstractResultSet implements ArrayObjectResultSetInterfa
         $data = parent::current();
 
         if ($data instanceof ArrayObject) {
-            // already the shape this result set promises, so hand it back untouched
             return $data;
         }
 

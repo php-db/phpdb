@@ -26,7 +26,6 @@ class RowPrototypeResultSet extends AbstractResultSet implements RowPrototypeRes
         $data = parent::current();
 
         if ($data instanceof RowPrototypeInterface) {
-            // already the shape this result set promises, so hand it back untouched
             return $data;
         }
 
@@ -38,8 +37,6 @@ class RowPrototypeResultSet extends AbstractResultSet implements RowPrototypeRes
             return (clone $this->getRowPrototype())->populate($data);
         }
 
-        // every array fills the prototype and every object is reduced to one, so
-        // anything reaching here is the exhausted-or-unusable row the parent nulls
         return null;
     }
 

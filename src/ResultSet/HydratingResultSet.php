@@ -119,9 +119,6 @@ class HydratingResultSet extends AbstractResultSet implements HydratingResultSet
     /**
      * Hydrate one row onto a clone of the prototype.
      *
-     * A row that is neither an array nor reducible to one carries nothing to hydrate,
-     * which is how FETCH_BOUND arrives.
-     *
      * @throws RuntimeException
      */
     private function hydrateRow(mixed $data): ?object

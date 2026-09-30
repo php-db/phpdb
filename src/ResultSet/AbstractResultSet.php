@@ -56,10 +56,6 @@ abstract class AbstractResultSet implements ResultSetInterface
     /**
      * Resolve an IteratorAggregate chain down to the Iterator it wraps.
      *
-     * IteratorAggregate::getIterator() is declared to return Traversable, so it may
-     * hand back another aggregate. Anything that never bottoms out in an Iterator is
-     * rejected rather than stored, since the result set can only iterate an Iterator.
-     *
      * @throws InvalidArgumentException
      * @throws Exception If the data source raises one while handing over its iterator.
      */
@@ -78,9 +74,6 @@ abstract class AbstractResultSet implements ResultSetInterface
             return $dataSource;
         }
 
-        // Userland cannot implement Traversable without Iterator or IteratorAggregate, and the
-        // internal classes that do (PDOStatement, DOMNodeList, DatePeriod) are all aggregates
-        // the loop above has already unwrapped. Kept so the return type cannot be violated.
         // @codeCoverageIgnoreStart
         throw InvalidArgumentException::forNonIteratorDataSource($dataSource::class);
 
@@ -233,7 +226,6 @@ abstract class AbstractResultSet implements ResultSetInterface
             return $this;
         }
 
-        // the array is safe to measure, but its first row can be any shape at all
         $first            = current($dataSource);
         $this->fieldCount = is_array($first) || $first instanceof Countable ? count($first) : 0;
         reset($dataSource);
@@ -326,16 +318,6 @@ abstract class AbstractResultSet implements ResultSetInterface
 
     /**
      * Reduce an object row to the array a prototype can be filled from.
-     *
-     * A row that carries its values as elements rather than properties, ArrayObject
-     * being the common case, is read through its iterator. Everything else is reduced
-     * with get_object_vars(), which sees only public properties from out here; a plain
-     * cast would instead yield mangled keys for anything private.
-     *
-     * A row that exposes nothing either way cannot fill a prototype at all. PDORow,
-     * which FETCH_LAZY yields, is the case that matters: it resolves columns through
-     * __get() and reduces to an empty array, so converting it would quietly drop every
-     * column. Such a row is rejected rather than emptied.
      *
      * @return array<array-key, mixed>
      *
