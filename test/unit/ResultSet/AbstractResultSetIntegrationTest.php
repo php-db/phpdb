@@ -7,16 +7,16 @@ namespace PhpDbTest\ResultSet;
 use Override;
 use PhpDb\Adapter\Driver\ResultInterface;
 use PhpDb\ResultSet\AbstractResultSet;
+use PhpDbTest\ResultSet\TestAsset\PassThroughResultSet;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\Exception;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-#[CoversMethod(AbstractResultSet::class, 'current')]
+#[CoversMethod(AbstractResultSet::class, 'currentRow')]
 final class AbstractResultSetIntegrationTest extends TestCase
 {
-    protected MockObject|AbstractResultSet $resultSet;
+    protected AbstractResultSet $resultSet;
 
     /**
      * @throws \Exception
@@ -26,6 +26,7 @@ final class AbstractResultSetIntegrationTest extends TestCase
     {
         $result = $this->getMockBuilder(ResultInterface::class)->getMock();
         $this->resultSet->initialize($result);
+        $result->method('valid')->willReturn(true);
         $result->expects($this->exactly(3))->method('current')->willReturn(['foo' => 'bar']);
         // Call current() multiple times and verify data source is called each time
         $value1 = $this->resultSet->current();
@@ -43,6 +44,7 @@ final class AbstractResultSetIntegrationTest extends TestCase
         $result = $this->getMockBuilder(ResultInterface::class)->getMock();
         $this->resultSet->buffer();
         $this->resultSet->initialize($result);
+        $result->method('valid')->willReturn(true);
         $result->expects($this->once())->method('current')->willReturn(['foo' => 'bar']);
         // Call current() multiple times and verify data source is called only once due to buffering
         $value1 = $this->resultSet->current();
@@ -60,8 +62,6 @@ final class AbstractResultSetIntegrationTest extends TestCase
     #[Override]
     protected function setUp(): void
     {
-        $this->resultSet = $this->getMockBuilder(AbstractResultSet::class)
-            ->onlyMethods(['toArray'])
-            ->getMock();
+        $this->resultSet = new PassThroughResultSet();
     }
 }

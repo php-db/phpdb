@@ -15,10 +15,10 @@ use PhpDb\Adapter\Driver\Pdo\Result;
 use PhpDb\Adapter\Driver\ResultInterface;
 use PhpDb\ResultSet\AbstractResultSet;
 use PhpDb\ResultSet\Exception\RuntimeException;
+use PhpDbTest\ResultSet\TestAsset\PassThroughResultSet;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use TypeError;
 
@@ -33,13 +33,15 @@ use function assert;
 #[CoversMethod(AbstractResultSet::class, 'getFieldCount')]
 #[CoversMethod(AbstractResultSet::class, 'next')]
 #[CoversMethod(AbstractResultSet::class, 'key')]
-#[CoversMethod(AbstractResultSet::class, 'current')]
+#[CoversMethod(AbstractResultSet::class, '__clone')]
+#[CoversMethod(AbstractResultSet::class, 'rowBuffer')]
+#[CoversMethod(AbstractResultSet::class, 'currentRow')]
 #[CoversMethod(AbstractResultSet::class, 'valid')]
 #[CoversMethod(AbstractResultSet::class, 'rewind')]
 #[CoversMethod(AbstractResultSet::class, 'count')]
 final class AbstractResultSetTest extends TestCase
 {
-    protected MockObject|AbstractResultSet $resultSet;
+    protected AbstractResultSet $resultSet;
 
     /**
      * @throws Exception
@@ -98,6 +100,31 @@ final class AbstractResultSetTest extends TestCase
         $resultSet->next();
         $data = $resultSet->current();
         static::assertSame(3, $data['id']);
+    }
+
+    /**
+     * Sets up the fixture, for example, opens a network connection.
+     * This method is called before a test is executed.
+     */
+    /**
+     * A table gateway clones its result set prototype for every select, so two result
+     * sets cloned from one prototype must not hand each other's rows back.
+     *
+     * @throws Exception
+     */
+    #[Test]
+    public function cloningAResultSetDoesNotShareTheRowsItHolds(): void
+    {
+        $prototype = new PassThroughResultSet();
+        $prototype->initialize(new ArrayIterator([['id' => 1]]));
+        $prototype->buffer();
+        $prototype->current();
+
+        $clone = clone $prototype;
+        $clone->initialize(new ArrayIterator([['id' => 2]]));
+
+        static::assertSame(['id' => 2], $clone->current());
+        static::assertSame(['id' => 1], $prototype->current());
     }
 
     #[Test]
@@ -611,21 +638,15 @@ final class AbstractResultSetTest extends TestCase
         static::assertTrue($resultSet->valid());
     }
 
-    /**
-     * Sets up the fixture, for example, opens a network connection.
-     * This method is called before a test is executed.
-     */
     #[Override]
     protected function setUp(): void
     {
         $this->resultSet = $this->createResultSetMock();
     }
 
-    private function createResultSetMock(): MockObject|AbstractResultSet
+    private function createResultSetMock(): AbstractResultSet
     {
-        return $this->getMockBuilder(AbstractResultSet::class)
-            ->onlyMethods(['toArray'])
-            ->getMock();
+        return new PassThroughResultSet();
     }
 
     /**
@@ -634,7 +655,7 @@ final class AbstractResultSetTest extends TestCase
      *
      * @throws Exception
      */
-    private function drainIntoBuffer(): MockObject|AbstractResultSet
+    private function drainIntoBuffer(): AbstractResultSet
     {
         $resultSet = $this->createResultSetMock();
         $resultSet->initialize(new ArrayIterator([

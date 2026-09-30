@@ -7,15 +7,18 @@ namespace PhpDb\ResultSet;
 use ArrayObject;
 use Override;
 
-use function is_array;
-use function is_object;
 use function is_string;
 
+/**
+ * @api
+ *
+ * @extends AbstractResultSet<array<array-key, mixed>|ArrayObject>
+ */
 class ResultSet extends AbstractResultSet implements ArrayObjectResultSetInterface
 {
     /** @deprecated use ResultSetReturnType */
-    public const TYPE_ARRAYOBJECT = 'arrayobject';
-    public const TYPE_ARRAY       = 'array';
+    public const string TYPE_ARRAYOBJECT = 'arrayobject';
+    public const string TYPE_ARRAY       = 'array';
 
     private readonly ResultSetReturnType $returnType;
 
@@ -44,29 +47,15 @@ class ResultSet extends AbstractResultSet implements ArrayObjectResultSetInterfa
     /**
      * Iterator: get current item
      *
-     * @throws Exception\RuntimeException If a row cannot fill the prototype.
+     * @return array<array-key, mixed>|ArrayObject|null
+     *
+     * @throws Exception\RuntimeException
+     * @throws Exception\ValueError If a row is not row data.
      */
     #[Override]
     public function current(): array|ArrayObject|null
     {
-        $data = parent::current();
-
-        if ($data instanceof ArrayObject) {
-            return $data;
-        }
-
-        if (is_object($data)) {
-            $data = $this->rowToArray($data);
-        }
-
-        if ($this->fillsRowPrototype && is_array($data)) {
-            $ao = clone $this->getRowPrototype();
-            $ao->exchangeArray($data);
-
-            return $ao;
-        }
-
-        return $data;
+        return $this->currentRow();
     }
 
     /**
@@ -123,5 +112,32 @@ class ResultSet extends AbstractResultSet implements ArrayObjectResultSetInterfa
         }
 
         return $return;
+    }
+
+    /**
+     * An ArrayObject row is the caller's own object and is passed through untouched;
+     * row data fills the prototype when the return type calls for it.
+     *
+     * @return array<array-key, mixed>|ArrayObject
+     *
+     * @throws Exception\ValueError If the row is neither an ArrayObject nor row data.
+     */
+    #[Override]
+    protected function mapRow(mixed $row): array|ArrayObject
+    {
+        if ($row instanceof ArrayObject) {
+            return $row;
+        }
+
+        $data = $this->getArrayData($row);
+
+        if (! $this->fillsRowPrototype) {
+            return $data;
+        }
+
+        $ao = clone $this->getRowPrototype();
+        $ao->exchangeArray($data);
+
+        return $ao;
     }
 }

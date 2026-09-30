@@ -14,8 +14,6 @@ use PHPUnit\Framework\TestCase;
 #[Group('unit')]
 #[CoversMethod(RuntimeException::class, 'forUnbufferedIteration')]
 #[CoversMethod(RuntimeException::class, 'forUninitialisedDataSource')]
-#[CoversMethod(RuntimeException::class, 'forUnhydratableRow')]
-#[CoversMethod(RuntimeException::class, 'forUnconvertibleRow')]
 final class RuntimeExceptionTest extends TestCase
 {
     #[Test]
@@ -31,36 +29,6 @@ final class RuntimeExceptionTest extends TestCase
     public function forUnbufferedIterationReturnsTheComponentExceptionType(): void
     {
         self::assertInstanceOf(ExceptionInterface::class, RuntimeException::forUnbufferedIteration());
-    }
-
-    #[Test]
-    public function forUnconvertibleRowNamesTheOffendingType(): void
-    {
-        self::assertStringContainsString(
-            'PDORow',
-            RuntimeException::forUnconvertibleRow('PDORow')->getMessage(),
-        );
-    }
-
-    #[Test]
-    public function forUnconvertibleRowReturnsTheComponentExceptionType(): void
-    {
-        self::assertInstanceOf(ExceptionInterface::class, RuntimeException::forUnconvertibleRow('PDORow'));
-    }
-
-    #[Test]
-    public function forUnhydratableRowNamesTheOffendingType(): void
-    {
-        self::assertStringContainsString(
-            'bool',
-            RuntimeException::forUnhydratableRow('bool')->getMessage(),
-        );
-    }
-
-    #[Test]
-    public function forUnhydratableRowReturnsTheComponentExceptionType(): void
-    {
-        self::assertInstanceOf(ExceptionInterface::class, RuntimeException::forUnhydratableRow('bool'));
     }
 
     #[Test]

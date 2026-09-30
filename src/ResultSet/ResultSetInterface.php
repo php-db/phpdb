@@ -10,7 +10,9 @@ use Iterator;
 /**
  * @api
  *
- * @extends Iterator<int, mixed>
+ * @template TRow
+ *
+ * @extends Iterator<int, TRow>
  */
 interface ResultSetInterface extends Iterator, Countable
 {

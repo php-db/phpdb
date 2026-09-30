@@ -6,8 +6,11 @@ namespace PhpDb\ResultSet;
 
 use Override;
 
-use function is_object;
-
+/**
+ * @api
+ *
+ * @extends AbstractResultSet<array<array-key, mixed>>
+ */
 class ArrayResultSet extends AbstractResultSet
 {
     /**
@@ -16,17 +19,12 @@ class ArrayResultSet extends AbstractResultSet
      * @return array<array-key, mixed>|null
      *
      * @throws Exception\RuntimeException
+     * @throws Exception\ValueError If a row is not row data.
      */
     #[Override]
     public function current(): ?array
     {
-        $data = parent::current();
-
-        if (is_object($data)) {
-            return $this->rowToArray($data);
-        }
-
-        return $data;
+        return $this->currentRow();
     }
 
     /** {@inheritDoc} */
@@ -39,5 +37,16 @@ class ArrayResultSet extends AbstractResultSet
         }
 
         return $return;
+    }
+
+    /**
+     * @return array<array-key, mixed>
+     *
+     * @throws Exception\ValueError If the row is not row data.
+     */
+    #[Override]
+    protected function mapRow(mixed $row): array
+    {
+        return $this->getArrayData($row);
     }
 }

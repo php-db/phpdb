@@ -17,11 +17,15 @@ interface RowPrototypeInterface
 {
     /**
      * Populate the prototype with row data. Mutating vs. returning a new instance is up to the implementation.
+     *
+     * @param array<array-key, mixed> $data
      */
     public function populate(array $data): self;
 
     /**
      * Current data as an array and match current RowGateway implementations.
+     *
+     * @return array<array-key, mixed>
      */
     public function toArray(): array;
 }

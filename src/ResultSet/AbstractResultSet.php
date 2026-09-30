@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace PhpDb\ResultSet;
 
 use ArrayIterator;
+use ArrayObject;
 use Countable;
 use Exception;
 use Iterator;
@@ -13,21 +14,22 @@ use Override;
 use PhpDb\Adapter\Driver\ResultInterface;
 use PhpDb\ResultSet\Exception\InvalidArgumentException;
 use PhpDb\ResultSet\Exception\RuntimeException;
+use PhpDb\ResultSet\Exception\ValueError;
 use ReturnTypeWillChange;
 use Traversable;
 
-use function array_key_exists;
 use function count;
 use function current;
 use function get_debug_type;
-use function get_object_vars;
 use function is_array;
-use function is_object;
-use function iterator_to_array;
 use function reset;
 
 /**
  * @api
+ *
+ * @template TRow
+ *
+ * @implements ResultSetInterface<TRow>
  */
 abstract class AbstractResultSet implements ResultSetInterface
 {
@@ -35,19 +37,19 @@ abstract class AbstractResultSet implements ResultSetInterface
     private const int MAX_ITERATOR_DEPTH = 8;
 
     /**
-     * if -1, datasource is already buffered
-     * if -2, implicitly disabling buffering in ResultSet
-     * if false, explicitly disabled
-     * if null, default state - nothing, but can buffer until iteration started
-     * if array, already buffering
+     * Created on first use, so that a subclass constructor need not call this one.
      *
-     * @var int|array<int, mixed>|bool|null
+     * @var RowBuffer<TRow>|null
      */
-    protected int|array|bool|null $buffer = null;
+    private ?RowBuffer $buffer = null;
 
     protected ?int $count = null;
 
-    protected Iterator|IteratorAggregate|ResultInterface|null $dataSource = null;
+    /**
+     * Always an Iterator once initialize() has run: an IteratorAggregate is resolved
+     * before it is stored, and a ResultInterface is an Iterator in its own right.
+     */
+    protected ?Iterator $dataSource = null;
 
     protected ?int $fieldCount = null;
 
@@ -85,15 +87,11 @@ abstract class AbstractResultSet implements ResultSetInterface
      */
     public function buffer(): ResultSetInterface
     {
-        if (-2 === $this->buffer) {
-            throw RuntimeException::forUnbufferedIteration();
-        }
+        $pending = $this->rowBuffer()->isPending();
+        $this->rowBuffer()->store();
 
-        if (null === $this->buffer) {
-            $this->buffer = [];
-            if ($this->dataSource instanceof ResultInterface) {
-                $this->dataSource->rewind();
-            }
+        if ($pending && $this->dataSource instanceof ResultInterface) {
+            $this->dataSource->rewind();
         }
 
         return $this;
@@ -118,42 +116,9 @@ abstract class AbstractResultSet implements ResultSetInterface
     }
 
     /**
-     * Iterator: get current item
-     *
-     * @throws RuntimeException
-     */
-    #[Override]
-    public function current(): array|object|null
-    {
-        if (-1 === $this->buffer) {
-            // datasource was an array when the resultset was initialized
-            return $this->dataSource()->current();
-        }
-
-        if (null === $this->buffer) {
-            $this->buffer = -2; // implicitly disable buffering from here on
-        }
-
-        if (
-            is_array($this->buffer)
-            && array_key_exists($this->position, $this->buffer)
-            && null !== $this->buffer[$this->position]
-        ) {
-            return $this->buffer[$this->position];
-        }
-
-        $data = $this->dataSource()->current();
-        if (is_array($this->buffer)) {
-            $this->buffer[$this->position] = $data;
-        }
-
-        return is_array($data) || is_object($data) ? $data : null;
-    }
-
-    /**
      * Get the data source used to create the result set
      */
-    public function getDataSource(): ResultInterface|IteratorAggregate|Iterator|null
+    public function getDataSource(): ?Iterator
     {
         return $this->dataSource;
     }
@@ -201,20 +166,17 @@ abstract class AbstractResultSet implements ResultSetInterface
     #[Override]
     public function initialize(iterable $dataSource): ResultSetInterface
     {
-        // reset buffering
-        if (is_array($this->buffer)) {
-            $this->buffer = [];
-        }
+        $this->rowBuffer()->clear();
 
         if ($dataSource instanceof ResultInterface) {
             $this->fieldCount = $dataSource->getFieldCount();
             $this->dataSource = $dataSource;
             if ($dataSource->isBuffered()) {
-                $this->buffer = -1;
+                $this->rowBuffer()->useDataSource();
             }
 
-            if (is_array($this->buffer)) {
-                $this->dataSource->rewind();
+            if ($this->rowBuffer()->isStoring()) {
+                $dataSource->rewind();
             }
 
             return $this;
@@ -230,14 +192,14 @@ abstract class AbstractResultSet implements ResultSetInterface
         $this->fieldCount = is_array($first) || $first instanceof Countable ? count($first) : 0;
         reset($dataSource);
         $this->dataSource = new ArrayIterator($dataSource);
-        $this->buffer     = -1; // array's are a natural buffer
+        $this->rowBuffer()->useDataSource(); // an array is its own buffer
 
         return $this;
     }
 
     public function isBuffered(): bool
     {
-        return $this->buffer === -1 || is_array($this->buffer);
+        return $this->rowBuffer()->isBuffered();
     }
 
     /**
@@ -257,11 +219,9 @@ abstract class AbstractResultSet implements ResultSetInterface
     #[Override]
     public function next(): void
     {
-        if (null === $this->buffer) {
-            $this->buffer = -2; // implicitly disable buffering from here on
-        }
+        $this->rowBuffer()->startIteration();
 
-        if (! is_array($this->buffer) || $this->position === $this->dataSource()->key()) {
+        if (! $this->rowBuffer()->isStoring() || $this->position === $this->dataSource()->key()) {
             $this->dataSource()->next();
         }
 
@@ -276,7 +236,7 @@ abstract class AbstractResultSet implements ResultSetInterface
     #[Override]
     public function rewind(): void
     {
-        if (! is_array($this->buffer)) {
+        if (! $this->rowBuffer()->isStoring()) {
             $this->dataSource()->rewind();
         }
 
@@ -291,15 +251,59 @@ abstract class AbstractResultSet implements ResultSetInterface
     #[Override]
     public function valid(): bool
     {
-        if (
-            is_array($this->buffer)
-            && array_key_exists($this->position, $this->buffer)
-            && null !== $this->buffer[$this->position]
-        ) {
+        if ($this->rowBuffer()->has($this->position)) {
             return true;
         }
 
         return $this->dataSource()->valid();
+    }
+
+    /**
+     * Shape one raw data source row into the type this result set yields.
+     *
+     * Implementations narrow the return type to whatever their current() declares.
+     *
+     * @return TRow
+     */
+    abstract protected function mapRow(mixed $row): mixed;
+
+    /**
+     * The row at the current position, served from the buffer when one is held there.
+     *
+     * Concrete result sets call this from current() and shape the row in mapRow(), so
+     * that buffering lives here and row typing lives with the set that declares it.
+     *
+     * @return TRow|null
+     *
+     * @throws RuntimeException
+     */
+    protected function currentRow(): mixed
+    {
+        $this->rowBuffer()->startIteration();
+
+        if ($this->rowBuffer()->has($this->position)) {
+            return $this->rowBuffer()->get($this->position);
+        }
+
+        $dataSource = $this->dataSource();
+
+        /**
+         * The data source is asked for its row first, because a ResultInterface only
+         * knows whether it is still valid once it has tried to fetch one.
+         *
+         * @var mixed $row
+         */
+        $row = $dataSource->current();
+
+        if (! $dataSource->valid()) {
+            return null;
+        }
+
+        $row = $this->mapRow($row);
+
+        $this->rowBuffer()->put($this->position, $row);
+
+        return $row;
     }
 
     /**
@@ -309,7 +313,7 @@ abstract class AbstractResultSet implements ResultSetInterface
      */
     protected function dataSource(): Iterator
     {
-        if (! $this->dataSource instanceof Iterator) {
+        if (null === $this->dataSource) {
             throw RuntimeException::forUninitialisedDataSource();
         }
 
@@ -317,23 +321,59 @@ abstract class AbstractResultSet implements ResultSetInterface
     }
 
     /**
-     * Reduce an object row to the array a prototype can be filled from.
+     * The row data a prototype can be filled from.
+     *
+     * Only the types a result set may safely read are accepted; anything else is the
+     * caller's own object, which this component refuses to reshape.
      *
      * @return array<array-key, mixed>
      *
-     * @throws RuntimeException
+     * @throws ValueError If the row is neither an array nor an ArrayObject.
      */
-    protected function rowToArray(object $row): array
+    protected function getArrayData(mixed $row): array
     {
-        if ($row instanceof Traversable) {
-            return iterator_to_array($row);
+        if (is_array($row)) {
+            return $row;
         }
 
-        $data = get_object_vars($row);
-        if ([] === $data) {
-            throw RuntimeException::forUnconvertibleRow(get_debug_type($row));
+        if ($row instanceof ArrayObject) {
+            return $row->getArrayCopy();
         }
 
-        return $data;
+        throw $this->unsupportedRowError($row);
+    }
+
+    /**
+     * The rows this result set holds on to.
+     *
+     * @return RowBuffer<TRow>
+     */
+    protected function rowBuffer(): RowBuffer
+    {
+        return $this->buffer ??= new RowBuffer();
+    }
+
+    /**
+     * The error describing a row this result set cannot read.
+     *
+     * Overridden by a result set that accepts more than row data, so that the message
+     * names everything it would have taken.
+     */
+    protected function unsupportedRowError(mixed $row): ValueError
+    {
+        return ValueError::forRowThatIsNotArrayData(get_debug_type($row), static::class);
+    }
+
+    /**
+     * A result set is routinely cloned from a prototype, so the rows one holds must
+     * never be shared with the next.
+     */
+    public function __clone(): void
+    {
+        if (null === $this->buffer) {
+            return;
+        }
+
+        $this->buffer = clone $this->buffer;
     }
 }

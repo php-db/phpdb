@@ -7,7 +7,7 @@ namespace PhpDbTest\ResultSet;
 use ArrayIterator;
 use ArrayObject;
 use PhpDb\ResultSet\AbstractResultSet;
-use PhpDb\ResultSet\Exception\RuntimeException;
+use PhpDb\ResultSet\Exception\ValueError;
 use PhpDb\ResultSet\RowPrototypeInterface;
 use PhpDb\ResultSet\RowPrototypeResultSet;
 use PHPUnit\Framework\Attributes\CoversMethod;
@@ -16,27 +16,14 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
-#[CoversMethod(AbstractResultSet::class, 'rowToArray')]
+#[CoversMethod(AbstractResultSet::class, 'getArrayData')]
+#[CoversMethod(RowPrototypeResultSet::class, 'unsupportedRowError')]
 #[CoversMethod(RowPrototypeResultSet::class, 'current')]
+#[CoversMethod(RowPrototypeResultSet::class, 'mapRow')]
 #[CoversMethod(RowPrototypeResultSet::class, 'toArray')]
 #[Group('unit')]
 final class RowPrototypeResultSetTest extends TestCase
 {
-    #[Test]
-    public function currentPopulatesThePrototypeFromAnObjectRow(): void
-    {
-        $resultSet = new RowPrototypeResultSet($this->createRowPrototype());
-        $row       = new stdClass();
-        $row->id   = 1;
-        $row->name = 'one';
-        $resultSet->initialize(new ArrayIterator([$row]));
-
-        $current = $resultSet->current();
-
-        static::assertInstanceOf(RowPrototypeInterface::class, $current);
-        static::assertSame(['id' => 1, 'name' => 'one'], $current->toArray());
-    }
-
     #[Test]
     public function currentPopulatesThePrototypeFromARowCarryingItsValuesAsElements(): void
     {
@@ -50,13 +37,41 @@ final class RowPrototypeResultSetTest extends TestCase
     }
 
     #[Test]
+    public function currentRejectsAnObjectRowThatIsNotAPrototype(): void
+    {
+        $resultSet = new RowPrototypeResultSet($this->createRowPrototype());
+        $row       = new stdClass();
+        $row->id   = 1;
+        $row->name = 'one';
+        $resultSet->initialize(new ArrayIterator([$row]));
+
+        self::expectException(ValueError::class);
+        self::expectExceptionMessage('A row of type "stdClass"');
+
+        $resultSet->current();
+    }
+
+    #[Test]
+    public function currentRejectsANullRowRatherThanYieldingIt(): void
+    {
+        $prototype = $this->createRowPrototype();
+        $resultSet = new RowPrototypeResultSet($prototype);
+        $resultSet->initialize(new ArrayIterator([null]));
+
+        self::expectException(ValueError::class);
+        self::expectExceptionMessage('A row of type "null"');
+
+        $resultSet->current();
+    }
+
+    #[Test]
     public function currentRejectsARowThatExposesNothing(): void
     {
         $resultSet = new RowPrototypeResultSet($this->createRowPrototype());
         $resultSet->initialize(new ArrayIterator([new stdClass()]));
 
-        self::expectException(RuntimeException::class);
-        self::expectExceptionMessage('exposes no properties');
+        self::expectException(ValueError::class);
+        self::expectExceptionMessage('an array, ArrayObject or RowPrototypeInterface');
 
         $resultSet->current();
     }
@@ -73,11 +88,10 @@ final class RowPrototypeResultSetTest extends TestCase
     }
 
     #[Test]
-    public function currentReturnsDataUnchangedWhenNotArray(): void
+    public function currentReturnsNullOnceTheRowsAreExhausted(): void
     {
-        $prototype = $this->createRowPrototype();
-        $resultSet = new RowPrototypeResultSet($prototype);
-        $resultSet->initialize(new ArrayIterator([null]));
+        $resultSet = new RowPrototypeResultSet($this->createRowPrototype());
+        $resultSet->initialize(new ArrayIterator([]));
 
         static::assertNull($resultSet->current());
     }

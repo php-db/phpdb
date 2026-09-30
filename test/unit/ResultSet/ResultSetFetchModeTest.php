@@ -6,49 +6,85 @@ namespace PhpDbTest\ResultSet;
 
 use ArrayObject;
 use PDO;
+use PDORow;
 use PhpDb\Adapter\Driver\Pdo\Result;
 use PhpDb\ResultSet\AbstractResultSet;
-use PhpDb\ResultSet\Exception\RuntimeException;
+use PhpDb\ResultSet\Exception\ValueError;
+use PhpDb\ResultSet\ObjectResultSet;
 use PhpDb\ResultSet\ResultSet;
+use PhpDb\ResultSet\ResultSetInterface;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 use Throwable;
 
 use function array_map;
 use function iterator_to_array;
+use function sprintf;
 
 /**
  * The fetch mode is chosen by the caller, so a row reaching the result set need not be
- * an array. These cases drive a real SQLite result through the PDO driver and cover
- * every entry in Result::VALID_FETCH_MODES, so that a mode cannot start discarding rows
- * without a test noticing.
+ * an array. A result set fills its prototype from row data and refuses anything else
+ * rather than reshaping an object the caller asked PDO for. These cases drive a real
+ * SQLite result through the PDO driver and cover every entry in
+ * Result::VALID_FETCH_MODES, so that a mode cannot change sides without a test noticing.
  */
-#[CoversMethod(AbstractResultSet::class, 'rowToArray')]
+#[CoversMethod(AbstractResultSet::class, 'getArrayData')]
+#[CoversMethod(AbstractResultSet::class, 'unsupportedRowError')]
 #[CoversMethod(ResultSet::class, 'current')]
+#[CoversMethod(ResultSet::class, 'mapRow')]
+#[CoversMethod(ObjectResultSet::class, 'mapRow')]
 #[Group('unit')]
 final class ResultSetFetchModeTest extends TestCase
 {
     private PDO $pdo;
 
     /**
-     * Every mode that yields rows, and the type each row arrives as.
+     * Modes whose rows are objects, which ObjectResultSet passes through untouched.
      *
      * @return array<string, array{0: int, 1: class-string}>
+     */
+    public static function objectYieldingModeProvider(): array
+    {
+        return [
+            'FETCH_OBJ yields a stdClass' => [PDO::FETCH_OBJ, stdClass::class],
+            'FETCH_LAZY yields a PDORow'  => [PDO::FETCH_LAZY, PDORow::class],
+        ];
+    }
+
+    /**
+     * Modes whose rows are not row data. The result set will not transform them, so each
+     * names the type the caller is left holding.
+     *
+     * @return array<string, array{0: int, 1: string}>
+     */
+    public static function refusedModeProvider(): array
+    {
+        return [
+            'FETCH_OBJ yields a stdClass'                    => [PDO::FETCH_OBJ, 'stdClass'],
+            'FETCH_LAZY yields a PDORow'                     => [PDO::FETCH_LAZY, 'PDORow'],
+            'FETCH_BOUND yields true and binds by reference' => [PDO::FETCH_BOUND, 'bool'],
+        ];
+    }
+
+    /**
+     * Every mode that yields row data, all of which fill the ArrayObject prototype.
+     *
+     * @return array<string, array{0: int}>
      */
     public static function rowYieldingModeProvider(): array
     {
         return [
-            'FETCH_ASSOC fills the ArrayObject prototype'    => [PDO::FETCH_ASSOC, ArrayObject::class],
-            'FETCH_NUM fills the ArrayObject prototype'      => [PDO::FETCH_NUM, ArrayObject::class],
-            'FETCH_BOTH fills the ArrayObject prototype'     => [PDO::FETCH_BOTH, ArrayObject::class],
-            'FETCH_OBJ fills the ArrayObject prototype'      => [PDO::FETCH_OBJ, ArrayObject::class],
-            'FETCH_NAMED fills the ArrayObject prototype'    => [PDO::FETCH_NAMED, ArrayObject::class],
-            'FETCH_KEY_PAIR fills the ArrayObject prototype' => [PDO::FETCH_KEY_PAIR, ArrayObject::class],
-            'FETCH_PROPS_LATE is a flag, so PDO falls back'  => [PDO::FETCH_PROPS_LATE, ArrayObject::class],
-            'FETCH_CLASSTYPE is a flag, so PDO falls back'   => [PDO::FETCH_CLASSTYPE, ArrayObject::class],
+            'FETCH_ASSOC'                                   => [PDO::FETCH_ASSOC],
+            'FETCH_NUM'                                     => [PDO::FETCH_NUM],
+            'FETCH_BOTH'                                    => [PDO::FETCH_BOTH],
+            'FETCH_NAMED'                                   => [PDO::FETCH_NAMED],
+            'FETCH_KEY_PAIR'                                => [PDO::FETCH_KEY_PAIR],
+            'FETCH_PROPS_LATE is a flag, so PDO falls back' => [PDO::FETCH_PROPS_LATE],
+            'FETCH_CLASSTYPE is a flag, so PDO falls back'  => [PDO::FETCH_CLASSTYPE],
         ];
     }
 
@@ -68,11 +104,11 @@ final class ResultSetFetchModeTest extends TestCase
     }
 
     /**
-     * FETCH_BOUND carries its row in variables bound by reference, so there is nothing
-     * for the result set to hand back. Null is the correct answer here, not a loss.
+     * FETCH_BOUND carries its row in variables bound by reference and yields only a
+     * success flag, so the columns still arrive even though the row itself is refused.
      */
     #[Test]
-    public function boundFetchModeYieldsNullAndPopulatesTheBoundColumns(): void
+    public function boundFetchModeStillPopulatesTheBoundColumns(): void
     {
         $result = new Result();
         $result->initialize($this->pdo->query('SELECT id, name FROM t'), null);
@@ -85,13 +121,20 @@ final class ResultSetFetchModeTest extends TestCase
         $resultSet = new ResultSet();
         $resultSet->initialize($result);
 
-        $seen = [];
-        foreach ($resultSet as $row) {
-            static::assertNull($row);
-            $seen[] = (int) $id;
-        }
+        self::expectException(ValueError::class);
 
-        static::assertSame([1, 2], $seen);
+        try {
+            iterator_to_array($resultSet, preserve_keys: false);
+        } finally {
+            static::assertSame(1, (int) $id);
+        }
+    }
+
+    #[Test]
+    #[DataProvider('rowYieldingModeProvider')]
+    public function everyRowYieldingFetchModeFillsThePrototype(int $fetchMode): void
+    {
+        static::assertContainsOnlyInstancesOf(ArrayObject::class, $this->rowsFor($fetchMode));
     }
 
     #[Test]
@@ -99,15 +142,6 @@ final class ResultSetFetchModeTest extends TestCase
     public function everyRowYieldingFetchModeReturnsBothRows(int $fetchMode): void
     {
         static::assertCount(2, $this->rowsFor($fetchMode));
-    }
-
-    #[Test]
-    #[DataProvider('rowYieldingModeProvider')]
-    public function everyRowYieldingFetchModeReturnsItsRows(int $fetchMode, string $expectedType): void
-    {
-        $rows = $this->rowsFor($fetchMode);
-
-        static::assertContainsOnlyInstancesOf($expectedType, $rows);
     }
 
     #[Test]
@@ -119,26 +153,40 @@ final class ResultSetFetchModeTest extends TestCase
         $this->rowsFor($fetchMode);
     }
 
-    /**
-     * FETCH_LAZY yields a PDORow, which resolves its columns through __get() and so
-     * reduces to an empty array. There is no way to fill a prototype from it, and
-     * emptying it silently is what this component used to do.
-     */
     #[Test]
-    public function lazyFetchModeIsRejectedRatherThanEmptied(): void
-    {
-        self::expectException(RuntimeException::class);
-        self::expectExceptionMessage('exposes no properties');
+    #[DataProvider('refusedModeProvider')]
+    public function fetchModesYieldingSomethingOtherThanRowDataAreRefused(
+        int $fetchMode,
+        string $rowType,
+    ): void {
+        self::expectException(ValueError::class);
+        self::expectExceptionMessage(sprintf('A row of type "%s"', $rowType));
 
-        $this->rowsFor(PDO::FETCH_LAZY);
+        $this->rowsFor($fetchMode);
     }
 
     #[Test]
-    public function objectRowsKeepTheirColumnValues(): void
+    public function objectResultSetKeepsTheColumnValuesOfAnObjectRow(): void
     {
-        $rows = $this->rowsFor(PDO::FETCH_OBJ);
+        $rows = $this->rowsFor(PDO::FETCH_OBJ, new ObjectResultSet());
 
-        static::assertSame([1, 2], array_map(static fn(ArrayObject $row): int => (int) $row['id'], $rows));
+        static::assertSame([1, 2], array_map(static fn(object $row): int => (int) $row->id, $rows));
+    }
+
+    /**
+     * The modes ResultSet refuses are the ones ObjectResultSet exists for; it yields the
+     * caller's own objects rather than reshaping them.
+     */
+    #[Test]
+    #[DataProvider('objectYieldingModeProvider')]
+    public function objectYieldingFetchModesAreServedByObjectResultSet(
+        int $fetchMode,
+        string $rowType,
+    ): void {
+        $rows = $this->rowsFor($fetchMode, new ObjectResultSet());
+
+        static::assertCount(2, $rows);
+        static::assertContainsOnlyInstancesOf($rowType, $rows);
     }
 
     protected function setUp(): void
@@ -149,13 +197,13 @@ final class ResultSetFetchModeTest extends TestCase
     }
 
     /** @return list<mixed> */
-    private function rowsFor(int $fetchMode): array
+    private function rowsFor(int $fetchMode, ?ResultSetInterface $resultSet = null): array
     {
         $result = new Result();
         $result->initialize($this->pdo->query('SELECT id, name FROM t'), null);
         $result->setFetchMode($fetchMode);
 
-        $resultSet = new ResultSet();
+        $resultSet ??= new ResultSet();
         $resultSet->initialize($result);
 
         return iterator_to_array($resultSet, preserve_keys: false);

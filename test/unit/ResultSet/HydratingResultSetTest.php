@@ -12,6 +12,7 @@ use Laminas\Hydrator\ClassMethodsHydrator;
 use Override;
 use PhpDb\ResultSet\AbstractResultSet;
 use PhpDb\ResultSet\Exception\RuntimeException;
+use PhpDb\ResultSet\Exception\ValueError;
 use PhpDb\ResultSet\HydratingResultSet;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Group;
@@ -19,13 +20,14 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
-#[CoversMethod(AbstractResultSet::class, 'rowToArray')]
+#[CoversMethod(AbstractResultSet::class, 'getArrayData')]
+#[CoversMethod(AbstractResultSet::class, 'unsupportedRowError')]
 #[CoversMethod(HydratingResultSet::class, 'setObjectPrototype')]
 #[CoversMethod(HydratingResultSet::class, 'getObjectPrototype')]
 #[CoversMethod(HydratingResultSet::class, 'setHydrator')]
 #[CoversMethod(HydratingResultSet::class, 'getHydrator')]
 #[CoversMethod(HydratingResultSet::class, 'current')]
-#[CoversMethod(HydratingResultSet::class, 'hydrateRow')]
+#[CoversMethod(HydratingResultSet::class, 'mapRow')]
 #[CoversMethod(HydratingResultSet::class, 'toArray')]
 #[CoversMethod(HydratingResultSet::class, '__construct')]
 #[CoversMethod(HydratingResultSet::class, 'setRowPrototype')]
@@ -89,7 +91,7 @@ final class HydratingResultSetTest extends TestCase
     }
 
     #[Test]
-    public function currentHydratesAnObjectRowRatherThanDiscardingIt(): void
+    public function currentRejectsAnObjectRowRatherThanHydratingIt(): void
     {
         $row       = new stdClass();
         $row->id   = 1;
@@ -98,10 +100,10 @@ final class HydratingResultSetTest extends TestCase
         $resultSet = new HydratingResultSet(new ArraySerializableHydrator(), new ArrayObject());
         $resultSet->initialize(new ArrayIterator([$row]));
 
-        $current = $resultSet->current();
+        self::expectException(ValueError::class);
+        self::expectExceptionMessage('A row of type "stdClass"');
 
-        static::assertInstanceOf(ArrayObject::class, $current);
-        static::assertSame(['id' => 1, 'name' => 'one'], $current->getArrayCopy());
+        $resultSet->current();
     }
 
     #[Test]
@@ -110,8 +112,8 @@ final class HydratingResultSetTest extends TestCase
         $resultSet = new HydratingResultSet(new ArraySerializableHydrator(), new ArrayObject());
         $resultSet->initialize(new ArrayIterator([new stdClass()]));
 
-        self::expectException(RuntimeException::class);
-        self::expectExceptionMessage('exposes no properties');
+        self::expectException(ValueError::class);
+        self::expectExceptionMessage('will not transform a row it did not create');
 
         $resultSet->current();
     }
@@ -242,11 +244,10 @@ final class HydratingResultSetTest extends TestCase
     public function toArrayReportsARowTheHydratorCannotExtract(): void
     {
         $hydratingRs = new HydratingResultSet();
-        // Scalars never hydrate into an object, so current() yields null for each row.
         $hydratingRs->initialize(new ArrayIterator([1, 2]));
 
-        self::expectException(RuntimeException::class);
-        self::expectExceptionMessage('null');
+        self::expectException(ValueError::class);
+        self::expectExceptionMessage('A row of type "int"');
 
         $hydratingRs->toArray();
     }

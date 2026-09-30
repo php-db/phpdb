@@ -6,9 +6,13 @@ namespace PhpDb\ResultSet;
 
 use Override;
 
-use function is_array;
-use function is_object;
+use function get_debug_type;
 
+/**
+ * @api
+ *
+ * @extends AbstractResultSet<RowPrototypeInterface>
+ */
 class RowPrototypeResultSet extends AbstractResultSet implements RowPrototypeResultSetInterface
 {
     public function __construct(
@@ -18,26 +22,13 @@ class RowPrototypeResultSet extends AbstractResultSet implements RowPrototypeRes
     /**
      * Iterator: get current item
      *
-     * @throws Exception\RuntimeException If a row cannot fill the prototype.
+     * @throws Exception\RuntimeException
+     * @throws Exception\ValueError If a row is not row data.
      */
     #[Override]
     public function current(): ?RowPrototypeInterface
     {
-        $data = parent::current();
-
-        if ($data instanceof RowPrototypeInterface) {
-            return $data;
-        }
-
-        if (is_object($data)) {
-            $data = $this->rowToArray($data);
-        }
-
-        if (is_array($data)) {
-            return (clone $this->getRowPrototype())->populate($data);
-        }
-
-        return null;
+        return $this->currentRow();
     }
 
     /** {@inheritDoc} */
@@ -67,5 +58,28 @@ class RowPrototypeResultSet extends AbstractResultSet implements RowPrototypeRes
         }
 
         return $return;
+    }
+
+    /**
+     * A row that already satisfies the prototype interface is the caller's own object
+     * and is passed through untouched; row data populates a clone of the prototype.
+     *
+     * @throws Exception\ValueError If the row is neither a RowPrototypeInterface nor row data.
+     */
+    #[Override]
+    protected function mapRow(mixed $row): RowPrototypeInterface
+    {
+        if ($row instanceof RowPrototypeInterface) {
+            return $row;
+        }
+
+        return (clone $this->getRowPrototype())->populate($this->getArrayData($row));
+    }
+
+    /** {@inheritDoc} */
+    #[Override]
+    protected function unsupportedRowError(mixed $row): Exception\ValueError
+    {
+        return Exception\ValueError::forRowThatIsNotArrayDataOrPrototype(get_debug_type($row), static::class);
     }
 }

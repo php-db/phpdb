@@ -30,10 +30,11 @@ use function is_array;
 use function random_int;
 use function var_export;
 
-#[CoversMethod(AbstractResultSet::class, 'current')]
+#[CoversMethod(AbstractResultSet::class, 'currentRow')]
 #[CoversMethod(AbstractResultSet::class, 'resolveIterator')]
 #[CoversMethod(AbstractResultSet::class, 'buffer')]
 #[CoversMethod(ResultSet::class, 'current')]
+#[CoversMethod(ResultSet::class, 'mapRow')]
 #[CoversMethod(ResultSet::class, 'getReturnType')]
 #[CoversMethod(ResultSet::class, '__construct')]
 #[CoversMethod(ResultSet::class, 'getArrayObjectPrototype')]
@@ -224,6 +225,7 @@ final class ResultSetIntegrationTest extends TestCase
     public function currentWithBufferingCallsDataSourceCurrentOnce(): void
     {
         $mockResult = $this->getMockBuilder(ResultInterface::class)->getMock();
+        $mockResult->method('valid')->willReturn(true);
         $mockResult->expects($this->once())->method('current')->willReturn(['foo' => 'bar']);
 
         $this->resultSet->initialize($mockResult);
