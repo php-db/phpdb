@@ -17,7 +17,15 @@ class ResultSet extends AbstractResultSet implements ArrayObjectResultSetInterfa
     public const TYPE_ARRAYOBJECT = 'arrayobject';
     public const TYPE_ARRAY       = 'array';
 
-    private ResultSetReturnType $returnType;
+    private readonly ResultSetReturnType $returnType;
+
+    /**
+     * Whether the selected return type fills the row prototype, resolved once.
+     *
+     * The match is exhaustive so that a return type added without a decision here
+     * fails at construction rather than falling through current() unnoticed.
+     */
+    private readonly bool $fillsRowPrototype;
 
     public function __construct(
         ResultSetReturnType|string $returnType = ResultSetReturnType::ArrayObject,
@@ -26,7 +34,11 @@ class ResultSet extends AbstractResultSet implements ArrayObjectResultSetInterfa
             ArrayObject::ARRAY_AS_PROPS,
         ),
     ) {
-        $this->returnType = is_string($returnType) ? ResultSetReturnType::from($returnType) : $returnType;
+        $this->returnType        = is_string($returnType) ? ResultSetReturnType::from($returnType) : $returnType;
+        $this->fillsRowPrototype = match ($this->returnType) {
+            ResultSetReturnType::ArrayObject, ResultSetReturnType::Prototype => true,
+            ResultSetReturnType::Array                                       => false,
+        };
     }
 
     /**
@@ -47,7 +59,7 @@ class ResultSet extends AbstractResultSet implements ArrayObjectResultSetInterfa
             $data = $this->rowToArray($data);
         }
 
-        if (ResultSetReturnType::ArrayObject === $this->returnType && is_array($data)) {
+        if ($this->fillsRowPrototype && is_array($data)) {
             $ao = clone $this->getRowPrototype();
             $ao->exchangeArray($data);
 
