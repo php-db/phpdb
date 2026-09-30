@@ -24,6 +24,8 @@ use SplStack;
 use stdClass;
 use TypeError;
 
+use function count;
+use function get_debug_type;
 use function is_array;
 use function random_int;
 use function var_export;
@@ -44,7 +46,6 @@ final class ResultSetIntegrationTest extends TestCase
 {
     protected ResultSet $resultSet;
 
-    /** @psalm-return array<array-key, array{0: mixed}> */
     public static function invalidReturnTypes(): array
     {
         return [
@@ -55,6 +56,30 @@ final class ResultSetIntegrationTest extends TestCase
             [['foo']],
             [new stdClass()],
         ];
+    }
+
+    /** @psalm-return array<array-key, array{0: mixed}> */
+    /**
+     * Every case in ResultSetReturnType and the type a row arrives as, so a case
+     * cannot be added without deciding what current() does with it.
+     *
+     * @return array<string, array{0: ResultSetReturnType, 1: string}>
+     */
+    public static function returnTypeProvider(): array
+    {
+        $cases = [
+            'ArrayObject fills the row prototype' => [ResultSetReturnType::ArrayObject, ArrayObject::class],
+            'Prototype fills the row prototype'   => [ResultSetReturnType::Prototype, ArrayObject::class],
+            'Array hands back the raw row'        => [ResultSetReturnType::Array, 'array'],
+        ];
+
+        self::assertSame(
+            count(ResultSetReturnType::cases()),
+            count($cases),
+            'every ResultSetReturnType case needs a row type asserted here',
+        );
+
+        return $cases;
     }
 
     /**
@@ -215,6 +240,16 @@ final class ResultSetIntegrationTest extends TestCase
     {
         // Verify data source is null before initialization
         static::assertNull($this->resultSet->getDataSource());
+    }
+
+    #[Test]
+    #[DataProvider('returnTypeProvider')]
+    public function everyReturnTypeYieldsItsRowType(ResultSetReturnType $returnType, string $expected): void
+    {
+        $resultSet = new ResultSet($returnType);
+        $resultSet->initialize([['id' => 1, 'name' => 'one']]);
+
+        static::assertSame($expected, get_debug_type($resultSet->current()));
     }
 
     #[Test]
