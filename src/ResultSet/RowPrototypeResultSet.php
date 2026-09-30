@@ -7,6 +7,7 @@ namespace PhpDb\ResultSet;
 use Override;
 
 use function is_array;
+use function is_object;
 
 class RowPrototypeResultSet extends AbstractResultSet implements RowPrototypeResultSetInterface
 {
@@ -16,11 +17,22 @@ class RowPrototypeResultSet extends AbstractResultSet implements RowPrototypeRes
 
     /**
      * Iterator: get current item
+     *
+     * @throws Exception\RuntimeException If a row cannot fill the prototype.
      */
     #[Override]
-    public function current(): array|object|null
+    public function current(): array|RowPrototypeInterface|null
     {
         $data = parent::current();
+
+        if ($data instanceof RowPrototypeInterface) {
+            // already the shape this result set promises, so hand it back untouched
+            return $data;
+        }
+
+        if (is_object($data)) {
+            $data = $this->rowToArray($data);
+        }
 
         if (is_array($data)) {
             return (clone $this->getRowPrototype())->populate($data);

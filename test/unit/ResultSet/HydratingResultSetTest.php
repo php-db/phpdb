@@ -10,6 +10,7 @@ use Exception;
 use Laminas\Hydrator\ArraySerializableHydrator;
 use Laminas\Hydrator\ClassMethodsHydrator;
 use Override;
+use PhpDb\ResultSet\AbstractResultSet;
 use PhpDb\ResultSet\Exception\RuntimeException;
 use PhpDb\ResultSet\HydratingResultSet;
 use PHPUnit\Framework\Attributes\CoversMethod;
@@ -18,11 +19,13 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
+#[CoversMethod(AbstractResultSet::class, 'rowToArray')]
 #[CoversMethod(HydratingResultSet::class, 'setObjectPrototype')]
 #[CoversMethod(HydratingResultSet::class, 'getObjectPrototype')]
 #[CoversMethod(HydratingResultSet::class, 'setHydrator')]
 #[CoversMethod(HydratingResultSet::class, 'getHydrator')]
 #[CoversMethod(HydratingResultSet::class, 'current')]
+#[CoversMethod(HydratingResultSet::class, 'hydrateRow')]
 #[CoversMethod(HydratingResultSet::class, 'toArray')]
 #[CoversMethod(HydratingResultSet::class, '__construct')]
 #[CoversMethod(HydratingResultSet::class, 'setRowPrototype')]
@@ -83,6 +86,34 @@ final class HydratingResultSetTest extends TestCase
         // Verify current() returns hydrated object when data exists
         $obj = $hydratingRs->current();
         static::assertInstanceOf('ArrayObject', $obj);
+    }
+
+    #[Test]
+    public function currentHydratesAnObjectRowRatherThanDiscardingIt(): void
+    {
+        $row       = new stdClass();
+        $row->id   = 1;
+        $row->name = 'one';
+
+        $resultSet = new HydratingResultSet(new ArraySerializableHydrator(), new ArrayObject());
+        $resultSet->initialize(new ArrayIterator([$row]));
+
+        $current = $resultSet->current();
+
+        static::assertInstanceOf(ArrayObject::class, $current);
+        static::assertSame(['id' => 1, 'name' => 'one'], $current->getArrayCopy());
+    }
+
+    #[Test]
+    public function currentRejectsARowThatExposesNothing(): void
+    {
+        $resultSet = new HydratingResultSet(new ArraySerializableHydrator(), new ArrayObject());
+        $resultSet->initialize(new ArrayIterator([new stdClass()]));
+
+        self::expectException(RuntimeException::class);
+        self::expectExceptionMessage('exposes no properties');
+
+        $resultSet->current();
     }
 
     #[Test]

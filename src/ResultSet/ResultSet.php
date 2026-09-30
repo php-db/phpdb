@@ -8,6 +8,7 @@ use ArrayObject;
 use Override;
 
 use function is_array;
+use function is_object;
 use function is_string;
 
 class ResultSet extends AbstractResultSet implements ArrayObjectResultSetInterface
@@ -30,11 +31,22 @@ class ResultSet extends AbstractResultSet implements ArrayObjectResultSetInterfa
 
     /**
      * Iterator: get current item
+     *
+     * @throws Exception\RuntimeException If a row cannot fill the prototype.
      */
     #[Override]
-    public function current(): array|object|null
+    public function current(): array|ArrayObject|null
     {
         $data = parent::current();
+
+        if ($data instanceof ArrayObject) {
+            // already the shape this result set promises, so hand it back untouched
+            return $data;
+        }
+
+        if (is_object($data)) {
+            $data = $this->rowToArray($data);
+        }
 
         if (ResultSetReturnType::ArrayObject === $this->returnType && is_array($data)) {
             $ao = clone $this->getRowPrototype();

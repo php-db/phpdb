@@ -19,8 +19,11 @@ use Traversable;
 use function array_key_exists;
 use function count;
 use function current;
+use function get_debug_type;
+use function get_object_vars;
 use function is_array;
 use function is_object;
+use function iterator_to_array;
 use function reset;
 
 /**
@@ -319,5 +322,36 @@ abstract class AbstractResultSet implements ResultSetInterface
         }
 
         return $this->dataSource;
+    }
+
+    /**
+     * Reduce an object row to the array a prototype can be filled from.
+     *
+     * A row that carries its values as elements rather than properties, ArrayObject
+     * being the common case, is read through its iterator. Everything else is reduced
+     * with get_object_vars(), which sees only public properties from out here; a plain
+     * cast would instead yield mangled keys for anything private.
+     *
+     * A row that exposes nothing either way cannot fill a prototype at all. PDORow,
+     * which FETCH_LAZY yields, is the case that matters: it resolves columns through
+     * __get() and reduces to an empty array, so converting it would quietly drop every
+     * column. Such a row is rejected rather than emptied.
+     *
+     * @return array<array-key, mixed>
+     *
+     * @throws RuntimeException
+     */
+    protected function rowToArray(object $row): array
+    {
+        if ($row instanceof Traversable) {
+            return iterator_to_array($row);
+        }
+
+        $data = get_object_vars($row);
+        if ([] === $data) {
+            throw RuntimeException::forUnconvertibleRow(get_debug_type($row));
+        }
+
+        return $data;
     }
 }

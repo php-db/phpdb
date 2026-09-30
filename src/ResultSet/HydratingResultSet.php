@@ -42,8 +42,7 @@ class HydratingResultSet extends AbstractResultSet implements HydratingResultSet
             return $this->buffer[$this->position];
         }
 
-        $data    = $this->dataSource()->current();
-        $current = is_array($data) ? $this->getHydrator()->hydrate($data, clone $this->getRowPrototype()) : null;
+        $current = $this->hydrateRow($this->dataSource()->current());
 
         if (is_array($this->buffer)) {
             $this->buffer[$this->position] = $current;
@@ -115,5 +114,26 @@ class HydratingResultSet extends AbstractResultSet implements HydratingResultSet
         }
 
         return $return;
+    }
+
+    /**
+     * Hydrate one row onto a clone of the prototype.
+     *
+     * A row that is neither an array nor reducible to one carries nothing to hydrate,
+     * which is how FETCH_BOUND arrives.
+     *
+     * @throws RuntimeException
+     */
+    private function hydrateRow(mixed $data): ?object
+    {
+        if (is_object($data)) {
+            $data = $this->rowToArray($data);
+        }
+
+        if (! is_array($data)) {
+            return null;
+        }
+
+        return $this->getHydrator()->hydrate($data, clone $this->getRowPrototype());
     }
 }

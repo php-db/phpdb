@@ -21,6 +21,13 @@ class RuntimeException extends Exception\RuntimeException
 
     final public const string UNHYDRATABLE_ROW = 'Cannot extract a row of type "%s"; the hydrator requires an object';
 
+    final public const string UNCONVERTIBLE_ROW = 'A row of type "%s" exposes no properties and cannot fill a row prototype; select a fetch mode that yields arrays';
+
+    public static function forUnconvertibleRow(string $type): self
+    {
+        return new self(sprintf(self::UNCONVERTIBLE_ROW, $type));
+    }
+
     public static function forUnhydratableRow(string $type): self
     {
         return new self(sprintf(self::UNHYDRATABLE_ROW, $type));

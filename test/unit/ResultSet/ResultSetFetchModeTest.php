@@ -6,15 +6,15 @@ namespace PhpDbTest\ResultSet;
 
 use ArrayObject;
 use PDO;
-use PDORow;
 use PhpDb\Adapter\Driver\Pdo\Result;
+use PhpDb\ResultSet\AbstractResultSet;
+use PhpDb\ResultSet\Exception\RuntimeException;
 use PhpDb\ResultSet\ResultSet;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
-use stdClass;
 use Throwable;
 
 use function array_map;
@@ -26,6 +26,7 @@ use function iterator_to_array;
  * every entry in Result::VALID_FETCH_MODES, so that a mode cannot start discarding rows
  * without a test noticing.
  */
+#[CoversMethod(AbstractResultSet::class, 'rowToArray')]
 #[CoversMethod(ResultSet::class, 'current')]
 #[Group('unit')]
 final class ResultSetFetchModeTest extends TestCase
@@ -40,11 +41,10 @@ final class ResultSetFetchModeTest extends TestCase
     public static function rowYieldingModeProvider(): array
     {
         return [
-            'FETCH_LAZY hands back a PDORow'                 => [PDO::FETCH_LAZY, PDORow::class],
             'FETCH_ASSOC fills the ArrayObject prototype'    => [PDO::FETCH_ASSOC, ArrayObject::class],
             'FETCH_NUM fills the ArrayObject prototype'      => [PDO::FETCH_NUM, ArrayObject::class],
             'FETCH_BOTH fills the ArrayObject prototype'     => [PDO::FETCH_BOTH, ArrayObject::class],
-            'FETCH_OBJ hands back a stdClass'                => [PDO::FETCH_OBJ, stdClass::class],
+            'FETCH_OBJ fills the ArrayObject prototype'      => [PDO::FETCH_OBJ, ArrayObject::class],
             'FETCH_NAMED fills the ArrayObject prototype'    => [PDO::FETCH_NAMED, ArrayObject::class],
             'FETCH_KEY_PAIR fills the ArrayObject prototype' => [PDO::FETCH_KEY_PAIR, ArrayObject::class],
             'FETCH_PROPS_LATE is a flag, so PDO falls back'  => [PDO::FETCH_PROPS_LATE, ArrayObject::class],
@@ -119,12 +119,26 @@ final class ResultSetFetchModeTest extends TestCase
         $this->rowsFor($fetchMode);
     }
 
+    /**
+     * FETCH_LAZY yields a PDORow, which resolves its columns through __get() and so
+     * reduces to an empty array. There is no way to fill a prototype from it, and
+     * emptying it silently is what this component used to do.
+     */
+    #[Test]
+    public function lazyFetchModeIsRejectedRatherThanEmptied(): void
+    {
+        self::expectException(RuntimeException::class);
+        self::expectExceptionMessage('exposes no properties');
+
+        $this->rowsFor(PDO::FETCH_LAZY);
+    }
+
     #[Test]
     public function objectRowsKeepTheirColumnValues(): void
     {
         $rows = $this->rowsFor(PDO::FETCH_OBJ);
 
-        static::assertSame([1, 2], array_map(static fn(stdClass $row): int => (int) $row->id, $rows));
+        static::assertSame([1, 2], array_map(static fn(ArrayObject $row): int => (int) $row['id'], $rows));
     }
 
     protected function setUp(): void
