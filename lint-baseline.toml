@@ -271,24 +271,6 @@ message = "Class has too many methods."
 count = 1
 
 [[issues]]
-file = "src/ResultSet/ArrayObjectResultSetInterface.php"
-code = "prefer-self-return-type"
-message = "Return type `ArrayObjectResultSetInterface` refers to the enclosing class; use `self` instead."
-count = 1
-
-[[issues]]
-file = "src/ResultSet/HydratingResultSetInterface.php"
-code = "prefer-self-return-type"
-message = "Return type `HydratingResultSetInterface` refers to the enclosing class; use `self` instead."
-count = 1
-
-[[issues]]
-file = "src/ResultSet/RowPrototypeResultSetInterface.php"
-code = "prefer-self-return-type"
-message = "Return type `RowPrototypeResultSetInterface` refers to the enclosing class; use `self` instead."
-count = 1
-
-[[issues]]
 file = "src/RowGateway/AbstractRowGateway.php"
 code = "cyclomatic-complexity"
 message = "Class has high complexity."
