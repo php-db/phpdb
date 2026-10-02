@@ -9,6 +9,7 @@ use ArrayObject;
 use Exception;
 use Laminas\Hydrator\ArraySerializableHydrator;
 use Laminas\Hydrator\ClassMethodsHydrator;
+use Laminas\Hydrator\ObjectPropertyHydrator;
 use Override;
 use PhpDb\ResultSet\AbstractResultSet;
 use PhpDb\ResultSet\Exception\RuntimeException;
@@ -32,8 +33,6 @@ use stdClass;
 #[CoversMethod(HydratingResultSet::class, '__construct')]
 #[CoversMethod(HydratingResultSet::class, 'setRowPrototype')]
 #[CoversMethod(HydratingResultSet::class, 'getRowPrototype')]
-#[CoversMethod(HydratingResultSet::class, 'holdsMappedRows')]
-#[CoversMethod(HydratingResultSet::class, 'resetResolvedConfiguration')]
 #[CoversMethod(AbstractResultSet::class, 'currentRow')]
 #[CoversMethod(AbstractResultSet::class, 'holdRow')]
 #[Group('unit')]
@@ -42,22 +41,6 @@ final class HydratingResultSetTest extends TestCase
     private string $arraySerializableHydratorClass;
 
     private string $classMethodsHydratorClass;
-
-    #[Test]
-    public function aSecondBufferedPassReturnsTheSameObject(): void
-    {
-        $hydratingRs = new HydratingResultSet();
-        $hydratingRs->initialize(new ArrayIterator([
-            ['id' => 1, 'name' => 'one'],
-            ['id' => 2, 'name' => 'two'],
-        ]));
-        $hydratingRs->buffer();
-
-        $first = $hydratingRs->current();
-        $hydratingRs->rewind();
-
-        static::assertSame($first, $hydratingRs->current());
-    }
 
     #[Test]
     public function aChangeToABufferedEntityCarriesIntoTheNextPass(): void
@@ -82,41 +65,35 @@ final class HydratingResultSetTest extends TestCase
     }
 
     #[Test]
-    public function subclassGettersDecideHowRowsAreHydrated(): void
+    public function aNewHydratorOrPrototypeIsUsedForTheNextDataSource(): void
     {
-        $hydratingRs = new class extends HydratingResultSet {
-            public int $hydratorCalls = 0;
+        $hydratingRs = new HydratingResultSet(null, new ArrayObject());
+        $hydratingRs->initialize(new ArrayIterator([['id' => 1]]));
+        static::assertInstanceOf(ArrayObject::class, $hydratingRs->current());
 
-            #[Override]
-            public function getHydrator(): ClassMethodsHydrator
-            {
-                $this->hydratorCalls++;
+        $hydratingRs->setRowPrototype(new stdClass());
+        $hydratingRs->setHydrator(new ObjectPropertyHydrator());
+        $hydratingRs->initialize(new ArrayIterator([['id' => 2]]));
 
-                return new ClassMethodsHydrator();
-            }
+        $row = $hydratingRs->current();
+        static::assertInstanceOf(stdClass::class, $row);
+        static::assertSame(2, $row->id);
+    }
 
-            #[Override]
-            public function getRowPrototype(): object
-            {
-                return new class {
-                    public ?int $id = null;
+    #[Test]
+    public function aSecondBufferedPassReturnsTheSameObject(): void
+    {
+        $hydratingRs = new HydratingResultSet();
+        $hydratingRs->initialize(new ArrayIterator([
+            ['id' => 1, 'name' => 'one'],
+            ['id' => 2, 'name' => 'two'],
+        ]));
+        $hydratingRs->buffer();
 
-                    public function setId(int $id): void
-                    {
-                        $this->id = $id * 10;
-                    }
-                };
-            }
-        };
-        $hydratingRs->initialize(new ArrayIterator([['id' => 1], ['id' => 2]]));
+        $first = $hydratingRs->current();
+        $hydratingRs->rewind();
 
-        $ids = [];
-        foreach ($hydratingRs as $row) {
-            $ids[] = $row->id;
-        }
-
-        static::assertSame([10, 20], $ids);
-        static::assertSame(1, $hydratingRs->hydratorCalls, 'getHydrator() is asked once per data source, not per row');
+        static::assertSame($first, $hydratingRs->current());
     }
 
     #[Test]
@@ -287,6 +264,44 @@ final class HydratingResultSetTest extends TestCase
         static::assertSame($prototype, $hydratingRs->getRowPrototype());
     }
 
+    #[Test]
+    public function subclassGettersDecideHowRowsAreHydrated(): void
+    {
+        $hydratingRs = new class extends HydratingResultSet {
+            public int $hydratorCalls = 0;
+
+            #[Override]
+            public function getHydrator(): ClassMethodsHydrator
+            {
+                $this->hydratorCalls++;
+
+                return new ClassMethodsHydrator();
+            }
+
+            #[Override]
+            public function getRowPrototype(): object
+            {
+                return new class {
+                    public ?int $id = null;
+
+                    public function setId(int $id): void
+                    {
+                        $this->id = $id * 10;
+                    }
+                };
+            }
+        };
+        $hydratingRs->initialize(new ArrayIterator([['id' => 1], ['id' => 2]]));
+
+        $ids = [];
+        foreach ($hydratingRs as $row) {
+            $ids[] = $row->id;
+        }
+
+        static::assertSame([10, 20], $ids);
+        static::assertSame(1, $hydratingRs->hydratorCalls, 'getHydrator() is asked once per data source, not per row');
+    }
+
     /**
      * @throws Exception
      * @todo Implement testToArray().
@@ -335,21 +350,5 @@ final class HydratingResultSetTest extends TestCase
     {
         $this->arraySerializableHydratorClass = ArraySerializableHydrator::class;
         $this->classMethodsHydratorClass      = ClassMethodsHydrator::class;
-    }
-
-    #[Test]
-    public function aNewHydratorOrPrototypeIsUsedForTheNextDataSource(): void
-    {
-        $hydratingRs = new HydratingResultSet(null, new ArrayObject());
-        $hydratingRs->initialize(new ArrayIterator([['id' => 1]]));
-        static::assertInstanceOf(ArrayObject::class, $hydratingRs->current());
-
-        $hydratingRs->setRowPrototype(new stdClass());
-        $hydratingRs->setHydrator(new \Laminas\Hydrator\ObjectPropertyHydrator());
-        $hydratingRs->initialize(new ArrayIterator([['id' => 2]]));
-
-        $row = $hydratingRs->current();
-        static::assertInstanceOf(stdClass::class, $row);
-        static::assertSame(2, $row->id);
     }
 }

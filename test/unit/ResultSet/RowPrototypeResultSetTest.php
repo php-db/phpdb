@@ -6,6 +6,7 @@ namespace PhpDbTest\ResultSet;
 
 use ArrayIterator;
 use ArrayObject;
+use Override;
 use PhpDb\ResultSet\AbstractResultSet;
 use PhpDb\ResultSet\Exception\ValueError;
 use PhpDb\ResultSet\RowPrototypeInterface;
@@ -28,6 +29,30 @@ use stdClass;
 #[Group('unit')]
 final class RowPrototypeResultSetTest extends TestCase
 {
+    #[Test]
+    public function aSubclassGetRowPrototypeDecidesTheRowClass(): void
+    {
+        $custom    = $this->createRowPrototype();
+        $resultSet = new class($this->createRowPrototype(), $custom) extends RowPrototypeResultSet {
+            public function __construct(
+                RowPrototypeInterface $prototype,
+                private RowPrototypeInterface $custom,
+            ) {
+                parent::__construct($prototype);
+            }
+
+            #[Override]
+            public function getRowPrototype(): RowPrototypeInterface
+            {
+                return $this->custom;
+            }
+        };
+        $resultSet->initialize([['id' => 1]]);
+
+        static::assertSame($custom::class, $resultSet->current()::class);
+        static::assertNotSame($custom, $resultSet->current(), 'the prototype is cloned for each row');
+    }
+
     #[Test]
     public function currentPopulatesThePrototypeFromARowCarryingItsValuesAsElements(): void
     {
@@ -118,6 +143,22 @@ final class RowPrototypeResultSetTest extends TestCase
     }
 
     #[Test]
+    public function setRowPrototypeReplacesThePrototypeForLaterRows(): void
+    {
+        $first     = $this->createRowPrototype();
+        $second    = $this->createRowPrototype();
+        $resultSet = new RowPrototypeResultSet($first);
+        $resultSet->initialize([['id' => 1], ['id' => 2]]);
+        $resultSet->current();
+
+        static::assertSame($resultSet, $resultSet->setRowPrototype($second));
+        static::assertSame($second, $resultSet->getRowPrototype());
+
+        $resultSet->next();
+        static::assertSame(['id' => 2], $resultSet->current()->toArray());
+    }
+
+    #[Test]
     public function toArrayConvertsPrototypeRowsToArrays(): void
     {
         $prototype = $this->createRowPrototype();
@@ -134,28 +175,6 @@ final class RowPrototypeResultSetTest extends TestCase
             ],
             $resultSet->toArray(),
         );
-    }
-
-    #[Test]
-    public function aSubclassGetRowPrototypeDecidesTheRowClass(): void
-    {
-        $custom    = $this->createRowPrototype();
-        $resultSet = new class ($this->createRowPrototype(), $custom) extends RowPrototypeResultSet {
-            public function __construct(RowPrototypeInterface $prototype, private RowPrototypeInterface $custom)
-            {
-                parent::__construct($prototype);
-            }
-
-            #[\Override]
-            public function getRowPrototype(): RowPrototypeInterface
-            {
-                return $this->custom;
-            }
-        };
-        $resultSet->initialize([['id' => 1]]);
-
-        static::assertSame($custom::class, $resultSet->current()::class);
-        static::assertNotSame($custom, $resultSet->current(), 'the prototype is cloned for each row');
     }
 
     private function createRowPrototype(): RowPrototypeInterface
@@ -175,21 +194,5 @@ final class RowPrototypeResultSetTest extends TestCase
                 return $this->data;
             }
         };
-    }
-
-    #[Test]
-    public function setRowPrototypeReplacesThePrototypeForLaterRows(): void
-    {
-        $first     = $this->createRowPrototype();
-        $second    = $this->createRowPrototype();
-        $resultSet = new RowPrototypeResultSet($first);
-        $resultSet->initialize([['id' => 1], ['id' => 2]]);
-        $resultSet->current();
-
-        static::assertSame($resultSet, $resultSet->setRowPrototype($second));
-        static::assertSame($second, $resultSet->getRowPrototype());
-
-        $resultSet->next();
-        static::assertSame(['id' => 2], $resultSet->current()->toArray());
     }
 }

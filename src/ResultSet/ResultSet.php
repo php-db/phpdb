@@ -145,7 +145,9 @@ class ResultSet extends AbstractResultSet implements ArrayObjectResultSetInterfa
             return $row;
         }
 
-        $ao = clone ($this->resolvedRowPrototype ??= $this->getRowPrototype());
+        $this->resolvedRowPrototype ??= $this->getRowPrototype();
+
+        $ao = clone $this->resolvedRowPrototype;
         $ao->exchangeArray($row);
 
         return $ao;

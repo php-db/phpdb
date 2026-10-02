@@ -256,7 +256,7 @@ count = 1
 file = "src/ResultSet/AbstractResultSet.php"
 code = "halstead"
 message = "Method has a high halstead difficulty"
-count = 2
+count = 3
 
 [[issues]]
 file = "src/ResultSet/AbstractResultSet.php"

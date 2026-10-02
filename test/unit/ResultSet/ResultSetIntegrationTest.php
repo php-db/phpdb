@@ -45,7 +45,6 @@ use function var_export;
 #[CoversMethod(ResultSet::class, 'toArray')]
 #[CoversMethod(ResultSet::class, 'resetResolvedConfiguration')]
 #[CoversMethod(AbstractResultSet::class, 'holdRow')]
-#[CoversMethod(AbstractResultSet::class, 'holdsMappedRows')]
 #[CoversMethod(AbstractResultSet::class, 'resetResolvedConfiguration')]
 #[Group('unit')]
 final class ResultSetIntegrationTest extends TestCase
@@ -89,6 +88,34 @@ final class ResultSetIntegrationTest extends TestCase
     }
 
     #[Test]
+    public function aBufferedPassAfterSetRowPrototypeUsesTheNewPrototype(): void
+    {
+        $resultSet = new ResultSet();
+        $resultSet->initialize(new ArrayIterator([['id' => 1]]));
+        $resultSet->buffer();
+        $resultSet->current();
+
+        $resultSet->setRowPrototype(new class([], ArrayObject::ARRAY_AS_PROPS) extends ArrayObject {});
+        $resultSet->rewind();
+
+        static::assertNotSame(ArrayObject::class, $resultSet->current()::class);
+    }
+
+    #[Test]
+    public function aBufferedResultSetBuildsFreshRowsOnEveryPass(): void
+    {
+        $resultSet = new ResultSet();
+        $resultSet->initialize(new ArrayIterator([['id' => 1], ['id' => 2]]));
+        $resultSet->buffer();
+
+        $first = $resultSet->current();
+        $resultSet->rewind();
+
+        static::assertNotSame($first, $resultSet->current());
+        static::assertEquals($first, $resultSet->current());
+    }
+
+    #[Test]
     public function aChangeToARowInOneBufferedPassDoesNotReachTheNext(): void
     {
         $this->resultSet->initialize(new ArrayIterator([['id' => 1, 'name' => 'one']]));
@@ -114,6 +141,24 @@ final class ResultSetIntegrationTest extends TestCase
         $this->resultSet->rewind();
 
         static::assertInstanceOf($prototype::class, $this->resultSet->current());
+    }
+
+    #[Test]
+    public function aSubclassGetRowPrototypeDecidesTheRowClass(): void
+    {
+        $resultSet = new class extends ResultSet {
+            #[Override]
+            public function getRowPrototype(): ArrayObject
+            {
+                return new class([], ArrayObject::ARRAY_AS_PROPS) extends ArrayObject {};
+            }
+        };
+        $resultSet->initialize([['id' => 1]]);
+
+        $row = $resultSet->current();
+
+        static::assertInstanceOf(ArrayObject::class, $row);
+        static::assertNotSame(ArrayObject::class, $row::class);
     }
 
     /**
@@ -478,51 +523,5 @@ final class ResultSetIntegrationTest extends TestCase
     protected function setUp(): void
     {
         $this->resultSet = new ResultSet();
-    }
-
-    #[Test]
-    public function aSubclassGetRowPrototypeDecidesTheRowClass(): void
-    {
-        $resultSet = new class extends ResultSet {
-            #[Override]
-            public function getRowPrototype(): ArrayObject
-            {
-                return new class ([], ArrayObject::ARRAY_AS_PROPS) extends ArrayObject {};
-            }
-        };
-        $resultSet->initialize([['id' => 1]]);
-
-        $row = $resultSet->current();
-
-        static::assertInstanceOf(ArrayObject::class, $row);
-        static::assertNotSame(ArrayObject::class, $row::class);
-    }
-
-    #[Test]
-    public function aBufferedResultSetBuildsFreshRowsOnEveryPass(): void
-    {
-        $resultSet = new ResultSet();
-        $resultSet->initialize(new ArrayIterator([['id' => 1], ['id' => 2]]));
-        $resultSet->buffer();
-
-        $first = $resultSet->current();
-        $resultSet->rewind();
-
-        static::assertNotSame($first, $resultSet->current());
-        static::assertEquals($first, $resultSet->current());
-    }
-
-    #[Test]
-    public function aBufferedPassAfterSetRowPrototypeUsesTheNewPrototype(): void
-    {
-        $resultSet = new ResultSet();
-        $resultSet->initialize(new ArrayIterator([['id' => 1]]));
-        $resultSet->buffer();
-        $resultSet->current();
-
-        $resultSet->setRowPrototype(new class ([], ArrayObject::ARRAY_AS_PROPS) extends ArrayObject {});
-        $resultSet->rewind();
-
-        static::assertNotSame(ArrayObject::class, $resultSet->current()::class);
     }
 }

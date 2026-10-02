@@ -36,6 +36,16 @@ abstract class AbstractResultSet implements ResultSetInterface
     /** How deeply initialize() will unwrap a chain of IteratorAggregate. */
     private const int MAX_ITERATOR_DEPTH = 8;
 
+    /**
+     * Whether buffered passes hand out the rows built on the first pass.
+     *
+     * False by default: the buffer keeps raw rows and every pass builds its own. A
+     * result set whose rows carry an identity of their own redeclares this as true.
+     *
+     * @var bool
+     */
+    protected const bool HOLDS_MAPPED_ROWS = false;
+
     private RowBufferState $bufferState = RowBufferState::Pending;
 
     /**
@@ -54,15 +64,6 @@ abstract class AbstractResultSet implements ResultSetInterface
      * initialize() calls again whenever it replaces the data source.
      */
     private bool $storesRows = false;
-
-    /**
-     * Whether the buffer holds the rows mapRow() built rather than the raw rows.
-     *
-     * Derived from holdsMappedRows() by setBufferState(). A result set whose rows are
-     * objects with an identity of their own, such as hydrated entities, hands the same
-     * objects out on every pass; one whose rows are cheap copies builds them afresh.
-     */
-    private bool $holdsMappedRows = false;
 
     /**
      * Raw rows held for later passes, keyed by position, and mapped afresh on each read
@@ -366,7 +367,8 @@ abstract class AbstractResultSet implements ResultSetInterface
             /** @var mixed $held */
             $held = $this->bufferedRows[$this->position] ?? null;
 
-            if (null !== $held && $this->holdsMappedRows) {
+            if (null !== $held && static::HOLDS_MAPPED_ROWS) {
+                /** @var TRow $held */
                 return $held;
             }
 
@@ -393,25 +395,6 @@ abstract class AbstractResultSet implements ResultSetInterface
         $row = $dataSource->current();
 
         return null === $row || false === $row ? null : $this->mapRow($row);
-    }
-
-    /**
-     * Whether buffered passes hand out the rows built on the first pass.
-     *
-     * False by default: the buffer keeps raw rows and every pass builds its own. A
-     * result set whose rows carry an identity of their own overrides this.
-     */
-    protected function holdsMappedRows(): bool
-    {
-        return false;
-    }
-
-    /**
-     * Forget anything a subclass resolved from its getters, so that the next row asks
-     * them again. Called by initialize(); a subclass's setters call it too.
-     */
-    protected function resetResolvedConfiguration(): void
-    {
     }
 
     /**
@@ -452,6 +435,12 @@ abstract class AbstractResultSet implements ResultSetInterface
     }
 
     /**
+     * Forget anything a subclass resolved from its getters, so that the next row asks
+     * them again. Called by initialize(); a subclass's setters call it too.
+     */
+    protected function resetResolvedConfiguration(): void {}
+
+    /**
      * The error describing a row this result set cannot read.
      *
      * Overridden by a result set that accepts more than row data, so that the message
@@ -460,6 +449,22 @@ abstract class AbstractResultSet implements ResultSetInterface
     protected function unsupportedRowError(mixed $row): ValueError
     {
         return ValueError::forRowThatIsNotArrayData(get_debug_type($row), static::class);
+    }
+
+    /**
+     * Keep a row for later passes and return it mapped.
+     *
+     * @return TRow
+     */
+    private function holdRow(mixed $row): mixed
+    {
+        if (static::HOLDS_MAPPED_ROWS) {
+            return $this->bufferedRows[$this->position] = $this->mapRow($row);
+        }
+
+        $this->bufferedRows[$this->position] = $row;
+
+        return $this->mapRow($row);
     }
 
     private function initializeFromResult(ResultInterface $result): void
@@ -484,22 +489,5 @@ abstract class AbstractResultSet implements ResultSetInterface
         $this->bufferState   = $state;
         $this->readsDirectly = RowBufferState::Passthrough === $state || RowBufferState::Disabled === $state;
         $this->storesRows    = RowBufferState::Storing === $state && null !== $this->dataSource;
-        $this->holdsMappedRows = RowBufferState::Storing === $state && $this->holdsMappedRows();
-    }
-
-    /**
-     * Keep a row for later passes and return it mapped.
-     *
-     * @return TRow
-     */
-    private function holdRow(mixed $row): mixed
-    {
-        if ($this->holdsMappedRows) {
-            return $this->bufferedRows[$this->position] = $this->mapRow($row);
-        }
-
-        $this->bufferedRows[$this->position] = $row;
-
-        return $this->mapRow($row);
     }
 }

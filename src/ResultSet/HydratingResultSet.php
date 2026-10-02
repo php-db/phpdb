@@ -19,7 +19,16 @@ use function is_array;
  */
 class HydratingResultSet extends AbstractResultSet implements HydratingResultSetInterface
 {
-    /** getHydrator() and getRowPrototype(), asked once per data source rather than once per row. */
+    /**
+     * Hydrated rows are entities with an identity of their own, so a buffered set hands
+     * the same objects out on every pass, as laminas-db and earlier PhpDb releases did.
+     */
+    protected const bool HOLDS_MAPPED_ROWS = true;
+
+    /**
+     * getHydrator() and getRowPrototype(), asked on the first row rather than on every
+     * row, and asked again after setHydrator() or setRowPrototype().
+     */
     private ?HydratorInterface $resolvedHydrator = null;
 
     private ?object $resolvedRowPrototype = null;
@@ -115,26 +124,13 @@ class HydratingResultSet extends AbstractResultSet implements HydratingResultSet
     #[Override]
     protected function mapRow(mixed $row): object
     {
-        return ($this->resolvedHydrator ??= $this->getHydrator())->hydrate(
-            is_array($row) ? $row : $this->getArrayData($row),
-            clone ($this->resolvedRowPrototype ??= $this->getRowPrototype()),
-        );
-    }
+        $data = is_array($row) ? $row : $this->getArrayData($row);
 
-    /**
-     * Hydrated rows are entities with an identity of their own, so a buffered set hands
-     * the same objects out on every pass, as laminas-db and earlier PhpDb releases did.
-     */
-    #[Override]
-    protected function holdsMappedRows(): bool
-    {
-        return true;
-    }
+        $this->resolvedRowPrototype ??= $this->getRowPrototype();
+        $prototype                  = clone $this->resolvedRowPrototype;
 
-    #[Override]
-    protected function resetResolvedConfiguration(): void
-    {
-        $this->resolvedHydrator     = null;
-        $this->resolvedRowPrototype = null;
+        $this->resolvedHydrator ??= $this->getHydrator();
+
+        return $this->resolvedHydrator->hydrate($data, $prototype);
     }
 }

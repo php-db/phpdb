@@ -41,7 +41,6 @@ use function iterator_to_array;
 #[CoversMethod(AbstractResultSet::class, 'rewind')]
 #[CoversMethod(AbstractResultSet::class, 'count')]
 #[CoversMethod(AbstractResultSet::class, 'resetResolvedConfiguration')]
-#[CoversMethod(AbstractResultSet::class, 'holdsMappedRows')]
 #[CoversMethod(AbstractResultSet::class, 'holdRow')]
 final class AbstractResultSetTest extends TestCase
 {
