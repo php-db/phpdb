@@ -40,7 +40,7 @@ final class HydratingResultSetTest extends TestCase
     private string $classMethodsHydratorClass;
 
     #[Test]
-    public function aSecondBufferedPassHydratesAFreshObject(): void
+    public function aSecondBufferedPassReturnsTheSameObject(): void
     {
         $hydratingRs = new HydratingResultSet();
         $hydratingRs->initialize(new ArrayIterator([
@@ -52,7 +52,67 @@ final class HydratingResultSetTest extends TestCase
         $first = $hydratingRs->current();
         $hydratingRs->rewind();
 
-        static::assertNotSame($first, $hydratingRs->current());
+        static::assertSame($first, $hydratingRs->current());
+    }
+
+    #[Test]
+    public function aChangeToABufferedEntityCarriesIntoTheNextPass(): void
+    {
+        $hydratingRs = new HydratingResultSet(null, new ArrayObject([], ArrayObject::ARRAY_AS_PROPS));
+        $hydratingRs->initialize(new ArrayIterator([
+            ['id' => 1, 'name' => 'one'],
+            ['id' => 2, 'name' => 'two'],
+        ]));
+        $hydratingRs->buffer();
+
+        foreach ($hydratingRs as $row) {
+            $row['name'] = 'changed';
+        }
+
+        $names = [];
+        foreach ($hydratingRs as $row) {
+            $names[] = $row['name'];
+        }
+
+        static::assertSame(['changed', 'changed'], $names);
+    }
+
+    #[Test]
+    public function subclassGettersDecideHowRowsAreHydrated(): void
+    {
+        $hydratingRs = new class extends HydratingResultSet {
+            public int $hydratorCalls = 0;
+
+            #[Override]
+            public function getHydrator(): ClassMethodsHydrator
+            {
+                $this->hydratorCalls++;
+
+                return new ClassMethodsHydrator();
+            }
+
+            #[Override]
+            public function getRowPrototype(): object
+            {
+                return new class {
+                    public ?int $id = null;
+
+                    public function setId(int $id): void
+                    {
+                        $this->id = $id * 10;
+                    }
+                };
+            }
+        };
+        $hydratingRs->initialize(new ArrayIterator([['id' => 1], ['id' => 2]]));
+
+        $ids = [];
+        foreach ($hydratingRs as $row) {
+            $ids[] = $row->id;
+        }
+
+        static::assertSame([10, 20], $ids);
+        static::assertSame(1, $hydratingRs->hydratorCalls, 'getHydrator() is asked once per data source, not per row');
     }
 
     #[Test]

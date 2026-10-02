@@ -31,6 +31,12 @@ class ResultSet extends AbstractResultSet implements ArrayObjectResultSetInterfa
      */
     private readonly bool $fillsRowPrototype;
 
+    /**
+     * getRowPrototype(), asked once per data source rather than once per row, so that a
+     * subclass overriding the getter is honoured without a method call on every row.
+     */
+    private ?ArrayObject $resolvedRowPrototype = null;
+
     public function __construct(
         ResultSetReturnType|string $returnType = ResultSetReturnType::ArrayObject,
         private ArrayObject $rowPrototype = new ArrayObject(
@@ -98,7 +104,8 @@ class ResultSet extends AbstractResultSet implements ArrayObjectResultSetInterfa
     public function setRowPrototype(
         ArrayObject $rowPrototype,
     ): ResultSetInterface&ArrayObjectResultSetInterface {
-        $this->rowPrototype = $rowPrototype;
+        $this->rowPrototype         = $rowPrototype;
+        $this->resolvedRowPrototype = null;
 
         return $this;
     }
@@ -138,9 +145,15 @@ class ResultSet extends AbstractResultSet implements ArrayObjectResultSetInterfa
             return $row;
         }
 
-        $ao = clone $this->rowPrototype;
+        $ao = clone ($this->resolvedRowPrototype ??= $this->getRowPrototype());
         $ao->exchangeArray($row);
 
         return $ao;
+    }
+
+    #[Override]
+    protected function resetResolvedConfiguration(): void
+    {
+        $this->resolvedRowPrototype = null;
     }
 }

@@ -132,6 +132,28 @@ final class RowPrototypeResultSetTest extends TestCase
         );
     }
 
+    #[Test]
+    public function aSubclassGetRowPrototypeDecidesTheRowClass(): void
+    {
+        $custom    = $this->createRowPrototype();
+        $resultSet = new class ($this->createRowPrototype(), $custom) extends RowPrototypeResultSet {
+            public function __construct(RowPrototypeInterface $prototype, private RowPrototypeInterface $custom)
+            {
+                parent::__construct($prototype);
+            }
+
+            #[\Override]
+            public function getRowPrototype(): RowPrototypeInterface
+            {
+                return $this->custom;
+            }
+        };
+        $resultSet->initialize([['id' => 1]]);
+
+        static::assertSame($custom::class, $resultSet->current()::class);
+        static::assertNotSame($custom, $resultSet->current(), 'the prototype is cloned for each row');
+    }
+
     private function createRowPrototype(): RowPrototypeInterface
     {
         return new class implements RowPrototypeInterface {

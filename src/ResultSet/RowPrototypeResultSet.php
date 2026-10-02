@@ -16,6 +16,9 @@ use function is_array;
  */
 class RowPrototypeResultSet extends AbstractResultSet implements RowPrototypeResultSetInterface
 {
+    /** getRowPrototype(), asked once per data source rather than once per row. */
+    private ?RowPrototypeInterface $resolvedRowPrototype = null;
+
     public function __construct(
         private RowPrototypeInterface $rowPrototype,
     ) {}
@@ -44,7 +47,8 @@ class RowPrototypeResultSet extends AbstractResultSet implements RowPrototypeRes
     public function setRowPrototype(
         RowPrototypeInterface $rowPrototype,
     ): ResultSetInterface&RowPrototypeResultSetInterface {
-        $this->rowPrototype = $rowPrototype;
+        $this->rowPrototype         = $rowPrototype;
+        $this->resolvedRowPrototype = null;
 
         return $this;
     }
@@ -71,14 +75,14 @@ class RowPrototypeResultSet extends AbstractResultSet implements RowPrototypeRes
     protected function mapRow(mixed $row): RowPrototypeInterface
     {
         if (is_array($row)) {
-            return (clone $this->rowPrototype)->populate($row);
+            return (clone ($this->resolvedRowPrototype ??= $this->getRowPrototype()))->populate($row);
         }
 
         if ($row instanceof RowPrototypeInterface) {
             return $row;
         }
 
-        return (clone $this->rowPrototype)->populate($this->getArrayData($row));
+        return (clone ($this->resolvedRowPrototype ??= $this->getRowPrototype()))->populate($this->getArrayData($row));
     }
 
     /** {@inheritDoc} */
@@ -86,5 +90,11 @@ class RowPrototypeResultSet extends AbstractResultSet implements RowPrototypeRes
     protected function unsupportedRowError(mixed $row): Exception\ValueError
     {
         return Exception\ValueError::forRowThatIsNotArrayDataOrPrototype(get_debug_type($row), static::class);
+    }
+
+    #[Override]
+    protected function resetResolvedConfiguration(): void
+    {
+        $this->resolvedRowPrototype = null;
     }
 }

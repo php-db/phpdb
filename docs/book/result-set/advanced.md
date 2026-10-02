@@ -202,12 +202,17 @@ started
 
 ### What a Buffer Holds
 
-A buffer holds the rows as the data source returned them, and every pass builds
-its rows from those afresh. A row object from one pass is never handed out again,
-so a change made to it does not carry into the next pass, and a new row prototype
-or hydrator takes effect from the next pass:
+What a buffered pass hands back depends on the kind of row.
 
-```php title="Each Pass Builds Its Own Rows"
+- `ResultSet` and `RowPrototypeResultSet` keep the rows as the data source returned
+  them and build each row afresh on every pass. A change made to an `ArrayObject` or
+  row prototype in one pass does not carry into the next.
+- `HydratingResultSet` keeps the objects it hydrated on the first pass and hands the
+  same objects out on every later pass, as laminas-db and earlier PhpDb releases did.
+  A hydrated row is an entity with an identity of its own, so a change made to it in
+  one pass is still there in the next, and nothing is hydrated twice.
+
+```php title="Buffered Entities Keep Their Identity"
 $resultSet = new HydratingResultSet(new ReflectionHydrator(), new UserEntity());
 $resultSet->initialize($result);
 $resultSet->buffer();
@@ -217,13 +222,13 @@ foreach ($resultSet as $user) {
 }
 
 foreach ($resultSet as $user) {
-    echo $user->getName(); // as read from the database, not upper-cased
+    echo $user->getName(); // upper-cased: the same objects as the first pass
 }
 ```
 
-**Note:** laminas-db and PhpDb 0.6 returned the same hydrated object on every pass
-of a buffered `HydratingResultSet`. Code that relied on that identity, such as an
-identity map keyed by row object, must keep its own reference to each object.
+The row prototype and hydrator are read through `getRowPrototype()` and
+`getHydrator()` once for each data source, so a subclass that overrides either getter
+decides how its rows are built.
 
 ### isBuffered() Method
 

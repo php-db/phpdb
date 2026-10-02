@@ -56,6 +56,15 @@ abstract class AbstractResultSet implements ResultSetInterface
     private bool $storesRows = false;
 
     /**
+     * Whether the buffer holds the rows mapRow() built rather than the raw rows.
+     *
+     * Derived from holdsMappedRows() by setBufferState(). A result set whose rows are
+     * objects with an identity of their own, such as hydrated entities, hands the same
+     * objects out on every pass; one whose rows are cheap copies builds them afresh.
+     */
+    private bool $holdsMappedRows = false;
+
+    /**
      * Raw rows held for later passes, keyed by position, and mapped afresh on each read
      * so that no pass sees what a caller did to the rows of another.
      *
@@ -197,6 +206,7 @@ abstract class AbstractResultSet implements ResultSetInterface
     public function initialize(iterable $dataSource): ResultSetInterface
     {
         $this->bufferedRows = [];
+        $this->resetResolvedConfiguration();
 
         if ($dataSource instanceof ResultInterface) {
             $this->initializeFromResult($dataSource);
@@ -353,19 +363,24 @@ abstract class AbstractResultSet implements ResultSetInterface
         }
 
         if ($this->storesRows) {
+            /** @var mixed $held */
+            $held = $this->bufferedRows[$this->position] ?? null;
+
+            if (null !== $held && $this->holdsMappedRows) {
+                return $held;
+            }
+
             /** @var Iterator $dataSource */
             $dataSource = $this->dataSource;
 
             /** @var mixed $row */
-            $row = $this->bufferedRows[$this->position] ?? $dataSource->current();
+            $row = $held ?? $dataSource->current();
 
             if (null === $row || false === $row) {
                 return null;
             }
 
-            $this->bufferedRows[$this->position] = $row;
-
-            return $this->mapRow($row);
+            return $this->holdRow($row);
         }
 
         $dataSource = $this->dataSource ?? throw RuntimeException::forUninitialisedDataSource();
@@ -374,18 +389,44 @@ abstract class AbstractResultSet implements ResultSetInterface
             $this->setBufferState(RowBufferState::Disabled);
         }
 
+        /** @var mixed $held */
+        $held = $this->bufferedRows[$this->position] ?? null;
+
+        if (null !== $held && $this->holdsMappedRows) {
+            return $held;
+        }
+
         /** @var mixed $row */
-        $row = $this->bufferedRows[$this->position] ?? $dataSource->current();
+        $row = $held ?? $dataSource->current();
 
         if (null === $row || false === $row) {
             return null;
         }
 
         if (RowBufferState::Storing === $this->bufferState) {
-            $this->bufferedRows[$this->position] = $row;
+            return $this->holdRow($row);
         }
 
         return $this->mapRow($row);
+    }
+
+    /**
+     * Whether buffered passes hand out the rows built on the first pass.
+     *
+     * False by default: the buffer keeps raw rows and every pass builds its own. A
+     * result set whose rows carry an identity of their own overrides this.
+     */
+    protected function holdsMappedRows(): bool
+    {
+        return false;
+    }
+
+    /**
+     * Forget anything a subclass resolved from its getters, so that the next row asks
+     * them again. Called by initialize(); a subclass's setters call it too.
+     */
+    protected function resetResolvedConfiguration(): void
+    {
     }
 
     /**
@@ -458,5 +499,22 @@ abstract class AbstractResultSet implements ResultSetInterface
         $this->bufferState   = $state;
         $this->readsDirectly = RowBufferState::Passthrough === $state || RowBufferState::Disabled === $state;
         $this->storesRows    = RowBufferState::Storing === $state && null !== $this->dataSource;
+        $this->holdsMappedRows = RowBufferState::Storing === $state && $this->holdsMappedRows();
+    }
+
+    /**
+     * Keep a row for later passes and return it mapped.
+     *
+     * @return TRow
+     */
+    private function holdRow(mixed $row): mixed
+    {
+        if ($this->holdsMappedRows) {
+            return $this->bufferedRows[$this->position] = $this->mapRow($row);
+        }
+
+        $this->bufferedRows[$this->position] = $row;
+
+        return $this->mapRow($row);
     }
 }

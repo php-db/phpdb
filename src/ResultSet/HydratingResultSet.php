@@ -19,6 +19,11 @@ use function is_array;
  */
 class HydratingResultSet extends AbstractResultSet implements HydratingResultSetInterface
 {
+    /** getHydrator() and getRowPrototype(), asked once per data source rather than once per row. */
+    private ?HydratorInterface $resolvedHydrator = null;
+
+    private ?object $resolvedRowPrototype = null;
+
     public function __construct(
         private ?HydratorInterface $hydrator = null,
         private ?object $rowPrototype = null,
@@ -62,7 +67,8 @@ class HydratingResultSet extends AbstractResultSet implements HydratingResultSet
      */
     public function setHydrator(HydratorInterface $hydrator): ResultSetInterface
     {
-        $this->hydrator = $hydrator;
+        $this->hydrator         = $hydrator;
+        $this->resolvedHydrator = null;
         return $this;
     }
 
@@ -77,7 +83,8 @@ class HydratingResultSet extends AbstractResultSet implements HydratingResultSet
     public function setRowPrototype(
         object $rowPrototype,
     ): ResultSetInterface&HydratingResultSetInterface {
-        $this->rowPrototype = $rowPrototype;
+        $this->rowPrototype         = $rowPrototype;
+        $this->resolvedRowPrototype = null;
         return $this;
     }
 
@@ -108,11 +115,26 @@ class HydratingResultSet extends AbstractResultSet implements HydratingResultSet
     #[Override]
     protected function mapRow(mixed $row): object
     {
-        $this->rowPrototype ??= new ArrayObject();
-
-        return ($this->hydrator ??= new ArraySerializableHydrator())->hydrate(
+        return ($this->resolvedHydrator ??= $this->getHydrator())->hydrate(
             is_array($row) ? $row : $this->getArrayData($row),
-            clone $this->rowPrototype,
+            clone ($this->resolvedRowPrototype ??= $this->getRowPrototype()),
         );
+    }
+
+    /**
+     * Hydrated rows are entities with an identity of their own, so a buffered set hands
+     * the same objects out on every pass, as laminas-db and earlier PhpDb releases did.
+     */
+    #[Override]
+    protected function holdsMappedRows(): bool
+    {
+        return true;
+    }
+
+    #[Override]
+    protected function resetResolvedConfiguration(): void
+    {
+        $this->resolvedHydrator     = null;
+        $this->resolvedRowPrototype = null;
     }
 }

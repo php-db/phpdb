@@ -475,4 +475,36 @@ final class ResultSetIntegrationTest extends TestCase
     {
         $this->resultSet = new ResultSet();
     }
+
+    #[Test]
+    public function aSubclassGetRowPrototypeDecidesTheRowClass(): void
+    {
+        $resultSet = new class extends ResultSet {
+            #[Override]
+            public function getRowPrototype(): ArrayObject
+            {
+                return new class ([], ArrayObject::ARRAY_AS_PROPS) extends ArrayObject {};
+            }
+        };
+        $resultSet->initialize([['id' => 1]]);
+
+        $row = $resultSet->current();
+
+        static::assertInstanceOf(ArrayObject::class, $row);
+        static::assertNotSame(ArrayObject::class, $row::class);
+    }
+
+    #[Test]
+    public function aBufferedResultSetBuildsFreshRowsOnEveryPass(): void
+    {
+        $resultSet = new ResultSet();
+        $resultSet->initialize(new ArrayIterator([['id' => 1], ['id' => 2]]));
+        $resultSet->buffer();
+
+        $first = $resultSet->current();
+        $resultSet->rewind();
+
+        static::assertNotSame($first, $resultSet->current());
+        static::assertEquals($first, $resultSet->current());
+    }
 }
