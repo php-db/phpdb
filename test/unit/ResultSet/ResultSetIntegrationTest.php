@@ -43,6 +43,10 @@ use function var_export;
 #[CoversMethod(ResultSet::class, 'setArrayObjectPrototype')]
 #[CoversMethod(ResultSet::class, 'setRowPrototype')]
 #[CoversMethod(ResultSet::class, 'toArray')]
+#[CoversMethod(ResultSet::class, 'resetResolvedConfiguration')]
+#[CoversMethod(AbstractResultSet::class, 'holdRow')]
+#[CoversMethod(AbstractResultSet::class, 'holdsMappedRows')]
+#[CoversMethod(AbstractResultSet::class, 'resetResolvedConfiguration')]
 #[Group('unit')]
 final class ResultSetIntegrationTest extends TestCase
 {
@@ -506,5 +510,19 @@ final class ResultSetIntegrationTest extends TestCase
 
         static::assertNotSame($first, $resultSet->current());
         static::assertEquals($first, $resultSet->current());
+    }
+
+    #[Test]
+    public function aBufferedPassAfterSetRowPrototypeUsesTheNewPrototype(): void
+    {
+        $resultSet = new ResultSet();
+        $resultSet->initialize(new ArrayIterator([['id' => 1]]));
+        $resultSet->buffer();
+        $resultSet->current();
+
+        $resultSet->setRowPrototype(new class ([], ArrayObject::ARRAY_AS_PROPS) extends ArrayObject {});
+        $resultSet->rewind();
+
+        static::assertNotSame(ArrayObject::class, $resultSet->current()::class);
     }
 }

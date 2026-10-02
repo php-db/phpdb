@@ -383,31 +383,16 @@ abstract class AbstractResultSet implements ResultSetInterface
             return $this->holdRow($row);
         }
 
+        // Only the first read of an unbuffered set lands here: Storing with a data source
+        // takes the branch above, and every other settled state reads directly.
         $dataSource = $this->dataSource ?? throw RuntimeException::forUninitialisedDataSource();
 
-        if (RowBufferState::Pending === $this->bufferState) {
-            $this->setBufferState(RowBufferState::Disabled);
-        }
-
-        /** @var mixed $held */
-        $held = $this->bufferedRows[$this->position] ?? null;
-
-        if (null !== $held && $this->holdsMappedRows) {
-            return $held;
-        }
+        $this->setBufferState(RowBufferState::Disabled);
 
         /** @var mixed $row */
-        $row = $held ?? $dataSource->current();
+        $row = $dataSource->current();
 
-        if (null === $row || false === $row) {
-            return null;
-        }
-
-        if (RowBufferState::Storing === $this->bufferState) {
-            return $this->holdRow($row);
-        }
-
-        return $this->mapRow($row);
+        return null === $row || false === $row ? null : $this->mapRow($row);
     }
 
     /**

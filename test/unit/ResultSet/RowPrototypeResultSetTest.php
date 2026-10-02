@@ -21,6 +21,10 @@ use stdClass;
 #[CoversMethod(RowPrototypeResultSet::class, 'current')]
 #[CoversMethod(RowPrototypeResultSet::class, 'mapRow')]
 #[CoversMethod(RowPrototypeResultSet::class, 'toArray')]
+#[CoversMethod(RowPrototypeResultSet::class, '__construct')]
+#[CoversMethod(RowPrototypeResultSet::class, 'getRowPrototype')]
+#[CoversMethod(RowPrototypeResultSet::class, 'setRowPrototype')]
+#[CoversMethod(RowPrototypeResultSet::class, 'resetResolvedConfiguration')]
 #[Group('unit')]
 final class RowPrototypeResultSetTest extends TestCase
 {
@@ -171,5 +175,21 @@ final class RowPrototypeResultSetTest extends TestCase
                 return $this->data;
             }
         };
+    }
+
+    #[Test]
+    public function setRowPrototypeReplacesThePrototypeForLaterRows(): void
+    {
+        $first     = $this->createRowPrototype();
+        $second    = $this->createRowPrototype();
+        $resultSet = new RowPrototypeResultSet($first);
+        $resultSet->initialize([['id' => 1], ['id' => 2]]);
+        $resultSet->current();
+
+        static::assertSame($resultSet, $resultSet->setRowPrototype($second));
+        static::assertSame($second, $resultSet->getRowPrototype());
+
+        $resultSet->next();
+        static::assertSame(['id' => 2], $resultSet->current()->toArray());
     }
 }

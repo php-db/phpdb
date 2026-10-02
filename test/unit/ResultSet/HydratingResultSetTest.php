@@ -32,6 +32,10 @@ use stdClass;
 #[CoversMethod(HydratingResultSet::class, '__construct')]
 #[CoversMethod(HydratingResultSet::class, 'setRowPrototype')]
 #[CoversMethod(HydratingResultSet::class, 'getRowPrototype')]
+#[CoversMethod(HydratingResultSet::class, 'holdsMappedRows')]
+#[CoversMethod(HydratingResultSet::class, 'resetResolvedConfiguration')]
+#[CoversMethod(AbstractResultSet::class, 'currentRow')]
+#[CoversMethod(AbstractResultSet::class, 'holdRow')]
 #[Group('unit')]
 final class HydratingResultSetTest extends TestCase
 {
@@ -331,5 +335,21 @@ final class HydratingResultSetTest extends TestCase
     {
         $this->arraySerializableHydratorClass = ArraySerializableHydrator::class;
         $this->classMethodsHydratorClass      = ClassMethodsHydrator::class;
+    }
+
+    #[Test]
+    public function aNewHydratorOrPrototypeIsUsedForTheNextDataSource(): void
+    {
+        $hydratingRs = new HydratingResultSet(null, new ArrayObject());
+        $hydratingRs->initialize(new ArrayIterator([['id' => 1]]));
+        static::assertInstanceOf(ArrayObject::class, $hydratingRs->current());
+
+        $hydratingRs->setRowPrototype(new stdClass());
+        $hydratingRs->setHydrator(new \Laminas\Hydrator\ObjectPropertyHydrator());
+        $hydratingRs->initialize(new ArrayIterator([['id' => 2]]));
+
+        $row = $hydratingRs->current();
+        static::assertInstanceOf(stdClass::class, $row);
+        static::assertSame(2, $row->id);
     }
 }
