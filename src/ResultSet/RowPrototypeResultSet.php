@@ -48,7 +48,7 @@ class RowPrototypeResultSet extends AbstractResultSet implements RowPrototypeRes
         RowPrototypeInterface $rowPrototype,
     ): ResultSetInterface&RowPrototypeResultSetInterface {
         $this->rowPrototype         = $rowPrototype;
-        $this->resolvedRowPrototype = null;
+        $this->resolvedRowPrototype = $this->getRowPrototype();
 
         return $this;
     }
@@ -78,15 +78,16 @@ class RowPrototypeResultSet extends AbstractResultSet implements RowPrototypeRes
             return $row;
         }
 
-        $this->resolvedRowPrototype ??= $this->getRowPrototype();
+        /** @var RowPrototypeInterface $prototype Resolved by initialize() before any row is read. */
+        $prototype = $this->resolvedRowPrototype;
 
-        return (clone $this->resolvedRowPrototype)->populate(is_array($row) ? $row : $this->getArrayData($row));
+        return (clone $prototype)->populate(is_array($row) ? $row : $this->getArrayData($row));
     }
 
     #[Override]
     protected function resetResolvedConfiguration(): void
     {
-        $this->resolvedRowPrototype = null;
+        $this->resolvedRowPrototype = $this->getRowPrototype();
     }
 
     /** {@inheritDoc} */

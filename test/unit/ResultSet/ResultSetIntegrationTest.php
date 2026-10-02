@@ -44,7 +44,6 @@ use function var_export;
 #[CoversMethod(ResultSet::class, 'setRowPrototype')]
 #[CoversMethod(ResultSet::class, 'toArray')]
 #[CoversMethod(ResultSet::class, 'resetResolvedConfiguration')]
-#[CoversMethod(AbstractResultSet::class, 'holdRow')]
 #[CoversMethod(AbstractResultSet::class, 'resetResolvedConfiguration')]
 #[Group('unit')]
 final class ResultSetIntegrationTest extends TestCase

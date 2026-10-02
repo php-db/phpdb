@@ -8,6 +8,7 @@ use ArrayIterator;
 use ArrayObject;
 use Exception;
 use IteratorAggregate;
+use LimitIterator;
 use NoRewindIterator;
 use Override;
 use PDOStatement;
@@ -41,7 +42,6 @@ use function iterator_to_array;
 #[CoversMethod(AbstractResultSet::class, 'rewind')]
 #[CoversMethod(AbstractResultSet::class, 'count')]
 #[CoversMethod(AbstractResultSet::class, 'resetResolvedConfiguration')]
-#[CoversMethod(AbstractResultSet::class, 'holdRow')]
 final class AbstractResultSetTest extends TestCase
 {
     protected AbstractResultSet $resultSet;
@@ -123,6 +123,19 @@ final class AbstractResultSetTest extends TestCase
         $resultSet->rewind();
 
         static::assertSame(['id' => 1], $resultSet->current());
+    }
+
+    #[Test]
+    public function bufferedPassAdvancesADataSourceKeyedOtherThanByPosition(): void
+    {
+        $resultSet = $this->createResultSetMock();
+        $resultSet->buffer();
+        $resultSet->initialize(new ArrayIterator(['a' => ['id' => 1], 'b' => ['id' => 2], 'c' => ['id' => 3]]));
+
+        // A data source that is never advanced repeats its first row; a fourth read shows it
+        $rows = iterator_to_array(new LimitIterator($resultSet, 0, 4), preserve_keys: false);
+
+        static::assertSame([['id' => 1], ['id' => 2], ['id' => 3]], $rows);
     }
 
     /**

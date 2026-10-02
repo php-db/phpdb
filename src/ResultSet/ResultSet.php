@@ -105,7 +105,7 @@ class ResultSet extends AbstractResultSet implements ArrayObjectResultSetInterfa
         ArrayObject $rowPrototype,
     ): ResultSetInterface&ArrayObjectResultSetInterface {
         $this->rowPrototype         = $rowPrototype;
-        $this->resolvedRowPrototype = null;
+        $this->resolvedRowPrototype = $this->getRowPrototype();
 
         return $this;
     }
@@ -145,9 +145,10 @@ class ResultSet extends AbstractResultSet implements ArrayObjectResultSetInterfa
             return $row;
         }
 
-        $this->resolvedRowPrototype ??= $this->getRowPrototype();
+        /** @var ArrayObject $prototype Resolved by initialize() before any row is read. */
+        $prototype = $this->resolvedRowPrototype;
 
-        $ao = clone $this->resolvedRowPrototype;
+        $ao = clone $prototype;
         $ao->exchangeArray($row);
 
         return $ao;
@@ -156,6 +157,6 @@ class ResultSet extends AbstractResultSet implements ArrayObjectResultSetInterfa
     #[Override]
     protected function resetResolvedConfiguration(): void
     {
-        $this->resolvedRowPrototype = null;
+        $this->resolvedRowPrototype = $this->getRowPrototype();
     }
 }

@@ -66,6 +66,12 @@ abstract class AbstractResultSet implements ResultSetInterface
     private bool $storesRows = false;
 
     /**
+     * Whether rows are held as mapRow() built them, for a result set that redeclares
+     * HOLDS_MAPPED_ROWS. Derived alongside $storesRows by setBufferState().
+     */
+    private bool $storesMappedRows = false;
+
+    /**
      * Raw rows held for later passes, keyed by position, and mapped afresh on each read
      * so that no pass sees what a caller did to the rows of another.
      *
@@ -87,6 +93,14 @@ abstract class AbstractResultSet implements ResultSetInterface
     protected ?int $fieldCount = null;
 
     protected int $position = 0;
+
+    /**
+     * How many rows the data source has been advanced past while Storing.
+     *
+     * next() compares this, rather than the data source's key(), with the position, so
+     * a source keyed other than 0, 1, 2... is still advanced one row at a time.
+     */
+    private int $sourcePosition = 0;
 
     /**
      * Resolve an IteratorAggregate chain down to the Iterator it wraps.
@@ -129,6 +143,7 @@ abstract class AbstractResultSet implements ResultSetInterface
         }
 
         $this->setBufferState(RowBufferState::Storing);
+        $this->sourcePosition = 0;
 
         if ($this->dataSource instanceof ResultInterface) {
             $this->dataSource->rewind();
@@ -206,7 +221,8 @@ abstract class AbstractResultSet implements ResultSetInterface
     #[Override]
     public function initialize(iterable $dataSource): ResultSetInterface
     {
-        $this->bufferedRows = [];
+        $this->bufferedRows   = [];
+        $this->sourcePosition = 0;
         $this->resetResolvedConfiguration();
 
         if ($dataSource instanceof ResultInterface) {
@@ -265,8 +281,9 @@ abstract class AbstractResultSet implements ResultSetInterface
         if ($this->storesRows) {
             /** @var Iterator $dataSource */
             $dataSource = $this->dataSource;
-            if ($this->position === $dataSource->key()) {
+            if ($this->position === $this->sourcePosition) {
                 $dataSource->next();
+                $this->sourcePosition++;
             }
 
             $this->position++;
@@ -316,11 +333,15 @@ abstract class AbstractResultSet implements ResultSetInterface
             return $dataSource->valid();
         }
 
-        if (null !== ($this->bufferedRows[$this->position] ?? null)) {
-            return true;
+        if ($this->storesRows) {
+            /** @var Iterator $dataSource */
+            $dataSource = $this->dataSource;
+
+            return null !== ($this->bufferedRows[$this->position] ?? null) || $dataSource->valid();
         }
 
-        return ($this->dataSource ?? throw RuntimeException::forUninitialisedDataSource())->valid();
+        // Pending, or Storing before initialize() supplies a data source: nothing is held
+        return $this->dataSource()->valid();
     }
 
     /**
@@ -363,12 +384,11 @@ abstract class AbstractResultSet implements ResultSetInterface
             return null === $row || false === $row ? null : $this->mapRow($row);
         }
 
-        if ($this->storesRows) {
-            /** @var mixed $held */
+        if ($this->storesMappedRows) {
+            /** @var TRow|null $held */
             $held = $this->bufferedRows[$this->position] ?? null;
 
-            if (null !== $held && static::HOLDS_MAPPED_ROWS) {
-                /** @var TRow $held */
+            if (null !== $held) {
                 return $held;
             }
 
@@ -376,13 +396,29 @@ abstract class AbstractResultSet implements ResultSetInterface
             $dataSource = $this->dataSource;
 
             /** @var mixed $row */
-            $row = $held ?? $dataSource->current();
+            $row = $dataSource->current();
 
             if (null === $row || false === $row) {
                 return null;
             }
 
-            return $this->holdRow($row);
+            return $this->bufferedRows[$this->position] = $this->mapRow($row);
+        }
+
+        if ($this->storesRows) {
+            /** @var Iterator $dataSource */
+            $dataSource = $this->dataSource;
+
+            /** @var mixed $row */
+            $row = $this->bufferedRows[$this->position] ?? $dataSource->current();
+
+            if (null === $row || false === $row) {
+                return null;
+            }
+
+            $this->bufferedRows[$this->position] = $row;
+
+            return $this->mapRow($row);
         }
 
         // Only the first read of an unbuffered set lands here: Storing with a data source
@@ -435,8 +471,8 @@ abstract class AbstractResultSet implements ResultSetInterface
     }
 
     /**
-     * Forget anything a subclass resolved from its getters, so that the next row asks
-     * them again. Called by initialize(); a subclass's setters call it too.
+     * Refresh anything a subclass resolves from its getters, so that each data source
+     * reads them once. Called by initialize() before the data source is taken.
      */
     protected function resetResolvedConfiguration(): void {}
 
@@ -449,22 +485,6 @@ abstract class AbstractResultSet implements ResultSetInterface
     protected function unsupportedRowError(mixed $row): ValueError
     {
         return ValueError::forRowThatIsNotArrayData(get_debug_type($row), static::class);
-    }
-
-    /**
-     * Keep a row for later passes and return it mapped.
-     *
-     * @return TRow
-     */
-    private function holdRow(mixed $row): mixed
-    {
-        if (static::HOLDS_MAPPED_ROWS) {
-            return $this->bufferedRows[$this->position] = $this->mapRow($row);
-        }
-
-        $this->bufferedRows[$this->position] = $row;
-
-        return $this->mapRow($row);
     }
 
     private function initializeFromResult(ResultInterface $result): void
@@ -486,8 +506,9 @@ abstract class AbstractResultSet implements ResultSetInterface
 
     private function setBufferState(RowBufferState $state): void
     {
-        $this->bufferState   = $state;
-        $this->readsDirectly = RowBufferState::Passthrough === $state || RowBufferState::Disabled === $state;
-        $this->storesRows    = RowBufferState::Storing === $state && null !== $this->dataSource;
+        $this->bufferState      = $state;
+        $this->readsDirectly    = RowBufferState::Passthrough === $state || RowBufferState::Disabled === $state;
+        $this->storesRows       = RowBufferState::Storing === $state && null !== $this->dataSource;
+        $this->storesMappedRows = $this->storesRows && static::HOLDS_MAPPED_ROWS;
     }
 }

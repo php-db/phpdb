@@ -34,13 +34,24 @@ use stdClass;
 #[CoversMethod(HydratingResultSet::class, 'setRowPrototype')]
 #[CoversMethod(HydratingResultSet::class, 'getRowPrototype')]
 #[CoversMethod(AbstractResultSet::class, 'currentRow')]
-#[CoversMethod(AbstractResultSet::class, 'holdRow')]
 #[Group('unit')]
 final class HydratingResultSetTest extends TestCase
 {
     private string $arraySerializableHydratorClass;
 
     private string $classMethodsHydratorClass;
+
+    #[Test]
+    public function aBufferedReadPastTheLastRowReturnsNull(): void
+    {
+        $hydratingRs = new HydratingResultSet();
+        $hydratingRs->initialize(new ArrayIterator([['id' => 1]]));
+        $hydratingRs->buffer();
+        $hydratingRs->current();
+        $hydratingRs->next();
+
+        static::assertNull($hydratingRs->current());
+    }
 
     #[Test]
     public function aChangeToABufferedEntityCarriesIntoTheNextPass(): void
