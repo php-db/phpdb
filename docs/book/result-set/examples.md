@@ -205,15 +205,25 @@ try {
 }
 ```
 
-**toArray() on non-castable rows:**
+### ValueError
+
+**A row the result set cannot read**, such as a `PDO::FETCH_OBJ` row in a
+`ResultSet`, is refused when it is read, whether by iterating, `current()` or
+`toArray()`:
 
 ```php
+use PhpDb\ResultSet\Exception\ValueError;
+
 try {
-    $resultSet->toArray();
-} catch (RuntimeException $e) {
-    printf("Error: Could not convert row to array\n");
+    $rows = $resultSet->toArray();
+} catch (ValueError $e) {
+    printf("Error: %s\n", $e->getMessage());
 }
 ```
+
+`ValueError` extends PHP's `\ValueError`, which is an `Error` rather than an
+`Exception`, so `catch (\Exception $e)` does not catch it. Catch `ValueError`,
+`\Throwable`, or `PhpDb\Exception\ExceptionInterface`, which it implements.
 
 ## Troubleshooting
 

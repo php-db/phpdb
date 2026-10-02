@@ -69,16 +69,13 @@ functionality:
 namespace PhpDb\ResultSet;
 
 use Iterator;
-use IteratorAggregate;
-use PhpDb\Adapter\Driver\ResultInterface;
 
-abstract class AbstractResultSet implements Iterator, ResultSetInterface
+abstract class AbstractResultSet implements ResultSetInterface
 {
-    public function initialize(
-        array|Iterator|IteratorAggregate|ResultInterface $dataSource
-    ): ResultSetInterface;
-    public function getDataSource():
-        array|Iterator|IteratorAggregate|ResultInterface;
+    protected const bool HOLDS_MAPPED_ROWS = false;
+
+    public function initialize(iterable $dataSource): ResultSetInterface;
+    public function getDataSource(): ?Iterator;
     public function getFieldCount(): int;
 
     public function buffer(): ResultSetInterface;
@@ -86,15 +83,24 @@ abstract class AbstractResultSet implements Iterator, ResultSetInterface
 
     public function next(): void;
     public function key(): int;
-    public function current(): mixed;
     public function valid(): bool;
     public function rewind(): void;
 
-    public function count(): int;
+    public function count(): ?int;
 
-    public function toArray(): array;
+    abstract protected function mapRow(mixed $row): mixed;
+    protected function resetResolvedConfiguration(): void;
 }
 ```
+
+`ResultSetInterface` extends `Iterator` and `Countable` and adds `toArray()`. Each
+concrete result set declares `current()` with its own row type and implements it by
+returning `$this->currentRow()`, which serves the row from the buffer or the data source
+and passes it through `mapRow()` to give it that shape. A custom result set implements
+`current()`, `mapRow()` and `toArray()`. It can redeclare `HOLDS_MAPPED_ROWS` as `true`
+to hand out the same row objects on every buffered pass, and override
+`resetResolvedConfiguration()` to forget anything it cached when `initialize()` is given
+a new data source.
 
 ## HydratingResultSet
 
@@ -186,10 +192,13 @@ and the result set have to agree; where they do not, the row is refused with a
 | `HydratingResultSet` | row data | the hydrated row prototype |
 | `RowPrototypeResultSet` | row data, or a `RowPrototypeInterface` | a populated `RowPrototypeInterface` |
 
-With PDO that means `FETCH_ASSOC`, `FETCH_NUM`, `FETCH_BOTH`, `FETCH_NAMED` and
-`FETCH_KEY_PAIR` suit the row-data sets, while `FETCH_OBJ` and `FETCH_LAZY` need
-`ObjectResultSet`. `FETCH_BOUND` yields only a success flag and binds its columns by
-reference, so no result set accepts its rows; read the bound variables instead.
+With PDO that means `FETCH_ASSOC` and `FETCH_NAMED` suit every row-data set.
+`FETCH_NUM`, `FETCH_BOTH` and `FETCH_KEY_PAIR` give rows with integer keys, which
+`ResultSet`, `ArrayResultSet` and `RowPrototypeResultSet` accept but a hydrator cannot
+map to properties, so `HydratingResultSet` fails on them with a `TypeError` from
+laminas-hydrator. `FETCH_OBJ` and `FETCH_LAZY` need `ObjectResultSet`. `FETCH_BOUND`
+yields only a success flag and binds its columns by reference, so no result set accepts
+its rows; read the bound variables instead.
 
 ## Data Source Types
 

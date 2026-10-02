@@ -15,8 +15,8 @@ use ArrayObject;
 class ResultSet extends AbstractResultSet
 {
     public function __construct(
-        ResultSetReturnType $returnType = ResultSetReturnType::ArrayObject,
-        ?ArrayObject $rowPrototype = null
+        ResultSetReturnType|string $returnType = ResultSetReturnType::ArrayObject,
+        ArrayObject $rowPrototype = new ArrayObject([], ArrayObject::ARRAY_AS_PROPS)
     );
 
     public function setRowPrototype(
@@ -39,6 +39,7 @@ enum ResultSetReturnType: string
 {
     case ArrayObject = 'arrayobject';
     case Array = 'array';
+    case Prototype = 'prototype';
 }
 ```
 
@@ -56,10 +57,12 @@ $resultSet = new ResultSet(ResultSetReturnType::Array);
 
 - `ResultSetReturnType::ArrayObject` (default) - Returns rows as
   ArrayObject instances
+- `ResultSetReturnType::Prototype` - The same as `ArrayObject`: rows fill a clone
+  of the row prototype. It is the newer name, matching `setRowPrototype()`
 - `ResultSetReturnType::Array` - Returns rows as plain PHP arrays
 
 **`$rowPrototype`** - Custom ArrayObject prototype for row objects
-(only used with ArrayObject mode)
+(only used with ArrayObject and Prototype modes)
 
 #### Return Type Modes
 
@@ -226,9 +229,11 @@ foreach ($resultSet as $user) {
 }
 ```
 
-The row prototype and hydrator are read through `getRowPrototype()` and
-`getHydrator()` once for each data source, so a subclass that overrides either getter
-decides how its rows are built.
+Rows are built from what `getRowPrototype()` and `getHydrator()` return, so a subclass
+that overrides either getter decides how its rows are built. `ResultSet` and
+`RowPrototypeResultSet` ask once for each data source. `HydratingResultSet` asks on its
+first row and again after `setRowPrototype()` or `setHydrator()`, so a getter whose
+answer changes between data sources needs one of those setters called to take effect.
 
 ### isBuffered() Method
 
