@@ -23,6 +23,7 @@ use PHPUnit\Framework\TestCase;
 use TypeError;
 
 use function assert;
+use function iterator_to_array;
 
 #[CoversMethod(AbstractResultSet::class, 'initialize')]
 #[CoversMethod(AbstractResultSet::class, 'resolveIterator')]
@@ -33,9 +34,9 @@ use function assert;
 #[CoversMethod(AbstractResultSet::class, 'getFieldCount')]
 #[CoversMethod(AbstractResultSet::class, 'next')]
 #[CoversMethod(AbstractResultSet::class, 'key')]
-#[CoversMethod(AbstractResultSet::class, '__clone')]
-#[CoversMethod(AbstractResultSet::class, 'rowBuffer')]
 #[CoversMethod(AbstractResultSet::class, 'currentRow')]
+#[CoversMethod(AbstractResultSet::class, 'initializeFromResult')]
+#[CoversMethod(AbstractResultSet::class, 'setBufferState')]
 #[CoversMethod(AbstractResultSet::class, 'valid')]
 #[CoversMethod(AbstractResultSet::class, 'rewind')]
 #[CoversMethod(AbstractResultSet::class, 'count')]
@@ -64,6 +65,62 @@ final class AbstractResultSetTest extends TestCase
         self::expectException(RuntimeException::class);
         self::expectExceptionMessage(RuntimeException::UNBUFFERED_ITERATION);
         $resultSet->buffer();
+    }
+
+    #[Test]
+    public function bufferAfterABufferedPassHasBegunKeepsBuffering(): void
+    {
+        $resultSet = $this->createResultSetMock();
+        $resultSet->initialize(new ArrayIterator([['id' => 1], ['id' => 2]]));
+        $resultSet->buffer();
+        $resultSet->current();
+        $resultSet->next();
+
+        $resultSet->buffer();
+        $resultSet->rewind();
+
+        static::assertSame(['id' => 1], $resultSet->current());
+    }
+
+    #[Test]
+    public function bufferAfterIteratingAnArrayDataSourceIsAllowed(): void
+    {
+        $resultSet = $this->createResultSetMock();
+        $resultSet->initialize([['id' => 1], ['id' => 2]]);
+        $resultSet->current();
+        $resultSet->next();
+
+        $resultSet->buffer();
+
+        static::assertTrue($resultSet->isBuffered());
+    }
+
+    /**
+     * @throws Exception
+     */
+    #[Test]
+    public function bufferBeforeInitializeHoldsTheRowsOfTheDataSourceGivenLater(): void
+    {
+        $resultSet = $this->createResultSetMock();
+        $resultSet->buffer();
+        $resultSet->initialize(new NoRewindIterator(new ArrayIterator([['id' => 1], ['id' => 2]])));
+        iterator_to_array($resultSet);
+
+        static::assertSame([['id' => 1], ['id' => 2]], iterator_to_array($resultSet));
+    }
+
+    #[Test]
+    public function bufferCalledTwiceKeepsTheRowsAlreadyHeld(): void
+    {
+        $resultSet = $this->createResultSetMock();
+        $resultSet->initialize(new ArrayIterator([['id' => 1]]));
+        $resultSet->buffer();
+        $resultSet->current();
+
+        $resultSet->buffer();
+        $resultSet->rewind();
+
+        static::assertSame(['id' => 1], $resultSet->current());
     }
 
     /**
@@ -213,6 +270,18 @@ final class AbstractResultSetTest extends TestCase
     }
 
     #[Test]
+    public function currentReportsAnUninitialisedDataSourceWhileBuffering(): void
+    {
+        $resultSet = $this->createResultSetMock();
+        $resultSet->buffer();
+
+        self::expectException(RuntimeException::class);
+        self::expectExceptionMessage(RuntimeException::UNINITIALISED_DATA_SOURCE);
+
+        $resultSet->current();
+    }
+
+    #[Test]
     public function currentReturnsBufferedDataOnSecondPass(): void
     {
         $resultSet = $this->createResultSetMock();
@@ -242,6 +311,18 @@ final class AbstractResultSetTest extends TestCase
     {
         $resultSet = $this->createResultSetMock();
         $resultSet->initialize(new ArrayIterator([false]));
+
+        static::assertNull($resultSet->current());
+    }
+
+    #[Test]
+    public function currentReturnsNullPastTheLastRowWhileBuffering(): void
+    {
+        $resultSet = $this->createResultSetMock();
+        $resultSet->initialize(new ArrayIterator([['id' => 1]]));
+        $resultSet->buffer();
+        $resultSet->current();
+        $resultSet->next();
 
         static::assertNull($resultSet->current());
     }
@@ -531,6 +612,29 @@ final class AbstractResultSetTest extends TestCase
         static::assertSame(0, $resultSet->key());
         $resultSet->next();
         static::assertSame(1, $resultSet->key());
+    }
+
+    #[Test]
+    public function nextReportsAnUninitialisedDataSourceWhileBuffering(): void
+    {
+        $resultSet = $this->createResultSetMock();
+        $resultSet->buffer();
+
+        self::expectException(RuntimeException::class);
+        self::expectExceptionMessage(RuntimeException::UNINITIALISED_DATA_SOURCE);
+
+        $resultSet->next();
+    }
+
+    #[Test]
+    public function rewindReportsAnUninitialisedDataSourceRatherThanFailingOnNull(): void
+    {
+        $resultSet = $this->createResultSetMock();
+
+        self::expectException(RuntimeException::class);
+        self::expectExceptionMessage(RuntimeException::UNINITIALISED_DATA_SOURCE);
+
+        $resultSet->rewind();
     }
 
     /**

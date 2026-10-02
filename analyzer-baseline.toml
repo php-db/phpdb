@@ -1538,8 +1538,8 @@ count = 2
 
 [[issues]]
 file = "src/ResultSet/AbstractResultSet.php"
-code = "mixed-property-type-coercion"
-message = "A value with a less specific type `mixed` is being assigned to property `$fieldCount` (int|null)."
+code = "no-value"
+message = 'Argument #1 passed to method `PhpDb\ResultSet\AbstractResultSet::initializeFromResult` has type `never`, meaning it cannot produce a value.'
 count = 1
 
 [[issues]]

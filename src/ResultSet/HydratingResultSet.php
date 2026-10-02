@@ -10,6 +10,8 @@ use Laminas\Hydrator\HydratorInterface;
 use Override;
 use PhpDb\ResultSet\Exception\RuntimeException;
 
+use function is_array;
+
 /**
  * @api
  *
@@ -101,13 +103,16 @@ class HydratingResultSet extends AbstractResultSet implements HydratingResultSet
      * Hydrate one row onto a clone of the prototype.
      *
      * @throws Exception\ValueError If the row is not row data.
+     * @throws \Laminas\Hydrator\Exception\RuntimeException If the hydrator cannot fill the prototype.
      */
     #[Override]
     protected function mapRow(mixed $row): object
     {
-        return $this->getHydrator()->hydrate(
-            $this->getArrayData($row),
-            clone $this->getRowPrototype(),
+        $this->rowPrototype ??= new ArrayObject();
+
+        return ($this->hydrator ??= new ArraySerializableHydrator())->hydrate(
+            is_array($row) ? $row : $this->getArrayData($row),
+            clone $this->rowPrototype,
         );
     }
 }

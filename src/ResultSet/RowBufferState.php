@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace PhpDb\ResultSet;
 
 /**
- * The states a RowBuffer can be in.
+ * The buffering states a result set can be in.
  *
  * @internal
  */

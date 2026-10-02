@@ -7,6 +7,7 @@ namespace PhpDb\ResultSet;
 use Override;
 
 use function get_debug_type;
+use function is_array;
 
 /**
  * @api
@@ -69,11 +70,15 @@ class RowPrototypeResultSet extends AbstractResultSet implements RowPrototypeRes
     #[Override]
     protected function mapRow(mixed $row): RowPrototypeInterface
     {
+        if (is_array($row)) {
+            return (clone $this->rowPrototype)->populate($row);
+        }
+
         if ($row instanceof RowPrototypeInterface) {
             return $row;
         }
 
-        return (clone $this->getRowPrototype())->populate($this->getArrayData($row));
+        return (clone $this->rowPrototype)->populate($this->getArrayData($row));
     }
 
     /** {@inheritDoc} */

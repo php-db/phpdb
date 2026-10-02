@@ -7,6 +7,7 @@ namespace PhpDb\ResultSet;
 use ArrayObject;
 use Override;
 
+use function is_array;
 use function is_string;
 
 /**
@@ -125,18 +126,20 @@ class ResultSet extends AbstractResultSet implements ArrayObjectResultSetInterfa
     #[Override]
     protected function mapRow(mixed $row): array|ArrayObject
     {
-        if ($row instanceof ArrayObject) {
+        if (! is_array($row)) {
+            if ($row instanceof ArrayObject) {
+                return $row;
+            }
+
+            $row = $this->getArrayData($row);
+        }
+
+        if (! $this->fillsRowPrototype) {
             return $row;
         }
 
-        $data = $this->getArrayData($row);
-
-        if (! $this->fillsRowPrototype) {
-            return $data;
-        }
-
-        $ao = clone $this->getRowPrototype();
-        $ao->exchangeArray($data);
+        $ao = clone $this->rowPrototype;
+        $ao->exchangeArray($row);
 
         return $ao;
     }
