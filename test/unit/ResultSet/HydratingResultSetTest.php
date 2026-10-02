@@ -40,6 +40,22 @@ final class HydratingResultSetTest extends TestCase
     private string $classMethodsHydratorClass;
 
     #[Test]
+    public function aSecondBufferedPassHydratesAFreshObject(): void
+    {
+        $hydratingRs = new HydratingResultSet();
+        $hydratingRs->initialize(new ArrayIterator([
+            ['id' => 1, 'name' => 'one'],
+            ['id' => 2, 'name' => 'two'],
+        ]));
+        $hydratingRs->buffer();
+
+        $first = $hydratingRs->current();
+        $hydratingRs->rewind();
+
+        static::assertNotSame($first, $hydratingRs->current());
+    }
+
+    #[Test]
     public function constructorDefaultsToArraySerializableHydrator(): void
     {
         $hydratingRs = new HydratingResultSet();
@@ -116,23 +132,6 @@ final class HydratingResultSetTest extends TestCase
         self::expectExceptionMessage('will not transform a row it did not create');
 
         $resultSet->current();
-    }
-
-    #[Test]
-    public function currentWithBufferReturnsBufferedObject(): void
-    {
-        $hydratingRs = new HydratingResultSet();
-        $hydratingRs->initialize(new ArrayIterator([
-            ['id' => 1, 'name' => 'one'],
-            ['id' => 2, 'name' => 'two'],
-        ]));
-        $hydratingRs->buffer();
-
-        $first = $hydratingRs->current();
-        $hydratingRs->rewind();
-        $buffered = $hydratingRs->current();
-
-        static::assertSame($first, $buffered);
     }
 
     #[Test]

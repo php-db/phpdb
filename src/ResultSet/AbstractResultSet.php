@@ -56,12 +56,13 @@ abstract class AbstractResultSet implements ResultSetInterface
     private bool $storesRows = false;
 
     /**
-     * Rows held for later passes, keyed by position, already shaped by mapRow().
+     * Raw rows held for later passes, keyed by position, and mapped afresh on each read
+     * so that no pass sees what a caller did to the rows of another.
      *
      * Only filled while Storing, and emptied by initialize() before the state can
      * leave Storing, so a row found here never needs the state checked as well.
      *
-     * @var array<int, TRow>
+     * @var array<int, mixed>
      */
     private array $bufferedRows = [];
 
@@ -355,20 +356,16 @@ abstract class AbstractResultSet implements ResultSetInterface
             /** @var Iterator $dataSource */
             $dataSource = $this->dataSource;
 
-            $held = $this->bufferedRows[$this->position] ?? null;
-
-            if (null !== $held) {
-                return $held;
-            }
-
             /** @var mixed $row */
-            $row = $dataSource->current();
+            $row = $this->bufferedRows[$this->position] ?? $dataSource->current();
 
             if (null === $row || false === $row) {
                 return null;
             }
 
-            return $this->bufferedRows[$this->position] = $this->mapRow($row);
+            $this->bufferedRows[$this->position] = $row;
+
+            return $this->mapRow($row);
         }
 
         $dataSource = $this->dataSource ?? throw RuntimeException::forUninitialisedDataSource();
@@ -377,24 +374,18 @@ abstract class AbstractResultSet implements ResultSetInterface
             $this->setBufferState(RowBufferState::Disabled);
         }
 
-        $held = $this->bufferedRows[$this->position] ?? null;
-
-        if (null !== $held) {
-            return $held;
-        }
-
         /** @var mixed $row */
-        $row = $dataSource->current();
+        $row = $this->bufferedRows[$this->position] ?? $dataSource->current();
 
         if (null === $row || false === $row) {
             return null;
         }
 
-        if (RowBufferState::Storing !== $this->bufferState) {
-            return $this->mapRow($row);
+        if (RowBufferState::Storing === $this->bufferState) {
+            $this->bufferedRows[$this->position] = $row;
         }
 
-        return $this->bufferedRows[$this->position] = $this->mapRow($row);
+        return $this->mapRow($row);
     }
 
     /**

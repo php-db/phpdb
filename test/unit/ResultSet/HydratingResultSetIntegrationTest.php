@@ -18,7 +18,7 @@ class HydratingResultSetIntegrationTest extends TestCase
      * @throws Exception
      */
     #[Test]
-    public function currentWillReturnBufferedRow(): void
+    public function aSecondBufferedPassHydratesTheSameData(): void
     {
         $hydratingRs = new HydratingResultSet();
         $hydratingRs->initialize(new ArrayIterator([
@@ -27,10 +27,9 @@ class HydratingResultSetIntegrationTest extends TestCase
         ]));
         $hydratingRs->buffer();
 
-        // Get current object and rewind to verify same buffered object is returned
-        $obj1 = $hydratingRs->current();
+        $first = $hydratingRs->current();
         $hydratingRs->rewind();
-        $obj2 = $hydratingRs->current();
-        static::assertSame($obj1, $obj2);
+
+        static::assertEquals($first, $hydratingRs->current());
     }
 }

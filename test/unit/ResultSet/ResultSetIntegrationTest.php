@@ -84,6 +84,34 @@ final class ResultSetIntegrationTest extends TestCase
         return $cases;
     }
 
+    #[Test]
+    public function aChangeToARowInOneBufferedPassDoesNotReachTheNext(): void
+    {
+        $this->resultSet->initialize(new ArrayIterator([['id' => 1, 'name' => 'one']]));
+        $this->resultSet->buffer();
+
+        $row = $this->resultSet->current();
+        static::assertInstanceOf(ArrayObject::class, $row);
+        $row['name'] = 'ONE';
+        $this->resultSet->rewind();
+
+        static::assertSame(['id' => 1, 'name' => 'one'], $this->resultSet->current()?->getArrayCopy());
+    }
+
+    #[Test]
+    public function aRowPrototypeSetAfterABufferedPassShapesTheNext(): void
+    {
+        $this->resultSet->initialize(new ArrayIterator([['id' => 1]]));
+        $this->resultSet->buffer();
+        $this->resultSet->current();
+
+        $prototype = new class extends ArrayObject {};
+        $this->resultSet->setRowPrototype($prototype);
+        $this->resultSet->rewind();
+
+        static::assertInstanceOf($prototype::class, $this->resultSet->current());
+    }
+
     /**
      * @throws Exception
      * @throws \Exception

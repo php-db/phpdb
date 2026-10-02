@@ -200,6 +200,31 @@ RuntimeException: Buffering must be enabled before iteration is
 started
 ```
 
+### What a Buffer Holds
+
+A buffer holds the rows as the data source returned them, and every pass builds
+its rows from those afresh. A row object from one pass is never handed out again,
+so a change made to it does not carry into the next pass, and a new row prototype
+or hydrator takes effect from the next pass:
+
+```php title="Each Pass Builds Its Own Rows"
+$resultSet = new HydratingResultSet(new ReflectionHydrator(), new UserEntity());
+$resultSet->initialize($result);
+$resultSet->buffer();
+
+foreach ($resultSet as $user) {
+    $user->setName(strtoupper($user->getName()));
+}
+
+foreach ($resultSet as $user) {
+    echo $user->getName(); // as read from the database, not upper-cased
+}
+```
+
+**Note:** laminas-db and PhpDb 0.6 returned the same hydrated object on every pass
+of a buffered `HydratingResultSet`. Code that relied on that identity, such as an
+identity map keyed by row object, must keep its own reference to each object.
+
 ### isBuffered() Method
 
 Checks if the result set is currently buffered:
