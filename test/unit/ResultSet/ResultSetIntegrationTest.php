@@ -11,6 +11,7 @@ use PhpDb\Adapter\Driver\ResultInterface;
 use PhpDb\ResultSet\AbstractResultSet;
 use PhpDb\ResultSet\Exception\InvalidArgumentException;
 use PhpDb\ResultSet\Exception\RuntimeException;
+use PhpDb\ResultSet\Exception\ValueError;
 use PhpDb\ResultSet\ResultSet;
 use PhpDb\ResultSet\ResultSetReturnType;
 use PHPUnit\Framework\Attributes\CoversMethod;
@@ -177,6 +178,25 @@ final class ResultSetIntegrationTest extends TestCase
         static::assertNotSame($first, $second);
     }
 
+    /**
+     * @throws Exception
+     * @throws \Exception
+     */
+    #[Test]
+    public function currentRejectsARowThatIsNotArrayData(): void
+    {
+        $mockResult = $this->createMock(ResultInterface::class);
+        $mockResult->method('current')->willReturn('Not an Array');
+
+        $this->resultSet->initialize($mockResult);
+        $this->resultSet->buffer();
+
+        self::expectException(ValueError::class);
+        self::expectExceptionMessage('A row of type "string"');
+
+        $this->resultSet->current();
+    }
+
     #[Test]
     public function currentReturnsArrayObjectWhenReturnTypeIsArrayObject(): void
     {
@@ -199,23 +219,6 @@ final class ResultSetIntegrationTest extends TestCase
 
         static::assertIsArray($current);
         static::assertSame(1, $current['id']);
-    }
-
-    /**
-     * @throws Exception
-     * @throws \Exception
-     */
-    #[Test]
-    public function currentReturnsNullForNonExistingValues(): void
-    {
-        $mockResult = $this->createMock(ResultInterface::class);
-        $mockResult->expects($this->once())->method('current')->willReturn('Not an Array');
-
-        $this->resultSet->initialize($mockResult);
-        $this->resultSet->buffer();
-
-        // Verify current() returns null when data source returns non-array value
-        static::assertNull($this->resultSet->current());
     }
 
     /**

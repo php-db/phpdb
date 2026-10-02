@@ -52,19 +52,6 @@ final class RowPrototypeResultSetTest extends TestCase
     }
 
     #[Test]
-    public function currentRejectsANullRowRatherThanYieldingIt(): void
-    {
-        $prototype = $this->createRowPrototype();
-        $resultSet = new RowPrototypeResultSet($prototype);
-        $resultSet->initialize(new ArrayIterator([null]));
-
-        self::expectException(ValueError::class);
-        self::expectExceptionMessage('A row of type "null"');
-
-        $resultSet->current();
-    }
-
-    #[Test]
     public function currentRejectsARowThatExposesNothing(): void
     {
         $resultSet = new RowPrototypeResultSet($this->createRowPrototype());
@@ -110,6 +97,20 @@ final class RowPrototypeResultSetTest extends TestCase
         static::assertInstanceOf(RowPrototypeInterface::class, $current);
         static::assertNotSame($prototype, $current);
         static::assertSame(['id' => 1, 'name' => 'one'], $current->toArray());
+    }
+
+    #[Test]
+    public function iterationYieldsNullForANullRowAndCarriesOn(): void
+    {
+        $resultSet = new RowPrototypeResultSet($this->createRowPrototype());
+        $resultSet->initialize([['id' => 1], null, ['id' => 3]]);
+
+        $rows = [];
+        foreach ($resultSet as $row) {
+            $rows[] = $row?->toArray();
+        }
+
+        static::assertSame([['id' => 1], null, ['id' => 3]], $rows);
     }
 
     #[Test]

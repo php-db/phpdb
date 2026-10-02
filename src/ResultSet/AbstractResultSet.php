@@ -279,29 +279,28 @@ abstract class AbstractResultSet implements ResultSetInterface
      */
     protected function currentRow(): mixed
     {
-        $this->rowBuffer()->startIteration();
+        $buffer = $this->rowBuffer();
+        $buffer->startIteration();
 
-        if ($this->rowBuffer()->has($this->position)) {
-            return $this->rowBuffer()->get($this->position);
+        if ($buffer->has($this->position)) {
+            return $buffer->get($this->position);
         }
 
-        $dataSource = $this->dataSource();
-
         /**
-         * The data source is asked for its row first, because a ResultInterface only
-         * knows whether it is still valid once it has tried to fetch one.
+         * A driver Result signals the end of its rows with null or false, and asking it
+         * valid() afterwards may fetch again from a statement it has already closed.
          *
          * @var mixed $row
          */
-        $row = $dataSource->current();
+        $row = $this->dataSource()->current();
 
-        if (! $dataSource->valid()) {
+        if (null === $row || false === $row) {
             return null;
         }
 
         $row = $this->mapRow($row);
 
-        $this->rowBuffer()->put($this->position, $row);
+        $buffer->put($this->position, $row);
 
         return $row;
     }

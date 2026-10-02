@@ -182,6 +182,25 @@ final class AbstractResultSetTest extends TestCase
         static::assertEquals(['id' => 1, 'name' => 'one'], $resultSet->current());
     }
 
+    /**
+     * The mysqli Result closes its statement once a fetch finds no row, so a valid()
+     * asked after that fetches again from a closed statement.
+     *
+     * @throws Exception
+     */
+    #[Test]
+    public function currentDoesNotAskAnExhaustedDriverResultWhetherItIsValid(): void
+    {
+        $result = $this->createMock(ResultInterface::class);
+        $result->method('current')->willReturn(null);
+        $result->expects(self::never())->method('valid');
+
+        $resultSet = $this->createResultSetMock();
+        $resultSet->initialize($result);
+
+        static::assertNull($resultSet->current());
+    }
+
     #[Test]
     public function currentReportsAnUninitialisedDataSourceRatherThanFailingOnNull(): void
     {
@@ -216,6 +235,15 @@ final class AbstractResultSetTest extends TestCase
         }
 
         static::assertEquals($firstPass, $secondPass);
+    }
+
+    #[Test]
+    public function currentReturnsNullForAFalseRowFromTheDataSource(): void
+    {
+        $resultSet = $this->createResultSetMock();
+        $resultSet->initialize(new ArrayIterator([false]));
+
+        static::assertNull($resultSet->current());
     }
 
     /**

@@ -34,7 +34,6 @@ final class ObjectResultSetTest extends TestCase
         return [
             'an array row means the fetch mode yields arrays' => [['id' => 1], 'array'],
             'FETCH_BOUND yields a success flag'               => [true, 'bool'],
-            'a null row is not a row'                         => [null, 'null'],
         ];
     }
 
