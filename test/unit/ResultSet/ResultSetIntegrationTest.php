@@ -11,7 +11,7 @@ use PhpDb\Adapter\Driver\ResultInterface;
 use PhpDb\ResultSet\AbstractResultSet;
 use PhpDb\ResultSet\Exception\InvalidArgumentException;
 use PhpDb\ResultSet\Exception\RuntimeException;
-use PhpDb\ResultSet\Exception\ValueError;
+use PhpDb\ResultSet\Exception\UnexpectedValueException;
 use PhpDb\ResultSet\ResultSet;
 use PhpDb\ResultSet\ResultSetReturnType;
 use PHPUnit\Framework\Attributes\CoversMethod;
@@ -267,7 +267,7 @@ final class ResultSetIntegrationTest extends TestCase
         $this->resultSet->initialize($mockResult);
         $this->resultSet->buffer();
 
-        self::expectException(ValueError::class);
+        self::expectException(UnexpectedValueException::class);
         self::expectExceptionMessage('A row of type "string"');
 
         $this->resultSet->current();

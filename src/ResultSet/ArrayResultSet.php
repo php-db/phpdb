@@ -19,7 +19,7 @@ class ArrayResultSet extends AbstractResultSet
      * @return array<array-key, mixed>|null
      *
      * @throws Exception\RuntimeException
-     * @throws Exception\ValueError If a row is not row data.
+     * @throws Exception\UnexpectedValueException If a row is not row data.
      */
     #[Override]
     public function current(): ?array
@@ -42,7 +42,7 @@ class ArrayResultSet extends AbstractResultSet
     /**
      * @return array<array-key, mixed>
      *
-     * @throws Exception\ValueError If the row is not row data.
+     * @throws Exception\UnexpectedValueException If the row is not row data.
      */
     #[Override]
     protected function mapRow(mixed $row): array

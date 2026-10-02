@@ -6,7 +6,7 @@ namespace PhpDbTest\ResultSet;
 
 use ArrayIterator;
 use ArrayObject;
-use PhpDb\ResultSet\Exception\ValueError;
+use PhpDb\ResultSet\Exception\UnexpectedValueException;
 use PhpDb\ResultSet\ObjectResultSet;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -44,7 +44,7 @@ final class ObjectResultSetTest extends TestCase
         $resultSet = new ObjectResultSet();
         $resultSet->initialize(new ArrayIterator([$row]));
 
-        self::expectException(ValueError::class);
+        self::expectException(UnexpectedValueException::class);
         self::expectExceptionMessage(sprintf('A row of type "%s"', $rowType));
 
         $resultSet->current();
@@ -93,7 +93,7 @@ final class ObjectResultSetTest extends TestCase
         $resultSet = new ObjectResultSet();
         $resultSet->initialize(new ArrayIterator([['id' => 1]]));
 
-        self::expectException(ValueError::class);
+        self::expectException(UnexpectedValueException::class);
         self::expectExceptionMessage('which accepts an object');
 
         $resultSet->current();
@@ -128,7 +128,7 @@ final class ObjectResultSetTest extends TestCase
         $resultSet = new ObjectResultSet();
         $resultSet->initialize(new ArrayIterator([new stdClass()]));
 
-        self::expectException(ValueError::class);
+        self::expectException(UnexpectedValueException::class);
         self::expectExceptionMessage('exposes no values');
 
         $resultSet->toArray();

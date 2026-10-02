@@ -29,7 +29,7 @@ class ObjectResultSet extends AbstractResultSet
      * Iterator: get current item
      *
      * @throws Exception\RuntimeException
-     * @throws Exception\ValueError If a row is not an object.
+     * @throws Exception\UnexpectedValueException If a row is not an object.
      */
     #[Override]
     public function current(): ?object
@@ -40,7 +40,7 @@ class ObjectResultSet extends AbstractResultSet
     /**
      * Cast result set to array of arrays
      *
-     * @throws Exception\ValueError If a row exposes nothing to cast.
+     * @throws Exception\UnexpectedValueException If a row exposes nothing to cast.
      */
     #[Override]
     public function toArray(): array
@@ -56,7 +56,7 @@ class ObjectResultSet extends AbstractResultSet
     }
 
     /**
-     * @throws Exception\ValueError If the row is not an object.
+     * @throws Exception\UnexpectedValueException If the row is not an object.
      */
     #[Override]
     protected function mapRow(mixed $row): object
@@ -65,7 +65,7 @@ class ObjectResultSet extends AbstractResultSet
             return $row;
         }
 
-        throw Exception\ValueError::forRowThatIsNotAnObject(get_debug_type($row), static::class);
+        throw Exception\UnexpectedValueException::forRowThatIsNotAnObject(get_debug_type($row), static::class);
     }
 
     /**
@@ -73,7 +73,7 @@ class ObjectResultSet extends AbstractResultSet
      *
      * @return array<array-key, mixed>
      *
-     * @throws Exception\ValueError If the row exposes nothing to read.
+     * @throws Exception\UnexpectedValueException If the row exposes nothing to read.
      */
     private function rowToArray(object $row): array
     {
@@ -84,7 +84,7 @@ class ObjectResultSet extends AbstractResultSet
         $data = get_object_vars($row);
 
         if ([] === $data) {
-            throw Exception\ValueError::forUnreadableRow(get_debug_type($row), static::class);
+            throw Exception\UnexpectedValueException::forUnreadableRow(get_debug_type($row), static::class);
         }
 
         return $data;

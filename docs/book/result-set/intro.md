@@ -182,7 +182,7 @@ instead of calling `toArray()` on it.
 A result set fills its rows from row data, meaning an `array` or an `ArrayObject`. It
 will not transform a row the driver handed it into some other shape, so the fetch mode
 and the result set have to agree; where they do not, the row is refused with a
-`PhpDb\ResultSet\Exception\ValueError` naming both types.
+`PhpDb\ResultSet\Exception\UnexpectedValueException` naming both types.
 
 | Result set | Rows arrive as | Rows leave as |
 |---|---|---|

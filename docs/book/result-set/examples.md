@@ -205,25 +205,24 @@ try {
 }
 ```
 
-### ValueError
+### UnexpectedValueException
 
 **A row the result set cannot read**, such as a `PDO::FETCH_OBJ` row in a
 `ResultSet`, is refused when it is read, whether by iterating, `current()` or
 `toArray()`:
 
 ```php
-use PhpDb\ResultSet\Exception\ValueError;
+use PhpDb\ResultSet\Exception\UnexpectedValueException;
 
 try {
     $rows = $resultSet->toArray();
-} catch (ValueError $e) {
+} catch (UnexpectedValueException $e) {
     printf("Error: %s\n", $e->getMessage());
 }
 ```
 
-`ValueError` extends PHP's `\ValueError`, which is an `Error` rather than an
-`Exception`, so `catch (\Exception $e)` does not catch it. Catch `ValueError`,
-`\Throwable`, or `PhpDb\Exception\ExceptionInterface`, which it implements.
+It extends SPL's `\UnexpectedValueException`, so `catch (\RuntimeException $e)` and
+`catch (\Exception $e)` catch it too, as does `PhpDb\Exception\ExceptionInterface`.
 
 ## Troubleshooting
 

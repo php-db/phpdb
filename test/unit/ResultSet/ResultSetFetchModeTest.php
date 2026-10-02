@@ -9,7 +9,7 @@ use PDO;
 use PDORow;
 use PhpDb\Adapter\Driver\Pdo\Result;
 use PhpDb\ResultSet\AbstractResultSet;
-use PhpDb\ResultSet\Exception\ValueError;
+use PhpDb\ResultSet\Exception\UnexpectedValueException;
 use PhpDb\ResultSet\ObjectResultSet;
 use PhpDb\ResultSet\ResultSet;
 use PhpDb\ResultSet\ResultSetInterface;
@@ -121,7 +121,7 @@ final class ResultSetFetchModeTest extends TestCase
         $resultSet = new ResultSet();
         $resultSet->initialize($result);
 
-        self::expectException(ValueError::class);
+        self::expectException(UnexpectedValueException::class);
 
         try {
             iterator_to_array($resultSet, preserve_keys: false);
@@ -159,7 +159,7 @@ final class ResultSetFetchModeTest extends TestCase
         int $fetchMode,
         string $rowType,
     ): void {
-        self::expectException(ValueError::class);
+        self::expectException(UnexpectedValueException::class);
         self::expectExceptionMessage(sprintf('A row of type "%s"', $rowType));
 
         $this->rowsFor($fetchMode);

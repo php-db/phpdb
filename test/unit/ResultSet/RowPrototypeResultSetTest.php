@@ -8,7 +8,7 @@ use ArrayIterator;
 use ArrayObject;
 use Override;
 use PhpDb\ResultSet\AbstractResultSet;
-use PhpDb\ResultSet\Exception\ValueError;
+use PhpDb\ResultSet\Exception\UnexpectedValueException;
 use PhpDb\ResultSet\RowPrototypeInterface;
 use PhpDb\ResultSet\RowPrototypeResultSet;
 use PHPUnit\Framework\Attributes\CoversMethod;
@@ -74,7 +74,7 @@ final class RowPrototypeResultSetTest extends TestCase
         $row->name = 'one';
         $resultSet->initialize(new ArrayIterator([$row]));
 
-        self::expectException(ValueError::class);
+        self::expectException(UnexpectedValueException::class);
         self::expectExceptionMessage('A row of type "stdClass"');
 
         $resultSet->current();
@@ -86,7 +86,7 @@ final class RowPrototypeResultSetTest extends TestCase
         $resultSet = new RowPrototypeResultSet($this->createRowPrototype());
         $resultSet->initialize(new ArrayIterator([new stdClass()]));
 
-        self::expectException(ValueError::class);
+        self::expectException(UnexpectedValueException::class);
         self::expectExceptionMessage('an array, ArrayObject or RowPrototypeInterface');
 
         $resultSet->current();

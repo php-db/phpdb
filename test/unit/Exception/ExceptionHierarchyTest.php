@@ -73,6 +73,7 @@ final class ExceptionHierarchyTest extends TestCase
         MetadataException\RuntimeException::class                    => RuntimeException::class,
         ResultSetException\InvalidArgumentException::class           => InvalidArgumentException::class,
         ResultSetException\RuntimeException::class                   => RuntimeException::class,
+        ResultSetException\UnexpectedValueException::class           => UnexpectedValueException::class,
         RowGatewayException\InvalidArgumentException::class          => InvalidArgumentException::class,
         RowGatewayException\RuntimeException::class                  => RuntimeException::class,
         SqlException\InvalidArgumentException::class                 => InvalidArgumentException::class,

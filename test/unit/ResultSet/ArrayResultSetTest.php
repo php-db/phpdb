@@ -8,7 +8,7 @@ use ArrayIterator;
 use ArrayObject;
 use PhpDb\ResultSet\AbstractResultSet;
 use PhpDb\ResultSet\ArrayResultSet;
-use PhpDb\ResultSet\Exception\ValueError;
+use PhpDb\ResultSet\Exception\UnexpectedValueException;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
@@ -42,7 +42,7 @@ final class ArrayResultSetTest extends TestCase
         $resultSet = new ArrayResultSet();
         $resultSet->initialize(new ArrayIterator([$row]));
 
-        self::expectException(ValueError::class);
+        self::expectException(UnexpectedValueException::class);
         self::expectExceptionMessage('A row of type "stdClass"');
 
         $resultSet->current();
@@ -54,7 +54,7 @@ final class ArrayResultSetTest extends TestCase
         $resultSet = new ArrayResultSet();
         $resultSet->initialize(new ArrayIterator([new stdClass()]));
 
-        self::expectException(ValueError::class);
+        self::expectException(UnexpectedValueException::class);
         self::expectExceptionMessage('will not transform a row it did not create');
 
         $resultSet->current();

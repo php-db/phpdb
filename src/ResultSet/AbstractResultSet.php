@@ -14,7 +14,7 @@ use Override;
 use PhpDb\Adapter\Driver\ResultInterface;
 use PhpDb\ResultSet\Exception\InvalidArgumentException;
 use PhpDb\ResultSet\Exception\RuntimeException;
-use PhpDb\ResultSet\Exception\ValueError;
+use PhpDb\ResultSet\Exception\UnexpectedValueException;
 use ReturnTypeWillChange;
 use Traversable;
 
@@ -455,7 +455,7 @@ abstract class AbstractResultSet implements ResultSetInterface
      *
      * @return array<array-key, mixed>
      *
-     * @throws ValueError If the row is neither an array nor an ArrayObject.
+     * @throws UnexpectedValueException If the row is neither an array nor an ArrayObject.
      */
     protected function getArrayData(mixed $row): array
     {
@@ -482,9 +482,9 @@ abstract class AbstractResultSet implements ResultSetInterface
      * Overridden by a result set that accepts more than row data, so that the message
      * names everything it would have taken.
      */
-    protected function unsupportedRowError(mixed $row): ValueError
+    protected function unsupportedRowError(mixed $row): UnexpectedValueException
     {
-        return ValueError::forRowThatIsNotArrayData(get_debug_type($row), static::class);
+        return UnexpectedValueException::forRowThatIsNotArrayData(get_debug_type($row), static::class);
     }
 
     private function initializeFromResult(ResultInterface $result): void

@@ -13,7 +13,7 @@ use Laminas\Hydrator\ObjectPropertyHydrator;
 use Override;
 use PhpDb\ResultSet\AbstractResultSet;
 use PhpDb\ResultSet\Exception\RuntimeException;
-use PhpDb\ResultSet\Exception\ValueError;
+use PhpDb\ResultSet\Exception\UnexpectedValueException;
 use PhpDb\ResultSet\HydratingResultSet;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Group;
@@ -168,7 +168,7 @@ final class HydratingResultSetTest extends TestCase
         $resultSet = new HydratingResultSet(new ArraySerializableHydrator(), new ArrayObject());
         $resultSet->initialize(new ArrayIterator([$row]));
 
-        self::expectException(ValueError::class);
+        self::expectException(UnexpectedValueException::class);
         self::expectExceptionMessage('A row of type "stdClass"');
 
         $resultSet->current();
@@ -180,7 +180,7 @@ final class HydratingResultSetTest extends TestCase
         $resultSet = new HydratingResultSet(new ArraySerializableHydrator(), new ArrayObject());
         $resultSet->initialize(new ArrayIterator([new stdClass()]));
 
-        self::expectException(ValueError::class);
+        self::expectException(UnexpectedValueException::class);
         self::expectExceptionMessage('will not transform a row it did not create');
 
         $resultSet->current();
@@ -335,7 +335,7 @@ final class HydratingResultSetTest extends TestCase
         $hydratingRs = new HydratingResultSet();
         $hydratingRs->initialize(new ArrayIterator([1, 2]));
 
-        self::expectException(ValueError::class);
+        self::expectException(UnexpectedValueException::class);
         self::expectExceptionMessage('A row of type "int"');
 
         $hydratingRs->toArray();

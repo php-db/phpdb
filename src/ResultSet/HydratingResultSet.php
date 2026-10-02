@@ -42,7 +42,7 @@ class HydratingResultSet extends AbstractResultSet implements HydratingResultSet
      * Iterator: get current item
      *
      * @throws RuntimeException
-     * @throws Exception\ValueError If a row is not row data.
+     * @throws Exception\UnexpectedValueException If a row is not row data.
      */
     #[Override]
     public function current(): ?object
@@ -100,7 +100,7 @@ class HydratingResultSet extends AbstractResultSet implements HydratingResultSet
     /**
      * Cast result set to array of arrays
      *
-     * @throws Exception\ValueError If any row is not row data.
+     * @throws Exception\UnexpectedValueException If any row is not row data.
      */
     #[Override]
     public function toArray(): array
@@ -118,7 +118,7 @@ class HydratingResultSet extends AbstractResultSet implements HydratingResultSet
     /**
      * Hydrate one row onto a clone of the prototype.
      *
-     * @throws Exception\ValueError If the row is not row data.
+     * @throws Exception\UnexpectedValueException If the row is not row data.
      * @throws \Laminas\Hydrator\Exception\RuntimeException If the hydrator cannot fill the prototype.
      */
     #[Override]

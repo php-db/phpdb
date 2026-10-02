@@ -27,7 +27,7 @@ class RowPrototypeResultSet extends AbstractResultSet implements RowPrototypeRes
      * Iterator: get current item
      *
      * @throws Exception\RuntimeException
-     * @throws Exception\ValueError If a row is not row data.
+     * @throws Exception\UnexpectedValueException If a row is not row data.
      */
     #[Override]
     public function current(): ?RowPrototypeInterface
@@ -69,7 +69,7 @@ class RowPrototypeResultSet extends AbstractResultSet implements RowPrototypeRes
      * A row that already satisfies the prototype interface is the caller's own object
      * and is passed through untouched; row data populates a clone of the prototype.
      *
-     * @throws Exception\ValueError If the row is neither a RowPrototypeInterface nor row data.
+     * @throws Exception\UnexpectedValueException If the row is neither a RowPrototypeInterface nor row data.
      */
     #[Override]
     protected function mapRow(mixed $row): RowPrototypeInterface
@@ -92,8 +92,11 @@ class RowPrototypeResultSet extends AbstractResultSet implements RowPrototypeRes
 
     /** {@inheritDoc} */
     #[Override]
-    protected function unsupportedRowError(mixed $row): Exception\ValueError
+    protected function unsupportedRowError(mixed $row): Exception\UnexpectedValueException
     {
-        return Exception\ValueError::forRowThatIsNotArrayDataOrPrototype(get_debug_type($row), static::class);
+        return Exception\UnexpectedValueException::forRowThatIsNotArrayDataOrPrototype(
+            get_debug_type($row),
+            static::class,
+        );
     }
 }

@@ -57,7 +57,7 @@ class ResultSet extends AbstractResultSet implements ArrayObjectResultSetInterfa
      * @return array<array-key, mixed>|ArrayObject|null
      *
      * @throws Exception\RuntimeException
-     * @throws Exception\ValueError If a row is not row data.
+     * @throws Exception\UnexpectedValueException If a row is not row data.
      */
     #[Override]
     public function current(): array|ArrayObject|null
@@ -128,7 +128,7 @@ class ResultSet extends AbstractResultSet implements ArrayObjectResultSetInterfa
      *
      * @return array<array-key, mixed>|ArrayObject
      *
-     * @throws Exception\ValueError If the row is neither an ArrayObject nor row data.
+     * @throws Exception\UnexpectedValueException If the row is neither an ArrayObject nor row data.
      */
     #[Override]
     protected function mapRow(mixed $row): array|ArrayObject
