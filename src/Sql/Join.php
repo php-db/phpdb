@@ -11,6 +11,7 @@ use ReturnTypeWillChange;
 
 use function array_shift;
 use function count;
+use function get_debug_type;
 use function is_array;
 use function is_string;
 use function key;
@@ -94,7 +95,11 @@ class Join implements Iterator, Countable
         string $type = self::JOIN_INNER,
     ): static {
         if (is_array($name) && (! is_string(key($name)) || count($name) !== 1)) {
-            throw Exception\InvalidArgumentException::forInvalidJoinName(array_shift($name));
+            $first = array_shift($name);
+
+            throw Exception\InvalidArgumentException::forInvalidJoinName(
+                is_string($first) ? $first : get_debug_type($first),
+            );
         }
 
         if (! is_array($columns)) {
