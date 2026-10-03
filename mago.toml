@@ -18,6 +18,14 @@ baseline = "lint-baseline.toml"
 # not apply. "test/" repeats the phpdb-qa-tools default, which this key replaces.
 too-many-methods = { exclude = ["test/", "src/Sql/Exception/", "src/TableGateway/Exception/", "src/Adapter/Exception/"] }
 
+# The capability interfaces return `ResultSetInterface&<themselves>`, and PHP rejects
+# `self` as part of an intersection type, so this rule's advice cannot be taken there.
+prefer-self-return-type = { exclude = [
+    "src/ResultSet/ArrayObjectResultSetInterface.php",
+    "src/ResultSet/HydratingResultSetInterface.php",
+    "src/ResultSet/RowPrototypeResultSetInterface.php",
+] }
+
 [analyzer]
 baseline = "analyzer-baseline.toml"
 class-initializers = [

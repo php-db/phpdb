@@ -205,15 +205,24 @@ try {
 }
 ```
 
-**toArray() on non-castable rows:**
+### UnexpectedValueException
+
+**A row the result set cannot read**, such as a `PDO::FETCH_OBJ` row in a
+`ResultSet`, is refused when it is read, whether by iterating, `current()` or
+`toArray()`:
 
 ```php
+use PhpDb\ResultSet\Exception\UnexpectedValueException;
+
 try {
-    $resultSet->toArray();
-} catch (RuntimeException $e) {
-    printf("Error: Could not convert row to array\n");
+    $rows = $resultSet->toArray();
+} catch (UnexpectedValueException $e) {
+    printf("Error: %s\n", $e->getMessage());
 }
 ```
+
+It extends SPL's `\UnexpectedValueException`, so `catch (\RuntimeException $e)` and
+`catch (\Exception $e)` catch it too, as does `PhpDb\Exception\ExceptionInterface`.
 
 ## Troubleshooting
 

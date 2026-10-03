@@ -8,6 +8,7 @@ use ArrayIterator;
 use ArrayObject;
 use Exception;
 use IteratorAggregate;
+use LimitIterator;
 use NoRewindIterator;
 use Override;
 use PDOStatement;
@@ -15,29 +16,35 @@ use PhpDb\Adapter\Driver\Pdo\Result;
 use PhpDb\Adapter\Driver\ResultInterface;
 use PhpDb\ResultSet\AbstractResultSet;
 use PhpDb\ResultSet\Exception\RuntimeException;
+use PhpDbTest\ResultSet\TestAsset\PassThroughResultSet;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use TypeError;
 
 use function assert;
+use function iterator_to_array;
 
 #[CoversMethod(AbstractResultSet::class, 'initialize')]
+#[CoversMethod(AbstractResultSet::class, 'resolveIterator')]
+#[CoversMethod(AbstractResultSet::class, 'dataSource')]
 #[CoversMethod(AbstractResultSet::class, 'buffer')]
 #[CoversMethod(AbstractResultSet::class, 'isBuffered')]
 #[CoversMethod(AbstractResultSet::class, 'getDataSource')]
 #[CoversMethod(AbstractResultSet::class, 'getFieldCount')]
 #[CoversMethod(AbstractResultSet::class, 'next')]
 #[CoversMethod(AbstractResultSet::class, 'key')]
-#[CoversMethod(AbstractResultSet::class, 'current')]
+#[CoversMethod(AbstractResultSet::class, 'currentRow')]
+#[CoversMethod(AbstractResultSet::class, 'initializeFromResult')]
+#[CoversMethod(AbstractResultSet::class, 'setBufferState')]
 #[CoversMethod(AbstractResultSet::class, 'valid')]
 #[CoversMethod(AbstractResultSet::class, 'rewind')]
 #[CoversMethod(AbstractResultSet::class, 'count')]
+#[CoversMethod(AbstractResultSet::class, 'resetResolvedConfiguration')]
 final class AbstractResultSetTest extends TestCase
 {
-    protected MockObject|AbstractResultSet $resultSet;
+    protected AbstractResultSet $resultSet;
 
     /**
      * @throws Exception
@@ -60,6 +67,75 @@ final class AbstractResultSetTest extends TestCase
         self::expectException(RuntimeException::class);
         self::expectExceptionMessage(RuntimeException::UNBUFFERED_ITERATION);
         $resultSet->buffer();
+    }
+
+    #[Test]
+    public function bufferAfterABufferedPassHasBegunKeepsBuffering(): void
+    {
+        $resultSet = $this->createResultSetMock();
+        $resultSet->initialize(new ArrayIterator([['id' => 1], ['id' => 2]]));
+        $resultSet->buffer();
+        $resultSet->current();
+        $resultSet->next();
+
+        $resultSet->buffer();
+        $resultSet->rewind();
+
+        static::assertSame(['id' => 1], $resultSet->current());
+    }
+
+    #[Test]
+    public function bufferAfterIteratingAnArrayDataSourceIsAllowed(): void
+    {
+        $resultSet = $this->createResultSetMock();
+        $resultSet->initialize([['id' => 1], ['id' => 2]]);
+        $resultSet->current();
+        $resultSet->next();
+
+        $resultSet->buffer();
+
+        static::assertTrue($resultSet->isBuffered());
+    }
+
+    /**
+     * @throws Exception
+     */
+    #[Test]
+    public function bufferBeforeInitializeHoldsTheRowsOfTheDataSourceGivenLater(): void
+    {
+        $resultSet = $this->createResultSetMock();
+        $resultSet->buffer();
+        $resultSet->initialize(new NoRewindIterator(new ArrayIterator([['id' => 1], ['id' => 2]])));
+        iterator_to_array($resultSet);
+
+        static::assertSame([['id' => 1], ['id' => 2]], iterator_to_array($resultSet));
+    }
+
+    #[Test]
+    public function bufferCalledTwiceKeepsTheRowsAlreadyHeld(): void
+    {
+        $resultSet = $this->createResultSetMock();
+        $resultSet->initialize(new ArrayIterator([['id' => 1]]));
+        $resultSet->buffer();
+        $resultSet->current();
+
+        $resultSet->buffer();
+        $resultSet->rewind();
+
+        static::assertSame(['id' => 1], $resultSet->current());
+    }
+
+    #[Test]
+    public function bufferedPassAdvancesADataSourceKeyedOtherThanByPosition(): void
+    {
+        $resultSet = $this->createResultSetMock();
+        $resultSet->buffer();
+        $resultSet->initialize(new ArrayIterator(['a' => ['id' => 1], 'b' => ['id' => 2], 'c' => ['id' => 3]]));
+
+        // A data source that is never advanced repeats its first row; a fourth read shows it
+        $rows = iterator_to_array(new LimitIterator($resultSet, 0, 4), preserve_keys: false);
+
+        static::assertSame([['id' => 1], ['id' => 2], ['id' => 3]], $rows);
     }
 
     /**
@@ -96,6 +172,31 @@ final class AbstractResultSetTest extends TestCase
         $resultSet->next();
         $data = $resultSet->current();
         static::assertSame(3, $data['id']);
+    }
+
+    /**
+     * Sets up the fixture, for example, opens a network connection.
+     * This method is called before a test is executed.
+     */
+    /**
+     * A table gateway clones its result set prototype for every select, so two result
+     * sets cloned from one prototype must not hand each other's rows back.
+     *
+     * @throws Exception
+     */
+    #[Test]
+    public function cloningAResultSetDoesNotShareTheRowsItHolds(): void
+    {
+        $prototype = new PassThroughResultSet();
+        $prototype->initialize(new ArrayIterator([['id' => 1]]));
+        $prototype->buffer();
+        $prototype->current();
+
+        $clone = clone $prototype;
+        $clone->initialize(new ArrayIterator([['id' => 2]]));
+
+        static::assertSame(['id' => 2], $clone->current());
+        static::assertSame(['id' => 1], $prototype->current());
     }
 
     #[Test]
@@ -153,6 +254,48 @@ final class AbstractResultSetTest extends TestCase
         static::assertEquals(['id' => 1, 'name' => 'one'], $resultSet->current());
     }
 
+    /**
+     * The mysqli Result closes its statement once a fetch finds no row, so a valid()
+     * asked after that fetches again from a closed statement.
+     *
+     * @throws Exception
+     */
+    #[Test]
+    public function currentDoesNotAskAnExhaustedDriverResultWhetherItIsValid(): void
+    {
+        $result = $this->createMock(ResultInterface::class);
+        $result->method('current')->willReturn(null);
+        $result->expects(self::never())->method('valid');
+
+        $resultSet = $this->createResultSetMock();
+        $resultSet->initialize($result);
+
+        static::assertNull($resultSet->current());
+    }
+
+    #[Test]
+    public function currentReportsAnUninitialisedDataSourceRatherThanFailingOnNull(): void
+    {
+        $resultSet = $this->createResultSetMock();
+
+        self::expectException(RuntimeException::class);
+        self::expectExceptionMessage(RuntimeException::UNINITIALISED_DATA_SOURCE);
+
+        $resultSet->current();
+    }
+
+    #[Test]
+    public function currentReportsAnUninitialisedDataSourceWhileBuffering(): void
+    {
+        $resultSet = $this->createResultSetMock();
+        $resultSet->buffer();
+
+        self::expectException(RuntimeException::class);
+        self::expectExceptionMessage(RuntimeException::UNINITIALISED_DATA_SOURCE);
+
+        $resultSet->current();
+    }
+
     #[Test]
     public function currentReturnsBufferedDataOnSecondPass(): void
     {
@@ -176,6 +319,27 @@ final class AbstractResultSetTest extends TestCase
         }
 
         static::assertEquals($firstPass, $secondPass);
+    }
+
+    #[Test]
+    public function currentReturnsNullForAFalseRowFromTheDataSource(): void
+    {
+        $resultSet = $this->createResultSetMock();
+        $resultSet->initialize(new ArrayIterator([false]));
+
+        static::assertNull($resultSet->current());
+    }
+
+    #[Test]
+    public function currentReturnsNullPastTheLastRowWhileBuffering(): void
+    {
+        $resultSet = $this->createResultSetMock();
+        $resultSet->initialize(new ArrayIterator([['id' => 1]]));
+        $resultSet->buffer();
+        $resultSet->current();
+        $resultSet->next();
+
+        static::assertNull($resultSet->current());
     }
 
     /**
@@ -465,6 +629,29 @@ final class AbstractResultSetTest extends TestCase
         static::assertSame(1, $resultSet->key());
     }
 
+    #[Test]
+    public function nextReportsAnUninitialisedDataSourceWhileBuffering(): void
+    {
+        $resultSet = $this->createResultSetMock();
+        $resultSet->buffer();
+
+        self::expectException(RuntimeException::class);
+        self::expectExceptionMessage(RuntimeException::UNINITIALISED_DATA_SOURCE);
+
+        $resultSet->next();
+    }
+
+    #[Test]
+    public function rewindReportsAnUninitialisedDataSourceRatherThanFailingOnNull(): void
+    {
+        $resultSet = $this->createResultSetMock();
+
+        self::expectException(RuntimeException::class);
+        self::expectExceptionMessage(RuntimeException::UNINITIALISED_DATA_SOURCE);
+
+        $resultSet->rewind();
+    }
+
     /**
      * @throws Exception
      */
@@ -546,6 +733,17 @@ final class AbstractResultSetTest extends TestCase
     }
 
     #[Test]
+    public function validReportsAnUninitialisedDataSourceRatherThanFailingOnNull(): void
+    {
+        $resultSet = $this->createResultSetMock();
+
+        self::expectException(RuntimeException::class);
+        self::expectExceptionMessage(RuntimeException::UNINITIALISED_DATA_SOURCE);
+
+        $resultSet->valid();
+    }
+
+    #[Test]
     public function validReturnsFalseAfterLastElement(): void
     {
         $resultSet = $this->createResultSetMock();
@@ -587,21 +785,15 @@ final class AbstractResultSetTest extends TestCase
         static::assertTrue($resultSet->valid());
     }
 
-    /**
-     * Sets up the fixture, for example, opens a network connection.
-     * This method is called before a test is executed.
-     */
     #[Override]
     protected function setUp(): void
     {
         $this->resultSet = $this->createResultSetMock();
     }
 
-    private function createResultSetMock(): MockObject|AbstractResultSet
+    private function createResultSetMock(): AbstractResultSet
     {
-        return $this->getMockBuilder(AbstractResultSet::class)
-            ->onlyMethods(['toArray'])
-            ->getMock();
+        return new PassThroughResultSet();
     }
 
     /**
@@ -610,7 +802,7 @@ final class AbstractResultSetTest extends TestCase
      *
      * @throws Exception
      */
-    private function drainIntoBuffer(): MockObject|AbstractResultSet
+    private function drainIntoBuffer(): AbstractResultSet
     {
         $resultSet = $this->createResultSetMock();
         $resultSet->initialize(new ArrayIterator([

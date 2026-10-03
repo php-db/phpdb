@@ -7,6 +7,13 @@ namespace PhpDb\ResultSet;
 use Countable;
 use Iterator;
 
+/**
+ * @api
+ *
+ * @template TRow
+ *
+ * @extends Iterator<int, TRow>
+ */
 interface ResultSetInterface extends Iterator, Countable
 {
     /**
@@ -18,11 +25,15 @@ interface ResultSetInterface extends Iterator, Countable
 
     /**
      * Can be anything iterable|array
+     *
+     * @param iterable<array-key, mixed> $dataSource
      */
-    public function initialize(iterable $dataSource): ResultSetInterface;
+    public function initialize(iterable $dataSource): self;
 
     /**
      * Get all rows as an array
+     *
+     * @return list<mixed>
      */
     public function toArray(): array;
 }

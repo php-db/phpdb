@@ -13,6 +13,7 @@ use PHPUnit\Framework\TestCase;
 
 #[Group('unit')]
 #[CoversMethod(RuntimeException::class, 'forUnbufferedIteration')]
+#[CoversMethod(RuntimeException::class, 'forUninitialisedDataSource')]
 final class RuntimeExceptionTest extends TestCase
 {
     #[Test]
@@ -28,5 +29,20 @@ final class RuntimeExceptionTest extends TestCase
     public function forUnbufferedIterationReturnsTheComponentExceptionType(): void
     {
         self::assertInstanceOf(ExceptionInterface::class, RuntimeException::forUnbufferedIteration());
+    }
+
+    #[Test]
+    public function forUninitialisedDataSourceRendersItsTemplate(): void
+    {
+        self::assertSame(
+            RuntimeException::UNINITIALISED_DATA_SOURCE,
+            RuntimeException::forUninitialisedDataSource()->getMessage(),
+        );
+    }
+
+    #[Test]
+    public function forUninitialisedDataSourceReturnsTheComponentExceptionType(): void
+    {
+        self::assertInstanceOf(ExceptionInterface::class, RuntimeException::forUninitialisedDataSource());
     }
 }

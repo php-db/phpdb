@@ -15,8 +15,8 @@ use ArrayObject;
 class ResultSet extends AbstractResultSet
 {
     public function __construct(
-        ResultSetReturnType $returnType = ResultSetReturnType::ArrayObject,
-        ?ArrayObject $rowPrototype = null
+        ResultSetReturnType|string $returnType = ResultSetReturnType::ArrayObject,
+        ArrayObject $rowPrototype = new ArrayObject([], ArrayObject::ARRAY_AS_PROPS)
     );
 
     public function setRowPrototype(
@@ -39,6 +39,7 @@ enum ResultSetReturnType: string
 {
     case ArrayObject = 'arrayobject';
     case Array = 'array';
+    case Prototype = 'prototype';
 }
 ```
 
@@ -56,10 +57,12 @@ $resultSet = new ResultSet(ResultSetReturnType::Array);
 
 - `ResultSetReturnType::ArrayObject` (default) - Returns rows as
   ArrayObject instances
+- `ResultSetReturnType::Prototype` - The same as `ArrayObject`: rows fill a clone
+  of the row prototype. It is the newer name, matching `setRowPrototype()`
 - `ResultSetReturnType::Array` - Returns rows as plain PHP arrays
 
 **`$rowPrototype`** - Custom ArrayObject prototype for row objects
-(only used with ArrayObject mode)
+(only used with ArrayObject and Prototype modes)
 
 #### Return Type Modes
 
@@ -199,6 +202,38 @@ Throws:
 RuntimeException: Buffering must be enabled before iteration is
 started
 ```
+
+### What a Buffer Holds
+
+What a buffered pass hands back depends on the kind of row.
+
+- `ResultSet` and `RowPrototypeResultSet` keep the rows as the data source returned
+  them and build each row afresh on every pass. A change made to an `ArrayObject` or
+  row prototype in one pass does not carry into the next.
+- `HydratingResultSet` keeps the objects it hydrated on the first pass and hands the
+  same objects out on every later pass, as laminas-db and earlier PhpDb releases did.
+  A hydrated row is an entity with an identity of its own, so a change made to it in
+  one pass is still there in the next, and nothing is hydrated twice.
+
+```php title="Buffered Entities Keep Their Identity"
+$resultSet = new HydratingResultSet(new ReflectionHydrator(), new UserEntity());
+$resultSet->initialize($result);
+$resultSet->buffer();
+
+foreach ($resultSet as $user) {
+    $user->setName(strtoupper($user->getName()));
+}
+
+foreach ($resultSet as $user) {
+    echo $user->getName(); // upper-cased: the same objects as the first pass
+}
+```
+
+Rows are built from what `getRowPrototype()` and `getHydrator()` return, so a subclass
+that overrides either getter decides how its rows are built. `ResultSet` and
+`RowPrototypeResultSet` ask once for each data source. `HydratingResultSet` asks on its
+first row and again after `setRowPrototype()` or `setHydrator()`, so a getter whose
+answer changes between data sources needs one of those setters called to take effect.
 
 ### isBuffered() Method
 
