@@ -98,7 +98,7 @@ use function array_keys;
  */
 abstract class AbstractSource implements MetadataInterface
 {
-    public const DEFAULT_SCHEMA = '__DEFAULT_SCHEMA__';
+    public const string DEFAULT_SCHEMA = '__DEFAULT_SCHEMA__';
 
     protected string $defaultSchema;
 
