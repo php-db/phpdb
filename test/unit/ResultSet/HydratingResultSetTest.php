@@ -9,8 +9,11 @@ use ArrayObject;
 use Exception;
 use Laminas\Hydrator\ArraySerializableHydrator;
 use Laminas\Hydrator\ClassMethodsHydrator;
+use Laminas\Hydrator\ObjectPropertyHydrator;
 use Override;
+use PhpDb\ResultSet\AbstractResultSet;
 use PhpDb\ResultSet\Exception\RuntimeException;
+use PhpDb\ResultSet\Exception\UnexpectedValueException;
 use PhpDb\ResultSet\HydratingResultSet;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Group;
@@ -18,21 +21,91 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
+#[CoversMethod(AbstractResultSet::class, 'getArrayData')]
+#[CoversMethod(AbstractResultSet::class, 'unsupportedRowError')]
 #[CoversMethod(HydratingResultSet::class, 'setObjectPrototype')]
 #[CoversMethod(HydratingResultSet::class, 'getObjectPrototype')]
 #[CoversMethod(HydratingResultSet::class, 'setHydrator')]
 #[CoversMethod(HydratingResultSet::class, 'getHydrator')]
 #[CoversMethod(HydratingResultSet::class, 'current')]
+#[CoversMethod(HydratingResultSet::class, 'mapRow')]
 #[CoversMethod(HydratingResultSet::class, 'toArray')]
 #[CoversMethod(HydratingResultSet::class, '__construct')]
 #[CoversMethod(HydratingResultSet::class, 'setRowPrototype')]
 #[CoversMethod(HydratingResultSet::class, 'getRowPrototype')]
+#[CoversMethod(AbstractResultSet::class, 'currentRow')]
 #[Group('unit')]
 final class HydratingResultSetTest extends TestCase
 {
     private string $arraySerializableHydratorClass;
 
     private string $classMethodsHydratorClass;
+
+    #[Test]
+    public function aBufferedReadPastTheLastRowReturnsNull(): void
+    {
+        $hydratingRs = new HydratingResultSet();
+        $hydratingRs->initialize(new ArrayIterator([['id' => 1]]));
+        $hydratingRs->buffer();
+        $hydratingRs->current();
+        $hydratingRs->next();
+
+        static::assertNull($hydratingRs->current());
+    }
+
+    #[Test]
+    public function aChangeToABufferedEntityCarriesIntoTheNextPass(): void
+    {
+        $hydratingRs = new HydratingResultSet(null, new ArrayObject([], ArrayObject::ARRAY_AS_PROPS));
+        $hydratingRs->initialize(new ArrayIterator([
+            ['id' => 1, 'name' => 'one'],
+            ['id' => 2, 'name' => 'two'],
+        ]));
+        $hydratingRs->buffer();
+
+        foreach ($hydratingRs as $row) {
+            $row['name'] = 'changed';
+        }
+
+        $names = [];
+        foreach ($hydratingRs as $row) {
+            $names[] = $row['name'];
+        }
+
+        static::assertSame(['changed', 'changed'], $names);
+    }
+
+    #[Test]
+    public function aNewHydratorOrPrototypeIsUsedForTheNextDataSource(): void
+    {
+        $hydratingRs = new HydratingResultSet(null, new ArrayObject());
+        $hydratingRs->initialize(new ArrayIterator([['id' => 1]]));
+        static::assertInstanceOf(ArrayObject::class, $hydratingRs->current());
+
+        $hydratingRs->setRowPrototype(new stdClass());
+        $hydratingRs->setHydrator(new ObjectPropertyHydrator());
+        $hydratingRs->initialize(new ArrayIterator([['id' => 2]]));
+
+        $row = $hydratingRs->current();
+        static::assertInstanceOf(stdClass::class, $row);
+        static::assertSame(2, $row->id);
+    }
+
+    #[Test]
+    public function aSecondBufferedPassReturnsTheSameObject(): void
+    {
+        $hydratingRs = new HydratingResultSet();
+        $hydratingRs->initialize(new ArrayIterator([
+            ['id' => 1, 'name' => 'one'],
+            ['id' => 2, 'name' => 'two'],
+        ]));
+        $hydratingRs->buffer();
+
+        $first = $hydratingRs->current();
+        $hydratingRs->rewind();
+
+        static::assertSame($first, $hydratingRs->current());
+    }
 
     #[Test]
     public function constructorDefaultsToArraySerializableHydrator(): void
@@ -86,20 +159,31 @@ final class HydratingResultSetTest extends TestCase
     }
 
     #[Test]
-    public function currentWithBufferReturnsBufferedObject(): void
+    public function currentRejectsAnObjectRowRatherThanHydratingIt(): void
     {
-        $hydratingRs = new HydratingResultSet();
-        $hydratingRs->initialize(new ArrayIterator([
-            ['id' => 1, 'name' => 'one'],
-            ['id' => 2, 'name' => 'two'],
-        ]));
-        $hydratingRs->buffer();
+        $row       = new stdClass();
+        $row->id   = 1;
+        $row->name = 'one';
 
-        $first = $hydratingRs->current();
-        $hydratingRs->rewind();
-        $buffered = $hydratingRs->current();
+        $resultSet = new HydratingResultSet(new ArraySerializableHydrator(), new ArrayObject());
+        $resultSet->initialize(new ArrayIterator([$row]));
 
-        static::assertSame($first, $buffered);
+        self::expectException(UnexpectedValueException::class);
+        self::expectExceptionMessage('A row of type "stdClass"');
+
+        $resultSet->current();
+    }
+
+    #[Test]
+    public function currentRejectsARowThatExposesNothing(): void
+    {
+        $resultSet = new HydratingResultSet(new ArraySerializableHydrator(), new ArrayObject());
+        $resultSet->initialize(new ArrayIterator([new stdClass()]));
+
+        self::expectException(UnexpectedValueException::class);
+        self::expectExceptionMessage('will not transform a row it did not create');
+
+        $resultSet->current();
     }
 
     #[Test]
@@ -191,6 +275,44 @@ final class HydratingResultSetTest extends TestCase
         static::assertSame($prototype, $hydratingRs->getRowPrototype());
     }
 
+    #[Test]
+    public function subclassGettersDecideHowRowsAreHydrated(): void
+    {
+        $hydratingRs = new class extends HydratingResultSet {
+            public int $hydratorCalls = 0;
+
+            #[Override]
+            public function getHydrator(): ClassMethodsHydrator
+            {
+                $this->hydratorCalls++;
+
+                return new ClassMethodsHydrator();
+            }
+
+            #[Override]
+            public function getRowPrototype(): object
+            {
+                return new class {
+                    public ?int $id = null;
+
+                    public function setId(int $id): void
+                    {
+                        $this->id = $id * 10;
+                    }
+                };
+            }
+        };
+        $hydratingRs->initialize(new ArrayIterator([['id' => 1], ['id' => 2]]));
+
+        $ids = [];
+        foreach ($hydratingRs as $row) {
+            $ids[] = $row->id;
+        }
+
+        static::assertSame([10, 20], $ids);
+        static::assertSame(1, $hydratingRs->hydratorCalls, 'getHydrator() is asked once per data source, not per row');
+    }
+
     /**
      * @throws Exception
      * @todo Implement testToArray().
@@ -205,6 +327,18 @@ final class HydratingResultSetTest extends TestCase
         // Verify toArray() returns array of hydrated objects
         $obj = $hydratingRs->toArray();
         static::assertIsArray($obj);
+    }
+
+    #[Test]
+    public function toArrayReportsARowTheHydratorCannotExtract(): void
+    {
+        $hydratingRs = new HydratingResultSet();
+        $hydratingRs->initialize(new ArrayIterator([1, 2]));
+
+        self::expectException(UnexpectedValueException::class);
+        self::expectExceptionMessage('A row of type "int"');
+
+        $hydratingRs->toArray();
     }
 
     #[Test]

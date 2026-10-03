@@ -8,6 +8,8 @@ use ArrayObject;
 
 /**
  * Capability interface for a ResultSet whose rows clone an ArrayObject prototype.
+ *
+ * @api
  */
 interface ArrayObjectResultSetInterface
 {

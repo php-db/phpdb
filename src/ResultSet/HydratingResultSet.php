@@ -8,11 +8,31 @@ use ArrayObject;
 use Laminas\Hydrator\ArraySerializableHydrator;
 use Laminas\Hydrator\HydratorInterface;
 use Override;
+use PhpDb\ResultSet\Exception\RuntimeException;
 
 use function is_array;
 
+/**
+ * @api
+ *
+ * @extends AbstractResultSet<object>
+ */
 class HydratingResultSet extends AbstractResultSet implements HydratingResultSetInterface
 {
+    /**
+     * Hydrated rows are entities with an identity of their own, so a buffered set hands
+     * the same objects out on every pass, as laminas-db and earlier PhpDb releases did.
+     */
+    protected const bool HOLDS_MAPPED_ROWS = true;
+
+    /**
+     * getHydrator() and getRowPrototype(), asked on the first row rather than on every
+     * row, and asked again after setHydrator() or setRowPrototype().
+     */
+    private ?HydratorInterface $resolvedHydrator = null;
+
+    private ?object $resolvedRowPrototype = null;
+
     public function __construct(
         private ?HydratorInterface $hydrator = null,
         private ?object $rowPrototype = null,
@@ -20,23 +40,14 @@ class HydratingResultSet extends AbstractResultSet implements HydratingResultSet
 
     /**
      * Iterator: get current item
+     *
+     * @throws RuntimeException
+     * @throws Exception\UnexpectedValueException If a row is not row data.
      */
     #[Override]
     public function current(): ?object
     {
-        if ($this->buffer === null) {
-            $this->buffer = -2; // implicitly disable buffering from here on
-        } elseif (is_array($this->buffer) && isset($this->buffer[$this->position])) {
-            return $this->buffer[$this->position];
-        }
-        $data    = $this->dataSource->current();
-        $current = is_array($data) ? $this->getHydrator()->hydrate($data, clone $this->getRowPrototype()) : null;
-
-        if (is_array($this->buffer)) {
-            $this->buffer[$this->position] = $current;
-        }
-
-        return $current;
+        return $this->currentRow();
     }
 
     /**
@@ -48,7 +59,7 @@ class HydratingResultSet extends AbstractResultSet implements HydratingResultSet
     }
 
     /** @deprecated use getRowPrototype() */
-    public function getObjectPrototype(): ?object
+    public function getObjectPrototype(): object
     {
         return $this->getRowPrototype();
     }
@@ -65,7 +76,8 @@ class HydratingResultSet extends AbstractResultSet implements HydratingResultSet
      */
     public function setHydrator(HydratorInterface $hydrator): ResultSetInterface
     {
-        $this->hydrator = $hydrator;
+        $this->hydrator         = $hydrator;
+        $this->resolvedHydrator = null;
         return $this;
     }
 
@@ -77,24 +89,48 @@ class HydratingResultSet extends AbstractResultSet implements HydratingResultSet
 
     /** {@inheritDoc} */
     #[Override]
-    public function setRowPrototype(object $rowPrototype): ResultSetInterface&HydratingResultSetInterface
-    {
-        $this->rowPrototype = $rowPrototype;
+    public function setRowPrototype(
+        object $rowPrototype,
+    ): ResultSetInterface&HydratingResultSetInterface {
+        $this->rowPrototype         = $rowPrototype;
+        $this->resolvedRowPrototype = null;
         return $this;
     }
 
     /**
      * Cast result set to array of arrays
      *
-     * @throws Exception\RuntimeException If any row is not castable to an array.
+     * @throws Exception\UnexpectedValueException If any row is not row data.
      */
     #[Override]
     public function toArray(): array
     {
         $return = [];
+
+        /** @var object $row Every row this set yields is hydrated, or mapRow() throws. */
         foreach ($this as $row) {
             $return[] = $this->getHydrator()->extract($row);
         }
+
         return $return;
+    }
+
+    /**
+     * Hydrate one row onto a clone of the prototype.
+     *
+     * @throws Exception\UnexpectedValueException If the row is not row data.
+     * @throws \Laminas\Hydrator\Exception\RuntimeException If the hydrator cannot fill the prototype.
+     */
+    #[Override]
+    protected function mapRow(mixed $row): object
+    {
+        $data = is_array($row) ? $row : $this->getArrayData($row);
+
+        $this->resolvedRowPrototype ??= $this->getRowPrototype();
+        $prototype                  = clone $this->resolvedRowPrototype;
+
+        $this->resolvedHydrator ??= $this->getHydrator();
+
+        return $this->resolvedHydrator->hydrate($data, $prototype);
     }
 }

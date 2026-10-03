@@ -69,16 +69,13 @@ functionality:
 namespace PhpDb\ResultSet;
 
 use Iterator;
-use IteratorAggregate;
-use PhpDb\Adapter\Driver\ResultInterface;
 
-abstract class AbstractResultSet implements Iterator, ResultSetInterface
+abstract class AbstractResultSet implements ResultSetInterface
 {
-    public function initialize(
-        array|Iterator|IteratorAggregate|ResultInterface $dataSource
-    ): ResultSetInterface;
-    public function getDataSource():
-        array|Iterator|IteratorAggregate|ResultInterface;
+    protected const bool HOLDS_MAPPED_ROWS = false;
+
+    public function initialize(iterable $dataSource): ResultSetInterface;
+    public function getDataSource(): ?Iterator;
     public function getFieldCount(): int;
 
     public function buffer(): ResultSetInterface;
@@ -86,15 +83,24 @@ abstract class AbstractResultSet implements Iterator, ResultSetInterface
 
     public function next(): void;
     public function key(): int;
-    public function current(): mixed;
     public function valid(): bool;
     public function rewind(): void;
 
-    public function count(): int;
+    public function count(): ?int;
 
-    public function toArray(): array;
+    abstract protected function mapRow(mixed $row): mixed;
+    protected function resetResolvedConfiguration(): void;
 }
 ```
+
+`ResultSetInterface` extends `Iterator` and `Countable` and adds `toArray()`. Each
+concrete result set declares `current()` with its own row type and implements it by
+returning `$this->currentRow()`, which serves the row from the buffer or the data source
+and passes it through `mapRow()` to give it that shape. A custom result set implements
+`current()`, `mapRow()` and `toArray()`. It can redeclare `HOLDS_MAPPED_ROWS` as `true`
+to hand out the same row objects on every buffered pass, and override
+`resetResolvedConfiguration()` to forget anything it cached when `initialize()` is given
+a new data source.
 
 ## HydratingResultSet
 
@@ -144,6 +150,55 @@ For more information, see the
 [laminas-hydrator](https://docs.laminas.dev/laminas-hydrator/)
 documentation to get a better sense of the different strategies that can be
 employed in order to populate a target object.
+
+## ObjectResultSet
+
+`PhpDb\ResultSet\ObjectResultSet` is for fetch modes that yield objects, such as
+`PDO::FETCH_OBJ` and `PDO::FETCH_LAZY`. Rows leave it as the very instances the driver
+produced: nothing is cloned, hydrated or reshaped.
+
+```php title="Using ObjectResultSet with PDO::FETCH_OBJ"
+use PDO;
+use PhpDb\ResultSet\ObjectResultSet;
+
+$result = $statement->execute();
+$result->setFetchMode(PDO::FETCH_OBJ);
+
+$resultSet = new ObjectResultSet();
+$resultSet->initialize($result);
+
+foreach ($resultSet as $user) {
+    printf("%s %s\n", $user->first_name, $user->last_name);
+}
+```
+
+`toArray()` reads each row's values, either by traversing it or by reading its public
+properties. A row that exposes neither — a `PDORow` from `PDO::FETCH_LAZY`, for
+instance — throws rather than yielding an empty array, so iterate such a result set
+instead of calling `toArray()` on it.
+
+## Choosing a Result Set
+
+A result set fills its rows from row data, meaning an `array` or an `ArrayObject`. It
+will not transform a row the driver handed it into some other shape, so the fetch mode
+and the result set have to agree; where they do not, the row is refused with a
+`PhpDb\ResultSet\Exception\UnexpectedValueException` naming both types.
+
+| Result set | Rows arrive as | Rows leave as |
+|---|---|---|
+| `ResultSet` | row data, or an `ArrayObject` | a filled `ArrayObject` prototype, an array, or that same `ArrayObject` |
+| `ArrayResultSet` | row data | an array |
+| `ObjectResultSet` | any object | that same object |
+| `HydratingResultSet` | row data | the hydrated row prototype |
+| `RowPrototypeResultSet` | row data, or a `RowPrototypeInterface` | a populated `RowPrototypeInterface` |
+
+With PDO that means `FETCH_ASSOC` and `FETCH_NAMED` suit every row-data set.
+`FETCH_NUM`, `FETCH_BOTH` and `FETCH_KEY_PAIR` give rows with integer keys, which
+`ResultSet`, `ArrayResultSet` and `RowPrototypeResultSet` accept but a hydrator cannot
+map to properties, so `HydratingResultSet` fails on them with a `TypeError` from
+laminas-hydrator. `FETCH_OBJ` and `FETCH_LAZY` need `ObjectResultSet`. `FETCH_BOUND`
+yields only a success flag and binds its columns by reference, so no result set accepts
+its rows; read the bound variables instead.
 
 ## Data Source Types
 

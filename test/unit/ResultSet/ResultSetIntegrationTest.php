@@ -9,7 +9,9 @@ use ArrayObject;
 use Override;
 use PhpDb\Adapter\Driver\ResultInterface;
 use PhpDb\ResultSet\AbstractResultSet;
+use PhpDb\ResultSet\Exception\InvalidArgumentException;
 use PhpDb\ResultSet\Exception\RuntimeException;
+use PhpDb\ResultSet\Exception\UnexpectedValueException;
 use PhpDb\ResultSet\ResultSet;
 use PhpDb\ResultSet\ResultSetReturnType;
 use PHPUnit\Framework\Attributes\CoversMethod;
@@ -23,13 +25,17 @@ use SplStack;
 use stdClass;
 use TypeError;
 
+use function count;
+use function get_debug_type;
 use function is_array;
 use function random_int;
 use function var_export;
 
-#[CoversMethod(AbstractResultSet::class, 'current')]
+#[CoversMethod(AbstractResultSet::class, 'currentRow')]
+#[CoversMethod(AbstractResultSet::class, 'resolveIterator')]
 #[CoversMethod(AbstractResultSet::class, 'buffer')]
 #[CoversMethod(ResultSet::class, 'current')]
+#[CoversMethod(ResultSet::class, 'mapRow')]
 #[CoversMethod(ResultSet::class, 'getReturnType')]
 #[CoversMethod(ResultSet::class, '__construct')]
 #[CoversMethod(ResultSet::class, 'getArrayObjectPrototype')]
@@ -37,12 +43,13 @@ use function var_export;
 #[CoversMethod(ResultSet::class, 'setArrayObjectPrototype')]
 #[CoversMethod(ResultSet::class, 'setRowPrototype')]
 #[CoversMethod(ResultSet::class, 'toArray')]
+#[CoversMethod(ResultSet::class, 'resetResolvedConfiguration')]
+#[CoversMethod(AbstractResultSet::class, 'resetResolvedConfiguration')]
 #[Group('unit')]
 final class ResultSetIntegrationTest extends TestCase
 {
     protected ResultSet $resultSet;
 
-    /** @psalm-return array<array-key, array{0: mixed}> */
     public static function invalidReturnTypes(): array
     {
         return [
@@ -53,6 +60,104 @@ final class ResultSetIntegrationTest extends TestCase
             [['foo']],
             [new stdClass()],
         ];
+    }
+
+    /** @psalm-return array<array-key, array{0: mixed}> */
+    /**
+     * Every case in ResultSetReturnType and the type a row arrives as, so a case
+     * cannot be added without deciding what current() does with it.
+     *
+     * @return array<string, array{0: ResultSetReturnType, 1: string}>
+     */
+    public static function returnTypeProvider(): array
+    {
+        $cases = [
+            'ArrayObject fills the row prototype' => [ResultSetReturnType::ArrayObject, ArrayObject::class],
+            'Prototype fills the row prototype'   => [ResultSetReturnType::Prototype, ArrayObject::class],
+            'Array hands back the raw row'        => [ResultSetReturnType::Array, 'array'],
+        ];
+
+        self::assertSame(
+            count(ResultSetReturnType::cases()),
+            count($cases),
+            'every ResultSetReturnType case needs a row type asserted here',
+        );
+
+        return $cases;
+    }
+
+    #[Test]
+    public function aBufferedPassAfterSetRowPrototypeUsesTheNewPrototype(): void
+    {
+        $resultSet = new ResultSet();
+        $resultSet->initialize(new ArrayIterator([['id' => 1]]));
+        $resultSet->buffer();
+        $resultSet->current();
+
+        $resultSet->setRowPrototype(new class([], ArrayObject::ARRAY_AS_PROPS) extends ArrayObject {});
+        $resultSet->rewind();
+
+        static::assertNotSame(ArrayObject::class, $resultSet->current()::class);
+    }
+
+    #[Test]
+    public function aBufferedResultSetBuildsFreshRowsOnEveryPass(): void
+    {
+        $resultSet = new ResultSet();
+        $resultSet->initialize(new ArrayIterator([['id' => 1], ['id' => 2]]));
+        $resultSet->buffer();
+
+        $first = $resultSet->current();
+        $resultSet->rewind();
+
+        static::assertNotSame($first, $resultSet->current());
+        static::assertEquals($first, $resultSet->current());
+    }
+
+    #[Test]
+    public function aChangeToARowInOneBufferedPassDoesNotReachTheNext(): void
+    {
+        $this->resultSet->initialize(new ArrayIterator([['id' => 1, 'name' => 'one']]));
+        $this->resultSet->buffer();
+
+        $row = $this->resultSet->current();
+        static::assertInstanceOf(ArrayObject::class, $row);
+        $row['name'] = 'ONE';
+        $this->resultSet->rewind();
+
+        static::assertSame(['id' => 1, 'name' => 'one'], $this->resultSet->current()?->getArrayCopy());
+    }
+
+    #[Test]
+    public function aRowPrototypeSetAfterABufferedPassShapesTheNext(): void
+    {
+        $this->resultSet->initialize(new ArrayIterator([['id' => 1]]));
+        $this->resultSet->buffer();
+        $this->resultSet->current();
+
+        $prototype = new class extends ArrayObject {};
+        $this->resultSet->setRowPrototype($prototype);
+        $this->resultSet->rewind();
+
+        static::assertInstanceOf($prototype::class, $this->resultSet->current());
+    }
+
+    #[Test]
+    public function aSubclassGetRowPrototypeDecidesTheRowClass(): void
+    {
+        $resultSet = new class extends ResultSet {
+            #[Override]
+            public function getRowPrototype(): ArrayObject
+            {
+                return new class([], ArrayObject::ARRAY_AS_PROPS) extends ArrayObject {};
+            }
+        };
+        $resultSet->initialize([['id' => 1]]);
+
+        $row = $resultSet->current();
+
+        static::assertInstanceOf(ArrayObject::class, $row);
+        static::assertNotSame(ArrayObject::class, $row::class);
     }
 
     /**
@@ -97,13 +202,14 @@ final class ResultSetIntegrationTest extends TestCase
     #[Test]
     public function canProvideIteratorAggregateAsDataSource(): void
     {
+        $iterator          = new ArrayIterator([['id' => 1, 'name' => 'one']]);
         $iteratorAggregate = $this->getMockBuilder('IteratorAggregate')
             ->onlyMethods(['getIterator'])
             ->getMock();
-        $iteratorAggregate->expects($this->any())->method('getIterator')->willReturn($iteratorAggregate);
-        // Initialize with IteratorAggregate and verify its iterator is used
+        $iteratorAggregate->expects($this->any())->method('getIterator')->willReturn($iterator);
+        // Initialize with IteratorAggregate and verify the iterator it wraps is stored
         $this->resultSet->initialize($iteratorAggregate);
-        static::assertSame($iteratorAggregate->getIterator(), $this->resultSet->getDataSource());
+        static::assertSame($iterator, $this->resultSet->getDataSource());
     }
 
     /**
@@ -148,6 +254,25 @@ final class ResultSetIntegrationTest extends TestCase
         static::assertNotSame($first, $second);
     }
 
+    /**
+     * @throws Exception
+     * @throws \Exception
+     */
+    #[Test]
+    public function currentRejectsARowThatIsNotArrayData(): void
+    {
+        $mockResult = $this->createMock(ResultInterface::class);
+        $mockResult->method('current')->willReturn('Not an Array');
+
+        $this->resultSet->initialize($mockResult);
+        $this->resultSet->buffer();
+
+        self::expectException(UnexpectedValueException::class);
+        self::expectExceptionMessage('A row of type "string"');
+
+        $this->resultSet->current();
+    }
+
     #[Test]
     public function currentReturnsArrayObjectWhenReturnTypeIsArrayObject(): void
     {
@@ -173,29 +298,13 @@ final class ResultSetIntegrationTest extends TestCase
     }
 
     /**
-     * @throws Exception
-     * @throws \Exception
-     */
-    #[Test]
-    public function currentReturnsNullForNonExistingValues(): void
-    {
-        $mockResult = $this->createMock(ResultInterface::class);
-        $mockResult->expects($this->once())->method('current')->willReturn('Not an Array');
-
-        $this->resultSet->initialize($mockResult);
-        $this->resultSet->buffer();
-
-        // Verify current() returns null when data source returns non-array value
-        static::assertNull($this->resultSet->current());
-    }
-
-    /**
      * @throws \Exception
      */
     #[Test]
     public function currentWithBufferingCallsDataSourceCurrentOnce(): void
     {
         $mockResult = $this->getMockBuilder(ResultInterface::class)->getMock();
+        $mockResult->method('valid')->willReturn(true);
         $mockResult->expects($this->once())->method('current')->willReturn(['foo' => 'bar']);
 
         $this->resultSet->initialize($mockResult);
@@ -212,6 +321,16 @@ final class ResultSetIntegrationTest extends TestCase
     {
         // Verify data source is null before initialization
         static::assertNull($this->resultSet->getDataSource());
+    }
+
+    #[Test]
+    #[DataProvider('returnTypeProvider')]
+    public function everyReturnTypeYieldsItsRowType(ResultSetReturnType $returnType, string $expected): void
+    {
+        $resultSet = new ResultSet($returnType);
+        $resultSet->initialize([['id' => 1, 'name' => 'one']]);
+
+        static::assertSame($expected, get_debug_type($resultSet->current()));
     }
 
     #[Test]
@@ -280,6 +399,21 @@ final class ResultSetIntegrationTest extends TestCase
         // Verify invalid data source throws TypeError
         self::expectException(TypeError::class);
         $this->resultSet->initialize($dataSource);
+    }
+
+    /**
+     * @throws \Exception
+     */
+    #[Test]
+    public function rejectsAnIteratorAggregateThatNeverResolvesToAnIterator(): void
+    {
+        $iteratorAggregate = $this->getMockBuilder('IteratorAggregate')
+            ->onlyMethods(['getIterator'])
+            ->getMock();
+        $iteratorAggregate->expects($this->any())->method('getIterator')->willReturn($iteratorAggregate);
+
+        self::expectException(InvalidArgumentException::class);
+        $this->resultSet->initialize($iteratorAggregate);
     }
 
     #[Test]

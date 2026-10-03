@@ -6,6 +6,8 @@ namespace PhpDb\ResultSet;
 
 /**
  * Capability interface for a ResultSet whose rows clone a RowPrototypeInterface prototype.
+ *
+ * @api
  */
 interface RowPrototypeResultSetInterface
 {
