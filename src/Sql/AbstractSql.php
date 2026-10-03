@@ -442,7 +442,7 @@ abstract class AbstractSql implements SqlInterface
 
         return $isIdentifier
             ? $fromTable . $platform->quoteIdentifierInFragment($column)
-            : $platform->quoteValue($column);
+            : $platform->quoteValue((string) $column);
     }
 
     protected function resolveTable(

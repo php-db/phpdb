@@ -1911,12 +1911,6 @@ count = 1
 [[issues]]
 file = "src/Sql/AbstractSql.php"
 code = "mixed-argument"
-message = 'Invalid argument type for argument #1 of `PhpDb\Adapter\Platform\PlatformInterface::quoteValue`: expected `string`, but found `nonnull`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/AbstractSql.php"
-code = "mixed-argument"
 message = "Invalid argument type for argument #1 of `count`: expected `Countable|array<array-key, mixed>`, but found `mixed`."
 count = 2
 
@@ -4469,12 +4463,6 @@ file = "src/Sql/Select.php"
 code = "possibly-false-iterator"
 message = 'Expression being iterated (type `array<array-key, mixed>|false|list<PhpDb\Sql\ExpressionInterface|string>`) might be `false` at runtime.'
 count = 1
-
-[[issues]]
-file = "src/Sql/Select.php"
-code = "possibly-invalid-argument"
-message = 'Possible argument type mismatch for argument #1 of `PhpDb\Adapter\Platform\PlatformInterface::quoteValue`: expected `string`, but possibly received `int|string`.'
-count = 2
 
 [[issues]]
 file = "src/Sql/Select.php"
