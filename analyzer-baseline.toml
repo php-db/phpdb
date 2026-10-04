@@ -2065,18 +2065,6 @@ message = "Possibly undefined array key `string('combine')` accessed on `array<s
 count = 1
 
 [[issues]]
-file = "src/Sql/Combine.php"
-code = "undefined-int-array-index"
-message = 'Undefined list index `1` accessed on `list{PhpDb\Sql\Select}`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Combine.php"
-code = "undefined-int-array-index"
-message = 'Undefined list index `2` accessed on `list{PhpDb\Sql\Select}`.'
-count = 1
-
-[[issues]]
 file = "src/Sql/Ddl/AlterTable.php"
 code = "class-must-be-final"
 message = 'Class `PhpDb\Sql\Ddl\AlterTable` should be declared `final`.'
