@@ -2618,12 +2618,6 @@ count = 1
 
 [[issues]]
 file = "src/Sql/Expression.php"
-code = "mixed-argument"
-message = "Invalid argument type for argument #4 of `str_replace`: expected `int|null`, but found `mixed`."
-count = 1
-
-[[issues]]
-file = "src/Sql/Expression.php"
 code = "possibly-null-argument"
 message = "Argument #1 of function `array_unique` is possibly `null`, but parameter type `array<array-key, string>` does not accept it."
 count = 1
@@ -2632,18 +2626,6 @@ count = 1
 file = "src/Sql/Expression.php"
 code = "possibly-undefined-int-array-index"
 message = "Possibly undefined array index accessed on `list<array<array-key, string>>`."
-count = 1
-
-[[issues]]
-file = "src/Sql/Expression.php"
-code = "reference-to-undefined-variable"
-message = "Reference created from a previously undefined variable `$count`."
-count = 1
-
-[[issues]]
-file = "src/Sql/Expression.php"
-code = "reference-to-undefined-variable"
-message = "Reference created from a previously undefined variable `$matches`."
 count = 1
 
 [[issues]]

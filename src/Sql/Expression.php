@@ -82,11 +82,13 @@ class Expression extends AbstractExpression
         }
 
         // assign locally, escaping % signs
+        $count         = 0;
         $specification = str_replace(self::PLACEHOLDER, replace: '%s', subject: $specification, count: $count);
 
         // test number of replacements without considering same variable begin used many times first, which is
         // faster, if the test fails then resort to regex which are slow and used rarely
         if ($count !== $parametersCount) {
+            $matches = [];
             preg_match_all('/:\w*/', $specification, $matches);
             if (count(array_unique($matches[0])) !== $parametersCount) {
                 throw Exception\RuntimeException::forReplacementMismatch();
