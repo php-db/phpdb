@@ -100,10 +100,12 @@ abstract class AbstractSql implements SqlInterface
         $paramSpecs          = [];
 
         foreach ($specifications as $candidateString => $paramSpecs) {
-            if (count($paramSpecs) === $parametersCount) {
-                $specificationString = (string) $candidateString;
-                break;
+            if (count($paramSpecs) !== $parametersCount) {
+                continue;
             }
+
+            $specificationString = (string) $candidateString;
+            break;
         }
 
         if (null === $specificationString) {
