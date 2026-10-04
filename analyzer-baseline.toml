@@ -2347,18 +2347,6 @@ message = 'Abstract class `PhpDb\Sql\Ddl\Constraint\AbstractConstraint` is missi
 count = 1
 
 [[issues]]
-file = "src/Sql/Ddl/Constraint/AbstractConstraint.php"
-code = "possibly-null-argument"
-message = 'Argument #1 of method `PhpDb\Sql\Argument\Identifier::__construct` is possibly `null`, but parameter type `string` does not accept it.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/Constraint/AbstractConstraint.php"
-code = "possibly-undefined-int-array-index"
-message = "Possibly undefined array index accessed on `list<string>`."
-count = 1
-
-[[issues]]
 file = "src/Sql/Ddl/Constraint/Check.php"
 code = "class-must-be-final"
 message = 'Class `PhpDb\Sql\Ddl\Constraint\Check` should be declared `final`.'
@@ -2530,18 +2518,6 @@ count = 1
 file = "src/Sql/Ddl/Index/Index.php"
 code = "class-must-be-final"
 message = 'Class `PhpDb\Sql\Ddl\Index\Index` should be declared `final`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/Index/Index.php"
-code = "possibly-null-argument"
-message = 'Argument #1 of method `PhpDb\Sql\Argument\Identifier::__construct` is possibly `null`, but parameter type `string` does not accept it.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/Index/Index.php"
-code = "possibly-undefined-int-array-index"
-message = "Possibly undefined array index accessed on `list<string>`."
 count = 1
 
 [[issues]]
