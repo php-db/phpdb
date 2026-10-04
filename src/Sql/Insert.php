@@ -21,6 +21,9 @@ use function is_scalar;
 use function range;
 use function str_replace;
 
+/**
+ * @psalm-import-type Specification from AbstractSql
+ */
 class Insert extends AbstractPreparableSql
 {
     /**
@@ -36,14 +39,16 @@ class Insert extends AbstractPreparableSql
 
     final public const VALUES_SET = 'set';
 
-    /** @var string[]|array[] $specifications */
+    /** @var array<string, Specification> */
     protected array $specifications = [
         self::SPECIFICATION_INSERT => 'INSERT INTO %1$s (%2$s) VALUES (%3$s)',
         self::SPECIFICATION_SELECT => 'INSERT INTO %1$s %2$s %3$s',
     ];
 
+    /** @var TableIdentifier|string|array<string, string|TableIdentifier> */
     protected TableIdentifier|string|array $table = '';
 
+    /** @var array<array-key, mixed> */
     protected array $columns = [];
 
     protected array|Select|null $select = null;
@@ -60,6 +65,8 @@ class Insert extends AbstractPreparableSql
 
     /**
      * Specify columns
+     *
+     * @param list<string> $columns
      */
     public function columns(array $columns): static
     {
@@ -82,6 +89,8 @@ class Insert extends AbstractPreparableSql
 
     /**
      * Create INTO clause
+     *
+     * @param TableIdentifier|string|array<string, string|TableIdentifier> $table
      */
     public function into(TableIdentifier|string|array $table): static
     {
@@ -100,7 +109,8 @@ class Insert extends AbstractPreparableSql
     /**
      * Specify values to insert
      *
-     * @param string        $flag one of VALUES_MERGE or VALUES_SET; defaults to VALUES_SET
+     * @param array<array-key, mixed>|Select $values
+     * @param string                        $flag one of VALUES_MERGE or VALUES_SET; defaults to VALUES_SET
      * @throws Exception\InvalidArgumentException
      */
     public function values(array|Select $values, string $flag = self::VALUES_SET): static
@@ -211,6 +221,7 @@ class Insert extends AbstractPreparableSql
      *
      * @link http://stackoverflow.com/questions/173400/how-to-check-if-php-array-is-associative-or-sequential
      */
+    /** @param array<array-key, mixed> $array */
     private function isAssocativeArray(array $array): bool
     {
         return array_keys($array) !== range(0, count($array) - 1);

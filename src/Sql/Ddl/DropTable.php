@@ -8,12 +8,16 @@ use PhpDb\Adapter\Platform\PlatformInterface;
 use PhpDb\Sql\AbstractSql;
 use PhpDb\Sql\TableIdentifier;
 
+/**
+ * @psalm-import-type Specification from AbstractSql
+ */
 class DropTable extends AbstractSql
 {
     final public const TABLE = 'table';
 
     protected bool $ifExists = false;
 
+    /** @var array<string, Specification> */
     protected array $specifications = [
         self::TABLE => 'DROP TABLE %1$s%2$s',
     ];

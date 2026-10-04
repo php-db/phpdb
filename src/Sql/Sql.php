@@ -11,10 +11,12 @@ class Sql
 {
     protected AdapterInterface $adapter;
 
+    /** @var TableIdentifier|string|array<string, string|TableIdentifier>|null */
     protected TableIdentifier|string|array|null $table;
 
     protected Platform\PlatformDecoratorInterface $sqlPlatform;
 
+    /** @param TableIdentifier|string|array<string, string|TableIdentifier>|null $table */
     public function __construct(
         AdapterInterface $adapter,
         array|string|TableIdentifier|null $table = null,
@@ -59,6 +61,7 @@ class Sql
         return $this->sqlPlatform;
     }
 
+    /** @return TableIdentifier|string|array<string, string|TableIdentifier>|null */
     public function getTable(): array|string|TableIdentifier|null
     {
         return $this->table;
@@ -106,6 +109,7 @@ class Sql
     }
 
     /**
+     * @param TableIdentifier|string|array<string, string|TableIdentifier> $table
      * @throws Exception\InvalidArgumentException
      */
     public function setTable(array|string|TableIdentifier $table): self
