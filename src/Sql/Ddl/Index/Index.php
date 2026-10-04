@@ -39,7 +39,7 @@ class Index extends AbstractIndex
             $specPart = '%s';
             $values[] = new Identifier($this->columns[$i]);
 
-            if (isset($this->lengths[$i])) {
+            if (null !== ($this->lengths[$i] ?? null)) {
                 $specPart .= "({$this->lengths[$i]})";
             }
 

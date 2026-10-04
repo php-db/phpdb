@@ -55,7 +55,7 @@ abstract class AbstractSql implements SqlInterface
     #[Override]
     public function getSqlString(?PlatformInterface $adapterPlatform = null): string
     {
-        $adapterPlatform = $adapterPlatform ?: new DefaultAdapterPlatform();
+        $adapterPlatform ??= new DefaultAdapterPlatform();
 
         return $this->buildSqlString($adapterPlatform);
     }
@@ -83,7 +83,7 @@ abstract class AbstractSql implements SqlInterface
             }
         }
 
-        return rtrim(implode(' ', $sqls), "\n ,");
+        return rtrim(implode(' ', $sqls), characters: "\n ,");
     }
 
     /**
@@ -95,23 +95,24 @@ abstract class AbstractSql implements SqlInterface
             return vsprintf($specifications, $parameters);
         }
 
-        $parametersCount = count($parameters);
+        $parametersCount     = count($parameters);
+        $specificationString = null;
+        $paramSpecs          = [];
 
-        foreach ($specifications as $specificationString => $paramSpecs) {
+        foreach ($specifications as $candidateString => $paramSpecs) {
             if (count($paramSpecs) === $parametersCount) {
+                $specificationString = (string) $candidateString;
                 break;
             }
-
-            unset($specificationString, $paramSpecs);
         }
 
-        if (! isset($specificationString)) {
+        if (null === $specificationString) {
             throw Exception\RuntimeException::forUnsupportedParameterCount();
         }
 
         $topParameters = [];
         foreach ($parameters as $position => $paramsForPosition) {
-            if (isset($paramSpecs[$position]['combinedby'])) {
+            if (null !== ($paramSpecs[$position]['combinedby'] ?? null)) {
                 $multiParamValues = [];
                 foreach ($paramsForPosition as $multiParamsForPosition) {
                     if (is_array($multiParamsForPosition)) {
@@ -121,7 +122,7 @@ abstract class AbstractSql implements SqlInterface
                         $multiParamsForPosition = [$multiParamsForPosition];
                     }
 
-                    if (! isset($paramSpecs[$position][$ppCount])) {
+                    if (null === ($paramSpecs[$position][$ppCount] ?? null)) {
                         throw Exception\RuntimeException::forUnsupportedParameterCountOf($ppCount);
                     }
 
@@ -131,7 +132,7 @@ abstract class AbstractSql implements SqlInterface
                 $topParameters[] = implode($paramSpecs[$position]['combinedby'], $multiParamValues);
             } elseif (null !== $paramSpecs[$position]) {
                 $ppCount = count($paramsForPosition);
-                if (! isset($paramSpecs[$position][$ppCount])) {
+                if (null === ($paramSpecs[$position][$ppCount] ?? null)) {
                     throw Exception\RuntimeException::forUnsupportedParameterCountOf($ppCount);
                 }
 
@@ -208,7 +209,7 @@ abstract class AbstractSql implements SqlInterface
         $expressionValues = $expressionData['values'];
 
         if ([] === $expressionValues) {
-            return str_replace('%%', '%', $specification);
+            return str_replace('%%', replace: '%', subject: $specification);
         }
 
         if (null === $namedParameterPrefix || '' === $namedParameterPrefix) {
@@ -218,12 +219,10 @@ abstract class AbstractSql implements SqlInterface
         } else {
             $namedParameterPrefix =
                 $this->processInfo['paramPrefix']
-                . str_replace([' ', "\t", "\n", "\r"], '__', $namedParameterPrefix);
+                . str_replace([' ', "\t", "\n", "\r"], replace: '__', subject: $namedParameterPrefix);
         }
 
-        if (! isset($this->instanceParameterIndex[$namedParameterPrefix])) {
-            $this->instanceParameterIndex[$namedParameterPrefix] = 1;
-        }
+        $this->instanceParameterIndex[$namedParameterPrefix] ??= 1;
 
         $expressionParamIndex = &$this->instanceParameterIndex[$namedParameterPrefix];
         $expressionValues     = $this->flattenExpressionValues($expressionValues);
