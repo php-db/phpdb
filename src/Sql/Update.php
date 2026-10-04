@@ -152,9 +152,11 @@ class Update extends AbstractPreparableSql
     ): static {
         if ($predicate instanceof Where) {
             $this->where = $predicate;
-        } else {
-            $this->getWhere()->addPredicates($predicate, $combination);
+
+            return $this;
         }
+
+        $this->getWhere()->addPredicates($predicate, $combination);
 
         return $this;
     }
@@ -199,15 +201,16 @@ class Update extends AbstractPreparableSql
 
                 $setSql[] = $prefix . $driver->formatParameterName($column);
                 $parameterContainer->offsetSet($column, $value);
-            } else {
-                $setSql[] = $prefix
-                . $this->resolveColumnValue(
-                    $value,
-                    $platform,
-                    $driver,
-                    $parameterContainer,
-                );
+                continue;
             }
+
+            $setSql[] = $prefix
+            . $this->resolveColumnValue(
+                $value,
+                $platform,
+                $driver,
+                $parameterContainer,
+            );
         }
 
         return str_replace(

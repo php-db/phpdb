@@ -67,18 +67,16 @@ class Column implements ColumnInterface
             new Literal($this->type),
         ];
 
-        if (false === $this->isNullable) {
-            $specParts[] = 'NOT NULL';
-        } else {
-            $specParts[] = 'NULL';
-        }
+        $specParts[] = $this->isNullable ? 'NULL' : 'NOT NULL';
 
         if (null !== $this->default) {
             $specParts[] = 'DEFAULT %s';
             $values[]    = $this->default instanceof ArgumentInterface
                 ? $this->default
                 : new Value($this->default);
-        } elseif ($this->isNullable) {
+        }
+
+        if (null === $this->default && $this->isNullable) {
             $specParts[] = 'DEFAULT NULL';
         }
 

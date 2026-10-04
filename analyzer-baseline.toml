@@ -1851,6 +1851,12 @@ count = 1
 [[issues]]
 file = "src/Sql/AbstractSql.php"
 code = "possibly-invalid-argument"
+message = 'Possible argument type mismatch for argument #1 of `PhpDb\Adapter\Platform\PlatformInterface::quoteIdentifier`: expected `string`, but possibly received `non-empty-array<string, PhpDb\Sql\Expression|PhpDb\Sql\Select|PhpDb\Sql\TableIdentifier|string>|null|string`.'
+count = 1
+
+[[issues]]
+file = "src/Sql/AbstractSql.php"
+code = "possibly-invalid-argument"
 message = 'Possible argument type mismatch for argument #1 of `PhpDb\Adapter\Platform\PlatformInterface::quoteValue`: expected `string`, but possibly received `bool|int|string`.'
 count = 1
 
@@ -2230,12 +2236,6 @@ count = 1
 file = "src/Sql/Ddl/Column/Column.php"
 code = "mixed-argument"
 message = 'Invalid argument type for argument #1 of `PhpDb\Sql\Ddl\Column\Column::setDefault`: expected `PhpDb\Sql\Argument\Literal|PhpDb\Sql\Argument\Value|null|scalar`, but found `mixed`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/Column/Column.php"
-code = "redundant-comparison"
-message = "Avoid direct comparison with boolean literals."
 count = 1
 
 [[issues]]
@@ -2673,7 +2673,7 @@ count = 1
 [[issues]]
 file = "src/Sql/Insert.php"
 code = "less-specific-nested-argument-type"
-message = "Argument type mismatch for argument #2 of `implode`: expected `array<array-key, Stringable|null|scalar>|null`, but provided type `non-empty-list<mixed>` is less specific."
+message = "Argument type mismatch for argument #2 of `implode`: expected `array<array-key, Stringable|null|scalar>|null`, but provided type `list<mixed>` is less specific."
 count = 1
 
 [[issues]]
@@ -3387,7 +3387,7 @@ count = 1
 [[issues]]
 file = "src/Sql/Select.php"
 code = "invalid-return-statement"
-message = 'Invalid return type for function `PhpDb\Sql\Select::resolveTable`: expected `array{0: null|string, 1: string}`, but found `list{array<array-key, mixed>|null|string, string}`.'
+message = '''Invalid return type for function `PhpDb\Sql\Select::resolveTable`: expected `array{0: null|string, 1: string}`, but found `list{array<array-key, mixed>|null|string, string('')|truthy-string}`.'''
 count = 1
 
 [[issues]]

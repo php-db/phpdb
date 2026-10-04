@@ -132,10 +132,12 @@ class Insert extends AbstractPreparableSql
             $this->columns = $this->isAssocativeArray($values)
                 ? $values
                 : array_combine(array_keys($this->columns), array_values($values));
-        } else {
-            foreach ($values as $column => $value) {
-                $this->columns[$column] = $value;
-            }
+
+            return $this;
+        }
+
+        foreach ($values as $column => $value) {
+            $this->columns[$column] = $value;
         }
 
         return $this;
@@ -170,14 +172,15 @@ class Insert extends AbstractPreparableSql
 
                 $values[] = $driver->formatParameterName($column);
                 $parameterContainer->offsetSet($column, $value);
-            } else {
-                $values[] = $this->resolveColumnValue(
-                    $value,
-                    $platform,
-                    $driver,
-                    $parameterContainer,
-                );
+                continue;
             }
+
+            $values[] = $this->resolveColumnValue(
+                $value,
+                $platform,
+                $driver,
+                $parameterContainer,
+            );
         }
 
         return str_replace(
