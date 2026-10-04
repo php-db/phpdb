@@ -11,7 +11,7 @@ use PhpDb\Sql\Delete;
 
 class DeleteIgnore extends Delete
 {
-    public const SPECIFICATION_DELETE = 'deleteIgnore';
+    public const string SPECIFICATION_DELETE = 'deleteIgnore';
 
     /** @var array<string, string> */
     protected array $specifications = [

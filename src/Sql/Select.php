@@ -48,59 +48,59 @@ class Select extends AbstractPreparableSql
      *
      * @const
      */
-    final public const SELECT = 'select';
+    final public const string SELECT = 'select';
 
-    final public const QUANTIFIER = 'quantifier';
+    final public const string QUANTIFIER = 'quantifier';
 
-    final public const COLUMNS = 'columns';
+    final public const string COLUMNS = 'columns';
 
-    final public const TABLE = 'table';
+    final public const string TABLE = 'table';
 
-    final public const JOINS = 'joins';
+    final public const string JOINS = 'joins';
 
-    final public const WHERE = 'where';
+    final public const string WHERE = 'where';
 
-    final public const GROUP = 'group';
+    final public const string GROUP = 'group';
 
-    final public const HAVING = 'having';
+    final public const string HAVING = 'having';
 
-    final public const ORDER = 'order';
+    final public const string ORDER = 'order';
 
-    final public const LIMIT = 'limit';
+    final public const string LIMIT = 'limit';
 
-    final public const OFFSET = 'offset';
+    final public const string OFFSET = 'offset';
 
-    final public const QUANTIFIER_DISTINCT = 'DISTINCT';
+    final public const string QUANTIFIER_DISTINCT = 'DISTINCT';
 
-    final public const QUANTIFIER_ALL = 'ALL';
+    final public const string QUANTIFIER_ALL = 'ALL';
 
-    final public const JOIN_INNER = Join::JOIN_INNER;
+    final public const string JOIN_INNER = Join::JOIN_INNER;
 
-    final public const JOIN_OUTER = Join::JOIN_OUTER;
+    final public const string JOIN_OUTER = Join::JOIN_OUTER;
 
-    final public const JOIN_FULL_OUTER = Join::JOIN_FULL_OUTER;
+    final public const string JOIN_FULL_OUTER = Join::JOIN_FULL_OUTER;
 
-    final public const JOIN_LEFT = Join::JOIN_LEFT;
+    final public const string JOIN_LEFT = Join::JOIN_LEFT;
 
-    final public const JOIN_RIGHT = Join::JOIN_RIGHT;
+    final public const string JOIN_RIGHT = Join::JOIN_RIGHT;
 
-    final public const JOIN_RIGHT_OUTER = Join::JOIN_RIGHT_OUTER;
+    final public const string JOIN_RIGHT_OUTER = Join::JOIN_RIGHT_OUTER;
 
-    final public const JOIN_LEFT_OUTER = Join::JOIN_LEFT_OUTER;
+    final public const string JOIN_LEFT_OUTER = Join::JOIN_LEFT_OUTER;
 
-    final public const SQL_STAR = '*';
+    final public const string SQL_STAR = '*';
 
-    final public const ORDER_ASCENDING = 'ASC';
+    final public const string ORDER_ASCENDING = 'ASC';
 
-    final public const ORDER_DESCENDING = 'DESC';
+    final public const string ORDER_DESCENDING = 'DESC';
 
-    final public const COMBINE = 'combine';
+    final public const string COMBINE = 'combine';
 
-    final public const COMBINE_UNION = 'union';
+    final public const string COMBINE_UNION = 'union';
 
-    final public const COMBINE_EXCEPT = 'except';
+    final public const string COMBINE_EXCEPT = 'except';
 
-    final public const COMBINE_INTERSECT = 'intersect';
+    final public const string COMBINE_INTERSECT = 'intersect';
 
     /** @var array<string, Specification> */
     protected array $specifications = [

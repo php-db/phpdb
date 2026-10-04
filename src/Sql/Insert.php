@@ -31,13 +31,13 @@ class Insert extends AbstractPreparableSql
      *
      * @const
      */
-    public const SPECIFICATION_INSERT = 'insert';
+    public const string SPECIFICATION_INSERT = 'insert';
 
-    final public const SPECIFICATION_SELECT = 'select';
+    final public const string SPECIFICATION_SELECT = 'select';
 
-    final public const VALUES_MERGE = 'merge';
+    final public const string VALUES_MERGE = 'merge';
 
-    final public const VALUES_SET = 'set';
+    final public const string VALUES_SET = 'set';
 
     /** @var array<string, Specification> */
     protected array $specifications = [

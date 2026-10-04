@@ -24,15 +24,15 @@ use function trim;
  */
 class Combine extends AbstractPreparableSql
 {
-    final public const COLUMNS = 'columns';
+    final public const string COLUMNS = 'columns';
 
-    final public const COMBINE = 'combine';
+    final public const string COMBINE = 'combine';
 
-    final public const COMBINE_UNION = 'union';
+    final public const string COMBINE_UNION = 'union';
 
-    final public const COMBINE_EXCEPT = 'except';
+    final public const string COMBINE_EXCEPT = 'except';
 
-    final public const COMBINE_INTERSECT = 'intersect';
+    final public const string COMBINE_INTERSECT = 'intersect';
 
     /** @var array<string, Specification> */
     protected array $specifications = [
