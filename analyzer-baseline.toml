@@ -1844,12 +1844,6 @@ count = 1
 
 [[issues]]
 file = "src/Sql/AbstractSql.php"
-code = "possibly-false-argument"
-message = 'Argument #1 of method `PhpDb\Adapter\Platform\PlatformInterface::quoteIdentifier` is possibly `false`, but parameter type `string` does not accept it.'
-count = 1
-
-[[issues]]
-file = "src/Sql/AbstractSql.php"
 code = "possibly-invalid-argument"
 message = 'Possible argument type mismatch for argument #1 of `PhpDb\Adapter\Platform\PlatformInterface::quoteIdentifierInFragment`: expected `string`, but possibly received `bool|int|string`.'
 count = 1
@@ -1912,6 +1906,12 @@ count = 1
 file = "src/Sql/AbstractSql.php"
 code = "possibly-null-argument"
 message = 'Argument #4 of method `PhpDb\Sql\AbstractSql::processExpressionParameterName` is possibly `null`, but parameter type `PhpDb\Adapter\Driver\DriverInterface` does not accept it.'
+count = 1
+
+[[issues]]
+file = "src/Sql/AbstractSql.php"
+code = "possibly-undefined-string-array-index"
+message = 'Possibly undefined array key `string` accessed on `non-empty-array<string, PhpDb\Sql\Expression|PhpDb\Sql\Select|PhpDb\Sql\TableIdentifier|string>`.'
 count = 1
 
 [[issues]]
@@ -3638,12 +3638,6 @@ count = 2
 
 [[issues]]
 file = "src/Sql/Select.php"
-code = "possibly-false-argument"
-message = 'Argument #1 of method `PhpDb\Sql\AbstractSql::resolveTable` is possibly `false`, but parameter type `PhpDb\Sql\Select|PhpDb\Sql\TableIdentifier|null|string` does not accept it.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Select.php"
 code = "possibly-false-iterator"
 message = 'Expression being iterated (type `array<array-key, PhpDb\Sql\ExpressionInterface|string>|false|list<PhpDb\Sql\ExpressionInterface|string>`) might be `false` at runtime.'
 count = 1
@@ -3692,6 +3686,12 @@ count = 1
 
 [[issues]]
 file = "src/Sql/Select.php"
+code = "possibly-null-array-index"
+message = "Possibly using `null` as an array index to access elementof variable $table."
+count = 1
+
+[[issues]]
+file = "src/Sql/Select.php"
 code = "possibly-null-operand"
 message = "Possibly null left operand used in string concatenation (type `array<array-key, mixed>|null|string`)."
 count = 1
@@ -3724,6 +3724,12 @@ count = 1
 file = "src/Sql/Select.php"
 code = "possibly-undefined-string-array-index"
 message = '''Possibly undefined array key 'type' accessed on `array{'modifier'?: truthy-string, 'select'?: PhpDb\Sql\Select, 'type'?: string}`.'''
+count = 1
+
+[[issues]]
+file = "src/Sql/Select.php"
+code = "possibly-undefined-string-array-index"
+message = 'Possibly undefined array key `null|string` accessed on `array<string, PhpDb\Sql\Select|PhpDb\Sql\TableIdentifier|string>`.'
 count = 1
 
 [[issues]]
