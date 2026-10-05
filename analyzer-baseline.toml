@@ -3807,24 +3807,6 @@ count = 1
 [[issues]]
 file = "src/Sql/Predicate/Predicate.php"
 code = "imprecise-type"
-message = "Type `array` in parameter `$identifier` is imprecise, equivalent to `array<array-key, mixed>`."
-count = 2
-
-[[issues]]
-file = "src/Sql/Predicate/Predicate.php"
-code = "imprecise-type"
-message = "Type `array` in parameter `$maxValue` is imprecise, equivalent to `array<array-key, mixed>`."
-count = 2
-
-[[issues]]
-file = "src/Sql/Predicate/Predicate.php"
-code = "imprecise-type"
-message = "Type `array` in parameter `$minValue` is imprecise, equivalent to `array<array-key, mixed>`."
-count = 2
-
-[[issues]]
-file = "src/Sql/Predicate/Predicate.php"
-code = "imprecise-type"
 message = "Type `array` in parameter `$parameters` is imprecise, equivalent to `array<array-key, mixed>`."
 count = 1
 
@@ -3845,48 +3827,6 @@ file = "src/Sql/Predicate/Predicate.php"
 code = "invalid-property-assignment-value"
 message = 'Invalid type for property `$unnest`: expected `PhpDb\Sql\Predicate\Predicate`, but got `null`.'
 count = 1
-
-[[issues]]
-file = "src/Sql/Predicate/Predicate.php"
-code = "possibly-invalid-argument"
-message = 'Possible argument type mismatch for argument #1 of `PhpDb\Sql\Predicate\Between::__construct`: expected `PhpDb\Sql\ArgumentInterface|null|string`, but possibly received `PhpDb\Sql\ArgumentInterface|array<array-key, mixed>|float|int|null|string`.'
-count = 2
-
-[[issues]]
-file = "src/Sql/Predicate/Predicate.php"
-code = "possibly-invalid-argument"
-message = 'Possible argument type mismatch for argument #1 of `PhpDb\Sql\Predicate\In::__construct`: expected `PhpDb\Sql\ArgumentInterface|null|string`, but possibly received `PhpDb\Sql\ArgumentInterface|float|int|string`.'
-count = 2
-
-[[issues]]
-file = "src/Sql/Predicate/Predicate.php"
-code = "possibly-invalid-argument"
-message = 'Possible argument type mismatch for argument #1 of `PhpDb\Sql\Predicate\IsNull::__construct`: expected `PhpDb\Sql\ArgumentInterface|null|string`, but possibly received `PhpDb\Sql\ArgumentInterface|float|int|string`.'
-count = 2
-
-[[issues]]
-file = "src/Sql/Predicate/Predicate.php"
-code = "possibly-invalid-argument"
-message = 'Possible argument type mismatch for argument #1 of `PhpDb\Sql\Predicate\Like::__construct`: expected `PhpDb\Sql\ArgumentInterface|null|string`, but possibly received `PhpDb\Sql\ArgumentInterface|float|int|null|string`.'
-count = 2
-
-[[issues]]
-file = "src/Sql/Predicate/Predicate.php"
-code = "possibly-invalid-argument"
-message = 'Possible argument type mismatch for argument #1 of `PhpDb\Sql\Predicate\Operator::__construct`: expected `PhpDb\Sql\ArgumentInterface|PhpDb\Sql\ExpressionInterface|PhpDb\Sql\SqlInterface|null|string`, but possibly received `PhpDb\Sql\ArgumentInterface|float|int|null|string`.'
-count = 6
-
-[[issues]]
-file = "src/Sql/Predicate/Predicate.php"
-code = "possibly-invalid-argument"
-message = 'Possible argument type mismatch for argument #2 of `PhpDb\Sql\Predicate\Between::__construct`: expected `PhpDb\Sql\ArgumentInterface|float|int|null|string`, but possibly received `PhpDb\Sql\ArgumentInterface|array<array-key, mixed>|float|int|null|string`.'
-count = 2
-
-[[issues]]
-file = "src/Sql/Predicate/Predicate.php"
-code = "possibly-invalid-argument"
-message = 'Possible argument type mismatch for argument #3 of `PhpDb\Sql\Predicate\Between::__construct`: expected `PhpDb\Sql\ArgumentInterface|float|int|null|string`, but possibly received `PhpDb\Sql\ArgumentInterface|array<array-key, mixed>|float|int|null|string`.'
-count = 2
 
 [[issues]]
 file = "src/Sql/Predicate/PredicateInterface.php"
