@@ -4562,6 +4562,12 @@ count = 1
 
 [[issues]]
 file = "src/Sql/Sql.php"
+code = "less-specific-argument"
+message = 'Argument type mismatch for argument #1 of `PhpDb\Sql\Exception\InvalidArgumentException::forForeignTable`: expected `PhpDb\Sql\TableIdentifier|array<string, PhpDb\Sql\TableIdentifier|string>|string`, but provided type `PhpDb\Sql\TableIdentifier|array<array-key, mixed>|string` is less specific.'
+count = 4
+
+[[issues]]
+file = "src/Sql/Sql.php"
 code = "overly-wide-return-type"
 message = 'Declared return type `PhpDb\Adapter\AdapterInterface|null` for `getadapter` has unused branches: `null`.'
 count = 1
@@ -4577,12 +4583,6 @@ file = "src/Sql/Sql.php"
 code = "possibly-invalid-argument"
 message = 'Possible argument type mismatch for argument #1 of `PhpDb\Sql\Delete::__construct`: expected `PhpDb\Sql\TableIdentifier|null|string`, but possibly received `PhpDb\Sql\TableIdentifier|array<array-key, mixed>|null|string`.'
 count = 1
-
-[[issues]]
-file = "src/Sql/Sql.php"
-code = "possibly-invalid-argument"
-message = 'Possible argument type mismatch for argument #1 of `PhpDb\Sql\Exception\InvalidArgumentException::forForeignTable`: expected `string`, but possibly received `PhpDb\Sql\TableIdentifier|array<array-key, mixed>|string`.'
-count = 4
 
 [[issues]]
 file = "src/Sql/Sql.php"

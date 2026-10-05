@@ -6,6 +6,7 @@ namespace PhpDbTest\Sql\Exception;
 
 use PhpDb\Exception\ExceptionInterface;
 use PhpDb\Sql\Exception\InvalidArgumentException;
+use PhpDb\Sql\TableIdentifier;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
@@ -26,6 +27,7 @@ use function sprintf;
 #[CoversMethod(InvalidArgumentException::class, 'forEmptySeparator')]
 #[CoversMethod(InvalidArgumentException::class, 'forEmptyTable')]
 #[CoversMethod(InvalidArgumentException::class, 'forForeignTable')]
+#[CoversMethod(InvalidArgumentException::class, 'describeTable')]
 #[CoversMethod(InvalidArgumentException::class, 'forInvalidArgumentType')]
 #[CoversMethod(InvalidArgumentException::class, 'forInvalidFromArray')]
 #[CoversMethod(InvalidArgumentException::class, 'forInvalidJoinName')]
@@ -41,6 +43,19 @@ use function sprintf;
 #[CoversMethod(InvalidArgumentException::class, 'forValuesWithMergeFlag')]
 final class InvalidArgumentExceptionTest extends TestCase
 {
+    /** @return array<string, array{string|TableIdentifier|array<string, string|TableIdentifier>, string}> */
+    public static function foreignTableProvider(): array
+    {
+        return [
+            'table name'                   => ['users', 'users'],
+            'table identifier'             => [new TableIdentifier('users'), 'users'],
+            'table identifier with schema' => [new TableIdentifier('users', 'app'), 'app.users'],
+            'aliased table name'           => [['u' => 'users'], 'users AS u'],
+            'aliased table identifier'     => [['u' => new TableIdentifier('users', 'app')], 'app.users AS u'],
+            'empty array'                  => [[], 'null'],
+        ];
+    }
+
     /** @return array<string, array{string, list<string|int>, string}> */
     public static function namedConstructorProvider(): array
     {
@@ -166,6 +181,21 @@ final class InvalidArgumentExceptionTest extends TestCase
                 InvalidArgumentException::VALUES_WITH_MERGE_FLAG,
             ],
         ];
+    }
+
+    /**
+     * @param string|TableIdentifier|array<string, string|TableIdentifier> $table
+     */
+    #[Test]
+    #[DataProvider('foreignTableProvider')]
+    public function forForeignTableDescribesEachKindOfTable(
+        string|TableIdentifier|array $table,
+        string $described,
+    ): void {
+        self::assertSame(
+            sprintf(InvalidArgumentException::FOREIGN_TABLE, $described),
+            InvalidArgumentException::forForeignTable($table)->getMessage(),
+        );
     }
 
     /** @param list<string|int> $arguments */

@@ -5,7 +5,11 @@ declare(strict_types=1);
 namespace PhpDb\Sql\Exception;
 
 use PhpDb\Exception;
+use PhpDb\Sql\TableIdentifier;
 
+use function array_key_first;
+use function get_debug_type;
+use function is_string;
 use function sprintf;
 
 class InvalidArgumentException extends Exception\InvalidArgumentException
@@ -111,9 +115,12 @@ class InvalidArgumentException extends Exception\InvalidArgumentException
         return new self(self::EMPTY_TABLE);
     }
 
-    public static function forForeignTable(string $table): self
+    /**
+     * @param string|TableIdentifier|array<string, string|TableIdentifier> $table
+     */
+    public static function forForeignTable(string|TableIdentifier|array $table): self
     {
-        return new self(sprintf(self::FOREIGN_TABLE, $table));
+        return new self(sprintf(self::FOREIGN_TABLE, self::describeTable($table)));
     }
 
     public static function forInvalidArgumentType(): self
@@ -194,5 +201,28 @@ class InvalidArgumentException extends Exception\InvalidArgumentException
     public static function forValuesWithMergeFlag(): self
     {
         return new self(self::VALUES_WITH_MERGE_FLAG);
+    }
+
+    /**
+     * @param string|TableIdentifier|array<string, string|TableIdentifier> $table
+     */
+    private static function describeTable(string|TableIdentifier|array $table): string
+    {
+        if (is_string($table)) {
+            return $table;
+        }
+
+        if ($table instanceof TableIdentifier) {
+            [$name, $schema] = $table->getTableAndSchema();
+
+            return null === $schema ? $name : "{$schema}.{$name}";
+        }
+
+        $alias  = (string) array_key_first($table);
+        $target = $table[$alias] ?? null;
+
+        return null === $target
+            ? get_debug_type($target)
+            : self::describeTable($target) . " AS {$alias}";
     }
 }

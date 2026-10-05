@@ -22,6 +22,7 @@ use PhpDb\Sql\TableIdentifier;
 use PhpDb\Sql\Update;
 use PhpDbTest\TestAsset;
 use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -48,6 +49,16 @@ final class SqlTest extends TestCase
      * Sql object
      */
     protected Sql $sql;
+
+    /** @return array<string, array{array<string, string|TableIdentifier>|TableIdentifier, string}> */
+    public static function foreignTableProvider(): array
+    {
+        return [
+            'table identifier with schema' => [new TableIdentifier('foo', 'sch'), 'sch.foo'],
+            'aliased table name'           => [['f' => 'foo'], 'foo AS f'],
+            'aliased table identifier'     => [['f' => new TableIdentifier('foo')], 'foo AS f'],
+        ];
+    }
 
     // @codingStandardsIgnoreStart
     #[Test]
@@ -119,6 +130,24 @@ final class SqlTest extends TestCase
             'This Sql object is intended to work with only the table "foo" provided at construction time.',
         );
         $this->sql->delete(new TableIdentifier('bar'));
+    }
+
+    /**
+     * @param array<string, string|TableIdentifier>|TableIdentifier $table
+     */
+    #[Test]
+    #[DataProvider('foreignTableProvider')]
+    public function foreignTableMessageDescribesTheConstructedTable(
+        array|TableIdentifier $table,
+        string $described,
+    ): void {
+        $sql = new Sql($this->mockAdapter, $table);
+
+        self::expectException(InvalidArgumentException::class);
+        self::expectExceptionMessage(
+            "This Sql object is intended to work with only the table \"{$described}\" provided at construction time.",
+        );
+        $sql->select('bar');
     }
 
     #[Test]
