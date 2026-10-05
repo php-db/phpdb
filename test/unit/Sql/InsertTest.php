@@ -10,6 +10,7 @@ use PhpDb\Adapter\Driver\PdoDriverInterface;
 use PhpDb\Adapter\Driver\StatementInterface;
 use PhpDb\Adapter\ParameterContainer;
 use PhpDb\Adapter\StatementContainer;
+use PhpDb\Sql\AbstractPreparableSql;
 use PhpDb\Sql\Exception\InvalidArgumentException;
 use PhpDb\Sql\Expression;
 use PhpDb\Sql\Insert;
@@ -21,6 +22,7 @@ use PhpDbTest\TestAsset\Replace;
 use PhpDbTest\TestAsset\TrustingSql92Platform;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\CoversNothing;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\IgnoreDeprecations;
 use PHPUnit\Framework\Attributes\RequiresPhp;
@@ -47,12 +49,22 @@ use function sprintf;
 #[CoversMethod(Insert::class, '__unset')]
 #[CoversMethod(Insert::class, '__isset')]
 #[CoversMethod(Insert::class, '__get')]
+#[CoversMethod(AbstractPreparableSql::class, 'unaliasTable')]
 final class InsertTest extends TestCase
 {
     use AdapterTestTrait;
     use DeprecatedAssertionsTrait;
 
     protected Insert $insert;
+
+    /** @return array<string, array{array<string, string|TableIdentifier>, string}> */
+    public static function aliasedTableProvider(): array
+    {
+        return [
+            'table name'       => [['f' => 'foo'], '"foo"'],
+            'table identifier' => [['f' => new TableIdentifier('foo', 'sch')], '"sch"."foo"'],
+        ];
+    }
 
     // @codingStandardsIgnoreStart
     #[Test]
@@ -172,6 +184,21 @@ final class InsertTest extends TestCase
         $this->insert->columns(['col1', 'col2']);
         static::assertSame(
             'INSERT INTO "foo" ("col1", "col2") SELECT "bar".* FROM "bar"',
+            $this->insert->getSqlString(new TrustingSql92Platform()),
+        );
+    }
+
+    /**
+     * @param array<string, string|TableIdentifier> $table
+     */
+    #[Test]
+    #[DataProvider('aliasedTableProvider')]
+    public function getSqlStringRendersBareTableForAliasedTable(array $table, string $expected): void
+    {
+        $this->insert->into($table)->values(['bar' => 'baz']);
+
+        static::assertSame(
+            "INSERT INTO {$expected} (\"bar\") VALUES ('baz')",
             $this->insert->getSqlString(new TrustingSql92Platform()),
         );
     }

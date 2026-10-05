@@ -22,6 +22,7 @@ use PhpDb\Sql\TableIdentifier;
 use PhpDb\Sql\Update;
 use PhpDbTest\TestAsset;
 use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -48,6 +49,16 @@ final class SqlTest extends TestCase
      * Sql object
      */
     protected Sql $sql;
+
+    /** @return array<string, array{'delete'|'insert'|'update'}> */
+    public static function dataChangingStatementProvider(): array
+    {
+        return [
+            'delete' => ['delete'],
+            'insert' => ['insert'],
+            'update' => ['update'],
+        ];
+    }
 
     // @codingStandardsIgnoreStart
     #[Test]
@@ -94,6 +105,18 @@ final class SqlTest extends TestCase
         self::expectException(RuntimeException::class);
         self::expectExceptionMessage(RuntimeException::SUBJECT_NOT_SQL_INTERFACE);
         $sql->buildSqlString($this->sql->select());
+    }
+
+    /**
+     * @param 'delete'|'insert'|'update' $method
+     */
+    #[Test]
+    #[DataProvider('dataChangingStatementProvider')]
+    public function dataChangingStatementKeepsAliasedTable(string $method): void
+    {
+        $sql = new Sql($this->mockAdapter, ['f' => 'foo']);
+
+        static::assertSame(['f' => 'foo'], $sql->{$method}()->getRawState('table'));
     }
 
     #[Test]

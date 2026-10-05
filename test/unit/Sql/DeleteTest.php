@@ -7,6 +7,7 @@ namespace PhpDbTest\Sql;
 use Override;
 use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\Driver\StatementInterface;
+use PhpDb\Sql\AbstractPreparableSql;
 use PhpDb\Sql\Argument\Identifier;
 use PhpDb\Sql\Argument\Value;
 use PhpDb\Sql\Delete;
@@ -25,6 +26,7 @@ use PhpDbTest\DeprecatedAssertionsTrait;
 use PhpDbTest\TestAsset\DeleteIgnore;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\CoversNothing;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\IgnoreDeprecations;
 use PHPUnit\Framework\Attributes\RequiresPhp;
 use PHPUnit\Framework\Attributes\Test;
@@ -41,12 +43,22 @@ use ReflectionException;
 #[CoversMethod(Delete::class, 'processDelete')]
 #[CoversMethod(Delete::class, 'processWhere')]
 #[CoversMethod(Delete::class, '__get')]
+#[CoversMethod(AbstractPreparableSql::class, 'unaliasTable')]
 final class DeleteTest extends TestCase
 {
     use AdapterTestTrait;
     use DeprecatedAssertionsTrait;
 
     protected Delete $delete;
+
+    /** @return array<string, array{array<string, string|TableIdentifier>, string}> */
+    public static function aliasedTableProvider(): array
+    {
+        return [
+            'table name'       => [['f' => 'foo'], '"foo"'],
+            'table identifier' => [['f' => new TableIdentifier('foo', 'sch')], '"sch"."foo"'],
+        ];
+    }
 
     #[Test]
     public function constructorWithTable(): void
@@ -116,6 +128,18 @@ final class DeleteTest extends TestCase
         $this->delete = new Delete();
         $this->delete->from(new TableIdentifier('foo', 'sch'))->where('x = y');
         static::assertSame('DELETE FROM "sch"."foo" WHERE x = y', $this->delete->getSqlString());
+    }
+
+    /**
+     * @param array<string, string|TableIdentifier> $table
+     */
+    #[Test]
+    #[DataProvider('aliasedTableProvider')]
+    public function getSqlStringRendersBareTableForAliasedTable(array $table, string $expected): void
+    {
+        $this->delete->from($table)->where('x = y');
+
+        static::assertSame("DELETE FROM {$expected} WHERE x = y", $this->delete->getSqlString());
     }
 
     #[Test]

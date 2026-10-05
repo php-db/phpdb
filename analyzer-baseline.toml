@@ -3032,6 +3032,12 @@ count = 1
 
 [[issues]]
 file = "src/Sql/Delete.php"
+code = "less-specific-argument"
+message = 'Argument type mismatch for argument #1 of `PhpDb\Sql\AbstractPreparableSql::unaliasTable`: expected `PhpDb\Sql\TableIdentifier|array<string, PhpDb\Sql\TableIdentifier|string>|string`, but provided type `PhpDb\Sql\TableIdentifier|array<array-key, mixed>|string` is less specific.'
+count = 1
+
+[[issues]]
+file = "src/Sql/Delete.php"
 code = "less-specific-nested-argument-type"
 message = "Argument type mismatch for argument #2 of `str_replace`: expected `array<array-key, string>|string`, but provided type `array<array-key, mixed>|null|string` is less specific."
 count = 1
@@ -3052,12 +3058,6 @@ count = 1
 file = "src/Sql/Delete.php"
 code = "missing-constant-type"
 message = "Class constant `SPECIFICATION_WHERE` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "src/Sql/Delete.php"
-code = "possibly-invalid-argument"
-message = 'Possible argument type mismatch for argument #1 of `PhpDb\Sql\AbstractSql::resolveTable`: expected `PhpDb\Sql\Select|PhpDb\Sql\TableIdentifier|null|string`, but possibly received `PhpDb\Sql\TableIdentifier|array<array-key, mixed>|string`.'
 count = 1
 
 [[issues]]
@@ -3266,6 +3266,12 @@ count = 1
 
 [[issues]]
 file = "src/Sql/Insert.php"
+code = "less-specific-argument"
+message = 'Argument type mismatch for argument #1 of `PhpDb\Sql\AbstractPreparableSql::unaliasTable`: expected `PhpDb\Sql\TableIdentifier|array<string, PhpDb\Sql\TableIdentifier|string>|string`, but provided type `PhpDb\Sql\TableIdentifier|array<array-key, mixed>|string` is less specific.'
+count = 2
+
+[[issues]]
+file = "src/Sql/Insert.php"
 code = "less-specific-nested-argument-type"
 message = "Argument type mismatch for argument #1 of `array_flip`: expected `array<array-key, ('V.array_flip() extends array-key)>`, but provided type `array<array-key, mixed>` is less specific."
 count = 1
@@ -3347,12 +3353,6 @@ file = "src/Sql/Insert.php"
 code = "possibly-invalid-argument"
 message = 'Possible argument type mismatch for argument #1 of `PhpDb\Sql\AbstractSql::processSubSelect`: expected `PhpDb\Sql\Select`, but possibly received `PhpDb\Sql\Select|non-empty-array<array-key, mixed>`.'
 count = 1
-
-[[issues]]
-file = "src/Sql/Insert.php"
-code = "possibly-invalid-argument"
-message = 'Possible argument type mismatch for argument #1 of `PhpDb\Sql\AbstractSql::resolveTable`: expected `PhpDb\Sql\Select|PhpDb\Sql\TableIdentifier|null|string`, but possibly received `PhpDb\Sql\TableIdentifier|array<array-key, mixed>|string`.'
-count = 2
 
 [[issues]]
 file = "src/Sql/Insert.php"
@@ -4562,6 +4562,24 @@ count = 1
 
 [[issues]]
 file = "src/Sql/Sql.php"
+code = "less-specific-argument"
+message = 'Argument type mismatch for argument #1 of `PhpDb\Sql\Delete::__construct`: expected `PhpDb\Sql\TableIdentifier|array<string, PhpDb\Sql\TableIdentifier|string>|null|string`, but provided type `PhpDb\Sql\TableIdentifier|array<array-key, mixed>|null|string` is less specific.'
+count = 1
+
+[[issues]]
+file = "src/Sql/Sql.php"
+code = "less-specific-argument"
+message = 'Argument type mismatch for argument #1 of `PhpDb\Sql\Insert::__construct`: expected `PhpDb\Sql\TableIdentifier|array<string, PhpDb\Sql\TableIdentifier|string>|null|string`, but provided type `PhpDb\Sql\TableIdentifier|array<array-key, mixed>|null|string` is less specific.'
+count = 1
+
+[[issues]]
+file = "src/Sql/Sql.php"
+code = "less-specific-argument"
+message = 'Argument type mismatch for argument #1 of `PhpDb\Sql\Update::__construct`: expected `PhpDb\Sql\TableIdentifier|array<string, PhpDb\Sql\TableIdentifier|string>|null|string`, but provided type `PhpDb\Sql\TableIdentifier|array<array-key, mixed>|null|string` is less specific.'
+count = 1
+
+[[issues]]
+file = "src/Sql/Sql.php"
 code = "overly-wide-return-type"
 message = 'Declared return type `PhpDb\Adapter\AdapterInterface|null` for `getadapter` has unused branches: `null`.'
 count = 1
@@ -4575,26 +4593,8 @@ count = 1
 [[issues]]
 file = "src/Sql/Sql.php"
 code = "possibly-invalid-argument"
-message = 'Possible argument type mismatch for argument #1 of `PhpDb\Sql\Delete::__construct`: expected `PhpDb\Sql\TableIdentifier|null|string`, but possibly received `PhpDb\Sql\TableIdentifier|array<array-key, mixed>|null|string`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Sql.php"
-code = "possibly-invalid-argument"
 message = 'Possible argument type mismatch for argument #1 of `PhpDb\Sql\Exception\InvalidArgumentException::forForeignTable`: expected `string`, but possibly received `PhpDb\Sql\TableIdentifier|array<array-key, mixed>|string`.'
 count = 4
-
-[[issues]]
-file = "src/Sql/Sql.php"
-code = "possibly-invalid-argument"
-message = 'Possible argument type mismatch for argument #1 of `PhpDb\Sql\Insert::__construct`: expected `PhpDb\Sql\TableIdentifier|null|string`, but possibly received `PhpDb\Sql\TableIdentifier|array<array-key, mixed>|null|string`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Sql.php"
-code = "possibly-invalid-argument"
-message = 'Possible argument type mismatch for argument #1 of `PhpDb\Sql\Update::__construct`: expected `PhpDb\Sql\TableIdentifier|null|string`, but possibly received `PhpDb\Sql\TableIdentifier|array<array-key, mixed>|null|string`.'
-count = 1
 
 [[issues]]
 file = "src/Sql/Sql.php"
@@ -4712,6 +4712,12 @@ count = 1
 
 [[issues]]
 file = "src/Sql/Update.php"
+code = "less-specific-argument"
+message = 'Argument type mismatch for argument #1 of `PhpDb\Sql\AbstractPreparableSql::unaliasTable`: expected `PhpDb\Sql\TableIdentifier|array<string, PhpDb\Sql\TableIdentifier|string>|string`, but provided type `PhpDb\Sql\TableIdentifier|array<array-key, mixed>|string` is less specific.'
+count = 1
+
+[[issues]]
+file = "src/Sql/Update.php"
 code = "less-specific-nested-argument-type"
 message = "Argument type mismatch for argument #2 of `str_replace`: expected `array<array-key, string>|string`, but provided type `array<array-key, mixed>|null|string` is less specific."
 count = 1
@@ -4780,12 +4786,6 @@ count = 2
 file = "src/Sql/Update.php"
 code = "possible-method-access-on-null"
 message = "Attempting to call a method on `null`."
-count = 1
-
-[[issues]]
-file = "src/Sql/Update.php"
-code = "possibly-invalid-argument"
-message = 'Possible argument type mismatch for argument #1 of `PhpDb\Sql\AbstractSql::resolveTable`: expected `PhpDb\Sql\Select|PhpDb\Sql\TableIdentifier|null|string`, but possibly received `PhpDb\Sql\TableIdentifier|array<array-key, mixed>|string`.'
 count = 1
 
 [[issues]]

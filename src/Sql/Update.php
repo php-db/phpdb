@@ -66,8 +66,11 @@ class Update extends AbstractPreparableSql
 
     /**
      * Constructor
+     *
+     * @param string|TableIdentifier|array<string, string|TableIdentifier>|null $table An aliased table
+     *     array is kept for TableGateway and rendered as the bare table
      */
-    public function __construct(string|TableIdentifier|null $table = null)
+    public function __construct(string|TableIdentifier|array|null $table = null)
     {
         if ($table) {
             $this->table($table);
@@ -216,7 +219,7 @@ class Update extends AbstractPreparableSql
     ): string {
         return str_replace(
             '%1$s',
-            $this->resolveTable($this->table, $platform, $driver, $parameterContainer),
+            $this->resolveTable($this->unaliasTable($this->table), $platform, $driver, $parameterContainer),
             $this->specifications[static::SPECIFICATION_UPDATE],
         );
     }
