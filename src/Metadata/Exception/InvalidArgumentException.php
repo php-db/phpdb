@@ -6,4 +6,4 @@ namespace PhpDb\Metadata\Exception;
 
 use PhpDb\Exception;
 
-class InvalidArgumentException extends Exception\InvalidArgumentException {}
+final class InvalidArgumentException extends Exception\InvalidArgumentException {}
