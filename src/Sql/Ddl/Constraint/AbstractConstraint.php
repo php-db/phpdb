@@ -22,8 +22,10 @@ abstract class AbstractConstraint implements ConstraintInterface
 
     protected string $name = '';
 
+    /** @var list<string> */
     protected array $columns = [];
 
+    /** @param list<string>|string|null $columns */
     public function __construct(array|string|null $columns = null, ?string $name = null)
     {
         if (null !== $columns) {
@@ -42,6 +44,7 @@ abstract class AbstractConstraint implements ConstraintInterface
     }
 
     #[Override]
+    /** @return list<string> */
     public function getColumns(): array
     {
         return $this->columns;
@@ -83,6 +86,7 @@ abstract class AbstractConstraint implements ConstraintInterface
         return $this->name;
     }
 
+    /** @param list<string>|string $columns */
     public function setColumns(string|array $columns): static
     {
         $this->columns = (array) $columns;

@@ -21,15 +21,17 @@ class Column implements ColumnInterface
 
     protected string $name = '';
 
+    /** @var array<string, mixed> */
     protected array $options = [];
 
-    /** @var ConstraintInterface[] */
+    /** @var list<ConstraintInterface> */
     protected array $constraints = [];
 
     protected string $specification = '%s %s';
 
     protected string $type = 'INTEGER';
 
+    /** @param array<string, mixed> $options */
     public function __construct(
         string $name = '',
         bool $nullable = false,
@@ -101,6 +103,7 @@ class Column implements ColumnInterface
     }
 
     #[Override]
+    /** @return array<string, mixed> */
     public function getOptions(): array
     {
         return $this->options;
@@ -136,6 +139,7 @@ class Column implements ColumnInterface
         return $this;
     }
 
+    /** @param array<string, mixed> $options */
     public function setOptions(array $options): static
     {
         $this->options = $options;

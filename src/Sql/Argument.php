@@ -44,6 +44,7 @@ final class Argument
         return new Value($value);
     }
 
+    /** @param list<bool|string|float|int|null> $values */
     public static function values(array $values): Values
     {
         return new Values($values);

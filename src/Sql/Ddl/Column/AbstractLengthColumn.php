@@ -21,6 +21,7 @@ abstract class AbstractLengthColumn extends Column
 
     protected ?int $length = null;
 
+    /** @param array<string, mixed> $options */
     public function __construct(
         string $name,
         ?int $length = null,
