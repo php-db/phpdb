@@ -8,7 +8,7 @@ use PhpDb\Exception;
 
 use function sprintf;
 
-class RuntimeException extends Exception\RuntimeException
+final class RuntimeException extends Exception\RuntimeException
 {
     final public const string UNKNOWN_COLUMN = 'A column by that name was not found.';
 

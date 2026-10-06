@@ -6,15 +6,15 @@ namespace PhpDb\Metadata\Object;
 
 final class ConstraintKeyObject
 {
-    final public const FK_CASCADE = 'CASCADE';
+    final public const string FK_CASCADE = 'CASCADE';
 
-    final public const FK_SET_NULL = 'SET NULL';
+    final public const string FK_SET_NULL = 'SET NULL';
 
-    final public const FK_NO_ACTION = 'NO ACTION';
+    final public const string FK_NO_ACTION = 'NO ACTION';
 
-    final public const FK_RESTRICT = 'RESTRICT';
+    final public const string FK_RESTRICT = 'RESTRICT';
 
-    final public const FK_SET_DEFAULT = 'SET DEFAULT';
+    final public const string FK_SET_DEFAULT = 'SET DEFAULT';
 
     private ?int $ordinalPosition = null;
 
