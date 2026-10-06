@@ -160,7 +160,7 @@ class AlterTable extends AbstractSql
             self::TABLE_OPTIONS    => $this->options,
         ];
 
-        return isset($key) && array_key_exists($key, $rawState) ? $rawState[$key] : $rawState;
+        return null !== $key && array_key_exists($key, $rawState) ? $rawState[$key] : $rawState;
     }
 
     public function setOption(string $name, Literal|bool|int|string $value): static

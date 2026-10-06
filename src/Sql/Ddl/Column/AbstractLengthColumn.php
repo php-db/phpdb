@@ -59,7 +59,7 @@ abstract class AbstractLengthColumn extends Column
         $attributes = substr($expressionData['spec'], strlen($this->specification));
 
         $expressionData['spec'] = "{$this->specification}(%s){$attributes}";
-        array_splice($expressionData['values'], 2, 0, [new Literal($lengthExpression)]);
+        array_splice($expressionData['values'], offset: 2, length: 0, replacement: [new Literal($lengthExpression)]);
 
         return $expressionData;
     }

@@ -126,7 +126,7 @@ class Combine extends AbstractPreparableSql
                 ? $this->combine[0]['select']->getRawState(self::COLUMNS)
                 : [],
         ];
-        return isset($key) && array_key_exists($key, $rawState) ? $rawState[$key] : $rawState;
+        return null !== $key && array_key_exists($key, $rawState) ? $rawState[$key] : $rawState;
     }
 
     /**
@@ -175,6 +175,6 @@ class Combine extends AbstractPreparableSql
             );
         }
 
-        return trim($sql, ' ');
+        return trim($sql, characters: ' ');
     }
 }
