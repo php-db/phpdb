@@ -29,6 +29,17 @@ use function str_replace;
 use function strtoupper;
 use function vsprintf;
 
+/**
+ * @psalm-type ParameterSpecification = array<int|string, string>|null
+ * @psalm-type Specification = string|array<string, list<ParameterSpecification>>
+ * @psalm-type SqlParameters = array<array-key, string|array<array-key, string|array<array-key, string>>>
+ * @psalm-type ColumnReference = array{
+ *     column: Select|string|int|bool|ExpressionInterface|null,
+ *     fromTable?: string,
+ *     isIdentifier?: bool,
+ * }
+ * @psalm-import-type JoinSpecification from Join
+ */
 abstract class AbstractSql implements SqlInterface
 {
     protected SqlInterface|PreparableSqlInterface|null $subject = null;
@@ -36,7 +47,7 @@ abstract class AbstractSql implements SqlInterface
     /**
      * Specifications for Sql String generation
      *
-     * @var string[]|array[]
+     * @var array<string, Specification>
      */
     protected array $specifications = [];
 
@@ -47,6 +58,7 @@ abstract class AbstractSql implements SqlInterface
      */
     protected array $processInfo = ['paramPrefix' => '', 'subselectCount' => 0];
 
+    /** @var array<string, int> */
     protected array $instanceParameterIndex = [];
 
     /**
@@ -70,6 +82,7 @@ abstract class AbstractSql implements SqlInterface
         $sqls = [];
 
         foreach ($this->specifications as $name => $specification) {
+            /** @var SqlParameters|string|null $result */
             $result = $this->{"process{$name}"}(
                 $platform,
                 $driver,
@@ -87,6 +100,8 @@ abstract class AbstractSql implements SqlInterface
     }
 
     /**
+     * @param Specification $specifications
+     * @param SqlParameters $parameters
      * @throws Exception\RuntimeException
      */
     protected function createSqlFromSpecificationAndParameters(array|string $specifications, array $parameters): string
@@ -150,8 +165,8 @@ abstract class AbstractSql implements SqlInterface
     /**
      * Flattens expression values, expanding Values arguments
      *
-     * @param ArgumentInterface[] $arguments
-     * @return ArgumentInterface[]
+     * @param list<ArgumentInterface> $arguments
+     * @return list<ArgumentInterface>
      */
     protected function flattenExpressionValues(array $arguments): array
     {
@@ -299,6 +314,7 @@ abstract class AbstractSql implements SqlInterface
         ArgumentInterface $argument,
         PlatformInterface $platform,
     ): string {
+        /** @var list<string> $identifiers */
         $identifiers          = $argument->getValue();
         $processedIdentifiers = [];
 
@@ -310,7 +326,7 @@ abstract class AbstractSql implements SqlInterface
     }
 
     /**
-     * @return null|string[][][] Null if no joins present, array of JOIN statements otherwise
+     * @return null|array{0: array<int, list<string>>} Null if no joins present, array of JOIN statements otherwise
      */
     protected function processJoin(
         ?Join $joins,
@@ -411,6 +427,9 @@ abstract class AbstractSql implements SqlInterface
         return $alias ? "{$table} AS {$alias}" : $table;
     }
 
+    /**
+     * @param ColumnReference|Select|string|int|bool|ExpressionInterface|null $column
+     */
     protected function resolveColumnValue(
         Select|array|string|int|bool|ExpressionInterface|null $column,
         PlatformInterface $platform,

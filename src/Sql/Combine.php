@@ -18,6 +18,9 @@ use function trim;
 
 /**
  * Combine SQL statement - allows combining multiple select statements into one
+ *
+ * @psalm-import-type Specification from AbstractSql
+ * @psalm-type CombineSelects = Select|list<Select|array{0: Select, 1?: string, 2?: string}>
  */
 class Combine extends AbstractPreparableSql
 {
@@ -31,14 +34,17 @@ class Combine extends AbstractPreparableSql
 
     final public const COMBINE_INTERSECT = 'intersect';
 
-    /** @var string[] */
+    /** @var array<string, Specification> */
     protected array $specifications = [
         self::COMBINE => '%1$s (%2$s) ',
     ];
 
-    /** @var array<array{select: Select, type: string, modifier: string}> */
+    /** @var list<array{select: Select, type: string, modifier: string}> */
     private array $combine = [];
 
+    /**
+     * @param CombineSelects|null $select
+     */
     public function __construct(
         Select|array|null $select = null,
         string $type = self::COMBINE_UNION,
@@ -79,6 +85,7 @@ class Combine extends AbstractPreparableSql
     /**
      * Create combine clause
      *
+     * @param CombineSelects $select
      * @throws Exception\InvalidArgumentException
      */
     public function combine(Select|array $select, string $type = self::COMBINE_UNION, string $modifier = ''): static
@@ -109,6 +116,8 @@ class Combine extends AbstractPreparableSql
 
     /**
      * Create except clause
+     *
+     * @param CombineSelects $select
      */
     public function except(Select|array $select, string $modifier = ''): static
     {
@@ -131,6 +140,8 @@ class Combine extends AbstractPreparableSql
 
     /**
      * Create intersect clause
+     *
+     * @param CombineSelects $select
      */
     public function intersect(Select|array $select, string $modifier = ''): static
     {
@@ -139,6 +150,8 @@ class Combine extends AbstractPreparableSql
 
     /**
      * Create union clause
+     *
+     * @param CombineSelects $select
      */
     public function union(Select|array $select, string $modifier = ''): static
     {

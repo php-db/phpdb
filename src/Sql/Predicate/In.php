@@ -21,6 +21,8 @@ class In extends AbstractExpression implements PredicateInterface
 
     /**
      * Constructor
+     *
+     * @param list<bool|string|float|int|null>|Select|ArgumentInterface|null $valueSet
      */
     public function __construct(
         string|ArgumentInterface|null $identifier = null,
@@ -86,6 +88,8 @@ class In extends AbstractExpression implements PredicateInterface
 
     /**
      * Set set of values for IN comparison
+     *
+     * @param list<bool|string|float|int|null>|Select|ArgumentInterface $valueSet
      */
     public function setValueSet(array|Select|ArgumentInterface $valueSet): static
     {

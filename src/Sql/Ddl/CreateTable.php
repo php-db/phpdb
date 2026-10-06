@@ -15,6 +15,9 @@ use function is_bool;
 use function is_int;
 use function strtoupper;
 
+/**
+ * @psalm-import-type Specification from AbstractSql
+ */
 class CreateTable extends AbstractSql
 {
     final public const COLUMNS = 'columns';
@@ -25,19 +28,20 @@ class CreateTable extends AbstractSql
 
     final public const TABLE_OPTIONS = 'tableOptions';
 
+    /** @var list<Column\ColumnInterface> */
     protected array $columns = [];
 
+    /** @var list<Constraint\ConstraintInterface> */
     protected array $constraints = [];
 
     protected bool $ifNotExists = false;
 
     protected bool $isTemporary = false;
 
+    /** @var array<string, Literal|bool|int|string> */
     protected array $options = [];
 
-    /**
-     * {@inheritDoc}
-     */
+    /** @var array<string, Specification> */
     protected array $specifications = [
         self::TABLE         => 'CREATE %1$sTABLE %2$s%3$s (',
         self::COLUMNS       => [
@@ -80,6 +84,7 @@ class CreateTable extends AbstractSql
         return $this->ifNotExists;
     }
 
+    /** @return array<string, Literal|bool|int|string> */
     public function getOptions(): array
     {
         return $this->options;
@@ -118,6 +123,7 @@ class CreateTable extends AbstractSql
         return $this;
     }
 
+    /** @param array<string, Literal|bool|int|string> $options */
     public function setOptions(array $options): static
     {
         $this->options = $options;

@@ -8,5 +8,6 @@ use PhpDb\Sql\ExpressionInterface;
 
 interface ConstraintInterface extends ExpressionInterface
 {
+    /** @return list<string> */
     public function getColumns(): array;
 }

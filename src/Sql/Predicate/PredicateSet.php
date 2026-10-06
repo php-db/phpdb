@@ -33,10 +33,13 @@ class PredicateSet implements PredicateInterface, Countable
 
     protected string $defaultCombination = self::OP_AND;
 
+    /** @var list<array{0: string, 1: PredicateInterface}> */
     protected array $predicates = [];
 
     /**
      * Constructor
+     *
+     * @param list<PredicateInterface>|null $predicates
      */
     public function __construct(?array $predicates = null, string $defaultCombination = self::OP_AND)
     {
@@ -68,6 +71,7 @@ class PredicateSet implements PredicateInterface, Countable
     /**
      * Add predicates to set
      *
+     * @param PredicateInterface|Closure|string|array<array-key, mixed> $predicates
      * @throws Exception\InvalidArgumentException
      */
     public function addPredicates(
@@ -201,6 +205,8 @@ class PredicateSet implements PredicateInterface, Countable
 
     /**
      * Return the predicates
+     *
+     * @return list<array{0: string, 1: PredicateInterface}>
      */
     public function getPredicates(): array
     {
