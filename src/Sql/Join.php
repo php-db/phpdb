@@ -9,6 +9,7 @@ use Iterator;
 use Override;
 use ReturnTypeWillChange;
 
+use function array_key_exists;
 use function array_shift;
 use function count;
 use function is_array;
@@ -157,6 +158,6 @@ class Join implements Iterator, Countable
     #[ReturnTypeWillChange]
     public function valid(): bool
     {
-        return isset($this->joins[$this->position]);
+        return array_key_exists($this->position, $this->joins);
     }
 }

@@ -356,24 +356,6 @@ count = 1
 
 [[issues]]
 file = "src/Sql/AbstractSql.php"
-code = "literal-named-argument"
-message = 'Literal argument `"\n ,"` should be passed as a named argument for clarity.'
-count = 1
-
-[[issues]]
-file = "src/Sql/AbstractSql.php"
-code = "literal-named-argument"
-message = "Literal argument `'%'` should be passed as a named argument for clarity."
-count = 1
-
-[[issues]]
-file = "src/Sql/AbstractSql.php"
-code = "literal-named-argument"
-message = "Literal argument `'__'` should be passed as a named argument for clarity."
-count = 1
-
-[[issues]]
-file = "src/Sql/AbstractSql.php"
 code = "no-else-clause"
 message = "Avoid `else` clauses."
 count = 8
@@ -386,32 +368,8 @@ count = 5
 
 [[issues]]
 file = "src/Sql/AbstractSql.php"
-code = "no-isset"
-message = "Use of the `isset` construct."
-count = 5
-
-[[issues]]
-file = "src/Sql/AbstractSql.php"
-code = "no-shorthand-ternary"
-message = "Use of the shorthand ternary operator."
-count = 1
-
-[[issues]]
-file = "src/Sql/AbstractSql.php"
 code = "too-many-methods"
 message = "Class has too many methods."
-count = 1
-
-[[issues]]
-file = "src/Sql/Argument/Identifiers.php"
-code = "literal-named-argument"
-message = "Literal argument `'%s'` should be passed as a named argument for clarity."
-count = 1
-
-[[issues]]
-file = "src/Sql/Argument/Values.php"
-code = "literal-named-argument"
-message = "Literal argument `'%s'` should be passed as a named argument for clarity."
 count = 1
 
 [[issues]]
@@ -428,20 +386,8 @@ count = 1
 
 [[issues]]
 file = "src/Sql/Combine.php"
-code = "literal-named-argument"
-message = "Literal argument `' '` should be passed as a named argument for clarity."
-count = 1
-
-[[issues]]
-file = "src/Sql/Combine.php"
 code = "no-array-accumulation-in-loop"
 message = "Array spread in reassignment inside a loop causes O(n²) array copying."
-count = 1
-
-[[issues]]
-file = "src/Sql/Combine.php"
-code = "no-isset"
-message = "Use of the `isset` construct."
 count = 1
 
 [[issues]]
@@ -464,26 +410,8 @@ count = 2
 
 [[issues]]
 file = "src/Sql/Ddl/AlterTable.php"
-code = "no-isset"
-message = "Use of the `isset` construct."
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/AlterTable.php"
 code = "too-many-methods"
 message = "Class has too many methods."
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/Column/AbstractLengthColumn.php"
-code = "literal-named-argument"
-message = "Literal argument `0` should be passed as a named argument for clarity."
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/Column/AbstractLengthColumn.php"
-code = "literal-named-argument"
-message = "Literal argument `2` should be passed as a named argument for clarity."
 count = 1
 
 [[issues]]
@@ -499,12 +427,6 @@ message = "Method has a high halstead difficulty"
 count = 1
 
 [[issues]]
-file = "src/Sql/Ddl/Column/AbstractTimestampColumn.php"
-code = "no-isset"
-message = "Use of the `isset` construct."
-count = 1
-
-[[issues]]
 file = "src/Sql/Ddl/Column/Column.php"
 code = "no-else-clause"
 message = "Avoid `else` clauses."
@@ -517,27 +439,9 @@ message = "Avoid `elseif` clauses."
 count = 1
 
 [[issues]]
-file = "src/Sql/Ddl/Column/Integer.php"
-code = "no-isset"
-message = "Use of the `isset` construct."
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/Constraint/AbstractConstraint.php"
-code = "literal-named-argument"
-message = "Literal argument `'%s'` should be passed as a named argument for clarity."
-count = 1
-
-[[issues]]
 file = "src/Sql/Ddl/Constraint/ForeignKey.php"
 code = "excessive-parameter-list"
 message = "Parameter list is too long."
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/Constraint/ForeignKey.php"
-code = "literal-named-argument"
-message = "Literal argument `'%s'` should be passed as a named argument for clarity."
 count = 1
 
 [[issues]]
@@ -560,20 +464,8 @@ count = 2
 
 [[issues]]
 file = "src/Sql/Ddl/CreateTable.php"
-code = "no-isset"
-message = "Use of the `isset` construct."
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/CreateTable.php"
 code = "too-many-methods"
 message = "Class has too many methods."
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/Index/Index.php"
-code = "no-isset"
-message = "Use of the `isset` construct."
 count = 1
 
 [[issues]]
@@ -590,24 +482,6 @@ count = 1
 
 [[issues]]
 file = "src/Sql/Expression.php"
-code = "literal-named-argument"
-message = "Literal argument `'%%'` should be passed as a named argument for clarity."
-count = 1
-
-[[issues]]
-file = "src/Sql/Expression.php"
-code = "literal-named-argument"
-message = "Literal argument `'%s'` should be passed as a named argument for clarity."
-count = 1
-
-[[issues]]
-file = "src/Sql/Expression.php"
-code = "literal-named-argument"
-message = "Literal argument `1` should be passed as a named argument for clarity."
-count = 1
-
-[[issues]]
-file = "src/Sql/Expression.php"
 code = "no-else-clause"
 message = "Avoid `elseif` clauses."
 count = 2
@@ -629,36 +503,6 @@ file = "src/Sql/Insert.php"
 code = "too-many-methods"
 message = "Class has too many methods."
 count = 1
-
-[[issues]]
-file = "src/Sql/Join.php"
-code = "no-isset"
-message = "Use of the `isset` construct."
-count = 1
-
-[[issues]]
-file = "src/Sql/Literal.php"
-code = "literal-named-argument"
-message = "Literal argument `'%%'` should be passed as a named argument for clarity."
-count = 1
-
-[[issues]]
-file = "src/Sql/Platform/Platform.php"
-code = "literal-named-argument"
-message = "Literal argument `''` should be passed as a named argument for clarity."
-count = 1
-
-[[issues]]
-file = "src/Sql/Platform/Platform.php"
-code = "literal-named-argument"
-message = "Literal argument `true` should be passed as a named argument for clarity."
-count = 1
-
-[[issues]]
-file = "src/Sql/Platform/Platform.php"
-code = "no-isset"
-message = "Use of the `isset` construct."
-count = 2
 
 [[issues]]
 file = "src/Sql/Predicate/In.php"
@@ -764,18 +608,6 @@ count = 1
 
 [[issues]]
 file = "src/Sql/Select.php"
-code = "literal-named-argument"
-message = "Literal argument `' as '` should be passed as a named argument for clarity."
-count = 1
-
-[[issues]]
-file = "src/Sql/Select.php"
-code = "literal-named-argument"
-message = "Literal argument `2` should be passed as a named argument for clarity."
-count = 1
-
-[[issues]]
-file = "src/Sql/Select.php"
 code = "no-else-clause"
 message = "Avoid `else` clauses."
 count = 8
@@ -788,24 +620,6 @@ count = 3
 
 [[issues]]
 file = "src/Sql/Select.php"
-code = "no-empty"
-message = "Use of the `empty` construct."
-count = 1
-
-[[issues]]
-file = "src/Sql/Select.php"
-code = "no-isset"
-message = "Use of the `isset` construct."
-count = 2
-
-[[issues]]
-file = "src/Sql/Select.php"
-code = "no-negated-ternary"
-message = "Negated ternary condition."
-count = 1
-
-[[issues]]
-file = "src/Sql/Select.php"
 code = "too-many-methods"
 message = "Class has too many methods."
 count = 1
@@ -815,12 +629,6 @@ file = "src/Sql/Select.php"
 code = "too-many-properties"
 message = "Class has too many properties."
 count = 1
-
-[[issues]]
-file = "src/Sql/Sql.php"
-code = "no-shorthand-ternary"
-message = "Use of the shorthand ternary operator."
-count = 4
 
 [[issues]]
 file = "src/Sql/Update.php"

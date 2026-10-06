@@ -77,20 +77,20 @@ class Platform extends AbstractPlatform
     ): PlatformDecoratorInterface|PreparableSqlInterface|SqlInterface {
         $platformName = $this->resolvePlatformName($adapterOrPlatform);
 
-        if (! isset($this->decorators[$platformName])) {
+        /** @var array<class-string, PlatformDecoratorInterface>|null $decorators */
+        $decorators = $this->decorators[$platformName] ?? null;
+        if (null === $decorators) {
             return $subject;
         }
 
-        $subjectClass = $subject::class;
-        if (isset($this->decorators[$platformName][$subjectClass])) {
-            $decorator = $this->decorators[$platformName][$subjectClass];
+        $decorator = $decorators[$subject::class] ?? null;
+        if (null !== $decorator) {
             $decorator->setSubject($subject);
             return $decorator;
         }
 
-        /** @var PlatformDecoratorInterface $decorator */
-        foreach ($this->decorators[$platformName] as $type => $decorator) {
-            if (! ($subject instanceof $type && is_a($decorator, $type, true))) {
+        foreach ($decorators as $type => $decorator) {
+            if (! ($subject instanceof $type && is_a($decorator, $type, allow_string: true))) {
                 continue;
             }
 
@@ -161,7 +161,7 @@ class Platform extends AbstractPlatform
         }
 
         $platformName = $this->resolvePlatform($adapterOrPlatform)->getName();
-        $normalized   = str_replace([' ', '_'], '', strtolower($platformName));
+        $normalized   = str_replace([' ', '_'], replace: '', subject: strtolower($platformName));
 
         if (null === $adapterOrPlatform) {
             $this->cachedPlatformName = $normalized;
