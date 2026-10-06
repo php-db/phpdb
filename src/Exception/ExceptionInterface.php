@@ -6,5 +6,9 @@ namespace PhpDb\Exception;
 
 use Throwable;
 
-/** Marker for every exception this package throws. */
+/**
+ * Marker for every exception this package throws.
+ *
+ * @api
+ */
 interface ExceptionInterface extends Throwable {}

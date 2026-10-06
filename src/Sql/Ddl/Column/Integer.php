@@ -30,7 +30,7 @@ class Integer extends Column
         $expressionData = parent::getExpressionData();
         $options        = $this->getOptions();
 
-        if (! isset($options['length'])) {
+        if (null === ($options['length'] ?? null)) {
             return $expressionData;
         }
 

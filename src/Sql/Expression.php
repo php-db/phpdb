@@ -47,7 +47,7 @@ class Expression extends AbstractExpression
              *
              * @todo Make notes in documentation
              */
-            $parameters = array_slice(func_get_args(), 1);
+            $parameters = array_slice(func_get_args(), offset: 1);
         }
 
         $this->setParameters($parameters);
@@ -67,7 +67,7 @@ class Expression extends AbstractExpression
     {
         $parameters      = $this->parameters;
         $parametersCount = count($parameters);
-        $specification   = str_replace('%', '%%', $this->expression);
+        $specification   = str_replace('%', replace: '%%', subject: $this->expression);
 
         if (0 === $parametersCount) {
             return [
@@ -77,7 +77,7 @@ class Expression extends AbstractExpression
         }
 
         // assign locally, escaping % signs
-        $specification = str_replace(self::PLACEHOLDER, '%s', $specification, $count);
+        $specification = str_replace(self::PLACEHOLDER, replace: '%s', subject: $specification, count: $count);
 
         // test number of replacements without considering same variable begin used many times first, which is
         // faster, if the test fails then resort to regex which are slow and used rarely

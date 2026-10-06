@@ -46,7 +46,7 @@ class Sql
             throw Exception\InvalidArgumentException::forForeignTable($this->table);
         }
 
-        return new Delete($table ?: $this->table);
+        return new Delete($table ?? $this->table);
     }
 
     public function getAdapter(): ?AdapterInterface
@@ -75,7 +75,7 @@ class Sql
             throw Exception\InvalidArgumentException::forForeignTable($this->table);
         }
 
-        return new Insert($table ?: $this->table);
+        return new Insert($table ?? $this->table);
     }
 
     public function prepareStatementForSqlObject(
@@ -102,7 +102,7 @@ class Sql
             throw Exception\InvalidArgumentException::forForeignTable($this->table);
         }
 
-        return new Select($table ?: $this->table);
+        return new Select($table ?? $this->table);
     }
 
     /**
@@ -121,6 +121,6 @@ class Sql
             throw Exception\InvalidArgumentException::forForeignTable($this->table);
         }
 
-        return new Update($table ?: $this->table);
+        return new Update($table ?? $this->table);
     }
 }
