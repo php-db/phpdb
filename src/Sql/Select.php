@@ -35,6 +35,11 @@ use function trim;
  * @property Where $where
  * @property Having $having
  * @property Join $joins
+ * @psalm-import-type Specification from AbstractSql
+ * @psalm-import-type JoinName from Join
+ * @psalm-type TableReference = string|TableIdentifier|array<string, string|TableIdentifier|Select>
+ * @psalm-type ColumnList = array<array-key, string|ExpressionInterface>
+ * @psalm-type Combination = array{select: Select, type: string, modifier: string}
  */
 class Select extends AbstractPreparableSql
 {
@@ -97,7 +102,7 @@ class Select extends AbstractPreparableSql
 
     final public const COMBINE_INTERSECT = 'intersect';
 
-    /** @var string[]|array[] $specifications */
+    /** @var array<string, Specification> */
     protected array $specifications = [
         'statementStart' => '%1$s',
         self::SELECT     => [
@@ -141,18 +146,22 @@ class Select extends AbstractPreparableSql
 
     protected bool $prefixColumnsWithTable = true;
 
+    /** @var TableReference|null */
     protected string|array|TableIdentifier|null $table = null;
 
     protected string|ExpressionInterface|null $quantifier = null;
 
+    /** @var ColumnList */
     protected array $columns = [self::SQL_STAR];
 
     protected ?Join $joins = null;
 
     protected ?Where $where = null;
 
+    /** @var ColumnList */
     protected array $order = [];
 
+    /** @var list<string|ExpressionInterface>|null */
     protected ?array $group = null;
 
     protected ?Having $having = null;
@@ -161,10 +170,13 @@ class Select extends AbstractPreparableSql
 
     protected string|int|null $offset = null;
 
+    /** @var Combination|array{} */
     protected array $combine = [];
 
     /**
      * Constructor
+     *
+     * @param TableReference|null $table
      */
     public function __construct(array|string|TableIdentifier|null $table = null)
     {
@@ -183,6 +195,8 @@ class Select extends AbstractPreparableSql
      *   array(string => value, ...)
      *     key string will be use as alias,
      *     value can be string or Expression objects
+     *
+     * @param ColumnList $columns
      */
     public function columns(array $columns, bool $prefixColumnsWithTable = true): static
     {
@@ -211,6 +225,7 @@ class Select extends AbstractPreparableSql
     /**
      * Create from clause
      *
+     * @param TableReference $table
      * @throws Exception\InvalidArgumentException
      */
     public function from(array|string|TableIdentifier $table): static
@@ -245,6 +260,9 @@ class Select extends AbstractPreparableSql
         return null !== $key && array_key_exists($key, $rawState) ? $rawState[$key] : $rawState;
     }
 
+    /**
+     * @param string|ExpressionInterface|list<string|ExpressionInterface> $group
+     */
     public function group(mixed $group): static
     {
         if (is_array($group)) {
@@ -261,6 +279,7 @@ class Select extends AbstractPreparableSql
     /**
      * Create having clause
      *
+     * @param Having|PredicateInterface|array<array-key, mixed>|Closure|string $predicate
      * @param string $combination One of the OP_* constants from Predicate\PredicateSet
      */
     public function having(
@@ -287,7 +306,9 @@ class Select extends AbstractPreparableSql
     /**
      * Create join clause
      *
-     * @param string                    $type one of the JOIN_* constants
+     * @param JoinName                                            $name
+     * @param string|array<array-key, string|ExpressionInterface> $columns
+     * @param string                                              $type one of the JOIN_* constants
      * @throws Exception\InvalidArgumentException
      */
     public function join(
@@ -327,6 +348,9 @@ class Select extends AbstractPreparableSql
         return $this;
     }
 
+    /**
+     * @param ExpressionInterface|ColumnList|string $order
+     */
     public function order(ExpressionInterface|array|string $order): static
     {
         if (is_string($order)) {
@@ -405,7 +429,7 @@ class Select extends AbstractPreparableSql
     }
 
     /**
-     * @param string|array<string, array> $specification
+     * @param Specification $specification
      */
     public function setSpecification(string $index, array|string $specification): static
     {
@@ -420,7 +444,8 @@ class Select extends AbstractPreparableSql
     /**
      * Create where clause
      *
-     * @param string                                  $combination One of the OP_* constants from Predicate\PredicateSet
+     * @param PredicateInterface|array<array-key, mixed>|string|Closure $predicate
+     * @param string $combination One of the OP_* constants from Predicate\PredicateSet
      * @throws Exception\InvalidArgumentException
      */
     public function where(
@@ -436,6 +461,7 @@ class Select extends AbstractPreparableSql
         return $this;
     }
 
+    /** @return array{0: string, 1: string}|null */
     protected function processCombine(
         PlatformInterface $platform,
         ?DriverInterface $driver = null,
@@ -455,6 +481,7 @@ class Select extends AbstractPreparableSql
         ];
     }
 
+    /** @return array{0: list<string>}|null */
     protected function processGroup(
         PlatformInterface $platform,
         ?DriverInterface $driver = null,
@@ -481,6 +508,7 @@ class Select extends AbstractPreparableSql
         return [$groups];
     }
 
+    /** @return array{0: string}|null */
     protected function processHaving(
         PlatformInterface $platform,
         ?DriverInterface $driver = null,
@@ -495,7 +523,7 @@ class Select extends AbstractPreparableSql
         ];
     }
 
-    /** @return string[][][]|null */
+    /** @return array{0: array<int, list<string>>}|null */
     protected function processJoins(
         PlatformInterface $platform,
         ?DriverInterface $driver = null,
@@ -504,6 +532,7 @@ class Select extends AbstractPreparableSql
         return $this->processJoin($this->joins, $platform, $driver, $parameterContainer);
     }
 
+    /** @return array{0: string}|null */
     protected function processLimit(
         PlatformInterface $platform,
         ?DriverInterface $driver = null,
@@ -522,6 +551,7 @@ class Select extends AbstractPreparableSql
         return [$platform->quoteValue($this->limit)];
     }
 
+    /** @return array{0: string}|null */
     protected function processOffset(
         PlatformInterface $platform,
         ?DriverInterface $driver = null,
@@ -540,6 +570,7 @@ class Select extends AbstractPreparableSql
         return [$platform->quoteValue($this->offset)];
     }
 
+    /** @return array{0: list<list<string>>}|null */
     protected function processOrder(
         PlatformInterface $platform,
         ?DriverInterface $driver = null,
@@ -579,6 +610,8 @@ class Select extends AbstractPreparableSql
 
     /**
      * Process the select part
+     *
+     * @return list<string|list<list<string>>>
      */
     protected function processSelect(
         PlatformInterface $platform,
@@ -684,6 +717,7 @@ class Select extends AbstractPreparableSql
         return null;
     }
 
+    /** @return array{0: string}|null */
     protected function processWhere(
         PlatformInterface $platform,
         ?DriverInterface $driver = null,
@@ -699,8 +733,8 @@ class Select extends AbstractPreparableSql
     }
 
     /**
+     * @param Select|TableReference|null $table
      * @return array{0: string|null, 1: string}
-     * @phpstan-return array{0: string|null, 1: string}
      */
     #[Override]
     protected function resolveTable(

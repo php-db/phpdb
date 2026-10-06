@@ -22,6 +22,8 @@ use function strtolower;
 
 /**
  * @property Where $where
+ * @psalm-import-type Specification from AbstractSql
+ * @psalm-import-type JoinName from Join
  */
 class Update extends AbstractPreparableSql
 {
@@ -42,7 +44,7 @@ class Update extends AbstractPreparableSql
 
     /** @#-* */
 
-    /** @var array<string, string>|array<string, array> */
+    /** @var array<string, Specification> */
     protected array $specifications = [
         self::SPECIFICATION_UPDATE => 'UPDATE %1$s',
         self::SPECIFICATION_JOIN   => [
@@ -54,6 +56,7 @@ class Update extends AbstractPreparableSql
         self::SPECIFICATION_WHERE  => 'WHERE %1$s',
     ];
 
+    /** @var TableIdentifier|string|array<string, string|TableIdentifier> */
     protected TableIdentifier|string|array $table = '';
 
     protected bool $emptyWhereProtection = true;
@@ -92,6 +95,7 @@ class Update extends AbstractPreparableSql
     /**
      * Create join clause
      *
+     * @param JoinName $name
      * @throws Exception\InvalidArgumentException
      */
     public function join(array|string|TableIdentifier $name, string $on, string $type = Join::JOIN_INNER): static
@@ -104,8 +108,8 @@ class Update extends AbstractPreparableSql
     /**
      * Set key/value pairs to update
      *
-     * @param  array $values Associative array of key values
-     * @param string $flag   One of the VALUES_* constants
+     * @param array<array-key, mixed> $values Associative array of key values
+     * @param string|int              $flag   One of the VALUES_* constants, or a numeric priority
      * @throws Exception\InvalidArgumentException
      */
     public function set(array $values, string|int $flag = self::VALUES_SET): static
@@ -129,6 +133,8 @@ class Update extends AbstractPreparableSql
 
     /**
      * Specify table for statement
+     *
+     * @param TableIdentifier|string|array<string, string|TableIdentifier> $table
      */
     public function table(TableIdentifier|string|array $table): static
     {
@@ -139,6 +145,8 @@ class Update extends AbstractPreparableSql
     /**
      * Create where clause
      *
+     * @param PredicateInterface|array<array-key, mixed>|Closure|string|Where $predicate
+     * @param string $combination One of the OP_* constants from Predicate\PredicateSet
      * @throws Exception\InvalidArgumentException
      */
     public function where(

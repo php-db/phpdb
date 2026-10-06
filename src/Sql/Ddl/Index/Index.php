@@ -16,10 +16,15 @@ class Index extends AbstractIndex
 {
     protected string $specification = 'INDEX %s(...)';
 
+    /** @var array<int, int> */
     protected array $lengths;
 
     protected ?string $type = null;
 
+    /**
+     * @param list<string>|string|null $columns
+     * @param array<int, int>          $lengths
+     */
     public function __construct(array|string|null $columns, ?string $name = null, array $lengths = [])
     {
         parent::__construct($columns, $name);

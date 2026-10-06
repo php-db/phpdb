@@ -9,7 +9,7 @@ interface ExpressionInterface
     /**
      * Returns raw expression data as array for optimised processing
      *
-     * @return array{spec: string, values: ArgumentInterface[]}
+     * @return array{spec: string, values: list<ArgumentInterface>}
      */
     public function getExpressionData(): array;
 }
