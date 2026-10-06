@@ -18,6 +18,9 @@ use function is_array;
 use function preg_match_all;
 use function str_replace;
 
+/**
+ * @psalm-type ExpressionParameter = bool|string|float|int|null|list<bool|string|float|int|null>|ExpressionInterface|ArgumentInterface
+ */
 class Expression extends AbstractExpression
 {
     /**
@@ -27,11 +30,13 @@ class Expression extends AbstractExpression
 
     protected string $expression = '';
 
-    /** @var ArgumentInterface[] */
+    /** @var list<ArgumentInterface> */
     protected array $parameters = [];
 
     /**
      * @todo Update documentation to show how parameters can be specifically typed
+     *
+     * @param ExpressionParameter|array<array-key, ExpressionParameter> $parameters
      */
     public function __construct(
         string $expression = '',
@@ -94,6 +99,7 @@ class Expression extends AbstractExpression
         ];
     }
 
+    /** @return list<ArgumentInterface> */
     public function getParameters(): array
     {
         return $this->parameters;
@@ -113,6 +119,7 @@ class Expression extends AbstractExpression
     }
 
     /**
+     * @param ExpressionParameter|array<array-key, ExpressionParameter> $parameters
      * @throws Exception\InvalidArgumentException
      */
     public function setParameters(

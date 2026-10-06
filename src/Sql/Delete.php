@@ -16,6 +16,7 @@ use function strtolower;
 
 /**
  * @property Where $where
+ * @psalm-import-type Specification from AbstractSql
  */
 class Delete extends AbstractPreparableSql
 {
@@ -28,14 +29,13 @@ class Delete extends AbstractPreparableSql
 
     /** @#- */
 
-    /**
-     * {@inheritDoc}
-     */
+    /** @var array<string, Specification> */
     protected array $specifications = [
         self::SPECIFICATION_DELETE => 'DELETE FROM %1$s',
         self::SPECIFICATION_WHERE  => 'WHERE %1$s',
     ];
 
+    /** @var TableIdentifier|string|array<string, string|TableIdentifier> */
     protected TableIdentifier|string|array $table = '';
 
     protected bool $emptyWhereProtection = true;
@@ -54,6 +54,8 @@ class Delete extends AbstractPreparableSql
 
     /**
      * Create from statement
+     *
+     * @param TableIdentifier|string|array<string, string|TableIdentifier> $table
      */
     public function from(TableIdentifier|string|array $table): static
     {
@@ -74,6 +76,7 @@ class Delete extends AbstractPreparableSql
     /**
      * Create where clause
      *
+     * @param PredicateInterface|array<array-key, mixed>|Closure|string|Where $predicate
      * @param string $combination One of the OP_* constants from Predicate\PredicateSet
      */
     public function where(
