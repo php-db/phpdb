@@ -29,4 +29,22 @@ final class UniqueKeyTest extends TestCase
             $expressionData['values'],
         );
     }
+
+    #[Test]
+    public function getExpressionDataListsEveryColumnInTheSpecification(): void
+    {
+        $uk = new UniqueKey(['foo', 'bar'], 'my_uk');
+
+        $expressionData = $uk->getExpressionData();
+
+        static::assertSame('CONSTRAINT %s UNIQUE (%s, %s)', $expressionData['spec']);
+        static::assertEquals(
+            [
+                Argument::identifier('my_uk'),
+                Argument::identifier('foo'),
+                Argument::identifier('bar'),
+            ],
+            $expressionData['values'],
+        );
+    }
 }
