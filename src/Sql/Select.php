@@ -545,7 +545,7 @@ class Select extends AbstractPreparableSql
         ?DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null,
     ): ?array {
-        if (empty($this->order)) {
+        if ([] === $this->order) {
             return null;
         }
 
@@ -560,7 +560,7 @@ class Select extends AbstractPreparableSql
 
             if (is_int($k)) {
                 if (str_contains($v, ' ')) {
-                    [$k, $v] = explode(' ', $v, 2);
+                    [$k, $v] = explode(' ', $v, limit: 2);
                 } else {
                     $k = $v;
                     $v = self::ORDER_ASCENDING;
@@ -609,11 +609,11 @@ class Select extends AbstractPreparableSql
             $columnAs = null;
             if (is_string($columnIndexOrAs)) {
                 $columnAs = $platform->quoteIdentifier($columnIndexOrAs);
-            } elseif (stripos($columnName, ' as ') === false) {
+            } elseif (stripos($columnName, needle: ' as ') === false) {
                 $columnAs = is_string($column) ? $platform->quoteIdentifier($column) : 'Expression' . $expr++;
             }
 
-            $columns[] = null !== $columnAs ? [$columnName, $columnAs] : [$columnName];
+            $columns[] = null === $columnAs ? [$columnName] : [$columnName, $columnAs];
         }
 
         foreach ($this->getJoins()->getJoins() as $join) {
@@ -646,17 +646,18 @@ class Select extends AbstractPreparableSql
             }
         }
 
+        $quantifier = null;
         if ($this->quantifier) {
             $quantifier = $this->quantifier instanceof ExpressionInterface
                 ? $this->processExpression($this->quantifier, $platform, $driver, $parameterContainer, 'quantifier')
                 : $this->quantifier;
         }
 
-        if (! isset($table)) {
+        if (null === $table) {
             return [$columns];
         }
 
-        if (isset($quantifier)) {
+        if (null !== $quantifier) {
             return [$quantifier, $columns, $table];
         }
 

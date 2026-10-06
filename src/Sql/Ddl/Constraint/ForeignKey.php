@@ -70,7 +70,7 @@ class ForeignKey extends AbstractConstraint
         $expressionData['values'][] = new Identifier($this->referenceTable);
 
         if (0 !== $colCount) {
-            $expressionData['spec'] .= ' (' . implode(', ', array_fill(0, $colCount, '%s')) . ')';
+            $expressionData['spec'] .= ' (' . implode(', ', array_fill(0, count: $colCount, value: '%s')) . ')';
             foreach ($this->referenceColumn as $column) {
                 $expressionData['values'][] = new Identifier($column);
             }

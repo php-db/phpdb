@@ -37,7 +37,7 @@ final readonly class Identifiers implements ArgumentInterface
     {
         $count = count($this->identifiers);
         return $count > 0
-            ? '(' . implode(', ', array_fill(0, $count, '%s')) . ')'
+            ? '(' . implode(', ', array_fill(0, count: $count, value: '%s')) . ')'
             : '(NULL)';
     }
 
