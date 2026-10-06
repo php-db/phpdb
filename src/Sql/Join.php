@@ -26,6 +26,15 @@ use function key;
  *   `Select::SQL_STAR`.
  * - type: the type of JOIN being performed; see the `JOIN_*` constants;
  *   defaults to `JOIN_INNER`
+ *
+ * @psalm-type JoinName = string|TableIdentifier|non-empty-array<string, string|TableIdentifier|Select|Expression>
+ * @psalm-type JoinSpecification = array{
+ *     name: JoinName,
+ *     on: string|Predicate\PredicateInterface,
+ *     columns: array<array-key, string|ExpressionInterface>,
+ *     type: string,
+ * }
+ * @implements Iterator<int, JoinSpecification>
  */
 class Join implements Iterator, Countable
 {
@@ -50,6 +59,8 @@ class Join implements Iterator, Countable
 
     /**
      * JOIN specifications
+     *
+     * @var list<JoinSpecification>
      */
     protected array $joins = [];
 
@@ -65,6 +76,8 @@ class Join implements Iterator, Countable
 
     /**
      * Return current join specification.
+     *
+     * @return JoinSpecification
      */
     #[Override]
     #[ReturnTypeWillChange]
@@ -73,19 +86,23 @@ class Join implements Iterator, Countable
         return $this->joins[$this->position];
     }
 
+    /** @return list<JoinSpecification> */
     public function getJoins(): array
     {
         return $this->joins;
     }
 
     /**
-     * @param array|string|TableIdentifier $name    A table name on which to join, or a single
-     *     element associative array, of the form alias => table, or TableIdentifier instance
-     * @param string|Predicate\Expression  $on      A specification describing the fields to join on.
-     * @param string|string[]              $columns A single column name, an array
-     *     of column names, or (a) specification(s) such as SQL_STAR representing
+     * @param JoinName                                                    $name    A table name on which
+     *     to join, or a single element associative array, of the form alias => table, or TableIdentifier
+     *     instance
+     * @param string|Predicate\PredicateInterface                          $on      A specification
+     *     describing the fields to join on.
+     * @param string|array<array-key, string|ExpressionInterface>         $columns A single
+     *     column name, an array of column names, or (a) specification(s) such as SQL_STAR representing
      *     the columns to join.
-     * @param string                       $type    The JOIN type to use; see the JOIN_* constants.
+     * @param string                                                      $type    The JOIN type to use;
+     *     see the JOIN_* constants.
      * @throws Exception\InvalidArgumentException For invalid $name values.
      */
     // phpcs:ignore Generic.NamingConventions.ConstructorName.OldStyle

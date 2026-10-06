@@ -22,7 +22,7 @@ class ForeignKey extends AbstractConstraint
 
     protected string $columnSpecification = 'FOREIGN KEY (%s)';
 
-    /** @var string[] */
+    /** @var list<string> */
     protected array $referenceColumn = [];
 
     /** @var string[] */
@@ -32,7 +32,8 @@ class ForeignKey extends AbstractConstraint
     ];
 
     /**
-     * @param string[]|string|null $referenceColumn
+     * @param list<string>|string      $columns
+     * @param list<string>|string|null $referenceColumn
      */
     public function __construct(
         string $name,
@@ -93,6 +94,7 @@ class ForeignKey extends AbstractConstraint
         return $this->onUpdateRule;
     }
 
+    /** @return list<string> */
     public function getReferenceColumn(): array
     {
         return $this->referenceColumn;
@@ -118,7 +120,7 @@ class ForeignKey extends AbstractConstraint
     }
 
     /**
-     * @param string[]|string $referenceColumn
+     * @param list<string>|string $referenceColumn
      */
     public function setReferenceColumn(array|string $referenceColumn): static
     {

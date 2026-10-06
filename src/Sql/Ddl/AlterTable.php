@@ -14,6 +14,9 @@ use function is_bool;
 use function is_int;
 use function strtoupper;
 
+/**
+ * @psalm-import-type Specification from AbstractSql
+ */
 class AlterTable extends AbstractSql
 {
     final public const ADD_COLUMNS = 'addColumns';
@@ -32,22 +35,31 @@ class AlterTable extends AbstractSql
 
     final public const TABLE_OPTIONS = 'tableOptions';
 
+    /** @var list<Column\ColumnInterface> */
     protected array $addColumns = [];
 
+    /** @var list<Constraint\ConstraintInterface> */
     protected array $addConstraints = [];
 
+    /** @var array<string, Column\ColumnInterface> */
     protected array $changeColumns = [];
 
+    /** @var list<string> */
     protected array $dropColumns = [];
 
+    /** @var list<string> */
     protected array $dropConstraints = [];
 
+    /** @var list<string> */
     protected array $dropIndexes = [];
 
+    /** @var array<string, Literal|bool|int|string> */
     protected array $options = [];
 
     /**
      * Specifications for Sql String generation
+     *
+     * @var array<string, Specification>
      */
     protected array $specifications = [
         self::TABLE            => "ALTER TABLE %1\$s\n",
@@ -142,6 +154,7 @@ class AlterTable extends AbstractSql
         return $this;
     }
 
+    /** @return array<string, Literal|bool|int|string> */
     public function getOptions(): array
     {
         return $this->options;
@@ -169,6 +182,7 @@ class AlterTable extends AbstractSql
         return $this;
     }
 
+    /** @param array<string, Literal|bool|int|string> $options */
     public function setOptions(array $options): static
     {
         $this->options = $options;
@@ -183,8 +197,7 @@ class AlterTable extends AbstractSql
     }
 
     /**
-     * @return string[][]
-     * @psalm-return list{list{0?: string,...}}
+     * @return array{0: list<string>}
      */
     protected function processAddColumns(?PlatformInterface $adapterPlatform = null): array
     {
@@ -197,8 +210,7 @@ class AlterTable extends AbstractSql
     }
 
     /**
-     * @return string[][]
-     * @psalm-return list{list{0?: string,...}}
+     * @return array{0: list<string>}
      */
     protected function processAddConstraints(?PlatformInterface $adapterPlatform = null): array
     {
@@ -211,8 +223,7 @@ class AlterTable extends AbstractSql
     }
 
     /**
-     * @return string[][][]
-     * @psalm-return list{list{0?: list{string, string},...}}
+     * @return array{0: list<array{0: string, 1: string}>}
      */
     protected function processChangeColumns(?PlatformInterface $adapterPlatform = null): array
     {
@@ -228,8 +239,7 @@ class AlterTable extends AbstractSql
     }
 
     /**
-     * @return string[][]
-     * @psalm-return list{list{0?: string,...}}
+     * @return array{0: list<string>}
      */
     protected function processDropColumns(?PlatformInterface $adapterPlatform = null): array
     {
@@ -242,8 +252,7 @@ class AlterTable extends AbstractSql
     }
 
     /**
-     * @return string[][]
-     * @psalm-return list{list{0?: string,...}}
+     * @return array{0: list<string>}
      */
     protected function processDropConstraints(?PlatformInterface $adapterPlatform = null): array
     {
@@ -256,8 +265,7 @@ class AlterTable extends AbstractSql
     }
 
     /**
-     * @return string[][]
-     * @psalm-return list{list{0?: string,...}}
+     * @return array{0: list<string>}
      */
     protected function processDropIndexes(?PlatformInterface $adapterPlatform = null): array
     {
@@ -276,7 +284,7 @@ class AlterTable extends AbstractSql
     }
 
     /**
-     * @return string[][]|null
+     * @return array{0: list<string>}|null
      */
     protected function processTableOptions(?PlatformInterface $adapterPlatform = null): ?array
     {
