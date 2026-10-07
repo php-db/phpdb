@@ -158,18 +158,6 @@ count = 1
 
 [[issues]]
 file = "src/Adapter/Driver/AbstractConnection.php"
-code = "incompatible-return-type"
-message = 'Return type `null|resource` of `PhpDb\Adapter\Driver\AbstractConnection::getresource()` is incompatible with parent return type `resource` of `PhpDb\Adapter\Driver\ConnectionInterface::getresource()`'
-count = 1
-
-[[issues]]
-file = "src/Adapter/Driver/AbstractConnection.php"
-code = "incompatible-return-type"
-message = 'Return type `null|resource` of `PhpDb\Adapter\Driver\Pdo\AbstractPdoConnection::getresource()` is incompatible with parent return type `resource` of `PhpDb\Adapter\Driver\ConnectionInterface::getresource()`'
-count = 1
-
-[[issues]]
-file = "src/Adapter/Driver/AbstractConnection.php"
 code = "missing-api-or-internal"
 message = 'Abstract class `PhpDb\Adapter\Driver\AbstractConnection` is missing an `@api` or `@internal` annotation.'
 count = 1
@@ -424,12 +412,6 @@ count = 1
 file = "src/Adapter/Driver/Pdo/AbstractPdoConnection.php"
 code = "imprecise-type"
 message = "Type `array` in parameter `$connectionParameters` is imprecise, equivalent to `array<array-key, mixed>`."
-count = 1
-
-[[issues]]
-file = "src/Adapter/Driver/Pdo/AbstractPdoConnection.php"
-code = "incompatible-property-type"
-message = 'Property `PhpDb\Adapter\Driver\Pdo\AbstractPdoConnection::$resource` has an incompatible type declaration from docblock.'
 count = 1
 
 [[issues]]
