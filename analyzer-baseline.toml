@@ -351,19 +351,19 @@ count = 1
 [[issues]]
 file = "src/Adapter/Driver/Pdo/AbstractPdo.php"
 code = "non-existent-method"
-message = "Method `getlastgeneratedvalue` does not exist on type `PDO`."
+message = "Method `getLastGeneratedValue` does not exist on type `PDO`."
 count = 1
 
 [[issues]]
 file = "src/Adapter/Driver/Pdo/AbstractPdo.php"
 code = "non-existent-method"
-message = "Method `getresource` does not exist on type `PDO`."
+message = "Method `getResource` does not exist on type `PDO`."
 count = 1
 
 [[issues]]
 file = "src/Adapter/Driver/Pdo/AbstractPdo.php"
 code = "non-existent-method"
-message = "Method `isconnected` does not exist on type `PDO`."
+message = "Method `isConnected` does not exist on type `PDO`."
 count = 1
 
 [[issues]]
@@ -2877,25 +2877,25 @@ count = 1
 [[issues]]
 file = "src/Sql/Platform/AbstractPlatform.php"
 code = "non-existent-method"
-message = 'Method `getsqlstring` does not exist on type `PhpDb\Sql\Platform\PlatformDecoratorInterface`.'
+message = 'Method `getSqlString` does not exist on type `PhpDb\Sql\Platform\PlatformDecoratorInterface`.'
 count = 1
 
 [[issues]]
 file = "src/Sql/Platform/AbstractPlatform.php"
 code = "non-existent-method"
-message = 'Method `getsqlstring` does not exist on type `PhpDb\Sql\PreparableSqlInterface`.'
+message = 'Method `getSqlString` does not exist on type `PhpDb\Sql\PreparableSqlInterface`.'
 count = 1
 
 [[issues]]
 file = "src/Sql/Platform/AbstractPlatform.php"
 code = "non-existent-method"
-message = 'Method `preparestatement` does not exist on type `PhpDb\Sql\Platform\PlatformDecoratorInterface`.'
+message = 'Method `prepareStatement` does not exist on type `PhpDb\Sql\Platform\PlatformDecoratorInterface`.'
 count = 1
 
 [[issues]]
 file = "src/Sql/Platform/AbstractPlatform.php"
 code = "non-existent-method"
-message = 'Method `preparestatement` does not exist on type `PhpDb\Sql\SqlInterface`.'
+message = 'Method `prepareStatement` does not exist on type `PhpDb\Sql\SqlInterface`.'
 count = 1
 
 [[issues]]
@@ -2925,25 +2925,25 @@ count = 1
 [[issues]]
 file = "src/Sql/Platform/Platform.php"
 code = "non-existent-method"
-message = 'Method `getsqlstring` does not exist on type `PhpDb\Sql\Platform\PlatformDecoratorInterface`.'
+message = 'Method `getSqlString` does not exist on type `PhpDb\Sql\Platform\PlatformDecoratorInterface`.'
 count = 1
 
 [[issues]]
 file = "src/Sql/Platform/Platform.php"
 code = "non-existent-method"
-message = 'Method `getsqlstring` does not exist on type `PhpDb\Sql\PreparableSqlInterface`.'
+message = 'Method `getSqlString` does not exist on type `PhpDb\Sql\PreparableSqlInterface`.'
 count = 1
 
 [[issues]]
 file = "src/Sql/Platform/Platform.php"
 code = "non-existent-method"
-message = 'Method `preparestatement` does not exist on type `PhpDb\Sql\Platform\PlatformDecoratorInterface`.'
+message = 'Method `prepareStatement` does not exist on type `PhpDb\Sql\Platform\PlatformDecoratorInterface`.'
 count = 1
 
 [[issues]]
 file = "src/Sql/Platform/Platform.php"
 code = "non-existent-method"
-message = 'Method `preparestatement` does not exist on type `PhpDb\Sql\SqlInterface`.'
+message = 'Method `prepareStatement` does not exist on type `PhpDb\Sql\SqlInterface`.'
 count = 1
 
 [[issues]]
