@@ -8,7 +8,6 @@ use Override;
 use PhpDb\Sql\Argument\Identifier;
 use PhpDb\Sql\Argument\Literal;
 
-use function count;
 use function implode;
 use function str_replace;
 
@@ -36,13 +35,12 @@ class Index extends AbstractIndex
     #[Override]
     public function getExpressionData(): array
     {
-        $colCount  = count($this->columns);
         $values    = [new Identifier($this->name)];
         $specParts = [];
 
-        for ($i = 0; $i < $colCount; $i++) {
+        foreach ($this->columns as $i => $column) {
             $specPart = '%s';
-            $values[] = new Identifier($this->columns[$i]);
+            $values[] = new Identifier($column);
 
             if (null !== ($this->lengths[$i] ?? null)) {
                 $specPart .= "({$this->lengths[$i]})";

@@ -158,18 +158,6 @@ count = 1
 
 [[issues]]
 file = "src/Adapter/Driver/AbstractConnection.php"
-code = "incompatible-return-type"
-message = 'Return type `null|resource` of `PhpDb\Adapter\Driver\AbstractConnection::getresource()` is incompatible with parent return type `resource` of `PhpDb\Adapter\Driver\ConnectionInterface::getresource()`'
-count = 1
-
-[[issues]]
-file = "src/Adapter/Driver/AbstractConnection.php"
-code = "incompatible-return-type"
-message = 'Return type `null|resource` of `PhpDb\Adapter\Driver\Pdo\AbstractPdoConnection::getresource()` is incompatible with parent return type `resource` of `PhpDb\Adapter\Driver\ConnectionInterface::getresource()`'
-count = 1
-
-[[issues]]
-file = "src/Adapter/Driver/AbstractConnection.php"
 code = "missing-api-or-internal"
 message = 'Abstract class `PhpDb\Adapter\Driver\AbstractConnection` is missing an `@api` or `@internal` annotation.'
 count = 1
@@ -363,19 +351,19 @@ count = 1
 [[issues]]
 file = "src/Adapter/Driver/Pdo/AbstractPdo.php"
 code = "non-existent-method"
-message = "Method `getlastgeneratedvalue` does not exist on type `PDO`."
+message = "Method `getLastGeneratedValue` does not exist on type `PDO`."
 count = 1
 
 [[issues]]
 file = "src/Adapter/Driver/Pdo/AbstractPdo.php"
 code = "non-existent-method"
-message = "Method `getresource` does not exist on type `PDO`."
+message = "Method `getResource` does not exist on type `PDO`."
 count = 1
 
 [[issues]]
 file = "src/Adapter/Driver/Pdo/AbstractPdo.php"
 code = "non-existent-method"
-message = "Method `isconnected` does not exist on type `PDO`."
+message = "Method `isConnected` does not exist on type `PDO`."
 count = 1
 
 [[issues]]
@@ -424,12 +412,6 @@ count = 1
 file = "src/Adapter/Driver/Pdo/AbstractPdoConnection.php"
 code = "imprecise-type"
 message = "Type `array` in parameter `$connectionParameters` is imprecise, equivalent to `array<array-key, mixed>`."
-count = 1
-
-[[issues]]
-file = "src/Adapter/Driver/Pdo/AbstractPdoConnection.php"
-code = "incompatible-property-type"
-message = 'Property `PhpDb\Adapter\Driver\Pdo\AbstractPdoConnection::$resource` has an incompatible type declaration from docblock.'
 count = 1
 
 [[issues]]
@@ -1790,12 +1772,6 @@ count = 1
 
 [[issues]]
 file = "src/Sql/AbstractSql.php"
-code = "possibly-false-argument"
-message = 'Argument #1 of method `PhpDb\Adapter\Platform\PlatformInterface::quoteIdentifier` is possibly `false`, but parameter type `string` does not accept it.'
-count = 1
-
-[[issues]]
-file = "src/Sql/AbstractSql.php"
 code = "possibly-invalid-argument"
 message = 'Possible argument type mismatch for argument #1 of `PhpDb\Adapter\Platform\PlatformInterface::quoteIdentifierInFragment`: expected `string`, but possibly received `bool|int|string`.'
 count = 1
@@ -1858,6 +1834,12 @@ count = 1
 file = "src/Sql/AbstractSql.php"
 code = "possibly-null-argument"
 message = 'Argument #4 of method `PhpDb\Sql\AbstractSql::processExpressionParameterName` is possibly `null`, but parameter type `PhpDb\Adapter\Driver\DriverInterface` does not accept it.'
+count = 1
+
+[[issues]]
+file = "src/Sql/AbstractSql.php"
+code = "possibly-undefined-string-array-index"
+message = 'Possibly undefined array key `string` accessed on `non-empty-array<string, PhpDb\Sql\Expression|PhpDb\Sql\Select|PhpDb\Sql\TableIdentifier|string>`.'
 count = 1
 
 [[issues]]
@@ -2293,18 +2275,6 @@ message = 'Abstract class `PhpDb\Sql\Ddl\Constraint\AbstractConstraint` is missi
 count = 1
 
 [[issues]]
-file = "src/Sql/Ddl/Constraint/AbstractConstraint.php"
-code = "possibly-null-argument"
-message = 'Argument #1 of method `PhpDb\Sql\Argument\Identifier::__construct` is possibly `null`, but parameter type `string` does not accept it.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/Constraint/AbstractConstraint.php"
-code = "possibly-undefined-int-array-index"
-message = "Possibly undefined array index accessed on `list<string>`."
-count = 1
-
-[[issues]]
 file = "src/Sql/Ddl/Constraint/Check.php"
 code = "class-must-be-final"
 message = 'Class `PhpDb\Sql\Ddl\Constraint\Check` should be declared `final`.'
@@ -2476,18 +2446,6 @@ count = 1
 file = "src/Sql/Ddl/Index/Index.php"
 code = "class-must-be-final"
 message = 'Class `PhpDb\Sql\Ddl\Index\Index` should be declared `final`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/Index/Index.php"
-code = "possibly-null-argument"
-message = 'Argument #1 of method `PhpDb\Sql\Argument\Identifier::__construct` is possibly `null`, but parameter type `string` does not accept it.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/Index/Index.php"
-code = "possibly-undefined-int-array-index"
-message = "Possibly undefined array index accessed on `list<string>`."
 count = 1
 
 [[issues]]
@@ -2913,25 +2871,25 @@ count = 1
 [[issues]]
 file = "src/Sql/Platform/AbstractPlatform.php"
 code = "non-existent-method"
-message = 'Method `getsqlstring` does not exist on type `PhpDb\Sql\Platform\PlatformDecoratorInterface`.'
+message = 'Method `getSqlString` does not exist on type `PhpDb\Sql\Platform\PlatformDecoratorInterface`.'
 count = 1
 
 [[issues]]
 file = "src/Sql/Platform/AbstractPlatform.php"
 code = "non-existent-method"
-message = 'Method `getsqlstring` does not exist on type `PhpDb\Sql\PreparableSqlInterface`.'
+message = 'Method `getSqlString` does not exist on type `PhpDb\Sql\PreparableSqlInterface`.'
 count = 1
 
 [[issues]]
 file = "src/Sql/Platform/AbstractPlatform.php"
 code = "non-existent-method"
-message = 'Method `preparestatement` does not exist on type `PhpDb\Sql\Platform\PlatformDecoratorInterface`.'
+message = 'Method `prepareStatement` does not exist on type `PhpDb\Sql\Platform\PlatformDecoratorInterface`.'
 count = 1
 
 [[issues]]
 file = "src/Sql/Platform/AbstractPlatform.php"
 code = "non-existent-method"
-message = 'Method `preparestatement` does not exist on type `PhpDb\Sql\SqlInterface`.'
+message = 'Method `prepareStatement` does not exist on type `PhpDb\Sql\SqlInterface`.'
 count = 1
 
 [[issues]]
@@ -2961,25 +2919,25 @@ count = 1
 [[issues]]
 file = "src/Sql/Platform/Platform.php"
 code = "non-existent-method"
-message = 'Method `getsqlstring` does not exist on type `PhpDb\Sql\Platform\PlatformDecoratorInterface`.'
+message = 'Method `getSqlString` does not exist on type `PhpDb\Sql\Platform\PlatformDecoratorInterface`.'
 count = 1
 
 [[issues]]
 file = "src/Sql/Platform/Platform.php"
 code = "non-existent-method"
-message = 'Method `getsqlstring` does not exist on type `PhpDb\Sql\PreparableSqlInterface`.'
+message = 'Method `getSqlString` does not exist on type `PhpDb\Sql\PreparableSqlInterface`.'
 count = 1
 
 [[issues]]
 file = "src/Sql/Platform/Platform.php"
 code = "non-existent-method"
-message = 'Method `preparestatement` does not exist on type `PhpDb\Sql\Platform\PlatformDecoratorInterface`.'
+message = 'Method `prepareStatement` does not exist on type `PhpDb\Sql\Platform\PlatformDecoratorInterface`.'
 count = 1
 
 [[issues]]
 file = "src/Sql/Platform/Platform.php"
 code = "non-existent-method"
-message = 'Method `preparestatement` does not exist on type `PhpDb\Sql\SqlInterface`.'
+message = 'Method `prepareStatement` does not exist on type `PhpDb\Sql\SqlInterface`.'
 count = 1
 
 [[issues]]
@@ -3578,12 +3536,6 @@ count = 2
 
 [[issues]]
 file = "src/Sql/Select.php"
-code = "possibly-false-argument"
-message = 'Argument #1 of method `PhpDb\Sql\AbstractSql::resolveTable` is possibly `false`, but parameter type `PhpDb\Sql\Select|PhpDb\Sql\TableIdentifier|null|string` does not accept it.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Select.php"
 code = "possibly-false-iterator"
 message = 'Expression being iterated (type `array<array-key, PhpDb\Sql\ExpressionInterface|string>|false|list<PhpDb\Sql\ExpressionInterface|string>`) might be `false` at runtime.'
 count = 1
@@ -3632,6 +3584,12 @@ count = 1
 
 [[issues]]
 file = "src/Sql/Select.php"
+code = "possibly-null-array-index"
+message = "Possibly using `null` as an array index to access elementof variable $table."
+count = 1
+
+[[issues]]
+file = "src/Sql/Select.php"
 code = "possibly-null-operand"
 message = "Possibly null left operand used in string concatenation (type `array<array-key, mixed>|null|string`)."
 count = 1
@@ -3664,6 +3622,12 @@ count = 1
 file = "src/Sql/Select.php"
 code = "possibly-undefined-string-array-index"
 message = '''Possibly undefined array key 'type' accessed on `array{'modifier'?: truthy-string, 'select'?: PhpDb\Sql\Select, 'type'?: string}`.'''
+count = 1
+
+[[issues]]
+file = "src/Sql/Select.php"
+code = "possibly-undefined-string-array-index"
+message = 'Possibly undefined array key `null|string` accessed on `array<string, PhpDb\Sql\Select|PhpDb\Sql\TableIdentifier|string>`.'
 count = 1
 
 [[issues]]
