@@ -1785,12 +1785,6 @@ count = 1
 [[issues]]
 file = "src/Sql/AbstractSql.php"
 code = "possibly-invalid-argument"
-message = 'Possible argument type mismatch for argument #1 of `PhpDb\Adapter\Platform\PlatformInterface::quoteValue`: expected `string`, but possibly received `bool|int|string`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/AbstractSql.php"
-code = "possibly-invalid-argument"
 message = "Possible argument type mismatch for argument #1 of `count`: expected `Countable|array<array-key, mixed>`, but possibly received `array<array-key, array<array-key, string>|string>|string`."
 count = 1
 
@@ -3059,12 +3053,6 @@ file = "src/Sql/Select.php"
 code = "possibly-invalid-argument"
 message = 'Possible argument type mismatch for argument #1 of `PhpDb\Adapter\Platform\PlatformInterface::quoteIdentifier`: expected `string`, but possibly received `PhpDb\Sql\ExpressionInterface|string`.'
 count = 1
-
-[[issues]]
-file = "src/Sql/Select.php"
-code = "possibly-invalid-argument"
-message = 'Possible argument type mismatch for argument #1 of `PhpDb\Adapter\Platform\PlatformInterface::quoteValue`: expected `string`, but possibly received `int|string`.'
-count = 2
 
 [[issues]]
 file = "src/Sql/Select.php"
