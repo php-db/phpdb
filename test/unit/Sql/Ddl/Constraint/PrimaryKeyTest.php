@@ -28,4 +28,21 @@ final class PrimaryKeyTest extends TestCase
             $expressionData['values'],
         );
     }
+
+    #[Test]
+    public function getExpressionDataListsEveryColumnInTheSpecification(): void
+    {
+        $pk = new PrimaryKey(['foo', 'bar']);
+
+        $expressionData = $pk->getExpressionData();
+
+        static::assertSame('PRIMARY KEY (%s, %s)', $expressionData['spec']);
+        static::assertEquals(
+            [
+                Argument::identifier('foo'),
+                Argument::identifier('bar'),
+            ],
+            $expressionData['values'],
+        );
+    }
 }

@@ -93,7 +93,8 @@ class Combine extends AbstractPreparableSql
         if (is_array($select)) {
             foreach ($select as $combine) {
                 if ($combine instanceof Select) {
-                    $combine = [$combine];
+                    $this->combine($combine, $type, $modifier);
+                    continue;
                 }
 
                 $this->combine(

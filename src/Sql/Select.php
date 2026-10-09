@@ -12,8 +12,8 @@ use PhpDb\Adapter\Platform\PlatformInterface;
 use PhpDb\Sql\Predicate\PredicateInterface;
 
 use function array_key_exists;
+use function array_key_first;
 use function count;
-use function current;
 use function explode;
 use function gettype;
 use function is_array;
@@ -650,7 +650,7 @@ class Select extends AbstractPreparableSql
         }
 
         foreach ($this->getJoins()->getJoins() as $join) {
-            $joinName = is_array($join['name']) ? key($join['name']) : $join['name'];
+            $joinName = is_array($join['name']) ? array_key_first($join['name']) : $join['name'];
             $joinName = parent::resolveTable($joinName, $platform, $driver, $parameterContainer);
 
             foreach ($join['columns'] as $jKey => $jColumn) {
@@ -746,8 +746,8 @@ class Select extends AbstractPreparableSql
         $alias = null;
 
         if (is_array($table)) {
-            $alias = key($table);
-            $table = current($table);
+            $alias = array_key_first($table);
+            $table = $table[$alias];
         }
 
         $table = parent::resolveTable($table, $platform, $driver, $parameterContainer);

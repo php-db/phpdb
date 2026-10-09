@@ -17,13 +17,12 @@ use PhpDb\Sql\Argument\Value;
 use PhpDb\Sql\Argument\Values;
 use PhpDb\Sql\Platform\PlatformDecoratorInterface;
 
+use function array_key_first;
 use function count;
-use function current;
 use function get_object_vars;
 use function implode;
 use function is_array;
 use function is_string;
-use function key;
 use function rtrim;
 use function str_replace;
 use function strtoupper;
@@ -343,8 +342,9 @@ abstract class AbstractSql implements SqlInterface
             $joinAs        = null;
             $joinNameValue = $join['name'];
             if (is_array($joinNameValue)) {
-                $joinName = current($joinNameValue);
-                $joinAs   = $platform->quoteIdentifier(key($joinNameValue));
+                $alias    = array_key_first($joinNameValue);
+                $joinName = $joinNameValue[$alias];
+                $joinAs   = $platform->quoteIdentifier($alias);
             } else {
                 $joinName = $joinNameValue;
             }
