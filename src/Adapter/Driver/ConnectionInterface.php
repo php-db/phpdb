@@ -30,7 +30,7 @@ interface ConnectionInterface extends SchemaAwareInterface
     /**
      * Get resource
      *
-     * @return resource
+     * @return resource|object|null
      */
     public function getResource();
 
