@@ -2822,12 +2822,6 @@ count = 1
 
 [[issues]]
 file = "src/Sql/Join.php"
-code = "possibly-invalid-argument"
-message = 'Possible argument type mismatch for argument #1 of `PhpDb\Sql\Exception\InvalidArgumentException::forInvalidJoinName`: expected `string`, but possibly received `PhpDb\Sql\Expression|PhpDb\Sql\Select|PhpDb\Sql\TableIdentifier|string`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Join.php"
 code = "possibly-undefined-int-array-index"
 message = '''Possibly undefined array index accessed on `list<array{'columns': array<array-key, PhpDb\Sql\ExpressionInterface|string>, 'name': PhpDb\Sql\TableIdentifier|non-empty-array<string, PhpDb\Sql\Expression|PhpDb\Sql\Select|PhpDb\Sql\TableIdentifier|string>|string, 'on': PhpDb\Sql\Predicate\PredicateInterface|string, 'type': string}>`.'''
 count = 1
