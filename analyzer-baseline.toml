@@ -2349,12 +2349,6 @@ count = 1
 [[issues]]
 file = "src/Sql/Delete.php"
 code = "possibly-invalid-argument"
-message = 'Possible argument type mismatch for argument #1 of `PhpDb\Sql\AbstractSql::resolveTable`: expected `PhpDb\Sql\Select|PhpDb\Sql\TableIdentifier|null|string`, but possibly received `PhpDb\Sql\TableIdentifier|array<string, PhpDb\Sql\TableIdentifier|string>|string`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Delete.php"
-code = "possibly-invalid-argument"
 message = "Possible argument type mismatch for argument #3 of `str_replace`: expected `array<array-key, string>|string`, but possibly received `array<string, list<array<int|string, string>|null>>|null|string`."
 count = 2
 
@@ -2513,12 +2507,6 @@ file = "src/Sql/Insert.php"
 code = "possibly-invalid-argument"
 message = 'Possible argument type mismatch for argument #1 of `PhpDb\Sql\AbstractSql::processSubSelect`: expected `PhpDb\Sql\Select`, but possibly received `PhpDb\Sql\Select|non-empty-array<array-key, mixed>`.'
 count = 1
-
-[[issues]]
-file = "src/Sql/Insert.php"
-code = "possibly-invalid-argument"
-message = 'Possible argument type mismatch for argument #1 of `PhpDb\Sql\AbstractSql::resolveTable`: expected `PhpDb\Sql\Select|PhpDb\Sql\TableIdentifier|null|string`, but possibly received `PhpDb\Sql\TableIdentifier|array<string, PhpDb\Sql\TableIdentifier|string>|string`.'
-count = 2
 
 [[issues]]
 file = "src/Sql/Insert.php"
@@ -3123,26 +3111,8 @@ count = 1
 [[issues]]
 file = "src/Sql/Sql.php"
 code = "possibly-invalid-argument"
-message = 'Possible argument type mismatch for argument #1 of `PhpDb\Sql\Delete::__construct`: expected `PhpDb\Sql\TableIdentifier|null|string`, but possibly received `PhpDb\Sql\TableIdentifier|array<string, PhpDb\Sql\TableIdentifier|string>|null|string`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Sql.php"
-code = "possibly-invalid-argument"
 message = 'Possible argument type mismatch for argument #1 of `PhpDb\Sql\Exception\InvalidArgumentException::forForeignTable`: expected `string`, but possibly received `PhpDb\Sql\TableIdentifier|array<string, PhpDb\Sql\TableIdentifier|string>|string`.'
 count = 4
-
-[[issues]]
-file = "src/Sql/Sql.php"
-code = "possibly-invalid-argument"
-message = 'Possible argument type mismatch for argument #1 of `PhpDb\Sql\Insert::__construct`: expected `PhpDb\Sql\TableIdentifier|null|string`, but possibly received `PhpDb\Sql\TableIdentifier|array<string, PhpDb\Sql\TableIdentifier|string>|null|string`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Sql.php"
-code = "possibly-invalid-argument"
-message = 'Possible argument type mismatch for argument #1 of `PhpDb\Sql\Update::__construct`: expected `PhpDb\Sql\TableIdentifier|null|string`, but possibly received `PhpDb\Sql\TableIdentifier|array<string, PhpDb\Sql\TableIdentifier|string>|null|string`.'
-count = 1
 
 [[issues]]
 file = "src/Sql/Sql.php"
@@ -3220,12 +3190,6 @@ count = 2
 file = "src/Sql/Update.php"
 code = "possible-method-access-on-null"
 message = "Attempting to call a method on `null`."
-count = 1
-
-[[issues]]
-file = "src/Sql/Update.php"
-code = "possibly-invalid-argument"
-message = 'Possible argument type mismatch for argument #1 of `PhpDb\Sql\AbstractSql::resolveTable`: expected `PhpDb\Sql\Select|PhpDb\Sql\TableIdentifier|null|string`, but possibly received `PhpDb\Sql\TableIdentifier|array<string, PhpDb\Sql\TableIdentifier|string>|string`.'
 count = 1
 
 [[issues]]
