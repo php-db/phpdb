@@ -3110,12 +3110,6 @@ count = 1
 
 [[issues]]
 file = "src/Sql/Sql.php"
-code = "possibly-invalid-argument"
-message = 'Possible argument type mismatch for argument #1 of `PhpDb\Sql\Exception\InvalidArgumentException::forForeignTable`: expected `string`, but possibly received `PhpDb\Sql\TableIdentifier|array<string, PhpDb\Sql\TableIdentifier|string>|string`.'
-count = 4
-
-[[issues]]
-file = "src/Sql/Sql.php"
 code = "unhandled-thrown-type"
 message = 'Potentially unhandled exception `PhpDb\Sql\Exception\RuntimeException` in `PhpDb\Sql\Sql::buildSqlString`.'
 count = 1
