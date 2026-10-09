@@ -443,7 +443,7 @@ abstract class AbstractSql implements SqlInterface
         $isIdentifier = false;
         $fromTable    = '';
         if (is_array($column)) {
-            $isIdentifier = (bool) ($column['isIdentifier'] ?? false);
+            $isIdentifier = $column['isIdentifier'] ?? false;
             $fromTable    = $column['fromTable'] ?? '';
             $column       = $column['column'];
         }

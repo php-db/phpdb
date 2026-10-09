@@ -1845,12 +1845,6 @@ count = 1
 [[issues]]
 file = "src/Sql/AbstractSql.php"
 code = "redundant-cast"
-message = "Redundant cast to `(bool)`: the expression already has this type."
-count = 1
-
-[[issues]]
-file = "src/Sql/AbstractSql.php"
-code = "redundant-cast"
 message = "Redundant cast to `(string)`: the expression already has this type."
 count = 1
 
