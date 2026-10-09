@@ -68,17 +68,10 @@ class Predicate extends PredicateSet
         string $expression,
         string|float|int|array|ArgumentInterface|ExpressionInterface|null $parameters = [],
     ): static {
-        if ([] !== $parameters) {
-            $this->addPredicate(
-                new Expression($expression, $parameters),
-                $this->getNextPredicateCombineOperator(),
-            );
-        } else {
-            $this->addPredicate(
-                new Expression($expression),
-                $this->getNextPredicateCombineOperator(),
-            );
-        }
+        $this->addPredicate(
+            [] === $parameters ? new Expression($expression) : new Expression($expression, $parameters),
+            $this->getNextPredicateCombineOperator(),
+        );
 
         return $this;
     }

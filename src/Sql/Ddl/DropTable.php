@@ -13,7 +13,7 @@ use PhpDb\Sql\TableIdentifier;
  */
 class DropTable extends AbstractSql
 {
-    final public const TABLE = 'table';
+    final public const string TABLE = 'table';
 
     protected bool $ifExists = false;
 

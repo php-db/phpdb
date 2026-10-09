@@ -93,13 +93,11 @@ class In extends AbstractExpression implements PredicateInterface
      */
     public function setValueSet(array|Select|ArgumentInterface $valueSet): static
     {
-        if ($valueSet instanceof ArgumentInterface) {
-            $this->valueSet = $valueSet;
-        } elseif ($valueSet instanceof Select) {
-            $this->valueSet = new ArgumentSelect($valueSet);
-        } else {
-            $this->valueSet = new Values($valueSet);
-        }
+        $this->valueSet = match (true) {
+            $valueSet instanceof ArgumentInterface => $valueSet,
+            $valueSet instanceof Select => new ArgumentSelect($valueSet),
+            default => new Values($valueSet),
+        };
 
         return $this;
     }

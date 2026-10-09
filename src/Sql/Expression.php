@@ -26,7 +26,7 @@ class Expression extends AbstractExpression
     /**
      * @const
      */
-    final public const PLACEHOLDER = '?';
+    final public const string PLACEHOLDER = '?';
 
     protected string $expression = '';
 
@@ -132,15 +132,12 @@ class Expression extends AbstractExpression
         }
 
         foreach ($parameters as $parameter) {
-            if (is_array($parameter)) {
-                $parameter = new Values($parameter);
-            } elseif ($parameter instanceof ExpressionInterface) {
-                $parameter = new SelectArgument($parameter);
-            } elseif (! $parameter instanceof ArgumentInterface) {
-                $parameter = new Value($parameter);
-            }
-
-            $this->parameters[] = $parameter;
+            $this->parameters[] = match (true) {
+                is_array($parameter) => new Values($parameter),
+                $parameter instanceof ExpressionInterface => new SelectArgument($parameter),
+                $parameter instanceof ArgumentInterface => $parameter,
+                default => new Value($parameter),
+            };
         }
 
         return $this;
