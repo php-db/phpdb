@@ -21,15 +21,15 @@ use function str_contains;
 
 class PredicateSet implements PredicateInterface, Countable
 {
-    final public const OP_AND = 'AND';
+    final public const string OP_AND = 'AND';
 
-    final public const OP_OR = 'OR';
+    final public const string OP_OR = 'OR';
 
     /** @deprecated Use OP_AND instead */
-    final public const COMBINED_BY_AND = self::OP_AND;
+    final public const string COMBINED_BY_AND = self::OP_AND;
 
     /** @deprecated Use OP_OR instead */
-    final public const COMBINED_BY_OR = self::OP_OR;
+    final public const string COMBINED_BY_OR = self::OP_OR;
 
     protected string $defaultCombination = self::OP_AND;
 

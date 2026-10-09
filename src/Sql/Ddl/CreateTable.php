@@ -20,13 +20,13 @@ use function strtoupper;
  */
 class CreateTable extends AbstractSql
 {
-    final public const COLUMNS = 'columns';
+    final public const string COLUMNS = 'columns';
 
-    final public const CONSTRAINTS = 'constraints';
+    final public const string CONSTRAINTS = 'constraints';
 
-    final public const TABLE = 'table';
+    final public const string TABLE = 'table';
 
-    final public const TABLE_OPTIONS = 'tableOptions';
+    final public const string TABLE_OPTIONS = 'tableOptions';
 
     /** @var list<Column\ColumnInterface> */
     protected array $columns = [];

@@ -38,19 +38,19 @@ use function key;
  */
 class Join implements Iterator, Countable
 {
-    final public const JOIN_INNER = 'inner';
+    final public const string JOIN_INNER = 'inner';
 
-    final public const JOIN_OUTER = 'outer';
+    final public const string JOIN_OUTER = 'outer';
 
-    final public const JOIN_FULL_OUTER = 'full outer';
+    final public const string JOIN_FULL_OUTER = 'full outer';
 
-    final public const JOIN_LEFT = 'left';
+    final public const string JOIN_LEFT = 'left';
 
-    final public const JOIN_RIGHT = 'right';
+    final public const string JOIN_RIGHT = 'right';
 
-    final public const JOIN_RIGHT_OUTER = 'right outer';
+    final public const string JOIN_RIGHT_OUTER = 'right outer';
 
-    final public const JOIN_LEFT_OUTER = 'left outer';
+    final public const string JOIN_LEFT_OUTER = 'left outer';
 
     /**
      * Current iterator position.
