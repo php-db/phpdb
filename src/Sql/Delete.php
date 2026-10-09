@@ -23,9 +23,9 @@ class Delete extends AbstractPreparableSql
     /**@#+
      * @const
      */
-    public const SPECIFICATION_DELETE = 'delete';
+    public const string SPECIFICATION_DELETE = 'delete';
 
-    final public const SPECIFICATION_WHERE = 'where';
+    final public const string SPECIFICATION_WHERE = 'where';
 
     /** @#- */
 
@@ -44,8 +44,11 @@ class Delete extends AbstractPreparableSql
 
     /**
      * Constructor
+     *
+     * @param string|TableIdentifier|array<string, string|TableIdentifier>|null $table An aliased table
+     *     array is kept for TableGateway and rendered as the bare table
      */
-    public function __construct(string|TableIdentifier|null $table = null)
+    public function __construct(string|TableIdentifier|array|null $table = null)
     {
         if ($table) {
             $this->from($table);
@@ -85,9 +88,11 @@ class Delete extends AbstractPreparableSql
     ): static {
         if ($predicate instanceof Where) {
             $this->where = $predicate;
-        } else {
-            $this->getWhere()->addPredicates($predicate, $combination);
+
+            return $this;
         }
+
+        $this->getWhere()->addPredicates($predicate, $combination);
 
         return $this;
     }
@@ -99,7 +104,7 @@ class Delete extends AbstractPreparableSql
     ): string {
         return str_replace(
             '%1$s',
-            $this->resolveTable($this->table, $platform, $driver, $parameterContainer),
+            $this->resolveTable($this->unaliasTable($this->table), $platform, $driver, $parameterContainer),
             $this->specifications[static::SPECIFICATION_DELETE],
         );
     }

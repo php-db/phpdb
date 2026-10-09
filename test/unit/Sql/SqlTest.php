@@ -50,6 +50,16 @@ final class SqlTest extends TestCase
      */
     protected Sql $sql;
 
+    /** @return array<string, array{'delete'|'insert'|'update'}> */
+    public static function dataChangingStatementProvider(): array
+    {
+        return [
+            'delete' => ['delete'],
+            'insert' => ['insert'],
+            'update' => ['update'],
+        ];
+    }
+
     /** @return array<string, array{array<string, string|TableIdentifier>|TableIdentifier, string}> */
     public static function foreignTableProvider(): array
     {
@@ -105,6 +115,18 @@ final class SqlTest extends TestCase
         self::expectException(RuntimeException::class);
         self::expectExceptionMessage(RuntimeException::SUBJECT_NOT_SQL_INTERFACE);
         $sql->buildSqlString($this->sql->select());
+    }
+
+    /**
+     * @param 'delete'|'insert'|'update' $method
+     */
+    #[Test]
+    #[DataProvider('dataChangingStatementProvider')]
+    public function dataChangingStatementKeepsAliasedTable(string $method): void
+    {
+        $sql = new Sql($this->mockAdapter, ['f' => 'foo']);
+
+        static::assertSame(['f' => 'foo'], $sql->{$method}()->getRawState('table'));
     }
 
     #[Test]

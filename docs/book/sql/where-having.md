@@ -132,35 +132,35 @@ class Predicate extends PredicateSet
     public function setUnnest(?Predicate $predicate = null) : void;
     public function unnest() : Predicate;
     public function equalTo(
-        null|float|int|string|ArgumentInterface $left,
+        null|string|ArgumentInterface $left,
         null|float|int|string|ArgumentInterface $right
     ) : static;
     public function notEqualTo(
-        null|float|int|string|ArgumentInterface $left,
+        null|string|ArgumentInterface $left,
         null|float|int|string|ArgumentInterface $right
     ) : static;
     public function lessThan(
-        null|float|int|string|ArgumentInterface $left,
+        null|string|ArgumentInterface $left,
         null|float|int|string|ArgumentInterface $right
     ) : static;
     public function greaterThan(
-        null|float|int|string|ArgumentInterface $left,
+        null|string|ArgumentInterface $left,
         null|float|int|string|ArgumentInterface $right
     ) : static;
     public function lessThanOrEqualTo(
-        null|float|int|string|ArgumentInterface $left,
+        null|string|ArgumentInterface $left,
         null|float|int|string|ArgumentInterface $right
     ) : static;
     public function greaterThanOrEqualTo(
-        null|float|int|string|ArgumentInterface $left,
+        null|string|ArgumentInterface $left,
         null|float|int|string|ArgumentInterface $right
     ) : static;
     public function like(
-        null|float|int|string|ArgumentInterface $identifier,
+        null|string|ArgumentInterface $identifier,
         null|float|int|string|ArgumentInterface $like
     ) : static;
     public function notLike(
-        null|float|int|string|ArgumentInterface $identifier,
+        null|string|ArgumentInterface $identifier,
         null|float|int|string|ArgumentInterface $notLike
     ) : static;
     public function literal(string $literal) : static;
@@ -170,28 +170,28 @@ class Predicate extends PredicateSet
             |ExpressionInterface $parameters = []
     ) : static;
     public function isNull(
-        float|int|string|ArgumentInterface $identifier
+        string|ArgumentInterface $identifier
     ) : static;
     public function isNotNull(
-        float|int|string|ArgumentInterface $identifier
+        string|ArgumentInterface $identifier
     ) : static;
     public function in(
-        float|int|string|ArgumentInterface $identifier,
+        string|ArgumentInterface $identifier,
         array|ArgumentInterface $valueSet
     ) : static;
     public function notIn(
-        float|int|string|ArgumentInterface $identifier,
+        string|ArgumentInterface $identifier,
         array|ArgumentInterface $valueSet
     ) : static;
     public function between(
-        null|float|int|string|array|ArgumentInterface $identifier,
-        null|float|int|string|array|ArgumentInterface $minValue,
-        null|float|int|string|array|ArgumentInterface $maxValue
+        null|string|ArgumentInterface $identifier,
+        null|float|int|string|ArgumentInterface $minValue,
+        null|float|int|string|ArgumentInterface $maxValue
     ) : static;
     public function notBetween(
-        null|float|int|string|array|ArgumentInterface $identifier,
-        null|float|int|string|array|ArgumentInterface $minValue,
-        null|float|int|string|array|ArgumentInterface $maxValue
+        null|string|ArgumentInterface $identifier,
+        null|float|int|string|ArgumentInterface $minValue,
+        null|float|int|string|ArgumentInterface $maxValue
     ) : static;
     public function predicate(PredicateInterface $predicate) : static;
 
@@ -222,6 +222,15 @@ class Predicate extends PredicateSet
 > `ArgumentInterface` implementations. Pass an `Argument\Identifier` for
 > column names, `Argument\Value` for values, or `Argument\Literal` for raw
 > SQL fragments directly to control how values are treated.
+>
+> The left-hand side and identifier parameters accept a string (treated as an
+> identifier) or an `ArgumentInterface`. To put a value on the left, wrap it in
+> `Argument\Value`:
+>
+> ```php
+> $where->equalTo(new Argument\Value(5), new Argument\Identifier('quantity'));
+> // WHERE '5' = "quantity"
+> ```
 
 Each method in the API will produce a corresponding `Predicate` object
 of a similarly named type, as described below.

@@ -31,6 +31,7 @@ use PhpDbTest\TestAsset\TrustingSql92Platform;
 use PhpDbTest\TestAsset\UpdateIgnore;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\CoversNothing;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\IgnoreDeprecations;
 use PHPUnit\Framework\Attributes\RequiresPhp;
@@ -57,12 +58,22 @@ use TypeError;
 #[CoversMethod(Update::class, 'processSet')]
 #[CoversMethod(Update::class, 'processWhere')]
 #[CoversMethod(Update::class, 'processJoins')]
+#[CoversMethod(AbstractPreparableSql::class, 'unaliasTable')]
 final class UpdateTest extends TestCase
 {
     use AdapterTestTrait;
     use DeprecatedAssertionsTrait;
 
     protected Update $update;
+
+    /** @return array<string, array{array<string, string|TableIdentifier>, string}> */
+    public static function aliasedTableProvider(): array
+    {
+        return [
+            'table name'       => [['f' => 'foo'], '"foo"'],
+            'table identifier' => [['f' => new TableIdentifier('foo', 'sch')], '"sch"."foo"'],
+        ];
+    }
 
     #[Test]
     public function cloneDeepCopiesSetWhereAndJoins(): void
@@ -208,6 +219,21 @@ final class UpdateTest extends TestCase
             ->where('x = y');
         static::assertSame(
             'UPDATE "sch"."foo" SET "bar" = \'\', "boo" = \'test\', "bam" = \'1\' WHERE x = y',
+            $this->update->getSqlString(new TrustingSql92Platform()),
+        );
+    }
+
+    /**
+     * @param array<string, string|TableIdentifier> $table
+     */
+    #[Test]
+    #[DataProvider('aliasedTableProvider')]
+    public function getSqlStringRendersBareTableForAliasedTable(array $table, string $expected): void
+    {
+        $this->update->table($table)->set(['bar' => 'baz']);
+
+        static::assertSame(
+            "UPDATE {$expected} SET \"bar\" = 'baz'",
             $this->update->getSqlString(new TrustingSql92Platform()),
         );
     }

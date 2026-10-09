@@ -11,7 +11,7 @@ use PhpDb\Sql\Insert;
 
 class Replace extends Insert
 {
-    public const SPECIFICATION_INSERT = 'replace';
+    public const string SPECIFICATION_INSERT = 'replace';
 
     /** @var array<string, string> */
     protected array $specifications = [

@@ -9,18 +9,72 @@ use PhpDb\Adapter\Exception\RuntimeException as AdapterRuntimeException;
 use PhpDb\Adapter\Platform\Sql92;
 use PhpDb\Sql\Argument;
 use PhpDb\Sql\Expression;
+use PhpDb\Sql\Predicate\Between;
 use PhpDb\Sql\Predicate\Exception\RuntimeException;
+use PhpDb\Sql\Predicate\In;
+use PhpDb\Sql\Predicate\IsNull;
+use PhpDb\Sql\Predicate\Like;
+use PhpDb\Sql\Predicate\Operator;
 use PhpDb\Sql\Predicate\Predicate;
 use PhpDb\Sql\Predicate\PredicateInterface;
 use PhpDb\Sql\Select;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestDox;
 use PHPUnit\Framework\TestCase;
+use ReflectionMethod;
+use ReflectionNamedType;
+use ReflectionParameter;
+use ReflectionUnionType;
+
+use function array_diff;
+use function array_map;
 
 #[Group('unit')]
 final class PredicateTest extends TestCase
 {
+    /** @return array<string, array{string, int, class-string, int}> */
+    public static function fluentParameterProvider(): array
+    {
+        return [
+            'between identifier'        => ['between', 0, Between::class, 0],
+            'between minimum'           => ['between', 1, Between::class, 1],
+            'between maximum'           => ['between', 2, Between::class, 2],
+            'notBetween identifier'     => ['notBetween', 0, Between::class, 0],
+            'equalTo left'              => ['equalTo', 0, Operator::class, 0],
+            'equalTo right'             => ['equalTo', 1, Operator::class, 2],
+            'notEqualTo left'           => ['notEqualTo', 0, Operator::class, 0],
+            'greaterThan left'          => ['greaterThan', 0, Operator::class, 0],
+            'greaterThanOrEqualTo left' => ['greaterThanOrEqualTo', 0, Operator::class, 0],
+            'lessThan left'             => ['lessThan', 0, Operator::class, 0],
+            'lessThanOrEqualTo left'    => ['lessThanOrEqualTo', 0, Operator::class, 0],
+            'in identifier'             => ['in', 0, In::class, 0],
+            'in value set'              => ['in', 1, In::class, 1],
+            'notIn identifier'          => ['notIn', 0, In::class, 0],
+            'isNull identifier'         => ['isNull', 0, IsNull::class, 0],
+            'isNotNull identifier'      => ['isNotNull', 0, IsNull::class, 0],
+            'like identifier'           => ['like', 0, Like::class, 0],
+            'like pattern'              => ['like', 1, Like::class, 1],
+            'notLike identifier'        => ['notLike', 0, Like::class, 0],
+        ];
+    }
+
+    /**
+     * @throws ErrorException
+     */
+    /** @return list<string> */
+    private static function typeNames(ReflectionParameter $parameter): array
+    {
+        $type  = $parameter->getType();
+        $types = $type instanceof ReflectionUnionType ? $type->getTypes() : [$type];
+
+        return array_map(
+            static fn(?ReflectionNamedType $named): string => $named?->getName() ?? 'mixed',
+            $types,
+        );
+    }
+
     #[Test]
     public function betweenCreatesBetweenPredicate(): void
     {
@@ -160,6 +214,23 @@ final class PredicateTest extends TestCase
         } else {
             static::fail('Expression not found');
         }
+    }
+
+    /**
+     * @param class-string $predicateClass
+     */
+    #[Test]
+    #[DataProvider('fluentParameterProvider')]
+    public function fluentMethodAcceptsOnlyTypesItsPredicateAccepts(
+        string $method,
+        int $position,
+        string $predicateClass,
+        int $constructorPosition,
+    ): void {
+        $fluent      = (new ReflectionMethod(Predicate::class, $method))->getParameters()[$position];
+        $constructor = (new ReflectionMethod($predicateClass, '__construct'))->getParameters()[$constructorPosition];
+
+        static::assertSame([], array_diff(self::typeNames($fluent), self::typeNames($constructor)));
     }
 
     #[Test]

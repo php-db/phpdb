@@ -90,7 +90,10 @@ abstract class AbstractSql implements SqlInterface
 
             if (is_array($result)) {
                 $sqls[$name] = $this->createSqlFromSpecificationAndParameters($specification, $result);
-            } elseif (null !== $result) {
+                continue;
+            }
+
+            if (null !== $result) {
                 $sqls[$name] = $result;
             }
         }
@@ -131,12 +134,11 @@ abstract class AbstractSql implements SqlInterface
             if (null !== ($paramSpecs[$position]['combinedby'] ?? null)) {
                 $multiParamValues = [];
                 foreach ($paramsForPosition as $multiParamsForPosition) {
-                    if (is_array($multiParamsForPosition)) {
-                        $ppCount = count($multiParamsForPosition);
-                    } else {
-                        $ppCount                = 1;
+                    if (! is_array($multiParamsForPosition)) {
                         $multiParamsForPosition = [$multiParamsForPosition];
                     }
+
+                    $ppCount = count($multiParamsForPosition);
 
                     if (null === ($paramSpecs[$position][$ppCount] ?? null)) {
                         throw Exception\RuntimeException::forUnsupportedParameterCountOf($ppCount);
@@ -146,16 +148,20 @@ abstract class AbstractSql implements SqlInterface
                 }
 
                 $topParameters[] = implode($paramSpecs[$position]['combinedby'], $multiParamValues);
-            } elseif (null !== $paramSpecs[$position]) {
-                $ppCount = count($paramsForPosition);
-                if (null === ($paramSpecs[$position][$ppCount] ?? null)) {
-                    throw Exception\RuntimeException::forUnsupportedParameterCountOf($ppCount);
-                }
-
-                $topParameters[] = vsprintf($paramSpecs[$position][$ppCount], $paramsForPosition);
-            } else {
-                $topParameters[] = $paramsForPosition;
+                continue;
             }
+
+            if (null === $paramSpecs[$position]) {
+                $topParameters[] = $paramsForPosition;
+                continue;
+            }
+
+            $ppCount = count($paramsForPosition);
+            if (null === ($paramSpecs[$position][$ppCount] ?? null)) {
+                throw Exception\RuntimeException::forUnsupportedParameterCountOf($ppCount);
+            }
+
+            $topParameters[] = vsprintf($paramSpecs[$position][$ppCount], $paramsForPosition);
         }
 
         return vsprintf($specificationString, $topParameters);
@@ -185,12 +191,13 @@ abstract class AbstractSql implements SqlInterface
 
         $values = [];
         foreach ($arguments as $argument) {
-            if ($argument instanceof Values) {
-                foreach ($argument->getValue() as $v) {
-                    $values[] = new Value($v);
-                }
-            } else {
+            if (! $argument instanceof Values) {
                 $values[] = $argument;
+                continue;
+            }
+
+            foreach ($argument->getValue() as $v) {
+                $values[] = new Value($v);
             }
         }
 
@@ -228,15 +235,13 @@ abstract class AbstractSql implements SqlInterface
             return str_replace('%%', replace: '%', subject: $specification);
         }
 
-        if (null === $namedParameterPrefix || '' === $namedParameterPrefix) {
-            $namedParameterPrefix = $parameterContainer
+        $namedParameterPrefix = match (true) {
+            null === $namedParameterPrefix || '' === $namedParameterPrefix => $parameterContainer
                 ? 'expr' . $runtimeExpressionPrefix++ . 'Param'
-                : '';
-        } else {
-            $namedParameterPrefix =
-                $this->processInfo['paramPrefix']
-                . str_replace([' ', "\t", "\n", "\r"], replace: '__', subject: $namedParameterPrefix);
-        }
+                : '',
+            default => $this->processInfo['paramPrefix']
+                . str_replace([' ', "\t", "\n", "\r"], replace: '__', subject: $namedParameterPrefix),
+        };
 
         $this->instanceParameterIndex[$namedParameterPrefix] ??= 1;
 
@@ -341,49 +346,42 @@ abstract class AbstractSql implements SqlInterface
         foreach ($joins->getJoins() as $j => $join) {
             $joinAs        = null;
             $joinNameValue = $join['name'];
+            $joinName      = $joinNameValue;
             if (is_array($joinNameValue)) {
                 $alias    = array_key_first($joinNameValue);
                 $joinName = $joinNameValue[$alias];
                 $joinAs   = $platform->quoteIdentifier($alias);
-            } else {
-                $joinName = $joinNameValue;
             }
 
-            if ($joinName instanceof Expression) {
-                $joinName = $joinName->getExpression();
-            } elseif ($joinName instanceof TableIdentifier) {
-                $joinName = $joinName->getTableAndSchema();
-                $joinName = (
-                    $joinName[1]
-                        ? $platform->quoteIdentifier($joinName[1]) . $platform->getIdentifierSeparator()
-                        : ''
-                )
-                . $platform->quoteIdentifier($joinName[0]);
-            } elseif ($joinName instanceof Select) {
-                $joinName = "({$this->processSubSelect($joinName, $platform, $driver, $parameterContainer)})";
-            } else {
-                $joinName = $platform->quoteIdentifier($joinName);
-            }
+            $joinName = match (true) {
+                $joinName instanceof Expression => $joinName->getExpression(),
+                $joinName instanceof TableIdentifier => $this->quoteJoinTableIdentifier($joinName, $platform),
+                $joinName instanceof Select => "({$this->processSubSelect(
+                    $joinName,
+                    $platform,
+                    $driver,
+                    $parameterContainer,
+                )})",
+                default => $platform->quoteIdentifier($joinName),
+            };
 
             $joinSpecArgArray[$j] = [
                 strtoupper($join['type']),
                 $this->renderTable($joinName, $joinAs),
             ];
 
-            if ($join['on'] instanceof ExpressionInterface) {
-                $joinSpecArgArray[$j][] = $this->processExpression(
+            $joinSpecArgArray[$j][] = $join['on'] instanceof ExpressionInterface
+                ? $this->processExpression(
                     $join['on'],
                     $platform,
                     $driver,
                     $parameterContainer,
                     'join' . ($j + 1) . 'part',
-                );
-            } else {
-                $joinSpecArgArray[$j][] = $platform->quoteIdentifierInFragment(
+                )
+                : $platform->quoteIdentifierInFragment(
                     $join['on'],
                     ['=', 'AND', 'OR', '(', ')', 'BETWEEN', '<', '>'],
                 );
-            }
         }
 
         return [$joinSpecArgArray];
@@ -395,11 +393,10 @@ abstract class AbstractSql implements SqlInterface
         ?DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null,
     ): string {
+        $decorator = $subselect;
         if ($this instanceof PlatformDecoratorInterface) {
             $decorator = clone $this;
             $decorator->setSubject($subselect);
-        } else {
-            $decorator = $subselect;
         }
 
         if ($parameterContainer instanceof ParameterContainer) {
@@ -443,7 +440,7 @@ abstract class AbstractSql implements SqlInterface
         $isIdentifier = false;
         $fromTable    = '';
         if (is_array($column)) {
-            $isIdentifier = (bool) ($column['isIdentifier'] ?? false);
+            $isIdentifier = $column['isIdentifier'] ?? false;
             $fromTable    = $column['fromTable'] ?? '';
             $column       = $column['column'];
         }
@@ -462,7 +459,7 @@ abstract class AbstractSql implements SqlInterface
 
         return $isIdentifier
             ? $fromTable . $platform->quoteIdentifierInFragment($column)
-            : $platform->quoteValue($column);
+            : $platform->quoteValue((string) $column);
     }
 
     protected function resolveTable(
@@ -477,15 +474,29 @@ abstract class AbstractSql implements SqlInterface
         }
 
         if ($table instanceof Select) {
-            $table = "({$this->processSubSelect($table, $platform, $driver, $parameterContainer)})";
-        } elseif ($table) {
-            $table = $platform->quoteIdentifier($table);
+            return "({$this->processSubSelect($table, $platform, $driver, $parameterContainer)})";
         }
 
-        if ($schema && $table) {
+        if (! $table) {
+            return $table;
+        }
+
+        $table = $platform->quoteIdentifier($table);
+
+        if ($schema) {
             $table = $platform->quoteIdentifier($schema) . $platform->getIdentifierSeparator() . $table;
         }
 
         return $table;
+    }
+
+    private function quoteJoinTableIdentifier(TableIdentifier $identifier, PlatformInterface $platform): string
+    {
+        [$table, $schema] = $identifier->getTableAndSchema();
+
+        return (
+            ($schema ? $platform->quoteIdentifier($schema) . $platform->getIdentifierSeparator() : '')
+                . $platform->quoteIdentifier($table)
+        );
     }
 }

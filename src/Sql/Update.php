@@ -30,17 +30,17 @@ class Update extends AbstractPreparableSql
     /**@#++
      * @const
      */
-    public const SPECIFICATION_UPDATE = 'update';
+    public const string SPECIFICATION_UPDATE = 'update';
 
-    final public const SPECIFICATION_SET = 'set';
+    final public const string SPECIFICATION_SET = 'set';
 
-    final public const SPECIFICATION_WHERE = 'where';
+    final public const string SPECIFICATION_WHERE = 'where';
 
-    final public const SPECIFICATION_JOIN = 'joins';
+    final public const string SPECIFICATION_JOIN = 'joins';
 
-    final public const VALUES_MERGE = 'merge';
+    final public const string VALUES_MERGE = 'merge';
 
-    final public const VALUES_SET = 'set';
+    final public const string VALUES_SET = 'set';
 
     /** @#-* */
 
@@ -69,8 +69,11 @@ class Update extends AbstractPreparableSql
 
     /**
      * Constructor
+     *
+     * @param string|TableIdentifier|array<string, string|TableIdentifier>|null $table An aliased table
+     *     array is kept for TableGateway and rendered as the bare table
      */
-    public function __construct(string|TableIdentifier|null $table = null)
+    public function __construct(string|TableIdentifier|array|null $table = null)
     {
         if ($table) {
             $this->table($table);
@@ -152,9 +155,11 @@ class Update extends AbstractPreparableSql
     ): static {
         if ($predicate instanceof Where) {
             $this->where = $predicate;
-        } else {
-            $this->getWhere()->addPredicates($predicate, $combination);
+
+            return $this;
         }
+
+        $this->getWhere()->addPredicates($predicate, $combination);
 
         return $this;
     }
@@ -199,15 +204,16 @@ class Update extends AbstractPreparableSql
 
                 $setSql[] = $prefix . $driver->formatParameterName($column);
                 $parameterContainer->offsetSet($column, $value);
-            } else {
-                $setSql[] = $prefix
-                . $this->resolveColumnValue(
-                    $value,
-                    $platform,
-                    $driver,
-                    $parameterContainer,
-                );
+                continue;
             }
+
+            $setSql[] = $prefix
+            . $this->resolveColumnValue(
+                $value,
+                $platform,
+                $driver,
+                $parameterContainer,
+            );
         }
 
         return str_replace(
@@ -224,7 +230,7 @@ class Update extends AbstractPreparableSql
     ): string {
         return str_replace(
             '%1$s',
-            $this->resolveTable($this->table, $platform, $driver, $parameterContainer),
+            $this->resolveTable($this->unaliasTable($this->table), $platform, $driver, $parameterContainer),
             $this->specifications[static::SPECIFICATION_UPDATE],
         );
     }

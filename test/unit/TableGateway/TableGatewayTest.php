@@ -10,6 +10,7 @@ use PhpDb\Adapter\Driver\ConnectionInterface;
 use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\Driver\ResultInterface;
 use PhpDb\Adapter\Driver\StatementInterface;
+use PhpDb\Adapter\ParameterContainer;
 use PhpDb\Adapter\Platform\PlatformInterface;
 use PhpDb\ResultSet\ResultSet;
 use PhpDb\Sql\Delete;
@@ -21,6 +22,8 @@ use PhpDb\TableGateway\Exception\InvalidArgumentException;
 use PhpDb\TableGateway\Feature;
 use PhpDb\TableGateway\Feature\FeatureSet;
 use PhpDb\TableGateway\TableGateway;
+use PhpDbTest\TestAsset\TemporaryResultSet;
+use PhpDbTest\TestAsset\TrustingSql92Platform;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
@@ -48,6 +51,16 @@ final class TableGatewayTest extends TestCase
         return [
             'simple-alias'     => [['U' => 'Users'], 'Users'],
             'identifier-alias' => [['U' => $identifier], $identifier],
+        ];
+    }
+
+    /** @return array<string, array{'delete'|'insert'|'update', list<array<string, int|string>>, string}> */
+    public static function dataChangingCallOnAliasedTable(): array
+    {
+        return [
+            'delete' => ['delete', [['id' => 5]], 'DELETE FROM "users" WHERE "id" = ?'],
+            'insert' => ['insert', [['id' => 5]], 'INSERT INTO "users" ("id") VALUES (?)'],
+            'update' => ['update', [['name' => 'x'], ['id' => 5]], 'UPDATE "users" SET "name" = ? WHERE "id" = ?'],
         ];
     }
 
@@ -158,6 +171,57 @@ final class TableGatewayTest extends TestCase
         $featureSet = $table->getFeatureSet();
         static::assertInstanceOf(FeatureSet::class, $featureSet);
         static::assertSame($feature, $featureSet->getFeatureByClassName(Feature\SequenceFeature::class));
+    }
+
+    /**
+     * @param 'delete'|'insert'|'update' $method
+     * @param list<array<string, int|string>> $arguments
+     */
+    #[Test]
+    #[DataProvider('dataChangingCallOnAliasedTable')]
+    public function dataChangingCallOnAliasedTableRendersTheBareTable(
+        string $method,
+        array $arguments,
+        string $expectedSql,
+    ): void {
+        $executed = [];
+        $result   = $this->createStub(ResultInterface::class);
+        $result->method('getAffectedRows')->willReturn(1);
+
+        $driver = $this->createStub(DriverInterface::class);
+        $driver->method('formatParameterName')->willReturn('?');
+        $driver->method('createStatement')
+            ->willReturnCallback(
+                function () use (&$executed, $result): StatementInterface {
+                    $sql       = '';
+                    $statement = $this->createStub(StatementInterface::class);
+                    $container = new ParameterContainer();
+                    $statement->method('getParameterContainer')->willReturn($container);
+                    $statement->method('setSql')
+                        ->willReturnCallback(
+                            static function (string $value) use (&$sql, $statement): StatementInterface {
+                                $sql = $value;
+                                return $statement;
+                            },
+                        );
+                    $statement->method('execute')
+                        ->willReturnCallback(
+                            static function () use (&$executed, &$sql, $result): ResultInterface {
+                                $executed[] = $sql;
+                                return $result;
+                            },
+                        );
+
+                    return $statement;
+                },
+            );
+
+        $adapter = new Adapter($driver, new TrustingSql92Platform(), new TemporaryResultSet());
+        $table   = new TableGateway(['u' => 'users'], $adapter);
+
+        $table->{$method}(...$arguments);
+
+        static::assertSame([$expectedSql], $executed);
     }
 
     /**
