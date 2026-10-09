@@ -31,9 +31,9 @@ class Predicate extends PredicateSet
      * @return $this Provides a fluent interface
      */
     public function between(
-        float|int|string|array|ArgumentInterface|null $identifier,
-        float|int|string|array|ArgumentInterface|null $minValue,
-        float|int|string|array|ArgumentInterface|null $maxValue,
+        string|ArgumentInterface|null $identifier,
+        float|int|string|ArgumentInterface|null $minValue,
+        float|int|string|ArgumentInterface|null $maxValue,
     ): static {
         $this->addPredicate(
             new Between($identifier, $minValue, $maxValue),
@@ -48,7 +48,7 @@ class Predicate extends PredicateSet
      * Utilizes Operator predicate
      */
     public function equalTo(
-        float|int|string|ArgumentInterface|null $left,
+        string|ArgumentInterface|null $left,
         float|int|string|ArgumentInterface|null $right,
     ): static {
         $this->addPredicate(
@@ -83,7 +83,7 @@ class Predicate extends PredicateSet
      * @return $this Provides a fluent interface
      */
     public function greaterThan(
-        float|int|string|ArgumentInterface|null $left,
+        string|ArgumentInterface|null $left,
         float|int|string|ArgumentInterface|null $right,
     ): static {
         $this->addPredicate(
@@ -101,7 +101,7 @@ class Predicate extends PredicateSet
      * @return $this Provides a fluent interface
      */
     public function greaterThanOrEqualTo(
-        float|int|string|ArgumentInterface|null $left,
+        string|ArgumentInterface|null $left,
         float|int|string|ArgumentInterface|null $right,
     ): static {
         $this->addPredicate(
@@ -118,7 +118,7 @@ class Predicate extends PredicateSet
      *
      * @return $this Provides a fluent interface
      */
-    public function in(float|int|string|ArgumentInterface $identifier, array|ArgumentInterface $valueSet): static
+    public function in(string|ArgumentInterface $identifier, array|ArgumentInterface $valueSet): static
     {
         $this->addPredicate(
             new In($identifier, $valueSet),
@@ -134,7 +134,7 @@ class Predicate extends PredicateSet
      *
      * @return $this Provides a fluent interface
      */
-    public function isNotNull(float|int|string|ArgumentInterface $identifier): static
+    public function isNotNull(string|ArgumentInterface $identifier): static
     {
         $this->addPredicate(
             new IsNotNull($identifier),
@@ -150,7 +150,7 @@ class Predicate extends PredicateSet
      *
      * @return $this Provides a fluent interface
      */
-    public function isNull(float|int|string|ArgumentInterface $identifier): static
+    public function isNull(string|ArgumentInterface $identifier): static
     {
         $this->addPredicate(
             new IsNull($identifier),
@@ -165,7 +165,7 @@ class Predicate extends PredicateSet
      * Utilizes Operator predicate
      */
     public function lessThan(
-        float|int|string|ArgumentInterface|null $left,
+        string|ArgumentInterface|null $left,
         float|int|string|ArgumentInterface|null $right,
     ): static {
         $this->addPredicate(
@@ -183,7 +183,7 @@ class Predicate extends PredicateSet
      * @return $this Provides a fluent interface
      */
     public function lessThanOrEqualTo(
-        float|int|string|ArgumentInterface|null $left,
+        string|ArgumentInterface|null $left,
         float|int|string|ArgumentInterface|null $right,
     ): static {
         $this->addPredicate(
@@ -201,7 +201,7 @@ class Predicate extends PredicateSet
      * @return $this Provides a fluent interface
      */
     public function like(
-        float|int|string|ArgumentInterface|null $identifier,
+        string|ArgumentInterface|null $identifier,
         float|int|string|ArgumentInterface|null $like,
     ): static {
         $this->addPredicate(
@@ -248,9 +248,9 @@ class Predicate extends PredicateSet
      * @return $this Provides a fluent interface
      */
     public function notBetween(
-        float|int|string|array|ArgumentInterface|null $identifier,
-        float|int|string|array|ArgumentInterface|null $minValue,
-        float|int|string|array|ArgumentInterface|null $maxValue,
+        string|ArgumentInterface|null $identifier,
+        float|int|string|ArgumentInterface|null $minValue,
+        float|int|string|ArgumentInterface|null $maxValue,
     ): static {
         $this->addPredicate(
             new NotBetween($identifier, $minValue, $maxValue),
@@ -265,7 +265,7 @@ class Predicate extends PredicateSet
      * Utilizes Operator predicate
      */
     public function notEqualTo(
-        float|int|string|ArgumentInterface|null $left,
+        string|ArgumentInterface|null $left,
         float|int|string|ArgumentInterface|null $right,
     ): static {
         $this->addPredicate(
@@ -282,7 +282,7 @@ class Predicate extends PredicateSet
      *
      * @return $this Provides a fluent interface
      */
-    public function notIn(float|int|string|ArgumentInterface $identifier, array|ArgumentInterface $valueSet): static
+    public function notIn(string|ArgumentInterface $identifier, array|ArgumentInterface $valueSet): static
     {
         $this->addPredicate(
             new NotIn($identifier, $valueSet),
@@ -299,7 +299,7 @@ class Predicate extends PredicateSet
      * @return $this Provides a fluent interface
      */
     public function notLike(
-        float|int|string|ArgumentInterface|null $identifier,
+        string|ArgumentInterface|null $identifier,
         float|int|string|ArgumentInterface|null $notLike,
     ): static {
         $this->addPredicate(
