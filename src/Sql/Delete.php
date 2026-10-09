@@ -85,9 +85,11 @@ class Delete extends AbstractPreparableSql
     ): static {
         if ($predicate instanceof Where) {
             $this->where = $predicate;
-        } else {
-            $this->getWhere()->addPredicates($predicate, $combination);
+
+            return $this;
         }
+
+        $this->getWhere()->addPredicates($predicate, $combination);
 
         return $this;
     }

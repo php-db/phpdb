@@ -218,16 +218,13 @@ class CreateTable extends AbstractSql
 
         $parts = [];
         foreach ($this->options as $key => $value) {
-            $key = strtoupper($key);
-            if ($value instanceof Literal) {
-                $value = $value->getLiteral();
-            } elseif (is_bool($value)) {
-                $value = $value ? '1' : '0';
-            } elseif (is_int($value)) {
-                $value = (string) $value;
-            } else {
-                $value = $adapterPlatform->quoteTrustedValue($value);
-            }
+            $key   = strtoupper($key);
+            $value = match (true) {
+                $value instanceof Literal => $value->getLiteral(),
+                is_bool($value) => $value ? '1' : '0',
+                is_int($value)  => (string) $value,
+                default         => $adapterPlatform->quoteTrustedValue($value),
+            };
             $parts[] = "{$key} = {$value}";
         }
 

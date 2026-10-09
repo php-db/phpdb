@@ -265,12 +265,14 @@ class Select extends AbstractPreparableSql
      */
     public function group(mixed $group): static
     {
-        if (is_array($group)) {
-            foreach ($group as $o) {
-                $this->group[] = $o;
-            }
-        } else {
+        if (! is_array($group)) {
             $this->group[] = $group;
+
+            return $this;
+        }
+
+        foreach ($group as $o) {
+            $this->group[] = $o;
         }
 
         return $this;
@@ -288,9 +290,11 @@ class Select extends AbstractPreparableSql
     ): static {
         if ($predicate instanceof Having) {
             $this->having = $predicate;
-        } else {
-            $this->getHaving()->addPredicates($predicate, $combination);
+
+            return $this;
         }
+
+        $this->getHaving()->addPredicates($predicate, $combination);
 
         return $this;
     }
@@ -353,18 +357,19 @@ class Select extends AbstractPreparableSql
      */
     public function order(ExpressionInterface|array|string $order): static
     {
-        if (is_string($order)) {
-            $order = str_contains($order, ',') ? preg_split('#,\s+#', $order) : (array) $order;
-        } elseif (! is_array($order)) {
-            $order = [$order];
-        }
+        $order = match (true) {
+            is_string($order) => str_contains($order, ',') ? preg_split('#,\s+#', $order) : (array) $order,
+            is_array($order)  => $order,
+            default           => [$order],
+        };
 
         foreach ($order as $k => $v) {
             if (is_string($k)) {
                 $this->order[$k] = $v;
-            } else {
-                $this->order[] = $v;
+                continue;
             }
+
+            $this->order[] = $v;
         }
 
         return $this;
@@ -454,9 +459,11 @@ class Select extends AbstractPreparableSql
     ): self {
         if ($predicate instanceof Where) {
             $this->where = $predicate;
-        } else {
-            $this->getWhere()->addPredicates($predicate, $combination);
+
+            return $this;
         }
+
+        $this->getWhere()->addPredicates($predicate, $combination);
 
         return $this;
     }
@@ -590,19 +597,17 @@ class Select extends AbstractPreparableSql
             }
 
             if (is_int($k)) {
-                if (str_contains($v, ' ')) {
-                    [$k, $v] = explode(' ', $v, limit: 2);
-                } else {
-                    $k = $v;
-                    $v = self::ORDER_ASCENDING;
-                }
+                [$k, $v] = str_contains($v, ' ')
+                    ? explode(' ', $v, limit: 2)
+                    : [$v, self::ORDER_ASCENDING];
             }
 
-            if (strcasecmp(trim($v), self::ORDER_DESCENDING) === 0) {
-                $orders[] = [$platform->quoteIdentifierInFragment($k), self::ORDER_DESCENDING];
-            } else {
-                $orders[] = [$platform->quoteIdentifierInFragment($k), self::ORDER_ASCENDING];
-            }
+            $orders[] = [
+                $platform->quoteIdentifierInFragment($k),
+                strcasecmp(trim($v), self::ORDER_DESCENDING) === 0
+                    ? self::ORDER_DESCENDING
+                    : self::ORDER_ASCENDING,
+            ];
         }
 
         return [$orders];
@@ -639,12 +644,13 @@ class Select extends AbstractPreparableSql
                 $parameterContainer,
                 is_string($columnIndexOrAs) ? $columnIndexOrAs : 'column',
             );
-            $columnAs = null;
-            if (is_string($columnIndexOrAs)) {
-                $columnAs = $platform->quoteIdentifier($columnIndexOrAs);
-            } elseif (stripos($columnName, needle: ' as ') === false) {
-                $columnAs = is_string($column) ? $platform->quoteIdentifier($column) : 'Expression' . $expr++;
-            }
+            $columnAs = match (true) {
+                is_string($columnIndexOrAs) => $platform->quoteIdentifier($columnIndexOrAs),
+                stripos($columnName, needle: ' as ') === false => is_string($column)
+                    ? $platform->quoteIdentifier($column)
+                    : 'Expression' . $expr++,
+                default => null,
+            };
 
             $columns[] = null === $columnAs ? [$columnName] : [$columnName, $columnAs];
         }
@@ -671,7 +677,9 @@ class Select extends AbstractPreparableSql
                 );
                 if (is_string($jKey)) {
                     $jColumns[] = $platform->quoteIdentifier($jKey);
-                } elseif (self::SQL_STAR !== $jColumn) {
+                }
+
+                if (! is_string($jKey) && self::SQL_STAR !== $jColumn) {
                     $jColumns[] = $platform->quoteIdentifier($jColumn);
                 }
 
@@ -752,18 +760,15 @@ class Select extends AbstractPreparableSql
 
         $table = parent::resolveTable($table, $platform, $driver, $parameterContainer);
 
+        $fromTable = $table;
         if ($alias) {
             $fromTable = $platform->quoteIdentifier($alias);
             $table     = $this->renderTable($table, $fromTable);
-        } else {
-            $fromTable = $table;
         }
 
-        if ($this->prefixColumnsWithTable && $fromTable) {
-            $fromTable .= $platform->getIdentifierSeparator();
-        } else {
-            $fromTable = '';
-        }
+        $fromTable = $this->prefixColumnsWithTable && $fromTable
+            ? $fromTable . $platform->getIdentifierSeparator()
+            : '';
 
         return [
             $table,

@@ -356,18 +356,6 @@ count = 1
 
 [[issues]]
 file = "src/Sql/AbstractSql.php"
-code = "no-else-clause"
-message = "Avoid `else` clauses."
-count = 8
-
-[[issues]]
-file = "src/Sql/AbstractSql.php"
-code = "no-else-clause"
-message = "Avoid `elseif` clauses."
-count = 5
-
-[[issues]]
-file = "src/Sql/AbstractSql.php"
 code = "too-many-methods"
 message = "Class has too many methods."
 count = 1
@@ -398,18 +386,6 @@ count = 1
 
 [[issues]]
 file = "src/Sql/Ddl/AlterTable.php"
-code = "no-else-clause"
-message = "Avoid `else` clauses."
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/AlterTable.php"
-code = "no-else-clause"
-message = "Avoid `elseif` clauses."
-count = 2
-
-[[issues]]
-file = "src/Sql/Ddl/AlterTable.php"
 code = "too-many-methods"
 message = "Class has too many methods."
 count = 1
@@ -424,18 +400,6 @@ count = 1
 file = "src/Sql/Ddl/Column/AbstractPrecisionColumn.php"
 code = "halstead"
 message = "Method has a high halstead difficulty"
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/Column/Column.php"
-code = "no-else-clause"
-message = "Avoid `else` clauses."
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/Column/Column.php"
-code = "no-else-clause"
-message = "Avoid `elseif` clauses."
 count = 1
 
 [[issues]]
@@ -446,45 +410,9 @@ count = 1
 
 [[issues]]
 file = "src/Sql/Ddl/CreateTable.php"
-code = "cyclomatic-complexity"
-message = "Class has high complexity."
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/CreateTable.php"
-code = "no-else-clause"
-message = "Avoid `else` clauses."
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/CreateTable.php"
-code = "no-else-clause"
-message = "Avoid `elseif` clauses."
-count = 2
-
-[[issues]]
-file = "src/Sql/Ddl/CreateTable.php"
 code = "too-many-methods"
 message = "Class has too many methods."
 count = 1
-
-[[issues]]
-file = "src/Sql/Delete.php"
-code = "no-else-clause"
-message = "Avoid `else` clauses."
-count = 1
-
-[[issues]]
-file = "src/Sql/Expression.php"
-code = "halstead"
-message = "Method has a high halstead difficulty"
-count = 1
-
-[[issues]]
-file = "src/Sql/Expression.php"
-code = "no-else-clause"
-message = "Avoid `elseif` clauses."
-count = 2
 
 [[issues]]
 file = "src/Sql/Insert.php"
@@ -494,68 +422,14 @@ count = 1
 
 [[issues]]
 file = "src/Sql/Insert.php"
-code = "no-else-clause"
-message = "Avoid `else` clauses."
-count = 2
-
-[[issues]]
-file = "src/Sql/Insert.php"
 code = "too-many-methods"
 message = "Class has too many methods."
-count = 1
-
-[[issues]]
-file = "src/Sql/Predicate/In.php"
-code = "halstead"
-message = "Method has a high halstead difficulty"
-count = 1
-
-[[issues]]
-file = "src/Sql/Predicate/In.php"
-code = "no-else-clause"
-message = "Avoid `else` clauses."
-count = 1
-
-[[issues]]
-file = "src/Sql/Predicate/In.php"
-code = "no-else-clause"
-message = "Avoid `elseif` clauses."
-count = 1
-
-[[issues]]
-file = "src/Sql/Predicate/Operator.php"
-code = "halstead"
-message = "Method has a high halstead difficulty"
-count = 2
-
-[[issues]]
-file = "src/Sql/Predicate/Operator.php"
-code = "no-else-clause"
-message = "Avoid `else` clauses."
-count = 2
-
-[[issues]]
-file = "src/Sql/Predicate/Operator.php"
-code = "no-else-clause"
-message = "Avoid `elseif` clauses."
-count = 2
-
-[[issues]]
-file = "src/Sql/Predicate/Predicate.php"
-code = "no-else-clause"
-message = "Avoid `else` clauses."
 count = 1
 
 [[issues]]
 file = "src/Sql/Predicate/Predicate.php"
 code = "too-many-methods"
 message = "Class has too many methods."
-count = 1
-
-[[issues]]
-file = "src/Sql/Predicate/PredicateSet.php"
-code = "cyclomatic-complexity"
-message = "Class has high complexity."
 count = 1
 
 [[issues]]
@@ -571,18 +445,6 @@ message = "Class has a high kan defect score."
 count = 1
 
 [[issues]]
-file = "src/Sql/Predicate/PredicateSet.php"
-code = "no-else-clause"
-message = "Avoid `else` clauses."
-count = 2
-
-[[issues]]
-file = "src/Sql/Predicate/PredicateSet.php"
-code = "no-else-clause"
-message = "Avoid `elseif` clauses."
-count = 5
-
-[[issues]]
 file = "src/Sql/Select.php"
 code = "cyclomatic-complexity"
 message = "Class has high complexity."
@@ -596,27 +458,9 @@ count = 2
 
 [[issues]]
 file = "src/Sql/Select.php"
-code = "halstead"
-message = "Method has a high halstead effort"
-count = 1
-
-[[issues]]
-file = "src/Sql/Select.php"
 code = "kan-defect"
 message = "Class has a high kan defect score."
 count = 1
-
-[[issues]]
-file = "src/Sql/Select.php"
-code = "no-else-clause"
-message = "Avoid `else` clauses."
-count = 8
-
-[[issues]]
-file = "src/Sql/Select.php"
-code = "no-else-clause"
-message = "Avoid `elseif` clauses."
-count = 3
 
 [[issues]]
 file = "src/Sql/Select.php"
@@ -641,12 +485,6 @@ file = "src/Sql/Update.php"
 code = "halstead"
 message = "Method has a high halstead difficulty"
 count = 1
-
-[[issues]]
-file = "src/Sql/Update.php"
-code = "no-else-clause"
-message = "Avoid `else` clauses."
-count = 2
 
 [[issues]]
 file = "src/Sql/Update.php"

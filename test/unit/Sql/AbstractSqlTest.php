@@ -26,6 +26,7 @@ use PhpDb\Sql\TableIdentifier;
 use PhpDbTest\TestAsset\SelectDecorator;
 use PhpDbTest\TestAsset\TrustingSql92Platform;
 use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\IgnoreDeprecations;
 use PHPUnit\Framework\Attributes\RequiresPhp;
@@ -60,11 +61,21 @@ use function uniqid;
 #[CoversMethod(AbstractSql::class, 'resolveColumnValue')]
 #[CoversMethod(AbstractSql::class, 'resolveTable')]
 #[CoversMethod(AbstractSql::class, 'localizeVariables')]
+#[CoversMethod(AbstractSql::class, 'quoteJoinTableIdentifier')]
 final class AbstractSqlTest extends TestCase
 {
     protected AbstractSql&MockObject $abstractSql;
 
     protected DriverInterface&MockObject $mockDriver;
+
+    /** @return array<string, array{0: string|null}> */
+    public static function emptyTableProvider(): array
+    {
+        return [
+            'null'         => [null],
+            'empty string' => [''],
+        ];
+    }
 
     /**
      * @throws ReflectionException
@@ -426,6 +437,28 @@ final class AbstractSqlTest extends TestCase
      * @throws ReflectionException
      */
     #[Test]
+    public function processJoinQuotesTableIdentifierWithoutSchemaAsBareTable(): void
+    {
+        $join = new Join();
+        $join->join(new TableIdentifier('bar'), 'foo.id = bar.foo_id');
+
+        $method = new ReflectionMethod($this->abstractSql, 'processJoin');
+        $result = $method->invoke(
+            $this->abstractSql,
+            $join,
+            new TrustingSql92Platform(),
+            null,
+            null,
+        );
+
+        static::assertNotNull($result);
+        static::assertSame('"bar"', $result[0][0][1]);
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    #[Test]
     public function processJoinReturnsNullWhenEmpty(): void
     {
         $method = new ReflectionMethod($this->abstractSql, 'processJoin');
@@ -716,6 +749,26 @@ final class AbstractSqlTest extends TestCase
         static::assertStringContainsString('SELECT', $result);
         static::assertStringStartsWith('(', $result);
         static::assertStringEndsWith(')', $result);
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    #[Test]
+    #[DataProvider('emptyTableProvider')]
+    public function resolveTableReturnsEmptyTableUnquoted(?string $table): void
+    {
+        $method = new ReflectionMethod($this->abstractSql, 'resolveTable');
+
+        $result = $method->invoke(
+            $this->abstractSql,
+            $table,
+            new TrustingSql92Platform(),
+            $this->mockDriver,
+            null,
+        );
+
+        static::assertSame($table, $result);
     }
 
     /**

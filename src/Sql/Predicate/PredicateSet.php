@@ -100,30 +100,23 @@ class PredicateSet implements PredicateInterface, Countable
         }
 
         foreach ($predicates as $pkey => $pvalue) {
-            if (is_string($pkey)) {
-                if (str_contains($pkey, '?')) {
-                    $predicate = new PredicateExpression($pkey, $pvalue);
-                } elseif (null === $pvalue) {
-                    $predicate = new IsNull($pkey);
-                } elseif (is_array($pvalue)) {
-                    $predicate = new In($pkey, $pvalue);
-                } elseif ($pvalue instanceof PredicateInterface) {
-                    throw Exception\InvalidArgumentException::forPredicateWithStringKey();
-                } else {
-                    $predicate = new Operator($pkey, Operator::OP_EQ, $pvalue);
-                }
-            } elseif ($pvalue instanceof PredicateInterface) {
-                $predicate = $pvalue;
-            } elseif ($pvalue instanceof Expression) {
-                $predicate = new PredicateExpression(
+            $predicate = match (true) {
+                is_string($pkey) => match (true) {
+                    str_contains($pkey, '?') => new PredicateExpression($pkey, $pvalue),
+                    null === $pvalue => new IsNull($pkey),
+                    is_array($pvalue) => new In($pkey, $pvalue),
+                    $pvalue instanceof PredicateInterface
+                        => throw Exception\InvalidArgumentException::forPredicateWithStringKey(),
+                    default => new Operator($pkey, Operator::OP_EQ, $pvalue),
+                },
+                $pvalue instanceof PredicateInterface => $pvalue,
+                $pvalue instanceof Expression => new PredicateExpression(
                     $pvalue->getExpression(),
                     $pvalue->getParameters(),
-                );
-            } else {
-                $predicate = str_contains($pvalue, Expression::PLACEHOLDER)
-                    ? new Expression($pvalue)
-                    : new Literal($pvalue);
-            }
+                ),
+                str_contains($pvalue, Expression::PLACEHOLDER) => new Expression($pvalue),
+                default                                        => new Literal($pvalue),
+            };
 
             $this->addPredicate($predicate, $combination);
         }
