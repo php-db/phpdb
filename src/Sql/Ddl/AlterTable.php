@@ -19,21 +19,21 @@ use function strtoupper;
  */
 class AlterTable extends AbstractSql
 {
-    final public const ADD_COLUMNS = 'addColumns';
+    final public const string ADD_COLUMNS = 'addColumns';
 
-    final public const ADD_CONSTRAINTS = 'addConstraints';
+    final public const string ADD_CONSTRAINTS = 'addConstraints';
 
-    final public const CHANGE_COLUMNS = 'changeColumns';
+    final public const string CHANGE_COLUMNS = 'changeColumns';
 
-    final public const DROP_COLUMNS = 'dropColumns';
+    final public const string DROP_COLUMNS = 'dropColumns';
 
-    final public const DROP_CONSTRAINTS = 'dropConstraints';
+    final public const string DROP_CONSTRAINTS = 'dropConstraints';
 
-    final public const DROP_INDEXES = 'dropIndexes';
+    final public const string DROP_INDEXES = 'dropIndexes';
 
-    final public const TABLE = 'table';
+    final public const string TABLE = 'table';
 
-    final public const TABLE_OPTIONS = 'tableOptions';
+    final public const string TABLE_OPTIONS = 'tableOptions';
 
     /** @var list<Column\ColumnInterface> */
     protected array $addColumns = [];
@@ -294,16 +294,13 @@ class AlterTable extends AbstractSql
 
         $sqls = [];
         foreach ($this->options as $key => $value) {
-            $key = strtoupper($key);
-            if ($value instanceof Literal) {
-                $value = $value->getLiteral();
-            } elseif (is_bool($value)) {
-                $value = $value ? '1' : '0';
-            } elseif (is_int($value)) {
-                $value = (string) $value;
-            } else {
-                $value = $adapterPlatform->quoteTrustedValue($value);
-            }
+            $key   = strtoupper($key);
+            $value = match (true) {
+                $value instanceof Literal => $value->getLiteral(),
+                is_bool($value) => $value ? '1' : '0',
+                is_int($value)  => (string) $value,
+                default         => $adapterPlatform->quoteTrustedValue($value),
+            };
             $sqls[] = "{$key} = {$value}";
         }
 

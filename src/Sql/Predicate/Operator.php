@@ -16,29 +16,29 @@ use PhpDb\Sql\SqlInterface;
 
 class Operator extends AbstractExpression implements PredicateInterface
 {
-    final public const OPERATOR_EQUAL_TO = '=';
+    final public const string OPERATOR_EQUAL_TO = '=';
 
-    final public const OP_EQ = '=';
+    final public const string OP_EQ = '=';
 
-    final public const OPERATOR_NOT_EQUAL_TO = '!=';
+    final public const string OPERATOR_NOT_EQUAL_TO = '!=';
 
-    final public const OP_NE = '!=';
+    final public const string OP_NE = '!=';
 
-    final public const OPERATOR_LESS_THAN = '<';
+    final public const string OPERATOR_LESS_THAN = '<';
 
-    final public const OP_LT = '<';
+    final public const string OP_LT = '<';
 
-    final public const OPERATOR_LESS_THAN_OR_EQUAL_TO = '<=';
+    final public const string OPERATOR_LESS_THAN_OR_EQUAL_TO = '<=';
 
-    final public const OP_LTE = '<=';
+    final public const string OP_LTE = '<=';
 
-    final public const OPERATOR_GREATER_THAN = '>';
+    final public const string OPERATOR_GREATER_THAN = '>';
 
-    final public const OP_GT = '>';
+    final public const string OP_GT = '>';
 
-    final public const OPERATOR_GREATER_THAN_OR_EQUAL_TO = '>=';
+    final public const string OPERATOR_GREATER_THAN_OR_EQUAL_TO = '>=';
 
-    final public const OP_GTE = '>=';
+    final public const string OP_GTE = '>=';
 
     protected ?ArgumentInterface $left     = null;
     protected ?ArgumentInterface $right    = null;
@@ -115,13 +115,11 @@ class Operator extends AbstractExpression implements PredicateInterface
      */
     public function setLeft(string|ArgumentInterface|ExpressionInterface|SqlInterface $left): static
     {
-        if ($left instanceof ArgumentInterface) {
-            $this->left = $left;
-        } elseif ($left instanceof ExpressionInterface || $left instanceof SqlInterface) {
-            $this->left = new Select($left);
-        } else {
-            $this->left = new Identifier($left);
-        }
+        $this->left = match (true) {
+            $left instanceof ArgumentInterface => $left,
+            $left instanceof ExpressionInterface, $left instanceof SqlInterface => new Select($left),
+            default => new Identifier($left),
+        };
 
         return $this;
     }
@@ -142,13 +140,11 @@ class Operator extends AbstractExpression implements PredicateInterface
     public function setRight(
         bool|string|int|float|ArgumentInterface|ExpressionInterface|SqlInterface|null $right,
     ): static {
-        if ($right instanceof ArgumentInterface) {
-            $this->right = $right;
-        } elseif ($right instanceof ExpressionInterface || $right instanceof SqlInterface) {
-            $this->right = new Select($right);
-        } else {
-            $this->right = new Value($right);
-        }
+        $this->right = match (true) {
+            $right instanceof ArgumentInterface => $right,
+            $right instanceof ExpressionInterface, $right instanceof SqlInterface => new Select($right),
+            default => new Value($right),
+        };
 
         return $this;
     }

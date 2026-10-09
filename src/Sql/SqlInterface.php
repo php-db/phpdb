@@ -15,13 +15,13 @@ interface SqlInterface
      *
      * @see ArgumentType
      */
-    public const TYPE_IDENTIFIER = 'identifier';
+    public const string TYPE_IDENTIFIER = 'identifier';
 
-    public const TYPE_VALUE = 'value';
+    public const string TYPE_VALUE = 'value';
 
-    public const TYPE_LITERAL = 'literal';
+    public const string TYPE_LITERAL = 'literal';
 
-    public const TYPE_SELECT = 'select';
+    public const string TYPE_SELECT = 'select';
 
     /**
      * Get SQL string for statement
