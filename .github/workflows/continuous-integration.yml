@@ -16,3 +16,22 @@ jobs:
       enable-infection: true
       min-msi: "80"
       min-covered-msi: "80"
+
+  qa-structarmed:
+    name: "StructArmed (PHP 8.3)"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.3"
+          coverage: none
+
+      - name: Install dependencies
+        run: composer install --no-interaction --no-progress
+
+      - name: Check architecture
+        run: vendor/bin/structarmed analyse --no-progress
