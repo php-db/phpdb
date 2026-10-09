@@ -9,6 +9,7 @@ use PhpDb\Sql\Join;
 use PhpDb\Sql\Select;
 use PhpDbTest\DeprecatedAssertionsTrait;
 use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\IgnoreDeprecations;
 use PHPUnit\Framework\Attributes\RequiresPhp;
 use PHPUnit\Framework\Attributes\Test;
@@ -31,6 +32,16 @@ use TypeError;
 class JoinTest extends TestCase
 {
     use DeprecatedAssertionsTrait;
+
+    /** @return array<string, array{array<array-key, mixed>, string}> */
+    public static function invalidJoinNameWithoutStringElementProvider(): array
+    {
+        return [
+            'empty array'          => [[], 'null'],
+            'select without alias' => [[new Select('foo')], Select::class],
+            'integer element'      => [[5], 'int'],
+        ];
+    }
 
     #[Test]
     #[TestDox('unit test: Test count() returns correct count')]
@@ -89,6 +100,20 @@ class JoinTest extends TestCase
         $join   = new Join();
         $return = $join->join('baz', 'foo.fooId = baz.fooId', Join::JOIN_FULL_OUTER);
         static::assertSame($join, $return);
+    }
+
+    /**
+     * @param array<array-key, mixed> $name
+     */
+    #[Test]
+    #[DataProvider('invalidJoinNameWithoutStringElementProvider')]
+    public function joinThrowsInvalidArgumentWhenInvalidNameHasNoLeadingString(array $name, string $described): void
+    {
+        $join = new Join();
+
+        self::expectException(InvalidArgumentException::class);
+        self::expectExceptionMessage("expects '{$described}' as a single element associative array");
+        $join->join($name, 'on');
     }
 
     #[Test]

@@ -158,18 +158,6 @@ count = 1
 
 [[issues]]
 file = "src/Adapter/Driver/AbstractConnection.php"
-code = "incompatible-return-type"
-message = 'Return type `null|resource` of `PhpDb\Adapter\Driver\AbstractConnection::getresource()` is incompatible with parent return type `resource` of `PhpDb\Adapter\Driver\ConnectionInterface::getresource()`'
-count = 1
-
-[[issues]]
-file = "src/Adapter/Driver/AbstractConnection.php"
-code = "incompatible-return-type"
-message = 'Return type `null|resource` of `PhpDb\Adapter\Driver\Pdo\AbstractPdoConnection::getresource()` is incompatible with parent return type `resource` of `PhpDb\Adapter\Driver\ConnectionInterface::getresource()`'
-count = 1
-
-[[issues]]
-file = "src/Adapter/Driver/AbstractConnection.php"
 code = "missing-api-or-internal"
 message = 'Abstract class `PhpDb\Adapter\Driver\AbstractConnection` is missing an `@api` or `@internal` annotation.'
 count = 1
@@ -363,19 +351,19 @@ count = 1
 [[issues]]
 file = "src/Adapter/Driver/Pdo/AbstractPdo.php"
 code = "non-existent-method"
-message = "Method `getlastgeneratedvalue` does not exist on type `PDO`."
+message = "Method `getLastGeneratedValue` does not exist on type `PDO`."
 count = 1
 
 [[issues]]
 file = "src/Adapter/Driver/Pdo/AbstractPdo.php"
 code = "non-existent-method"
-message = "Method `getresource` does not exist on type `PDO`."
+message = "Method `getResource` does not exist on type `PDO`."
 count = 1
 
 [[issues]]
 file = "src/Adapter/Driver/Pdo/AbstractPdo.php"
 code = "non-existent-method"
-message = "Method `isconnected` does not exist on type `PDO`."
+message = "Method `isConnected` does not exist on type `PDO`."
 count = 1
 
 [[issues]]
@@ -424,12 +412,6 @@ count = 1
 file = "src/Adapter/Driver/Pdo/AbstractPdoConnection.php"
 code = "imprecise-type"
 message = "Type `array` in parameter `$connectionParameters` is imprecise, equivalent to `array<array-key, mixed>`."
-count = 1
-
-[[issues]]
-file = "src/Adapter/Driver/Pdo/AbstractPdoConnection.php"
-code = "incompatible-property-type"
-message = 'Property `PhpDb\Adapter\Driver\Pdo\AbstractPdoConnection::$resource` has an incompatible type declaration from docblock.'
 count = 1
 
 [[issues]]
@@ -2810,12 +2792,6 @@ count = 1
 
 [[issues]]
 file = "src/Sql/Join.php"
-code = "possibly-invalid-argument"
-message = 'Possible argument type mismatch for argument #1 of `PhpDb\Sql\Exception\InvalidArgumentException::forInvalidJoinName`: expected `string`, but possibly received `PhpDb\Sql\Expression|PhpDb\Sql\Select|PhpDb\Sql\TableIdentifier|string`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Join.php"
 code = "possibly-undefined-int-array-index"
 message = '''Possibly undefined array index accessed on `list<array{'columns': array<array-key, PhpDb\Sql\ExpressionInterface|string>, 'name': PhpDb\Sql\TableIdentifier|non-empty-array<string, PhpDb\Sql\Expression|PhpDb\Sql\Select|PhpDb\Sql\TableIdentifier|string>|string, 'on': PhpDb\Sql\Predicate\PredicateInterface|string, 'type': string}>`.'''
 count = 1
@@ -2865,25 +2841,25 @@ count = 1
 [[issues]]
 file = "src/Sql/Platform/AbstractPlatform.php"
 code = "non-existent-method"
-message = 'Method `getsqlstring` does not exist on type `PhpDb\Sql\Platform\PlatformDecoratorInterface`.'
+message = 'Method `getSqlString` does not exist on type `PhpDb\Sql\Platform\PlatformDecoratorInterface`.'
 count = 1
 
 [[issues]]
 file = "src/Sql/Platform/AbstractPlatform.php"
 code = "non-existent-method"
-message = 'Method `getsqlstring` does not exist on type `PhpDb\Sql\PreparableSqlInterface`.'
+message = 'Method `getSqlString` does not exist on type `PhpDb\Sql\PreparableSqlInterface`.'
 count = 1
 
 [[issues]]
 file = "src/Sql/Platform/AbstractPlatform.php"
 code = "non-existent-method"
-message = 'Method `preparestatement` does not exist on type `PhpDb\Sql\Platform\PlatformDecoratorInterface`.'
+message = 'Method `prepareStatement` does not exist on type `PhpDb\Sql\Platform\PlatformDecoratorInterface`.'
 count = 1
 
 [[issues]]
 file = "src/Sql/Platform/AbstractPlatform.php"
 code = "non-existent-method"
-message = 'Method `preparestatement` does not exist on type `PhpDb\Sql\SqlInterface`.'
+message = 'Method `prepareStatement` does not exist on type `PhpDb\Sql\SqlInterface`.'
 count = 1
 
 [[issues]]
@@ -2913,25 +2889,25 @@ count = 1
 [[issues]]
 file = "src/Sql/Platform/Platform.php"
 code = "non-existent-method"
-message = 'Method `getsqlstring` does not exist on type `PhpDb\Sql\Platform\PlatformDecoratorInterface`.'
+message = 'Method `getSqlString` does not exist on type `PhpDb\Sql\Platform\PlatformDecoratorInterface`.'
 count = 1
 
 [[issues]]
 file = "src/Sql/Platform/Platform.php"
 code = "non-existent-method"
-message = 'Method `getsqlstring` does not exist on type `PhpDb\Sql\PreparableSqlInterface`.'
+message = 'Method `getSqlString` does not exist on type `PhpDb\Sql\PreparableSqlInterface`.'
 count = 1
 
 [[issues]]
 file = "src/Sql/Platform/Platform.php"
 code = "non-existent-method"
-message = 'Method `preparestatement` does not exist on type `PhpDb\Sql\Platform\PlatformDecoratorInterface`.'
+message = 'Method `prepareStatement` does not exist on type `PhpDb\Sql\Platform\PlatformDecoratorInterface`.'
 count = 1
 
 [[issues]]
 file = "src/Sql/Platform/Platform.php"
 code = "non-existent-method"
-message = 'Method `preparestatement` does not exist on type `PhpDb\Sql\SqlInterface`.'
+message = 'Method `prepareStatement` does not exist on type `PhpDb\Sql\SqlInterface`.'
 count = 1
 
 [[issues]]
