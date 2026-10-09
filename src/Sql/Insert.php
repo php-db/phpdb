@@ -31,13 +31,13 @@ class Insert extends AbstractPreparableSql
      *
      * @const
      */
-    public const SPECIFICATION_INSERT = 'insert';
+    public const string SPECIFICATION_INSERT = 'insert';
 
-    final public const SPECIFICATION_SELECT = 'select';
+    final public const string SPECIFICATION_SELECT = 'select';
 
-    final public const VALUES_MERGE = 'merge';
+    final public const string VALUES_MERGE = 'merge';
 
-    final public const VALUES_SET = 'set';
+    final public const string VALUES_SET = 'set';
 
     /** @var array<string, Specification> */
     protected array $specifications = [
@@ -135,10 +135,12 @@ class Insert extends AbstractPreparableSql
             $this->columns = $this->isAssocativeArray($values)
                 ? $values
                 : array_combine(array_keys($this->columns), array_values($values));
-        } else {
-            foreach ($values as $column => $value) {
-                $this->columns[$column] = $value;
-            }
+
+            return $this;
+        }
+
+        foreach ($values as $column => $value) {
+            $this->columns[$column] = $value;
         }
 
         return $this;
@@ -173,14 +175,15 @@ class Insert extends AbstractPreparableSql
 
                 $values[] = $driver->formatParameterName($column);
                 $parameterContainer->offsetSet($column, $value);
-            } else {
-                $values[] = $this->resolveColumnValue(
-                    $value,
-                    $platform,
-                    $driver,
-                    $parameterContainer,
-                );
+                continue;
             }
+
+            $values[] = $this->resolveColumnValue(
+                $value,
+                $platform,
+                $driver,
+                $parameterContainer,
+            );
         }
 
         return str_replace(

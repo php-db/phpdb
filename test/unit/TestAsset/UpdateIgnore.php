@@ -19,7 +19,7 @@ class UpdateIgnore extends Update
      *
      * @psalm-suppress InvalidClassConstantType
      */
-    public const SPECIFICATION_UPDATE = 'updateIgnore';
+    public const string SPECIFICATION_UPDATE = 'updateIgnore';
 
     /** @var array<string, string> */
     protected array $specifications = [

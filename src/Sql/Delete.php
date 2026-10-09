@@ -23,9 +23,9 @@ class Delete extends AbstractPreparableSql
     /**@#+
      * @const
      */
-    public const SPECIFICATION_DELETE = 'delete';
+    public const string SPECIFICATION_DELETE = 'delete';
 
-    final public const SPECIFICATION_WHERE = 'where';
+    final public const string SPECIFICATION_WHERE = 'where';
 
     /** @#- */
 
@@ -88,9 +88,11 @@ class Delete extends AbstractPreparableSql
     ): static {
         if ($predicate instanceof Where) {
             $this->where = $predicate;
-        } else {
-            $this->getWhere()->addPredicates($predicate, $combination);
+
+            return $this;
         }
+
+        $this->getWhere()->addPredicates($predicate, $combination);
 
         return $this;
     }

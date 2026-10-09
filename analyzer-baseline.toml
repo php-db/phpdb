@@ -1779,7 +1779,7 @@ count = 1
 [[issues]]
 file = "src/Sql/AbstractSql.php"
 code = "possibly-invalid-argument"
-message = 'Possible argument type mismatch for argument #1 of `PhpDb\Adapter\Platform\PlatformInterface::quoteValue`: expected `string`, but possibly received `bool|int|string`.'
+message = 'Possible argument type mismatch for argument #1 of `PhpDb\Adapter\Platform\PlatformInterface::quoteIdentifier`: expected `string`, but possibly received `non-empty-array<string, PhpDb\Sql\Expression|PhpDb\Sql\Select|PhpDb\Sql\TableIdentifier|string>|null|string`.'
 count = 1
 
 [[issues]]
@@ -1840,12 +1840,6 @@ count = 1
 file = "src/Sql/AbstractSql.php"
 code = "possibly-undefined-string-array-index"
 message = 'Possibly undefined array key `string` accessed on `non-empty-array<string, PhpDb\Sql\Expression|PhpDb\Sql\Select|PhpDb\Sql\TableIdentifier|string>`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/AbstractSql.php"
-code = "redundant-cast"
-message = "Redundant cast to `(bool)`: the expression already has this type."
 count = 1
 
 [[issues]]
@@ -1940,36 +1934,6 @@ count = 1
 
 [[issues]]
 file = "src/Sql/Combine.php"
-code = "missing-constant-type"
-message = "Class constant `COLUMNS` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "src/Sql/Combine.php"
-code = "missing-constant-type"
-message = "Class constant `COMBINE_EXCEPT` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "src/Sql/Combine.php"
-code = "missing-constant-type"
-message = "Class constant `COMBINE_INTERSECT` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "src/Sql/Combine.php"
-code = "missing-constant-type"
-message = "Class constant `COMBINE_UNION` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "src/Sql/Combine.php"
-code = "missing-constant-type"
-message = "Class constant `COMBINE` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "src/Sql/Combine.php"
 code = "mixed-assignment"
 message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
 count = 1
@@ -2038,54 +2002,6 @@ count = 1
 file = "src/Sql/Ddl/AlterTable.php"
 code = "less-specific-nested-return-statement"
 message = '''Returned type `list{list<mixed>}` is less specific than the declared return type `array{0: list<string>}` for function `PhpDb\Sql\Ddl\AlterTable::processDropIndexes` due to nested 'mixed'.'''
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/AlterTable.php"
-code = "missing-constant-type"
-message = "Class constant `ADD_COLUMNS` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/AlterTable.php"
-code = "missing-constant-type"
-message = "Class constant `ADD_CONSTRAINTS` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/AlterTable.php"
-code = "missing-constant-type"
-message = "Class constant `CHANGE_COLUMNS` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/AlterTable.php"
-code = "missing-constant-type"
-message = "Class constant `DROP_COLUMNS` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/AlterTable.php"
-code = "missing-constant-type"
-message = "Class constant `DROP_CONSTRAINTS` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/AlterTable.php"
-code = "missing-constant-type"
-message = "Class constant `DROP_INDEXES` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/AlterTable.php"
-code = "missing-constant-type"
-message = "Class constant `TABLE_OPTIONS` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/AlterTable.php"
-code = "missing-constant-type"
-message = "Class constant `TABLE` is missing a type hint."
 count = 1
 
 [[issues]]
@@ -2164,12 +2080,6 @@ count = 1
 file = "src/Sql/Ddl/Column/Column.php"
 code = "mixed-argument"
 message = 'Invalid argument type for argument #1 of `PhpDb\Sql\Ddl\Column\Column::setDefault`: expected `PhpDb\Sql\Argument\Literal|PhpDb\Sql\Argument\Value|null|scalar`, but found `mixed`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/Column/Column.php"
-code = "redundant-comparison"
-message = "Avoid direct comparison with boolean literals."
 count = 1
 
 [[issues]]
@@ -2342,30 +2252,6 @@ count = 1
 
 [[issues]]
 file = "src/Sql/Ddl/CreateTable.php"
-code = "missing-constant-type"
-message = "Class constant `COLUMNS` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/CreateTable.php"
-code = "missing-constant-type"
-message = "Class constant `CONSTRAINTS` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/CreateTable.php"
-code = "missing-constant-type"
-message = "Class constant `TABLE_OPTIONS` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/CreateTable.php"
-code = "missing-constant-type"
-message = "Class constant `TABLE` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/CreateTable.php"
 code = "mixed-assignment"
 message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
 count = 1
@@ -2414,12 +2300,6 @@ count = 1
 
 [[issues]]
 file = "src/Sql/Ddl/DropTable.php"
-code = "missing-constant-type"
-message = "Class constant `TABLE` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/DropTable.php"
 code = "possibly-null-argument"
 message = 'Argument #2 of method `PhpDb\Sql\AbstractSql::resolveTable` is possibly `null`, but parameter type `PhpDb\Adapter\Platform\PlatformInterface` does not accept it.'
 count = 1
@@ -2464,18 +2344,6 @@ count = 1
 file = "src/Sql/Delete.php"
 code = "less-specific-nested-argument-type"
 message = "Argument type mismatch for argument #2 of `str_replace`: expected `array<array-key, string>|string`, but provided type `array<array-key, mixed>|null|string` is less specific."
-count = 1
-
-[[issues]]
-file = "src/Sql/Delete.php"
-code = "missing-constant-type"
-message = "Class constant `SPECIFICATION_DELETE` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "src/Sql/Delete.php"
-code = "missing-constant-type"
-message = "Class constant `SPECIFICATION_WHERE` is missing a type hint."
 count = 1
 
 [[issues]]
@@ -2530,12 +2398,6 @@ count = 1
 file = "src/Sql/Expression.php"
 code = "less-specific-nested-argument-type"
 message = 'Argument type mismatch for argument #1 of `PhpDb\Sql\Expression::setParameters`: expected `PhpDb\Sql\ArgumentInterface|PhpDb\Sql\ExpressionInterface|array<array-key, PhpDb\Sql\ArgumentInterface|PhpDb\Sql\ExpressionInterface|list<bool|float|int|null|string>|null|scalar>|list<bool|float|int|null|string>|null|scalar`, but provided type `PhpDb\Sql\ArgumentInterface|PhpDb\Sql\ExpressionInterface|array<array-key, mixed>|list<mixed>|null|scalar` is less specific.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Expression.php"
-code = "missing-constant-type"
-message = "Class constant `PLACEHOLDER` is missing a type hint."
 count = 1
 
 [[issues]]
@@ -2601,31 +2463,7 @@ count = 1
 [[issues]]
 file = "src/Sql/Insert.php"
 code = "less-specific-nested-argument-type"
-message = "Argument type mismatch for argument #2 of `implode`: expected `array<array-key, Stringable|null|scalar>|null`, but provided type `non-empty-list<mixed>` is less specific."
-count = 1
-
-[[issues]]
-file = "src/Sql/Insert.php"
-code = "missing-constant-type"
-message = "Class constant `SPECIFICATION_INSERT` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "src/Sql/Insert.php"
-code = "missing-constant-type"
-message = "Class constant `SPECIFICATION_SELECT` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "src/Sql/Insert.php"
-code = "missing-constant-type"
-message = "Class constant `VALUES_MERGE` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "src/Sql/Insert.php"
-code = "missing-constant-type"
-message = "Class constant `VALUES_SET` is missing a type hint."
+message = "Argument type mismatch for argument #2 of `implode`: expected `array<array-key, Stringable|null|scalar>|null`, but provided type `list<mixed>` is less specific."
 count = 1
 
 [[issues]]
@@ -2728,48 +2566,6 @@ count = 1
 file = "src/Sql/Join.php"
 code = "invalid-return-statement"
 message = '''Invalid return type for function `PhpDb\Sql\Join::current`: expected `array{'columns': array<array-key, PhpDb\Sql\ExpressionInterface|string>, 'name': PhpDb\Sql\TableIdentifier|non-empty-array<string, PhpDb\Sql\Expression|PhpDb\Sql\Select|PhpDb\Sql\TableIdentifier|string>|string, 'on': PhpDb\Sql\Predicate\PredicateInterface|string, 'type': string}`, but found `array{'columns': array<array-key, PhpDb\Sql\ExpressionInterface|string>, 'name': PhpDb\Sql\TableIdentifier|non-empty-array<string, PhpDb\Sql\Expression|PhpDb\Sql\Select|PhpDb\Sql\TableIdentifier|string>|string, 'on': PhpDb\Sql\Predicate\PredicateInterface|string, 'type': string}|null`.'''
-count = 1
-
-[[issues]]
-file = "src/Sql/Join.php"
-code = "missing-constant-type"
-message = "Class constant `JOIN_FULL_OUTER` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "src/Sql/Join.php"
-code = "missing-constant-type"
-message = "Class constant `JOIN_INNER` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "src/Sql/Join.php"
-code = "missing-constant-type"
-message = "Class constant `JOIN_LEFT_OUTER` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "src/Sql/Join.php"
-code = "missing-constant-type"
-message = "Class constant `JOIN_LEFT` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "src/Sql/Join.php"
-code = "missing-constant-type"
-message = "Class constant `JOIN_OUTER` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "src/Sql/Join.php"
-code = "missing-constant-type"
-message = "Class constant `JOIN_RIGHT_OUTER` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "src/Sql/Join.php"
-code = "missing-constant-type"
-message = "Class constant `JOIN_RIGHT` is missing a type hint."
 count = 1
 
 [[issues]]
@@ -2965,100 +2761,10 @@ message = 'Class `PhpDb\Sql\Predicate\Operator` should be declared `final`.'
 count = 1
 
 [[issues]]
-file = "src/Sql/Predicate/Operator.php"
-code = "missing-constant-type"
-message = "Class constant `OPERATOR_EQUAL_TO` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "src/Sql/Predicate/Operator.php"
-code = "missing-constant-type"
-message = "Class constant `OPERATOR_GREATER_THAN_OR_EQUAL_TO` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "src/Sql/Predicate/Operator.php"
-code = "missing-constant-type"
-message = "Class constant `OPERATOR_GREATER_THAN` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "src/Sql/Predicate/Operator.php"
-code = "missing-constant-type"
-message = "Class constant `OPERATOR_LESS_THAN_OR_EQUAL_TO` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "src/Sql/Predicate/Operator.php"
-code = "missing-constant-type"
-message = "Class constant `OPERATOR_LESS_THAN` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "src/Sql/Predicate/Operator.php"
-code = "missing-constant-type"
-message = "Class constant `OPERATOR_NOT_EQUAL_TO` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "src/Sql/Predicate/Operator.php"
-code = "missing-constant-type"
-message = "Class constant `OP_EQ` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "src/Sql/Predicate/Operator.php"
-code = "missing-constant-type"
-message = "Class constant `OP_GTE` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "src/Sql/Predicate/Operator.php"
-code = "missing-constant-type"
-message = "Class constant `OP_GT` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "src/Sql/Predicate/Operator.php"
-code = "missing-constant-type"
-message = "Class constant `OP_LTE` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "src/Sql/Predicate/Operator.php"
-code = "missing-constant-type"
-message = "Class constant `OP_LT` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "src/Sql/Predicate/Operator.php"
-code = "missing-constant-type"
-message = "Class constant `OP_NE` is missing a type hint."
-count = 1
-
-[[issues]]
 file = "src/Sql/Predicate/Predicate.php"
 code = "impossible-condition"
 message = "This condition (type `false`) will always evaluate to false."
 count = 1
-
-[[issues]]
-file = "src/Sql/Predicate/Predicate.php"
-code = "imprecise-type"
-message = "Type `array` in parameter `$identifier` is imprecise, equivalent to `array<array-key, mixed>`."
-count = 2
-
-[[issues]]
-file = "src/Sql/Predicate/Predicate.php"
-code = "imprecise-type"
-message = "Type `array` in parameter `$maxValue` is imprecise, equivalent to `array<array-key, mixed>`."
-count = 2
-
-[[issues]]
-file = "src/Sql/Predicate/Predicate.php"
-code = "imprecise-type"
-message = "Type `array` in parameter `$minValue` is imprecise, equivalent to `array<array-key, mixed>`."
-count = 2
 
 [[issues]]
 file = "src/Sql/Predicate/Predicate.php"
@@ -3093,49 +2799,7 @@ count = 1
 [[issues]]
 file = "src/Sql/Predicate/Predicate.php"
 code = "possibly-invalid-argument"
-message = 'Possible argument type mismatch for argument #1 of `PhpDb\Sql\Predicate\Between::__construct`: expected `PhpDb\Sql\ArgumentInterface|null|string`, but possibly received `PhpDb\Sql\ArgumentInterface|array<array-key, mixed>|float|int|null|string`.'
-count = 2
-
-[[issues]]
-file = "src/Sql/Predicate/Predicate.php"
-code = "possibly-invalid-argument"
-message = 'Possible argument type mismatch for argument #1 of `PhpDb\Sql\Predicate\In::__construct`: expected `PhpDb\Sql\ArgumentInterface|null|string`, but possibly received `PhpDb\Sql\ArgumentInterface|float|int|string`.'
-count = 2
-
-[[issues]]
-file = "src/Sql/Predicate/Predicate.php"
-code = "possibly-invalid-argument"
-message = 'Possible argument type mismatch for argument #1 of `PhpDb\Sql\Predicate\IsNull::__construct`: expected `PhpDb\Sql\ArgumentInterface|null|string`, but possibly received `PhpDb\Sql\ArgumentInterface|float|int|string`.'
-count = 2
-
-[[issues]]
-file = "src/Sql/Predicate/Predicate.php"
-code = "possibly-invalid-argument"
-message = 'Possible argument type mismatch for argument #1 of `PhpDb\Sql\Predicate\Like::__construct`: expected `PhpDb\Sql\ArgumentInterface|null|string`, but possibly received `PhpDb\Sql\ArgumentInterface|float|int|null|string`.'
-count = 2
-
-[[issues]]
-file = "src/Sql/Predicate/Predicate.php"
-code = "possibly-invalid-argument"
-message = 'Possible argument type mismatch for argument #1 of `PhpDb\Sql\Predicate\Operator::__construct`: expected `PhpDb\Sql\ArgumentInterface|PhpDb\Sql\ExpressionInterface|PhpDb\Sql\SqlInterface|null|string`, but possibly received `PhpDb\Sql\ArgumentInterface|float|int|null|string`.'
-count = 6
-
-[[issues]]
-file = "src/Sql/Predicate/Predicate.php"
-code = "possibly-invalid-argument"
-message = 'Possible argument type mismatch for argument #2 of `PhpDb\Sql\Predicate\Between::__construct`: expected `PhpDb\Sql\ArgumentInterface|float|int|null|string`, but possibly received `PhpDb\Sql\ArgumentInterface|array<array-key, mixed>|float|int|null|string`.'
-count = 2
-
-[[issues]]
-file = "src/Sql/Predicate/Predicate.php"
-code = "possibly-invalid-argument"
 message = 'Possible argument type mismatch for argument #2 of `PhpDb\Sql\Predicate\In::__construct`: expected `PhpDb\Sql\ArgumentInterface|PhpDb\Sql\Select|list<bool|float|int|null|string>|null`, but possibly received `PhpDb\Sql\ArgumentInterface|array<array-key, mixed>`.'
-count = 2
-
-[[issues]]
-file = "src/Sql/Predicate/Predicate.php"
-code = "possibly-invalid-argument"
-message = 'Possible argument type mismatch for argument #3 of `PhpDb\Sql\Predicate\Between::__construct`: expected `PhpDb\Sql\ArgumentInterface|float|int|null|string`, but possibly received `PhpDb\Sql\ArgumentInterface|array<array-key, mixed>|float|int|null|string`.'
 count = 2
 
 [[issues]]
@@ -3148,30 +2812,6 @@ count = 1
 file = "src/Sql/Predicate/PredicateSet.php"
 code = "less-specific-nested-return-statement"
 message = '''Returned type `array{'spec': non-empty-string, 'values': mixed}` is less specific than the declared return type `array{'spec': string, 'values': list<PhpDb\Sql\ArgumentInterface>}` for function `PhpDb\Sql\Predicate\PredicateSet::getExpressionData` due to nested 'mixed'.'''
-count = 1
-
-[[issues]]
-file = "src/Sql/Predicate/PredicateSet.php"
-code = "missing-constant-type"
-message = "Class constant `COMBINED_BY_AND` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "src/Sql/Predicate/PredicateSet.php"
-code = "missing-constant-type"
-message = "Class constant `COMBINED_BY_OR` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "src/Sql/Predicate/PredicateSet.php"
-code = "missing-constant-type"
-message = "Class constant `OP_AND` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "src/Sql/Predicate/PredicateSet.php"
-code = "missing-constant-type"
-message = "Class constant `OP_OR` is missing a type hint."
 count = 1
 
 [[issues]]
@@ -3303,7 +2943,7 @@ count = 1
 [[issues]]
 file = "src/Sql/Select.php"
 code = "invalid-return-statement"
-message = 'Invalid return type for function `PhpDb\Sql\Select::resolveTable`: expected `array{0: null|string, 1: string}`, but found `list{array<array-key, mixed>|null|string, string}`.'
+message = '''Invalid return type for function `PhpDb\Sql\Select::resolveTable`: expected `array{0: null|string, 1: string}`, but found `list{array<array-key, mixed>|null|string, string('')|truthy-string}`.'''
 count = 1
 
 [[issues]]
@@ -3316,168 +2956,6 @@ count = 1
 file = "src/Sql/Select.php"
 code = "less-specific-nested-return-statement"
 message = '''Returned type `list{mixed}` is less specific than the declared return type `array{0: string}|null` for function `PhpDb\Sql\Select::processOffset` due to nested 'mixed'.'''
-count = 1
-
-[[issues]]
-file = "src/Sql/Select.php"
-code = "missing-constant-type"
-message = "Class constant `COLUMNS` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "src/Sql/Select.php"
-code = "missing-constant-type"
-message = "Class constant `COMBINE_EXCEPT` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "src/Sql/Select.php"
-code = "missing-constant-type"
-message = "Class constant `COMBINE_INTERSECT` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "src/Sql/Select.php"
-code = "missing-constant-type"
-message = "Class constant `COMBINE_UNION` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "src/Sql/Select.php"
-code = "missing-constant-type"
-message = "Class constant `COMBINE` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "src/Sql/Select.php"
-code = "missing-constant-type"
-message = "Class constant `GROUP` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "src/Sql/Select.php"
-code = "missing-constant-type"
-message = "Class constant `HAVING` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "src/Sql/Select.php"
-code = "missing-constant-type"
-message = "Class constant `JOINS` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "src/Sql/Select.php"
-code = "missing-constant-type"
-message = "Class constant `JOIN_FULL_OUTER` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "src/Sql/Select.php"
-code = "missing-constant-type"
-message = "Class constant `JOIN_INNER` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "src/Sql/Select.php"
-code = "missing-constant-type"
-message = "Class constant `JOIN_LEFT_OUTER` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "src/Sql/Select.php"
-code = "missing-constant-type"
-message = "Class constant `JOIN_LEFT` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "src/Sql/Select.php"
-code = "missing-constant-type"
-message = "Class constant `JOIN_OUTER` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "src/Sql/Select.php"
-code = "missing-constant-type"
-message = "Class constant `JOIN_RIGHT_OUTER` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "src/Sql/Select.php"
-code = "missing-constant-type"
-message = "Class constant `JOIN_RIGHT` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "src/Sql/Select.php"
-code = "missing-constant-type"
-message = "Class constant `LIMIT` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "src/Sql/Select.php"
-code = "missing-constant-type"
-message = "Class constant `OFFSET` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "src/Sql/Select.php"
-code = "missing-constant-type"
-message = "Class constant `ORDER_ASCENDING` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "src/Sql/Select.php"
-code = "missing-constant-type"
-message = "Class constant `ORDER_DESCENDING` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "src/Sql/Select.php"
-code = "missing-constant-type"
-message = "Class constant `ORDER` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "src/Sql/Select.php"
-code = "missing-constant-type"
-message = "Class constant `QUANTIFIER_ALL` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "src/Sql/Select.php"
-code = "missing-constant-type"
-message = "Class constant `QUANTIFIER_DISTINCT` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "src/Sql/Select.php"
-code = "missing-constant-type"
-message = "Class constant `QUANTIFIER` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "src/Sql/Select.php"
-code = "missing-constant-type"
-message = "Class constant `SELECT` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "src/Sql/Select.php"
-code = "missing-constant-type"
-message = "Class constant `SQL_STAR` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "src/Sql/Select.php"
-code = "missing-constant-type"
-message = "Class constant `TABLE` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "src/Sql/Select.php"
-code = "missing-constant-type"
-message = "Class constant `WHERE` is missing a type hint."
 count = 1
 
 [[issues]]
@@ -3503,12 +2981,6 @@ file = "src/Sql/Select.php"
 code = "possibly-invalid-argument"
 message = 'Possible argument type mismatch for argument #1 of `PhpDb\Adapter\Platform\PlatformInterface::quoteIdentifier`: expected `string`, but possibly received `PhpDb\Sql\ExpressionInterface|string`.'
 count = 1
-
-[[issues]]
-file = "src/Sql/Select.php"
-code = "possibly-invalid-argument"
-message = 'Possible argument type mismatch for argument #1 of `PhpDb\Adapter\Platform\PlatformInterface::quoteValue`: expected `string`, but possibly received `int|string`.'
-count = 2
 
 [[issues]]
 file = "src/Sql/Select.php"
@@ -3661,30 +3133,6 @@ message = 'Interface `PhpDb\Sql\SqlInterface` is missing an `@api` or `@internal
 count = 1
 
 [[issues]]
-file = "src/Sql/SqlInterface.php"
-code = "missing-constant-type"
-message = "Class constant `TYPE_IDENTIFIER` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "src/Sql/SqlInterface.php"
-code = "missing-constant-type"
-message = "Class constant `TYPE_LITERAL` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "src/Sql/SqlInterface.php"
-code = "missing-constant-type"
-message = "Class constant `TYPE_SELECT` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "src/Sql/SqlInterface.php"
-code = "missing-constant-type"
-message = "Class constant `TYPE_VALUE` is missing a type hint."
-count = 1
-
-[[issues]]
 file = "src/Sql/Update.php"
 code = "class-must-be-final"
 message = 'Class `PhpDb\Sql\Update` should be declared `final`.'
@@ -3718,42 +3166,6 @@ count = 1
 file = "src/Sql/Update.php"
 code = "less-specific-nested-argument-type"
 message = "Argument type mismatch for argument #2 of `str_replace`: expected `array<array-key, string>|string`, but provided type `array<array-key, mixed>|null|string` is less specific."
-count = 1
-
-[[issues]]
-file = "src/Sql/Update.php"
-code = "missing-constant-type"
-message = "Class constant `SPECIFICATION_JOIN` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "src/Sql/Update.php"
-code = "missing-constant-type"
-message = "Class constant `SPECIFICATION_SET` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "src/Sql/Update.php"
-code = "missing-constant-type"
-message = "Class constant `SPECIFICATION_UPDATE` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "src/Sql/Update.php"
-code = "missing-constant-type"
-message = "Class constant `SPECIFICATION_WHERE` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "src/Sql/Update.php"
-code = "missing-constant-type"
-message = "Class constant `VALUES_MERGE` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "src/Sql/Update.php"
-code = "missing-constant-type"
-message = "Class constant `VALUES_SET` is missing a type hint."
 count = 1
 
 [[issues]]
