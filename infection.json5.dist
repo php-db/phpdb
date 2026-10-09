@@ -22,6 +22,7 @@
                 // implode() discards keys, so array_fill()'s start index cannot be observed.
                 "PhpDb\\Sql\\Argument\\Identifiers::getSpecification",
                 "PhpDb\\Sql\\Argument\\Values::getSpecification",
+                "PhpDb\\Sql\\Ddl\\Constraint\\AbstractConstraint::getExpressionData",
                 "PhpDb\\Sql\\Ddl\\Constraint\\ForeignKey::getExpressionData"
             ]
         },
@@ -30,6 +31,7 @@
                 // implode() discards keys, so array_fill()'s start index cannot be observed.
                 "PhpDb\\Sql\\Argument\\Identifiers::getSpecification",
                 "PhpDb\\Sql\\Argument\\Values::getSpecification",
+                "PhpDb\\Sql\\Ddl\\Constraint\\AbstractConstraint::getExpressionData",
                 "PhpDb\\Sql\\Ddl\\Constraint\\ForeignKey::getExpressionData"
             ]
         },

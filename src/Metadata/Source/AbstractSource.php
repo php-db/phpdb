@@ -300,10 +300,8 @@ abstract class AbstractSource implements MetadataInterface
         foreach ($this->data['constraint_keys'][$schema] ?? [] as $constraintKeyInfo) {
             if (
                 ! (
-
-                        $constraintKeyInfo['table_name'] === $table
-                        && $constraintKeyInfo['constraint_name'] === $constraint
-
+                    $constraintKeyInfo['table_name'] === $table
+                    && $constraintKeyInfo['constraint_name'] === $constraint
                 )
             ) {
                 continue;
