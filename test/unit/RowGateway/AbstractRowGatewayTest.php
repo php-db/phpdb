@@ -47,6 +47,12 @@ use function sprintf;
 #[CoversMethod(RowGateway::class, 'count')]
 #[CoversMethod(RowGateway::class, 'toArray')]
 #[CoversMethod(RowGateway::class, 'exchangeArray')]
+#[CoversMethod(AbstractRowGateway::class, 'executeStatement')]
+#[CoversMethod(AbstractRowGateway::class, 'insertRow')]
+#[CoversMethod(AbstractRowGateway::class, 'updateRow')]
+#[CoversMethod(AbstractRowGateway::class, 'processInsertedPrimaryKey')]
+#[CoversMethod(AbstractRowGateway::class, 'requirePrimaryKeyColumn')]
+#[CoversMethod(AbstractRowGateway::class, 'requireSql')]
 final class AbstractRowGatewayTest extends TestCase
 {
     /** @var Adapter&MockObject */
@@ -72,6 +78,29 @@ final class AbstractRowGatewayTest extends TestCase
         $affectedRows          = $this->rowGateway->delete();
         static::assertFalse($this->rowGateway->rowExistsInDatabase());
         static::assertSame(1, $affectedRows);
+    }
+
+    #[Test]
+    public function deleteThrowsWhenTheStatementReturnsNoResult(): void
+    {
+        $nullStatement = $this->getMockBuilder(StatementInterface::class)->getMock();
+        $nullStatement->method('execute')->willReturn(null);
+
+        $driver = $this->getMockBuilder(DriverInterface::class)->getMock();
+        $driver->method('createStatement')->willReturn($nullStatement);
+
+        $adapter = $this->getMockBuilder(Adapter::class)
+            ->onlyMethods([])
+            ->setConstructorArgs([$driver, new TrustingSql92Platform()])
+            ->getMock();
+
+        $rowGateway = new RowGateway('id', 'foo', $adapter);
+        $rowGateway->populate(['id' => 1], true);
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage(RuntimeException::MISSING_STATEMENT_RESULT);
+
+        $rowGateway->delete();
     }
 
     #[Test]
@@ -264,6 +293,14 @@ final class AbstractRowGatewayTest extends TestCase
     }
 
     #[Test]
+    public function offsetGetReturnsNullForAnUnknownColumn(): void
+    {
+        $this->rowGateway->populate(['id' => 5], true);
+
+        static::assertNull($this->rowGateway['unknown']);
+    }
+
+    #[Test]
     public function offsetSet(): void
     {
         $this->rowGateway['testColumn'] = 'test';
@@ -367,12 +404,57 @@ final class AbstractRowGatewayTest extends TestCase
     }
 
     #[Test]
+    public function saveThrowsWhenTheSavedRowCannotBeReadBack(): void
+    {
+        $this->mockResult->expects($this->any())->method('current')->willReturn(false);
+        $this->rowGateway->populate(['id' => 6, 'name' => 'foo'], true);
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage(RuntimeException::MISSING_SAVED_ROW);
+
+        $this->rowGateway->save();
+    }
+
+    #[Test]
     public function saveUpdate(): void
     {
         $this->mockResult->expects($this->any())->method('current')->willReturn(['id' => 6, 'name' => 'foo']);
         $this->rowGateway->populate(['id' => 6, 'name' => 'foo'], true);
         $this->rowGateway->save();
         static::assertSame(6, $this->rowGateway['id']);
+    }
+
+    #[Test]
+    public function saveUpdateChangingOneColumnOfACompositeKeyReselectsByTheNewKey(): void
+    {
+        $selectMock = $this->getMockBuilder(Select::class)
+            ->onlyMethods(['where'])
+            ->getMock();
+        $selectMock->expects($this->once())
+            ->method('where')
+            ->with(static::equalTo(['one' => 1, 'two' => 3]))
+            ->willReturn($selectMock);
+
+        $sqlMock = $this->getMockBuilder(Sql::class)
+            ->onlyMethods(['select'])
+            ->setConstructorArgs([$this->mockAdapter])
+            ->getMock();
+        $sqlMock->expects($this->any())
+            ->method('select')
+            ->willReturn($selectMock);
+
+        $this->setRowGatewayState(['primaryKeyColumn' => ['one', 'two'], 'sql' => $sqlMock]);
+
+        $this->mockResult
+            ->expects($this->any())
+            ->method('current')
+            ->willReturn(['one' => 1, 'two' => 3, 'name' => 'foo']);
+
+        $this->rowGateway->populate(['one' => 1, 'two' => 2, 'name' => 'foo'], true);
+        $this->rowGateway->two = 3;
+        $this->rowGateway->save();
+
+        static::assertEquals(['one' => 1, 'two' => 3, 'name' => 'foo'], $this->rowGateway->toArray());
     }
 
     #[Test]

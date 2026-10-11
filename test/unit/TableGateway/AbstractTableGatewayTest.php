@@ -21,9 +21,12 @@ use PhpDb\Sql\Update;
 use PhpDb\TableGateway\AbstractTableGateway;
 use PhpDb\TableGateway\Exception\InvalidArgumentException;
 use PhpDb\TableGateway\Exception\RuntimeException;
+use PhpDb\TableGateway\Feature\EventFeatureEventsInterface;
 use PhpDb\TableGateway\Feature\FeatureSet;
 use PhpDbTest\TableGateway\Feature\TestAsset\TestTableGatewayFeature;
+use PhpDbTest\TableGateway\TestAsset\HookRecordingTableGateway;
 use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\IgnoreDeprecations;
 use PHPUnit\Framework\Attributes\RequiresPhp;
 use PHPUnit\Framework\Attributes\Test;
@@ -31,6 +34,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 
+use function count;
 use function sprintf;
 
 #[IgnoreDeprecations]
@@ -60,6 +64,11 @@ use function sprintf;
 #[CoversMethod(AbstractTableGateway::class, 'getColumns')]
 #[CoversMethod(AbstractTableGateway::class, 'getFeatureSet')]
 #[CoversMethod(AbstractTableGateway::class, 'initialize')]
+#[CoversMethod(AbstractTableGateway::class, 'unaliasTable')]
+#[CoversMethod(AbstractTableGateway::class, 'cloneTable')]
+#[CoversMethod(AbstractTableGateway::class, 'requireFeatureSet')]
+#[CoversMethod(AbstractTableGateway::class, 'requireResultSetPrototype')]
+#[CoversMethod(AbstractTableGateway::class, 'requireSql')]
 final class AbstractTableGatewayTest extends TestCase
 {
     protected MockObject&Adapter $mockAdapter;
@@ -75,11 +84,122 @@ final class AbstractTableGatewayTest extends TestCase
     protected MockObject&Update $mockUpdate;
     protected MockObject&Delete $mockDelete;
 
+    /** @return array<string, array{string, list<mixed>}> */
+    public static function executeHookProvider(): array
+    {
+        return [
+            'delete' => ['delete', ['id = 1']],
+            'insert' => ['insert', [['foo' => 'bar']]],
+            'select' => ['select', []],
+            'update' => ['update', [['foo' => 'bar']]],
+        ];
+    }
+
+    /** @return array<string, array{string, list<mixed>, list<array{string, int}>}> */
+    public static function featureEventProvider(): array
+    {
+        return [
+            'delete' => [
+                'delete',
+                ['id = 1'],
+                [
+                    [EventFeatureEventsInterface::EVENT_PRE_DELETE,  1],
+                    [EventFeatureEventsInterface::EVENT_POST_DELETE, 2],
+                ],
+            ],
+            'insert' => [
+                'insert',
+                [['foo' => 'bar']],
+                [
+                    [EventFeatureEventsInterface::EVENT_PRE_INSERT,  1],
+                    [EventFeatureEventsInterface::EVENT_POST_INSERT, 2],
+                ],
+            ],
+            'select' => [
+                'select',
+                [],
+                [
+                    [EventFeatureEventsInterface::EVENT_PRE_SELECT,  1],
+                    [EventFeatureEventsInterface::EVENT_POST_SELECT, 3],
+                ],
+            ],
+            'update' => [
+                'update',
+                [['foo' => 'bar']],
+                [
+                    [EventFeatureEventsInterface::EVENT_PRE_UPDATE,  1],
+                    [EventFeatureEventsInterface::EVENT_POST_UPDATE, 2],
+                ],
+            ],
+        ];
+    }
+
+    /** @return array<string, array{string, list<mixed>}> */
+    public static function initializingOperationProvider(): array
+    {
+        return [
+            'delete'                => ['delete', ['id = 1']],
+            'deleteWith'            => ['deleteWith', [new Delete('foo')]],
+            'getFeatureSet'         => ['getFeatureSet', []],
+            'getResultSetPrototype' => ['getResultSetPrototype', []],
+            'getSql'                => ['getSql', []],
+            'insert'                => ['insert', [['foo' => 'bar']]],
+            'insertWith'            => ['insertWith', [(new Insert('foo'))->values(['foo' => 'bar'])]],
+            'select'                => ['select', []],
+            'selectWith'            => ['selectWith', [new Select('foo')]],
+            'update'                => ['update', [['foo' => 'bar']]],
+            'updateWith'            => ['updateWith', [new Update('foo')]],
+        ];
+    }
+
+    /** @return array<string, array{string, list<mixed>, string}> */
+    public static function statementWithoutResultProvider(): array
+    {
+        return [
+            'delete' => ['delete', [['id' => 1]], 'Delete'],
+            'insert' => ['insert', [['foo' => 'bar']], 'Insert'],
+            'select' => ['select', [], 'Select'],
+            'update' => ['update', [['foo' => 'bar']], 'Update'],
+        ];
+    }
+
+    /** @return array<string, array{string, string}> */
+    public static function uninitializedPropertyProvider(): array
+    {
+        return [
+            'feature set'          => ['featureSet', 'getFeatureSet'],
+            'result set prototype' => ['resultSetPrototype', 'getResultSetPrototype'],
+            'sql'                  => ['sql', 'getSql'],
+        ];
+    }
+
+    #[Test]
+    public function cloneCopiesTheSqlAndResultSetPrototype(): void
+    {
+        $cloned = clone $this->table;
+
+        static::assertNotSame($this->table->getSql(), $cloned->getSql());
+        static::assertNotSame($this->table->getResultSetPrototype(), $cloned->getResultSetPrototype());
+    }
+
     #[Test]
     public function cloneKeepsTheAdapter(): void
     {
         $cTable = clone $this->table;
         static::assertSame($this->mockAdapter, $cTable->getAdapter());
+    }
+
+    #[Test]
+    public function cloneOfAGatewayWithoutDependenciesKeepsThemUnset(): void
+    {
+        $gateway = $this->getMockBuilder(AbstractTableGateway::class)->onlyMethods([])->getMock();
+
+        $cloned = clone $gateway;
+
+        $tgReflection = new ReflectionClass(AbstractTableGateway::class);
+        static::assertNull($tgReflection->getProperty('sql')->getValue($cloned));
+        static::assertNull($tgReflection->getProperty('resultSetPrototype')->getValue($cloned));
+        static::assertNull($tgReflection->getProperty('table')->getValue($cloned));
     }
 
     #[Test]
@@ -140,7 +260,7 @@ final class AbstractTableGatewayTest extends TestCase
 
         $delete->expects($this->any())
             ->method('getRawState')
-            ->willReturn(['table' => 'foo']);
+            ->willReturnMap([['table', 'foo']]);
 
         $affectedRows = $this->table->deleteWith($delete);
         static::assertSame(5, $affectedRows);
@@ -151,6 +271,8 @@ final class AbstractTableGatewayTest extends TestCase
     {
         // The closure receives the Delete object created by $this->sql->delete()
         // We verify that the closure is called with a Delete instance
+        $this->mockDelete->expects($this->never())->method('where');
+
         $closureCalled = false;
         $affectedRows  = $this->table->delete(static function ($delete) use (&$closureCalled) {
             $closureCalled = true;
@@ -226,6 +348,17 @@ final class AbstractTableGatewayTest extends TestCase
     }
 
     #[Test]
+    public function getAdapterThrowsWhenNoAdapterIsSet(): void
+    {
+        $gateway = $this->getMockBuilder(AbstractTableGateway::class)->onlyMethods([])->getMock();
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage(RuntimeException::MISSING_ADAPTER);
+
+        $gateway->getAdapter();
+    }
+
+    #[Test]
     public function getColumns(): void
     {
         $tgReflection = new ReflectionClass(AbstractTableGateway::class);
@@ -264,6 +397,41 @@ final class AbstractTableGatewayTest extends TestCase
     public function getTable(): void
     {
         static::assertSame('foo', $this->table->getTable());
+    }
+
+    #[Test]
+    public function getTableThrowsWhenNoTableIsSet(): void
+    {
+        $gateway = $this->getMockBuilder(AbstractTableGateway::class)->onlyMethods([])->getMock();
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage(RuntimeException::MISSING_TABLE);
+
+        $gateway->getTable();
+    }
+
+    #[Test]
+    public function initializeAppliesItsFeatureEventsOnlyOnce(): void
+    {
+        $events     = [];
+        $featureSet = $this->getMockBuilder(FeatureSet::class)->onlyMethods(['apply'])->getMock();
+        $featureSet->method('apply')
+            ->willReturnCallback(
+                static function (string $event) use (&$events): void {
+                    $events[] = $event;
+                },
+            );
+
+        $tgReflection = new ReflectionClass(AbstractTableGateway::class);
+        $tgReflection->getProperty('featureSet')->setValue($this->table, $featureSet);
+
+        $this->table->initialize();
+        $this->table->initialize();
+
+        static::assertSame(
+            [EventFeatureEventsInterface::EVENT_PRE_INITIALIZE, EventFeatureEventsInterface::EVENT_POST_INITIALIZE],
+            $events,
+        );
     }
 
     #[Test]
@@ -553,6 +721,62 @@ final class AbstractTableGatewayTest extends TestCase
         $this->table->invalidProperty = 'value';
     }
 
+    /**
+     * @param list<mixed>               $arguments
+     * @param list<array{string, int}>  $expectedEvents
+     */
+    #[Test]
+    #[DataProvider('featureEventProvider')]
+    public function operationsApplyTheirPreAndPostFeatureEvents(
+        string $method,
+        array $arguments,
+        array $expectedEvents,
+    ): void {
+        $events     = [];
+        $featureSet = $this->getMockBuilder(FeatureSet::class)->onlyMethods(['apply'])->getMock();
+        $featureSet->method('apply')
+            ->willReturnCallback(
+                static function (string $event, array $args) use (&$events): void {
+                    $events[] = [$event, count($args)];
+                },
+            );
+
+        $tgReflection = new ReflectionClass(AbstractTableGateway::class);
+        $tgReflection->getProperty('featureSet')->setValue($this->table, $featureSet);
+        $tgReflection->getProperty('isInitialized')->setValue($this->table, true);
+
+        $this->table->{$method}(...$arguments);
+
+        static::assertSame($expectedEvents, $events);
+    }
+
+    /** @param list<mixed> $arguments */
+    #[Test]
+    #[DataProvider('initializingOperationProvider')]
+    public function operationsInitializeTheGatewayFirst(string $method, array $arguments): void
+    {
+        $gateway      = $this->getMockBuilder(AbstractTableGateway::class)->onlyMethods([])->getMock();
+        $tgReflection = new ReflectionClass(AbstractTableGateway::class);
+        $tgReflection->getProperty('table')->setValue($gateway, 'foo');
+        $tgReflection->getProperty('adapter')->setValue($gateway, $this->mockAdapter);
+
+        $gateway->{$method}(...$arguments);
+
+        static::assertTrue($gateway->isInitialized());
+    }
+
+    /** @param list<mixed> $arguments */
+    #[Test]
+    #[DataProvider('executeHookProvider')]
+    public function operationsRunThroughTheOverridableExecuteHooks(string $method, array $arguments): void
+    {
+        $gateway = new HookRecordingTableGateway('foo', $this->mockAdapter);
+
+        $gateway->{$method}(...$arguments);
+
+        static::assertSame([$method], $gateway->executed);
+    }
+
     #[Test]
     public function selectAppliesColumnsWhenStarSelected(): void
     {
@@ -568,9 +792,9 @@ final class AbstractTableGatewayTest extends TestCase
 
         $select->expects($this->any())
             ->method('getRawState')
-            ->willReturn([
-                'table'   => 'foo',
-                'columns' => [Select::SQL_STAR],
+            ->willReturnMap([
+                [Select::TABLE, 'foo'],
+                [Select::COLUMNS, [Select::SQL_STAR]],
             ]);
 
         $select->expects($this->once())
@@ -581,26 +805,55 @@ final class AbstractTableGatewayTest extends TestCase
     }
 
     #[Test]
+    public function selectInitializesTheResultSetWithTheStatementResult(): void
+    {
+        $resultSet = $this->table->select();
+
+        static::assertInstanceOf(ResultSet::class, $resultSet);
+        static::assertInstanceOf(ResultInterface::class, $resultSet->getDataSource());
+    }
+
+    #[Test]
+    public function selectKeepsExplicitlySelectedColumns(): void
+    {
+        $tgReflection = new ReflectionClass(AbstractTableGateway::class);
+        $tgReflection->getProperty('columns')->setValue($this->table, ['id', 'name', 'email']);
+
+        $select = $this->getMockBuilder(Select::class)
+            ->onlyMethods(['getRawState', 'columns'])
+            ->setConstructorArgs(['foo'])
+            ->getMock();
+        $select->method('getRawState')
+            ->willReturnMap([
+                [Select::TABLE, 'foo'],
+                [Select::COLUMNS, ['id']],
+            ]);
+        $select->expects($this->never())->method('columns');
+
+        $this->table->selectWith($select);
+    }
+
+    #[Test]
     public function selectWithArrayTable(): void
     {
         // Case 1
         $select1 = $this->getMockBuilder(Select::class)->onlyMethods(['getRawState'])->getMock();
-        $select1->expects($this->once())
+        $select1->expects($this->exactly(2))
             ->method('getRawState')
-            ->willReturn([
-                'table' => 'foo', // Standard table name format, valid according to Select::from()
-                'columns' => null,
+            ->willReturnMap([
+                [Select::TABLE, 'foo'], // Standard table name format, valid according to Select::from()
+                [Select::COLUMNS, []],
             ]);
         $return = $this->table->selectWith($select1);
         static::assertInstanceOf(ResultSet::class, $return);
 
         // Case 2
         $select1 = $this->getMockBuilder(Select::class)->onlyMethods(['getRawState'])->getMock();
-        $select1->expects($this->once())
+        $select1->expects($this->exactly(2))
             ->method('getRawState')
-            ->willReturn([
-                'table' => ['f' => 'foo'], // Alias table name format, valid according to Select::from()
-                'columns' => null,
+            ->willReturnMap([
+                [Select::TABLE, ['f' => 'foo']], // Alias table name format, valid according to Select::from()
+                [Select::COLUMNS, []],
             ]);
         $return = $this->table->selectWith($select1);
         static::assertInstanceOf(ResultSet::class, $return);
@@ -612,10 +865,12 @@ final class AbstractTableGatewayTest extends TestCase
         $mockSelect = $this->mockSelect;
         $mockSelect->expects($this->any())
             ->method('getRawState')
-            ->willReturn([
-                'table'   => $this->table->getTable(),
-                'columns' => [],
+            ->willReturnMap([
+                [Select::TABLE, $this->table->getTable()],
+                [Select::COLUMNS, []],
             ]);
+
+        $mockSelect->expects($this->never())->method('where');
 
         $closureCalled = false;
         $result        = $this->table->select(static function ($select) use (&$closureCalled) {
@@ -643,9 +898,9 @@ final class AbstractTableGatewayTest extends TestCase
         $mockSelect = $this->mockSelect;
         $mockSelect->expects($this->any())
             ->method('getRawState')
-            ->willReturn([
-                'table'   => $this->table->getTable(),
-                'columns' => [],
+            ->willReturnMap([
+                [Select::TABLE, $this->table->getTable()],
+                [Select::COLUMNS, []],
             ]);
 
         // assert select::from() is called
@@ -654,6 +909,50 @@ final class AbstractTableGatewayTest extends TestCase
             ->with(static::equalTo('foo'));
 
         $this->table->select('foo');
+    }
+
+    #[Test]
+    #[DataProvider('uninitializedPropertyProvider')]
+    public function throwsWhenAnInitializedDependencyIsUnset(string $property, string $getter): void
+    {
+        $tgReflection = new ReflectionClass(AbstractTableGateway::class);
+        $tgReflection->getProperty('isInitialized')->setValue($this->table, true);
+        $tgReflection->getProperty($property)->setValue($this->table, null);
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage(sprintf(RuntimeException::UNINITIALIZED_PROPERTY, $property));
+
+        $this->table->{$getter}();
+    }
+
+    /** @param list<mixed> $arguments */
+    #[Test]
+    #[DataProvider('statementWithoutResultProvider')]
+    public function throwsWhenTheStatementReturnsNoResult(string $method, array $arguments, string $statement): void
+    {
+        $nullStatement = $this->getMockBuilder(StatementInterface::class)->getMock();
+        $nullStatement->method('execute')->willReturn(null);
+
+        $driver = $this->getMockBuilder(DriverInterface::class)->getMock();
+        $driver->method('createStatement')->willReturn($nullStatement);
+
+        $platform = $this->getMockBuilder(PlatformInterface::class)->getMock();
+        $platform->method('getSqlPlatformDecorator')->willReturn(new Sql\Platform\Platform($platform));
+
+        $adapter = $this->getMockBuilder(Adapter::class)
+            ->onlyMethods([])
+            ->setConstructorArgs([$driver, $platform, $this->getMockBuilder(ResultSetInterface::class)->getMock()])
+            ->getMock();
+
+        $gateway      = $this->getMockBuilder(AbstractTableGateway::class)->onlyMethods([])->getMock();
+        $tgReflection = new ReflectionClass(AbstractTableGateway::class);
+        $tgReflection->getProperty('table')->setValue($gateway, 'foo');
+        $tgReflection->getProperty('adapter')->setValue($gateway, $adapter);
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage(sprintf(RuntimeException::MISSING_STATEMENT_RESULT, $statement));
+
+        $gateway->{$method}(...$arguments);
     }
 
     #[Test]
@@ -680,7 +979,7 @@ final class AbstractTableGatewayTest extends TestCase
 
         $update->expects($this->any())
             ->method('getRawState')
-            ->willReturn(['table' => 'foo']);
+            ->willReturnMap([['table', 'foo']]);
 
         $affectedRows = $this->table->updateWith($update);
         static::assertSame(5, $affectedRows);
