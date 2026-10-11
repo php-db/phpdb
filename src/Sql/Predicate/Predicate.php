@@ -8,7 +8,11 @@ use PhpDb\Sql\ArgumentInterface;
 use PhpDb\Sql\ExpressionInterface;
 use PhpDb\Sql\Predicate\Exception\RuntimeException;
 
+use function strtolower;
+
 /**
+ * @psalm-import-type ExpressionParameter from \PhpDb\Sql\Expression
+ *
  * @property Predicate $and
  * @property Predicate $or
  * @property Predicate $AND
@@ -20,7 +24,7 @@ use PhpDb\Sql\Predicate\Exception\RuntimeException;
  */
 class Predicate extends PredicateSet
 {
-    private ?Predicate $unnest = null;
+    private ?Predicate $parent = null;
 
     protected ?string $nextPredicateCombineOperator = null;
 
@@ -62,6 +66,7 @@ class Predicate extends PredicateSet
     /**
      * Create an expression, with parameter placeholders
      *
+     * @param string|float|int|ArgumentInterface|ExpressionInterface|array<array-key, ExpressionParameter>|null $parameters
      * @return $this Provides a fluent interface
      */
     public function expression(
@@ -116,6 +121,7 @@ class Predicate extends PredicateSet
      * Create "IN" predicate
      * Utilizes In predicate
      *
+     * @param list<bool|string|float|int|null>|ArgumentInterface $valueSet
      * @return $this Provides a fluent interface
      */
     public function in(string|ArgumentInterface $identifier, array|ArgumentInterface $valueSet): static
@@ -280,6 +286,7 @@ class Predicate extends PredicateSet
      * Create "NOT IN" predicate
      * Utilizes NotIn predicate
      *
+     * @param list<bool|string|float|int|null>|ArgumentInterface $valueSet
      * @return $this Provides a fluent interface
      */
     public function notIn(string|ArgumentInterface $identifier, array|ArgumentInterface $valueSet): static
@@ -334,8 +341,7 @@ class Predicate extends PredicateSet
      */
     public function setUnnest(?Predicate $predicate = null): void
     {
-        /** @psalm-suppress PossiblyNullPropertyAssignmentValue */
-        $this->unnest = $predicate;
+        $this->parent = $predicate;
     }
 
     /**
@@ -345,15 +351,14 @@ class Predicate extends PredicateSet
      */
     public function unnest(): self
     {
-        if (! $this->unnest instanceof Predicate) {
+        if (! $this->parent instanceof Predicate) {
             throw RuntimeException::forNotNested();
         }
 
-        $unnest = $this->unnest;
-        /** @psalm-suppress PossiblyNullPropertyAssignmentValue */
-        $this->unnest = null;
+        $parent       = $this->parent;
+        $this->parent = null;
 
-        return $unnest;
+        return $parent;
     }
 
     protected function getNextPredicateCombineOperator(): string
@@ -364,6 +369,13 @@ class Predicate extends PredicateSet
         return $operator;
     }
 
+    private function combineNextWith(string $operator): self
+    {
+        $this->nextPredicateCombineOperator = $operator;
+
+        return $this;
+    }
+
     /**
      * Overloading
      * Overloads "or", "and", "nest", and "unnest"
@@ -372,19 +384,12 @@ class Predicate extends PredicateSet
      */
     public function __get(string $name): self
     {
-        switch ($name) {
-            case 'or':
-                $this->nextPredicateCombineOperator = self::OP_OR;
-                break;
-            case 'and':
-                $this->nextPredicateCombineOperator = self::OP_AND;
-                break;
-            case 'nest':
-                return $this->nest();
-            case 'unnest':
-                return $this->unnest();
-        }
-
-        return $this;
+        return match (strtolower($name)) {
+            'or'     => $this->combineNextWith(self::OP_OR),
+            'and'    => $this->combineNextWith(self::OP_AND),
+            'nest'   => $this->nest(),
+            'unnest' => $this->unnest(),
+            default  => $this,
+        };
     }
 }
