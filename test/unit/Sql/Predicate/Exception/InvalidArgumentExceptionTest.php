@@ -16,6 +16,7 @@ use function sprintf;
 
 #[Group('unit')]
 #[CoversMethod(InvalidArgumentException::class, 'forInvalidCombination')]
+#[CoversMethod(InvalidArgumentException::class, 'forInvalidListPredicate')]
 #[CoversMethod(InvalidArgumentException::class, 'forMissingIdentifier')]
 #[CoversMethod(InvalidArgumentException::class, 'forMissingLeftExpression')]
 #[CoversMethod(InvalidArgumentException::class, 'forMissingLikeExpression')]
@@ -34,6 +35,11 @@ final class InvalidArgumentExceptionTest extends TestCase
                 'forInvalidCombination',
                 [],
                 InvalidArgumentException::INVALID_COMBINATION,
+            ],
+            'invalid list predicate'    => [
+                'forInvalidListPredicate',
+                [],
+                InvalidArgumentException::INVALID_LIST_PREDICATE,
             ],
             'missing identifier'        => [
                 'forMissingIdentifier',
