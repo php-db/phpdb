@@ -1515,7 +1515,19 @@ count = 1
 [[issues]]
 file = "src/RowGateway/AbstractRowGateway.php"
 code = "less-specific-nested-argument-type"
+message = 'Argument type mismatch for argument #1 of `PhpDb\Sql\Insert::values`: expected `PhpDb\Sql\Select|array<array-key, PhpDb\Sql\ExpressionInterface|PhpDb\Sql\Select|null|scalar>`, but provided type `array<array-key, mixed>` is less specific.'
+count = 1
+
+[[issues]]
+file = "src/RowGateway/AbstractRowGateway.php"
+code = "less-specific-nested-argument-type"
 message = 'Argument type mismatch for argument #1 of `PhpDb\Sql\Select::where`: expected `(closure(...mixed): mixed)|PhpDb\Sql\Predicate\PredicateInterface|array<array-key, PhpDb\Sql\ArgumentInterface|PhpDb\Sql\ExpressionInterface|PhpDb\Sql\Predicate\PredicateInterface|PhpDb\Sql\SqlInterface|list<bool|float|int|null|string>|null|scalar>|string`, but provided type `array<array-key, mixed>` is less specific.'
+count = 1
+
+[[issues]]
+file = "src/RowGateway/AbstractRowGateway.php"
+code = "less-specific-nested-argument-type"
+message = 'Argument type mismatch for argument #1 of `PhpDb\Sql\Update::set`: expected `array<array-key, PhpDb\Sql\ExpressionInterface|PhpDb\Sql\Select|null|scalar>`, but provided type `array<array-key, mixed>` is less specific.'
 count = 1
 
 [[issues]]
@@ -1639,6 +1651,18 @@ message = 'Potentially unhandled exception `PhpDb\RowGateway\Exception\RuntimeEx
 count = 1
 
 [[issues]]
+file = "src/RowGateway/AbstractRowGateway.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `PhpDb\Sql\Exception\RuntimeException` in `PhpDb\RowGateway\AbstractRowGateway::delete`.'
+count = 1
+
+[[issues]]
+file = "src/RowGateway/AbstractRowGateway.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `PhpDb\Sql\Exception\RuntimeException` in `PhpDb\RowGateway\AbstractRowGateway::save`.'
+count = 1
+
+[[issues]]
 file = "src/RowGateway/Exception/InvalidArgumentException.php"
 code = "class-must-be-final"
 message = 'Class `PhpDb\RowGateway\Exception\InvalidArgumentException` should be declared `final`.'
@@ -1675,129 +1699,9 @@ message = 'Interface `PhpDb\RowGateway\RowGatewayInterface` is missing an `@api`
 count = 1
 
 [[issues]]
-file = "src/Sql/AbstractExpression.php"
-code = "missing-api-or-internal"
-message = 'Abstract class `PhpDb\Sql\AbstractExpression` is missing an `@api` or `@internal` annotation.'
-count = 1
-
-[[issues]]
-file = "src/Sql/AbstractPreparableSql.php"
-code = "missing-api-or-internal"
-message = 'Abstract class `PhpDb\Sql\AbstractPreparableSql` is missing an `@api` or `@internal` annotation.'
-count = 1
-
-[[issues]]
-file = "src/Sql/AbstractSql.php"
-code = "imprecise-type"
-message = "Type `array` in return type of `resolveTable` is imprecise, equivalent to `array<array-key, mixed>`."
-count = 1
-
-[[issues]]
-file = "src/Sql/AbstractSql.php"
-code = "less-specific-nested-argument-type"
-message = "Argument type mismatch for argument #2 of `vsprintf`: expected `array<array-key, Stringable|null|scalar>`, but provided type `array<array-key, mixed>|list{mixed}` is less specific."
-count = 1
-
-[[issues]]
-file = "src/Sql/AbstractSql.php"
-code = "missing-api-or-internal"
-message = 'Abstract class `PhpDb\Sql\AbstractSql` is missing an `@api` or `@internal` annotation.'
-count = 1
-
-[[issues]]
 file = "src/Sql/AbstractSql.php"
 code = "mixed-assignment"
 message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
-count = 2
-
-[[issues]]
-file = "src/Sql/AbstractSql.php"
-code = "overly-wide-return-type"
-message = "Declared return type `array<array-key, mixed>|null|string` for `resolvetable` has unused branches: `array<array-key, mixed>`."
-count = 1
-
-[[issues]]
-file = "src/Sql/AbstractSql.php"
-code = "overly-wide-return-type"
-message = "Declared return type `null|string` for `processexpressionparametername` has unused branches: `null`."
-count = 1
-
-[[issues]]
-file = "src/Sql/AbstractSql.php"
-code = "possibly-invalid-argument"
-message = 'Possible argument type mismatch for argument #1 of `PhpDb\Adapter\Platform\PlatformInterface::quoteIdentifierInFragment`: expected `string`, but possibly received `bool|int|string`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/AbstractSql.php"
-code = "possibly-invalid-argument"
-message = 'Possible argument type mismatch for argument #1 of `PhpDb\Adapter\Platform\PlatformInterface::quoteIdentifier`: expected `string`, but possibly received `non-empty-array<string, PhpDb\Sql\Expression|PhpDb\Sql\Select|PhpDb\Sql\TableIdentifier|string>|null|string`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/AbstractSql.php"
-code = "possibly-invalid-argument"
-message = "Possible argument type mismatch for argument #1 of `count`: expected `Countable|array<array-key, mixed>`, but possibly received `array<array-key, array<array-key, string>|string>|string`."
-count = 1
-
-[[issues]]
-file = "src/Sql/AbstractSql.php"
-code = "possibly-invalid-argument"
-message = "Possible argument type mismatch for argument #2 of `vsprintf`: expected `array<array-key, Stringable|null|scalar>`, but possibly received `array<array-key, array<array-key, array<array-key, string>|string>|string>`."
-count = 1
-
-[[issues]]
-file = "src/Sql/AbstractSql.php"
-code = "possibly-invalid-argument"
-message = "Possible argument type mismatch for argument #2 of `vsprintf`: expected `array<array-key, Stringable|null|scalar>`, but possibly received `array<array-key, array<array-key, string>|string>|string`."
-count = 1
-
-[[issues]]
-file = "src/Sql/AbstractSql.php"
-code = "possibly-invalid-argument"
-message = "Possible argument type mismatch for argument #2 of `vsprintf`: expected `array<array-key, Stringable|null|scalar>`, but possibly received `list<array<array-key, array<array-key, string>|string>|string>`."
-count = 1
-
-[[issues]]
-file = "src/Sql/AbstractSql.php"
-code = "possibly-invalid-iterator"
-message = "The expression provided to `foreach` (type `array<array-key, array<array-key, string>|string>|string`) might not be iterable at runtime."
-count = 1
-
-[[issues]]
-file = "src/Sql/AbstractSql.php"
-code = "possibly-null-argument"
-message = "Argument #1 of function `get_object_vars` is possibly `null`, but parameter type `object` does not accept it."
-count = 1
-
-[[issues]]
-file = "src/Sql/AbstractSql.php"
-code = "possibly-null-argument"
-message = 'Argument #1 of method `PhpDb\Adapter\Platform\PlatformInterface::quoteIdentifier` is possibly `null`, but parameter type `string` does not accept it.'
-count = 1
-
-[[issues]]
-file = "src/Sql/AbstractSql.php"
-code = "possibly-null-argument"
-message = 'Argument #1 of method `PhpDb\Sql\AbstractSql::processExpressionParameterName` is possibly `null`, but parameter type `bool|float|int|string` does not accept it.'
-count = 1
-
-[[issues]]
-file = "src/Sql/AbstractSql.php"
-code = "possibly-null-argument"
-message = 'Argument #4 of method `PhpDb\Sql\AbstractSql::processExpressionParameterName` is possibly `null`, but parameter type `PhpDb\Adapter\Driver\DriverInterface` does not accept it.'
-count = 1
-
-[[issues]]
-file = "src/Sql/AbstractSql.php"
-code = "possibly-undefined-string-array-index"
-message = 'Possibly undefined array key `string` accessed on `non-empty-array<string, PhpDb\Sql\Expression|PhpDb\Sql\Select|PhpDb\Sql\TableIdentifier|string>`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/AbstractSql.php"
-code = "redundant-cast"
-message = "Redundant cast to `(string)`: the expression already has this type."
 count = 1
 
 [[issues]]
@@ -1813,264 +1717,6 @@ message = "This member selector uses a non-literal string type (`string`); its s
 count = 1
 
 [[issues]]
-file = "src/Sql/AbstractSql.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `PhpDb\Sql\Exception\RuntimeException` in `PhpDb\Sql\AbstractSql::buildSqlString`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/ArgumentInterface.php"
-code = "missing-api-or-internal"
-message = 'Interface `PhpDb\Sql\ArgumentInterface` is missing an `@api` or `@internal` annotation.'
-count = 1
-
-[[issues]]
-file = "src/Sql/ArgumentType.php"
-code = "invalid-enum-case-value"
-message = '''Invalid case value for `PhpDb\Sql\ArgumentType::Identifier`. Expected `string`, but got `class-string('PhpDb\Sql\Argument\Identifier')`.'''
-count = 1
-
-[[issues]]
-file = "src/Sql/ArgumentType.php"
-code = "invalid-enum-case-value"
-message = '''Invalid case value for `PhpDb\Sql\ArgumentType::Identifiers`. Expected `string`, but got `class-string('PhpDb\Sql\Argument\Identifiers')`.'''
-count = 1
-
-[[issues]]
-file = "src/Sql/ArgumentType.php"
-code = "invalid-enum-case-value"
-message = '''Invalid case value for `PhpDb\Sql\ArgumentType::Literal`. Expected `string`, but got `class-string('PhpDb\Sql\Argument\Literal')`.'''
-count = 1
-
-[[issues]]
-file = "src/Sql/ArgumentType.php"
-code = "invalid-enum-case-value"
-message = '''Invalid case value for `PhpDb\Sql\ArgumentType::Select`. Expected `string`, but got `class-string('PhpDb\Sql\Argument\Select')`.'''
-count = 1
-
-[[issues]]
-file = "src/Sql/ArgumentType.php"
-code = "invalid-enum-case-value"
-message = '''Invalid case value for `PhpDb\Sql\ArgumentType::Value`. Expected `string`, but got `class-string('PhpDb\Sql\Argument\Value')`.'''
-count = 1
-
-[[issues]]
-file = "src/Sql/ArgumentType.php"
-code = "invalid-enum-case-value"
-message = '''Invalid case value for `PhpDb\Sql\ArgumentType::Values`. Expected `string`, but got `class-string('PhpDb\Sql\Argument\Values')`.'''
-count = 1
-
-[[issues]]
-file = "src/Sql/Combine.php"
-code = "array-to-string-conversion"
-message = "Potential array in right operand of string concatenation."
-count = 1
-
-[[issues]]
-file = "src/Sql/Combine.php"
-code = "class-must-be-final"
-message = 'Class `PhpDb\Sql\Combine` should be declared `final`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Combine.php"
-code = "invalid-array-element"
-message = "Cannot use spread operator on non-iterable type `mixed`."
-count = 1
-
-[[issues]]
-file = "src/Sql/Combine.php"
-code = "less-specific-nested-argument-type"
-message = 'Argument type mismatch for argument #1 of `PhpDb\Sql\Select::columns`: expected `array<array-key, PhpDb\Sql\ExpressionInterface|string>`, but provided type `array<non-negative-int, nonnull>` is less specific.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Combine.php"
-code = "mixed-assignment"
-message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
-count = 1
-
-[[issues]]
-file = "src/Sql/Combine.php"
-code = "possibly-invalid-argument"
-message = "Possible argument type mismatch for argument #3 of `str_replace`: expected `array<array-key, string>|string`, but possibly received `array<string, list<array<int|string, string>|null>>|null|string`."
-count = 1
-
-[[issues]]
-file = "src/Sql/Combine.php"
-code = "possibly-null-argument"
-message = "Argument #3 of function `str_replace` is possibly `null`, but parameter type `array<array-key, string>|string` does not accept it."
-count = 1
-
-[[issues]]
-file = "src/Sql/Combine.php"
-code = "possibly-undefined-string-array-index"
-message = "Possibly undefined array key `string('combine')` accessed on `array<string, array<string, list<array<int|string, string>|null>>|string>`."
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/AlterTable.php"
-code = "invalid-return-statement"
-message = 'Invalid return type for function `PhpDb\Sql\Ddl\AlterTable::processTable`: expected `array<array-key, string>`, but found `list{array<array-key, mixed>|null|string}`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/CreateTable.php"
-code = "invalid-return-statement"
-message = '''Invalid return type for function `PhpDb\Sql\Ddl\CreateTable::processTable`: expected `array<array-key, string>`, but found `list{string('')|string('TEMPORARY '), string('')|string('IF NOT EXISTS '), array<array-key, mixed>|null|string}`.'''
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/DropTable.php"
-code = "invalid-return-statement"
-message = '''Invalid return type for function `PhpDb\Sql\Ddl\DropTable::processTable`: expected `array<array-key, string>`, but found `list{string('')|string('IF EXISTS '), array<array-key, mixed>|null|string}`.'''
-count = 1
-
-[[issues]]
-file = "src/Sql/Delete.php"
-code = "class-must-be-final"
-message = 'Class `PhpDb\Sql\Delete` should be declared `final`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Delete.php"
-code = "impossible-null-type-comparison"
-message = 'Impossible condition: variable `$this->where` (type `PhpDb\Sql\Where`) will always be `null`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Delete.php"
-code = "invalid-return-statement"
-message = 'Invalid return type for function `PhpDb\Sql\Delete::processDelete`: expected `string`, but found `array<array-key, string>|string`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Delete.php"
-code = "invalid-return-statement"
-message = 'Invalid return type for function `PhpDb\Sql\Delete::processWhere`: expected `null|string`, but found `array<array-key, string>|string`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Delete.php"
-code = "less-specific-nested-argument-type"
-message = "Argument type mismatch for argument #2 of `str_replace`: expected `array<array-key, string>|string`, but provided type `array<array-key, mixed>|null|string` is less specific."
-count = 1
-
-[[issues]]
-file = "src/Sql/Delete.php"
-code = "possibly-invalid-argument"
-message = "Possible argument type mismatch for argument #3 of `str_replace`: expected `array<array-key, string>|string`, but possibly received `array<string, list<array<int|string, string>|null>>|null|string`."
-count = 2
-
-[[issues]]
-file = "src/Sql/Delete.php"
-code = "possibly-null-argument"
-message = "Argument #2 of function `str_replace` is possibly `null`, but parameter type `array<array-key, string>|string` does not accept it."
-count = 1
-
-[[issues]]
-file = "src/Sql/Delete.php"
-code = "possibly-null-argument"
-message = "Argument #3 of function `str_replace` is possibly `null`, but parameter type `array<array-key, string>|string` does not accept it."
-count = 2
-
-[[issues]]
-file = "src/Sql/Delete.php"
-code = "possibly-undefined-string-array-index"
-message = "Possibly undefined array key `string('delete')` accessed on `array<string, array<string, list<array<int|string, string>|null>>|string>`."
-count = 1
-
-[[issues]]
-file = "src/Sql/Delete.php"
-code = "possibly-undefined-string-array-index"
-message = "Possibly undefined array key `string('where')` accessed on `array<string, array<string, list<array<int|string, string>|null>>|string>`."
-count = 1
-
-[[issues]]
-file = "src/Sql/Delete.php"
-code = "redundant-comparison"
-message = "Redundant `===` comparison: left-hand side is never identical to right-hand side."
-count = 1
-
-[[issues]]
-file = "src/Sql/Delete.php"
-code = "redundant-logical-operation"
-message = "Redundant `||` operation: left operand is always false and right operand is evaluated."
-count = 1
-
-[[issues]]
-file = "src/Sql/Delete.php"
-code = "redundant-null-coalesce"
-message = "Redundant null coalesce: left-hand side can never be `null` or undefined."
-count = 1
-
-[[issues]]
-file = "src/Sql/Expression.php"
-code = "less-specific-nested-argument-type"
-message = 'Argument type mismatch for argument #1 of `PhpDb\Sql\Expression::setParameters`: expected `PhpDb\Sql\ArgumentInterface|PhpDb\Sql\ExpressionInterface|array<array-key, PhpDb\Sql\ArgumentInterface|PhpDb\Sql\ExpressionInterface|list<bool|float|int|null|string>|null|scalar>|list<bool|float|int|null|string>|null|scalar`, but provided type `PhpDb\Sql\ArgumentInterface|PhpDb\Sql\ExpressionInterface|array<array-key, mixed>|list<mixed>|null|scalar` is less specific.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Expression.php"
-code = "possibly-null-argument"
-message = "Argument #1 of function `array_unique` is possibly `null`, but parameter type `array<array-key, string>` does not accept it."
-count = 1
-
-[[issues]]
-file = "src/Sql/Expression.php"
-code = "possibly-undefined-int-array-index"
-message = "Possibly undefined array index accessed on `list<array<array-key, string>>`."
-count = 1
-
-[[issues]]
-file = "src/Sql/ExpressionInterface.php"
-code = "missing-api-or-internal"
-message = 'Interface `PhpDb\Sql\ExpressionInterface` is missing an `@api` or `@internal` annotation.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Having.php"
-code = "class-must-be-final"
-message = 'Class `PhpDb\Sql\Having` should be declared `final`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Insert.php"
-code = "imprecise-type"
-message = "Type `array` in property `$select` is imprecise, equivalent to `array<array-key, mixed>`."
-count = 1
-
-[[issues]]
-file = "src/Sql/Insert.php"
-code = "imprecise-type"
-message = "Type `array` in return type of `getRawState` is imprecise, equivalent to `array<array-key, mixed>`."
-count = 1
-
-[[issues]]
-file = "src/Sql/Insert.php"
-code = "invalid-return-statement"
-message = 'Invalid return type for function `PhpDb\Sql\Insert::processInsert`: expected `null|string`, but found `array<array-key, string>|string`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Insert.php"
-code = "invalid-return-statement"
-message = 'Invalid return type for function `PhpDb\Sql\Insert::processSelect`: expected `null|string`, but found `array<array-key, string>|string`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Insert.php"
-code = "less-specific-argument"
-message = 'Argument type mismatch for argument #1 of `PhpDb\Adapter\Driver\DriverInterface::formatParameterName`: expected `string`, but provided type `array-key` is less specific.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Insert.php"
-code = "less-specific-argument"
-message = 'Argument type mismatch for argument #1 of `PhpDb\Adapter\Platform\PlatformInterface::quoteIdentifier`: expected `string`, but provided type `array-key` is less specific.'
-count = 1
-
-[[issues]]
 file = "src/Sql/Insert.php"
 code = "missing-return-type"
 message = "Function `__isset` is missing a return type hint."
@@ -2080,108 +1726,6 @@ count = 1
 file = "src/Sql/Insert.php"
 code = "missing-return-type"
 message = "Function `__unset` is missing a return type hint."
-count = 1
-
-[[issues]]
-file = "src/Sql/Insert.php"
-code = "mixed-argument"
-message = '''Invalid argument type for argument #1 of `PhpDb\Sql\AbstractSql::resolveColumnValue`: expected `PhpDb\Sql\ExpressionInterface|PhpDb\Sql\Select|array{'column': PhpDb\Sql\ExpressionInterface|PhpDb\Sql\Select|bool|int|null|string, 'fromTable'?: string, 'isIdentifier'?: bool}|bool|int|null|string`, but found `mixed`.'''
-count = 1
-
-[[issues]]
-file = "src/Sql/Insert.php"
-code = "mixed-assignment"
-message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
-count = 2
-
-[[issues]]
-file = "src/Sql/Insert.php"
-code = "mixed-return-statement"
-message = 'Could not infer a precise return type for function `PhpDb\Sql\Insert::__get`. Saw type `mixed`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Insert.php"
-code = "possible-method-access-on-null"
-message = "Attempting to call a method on `null`."
-count = 1
-
-[[issues]]
-file = "src/Sql/Insert.php"
-code = "possibly-invalid-argument"
-message = 'Possible argument type mismatch for argument #1 of `PhpDb\Sql\AbstractSql::processSubSelect`: expected `PhpDb\Sql\Select`, but possibly received `PhpDb\Sql\Select|non-empty-array<array-key, mixed>`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Insert.php"
-code = "possibly-invalid-argument"
-message = '''Possible argument type mismatch for argument #1 of `array_map`: expected `(callable(array-key): string)|(callable(array-key, ('S.array_map() extends mixed)): string)|null`, but possibly received `list{PhpDb\Adapter\Platform\PlatformInterface, string('quoteIdentifier')}`.'''
-count = 1
-
-[[issues]]
-file = "src/Sql/Insert.php"
-code = "possibly-invalid-argument"
-message = "Possible argument type mismatch for argument #2 of `str_replace`: expected `array<array-key, string>|string`, but possibly received `list{array<array-key, mixed>|null|string, non-empty-string|string(''), string}`."
-count = 1
-
-[[issues]]
-file = "src/Sql/Insert.php"
-code = "possibly-invalid-argument"
-message = "Possible argument type mismatch for argument #2 of `str_replace`: expected `array<array-key, string>|string`, but possibly received `list{array<array-key, mixed>|null|string, string, string}`."
-count = 1
-
-[[issues]]
-file = "src/Sql/Insert.php"
-code = "possibly-invalid-argument"
-message = "Possible argument type mismatch for argument #3 of `str_replace`: expected `array<array-key, string>|string`, but possibly received `array<string, list<array<int|string, string>|null>>|null|string`."
-count = 2
-
-[[issues]]
-file = "src/Sql/Insert.php"
-code = "possibly-null-argument"
-message = "Argument #3 of function `str_replace` is possibly `null`, but parameter type `array<array-key, string>|string` does not accept it."
-count = 2
-
-[[issues]]
-file = "src/Sql/Insert.php"
-code = "possibly-undefined-string-array-index"
-message = "Possibly undefined array key `string('insert')` accessed on `array<string, array<string, list<array<int|string, string>|null>>|string>`."
-count = 1
-
-[[issues]]
-file = "src/Sql/Insert.php"
-code = "possibly-undefined-string-array-index"
-message = "Possibly undefined array key `string('select')` accessed on `array<string, array<string, list<array<int|string, string>|null>>|string>`."
-count = 1
-
-[[issues]]
-file = "src/Sql/InsertIgnore.php"
-code = "class-must-be-final"
-message = 'Class `PhpDb\Sql\InsertIgnore` should be declared `final`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Join.php"
-code = "class-must-be-final"
-message = 'Class `PhpDb\Sql\Join` should be declared `final`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Join.php"
-code = "invalid-return-statement"
-message = '''Invalid return type for function `PhpDb\Sql\Join::current`: expected `array{'columns': array<array-key, PhpDb\Sql\ExpressionInterface|string>, 'name': PhpDb\Sql\TableIdentifier|non-empty-array<string, PhpDb\Sql\Expression|PhpDb\Sql\Select|PhpDb\Sql\TableIdentifier|string>|string, 'on': PhpDb\Sql\Predicate\PredicateInterface|string, 'type': string}`, but found `array{'columns': array<array-key, PhpDb\Sql\ExpressionInterface|string>, 'name': PhpDb\Sql\TableIdentifier|non-empty-array<string, PhpDb\Sql\Expression|PhpDb\Sql\Select|PhpDb\Sql\TableIdentifier|string>|string, 'on': PhpDb\Sql\Predicate\PredicateInterface|string, 'type': string}|null`.'''
-count = 1
-
-[[issues]]
-file = "src/Sql/Join.php"
-code = "nullable-return-statement"
-message = '''Function `PhpDb\Sql\Join::current` is declared to return `array{'columns': array<array-key, PhpDb\Sql\ExpressionInterface|string>, 'name': PhpDb\Sql\TableIdentifier|non-empty-array<string, PhpDb\Sql\Expression|PhpDb\Sql\Select|PhpDb\Sql\TableIdentifier|string>|string, 'on': PhpDb\Sql\Predicate\PredicateInterface|string, 'type': string}` but possibly returns a nullable value (inferred as `array{'columns': array<array-key, PhpDb\Sql\ExpressionInterface|string>, 'name': PhpDb\Sql\TableIdentifier|non-empty-array<string, PhpDb\Sql\Expression|PhpDb\Sql\Select|PhpDb\Sql\TableIdentifier|string>|string, 'on': PhpDb\Sql\Predicate\PredicateInterface|string, 'type': string}|null`).'''
-count = 1
-
-[[issues]]
-file = "src/Sql/Join.php"
-code = "possibly-undefined-int-array-index"
-message = '''Possibly undefined array index accessed on `list<array{'columns': array<array-key, PhpDb\Sql\ExpressionInterface|string>, 'name': PhpDb\Sql\TableIdentifier|non-empty-array<string, PhpDb\Sql\Expression|PhpDb\Sql\Select|PhpDb\Sql\TableIdentifier|string>|string, 'on': PhpDb\Sql\Predicate\PredicateInterface|string, 'type': string}>`.'''
 count = 1
 
 [[issues]]
@@ -2311,363 +1855,15 @@ message = 'Interface `PhpDb\Sql\Platform\PlatformDecoratorInterface` is missing 
 count = 1
 
 [[issues]]
-file = "src/Sql/PreparableSqlInterface.php"
-code = "missing-api-or-internal"
-message = 'Interface `PhpDb\Sql\PreparableSqlInterface` is missing an `@api` or `@internal` annotation.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Select.php"
-code = "array-to-string-conversion"
-message = "Potential array in left operand of string concatenation."
-count = 2
-
-[[issues]]
-file = "src/Sql/Select.php"
-code = "class-must-be-final"
-message = 'Class `PhpDb\Sql\Select` should be declared `final`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Select.php"
-code = "impossible-null-type-comparison"
-message = 'Impossible condition: variable `$this->having` (type `PhpDb\Sql\Having`) will always be `null`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Select.php"
-code = "impossible-null-type-comparison"
-message = 'Impossible condition: variable `$this->where` (type `PhpDb\Sql\Where`) will always be `null`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Select.php"
-code = "invalid-property-assignment-value"
-message = 'Invalid type for property `$having`: expected `PhpDb\Sql\Having`, but got `null`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Select.php"
-code = "invalid-property-assignment-value"
-message = 'Invalid type for property `$joins`: expected `PhpDb\Sql\Join`, but got `null`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Select.php"
-code = "invalid-property-assignment-value"
-message = 'Invalid type for property `$where`: expected `PhpDb\Sql\Where`, but got `null`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Select.php"
-code = "invalid-return-statement"
-message = '''Invalid return type for function `PhpDb\Sql\Select::resolveTable`: expected `array{0: null|string, 1: string}`, but found `list{array<array-key, mixed>|null|string, string('')|truthy-string}`.'''
-count = 1
-
-[[issues]]
 file = "src/Sql/Select.php"
 code = "missing-return-type"
 message = "Function `__clone` is missing a return type hint."
 count = 1
 
 [[issues]]
-file = "src/Sql/Select.php"
-code = "possible-method-access-on-null"
-message = "Attempting to call a method on `null`."
-count = 2
-
-[[issues]]
-file = "src/Sql/Select.php"
-code = "possibly-false-iterator"
-message = 'Expression being iterated (type `array<array-key, PhpDb\Sql\ExpressionInterface|string>|false|list<PhpDb\Sql\ExpressionInterface|string>`) might be `false` at runtime.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Select.php"
-code = "possibly-invalid-argument"
-message = 'Possible argument type mismatch for argument #1 of `PhpDb\Adapter\Platform\PlatformInterface::quoteIdentifier`: expected `string`, but possibly received `PhpDb\Sql\ExpressionInterface|string`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Select.php"
-code = "possibly-invalid-argument"
-message = 'Possible argument type mismatch for argument #1 of `PhpDb\Sql\AbstractSql::renderTable`: expected `string`, but possibly received `array<array-key, mixed>|null|string`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Select.php"
-code = "possibly-null-argument"
-message = "Argument #1 of function `strtoupper` is possibly `null`, but parameter type `string` does not accept it."
-count = 1
-
-[[issues]]
-file = "src/Sql/Select.php"
-code = "possibly-null-argument"
-message = "Argument #1 of function `trim` is possibly `null`, but parameter type `string` does not accept it."
-count = 1
-
-[[issues]]
-file = "src/Sql/Select.php"
-code = "possibly-null-argument"
-message = 'Argument #1 of method `PhpDb\Sql\AbstractSql::processSubSelect` is possibly `null`, but parameter type `PhpDb\Sql\Select` does not accept it.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Select.php"
-code = "possibly-null-argument"
-message = 'Argument #1 of method `PhpDb\Sql\AbstractSql::renderTable` is possibly `null`, but parameter type `string` does not accept it.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Select.php"
-code = "possibly-null-array-index"
-message = "Possibly using `null` as an array index to access elementof variable $table."
-count = 1
-
-[[issues]]
-file = "src/Sql/Select.php"
-code = "possibly-null-operand"
-message = "Possibly null left operand used in string concatenation (type `array<array-key, mixed>|null|string`)."
-count = 1
-
-[[issues]]
-file = "src/Sql/Select.php"
-code = "possibly-undefined-int-array-index"
-message = "Possibly undefined array index accessed on `non-empty-list<string>`."
-count = 1
-
-[[issues]]
-file = "src/Sql/Select.php"
-code = "possibly-undefined-string-array-index"
-message = '''Possibly undefined array key 'modifier' accessed on `array{'modifier'?: string, 'select'?: PhpDb\Sql\Select, 'type'?: string}`.'''
-count = 1
-
-[[issues]]
-file = "src/Sql/Select.php"
-code = "possibly-undefined-string-array-index"
-message = '''Possibly undefined array key 'select' accessed on `array{'modifier'?: string, 'select'?: PhpDb\Sql\Select, 'type'?: string}`.'''
-count = 1
-
-[[issues]]
-file = "src/Sql/Select.php"
-code = "possibly-undefined-string-array-index"
-message = '''Possibly undefined array key 'type' accessed on `array{'modifier'?: string('')|string('0'), 'select'?: PhpDb\Sql\Select, 'type'?: string}`.'''
-count = 1
-
-[[issues]]
-file = "src/Sql/Select.php"
-code = "possibly-undefined-string-array-index"
-message = '''Possibly undefined array key 'type' accessed on `array{'modifier'?: truthy-string, 'select'?: PhpDb\Sql\Select, 'type'?: string}`.'''
-count = 1
-
-[[issues]]
-file = "src/Sql/Select.php"
-code = "possibly-undefined-string-array-index"
-message = 'Possibly undefined array key `null|string` accessed on `array<string, PhpDb\Sql\Select|PhpDb\Sql\TableIdentifier|string>`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Select.php"
-code = "redundant-comparison"
-message = "Redundant `!==` comparison: left-hand side is always not identical to right-hand side."
-count = 3
-
-[[issues]]
-file = "src/Sql/Select.php"
-code = "redundant-comparison"
-message = "Redundant `===` comparison: left-hand side is never identical to right-hand side."
-count = 2
-
-[[issues]]
-file = "src/Sql/Select.php"
-code = "redundant-condition"
-message = "This condition (type `true`) will always evaluate to true."
-count = 3
-
-[[issues]]
-file = "src/Sql/Select.php"
-code = "redundant-logical-operation"
-message = "Redundant `||` operation: left operand is always false and right operand is evaluated."
-count = 2
-
-[[issues]]
-file = "src/Sql/Select.php"
-code = "redundant-null-coalesce"
-message = "Redundant null coalesce: left-hand side can never be `null` or undefined."
-count = 3
-
-[[issues]]
-file = "src/Sql/Sql.php"
-code = "class-must-be-final"
-message = 'Class `PhpDb\Sql\Sql` should be declared `final`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Sql.php"
-code = "overly-wide-return-type"
-message = 'Declared return type `PhpDb\Adapter\AdapterInterface|null` for `getadapter` has unused branches: `null`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Sql.php"
-code = "overly-wide-return-type"
-message = 'Declared return type `PhpDb\Sql\Platform\PlatformDecoratorInterface|null` for `getsqlplatform` has unused branches: `null`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Sql.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `PhpDb\Sql\Exception\RuntimeException` in `PhpDb\Sql\Sql::buildSqlString`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Sql.php"
-code = "unhandled-thrown-type"
-message = 'Potentially unhandled exception `PhpDb\Sql\Exception\RuntimeException` in `PhpDb\Sql\Sql::prepareStatementForSqlObject`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/SqlInterface.php"
-code = "missing-api-or-internal"
-message = 'Interface `PhpDb\Sql\SqlInterface` is missing an `@api` or `@internal` annotation.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Update.php"
-code = "class-must-be-final"
-message = 'Class `PhpDb\Sql\Update` should be declared `final`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Update.php"
-code = "impossible-null-type-comparison"
-message = 'Impossible condition: variable `$this->where` (type `PhpDb\Sql\Where`) will always be `null`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Update.php"
-code = "invalid-return-statement"
-message = 'Invalid return type for function `PhpDb\Sql\Update::processSet`: expected `string`, but found `array<array-key, string>|string`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Update.php"
-code = "invalid-return-statement"
-message = 'Invalid return type for function `PhpDb\Sql\Update::processUpdate`: expected `string`, but found `array<array-key, string>|string`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Update.php"
-code = "invalid-return-statement"
-message = 'Invalid return type for function `PhpDb\Sql\Update::processWhere`: expected `null|string`, but found `array<array-key, string>|string`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Update.php"
-code = "less-specific-nested-argument-type"
-message = "Argument type mismatch for argument #2 of `str_replace`: expected `array<array-key, string>|string`, but provided type `array<array-key, mixed>|null|string` is less specific."
-count = 1
-
-[[issues]]
 file = "src/Sql/Update.php"
 code = "missing-return-type"
 message = "Function `__clone` is missing a return type hint."
-count = 1
-
-[[issues]]
-file = "src/Sql/Update.php"
-code = "mixed-argument"
-message = '''Invalid argument type for argument #1 of `PhpDb\Sql\AbstractSql::resolveColumnValue`: expected `PhpDb\Sql\ExpressionInterface|PhpDb\Sql\Select|array{'column': PhpDb\Sql\ExpressionInterface|PhpDb\Sql\Select|bool|int|null|string, 'fromTable'?: string, 'isIdentifier'?: bool}|bool|int|null|string`, but found `mixed`.'''
-count = 1
-
-[[issues]]
-file = "src/Sql/Update.php"
-code = "mixed-assignment"
-message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
-count = 2
-
-[[issues]]
-file = "src/Sql/Update.php"
-code = "possible-method-access-on-null"
-message = "Attempting to call a method on `null`."
-count = 1
-
-[[issues]]
-file = "src/Sql/Update.php"
-code = "possibly-invalid-argument"
-message = 'Possible argument type mismatch for argument #3 of `Laminas\Stdlib\PriorityList::insert`: expected `int`, but possibly received `int|numeric-string`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Update.php"
-code = "possibly-invalid-argument"
-message = "Possible argument type mismatch for argument #3 of `str_replace`: expected `array<array-key, string>|string`, but possibly received `array<string, list<array<int|string, string>|null>>|null|string`."
-count = 3
-
-[[issues]]
-file = "src/Sql/Update.php"
-code = "possibly-null-argument"
-message = "Argument #2 of function `str_replace` is possibly `null`, but parameter type `array<array-key, string>|string` does not accept it."
-count = 1
-
-[[issues]]
-file = "src/Sql/Update.php"
-code = "possibly-null-argument"
-message = "Argument #3 of function `str_replace` is possibly `null`, but parameter type `array<array-key, string>|string` does not accept it."
-count = 3
-
-[[issues]]
-file = "src/Sql/Update.php"
-code = "possibly-undefined-string-array-index"
-message = "Possibly undefined array key `string('set')` accessed on `array<string, array<string, list<array<int|string, string>|null>>|string>`."
-count = 1
-
-[[issues]]
-file = "src/Sql/Update.php"
-code = "possibly-undefined-string-array-index"
-message = "Possibly undefined array key `string('update')` accessed on `array<string, array<string, list<array<int|string, string>|null>>|string>`."
-count = 1
-
-[[issues]]
-file = "src/Sql/Update.php"
-code = "possibly-undefined-string-array-index"
-message = "Possibly undefined array key `string('where')` accessed on `array<string, array<string, list<array<int|string, string>|null>>|string>`."
-count = 1
-
-[[issues]]
-file = "src/Sql/Update.php"
-code = "redundant-comparison"
-message = "Redundant `!==` comparison: left-hand side is always not identical to right-hand side."
-count = 1
-
-[[issues]]
-file = "src/Sql/Update.php"
-code = "redundant-comparison"
-message = "Redundant `===` comparison: left-hand side is never identical to right-hand side."
-count = 1
-
-[[issues]]
-file = "src/Sql/Update.php"
-code = "redundant-condition"
-message = "This condition (type `true`) will always evaluate to true."
-count = 1
-
-[[issues]]
-file = "src/Sql/Update.php"
-code = "redundant-logical-operation"
-message = "Redundant `||` operation: left operand is always false and right operand is evaluated."
-count = 1
-
-[[issues]]
-file = "src/Sql/Update.php"
-code = "redundant-null-coalesce"
-message = "Redundant null coalesce: left-hand side can never be `null` or undefined."
-count = 1
-
-[[issues]]
-file = "src/Sql/Where.php"
-code = "class-must-be-final"
-message = 'Class `PhpDb\Sql\Where` should be declared `final`.'
 count = 1
 
 [[issues]]
@@ -2769,6 +1965,12 @@ count = 1
 [[issues]]
 file = "src/TableGateway/AbstractTableGateway.php"
 code = "less-specific-argument"
+message = 'Argument type mismatch for argument #1 of `PhpDb\Sql\Insert::into`: expected `PhpDb\Sql\TableIdentifier|array<string, PhpDb\Sql\TableIdentifier|string>|string`, but provided type `PhpDb\Sql\ExpressionInterface|PhpDb\Sql\Select|PhpDb\Sql\TableIdentifier|array<array-key, mixed>|null|scalar` is less specific.'
+count = 1
+
+[[issues]]
+file = "src/TableGateway/AbstractTableGateway.php"
+code = "less-specific-argument"
 message = 'Argument type mismatch for argument #2 of `PhpDb\Sql\Sql::__construct`: expected `PhpDb\Sql\TableIdentifier|array<string, PhpDb\Sql\TableIdentifier|string>|null|string`, but provided type `PhpDb\Sql\TableIdentifier|array<array-key, mixed>|string` is less specific.'
 count = 1
 
@@ -2787,6 +1989,12 @@ count = 1
 [[issues]]
 file = "src/TableGateway/AbstractTableGateway.php"
 code = "less-specific-nested-argument-type"
+message = 'Argument type mismatch for argument #1 of `PhpDb\Sql\Insert::values`: expected `PhpDb\Sql\Select|array<array-key, PhpDb\Sql\ExpressionInterface|PhpDb\Sql\Select|null|scalar>`, but provided type `array<string, mixed>` is less specific.'
+count = 1
+
+[[issues]]
+file = "src/TableGateway/AbstractTableGateway.php"
+code = "less-specific-nested-argument-type"
 message = 'Argument type mismatch for argument #1 of `PhpDb\Sql\Select::columns`: expected `array<array-key, PhpDb\Sql\ExpressionInterface|string>`, but provided type `non-empty-array<array-key, mixed>` is less specific.'
 count = 1
 
@@ -2794,6 +2002,12 @@ count = 1
 file = "src/TableGateway/AbstractTableGateway.php"
 code = "less-specific-nested-argument-type"
 message = 'Argument type mismatch for argument #1 of `PhpDb\Sql\Select::where`: expected `(closure(...mixed): mixed)|PhpDb\Sql\Predicate\PredicateInterface|array<array-key, PhpDb\Sql\ArgumentInterface|PhpDb\Sql\ExpressionInterface|PhpDb\Sql\Predicate\PredicateInterface|PhpDb\Sql\SqlInterface|list<bool|float|int|null|string>|null|scalar>|string`, but provided type `PhpDb\Sql\Where|array<array-key, mixed>|string` is less specific.'
+count = 1
+
+[[issues]]
+file = "src/TableGateway/AbstractTableGateway.php"
+code = "less-specific-nested-argument-type"
+message = 'Argument type mismatch for argument #1 of `PhpDb\Sql\Update::set`: expected `array<array-key, PhpDb\Sql\ExpressionInterface|PhpDb\Sql\Select|null|scalar>`, but provided type `array<string, mixed>` is less specific.'
 count = 1
 
 [[issues]]
@@ -2818,7 +2032,7 @@ count = 2
 file = "src/TableGateway/AbstractTableGateway.php"
 code = "mixed-argument"
 message = 'Invalid argument type for argument #1 of `PhpDb\Sql\Insert::into`: expected `PhpDb\Sql\TableIdentifier|array<string, PhpDb\Sql\TableIdentifier|string>|string`, but found `mixed`.'
-count = 2
+count = 1
 
 [[issues]]
 file = "src/TableGateway/AbstractTableGateway.php"
@@ -2930,14 +2144,56 @@ count = 1
 
 [[issues]]
 file = "src/TableGateway/AbstractTableGateway.php"
-code = "possibly-undefined-string-array-index"
-message = "Possibly undefined array key `string('table')` accessed on `array<array-key, mixed>`."
+code = "possibly-null-argument"
+message = 'Argument #1 of method `PhpDb\Sql\Insert::into` is possibly `null`, but parameter type `PhpDb\Sql\TableIdentifier|array<string, PhpDb\Sql\TableIdentifier|string>|string` does not accept it.'
+count = 1
+
+[[issues]]
+file = "src/TableGateway/AbstractTableGateway.php"
+code = "possibly-undefined-int-array-index"
+message = 'Possibly undefined array index accessed on `list<PhpDb\Sql\ExpressionInterface|PhpDb\Sql\Select|null|scalar>`.'
 count = 3
+
+[[issues]]
+file = "src/TableGateway/AbstractTableGateway.php"
+code = "possibly-undefined-string-array-index"
+message = '''Possibly undefined array key `string('table')` accessed on `array<string, PhpDb\Sql\TableIdentifier|array<array-key, mixed>|string>`.'''
+count = 1
+
+[[issues]]
+file = "src/TableGateway/AbstractTableGateway.php"
+code = "possibly-undefined-string-array-index"
+message = '''Possibly undefined array key `string('table')` accessed on `array<string, PhpDb\Sql\TableIdentifier|string>`.'''
+count = 2
 
 [[issues]]
 file = "src/TableGateway/AbstractTableGateway.php"
 code = "redundant-comparison"
 message = "Redundant `===` comparison: left-hand side is never identical to right-hand side."
+count = 1
+
+[[issues]]
+file = "src/TableGateway/AbstractTableGateway.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `PhpDb\Sql\Exception\RuntimeException` in `PhpDb\TableGateway\AbstractTableGateway::executeDelete`.'
+count = 1
+
+[[issues]]
+file = "src/TableGateway/AbstractTableGateway.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `PhpDb\Sql\Exception\RuntimeException` in `PhpDb\TableGateway\AbstractTableGateway::executeInsert`.'
+count = 1
+
+[[issues]]
+file = "src/TableGateway/AbstractTableGateway.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `PhpDb\Sql\Exception\RuntimeException` in `PhpDb\TableGateway\AbstractTableGateway::executeSelect`.'
+count = 1
+
+[[issues]]
+file = "src/TableGateway/AbstractTableGateway.php"
+code = "unhandled-thrown-type"
+message = 'Potentially unhandled exception `PhpDb\Sql\Exception\RuntimeException` in `PhpDb\TableGateway\AbstractTableGateway::executeUpdate`.'
 count = 1
 
 [[issues]]
@@ -2972,12 +2228,6 @@ count = 1
 
 [[issues]]
 file = "src/TableGateway/Feature/RowGatewayFeature.php"
-code = "mixed-assignment"
-message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
-count = 1
-
-[[issues]]
-file = "src/TableGateway/Feature/SequenceFeature.php"
 code = "mixed-assignment"
 message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
 count = 1

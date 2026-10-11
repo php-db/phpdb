@@ -19,6 +19,8 @@ use function preg_match_all;
 use function str_replace;
 
 /**
+ * @api
+ *
  * @psalm-type ExpressionParameter = bool|string|float|int|null|list<bool|string|float|int|null>|ExpressionInterface|ArgumentInterface
  */
 class Expression extends AbstractExpression

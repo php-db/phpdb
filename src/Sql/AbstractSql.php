@@ -29,6 +29,8 @@ use function strtoupper;
 use function vsprintf;
 
 /**
+ * @api
+ *
  * @psalm-type ParameterSpecification = array<int|string, string>|null
  * @psalm-type Specification = string|array<string, list<ParameterSpecification>>
  * @psalm-type SqlParameters = array<array-key, string|array<array-key, string|array<array-key, string>>>

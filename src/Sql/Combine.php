@@ -17,6 +17,8 @@ use function strtoupper;
 use function trim;
 
 /**
+ * @api
+ *
  * Combine SQL statement - allows combining multiple select statements into one
  *
  * @psalm-import-type Specification from AbstractSql

@@ -20,6 +20,8 @@ use function is_string;
 use function strtolower;
 
 /**
+ * @api
+ *
  * @property Where $where
  * @psalm-import-type Specification from AbstractSql
  * @psalm-import-type ColumnValue from AbstractSql

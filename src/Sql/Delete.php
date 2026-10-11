@@ -14,6 +14,8 @@ use function array_key_exists;
 use function strtolower;
 
 /**
+ * @api
+ *
  * @property Where $where
  * @psalm-import-type Specification from AbstractSql
  * @psalm-import-type PredicateValue from Predicate\PredicateSet

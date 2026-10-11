@@ -12,6 +12,8 @@ use PhpDb\Sql\Argument\Value;
 use PhpDb\Sql\Argument\Values;
 
 /**
+ * @api
+ *
  * Factory for creating argument instances.
  */
 final class Argument

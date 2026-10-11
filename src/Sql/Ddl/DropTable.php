@@ -9,6 +9,8 @@ use PhpDb\Sql\AbstractSql;
 use PhpDb\Sql\TableIdentifier;
 
 /**
+ * @api
+ *
  * @psalm-import-type Specification from AbstractSql
  */
 class DropTable extends AbstractSql

@@ -21,6 +21,8 @@ use function is_scalar;
 use function range;
 
 /**
+ * @api
+ *
  * @psalm-import-type Specification from AbstractSql
  * @psalm-import-type ColumnValue from AbstractSql
  */

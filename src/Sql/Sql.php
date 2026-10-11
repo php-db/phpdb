@@ -7,6 +7,9 @@ namespace PhpDb\Sql;
 use PhpDb\Adapter\AdapterInterface;
 use PhpDb\Adapter\Driver\StatementInterface;
 
+/**
+ * @api
+ */
 class Sql
 {
     protected AdapterInterface $adapter;

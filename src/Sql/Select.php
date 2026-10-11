@@ -30,6 +30,8 @@ use function strtoupper;
 use function trim;
 
 /**
+ * @api
+ *
  * @property Where $where
  * @property Having $having
  * @property Join $joins

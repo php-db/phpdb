@@ -16,6 +16,8 @@ use function is_int;
 use function strtoupper;
 
 /**
+ * @api
+ *
  * @psalm-import-type Specification from AbstractSql
  * @psalm-type RawState = array{
  *     table: string|TableIdentifier,
