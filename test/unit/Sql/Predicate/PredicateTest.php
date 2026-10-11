@@ -10,6 +10,7 @@ use PhpDb\Adapter\Platform\Sql92;
 use PhpDb\Sql\Argument;
 use PhpDb\Sql\Expression;
 use PhpDb\Sql\Predicate\Between;
+use PhpDb\Sql\Predicate\Exception\InvalidArgumentException;
 use PhpDb\Sql\Predicate\Exception\RuntimeException;
 use PhpDb\Sql\Predicate\In;
 use PhpDb\Sql\Predicate\IsNull;
@@ -30,6 +31,7 @@ use ReflectionUnionType;
 
 use function array_diff;
 use function array_map;
+use function sprintf;
 
 #[Group('unit')]
 final class PredicateTest extends TestCase
@@ -68,9 +70,21 @@ final class PredicateTest extends TestCase
         return [
             'lower-case or'  => ['or', Predicate::OP_AND, '%s IS NULL OR %s IS NULL'],
             'upper-case OR'  => ['OR', Predicate::OP_AND, '%s IS NULL OR %s IS NULL'],
-            'mixed-case Or'  => ['Or', Predicate::OP_AND, '%s IS NULL OR %s IS NULL'],
             'lower-case and' => ['and', Predicate::OP_OR, '%s IS NULL AND %s IS NULL'],
             'upper-case AND' => ['AND', Predicate::OP_OR, '%s IS NULL AND %s IS NULL'],
+        ];
+    }
+
+    /**
+     * @return array<string, array{string}>
+     */
+    public static function mixedCaseMagicPropertyProvider(): array
+    {
+        return [
+            'Or'     => ['Or'],
+            'aND'    => ['aND'],
+            'Nest'   => ['Nest'],
+            'unNest' => ['unNest'],
         ];
     }
 
@@ -440,7 +454,7 @@ final class PredicateTest extends TestCase
 
     #[Test]
     #[DataProvider('magicCombinationProvider')]
-    public function magicCombinationPropertyIgnoresCase(
+    public function magicCombinationPropertyAcceptsLowerOrUpperCase(
         string $property,
         string $defaultCombination,
         string $expectedSpec,
@@ -460,6 +474,17 @@ final class PredicateTest extends TestCase
 
         static::assertInstanceOf(Predicate::class, $nested);
         static::assertNotSame($predicate, $nested);
+    }
+
+    #[Test]
+    #[DataProvider('mixedCaseMagicPropertyProvider')]
+    public function magicGetThrowsForMixedCaseName(string $name): void
+    {
+        $predicate = new Predicate();
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage(sprintf(InvalidArgumentException::MIXED_CASE_MAGIC_PROPERTY, $name));
+        $predicate->__get($name);
     }
 
     #[Test]

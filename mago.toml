@@ -21,6 +21,7 @@ baseline = "lint-baseline.toml"
 too-many-methods = { exclude = [
     "test/",
     "src/Sql/Exception/",
+    "src/Sql/Predicate/Exception/",
     "src/TableGateway/Exception/",
     "src/Adapter/Exception/",
     "src/Sql/Predicate/Predicate.php",

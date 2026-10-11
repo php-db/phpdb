@@ -6,8 +6,10 @@ namespace PhpDb\Sql\Predicate;
 
 use PhpDb\Sql\ArgumentInterface;
 use PhpDb\Sql\ExpressionInterface;
+use PhpDb\Sql\Predicate\Exception\InvalidArgumentException;
 use PhpDb\Sql\Predicate\Exception\RuntimeException;
 
+use function in_array;
 use function strtolower;
 
 /**
@@ -380,18 +382,21 @@ class Predicate extends PredicateSet
 
     /**
      * Overloading
-     * Overloads "or", "and", "nest", and "unnest"
+     * Overloads "or", "and", "nest" and "unnest", in lower or upper case
      *
      * @throws RuntimeException If "unnest" is accessed on a predicate that is not nested.
+     * @throws InvalidArgumentException If one of those names is given in mixed case.
      */
     public function __get(string $name): self
     {
-        return match (strtolower($name)) {
-            'or'     => $this->combineNextWith(self::OP_OR),
-            'and'    => $this->combineNextWith(self::OP_AND),
-            'nest'   => $this->nest(),
-            'unnest' => $this->unnest(),
-            default  => $this,
+        return match ($name) {
+            'or', 'OR'         => $this->combineNextWith(self::OP_OR),
+            'and', 'AND'       => $this->combineNextWith(self::OP_AND),
+            'nest', 'NEST'     => $this->nest(),
+            'unnest', 'UNNEST' => $this->unnest(),
+            default            => in_array(strtolower($name), ['or', 'and', 'nest', 'unnest'], strict: true)
+                ? throw InvalidArgumentException::forMixedCaseMagicProperty($name)
+                : $this,
         };
     }
 }

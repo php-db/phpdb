@@ -24,6 +24,7 @@ use function sprintf;
 #[CoversMethod(InvalidArgumentException::class, 'forMissingMinValue')]
 #[CoversMethod(InvalidArgumentException::class, 'forMissingRightExpression')]
 #[CoversMethod(InvalidArgumentException::class, 'forMissingValueSet')]
+#[CoversMethod(InvalidArgumentException::class, 'forMixedCaseMagicProperty')]
 #[CoversMethod(InvalidArgumentException::class, 'forPredicateWithStringKey')]
 final class InvalidArgumentExceptionTest extends TestCase
 {
@@ -75,6 +76,11 @@ final class InvalidArgumentExceptionTest extends TestCase
                 'forMissingValueSet',
                 [],
                 InvalidArgumentException::MISSING_VALUE_SET,
+            ],
+            'mixed case magic property' => [
+                'forMixedCaseMagicProperty',
+                ['Or'],
+                InvalidArgumentException::MIXED_CASE_MAGIC_PROPERTY,
             ],
             'predicate with string key' => [
                 'forPredicateWithStringKey',

@@ -614,11 +614,12 @@ Produces:
 WHERE status = 'active' AND age > 18 OR role = 'admin'
 ```
 
-The properties are case-insensitive for convenience:
+The properties can be written in lower or upper case. Mixed case, such as `Or`, throws
+`PhpDb\Sql\Predicate\Exception\InvalidArgumentException`:
 
-```php title="Case-insensitive magic property usage"
+```php title="Lower- and upper-case magic property usage"
 $where->and->equalTo('a', 1);
-$where->AND->equalTo('b', 2');
+$where->AND->equalTo('b', 2);
 ```
 
 ### Deep nesting of predicates
