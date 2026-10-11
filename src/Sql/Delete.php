@@ -11,7 +11,6 @@ use PhpDb\Adapter\Platform\PlatformInterface;
 use PhpDb\Sql\Predicate\PredicateInterface;
 
 use function array_key_exists;
-use function str_replace;
 use function strtolower;
 
 /**
@@ -28,8 +27,6 @@ class Delete extends AbstractPreparableSql
 
     final public const string SPECIFICATION_WHERE = 'where';
 
-    /** @#- */
-
     /** @var array<string, Specification> */
     protected array $specifications = [
         self::SPECIFICATION_DELETE => 'DELETE FROM %1$s',
@@ -41,7 +38,7 @@ class Delete extends AbstractPreparableSql
 
     protected bool $emptyWhereProtection = true;
 
-    protected ?Where $where = null;
+    protected ?Where $whereClause = null;
 
     /**
      * Constructor
@@ -88,7 +85,7 @@ class Delete extends AbstractPreparableSql
         string $combination = Predicate\PredicateSet::OP_AND,
     ): static {
         if ($predicate instanceof Where) {
-            $this->where = $predicate;
+            $this->whereClause = $predicate;
 
             return $this;
         }
@@ -98,37 +95,41 @@ class Delete extends AbstractPreparableSql
         return $this;
     }
 
+    /**
+     * @throws Exception\RuntimeException
+     */
     protected function processDelete(
         PlatformInterface $platform,
         ?DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null,
     ): string {
-        return str_replace(
-            '%1$s',
+        return $this->formatSpecification(
+            static::SPECIFICATION_DELETE,
             $this->resolveTable($this->unaliasTable($this->table), $platform, $driver, $parameterContainer),
-            $this->specifications[static::SPECIFICATION_DELETE],
         );
     }
 
+    /**
+     * @throws Exception\RuntimeException
+     */
     protected function processWhere(
         PlatformInterface $platform,
         ?DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null,
     ): ?string {
-        if (null === $this->where || $this->where->count() === 0) {
+        if (null === $this->whereClause || $this->whereClause->count() === 0) {
             return null;
         }
 
-        return str_replace(
-            '%1$s',
-            $this->processExpression($this->where, $platform, $driver, $parameterContainer, 'where'),
-            $this->specifications[static::SPECIFICATION_WHERE],
+        return $this->formatSpecification(
+            static::SPECIFICATION_WHERE,
+            $this->processExpression($this->whereClause, $platform, $driver, $parameterContainer, 'where'),
         );
     }
 
     private function getWhere(): Where
     {
-        return $this->where ??= new Where();
+        return $this->whereClause ??= new Where();
     }
 
     /**

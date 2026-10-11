@@ -59,6 +59,7 @@ use TypeError;
 #[CoversMethod(Update::class, 'processWhere')]
 #[CoversMethod(Update::class, 'processJoins')]
 #[CoversMethod(AbstractPreparableSql::class, 'unaliasTable')]
+#[CoversMethod(Update::class, 'getJoins')]
 final class UpdateTest extends TestCase
 {
     use AdapterTestTrait;
@@ -338,6 +339,14 @@ final class UpdateTest extends TestCase
     }
 
     #[Test]
+    public function numericFlagSetsPriorityAboveDefault(): void
+    {
+        $update = (new Update('t'))->set(['a' => new Expression('1')])->set(['b' => new Expression('2')], 1);
+
+        static::assertSame('UPDATE "t" SET "b" = 2, "a" = 1', $update->getSqlString(new TrustingSql92Platform()));
+    }
+
+    #[Test]
     #[Group('Laminas-240')]
     public function passingMultipleKeyValueInWhereClause(): void
     {
@@ -418,6 +427,19 @@ final class UpdateTest extends TestCase
         $sql = $mockStatement->getSql();
         static::assertStringContainsString(':c_0', $sql);
         static::assertStringContainsString(':c_1', $sql);
+    }
+
+    #[Test]
+    public function repeatedJoinCallsAccumulate(): void
+    {
+        $update = (new Update('a'))->set(['x' => new Expression('1')])
+            ->join('b', 'a.id = b.id')
+            ->join('c', 'a.id = c.id');
+
+        static::assertSame(
+            'UPDATE "a" INNER JOIN "b" ON "a"."id" = "b"."id" INNER JOIN "c" ON "a"."id" = "c"."id" SET "x" = 1',
+            $update->getSqlString(new TrustingSql92Platform()),
+        );
     }
 
     #[Test]

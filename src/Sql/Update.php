@@ -17,12 +17,12 @@ use function implode;
 use function is_numeric;
 use function is_scalar;
 use function is_string;
-use function str_replace;
 use function strtolower;
 
 /**
  * @property Where $where
  * @psalm-import-type Specification from AbstractSql
+ * @psalm-import-type ColumnValue from AbstractSql
  * @psalm-import-type PredicateValue from Predicate\PredicateSet
  * @psalm-import-type JoinName from Join
  */
@@ -62,11 +62,12 @@ class Update extends AbstractPreparableSql
 
     protected bool $emptyWhereProtection = true;
 
+    /** @var PriorityList<string, ColumnValue>|null */
     protected ?PriorityList $set = null;
 
-    protected ?Where $where = null;
+    protected ?Where $whereClause = null;
 
-    protected ?Join $joins = null;
+    protected ?Join $joinClause = null;
 
     /**
      * Constructor
@@ -109,7 +110,7 @@ class Update extends AbstractPreparableSql
     /**
      * Set key/value pairs to update
      *
-     * @param array<array-key, mixed> $values Associative array of key values
+     * @param array<array-key, ColumnValue> $values Associative array of key values
      * @param string|int              $flag   One of the VALUES_* constants, or a numeric priority
      * @throws Exception\InvalidArgumentException
      */
@@ -120,7 +121,7 @@ class Update extends AbstractPreparableSql
             $set->clear();
         }
 
-        $priority = is_numeric($flag) ? $flag : 0;
+        $priority = is_numeric($flag) ? (int) $flag : 0;
         foreach ($values as $k => $v) {
             if (! is_string($k)) {
                 throw Exception\InvalidArgumentException::forNonStringValueKey();
@@ -155,7 +156,7 @@ class Update extends AbstractPreparableSql
         string $combination = Predicate\PredicateSet::OP_AND,
     ): static {
         if ($predicate instanceof Where) {
-            $this->where = $predicate;
+            $this->whereClause = $predicate;
 
             return $this;
         }
@@ -165,15 +166,21 @@ class Update extends AbstractPreparableSql
         return $this;
     }
 
-    /** @return string[][][]|null */
+    /**
+     * @return string[][][]|null
+     * @throws Exception\RuntimeException
+     */
     protected function processJoins(
         PlatformInterface $platform,
         ?DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null,
     ): ?array {
-        return $this->processJoin($this->joins, $platform, $driver, $parameterContainer);
+        return $this->processJoin($this->joinClause, $platform, $driver, $parameterContainer);
     }
 
+    /**
+     * @throws Exception\RuntimeException
+     */
     protected function processSet(
         PlatformInterface $platform,
         ?DriverInterface $driver = null,
@@ -196,7 +203,7 @@ class Update extends AbstractPreparableSql
                 'column',
             );
             $prefix .= ' = ';
-            if (is_scalar($value) && $parameterContainer) {
+            if (is_scalar($value) && $parameterContainer && $driver instanceof DriverInterface) {
                 // use incremental value instead of column name for PDO
                 // @see https://github.com/zendframework/zend-db/issues/35
                 if ($isPdoDriver) {
@@ -217,46 +224,52 @@ class Update extends AbstractPreparableSql
             );
         }
 
-        return str_replace(
-            '%1$s',
+        return $this->formatSpecification(
+            static::SPECIFICATION_SET,
             implode(', ', $setSql),
-            $this->specifications[static::SPECIFICATION_SET],
         );
     }
 
+    /**
+     * @throws Exception\RuntimeException
+     */
     protected function processUpdate(
         PlatformInterface $platform,
         ?DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null,
     ): string {
-        return str_replace(
-            '%1$s',
+        return $this->formatSpecification(
+            static::SPECIFICATION_UPDATE,
             $this->resolveTable($this->unaliasTable($this->table), $platform, $driver, $parameterContainer),
-            $this->specifications[static::SPECIFICATION_UPDATE],
         );
     }
 
+    /**
+     * @throws Exception\RuntimeException
+     */
     protected function processWhere(
         PlatformInterface $platform,
         ?DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null,
     ): ?string {
-        if (null === $this->where || $this->where->count() === 0) {
+        if (null === $this->whereClause || $this->whereClause->count() === 0) {
             return null;
         }
 
-        return str_replace(
-            '%1$s',
-            $this->processExpression($this->where, $platform, $driver, $parameterContainer, 'where'),
-            $this->specifications[static::SPECIFICATION_WHERE],
+        return $this->formatSpecification(
+            static::SPECIFICATION_WHERE,
+            $this->processExpression($this->whereClause, $platform, $driver, $parameterContainer, 'where'),
         );
     }
 
     private function getJoins(): Join
     {
-        return $this->joins ??= new Join();
+        return $this->joinClause ??= new Join();
     }
 
+    /**
+     * @return PriorityList<string, ColumnValue>
+     */
     private function getSet(): PriorityList
     {
         if (null === $this->set) {
@@ -268,7 +281,7 @@ class Update extends AbstractPreparableSql
 
     private function getWhere(): Where
     {
-        return $this->where ??= new Where();
+        return $this->whereClause ??= new Where();
     }
 
     /**
@@ -280,15 +293,9 @@ class Update extends AbstractPreparableSql
      */
     public function __clone()
     {
-        if (null !== $this->where) {
-            $this->where = clone $this->where;
-        }
-        if (null !== $this->joins) {
-            $this->joins = clone $this->joins;
-        }
-        if (null !== $this->set) {
-            $this->set = clone $this->set;
-        }
+        $this->whereClause = null === $this->whereClause ? null : clone $this->whereClause;
+        $this->joinClause  = null === $this->joinClause ? null : clone $this->joinClause;
+        $this->set         = null === $this->set ? null : clone $this->set;
     }
 
     /**

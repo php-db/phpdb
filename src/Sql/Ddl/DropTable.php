@@ -9,8 +9,6 @@ use PhpDb\Sql\AbstractSql;
 use PhpDb\Sql\TableIdentifier;
 
 /**
- * @api
- *
  * @psalm-import-type Specification from AbstractSql
  */
 class DropTable extends AbstractSql
@@ -42,7 +40,10 @@ class DropTable extends AbstractSql
         return $this;
     }
 
-    /** @return string[] */
+    /**
+     * @return string[]
+     * @throws \PhpDb\Sql\Exception\RuntimeException
+     */
     protected function processTable(PlatformInterface $adapterPlatform): array
     {
         return [

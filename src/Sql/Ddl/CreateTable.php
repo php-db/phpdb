@@ -16,8 +16,6 @@ use function is_int;
 use function strtoupper;
 
 /**
- * @api
- *
  * @psalm-import-type Specification from AbstractSql
  * @psalm-type RawState = array{
  *     columns: list<Column\ColumnInterface>,
@@ -151,6 +149,7 @@ class CreateTable extends AbstractSql
 
     /**
      * @return string[][]|null
+     * @throws \PhpDb\Sql\Exception\RuntimeException
      */
     protected function processColumns(PlatformInterface $adapterPlatform): ?array
     {
@@ -158,13 +157,7 @@ class CreateTable extends AbstractSql
             return null;
         }
 
-        $sqls = [];
-
-        foreach ($this->columns as $column) {
-            $sqls[] = $this->processExpression($column, $adapterPlatform);
-        }
-
-        return [$sqls];
+        return [$this->processExpressionList($this->columns, $adapterPlatform)];
     }
 
     /**
@@ -177,6 +170,7 @@ class CreateTable extends AbstractSql
 
     /**
      * @return string[][]|null
+     * @throws \PhpDb\Sql\Exception\RuntimeException
      */
     protected function processConstraints(PlatformInterface $adapterPlatform): ?array
     {
@@ -184,13 +178,7 @@ class CreateTable extends AbstractSql
             return null;
         }
 
-        $sqls = [];
-
-        foreach ($this->constraints as $constraint) {
-            $sqls[] = $this->processExpression($constraint, $adapterPlatform);
-        }
-
-        return [$sqls];
+        return [$this->processExpressionList($this->constraints, $adapterPlatform)];
     }
 
     /**
@@ -203,6 +191,7 @@ class CreateTable extends AbstractSql
 
     /**
      * @return string[]
+     * @throws \PhpDb\Sql\Exception\RuntimeException
      */
     protected function processTable(PlatformInterface $adapterPlatform): array
     {

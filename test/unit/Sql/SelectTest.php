@@ -36,6 +36,7 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestDox;
 use PHPUnit\Framework\TestCase;
 use ReflectionException;
+use ReflectionMethod;
 use ReflectionObject;
 use TypeError;
 
@@ -72,7 +73,12 @@ use TypeError;
 #[CoversMethod(Select::class, 'processCombine')]
 #[CoversMethod(Select::class, 'processStatementStart')]
 #[CoversMethod(Select::class, 'processStatementEnd')]
-#[CoversMethod(Select::class, 'resolveTable')]
+#[CoversMethod(Select::class, 'resolveSelectTable')]
+#[CoversMethod(Select::class, 'splitOrderString')]
+#[CoversMethod(Select::class, 'prefixFromTable')]
+#[CoversMethod(Select::class, 'getWhere')]
+#[CoversMethod(Select::class, 'getHaving')]
+#[CoversMethod(Select::class, 'getJoins')]
 final class SelectTest extends TestCase
 {
     use AdapterTestTrait;
@@ -1215,6 +1221,17 @@ final class SelectTest extends TestCase
     }
 
     #[Test]
+    public function joinAliasesUnkeyedExpressionColumn(): void
+    {
+        $select = (new Select('a'))->join('b', 'a.id = b.id', [new Expression('COUNT(*)')]);
+
+        static::assertSame(
+            'SELECT "a".*, COUNT(*) AS Expression1 FROM "a" INNER JOIN "b" ON "a"."id" = "b"."id"',
+            $select->getSqlString(new TrustingSql92Platform()),
+        );
+    }
+
+    #[Test]
     #[TestDox(': unit test: test limit()')]
     public function limit(): void
     {
@@ -1249,6 +1266,18 @@ final class SelectTest extends TestCase
     }
 
     #[Test]
+    public function limitIsQuotedWhenContainerHasNoDriver(): void
+    {
+        $select = (new Select('a'))->limit(5);
+        $method = new ReflectionMethod($select, 'processLimit');
+
+        static::assertSame(
+            ["'5'"],
+            $method->invoke($select, new TrustingSql92Platform(), null, new ParameterContainer()),
+        );
+    }
+
+    #[Test]
     #[TestDox('unit test: Test __get() returns expected objects magically')]
     public function magicAccessor(): void
     {
@@ -1262,6 +1291,17 @@ final class SelectTest extends TestCase
         $select = new Select();
 
         static::assertInstanceOf(Join::class, $select->joins);
+    }
+
+    #[Test]
+    public function numbersEachUnkeyedJoinExpression(): void
+    {
+        $select = (new Select('a'))->join('b', 'a.id = b.id', [new Expression('MIN(x)'), new Expression('MAX(x)')]);
+
+        static::assertSame(
+            'SELECT "a".*, MIN(x) AS Expression1, MAX(x) AS Expression2 FROM "a" INNER JOIN "b" ON "a"."id" = "b"."id"',
+            $select->getSqlString(new TrustingSql92Platform()),
+        );
     }
 
     #[Test]
@@ -1353,6 +1393,17 @@ final class SelectTest extends TestCase
         $select->order('name  desc');
         static::assertSame(
             'SELECT * ORDER BY "name" DESC',
+            $select->getSqlString(new TrustingSql92Platform()),
+        );
+    }
+
+    #[Test]
+    public function orderSplitsCommaSeparatedString(): void
+    {
+        $select = (new Select('a'))->order('x DESC, y');
+
+        static::assertSame(
+            'SELECT "a".* FROM "a" ORDER BY "x" DESC, "y" ASC',
             $select->getSqlString(new TrustingSql92Platform()),
         );
     }
@@ -1494,6 +1545,24 @@ final class SelectTest extends TestCase
         static::assertSame(
             $expr,
             $select->getRawState(Select::QUANTIFIER),
+        );
+    }
+
+    #[Test]
+    public function repeatedClauseCallsAccumulate(): void
+    {
+        $select = (new Select('a'))->join('b', 'a.id = b.id', [])
+            ->join('c', 'a.id = c.id', [])
+            ->where('x = 1')
+            ->where('y = 2')
+            ->group('x')
+            ->having('x > 1')
+            ->having('y > 2');
+
+        static::assertSame(
+            'SELECT "a".* FROM "a" INNER JOIN "b" ON "a"."id" = "b"."id" INNER JOIN "c" ON "a"."id" = "c"."id"'
+                . ' WHERE x = 1 AND y = 2 GROUP BY "x" HAVING x > 1 AND y > 2',
+            $select->getSqlString(new TrustingSql92Platform()),
         );
     }
 

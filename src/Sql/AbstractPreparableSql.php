@@ -14,6 +14,9 @@ use function is_array;
 
 abstract class AbstractPreparableSql extends AbstractSql implements PreparableSqlInterface
 {
+    /**
+     * @throws Exception\RuntimeException
+     */
     #[Override]
     public function prepareStatement(
         AdapterInterface $adapter,

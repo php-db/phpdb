@@ -6,7 +6,6 @@ namespace PhpDb\Sql\Ddl;
 
 use PhpDb\Adapter\Platform\PlatformInterface;
 use PhpDb\Sql\AbstractSql;
-use PhpDb\Sql\ExpressionInterface;
 use PhpDb\Sql\Literal;
 use PhpDb\Sql\TableIdentifier;
 
@@ -17,8 +16,6 @@ use function is_int;
 use function strtoupper;
 
 /**
- * @api
- *
  * @psalm-import-type Specification from AbstractSql
  * @psalm-type RawState = array{
  *     table: string|TableIdentifier,
@@ -215,28 +212,25 @@ class AlterTable extends AbstractSql
 
     /**
      * @return array{0: list<string>}
+     * @throws \PhpDb\Sql\Exception\RuntimeException
      */
     protected function processAddColumns(PlatformInterface $adapterPlatform): array
     {
-        return [array_map(
-            fn(ExpressionInterface $column): string => $this->processExpression($column, $adapterPlatform),
-            $this->addColumns,
-        )];
+        return [$this->processExpressionList($this->addColumns, $adapterPlatform)];
     }
 
     /**
      * @return array{0: list<string>}
+     * @throws \PhpDb\Sql\Exception\RuntimeException
      */
     protected function processAddConstraints(PlatformInterface $adapterPlatform): array
     {
-        return [array_map(
-            fn(ExpressionInterface $constraint): string => $this->processExpression($constraint, $adapterPlatform),
-            $this->addConstraints,
-        )];
+        return [$this->processExpressionList($this->addConstraints, $adapterPlatform)];
     }
 
     /**
      * @return array{0: list<array{0: string, 1: string}>}
+     * @throws \PhpDb\Sql\Exception\RuntimeException
      */
     protected function processChangeColumns(PlatformInterface $adapterPlatform): array
     {
@@ -275,7 +269,10 @@ class AlterTable extends AbstractSql
         return [array_map($adapterPlatform->quoteIdentifier(...), $this->dropIndexes)];
     }
 
-    /** @return string[] */
+    /**
+     * @return string[]
+     * @throws \PhpDb\Sql\Exception\RuntimeException
+     */
     protected function processTable(PlatformInterface $adapterPlatform): array
     {
         return [$this->resolveTable($this->table, $adapterPlatform)];

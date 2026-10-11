@@ -11,8 +11,8 @@ use PhpDb\Adapter\Platform\PlatformInterface;
 
 use function array_key_exists;
 use function array_keys;
+use function array_merge;
 use function is_array;
-use function str_replace;
 use function strtoupper;
 use function trim;
 
@@ -61,13 +61,12 @@ class Combine extends AbstractPreparableSql
             return $this;
         }
 
-        $allColumns = [];
+        $columnLists = [];
         foreach ($this->combine as $combine) {
-            $allColumns = [
-                ...$allColumns,
-                ...$combine['select']->getRawState(self::COLUMNS),
-            ];
+            $columnLists[] = $combine['select']->getRawState(self::COLUMNS);
         }
+
+        $allColumns = array_merge(...$columnLists);
 
         foreach ($this->combine as $combine) {
             $combineColumns = $combine['select']->getRawState(self::COLUMNS);
@@ -177,15 +176,14 @@ class Combine extends AbstractPreparableSql
             $type = 0 === $i
                 ? ''
                 : strtoupper(
-                    $combine['modifier']
-                        ? "{$combine['type']} {$combine['modifier']}"
-                        : $combine['type'],
+                    '' === $combine['modifier']
+                        ? $combine['type']
+                        : "{$combine['type']} {$combine['modifier']}",
                 );
-            $select = $this->processSubSelect($combine['select'], $platform, $driver, $parameterContainer);
-            $sql    .= str_replace(
-                ['%1$s', '%2$s'],
-                [$type, $select],
-                $this->specifications[self::COMBINE],
+            $sql .= $this->formatSpecification(
+                self::COMBINE,
+                $type,
+                $this->processSubSelect($combine['select'], $platform, $driver, $parameterContainer),
             );
         }
 
