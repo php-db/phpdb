@@ -41,7 +41,7 @@ class DropTable extends AbstractSql
     }
 
     /** @return string[] */
-    protected function processTable(?PlatformInterface $adapterPlatform = null): array
+    protected function processTable(PlatformInterface $adapterPlatform): array
     {
         return [
             $this->ifExists ? 'IF EXISTS ' : '',

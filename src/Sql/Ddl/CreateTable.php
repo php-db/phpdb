@@ -17,6 +17,12 @@ use function strtoupper;
 
 /**
  * @psalm-import-type Specification from AbstractSql
+ * @psalm-type RawState = array{
+ *     columns: list<Column\ColumnInterface>,
+ *     constraints: list<Constraint\ConstraintInterface>,
+ *     table: string|TableIdentifier,
+ *     tableOptions: array<string, Literal|bool|int|string>,
+ * }
  */
 class CreateTable extends AbstractSql
 {
@@ -91,10 +97,9 @@ class CreateTable extends AbstractSql
     }
 
     /**
-     * @return ((Column\ColumnInterface|string)[]|Column\ColumnInterface|string)[]|string
-     * @psalm-return array<Column\ColumnInterface|array<Column\ColumnInterface|string>|string>|string
+     * @return RawState|value-of<RawState>
      */
-    public function getRawState(?string $key = null): array|string
+    public function getRawState(?string $key = null): array|string|TableIdentifier
     {
         $rawState = [
             self::COLUMNS       => $this->columns,
@@ -145,7 +150,7 @@ class CreateTable extends AbstractSql
     /**
      * @return string[][]|null
      */
-    protected function processColumns(?PlatformInterface $adapterPlatform = null): ?array
+    protected function processColumns(PlatformInterface $adapterPlatform): ?array
     {
         if (! $this->columns) {
             return null;
@@ -160,19 +165,18 @@ class CreateTable extends AbstractSql
         return [$sqls];
     }
 
-    protected function processCombinedby(?PlatformInterface $adapterPlatform = null): ?string
+    /**
+     * @return array{}|null
+     */
+    protected function processCombinedby(): ?array
     {
-        if ($this->constraints && $this->columns) {
-            return $this->specifications['combinedBy'];
-        }
-
-        return null;
+        return [] !== $this->constraints && [] !== $this->columns ? [] : null;
     }
 
     /**
      * @return string[][]|null
      */
-    protected function processConstraints(?PlatformInterface $adapterPlatform = null): ?array
+    protected function processConstraints(PlatformInterface $adapterPlatform): ?array
     {
         if (! $this->constraints) {
             return null;
@@ -190,7 +194,7 @@ class CreateTable extends AbstractSql
     /**
      * @return string[]
      */
-    protected function processStatementEnd(?PlatformInterface $adapterPlatform = null): array
+    protected function processStatementEnd(): array
     {
         return ["\n)"];
     }
@@ -198,7 +202,7 @@ class CreateTable extends AbstractSql
     /**
      * @return string[]
      */
-    protected function processTable(?PlatformInterface $adapterPlatform = null): array
+    protected function processTable(PlatformInterface $adapterPlatform): array
     {
         return [
             $this->isTemporary ? 'TEMPORARY ' : '',
@@ -210,7 +214,7 @@ class CreateTable extends AbstractSql
     /**
      * @return string[]|null
      */
-    protected function processTableOptions(?PlatformInterface $adapterPlatform = null): ?array
+    protected function processTableOptions(PlatformInterface $adapterPlatform): ?array
     {
         if (! $this->options) {
             return null;

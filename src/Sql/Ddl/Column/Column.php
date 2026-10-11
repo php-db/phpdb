@@ -15,7 +15,7 @@ use function implode;
 
 class Column implements ColumnInterface
 {
-    protected string|int|float|bool|Literal|Value|null $default;
+    protected string|int|float|bool|Literal|Value|null $default = null;
 
     protected bool $isNullable = false;
 
@@ -35,7 +35,7 @@ class Column implements ColumnInterface
     public function __construct(
         string $name = '',
         bool $nullable = false,
-        mixed $default = null,
+        string|int|float|bool|Literal|Value|null $default = null,
         array $options = [],
     ) {
         $this->setName($name);
