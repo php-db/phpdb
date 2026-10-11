@@ -416,6 +416,12 @@ count = 1
 
 [[issues]]
 file = "src/Adapter/Driver/Pdo/AbstractPdoConnection.php"
+code = "invalid-argument"
+message = 'Invalid argument type for argument #1 of `PhpDb\Adapter\Driver\DriverInterface::createResult`: expected `resource`, but found `PDOStatement`.'
+count = 1
+
+[[issues]]
+file = "src/Adapter/Driver/Pdo/AbstractPdoConnection.php"
 code = "missing-api-or-internal"
 message = 'Abstract class `PhpDb\Adapter\Driver\Pdo\AbstractPdoConnection` is missing an `@api` or `@internal` annotation.'
 count = 1
@@ -423,43 +429,7 @@ count = 1
 [[issues]]
 file = "src/Adapter/Driver/Pdo/AbstractPdoConnection.php"
 code = "mixed-argument"
-message = 'Invalid argument type for argument #1 of `PhpDb\Adapter\Driver\DriverInterface::createResult`: expected `resource`, but found `mixed`.'
-count = 1
-
-[[issues]]
-file = "src/Adapter/Driver/Pdo/AbstractPdoConnection.php"
-code = "mixed-argument"
-message = 'Invalid argument type for argument #1 of `PhpDb\Adapter\Exception\InvalidQueryException::forDriverError`: expected `string`, but found `mixed`.'
-count = 1
-
-[[issues]]
-file = "src/Adapter/Driver/Pdo/AbstractPdoConnection.php"
-code = "mixed-argument"
 message = "Invalid argument type for argument #1 of `strtolower`: expected `string`, but found `mixed`."
-count = 1
-
-[[issues]]
-file = "src/Adapter/Driver/Pdo/AbstractPdoConnection.php"
-code = "mixed-array-access"
-message = "Unsafe array access on type `mixed`."
-count = 1
-
-[[issues]]
-file = "src/Adapter/Driver/Pdo/AbstractPdoConnection.php"
-code = "mixed-assignment"
-message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
-count = 2
-
-[[issues]]
-file = "src/Adapter/Driver/Pdo/AbstractPdoConnection.php"
-code = "mixed-return-statement"
-message = 'Could not infer a precise return type for function `PhpDb\Adapter\Driver\Pdo\AbstractPdoConnection::execute`. Saw type `mixed`.'
-count = 1
-
-[[issues]]
-file = "src/Adapter/Driver/Pdo/AbstractPdoConnection.php"
-code = "mixed-return-statement"
-message = 'Could not infer a precise return type for function `PhpDb\Adapter\Driver\Pdo\AbstractPdoConnection::prepare`. Saw type `mixed`.'
 count = 1
 
 [[issues]]
@@ -1448,12 +1418,6 @@ count = 1
 
 [[issues]]
 file = "src/ResultSet/AbstractResultSet.php"
-code = "invalid-return-statement"
-message = 'Invalid return type for function `PhpDb\ResultSet\AbstractResultSet::resolveIterator`: expected `Iterator<mixed, mixed>`, but found `DOMNodeList<mixed, mixed>|DatePeriod<mixed, mixed>|Ds\Collection<mixed, mixed>|Generator<mixed, mixed, mixed, mixed>|Iterator<mixed, mixed>|PDOStatement<mixed, mixed>`.'
-count = 1
-
-[[issues]]
-file = "src/ResultSet/AbstractResultSet.php"
 code = "invalid-type-cast"
 message = "Casting `mixed` to `array`."
 count = 1
@@ -1586,45 +1550,15 @@ count = 1
 
 [[issues]]
 file = "src/RowGateway/AbstractRowGateway.php"
-code = "mixed-argument"
-message = 'Invalid argument type for argument #1 of `PhpDb\Sql\Sql::prepareStatementForSqlObject`: expected `PhpDb\Sql\PreparableSqlInterface`, but found `mixed`.'
-count = 4
-
-[[issues]]
-file = "src/RowGateway/AbstractRowGateway.php"
 code = "mixed-assignment"
 message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
-count = 19
-
-[[issues]]
-file = "src/RowGateway/AbstractRowGateway.php"
-code = "mixed-method-access"
-message = "Attempting to access a method on a non-object type (`mixed`)."
-count = 14
-
-[[issues]]
-file = "src/RowGateway/AbstractRowGateway.php"
-code = "mixed-operand"
-message = "Left operand in `&&` operation has `mixed` type."
-count = 1
-
-[[issues]]
-file = "src/RowGateway/AbstractRowGateway.php"
-code = "mixed-return-statement"
-message = 'Could not infer a precise return type for function `PhpDb\RowGateway\AbstractRowGateway::delete`. Saw type `mixed`.'
-count = 1
-
-[[issues]]
-file = "src/RowGateway/AbstractRowGateway.php"
-code = "mixed-return-statement"
-message = 'Could not infer a precise return type for function `PhpDb\RowGateway\AbstractRowGateway::save`. Saw type `mixed`.'
-count = 1
+count = 6
 
 [[issues]]
 file = "src/RowGateway/AbstractRowGateway.php"
 code = "possible-method-access-on-null"
 message = "Attempting to call a method on `null`."
-count = 10
+count = 15
 
 [[issues]]
 file = "src/RowGateway/AbstractRowGateway.php"
@@ -1982,36 +1916,6 @@ count = 1
 
 [[issues]]
 file = "src/Sql/Ddl/AlterTable.php"
-code = "less-specific-nested-return-statement"
-message = '''Returned type `list{list<list{mixed, string}>}` is less specific than the declared return type `array{0: list<array{0: string, 1: string}>}` for function `PhpDb\Sql\Ddl\AlterTable::processChangeColumns` due to nested 'mixed'.'''
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/AlterTable.php"
-code = "less-specific-nested-return-statement"
-message = '''Returned type `list{list<mixed>}` is less specific than the declared return type `array{0: list<string>}` for function `PhpDb\Sql\Ddl\AlterTable::processDropColumns` due to nested 'mixed'.'''
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/AlterTable.php"
-code = "less-specific-nested-return-statement"
-message = '''Returned type `list{list<mixed>}` is less specific than the declared return type `array{0: list<string>}` for function `PhpDb\Sql\Ddl\AlterTable::processDropConstraints` due to nested 'mixed'.'''
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/AlterTable.php"
-code = "less-specific-nested-return-statement"
-message = '''Returned type `list{list<mixed>}` is less specific than the declared return type `array{0: list<string>}` for function `PhpDb\Sql\Ddl\AlterTable::processDropIndexes` due to nested 'mixed'.'''
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/AlterTable.php"
-code = "mixed-assignment"
-message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/AlterTable.php"
 code = "possible-method-access-on-null"
 message = "Attempting to call a method on `null`."
 count = 5
@@ -2252,12 +2156,6 @@ count = 1
 
 [[issues]]
 file = "src/Sql/Ddl/CreateTable.php"
-code = "mixed-assignment"
-message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/CreateTable.php"
 code = "possible-method-access-on-null"
 message = "Attempting to call a method on `null`."
 count = 1
@@ -2458,12 +2356,6 @@ count = 1
 file = "src/Sql/Insert.php"
 code = "less-specific-argument"
 message = 'Argument type mismatch for argument #1 of `PhpDb\Adapter\Platform\PlatformInterface::quoteIdentifier`: expected `string`, but provided type `array-key` is less specific.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Insert.php"
-code = "less-specific-nested-argument-type"
-message = "Argument type mismatch for argument #2 of `implode`: expected `array<array-key, Stringable|null|scalar>|null`, but provided type `list<mixed>` is less specific."
 count = 1
 
 [[issues]]
@@ -2810,12 +2702,6 @@ count = 1
 
 [[issues]]
 file = "src/Sql/Predicate/PredicateSet.php"
-code = "less-specific-nested-return-statement"
-message = '''Returned type `array{'spec': non-empty-string, 'values': mixed}` is less specific than the declared return type `array{'spec': string, 'values': list<PhpDb\Sql\ArgumentInterface>}` for function `PhpDb\Sql\Predicate\PredicateSet::getExpressionData` due to nested 'mixed'.'''
-count = 1
-
-[[issues]]
-file = "src/Sql/Predicate/PredicateSet.php"
 code = "mixed-argument"
 message = 'Invalid argument type for argument #1 of `PhpDb\Sql\Expression::__construct`: expected `string`, but found `mixed`.'
 count = 1
@@ -2846,20 +2732,8 @@ count = 1
 
 [[issues]]
 file = "src/Sql/Predicate/PredicateSet.php"
-code = "mixed-array-access"
-message = "Unsafe array access on type `mixed`."
-count = 2
-
-[[issues]]
-file = "src/Sql/Predicate/PredicateSet.php"
 code = "mixed-assignment"
 message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
-count = 2
-
-[[issues]]
-file = "src/Sql/Predicate/PredicateSet.php"
-code = "mixed-return-statement"
-message = 'Could not infer a precise return type for function `PhpDb\Sql\Predicate\PredicateSet::getExpressionData`. Saw type `mixed`.'
 count = 1
 
 [[issues]]
@@ -2944,18 +2818,6 @@ count = 1
 file = "src/Sql/Select.php"
 code = "invalid-return-statement"
 message = '''Invalid return type for function `PhpDb\Sql\Select::resolveTable`: expected `array{0: null|string, 1: string}`, but found `list{array<array-key, mixed>|null|string, string('')|truthy-string}`.'''
-count = 1
-
-[[issues]]
-file = "src/Sql/Select.php"
-code = "less-specific-nested-return-statement"
-message = '''Returned type `list{mixed}` is less specific than the declared return type `array{0: string}|null` for function `PhpDb\Sql\Select::processLimit` due to nested 'mixed'.'''
-count = 1
-
-[[issues]]
-file = "src/Sql/Select.php"
-code = "less-specific-nested-return-statement"
-message = '''Returned type `list{mixed}` is less specific than the declared return type `array{0: string}|null` for function `PhpDb\Sql\Select::processOffset` due to nested 'mixed'.'''
 count = 1
 
 [[issues]]
@@ -3369,6 +3231,12 @@ count = 1
 [[issues]]
 file = "src/TableGateway/AbstractTableGateway.php"
 code = "less-specific-nested-argument-type"
+message = 'Argument type mismatch for argument #1 of `PhpDb\ResultSet\ResultSetInterface::initialize`: expected `iterable<array-key, mixed>`, but provided type `PhpDb\Adapter\Driver\ResultInterface|null` is less specific.'
+count = 1
+
+[[issues]]
+file = "src/TableGateway/AbstractTableGateway.php"
+code = "less-specific-nested-argument-type"
 message = 'Argument type mismatch for argument #1 of `PhpDb\Sql\Select::columns`: expected `array<array-key, PhpDb\Sql\ExpressionInterface|string>`, but provided type `non-empty-array<array-key, mixed>` is less specific.'
 count = 1
 
@@ -3376,12 +3244,6 @@ count = 1
 file = "src/TableGateway/AbstractTableGateway.php"
 code = "missing-api-or-internal"
 message = 'Abstract class `PhpDb\TableGateway\AbstractTableGateway` is missing an `@api` or `@internal` annotation.'
-count = 1
-
-[[issues]]
-file = "src/TableGateway/AbstractTableGateway.php"
-code = "mixed-argument"
-message = 'Invalid argument type for argument #1 of `PhpDb\ResultSet\ResultSetInterface::initialize`: expected `iterable<array-key, mixed>`, but found `mixed`.'
 count = 1
 
 [[issues]]
@@ -3399,31 +3261,25 @@ count = 2
 [[issues]]
 file = "src/TableGateway/AbstractTableGateway.php"
 code = "mixed-argument"
+message = 'Invalid argument type for argument #1 of `PhpDb\Sql\Update::join`: expected `PhpDb\Sql\TableIdentifier|non-empty-array<string, PhpDb\Sql\Expression|PhpDb\Sql\Select|PhpDb\Sql\TableIdentifier|string>|string`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = "src/TableGateway/AbstractTableGateway.php"
+code = "mixed-argument"
 message = 'Invalid argument type for argument #1 of `PhpDb\Sql\Update::table`: expected `PhpDb\Sql\TableIdentifier|array<string, PhpDb\Sql\TableIdentifier|string>|string`, but found `mixed`.'
 count = 2
 
 [[issues]]
 file = "src/TableGateway/AbstractTableGateway.php"
 code = "mixed-argument"
-message = 'Invalid argument type for argument #1 of `PhpDb\TableGateway\AbstractTableGateway::executeDelete`: expected `PhpDb\Sql\Delete`, but found `mixed`.'
+message = 'Invalid argument type for argument #2 of `PhpDb\Sql\Update::join`: expected `string`, but found `mixed`.'
 count = 1
 
 [[issues]]
 file = "src/TableGateway/AbstractTableGateway.php"
 code = "mixed-argument"
-message = 'Invalid argument type for argument #1 of `PhpDb\TableGateway\AbstractTableGateway::executeInsert`: expected `PhpDb\Sql\Insert`, but found `mixed`.'
-count = 1
-
-[[issues]]
-file = "src/TableGateway/AbstractTableGateway.php"
-code = "mixed-argument"
-message = 'Invalid argument type for argument #1 of `PhpDb\TableGateway\AbstractTableGateway::executeUpdate`: expected `PhpDb\Sql\Update`, but found `mixed`.'
-count = 1
-
-[[issues]]
-file = "src/TableGateway/AbstractTableGateway.php"
-code = "mixed-argument"
-message = 'Invalid argument type for argument #1 of `PhpDb\TableGateway\AbstractTableGateway::selectWith`: expected `PhpDb\Sql\Select`, but found `mixed`.'
+message = 'Invalid argument type for argument #3 of `PhpDb\Sql\Update::join`: expected `string`, but found `nonnull`.'
 count = 1
 
 [[issues]]
@@ -3436,7 +3292,7 @@ count = 6
 file = "src/TableGateway/AbstractTableGateway.php"
 code = "mixed-assignment"
 message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
-count = 21
+count = 9
 
 [[issues]]
 file = "src/TableGateway/AbstractTableGateway.php"
@@ -3448,30 +3304,6 @@ count = 1
 file = "src/TableGateway/AbstractTableGateway.php"
 code = "mixed-clone"
 message = "Cannot statically verify `clone` on a `mixed` type."
-count = 1
-
-[[issues]]
-file = "src/TableGateway/AbstractTableGateway.php"
-code = "mixed-method-access"
-message = "Attempting to access a method on a non-object type (`mixed`)."
-count = 13
-
-[[issues]]
-file = "src/TableGateway/AbstractTableGateway.php"
-code = "mixed-return-statement"
-message = 'Could not infer a precise return type for function `PhpDb\TableGateway\AbstractTableGateway::executeDelete`. Saw type `mixed`.'
-count = 1
-
-[[issues]]
-file = "src/TableGateway/AbstractTableGateway.php"
-code = "mixed-return-statement"
-message = 'Could not infer a precise return type for function `PhpDb\TableGateway\AbstractTableGateway::executeInsert`. Saw type `mixed`.'
-count = 1
-
-[[issues]]
-file = "src/TableGateway/AbstractTableGateway.php"
-code = "mixed-return-statement"
-message = 'Could not infer a precise return type for function `PhpDb\TableGateway\AbstractTableGateway::executeUpdate`. Saw type `mixed`.'
 count = 1
 
 [[issues]]
@@ -3514,7 +3346,7 @@ count = 1
 file = "src/TableGateway/AbstractTableGateway.php"
 code = "possible-method-access-on-null"
 message = "Attempting to call a method on `null`."
-count = 25
+count = 28
 
 [[issues]]
 file = "src/TableGateway/AbstractTableGateway.php"
@@ -3526,6 +3358,12 @@ count = 1
 file = "src/TableGateway/AbstractTableGateway.php"
 code = "possibly-invalid-clone"
 message = 'Expression of type `PhpDb\Sql\Sql|null` might not be a cloneable object.'
+count = 1
+
+[[issues]]
+file = "src/TableGateway/AbstractTableGateway.php"
+code = "possibly-null-argument"
+message = 'Argument #1 of method `PhpDb\ResultSet\ResultSetInterface::initialize` is possibly `null`, but parameter type `iterable<array-key, mixed>` does not accept it.'
 count = 1
 
 [[issues]]
@@ -3550,6 +3388,12 @@ count = 1
 file = "src/TableGateway/Exception/RuntimeException.php"
 code = "class-must-be-final"
 message = 'Class `PhpDb\TableGateway\Exception\RuntimeException` should be declared `final`.'
+count = 1
+
+[[issues]]
+file = "src/TableGateway/Feature/EventFeature/TableGatewayEvent.php"
+code = "imprecise-type"
+message = "Type `array` in return type of `getParams` is imprecise, equivalent to `array<array-key, mixed>`."
 count = 1
 
 [[issues]]
