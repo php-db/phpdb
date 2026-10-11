@@ -9,6 +9,9 @@ use PhpDb\Sql\Argument\Literal;
 use PhpDb\Sql\Argument\Value;
 use PhpDb\Sql\Exception\InvalidArgumentException;
 
+/**
+ * @api
+ */
 abstract class AbstractPrecisionColumn extends AbstractLengthColumn
 {
     protected ?int $decimal;

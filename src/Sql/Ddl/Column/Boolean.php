@@ -6,6 +6,9 @@ namespace PhpDb\Sql\Ddl\Column;
 
 use Override;
 
+/**
+ * @api
+ */
 class Boolean extends Column
 {
     protected string $type = 'BOOLEAN';

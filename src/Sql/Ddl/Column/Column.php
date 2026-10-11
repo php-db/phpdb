@@ -13,6 +13,9 @@ use PhpDb\Sql\Ddl\Constraint\ConstraintInterface;
 
 use function implode;
 
+/**
+ * @api
+ */
 class Column implements ColumnInterface
 {
     protected string|int|float|bool|Literal|Value|null $default = null;

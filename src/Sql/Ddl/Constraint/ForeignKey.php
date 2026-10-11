@@ -12,6 +12,9 @@ use function array_fill;
 use function count;
 use function implode;
 
+/**
+ * @api
+ */
 class ForeignKey extends AbstractConstraint
 {
     protected string $onDeleteRule = 'NO ACTION';

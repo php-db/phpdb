@@ -13,6 +13,9 @@ use PhpDb\Sql\ExpressionInterface;
 use function implode;
 use function sprintf;
 
+/**
+ * @api
+ */
 class Check extends AbstractConstraint
 {
     protected string|ExpressionInterface $expression;

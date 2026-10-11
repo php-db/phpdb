@@ -13,6 +13,9 @@ use function array_splice;
 use function strlen;
 use function substr;
 
+/**
+ * @api
+ */
 abstract class AbstractLengthColumn extends Column
 {
     /**

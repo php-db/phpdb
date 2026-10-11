@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace PhpDb\Sql\Ddl\Column;
 
 /**
+ * @api
+ *
  * Column representing a FLOAT type.
  *
  * Cannot name a class "float" starting in PHP 7, as it's a reserved keyword;
