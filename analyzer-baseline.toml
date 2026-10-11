@@ -1508,6 +1508,24 @@ count = 1
 
 [[issues]]
 file = "src/RowGateway/AbstractRowGateway.php"
+code = "less-specific-nested-argument-type"
+message = 'Argument type mismatch for argument #1 of `PhpDb\Sql\Delete::where`: expected `(closure(...mixed): mixed)|PhpDb\Sql\Predicate\PredicateInterface|PhpDb\Sql\Where|array<array-key, PhpDb\Sql\ArgumentInterface|PhpDb\Sql\ExpressionInterface|PhpDb\Sql\Predicate\PredicateInterface|PhpDb\Sql\SqlInterface|list<bool|float|int|null|string>|null|scalar>|string`, but provided type `array<array-key, mixed>` is less specific.'
+count = 1
+
+[[issues]]
+file = "src/RowGateway/AbstractRowGateway.php"
+code = "less-specific-nested-argument-type"
+message = 'Argument type mismatch for argument #1 of `PhpDb\Sql\Select::where`: expected `(closure(...mixed): mixed)|PhpDb\Sql\Predicate\PredicateInterface|array<array-key, PhpDb\Sql\ArgumentInterface|PhpDb\Sql\ExpressionInterface|PhpDb\Sql\Predicate\PredicateInterface|PhpDb\Sql\SqlInterface|list<bool|float|int|null|string>|null|scalar>|string`, but provided type `array<array-key, mixed>` is less specific.'
+count = 1
+
+[[issues]]
+file = "src/RowGateway/AbstractRowGateway.php"
+code = "less-specific-nested-argument-type"
+message = 'Argument type mismatch for argument #1 of `PhpDb\Sql\Update::where`: expected `(closure(...mixed): mixed)|PhpDb\Sql\Predicate\PredicateInterface|PhpDb\Sql\Where|array<array-key, PhpDb\Sql\ArgumentInterface|PhpDb\Sql\ExpressionInterface|PhpDb\Sql\Predicate\PredicateInterface|PhpDb\Sql\SqlInterface|list<bool|float|int|null|string>|null|scalar>|string`, but provided type `array<array-key, mixed>` is less specific.'
+count = 1
+
+[[issues]]
+file = "src/RowGateway/AbstractRowGateway.php"
 code = "less-specific-return-statement"
 message = 'Returned type `array<array-key, mixed>` is less specific than the declared return type `array<string, mixed>` for function `PhpDb\RowGateway\AbstractRowGateway::exchangeArray`.'
 count = 1
@@ -2599,174 +2617,6 @@ message = 'Interface `PhpDb\Sql\Platform\PlatformDecoratorInterface` is missing 
 count = 1
 
 [[issues]]
-file = "src/Sql/Predicate/Exception/InvalidArgumentException.php"
-code = "class-must-be-final"
-message = 'Class `PhpDb\Sql\Predicate\Exception\InvalidArgumentException` should be declared `final`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Predicate/Exception/RuntimeException.php"
-code = "class-must-be-final"
-message = 'Class `PhpDb\Sql\Predicate\Exception\RuntimeException` should be declared `final`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Predicate/Expression.php"
-code = "class-must-be-final"
-message = 'Class `PhpDb\Sql\Predicate\Expression` should be declared `final`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Predicate/IsNotNull.php"
-code = "class-must-be-final"
-message = 'Class `PhpDb\Sql\Predicate\IsNotNull` should be declared `final`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Predicate/Literal.php"
-code = "class-must-be-final"
-message = 'Class `PhpDb\Sql\Predicate\Literal` should be declared `final`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Predicate/NotBetween.php"
-code = "class-must-be-final"
-message = 'Class `PhpDb\Sql\Predicate\NotBetween` should be declared `final`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Predicate/NotIn.php"
-code = "class-must-be-final"
-message = 'Class `PhpDb\Sql\Predicate\NotIn` should be declared `final`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Predicate/NotLike.php"
-code = "class-must-be-final"
-message = 'Class `PhpDb\Sql\Predicate\NotLike` should be declared `final`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Predicate/Operator.php"
-code = "class-must-be-final"
-message = 'Class `PhpDb\Sql\Predicate\Operator` should be declared `final`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Predicate/Predicate.php"
-code = "impossible-condition"
-message = "This condition (type `false`) will always evaluate to false."
-count = 1
-
-[[issues]]
-file = "src/Sql/Predicate/Predicate.php"
-code = "imprecise-type"
-message = "Type `array` in parameter `$parameters` is imprecise, equivalent to `array<array-key, mixed>`."
-count = 1
-
-[[issues]]
-file = "src/Sql/Predicate/Predicate.php"
-code = "imprecise-type"
-message = "Type `array` in parameter `$valueSet` is imprecise, equivalent to `array<array-key, mixed>`."
-count = 2
-
-[[issues]]
-file = "src/Sql/Predicate/Predicate.php"
-code = "invalid-property-assignment-value"
-message = 'Invalid type for property `$unnest`: expected `PhpDb\Sql\Predicate\Predicate`, but got `PhpDb\Sql\Predicate\Predicate|null`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Predicate/Predicate.php"
-code = "invalid-property-assignment-value"
-message = 'Invalid type for property `$unnest`: expected `PhpDb\Sql\Predicate\Predicate`, but got `null`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Predicate/Predicate.php"
-code = "less-specific-nested-argument-type"
-message = 'Argument type mismatch for argument #2 of `PhpDb\Sql\Expression::__construct`: expected `PhpDb\Sql\ArgumentInterface|PhpDb\Sql\ExpressionInterface|array<array-key, PhpDb\Sql\ArgumentInterface|PhpDb\Sql\ExpressionInterface|list<bool|float|int|null|string>|null|scalar>|list<bool|float|int|null|string>|null|scalar`, but provided type `PhpDb\Sql\ArgumentInterface|PhpDb\Sql\ExpressionInterface|float|int|non-empty-array<array-key, mixed>|null|string` is less specific.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Predicate/Predicate.php"
-code = "possibly-invalid-argument"
-message = 'Possible argument type mismatch for argument #2 of `PhpDb\Sql\Predicate\In::__construct`: expected `PhpDb\Sql\ArgumentInterface|PhpDb\Sql\Select|list<bool|float|int|null|string>|null`, but possibly received `PhpDb\Sql\ArgumentInterface|array<array-key, mixed>`.'
-count = 2
-
-[[issues]]
-file = "src/Sql/Predicate/PredicateInterface.php"
-code = "missing-api-or-internal"
-message = 'Interface `PhpDb\Sql\Predicate\PredicateInterface` is missing an `@api` or `@internal` annotation.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Predicate/PredicateSet.php"
-code = "mixed-argument"
-message = 'Invalid argument type for argument #1 of `PhpDb\Sql\Expression::__construct`: expected `string`, but found `mixed`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Predicate/PredicateSet.php"
-code = "mixed-argument"
-message = 'Invalid argument type for argument #1 of `PhpDb\Sql\Literal::__construct`: expected `string`, but found `mixed`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Predicate/PredicateSet.php"
-code = "mixed-argument"
-message = "Invalid argument type for argument #1 of `str_contains`: expected `string`, but found `mixed`."
-count = 1
-
-[[issues]]
-file = "src/Sql/Predicate/PredicateSet.php"
-code = "mixed-argument"
-message = 'Invalid argument type for argument #2 of `PhpDb\Sql\Expression::__construct`: expected `PhpDb\Sql\ArgumentInterface|PhpDb\Sql\ExpressionInterface|array<array-key, PhpDb\Sql\ArgumentInterface|PhpDb\Sql\ExpressionInterface|list<bool|float|int|null|string>|null|scalar>|list<bool|float|int|null|string>|null|scalar`, but found `mixed`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Predicate/PredicateSet.php"
-code = "mixed-argument"
-message = 'Invalid argument type for argument #3 of `PhpDb\Sql\Predicate\Operator::__construct`: expected `PhpDb\Sql\ArgumentInterface|PhpDb\Sql\ExpressionInterface|PhpDb\Sql\SqlInterface|null|scalar`, but found `nonnull`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Predicate/PredicateSet.php"
-code = "mixed-assignment"
-message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
-count = 1
-
-[[issues]]
-file = "src/Sql/Predicate/PredicateSet.php"
-code = "possible-method-access-on-null"
-message = "Attempting to call a method on `null`."
-count = 1
-
-[[issues]]
-file = "src/Sql/Predicate/PredicateSet.php"
-code = "possibly-invalid-argument"
-message = 'Possible argument type mismatch for argument #1 of `PhpDb\Sql\Predicate\PredicateSet::addPredicate`: expected `PhpDb\Sql\Predicate\PredicateInterface`, but possibly received `PhpDb\Sql\Expression|PhpDb\Sql\Predicate\Expression|PhpDb\Sql\Predicate\In|PhpDb\Sql\Predicate\IsNull|PhpDb\Sql\Predicate\Literal|PhpDb\Sql\Predicate\Operator|PhpDb\Sql\Predicate\PredicateInterface`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Predicate/PredicateSet.php"
-code = "possibly-invalid-argument"
-message = 'Possible argument type mismatch for argument #2 of `PhpDb\Sql\Predicate\In::__construct`: expected `PhpDb\Sql\ArgumentInterface|PhpDb\Sql\Select|list<bool|float|int|null|string>|null`, but possibly received `array<array-key, mixed>`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Predicate/PredicateSet.php"
-code = "possibly-null-destructuring-source"
-message = 'Destructuring a possibly null value of type `array{0: string, 1: PhpDb\Sql\Predicate\PredicateInterface}|null`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Predicate/PredicateSet.php"
-code = "possibly-undefined-int-array-index"
-message = 'Possibly undefined array index accessed on `list<array{0: string, 1: PhpDb\Sql\Predicate\PredicateInterface}>`.'
-count = 1
-
-[[issues]]
 file = "src/Sql/PreparableSqlInterface.php"
 code = "missing-api-or-internal"
 message = 'Interface `PhpDb\Sql\PreparableSqlInterface` is missing an `@api` or `@internal` annotation.'
@@ -3237,7 +3087,25 @@ count = 1
 [[issues]]
 file = "src/TableGateway/AbstractTableGateway.php"
 code = "less-specific-nested-argument-type"
+message = 'Argument type mismatch for argument #1 of `PhpDb\Sql\Delete::where`: expected `(closure(...mixed): mixed)|PhpDb\Sql\Predicate\PredicateInterface|PhpDb\Sql\Where|array<array-key, PhpDb\Sql\ArgumentInterface|PhpDb\Sql\ExpressionInterface|PhpDb\Sql\Predicate\PredicateInterface|PhpDb\Sql\SqlInterface|list<bool|float|int|null|string>|null|scalar>|string`, but provided type `PhpDb\Sql\Where|array<array-key, mixed>|string` is less specific.'
+count = 1
+
+[[issues]]
+file = "src/TableGateway/AbstractTableGateway.php"
+code = "less-specific-nested-argument-type"
 message = 'Argument type mismatch for argument #1 of `PhpDb\Sql\Select::columns`: expected `array<array-key, PhpDb\Sql\ExpressionInterface|string>`, but provided type `non-empty-array<array-key, mixed>` is less specific.'
+count = 1
+
+[[issues]]
+file = "src/TableGateway/AbstractTableGateway.php"
+code = "less-specific-nested-argument-type"
+message = 'Argument type mismatch for argument #1 of `PhpDb\Sql\Select::where`: expected `(closure(...mixed): mixed)|PhpDb\Sql\Predicate\PredicateInterface|array<array-key, PhpDb\Sql\ArgumentInterface|PhpDb\Sql\ExpressionInterface|PhpDb\Sql\Predicate\PredicateInterface|PhpDb\Sql\SqlInterface|list<bool|float|int|null|string>|null|scalar>|string`, but provided type `PhpDb\Sql\Where|array<array-key, mixed>|string` is less specific.'
+count = 1
+
+[[issues]]
+file = "src/TableGateway/AbstractTableGateway.php"
+code = "less-specific-nested-argument-type"
+message = 'Argument type mismatch for argument #1 of `PhpDb\Sql\Update::where`: expected `(closure(...mixed): mixed)|PhpDb\Sql\Predicate\PredicateInterface|PhpDb\Sql\Where|array<array-key, PhpDb\Sql\ArgumentInterface|PhpDb\Sql\ExpressionInterface|PhpDb\Sql\Predicate\PredicateInterface|PhpDb\Sql\SqlInterface|list<bool|float|int|null|string>|null|scalar>|string`, but provided type `(closure(...mixed=): mixed)|PhpDb\Sql\Where|array<array-key, mixed>|string` is less specific.'
 count = 1
 
 [[issues]]

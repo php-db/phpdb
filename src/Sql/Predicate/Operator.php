@@ -14,6 +14,9 @@ use PhpDb\Sql\ExpressionInterface;
 use PhpDb\Sql\Predicate\Exception\InvalidArgumentException;
 use PhpDb\Sql\SqlInterface;
 
+/**
+ * @api
+ */
 class Operator extends AbstractExpression implements PredicateInterface
 {
     final public const string OPERATOR_EQUAL_TO = '=';

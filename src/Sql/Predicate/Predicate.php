@@ -11,6 +11,8 @@ use PhpDb\Sql\Predicate\Exception\RuntimeException;
 use function strtolower;
 
 /**
+ * @api
+ *
  * @psalm-import-type ExpressionParameter from \PhpDb\Sql\Expression
  *
  * @property Predicate $and

@@ -21,6 +21,8 @@ use function is_string;
 use function str_contains;
 
 /**
+ * @api
+ *
  * @psalm-import-type ExpressionParameter from Expression
  * @psalm-type PredicateValue = ExpressionParameter|PredicateInterface|SqlInterface
  */
