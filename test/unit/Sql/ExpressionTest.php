@@ -30,8 +30,24 @@ use TypeError;
 #[CoversMethod(Expression::class, 'setParameters')]
 #[CoversMethod(Expression::class, 'getParameters')]
 #[CoversMethod(Expression::class, 'getExpressionData')]
+#[CoversMethod(Expression::class, 'placeholderFor')]
 final class ExpressionTest extends TestCase
 {
+    /** @return array<string, array{string, list<mixed>, string}> */
+    public static function arrayParameterSpecificationProvider(): array
+    {
+        return [
+            'array of three values'          => ['a IN (?)', [[1, 2, 3]], 'a IN (%s, %s, %s)'],
+            'empty array'                    => ['a IN (?)', [[]], 'a IN (NULL)'],
+            'array between other parameters' => [
+                '? IN (?) AND ? = ?',
+                [Argument::identifier('a'), [1, 2], Argument::identifier('b'), 4],
+                '%s IN (%s, %s) AND %s = %s',
+            ],
+            'values argument'                => ['a IN (?)', [Argument::values([1, 2])], 'a IN (%s, %s)'],
+        ];
+    }
+
     /** @psalm-return array<array-key, array{0: mixed}> */
     public static function falsyExpressionParametersProvider(): array
     {
@@ -111,6 +127,22 @@ final class ExpressionTest extends TestCase
             ],
             $expressionData['values'],
         );
+    }
+
+    /**
+     * @param list<mixed> $parameters
+     */
+    #[Test]
+    #[Group('unit')]
+    #[DataProvider('arrayParameterSpecificationProvider')]
+    public function getExpressionDataGivesEachArrayValueItsOwnPlaceholder(
+        string $expression,
+        array $parameters,
+        string $expectedSpecification,
+    ): void {
+        $expressionData = (new Expression($expression, $parameters))->getExpressionData();
+
+        static::assertSame($expectedSpecification, $expressionData['spec']);
     }
 
     #[Test]

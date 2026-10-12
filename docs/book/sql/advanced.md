@@ -46,7 +46,7 @@ CASE WHEN age > 18 THEN ADULT ELSE MINOR END
 ```php title="Array values in expressions"
 $expression = new Expression(
     'id IN (?)',
-    [Argument::value([1, 2, 3, 4, 5])]
+    [Argument::values([1, 2, 3, 4, 5])]
 );
 ```
 
@@ -55,6 +55,10 @@ Produces:
 ```sql title="SQL output for array values"
 id IN (?, ?, ?, ?, ?)
 ```
+
+The placeholder for an array (or `Argument\Values`) expands to one
+placeholder per value, separated by commas, so write the surrounding
+parentheses in the expression yourself. An empty array renders as `NULL`.
 
 ```php title="Nested expressions"
 $innerExpression = new Expression('COUNT(*)');

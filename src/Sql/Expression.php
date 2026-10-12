@@ -9,11 +9,15 @@ use PhpDb\Sql\Argument\Select as SelectArgument;
 use PhpDb\Sql\Argument\Value;
 use PhpDb\Sql\Argument\Values;
 
+use function array_fill;
+use function array_shift;
 use function array_slice;
 use function array_unique;
 use function count;
+use function explode;
 use function func_get_args;
 use function func_num_args;
+use function implode;
 use function is_array;
 use function preg_match_all;
 use function str_replace;
@@ -58,6 +62,22 @@ class Expression extends AbstractExpression
         $this->setParameters($parameters);
     }
 
+    /**
+     * Values are bound one by one, so each needs its own placeholder
+     */
+    private static function placeholderFor(?ArgumentInterface $parameter): string
+    {
+        if (! $parameter instanceof Values) {
+            return '%s';
+        }
+
+        $count = count($parameter->getValue());
+
+        return $count > 0
+            ? implode(', ', array_fill(0, count: $count, value: '%s'))
+            : 'NULL';
+    }
+
     public function getExpression(): string
     {
         return $this->expression;
@@ -81,13 +101,16 @@ class Expression extends AbstractExpression
             ];
         }
 
-        // assign locally, escaping % signs
-        $count         = 0;
-        $specification = str_replace(self::PLACEHOLDER, replace: '%s', subject: $specification, count: $count);
+        $segments      = explode(self::PLACEHOLDER, $specification);
+        $specification = array_shift($segments);
+
+        foreach ($segments as $index => $segment) {
+            $specification .= self::placeholderFor($parameters[$index] ?? null) . $segment;
+        }
 
         // test number of replacements without considering same variable begin used many times first, which is
         // faster, if the test fails then resort to regex which are slow and used rarely
-        if ($count !== $parametersCount) {
+        if (count($segments) !== $parametersCount) {
             $matches = [];
             preg_match_all('/:\w*/', $specification, $matches);
             if (count(array_unique($matches[0])) !== $parametersCount) {
