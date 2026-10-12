@@ -6,6 +6,7 @@ namespace PhpDb\Sql\Ddl;
 
 use PhpDb\Adapter\Platform\PlatformInterface;
 use PhpDb\Sql\AbstractSql;
+use PhpDb\Sql\Exception\RuntimeException;
 use PhpDb\Sql\Literal;
 use PhpDb\Sql\TableIdentifier;
 
@@ -214,7 +215,7 @@ class AlterTable extends AbstractSql
 
     /**
      * @return array{0: list<string>}
-     * @throws \PhpDb\Sql\Exception\RuntimeException
+     * @throws RuntimeException
      */
     protected function processAddColumns(PlatformInterface $adapterPlatform): array
     {
@@ -223,7 +224,7 @@ class AlterTable extends AbstractSql
 
     /**
      * @return array{0: list<string>}
-     * @throws \PhpDb\Sql\Exception\RuntimeException
+     * @throws RuntimeException
      */
     protected function processAddConstraints(PlatformInterface $adapterPlatform): array
     {
@@ -232,7 +233,7 @@ class AlterTable extends AbstractSql
 
     /**
      * @return array{0: list<array{0: string, 1: string}>}
-     * @throws \PhpDb\Sql\Exception\RuntimeException
+     * @throws RuntimeException
      */
     protected function processChangeColumns(PlatformInterface $adapterPlatform): array
     {
@@ -273,7 +274,7 @@ class AlterTable extends AbstractSql
 
     /**
      * @return string[]
-     * @throws \PhpDb\Sql\Exception\RuntimeException
+     * @throws RuntimeException
      */
     protected function processTable(PlatformInterface $adapterPlatform): array
     {
