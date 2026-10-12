@@ -53,7 +53,7 @@ abstract class AbstractPdo implements PdoDriverInterface, ProfilerAwareInterface
     /**
      * todo: this needs improved
      *
-     * @param PDOStatement|string $sqlOrResource
+     * @param PDOStatement|resource|string|null $sqlOrResource A non-PDO resource is ignored, as with null
      */
     #[Override]
     public function createStatement($sqlOrResource = null): StatementInterface
