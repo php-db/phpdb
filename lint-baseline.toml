@@ -74,12 +74,6 @@ count = 1
 
 [[issues]]
 file = "src/Adapter/Driver/Pdo/Statement.php"
-code = "kan-defect"
-message = "Class has a high kan defect score."
-count = 1
-
-[[issues]]
-file = "src/Adapter/Driver/Pdo/Statement.php"
 code = "literal-named-argument"
 message = "Literal argument `':'` should be passed as a named argument for clarity."
 count = 1
