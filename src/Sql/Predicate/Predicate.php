@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace PhpDb\Sql\Predicate;
 
 use PhpDb\Sql\ArgumentInterface;
+use PhpDb\Sql\Expression as SqlExpression;
 use PhpDb\Sql\ExpressionInterface;
 use PhpDb\Sql\Predicate\Exception\InvalidArgumentException;
 use PhpDb\Sql\Predicate\Exception\RuntimeException;
@@ -15,7 +16,7 @@ use function strtolower;
 /**
  * @api
  *
- * @psalm-import-type ExpressionParameter from \PhpDb\Sql\Expression
+ * @psalm-import-type ExpressionParameter from SqlExpression
  *
  * @property Predicate $and
  * @property Predicate $or
