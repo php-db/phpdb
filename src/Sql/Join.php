@@ -18,6 +18,8 @@ use function is_string;
 use function key;
 
 /**
+ * @api
+ *
  * Aggregate JOIN specifications.
  * Each specification is an array with the following keys:
  * - name: the JOIN name
@@ -77,13 +79,13 @@ class Join implements Iterator, Countable
     /**
      * Return current join specification.
      *
-     * @return JoinSpecification
+     * @return JoinSpecification|null Null once iteration has passed the last join
      */
     #[Override]
     #[ReturnTypeWillChange]
-    public function current(): array
+    public function current(): ?array
     {
-        return $this->joins[$this->position];
+        return $this->joins[$this->position] ?? null;
     }
 
     /** @return list<JoinSpecification> */

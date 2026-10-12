@@ -56,6 +56,16 @@ class JoinTest extends TestCase
     }
 
     #[Test]
+    public function currentReturnsNullPastTheLastJoin(): void
+    {
+        $join = new Join();
+        $join->join('foo', 'a = b');
+        $join->next();
+
+        static::assertNull($join->current());
+    }
+
+    #[Test]
     public function currentReturnsTheCurrentJoinSpecification(): void
     {
         $name = 'baz';

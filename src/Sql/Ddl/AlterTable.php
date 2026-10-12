@@ -6,7 +6,7 @@ namespace PhpDb\Sql\Ddl;
 
 use PhpDb\Adapter\Platform\PlatformInterface;
 use PhpDb\Sql\AbstractSql;
-use PhpDb\Sql\ExpressionInterface;
+use PhpDb\Sql\Exception\RuntimeException;
 use PhpDb\Sql\Literal;
 use PhpDb\Sql\TableIdentifier;
 
@@ -215,28 +215,25 @@ class AlterTable extends AbstractSql
 
     /**
      * @return array{0: list<string>}
+     * @throws RuntimeException
      */
     protected function processAddColumns(PlatformInterface $adapterPlatform): array
     {
-        return [array_map(
-            fn(ExpressionInterface $column): string => $this->processExpression($column, $adapterPlatform),
-            $this->addColumns,
-        )];
+        return [$this->processExpressionList($this->addColumns, $adapterPlatform)];
     }
 
     /**
      * @return array{0: list<string>}
+     * @throws RuntimeException
      */
     protected function processAddConstraints(PlatformInterface $adapterPlatform): array
     {
-        return [array_map(
-            fn(ExpressionInterface $constraint): string => $this->processExpression($constraint, $adapterPlatform),
-            $this->addConstraints,
-        )];
+        return [$this->processExpressionList($this->addConstraints, $adapterPlatform)];
     }
 
     /**
      * @return array{0: list<array{0: string, 1: string}>}
+     * @throws RuntimeException
      */
     protected function processChangeColumns(PlatformInterface $adapterPlatform): array
     {
@@ -275,7 +272,10 @@ class AlterTable extends AbstractSql
         return [array_map($adapterPlatform->quoteIdentifier(...), $this->dropIndexes)];
     }
 
-    /** @return string[] */
+    /**
+     * @return string[]
+     * @throws RuntimeException
+     */
     protected function processTable(PlatformInterface $adapterPlatform): array
     {
         return [$this->resolveTable($this->table, $adapterPlatform)];

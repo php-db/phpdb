@@ -19,6 +19,8 @@ use function preg_match_all;
 use function str_replace;
 
 /**
+ * @api
+ *
  * @psalm-type ExpressionParameter = bool|string|float|int|null|list<bool|string|float|int|null>|ExpressionInterface|ArgumentInterface
  */
 class Expression extends AbstractExpression
@@ -48,9 +50,9 @@ class Expression extends AbstractExpression
 
         if (func_num_args() > 2) {
             /**
-             * @deprecated
+             * Passing parameters as separate arguments is deprecated
              *
-             * @todo Make notes in documentation
+             * @var list<ExpressionParameter> $parameters
              */
             $parameters = array_slice(func_get_args(), offset: 1);
         }
@@ -90,7 +92,7 @@ class Expression extends AbstractExpression
         if ($count !== $parametersCount) {
             $matches = [];
             preg_match_all('/:\w*/', $specification, $matches);
-            if (count(array_unique($matches[0])) !== $parametersCount) {
+            if (count(array_unique($matches[0] ?? [])) !== $parametersCount) {
                 throw Exception\RuntimeException::forReplacementMismatch();
             }
         }

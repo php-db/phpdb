@@ -29,11 +29,14 @@ use function strtoupper;
 use function vsprintf;
 
 /**
+ * @api
+ *
  * @psalm-type ParameterSpecification = array<int|string, string>|null
  * @psalm-type Specification = string|array<string, list<ParameterSpecification>>
  * @psalm-type SqlParameters = array<array-key, string|array<array-key, string|array<array-key, string>>>
+ * @psalm-type ColumnValue = Select|ExpressionInterface|string|int|float|bool|null
  * @psalm-type ColumnReference = array{
- *     column: Select|string|int|bool|ExpressionInterface|null,
+ *     column: ColumnValue,
  *     fromTable?: string,
  *     isIdentifier?: bool,
  * }
@@ -62,6 +65,8 @@ abstract class AbstractSql implements SqlInterface
 
     /**
      * {@inheritDoc}
+     *
+     * @throws Exception\RuntimeException
      */
     #[Override]
     public function getSqlString(?PlatformInterface $adapterPlatform = null): string
@@ -71,6 +76,9 @@ abstract class AbstractSql implements SqlInterface
         return $this->buildSqlString($adapterPlatform);
     }
 
+    /**
+     * @throws Exception\RuntimeException
+     */
     protected function buildSqlString(
         PlatformInterface $platform,
         ?DriverInterface $driver = null,
@@ -109,62 +117,17 @@ abstract class AbstractSql implements SqlInterface
     protected function createSqlFromSpecificationAndParameters(array|string $specifications, array $parameters): string
     {
         if (is_string($specifications)) {
-            return vsprintf($specifications, $parameters);
+            return vsprintf($specifications, $this->flattenParameterList($parameters));
         }
 
-        $parametersCount     = count($parameters);
-        $specificationString = null;
-        $paramSpecs          = [];
-
-        foreach ($specifications as $candidateString => $paramSpecs) {
-            if (count($paramSpecs) !== $parametersCount) {
-                continue;
-            }
-
-            $specificationString = (string) $candidateString;
-            break;
-        }
-
-        if (null === $specificationString) {
-            throw Exception\RuntimeException::forUnsupportedParameterCount();
-        }
+        [$format, $parameterSpecifications] = $this->matchSpecification($specifications, count($parameters));
 
         $topParameters = [];
-        foreach ($parameters as $position => $paramsForPosition) {
-            if (null !== ($paramSpecs[$position]['combinedby'] ?? null)) {
-                $multiParamValues = [];
-                foreach ($paramsForPosition as $multiParamsForPosition) {
-                    if (! is_array($multiParamsForPosition)) {
-                        $multiParamsForPosition = [$multiParamsForPosition];
-                    }
-
-                    $ppCount = count($multiParamsForPosition);
-
-                    if (null === ($paramSpecs[$position][$ppCount] ?? null)) {
-                        throw Exception\RuntimeException::forUnsupportedParameterCountOf($ppCount);
-                    }
-
-                    $multiParamValues[] = vsprintf($paramSpecs[$position][$ppCount], $multiParamsForPosition);
-                }
-
-                $topParameters[] = implode($paramSpecs[$position]['combinedby'], $multiParamValues);
-                continue;
-            }
-
-            if (null === $paramSpecs[$position]) {
-                $topParameters[] = $paramsForPosition;
-                continue;
-            }
-
-            $ppCount = count($paramsForPosition);
-            if (null === ($paramSpecs[$position][$ppCount] ?? null)) {
-                throw Exception\RuntimeException::forUnsupportedParameterCountOf($ppCount);
-            }
-
-            $topParameters[] = vsprintf($paramSpecs[$position][$ppCount], $paramsForPosition);
+        foreach ($parameters as $position => $parameter) {
+            $topParameters[] = $this->renderParameter($parameterSpecifications[$position] ?? null, $parameter);
         }
 
-        return vsprintf($specificationString, $topParameters);
+        return vsprintf($format, $topParameters);
     }
 
     /**
@@ -204,9 +167,31 @@ abstract class AbstractSql implements SqlInterface
         return $values;
     }
 
+    /**
+     * Substitute values into the numbered placeholders of a string specification
+     *
+     * @throws Exception\RuntimeException When the named specification is not a format string.
+     */
+    protected function formatSpecification(string $name, string ...$values): string
+    {
+        $specification = $this->specifications[$name] ?? null;
+
+        if (! is_string($specification)) {
+            throw Exception\RuntimeException::forStringSpecificationRequired($name);
+        }
+
+        $placeholders = [];
+        $position     = 0;
+        foreach ($values as $_) {
+            $placeholders[] = '%' . ++$position . '$s';
+        }
+
+        return str_replace($placeholders, $values, $specification);
+    }
+
     protected function localizeVariables(): void
     {
-        if (! $this instanceof PlatformDecoratorInterface) {
+        if (! $this instanceof PlatformDecoratorInterface || null === $this->subject) {
             return;
         }
 
@@ -217,6 +202,7 @@ abstract class AbstractSql implements SqlInterface
 
     /**
      * @staticvar int $runtimeExpressionPrefix
+     * @throws Exception\RuntimeException
      */
     protected function processExpression(
         ExpressionInterface $expression,
@@ -252,14 +238,15 @@ abstract class AbstractSql implements SqlInterface
         foreach ($expressionValues as $vIndex => $argument) {
             $values[] = match (true) {
                 $argument instanceof Value => $parameterContainer instanceof ParameterContainer
-                    ? $this->processExpressionParameterName(
-                        $argument->getValue(),
-                        $namedParameterPrefix,
-                        $expressionParamIndex,
-                        $driver,
-                        $parameterContainer,
-                    )
-                    : $platform->quoteValue((string) $argument->getValue()),
+                    && $driver instanceof DriverInterface
+                        ? $this->processExpressionParameterName(
+                            $argument->getValue(),
+                            $namedParameterPrefix,
+                            $expressionParamIndex,
+                            $driver,
+                            $parameterContainer,
+                        )
+                        : $platform->quoteValue((string) $argument->getValue()),
                 $argument instanceof Identifier => $platform->quoteIdentifierInFragment($argument->getValue()),
                 $argument instanceof Literal => $argument->getValue(),
                 $argument instanceof Identifiers => $this->processIdentifiersArgument($argument, $platform),
@@ -278,6 +265,26 @@ abstract class AbstractSql implements SqlInterface
         return vsprintf($specification, $values);
     }
 
+    /**
+     * Render each expression in a list against the platform
+     *
+     * @param array<array-key, ExpressionInterface> $expressions
+     * @return list<string>
+     * @throws Exception\RuntimeException
+     */
+    protected function processExpressionList(array $expressions, PlatformInterface $platform): array
+    {
+        $sqls = [];
+        foreach ($expressions as $expression) {
+            $sqls[] = $this->processExpression($expression, $platform);
+        }
+
+        return $sqls;
+    }
+
+    /**
+     * @throws Exception\RuntimeException
+     */
     protected function processExpressionOrSelect(
         ArgumentInterface $argument,
         string $namedParameterPrefix,
@@ -302,12 +309,12 @@ abstract class AbstractSql implements SqlInterface
     }
 
     protected function processExpressionParameterName(
-        int|float|string|bool $value,
+        int|float|string|bool|null $value,
         string $namedParameterPrefix,
         int &$expressionParamIndex,
         DriverInterface $driver,
         ParameterContainer $parameterContainer,
-    ): ?string {
+    ): string {
         $name = $namedParameterPrefix . $expressionParamIndex++;
         $parameterContainer->offsetSet($name, $value);
 
@@ -331,6 +338,7 @@ abstract class AbstractSql implements SqlInterface
 
     /**
      * @return null|array{0: array<int, list<string>>} Null if no joins present, array of JOIN statements otherwise
+     * @throws Exception\RuntimeException
      */
     protected function processJoin(
         ?Join $joins,
@@ -344,13 +352,12 @@ abstract class AbstractSql implements SqlInterface
 
         $joinSpecArgArray = [];
         foreach ($joins->getJoins() as $j => $join) {
-            $joinAs        = null;
-            $joinNameValue = $join['name'];
-            $joinName      = $joinNameValue;
-            if (is_array($joinNameValue)) {
-                $alias    = array_key_first($joinNameValue);
-                $joinName = $joinNameValue[$alias];
+            $joinAs   = null;
+            $joinName = $join['name'];
+            if (is_array($joinName)) {
+                $alias    = array_key_first($joinName);
                 $joinAs   = $platform->quoteIdentifier($alias);
+                $joinName = $joinName[$alias] ?? '';
             }
 
             $joinName = match (true) {
@@ -387,6 +394,9 @@ abstract class AbstractSql implements SqlInterface
         return [$joinSpecArgArray];
     }
 
+    /**
+     * @throws Exception\RuntimeException
+     */
     protected function processSubSelect(
         Select $subselect,
         PlatformInterface $platform,
@@ -425,10 +435,11 @@ abstract class AbstractSql implements SqlInterface
     }
 
     /**
-     * @param ColumnReference|Select|string|int|bool|ExpressionInterface|null $column
+     * @param ColumnReference|ColumnValue $column
+     * @throws Exception\RuntimeException
      */
     protected function resolveColumnValue(
-        Select|array|string|int|bool|ExpressionInterface|null $column,
+        Select|array|string|int|float|bool|ExpressionInterface|null $column,
         PlatformInterface $platform,
         ?DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null,
@@ -458,16 +469,20 @@ abstract class AbstractSql implements SqlInterface
         }
 
         return $isIdentifier
-            ? $fromTable . $platform->quoteIdentifierInFragment($column)
+            ? $fromTable . $platform->quoteIdentifierInFragment((string) $column)
             : $platform->quoteValue((string) $column);
     }
 
+    /**
+     * @return ($table is null ? null : string)
+     * @throws Exception\RuntimeException
+     */
     protected function resolveTable(
         Select|string|TableIdentifier|null $table,
         PlatformInterface $platform,
         ?DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null,
-    ): string|array|null {
+    ): ?string {
         $schema = null;
         if ($table instanceof TableIdentifier) {
             [$table, $schema] = $table->getTableAndSchema();
@@ -490,6 +505,56 @@ abstract class AbstractSql implements SqlInterface
         return $table;
     }
 
+    /**
+     * @param array<array-key, string|array<array-key, mixed>> $values
+     * @return list<string>
+     * @throws Exception\RuntimeException When a value is a nested list rather than a string.
+     */
+    private function flattenParameterList(array $values): array
+    {
+        $strings = [];
+        foreach ($values as $value) {
+            if (! is_string($value)) {
+                throw Exception\RuntimeException::forUnsupportedParameterCountOf(count($value));
+            }
+
+            $strings[] = $value;
+        }
+
+        return $strings;
+    }
+
+    /**
+     * @param array<int|string, string> $parameterSpecification
+     * @param array<array-key, string|array<array-key, mixed>> $values
+     * @throws Exception\RuntimeException When no format accepts the number of values.
+     */
+    private function formatParameterList(array $parameterSpecification, array $values): string
+    {
+        $count  = count($values);
+        $format = $parameterSpecification[$count] ?? throw Exception\RuntimeException::forUnsupportedParameterCountOf(
+                $count,
+            );
+
+        return vsprintf($format, $this->flattenParameterList($values));
+    }
+
+    /**
+     * @param array<string, list<ParameterSpecification>> $specifications
+     * @return array{string, list<ParameterSpecification>}
+     * @throws Exception\RuntimeException When no specification takes the number of parameters given.
+     */
+    private function matchSpecification(array $specifications, int $parameterCount): array
+    {
+        foreach ($specifications as $format => $parameterSpecifications) {
+            if (count($parameterSpecifications) === $parameterCount) {
+                return [$format, $parameterSpecifications];
+            }
+        }
+
+        throw Exception\RuntimeException::forUnsupportedParameterCount();
+    }
+
     private function quoteJoinTableIdentifier(TableIdentifier $identifier, PlatformInterface $platform): string
     {
         [$table, $schema] = $identifier->getTableAndSchema();
@@ -498,5 +563,31 @@ abstract class AbstractSql implements SqlInterface
             ($schema ? $platform->quoteIdentifier($schema) . $platform->getIdentifierSeparator() : '')
                 . $platform->quoteIdentifier($table)
         );
+    }
+
+    /**
+     * @param ParameterSpecification $parameterSpecification
+     * @param string|array<array-key, string|array<array-key, string>> $parameter
+     * @throws Exception\RuntimeException
+     */
+    private function renderParameter(?array $parameterSpecification, string|array $parameter): string
+    {
+        if (null === $parameterSpecification) {
+            return is_string($parameter)
+                ? $parameter
+                : throw Exception\RuntimeException::forUnsupportedParameterCountOf(count($parameter));
+        }
+
+        $combinedBy = $parameterSpecification['combinedby'] ?? null;
+        if (null === $combinedBy) {
+            return $this->formatParameterList($parameterSpecification, (array) $parameter);
+        }
+
+        $rendered = [];
+        foreach ((array) $parameter as $values) {
+            $rendered[] = $this->formatParameterList($parameterSpecification, (array) $values);
+        }
+
+        return implode($combinedBy, $rendered);
     }
 }

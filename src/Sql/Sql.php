@@ -7,6 +7,9 @@ namespace PhpDb\Sql;
 use PhpDb\Adapter\AdapterInterface;
 use PhpDb\Adapter\Driver\StatementInterface;
 
+/**
+ * @api
+ */
 class Sql
 {
     protected AdapterInterface $adapter;
@@ -28,6 +31,7 @@ class Sql
 
     /**
      * @throws Exception\InvalidArgumentException
+     * @throws Exception\RuntimeException
      */
     public function buildSqlString(SqlInterface $sqlObject, ?AdapterInterface $adapter = null): string
     {
@@ -51,12 +55,12 @@ class Sql
         return new Delete($table ?? $this->table);
     }
 
-    public function getAdapter(): ?AdapterInterface
+    public function getAdapter(): AdapterInterface
     {
         return $this->adapter;
     }
 
-    public function getSqlPlatform(): ?Platform\PlatformDecoratorInterface
+    public function getSqlPlatform(): Platform\PlatformDecoratorInterface
     {
         return $this->sqlPlatform;
     }
@@ -81,6 +85,9 @@ class Sql
         return new Insert($table ?? $this->table);
     }
 
+    /**
+     * @throws Exception\RuntimeException
+     */
     public function prepareStatementForSqlObject(
         PreparableSqlInterface $sqlObject,
         ?StatementInterface $statement = null,

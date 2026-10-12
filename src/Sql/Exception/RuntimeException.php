@@ -14,6 +14,8 @@ class RuntimeException extends Exception\RuntimeException
         'The number of replacements in the expression'
             . ' does not match the number of parameters';
 
+    final public const string STRING_SPECIFICATION_REQUIRED = 'Specification "%s" must be a format string';
+
     final public const string SUBJECT_NOT_IMPLEMENTING =
         'The subject does not appear to implement %s,'
             . ' thus calling %s has no effect';
@@ -35,6 +37,11 @@ class RuntimeException extends Exception\RuntimeException
     public static function forReplacementMismatch(): self
     {
         return new self(self::REPLACEMENT_MISMATCH);
+    }
+
+    public static function forStringSpecificationRequired(string $name): self
+    {
+        return new self(sprintf(self::STRING_SPECIFICATION_REQUIRED, $name));
     }
 
     public static function forSubjectNotImplementing(string $interface, string $method): self

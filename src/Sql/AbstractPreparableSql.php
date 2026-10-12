@@ -12,8 +12,14 @@ use PhpDb\Adapter\StatementContainerInterface;
 use function array_values;
 use function is_array;
 
+/**
+ * @api
+ */
 abstract class AbstractPreparableSql extends AbstractSql implements PreparableSqlInterface
 {
+    /**
+     * @throws Exception\RuntimeException
+     */
     #[Override]
     public function prepareStatement(
         AdapterInterface $adapter,
