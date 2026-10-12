@@ -11,12 +11,14 @@ use PhpDb\Adapter\Platform\PlatformInterface;
 use PhpDb\Sql\Predicate\PredicateInterface;
 
 use function array_key_exists;
-use function str_replace;
 use function strtolower;
 
 /**
- * @property Where $where
+ * @api
+ *
+ * @property ?Where $where
  * @psalm-import-type Specification from AbstractSql
+ * @psalm-import-type PredicateValue from Predicate\PredicateSet
  */
 class Delete extends AbstractPreparableSql
 {
@@ -26,8 +28,6 @@ class Delete extends AbstractPreparableSql
     public const string SPECIFICATION_DELETE = 'delete';
 
     final public const string SPECIFICATION_WHERE = 'where';
-
-    /** @#- */
 
     /** @var array<string, Specification> */
     protected array $specifications = [
@@ -79,7 +79,7 @@ class Delete extends AbstractPreparableSql
     /**
      * Create where clause
      *
-     * @param PredicateInterface|array<array-key, mixed>|Closure|string|Where $predicate
+     * @param PredicateInterface|array<array-key, PredicateValue>|Closure|string|Where $predicate
      * @param string $combination One of the OP_* constants from Predicate\PredicateSet
      */
     public function where(
@@ -97,18 +97,23 @@ class Delete extends AbstractPreparableSql
         return $this;
     }
 
+    /**
+     * @throws Exception\RuntimeException
+     */
     protected function processDelete(
         PlatformInterface $platform,
         ?DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null,
     ): string {
-        return str_replace(
-            '%1$s',
+        return $this->formatSpecification(
+            static::SPECIFICATION_DELETE,
             $this->resolveTable($this->unaliasTable($this->table), $platform, $driver, $parameterContainer),
-            $this->specifications[static::SPECIFICATION_DELETE],
         );
     }
 
+    /**
+     * @throws Exception\RuntimeException
+     */
     protected function processWhere(
         PlatformInterface $platform,
         ?DriverInterface $driver = null,
@@ -118,10 +123,9 @@ class Delete extends AbstractPreparableSql
             return null;
         }
 
-        return str_replace(
-            '%1$s',
+        return $this->formatSpecification(
+            static::SPECIFICATION_WHERE,
             $this->processExpression($this->where, $platform, $driver, $parameterContainer, 'where'),
-            $this->specifications[static::SPECIFICATION_WHERE],
         );
     }
 

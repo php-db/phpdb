@@ -6,9 +6,12 @@ namespace PhpDb\Sql\Ddl;
 
 use PhpDb\Adapter\Platform\PlatformInterface;
 use PhpDb\Sql\AbstractSql;
+use PhpDb\Sql\Exception\RuntimeException;
 use PhpDb\Sql\TableIdentifier;
 
 /**
+ * @api
+ *
  * @psalm-import-type Specification from AbstractSql
  */
 class DropTable extends AbstractSql
@@ -40,8 +43,11 @@ class DropTable extends AbstractSql
         return $this;
     }
 
-    /** @return string[] */
-    protected function processTable(?PlatformInterface $adapterPlatform = null): array
+    /**
+     * @return string[]
+     * @throws RuntimeException
+     */
+    protected function processTable(PlatformInterface $adapterPlatform): array
     {
         return [
             $this->ifExists ? 'IF EXISTS ' : '',

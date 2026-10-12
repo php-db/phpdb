@@ -6,6 +6,7 @@ namespace PhpDb\Sql\Ddl;
 
 use PhpDb\Adapter\Platform\PlatformInterface;
 use PhpDb\Sql\AbstractSql;
+use PhpDb\Sql\Exception\RuntimeException;
 use PhpDb\Sql\Literal;
 use PhpDb\Sql\TableIdentifier;
 
@@ -16,7 +17,15 @@ use function is_int;
 use function strtoupper;
 
 /**
+ * @api
+ *
  * @psalm-import-type Specification from AbstractSql
+ * @psalm-type RawState = array{
+ *     columns: list<Column\ColumnInterface>,
+ *     constraints: list<Constraint\ConstraintInterface>,
+ *     table: string|TableIdentifier,
+ *     tableOptions: array<string, Literal|bool|int|string>,
+ * }
  */
 class CreateTable extends AbstractSql
 {
@@ -91,10 +100,9 @@ class CreateTable extends AbstractSql
     }
 
     /**
-     * @return ((Column\ColumnInterface|string)[]|Column\ColumnInterface|string)[]|string
-     * @psalm-return array<Column\ColumnInterface|array<Column\ColumnInterface|string>|string>|string
+     * @return RawState|value-of<RawState>
      */
-    public function getRawState(?string $key = null): array|string
+    public function getRawState(?string $key = null): array|string|TableIdentifier
     {
         $rawState = [
             self::COLUMNS       => $this->columns,
@@ -144,61 +152,51 @@ class CreateTable extends AbstractSql
 
     /**
      * @return string[][]|null
+     * @throws RuntimeException
      */
-    protected function processColumns(?PlatformInterface $adapterPlatform = null): ?array
+    protected function processColumns(PlatformInterface $adapterPlatform): ?array
     {
         if (! $this->columns) {
             return null;
         }
 
-        $sqls = [];
-
-        foreach ($this->columns as $column) {
-            $sqls[] = $this->processExpression($column, $adapterPlatform);
-        }
-
-        return [$sqls];
+        return [$this->processExpressionList($this->columns, $adapterPlatform)];
     }
 
-    protected function processCombinedby(?PlatformInterface $adapterPlatform = null): ?string
+    /**
+     * @return array{}|null
+     */
+    protected function processCombinedby(): ?array
     {
-        if ($this->constraints && $this->columns) {
-            return $this->specifications['combinedBy'];
-        }
-
-        return null;
+        return [] !== $this->constraints && [] !== $this->columns ? [] : null;
     }
 
     /**
      * @return string[][]|null
+     * @throws RuntimeException
      */
-    protected function processConstraints(?PlatformInterface $adapterPlatform = null): ?array
+    protected function processConstraints(PlatformInterface $adapterPlatform): ?array
     {
         if (! $this->constraints) {
             return null;
         }
 
-        $sqls = [];
-
-        foreach ($this->constraints as $constraint) {
-            $sqls[] = $this->processExpression($constraint, $adapterPlatform);
-        }
-
-        return [$sqls];
+        return [$this->processExpressionList($this->constraints, $adapterPlatform)];
     }
 
     /**
      * @return string[]
      */
-    protected function processStatementEnd(?PlatformInterface $adapterPlatform = null): array
+    protected function processStatementEnd(): array
     {
         return ["\n)"];
     }
 
     /**
      * @return string[]
+     * @throws RuntimeException
      */
-    protected function processTable(?PlatformInterface $adapterPlatform = null): array
+    protected function processTable(PlatformInterface $adapterPlatform): array
     {
         return [
             $this->isTemporary ? 'TEMPORARY ' : '',
@@ -210,7 +208,7 @@ class CreateTable extends AbstractSql
     /**
      * @return string[]|null
      */
-    protected function processTableOptions(?PlatformInterface $adapterPlatform = null): ?array
+    protected function processTableOptions(PlatformInterface $adapterPlatform): ?array
     {
         if (! $this->options) {
             return null;

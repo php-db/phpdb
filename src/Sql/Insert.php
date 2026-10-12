@@ -19,10 +19,12 @@ use function count;
 use function implode;
 use function is_scalar;
 use function range;
-use function str_replace;
 
 /**
+ * @api
+ *
  * @psalm-import-type Specification from AbstractSql
+ * @psalm-import-type ColumnValue from AbstractSql
  */
 class Insert extends AbstractPreparableSql
 {
@@ -48,9 +50,10 @@ class Insert extends AbstractPreparableSql
     /** @var TableIdentifier|string|array<string, string|TableIdentifier> */
     protected TableIdentifier|string|array $table = '';
 
-    /** @var array<array-key, mixed> */
+    /** @var array<array-key, ColumnValue> */
     protected array $columns = [];
 
+    /** @var Select|null */
     protected array|Select|null $select = null;
 
     /**
@@ -79,6 +82,12 @@ class Insert extends AbstractPreparableSql
 
     /**
      * Get raw state
+     *
+     * @return TableIdentifier|string|array<string, string|TableIdentifier>|list<array-key|ColumnValue>|array{
+     *     table: TableIdentifier|string|array<string, string|TableIdentifier>,
+     *     columns: list<array-key>,
+     *     values: list<ColumnValue>,
+     * }
      */
     public function getRawState(?string $key = null): TableIdentifier|string|array
     {
@@ -112,7 +121,7 @@ class Insert extends AbstractPreparableSql
     /**
      * Specify values to insert
      *
-     * @param array<array-key, mixed>|Select $values
+     * @param array<array-key, ColumnValue>|Select $values
      * @param string                        $flag one of VALUES_MERGE or VALUES_SET; defaults to VALUES_SET
      * @throws Exception\InvalidArgumentException
      */
@@ -146,6 +155,9 @@ class Insert extends AbstractPreparableSql
         return $this;
     }
 
+    /**
+     * @throws Exception\RuntimeException
+     */
     protected function processInsert(
         PlatformInterface $platform,
         ?DriverInterface $driver = null,
@@ -165,15 +177,15 @@ class Insert extends AbstractPreparableSql
         $isPdoDriver = $driver instanceof PdoDriverInterface;
 
         foreach ($this->columns as $column => $value) {
-            $columns[] = $platform->quoteIdentifier($column);
-            if (is_scalar($value) && $parameterContainer) {
+            $columns[] = $platform->quoteIdentifier((string) $column);
+            if (is_scalar($value) && $parameterContainer && $driver instanceof DriverInterface) {
                 // use incremental value instead of column name for PDO
                 // @see https://github.com/zendframework/zend-db/issues/35
                 if ($isPdoDriver) {
                     $column = 'c_' . $i++;
                 }
 
-                $values[] = $driver->formatParameterName($column);
+                $values[] = $driver->formatParameterName((string) $column);
                 $parameterContainer->offsetSet($column, $value);
                 continue;
             }
@@ -186,17 +198,17 @@ class Insert extends AbstractPreparableSql
             );
         }
 
-        return str_replace(
-            ['%1$s', '%2$s', '%3$s'],
-            [
-                $this->resolveTable($this->unaliasTable($this->table), $platform, $driver, $parameterContainer),
-                implode(', ', $columns),
-                implode(', ', $values),
-            ],
-            $this->specifications[static::SPECIFICATION_INSERT],
+        return $this->formatSpecification(
+            static::SPECIFICATION_INSERT,
+            $this->resolveTable($this->unaliasTable($this->table), $platform, $driver, $parameterContainer),
+            implode(', ', $columns),
+            implode(', ', $values),
         );
     }
 
+    /**
+     * @throws Exception\RuntimeException
+     */
     protected function processSelect(
         PlatformInterface $platform,
         ?DriverInterface $driver = null,
@@ -208,17 +220,16 @@ class Insert extends AbstractPreparableSql
 
         $selectSql = $this->processSubSelect($this->select, $platform, $driver, $parameterContainer);
 
-        $columns = array_map([$platform, 'quoteIdentifier'], array_keys($this->columns));
-        $columns = implode(', ', $columns);
+        $columns = implode(', ', array_map(
+            static fn(int|string $column): string => $platform->quoteIdentifier((string) $column),
+            array_keys($this->columns),
+        ));
 
-        return str_replace(
-            ['%1$s', '%2$s', '%3$s'],
-            [
-                $this->resolveTable($this->unaliasTable($this->table), $platform, $driver, $parameterContainer),
-                $columns ? "({$columns})" : '',
-                $selectSql,
-            ],
-            $this->specifications[static::SPECIFICATION_SELECT],
+        return $this->formatSpecification(
+            static::SPECIFICATION_SELECT,
+            $this->resolveTable($this->unaliasTable($this->table), $platform, $driver, $parameterContainer),
+            $columns ? "({$columns})" : '',
+            $selectSql,
         );
     }
 
@@ -237,8 +248,8 @@ class Insert extends AbstractPreparableSql
      * Overloading: variable retrieval
      * Retrieves value by column name
      *
+     * @return ColumnValue
      * @throws Exception\InvalidArgumentException
-     * @return string
      */
     public function __get(string $name): mixed
     {
@@ -265,6 +276,8 @@ class Insert extends AbstractPreparableSql
      * Overloading: variable setting
      *
      * Proxies to values, using VALUES_MERGE strategy
+     *
+     * @param ColumnValue $value
      */
     public function __set(string $name, mixed $value): void
     {

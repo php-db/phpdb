@@ -15,6 +15,9 @@ use function is_string;
 use function strlen;
 use function substr;
 
+/**
+ * @api
+ */
 class Integer extends Column
 {
     /**

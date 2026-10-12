@@ -17,6 +17,7 @@ use function sprintf;
 
 #[Group('unit')]
 #[CoversMethod(RuntimeException::class, 'forReplacementMismatch')]
+#[CoversMethod(RuntimeException::class, 'forStringSpecificationRequired')]
 #[CoversMethod(RuntimeException::class, 'forSubjectNotImplementing')]
 #[CoversMethod(RuntimeException::class, 'forSubjectNotPreparableSqlInterface')]
 #[CoversMethod(RuntimeException::class, 'forSubjectNotSqlInterface')]
@@ -32,6 +33,11 @@ final class RuntimeExceptionTest extends TestCase
                 'forReplacementMismatch',
                 [],
                 RuntimeException::REPLACEMENT_MISMATCH,
+            ],
+            'string specification required'        => [
+                'forStringSpecificationRequired',
+                ['delete'],
+                RuntimeException::STRING_SPECIFICATION_REQUIRED,
             ],
             'subject not implementing'             => [
                 'forSubjectNotImplementing',

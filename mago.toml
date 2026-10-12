@@ -15,8 +15,36 @@ baseline = "lint-baseline.toml"
 # Exception classes are message catalogues: one template and one named constructor per
 # condition, per the convention in docs/book/exceptions.md. The method count tracks the
 # number of distinct failures a component can report, so the maintainability signal does
-# not apply. "test/" repeats the phpdb-qa-tools default, which this key replaces.
-too-many-methods = { exclude = ["test/", "src/Sql/Exception/", "src/TableGateway/Exception/", "src/Adapter/Exception/"] }
+# not apply. Predicate, AlterTable, CreateTable, Select, Insert and Update are fluent builders:
+# one public method per clause they can emit, so their method count is the size of their
+# public API. AbstractSql is their base and carries one protected hook per clause it renders.
+# "test/" repeats the phpdb-qa-tools default, which this key replaces.
+too-many-methods = { exclude = [
+    "test/",
+    "src/Sql/Exception/",
+    "src/Sql/Predicate/Exception/",
+    "src/TableGateway/Exception/",
+    "src/Adapter/Exception/",
+    "src/Sql/Predicate/Predicate.php",
+    "src/Sql/Ddl/AlterTable.php",
+    "src/Sql/Ddl/CreateTable.php",
+    "src/Sql/AbstractSql.php",
+    "src/Sql/Select.php",
+    "src/Sql/Insert.php",
+    "src/Sql/Update.php",
+] }
+
+# Select holds one property per clause of a SELECT statement.
+too-many-properties = { exclude = ["src/Sql/Select.php"] }
+
+# These constructors take one argument per part of the SQL definition they model
+# (a foreign key's name, columns, reference table, reference columns and two rules; a
+# column's name, digits, scale, nullability, default and options). They are public API, so
+# the list cannot be shortened without breaking callers.
+excessive-parameter-list = { exclude = [
+    "src/Sql/Ddl/Constraint/ForeignKey.php",
+    "src/Sql/Ddl/Column/AbstractPrecisionColumn.php",
+] }
 
 # The capability interfaces return `ResultSetInterface&<themselves>`, and PHP rejects
 # `self` as part of an intersection type, so this rule's advice cannot be taken there.
@@ -28,6 +56,11 @@ prefer-self-return-type = { exclude = [
 
 [analyzer]
 baseline = "analyzer-baseline.toml"
+# ArgumentType is string-backed and each case's value is a ::class constant, which PHP accepts
+# as a string. The analyzer reports the class-string type as not being a string.
+ignore = [
+    { code = "invalid-enum-case-value", in = ["src/Sql/ArgumentType.php"] },
+]
 class-initializers = [
     "PhpDb\\ResultSet\\AbstractResultSet::initialize",
     "PhpDb\\TableGateway\\Feature\\AbstractFeature::setTableGateway",

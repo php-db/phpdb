@@ -6,6 +6,9 @@ namespace PhpDb\Sql;
 
 use PhpDb\Adapter\Platform\PlatformInterface;
 
+/**
+ * @api
+ */
 interface SqlInterface
 {
     /**

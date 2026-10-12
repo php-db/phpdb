@@ -6,6 +6,9 @@ namespace PhpDb\Sql\Ddl\Constraint;
 
 use PhpDb\Sql\ExpressionInterface;
 
+/**
+ * @api
+ */
 interface ConstraintInterface extends ExpressionInterface
 {
     /** @return list<string> */

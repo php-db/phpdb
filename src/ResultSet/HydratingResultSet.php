@@ -6,6 +6,7 @@ namespace PhpDb\ResultSet;
 
 use ArrayObject;
 use Laminas\Hydrator\ArraySerializableHydrator;
+use Laminas\Hydrator\Exception\RuntimeException as HydratorRuntimeException;
 use Laminas\Hydrator\HydratorInterface;
 use Override;
 use PhpDb\ResultSet\Exception\RuntimeException;
@@ -119,7 +120,7 @@ class HydratingResultSet extends AbstractResultSet implements HydratingResultSet
      * Hydrate one row onto a clone of the prototype.
      *
      * @throws Exception\UnexpectedValueException If the row is not row data.
-     * @throws \Laminas\Hydrator\Exception\RuntimeException If the hydrator cannot fill the prototype.
+     * @throws HydratorRuntimeException If the hydrator cannot fill the prototype.
      */
     #[Override]
     protected function mapRow(mixed $row): object

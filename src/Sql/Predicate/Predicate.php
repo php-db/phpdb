@@ -5,18 +5,27 @@ declare(strict_types=1);
 namespace PhpDb\Sql\Predicate;
 
 use PhpDb\Sql\ArgumentInterface;
+use PhpDb\Sql\Expression as SqlExpression;
 use PhpDb\Sql\ExpressionInterface;
+use PhpDb\Sql\Predicate\Exception\InvalidArgumentException;
 use PhpDb\Sql\Predicate\Exception\RuntimeException;
 
+use function in_array;
+use function strtolower;
+
 /**
+ * @api
+ *
+ * @psalm-import-type ExpressionParameter from SqlExpression
+ *
  * @property Predicate $and
  * @property Predicate $or
  * @property Predicate $AND
  * @property Predicate $OR
  * @property Predicate $nest
- * @property Predicate $unnest
+ * @property ?Predicate $unnest
  * @property Predicate $NEST
- * @property Predicate $UNNEST
+ * @property ?Predicate $UNNEST
  */
 class Predicate extends PredicateSet
 {
@@ -62,6 +71,7 @@ class Predicate extends PredicateSet
     /**
      * Create an expression, with parameter placeholders
      *
+     * @param string|float|int|ArgumentInterface|ExpressionInterface|array<array-key, ExpressionParameter>|null $parameters
      * @return $this Provides a fluent interface
      */
     public function expression(
@@ -116,6 +126,7 @@ class Predicate extends PredicateSet
      * Create "IN" predicate
      * Utilizes In predicate
      *
+     * @param list<bool|string|float|int|null>|ArgumentInterface $valueSet
      * @return $this Provides a fluent interface
      */
     public function in(string|ArgumentInterface $identifier, array|ArgumentInterface $valueSet): static
@@ -280,6 +291,7 @@ class Predicate extends PredicateSet
      * Create "NOT IN" predicate
      * Utilizes NotIn predicate
      *
+     * @param list<bool|string|float|int|null>|ArgumentInterface $valueSet
      * @return $this Provides a fluent interface
      */
     public function notIn(string|ArgumentInterface $identifier, array|ArgumentInterface $valueSet): static
@@ -334,7 +346,6 @@ class Predicate extends PredicateSet
      */
     public function setUnnest(?Predicate $predicate = null): void
     {
-        /** @psalm-suppress PossiblyNullPropertyAssignmentValue */
         $this->unnest = $predicate;
     }
 
@@ -349,11 +360,10 @@ class Predicate extends PredicateSet
             throw RuntimeException::forNotNested();
         }
 
-        $unnest = $this->unnest;
-        /** @psalm-suppress PossiblyNullPropertyAssignmentValue */
+        $parent       = $this->unnest;
         $this->unnest = null;
 
-        return $unnest;
+        return $parent;
     }
 
     protected function getNextPredicateCombineOperator(): string
@@ -364,27 +374,30 @@ class Predicate extends PredicateSet
         return $operator;
     }
 
+    private function combineNextWith(string $operator): self
+    {
+        $this->nextPredicateCombineOperator = $operator;
+
+        return $this;
+    }
+
     /**
      * Overloading
-     * Overloads "or", "and", "nest", and "unnest"
+     * Overloads "or", "and", "nest" and "unnest", in lower or upper case
      *
      * @throws RuntimeException If "unnest" is accessed on a predicate that is not nested.
+     * @throws InvalidArgumentException If one of those names is given in mixed case.
      */
     public function __get(string $name): self
     {
-        switch ($name) {
-            case 'or':
-                $this->nextPredicateCombineOperator = self::OP_OR;
-                break;
-            case 'and':
-                $this->nextPredicateCombineOperator = self::OP_AND;
-                break;
-            case 'nest':
-                return $this->nest();
-            case 'unnest':
-                return $this->unnest();
-        }
-
-        return $this;
+        return match ($name) {
+            'or', 'OR'         => $this->combineNextWith(self::OP_OR),
+            'and', 'AND'       => $this->combineNextWith(self::OP_AND),
+            'nest', 'NEST'     => $this->nest(),
+            'unnest', 'UNNEST' => $this->unnest(),
+            default            => in_array(strtolower($name), ['or', 'and', 'nest', 'unnest'], strict: true)
+                ? throw InvalidArgumentException::forMixedCaseMagicProperty($name)
+                : $this,
+        };
     }
 }

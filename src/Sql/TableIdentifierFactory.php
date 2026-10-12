@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace PhpDb\Sql;
 
+use PhpDb\ConfigProvider;
+
 /**
  * Callable factory producing {@see TableIdentifier} instances with a
  * preconfigured table prefix and separator.
  *
- * Register via {@see \PhpDb\ConfigProvider} and configure the prefix once
+ * Register via {@see ConfigProvider} and configure the prefix once
  * (e.g. in application config) to have every identifier created through the
  * factory share the same prefix — convenient for creating backup_* tables
  * during a migration.

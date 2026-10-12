@@ -8,6 +8,9 @@ use Override;
 
 use function str_replace;
 
+/**
+ * @api
+ */
 class Literal implements ExpressionInterface
 {
     public function __construct(

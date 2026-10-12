@@ -6,16 +6,30 @@ namespace PhpDb\Sql\Ddl;
 
 use PhpDb\Adapter\Platform\PlatformInterface;
 use PhpDb\Sql\AbstractSql;
+use PhpDb\Sql\Exception\RuntimeException;
 use PhpDb\Sql\Literal;
 use PhpDb\Sql\TableIdentifier;
 
 use function array_key_exists;
+use function array_map;
 use function is_bool;
 use function is_int;
 use function strtoupper;
 
 /**
+ * @api
+ *
  * @psalm-import-type Specification from AbstractSql
+ * @psalm-type RawState = array{
+ *     table: string|TableIdentifier,
+ *     addColumns: list<Column\ColumnInterface>,
+ *     dropColumns: list<string>,
+ *     changeColumns: array<string, Column\ColumnInterface>,
+ *     addConstraints: list<Constraint\ConstraintInterface>,
+ *     dropConstraints: list<string>,
+ *     dropIndexes: list<string>,
+ *     tableOptions: array<string, Literal|bool|int|string>,
+ * }
  */
 class AlterTable extends AbstractSql
 {
@@ -160,7 +174,10 @@ class AlterTable extends AbstractSql
         return $this->options;
     }
 
-    public function getRawState(?string $key = null): array|string
+    /**
+     * @return RawState|value-of<RawState>
+     */
+    public function getRawState(?string $key = null): array|string|TableIdentifier
     {
         $rawState = [
             self::TABLE            => $this->table,
@@ -198,34 +215,27 @@ class AlterTable extends AbstractSql
 
     /**
      * @return array{0: list<string>}
+     * @throws RuntimeException
      */
-    protected function processAddColumns(?PlatformInterface $adapterPlatform = null): array
+    protected function processAddColumns(PlatformInterface $adapterPlatform): array
     {
-        $sqls = [];
-        foreach ($this->addColumns as $column) {
-            $sqls[] = $this->processExpression($column, $adapterPlatform);
-        }
-
-        return [$sqls];
+        return [$this->processExpressionList($this->addColumns, $adapterPlatform)];
     }
 
     /**
      * @return array{0: list<string>}
+     * @throws RuntimeException
      */
-    protected function processAddConstraints(?PlatformInterface $adapterPlatform = null): array
+    protected function processAddConstraints(PlatformInterface $adapterPlatform): array
     {
-        $sqls = [];
-        foreach ($this->addConstraints as $constraint) {
-            $sqls[] = $this->processExpression($constraint, $adapterPlatform);
-        }
-
-        return [$sqls];
+        return [$this->processExpressionList($this->addConstraints, $adapterPlatform)];
     }
 
     /**
      * @return array{0: list<array{0: string, 1: string}>}
+     * @throws RuntimeException
      */
-    protected function processChangeColumns(?PlatformInterface $adapterPlatform = null): array
+    protected function processChangeColumns(PlatformInterface $adapterPlatform): array
     {
         $sqls = [];
         foreach ($this->changeColumns as $name => $column) {
@@ -241,44 +251,32 @@ class AlterTable extends AbstractSql
     /**
      * @return array{0: list<string>}
      */
-    protected function processDropColumns(?PlatformInterface $adapterPlatform = null): array
+    protected function processDropColumns(PlatformInterface $adapterPlatform): array
     {
-        $sqls = [];
-        foreach ($this->dropColumns as $column) {
-            $sqls[] = $adapterPlatform->quoteIdentifier($column);
-        }
-
-        return [$sqls];
+        return [array_map($adapterPlatform->quoteIdentifier(...), $this->dropColumns)];
     }
 
     /**
      * @return array{0: list<string>}
      */
-    protected function processDropConstraints(?PlatformInterface $adapterPlatform = null): array
+    protected function processDropConstraints(PlatformInterface $adapterPlatform): array
     {
-        $sqls = [];
-        foreach ($this->dropConstraints as $constraint) {
-            $sqls[] = $adapterPlatform->quoteIdentifier($constraint);
-        }
-
-        return [$sqls];
+        return [array_map($adapterPlatform->quoteIdentifier(...), $this->dropConstraints)];
     }
 
     /**
      * @return array{0: list<string>}
      */
-    protected function processDropIndexes(?PlatformInterface $adapterPlatform = null): array
+    protected function processDropIndexes(PlatformInterface $adapterPlatform): array
     {
-        $sqls = [];
-        foreach ($this->dropIndexes as $index) {
-            $sqls[] = $adapterPlatform->quoteIdentifier($index);
-        }
-
-        return [$sqls];
+        return [array_map($adapterPlatform->quoteIdentifier(...), $this->dropIndexes)];
     }
 
-    /** @return string[] */
-    protected function processTable(?PlatformInterface $adapterPlatform = null): array
+    /**
+     * @return string[]
+     * @throws RuntimeException
+     */
+    protected function processTable(PlatformInterface $adapterPlatform): array
     {
         return [$this->resolveTable($this->table, $adapterPlatform)];
     }
@@ -286,7 +284,7 @@ class AlterTable extends AbstractSql
     /**
      * @return array{0: list<string>}|null
      */
-    protected function processTableOptions(?PlatformInterface $adapterPlatform = null): ?array
+    protected function processTableOptions(PlatformInterface $adapterPlatform): ?array
     {
         if (! $this->options) {
             return null;

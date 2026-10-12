@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace PhpDb\Sql;
 
+/**
+ * @api
+ */
 interface ArgumentInterface
 {
     public function getSpecification(): string;

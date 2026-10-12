@@ -15,8 +15,10 @@ use PhpDb\Sql\Predicate\Literal;
 use PhpDb\Sql\Predicate\Operator;
 use PhpDb\Sql\Predicate\PredicateInterface;
 use PhpDb\Sql\Predicate\PredicateSet;
+use PhpDb\Sql\Select;
 use PhpDbTest\DeprecatedAssertionsTrait;
 use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\IgnoreDeprecations;
 use PHPUnit\Framework\Attributes\RequiresPhp;
 use PHPUnit\Framework\Attributes\Test;
@@ -34,9 +36,24 @@ use TypeError;
 #[CoversMethod(PredicateSet::class, 'andPredicate')]
 #[CoversMethod(PredicateSet::class, 'getExpressionData')]
 #[CoversMethod(PredicateSet::class, 'count')]
+#[CoversMethod(PredicateSet::class, 'createColumnPredicate')]
+#[CoversMethod(PredicateSet::class, 'createListPredicate')]
 final class PredicateSetTest extends TestCase
 {
     use DeprecatedAssertionsTrait;
+
+    /**
+     * @return array<string, array{mixed}>
+     */
+    public static function invalidListPredicateProvider(): array
+    {
+        return [
+            'integer' => [1],
+            'null'    => [null],
+            'boolean' => [true],
+            'list'    => [[1, 2]],
+        ];
+    }
 
     /**
      * @throws ReflectionException
@@ -92,6 +109,38 @@ final class PredicateSetTest extends TestCase
         self::expectException(TypeError::class);
         /** @noinspection PhpStrictTypeCheckingInspection */
         $predicateSet->addPredicates(null);
+    }
+
+    #[Test]
+    public function addPredicatesBuildsPredicateExpressionForPlaceholderStringWithoutKey(): void
+    {
+        $predicateSet = new PredicateSet();
+        $predicateSet->addPredicates(['a = ?']);
+
+        static::assertInstanceOf(Expression::class, $predicateSet->getPredicates()[0][1]);
+    }
+
+    #[Test]
+    public function addPredicatesPassesTheSetToAClosure(): void
+    {
+        $predicateSet = new PredicateSet();
+        $predicateSet->addPredicates(static function (PredicateSet $set): void {
+            $set->addPredicate(new IsNull('a'));
+        });
+
+        static::assertCount(1, $predicateSet);
+    }
+
+    #[Test]
+    #[DataProvider('invalidListPredicateProvider')]
+    public function addPredicatesThrowsForListEntryThatCannotBecomeAPredicate(mixed $value): void
+    {
+        $predicateSet = new PredicateSet();
+
+        self::expectException(InvalidArgumentException::class);
+        self::expectExceptionMessage(InvalidArgumentException::INVALID_LIST_PREDICATE);
+        /** @psalm-suppress MixedArgumentTypeCoercion */
+        $predicateSet->addPredicates([$value]);
     }
 
     #[Test]
@@ -153,6 +202,15 @@ final class PredicateSetTest extends TestCase
 
         static::assertInstanceOf(Expression::class, $predicates[0][1]);
         static::assertInstanceOf(Expression::class, $predicates[1][1]);
+    }
+
+    #[Test]
+    public function addPredicatesWrapsSelectBoundToPlaceholder(): void
+    {
+        $predicateSet = new PredicateSet();
+        $predicateSet->addPredicates(['id IN (?)' => new Select('t')]);
+
+        static::assertInstanceOf(Argument\Select::class, $predicateSet->getExpressionData()['values'][0]);
     }
 
     #[Test]

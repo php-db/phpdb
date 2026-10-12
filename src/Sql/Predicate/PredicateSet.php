@@ -7,18 +7,25 @@ namespace PhpDb\Sql\Predicate;
 use Closure;
 use Countable;
 use Override;
+use PhpDb\Sql\Argument\Select;
 use PhpDb\Sql\Expression;
 use PhpDb\Sql\Predicate\Expression as PredicateExpression;
+use PhpDb\Sql\SqlInterface;
 use ReturnTypeWillChange;
 
+use function array_push;
 use function count;
 use function implode;
 use function is_array;
 use function is_string;
 use function str_contains;
 
-// phpcs:ignore SlevomatCodingStandard.Namespaces.UnusedUses.UnusedUse
-
+/**
+ * @api
+ *
+ * @psalm-import-type ExpressionParameter from Expression
+ * @psalm-type PredicateValue = ExpressionParameter|PredicateInterface|SqlInterface
+ */
 class PredicateSet implements PredicateInterface, Countable
 {
     final public const string OP_AND = 'AND';
@@ -45,10 +52,8 @@ class PredicateSet implements PredicateInterface, Countable
     {
         $this->defaultCombination = $defaultCombination;
 
-        if (null !== $predicates) {
-            foreach ($predicates as $predicate) {
-                $this->addPredicate($predicate);
-            }
+        foreach ($predicates ?? [] as $predicate) {
+            $this->addPredicate($predicate);
         }
     }
 
@@ -71,54 +76,24 @@ class PredicateSet implements PredicateInterface, Countable
     /**
      * Add predicates to set
      *
-     * @param PredicateInterface|Closure|string|array<array-key, mixed> $predicates
+     * @param PredicateInterface|Closure|string|array<array-key, PredicateValue> $predicates
      * @throws Exception\InvalidArgumentException
      */
     public function addPredicates(
         PredicateInterface|Closure|string|array $predicates,
         string $combination = self::OP_AND,
     ): static {
-        if ($predicates instanceof PredicateInterface) {
-            $this->addPredicate($predicates, $combination);
-
-            return $this;
-        }
-
         if ($predicates instanceof Closure) {
             $predicates($this);
 
             return $this;
         }
 
-        if (is_string($predicates)) {
-            $predicate = str_contains($predicates, Expression::PLACEHOLDER)
-                ? new PredicateExpression($predicates)
-                : new Literal($predicates);
-            $this->addPredicate($predicate, $combination);
-
-            return $this;
-        }
-
-        foreach ($predicates as $pkey => $pvalue) {
-            $predicate = match (true) {
-                is_string($pkey) => match (true) {
-                    str_contains($pkey, '?') => new PredicateExpression($pkey, $pvalue),
-                    null === $pvalue => new IsNull($pkey),
-                    is_array($pvalue) => new In($pkey, $pvalue),
-                    $pvalue instanceof PredicateInterface
-                        => throw Exception\InvalidArgumentException::forPredicateWithStringKey(),
-                    default => new Operator($pkey, Operator::OP_EQ, $pvalue),
-                },
-                $pvalue instanceof PredicateInterface => $pvalue,
-                $pvalue instanceof Expression => new PredicateExpression(
-                    $pvalue->getExpression(),
-                    $pvalue->getParameters(),
-                ),
-                str_contains($pvalue, Expression::PLACEHOLDER) => new Expression($pvalue),
-                default                                        => new Literal($pvalue),
-            };
-
-            $this->addPredicate($predicate, $combination);
+        foreach (is_array($predicates) ? $predicates : [$predicates] as $key => $value) {
+            $this->addPredicate(
+                is_string($key) ? $this->createColumnPredicate($key, $value) : $this->createListPredicate($value),
+                $combination,
+            );
         }
 
         return $this;
@@ -148,29 +123,8 @@ class PredicateSet implements PredicateInterface, Countable
     #[Override]
     public function getExpressionData(): array
     {
-        $predicateCount = count($this->predicates);
-
-        if (0 === $predicateCount) {
-            return ['spec' => '', 'values' => []];
-        }
-
-        if (1 === $predicateCount) {
-            [$operator, $predicate] = $this->predicates[0];
-            $expressionData = $predicate->getExpressionData();
-
-            if ($predicate instanceof self) {
-                return [
-                    'spec'   => "({$expressionData['spec']})",
-                    'values' => $expressionData['values'],
-                ];
-            }
-
-            return $expressionData;
-        }
-
         $specParts = [];
         $allValues = [];
-        $first     = true;
 
         foreach ($this->predicates as [$operator, $predicate]) {
             $expressionData = $predicate->getExpressionData();
@@ -179,15 +133,9 @@ class PredicateSet implements PredicateInterface, Countable
                 ? "({$expressionData['spec']})"
                 : $expressionData['spec'];
 
-            $specParts[] = $first ? $spec : "{$operator} {$spec}";
-            $first       = false;
+            $specParts[] = [] === $specParts ? $spec : "{$operator} {$spec}";
 
-            $values = $expressionData['values'];
-            if ([] !== $values) {
-                foreach ($values as $value) {
-                    $allValues[] = $value;
-                }
-            }
+            array_push($allValues, ...$expressionData['values']);
         }
 
         return [
@@ -214,5 +162,43 @@ class PredicateSet implements PredicateInterface, Countable
         $this->predicates[] = [self::OP_OR, $predicate];
 
         return $this;
+    }
+
+    /**
+     * Build the predicate for an entry keyed by a column name or an expression with placeholders
+     *
+     * @param PredicateValue $value
+     * @throws Exception\InvalidArgumentException
+     */
+    private function createColumnPredicate(string $key, mixed $value): PredicateInterface
+    {
+        return match (true) {
+            str_contains($key, Expression::PLACEHOLDER) => new PredicateExpression(
+                $key,
+                $value instanceof SqlInterface ? new Select($value) : $value,
+            ),
+            null === $value => new IsNull($key),
+            is_array($value) => new In($key, $value),
+            $value instanceof PredicateInterface
+                => throw Exception\InvalidArgumentException::forPredicateWithStringKey(),
+            default => new Operator($key, Operator::OP_EQ, $value),
+        };
+    }
+
+    /**
+     * Build the predicate for an entry without a string key
+     *
+     * @param PredicateValue $value
+     * @throws Exception\InvalidArgumentException
+     */
+    private function createListPredicate(mixed $value): PredicateInterface
+    {
+        return match (true) {
+            $value instanceof PredicateInterface => $value,
+            $value instanceof Expression => new PredicateExpression($value->getExpression(), $value->getParameters()),
+            ! is_string($value) => throw Exception\InvalidArgumentException::forInvalidListPredicate(),
+            str_contains($value, Expression::PLACEHOLDER) => new PredicateExpression($value),
+            default                                       => new Literal($value),
+        };
     }
 }

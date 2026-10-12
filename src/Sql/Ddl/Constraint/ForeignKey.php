@@ -12,6 +12,9 @@ use function array_fill;
 use function count;
 use function implode;
 
+/**
+ * @api
+ */
 class ForeignKey extends AbstractConstraint
 {
     protected string $onDeleteRule = 'NO ACTION';
@@ -25,7 +28,7 @@ class ForeignKey extends AbstractConstraint
     /** @var list<string> */
     protected array $referenceColumn = [];
 
-    /** @var string[] */
+    /** @var array{0: string, 1: string} */
     protected array $referenceSpecification = [
         'REFERENCES %s',
         'ON DELETE %s ON UPDATE %s',
