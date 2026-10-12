@@ -36,6 +36,7 @@ use function trim;
  * @property Having $having
  * @property Join $joins
  * @psalm-import-type Specification from AbstractSql
+ * @psalm-import-type PredicateValue from Predicate\PredicateSet
  * @psalm-import-type JoinName from Join
  * @psalm-type TableReference = string|TableIdentifier|array<string, string|TableIdentifier|Select>
  * @psalm-type ColumnList = array<array-key, string|ExpressionInterface>
@@ -281,7 +282,7 @@ class Select extends AbstractPreparableSql
     /**
      * Create having clause
      *
-     * @param Having|PredicateInterface|array<array-key, mixed>|Closure|string $predicate
+     * @param Having|PredicateInterface|array<array-key, PredicateValue>|Closure|string $predicate
      * @param string $combination One of the OP_* constants from Predicate\PredicateSet
      */
     public function having(
@@ -449,7 +450,7 @@ class Select extends AbstractPreparableSql
     /**
      * Create where clause
      *
-     * @param PredicateInterface|array<array-key, mixed>|string|Closure $predicate
+     * @param PredicateInterface|array<array-key, PredicateValue>|string|Closure $predicate
      * @param string $combination One of the OP_* constants from Predicate\PredicateSet
      * @throws Exception\InvalidArgumentException
      */

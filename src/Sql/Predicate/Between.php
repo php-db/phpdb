@@ -11,6 +11,9 @@ use PhpDb\Sql\Argument\Value;
 use PhpDb\Sql\ArgumentInterface;
 use PhpDb\Sql\Predicate\Exception\InvalidArgumentException;
 
+/**
+ * @api
+ */
 class Between extends AbstractExpression implements PredicateInterface
 {
     protected string $operator = 'BETWEEN';

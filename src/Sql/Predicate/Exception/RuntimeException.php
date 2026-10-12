@@ -6,6 +6,9 @@ namespace PhpDb\Sql\Predicate\Exception;
 
 use PhpDb\Sql\Exception;
 
+/**
+ * @api
+ */
 class RuntimeException extends Exception\RuntimeException
 {
     final public const string NOT_NESTED = 'Not nested';

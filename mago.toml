@@ -15,8 +15,28 @@ baseline = "lint-baseline.toml"
 # Exception classes are message catalogues: one template and one named constructor per
 # condition, per the convention in docs/book/exceptions.md. The method count tracks the
 # number of distinct failures a component can report, so the maintainability signal does
-# not apply. "test/" repeats the phpdb-qa-tools default, which this key replaces.
-too-many-methods = { exclude = ["test/", "src/Sql/Exception/", "src/TableGateway/Exception/", "src/Adapter/Exception/"] }
+# not apply. Predicate, AlterTable and CreateTable are fluent builders: one public method per
+# clause they can emit, so their method count is the size of their public API. "test/"
+# repeats the phpdb-qa-tools default, which this key replaces.
+too-many-methods = { exclude = [
+    "test/",
+    "src/Sql/Exception/",
+    "src/Sql/Predicate/Exception/",
+    "src/TableGateway/Exception/",
+    "src/Adapter/Exception/",
+    "src/Sql/Predicate/Predicate.php",
+    "src/Sql/Ddl/AlterTable.php",
+    "src/Sql/Ddl/CreateTable.php",
+] }
+
+# These constructors take one argument per part of the SQL definition they model
+# (a foreign key's name, columns, reference table, reference columns and two rules; a
+# column's name, digits, scale, nullability, default and options). They are public API, so
+# the list cannot be shortened without breaking callers.
+excessive-parameter-list = { exclude = [
+    "src/Sql/Ddl/Constraint/ForeignKey.php",
+    "src/Sql/Ddl/Column/AbstractPrecisionColumn.php",
+] }
 
 # The capability interfaces return `ResultSetInterface&<themselves>`, and PHP rejects
 # `self` as part of an intersection type, so this rule's advice cannot be taken there.

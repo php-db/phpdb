@@ -6,6 +6,9 @@ namespace PhpDb\Sql\Ddl\Column;
 
 use Override;
 
+/**
+ * @api
+ */
 class Blob extends AbstractLengthColumn
 {
     /** @var string Change type to blob */

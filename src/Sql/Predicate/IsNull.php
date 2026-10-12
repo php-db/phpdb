@@ -10,6 +10,9 @@ use PhpDb\Sql\Argument\Identifier;
 use PhpDb\Sql\ArgumentInterface;
 use PhpDb\Sql\Predicate\Exception\InvalidArgumentException;
 
+/**
+ * @api
+ */
 class IsNull extends AbstractExpression implements PredicateInterface
 {
     protected string $operator = 'IS NULL';

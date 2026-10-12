@@ -226,6 +226,14 @@ class AlterTableTest extends TestCase
     }
 
     #[Test]
+    public function getRawStateReturnsTableIdentifierForTable(): void
+    {
+        $table = new TableIdentifier('foo', 'bar');
+
+        static::assertSame($table, (new AlterTable($table))->getRawState(AlterTable::TABLE));
+    }
+
+    #[Test]
     public function getRawStateWithInvalidKey(): void
     {
         $at     = new AlterTable('test');

@@ -1508,6 +1508,24 @@ count = 1
 
 [[issues]]
 file = "src/RowGateway/AbstractRowGateway.php"
+code = "less-specific-nested-argument-type"
+message = 'Argument type mismatch for argument #1 of `PhpDb\Sql\Delete::where`: expected `(closure(...mixed): mixed)|PhpDb\Sql\Predicate\PredicateInterface|PhpDb\Sql\Where|array<array-key, PhpDb\Sql\ArgumentInterface|PhpDb\Sql\ExpressionInterface|PhpDb\Sql\Predicate\PredicateInterface|PhpDb\Sql\SqlInterface|list<bool|float|int|null|string>|null|scalar>|string`, but provided type `array<array-key, mixed>` is less specific.'
+count = 1
+
+[[issues]]
+file = "src/RowGateway/AbstractRowGateway.php"
+code = "less-specific-nested-argument-type"
+message = 'Argument type mismatch for argument #1 of `PhpDb\Sql\Select::where`: expected `(closure(...mixed): mixed)|PhpDb\Sql\Predicate\PredicateInterface|array<array-key, PhpDb\Sql\ArgumentInterface|PhpDb\Sql\ExpressionInterface|PhpDb\Sql\Predicate\PredicateInterface|PhpDb\Sql\SqlInterface|list<bool|float|int|null|string>|null|scalar>|string`, but provided type `array<array-key, mixed>` is less specific.'
+count = 1
+
+[[issues]]
+file = "src/RowGateway/AbstractRowGateway.php"
+code = "less-specific-nested-argument-type"
+message = 'Argument type mismatch for argument #1 of `PhpDb\Sql\Update::where`: expected `(closure(...mixed): mixed)|PhpDb\Sql\Predicate\PredicateInterface|PhpDb\Sql\Where|array<array-key, PhpDb\Sql\ArgumentInterface|PhpDb\Sql\ExpressionInterface|PhpDb\Sql\Predicate\PredicateInterface|PhpDb\Sql\SqlInterface|list<bool|float|int|null|string>|null|scalar>|string`, but provided type `array<array-key, mixed>` is less specific.'
+count = 1
+
+[[issues]]
+file = "src/RowGateway/AbstractRowGateway.php"
 code = "less-specific-return-statement"
 message = 'Returned type `array<array-key, mixed>` is less specific than the declared return type `array<string, mixed>` for function `PhpDb\RowGateway\AbstractRowGateway::exchangeArray`.'
 count = 1
@@ -1892,260 +1910,8 @@ count = 1
 
 [[issues]]
 file = "src/Sql/Ddl/AlterTable.php"
-code = "class-must-be-final"
-message = 'Class `PhpDb\Sql\Ddl\AlterTable` should be declared `final`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/AlterTable.php"
-code = "imprecise-type"
-message = "Type `array` in return type of `getRawState` is imprecise, equivalent to `array<array-key, mixed>`."
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/AlterTable.php"
-code = "invalid-return-statement"
-message = '''Invalid return type for function `PhpDb\Sql\Ddl\AlterTable::getRawState`: expected `array<array-key, mixed>|string`, but found `PhpDb\Sql\TableIdentifier|array<string, PhpDb\Sql\Ddl\Column\ColumnInterface|PhpDb\Sql\Literal|bool|int|string>|array{'addColumns': PhpDb\Sql\Ddl\Column\ColumnInterface|PhpDb\Sql\Literal|bool|int|list<PhpDb\Sql\Ddl\Column\ColumnInterface>|string, 'addConstraints': PhpDb\Sql\Ddl\Column\ColumnInterface|PhpDb\Sql\Literal|bool|int|list<PhpDb\Sql\Ddl\Constraint\ConstraintInterface>|string, 'changeColumns': PhpDb\Sql\Ddl\Column\ColumnInterface|PhpDb\Sql\Literal|array<string, PhpDb\Sql\Ddl\Column\ColumnInterface>|bool|int|string, 'dropColumns': PhpDb\Sql\Ddl\Column\ColumnInterface|PhpDb\Sql\Literal|bool|int|list<string>|string, 'dropConstraints': PhpDb\Sql\Ddl\Column\ColumnInterface|PhpDb\Sql\Literal|bool|int|list<string>|string, 'dropIndexes': PhpDb\Sql\Ddl\Column\ColumnInterface|PhpDb\Sql\Literal|bool|int|list<string>|string, 'table': PhpDb\Sql\Ddl\Column\ColumnInterface|PhpDb\Sql\Literal|PhpDb\Sql\TableIdentifier|bool|int|string, 'tableOptions': PhpDb\Sql\Ddl\Column\ColumnInterface|PhpDb\Sql\Literal|array<string, PhpDb\Sql\Literal|bool|int|string>|bool|int|string}|list<PhpDb\Sql\Ddl\Column\ColumnInterface|PhpDb\Sql\Ddl\Constraint\ConstraintInterface|string>|string`.'''
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/AlterTable.php"
 code = "invalid-return-statement"
 message = 'Invalid return type for function `PhpDb\Sql\Ddl\AlterTable::processTable`: expected `array<array-key, string>`, but found `list{array<array-key, mixed>|null|string}`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/AlterTable.php"
-code = "possible-method-access-on-null"
-message = "Attempting to call a method on `null`."
-count = 5
-
-[[issues]]
-file = "src/Sql/Ddl/AlterTable.php"
-code = "possibly-null-argument"
-message = 'Argument #2 of method `PhpDb\Sql\AbstractSql::processExpression` is possibly `null`, but parameter type `PhpDb\Adapter\Platform\PlatformInterface` does not accept it.'
-count = 3
-
-[[issues]]
-file = "src/Sql/Ddl/AlterTable.php"
-code = "possibly-null-argument"
-message = 'Argument #2 of method `PhpDb\Sql\AbstractSql::resolveTable` is possibly `null`, but parameter type `PhpDb\Adapter\Platform\PlatformInterface` does not accept it.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/Column/AbstractLengthColumn.php"
-code = "missing-api-or-internal"
-message = 'Abstract class `PhpDb\Sql\Ddl\Column\AbstractLengthColumn` is missing an `@api` or `@internal` annotation.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/Column/AbstractPrecisionColumn.php"
-code = "missing-api-or-internal"
-message = 'Abstract class `PhpDb\Sql\Ddl\Column\AbstractPrecisionColumn` is missing an `@api` or `@internal` annotation.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/Column/AbstractTimestampColumn.php"
-code = "missing-api-or-internal"
-message = 'Abstract class `PhpDb\Sql\Ddl\Column\AbstractTimestampColumn` is missing an `@api` or `@internal` annotation.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/Column/BigInteger.php"
-code = "class-must-be-final"
-message = 'Class `PhpDb\Sql\Ddl\Column\BigInteger` should be declared `final`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/Column/Binary.php"
-code = "class-must-be-final"
-message = 'Class `PhpDb\Sql\Ddl\Column\Binary` should be declared `final`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/Column/Blob.php"
-code = "class-must-be-final"
-message = 'Class `PhpDb\Sql\Ddl\Column\Blob` should be declared `final`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/Column/Boolean.php"
-code = "class-must-be-final"
-message = 'Class `PhpDb\Sql\Ddl\Column\Boolean` should be declared `final`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/Column/Char.php"
-code = "class-must-be-final"
-message = 'Class `PhpDb\Sql\Ddl\Column\Char` should be declared `final`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/Column/Column.php"
-code = "mixed-argument"
-message = 'Invalid argument type for argument #1 of `PhpDb\Sql\Ddl\Column\Column::setDefault`: expected `PhpDb\Sql\Argument\Literal|PhpDb\Sql\Argument\Value|null|scalar`, but found `mixed`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/Column/Column.php"
-code = "uninitialized-property"
-message = 'Property `$default` is not initialized in the constructor of class `PhpDb\Sql\Ddl\Column\Column`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/Column/ColumnInterface.php"
-code = "missing-api-or-internal"
-message = 'Interface `PhpDb\Sql\Ddl\Column\ColumnInterface` is missing an `@api` or `@internal` annotation.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/Column/Date.php"
-code = "class-must-be-final"
-message = 'Class `PhpDb\Sql\Ddl\Column\Date` should be declared `final`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/Column/Datetime.php"
-code = "class-must-be-final"
-message = 'Class `PhpDb\Sql\Ddl\Column\Datetime` should be declared `final`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/Column/Decimal.php"
-code = "class-must-be-final"
-message = 'Class `PhpDb\Sql\Ddl\Column\Decimal` should be declared `final`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/Column/Double.php"
-code = "class-must-be-final"
-message = 'Class `PhpDb\Sql\Ddl\Column\Double` should be declared `final`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/Column/Floating.php"
-code = "class-must-be-final"
-message = 'Class `PhpDb\Sql\Ddl\Column\Floating` should be declared `final`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/Column/Json.php"
-code = "class-must-be-final"
-message = 'Class `PhpDb\Sql\Ddl\Column\Json` should be declared `final`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/Column/SmallInteger.php"
-code = "class-must-be-final"
-message = 'Class `PhpDb\Sql\Ddl\Column\SmallInteger` should be declared `final`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/Column/Text.php"
-code = "class-must-be-final"
-message = 'Class `PhpDb\Sql\Ddl\Column\Text` should be declared `final`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/Column/Time.php"
-code = "class-must-be-final"
-message = 'Class `PhpDb\Sql\Ddl\Column\Time` should be declared `final`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/Column/Timestamp.php"
-code = "class-must-be-final"
-message = 'Class `PhpDb\Sql\Ddl\Column\Timestamp` should be declared `final`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/Column/Varbinary.php"
-code = "class-must-be-final"
-message = 'Class `PhpDb\Sql\Ddl\Column\Varbinary` should be declared `final`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/Column/Varchar.php"
-code = "class-must-be-final"
-message = 'Class `PhpDb\Sql\Ddl\Column\Varchar` should be declared `final`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/Constraint/AbstractConstraint.php"
-code = "missing-api-or-internal"
-message = 'Abstract class `PhpDb\Sql\Ddl\Constraint\AbstractConstraint` is missing an `@api` or `@internal` annotation.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/Constraint/Check.php"
-code = "class-must-be-final"
-message = 'Class `PhpDb\Sql\Ddl\Constraint\Check` should be declared `final`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/Constraint/ConstraintInterface.php"
-code = "missing-api-or-internal"
-message = 'Interface `PhpDb\Sql\Ddl\Constraint\ConstraintInterface` is missing an `@api` or `@internal` annotation.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/Constraint/ForeignKey.php"
-code = "class-must-be-final"
-message = 'Class `PhpDb\Sql\Ddl\Constraint\ForeignKey` should be declared `final`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/Constraint/ForeignKey.php"
-code = "possibly-undefined-int-array-index"
-message = "Possibly undefined array key `int(0)` accessed on `array<array-key, string>`."
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/Constraint/ForeignKey.php"
-code = "possibly-undefined-int-array-index"
-message = "Possibly undefined array key `int(1)` accessed on `array<array-key, string>`."
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/Constraint/PrimaryKey.php"
-code = "class-must-be-final"
-message = 'Class `PhpDb\Sql\Ddl\Constraint\PrimaryKey` should be declared `final`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/Constraint/UniqueKey.php"
-code = "class-must-be-final"
-message = 'Class `PhpDb\Sql\Ddl\Constraint\UniqueKey` should be declared `final`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/CreateTable.php"
-code = "class-must-be-final"
-message = 'Class `PhpDb\Sql\Ddl\CreateTable` should be declared `final`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/CreateTable.php"
-code = "invalid-operand"
-message = "Left operand in `&&` operation is an `array`."
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/CreateTable.php"
-code = "invalid-operand"
-message = "Right operand in `&&` operation is an `array`."
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/CreateTable.php"
-code = "invalid-return-statement"
-message = '''Invalid return type for function `PhpDb\Sql\Ddl\CreateTable::getRawState`: expected `array<array-key, PhpDb\Sql\Ddl\Column\ColumnInterface|array<array-key, PhpDb\Sql\Ddl\Column\ColumnInterface|string>|string>|string`, but found `PhpDb\Sql\TableIdentifier|array<string, PhpDb\Sql\Literal|bool|int|string>|array{'columns': PhpDb\Sql\Literal|bool|int|list<PhpDb\Sql\Ddl\Column\ColumnInterface>|string, 'constraints': PhpDb\Sql\Literal|bool|int|list<PhpDb\Sql\Ddl\Constraint\ConstraintInterface>|string, 'table': PhpDb\Sql\Literal|PhpDb\Sql\TableIdentifier|bool|int|string, 'tableOptions': PhpDb\Sql\Literal|array<string, PhpDb\Sql\Literal|bool|int|string>|bool|int|string}|list<PhpDb\Sql\Ddl\Column\ColumnInterface|PhpDb\Sql\Ddl\Constraint\ConstraintInterface>|string`.'''
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/CreateTable.php"
-code = "invalid-return-statement"
-message = 'Invalid return type for function `PhpDb\Sql\Ddl\CreateTable::processCombinedby`: expected `null|string`, but found `array<string, list<array<int|string, string>|null>>|null|string`.'
 count = 1
 
 [[issues]]
@@ -2155,63 +1921,9 @@ message = '''Invalid return type for function `PhpDb\Sql\Ddl\CreateTable::proces
 count = 1
 
 [[issues]]
-file = "src/Sql/Ddl/CreateTable.php"
-code = "possible-method-access-on-null"
-message = "Attempting to call a method on `null`."
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/CreateTable.php"
-code = "possibly-null-argument"
-message = 'Argument #2 of method `PhpDb\Sql\AbstractSql::processExpression` is possibly `null`, but parameter type `PhpDb\Adapter\Platform\PlatformInterface` does not accept it.'
-count = 2
-
-[[issues]]
-file = "src/Sql/Ddl/CreateTable.php"
-code = "possibly-null-argument"
-message = 'Argument #2 of method `PhpDb\Sql\AbstractSql::resolveTable` is possibly `null`, but parameter type `PhpDb\Adapter\Platform\PlatformInterface` does not accept it.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/CreateTable.php"
-code = "possibly-undefined-string-array-index"
-message = "Possibly undefined array key `string('combinedBy')` accessed on `array<string, array<string, list<array<int|string, string>|null>>|string>`."
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/CreateTable.php"
-code = "unused-parameter"
-message = "Parameter `$adapterPlatform` is never used."
-count = 2
-
-[[issues]]
-file = "src/Sql/Ddl/DropTable.php"
-code = "class-must-be-final"
-message = 'Class `PhpDb\Sql\Ddl\DropTable` should be declared `final`.'
-count = 1
-
-[[issues]]
 file = "src/Sql/Ddl/DropTable.php"
 code = "invalid-return-statement"
 message = '''Invalid return type for function `PhpDb\Sql\Ddl\DropTable::processTable`: expected `array<array-key, string>`, but found `list{string('')|string('IF EXISTS '), array<array-key, mixed>|null|string}`.'''
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/DropTable.php"
-code = "possibly-null-argument"
-message = 'Argument #2 of method `PhpDb\Sql\AbstractSql::resolveTable` is possibly `null`, but parameter type `PhpDb\Adapter\Platform\PlatformInterface` does not accept it.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/Index/AbstractIndex.php"
-code = "missing-api-or-internal"
-message = 'Abstract class `PhpDb\Sql\Ddl\Index\AbstractIndex` is missing an `@api` or `@internal` annotation.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/Index/Index.php"
-code = "class-must-be-final"
-message = 'Class `PhpDb\Sql\Ddl\Index\Index` should be declared `final`.'
 count = 1
 
 [[issues]]
@@ -2596,174 +2308,6 @@ count = 1
 file = "src/Sql/Platform/PlatformDecoratorInterface.php"
 code = "missing-api-or-internal"
 message = 'Interface `PhpDb\Sql\Platform\PlatformDecoratorInterface` is missing an `@api` or `@internal` annotation.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Predicate/Exception/InvalidArgumentException.php"
-code = "class-must-be-final"
-message = 'Class `PhpDb\Sql\Predicate\Exception\InvalidArgumentException` should be declared `final`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Predicate/Exception/RuntimeException.php"
-code = "class-must-be-final"
-message = 'Class `PhpDb\Sql\Predicate\Exception\RuntimeException` should be declared `final`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Predicate/Expression.php"
-code = "class-must-be-final"
-message = 'Class `PhpDb\Sql\Predicate\Expression` should be declared `final`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Predicate/IsNotNull.php"
-code = "class-must-be-final"
-message = 'Class `PhpDb\Sql\Predicate\IsNotNull` should be declared `final`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Predicate/Literal.php"
-code = "class-must-be-final"
-message = 'Class `PhpDb\Sql\Predicate\Literal` should be declared `final`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Predicate/NotBetween.php"
-code = "class-must-be-final"
-message = 'Class `PhpDb\Sql\Predicate\NotBetween` should be declared `final`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Predicate/NotIn.php"
-code = "class-must-be-final"
-message = 'Class `PhpDb\Sql\Predicate\NotIn` should be declared `final`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Predicate/NotLike.php"
-code = "class-must-be-final"
-message = 'Class `PhpDb\Sql\Predicate\NotLike` should be declared `final`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Predicate/Operator.php"
-code = "class-must-be-final"
-message = 'Class `PhpDb\Sql\Predicate\Operator` should be declared `final`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Predicate/Predicate.php"
-code = "impossible-condition"
-message = "This condition (type `false`) will always evaluate to false."
-count = 1
-
-[[issues]]
-file = "src/Sql/Predicate/Predicate.php"
-code = "imprecise-type"
-message = "Type `array` in parameter `$parameters` is imprecise, equivalent to `array<array-key, mixed>`."
-count = 1
-
-[[issues]]
-file = "src/Sql/Predicate/Predicate.php"
-code = "imprecise-type"
-message = "Type `array` in parameter `$valueSet` is imprecise, equivalent to `array<array-key, mixed>`."
-count = 2
-
-[[issues]]
-file = "src/Sql/Predicate/Predicate.php"
-code = "invalid-property-assignment-value"
-message = 'Invalid type for property `$unnest`: expected `PhpDb\Sql\Predicate\Predicate`, but got `PhpDb\Sql\Predicate\Predicate|null`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Predicate/Predicate.php"
-code = "invalid-property-assignment-value"
-message = 'Invalid type for property `$unnest`: expected `PhpDb\Sql\Predicate\Predicate`, but got `null`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Predicate/Predicate.php"
-code = "less-specific-nested-argument-type"
-message = 'Argument type mismatch for argument #2 of `PhpDb\Sql\Expression::__construct`: expected `PhpDb\Sql\ArgumentInterface|PhpDb\Sql\ExpressionInterface|array<array-key, PhpDb\Sql\ArgumentInterface|PhpDb\Sql\ExpressionInterface|list<bool|float|int|null|string>|null|scalar>|list<bool|float|int|null|string>|null|scalar`, but provided type `PhpDb\Sql\ArgumentInterface|PhpDb\Sql\ExpressionInterface|float|int|non-empty-array<array-key, mixed>|null|string` is less specific.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Predicate/Predicate.php"
-code = "possibly-invalid-argument"
-message = 'Possible argument type mismatch for argument #2 of `PhpDb\Sql\Predicate\In::__construct`: expected `PhpDb\Sql\ArgumentInterface|PhpDb\Sql\Select|list<bool|float|int|null|string>|null`, but possibly received `PhpDb\Sql\ArgumentInterface|array<array-key, mixed>`.'
-count = 2
-
-[[issues]]
-file = "src/Sql/Predicate/PredicateInterface.php"
-code = "missing-api-or-internal"
-message = 'Interface `PhpDb\Sql\Predicate\PredicateInterface` is missing an `@api` or `@internal` annotation.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Predicate/PredicateSet.php"
-code = "mixed-argument"
-message = 'Invalid argument type for argument #1 of `PhpDb\Sql\Expression::__construct`: expected `string`, but found `mixed`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Predicate/PredicateSet.php"
-code = "mixed-argument"
-message = 'Invalid argument type for argument #1 of `PhpDb\Sql\Literal::__construct`: expected `string`, but found `mixed`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Predicate/PredicateSet.php"
-code = "mixed-argument"
-message = "Invalid argument type for argument #1 of `str_contains`: expected `string`, but found `mixed`."
-count = 1
-
-[[issues]]
-file = "src/Sql/Predicate/PredicateSet.php"
-code = "mixed-argument"
-message = 'Invalid argument type for argument #2 of `PhpDb\Sql\Expression::__construct`: expected `PhpDb\Sql\ArgumentInterface|PhpDb\Sql\ExpressionInterface|array<array-key, PhpDb\Sql\ArgumentInterface|PhpDb\Sql\ExpressionInterface|list<bool|float|int|null|string>|null|scalar>|list<bool|float|int|null|string>|null|scalar`, but found `mixed`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Predicate/PredicateSet.php"
-code = "mixed-argument"
-message = 'Invalid argument type for argument #3 of `PhpDb\Sql\Predicate\Operator::__construct`: expected `PhpDb\Sql\ArgumentInterface|PhpDb\Sql\ExpressionInterface|PhpDb\Sql\SqlInterface|null|scalar`, but found `nonnull`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Predicate/PredicateSet.php"
-code = "mixed-assignment"
-message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
-count = 1
-
-[[issues]]
-file = "src/Sql/Predicate/PredicateSet.php"
-code = "possible-method-access-on-null"
-message = "Attempting to call a method on `null`."
-count = 1
-
-[[issues]]
-file = "src/Sql/Predicate/PredicateSet.php"
-code = "possibly-invalid-argument"
-message = 'Possible argument type mismatch for argument #1 of `PhpDb\Sql\Predicate\PredicateSet::addPredicate`: expected `PhpDb\Sql\Predicate\PredicateInterface`, but possibly received `PhpDb\Sql\Expression|PhpDb\Sql\Predicate\Expression|PhpDb\Sql\Predicate\In|PhpDb\Sql\Predicate\IsNull|PhpDb\Sql\Predicate\Literal|PhpDb\Sql\Predicate\Operator|PhpDb\Sql\Predicate\PredicateInterface`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Predicate/PredicateSet.php"
-code = "possibly-invalid-argument"
-message = 'Possible argument type mismatch for argument #2 of `PhpDb\Sql\Predicate\In::__construct`: expected `PhpDb\Sql\ArgumentInterface|PhpDb\Sql\Select|list<bool|float|int|null|string>|null`, but possibly received `array<array-key, mixed>`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Predicate/PredicateSet.php"
-code = "possibly-null-destructuring-source"
-message = 'Destructuring a possibly null value of type `array{0: string, 1: PhpDb\Sql\Predicate\PredicateInterface}|null`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Predicate/PredicateSet.php"
-code = "possibly-undefined-int-array-index"
-message = 'Possibly undefined array index accessed on `list<array{0: string, 1: PhpDb\Sql\Predicate\PredicateInterface}>`.'
 count = 1
 
 [[issues]]
@@ -3237,7 +2781,25 @@ count = 1
 [[issues]]
 file = "src/TableGateway/AbstractTableGateway.php"
 code = "less-specific-nested-argument-type"
+message = 'Argument type mismatch for argument #1 of `PhpDb\Sql\Delete::where`: expected `(closure(...mixed): mixed)|PhpDb\Sql\Predicate\PredicateInterface|PhpDb\Sql\Where|array<array-key, PhpDb\Sql\ArgumentInterface|PhpDb\Sql\ExpressionInterface|PhpDb\Sql\Predicate\PredicateInterface|PhpDb\Sql\SqlInterface|list<bool|float|int|null|string>|null|scalar>|string`, but provided type `PhpDb\Sql\Where|array<array-key, mixed>|string` is less specific.'
+count = 1
+
+[[issues]]
+file = "src/TableGateway/AbstractTableGateway.php"
+code = "less-specific-nested-argument-type"
 message = 'Argument type mismatch for argument #1 of `PhpDb\Sql\Select::columns`: expected `array<array-key, PhpDb\Sql\ExpressionInterface|string>`, but provided type `non-empty-array<array-key, mixed>` is less specific.'
+count = 1
+
+[[issues]]
+file = "src/TableGateway/AbstractTableGateway.php"
+code = "less-specific-nested-argument-type"
+message = 'Argument type mismatch for argument #1 of `PhpDb\Sql\Select::where`: expected `(closure(...mixed): mixed)|PhpDb\Sql\Predicate\PredicateInterface|array<array-key, PhpDb\Sql\ArgumentInterface|PhpDb\Sql\ExpressionInterface|PhpDb\Sql\Predicate\PredicateInterface|PhpDb\Sql\SqlInterface|list<bool|float|int|null|string>|null|scalar>|string`, but provided type `PhpDb\Sql\Where|array<array-key, mixed>|string` is less specific.'
+count = 1
+
+[[issues]]
+file = "src/TableGateway/AbstractTableGateway.php"
+code = "less-specific-nested-argument-type"
+message = 'Argument type mismatch for argument #1 of `PhpDb\Sql\Update::where`: expected `(closure(...mixed): mixed)|PhpDb\Sql\Predicate\PredicateInterface|PhpDb\Sql\Where|array<array-key, PhpDb\Sql\ArgumentInterface|PhpDb\Sql\ExpressionInterface|PhpDb\Sql\Predicate\PredicateInterface|PhpDb\Sql\SqlInterface|list<bool|float|int|null|string>|null|scalar>|string`, but provided type `(closure(...mixed=): mixed)|PhpDb\Sql\Where|array<array-key, mixed>|string` is less specific.'
 count = 1
 
 [[issues]]

@@ -8,6 +8,8 @@ use Override;
 use PhpDb\Sql\Argument\Literal;
 
 /**
+ * @api
+ *
  * @see doc section http://dev.mysql.com/doc/refman/5.6/en/timestamp-initialization.html
  */
 abstract class AbstractTimestampColumn extends Column
