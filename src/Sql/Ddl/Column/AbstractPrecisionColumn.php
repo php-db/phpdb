@@ -5,8 +5,13 @@ declare(strict_types=1);
 namespace PhpDb\Sql\Ddl\Column;
 
 use Override;
+use PhpDb\Sql\Argument\Literal;
+use PhpDb\Sql\Argument\Value;
 use PhpDb\Sql\Exception\InvalidArgumentException;
 
+/**
+ * @api
+ */
 abstract class AbstractPrecisionColumn extends AbstractLengthColumn
 {
     protected ?int $decimal;
@@ -17,7 +22,7 @@ abstract class AbstractPrecisionColumn extends AbstractLengthColumn
         ?int $digits = null,
         ?int $decimal = null,
         bool $nullable = false,
-        mixed $default = null,
+        string|int|float|bool|Literal|Value|null $default = null,
         array $options = [],
     ) {
         $this->setDecimal($decimal);
@@ -53,14 +58,10 @@ abstract class AbstractPrecisionColumn extends AbstractLengthColumn
     #[Override]
     protected function getLengthExpression(): string
     {
-        if (null === $this->decimal) {
-            return (string) $this->length;
-        }
-
-        if (null === $this->length) {
-            throw InvalidArgumentException::forMissingDecimalDigits($this->name, $this->type);
-        }
-
-        return "{$this->length},{$this->decimal}";
+        return match (true) {
+            null === $this->decimal => (string) $this->length,
+            null === $this->length => throw InvalidArgumentException::forMissingDecimalDigits($this->name, $this->type),
+            default => "{$this->length},{$this->decimal}",
+        };
     }
 }

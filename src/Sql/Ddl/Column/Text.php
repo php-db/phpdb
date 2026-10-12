@@ -6,6 +6,9 @@ namespace PhpDb\Sql\Ddl\Column;
 
 use Override;
 
+/**
+ * @api
+ */
 class Text extends AbstractLengthColumn
 {
     protected string $type = 'TEXT';

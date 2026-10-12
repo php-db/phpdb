@@ -379,42 +379,6 @@ message = "Array spread in reassignment inside a loop causes O(n²) array copyin
 count = 1
 
 [[issues]]
-file = "src/Sql/Ddl/AlterTable.php"
-code = "kan-defect"
-message = "Class has a high kan defect score."
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/AlterTable.php"
-code = "too-many-methods"
-message = "Class has too many methods."
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/Column/AbstractPrecisionColumn.php"
-code = "excessive-parameter-list"
-message = "Parameter list is too long."
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/Column/AbstractPrecisionColumn.php"
-code = "halstead"
-message = "Method has a high halstead difficulty"
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/Constraint/ForeignKey.php"
-code = "excessive-parameter-list"
-message = "Parameter list is too long."
-count = 1
-
-[[issues]]
-file = "src/Sql/Ddl/CreateTable.php"
-code = "too-many-methods"
-message = "Class has too many methods."
-count = 1
-
-[[issues]]
 file = "src/Sql/Insert.php"
 code = "cyclomatic-complexity"
 message = "Class has high complexity."

@@ -12,6 +12,9 @@ use function count;
 use function implode;
 use function str_replace;
 
+/**
+ * @api
+ */
 abstract class AbstractConstraint implements ConstraintInterface
 {
     protected string $columnSpecification = '(%s)';

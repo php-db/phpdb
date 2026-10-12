@@ -9,6 +9,8 @@ use PhpDb\Sql\Argument\Value;
 use PhpDb\Sql\ExpressionInterface;
 
 /**
+ * @api
+ *
  * Interface ColumnInterface describes the protocol on how Column objects interact
  */
 interface ColumnInterface extends ExpressionInterface

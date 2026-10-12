@@ -186,6 +186,14 @@ class CreateTableTest extends TestCase
     }
 
     #[Test]
+    public function getRawStateReturnsTableIdentifierForTable(): void
+    {
+        $table = new TableIdentifier('foo', 'bar');
+
+        static::assertSame($table, (new CreateTable($table))->getRawState(CreateTable::TABLE));
+    }
+
+    #[Test]
     public function getRawStateWithInvalidKey(): void
     {
         $ct = new CreateTable('test');

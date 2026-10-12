@@ -11,6 +11,9 @@ use PhpDb\Sql\Argument\Literal;
 use function implode;
 use function str_replace;
 
+/**
+ * @api
+ */
 class Index extends AbstractIndex
 {
     protected string $specification = 'INDEX %s(...)';
