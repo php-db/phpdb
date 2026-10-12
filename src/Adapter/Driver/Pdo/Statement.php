@@ -195,10 +195,6 @@ class Statement implements StatementInterface, PdoDriverAwareInterface, Profiler
     /** Bind parameters from container */
     protected function bindParametersFromContainer(): void
     {
-        if ($this->parametersBound) {
-            return;
-        }
-
         $parameters = $this->parameterContainer->getNamedArray();
         $errata     = $this->parameterContainer->getErrataIterator()->getArrayCopy();
 
