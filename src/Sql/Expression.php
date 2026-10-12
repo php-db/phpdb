@@ -19,6 +19,7 @@ use function func_get_args;
 use function func_num_args;
 use function implode;
 use function is_array;
+use function preg_match;
 use function preg_match_all;
 use function str_replace;
 
@@ -84,6 +85,7 @@ class Expression extends AbstractExpression
     }
 
     /**
+     * @throws Exception\InvalidArgumentException
      * @throws Exception\RuntimeException
      * @inheritDoc
      */
@@ -105,7 +107,19 @@ class Expression extends AbstractExpression
         $specification = array_shift($segments);
 
         foreach ($segments as $index => $segment) {
-            $specification .= self::placeholderFor($parameters[$index] ?? null) . $segment;
+            $parameter = $parameters[$index] ?? null;
+
+            if (
+                $parameter instanceof Values
+                && (
+                    1 !== preg_match('/\(\s*$/', $specification)
+                    || 1 !== preg_match('/^\s*\)/', $segment)
+                )
+            ) {
+                throw Exception\InvalidArgumentException::forUnenclosedValuesPlaceholder($this->expression);
+            }
+
+            $specification .= self::placeholderFor($parameter) . $segment;
         }
 
         // test number of replacements without considering same variable begin used many times first, which is

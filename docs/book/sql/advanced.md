@@ -59,6 +59,10 @@ id IN (?, ?, ?, ?, ?)
 The placeholder for an array (or `Argument\Values`) expands to one
 placeholder per value, separated by commas, so write the surrounding
 parentheses in the expression yourself. An empty array renders as `NULL`.
+The placeholder must sit alone inside its parentheses: `id IN ?` and
+`id IN (?, ?)` with an array throw
+`PhpDb\Sql\Exception\InvalidArgumentException`, since they would render
+invalid SQL.
 
 ```php title="Nested expressions"
 $innerExpression = new Expression('COUNT(*)');

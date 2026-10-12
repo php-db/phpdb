@@ -38,6 +38,7 @@ use function sprintf;
 #[CoversMethod(InvalidArgumentException::class, 'forNonStringValueKey')]
 #[CoversMethod(InvalidArgumentException::class, 'forReadOnlyConstructorState')]
 #[CoversMethod(InvalidArgumentException::class, 'forSelectWithMergeFlag')]
+#[CoversMethod(InvalidArgumentException::class, 'forUnenclosedValuesPlaceholder')]
 #[CoversMethod(InvalidArgumentException::class, 'forUnknownArgumentType')]
 #[CoversMethod(InvalidArgumentException::class, 'forUnknownColumnKey')]
 #[CoversMethod(InvalidArgumentException::class, 'forValuesWithMergeFlag')]
@@ -60,122 +61,127 @@ final class InvalidArgumentExceptionTest extends TestCase
     public static function namedConstructorProvider(): array
     {
         return [
-            'missing decimal digits'      => [
+            'missing decimal digits'        => [
                 'forMissingDecimalDigits',
                 ['price', 'DECIMAL'],
                 InvalidArgumentException::MISSING_DECIMAL_DIGITS,
             ],
-            'missing column length'       => [
+            'missing column length'         => [
                 'forMissingColumnLength',
                 ['name', 'VARCHAR'],
                 InvalidArgumentException::MISSING_COLUMN_LENGTH,
             ],
-            'invalid column length'       => [
+            'invalid column length'         => [
                 'forInvalidColumnLength',
                 ['age'],
                 InvalidArgumentException::INVALID_COLUMN_LENGTH,
             ],
-            'empty check expression'      => [
+            'empty check expression'        => [
                 'forEmptyCheckExpression',
                 [],
                 InvalidArgumentException::EMPTY_CHECK_EXPRESSION,
             ],
-            'already combined'            => [
+            'already combined'              => [
                 'forAlreadyCombined',
                 [],
                 InvalidArgumentException::ALREADY_COMBINED,
             ],
-            'empty expression'            => [
+            'empty expression'              => [
                 'forEmptyExpression',
                 [],
                 InvalidArgumentException::EMPTY_EXPRESSION,
             ],
-            'empty prefix'                => [
+            'empty prefix'                  => [
                 'forEmptyPrefix',
                 [],
                 InvalidArgumentException::EMPTY_PREFIX,
             ],
-            'empty schema'                => [
+            'empty schema'                  => [
                 'forEmptySchema',
                 [],
                 InvalidArgumentException::EMPTY_SCHEMA,
             ],
-            'empty separator'             => [
+            'empty separator'               => [
                 'forEmptySeparator',
                 [],
                 InvalidArgumentException::EMPTY_SEPARATOR,
             ],
-            'empty table'                 => [
+            'empty table'                   => [
                 'forEmptyTable',
                 [],
                 InvalidArgumentException::EMPTY_TABLE,
             ],
-            'foreign table'               => [
+            'foreign table'                 => [
                 'forForeignTable',
                 ['users'],
                 InvalidArgumentException::FOREIGN_TABLE,
             ],
-            'invalid argument type'       => [
+            'invalid argument type'         => [
                 'forInvalidArgumentType',
                 [],
                 InvalidArgumentException::INVALID_ARGUMENT_TYPE,
             ],
-            'invalid from array'          => [
+            'invalid from array'            => [
                 'forInvalidFromArray',
                 [],
                 InvalidArgumentException::INVALID_FROM_ARRAY,
             ],
-            'invalid join name'           => [
+            'invalid join name'             => [
                 'forInvalidJoinName',
                 ['orders'],
                 InvalidArgumentException::INVALID_JOIN_NAME,
             ],
-            'invalid magic property'      => [
+            'invalid magic property'        => [
                 'forInvalidMagicProperty',
                 [],
                 InvalidArgumentException::INVALID_MAGIC_PROPERTY,
             ],
-            'invalid specification name'  => [
+            'invalid specification name'    => [
                 'forInvalidSpecificationName',
                 [],
                 InvalidArgumentException::INVALID_SPECIFICATION_NAME,
             ],
-            'missing values or select'    => [
+            'missing values or select'      => [
                 'forMissingValuesOrSelect',
                 [],
                 InvalidArgumentException::MISSING_VALUES_OR_SELECT,
             ],
-            'non numeric parameter'       => [
+            'non numeric parameter'         => [
                 'forNonNumericParameter',
                 ['PhpDb\\Sql\\Select::limit', 'string'],
                 InvalidArgumentException::NON_NUMERIC_PARAMETER,
             ],
-            'non string value key'        => [
+            'non string value key'          => [
                 'forNonStringValueKey',
                 [],
                 InvalidArgumentException::NON_STRING_VALUE_KEY,
             ],
-            'read only constructor state' => [
+            'read only constructor state'   => [
                 'forReadOnlyConstructorState',
                 [],
                 InvalidArgumentException::READ_ONLY_CONSTRUCTOR_STATE,
             ],
-            'select with merge flag'      => [
+            'select with merge flag'        => [
                 'forSelectWithMergeFlag',
                 [],
                 InvalidArgumentException::SELECT_WITH_MERGE_FLAG,
             ],
-            'unknown argument type'       => [
+            'unenclosed values placeholder' => [
+                'forUnenclosedValuesPlaceholder',
+                ['a IN ?'],
+                InvalidArgumentException::UNENCLOSED_VALUES_PLACEHOLDER,
+            ],
+            'unknown argument type'         => [
                 'forUnknownArgumentType',
                 [],
                 InvalidArgumentException::UNKNOWN_ARGUMENT_TYPE,
             ],
-            'unknown column key'          => [
+            'unknown column key'            => [
                 'forUnknownColumnKey',
                 ['email'],
                 InvalidArgumentException::UNKNOWN_COLUMN_KEY,
             ],
-            'values with merge flag'      => [
+            'values with merge flag'        => [
                 'forValuesWithMergeFlag',
                 [],
                 InvalidArgumentException::VALUES_WITH_MERGE_FLAG,

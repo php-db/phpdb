@@ -18,6 +18,8 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use TypeError;
 
+use function sprintf;
+
 /**
  * This is a unit testing test case.
  * A unit here is a method, there will be at least one test per method
@@ -45,6 +47,7 @@ final class ExpressionTest extends TestCase
                 '%s IN (%s, %s) AND %s = %s',
             ],
             'values argument'                => ['a IN (?)', [Argument::values([1, 2])], 'a IN (%s, %s)'],
+            'whitespace inside parentheses'  => ['a IN ( ? )', [[1, 2]], 'a IN ( %s, %s )'],
         ];
     }
 
@@ -57,6 +60,19 @@ final class ExpressionTest extends TestCase
             [0],
             [0.0],
             [false],
+        ];
+    }
+
+    /** @return array<string, array{string, list<mixed>}> */
+    public static function unenclosedArrayParameterProvider(): array
+    {
+        return [
+            'array'                    => ['a IN ?', [[1, 2, 3]]],
+            'empty array'              => ['a IN ?', [[]]],
+            'values argument'          => ['a IN ?', [Argument::values([1, 2])]],
+            'opening parenthesis only' => ['a IN (?', [[1, 2]]],
+            'closing parenthesis only' => ['a IN ?)', [[1, 2]]],
+            'parenthesis around more'  => ['a IN (?, ?)', [[1, 2], 3]],
         ];
     }
 
@@ -143,6 +159,22 @@ final class ExpressionTest extends TestCase
         $expressionData = (new Expression($expression, $parameters))->getExpressionData();
 
         static::assertSame($expectedSpecification, $expressionData['spec']);
+    }
+
+    /**
+     * @param list<mixed> $parameters
+     */
+    #[Test]
+    #[Group('unit')]
+    #[DataProvider('unenclosedArrayParameterProvider')]
+    public function getExpressionDataRejectsArrayPlaceholderOutsideParentheses(
+        string $expression,
+        array $parameters,
+    ): void {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage(sprintf(InvalidArgumentException::UNENCLOSED_VALUES_PLACEHOLDER, $expression));
+
+        (new Expression($expression, $parameters))->getExpressionData();
     }
 
     #[Test]
