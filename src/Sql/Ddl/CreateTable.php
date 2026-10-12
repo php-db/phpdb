@@ -6,6 +6,7 @@ namespace PhpDb\Sql\Ddl;
 
 use PhpDb\Adapter\Platform\PlatformInterface;
 use PhpDb\Sql\AbstractSql;
+use PhpDb\Sql\Exception\RuntimeException;
 use PhpDb\Sql\Literal;
 use PhpDb\Sql\TableIdentifier;
 
@@ -151,6 +152,7 @@ class CreateTable extends AbstractSql
 
     /**
      * @return string[][]|null
+     * @throws RuntimeException
      */
     protected function processColumns(PlatformInterface $adapterPlatform): ?array
     {
@@ -158,13 +160,7 @@ class CreateTable extends AbstractSql
             return null;
         }
 
-        $sqls = [];
-
-        foreach ($this->columns as $column) {
-            $sqls[] = $this->processExpression($column, $adapterPlatform);
-        }
-
-        return [$sqls];
+        return [$this->processExpressionList($this->columns, $adapterPlatform)];
     }
 
     /**
@@ -177,6 +173,7 @@ class CreateTable extends AbstractSql
 
     /**
      * @return string[][]|null
+     * @throws RuntimeException
      */
     protected function processConstraints(PlatformInterface $adapterPlatform): ?array
     {
@@ -184,13 +181,7 @@ class CreateTable extends AbstractSql
             return null;
         }
 
-        $sqls = [];
-
-        foreach ($this->constraints as $constraint) {
-            $sqls[] = $this->processExpression($constraint, $adapterPlatform);
-        }
-
-        return [$sqls];
+        return [$this->processExpressionList($this->constraints, $adapterPlatform)];
     }
 
     /**
@@ -203,6 +194,7 @@ class CreateTable extends AbstractSql
 
     /**
      * @return string[]
+     * @throws RuntimeException
      */
     protected function processTable(PlatformInterface $adapterPlatform): array
     {

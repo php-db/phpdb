@@ -365,6 +365,17 @@ final class InsertTest extends TestCase
     }
 
     #[Test]
+    public function quotesFloatValue(): void
+    {
+        $insert = (new Insert('t'))->values(['a' => 1.5]);
+
+        static::assertSame(
+            'INSERT INTO "t" ("a") VALUES (\'1.5\')',
+            $insert->getSqlString(new TrustingSql92Platform()),
+        );
+    }
+
+    #[Test]
     #[CoversNothing]
     public function specificationconstantsCouldBeOverridedByExtensionInGetSqlString(): void
     {

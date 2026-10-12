@@ -12,6 +12,8 @@ use PhpDb\Sql\Argument\Value;
 use PhpDb\Sql\Argument\Values;
 
 /**
+ * @api
+ *
  * Defines types for SQL argument handling in expressions and statements.
  * Specifies how values should be treated during SQL generation:
  * - Identifier: Column names, table names, and other identifiers that require quoting

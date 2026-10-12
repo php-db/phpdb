@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace PhpDb\Sql;
 
 /**
+ * @api
+ *
  * @psalm-import-type Specification from AbstractSql
  */
 class InsertIgnore extends Insert

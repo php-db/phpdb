@@ -6,6 +6,7 @@ namespace PhpDb\Sql\Ddl;
 
 use PhpDb\Adapter\Platform\PlatformInterface;
 use PhpDb\Sql\AbstractSql;
+use PhpDb\Sql\Exception\RuntimeException;
 use PhpDb\Sql\TableIdentifier;
 
 /**
@@ -42,7 +43,10 @@ class DropTable extends AbstractSql
         return $this;
     }
 
-    /** @return string[] */
+    /**
+     * @return string[]
+     * @throws RuntimeException
+     */
     protected function processTable(PlatformInterface $adapterPlatform): array
     {
         return [

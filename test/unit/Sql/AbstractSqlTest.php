@@ -15,6 +15,7 @@ use PhpDb\Sql\Argument;
 use PhpDb\Sql\Argument\Identifier;
 use PhpDb\Sql\ArgumentInterface;
 use PhpDb\Sql\ArgumentType;
+use PhpDb\Sql\Delete;
 use PhpDb\Sql\Exception\InvalidArgumentException;
 use PhpDb\Sql\Exception\RuntimeException;
 use PhpDb\Sql\Expression;
@@ -23,6 +24,7 @@ use PhpDb\Sql\Join;
 use PhpDb\Sql\Predicate;
 use PhpDb\Sql\Select;
 use PhpDb\Sql\TableIdentifier;
+use PhpDb\Sql\Update;
 use PhpDbTest\TestAsset\SelectDecorator;
 use PhpDbTest\TestAsset\TrustingSql92Platform;
 use PHPUnit\Framework\Attributes\CoversMethod;
@@ -37,6 +39,7 @@ use PHPUnit\Framework\TestCase;
 use ReflectionException;
 use ReflectionMethod;
 
+use function array_values;
 use function count;
 use function current;
 use function key;
@@ -62,6 +65,12 @@ use function uniqid;
 #[CoversMethod(AbstractSql::class, 'resolveTable')]
 #[CoversMethod(AbstractSql::class, 'localizeVariables')]
 #[CoversMethod(AbstractSql::class, 'quoteJoinTableIdentifier')]
+#[CoversMethod(AbstractSql::class, 'formatSpecification')]
+#[CoversMethod(AbstractSql::class, 'flattenParameterList')]
+#[CoversMethod(AbstractSql::class, 'formatParameterList')]
+#[CoversMethod(AbstractSql::class, 'matchSpecification')]
+#[CoversMethod(AbstractSql::class, 'renderParameter')]
+#[CoversMethod(AbstractSql::class, 'processExpressionList')]
 final class AbstractSqlTest extends TestCase
 {
     protected AbstractSql&MockObject $abstractSql;
@@ -115,6 +124,26 @@ final class AbstractSqlTest extends TestCase
         self::expectException(RuntimeException::class);
         self::expectExceptionMessage(sprintf(RuntimeException::UNSUPPORTED_PARAMETER_COUNT_OF, 2));
         $method->invoke($this->abstractSql, $spec, $params);
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    #[Test]
+    public function createSqlFromSpecRejectsListForSlotWithoutSpecification(): void
+    {
+        $method = new ReflectionMethod($this->abstractSql, 'createSqlFromSpecificationAndParameters');
+
+        $spec = [
+            'SELECT %1$s FROM %2$s' => [
+                [1 => '%1$s', 'combinedby' => ', '],
+                null,
+            ],
+        ];
+
+        self::expectException(RuntimeException::class);
+        self::expectExceptionMessage(sprintf(RuntimeException::UNSUPPORTED_PARAMETER_COUNT_OF, 2));
+        $method->invoke($this->abstractSql, $spec, [['col1'], ['a', 'b']]);
     }
 
     /**
@@ -179,6 +208,19 @@ final class AbstractSqlTest extends TestCase
         static::assertSame('FROM my_table', $result);
     }
 
+    /**
+     * @throws ReflectionException
+     */
+    #[Test]
+    public function createSqlFromStringSpecRejectsListParameter(): void
+    {
+        $method = new ReflectionMethod($this->abstractSql, 'createSqlFromSpecificationAndParameters');
+
+        self::expectException(RuntimeException::class);
+        self::expectExceptionMessage(sprintf(RuntimeException::UNSUPPORTED_PARAMETER_COUNT_OF, 2));
+        $method->invoke($this->abstractSql, 'LIMIT %1$s', [['a', 'b']]);
+    }
+
     #[Test]
     public function flattenExpressionValuesViaInPredicate(): void
     {
@@ -216,6 +258,25 @@ final class AbstractSqlTest extends TestCase
     }
 
     #[Test]
+    public function formatSpecificationThrowsForSpecificationThatIsNotAString(): void
+    {
+        $delete = new class('foo') extends Delete {
+            /** @var array<string, array<string, list<array<int|string, string>|null>>|string> */
+            protected array $specifications = [
+                self::SPECIFICATION_DELETE => ['DELETE FROM %1$s' => [null]],
+                self::SPECIFICATION_WHERE  => 'WHERE %1$s',
+            ];
+        };
+
+        self::expectException(RuntimeException::class);
+        self::expectExceptionMessage(sprintf(
+            RuntimeException::STRING_SPECIFICATION_REQUIRED,
+            Delete::SPECIFICATION_DELETE,
+        ));
+        $delete->getSqlString(new TrustingSql92Platform());
+    }
+
+    #[Test]
     public function localizeVariablesCopiesSubjectProperties(): void
     {
         $decorator = new SelectDecorator();
@@ -227,6 +288,63 @@ final class AbstractSqlTest extends TestCase
 
         static::assertStringContainsString('"users"', $sql);
         static::assertStringContainsString('"id"', $sql);
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    #[Test]
+    public function processExpressionBindsNullParameterValue(): void
+    {
+        $method    = new ReflectionMethod($this->abstractSql, 'processExpression');
+        $container = new ParameterContainer();
+
+        $sql = $method->invoke(
+            $this->abstractSql,
+            new Expression('COALESCE(?, 1)', [null]),
+            new TrustingSql92Platform(),
+            $this->mockDriver,
+            $container,
+        );
+
+        static::assertMatchesRegularExpression('/^COALESCE\(:expr\d+Param1, 1\)$/', (string) $sql);
+        static::assertSame([null], array_values($container->getNamedArray()));
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    #[Test]
+    public function processExpressionListRendersEachExpression(): void
+    {
+        $method = new ReflectionMethod($this->abstractSql, 'processExpressionList');
+
+        $sqls = $method->invoke(
+            $this->abstractSql,
+            ['first' => new Expression('a'), 'second' => new Expression('b')],
+            new TrustingSql92Platform(),
+        );
+
+        static::assertSame(['a', 'b'], $sqls);
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    #[Test]
+    public function processExpressionQuotesValueWhenContainerHasNoDriver(): void
+    {
+        $method = new ReflectionMethod($this->abstractSql, 'processExpression');
+
+        $sql = $method->invoke(
+            $this->abstractSql,
+            new Expression('x = ?', ['a']),
+            new TrustingSql92Platform(),
+            null,
+            new ParameterContainer(),
+        );
+
+        static::assertSame("x = 'a'", $sql);
     }
 
     #[Test]
@@ -654,6 +772,32 @@ final class AbstractSqlTest extends TestCase
         $result = $method->invoke($this->abstractSql, '"foo"', '"f"');
 
         static::assertSame('"foo" AS "f"', $result);
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    #[Test]
+    public function resolveColumnValuePrefixesIdentifierWithTable(): void
+    {
+        $method = new ReflectionMethod($this->abstractSql, 'resolveColumnValue');
+
+        static::assertSame(
+            '"t"."col"',
+            $method->invoke(
+                $this->abstractSql,
+                ['column' => 'col', 'fromTable' => '"t".', 'isIdentifier' => true],
+                new TrustingSql92Platform(),
+            ),
+        );
+    }
+
+    #[Test]
+    public function resolveColumnValueQuotesFloatValue(): void
+    {
+        $update = (new Update('t'))->set(['a' => 1.5]);
+
+        static::assertSame('UPDATE "t" SET "a" = \'1.5\'', $update->getSqlString(new TrustingSql92Platform()));
     }
 
     /**

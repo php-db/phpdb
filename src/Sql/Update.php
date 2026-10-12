@@ -17,12 +17,14 @@ use function implode;
 use function is_numeric;
 use function is_scalar;
 use function is_string;
-use function str_replace;
 use function strtolower;
 
 /**
- * @property Where $where
+ * @api
+ *
+ * @property ?Where $where
  * @psalm-import-type Specification from AbstractSql
+ * @psalm-import-type ColumnValue from AbstractSql
  * @psalm-import-type PredicateValue from Predicate\PredicateSet
  * @psalm-import-type JoinName from Join
  */
@@ -62,6 +64,7 @@ class Update extends AbstractPreparableSql
 
     protected bool $emptyWhereProtection = true;
 
+    /** @var PriorityList<string, ColumnValue>|null */
     protected ?PriorityList $set = null;
 
     protected ?Where $where = null;
@@ -109,7 +112,7 @@ class Update extends AbstractPreparableSql
     /**
      * Set key/value pairs to update
      *
-     * @param array<array-key, mixed> $values Associative array of key values
+     * @param array<array-key, ColumnValue> $values Associative array of key values
      * @param string|int              $flag   One of the VALUES_* constants, or a numeric priority
      * @throws Exception\InvalidArgumentException
      */
@@ -120,7 +123,7 @@ class Update extends AbstractPreparableSql
             $set->clear();
         }
 
-        $priority = is_numeric($flag) ? $flag : 0;
+        $priority = is_numeric($flag) ? (int) $flag : 0;
         foreach ($values as $k => $v) {
             if (! is_string($k)) {
                 throw Exception\InvalidArgumentException::forNonStringValueKey();
@@ -165,7 +168,10 @@ class Update extends AbstractPreparableSql
         return $this;
     }
 
-    /** @return string[][][]|null */
+    /**
+     * @return string[][][]|null
+     * @throws Exception\RuntimeException
+     */
     protected function processJoins(
         PlatformInterface $platform,
         ?DriverInterface $driver = null,
@@ -174,6 +180,9 @@ class Update extends AbstractPreparableSql
         return $this->processJoin($this->joins, $platform, $driver, $parameterContainer);
     }
 
+    /**
+     * @throws Exception\RuntimeException
+     */
     protected function processSet(
         PlatformInterface $platform,
         ?DriverInterface $driver = null,
@@ -196,7 +205,7 @@ class Update extends AbstractPreparableSql
                 'column',
             );
             $prefix .= ' = ';
-            if (is_scalar($value) && $parameterContainer) {
+            if (is_scalar($value) && $parameterContainer && $driver instanceof DriverInterface) {
                 // use incremental value instead of column name for PDO
                 // @see https://github.com/zendframework/zend-db/issues/35
                 if ($isPdoDriver) {
@@ -217,25 +226,29 @@ class Update extends AbstractPreparableSql
             );
         }
 
-        return str_replace(
-            '%1$s',
+        return $this->formatSpecification(
+            static::SPECIFICATION_SET,
             implode(', ', $setSql),
-            $this->specifications[static::SPECIFICATION_SET],
         );
     }
 
+    /**
+     * @throws Exception\RuntimeException
+     */
     protected function processUpdate(
         PlatformInterface $platform,
         ?DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null,
     ): string {
-        return str_replace(
-            '%1$s',
+        return $this->formatSpecification(
+            static::SPECIFICATION_UPDATE,
             $this->resolveTable($this->unaliasTable($this->table), $platform, $driver, $parameterContainer),
-            $this->specifications[static::SPECIFICATION_UPDATE],
         );
     }
 
+    /**
+     * @throws Exception\RuntimeException
+     */
     protected function processWhere(
         PlatformInterface $platform,
         ?DriverInterface $driver = null,
@@ -245,10 +258,9 @@ class Update extends AbstractPreparableSql
             return null;
         }
 
-        return str_replace(
-            '%1$s',
+        return $this->formatSpecification(
+            static::SPECIFICATION_WHERE,
             $this->processExpression($this->where, $platform, $driver, $parameterContainer, 'where'),
-            $this->specifications[static::SPECIFICATION_WHERE],
         );
     }
 
@@ -257,6 +269,9 @@ class Update extends AbstractPreparableSql
         return $this->joins ??= new Join();
     }
 
+    /**
+     * @return PriorityList<string, ColumnValue>
+     */
     private function getSet(): PriorityList
     {
         if (null === $this->set) {
@@ -280,15 +295,9 @@ class Update extends AbstractPreparableSql
      */
     public function __clone()
     {
-        if (null !== $this->where) {
-            $this->where = clone $this->where;
-        }
-        if (null !== $this->joins) {
-            $this->joins = clone $this->joins;
-        }
-        if (null !== $this->set) {
-            $this->set = clone $this->set;
-        }
+        $this->where = null === $this->where ? null : clone $this->where;
+        $this->joins = null === $this->joins ? null : clone $this->joins;
+        $this->set   = null === $this->set ? null : clone $this->set;
     }
 
     /**

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace PhpDb\Sql\Predicate;
 
 use PhpDb\Sql\ArgumentInterface;
+use PhpDb\Sql\Expression as SqlExpression;
 use PhpDb\Sql\ExpressionInterface;
 use PhpDb\Sql\Predicate\Exception\InvalidArgumentException;
 use PhpDb\Sql\Predicate\Exception\RuntimeException;
@@ -15,20 +16,20 @@ use function strtolower;
 /**
  * @api
  *
- * @psalm-import-type ExpressionParameter from \PhpDb\Sql\Expression
+ * @psalm-import-type ExpressionParameter from SqlExpression
  *
  * @property Predicate $and
  * @property Predicate $or
  * @property Predicate $AND
  * @property Predicate $OR
  * @property Predicate $nest
- * @property Predicate $unnest
+ * @property ?Predicate $unnest
  * @property Predicate $NEST
- * @property Predicate $UNNEST
+ * @property ?Predicate $UNNEST
  */
 class Predicate extends PredicateSet
 {
-    private ?Predicate $parent = null;
+    private ?Predicate $unnest = null;
 
     protected ?string $nextPredicateCombineOperator = null;
 
@@ -345,7 +346,7 @@ class Predicate extends PredicateSet
      */
     public function setUnnest(?Predicate $predicate = null): void
     {
-        $this->parent = $predicate;
+        $this->unnest = $predicate;
     }
 
     /**
@@ -355,12 +356,12 @@ class Predicate extends PredicateSet
      */
     public function unnest(): self
     {
-        if (! $this->parent instanceof Predicate) {
+        if (! $this->unnest instanceof Predicate) {
             throw RuntimeException::forNotNested();
         }
 
-        $parent       = $this->parent;
-        $this->parent = null;
+        $parent       = $this->unnest;
+        $this->unnest = null;
 
         return $parent;
     }
