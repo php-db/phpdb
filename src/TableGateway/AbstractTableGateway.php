@@ -23,7 +23,6 @@ use PhpDb\Sql\Where;
 use PhpDb\TableGateway\Feature\EventFeatureEventsInterface;
 
 use function array_map;
-use function array_values;
 use function end;
 use function in_array;
 use function is_array;
@@ -82,20 +81,6 @@ abstract class AbstractTableGateway implements TableGatewayInterface
                 : $aliased,
             $table,
         );
-    }
-
-    /**
-     * Returns the bare table of an aliased table array, or null when the table is not aliased.
-     *
-     * @param GatewayTable $table
-     */
-    private static function unaliasTable(TableIdentifier|string|array $table): TableIdentifier|string|null
-    {
-        if (! is_array($table)) {
-            return null;
-        }
-
-        return array_values($table)[0] ?? null;
     }
 
     /**
@@ -355,21 +340,11 @@ abstract class AbstractTableGateway implements TableGatewayInterface
         // pre delete update
         $featureSet->apply(EventFeatureEventsInterface::EVENT_PRE_DELETE, [$delete]);
 
-        $unaliasedTable = self::unaliasTable($table);
-        if (null !== $unaliasedTable) {
-            $delete->from($unaliasedTable);
-        }
-
         $statement = $this->requireSql()->prepareStatementForSqlObject($delete);
         $result    = $statement->execute() ?? throw Exception\RuntimeException::forMissingStatementResult('Delete');
 
         // apply postDelete features
         $featureSet->apply(EventFeatureEventsInterface::EVENT_POST_DELETE, [$statement, $result]);
-
-        // Reset original table information in Delete instance, if necessary
-        if (null !== $unaliasedTable) {
-            $delete->from($table);
-        }
 
         return $result->getAffectedRows();
     }
@@ -393,10 +368,6 @@ abstract class AbstractTableGateway implements TableGatewayInterface
 
         // Most RDBMS solutions do not allow using table aliases in INSERTs
         // See https://github.com/zendframework/zf2/issues/7311
-        $unaliasedTable = self::unaliasTable($table);
-        if (null !== $unaliasedTable) {
-            $insert->into($unaliasedTable);
-        }
 
         $statement = $this->requireSql()->prepareStatementForSqlObject($insert);
         $result    = $statement->execute()
@@ -405,11 +376,6 @@ abstract class AbstractTableGateway implements TableGatewayInterface
 
         // apply postInsert features
         $featureSet->apply(EventFeatureEventsInterface::EVENT_POST_INSERT, [$statement, $result]);
-
-        // Reset original table information in Insert instance, if necessary
-        if (null !== $unaliasedTable) {
-            $insert->into($table);
-        }
 
         return $result->getAffectedRows();
     }
@@ -465,21 +431,11 @@ abstract class AbstractTableGateway implements TableGatewayInterface
         // apply preUpdate features
         $featureSet->apply(EventFeatureEventsInterface::EVENT_PRE_UPDATE, [$update]);
 
-        $unaliasedTable = self::unaliasTable($table);
-        if (null !== $unaliasedTable) {
-            $update->table($unaliasedTable);
-        }
-
         $statement = $this->requireSql()->prepareStatementForSqlObject($update);
         $result    = $statement->execute() ?? throw Exception\RuntimeException::forMissingStatementResult('Update');
 
         // apply postUpdate features
         $featureSet->apply(EventFeatureEventsInterface::EVENT_POST_UPDATE, [$statement, $result]);
-
-        // Reset original table information in Update instance, if necessary
-        if (null !== $unaliasedTable) {
-            $update->table($table);
-        }
 
         return $result->getAffectedRows();
     }
