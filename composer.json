@@ -34,6 +34,7 @@
         "laminas/laminas-stdlib": "^3.20.0"
     },
     "require-dev": {
+        "boundwize/structarmed": "^0.18",
         "infection/infection": "^0.34.1",
         "laminas/laminas-eventmanager": "^3.14.0",
         "laminas/laminas-hydrator": "^4.6.0",
@@ -55,8 +56,7 @@
     "autoload-dev": {
         "psr-4": {
             "PhpDbTest\\": "test/unit/",
-            "PhpDbIntegrationTest\\": "test/integration/",
-            "PhpDbBenchmark\\": "test/benchmark/"
+            "PhpDbIntegrationTest\\": "test/integration/"
         }
     },
     "scripts": {
