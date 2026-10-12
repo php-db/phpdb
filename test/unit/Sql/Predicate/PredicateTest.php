@@ -10,6 +10,7 @@ use PhpDb\Adapter\Platform\Sql92;
 use PhpDb\Sql\Argument;
 use PhpDb\Sql\Expression;
 use PhpDb\Sql\Predicate\Between;
+use PhpDb\Sql\Predicate\Exception\InvalidArgumentException;
 use PhpDb\Sql\Predicate\Exception\RuntimeException;
 use PhpDb\Sql\Predicate\In;
 use PhpDb\Sql\Predicate\IsNull;
@@ -30,6 +31,7 @@ use ReflectionUnionType;
 
 use function array_diff;
 use function array_map;
+use function sprintf;
 
 #[Group('unit')]
 final class PredicateTest extends TestCase
@@ -57,6 +59,32 @@ final class PredicateTest extends TestCase
             'like identifier'           => ['like', 0, Like::class, 0],
             'like pattern'              => ['like', 1, Like::class, 1],
             'notLike identifier'        => ['notLike', 0, Like::class, 0],
+        ];
+    }
+
+    /**
+     * @return array<string, array{string, string, string}>
+     */
+    public static function magicCombinationProvider(): array
+    {
+        return [
+            'lower-case or'  => ['or', Predicate::OP_AND, '%s IS NULL OR %s IS NULL'],
+            'upper-case OR'  => ['OR', Predicate::OP_AND, '%s IS NULL OR %s IS NULL'],
+            'lower-case and' => ['and', Predicate::OP_OR, '%s IS NULL AND %s IS NULL'],
+            'upper-case AND' => ['AND', Predicate::OP_OR, '%s IS NULL AND %s IS NULL'],
+        ];
+    }
+
+    /**
+     * @return array<string, array{string}>
+     */
+    public static function mixedCaseMagicPropertyProvider(): array
+    {
+        return [
+            'Or'     => ['Or'],
+            'aND'    => ['aND'],
+            'Nest'   => ['Nest'],
+            'unNest' => ['unNest'],
         ];
     }
 
@@ -416,6 +444,28 @@ final class PredicateTest extends TestCase
     }
 
     #[Test]
+    public function magicCombinationAppliesOnlyToTheNextPredicate(): void
+    {
+        $predicate = new Predicate();
+        $predicate->isNull('a')->OR->isNull('b')->isNull('c');
+
+        static::assertSame('%s IS NULL OR %s IS NULL AND %s IS NULL', $predicate->getExpressionData()['spec']);
+    }
+
+    #[Test]
+    #[DataProvider('magicCombinationProvider')]
+    public function magicCombinationPropertyAcceptsLowerOrUpperCase(
+        string $property,
+        string $defaultCombination,
+        string $expectedSpec,
+    ): void {
+        $predicate = new Predicate(null, $defaultCombination);
+        $predicate->isNull('a')->{$property}->isNull('b');
+
+        static::assertSame($expectedSpec, $predicate->getExpressionData()['spec']);
+    }
+
+    #[Test]
     public function magicGetNestReturnsNestedPredicate(): void
     {
         $predicate = new Predicate();
@@ -427,6 +477,25 @@ final class PredicateTest extends TestCase
     }
 
     #[Test]
+    #[DataProvider('mixedCaseMagicPropertyProvider')]
+    public function magicGetThrowsForMixedCaseName(string $name): void
+    {
+        $predicate = new Predicate();
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage(sprintf(InvalidArgumentException::MIXED_CASE_MAGIC_PROPERTY, $name));
+        $predicate->__get($name);
+    }
+
+    #[Test]
+    public function magicGetUnknownPropertyReturnsSamePredicate(): void
+    {
+        $predicate = new Predicate();
+
+        static::assertSame($predicate, $predicate->__get('unknown'));
+    }
+
+    #[Test]
     public function magicGetUnnestReturnsParentPredicate(): void
     {
         $predicate = new Predicate();
@@ -435,6 +504,16 @@ final class PredicateTest extends TestCase
         $parent = $nested->unnest;
 
         static::assertSame($predicate, $parent);
+    }
+
+    #[Test]
+    public function magicGetUpperCaseNestAndUnnestReturnToParent(): void
+    {
+        $predicate = new Predicate();
+        $nested    = $predicate->NEST;
+
+        static::assertNotSame($predicate, $nested);
+        static::assertSame($predicate, $nested->UNNEST);
     }
 
     #[Test]
@@ -498,6 +577,16 @@ final class PredicateTest extends TestCase
 
         static::assertSame($predicate, $result);
         static::assertCount(1, $predicate);
+    }
+
+    #[Test]
+    public function unnestReturnsThePredicateGivenToSetUnnest(): void
+    {
+        $parent    = new Predicate();
+        $predicate = new Predicate();
+        $predicate->setUnnest($parent);
+
+        static::assertSame($parent, $predicate->unnest());
     }
 
     #[Test]

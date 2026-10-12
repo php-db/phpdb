@@ -6,4 +6,7 @@ namespace PhpDb\Sql\Predicate;
 
 use PhpDb\Sql\ExpressionInterface;
 
+/**
+ * @api
+ */
 interface PredicateInterface extends ExpressionInterface {}

@@ -17,6 +17,7 @@ use function strtolower;
 /**
  * @property Where $where
  * @psalm-import-type Specification from AbstractSql
+ * @psalm-import-type PredicateValue from Predicate\PredicateSet
  */
 class Delete extends AbstractPreparableSql
 {
@@ -79,7 +80,7 @@ class Delete extends AbstractPreparableSql
     /**
      * Create where clause
      *
-     * @param PredicateInterface|array<array-key, mixed>|Closure|string|Where $predicate
+     * @param PredicateInterface|array<array-key, PredicateValue>|Closure|string|Where $predicate
      * @param string $combination One of the OP_* constants from Predicate\PredicateSet
      */
     public function where(

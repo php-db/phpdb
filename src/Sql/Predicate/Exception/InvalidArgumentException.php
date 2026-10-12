@@ -6,9 +6,18 @@ namespace PhpDb\Sql\Predicate\Exception;
 
 use PhpDb\Sql\Exception;
 
+use function sprintf;
+
+/**
+ * @api
+ */
 class InvalidArgumentException extends Exception\InvalidArgumentException
 {
     final public const string INVALID_COMBINATION = "Invalid combination: expected 'AND' or 'OR'";
+
+    final public const string INVALID_LIST_PREDICATE = 'A predicate without a string key must be a predicate, an expression or a string';
+
+    final public const string MIXED_CASE_MAGIC_PROPERTY = 'Magic property "%s" must be given in lower or upper case';
 
     final public const string MISSING_IDENTIFIER = 'Identifier must be specified';
 
@@ -29,6 +38,11 @@ class InvalidArgumentException extends Exception\InvalidArgumentException
     public static function forInvalidCombination(): self
     {
         return new self(self::INVALID_COMBINATION);
+    }
+
+    public static function forInvalidListPredicate(): self
+    {
+        return new self(self::INVALID_LIST_PREDICATE);
     }
 
     public static function forMissingIdentifier(): self
@@ -64,6 +78,11 @@ class InvalidArgumentException extends Exception\InvalidArgumentException
     public static function forMissingValueSet(): self
     {
         return new self(self::MISSING_VALUE_SET);
+    }
+
+    public static function forMixedCaseMagicProperty(string $name): self
+    {
+        return new self(sprintf(self::MIXED_CASE_MAGIC_PROPERTY, $name));
     }
 
     public static function forPredicateWithStringKey(): self

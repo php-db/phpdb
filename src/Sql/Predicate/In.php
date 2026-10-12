@@ -13,6 +13,9 @@ use PhpDb\Sql\ArgumentInterface;
 use PhpDb\Sql\Predicate\Exception\InvalidArgumentException;
 use PhpDb\Sql\Select;
 
+/**
+ * @api
+ */
 class In extends AbstractExpression implements PredicateInterface
 {
     protected ?ArgumentInterface $identifier = null;
