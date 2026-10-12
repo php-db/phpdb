@@ -18,7 +18,7 @@ use PhpDb\RowGateway\RowGateway;
 use PhpDb\Sql\Select;
 use PhpDb\Sql\Sql;
 use PhpDbTest\TestAsset\TrustingSql92Platform;
-use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\IgnoreDeprecations;
 use PHPUnit\Framework\Attributes\RequiresPhp;
 use PHPUnit\Framework\Attributes\Test;
@@ -31,22 +31,7 @@ use ReflectionObject;
 use function sprintf;
 
 #[IgnoreDeprecations]
-#[CoversMethod(RowGateway::class, 'offsetSet')]
-#[CoversMethod(RowGateway::class, '__set')]
-#[CoversMethod(RowGateway::class, '__isset')]
-#[CoversMethod(RowGateway::class, 'offsetExists')]
-#[CoversMethod(RowGateway::class, '__unset')]
-#[CoversMethod(RowGateway::class, 'offsetUnset')]
-#[CoversMethod(RowGateway::class, 'offsetGet')]
-#[CoversMethod(RowGateway::class, '__get')]
-#[CoversMethod(RowGateway::class, 'save')]
-#[CoversMethod(RowGateway::class, 'delete')]
-#[CoversMethod(RowGateway::class, 'populate')]
-#[CoversMethod(RowGateway::class, 'rowExistsInDatabase')]
-#[CoversMethod(RowGateway::class, 'processPrimaryKeyData')]
-#[CoversMethod(RowGateway::class, 'count')]
-#[CoversMethod(RowGateway::class, 'toArray')]
-#[CoversMethod(RowGateway::class, 'exchangeArray')]
+#[CoversClass(AbstractRowGateway::class)]
 final class AbstractRowGatewayTest extends TestCase
 {
     /** @var Adapter&MockObject */

@@ -25,7 +25,7 @@ use PhpDb\TableGateway\Feature\EventFeatureEventsInterface;
 use PhpDb\TableGateway\Feature\FeatureSet;
 use PhpDbTest\TableGateway\Feature\TestAsset\TestTableGatewayFeature;
 use PhpDbTest\TableGateway\TestAsset\HookRecordingTableGateway;
-use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\IgnoreDeprecations;
 use PHPUnit\Framework\Attributes\RequiresPhp;
@@ -39,31 +39,7 @@ use function sprintf;
 
 #[IgnoreDeprecations]
 #[RequiresPhp('<= 8.6')]
-#[CoversMethod(AbstractTableGateway::class, 'getTable')]
-#[CoversMethod(AbstractTableGateway::class, 'getAdapter')]
-#[CoversMethod(AbstractTableGateway::class, 'getSql')]
-#[CoversMethod(AbstractTableGateway::class, 'getResultSetPrototype')]
-#[CoversMethod(AbstractTableGateway::class, 'select')]
-#[CoversMethod(AbstractTableGateway::class, 'selectWith')]
-#[CoversMethod(AbstractTableGateway::class, 'executeSelect')]
-#[CoversMethod(AbstractTableGateway::class, 'insert')]
-#[CoversMethod(AbstractTableGateway::class, 'insertWith')]
-#[CoversMethod(AbstractTableGateway::class, 'executeInsert')]
-#[CoversMethod(AbstractTableGateway::class, 'update')]
-#[CoversMethod(AbstractTableGateway::class, 'updateWith')]
-#[CoversMethod(AbstractTableGateway::class, 'executeUpdate')]
-#[CoversMethod(AbstractTableGateway::class, 'delete')]
-#[CoversMethod(AbstractTableGateway::class, 'deleteWith')]
-#[CoversMethod(AbstractTableGateway::class, 'executeDelete')]
-#[CoversMethod(AbstractTableGateway::class, 'getLastInsertValue')]
-#[CoversMethod(AbstractTableGateway::class, '__get')]
-#[CoversMethod(AbstractTableGateway::class, '__set')]
-#[CoversMethod(AbstractTableGateway::class, '__call')]
-#[CoversMethod(AbstractTableGateway::class, '__clone')]
-#[CoversMethod(AbstractTableGateway::class, 'isInitialized')]
-#[CoversMethod(AbstractTableGateway::class, 'getColumns')]
-#[CoversMethod(AbstractTableGateway::class, 'getFeatureSet')]
-#[CoversMethod(AbstractTableGateway::class, 'initialize')]
+#[CoversClass(AbstractTableGateway::class)]
 final class AbstractTableGatewayTest extends TestCase
 {
     protected MockObject&Adapter $mockAdapter;
