@@ -9,7 +9,7 @@ use PhpDb\RowGateway\AbstractRowGateway;
 use function method_exists;
 
 /**
- * @final
+ * @api
  */
 class FeatureSet
 {
@@ -19,6 +19,9 @@ class FeatureSet
 
     /** @var FeatureInterface[] */
     protected array $features = [];
+
+    /** @var array<array-key, mixed> */
+    protected array $magicSpecifications = [];
 
     /** @param FeatureInterface[] $features */
     public function __construct(array $features = [])
