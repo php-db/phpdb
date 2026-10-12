@@ -23,13 +23,13 @@ use function strtolower;
  * @property Predicate $AND
  * @property Predicate $OR
  * @property Predicate $nest
- * @property Predicate $unnest
+ * @property ?Predicate $unnest
  * @property Predicate $NEST
- * @property Predicate $UNNEST
+ * @property ?Predicate $UNNEST
  */
 class Predicate extends PredicateSet
 {
-    private ?Predicate $parent = null;
+    private ?Predicate $unnest = null;
 
     protected ?string $nextPredicateCombineOperator = null;
 
@@ -346,7 +346,7 @@ class Predicate extends PredicateSet
      */
     public function setUnnest(?Predicate $predicate = null): void
     {
-        $this->parent = $predicate;
+        $this->unnest = $predicate;
     }
 
     /**
@@ -356,12 +356,12 @@ class Predicate extends PredicateSet
      */
     public function unnest(): self
     {
-        if (! $this->parent instanceof Predicate) {
+        if (! $this->unnest instanceof Predicate) {
             throw RuntimeException::forNotNested();
         }
 
-        $parent       = $this->parent;
-        $this->parent = null;
+        $parent       = $this->unnest;
+        $this->unnest = null;
 
         return $parent;
     }
