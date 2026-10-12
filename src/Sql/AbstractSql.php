@@ -56,9 +56,9 @@ abstract class AbstractSql implements SqlInterface
     /**
      * Information used during processing
      *
-     * @var array{paramPrefix: string, subselectCount: int}
+     * @var array{paramPrefix: string, subselectCount: int, expressionCount: int}
      */
-    protected array $processInfo = ['paramPrefix' => '', 'subselectCount' => 0];
+    protected array $processInfo = ['paramPrefix' => '', 'subselectCount' => 0, 'expressionCount' => 0];
 
     /** @var array<string, int> */
     protected array $instanceParameterIndex = [];
@@ -72,6 +72,8 @@ abstract class AbstractSql implements SqlInterface
     public function getSqlString(?PlatformInterface $adapterPlatform = null): string
     {
         $adapterPlatform ??= new DefaultAdapterPlatform();
+
+        $this->resetRenderState();
 
         return $this->buildSqlString($adapterPlatform);
     }
@@ -201,7 +203,6 @@ abstract class AbstractSql implements SqlInterface
     }
 
     /**
-     * @staticvar int $runtimeExpressionPrefix
      * @throws Exception\RuntimeException
      */
     protected function processExpression(
@@ -211,8 +212,6 @@ abstract class AbstractSql implements SqlInterface
         ?ParameterContainer $parameterContainer = null,
         ?string $namedParameterPrefix = null,
     ): string {
-        static $runtimeExpressionPrefix = 0;
-
         $expressionData   = $expression->getExpressionData();
         $specification    = $expressionData['spec'];
         $expressionValues = $expressionData['values'];
@@ -223,7 +222,7 @@ abstract class AbstractSql implements SqlInterface
 
         $namedParameterPrefix = match (true) {
             null === $namedParameterPrefix || '' === $namedParameterPrefix => $parameterContainer
-                ? 'expr' . $runtimeExpressionPrefix++ . 'Param'
+                ? 'expr' . $this->processInfo['expressionCount']++ . 'Param'
                 : '',
             default => $this->processInfo['paramPrefix']
                 . str_replace([' ', "\t", "\n", "\r"], replace: '__', subject: $namedParameterPrefix),
@@ -412,11 +411,16 @@ abstract class AbstractSql implements SqlInterface
         if ($parameterContainer instanceof ParameterContainer) {
             $processInfoContext = $decorator instanceof PlatformDecoratorInterface ? $subselect : $decorator;
             $this->processInfo['subselectCount']++;
-            $processInfoContext->processInfo['subselectCount'] = $this->processInfo['subselectCount'];
-            $processInfoContext->processInfo['paramPrefix']    = "subselect{$processInfoContext->processInfo['subselectCount']}";
+            $processInfoContext->processInfo = [
+                'paramPrefix'     => "subselect{$this->processInfo['subselectCount']}",
+                'subselectCount'  => $this->processInfo['subselectCount'],
+                'expressionCount' => $this->processInfo['expressionCount'],
+            ];
+            $processInfoContext->instanceParameterIndex = [];
 
-            $sql                                 = $decorator->buildSqlString($platform, $driver, $parameterContainer);
-            $this->processInfo['subselectCount'] = $decorator->processInfo['subselectCount'];
+            $sql                                  = $decorator->buildSqlString($platform, $driver, $parameterContainer);
+            $this->processInfo['subselectCount']  = $decorator->processInfo['subselectCount'];
+            $this->processInfo['expressionCount'] = $decorator->processInfo['expressionCount'];
 
             return $sql;
         }
@@ -432,6 +436,23 @@ abstract class AbstractSql implements SqlInterface
     protected function renderTable(string $table, ?string $alias = null): string
     {
         return $alias ? "{$table} AS {$alias}" : $table;
+    }
+
+    /**
+     * Clear the parameter naming state left by a previous render
+     *
+     * Called by the top-level render entry points so that rendering the same object again produces
+     * the same SQL and parameter names. A platform decorator also clears its subject, whose state it
+     * copies at the start of each render.
+     */
+    protected function resetRenderState(): void
+    {
+        $this->processInfo            = ['paramPrefix' => '', 'subselectCount' => 0, 'expressionCount' => 0];
+        $this->instanceParameterIndex = [];
+
+        if ($this instanceof PlatformDecoratorInterface && $this->subject instanceof self) {
+            $this->subject->resetRenderState();
+        }
     }
 
     /**
