@@ -326,12 +326,6 @@ count = 1
 
 [[issues]]
 file = "src/Adapter/Driver/Pdo/AbstractPdo.php"
-code = "incompatible-parameter-type"
-message = 'Parameter `$sqlOrResource` of `PhpDb\Adapter\Driver\Pdo\AbstractPdo::createstatement()` expects type `PDOStatement|string` but parent `PhpDb\Adapter\Driver\DriverInterface::createstatement()` expects type `resource|string`'
-count = 1
-
-[[issues]]
-file = "src/Adapter/Driver/Pdo/AbstractPdo.php"
 code = "invalid-return-statement"
 message = 'Invalid return type for function `PhpDb\Adapter\Driver\Pdo\AbstractPdo::getConnection`: expected `PhpDb\Adapter\Driver\PdoConnectionInterface`, but found `(PhpDb\Adapter\Driver\PdoConnectionInterface&PhpDb\Adapter\Driver\AbstractConnection&PhpDb\Adapter\Driver\PdoDriverAwareInterface)|PDO`.'
 count = 1
@@ -374,20 +368,8 @@ count = 1
 
 [[issues]]
 file = "src/Adapter/Driver/Pdo/AbstractPdo.php"
-code = "redundant-condition"
-message = "This condition (type `true`) will always evaluate to true."
-count = 1
-
-[[issues]]
-file = "src/Adapter/Driver/Pdo/AbstractPdo.php"
 code = "redundant-logical-operation"
 message = "Redundant `&&` operation: left operand is always falsy and right operand is not evaluated."
-count = 1
-
-[[issues]]
-file = "src/Adapter/Driver/Pdo/AbstractPdo.php"
-code = "redundant-type-comparison"
-message = "Redundant type assertion: `$sqlOrResource` is already `string`."
 count = 1
 
 [[issues]]

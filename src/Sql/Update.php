@@ -22,7 +22,7 @@ use function strtolower;
 /**
  * @api
  *
- * @property Where $where
+ * @property ?Where $where
  * @psalm-import-type Specification from AbstractSql
  * @psalm-import-type ColumnValue from AbstractSql
  * @psalm-import-type PredicateValue from Predicate\PredicateSet
@@ -67,9 +67,9 @@ class Update extends AbstractPreparableSql
     /** @var PriorityList<string, ColumnValue>|null */
     protected ?PriorityList $set = null;
 
-    protected ?Where $whereClause = null;
+    protected ?Where $where = null;
 
-    protected ?Join $joinClause = null;
+    protected ?Join $joins = null;
 
     /**
      * Constructor
@@ -158,7 +158,7 @@ class Update extends AbstractPreparableSql
         string $combination = Predicate\PredicateSet::OP_AND,
     ): static {
         if ($predicate instanceof Where) {
-            $this->whereClause = $predicate;
+            $this->where = $predicate;
 
             return $this;
         }
@@ -177,7 +177,7 @@ class Update extends AbstractPreparableSql
         ?DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null,
     ): ?array {
-        return $this->processJoin($this->joinClause, $platform, $driver, $parameterContainer);
+        return $this->processJoin($this->joins, $platform, $driver, $parameterContainer);
     }
 
     /**
@@ -254,19 +254,19 @@ class Update extends AbstractPreparableSql
         ?DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null,
     ): ?string {
-        if (null === $this->whereClause || $this->whereClause->count() === 0) {
+        if (null === $this->where || $this->where->count() === 0) {
             return null;
         }
 
         return $this->formatSpecification(
             static::SPECIFICATION_WHERE,
-            $this->processExpression($this->whereClause, $platform, $driver, $parameterContainer, 'where'),
+            $this->processExpression($this->where, $platform, $driver, $parameterContainer, 'where'),
         );
     }
 
     private function getJoins(): Join
     {
-        return $this->joinClause ??= new Join();
+        return $this->joins ??= new Join();
     }
 
     /**
@@ -283,7 +283,7 @@ class Update extends AbstractPreparableSql
 
     private function getWhere(): Where
     {
-        return $this->whereClause ??= new Where();
+        return $this->where ??= new Where();
     }
 
     /**
@@ -295,9 +295,9 @@ class Update extends AbstractPreparableSql
      */
     public function __clone()
     {
-        $this->whereClause = null === $this->whereClause ? null : clone $this->whereClause;
-        $this->joinClause  = null === $this->joinClause ? null : clone $this->joinClause;
-        $this->set         = null === $this->set ? null : clone $this->set;
+        $this->where = null === $this->where ? null : clone $this->where;
+        $this->joins = null === $this->joins ? null : clone $this->joins;
+        $this->set   = null === $this->set ? null : clone $this->set;
     }
 
     /**

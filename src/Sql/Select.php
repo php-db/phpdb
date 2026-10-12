@@ -32,9 +32,9 @@ use function trim;
 /**
  * @api
  *
- * @property Where $where
- * @property Having $having
- * @property Join $joins
+ * @property ?Where $where
+ * @property ?Having $having
+ * @property ?Join $joins
  * @psalm-import-type Specification from AbstractSql
  * @psalm-import-type PredicateValue from Predicate\PredicateSet
  * @psalm-import-type JoinName from Join
@@ -155,9 +155,9 @@ class Select extends AbstractPreparableSql
     /** @var ColumnList */
     protected array $columns = [self::SQL_STAR];
 
-    protected ?Join $joinClause = null;
+    protected ?Join $joins = null;
 
-    protected ?Where $whereClause = null;
+    protected ?Where $where = null;
 
     /** @var ColumnList */
     protected array $order = [];
@@ -165,7 +165,7 @@ class Select extends AbstractPreparableSql
     /** @var list<string|ExpressionInterface>|null */
     protected ?array $group = null;
 
-    protected ?Having $havingClause = null;
+    protected ?Having $having = null;
 
     protected string|int|null $limit = null;
 
@@ -293,7 +293,7 @@ class Select extends AbstractPreparableSql
         string $combination = Predicate\PredicateSet::OP_AND,
     ): static {
         if ($predicate instanceof Having) {
-            $this->havingClause = $predicate;
+            $this->having = $predicate;
 
             return $this;
         }
@@ -402,10 +402,10 @@ class Select extends AbstractPreparableSql
             self::TABLE => $this->table = null,
             self::QUANTIFIER => $this->quantifier = null,
             self::COLUMNS => $this->columns = [],
-            self::JOINS => $this->joinClause = null,
-            self::WHERE => $this->whereClause = null,
+            self::JOINS => $this->joins = null,
+            self::WHERE => $this->where = null,
             self::GROUP => $this->group = null,
-            self::HAVING => $this->havingClause = null,
+            self::HAVING => $this->having = null,
             self::LIMIT => $this->limit = null,
             self::OFFSET => $this->offset = null,
             self::ORDER => $this->order = [],
@@ -441,7 +441,7 @@ class Select extends AbstractPreparableSql
         string $combination = Predicate\PredicateSet::OP_AND,
     ): self {
         if ($predicate instanceof Where) {
-            $this->whereClause = $predicate;
+            $this->where = $predicate;
 
             return $this;
         }
@@ -516,12 +516,12 @@ class Select extends AbstractPreparableSql
         ?DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null,
     ): ?array {
-        if (null === $this->havingClause || $this->havingClause->count() === 0) {
+        if (null === $this->having || $this->having->count() === 0) {
             return null;
         }
 
         return [
-            $this->processExpression($this->havingClause, $platform, $driver, $parameterContainer, 'having'),
+            $this->processExpression($this->having, $platform, $driver, $parameterContainer, 'having'),
         ];
     }
 
@@ -534,7 +534,7 @@ class Select extends AbstractPreparableSql
         ?DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null,
     ): ?array {
-        return $this->processJoin($this->joinClause, $platform, $driver, $parameterContainer);
+        return $this->processJoin($this->joins, $platform, $driver, $parameterContainer);
     }
 
     /** @return array{0: string}|null */
@@ -739,28 +739,28 @@ class Select extends AbstractPreparableSql
         ?DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null,
     ): ?array {
-        if (null === $this->whereClause || $this->whereClause->count() === 0) {
+        if (null === $this->where || $this->where->count() === 0) {
             return null;
         }
 
         return [
-            $this->processExpression($this->whereClause, $platform, $driver, $parameterContainer, 'where'),
+            $this->processExpression($this->where, $platform, $driver, $parameterContainer, 'where'),
         ];
     }
 
     private function getHaving(): Having
     {
-        return $this->havingClause ??= new Having();
+        return $this->having ??= new Having();
     }
 
     private function getJoins(): Join
     {
-        return $this->joinClause ??= new Join();
+        return $this->joins ??= new Join();
     }
 
     private function getWhere(): Where
     {
-        return $this->whereClause ??= new Where();
+        return $this->where ??= new Where();
     }
 
     private function prefixFromTable(?string $fromTable, PlatformInterface $platform): string
@@ -818,9 +818,9 @@ class Select extends AbstractPreparableSql
      */
     public function __clone()
     {
-        $this->whereClause  = null === $this->whereClause ? null : clone $this->whereClause;
-        $this->joinClause   = null === $this->joinClause ? null : clone $this->joinClause;
-        $this->havingClause = null === $this->havingClause ? null : clone $this->havingClause;
+        $this->where  = null === $this->where ? null : clone $this->where;
+        $this->joins  = null === $this->joins ? null : clone $this->joins;
+        $this->having = null === $this->having ? null : clone $this->having;
     }
 
     /**
