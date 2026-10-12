@@ -14,7 +14,7 @@ use function is_array;
 
 /**
  * @api
- * @psalm-import-type GatewayTable from AbstractTableGateway
+ * @psalm-import-type GatewayTable from TableGatewayInterface
  */
 class TableGateway extends AbstractTableGateway
 {

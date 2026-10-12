@@ -14,7 +14,6 @@ use PhpDb\Sql\Delete;
 use PhpDb\Sql\Exception\RuntimeException as SqlRuntimeException;
 use PhpDb\Sql\Insert;
 use PhpDb\Sql\Join;
-use PhpDb\Sql\Predicate\PredicateSet;
 use PhpDb\Sql\Select;
 use PhpDb\Sql\Sql;
 use PhpDb\Sql\TableIdentifier;
@@ -32,9 +31,8 @@ use function is_array;
  * @psalm-import-type ColumnValue from AbstractSql
  * @psalm-import-type ColumnList from Select
  * @psalm-import-type JoinName from Join
- * @psalm-import-type PredicateValue from PredicateSet
- * @psalm-type GatewayTable = TableIdentifier|string|array<string, TableIdentifier|string>
- * @psalm-type GatewayWhere = Where|Closure|string|array<array-key, PredicateValue>
+ * @psalm-import-type GatewayTable from TableGatewayInterface
+ * @psalm-import-type GatewayWhere from TableGatewayInterface
  * @psalm-type GatewayJoin = array{name: JoinName, on: string, type?: string}
  * @property AdapterInterface|null $adapter
  * @property string|int|false|null $lastInsertValue

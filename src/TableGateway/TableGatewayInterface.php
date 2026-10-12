@@ -7,14 +7,16 @@ namespace PhpDb\TableGateway;
 use Closure;
 use PhpDb\ResultSet\ResultSetInterface;
 use PhpDb\Sql\AbstractSql;
+use PhpDb\Sql\Predicate\PredicateSet;
 use PhpDb\Sql\TableIdentifier;
 use PhpDb\Sql\Where;
 
 /**
  * @api
  * @psalm-import-type ColumnValue from AbstractSql
- * @psalm-import-type GatewayTable from AbstractTableGateway
- * @psalm-import-type GatewayWhere from AbstractTableGateway
+ * @psalm-import-type PredicateValue from PredicateSet
+ * @psalm-type GatewayTable = TableIdentifier|string|array<string, TableIdentifier|string>
+ * @psalm-type GatewayWhere = Where|Closure|string|array<array-key, PredicateValue>
  */
 interface TableGatewayInterface
 {
