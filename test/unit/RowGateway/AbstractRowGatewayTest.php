@@ -47,12 +47,6 @@ use function sprintf;
 #[CoversMethod(RowGateway::class, 'count')]
 #[CoversMethod(RowGateway::class, 'toArray')]
 #[CoversMethod(RowGateway::class, 'exchangeArray')]
-#[CoversMethod(AbstractRowGateway::class, 'executeStatement')]
-#[CoversMethod(AbstractRowGateway::class, 'insertRow')]
-#[CoversMethod(AbstractRowGateway::class, 'updateRow')]
-#[CoversMethod(AbstractRowGateway::class, 'processInsertedPrimaryKey')]
-#[CoversMethod(AbstractRowGateway::class, 'requirePrimaryKeyColumn')]
-#[CoversMethod(AbstractRowGateway::class, 'requireSql')]
 final class AbstractRowGatewayTest extends TestCase
 {
     /** @var Adapter&MockObject */

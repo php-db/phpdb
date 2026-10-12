@@ -64,11 +64,6 @@ use function sprintf;
 #[CoversMethod(AbstractTableGateway::class, 'getColumns')]
 #[CoversMethod(AbstractTableGateway::class, 'getFeatureSet')]
 #[CoversMethod(AbstractTableGateway::class, 'initialize')]
-#[CoversMethod(AbstractTableGateway::class, 'unaliasTable')]
-#[CoversMethod(AbstractTableGateway::class, 'cloneTable')]
-#[CoversMethod(AbstractTableGateway::class, 'requireFeatureSet')]
-#[CoversMethod(AbstractTableGateway::class, 'requireResultSetPrototype')]
-#[CoversMethod(AbstractTableGateway::class, 'requireSql')]
 final class AbstractTableGatewayTest extends TestCase
 {
     protected MockObject&Adapter $mockAdapter;
