@@ -83,11 +83,13 @@ class Insert extends AbstractPreparableSql
     /**
      * Get raw state
      *
-     * @return TableIdentifier|string|array<string, string|TableIdentifier>|list<array-key|ColumnValue>|array{
-     *     table: TableIdentifier|string|array<string, string|TableIdentifier>,
-     *     columns: list<array-key>,
-     *     values: list<ColumnValue>,
-     * }
+     * @return ($key is 'table' ? TableIdentifier|string|array<string, string|TableIdentifier> : (
+     *     TableIdentifier|string|array<string, string|TableIdentifier>|list<array-key|ColumnValue>|array{
+     *         table: TableIdentifier|string|array<string, string|TableIdentifier>,
+     *         columns: list<array-key>,
+     *         values: list<ColumnValue>,
+     *     }
+     * ))
      */
     public function getRawState(?string $key = null): TableIdentifier|string|array
     {

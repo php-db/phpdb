@@ -244,7 +244,7 @@ class Select extends AbstractPreparableSql
     }
 
     /**
-     * @return ($key is self::COLUMNS ? ColumnList : mixed)
+     * @return ($key is self::TABLE ? TableReference|null : ($key is self::COLUMNS ? ColumnList : mixed))
      */
     public function getRawState(?string $key = null): mixed
     {

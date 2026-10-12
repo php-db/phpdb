@@ -8,6 +8,9 @@ use PhpDb\Exception;
 
 use function sprintf;
 
+/**
+ * @api
+ */
 class InvalidArgumentException extends Exception\InvalidArgumentException
 {
     final public const string INVALID_COLUMN = 'Not a valid column in this row: %s';

@@ -9,7 +9,9 @@ use Override;
 use PhpDb\Adapter\AdapterInterface;
 use PhpDb\ResultSet\ResultSet;
 use PhpDb\ResultSet\ResultSetInterface;
+use PhpDb\Sql\AbstractSql;
 use PhpDb\Sql\Delete;
+use PhpDb\Sql\Exception\RuntimeException as SqlRuntimeException;
 use PhpDb\Sql\Insert;
 use PhpDb\Sql\Join;
 use PhpDb\Sql\Select;
@@ -19,18 +21,22 @@ use PhpDb\Sql\Update;
 use PhpDb\Sql\Where;
 use PhpDb\TableGateway\Feature\EventFeatureEventsInterface;
 
-use function array_shift;
-use function array_values;
-use function count;
+use function array_map;
 use function end;
+use function in_array;
 use function is_array;
-use function is_object;
-use function reset;
 
 /**
- * @property AdapterInterface $adapter
- * @property int $lastInsertValue
- * @property TableIdentifier|string|array|null $table
+ * @api
+ * @psalm-import-type ColumnValue from AbstractSql
+ * @psalm-import-type ColumnList from Select
+ * @psalm-import-type JoinName from Join
+ * @psalm-import-type GatewayTable from TableGatewayInterface
+ * @psalm-import-type GatewayWhere from TableGatewayInterface
+ * @psalm-type GatewayJoin = array{name: JoinName, on: string, type?: string}
+ * @property AdapterInterface|null $adapter
+ * @property string|int|false|null $lastInsertValue
+ * @property GatewayTable|null $table
  */
 abstract class AbstractTableGateway implements TableGatewayInterface
 {
@@ -38,8 +44,10 @@ abstract class AbstractTableGateway implements TableGatewayInterface
 
     protected ?AdapterInterface $adapter = null;
 
+    /** @var GatewayTable|null */
     protected TableIdentifier|string|array|null $table = null;
 
+    /** @var ColumnList */
     protected array $columns = [];
 
     protected ?Feature\FeatureSet $featureSet = null;
@@ -50,24 +58,56 @@ abstract class AbstractTableGateway implements TableGatewayInterface
 
     protected string|int|false|null $lastInsertValue = null;
 
-    /** @throws Exception\RuntimeException */
+    /**
+     * @param GatewayTable|null $table
+     *
+     * @return GatewayTable|null
+     */
+    private static function cloneTable(TableIdentifier|string|array|null $table): TableIdentifier|string|array|null
+    {
+        if ($table instanceof TableIdentifier) {
+            return clone $table;
+        }
+
+        if (! is_array($table)) {
+            return $table;
+        }
+
+        return array_map(
+            static fn(TableIdentifier|string $aliased): TableIdentifier|string => $aliased instanceof TableIdentifier
+                ? clone $aliased
+                : $aliased,
+            $table,
+        );
+    }
+
+    /**
+     * @param GatewayWhere $where
+     *
+     * @throws Exception\RuntimeException
+     * @throws SqlRuntimeException
+     */
     #[Override]
     public function delete(Where|Closure|array|string $where): int
     {
         if (! $this->isInitialized) {
             $this->initialize();
         }
-        $delete = $this->sql->delete();
+        $delete = $this->requireSql()->delete();
         if ($where instanceof Closure) {
             $where($delete);
-        } else {
-            $delete->where($where);
+
+            return $this->executeDelete($delete);
         }
+        $delete->where($where);
 
         return $this->executeDelete($delete);
     }
 
-    /** @throws Exception\RuntimeException */
+    /**
+     * @throws Exception\RuntimeException
+     * @throws SqlRuntimeException
+     */
     public function deleteWith(Delete $delete): int
     {
         $this->initialize();
@@ -75,11 +115,13 @@ abstract class AbstractTableGateway implements TableGatewayInterface
         return $this->executeDelete($delete);
     }
 
+    /** @throws Exception\RuntimeException */
     public function getAdapter(): AdapterInterface
     {
-        return $this->adapter;
+        return $this->adapter ?? throw Exception\RuntimeException::forMissingAdapter();
     }
 
+    /** @return ColumnList */
     public function getColumns(): array
     {
         return $this->columns;
@@ -92,7 +134,7 @@ abstract class AbstractTableGateway implements TableGatewayInterface
             $this->initialize();
         }
 
-        return $this->featureSet;
+        return $this->requireFeatureSet();
     }
 
     public function getLastInsertValue(): string|int|false|null
@@ -107,7 +149,7 @@ abstract class AbstractTableGateway implements TableGatewayInterface
             $this->initialize();
         }
 
-        return $this->resultSetPrototype;
+        return $this->requireResultSetPrototype();
     }
 
     /** @throws Exception\RuntimeException */
@@ -117,13 +159,18 @@ abstract class AbstractTableGateway implements TableGatewayInterface
             $this->initialize();
         }
 
-        return $this->sql;
+        return $this->requireSql();
     }
 
+    /**
+     * @return GatewayTable
+     *
+     * @throws Exception\RuntimeException
+     */
     #[Override]
     public function getTable(): TableIdentifier|array|string
     {
-        return $this->table;
+        return $this->table ?? throw Exception\RuntimeException::forMissingTable();
     }
 
     /**
@@ -137,48 +184,45 @@ abstract class AbstractTableGateway implements TableGatewayInterface
             return;
         }
 
-        if (null === $this->featureSet) {
-            $this->featureSet = new Feature\FeatureSet();
-        }
+        $this->featureSet ??= new Feature\FeatureSet();
+        $featureSet       = $this->featureSet;
 
-        $this->featureSet->setTableGateway($this);
-        $this->featureSet->apply(EventFeatureEventsInterface::EVENT_PRE_INITIALIZE, []);
+        $featureSet->setTableGateway($this);
+        $featureSet->apply(EventFeatureEventsInterface::EVENT_PRE_INITIALIZE, []);
 
-        if (null === $this->adapter) {
-            throw Exception\RuntimeException::forMissingAdapter();
-        }
+        $adapter = $this->adapter ?? throw Exception\RuntimeException::forMissingAdapter();
+        $table   = $this->table ?? throw Exception\RuntimeException::forMissingTable();
 
-        if (null === $this->table) {
-            throw Exception\RuntimeException::forMissingTable();
-        }
+        $this->resultSetPrototype ??= new ResultSet();
+        $this->sql                ??= new Sql($adapter, $table);
 
-        if (null === $this->resultSetPrototype) {
-            $this->resultSetPrototype = new ResultSet();
-        }
-
-        if (null === $this->sql) {
-            $this->sql = new Sql($this->adapter, $this->table);
-        }
-
-        $this->featureSet->apply(EventFeatureEventsInterface::EVENT_POST_INITIALIZE, []);
+        $featureSet->apply(EventFeatureEventsInterface::EVENT_POST_INITIALIZE, []);
 
         $this->isInitialized = true;
     }
 
-    /** @throws Exception\RuntimeException */
+    /**
+     * @param array<string, ColumnValue> $set
+     *
+     * @throws Exception\RuntimeException
+     * @throws SqlRuntimeException
+     */
     #[Override]
     public function insert(array $set): int
     {
         if (! $this->isInitialized) {
             $this->initialize();
         }
-        $insert = $this->sql->insert();
+        $insert = $this->requireSql()->insert();
         $insert->values($set);
 
         return $this->executeInsert($insert);
     }
 
-    /** @throws Exception\RuntimeException */
+    /**
+     * @throws Exception\RuntimeException
+     * @throws SqlRuntimeException
+     */
     public function insertWith(Insert $insert): int
     {
         if (! $this->isInitialized) {
@@ -193,7 +237,12 @@ abstract class AbstractTableGateway implements TableGatewayInterface
         return $this->isInitialized;
     }
 
-    /** @throws Exception\RuntimeException */
+    /**
+     * @param GatewayWhere|null $where
+     *
+     * @throws Exception\RuntimeException
+     * @throws SqlRuntimeException
+     */
     #[Override]
     public function select(Where|Closure|string|array|null $where = null): ResultSetInterface
     {
@@ -201,18 +250,25 @@ abstract class AbstractTableGateway implements TableGatewayInterface
             $this->initialize();
         }
 
-        $select = $this->sql->select();
+        $select = $this->requireSql()->select();
 
         if ($where instanceof Closure) {
             $where($select);
-        } elseif (null !== $where) {
+
+            return $this->selectWith($select);
+        }
+
+        if (null !== $where) {
             $select->where($where);
         }
 
         return $this->selectWith($select);
     }
 
-    /** @throws Exception\RuntimeException */
+    /**
+     * @throws Exception\RuntimeException
+     * @throws SqlRuntimeException
+     */
     public function selectWith(Select $select): ResultSetInterface
     {
         if (! $this->isInitialized) {
@@ -222,7 +278,14 @@ abstract class AbstractTableGateway implements TableGatewayInterface
         return $this->executeSelect($select);
     }
 
-    /** @throws Exception\RuntimeException */
+    /**
+     * @param array<string, ColumnValue> $set
+     * @param GatewayWhere|null          $where
+     * @param list<GatewayJoin>|null     $joins
+     *
+     * @throws Exception\RuntimeException
+     * @throws SqlRuntimeException
+     */
     #[Override]
     public function update(
         array $set,
@@ -232,24 +295,23 @@ abstract class AbstractTableGateway implements TableGatewayInterface
         if (! $this->isInitialized) {
             $this->initialize();
         }
-        $sql    = $this->sql;
-        $update = $sql->update();
+        $update = $this->requireSql()->update();
         $update->set($set);
         if (null !== $where) {
             $update->where($where);
         }
 
-        if ($joins) {
-            foreach ($joins as $join) {
-                $type = $join['type'] ?? Join::JOIN_INNER;
-                $update->join($join['name'], $join['on'], $type);
-            }
+        foreach ($joins ?? [] as $join) {
+            $update->join($join['name'], $join['on'], $join['type'] ?? Join::JOIN_INNER);
         }
 
         return $this->executeUpdate($update);
     }
 
-    /** @throws Exception\RuntimeException */
+    /**
+     * @throws Exception\RuntimeException
+     * @throws SqlRuntimeException
+     */
     public function updateWith(Update $update): int
     {
         if (! $this->isInitialized) {
@@ -261,201 +323,196 @@ abstract class AbstractTableGateway implements TableGatewayInterface
 
     /**
      * @throws Exception\RuntimeException
+     * @throws SqlRuntimeException
      * @todo add $columns support
      */
     protected function executeDelete(Delete $delete): int
     {
-        $deleteState = $delete->getRawState();
-        if ($deleteState['table'] !== $this->table) {
+        $table = $delete->getRawState('table');
+        if ($table !== $this->table) {
             throw Exception\RuntimeException::forTableMismatch('Delete');
         }
 
+        $featureSet = $this->requireFeatureSet();
+
         // pre delete update
-        $this->featureSet->apply(EventFeatureEventsInterface::EVENT_PRE_DELETE, [$delete]);
+        $featureSet->apply(EventFeatureEventsInterface::EVENT_PRE_DELETE, [$delete]);
 
-        $unaliasedTable = false;
-        if (is_array($deleteState['table'])) {
-            $tableData      = array_values($deleteState['table']);
-            $unaliasedTable = array_shift($tableData);
-            $delete->from($unaliasedTable);
-        }
-
-        $statement = $this->sql->prepareStatementForSqlObject($delete);
-        $result    = $statement->execute();
+        $statement = $this->requireSql()->prepareStatementForSqlObject($delete);
+        $result    = $statement->execute() ?? throw Exception\RuntimeException::forMissingStatementResult('Delete');
 
         // apply postDelete features
-        $this->featureSet->apply(EventFeatureEventsInterface::EVENT_POST_DELETE, [$statement, $result]);
-
-        // Reset original table information in Delete instance, if necessary
-        if ($unaliasedTable) {
-            $delete->from($deleteState['table']);
-        }
+        $featureSet->apply(EventFeatureEventsInterface::EVENT_POST_DELETE, [$statement, $result]);
 
         return $result->getAffectedRows();
     }
 
     /**
      * @throws Exception\RuntimeException
+     * @throws SqlRuntimeException
      * @todo add $columns support
      */
     protected function executeInsert(Insert $insert): int
     {
-        $insertState = $insert->getRawState();
-        if ($insertState['table'] !== $this->table) {
+        $table = $insert->getRawState('table');
+        if ($table !== $this->table) {
             throw Exception\RuntimeException::forTableMismatch('Insert');
         }
 
+        $featureSet = $this->requireFeatureSet();
+
         // apply preInsert features
-        $this->featureSet->apply(EventFeatureEventsInterface::EVENT_PRE_INSERT, [$insert]);
+        $featureSet->apply(EventFeatureEventsInterface::EVENT_PRE_INSERT, [$insert]);
 
         // Most RDBMS solutions do not allow using table aliases in INSERTs
         // See https://github.com/zendframework/zf2/issues/7311
-        $unaliasedTable = false;
-        if (is_array($insertState['table'])) {
-            $tableData      = array_values($insertState['table']);
-            $unaliasedTable = array_shift($tableData);
-            $insert->into($unaliasedTable);
-        }
 
-        $statement             = $this->sql->prepareStatementForSqlObject($insert);
-        $result                = $statement->execute();
-        $this->lastInsertValue = $this->adapter->getDriver()->getConnection()->getLastGeneratedValue();
+        $statement = $this->requireSql()->prepareStatementForSqlObject($insert);
+        $result    = $statement->execute()
+            ?? throw Exception\RuntimeException::forMissingStatementResult('Insert');
+        $this->lastInsertValue = $this->getAdapter()->getDriver()->getConnection()->getLastGeneratedValue();
 
         // apply postInsert features
-        $this->featureSet->apply(EventFeatureEventsInterface::EVENT_POST_INSERT, [$statement, $result]);
-
-        // Reset original table information in Insert instance, if necessary
-        if ($unaliasedTable) {
-            $insert->into($insertState['table']);
-        }
+        $featureSet->apply(EventFeatureEventsInterface::EVENT_POST_INSERT, [$statement, $result]);
 
         return $result->getAffectedRows();
     }
 
     /**
      * @throws Exception\RuntimeException
+     * @throws SqlRuntimeException
      */
     protected function executeSelect(Select $select): ResultSetInterface
     {
-        $selectState = $select->getRawState();
-        if (
-            isset($selectState['table'])
-            && $selectState['table'] !== $this->table
-            && (
-                is_array($selectState['table'])
-                && end($selectState['table']) !== $this->table
-            )
-        ) {
+        $table = $select->getRawState(Select::TABLE);
+        if (is_array($table) && $table !== $this->table && end($table) !== $this->table) {
             throw Exception\RuntimeException::forTableMismatch('Select');
         }
 
-        if (
-            isset($selectState['columns'])
-            && [Select::SQL_STAR] === $selectState['columns']
-            && [] !== $this->columns
-        ) {
+        if ([Select::SQL_STAR] === $select->getRawState(Select::COLUMNS) && [] !== $this->columns) {
             $select->columns($this->columns);
         }
 
+        $featureSet = $this->requireFeatureSet();
+
         // apply preSelect features
-        $this->featureSet->apply(EventFeatureEventsInterface::EVENT_PRE_SELECT, [$select]);
+        $featureSet->apply(EventFeatureEventsInterface::EVENT_PRE_SELECT, [$select]);
 
         // prepare and execute
-        $statement = $this->sql->prepareStatementForSqlObject($select);
-        $result    = $statement->execute();
+        $statement = $this->requireSql()->prepareStatementForSqlObject($select);
+        $result    = $statement->execute() ?? throw Exception\RuntimeException::forMissingStatementResult('Select');
 
         // build result set
-        $resultSet = clone $this->resultSetPrototype;
+        $resultSet = clone $this->requireResultSetPrototype();
         $resultSet->initialize($result);
 
         // apply postSelect features
-        $this->featureSet->apply(EventFeatureEventsInterface::EVENT_POST_SELECT, [$statement, $result, $resultSet]);
+        $featureSet->apply(EventFeatureEventsInterface::EVENT_POST_SELECT, [$statement, $result, $resultSet]);
 
         return $resultSet;
     }
 
     /**
      * @throws Exception\RuntimeException
+     * @throws SqlRuntimeException
      * @todo add $columns support
      */
     protected function executeUpdate(Update $update): int
     {
-        $updateState = $update->getRawState();
-        if ($updateState['table'] !== $this->table) {
+        $table = $update->getRawState('table');
+        if ($table !== $this->table) {
             throw Exception\RuntimeException::forTableMismatch('Update');
         }
 
+        $featureSet = $this->requireFeatureSet();
+
         // apply preUpdate features
-        $this->featureSet->apply(EventFeatureEventsInterface::EVENT_PRE_UPDATE, [$update]);
+        $featureSet->apply(EventFeatureEventsInterface::EVENT_PRE_UPDATE, [$update]);
 
-        $unaliasedTable = false;
-        if (is_array($updateState['table'])) {
-            $tableData      = array_values($updateState['table']);
-            $unaliasedTable = array_shift($tableData);
-            $update->table($unaliasedTable);
-        }
-
-        $statement = $this->sql->prepareStatementForSqlObject($update);
-        $result    = $statement->execute();
+        $statement = $this->requireSql()->prepareStatementForSqlObject($update);
+        $result    = $statement->execute() ?? throw Exception\RuntimeException::forMissingStatementResult('Update');
 
         // apply postUpdate features
-        $this->featureSet->apply(EventFeatureEventsInterface::EVENT_POST_UPDATE, [$statement, $result]);
-
-        // Reset original table information in Update instance, if necessary
-        if ($unaliasedTable) {
-            $update->table($updateState['table']);
-        }
+        $featureSet->apply(EventFeatureEventsInterface::EVENT_POST_UPDATE, [$statement, $result]);
 
         return $result->getAffectedRows();
     }
 
+    /** @throws Exception\RuntimeException */
+    private function requireFeatureSet(): Feature\FeatureSet
+    {
+        return $this->featureSet ?? throw Exception\RuntimeException::forUninitializedProperty('featureSet');
+    }
+
+    /** @throws Exception\RuntimeException */
+    private function requireResultSetPrototype(): ResultSetInterface
+    {
+        return (
+            $this->resultSetPrototype
+                ?? throw Exception\RuntimeException::forUninitializedProperty('resultSetPrototype')
+        );
+    }
+
+    /** @throws Exception\RuntimeException */
+    private function requireSql(): Sql
+    {
+        return $this->sql ?? throw Exception\RuntimeException::forUninitializedProperty('sql');
+    }
+
     /**
+     * @param array<array-key, mixed> $arguments
+     *
      * @throws Exception\InvalidArgumentException
+     * @throws Exception\RuntimeException
      */
     public function __call(string $method, array $arguments): mixed
     {
-        if ($this->featureSet->canCallMagicCall($method)) {
-            return $this->featureSet->callMagicCall($method, $arguments);
+        $featureSet = $this->requireFeatureSet();
+        if ($featureSet->canCallMagicCall($method)) {
+            return $featureSet->callMagicCall($method, $arguments);
         }
         throw Exception\InvalidArgumentException::forInvalidMagicCall($method, static::class);
     }
 
     public function __clone(): void
     {
-        $this->resultSetPrototype = isset($this->resultSetPrototype) ? clone $this->resultSetPrototype : null;
-        $this->sql                = clone $this->sql;
-        if (is_object($this->table)) {
-            $this->table = clone $this->table;
-        } elseif (
-            is_array($this->table)
-            && count($this->table) === 1
-            && is_object(reset($this->table))
-        ) {
-            foreach ($this->table as &$tableObject) {
-                $tableObject = clone $tableObject;
-            }
+        if (null !== $this->resultSetPrototype) {
+            $this->resultSetPrototype = clone $this->resultSetPrototype;
         }
+
+        if (null !== $this->sql) {
+            $this->sql = clone $this->sql;
+        }
+
+        $this->table = self::cloneTable($this->table);
     }
 
     /**
      * @throws Exception\InvalidArgumentException
+     * @throws Exception\RuntimeException
      */
     public function __get(string $property): mixed
     {
-        return match (true) {
-            'lastInsertValue' === $property, 'adapter' === $property, 'table' === $property => $this->$property,
-            $this->featureSet->canCallMagicGet($property) => $this->featureSet->callMagicGet($property),
-            default => throw Exception\InvalidArgumentException::forInvalidMagicGet(static::class),
-        };
+        if (in_array($property, ['lastInsertValue', 'adapter', 'table'], strict: true)) {
+            return $this->$property;
+        }
+
+        $featureSet = $this->requireFeatureSet();
+        if ($featureSet->canCallMagicGet($property)) {
+            return $featureSet->callMagicGet($property);
+        }
+        throw Exception\InvalidArgumentException::forInvalidMagicGet(static::class);
     }
 
     /**
      * @throws Exception\InvalidArgumentException
+     * @throws Exception\RuntimeException
      */
     public function __set(string $property, mixed $value): void
     {
-        if ($this->featureSet->canCallMagicSet($property)) {
-            $this->featureSet->callMagicSet($property, $value);
+        $featureSet = $this->requireFeatureSet();
+        if ($featureSet->canCallMagicSet($property)) {
+            $featureSet->callMagicSet($property, $value);
 
             return;
         }

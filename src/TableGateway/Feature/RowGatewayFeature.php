@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace PhpDb\TableGateway\Feature;
 
 use PhpDb\ResultSet\RowPrototypeResultSet;
+use PhpDb\RowGateway\Exception\RuntimeException as RowGatewayRuntimeException;
 use PhpDb\RowGateway\RowGateway;
 use PhpDb\RowGateway\RowGatewayInterface;
 use PhpDb\Sql\TableIdentifier;
@@ -25,6 +26,9 @@ final class RowGatewayFeature extends AbstractFeature
 
     /**
      * @throws Exception\RuntimeException
+     * @throws RowGatewayRuntimeException
+     *
+     * @mago-expect analysis:mixed-assignment
      */
     public function postInitialize(): void
     {
@@ -54,12 +58,12 @@ final class RowGatewayFeature extends AbstractFeature
         $resultSetPrototype->setRowPrototype(new RowGateway(
             $primaryKey,
             $table,
-            $this->tableGateway->adapter,
+            $this->tableGateway->getAdapter(),
         ));
     }
 
     /**
-     * @return string|array<array-key, mixed>
+     * @return string|list<string>
      *
      * @throws Exception\RuntimeException
      *
@@ -82,10 +86,22 @@ final class RowGatewayFeature extends AbstractFeature
         }
 
         $primaryKey = $metadataData['primaryKey'] ?? null;
-        if (! is_string($primaryKey) && ! is_array($primaryKey)) {
+        if (is_string($primaryKey)) {
+            return $primaryKey;
+        }
+
+        if (! is_array($primaryKey)) {
             throw Exception\RuntimeException::forUnusablePrimaryKey();
         }
 
-        return $primaryKey;
+        $columns = [];
+        foreach ($primaryKey as $column) {
+            if (! is_string($column)) {
+                throw Exception\RuntimeException::forUnusablePrimaryKey();
+            }
+            $columns[] = $column;
+        }
+
+        return $columns;
     }
 }
