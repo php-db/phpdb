@@ -32,6 +32,9 @@ use function strtolower;
 use function strtoupper;
 use function trim;
 
+use const PREG_SPLIT_DELIM_CAPTURE;
+use const PREG_SPLIT_NO_EMPTY;
+
 /**
  * @api
  *
@@ -789,6 +792,38 @@ class Select extends AbstractPreparableSql
         return $this->where ??= new Where();
     }
 
+    /**
+     * Whether fragment quoting renders a column string as valid SQL
+     *
+     * It does when each piece between the safe delimiters (space, `.` and `*`) is quoted as one
+     * whole name and no two pieces are separated by spaces alone.
+     */
+    private function isFragmentQuotable(string $column, PlatformInterface $platform): bool
+    {
+        $previousIsName = false;
+        $pieces         = preg_split('/([ .*])/', $column, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+        foreach (false === $pieces ? [] : $pieces as $piece) {
+            if (' ' === $piece) {
+                continue;
+            }
+
+            $isName = '.' !== $piece && self::SQL_STAR !== $piece;
+            if (
+                $isName
+                && (
+                    $previousIsName
+                    || $platform->quoteIdentifierInFragment($piece) !== $platform->quoteIdentifier($piece)
+                )
+            ) {
+                return false;
+            }
+
+            $previousIsName = $isName;
+        }
+
+        return true;
+    }
+
     private function prefixFromTable(?string $fromTable, PlatformInterface $platform): string
     {
         return $this->prefixColumnsWithTable && null !== $fromTable && '' !== $fromTable
@@ -799,11 +834,12 @@ class Select extends AbstractPreparableSql
     /**
      * Quote a column string as an identifier chain, splitting only on the table qualifier dot
      *
-     * A `*` part is left bare. A string holding an inline ` AS ` alias keeps fragment quoting.
+     * A `*` part is left bare. A string holding an inline ` AS ` alias, or one that fragment quoting
+     * already renders as valid SQL, keeps fragment quoting.
      */
     private function quoteColumnIdentifier(string $column, PlatformInterface $platform): string
     {
-        if (stripos($column, needle: ' as ') !== false) {
+        if (stripos($column, needle: ' as ') !== false || $this->isFragmentQuotable($column, $platform)) {
             return $platform->quoteIdentifierInFragment($column);
         }
 
