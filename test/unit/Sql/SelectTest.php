@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace PhpDbTest\Sql;
 
+use Closure;
 use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\Driver\StatementInterface;
 use PhpDb\Adapter\ParameterContainer;
 use PhpDb\Adapter\Platform\Sql92;
+use PhpDb\Adapter\StatementContainer;
 use PhpDb\Sql\Argument;
 use PhpDb\Sql\Argument\Identifier;
 use PhpDb\Sql\Argument\Value;
@@ -82,6 +84,28 @@ use TypeError;
 final class SelectTest extends TestCase
 {
     use AdapterTestTrait;
+
+    /**
+     * @return array<string, array{Closure(self, Select): array{?string, array<string, mixed>}, string, array<string, int>}>
+     */
+    public static function arrayExpressionParameterProvider(): array
+    {
+        return [
+            'prepared'   => [
+                static fn(self $test, Select $select): array => $test->prepareWithNamedParameters($select),
+                'SELECT "t".* FROM "t" WHERE a IN (:where1, :where2, :where3) AND "b" = :where4',
+                ['where1' => 1, 'where2' => 2, 'where3' => 3, 'where4' => 4],
+            ],
+            'unprepared' => [
+                static fn(self $test, Select $select): array => [
+                    $select->getSqlString(new TrustingSql92Platform()),
+                    [],
+                ],
+                'SELECT "t".* FROM "t" WHERE a IN (\'1\', \'2\', \'3\') AND "b" = \'4\'',
+                [],
+            ],
+        ];
+    }
 
     /**
      * @psalm-return array<array-key, array{
@@ -838,6 +862,24 @@ final class SelectTest extends TestCase
         ];
 
         // phpcs:enable Generic.Files.LineLength.TooLong
+    }
+
+    /**
+     * @param Closure(self, Select): array{?string, array<string, mixed>} $render
+     * @param array<string, int> $expectedParameters
+     */
+    #[Test]
+    #[Group('unit')]
+    #[DataProvider('arrayExpressionParameterProvider')]
+    public function arrayExpressionParameterDoesNotShiftValuesIntoFollowingPredicates(
+        Closure $render,
+        string $expectedSql,
+        array $expectedParameters,
+    ): void {
+        $select = new Select('t');
+        $select->where([new Predicate\Expression('a IN (?)', [[1, 2, 3]]), 'b' => 4]);
+
+        static::assertSame([$expectedSql, $expectedParameters], $render($this, $select));
     }
 
     #[Test]
@@ -1917,5 +1959,21 @@ final class SelectTest extends TestCase
     {
         $select = new Select();
         static::assertSame($select, $select->where('x = y'));
+    }
+
+    /**
+     * @return array{?string, array<string, mixed>}
+     */
+    private function prepareWithNamedParameters(Select $select): array
+    {
+        $driver = $this->createStub(DriverInterface::class);
+        $driver->method('formatParameterName')->willReturnCallback(static fn(string $name): string => ":{$name}");
+
+        $parameterContainer = new ParameterContainer();
+        $statement          = new StatementContainer(null, $parameterContainer);
+
+        $select->prepareStatement($this->createMockAdapter($driver, new TrustingSql92Platform()), $statement);
+
+        return [$statement->getSql(), $parameterContainer->getNamedArray()];
     }
 }

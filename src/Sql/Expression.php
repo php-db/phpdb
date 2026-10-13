@@ -9,14 +9,18 @@ use PhpDb\Sql\Argument\Select as SelectArgument;
 use PhpDb\Sql\Argument\Value;
 use PhpDb\Sql\Argument\Values;
 
+use function array_shift;
 use function array_slice;
 use function array_unique;
 use function count;
+use function explode;
 use function func_get_args;
 use function func_num_args;
 use function is_array;
+use function preg_match;
 use function preg_match_all;
 use function str_replace;
+use function substr;
 
 /**
  * @api
@@ -66,6 +70,7 @@ class Expression extends AbstractExpression
     }
 
     /**
+     * @throws Exception\InvalidArgumentException
      * @throws Exception\RuntimeException
      * @inheritDoc
      */
@@ -83,13 +88,16 @@ class Expression extends AbstractExpression
             ];
         }
 
-        // assign locally, escaping % signs
-        $count         = 0;
-        $specification = str_replace(self::PLACEHOLDER, replace: '%s', subject: $specification, count: $count);
+        $segments      = explode(self::PLACEHOLDER, $specification);
+        $specification = array_shift($segments);
+
+        foreach ($segments as $index => $segment) {
+            $specification .= $this->placeholderFor($parameters[$index] ?? null, $specification, $segment) . $segment;
+        }
 
         // test number of replacements without considering same variable begin used many times first, which is
         // faster, if the test fails then resort to regex which are slow and used rarely
-        if ($count !== $parametersCount) {
+        if (count($segments) !== $parametersCount) {
             $matches = [];
             preg_match_all('/:\w*/', $specification, $matches);
             if (count(array_unique($matches[0] ?? [])) !== $parametersCount) {
@@ -143,5 +151,23 @@ class Expression extends AbstractExpression
         }
 
         return $this;
+    }
+
+    /**
+     * Values are bound one by one, so each needs its own placeholder inside the parentheses around the `?`
+     *
+     * @throws Exception\InvalidArgumentException
+     */
+    private function placeholderFor(?ArgumentInterface $parameter, string $before, string $after): string
+    {
+        if (! $parameter instanceof Values) {
+            return '%s';
+        }
+
+        if (1 !== preg_match('/\(\s*$/', $before) || 1 !== preg_match('/^\s*\)/', $after)) {
+            throw Exception\InvalidArgumentException::forUnenclosedValuesPlaceholder($this->expression);
+        }
+
+        return substr($parameter->getSpecification(), offset: 1, length: -1);
     }
 }
