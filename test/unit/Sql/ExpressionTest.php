@@ -18,6 +18,8 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use TypeError;
 
+use function sprintf;
+
 /**
  * This is a unit testing test case.
  * A unit here is a method, there will be at least one test per method
@@ -30,6 +32,8 @@ use TypeError;
 #[CoversMethod(Expression::class, 'setParameters')]
 #[CoversMethod(Expression::class, 'getParameters')]
 #[CoversMethod(Expression::class, 'getExpressionData')]
+#[CoversMethod(Expression::class, 'setSpecification')]
+#[Group('unit')]
 final class ExpressionTest extends TestCase
 {
     /** @psalm-return array<array-key, array{0: mixed}> */
@@ -261,5 +265,18 @@ final class ExpressionTest extends TestCase
 
         static::assertCount(2, $data['values']);
         static::assertInstanceOf(Argument\Values::class, $data['values'][1]);
+    }
+
+    #[Test]
+    public function setSpecificationIsRejectedInFavourOfSetExpression(): void
+    {
+        $expression = new Expression('LOWER(?) = ?', ['x', 'y']);
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage(
+            sprintf(RuntimeException::UNSUPPORTED_SPECIFICATION_OVERRIDE, Expression::class),
+        );
+
+        $expression->setSpecification('IGNORED %s %s');
     }
 }
