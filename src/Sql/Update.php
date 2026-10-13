@@ -13,11 +13,15 @@ use PhpDb\Adapter\Platform\PlatformInterface;
 use PhpDb\Sql\Predicate\PredicateInterface;
 
 use function array_key_exists;
+use function array_keys;
+use function array_map;
+use function explode;
 use function implode;
 use function is_numeric;
 use function is_scalar;
 use function is_string;
 use function strtolower;
+use function strval;
 
 /**
  * @api
@@ -188,32 +192,25 @@ class Update extends AbstractPreparableSql
         ?DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null,
     ): string {
-        $setSql      = [];
-        $i           = 0;
-        $isPdoDriver = $driver instanceof PdoDriverInterface;
+        $setSql         = [];
+        $i              = 0;
+        $isPdoDriver    = $driver instanceof PdoDriverInterface;
+        $set            = $this->getSet();
+        $parameterNames = $this->resolveParameterNames(array_map(strval(...), array_keys($set->toArray())));
 
-        foreach ($this->getSet() as $column => $value) {
-            $prefix = $this->resolveColumnValue(
-                [
-                    'column'       => $column,
-                    'fromTable'    => '',
-                    'isIdentifier' => true,
-                ],
-                $platform,
-                $driver,
-                $parameterContainer,
-                'column',
-            );
+        foreach ($set as $column => $value) {
+            $prefix = $this->quoteSetColumn($column, $platform);
             $prefix .= ' = ';
             if (is_scalar($value) && $parameterContainer && $driver instanceof DriverInterface) {
                 // use incremental value instead of column name for PDO
                 // @see https://github.com/zendframework/zend-db/issues/35
+                $name = $parameterNames[$column] ?? $column;
                 if ($isPdoDriver) {
-                    $column = 'c_' . $i++;
+                    $name = 'c_' . $i++;
                 }
 
-                $setSql[] = $prefix . $driver->formatParameterName($column);
-                $parameterContainer->offsetSet($column, $value);
+                $setSql[] = $prefix . $driver->formatParameterName($name);
+                $parameterContainer->offsetSet($name, $value);
                 continue;
             }
 
@@ -284,6 +281,17 @@ class Update extends AbstractPreparableSql
     private function getWhere(): Where
     {
         return $this->where ??= new Where();
+    }
+
+    /**
+     * Quote a SET target as an identifier chain, splitting only on the table qualifier dot
+     */
+    private function quoteSetColumn(string $column, PlatformInterface $platform): string
+    {
+        return implode(
+            $platform->getIdentifierSeparator(),
+            array_map($platform->quoteIdentifier(...), explode('.', $column)),
+        );
     }
 
     /**
