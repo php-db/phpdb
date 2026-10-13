@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace PhpDb\Sql;
 
 use Closure;
+use Override;
 use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\ParameterContainer;
 use PhpDb\Adapter\Platform\PlatformInterface;
@@ -12,9 +13,11 @@ use PhpDb\Sql\Predicate\PredicateInterface;
 
 use function array_key_exists;
 use function array_key_first;
+use function array_map;
 use function count;
 use function explode;
 use function gettype;
+use function implode;
 use function is_array;
 use function is_int;
 use function is_numeric;
@@ -36,6 +39,8 @@ use function trim;
  * @property ?Having $having
  * @property ?Join $joins
  * @psalm-import-type Specification from AbstractSql
+ * @psalm-import-type ColumnReference from AbstractSql
+ * @psalm-import-type ColumnValue from AbstractSql
  * @psalm-import-type PredicateValue from Predicate\PredicateSet
  * @psalm-import-type JoinName from Join
  * @psalm-type TableReference = string|TableIdentifier|array<string, string|TableIdentifier|Select>
@@ -748,6 +753,27 @@ class Select extends AbstractPreparableSql
         ];
     }
 
+    /**
+     * Quote a select, join or group column string as an identifier chain
+     *
+     * @param ColumnReference|ColumnValue $column
+     * @throws Exception\RuntimeException
+     */
+    #[Override]
+    protected function resolveColumnValue(
+        Select|array|string|int|float|bool|ExpressionInterface|null $column,
+        PlatformInterface $platform,
+        ?DriverInterface $driver = null,
+        ?ParameterContainer $parameterContainer = null,
+        ?string $namedParameterPrefix = null,
+    ): string {
+        if (is_array($column) && ($column['isIdentifier'] ?? false) && is_string($column['column'])) {
+            return ($column['fromTable'] ?? '') . $this->quoteColumnIdentifier($column['column'], $platform);
+        }
+
+        return parent::resolveColumnValue($column, $platform, $driver, $parameterContainer, $namedParameterPrefix);
+    }
+
     private function getHaving(): Having
     {
         return $this->having ??= new Having();
@@ -768,6 +794,26 @@ class Select extends AbstractPreparableSql
         return $this->prefixColumnsWithTable && null !== $fromTable && '' !== $fromTable
             ? $fromTable . $platform->getIdentifierSeparator()
             : '';
+    }
+
+    /**
+     * Quote a column string as an identifier chain, splitting only on the table qualifier dot
+     *
+     * A `*` part is left bare. A string holding an inline ` AS ` alias keeps fragment quoting.
+     */
+    private function quoteColumnIdentifier(string $column, PlatformInterface $platform): string
+    {
+        if (stripos($column, needle: ' as ') !== false) {
+            return $platform->quoteIdentifierInFragment($column);
+        }
+
+        return implode(
+            $platform->getIdentifierSeparator(),
+            array_map(
+                static fn(string $part): string => self::SQL_STAR === $part ? $part : $platform->quoteIdentifier($part),
+                explode('.', $column),
+            ),
+        );
     }
 
     /**
