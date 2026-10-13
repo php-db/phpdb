@@ -52,12 +52,21 @@ class In extends AbstractExpression implements PredicateInterface
             throw InvalidArgumentException::forMissingValueSet();
         }
 
+        $values = [$this->identifier, $this->valueSet];
+
+        if (null !== $this->specification) {
+            return [
+                'spec'   => CustomSpecification::expand($this->specification, $values),
+                'values' => $values,
+            ];
+        }
+
         $identifierSpec = $this->identifier->getSpecification();
         $valueSetSpec   = $this->valueSet->getSpecification();
 
         return [
-            'spec'   => $this->specification ?? "{$identifierSpec} {$this->operator} {$valueSetSpec}",
-            'values' => [$this->identifier, $this->valueSet],
+            'spec'   => "{$identifierSpec} {$this->operator} {$valueSetSpec}",
+            'values' => $values,
         ];
     }
 
