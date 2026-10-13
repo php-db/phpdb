@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace PhpDbTest\Sql\Predicate;
 
+use PhpDb\Adapter\AdapterInterface;
+use PhpDb\Adapter\Driver\DriverInterface;
+use PhpDb\Adapter\StatementContainer;
 use PhpDb\Sql\Argument;
 use PhpDb\Sql\Argument\Select as ArgumentSelect;
 use PhpDb\Sql\Argument\Values;
@@ -12,7 +15,9 @@ use PhpDb\Sql\ArgumentType;
 use PhpDb\Sql\Predicate\Exception\InvalidArgumentException;
 use PhpDb\Sql\Predicate\In;
 use PhpDb\Sql\Select;
+use PhpDbTest\TestAsset\TrustingSql92Platform;
 use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
@@ -26,6 +31,65 @@ use PHPUnit\Framework\TestCase;
 #[Group('unit')]
 final class InTest extends TestCase
 {
+    /** @return array<string, array{In, string, array<string, mixed>}> */
+    public static function customSpecificationPreparedProvider(): array
+    {
+        return [
+            'one value, positional placeholders'  => [
+                (new In('id', [1]))->setSpecification('%1$s = ANY (ARRAY[%2$s])'),
+                'SELECT "t".* FROM "t" WHERE "id" = ANY (ARRAY[:where1])',
+                ['where1' => 1],
+            ],
+            'two values, positional placeholders' => [
+                (new In('id', [1, 2]))->setSpecification('%1$s = ANY (ARRAY[%2$s])'),
+                'SELECT "t".* FROM "t" WHERE "id" = ANY (ARRAY[:where1, :where2])',
+                ['where1' => 1, 'where2' => 2],
+            ],
+            'three values, plain placeholders'    => [
+                (new In('id', [1, 2, 3]))->setSpecification('%s = ANY (ARRAY[%s])'),
+                'SELECT "t".* FROM "t" WHERE "id" = ANY (ARRAY[:where1, :where2, :where3])',
+                ['where1' => 1, 'where2' => 2, 'where3' => 3],
+            ],
+            'empty list'                          => [
+                (new In('id', []))->setSpecification('%1$s = ANY (ARRAY[%2$s])'),
+                'SELECT "t".* FROM "t" WHERE "id" = ANY (ARRAY[NULL])',
+                [],
+            ],
+        ];
+    }
+
+    /** @return array<string, array{In, string}> */
+    public static function customSpecificationSqlProvider(): array
+    {
+        return [
+            'one value, positional placeholders'  => [
+                (new In('id', [1]))->setSpecification('%1$s = ANY (ARRAY[%2$s])'),
+                'SELECT "t".* FROM "t" WHERE "id" = ANY (ARRAY[\'1\'])',
+            ],
+            'two values, positional placeholders' => [
+                (new In('id', [1, 2]))->setSpecification('%1$s = ANY (ARRAY[%2$s])'),
+                'SELECT "t".* FROM "t" WHERE "id" = ANY (ARRAY[\'1\', \'2\'])',
+            ],
+            'three values, plain placeholders'    => [
+                (new In('id', [1, 2, 3]))->setSpecification('%s = ANY (ARRAY[%s])'),
+                'SELECT "t".* FROM "t" WHERE "id" = ANY (ARRAY[\'1\', \'2\', \'3\'])',
+            ],
+            'list placed before the identifier'   => [
+                (new In('id', [1, 2]))->setSpecification('ARRAY[%2$s] @> ARRAY[%1$s]'),
+                'SELECT "t".* FROM "t" WHERE ARRAY[\'1\', \'2\'] @> ARRAY["id"]',
+            ],
+            'empty list'                          => [
+                (new In('id', []))->setSpecification('%1$s = ANY (ARRAY[%2$s])'),
+                'SELECT "t".* FROM "t" WHERE "id" = ANY (ARRAY[NULL])',
+            ],
+            'sub-select value set'                => [
+                (new In('id', (new Select('u'))->columns(['id'])->where(['active' => 1])))
+                    ->setSpecification('%1$s = ANY %2$s'),
+                'SELECT "t".* FROM "t" WHERE "id" = ANY (SELECT "u"."id" AS "id" FROM "u" WHERE "active" = \'1\')',
+            ],
+        ];
+    }
+
     #[Test]
     public function canPassIdentifierAndEmptyValueSetToConstructor(): void
     {
@@ -60,6 +124,47 @@ final class InTest extends TestCase
         static::assertInstanceOf(ArgumentInterface::class, $valueSet);
         static::assertEquals([1, 2], $valueSet->getValue());
         static::assertEquals(ArgumentType::Values, $valueSet->getType());
+    }
+
+    /** @param array<string, mixed> $expectedParameters */
+    #[Test]
+    #[DataProvider('customSpecificationPreparedProvider')]
+    public function customSpecificationBindsEveryListValueOnce(
+        In $in,
+        string $expectedSql,
+        array $expectedParameters,
+    ): void {
+        $statement = $this->prepare((new Select('t'))->where([$in]));
+
+        static::assertSame(
+            [$expectedSql, $expectedParameters],
+            [$statement->getSql(), $statement->getParameterContainer()?->getNamedArray()],
+        );
+    }
+
+    #[Test]
+    public function customSpecificationBindsSubSelectParametersOnce(): void
+    {
+        $in = (new In('id', (new Select('u'))->columns(['id'])->where(['active' => 1])))
+            ->setSpecification('%s = ANY %s');
+        $statement = $this->prepare((new Select('t'))->where([$in]));
+
+        static::assertSame(
+            [
+                'SELECT "t".* FROM "t" WHERE "id" = ANY (SELECT "u"."id" AS "id" FROM "u" WHERE "active" = :subselect1where1)',
+                ['subselect1where1' => 1],
+            ],
+            [$statement->getSql(), $statement->getParameterContainer()?->getNamedArray()],
+        );
+    }
+
+    #[Test]
+    #[DataProvider('customSpecificationSqlProvider')]
+    public function customSpecificationRendersEveryListValue(In $in, string $expectedSql): void
+    {
+        $select = (new Select('t'))->where([$in]);
+
+        static::assertSame($expectedSql, $select->getSqlString(new TrustingSql92Platform()));
     }
 
     #[Test]
@@ -318,5 +423,20 @@ final class InTest extends TestCase
         static::assertInstanceOf(ArgumentInterface::class, $valueSet2);
         static::assertEquals([3, 4, 5], $valueSet2->getValue());
         static::assertEquals(ArgumentType::Values, $valueSet2->getType());
+    }
+
+    private function prepare(Select $select): StatementContainer
+    {
+        $driver = $this->createStub(DriverInterface::class);
+        $driver->method('formatParameterName')->willReturnCallback(static fn(string $name): string => ":{$name}");
+
+        $adapter = $this->createStub(AdapterInterface::class);
+        $adapter->method('getDriver')->willReturn($driver);
+        $adapter->method('getPlatform')->willReturn(new TrustingSql92Platform());
+
+        $statement = new StatementContainer();
+        $select->prepareStatement($adapter, $statement);
+
+        return $statement;
     }
 }
