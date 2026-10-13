@@ -34,6 +34,10 @@ class RuntimeException extends Exception\RuntimeException
         'A number of parameters (%d) was found'
             . ' that is not supported by this specification';
 
+    final public const string UNSUPPORTED_SPECIFICATION_OVERRIDE =
+        '%s renders its expression string and does not accept'
+            . ' a specification override; use setExpression() instead';
+
     public static function forReplacementMismatch(): self
     {
         return new self(self::REPLACEMENT_MISMATCH);
@@ -67,5 +71,10 @@ class RuntimeException extends Exception\RuntimeException
     public static function forUnsupportedParameterCountOf(int $count): self
     {
         return new self(sprintf(self::UNSUPPORTED_PARAMETER_COUNT_OF, $count));
+    }
+
+    public static function forUnsupportedSpecificationOverride(string $class): self
+    {
+        return new self(sprintf(self::UNSUPPORTED_SPECIFICATION_OVERRIDE, $class));
     }
 }
