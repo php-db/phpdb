@@ -17,12 +17,15 @@ use PhpDb\Sql\Argument\Value;
 use PhpDb\Sql\Argument\Values;
 use PhpDb\Sql\Platform\PlatformDecoratorInterface;
 
+use function array_key_exists;
 use function array_key_first;
 use function count;
 use function get_object_vars;
 use function implode;
 use function is_array;
 use function is_string;
+use function preg_match;
+use function preg_replace;
 use function rtrim;
 use function str_replace;
 use function strtoupper;
@@ -471,6 +474,48 @@ abstract class AbstractSql implements SqlInterface
         return $isIdentifier
             ? $fromTable . $platform->quoteIdentifierInFragment((string) $column)
             : $platform->quoteValue((string) $column);
+    }
+
+    /**
+     * Map column names to valid named-placeholder names
+     *
+     * Names made only of word characters are kept; any other name has each other character
+     * replaced by an underscore and is suffixed until it collides with no other name.
+     *
+     * @param list<string> $columns
+     * @return array<string, string>
+     */
+    protected function resolveParameterNames(array $columns): array
+    {
+        $used = [];
+        foreach ($columns as $column) {
+            if (preg_match('/^[a-zA-Z0-9_]+$/', $column) !== 1) {
+                continue;
+            }
+
+            $used[$column] = true;
+        }
+
+        $names = [];
+        foreach ($columns as $column) {
+            if (array_key_exists($column, $used)) {
+                $names[$column] = $column;
+                continue;
+            }
+
+            $base   = (string) preg_replace('/[^a-zA-Z0-9_]/', replacement: '_', subject: $column);
+            $name   = $base;
+            $suffix = 0;
+            while (array_key_exists($name, $used)) {
+                $suffix++;
+                $name = "{$base}_{$suffix}";
+            }
+
+            $used[$name]    = true;
+            $names[$column] = $name;
+        }
+
+        return $names;
     }
 
     /**
