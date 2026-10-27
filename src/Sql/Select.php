@@ -12,6 +12,7 @@ use PhpDb\Sql\Predicate\PredicateInterface;
 
 use function array_key_exists;
 use function array_key_first;
+use function array_keys;
 use function count;
 use function explode;
 use function gettype;
@@ -617,6 +618,10 @@ class Select extends AbstractPreparableSql
     /**
      * Process the select part
      *
+     * The FROM table is resolved before the columns and the quantifier after them, so the columns and
+     * the table bind into their own containers and are appended after the quantifier, keeping the
+     * parameters in the order their placeholders appear in the SQL.
+     *
      * @return list<string|list<list<string>>>
      * @throws Exception\RuntimeException
      */
@@ -627,7 +632,10 @@ class Select extends AbstractPreparableSql
     ): array {
         $expr = 1;
 
-        [$table, $fromTable] = $this->resolveSelectTable($this->table, $platform, $driver, $parameterContainer);
+        $tableParameters  = $parameterContainer instanceof ParameterContainer ? new ParameterContainer() : null;
+        $columnParameters = $parameterContainer instanceof ParameterContainer ? new ParameterContainer() : null;
+
+        [$table, $fromTable] = $this->resolveSelectTable($this->table, $platform, $driver, $tableParameters);
         $columns = [];
         foreach ($this->columns as $columnIndexOrAs => $column) {
             if (self::SQL_STAR === $column) {
@@ -643,7 +651,7 @@ class Select extends AbstractPreparableSql
                 ],
                 $platform,
                 $driver,
-                $parameterContainer,
+                $columnParameters,
                 is_string($columnIndexOrAs) ? $columnIndexOrAs : 'column',
             );
             $columnAs = match (true) {
@@ -659,7 +667,7 @@ class Select extends AbstractPreparableSql
 
         foreach ($this->getJoins()->getJoins() as $join) {
             $joinName = is_array($join['name']) ? array_key_first($join['name']) : $join['name'];
-            $joinName = $this->resolveTable($joinName, $platform, $driver, $parameterContainer);
+            $joinName = $this->resolveTable($joinName, $platform, $driver, $columnParameters);
 
             foreach ($join['columns'] as $jKey => $jColumn) {
                 $jColumns   = [];
@@ -674,7 +682,7 @@ class Select extends AbstractPreparableSql
                     ],
                     $platform,
                     $driver,
-                    $parameterContainer,
+                    $columnParameters,
                     is_string($jKey) ? $jKey : 'column',
                 );
                 $jColumnAs = match (true) {
@@ -698,6 +706,8 @@ class Select extends AbstractPreparableSql
                 ? $this->processExpression($this->quantifier, $platform, $driver, $parameterContainer, 'quantifier')
                 : $this->quantifier;
         }
+
+        $this->appendParameters($parameterContainer, $columnParameters, $tableParameters);
 
         if (null === $table) {
             return [$columns];
@@ -746,6 +756,36 @@ class Select extends AbstractPreparableSql
         return [
             $this->processExpression($this->where, $platform, $driver, $parameterContainer, 'where'),
         ];
+    }
+
+    /**
+     * Append the parameters of separately bound parts, in the order given
+     */
+    private function appendParameters(?ParameterContainer $target, ?ParameterContainer ...$sources): void
+    {
+        foreach ($sources as $source) {
+            if (null === $target || null === $source) {
+                continue;
+            }
+
+            $this->copyParameters($source, $target);
+        }
+    }
+
+    /**
+     * Copy each parameter with its type and maximum length, keeping their order
+     */
+    private function copyParameters(ParameterContainer $source, ParameterContainer $target): void
+    {
+        foreach (array_keys($source->getNamedArray()) as $name) {
+            $name = (string) $name;
+            $target->offsetSet(
+                $name,
+                $source->offsetGet($name),
+                $source->offsetHasErrata($name) ? $source->offsetGetErrata($name) : null,
+                $source->offsetHasMaxLength($name) ? $source->offsetGetMaxLength($name) : null,
+            );
+        }
     }
 
     private function getHaving(): Having
