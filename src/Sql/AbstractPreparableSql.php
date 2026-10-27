@@ -33,6 +33,8 @@ abstract class AbstractPreparableSql extends AbstractSql implements PreparableSq
             $statementContainer->setParameterContainer($parameterContainer);
         }
 
+        $this->resetRenderState();
+
         $statementContainer->setSql(
             $this->buildSqlString($adapter->getPlatform(), $adapter->getDriver(), $parameterContainer),
         );
