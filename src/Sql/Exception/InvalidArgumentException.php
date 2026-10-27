@@ -72,6 +72,10 @@ class InvalidArgumentException extends Exception\InvalidArgumentException
         'A PhpDb\Sql\Select instance cannot be provided'
             . ' with the merge flag';
 
+    final public const string UNENCLOSED_VALUES_PLACEHOLDER =
+        'An array or Values parameter in the expression "%s" must use a placeholder'
+            . ' wrapped in its own parentheses, such as IN (?)';
+
     final public const string UNKNOWN_ARGUMENT_TYPE = 'Unknown argument type';
 
     final public const string UNKNOWN_COLUMN_KEY = 'The key %s was not found in this objects column list';
@@ -186,6 +190,11 @@ class InvalidArgumentException extends Exception\InvalidArgumentException
     public static function forSelectWithMergeFlag(): self
     {
         return new self(self::SELECT_WITH_MERGE_FLAG);
+    }
+
+    public static function forUnenclosedValuesPlaceholder(string $expression): self
+    {
+        return new self(sprintf(self::UNENCLOSED_VALUES_PLACEHOLDER, $expression));
     }
 
     public static function forUnknownArgumentType(): self
