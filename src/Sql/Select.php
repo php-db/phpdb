@@ -12,9 +12,11 @@ use PhpDb\Sql\Predicate\PredicateInterface;
 
 use function array_key_exists;
 use function array_key_first;
+use function array_map;
 use function count;
 use function explode;
 use function gettype;
+use function implode;
 use function is_array;
 use function is_int;
 use function is_numeric;
@@ -23,6 +25,7 @@ use function is_string;
 use function key;
 use function method_exists;
 use function preg_split;
+use function str_replace;
 use function strcasecmp;
 use function stripos;
 use function strtolower;
@@ -604,7 +607,7 @@ class Select extends AbstractPreparableSql
             }
 
             $orders[] = [
-                $platform->quoteIdentifierInFragment($k),
+                $this->quoteOrderIdentifier($k, $platform),
                 strcasecmp(trim($v), self::ORDER_DESCENDING) === 0
                     ? self::ORDER_DESCENDING
                     : self::ORDER_ASCENDING,
@@ -768,6 +771,35 @@ class Select extends AbstractPreparableSql
         return $this->prefixColumnsWithTable && null !== $fromTable && '' !== $fromTable
             ? $fromTable . $platform->getIdentifierSeparator()
             : '';
+    }
+
+    /**
+     * Quote an order name, keeping fragment quoting only where it renders each part as a single identifier
+     *
+     * Fragment quoting splits on every non-word character, so a name such as `x-y` or `my col` would render
+     * as several quoted pieces. Such a name is quoted whole as an identifier chain instead, split only on
+     * the table qualifier dot. Names whose parts between `*` and `.` already quote whole, such as `t.col`
+     * or `price*qty`, render exactly as before.
+     */
+    private function quoteOrderIdentifier(string $name, PlatformInterface $platform): string
+    {
+        foreach (explode('.', str_replace(self::SQL_STAR, replace: '.', subject: $name)) as $segment) {
+            $segment = trim($segment, characters: ' ');
+            $quoted  = $platform->quoteIdentifierInFragment($segment);
+            if ($quoted !== $segment && $quoted !== $platform->quoteIdentifier($segment)) {
+                return implode(
+                    $platform->getIdentifierSeparator(),
+                    array_map(
+                        static fn(string $part): string => self::SQL_STAR === $part
+                            ? $part
+                            : $platform->quoteIdentifier($part),
+                        explode('.', $name),
+                    ),
+                );
+            }
+        }
+
+        return $platform->quoteIdentifierInFragment($name);
     }
 
     /**
