@@ -18,15 +18,22 @@ use PhpDb\Sql\Argument\Values;
 use PhpDb\Sql\Platform\PlatformDecoratorInterface;
 
 use function array_key_first;
+use function array_map;
 use function count;
+use function explode;
 use function get_object_vars;
 use function implode;
 use function is_array;
 use function is_string;
+use function preg_split;
 use function rtrim;
 use function str_replace;
+use function strtolower;
 use function strtoupper;
 use function vsprintf;
+
+use const PREG_SPLIT_DELIM_CAPTURE;
+use const PREG_SPLIT_NO_EMPTY;
 
 /**
  * @api
@@ -247,7 +254,7 @@ abstract class AbstractSql implements SqlInterface
                             $parameterContainer,
                         )
                         : $platform->quoteValue((string) $argument->getValue()),
-                $argument instanceof Identifier => $platform->quoteIdentifierInFragment($argument->getValue()),
+                $argument instanceof Identifier => $this->quoteIdentifierArgument($argument->getValue(), $platform),
                 $argument instanceof Literal => $argument->getValue(),
                 $argument instanceof Identifiers => $this->processIdentifiersArgument($argument, $platform),
                 $argument instanceof SelectArgument => $this->processExpressionOrSelect(
@@ -330,7 +337,7 @@ abstract class AbstractSql implements SqlInterface
         $processedIdentifiers = [];
 
         foreach ($identifiers as $identifier) {
-            $processedIdentifiers[] = $platform->quoteIdentifierInFragment($identifier);
+            $processedIdentifiers[] = $this->quoteIdentifierArgument($identifier, $platform);
         }
 
         return implode(', ', $processedIdentifiers);
@@ -553,6 +560,66 @@ abstract class AbstractSql implements SqlInterface
         }
 
         throw Exception\RuntimeException::forUnsupportedParameterCount();
+    }
+
+    /**
+     * Quote an identifier argument, keeping fragment quoting wherever it renders valid SQL
+     *
+     * Fragment quoting leaves spaces, dots, `*` and `AS` bare and quotes every other piece the
+     * platform splits out, so a name holding any other delimiter renders as adjacent quoted
+     * pieces, and names separated only by spaces render as a bare sequence of identifiers. Both
+     * are invalid, so such a name is quoted whole as an identifier chain instead, split only on
+     * the qualifier dot with a `*` part left bare.
+     */
+    private function quoteIdentifierArgument(string $identifier, PlatformInterface $platform): string
+    {
+        $isValidFragment = true;
+        $previousIsName  = false;
+        $afterSpace      = false;
+
+        foreach ((array) preg_split(
+            '/([ .*])/',
+            $identifier,
+            -1,
+            PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY,
+        ) as $part) {
+            if (' ' === $part) {
+                $afterSpace = true;
+                continue;
+            }
+
+            $isName = '.' !== $part && '*' !== $part && 'as' !== strtolower((string) $part);
+            if (
+                $isName
+                && (
+                    (
+                        $previousIsName
+                        && $afterSpace
+                    )
+                    || $platform->quoteIdentifierInFragment((string) $part) !== $platform->quoteIdentifier(
+                        (string) $part,
+                    )
+                )
+            ) {
+                $isValidFragment = false;
+                break;
+            }
+
+            $previousIsName = $isName;
+            $afterSpace     = false;
+        }
+
+        if ($isValidFragment) {
+            return $platform->quoteIdentifierInFragment($identifier);
+        }
+
+        return implode(
+            $platform->getIdentifierSeparator(),
+            array_map(
+                static fn(string $part): string => '*' === $part ? $part : $platform->quoteIdentifier($part),
+                explode('.', $identifier),
+            ),
+        );
     }
 
     private function quoteJoinTableIdentifier(TableIdentifier $identifier, PlatformInterface $platform): string
