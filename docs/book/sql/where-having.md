@@ -394,6 +394,13 @@ class Expression implements
 }
 ```
 
+> **Note:** Unlike `Operator`, `Like`, `Between`, `In` and `IsNull`,
+> `Expression` does not accept a specification override. It always renders
+> the string given to its constructor or `setExpression()`, so calling
+> `setSpecification()` on an `Expression` (or `Predicate\Expression`) throws
+> `PhpDb\Sql\Exception\RuntimeException`. Call `setExpression()` to change
+> the SQL it renders.
+
 Expression parameters can be supplied in multiple ways:
 
 ```php title="Using Expression with various parameter types"
