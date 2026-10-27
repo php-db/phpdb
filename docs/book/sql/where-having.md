@@ -517,9 +517,34 @@ class In implements PredicateInterface
         array|Select|ArgumentInterface $valueSet
     ) : static;
     public function getValueSet() : ?ArgumentInterface;
+    public function setSpecification(string $specification) : static;
+    public function getSpecification() : ?string;
     public function getExpressionData() : ExpressionData;
 }
 ```
+
+A custom specification refers to the identifier and the value set with one
+placeholder each, plain (`%s`) or positional (`%1$s`, `%2$s`). The value set's
+placeholder receives the whole list, comma-separated, with no parentheses
+added; an empty list renders as `NULL`.
+
+```php title="Using a custom specification with In"
+$where->addPredicate(
+    (new Predicate\In('id', [1, 2, 3]))->setSpecification('%1$s = ANY (ARRAY[%2$s])')
+);
+```
+
+Produces:
+
+```sql title="SQL output for a custom In specification"
+WHERE "id" = ANY (ARRAY['1', '2', '3'])
+```
+
+The value set must be referenced exactly once, as must an identifier that binds
+a parameter (such as `Argument::value()`), so the rendered placeholders always
+match the bound parameters. A specification that repeats or omits one, or
+references an argument the predicate does not have, throws
+`PhpDb\Sql\Predicate\Exception\InvalidArgumentException`.
 
 ## Range Predicates
 
