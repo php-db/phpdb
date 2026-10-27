@@ -36,6 +36,7 @@ use function trim;
  * @property ?Having $having
  * @property ?Join $joins
  * @psalm-import-type Specification from AbstractSql
+ * @psalm-import-type SqlParameterValue from AbstractSql
  * @psalm-import-type PredicateValue from Predicate\PredicateSet
  * @psalm-import-type JoinName from Join
  * @psalm-type TableReference = string|TableIdentifier|array<string, string|TableIdentifier|Select>
@@ -537,7 +538,11 @@ class Select extends AbstractPreparableSql
         return $this->processJoin($this->joins, $platform, $driver, $parameterContainer);
     }
 
-    /** @return array{0: string}|null */
+    /**
+     * Platform overrides may return the raw limit or offset unquoted; any scalar is rendered as vsprintf's %s would.
+     *
+     * @return array{0: SqlParameterValue}|null
+     */
     protected function processLimit(
         PlatformInterface $platform,
         ?DriverInterface $driver = null,
@@ -556,7 +561,11 @@ class Select extends AbstractPreparableSql
         return [$platform->quoteValue((string) $this->limit)];
     }
 
-    /** @return array{0: string}|null */
+    /**
+     * Platform overrides may return the raw limit or offset unquoted; any scalar is rendered as vsprintf's %s would.
+     *
+     * @return array{0: SqlParameterValue}|null
+     */
     protected function processOffset(
         PlatformInterface $platform,
         ?DriverInterface $driver = null,
