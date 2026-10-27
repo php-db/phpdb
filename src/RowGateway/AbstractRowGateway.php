@@ -7,23 +7,34 @@ namespace PhpDb\RowGateway;
 use ArrayAccess;
 use Countable;
 use Override;
+use PhpDb\Adapter\Driver\ResultInterface;
+use PhpDb\Adapter\Driver\StatementInterface;
+use PhpDb\Sql\Exception\RuntimeException as SqlRuntimeException;
 use PhpDb\Sql\Sql;
 use PhpDb\Sql\TableIdentifier;
 use ReturnTypeWillChange;
 
 use function array_key_exists;
 use function count;
+use function is_array;
 
+/**
+ * @api
+ * @implements ArrayAccess<string, mixed>
+ */
 abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayInterface
 {
     protected bool $isInitialized = false;
 
     protected TableIdentifier|string|null $table = null;
 
+    /** @var list<string>|null */
     protected ?array $primaryKeyColumn = null;
 
+    /** @var array<string, mixed>|null */
     protected ?array $primaryKeyData = null;
 
+    /** @var array<array-key, mixed> */
     protected array $data = [];
 
     protected ?Sql $sql = null;
@@ -37,24 +48,27 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
         return count($this->data);
     }
 
+    /**
+     * @throws Exception\RuntimeException
+     * @throws SqlRuntimeException
+     */
     #[Override]
     public function delete(): int
     {
         $this->initialize();
 
+        $sql   = $this->requireSql();
         $where = [];
-        foreach ($this->primaryKeyColumn as $pkColumn) {
+        foreach ($this->requirePrimaryKeyColumn() as $pkColumn) {
             $where[$pkColumn] = $this->primaryKeyData[$pkColumn] ?? null;
         }
 
         // @todo determine if we need to do a select to ensure 1 row will be affected
 
-        $rowsAffected = 0;
-        $statement    = $this->sql->prepareStatementForSqlObject($this->sql->delete()->where($where));
-        $result       = $statement->execute();
+        $statement = $sql->prepareStatementForSqlObject($sql->delete()->where($where));
 
-        $rowsAffected = $result->getAffectedRows();
-        if ($rowsAffected === 1) {
+        $rowsAffected = $this->executeStatement($statement)->getAffectedRows();
+        if (1 === $rowsAffected) {
             $this->primaryKeyData = null;
         }
 
@@ -65,7 +79,11 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
      * docs: Behaviour has changed - this no longer returns RowGatewayInterface but
      *       instead an array of the old data as per original PHP spec.
      *
-     * @return array<string, mixed>
+     * @param array<array-key, mixed> $array
+     *
+     * @return array<array-key, mixed>
+     *
+     * @throws Exception\RuntimeException
      */
     public function exchangeArray(array $array): array
     {
@@ -78,6 +96,8 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
 
     /**
      * initialize()
+     *
+     * @throws Exception\RuntimeException
      */
     public function initialize(): void
     {
@@ -85,26 +105,20 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
             return;
         }
 
-        if (! $this->featureSet instanceof Feature\FeatureSet) {
-            $this->featureSet = new Feature\FeatureSet();
-        }
+        $this->featureSet ??= new Feature\FeatureSet();
+        $featureSet       = $this->featureSet;
 
-        $this->featureSet->setRowGateway($this);
-        $this->featureSet->apply('preInitialize', []);
+        $featureSet->setRowGateway($this);
+        $featureSet->apply('preInitialize', []);
 
-        if ($this->table === null) {
+        if (null === $this->table) {
             throw Exception\RuntimeException::forMissingTable();
         }
 
-        if ($this->primaryKeyColumn === null) {
-            throw Exception\RuntimeException::forMissingPrimaryKeyColumn();
-        }
+        $this->requirePrimaryKeyColumn();
+        $this->requireSql();
 
-        if ($this->sql === null) {
-            throw Exception\RuntimeException::forMissingSqlObject();
-        }
-
-        $this->featureSet->apply('postInitialize', []);
+        $featureSet->apply('postInitialize', []);
 
         $this->isInitialized = true;
     }
@@ -130,13 +144,17 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
     #[ReturnTypeWillChange]
     public function offsetGet($offset): mixed
     {
-        return $this->data[$offset];
+        return $this->data[$offset] ?? null;
     }
 
     /**
      * Offset set
      *
+     * Returns the row for chaining, where ArrayAccess declares void.
+     *
      * @param string $offset
+     *
+     * @mago-expect analysis:incompatible-return-type
      */
     #[Override]
     #[ReturnTypeWillChange]
@@ -150,7 +168,11 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
     /**
      * Offset unset
      *
+     * Returns the row for chaining, where ArrayAccess declares void.
+     *
      * @param string $offset
+     *
+     * @mago-expect analysis:incompatible-return-type
      */
     #[Override]
     #[ReturnTypeWillChange]
@@ -163,16 +185,20 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
 
     /**
      * Populate Data
+     *
+     * @param array<array-key, mixed> $data
+     *
+     * @throws Exception\RuntimeException
      */
-    public function populate(array $rowData, bool $rowExistsInDatabase = false): static
+    #[Override]
+    public function populate(array $data, bool $rowExistsInDatabase = false): static
     {
         $this->initialize();
 
-        $this->data = $rowData;
-        if ($rowExistsInDatabase === true) {
+        $this->data           = $data;
+        $this->primaryKeyData = null;
+        if ($rowExistsInDatabase) {
             $this->processPrimaryKeyData();
-        } else {
-            $this->primaryKeyData = null;
         }
 
         return $this;
@@ -180,72 +206,41 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
 
     public function rowExistsInDatabase(): bool
     {
-        return $this->primaryKeyData !== null;
+        return null !== $this->primaryKeyData;
     }
 
+    /**
+     * @throws Exception\RuntimeException
+     * @throws SqlRuntimeException
+     *
+     * @mago-expect analysis:mixed-assignment
+     */
     #[Override]
     public function save(): int
     {
         $this->initialize();
 
-        $rowsAffected = 0;
+        $sql = $this->requireSql();
 
-        if ($this->rowExistsInDatabase()) {
-            $data         = $this->data;
-            $where        = [];
-            $isPkModified = false;
+        [$rowsAffected, $where] = $this->rowExistsInDatabase()
+            ? $this->updateRow($sql)
+            : $this->insertRow($sql);
 
-            foreach ($this->primaryKeyColumn as $pkColumn) {
-                $where[$pkColumn] = $this->primaryKeyData[$pkColumn];
-                if ($data[$pkColumn] === $this->primaryKeyData[$pkColumn]) {
-                    unset($data[$pkColumn]);
-                } else {
-                    $isPkModified = true;
-                }
-            }
-
-            $statement    = $this->sql->prepareStatementForSqlObject($this->sql->update()->set($data)->where($where));
-            $result       = $statement->execute();
-            $rowsAffected = $result->getAffectedRows();
-            unset($statement, $result);
-
-            if ($isPkModified) {
-                foreach ($this->primaryKeyColumn as $pkColumn) {
-                    if ($data[$pkColumn] !== $this->primaryKeyData[$pkColumn]) {
-                        $where[$pkColumn] = $data[$pkColumn];
-                    }
-                }
-            }
-        } else {
-            $insert = $this->sql->insert();
-            $insert->values($this->data);
-
-            $statement = $this->sql->prepareStatementForSqlObject($insert);
-            $result    = $statement->execute();
-            if (($primaryKeyValue = $result->getGeneratedValue()) && count($this->primaryKeyColumn) === 1) {
-                $this->primaryKeyData = [$this->primaryKeyColumn[0] => $primaryKeyValue];
-            } else {
-                $this->processPrimaryKeyData();
-            }
-            $rowsAffected = $result->getAffectedRows();
-            unset($statement, $result);
-
-            $where = [];
-            foreach ($this->primaryKeyColumn as $pkColumn) {
-                $where[$pkColumn] = $this->primaryKeyData[$pkColumn];
-            }
+        $statement = $sql->prepareStatementForSqlObject($sql->select()->where($where));
+        $rowData   = $this->executeStatement($statement)->current();
+        if (! is_array($rowData)) {
+            throw Exception\RuntimeException::forMissingSavedRow();
         }
-
-        $statement = $this->sql->prepareStatementForSqlObject($this->sql->select()->where($where));
-        $result    = $statement->execute();
-        $rowData   = $result->current();
-        unset($statement, $result);
 
         $this->populate($rowData, true);
 
         return $rowsAffected;
     }
 
+    /**
+     * @return array<array-key, mixed>
+     */
+    #[Override]
     public function toArray(): array
     {
         return $this->data;
@@ -256,13 +251,115 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
      */
     protected function processPrimaryKeyData(): void
     {
-        $this->primaryKeyData = [];
-        foreach ($this->primaryKeyColumn as $column) {
-            if (! isset($this->data[$column])) {
-                throw Exception\RuntimeException::forMissingPrimaryKeyData($column);
-            }
-            $this->primaryKeyData[$column] = $this->data[$column];
+        $primaryKeyData = [];
+        foreach ($this->requirePrimaryKeyColumn() as $column) {
+            $primaryKeyData[$column] = $this->data[$column]
+                ?? throw Exception\RuntimeException::forMissingPrimaryKeyData($column);
         }
+        $this->primaryKeyData = $primaryKeyData;
+    }
+
+    /**
+     * @throws Exception\RuntimeException
+     */
+    private function executeStatement(StatementInterface $statement): ResultInterface
+    {
+        return $statement->execute() ?? throw Exception\RuntimeException::forMissingStatementResult();
+    }
+
+    /**
+     * Inserts the row and returns the affected row count with the WHERE that reselects it.
+     *
+     * @return array{int, array<string, mixed>}
+     *
+     * @throws Exception\RuntimeException
+     * @throws SqlRuntimeException
+     */
+    private function insertRow(Sql $sql): array
+    {
+        $primaryKeyColumn = $this->requirePrimaryKeyColumn();
+
+        $insert = $sql->insert();
+        $insert->values($this->data);
+
+        $result = $this->executeStatement($sql->prepareStatementForSqlObject($insert));
+        $this->processInsertedPrimaryKey($primaryKeyColumn, $result->getGeneratedValue());
+
+        $where = [];
+        foreach ($primaryKeyColumn as $pkColumn) {
+            $where[$pkColumn] = $this->primaryKeyData[$pkColumn] ?? null;
+        }
+
+        return [$result->getAffectedRows(), $where];
+    }
+
+    /**
+     * Takes a single-column primary key from the generated value, or every column from the row data.
+     *
+     * @param list<string> $primaryKeyColumn
+     *
+     * @throws Exception\RuntimeException
+     */
+    private function processInsertedPrimaryKey(array $primaryKeyColumn, string|int|false|null $generatedValue): void
+    {
+        if ($generatedValue && 1 === count($primaryKeyColumn)) {
+            $this->primaryKeyData = [$primaryKeyColumn[0] => $generatedValue];
+
+            return;
+        }
+
+        $this->processPrimaryKeyData();
+    }
+
+    /**
+     * @return list<string>
+     *
+     * @throws Exception\RuntimeException
+     */
+    private function requirePrimaryKeyColumn(): array
+    {
+        return $this->primaryKeyColumn ?? throw Exception\RuntimeException::forMissingPrimaryKeyColumn();
+    }
+
+    /** @throws Exception\RuntimeException */
+    private function requireSql(): Sql
+    {
+        return $this->sql ?? throw Exception\RuntimeException::forMissingSqlObject();
+    }
+
+    /**
+     * Updates the row and returns the affected row count with the WHERE that reselects it.
+     *
+     * @return array{int, array<string, mixed>}
+     *
+     * @throws Exception\RuntimeException
+     * @throws SqlRuntimeException
+     */
+    private function updateRow(Sql $sql): array
+    {
+        $primaryKeyColumn = $this->requirePrimaryKeyColumn();
+        $primaryKeyData   = $this->primaryKeyData ?? [];
+        $data             = $this->data;
+        $where            = [];
+
+        foreach ($primaryKeyColumn as $pkColumn) {
+            $where[$pkColumn] = $primaryKeyData[$pkColumn] ?? null;
+            if (($data[$pkColumn] ?? null) === $where[$pkColumn]) {
+                unset($data[$pkColumn]);
+            }
+        }
+
+        $statement    = $sql->prepareStatementForSqlObject($sql->update()->set($data)->where($where));
+        $rowsAffected = $this->executeStatement($statement)->getAffectedRows();
+
+        foreach ($primaryKeyColumn as $pkColumn) {
+            if (! array_key_exists($pkColumn, $data)) {
+                continue;
+            }
+            $where[$pkColumn] = $data[$pkColumn];
+        }
+
+        return [$rowsAffected, $where];
     }
 
     /**

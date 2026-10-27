@@ -10,12 +10,18 @@ use PhpDb\Sql\TableIdentifier;
 
 use function is_string;
 
+/**
+ * @api
+ */
 class RowGateway extends AbstractRowGateway
 {
     /**
      * Constructor
      *
+     * @param string|list<string>|null $primaryKeyColumn
+     *
      * @throws Exception\InvalidArgumentException
+     * @throws Exception\RuntimeException
      */
     public function __construct(
         string|array|null $primaryKeyColumn,
@@ -24,7 +30,7 @@ class RowGateway extends AbstractRowGateway
     ) {
         // setup primary key
         if (is_string($primaryKeyColumn)) {
-            $primaryKeyColumn = '' !== $primaryKeyColumn ? (array) $primaryKeyColumn : null;
+            $primaryKeyColumn = '' === $primaryKeyColumn ? null : [$primaryKeyColumn];
         }
         $this->primaryKeyColumn = $primaryKeyColumn;
 
@@ -32,11 +38,7 @@ class RowGateway extends AbstractRowGateway
         $this->table = $table;
 
         // set Sql object
-        if ($adapterOrSql instanceof Sql) {
-            $this->sql = $adapterOrSql;
-        } else {
-            $this->sql = new Sql($adapterOrSql, $this->table);
-        }
+        $this->sql = $adapterOrSql instanceof Sql ? $adapterOrSql : new Sql($adapterOrSql, $this->table);
 
         if ($this->sql->getTable() !== $this->table) {
             throw Exception\InvalidArgumentException::forSqlTableMismatch();

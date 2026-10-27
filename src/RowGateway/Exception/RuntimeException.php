@@ -8,6 +8,9 @@ use PhpDb\Exception;
 
 use function sprintf;
 
+/**
+ * @api
+ */
 class RuntimeException extends Exception\RuntimeException
 {
     final public const string MISSING_PRIMARY_KEY_COLUMN =
@@ -18,7 +21,11 @@ class RuntimeException extends Exception\RuntimeException
         'While processing primary key data, a known key %s'
             . ' was not found in the data array';
 
+    final public const string MISSING_SAVED_ROW = 'The saved row could not be read back from the database.';
+
     final public const string MISSING_SQL_OBJECT = 'This row object does not have a Sql object set.';
+
+    final public const string MISSING_STATEMENT_RESULT = 'The statement did not return a result.';
 
     final public const string MISSING_TABLE = 'This row object does not have a valid table set.';
 
@@ -34,9 +41,19 @@ class RuntimeException extends Exception\RuntimeException
         return new self(sprintf(self::MISSING_PRIMARY_KEY_DATA, $column));
     }
 
+    public static function forMissingSavedRow(): self
+    {
+        return new self(self::MISSING_SAVED_ROW);
+    }
+
     public static function forMissingSqlObject(): self
     {
         return new self(self::MISSING_SQL_OBJECT);
+    }
+
+    public static function forMissingStatementResult(): self
+    {
+        return new self(self::MISSING_STATEMENT_RESULT);
     }
 
     public static function forMissingTable(): self
