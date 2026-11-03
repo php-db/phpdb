@@ -70,10 +70,12 @@ class Statement implements StatementInterface, PdoDriverAwareInterface, Profiler
         }
         /** END Standard ParameterContainer Merging Block */
 
+        $resource = $this->getPreparedResource();
+
         $this->profiler?->profilerStart($this);
 
         try {
-            $this->resource->execute();
+            $resource->execute();
         } catch (PDOException $e) {
             $this->profiler?->profilerFinish();
 
@@ -83,7 +85,7 @@ class Statement implements StatementInterface, PdoDriverAwareInterface, Profiler
             }
 
             throw Exception\InvalidQueryException::forFailedStatement(
-                implode(' - ', $this->resource->errorInfo()),
+                implode(' - ', $resource->errorInfo()),
                 $code,
                 $e,
             );
@@ -195,6 +197,7 @@ class Statement implements StatementInterface, PdoDriverAwareInterface, Profiler
     /** Bind parameters from container */
     protected function bindParametersFromContainer(): void
     {
+        $resource   = $this->getPreparedResource();
         $parameters = $this->parameterContainer->getNamedArray();
         $errata     = $this->parameterContainer->getErrataIterator()->getArrayCopy();
 
@@ -224,10 +227,18 @@ class Statement implements StatementInterface, PdoDriverAwareInterface, Profiler
                 $parameter = ':' . ltrim($name, ':');
             }
 
-            $this->resource->bindParam($parameter, $value, $type);
+            $resource->bindParam($parameter, $value, $type);
         }
 
         $this->parametersBound = true;
+    }
+
+    /** @throws Exception\RuntimeException */
+    private function getPreparedResource(): PDOStatement
+    {
+        return $this->resource instanceof PDOStatement
+            ? $this->resource
+            : throw Exception\RuntimeException::forUnpreparedStatement();
     }
 
     /** Perform a deep clone */

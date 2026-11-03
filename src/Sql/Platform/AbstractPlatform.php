@@ -44,6 +44,7 @@ class AbstractPlatform implements PlatformDecoratorInterface, PreparableSqlInter
     public function getTypeDecorator(
         PreparableSqlInterface|SqlInterface $subject,
     ): PlatformDecoratorInterface|PreparableSqlInterface|SqlInterface {
+        /** @var PlatformDecoratorInterface $decorator */
         foreach ($this->decorators as $type => $decorator) {
             /** @phpstan-ignore-next-line instanceof with string class name is valid */
             if (! $subject instanceof $type) {
