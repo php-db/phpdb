@@ -217,13 +217,14 @@ class Update extends AbstractPreparableSql
                 continue;
             }
 
-            $setSql[] = $prefix
-            . $this->resolveColumnValue(
-                $value,
-                $platform,
-                $driver,
-                $parameterContainer,
-            );
+            $setSql[] =
+                $prefix
+                . $this->resolveColumnValue(
+                    $value,
+                    $platform,
+                    $driver,
+                    $parameterContainer,
+                );
         }
 
         return $this->formatSpecification(

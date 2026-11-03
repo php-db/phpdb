@@ -68,12 +68,6 @@ count = 1
 
 [[issues]]
 file = "src/Adapter/Driver/Pdo/Statement.php"
-code = "halstead"
-message = "Method has a high halstead difficulty"
-count = 1
-
-[[issues]]
-file = "src/Adapter/Driver/Pdo/Statement.php"
 code = "literal-named-argument"
 message = "Literal argument `':'` should be passed as a named argument for clarity."
 count = 1
