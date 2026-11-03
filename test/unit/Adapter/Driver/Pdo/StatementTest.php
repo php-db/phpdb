@@ -10,6 +10,7 @@ use PDOException;
 use PDOStatement;
 use PhpDb\Adapter\Driver\Pdo\Result;
 use PhpDb\Adapter\Driver\Pdo\Statement;
+use PhpDb\Adapter\Driver\ResultInterface;
 use PhpDb\Adapter\Exception\InvalidQueryException;
 use PhpDb\Adapter\Exception\RuntimeException;
 use PhpDb\Adapter\ParameterContainer;
@@ -24,6 +25,7 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
 
+use function is_array;
 use function sprintf;
 
 #[CoversMethod(Statement::class, 'setDriver')]
@@ -92,19 +94,6 @@ final class StatementTest extends TestCase
         $result = $this->statement->execute();
 
         static::assertInstanceOf(Result::class, $result);
-    }
-
-    #[Test]
-    public function bindParametersFromContainerSkipsWhenAlreadyBound(): void
-    {
-        $pdo = new SqliteMemoryPdo();
-        $this->statement->setDriver(new TestPdo(new TestConnection($pdo)));
-        $this->statement->initialize($pdo);
-        $this->statement->setSql('SELECT :val');
-        $this->statement->setParameterContainer(new ParameterContainer(['val' => 'first']));
-
-        $result1 = $this->statement->execute();
-        static::assertInstanceOf(Result::class, $result1);
     }
 
     #[Test]
@@ -493,19 +482,39 @@ final class StatementTest extends TestCase
     }
 
     #[Test]
-    public function secondExecuteSkipsBindingWhenAlreadyBound(): void
+    public function reExecutingAfterMutatingTheParameterContainerUsesTheNewValues(): void
     {
-        $pdo = new SqliteMemoryPdo();
-        $this->statement->setDriver(new TestPdo(new TestConnection($pdo)));
-        $this->statement->initialize($pdo);
-        $this->statement->setSql('SELECT :val');
-        $this->statement->setParameterContainer(new ParameterContainer(['val' => 'test']));
+        $this->prepareLookupStatement();
+        $container = new ParameterContainer(['id' => 1]);
+        $this->statement->setParameterContainer($container);
 
-        $result1 = $this->statement->execute();
-        static::assertInstanceOf(Result::class, $result1);
+        $first = $this->fetchName($this->statement->execute());
+        $container->offsetSet('id', 2);
+        $second = $this->fetchName($this->statement->execute());
 
-        $result2 = $this->statement->execute();
-        static::assertInstanceOf(Result::class, $result2);
+        static::assertSame(['one', 'two'], [$first, $second]);
+    }
+
+    #[Test]
+    public function reExecutingWithNewArrayParametersUsesTheNewValues(): void
+    {
+        $this->prepareLookupStatement();
+
+        $first  = $this->fetchName($this->statement->execute(['id' => 1]));
+        $second = $this->fetchName($this->statement->execute(['id' => 2]));
+
+        static::assertSame(['one', 'two'], [$first, $second]);
+    }
+
+    #[Test]
+    public function reExecutingWithReplacementParameterContainerUsesTheNewValues(): void
+    {
+        $this->prepareLookupStatement();
+
+        $first  = $this->fetchName($this->statement->execute(new ParameterContainer(['id' => 1])));
+        $second = $this->fetchName($this->statement->execute(new ParameterContainer(['id' => 2])));
+
+        static::assertSame(['one', 'two'], [$first, $second]);
     }
 
     #[Test]
@@ -550,4 +559,21 @@ final class StatementTest extends TestCase
      * This method is called after a test is executed.
      */
     protected function tearDown(): void {}
+
+    private function fetchName(?ResultInterface $result): mixed
+    {
+        $row = $result?->current();
+
+        return is_array($row) ? $row['name'] ?? null : null;
+    }
+
+    private function prepareLookupStatement(): void
+    {
+        $pdo = new SqliteMemoryPdo(
+            "CREATE TABLE t (id INTEGER, name TEXT); INSERT INTO t VALUES (1, 'one'), (2, 'two');",
+        );
+        $this->statement->setDriver(new TestPdo(new TestConnection($pdo)));
+        $this->statement->initialize($pdo);
+        $this->statement->setSql('SELECT name FROM t WHERE id = :id');
+    }
 }
