@@ -97,6 +97,16 @@ final class StatementTest extends TestCase
     }
 
     #[Test]
+    public function bindParametersThrowsWhenMarkedPreparedWithoutResource(): void
+    {
+        $this->statement->setParameterContainer(new ParameterContainer(['val' => 1]));
+        (new ReflectionProperty($this->statement, 'isPrepared'))->setValue($this->statement, true);
+
+        $this->expectExceptionObject(RuntimeException::forUnpreparedStatement());
+        $this->statement->execute();
+    }
+
+    #[Test]
     public function bindParametersWithErrataTypeDefaultsToString(): void
     {
         $pdo = new SqliteMemoryPdo();
@@ -348,6 +358,15 @@ final class StatementTest extends TestCase
         self::expectException(RuntimeException::class);
         self::expectExceptionMessage(sprintf(RuntimeException::INVALID_PDO_PARAM, $name));
         $this->statement->execute([$name => 'value']);
+    }
+
+    #[Test]
+    public function executeThrowsWhenMarkedPreparedWithoutResource(): void
+    {
+        (new ReflectionProperty($this->statement, 'isPrepared'))->setValue($this->statement, true);
+
+        $this->expectExceptionObject(RuntimeException::forUnpreparedStatement());
+        $this->statement->execute();
     }
 
     #[Test]
