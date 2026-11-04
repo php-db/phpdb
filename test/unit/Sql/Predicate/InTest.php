@@ -45,6 +45,11 @@ final class InTest extends TestCase
                 'SELECT "t".* FROM "t" WHERE "id" = ANY (ARRAY[:where1, :where2])',
                 ['where1' => 1, 'where2' => 2],
             ],
+            'two values, width modifier'          => [
+                (new In('id', [1, 2]))->setSpecification('%1$s = ANY (ARRAY[%2$05s])'),
+                'SELECT "t".* FROM "t" WHERE "id" = ANY (ARRAY[:where1, :where2])',
+                ['where1' => 1, 'where2' => 2],
+            ],
             'three values, plain placeholders'    => [
                 (new In('id', [1, 2, 3]))->setSpecification('%s = ANY (ARRAY[%s])'),
                 'SELECT "t".* FROM "t" WHERE "id" = ANY (ARRAY[:where1, :where2, :where3])',
@@ -68,6 +73,10 @@ final class InTest extends TestCase
             ],
             'two values, positional placeholders' => [
                 (new In('id', [1, 2]))->setSpecification('%1$s = ANY (ARRAY[%2$s])'),
+                'SELECT "t".* FROM "t" WHERE "id" = ANY (ARRAY[\'1\', \'2\'])',
+            ],
+            'two values, width modifier'          => [
+                (new In('id', [1, 2]))->setSpecification('%1$s = ANY (ARRAY[%2$05s])'),
                 'SELECT "t".* FROM "t" WHERE "id" = ANY (ARRAY[\'1\', \'2\'])',
             ],
             'three values, plain placeholders'    => [

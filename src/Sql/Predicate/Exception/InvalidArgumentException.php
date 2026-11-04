@@ -39,6 +39,10 @@ class InvalidArgumentException extends Exception\InvalidArgumentException
 
     final public const string SPECIFICATION_ARGUMENT_OUT_OF_RANGE = 'Specification "%s" references argument %d, but only %d arguments are available';
 
+    final public const string SPECIFICATION_MIXED_PLACEHOLDER_STYLES = 'Specification "%s" mixes plain (%%s) and positional (%%N$s) placeholders; use one style throughout';
+
+    final public const string SPECIFICATION_UNSUPPORTED_CONVERSION = 'Specification "%s" contains the unsupported conversion "%s"; only %%s and %%N$s placeholders are supported and a literal percent must be escaped as %%%%';
+
     public static function forInvalidCombination(): self
     {
         return new self(self::INVALID_COMBINATION);
@@ -113,5 +117,17 @@ class InvalidArgumentException extends Exception\InvalidArgumentException
         int $available,
     ): self {
         return new self(sprintf(self::SPECIFICATION_ARGUMENT_OUT_OF_RANGE, $specification, $position, $available));
+    }
+
+    public static function forSpecificationMixedPlaceholderStyles(string $specification): self
+    {
+        return new self(sprintf(self::SPECIFICATION_MIXED_PLACEHOLDER_STYLES, $specification));
+    }
+
+    public static function forSpecificationUnsupportedConversion(
+        string $specification,
+        string $conversion,
+    ): self {
+        return new self(sprintf(self::SPECIFICATION_UNSUPPORTED_CONVERSION, $specification, $conversion));
     }
 }

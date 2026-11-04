@@ -6,6 +6,7 @@ namespace PhpDbTest\Sql\Predicate;
 
 use PhpDb\Sql\Argument;
 use PhpDb\Sql\ArgumentInterface;
+use PhpDb\Sql\Predicate\ArgumentPlaceholders;
 use PhpDb\Sql\Predicate\CustomSpecification;
 use PhpDb\Sql\Predicate\Exception\InvalidArgumentException;
 use PhpDb\Sql\Select;
@@ -17,6 +18,7 @@ use PHPUnit\Framework\TestCase;
 
 use function sprintf;
 
+#[CoversClass(ArgumentPlaceholders::class)]
 #[CoversClass(CustomSpecification::class)]
 #[Group('unit')]
 final class CustomSpecificationTest extends TestCase
@@ -59,6 +61,26 @@ final class CustomSpecificationTest extends TestCase
                 "%1\$s IN (%2\$s) AND 'a%%s' <> ''",
                 [Argument::identifier('id'), Argument::values([1, 2])],
                 "%1\$s IN (%2\$s, %3\$s) AND 'a%%s' <> ''",
+            ],
+            'width modifier ignored'               => [
+                '%1$s = ANY (ARRAY[%2$05s])',
+                [Argument::identifier('id'), Argument::values([1, 2])],
+                '%1$s = ANY (ARRAY[%2$s, %3$s])',
+            ],
+            'precision modifier ignored'           => [
+                '%.2s = ANY (ARRAY[%s])',
+                [Argument::identifier('id'), Argument::values([1, 2])],
+                '%1$s = ANY (ARRAY[%2$s, %3$s])',
+            ],
+            'padding modifier ignored'             => [
+                "%'10s IN (%s)",
+                [Argument::identifier('id'), Argument::values([1, 2])],
+                '%1$s IN (%2$s, %3$s)',
+            ],
+            'escape left for the caller'           => [
+                '100%% > 0',
+                [],
+                '100%% > 0',
             ],
             'empty list'                           => [
                 '%1$s = ANY (ARRAY[%2$s])',
@@ -118,6 +140,30 @@ final class CustomSpecificationTest extends TestCase
                 '%s IN (%s) OR %s',
                 $inList,
                 sprintf(InvalidArgumentException::SPECIFICATION_ARGUMENT_OUT_OF_RANGE, '%s IN (%s) OR %s', 3, 2),
+            ],
+            'unsupported conversion'       => [
+                '%1$s IN (%2$d)',
+                $inList,
+                sprintf(InvalidArgumentException::SPECIFICATION_UNSUPPORTED_CONVERSION, '%1$s IN (%2$d)', '%2$d'),
+            ],
+            'unescaped percent in text'    => [
+                '%1$s IN (%2$s) AND 50% > 0',
+                $inList,
+                sprintf(
+                    InvalidArgumentException::SPECIFICATION_UNSUPPORTED_CONVERSION,
+                    '%1$s IN (%2$s) AND 50% > 0',
+                    '%',
+                ),
+            ],
+            'unescaped trailing percent'   => [
+                '%1$s IN (%2$s)%',
+                $inList,
+                sprintf(InvalidArgumentException::SPECIFICATION_UNSUPPORTED_CONVERSION, '%1$s IN (%2$s)%', '%'),
+            ],
+            'mixed placeholder styles'     => [
+                '%2$s IN (%s)',
+                $inList,
+                sprintf(InvalidArgumentException::SPECIFICATION_MIXED_PLACEHOLDER_STYLES, '%2$s IN (%s)'),
             ],
         ];
     }
