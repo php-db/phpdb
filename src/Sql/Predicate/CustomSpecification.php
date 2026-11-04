@@ -11,12 +11,14 @@ use PhpDb\Sql\Predicate\Exception\InvalidArgumentException;
 
 use function array_count_values;
 use function array_map;
+use function array_slice;
 use function count;
 use function implode;
 use function in_array;
 use function preg_match;
 use function preg_split;
 use function range;
+use function strlen;
 
 use const PREG_SPLIT_DELIM_CAPTURE;
 
@@ -36,14 +38,17 @@ final class CustomSpecification
 {
     /**
      * Any vsprintf() conversion, matched the way vsprintf() reads one, leaving %% as literal text
+     *
+     * The pattern must keep exactly one capturing group: expand() relies on preg_split() placing
+     * literal text at even indexes and each captured conversion at odd ones.
      */
     private const string CONVERSION = '/%%(*SKIP)(*FAIL)|(%(?:\d+\$)?[-+ 0]*(?:\'.)?\d*(?:\.\d+)?[a-zA-Z]?)/';
 
     /**
      * The conversions that may refer to an argument, plain (%s) or positional (%2$s), capturing
-     * the argument number of a positional one
+     * the argument number of a positional one, which starts at 1
      */
-    private const string PLACEHOLDER = '/^%(?:(\d+)\$)?s$/';
+    private const string PLACEHOLDER = '/^%(?:([1-9]\d*)\$)?s$/';
 
     /**
      * @param list<ArgumentInterface> $arguments
@@ -69,23 +74,29 @@ final class CustomSpecification
 
             $match = [];
             if (1 !== preg_match(self::PLACEHOLDER, $text, $match)) {
-                throw InvalidArgumentException::forSpecificationUnsupportedPlaceholder($specification, $text);
+                throw InvalidArgumentException::forSpecificationUnsupportedPlaceholder(
+                    $specification,
+                    $text,
+                    strlen(implode('', array_slice($parts, offset: 0, length: $part))),
+                );
             }
 
             $positional = $match[1] ?? '';
             $isPlain    = '' === $positional;
-            $plain      ??= $isPlain;
-            if ($plain !== $isPlain) {
-                throw InvalidArgumentException::forSpecificationMixedPlaceholderStyles($specification);
-            }
-
-            $index        = $isPlain ? $sequential++ : (int) $positional - 1;
-            $referenced[] = $index;
-            $expanded     .= $placeholders[$index] ?? throw InvalidArgumentException::forSpecificationArgumentOutOfRange(
+            $index      = $isPlain ? $sequential++ : (int) $positional - 1;
+            $run        = $placeholders[$index] ?? throw InvalidArgumentException::forSpecificationArgumentOutOfRange(
                     $specification,
                     $index + 1,
                     count($arguments),
                 );
+
+            $plain ??= $isPlain;
+            if ($plain !== $isPlain) {
+                throw InvalidArgumentException::forSpecificationMixedPlaceholderStyles($specification);
+            }
+
+            $referenced[] = $index;
+            $expanded     .= $run;
         }
 
         $references = array_count_values($referenced);

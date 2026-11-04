@@ -108,7 +108,7 @@ final class InvalidArgumentExceptionTest extends TestCase
             ],
             'specification unsupported placeholder'      => [
                 'forSpecificationUnsupportedPlaceholder',
-                ['%1$05s IN (%2$s)', '%1$05s'],
+                ['%1$05s IN (%2$s)', '%1$05s', 0],
                 InvalidArgumentException::SPECIFICATION_UNSUPPORTED_PLACEHOLDER,
             ],
         ];

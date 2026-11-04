@@ -37,11 +37,11 @@ class InvalidArgumentException extends Exception\InvalidArgumentException
 
     final public const string SPECIFICATION_ARGUMENT_NOT_REFERENCED_ONCE = 'Specification "%s" must reference argument %d exactly once because it binds values, but references it %d times';
 
-    final public const string SPECIFICATION_ARGUMENT_OUT_OF_RANGE = 'Specification "%s" references argument %d, but only %d arguments are available';
+    final public const string SPECIFICATION_ARGUMENT_OUT_OF_RANGE = 'Specification "%s" references argument %d, but the highest argument number is %d';
 
     final public const string SPECIFICATION_MIXED_PLACEHOLDER_STYLES = 'Specification "%s" mixes plain (%%s) and positional (%%N$s) placeholders; use one style throughout';
 
-    final public const string SPECIFICATION_UNSUPPORTED_PLACEHOLDER = 'Specification "%s" contains unsupported placeholder "%s"; use %%s or %%N$s for an argument and %%%% for a literal percent sign';
+    final public const string SPECIFICATION_UNSUPPORTED_PLACEHOLDER = 'Specification "%s" contains unsupported placeholder "%s" at offset %d; use %%s or %%N$s for an argument and %%%% for a literal percent sign';
 
     public static function forInvalidCombination(): self
     {
@@ -124,8 +124,11 @@ class InvalidArgumentException extends Exception\InvalidArgumentException
         return new self(sprintf(self::SPECIFICATION_MIXED_PLACEHOLDER_STYLES, $specification));
     }
 
-    public static function forSpecificationUnsupportedPlaceholder(string $specification, string $placeholder): self
-    {
-        return new self(sprintf(self::SPECIFICATION_UNSUPPORTED_PLACEHOLDER, $specification, $placeholder));
+    public static function forSpecificationUnsupportedPlaceholder(
+        string $specification,
+        string $placeholder,
+        int $offset,
+    ): self {
+        return new self(sprintf(self::SPECIFICATION_UNSUPPORTED_PLACEHOLDER, $specification, $placeholder, $offset));
     }
 }

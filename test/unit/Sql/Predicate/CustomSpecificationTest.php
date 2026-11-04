@@ -50,6 +50,11 @@ final class CustomSpecificationTest extends TestCase
                 [Argument::identifier('id'), Argument::values([1, 2])],
                 '(%1$s IS NULL OR %1$s IN (%2$s, %3$s))',
             ],
+            'no placeholders'                      => [
+                'TRUE',
+                [Argument::identifier('id')],
+                'TRUE',
+            ],
             'escaped percent sign kept'            => [
                 "%1\$s IN (%2\$s) AND 'a%%' <> ''",
                 [Argument::identifier('id'), Argument::values([1, 2])],
@@ -84,7 +89,7 @@ final class CustomSpecificationTest extends TestCase
         $inList = [Argument::identifier('id'), Argument::values([1, 2])];
 
         return [
-            'list referenced twice'        => [
+            'list referenced twice'                => [
                 '%1$s IN (%2$s) OR %1$s = ANY (ARRAY[%2$s])',
                 $inList,
                 sprintf(
@@ -94,12 +99,12 @@ final class CustomSpecificationTest extends TestCase
                     2,
                 ),
             ],
-            'list never referenced'        => [
+            'list never referenced'                => [
                 '%1$s IS NOT NULL',
                 $inList,
                 sprintf(InvalidArgumentException::SPECIFICATION_ARGUMENT_NOT_REFERENCED_ONCE, '%1$s IS NOT NULL', 2, 0),
             ],
-            'bound value referenced twice' => [
+            'bound value referenced twice'         => [
                 '%1$s IN (%2$s) OR %1$s IS NULL',
                 [Argument::value('a'), Argument::values([1])],
                 sprintf(
@@ -109,22 +114,27 @@ final class CustomSpecificationTest extends TestCase
                     2,
                 ),
             ],
-            'missing argument referenced'  => [
+            'missing argument referenced'          => [
                 '%1$s IN (%3$s)',
                 $inList,
                 sprintf(InvalidArgumentException::SPECIFICATION_ARGUMENT_OUT_OF_RANGE, '%1$s IN (%3$s)', 3, 2),
             ],
-            'too many plain placeholders'  => [
+            'too many plain placeholders'          => [
                 '%s IN (%s) OR %s',
                 $inList,
                 sprintf(InvalidArgumentException::SPECIFICATION_ARGUMENT_OUT_OF_RANGE, '%s IN (%s) OR %s', 3, 2),
             ],
-            'positional then plain'        => [
+            'missing argument before mixed styles' => [
+                '%s IN (%3$s)',
+                $inList,
+                sprintf(InvalidArgumentException::SPECIFICATION_ARGUMENT_OUT_OF_RANGE, '%s IN (%3$s)', 3, 2),
+            ],
+            'positional then plain'                => [
                 '%2$s IN (%s)',
                 $inList,
                 sprintf(InvalidArgumentException::SPECIFICATION_MIXED_PLACEHOLDER_STYLES, '%2$s IN (%s)'),
             ],
-            'plain then positional'        => [
+            'plain then positional'                => [
                 '%s IN (%2$s)',
                 $inList,
                 sprintf(InvalidArgumentException::SPECIFICATION_MIXED_PLACEHOLDER_STYLES, '%s IN (%2$s)'),
@@ -132,28 +142,32 @@ final class CustomSpecificationTest extends TestCase
         ];
     }
 
-    /** @return array<string, array{string, string}> */
+    /** @return array<string, array{string, string, int}> */
     public static function unsupportedPlaceholderProvider(): array
     {
         return [
-            'padded positional placeholder' => ['%1$05s IN (%2$s)', '%1$05s'],
-            'padded plain placeholder'      => ['%05s IN (%s)', '%05s'],
-            'precision on a placeholder'    => ['%.3s IN (%s)', '%.3s'],
-            'custom padding character'      => ["%'*5s IN (%s)", "%'*5s"],
-            'integer conversion'            => ['%s IN (%s) AND %d', '%d'],
-            'positional integer conversion' => ['%1$s IN (%2$s) AND %1$d', '%1$d'],
-            'unescaped percent before text' => ["%s IN (%s) AND x LIKE '50% off'", '% o'],
-            'unescaped percent at the end'  => ['%s IN (%s) AND 50%', '%'],
-            'unsupported conversion only'   => ['%s = ANY (%d)', '%d'],
+            'padded positional placeholder' => ['%1$s IN (%2$05s)', '%2$05s', 9],
+            'padded plain placeholder'      => ['%05s IN (%s)', '%05s', 0],
+            'precision on a placeholder'    => ['%.3s IN (%s)', '%.3s', 0],
+            'custom padding character'      => ["%'*5s IN (%s)", "%'*5s", 0],
+            'argument number zero'          => ['%0$s IN (%2$s)', '%0$s', 0],
+            'integer conversion'            => ['%s IN (%s) AND %d', '%d', 15],
+            'positional integer conversion' => ['%1$s IN (%2$s) AND %1$d', '%1$d', 19],
+            'unescaped percent before text' => ["%s IN (%s) AND x LIKE '50% off'", '% o', 25],
+            'unescaped percent at the end'  => ['%s IN (%s) AND 50%', '%', 17],
+            'unsupported conversion only'   => ['%s = ANY (%d)', '%d', 10],
         ];
     }
 
     #[Test]
     #[DataProvider('unsupportedPlaceholderProvider')]
-    public function conversionOtherThanSupportedPlaceholdersIsRejected(string $specification, string $placeholder): void
-    {
+    public function conversionOtherThanSupportedPlaceholdersIsRejected(
+        string $specification,
+        string $placeholder,
+        int $offset,
+    ): void {
         $this->expectExceptionObject(
-            InvalidArgumentException::forSpecificationUnsupportedPlaceholder($specification, $placeholder),
+            InvalidArgumentException::forSpecificationUnsupportedPlaceholder($specification, $placeholder, $offset),
         );
 
         CustomSpecification::expand($specification, [Argument::identifier('id'), Argument::values([1, 2])]);
