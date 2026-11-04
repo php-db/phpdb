@@ -22,6 +22,7 @@ use function uniqid;
 
 #[CoversMethod(Result::class, 'current')]
 #[CoversMethod(Result::class, 'count')]
+#[CoversMethod(Result::class, 'resolveRowCount')]
 #[CoversMethod(Result::class, 'initialize')]
 #[CoversMethod(Result::class, 'isBuffered')]
 #[CoversMethod(Result::class, 'getFetchMode')]

@@ -57,4 +57,14 @@ final class StatementContainerTest extends TestCase
         static::assertSame($container, $result);
         static::assertSame('test', $container->getSql());
     }
+
+    #[Test]
+    public function setSqlStoresNullAsAnEmptyString(): void
+    {
+        $container = new StatementContainer('test');
+
+        $container->setSql(null);
+
+        static::assertSame('', $container->getSql());
+    }
 }

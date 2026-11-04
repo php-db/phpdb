@@ -20,10 +20,14 @@ use PhpDb\Adapter\StatementContainerInterface;
 
 use function implode;
 use function is_array;
+use function is_bool;
 use function is_int;
 use function ltrim;
 use function preg_match;
 
+/**
+ * @api
+ */
 class Statement implements StatementInterface, PdoDriverAwareInterface, ProfilerAwareInterface
 {
     protected PDO $pdo;
@@ -34,7 +38,7 @@ class Statement implements StatementInterface, PdoDriverAwareInterface, Profiler
 
     protected string $sql = '';
 
-    protected bool $isQuery;
+    protected bool $isQuery = false;
 
     protected bool $parametersBound = false;
 
@@ -42,12 +46,21 @@ class Statement implements StatementInterface, PdoDriverAwareInterface, Profiler
 
     protected bool $isPrepared = false;
 
+    /**
+     * @param array<array-key, mixed> $options
+     */
     public function __construct(
         protected ParameterContainer $parameterContainer = new ParameterContainer(),
         protected array $options = [],
     ) {}
 
-    /** @throws Exception\InvalidQueryException */
+    /**
+     * @param ParameterContainer|array<array-key, mixed>|null $parameters
+     *
+     * @throws Exception\InvalidQueryException
+     * @throws Exception\RuntimeException
+     * @throws PDOException When the driver raises one while preparing or binding.
+     */
     #[Override]
     public function execute(array|ParameterContainer|null $parameters = null): ?ResultInterface
     {
@@ -93,7 +106,7 @@ class Statement implements StatementInterface, PdoDriverAwareInterface, Profiler
 
         $this->profiler?->profilerFinish();
 
-        return $this->driver->createResult($this->resource);
+        return $this->driver->createResult($resource);
     }
 
     #[Override]
@@ -134,7 +147,10 @@ class Statement implements StatementInterface, PdoDriverAwareInterface, Profiler
         return $this->isPrepared;
     }
 
-    /** @throws Exception\RuntimeException */
+    /**
+     * @throws Exception\RuntimeException
+     * @throws PDOException When the driver raises one while preparing.
+     */
     #[Override]
     public function prepare(?string $sql = null): StatementInterface
     {
@@ -186,15 +202,25 @@ class Statement implements StatementInterface, PdoDriverAwareInterface, Profiler
         return $this;
     }
 
-    /** Set sql */
+    /** Set sql; a null SQL string is stored as an empty one */
     #[Override]
     public function setSql(?string $sql): StatementContainerInterface
     {
-        $this->sql = $sql;
+        $this->sql = $sql ?? '';
         return $this;
     }
 
-    /** Bind parameters from container */
+    /**
+     * Bind parameters from container
+     *
+     * Parameter values are bound by reference and can be of any type, so the loop and
+     * PDOStatement::bindParam() both assign mixed values.
+     *
+     * @throws Exception\RuntimeException
+     * @throws PDOException When the driver rejects a binding.
+     *
+     * @mago-expect analysis:mixed-assignment
+     */
     protected function bindParametersFromContainer(): void
     {
         $resource   = $this->getPreparedResource();
@@ -202,32 +228,11 @@ class Statement implements StatementInterface, PdoDriverAwareInterface, Profiler
         $errata     = $this->parameterContainer->getErrataIterator()->getArrayCopy();
 
         foreach ($parameters as $name => &$value) {
-            if (isset($errata[$name])) {
-                $type = match ($errata[$name]) {
-                    ParameterContainer::TYPE_INTEGER => PDO::PARAM_INT,
-                    ParameterContainer::TYPE_NULL    => PDO::PARAM_NULL,
-                    ParameterContainer::TYPE_LOB     => PDO::PARAM_LOB,
-                    default                          => PDO::PARAM_STR,
-                };
-            } else {
-                $type = match (true) {
-                    is_int($value) => PDO::PARAM_INT,
-                    false === $value, true === $value => PDO::PARAM_BOOL,
-                    null === $value => PDO::PARAM_NULL,
-                    default => PDO::PARAM_STR,
-                };
-            }
-
-            if (is_int($name)) {
-                $parameter = $name + 1;
-            } else {
-                if (! preg_match('/^:?[a-zA-Z0-9_]+$/', $name)) {
-                    throw Exception\RuntimeException::forInvalidPdoParam($name);
-                }
-                $parameter = ':' . ltrim($name, ':');
-            }
-
-            $resource->bindParam($parameter, $value, $type);
+            $resource->bindParam(
+                $this->toPdoParameter($name),
+                $value,
+                $this->toPdoType($errata[$name] ?? null, $value),
+            );
         }
 
         $this->parametersBound = true;
@@ -239,6 +244,39 @@ class Statement implements StatementInterface, PdoDriverAwareInterface, Profiler
         return $this->resource instanceof PDOStatement
             ? $this->resource
             : throw Exception\RuntimeException::forUnpreparedStatement();
+    }
+
+    /** @throws Exception\RuntimeException When a named parameter contains invalid characters. */
+    private function toPdoParameter(int|string $name): int|string
+    {
+        if (is_int($name)) {
+            return $name + 1;
+        }
+
+        if (1 !== preg_match('/^:?[a-zA-Z0-9_]+$/', $name)) {
+            throw Exception\RuntimeException::forInvalidPdoParam($name);
+        }
+
+        return ':' . ltrim($name, characters: ':');
+    }
+
+    private function toPdoType(mixed $errata, mixed $value): int
+    {
+        if (null !== $errata) {
+            return match ($errata) {
+                ParameterContainer::TYPE_INTEGER => PDO::PARAM_INT,
+                ParameterContainer::TYPE_NULL    => PDO::PARAM_NULL,
+                ParameterContainer::TYPE_LOB     => PDO::PARAM_LOB,
+                default                          => PDO::PARAM_STR,
+            };
+        }
+
+        return match (true) {
+            is_int($value)  => PDO::PARAM_INT,
+            is_bool($value) => PDO::PARAM_BOOL,
+            null === $value => PDO::PARAM_NULL,
+            default => PDO::PARAM_STR,
+        };
     }
 
     /** Perform a deep clone */
