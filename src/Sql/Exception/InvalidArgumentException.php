@@ -60,7 +60,7 @@ class InvalidArgumentException extends Exception\InvalidArgumentException
 
     final public const string MISSING_VALUES_OR_SELECT = 'values or select should be present';
 
-    final public const string NON_NUMERIC_PARAMETER = '%s expects parameter to be numeric, "%s" given';
+    final public const string NON_NEGATIVE_INTEGER_PARAMETER = '%s expects a non-negative integer, "%s" given';
 
     final public const string NON_STRING_VALUE_KEY = 'set() expects a string for the value key';
 
@@ -172,9 +172,9 @@ class InvalidArgumentException extends Exception\InvalidArgumentException
         return new self(self::MISSING_VALUES_OR_SELECT);
     }
 
-    public static function forNonNumericParameter(string $method, string $givenType): self
+    public static function forNonNegativeIntegerParameter(string $method, int|string $given): self
     {
-        return new self(sprintf(self::NON_NUMERIC_PARAMETER, $method, $givenType));
+        return new self(sprintf(self::NON_NEGATIVE_INTEGER_PARAMETER, $method, $given));
     }
 
     public static function forNonStringValueKey(): self

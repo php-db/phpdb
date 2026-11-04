@@ -195,6 +195,12 @@ $select->limit(5);
 $select->offset(10);
 ```
 
+Both take a non-negative integer, as an `int` or a string of digits such as
+`'10'`. A digit string is kept as given, so a count larger than `PHP_INT_MAX`
+still works. Anything else, including negative numbers, fractions, exponents
+and surrounding whitespace, throws
+`PhpDb\Sql\Exception\InvalidArgumentException`.
+
 ## group()
 
 The `group()` method specifies columns for GROUP BY clauses,

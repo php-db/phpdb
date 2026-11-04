@@ -83,8 +83,6 @@ use TypeError;
 #[CoversMethod(Select::class, 'getJoins')]
 final class SelectTest extends TestCase
 {
-    use AdapterTestTrait;
-
     /**
      * @return array<string, array{Closure(self, Select): array{?string, array<string, mixed>}, string, array<string, int>}>
      */
@@ -105,6 +103,32 @@ final class SelectTest extends TestCase
                 [],
             ],
         ];
+    }
+
+    /** @return array<string, array{'limit'|'offset', int|string}> */
+    public static function invalidRowCountProvider(): array
+    {
+        $values = [
+            'negative int'       => -1,
+            'negative string'    => '-1',
+            'fraction'           => '1.5',
+            'leading dot'        => '.5',
+            'exponent'           => '1e3',
+            'leading space'      => ' 5',
+            'trailing space'     => '5 ',
+            'trailing newline'   => "5\n",
+            'empty string'       => '',
+            'non-numeric string' => 'foobar',
+        ];
+
+        $cases = [];
+        foreach (['limit', 'offset'] as $method) {
+            foreach ($values as $label => $value) {
+                $cases["{$method}, {$label}"] = [$method, $value];
+            }
+        }
+
+        return $cases;
     }
 
     /**
@@ -864,6 +888,28 @@ final class SelectTest extends TestCase
         // phpcs:enable Generic.Files.LineLength.TooLong
     }
 
+    /** @return array<string, array{'limit'|'offset', int|string}> */
+    public static function validRowCountProvider(): array
+    {
+        $values = [
+            'zero int'           => 0,
+            'zero string'        => '0',
+            'int'                => 10,
+            'digit string'       => '10',
+            'leading zeros'      => '007',
+            'beyond PHP_INT_MAX' => '10000000000000000000',
+        ];
+
+        $cases = [];
+        foreach (['limit', 'offset'] as $method) {
+            foreach ($values as $label => $value) {
+                $cases["{$method}, {$label}"] = [$method, $value];
+            }
+        }
+
+        return $cases;
+    }
+
     /**
      * @param Closure(self, Select): array{?string, array<string, mixed>} $render
      * @param array<string, int> $expectedParameters
@@ -1262,6 +1308,8 @@ final class SelectTest extends TestCase
         static::assertSame('bar', $joins2->getJoins()[1]['name']);
     }
 
+    use AdapterTestTrait;
+
     #[Test]
     public function joinAliasesUnkeyedExpressionColumn(): void
     {
@@ -1298,16 +1346,6 @@ final class SelectTest extends TestCase
     }
 
     #[Test]
-    #[TestDox(': unit test: test limit() throws exception when invalid parameter passed')]
-    public function limitExceptionOnInvalidParameter(): void
-    {
-        $select = new Select();
-        self::expectException(InvalidArgumentException::class);
-        self::expectExceptionMessage(Select::class . '::limit expects parameter to be numeric');
-        $select->limit('foobar');
-    }
-
-    #[Test]
     public function limitIsQuotedWhenContainerHasNoDriver(): void
     {
         $select = (new Select('a'))->limit(5);
@@ -1333,6 +1371,18 @@ final class SelectTest extends TestCase
         $select = new Select();
 
         static::assertInstanceOf(Join::class, $select->joins);
+    }
+
+    /** @param 'limit'|'offset' $method */
+    #[Test]
+    #[DataProvider('validRowCountProvider')]
+    public function nonNegativeIntegerRowCountIsKeptAsGiven(string $method, int|string $value): void
+    {
+        static::assertSame(
+            $value,
+            (new Select())->{$method}($value)
+                ->getRawState($method),
+        );
     }
 
     #[Test]
@@ -1368,16 +1418,6 @@ final class SelectTest extends TestCase
 
         // Verify the instance was actually mutated
         static::assertSame(20, $select->getRawState(Select::OFFSET));
-    }
-
-    #[Test]
-    #[TestDox(': unit test: test offset() throws exception when invalid parameter passed')]
-    public function offsetExceptionOnInvalidParameter(): void
-    {
-        $select = new Select();
-        self::expectException(InvalidArgumentException::class);
-        self::expectExceptionMessage(Select::class . '::offset expects parameter to be numeric');
-        $select->offset('foobar');
     }
 
     /**
@@ -1724,6 +1764,18 @@ final class SelectTest extends TestCase
         $result = $select->reset('invalid');
 
         static::assertSame($select, $result);
+    }
+
+    /** @param 'limit'|'offset' $method */
+    #[Test]
+    #[DataProvider('invalidRowCountProvider')]
+    public function rowCountThatIsNotANonNegativeIntegerIsRejected(string $method, int|string $value): void
+    {
+        $this->expectExceptionObject(
+            InvalidArgumentException::forNonNegativeIntegerParameter(Select::class . '::' . $method, $value),
+        );
+
+        (new Select())->{$method}($value);
     }
 
     #[Test]
