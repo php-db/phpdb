@@ -17,7 +17,6 @@ use function in_array;
 use function preg_match;
 use function preg_split;
 use function range;
-use function substr;
 
 use const PREG_SPLIT_DELIM_CAPTURE;
 
@@ -27,8 +26,9 @@ use const PREG_SPLIT_DELIM_CAPTURE;
  * A custom specification refers to each argument with a single placeholder, plain (%s) or
  * positional (%2$s), but a Values argument renders one value per list item. Each placeholder
  * is replaced by positional placeholders for every value its argument renders, so %2$s becomes
- * %2$s, %3$s for a two-value list and NULL for an empty one. Any other conversion is rejected,
- * so a literal percent sign must be written as %%.
+ * %2$s, %3$s for a two-value list and NULL for an empty one. A specification must use one
+ * placeholder style throughout; any other conversion is rejected, so a literal percent sign
+ * must be written as %%.
  *
  * @internal
  */
@@ -40,21 +40,23 @@ final class CustomSpecification
     private const string CONVERSION = '/%%(*SKIP)(*FAIL)|(%(?:\d+\$)?[-+ 0]*(?:\'.)?\d*(?:\.\d+)?[a-zA-Z]?)/';
 
     /**
-     * The conversions that may refer to an argument: plain (%s) or positional (%2$s)
+     * The conversions that may refer to an argument, plain (%s) or positional (%2$s), capturing
+     * the argument number of a positional one
      */
-    private const string PLACEHOLDER = '/^%(?:\d+\$)?s$/';
+    private const string PLACEHOLDER = '/^%(?:(\d+)\$)?s$/';
 
     /**
      * @param list<ArgumentInterface> $arguments
      * @throws InvalidArgumentException When the specification contains a conversion other than
-     *     %s, %N$s or %%, a placeholder names a missing argument, or an argument that binds
-     *     values is not referenced exactly once.
+     *     %s, %N$s or %%, mixes plain and positional placeholders, a placeholder names a missing
+     *     argument, or an argument that binds values is not referenced exactly once.
      */
     public static function expand(string $specification, array $arguments): string
     {
         $offsets    = self::offsets($arguments);
         $referenced = [];
         $sequential = 0;
+        $plain      = null;
         $expanded   = '';
 
         /** @var list<string> $parts */
@@ -65,11 +67,19 @@ final class CustomSpecification
                 continue;
             }
 
-            if (1 !== preg_match(self::PLACEHOLDER, $text)) {
+            $match = [];
+            if (1 !== preg_match(self::PLACEHOLDER, $text, $match)) {
                 throw InvalidArgumentException::forSpecificationUnsupportedPlaceholder($specification, $text);
             }
 
-            $index    = '%s' === $text ? $sequential++ : (int) substr($text, offset: 1, length: -2) - 1;
+            $positional = $match[1] ?? '';
+            $isPlain    = '' === $positional;
+            $plain      ??= $isPlain;
+            if ($plain !== $isPlain) {
+                throw InvalidArgumentException::forSpecificationMixedPlaceholderStyles($specification);
+            }
+
+            $index    = $isPlain ? $sequential++ : (int) $positional - 1;
             $argument = $arguments[$index] ?? throw InvalidArgumentException::forSpecificationArgumentOutOfRange(
                     $specification,
                     $index + 1,

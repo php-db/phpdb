@@ -524,9 +524,9 @@ class In implements PredicateInterface
 ```
 
 A custom specification refers to the identifier and the value set with one
-placeholder each, plain (`%s`) or positional (`%1$s`, `%2$s`). The value set's
-placeholder receives the whole list, comma-separated, with no parentheses
-added; an empty list renders as `NULL`.
+placeholder each, plain (`%s`) or positional (`%1$s`, `%2$s`), using one style
+throughout. The value set's placeholder receives the whole list,
+comma-separated, with no parentheses added; an empty list renders as `NULL`.
 
 ```php title="Using a custom specification with In"
 $where->addPredicate(
@@ -544,9 +544,9 @@ The value set must be referenced exactly once, as must an identifier that binds
 a parameter (such as `Argument::value()`), so the rendered placeholders always
 match the bound parameters. A specification that repeats or omits one, or
 references an argument the predicate does not have, throws
-`PhpDb\Sql\Predicate\Exception\InvalidArgumentException`. So does any other
-`%` conversion, such as `%d` or a padded `%05s`; write a literal percent sign as
-`%%`.
+`PhpDb\Sql\Predicate\Exception\InvalidArgumentException`. So does mixing the
+two placeholder styles, or any other `%` conversion, such as `%d` or a padded
+`%05s`; write a literal percent sign as `%%`.
 
 ## Range Predicates
 

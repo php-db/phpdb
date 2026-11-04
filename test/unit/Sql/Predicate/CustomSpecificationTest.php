@@ -119,6 +119,16 @@ final class CustomSpecificationTest extends TestCase
                 $inList,
                 sprintf(InvalidArgumentException::SPECIFICATION_ARGUMENT_OUT_OF_RANGE, '%s IN (%s) OR %s', 3, 2),
             ],
+            'positional then plain'        => [
+                '%2$s IN (%s)',
+                $inList,
+                sprintf(InvalidArgumentException::SPECIFICATION_MIXED_PLACEHOLDER_STYLES, '%2$s IN (%s)'),
+            ],
+            'plain then positional'        => [
+                '%s IN (%2$s)',
+                $inList,
+                sprintf(InvalidArgumentException::SPECIFICATION_MIXED_PLACEHOLDER_STYLES, '%s IN (%2$s)'),
+            ],
         ];
     }
 

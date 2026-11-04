@@ -28,6 +28,7 @@ use function sprintf;
 #[CoversMethod(InvalidArgumentException::class, 'forPredicateWithStringKey')]
 #[CoversMethod(InvalidArgumentException::class, 'forSpecificationArgumentNotReferencedOnce')]
 #[CoversMethod(InvalidArgumentException::class, 'forSpecificationArgumentOutOfRange')]
+#[CoversMethod(InvalidArgumentException::class, 'forSpecificationMixedPlaceholderStyles')]
 #[CoversMethod(InvalidArgumentException::class, 'forSpecificationUnsupportedPlaceholder')]
 final class InvalidArgumentExceptionTest extends TestCase
 {
@@ -99,6 +100,11 @@ final class InvalidArgumentExceptionTest extends TestCase
                 'forSpecificationArgumentOutOfRange',
                 ['%1$s IN (%3$s)', 3, 2],
                 InvalidArgumentException::SPECIFICATION_ARGUMENT_OUT_OF_RANGE,
+            ],
+            'specification mixed placeholder styles'     => [
+                'forSpecificationMixedPlaceholderStyles',
+                ['%2$s IN (%s)'],
+                InvalidArgumentException::SPECIFICATION_MIXED_PLACEHOLDER_STYLES,
             ],
             'specification unsupported placeholder'      => [
                 'forSpecificationUnsupportedPlaceholder',
