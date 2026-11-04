@@ -618,9 +618,9 @@ class Select extends AbstractPreparableSql
     /**
      * Process the select part
      *
-     * The FROM table is resolved before the columns and the quantifier after them, so the columns and
-     * the table bind into their own containers and are appended after the quantifier, keeping the
-     * parameters in the order their placeholders appear in the SQL.
+     * The quantifier binds first and the columns after it, in the order their placeholders appear in
+     * the SQL. The FROM table must be resolved before the columns, which are prefixed with it, so it
+     * binds into its own container and its parameters are appended after the columns.
      *
      * @return list<string|list<list<string>>>
      * @throws Exception\RuntimeException
@@ -632,8 +632,8 @@ class Select extends AbstractPreparableSql
     ): array {
         $expr = 1;
 
-        $tableParameters  = $parameterContainer instanceof ParameterContainer ? new ParameterContainer() : null;
-        $columnParameters = $parameterContainer instanceof ParameterContainer ? new ParameterContainer() : null;
+        $quantifier      = $this->renderQuantifier($platform, $driver, $parameterContainer);
+        $tableParameters = $parameterContainer instanceof ParameterContainer ? new ParameterContainer() : null;
 
         [$table, $fromTable] = $this->resolveSelectTable($this->table, $platform, $driver, $tableParameters);
         $columns = [];
@@ -651,7 +651,7 @@ class Select extends AbstractPreparableSql
                 ],
                 $platform,
                 $driver,
-                $columnParameters,
+                $parameterContainer,
                 is_string($columnIndexOrAs) ? $columnIndexOrAs : 'column',
             );
             $columnAs = match (true) {
@@ -667,7 +667,7 @@ class Select extends AbstractPreparableSql
 
         foreach ($this->getJoins()->getJoins() as $join) {
             $joinName = is_array($join['name']) ? array_key_first($join['name']) : $join['name'];
-            $joinName = $this->resolveTable($joinName, $platform, $driver, $columnParameters);
+            $joinName = $this->resolveTable($joinName, $platform, $driver);
 
             foreach ($join['columns'] as $jKey => $jColumn) {
                 $jColumns   = [];
@@ -682,7 +682,7 @@ class Select extends AbstractPreparableSql
                     ],
                     $platform,
                     $driver,
-                    $columnParameters,
+                    $parameterContainer,
                     is_string($jKey) ? $jKey : 'column',
                 );
                 $jColumnAs = match (true) {
@@ -700,14 +700,9 @@ class Select extends AbstractPreparableSql
             }
         }
 
-        $quantifier = null;
-        if ($this->quantifier) {
-            $quantifier = $this->quantifier instanceof ExpressionInterface
-                ? $this->processExpression($this->quantifier, $platform, $driver, $parameterContainer, 'quantifier')
-                : $this->quantifier;
+        if ($parameterContainer instanceof ParameterContainer && $tableParameters instanceof ParameterContainer) {
+            $this->copyParameters($tableParameters, $parameterContainer);
         }
-
-        $this->appendParameters($parameterContainer, $columnParameters, $tableParameters);
 
         if (null === $table) {
             return [$columns];
@@ -759,26 +754,11 @@ class Select extends AbstractPreparableSql
     }
 
     /**
-     * Append the parameters of separately bound parts, in the order given
-     */
-    private function appendParameters(?ParameterContainer $target, ?ParameterContainer ...$sources): void
-    {
-        foreach ($sources as $source) {
-            if (null === $target || null === $source) {
-                continue;
-            }
-
-            $this->copyParameters($source, $target);
-        }
-    }
-
-    /**
      * Copy each parameter with its type and maximum length, keeping their order
      */
     private function copyParameters(ParameterContainer $source, ParameterContainer $target): void
     {
         foreach (array_keys($source->getNamedArray()) as $name) {
-            $name = (string) $name;
             $target->offsetSet(
                 $name,
                 $source->offsetGet($name),
@@ -808,6 +788,21 @@ class Select extends AbstractPreparableSql
         return $this->prefixColumnsWithTable && null !== $fromTable && '' !== $fromTable
             ? $fromTable . $platform->getIdentifierSeparator()
             : '';
+    }
+
+    /** @throws Exception\RuntimeException */
+    private function renderQuantifier(
+        PlatformInterface $platform,
+        ?DriverInterface $driver,
+        ?ParameterContainer $parameterContainer,
+    ): ?string {
+        if (! $this->quantifier) {
+            return null;
+        }
+
+        return $this->quantifier instanceof ExpressionInterface
+            ? $this->processExpression($this->quantifier, $platform, $driver, $parameterContainer, 'quantifier')
+            : $this->quantifier;
     }
 
     /**

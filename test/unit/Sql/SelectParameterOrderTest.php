@@ -23,7 +23,7 @@ use function ksort;
 
 #[Group('unit')]
 #[CoversMethod(Select::class, 'processSelect')]
-#[CoversMethod(Select::class, 'appendParameters')]
+#[CoversMethod(Select::class, 'renderQuantifier')]
 #[CoversMethod(Select::class, 'copyParameters')]
 final class SelectParameterOrderTest extends TestCase
 {
