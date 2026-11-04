@@ -100,7 +100,49 @@ final class AbstractRowGatewayTest extends TestCase
     }
 
     #[Test]
-    public function initializeCreatesFeatureSetIfNotSet(): void
+    public function initializeBindsAndRunsAConfiguredFeatureSet(): void
+    {
+        $rowGateway = $this->getMockBuilder(AbstractRowGateway::class)->onlyMethods([])->getMock();
+        $featureSet = $this->createMock(FeatureSet::class);
+        $featureSet->expects($this->once())->method('setRowGateway')->with($rowGateway)->willReturnSelf();
+
+        $applied = [];
+        $featureSet->expects($this->exactly(2))
+            ->method('apply')
+            ->willReturnCallback(static function (string $method) use (&$applied): void {
+                $applied[] = $method;
+            });
+
+        $refRowGateway = new ReflectionObject($rowGateway);
+        $refRowGateway->getProperty('table')->setValue($rowGateway, 'foo');
+        $refRowGateway->getProperty('primaryKeyColumn')->setValue($rowGateway, ['id']);
+        $refRowGateway->getProperty('sql')->setValue($rowGateway, new Sql($this->mockAdapter));
+        $refRowGateway->getProperty('featureSet')->setValue($rowGateway, $featureSet);
+
+        $rowGateway->initialize();
+
+        static::assertSame(['preInitialize', 'postInitialize'], $applied);
+    }
+
+    #[Test]
+    public function initializeEarlyReturnWhenAlreadyInitialized(): void
+    {
+        $rowGateway = new RowGateway('id', 'test_table', $this->mockAdapter);
+
+        $refRowGateway      = new ReflectionObject($rowGateway);
+        $featureSetProp     = $refRowGateway->getProperty('featureSet');
+        $originalFeatureSet = $featureSetProp->getValue($rowGateway);
+
+        $isInitializedProp = $refRowGateway->getProperty('isInitialized');
+        static::assertTrue($isInitializedProp->getValue($rowGateway));
+
+        $rowGateway->populate(['id' => 2, 'name' => 'bar'], true);
+
+        static::assertSame($originalFeatureSet, $featureSetProp->getValue($rowGateway));
+    }
+
+    #[Test]
+    public function initializeLeavesTheFeatureSetUnsetWhenNoneIsConfigured(): void
     {
         $rowGateway = $this->getMockBuilder(AbstractRowGateway::class)->onlyMethods([])->getMock();
 
@@ -120,24 +162,7 @@ final class AbstractRowGatewayTest extends TestCase
 
         $rowGateway->populate(['id' => 1, 'name' => 'test'], true);
 
-        static::assertInstanceOf(FeatureSet::class, $featureSetProp->getValue($rowGateway));
-    }
-
-    #[Test]
-    public function initializeEarlyReturnWhenAlreadyInitialized(): void
-    {
-        $rowGateway = new RowGateway('id', 'test_table', $this->mockAdapter);
-
-        $refRowGateway      = new ReflectionObject($rowGateway);
-        $featureSetProp     = $refRowGateway->getProperty('featureSet');
-        $originalFeatureSet = $featureSetProp->getValue($rowGateway);
-
-        $isInitializedProp = $refRowGateway->getProperty('isInitialized');
-        static::assertTrue($isInitializedProp->getValue($rowGateway));
-
-        $rowGateway->populate(['id' => 2, 'name' => 'bar'], true);
-
-        static::assertSame($originalFeatureSet, $featureSetProp->getValue($rowGateway));
+        static::assertNull($featureSetProp->getValue($rowGateway));
     }
 
     #[Test]

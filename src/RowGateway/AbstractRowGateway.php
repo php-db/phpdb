@@ -105,11 +105,7 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
             return;
         }
 
-        $this->featureSet ??= new Feature\FeatureSet();
-        $featureSet       = $this->featureSet;
-
-        $featureSet->setRowGateway($this);
-        $featureSet->apply('preInitialize', []);
+        $this->featureSet?->setRowGateway($this)->apply('preInitialize', []);
 
         if (null === $this->table) {
             throw Exception\RuntimeException::forMissingTable();
@@ -118,7 +114,7 @@ abstract class AbstractRowGateway implements ArrayAccess, Countable, RowGatewayI
         $this->requirePrimaryKeyColumn();
         $this->requireSql();
 
-        $featureSet->apply('postInitialize', []);
+        $this->featureSet?->apply('postInitialize', []);
 
         $this->isInitialized = true;
     }

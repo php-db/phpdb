@@ -28,7 +28,7 @@ class TableGateway extends AbstractTableGateway
     public function __construct(
         TableIdentifier|array|string $table,
         AdapterInterface $adapter,
-        Feature\FeatureSet|Feature\FeatureInterface|array|null $features = new Feature\FeatureSet(),
+        Feature\FeatureSet|Feature\FeatureInterface|array|null $features = null,
         ?ResultSetInterface $resultSetPrototype = new ResultSet(),
         ?Sql $sql = null,
     ) {

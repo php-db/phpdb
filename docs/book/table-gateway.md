@@ -153,6 +153,13 @@ constructor. The constructor can take features in 3 different forms:
 - as a `FeatureSet` instance
 - as an array of `Feature` instances
 
+A gateway given no features does not create a `FeatureSet`, so its operations
+skip feature dispatch entirely. `getFeatureSet()` creates an empty one, bound
+to the gateway, the first time it is called; a feature added to it then works
+like any other, except that it does not receive the initialization events,
+which have already run. In a subclass, `$this->featureSet` is `null` until a
+feature set is configured, so read it with `?->` or call `getFeatureSet()`.
+
 There are a number of features built-in and shipped with laminas-db:
 
 ### GlobalAdapterFeature

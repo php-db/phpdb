@@ -134,7 +134,7 @@ abstract class AbstractTableGateway implements TableGatewayInterface
             $this->initialize();
         }
 
-        return $this->requireFeatureSet();
+        return $this->featureSet ??= (new Feature\FeatureSet())->setTableGateway($this);
     }
 
     public function getLastInsertValue(): string|int|false|null
@@ -184,11 +184,7 @@ abstract class AbstractTableGateway implements TableGatewayInterface
             return;
         }
 
-        $this->featureSet ??= new Feature\FeatureSet();
-        $featureSet       = $this->featureSet;
-
-        $featureSet->setTableGateway($this);
-        $featureSet->apply(EventFeatureEventsInterface::EVENT_PRE_INITIALIZE, []);
+        $this->featureSet?->setTableGateway($this)->apply(EventFeatureEventsInterface::EVENT_PRE_INITIALIZE, []);
 
         $adapter = $this->adapter ?? throw Exception\RuntimeException::forMissingAdapter();
         $table   = $this->table ?? throw Exception\RuntimeException::forMissingTable();
@@ -196,7 +192,7 @@ abstract class AbstractTableGateway implements TableGatewayInterface
         $this->resultSetPrototype ??= new ResultSet();
         $this->sql                ??= new Sql($adapter, $table);
 
-        $featureSet->apply(EventFeatureEventsInterface::EVENT_POST_INITIALIZE, []);
+        $this->featureSet?->apply(EventFeatureEventsInterface::EVENT_POST_INITIALIZE, []);
 
         $this->isInitialized = true;
     }
@@ -333,16 +329,14 @@ abstract class AbstractTableGateway implements TableGatewayInterface
             throw Exception\RuntimeException::forTableMismatch('Delete');
         }
 
-        $featureSet = $this->requireFeatureSet();
-
         // pre delete update
-        $featureSet->apply(EventFeatureEventsInterface::EVENT_PRE_DELETE, [$delete]);
+        $this->featureSet?->apply(EventFeatureEventsInterface::EVENT_PRE_DELETE, [$delete]);
 
         $statement = $this->requireSql()->prepareStatementForSqlObject($delete);
         $result    = $statement->execute() ?? throw Exception\RuntimeException::forMissingStatementResult('Delete');
 
         // apply postDelete features
-        $featureSet->apply(EventFeatureEventsInterface::EVENT_POST_DELETE, [$statement, $result]);
+        $this->featureSet?->apply(EventFeatureEventsInterface::EVENT_POST_DELETE, [$statement, $result]);
 
         return $result->getAffectedRows();
     }
@@ -359,10 +353,8 @@ abstract class AbstractTableGateway implements TableGatewayInterface
             throw Exception\RuntimeException::forTableMismatch('Insert');
         }
 
-        $featureSet = $this->requireFeatureSet();
-
         // apply preInsert features
-        $featureSet->apply(EventFeatureEventsInterface::EVENT_PRE_INSERT, [$insert]);
+        $this->featureSet?->apply(EventFeatureEventsInterface::EVENT_PRE_INSERT, [$insert]);
 
         // Most RDBMS solutions do not allow using table aliases in INSERTs
         // See https://github.com/zendframework/zf2/issues/7311
@@ -373,7 +365,7 @@ abstract class AbstractTableGateway implements TableGatewayInterface
         $this->lastInsertValue = $this->getAdapter()->getDriver()->getConnection()->getLastGeneratedValue();
 
         // apply postInsert features
-        $featureSet->apply(EventFeatureEventsInterface::EVENT_POST_INSERT, [$statement, $result]);
+        $this->featureSet?->apply(EventFeatureEventsInterface::EVENT_POST_INSERT, [$statement, $result]);
 
         return $result->getAffectedRows();
     }
@@ -393,10 +385,8 @@ abstract class AbstractTableGateway implements TableGatewayInterface
             $select->columns($this->columns);
         }
 
-        $featureSet = $this->requireFeatureSet();
-
         // apply preSelect features
-        $featureSet->apply(EventFeatureEventsInterface::EVENT_PRE_SELECT, [$select]);
+        $this->featureSet?->apply(EventFeatureEventsInterface::EVENT_PRE_SELECT, [$select]);
 
         // prepare and execute
         $statement = $this->requireSql()->prepareStatementForSqlObject($select);
@@ -407,7 +397,7 @@ abstract class AbstractTableGateway implements TableGatewayInterface
         $resultSet->initialize($result);
 
         // apply postSelect features
-        $featureSet->apply(EventFeatureEventsInterface::EVENT_POST_SELECT, [$statement, $result, $resultSet]);
+        $this->featureSet?->apply(EventFeatureEventsInterface::EVENT_POST_SELECT, [$statement, $result, $resultSet]);
 
         return $resultSet;
     }
@@ -424,24 +414,16 @@ abstract class AbstractTableGateway implements TableGatewayInterface
             throw Exception\RuntimeException::forTableMismatch('Update');
         }
 
-        $featureSet = $this->requireFeatureSet();
-
         // apply preUpdate features
-        $featureSet->apply(EventFeatureEventsInterface::EVENT_PRE_UPDATE, [$update]);
+        $this->featureSet?->apply(EventFeatureEventsInterface::EVENT_PRE_UPDATE, [$update]);
 
         $statement = $this->requireSql()->prepareStatementForSqlObject($update);
         $result    = $statement->execute() ?? throw Exception\RuntimeException::forMissingStatementResult('Update');
 
         // apply postUpdate features
-        $featureSet->apply(EventFeatureEventsInterface::EVENT_POST_UPDATE, [$statement, $result]);
+        $this->featureSet?->apply(EventFeatureEventsInterface::EVENT_POST_UPDATE, [$statement, $result]);
 
         return $result->getAffectedRows();
-    }
-
-    /** @throws Exception\RuntimeException */
-    private function requireFeatureSet(): Feature\FeatureSet
-    {
-        return $this->featureSet ?? throw Exception\RuntimeException::forUninitializedProperty('featureSet');
     }
 
     /** @throws Exception\RuntimeException */
@@ -463,12 +445,11 @@ abstract class AbstractTableGateway implements TableGatewayInterface
      * @param array<array-key, mixed> $arguments
      *
      * @throws Exception\InvalidArgumentException
-     * @throws Exception\RuntimeException
      */
     public function __call(string $method, array $arguments): mixed
     {
-        $featureSet = $this->requireFeatureSet();
-        if ($featureSet->canCallMagicCall($method)) {
+        $featureSet = $this->featureSet;
+        if (null !== $featureSet && $featureSet->canCallMagicCall($method)) {
             return $featureSet->callMagicCall($method, $arguments);
         }
         throw Exception\InvalidArgumentException::forInvalidMagicCall($method, static::class);
@@ -489,7 +470,6 @@ abstract class AbstractTableGateway implements TableGatewayInterface
 
     /**
      * @throws Exception\InvalidArgumentException
-     * @throws Exception\RuntimeException
      */
     public function __get(string $property): mixed
     {
@@ -497,8 +477,8 @@ abstract class AbstractTableGateway implements TableGatewayInterface
             return $this->$property;
         }
 
-        $featureSet = $this->requireFeatureSet();
-        if ($featureSet->canCallMagicGet($property)) {
+        $featureSet = $this->featureSet;
+        if (null !== $featureSet && $featureSet->canCallMagicGet($property)) {
             return $featureSet->callMagicGet($property);
         }
         throw Exception\InvalidArgumentException::forInvalidMagicGet(static::class);
@@ -506,12 +486,11 @@ abstract class AbstractTableGateway implements TableGatewayInterface
 
     /**
      * @throws Exception\InvalidArgumentException
-     * @throws Exception\RuntimeException
      */
     public function __set(string $property, mixed $value): void
     {
-        $featureSet = $this->requireFeatureSet();
-        if ($featureSet->canCallMagicSet($property)) {
+        $featureSet = $this->featureSet;
+        if (null !== $featureSet && $featureSet->canCallMagicSet($property)) {
             $featureSet->callMagicSet($property, $value);
 
             return;

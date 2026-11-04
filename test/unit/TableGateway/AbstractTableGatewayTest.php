@@ -42,19 +42,6 @@ use function sprintf;
 #[CoversClass(AbstractTableGateway::class)]
 final class AbstractTableGatewayTest extends TestCase
 {
-    protected MockObject&Adapter $mockAdapter;
-
-    protected PlatformInterface&MockObject $mockPlatform;
-
-    protected ResultInterface&MockObject $mockResultSet;
-    protected MockObject&Sql\Sql $mockSql;
-    protected AbstractTableGateway&MockObject $table;
-    protected FeatureSet&MockObject $mockFeatureSet;
-    protected MockObject&Select $mockSelect;
-    protected MockObject&Insert $mockInsert;
-    protected MockObject&Update $mockUpdate;
-    protected MockObject&Delete $mockDelete;
-
     /** @return array<string, array{string, list<mixed>}> */
     public static function executeHookProvider(): array
     {
@@ -123,6 +110,33 @@ final class AbstractTableGatewayTest extends TestCase
         ];
     }
 
+    /** @return array<string, array{callable(AbstractTableGateway): mixed, callable(string): string}> */
+    public static function magicAccessWithoutFeatureSetProvider(): array
+    {
+        return [
+            'call' => [
+                static fn(AbstractTableGateway $gateway): mixed => $gateway->__call('invalidMethod', []),
+                static fn(string $class): string => sprintf(
+                    InvalidArgumentException::INVALID_MAGIC_CALL,
+                    'invalidMethod',
+                    $class,
+                ),
+            ],
+            'get'  => [
+                static fn(AbstractTableGateway $gateway): mixed => $gateway->__get('invalidProperty'),
+                static fn(string $class): string => sprintf(InvalidArgumentException::INVALID_MAGIC_GET, $class),
+            ],
+            'set'  => [
+                static function (AbstractTableGateway $gateway): mixed {
+                    $gateway->__set('invalidProperty', 'value');
+
+                    return null;
+                },
+                static fn(string $class): string => sprintf(InvalidArgumentException::INVALID_MAGIC_SET, $class),
+            ],
+        ];
+    }
+
     /** @return array<string, array{string, list<mixed>, string}> */
     public static function statementWithoutResultProvider(): array
     {
@@ -138,7 +152,6 @@ final class AbstractTableGatewayTest extends TestCase
     public static function uninitializedPropertyProvider(): array
     {
         return [
-            'feature set'          => ['featureSet', 'getFeatureSet'],
             'result set prototype' => ['resultSetPrototype', 'getResultSetPrototype'],
             'sql'                  => ['sql', 'getSql'],
         ];
@@ -346,6 +359,25 @@ final class AbstractTableGatewayTest extends TestCase
     }
 
     #[Test]
+    public function getFeatureSetCreatesOneBoundToTheGatewayWhenNoneIsConfigured(): void
+    {
+        $gateway = $this->featurelessGateway();
+        $feature = new TestTableGatewayFeature();
+
+        $gateway->getFeatureSet()->addFeature($feature);
+
+        static::assertSame($gateway, $feature->receivedTableGateway());
+    }
+
+    #[Test]
+    public function getFeatureSetReturnsTheSameCreatedFeatureSetOnEveryCall(): void
+    {
+        $gateway = $this->featurelessGateway();
+
+        static::assertSame($gateway->getFeatureSet(), $gateway->getFeatureSet());
+    }
+
+    #[Test]
     public function getLastInsertValue(): void
     {
         $this->table->insert(['foo' => 'bar']);
@@ -548,6 +580,23 @@ final class AbstractTableGatewayTest extends TestCase
         static::assertTrue($stub->isInitialized());
     }
 
+    /**
+     * @param callable(AbstractTableGateway): mixed $access
+     * @param callable(string): string             $expectedMessage
+     */
+    #[Test]
+    #[DataProvider('magicAccessWithoutFeatureSetProvider')]
+    public function magicAccessWithoutAFeatureSetReportsTheInvalidMember(
+        callable $access,
+        callable $expectedMessage,
+    ): void {
+        $gateway = $this->getMockBuilder(AbstractTableGateway::class)->onlyMethods([])->getMock();
+
+        $this->expectExceptionObject(new InvalidArgumentException($expectedMessage($gateway::class)));
+
+        $access($gateway);
+    }
+
     #[Test]
     public function magicCallDelegatesToTheFeatureSet(): void
     {
@@ -739,6 +788,21 @@ final class AbstractTableGatewayTest extends TestCase
     /** @param list<mixed> $arguments */
     #[Test]
     #[DataProvider('executeHookProvider')]
+    public function operationsLeaveTheFeatureSetUnsetWhenNoneIsConfigured(string $method, array $arguments): void
+    {
+        $gateway = $this->featurelessGateway();
+
+        $gateway->{$method}(...$arguments);
+
+        static::assertNull(
+            (new ReflectionClass(AbstractTableGateway::class))->getProperty('featureSet')
+                ->getValue($gateway),
+        );
+    }
+
+    /** @param list<mixed> $arguments */
+    #[Test]
+    #[DataProvider('executeHookProvider')]
     public function operationsRunThroughTheOverridableExecuteHooks(string $method, array $arguments): void
     {
         $gateway = new HookRecordingTableGateway('foo', $this->mockAdapter);
@@ -852,6 +916,19 @@ final class AbstractTableGatewayTest extends TestCase
         static::assertTrue($closureCalled);
         static::assertInstanceOf(ResultSet::class, $result);
     }
+
+    protected MockObject&Adapter $mockAdapter;
+
+    protected PlatformInterface&MockObject $mockPlatform;
+
+    protected ResultInterface&MockObject $mockResultSet;
+    protected MockObject&Sql\Sql $mockSql;
+    protected AbstractTableGateway&MockObject $table;
+    protected FeatureSet&MockObject $mockFeatureSet;
+    protected MockObject&Select $mockSelect;
+    protected MockObject&Insert $mockInsert;
+    protected MockObject&Update $mockUpdate;
+    protected MockObject&Delete $mockDelete;
 
     #[Test]
     public function selectWithNoWhere(): void
@@ -1100,5 +1177,15 @@ final class AbstractTableGatewayTest extends TestCase
                     break;
             }
         }
+    }
+
+    private function featurelessGateway(): AbstractTableGateway
+    {
+        $gateway      = $this->getMockBuilder(AbstractTableGateway::class)->onlyMethods([])->getMock();
+        $tgReflection = new ReflectionClass(AbstractTableGateway::class);
+        $tgReflection->getProperty('table')->setValue($gateway, 'foo');
+        $tgReflection->getProperty('adapter')->setValue($gateway, $this->mockAdapter);
+
+        return $gateway;
     }
 }
