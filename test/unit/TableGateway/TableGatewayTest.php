@@ -83,13 +83,10 @@ final class TableGatewayTest extends TestCase
         static::assertInstanceOf(Sql::class, $table->getSql());
 
         // injecting all args
-        $table = new TableGateway(
-            'foo',
-            $this->mockAdapter,
-            $featureSet = new Feature\FeatureSet(),
-            $resultSet = new ResultSet(),
-            $sql = new Sql($this->mockAdapter, 'foo'),
-        );
+        $featureSet = new Feature\FeatureSet();
+        $resultSet  = new ResultSet();
+        $sql        = new Sql($this->mockAdapter, 'foo');
+        $table      = new TableGateway('foo', $this->mockAdapter, $featureSet, $resultSet, $sql);
 
         static::assertSame('foo', $table->getTable());
         static::assertSame($this->mockAdapter, $table->getAdapter());

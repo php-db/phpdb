@@ -469,12 +469,6 @@ message = "Literal argument `true` should be passed as a named argument for clar
 count = 1
 
 [[issues]]
-file = "test/unit/RowGateway/AbstractRowGatewayTest.php"
-code = "no-isset"
-message = "Use of the `isset` construct."
-count = 4
-
-[[issues]]
 file = "test/unit/Sql/AbstractSqlFunctionalTestCase.php"
 code = "halstead"
 message = "Method has a high halstead volume"
@@ -689,9 +683,3 @@ file = "test/unit/Sql/UpdateTest.php"
 code = "no-fully-qualified-global-class-like"
 message = "Fully-qualified class-like reference detected."
 count = 1
-
-[[issues]]
-file = "test/unit/TableGateway/TableGatewayTest.php"
-code = "no-assign-in-argument"
-message = "Avoid assignments in function call arguments."
-count = 3

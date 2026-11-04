@@ -257,9 +257,9 @@ final class AbstractRowGatewayTest extends TestCase
     #[Test]
     public function magicIssetReportsWhetherAColumnIsSet(): void
     {
-        static::assertFalse(isset($this->rowGateway->foo));
+        static::assertFalse($this->rowGateway->__isset('foo'));
         $this->rowGateway->foo = 'bar';
-        static::assertTrue(isset($this->rowGateway->foo));
+        static::assertTrue($this->rowGateway->__isset('foo'));
     }
 
     #[Test]
@@ -283,9 +283,9 @@ final class AbstractRowGatewayTest extends TestCase
     #[Test]
     public function offsetExists(): void
     {
-        static::assertFalse(isset($this->rowGateway['foo']));
+        static::assertFalse($this->rowGateway->offsetExists('foo'));
         $this->rowGateway['foo'] = 'bar';
-        static::assertTrue(isset($this->rowGateway['foo']));
+        static::assertTrue($this->rowGateway->offsetExists('foo'));
     }
 
     #[Test]
