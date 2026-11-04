@@ -66,6 +66,7 @@ use TypeError;
 #[CoversMethod(Select::class, '__clone')]
 #[CoversMethod(Select::class, 'processJoins')]
 #[CoversMethod(Select::class, 'processSelect')]
+#[CoversMethod(Select::class, 'renderQuantifier')]
 #[CoversMethod(Select::class, 'processWhere')]
 #[CoversMethod(Select::class, 'processGroup')]
 #[CoversMethod(Select::class, 'processHaving')]
@@ -1042,6 +1043,16 @@ final class SelectTest extends TestCase
     {
         $select = new Select('foo');
         static::assertSame('foo', $select->getRawState('table'));
+    }
+
+    #[Test]
+    public function emptyQuantifierRendersNoQuantifier(): void
+    {
+        static::assertSame(
+            'SELECT "t".* FROM "t"',
+            (new Select('t'))->quantifier('')
+                ->getSqlString(new TrustingSql92Platform()),
+        );
     }
 
     #[Test]
