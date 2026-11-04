@@ -14,6 +14,10 @@ class RuntimeException extends Exception\RuntimeException
 
     final public const string DISCONNECTED_ROLLBACK = 'Must be connected before you can rollback';
 
+    final public const string BARE_PDO_CONNECTION =
+        'A bare PDO instance cannot serve as the driver connection;'
+            . ' wrap it in a PdoConnectionInterface implementation';
+
     /** The driver's own error text, passed through verbatim. */
     final public const string DRIVER_ERROR = '%s';
 
@@ -24,6 +28,10 @@ class RuntimeException extends Exception\RuntimeException
     final public const string INVALID_PDO_PARAM =
         'The PDO param "%s" contains invalid characters.'
             . ' Only alphabetic characters, digits, and underscores (_) are allowed.';
+
+    final public const string MISSING_CONNECTION_RESOURCE = 'Connecting did not produce a PDO resource';
+
+    final public const string MISSING_DRIVER = 'No driver has been set on this connection';
 
     final public const string MISSING_DSN =
         'The DSN has not been set or constructed from parameters'
@@ -59,6 +67,11 @@ class RuntimeException extends Exception\RuntimeException
         return new self(self::ALREADY_PREPARED);
     }
 
+    public static function forBarePdoConnection(): self
+    {
+        return new self(self::BARE_PDO_CONNECTION);
+    }
+
     public static function forDisconnectedRollback(): self
     {
         return new self(self::DISCONNECTED_ROLLBACK);
@@ -77,6 +90,16 @@ class RuntimeException extends Exception\RuntimeException
     public static function forInvalidPdoParam(string $name): self
     {
         return new self(sprintf(self::INVALID_PDO_PARAM, $name));
+    }
+
+    public static function forMissingConnectionResource(): self
+    {
+        return new self(self::MISSING_CONNECTION_RESOURCE);
+    }
+
+    public static function forMissingDriver(): self
+    {
+        return new self(self::MISSING_DRIVER);
     }
 
     public static function forMissingDsn(): self
