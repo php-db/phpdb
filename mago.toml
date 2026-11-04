@@ -66,3 +66,64 @@ class-initializers = [
     "PhpDb\\TableGateway\\Feature\\AbstractFeature::setTableGateway",
     "PhpDb\\RowGateway\\Feature\\AbstractFeature::setRowGateway",
 ]
+
+# Guard keeps the library's layering from eroding. From the bottom up: Exception and Feature,
+# then Adapter and ResultSet, Sql, Metadata, RowGateway, TableGateway, and finally Container and
+# ConfigProvider, which wire everything together. Restrictions forbid only the upward dependencies
+# named below, so everything else stays allowed. Two known exceptions are permitted on purpose:
+# Adapter\Platform reaches into Sql\Platform for its decorator interfaces, and Adapter and ResultSet
+# depend on each other. Tests may depend on anything, so they are not guarded.
+[guard]
+excludes = ["test/"]
+
+[[guard.perimeter.restrictions]]
+dependency = "PhpDb\\Container\\"
+allow-from = ["PhpDb", "PhpDb\\Container\\"]
+reason = "Container factories wire the library together; nothing else may depend on them."
+
+[[guard.perimeter.restrictions]]
+dependency = "PhpDb\\TableGateway\\"
+allow-from = ["PhpDb\\TableGateway\\", "PhpDb\\Container\\"]
+reason = "TableGateway is the outermost layer."
+
+[[guard.perimeter.restrictions]]
+dependency = "PhpDb\\RowGateway\\"
+allow-from = ["PhpDb\\RowGateway\\", "PhpDb\\TableGateway\\", "PhpDb\\Container\\"]
+reason = "Only the gateways and container wiring may use RowGateway."
+
+[[guard.perimeter.restrictions]]
+dependency = "PhpDb\\Metadata\\"
+allow-from = ["PhpDb\\Metadata\\", "PhpDb\\TableGateway\\", "PhpDb\\Container\\"]
+reason = "Metadata builds on Sql and Adapter, not the other way round."
+
+[[guard.perimeter.restrictions]]
+dependency = "PhpDb\\Sql\\"
+allow-from = [
+    "PhpDb\\Sql\\",
+    "PhpDb\\Metadata\\",
+    "PhpDb\\RowGateway\\",
+    "PhpDb\\TableGateway\\",
+    "PhpDb\\Container\\",
+    "PhpDb\\Adapter\\Platform\\",
+    "PhpDb",
+]
+reason = "Sql sits above Adapter; only the platforms' decorator hooks may reach back into it."
+
+[[guard.structural.rules]]
+on = "PhpDb\\**\\Exception\\**"
+target = "class"
+must-be-named = "*Exception"
+reason = "Exception classes are named *Exception."
+
+[[guard.structural.rules]]
+on = "PhpDb\\**"
+target = "interface"
+must-be-named = "*Interface"
+reason = "Interfaces follow the *Interface naming convention."
+
+[[guard.structural.rules]]
+on = "PhpDb\\Container\\**"
+target = "class"
+must-be-named = "*Factory"
+not-on = "PhpDb\\Container\\AdapterInterfaceDelegator"
+reason = "Container classes are service factories."
