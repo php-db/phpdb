@@ -29,6 +29,7 @@ use function sprintf;
 #[CoversMethod(RuntimeException::class, 'forNonQueryResult')]
 #[CoversMethod(RuntimeException::class, 'forRollbackWithoutTransaction')]
 #[CoversMethod(RuntimeException::class, 'forUncomposableTrait')]
+#[CoversMethod(RuntimeException::class, 'forUnpreparedStatement')]
 #[CoversMethod(RuntimeException::class, 'forUnstartedProfile')]
 #[CoversMethod(RuntimeException::class, 'forVulnerablePlatformQuote')]
 final class RuntimeExceptionTest extends TestCase
@@ -91,6 +92,11 @@ final class RuntimeExceptionTest extends TestCase
                 'forUncomposableTrait',
                 [DriverFeatureProviderTrait::class, DriverInterface::class],
                 RuntimeException::UNCOMPOSABLE_TRAIT,
+            ],
+            'unprepared statement'         => [
+                'forUnpreparedStatement',
+                [],
+                RuntimeException::UNPREPARED_STATEMENT,
             ],
             'unstarted profile'            => [
                 'forUnstartedProfile',

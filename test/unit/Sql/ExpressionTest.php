@@ -32,10 +32,27 @@ use function sprintf;
 #[CoversMethod(Expression::class, 'setParameters')]
 #[CoversMethod(Expression::class, 'getParameters')]
 #[CoversMethod(Expression::class, 'getExpressionData')]
+#[CoversMethod(Expression::class, 'placeholderFor')]
 #[CoversMethod(Expression::class, 'setSpecification')]
 #[Group('unit')]
 final class ExpressionTest extends TestCase
 {
+    /** @return array<string, array{string, list<mixed>, string}> */
+    public static function arrayParameterSpecificationProvider(): array
+    {
+        return [
+            'array of three values'          => ['a IN (?)', [[1, 2, 3]], 'a IN (%s, %s, %s)'],
+            'empty array'                    => ['a IN (?)', [[]], 'a IN (NULL)'],
+            'array between other parameters' => [
+                '? IN (?) AND ? = ?',
+                [Argument::identifier('a'), [1, 2], Argument::identifier('b'), 4],
+                '%s IN (%s, %s) AND %s = %s',
+            ],
+            'values argument'                => ['a IN (?)', [Argument::values([1, 2])], 'a IN (%s, %s)'],
+            'whitespace inside parentheses'  => ['a IN ( ? )', [[1, 2]], 'a IN ( %s, %s )'],
+        ];
+    }
+
     /** @psalm-return array<array-key, array{0: mixed}> */
     public static function falsyExpressionParametersProvider(): array
     {
@@ -45,6 +62,19 @@ final class ExpressionTest extends TestCase
             [0],
             [0.0],
             [false],
+        ];
+    }
+
+    /** @return array<string, array{string, list<mixed>}> */
+    public static function unenclosedArrayParameterProvider(): array
+    {
+        return [
+            'array'                    => ['a IN ?', [[1, 2, 3]]],
+            'empty array'              => ['a IN ?', [[]]],
+            'values argument'          => ['a IN ?', [Argument::values([1, 2])]],
+            'opening parenthesis only' => ['a IN (?', [[1, 2]]],
+            'closing parenthesis only' => ['a IN ?)', [[1, 2]]],
+            'parenthesis around more'  => ['a IN (?, ?)', [[1, 2], 3]],
         ];
     }
 
@@ -115,6 +145,38 @@ final class ExpressionTest extends TestCase
             ],
             $expressionData['values'],
         );
+    }
+
+    /**
+     * @param list<mixed> $parameters
+     */
+    #[Test]
+    #[Group('unit')]
+    #[DataProvider('arrayParameterSpecificationProvider')]
+    public function getExpressionDataGivesEachArrayValueItsOwnPlaceholder(
+        string $expression,
+        array $parameters,
+        string $expectedSpecification,
+    ): void {
+        $expressionData = (new Expression($expression, $parameters))->getExpressionData();
+
+        static::assertSame($expectedSpecification, $expressionData['spec']);
+    }
+
+    /**
+     * @param list<mixed> $parameters
+     */
+    #[Test]
+    #[Group('unit')]
+    #[DataProvider('unenclosedArrayParameterProvider')]
+    public function getExpressionDataRejectsArrayPlaceholderOutsideParentheses(
+        string $expression,
+        array $parameters,
+    ): void {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage(sprintf(InvalidArgumentException::UNENCLOSED_VALUES_PLACEHOLDER, $expression));
+
+        (new Expression($expression, $parameters))->getExpressionData();
     }
 
     #[Test]
