@@ -33,6 +33,8 @@ use function sprintf;
 #[CoversMethod(Expression::class, 'getParameters')]
 #[CoversMethod(Expression::class, 'getExpressionData')]
 #[CoversMethod(Expression::class, 'placeholderFor')]
+#[CoversMethod(Expression::class, 'setSpecification')]
+#[Group('unit')]
 final class ExpressionTest extends TestCase
 {
     /** @return array<string, array{string, list<mixed>, string}> */
@@ -325,5 +327,18 @@ final class ExpressionTest extends TestCase
 
         static::assertCount(2, $data['values']);
         static::assertInstanceOf(Argument\Values::class, $data['values'][1]);
+    }
+
+    #[Test]
+    public function setSpecificationIsRejectedInFavourOfSetExpression(): void
+    {
+        $expression = new Expression('LOWER(?) = ?', ['x', 'y']);
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage(
+            sprintf(RuntimeException::UNSUPPORTED_SPECIFICATION_OVERRIDE, Expression::class),
+        );
+
+        $expression->setSpecification('IGNORED %s %s');
     }
 }

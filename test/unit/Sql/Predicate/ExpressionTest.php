@@ -9,12 +9,18 @@ use PhpDb\Sql\Argument\Select;
 use PhpDb\Sql\Argument\Value;
 use PhpDb\Sql\ArgumentInterface;
 use PhpDb\Sql\ArgumentType;
+use PhpDb\Sql\Exception\RuntimeException;
 use PhpDb\Sql\Predicate\Expression;
 use PhpDb\Sql\Predicate\IsNull;
+use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
+use function sprintf;
+
+#[CoversMethod(Expression::class, 'setSpecification')]
+#[Group('unit')]
 final class ExpressionTest extends TestCase
 {
     #[Test]
@@ -215,5 +221,18 @@ final class ExpressionTest extends TestCase
 
         static::assertSame('foo.bar = %s AND id != %s', $expressionData['spec']);
         static::assertEquals([$parameter1, $parameter2], $expressionData['values']);
+    }
+
+    #[Test]
+    public function setSpecificationIsRejectedInFavourOfSetExpression(): void
+    {
+        $expression = new Expression('LOWER(?) = ?', ['x', 'y']);
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage(
+            sprintf(RuntimeException::UNSUPPORTED_SPECIFICATION_OVERRIDE, Expression::class),
+        );
+
+        $expression->setSpecification('IGNORED %s %s');
     }
 }

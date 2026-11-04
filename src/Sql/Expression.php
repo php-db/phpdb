@@ -154,6 +154,18 @@ class Expression extends AbstractExpression
     }
 
     /**
+     * Expression renders the string given to setExpression(), so a
+     * specification override would be silently ignored. Use setExpression().
+     *
+     * @throws Exception\RuntimeException
+     */
+    #[Override]
+    public function setSpecification(string $specification): static
+    {
+        throw Exception\RuntimeException::forUnsupportedSpecificationOverride(static::class);
+    }
+
+    /**
      * Values are bound one by one, so each needs its own placeholder inside the parentheses around the `?`
      *
      * @throws Exception\InvalidArgumentException
