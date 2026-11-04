@@ -45,6 +45,8 @@ class RuntimeException extends Exception\RuntimeException
 
     final public const string UNCOMPOSABLE_TRAIT = '%s can only be composed into %s';
 
+    final public const string UNPREPARED_STATEMENT = 'This statement has not been prepared';
+
     final public const string UNSTARTED_PROFILE = 'A profile must be started before %s can be called.';
 
     final public const string VULNERABLE_PLATFORM_QUOTE =
@@ -105,6 +107,11 @@ class RuntimeException extends Exception\RuntimeException
     public static function forUncomposableTrait(string $trait, string $interface): self
     {
         return new self(sprintf(self::UNCOMPOSABLE_TRAIT, $trait, $interface));
+    }
+
+    public static function forUnpreparedStatement(): self
+    {
+        return new self(self::UNPREPARED_STATEMENT);
     }
 
     public static function forUnstartedProfile(string $function): self

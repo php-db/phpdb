@@ -17,6 +17,7 @@ use PhpDb\Sql\Argument\Value;
 use PhpDb\Sql\Argument\Values;
 use PhpDb\Sql\Platform\PlatformDecoratorInterface;
 
+use function array_key_exists;
 use function array_key_first;
 use function array_map;
 use function count;
@@ -25,6 +26,8 @@ use function get_object_vars;
 use function implode;
 use function is_array;
 use function is_string;
+use function preg_match;
+use function preg_replace;
 use function preg_split;
 use function rtrim;
 use function str_replace;
@@ -63,9 +66,9 @@ abstract class AbstractSql implements SqlInterface
     /**
      * Information used during processing
      *
-     * @var array{paramPrefix: string, subselectCount: int}
+     * @var array{paramPrefix: string, subselectCount: int, expressionCount: int}
      */
-    protected array $processInfo = ['paramPrefix' => '', 'subselectCount' => 0];
+    protected array $processInfo = ['paramPrefix' => '', 'subselectCount' => 0, 'expressionCount' => 0];
 
     /** @var array<string, int> */
     protected array $instanceParameterIndex = [];
@@ -79,6 +82,8 @@ abstract class AbstractSql implements SqlInterface
     public function getSqlString(?PlatformInterface $adapterPlatform = null): string
     {
         $adapterPlatform ??= new DefaultAdapterPlatform();
+
+        $this->resetRenderState();
 
         return $this->buildSqlString($adapterPlatform);
     }
@@ -208,7 +213,6 @@ abstract class AbstractSql implements SqlInterface
     }
 
     /**
-     * @staticvar int $runtimeExpressionPrefix
      * @throws Exception\RuntimeException
      */
     protected function processExpression(
@@ -218,8 +222,6 @@ abstract class AbstractSql implements SqlInterface
         ?ParameterContainer $parameterContainer = null,
         ?string $namedParameterPrefix = null,
     ): string {
-        static $runtimeExpressionPrefix = 0;
-
         $expressionData   = $expression->getExpressionData();
         $specification    = $expressionData['spec'];
         $expressionValues = $expressionData['values'];
@@ -230,7 +232,7 @@ abstract class AbstractSql implements SqlInterface
 
         $namedParameterPrefix = match (true) {
             null === $namedParameterPrefix || '' === $namedParameterPrefix => $parameterContainer
-                ? 'expr' . $runtimeExpressionPrefix++ . 'Param'
+                ? 'expr' . $this->processInfo['expressionCount']++ . 'Param'
                 : '',
             default => $this->processInfo['paramPrefix']
                 . str_replace([' ', "\t", "\n", "\r"], replace: '__', subject: $namedParameterPrefix),
@@ -419,11 +421,16 @@ abstract class AbstractSql implements SqlInterface
         if ($parameterContainer instanceof ParameterContainer) {
             $processInfoContext = $decorator instanceof PlatformDecoratorInterface ? $subselect : $decorator;
             $this->processInfo['subselectCount']++;
-            $processInfoContext->processInfo['subselectCount'] = $this->processInfo['subselectCount'];
-            $processInfoContext->processInfo['paramPrefix']    = "subselect{$processInfoContext->processInfo['subselectCount']}";
+            $processInfoContext->processInfo = [
+                'paramPrefix'     => "subselect{$this->processInfo['subselectCount']}",
+                'subselectCount'  => $this->processInfo['subselectCount'],
+                'expressionCount' => $this->processInfo['expressionCount'],
+            ];
+            $processInfoContext->instanceParameterIndex = [];
 
-            $sql                                 = $decorator->buildSqlString($platform, $driver, $parameterContainer);
-            $this->processInfo['subselectCount'] = $decorator->processInfo['subselectCount'];
+            $sql                                  = $decorator->buildSqlString($platform, $driver, $parameterContainer);
+            $this->processInfo['subselectCount']  = $decorator->processInfo['subselectCount'];
+            $this->processInfo['expressionCount'] = $decorator->processInfo['expressionCount'];
 
             return $sql;
         }
@@ -439,6 +446,23 @@ abstract class AbstractSql implements SqlInterface
     protected function renderTable(string $table, ?string $alias = null): string
     {
         return $alias ? "{$table} AS {$alias}" : $table;
+    }
+
+    /**
+     * Clear the parameter naming state left by a previous render
+     *
+     * Called by the top-level render entry points so that rendering the same object again produces
+     * the same SQL and parameter names. A platform decorator also clears its subject, whose state it
+     * copies at the start of each render.
+     */
+    protected function resetRenderState(): void
+    {
+        $this->processInfo            = ['paramPrefix' => '', 'subselectCount' => 0, 'expressionCount' => 0];
+        $this->instanceParameterIndex = [];
+
+        if ($this instanceof PlatformDecoratorInterface && $this->subject instanceof self) {
+            $this->subject->resetRenderState();
+        }
     }
 
     /**
@@ -478,6 +502,48 @@ abstract class AbstractSql implements SqlInterface
         return $isIdentifier
             ? $fromTable . $platform->quoteIdentifierInFragment((string) $column)
             : $platform->quoteValue((string) $column);
+    }
+
+    /**
+     * Map column names to valid named-placeholder names
+     *
+     * Names made only of word characters are kept; any other name has each other character
+     * replaced by an underscore and is suffixed until it collides with no other name.
+     *
+     * @param list<string> $columns
+     * @return array<string, string>
+     */
+    protected function resolveParameterNames(array $columns): array
+    {
+        $used = [];
+        foreach ($columns as $column) {
+            if (preg_match('/^[a-zA-Z0-9_]+$/', $column) !== 1) {
+                continue;
+            }
+
+            $used[$column] = true;
+        }
+
+        $names = [];
+        foreach ($columns as $column) {
+            if (array_key_exists($column, $used)) {
+                $names[$column] = $column;
+                continue;
+            }
+
+            $base   = (string) preg_replace('/[^a-zA-Z0-9_]/', replacement: '_', subject: $column);
+            $name   = $base;
+            $suffix = 0;
+            while (array_key_exists($name, $used)) {
+                $suffix++;
+                $name = "{$base}_{$suffix}";
+            }
+
+            $used[$name]    = true;
+            $names[$column] = $name;
+        }
+
+        return $names;
     }
 
     /**
