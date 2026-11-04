@@ -14,6 +14,7 @@ use function array_map;
 use function count;
 use function implode;
 use function in_array;
+use function preg_match;
 use function preg_split;
 use function range;
 use function substr;
@@ -26,16 +27,28 @@ use const PREG_SPLIT_DELIM_CAPTURE;
  * A custom specification refers to each argument with a single placeholder, plain (%s) or
  * positional (%2$s), but a Values argument renders one value per list item. Each placeholder
  * is replaced by positional placeholders for every value its argument renders, so %2$s becomes
- * %2$s, %3$s for a two-value list and NULL for an empty one.
+ * %2$s, %3$s for a two-value list and NULL for an empty one. Any other conversion is rejected,
+ * so a literal percent sign must be written as %%.
  *
  * @internal
  */
 final class CustomSpecification
 {
     /**
+     * Any vsprintf() conversion, matched the way vsprintf() reads one, leaving %% as literal text
+     */
+    private const string CONVERSION = '/%%(*SKIP)(*FAIL)|(%(?:\d+\$)?[-+ 0]*(?:\'.)?\d*(?:\.\d+)?[a-zA-Z]?)/';
+
+    /**
+     * The conversions that may refer to an argument: plain (%s) or positional (%2$s)
+     */
+    private const string PLACEHOLDER = '/^%(?:\d+\$)?s$/';
+
+    /**
      * @param list<ArgumentInterface> $arguments
-     * @throws InvalidArgumentException When a placeholder names a missing argument, or an
-     *     argument that binds values is not referenced exactly once.
+     * @throws InvalidArgumentException When the specification contains a conversion other than
+     *     %s, %N$s or %%, a placeholder names a missing argument, or an argument that binds
+     *     values is not referenced exactly once.
      */
     public static function expand(string $specification, array $arguments): string
     {
@@ -45,11 +58,15 @@ final class CustomSpecification
         $expanded   = '';
 
         /** @var list<string> $parts */
-        $parts = preg_split('/%%(*SKIP)(*FAIL)|(%(?:\d+\$)?s)/', $specification, flags: PREG_SPLIT_DELIM_CAPTURE);
+        $parts = preg_split(self::CONVERSION, $specification, flags: PREG_SPLIT_DELIM_CAPTURE);
         foreach ($parts as $part => $text) {
             if (0 === ($part % 2)) {
                 $expanded .= $text;
                 continue;
+            }
+
+            if (1 !== preg_match(self::PLACEHOLDER, $text)) {
+                throw InvalidArgumentException::forSpecificationUnsupportedPlaceholder($specification, $text);
             }
 
             $index    = '%s' === $text ? $sequential++ : (int) substr($text, offset: 1, length: -2) - 1;

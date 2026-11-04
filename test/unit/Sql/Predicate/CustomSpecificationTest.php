@@ -122,6 +122,33 @@ final class CustomSpecificationTest extends TestCase
         ];
     }
 
+    /** @return array<string, array{string, string}> */
+    public static function unsupportedPlaceholderProvider(): array
+    {
+        return [
+            'padded positional placeholder' => ['%1$05s IN (%2$s)', '%1$05s'],
+            'padded plain placeholder'      => ['%05s IN (%s)', '%05s'],
+            'precision on a placeholder'    => ['%.3s IN (%s)', '%.3s'],
+            'custom padding character'      => ["%'*5s IN (%s)", "%'*5s"],
+            'integer conversion'            => ['%s IN (%s) AND %d', '%d'],
+            'positional integer conversion' => ['%1$s IN (%2$s) AND %1$d', '%1$d'],
+            'unescaped percent before text' => ["%s IN (%s) AND x LIKE '50% off'", '% o'],
+            'unescaped percent at the end'  => ['%s IN (%s) AND 50%', '%'],
+            'unsupported conversion only'   => ['%s = ANY (%d)', '%d'],
+        ];
+    }
+
+    #[Test]
+    #[DataProvider('unsupportedPlaceholderProvider')]
+    public function conversionOtherThanSupportedPlaceholdersIsRejected(string $specification, string $placeholder): void
+    {
+        $this->expectExceptionObject(
+            InvalidArgumentException::forSpecificationUnsupportedPlaceholder($specification, $placeholder),
+        );
+
+        CustomSpecification::expand($specification, [Argument::identifier('id'), Argument::values([1, 2])]);
+    }
+
     /** @param list<ArgumentInterface> $arguments */
     #[Test]
     #[DataProvider('expansionProvider')]

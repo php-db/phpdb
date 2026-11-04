@@ -39,6 +39,8 @@ class InvalidArgumentException extends Exception\InvalidArgumentException
 
     final public const string SPECIFICATION_ARGUMENT_OUT_OF_RANGE = 'Specification "%s" references argument %d, but only %d arguments are available';
 
+    final public const string SPECIFICATION_UNSUPPORTED_PLACEHOLDER = 'Specification "%s" contains unsupported placeholder "%s"; use %%s or %%N$s for an argument and %%%% for a literal percent sign';
+
     public static function forInvalidCombination(): self
     {
         return new self(self::INVALID_COMBINATION);
@@ -113,5 +115,10 @@ class InvalidArgumentException extends Exception\InvalidArgumentException
         int $available,
     ): self {
         return new self(sprintf(self::SPECIFICATION_ARGUMENT_OUT_OF_RANGE, $specification, $position, $available));
+    }
+
+    public static function forSpecificationUnsupportedPlaceholder(string $specification, string $placeholder): self
+    {
+        return new self(sprintf(self::SPECIFICATION_UNSUPPORTED_PLACEHOLDER, $specification, $placeholder));
     }
 }

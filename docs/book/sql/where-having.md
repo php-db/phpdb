@@ -544,7 +544,9 @@ The value set must be referenced exactly once, as must an identifier that binds
 a parameter (such as `Argument::value()`), so the rendered placeholders always
 match the bound parameters. A specification that repeats or omits one, or
 references an argument the predicate does not have, throws
-`PhpDb\Sql\Predicate\Exception\InvalidArgumentException`.
+`PhpDb\Sql\Predicate\Exception\InvalidArgumentException`. So does any other
+`%` conversion, such as `%d` or a padded `%05s`; write a literal percent sign as
+`%%`.
 
 ## Range Predicates
 
