@@ -83,7 +83,9 @@ final class RowGatewayTest extends TestCase
 
         $tableProp = new ReflectionProperty(RowGateway::class, 'table');
         $sqlProp   = new ReflectionProperty(RowGateway::class, 'sql');
+        $pkProp    = new ReflectionProperty(RowGateway::class, 'primaryKeyColumn');
 
+        static::assertSame(['id'], $pkProp->getValue($rowGateway));
         static::assertSame('foo', $tableProp->getValue($rowGateway));
         static::assertInstanceOf(Sql::class, $sqlProp->getValue($rowGateway));
     }

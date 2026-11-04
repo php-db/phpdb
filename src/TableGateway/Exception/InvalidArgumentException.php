@@ -8,6 +8,9 @@ use PhpDb\Exception;
 
 use function sprintf;
 
+/**
+ * @api
+ */
 class InvalidArgumentException extends Exception\InvalidArgumentException
 {
     final public const string INVALID_MAGIC_CALL = 'Invalid method (%s) called, caught by %s::__call()';

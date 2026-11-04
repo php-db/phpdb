@@ -39,7 +39,7 @@ class SequenceFeature extends AbstractFeature
      */
     public function lastSequenceId(): int
     {
-        $platform     = $this->tableGateway->adapter->getPlatform();
+        $platform     = $this->tableGateway->getAdapter()->getPlatform();
         $platformName = $platform->getName();
 
         // TODO(@simon-mundy): Remove string usage
@@ -49,7 +49,7 @@ class SequenceFeature extends AbstractFeature
             default      => throw RuntimeException::forUnsupportedLastSequencePlatform(),
         };
 
-        $statement = $this->tableGateway->adapter->createStatement();
+        $statement = $this->tableGateway->getAdapter()->createStatement();
         $statement->prepare($sql);
         $result = $statement->execute();
         if (! $result instanceof ResultInterface) {
@@ -75,7 +75,7 @@ class SequenceFeature extends AbstractFeature
      */
     public function nextSequenceId(): ?int
     {
-        $platform     = $this->tableGateway->adapter->getPlatform();
+        $platform     = $this->tableGateway->getAdapter()->getPlatform();
         $platformName = $platform->getName();
 
         $sql = match ($platformName) {
@@ -84,7 +84,7 @@ class SequenceFeature extends AbstractFeature
             default      => throw RuntimeException::forUnsupportedNextSequencePlatform(),
         };
 
-        $statement = $this->tableGateway->adapter->createStatement();
+        $statement = $this->tableGateway->getAdapter()->createStatement();
         $statement->prepare($sql);
         $result = $statement->execute();
         if (! $result instanceof ResultInterface) {

@@ -248,12 +248,6 @@ count = 1
 
 [[issues]]
 file = "src/RowGateway/AbstractRowGateway.php"
-code = "halstead"
-message = "Method has a high halstead difficulty"
-count = 1
-
-[[issues]]
-file = "src/RowGateway/AbstractRowGateway.php"
 code = "kan-defect"
 message = "Class has a high kan defect score."
 count = 1
@@ -262,60 +256,6 @@ count = 1
 file = "src/RowGateway/AbstractRowGateway.php"
 code = "no-boolean-flag-parameter"
 message = "Avoid boolean flag parameters."
-count = 1
-
-[[issues]]
-file = "src/RowGateway/AbstractRowGateway.php"
-code = "no-dead-store"
-message = "Variable `$rowsAffected` is overwritten before its value is read."
-count = 1
-
-[[issues]]
-file = "src/RowGateway/AbstractRowGateway.php"
-code = "no-else-clause"
-message = "Avoid `else` clauses."
-count = 4
-
-[[issues]]
-file = "src/RowGateway/AbstractRowGateway.php"
-code = "no-isset"
-message = "Use of the `isset` construct."
-count = 1
-
-[[issues]]
-file = "src/RowGateway/AbstractRowGateway.php"
-code = "prefer-early-continue"
-message = "Consider using early continue pattern to reduce nesting."
-count = 1
-
-[[issues]]
-file = "src/RowGateway/AbstractRowGateway.php"
-code = "too-many-methods"
-message = "Class has too many methods."
-count = 1
-
-[[issues]]
-file = "src/RowGateway/AbstractRowGateway.php"
-code = "yoda-conditions"
-message = "Use Yoda condition style for safer comparisons"
-count = 6
-
-[[issues]]
-file = "src/RowGateway/Feature/FeatureSet.php"
-code = "too-many-methods"
-message = "Class has too many methods."
-count = 1
-
-[[issues]]
-file = "src/RowGateway/RowGateway.php"
-code = "no-else-clause"
-message = "Avoid `else` clauses."
-count = 1
-
-[[issues]]
-file = "src/RowGateway/RowGateway.php"
-code = "no-negated-ternary"
-message = "Negated ternary condition."
 count = 1
 
 [[issues]]
@@ -386,44 +326,8 @@ count = 1
 
 [[issues]]
 file = "src/TableGateway/AbstractTableGateway.php"
-code = "halstead"
-message = "Method has a high halstead difficulty"
-count = 1
-
-[[issues]]
-file = "src/TableGateway/AbstractTableGateway.php"
 code = "kan-defect"
 message = "Class has a high kan defect score."
-count = 1
-
-[[issues]]
-file = "src/TableGateway/AbstractTableGateway.php"
-code = "no-else-clause"
-message = "Avoid `else` clauses."
-count = 1
-
-[[issues]]
-file = "src/TableGateway/AbstractTableGateway.php"
-code = "no-else-clause"
-message = "Avoid `elseif` clauses."
-count = 2
-
-[[issues]]
-file = "src/TableGateway/AbstractTableGateway.php"
-code = "no-isset"
-message = "Use of the `isset` construct."
-count = 3
-
-[[issues]]
-file = "src/TableGateway/AbstractTableGateway.php"
-code = "too-many-methods"
-message = "Class has too many methods."
-count = 1
-
-[[issues]]
-file = "src/TableGateway/Feature/EventFeature.php"
-code = "too-many-methods"
-message = "Class has too many methods."
 count = 1
 
 [[issues]]
@@ -433,15 +337,9 @@ message = "Class has a high kan defect score."
 count = 1
 
 [[issues]]
-file = "src/TableGateway/Feature/FeatureSet.php"
-code = "too-many-methods"
-message = "Class has too many methods."
-count = 1
-
-[[issues]]
-file = "src/TableGateway/TableGateway.php"
-code = "no-shorthand-ternary"
-message = "Use of the shorthand ternary operator."
+file = "src/TableGateway/Feature/RowGatewayFeature.php"
+code = "cyclomatic-complexity"
+message = "Class has high complexity."
 count = 1
 
 [[issues]]
@@ -569,12 +467,6 @@ file = "test/unit/ResultSet/ResultSetIntegrationTest.php"
 code = "literal-named-argument"
 message = "Literal argument `true` should be passed as a named argument for clarity."
 count = 1
-
-[[issues]]
-file = "test/unit/RowGateway/AbstractRowGatewayTest.php"
-code = "no-isset"
-message = "Use of the `isset` construct."
-count = 4
 
 [[issues]]
 file = "test/unit/Sql/AbstractSqlFunctionalTestCase.php"
@@ -791,9 +683,3 @@ file = "test/unit/Sql/UpdateTest.php"
 code = "no-fully-qualified-global-class-like"
 message = "Fully-qualified class-like reference detected."
 count = 1
-
-[[issues]]
-file = "test/unit/TableGateway/TableGatewayTest.php"
-code = "no-assign-in-argument"
-message = "Avoid assignments in function call arguments."
-count = 3

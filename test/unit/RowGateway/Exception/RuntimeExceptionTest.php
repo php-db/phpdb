@@ -17,7 +17,9 @@ use function sprintf;
 #[Group('unit')]
 #[CoversMethod(RuntimeException::class, 'forMissingPrimaryKeyColumn')]
 #[CoversMethod(RuntimeException::class, 'forMissingPrimaryKeyData')]
+#[CoversMethod(RuntimeException::class, 'forMissingSavedRow')]
 #[CoversMethod(RuntimeException::class, 'forMissingSqlObject')]
+#[CoversMethod(RuntimeException::class, 'forMissingStatementResult')]
 #[CoversMethod(RuntimeException::class, 'forMissingTable')]
 #[CoversMethod(RuntimeException::class, 'forUncallableMethod')]
 final class RuntimeExceptionTest extends TestCase
@@ -36,10 +38,20 @@ final class RuntimeExceptionTest extends TestCase
                 ['id'],
                 RuntimeException::MISSING_PRIMARY_KEY_DATA,
             ],
+            'missing saved row'          => [
+                'forMissingSavedRow',
+                [],
+                RuntimeException::MISSING_SAVED_ROW,
+            ],
             'missing sql object'         => [
                 'forMissingSqlObject',
                 [],
                 RuntimeException::MISSING_SQL_OBJECT,
+            ],
+            'missing statement result'   => [
+                'forMissingStatementResult',
+                [],
+                RuntimeException::MISSING_STATEMENT_RESULT,
             ],
             'missing table'              => [
                 'forMissingTable',

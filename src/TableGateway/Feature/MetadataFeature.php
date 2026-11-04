@@ -34,6 +34,8 @@ class MetadataFeature extends AbstractFeature
 
     /**
      * @throws Exception\RuntimeException
+     *
+     * @mago-expect analysis:mixed-assignment
      */
     public function postInitialize(): void
     {

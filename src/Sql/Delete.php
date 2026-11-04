@@ -66,6 +66,9 @@ class Delete extends AbstractPreparableSql
         return $this;
     }
 
+    /**
+     * @return ($key is 'table' ? TableIdentifier|string|array<string, string|TableIdentifier> : mixed)
+     */
     public function getRawState(?string $key = null): mixed
     {
         $rawState = [

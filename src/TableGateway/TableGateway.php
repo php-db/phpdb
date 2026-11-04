@@ -12,10 +12,15 @@ use PhpDb\Sql\TableIdentifier;
 
 use function is_array;
 
+/**
+ * @api
+ * @psalm-import-type GatewayTable from TableGatewayInterface
+ */
 class TableGateway extends AbstractTableGateway
 {
     /**
-     * @param Feature\FeatureSet|Feature\FeatureInterface|Feature\FeatureInterface[]|null $features
+     * @param GatewayTable                                                               $table
+     * @param Feature\FeatureSet|Feature\FeatureInterface|list<Feature\FeatureInterface>|null $features
      *
      * @throws Exception\InvalidArgumentException
      * @throws Exception\RuntimeException
@@ -23,7 +28,7 @@ class TableGateway extends AbstractTableGateway
     public function __construct(
         TableIdentifier|array|string $table,
         AdapterInterface $adapter,
-        Feature\FeatureSet|Feature\FeatureInterface|array|null $features = new Feature\FeatureSet(),
+        Feature\FeatureSet|Feature\FeatureInterface|array|null $features = null,
         ?ResultSetInterface $resultSetPrototype = new ResultSet(),
         ?Sql $sql = null,
     ) {
@@ -39,7 +44,7 @@ class TableGateway extends AbstractTableGateway
 
         $this->resultSetPrototype = $resultSetPrototype;
 
-        $this->sql = $sql ?: new Sql($this->adapter, $this->table);
+        $this->sql = $sql ?? new Sql($this->adapter, $this->table);
 
         if ($this->sql->getTable() !== $this->table) {
             throw Exception\InvalidArgumentException::forSqlTableMismatch();

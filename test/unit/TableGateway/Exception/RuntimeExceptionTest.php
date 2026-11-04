@@ -25,12 +25,14 @@ use function sprintf;
 #[CoversMethod(RuntimeException::class, 'forMissingPrimaryKeyInMetadata')]
 #[CoversMethod(RuntimeException::class, 'forMissingSequenceResult')]
 #[CoversMethod(RuntimeException::class, 'forMissingSqlInstance')]
+#[CoversMethod(RuntimeException::class, 'forMissingStatementResult')]
 #[CoversMethod(RuntimeException::class, 'forMissingStaticAdapter')]
 #[CoversMethod(RuntimeException::class, 'forMissingTable')]
 #[CoversMethod(RuntimeException::class, 'forNonArrayInsertData')]
 #[CoversMethod(RuntimeException::class, 'forNonArrayMetadata')]
 #[CoversMethod(RuntimeException::class, 'forTableMismatch')]
 #[CoversMethod(RuntimeException::class, 'forUnexpectedResultSet')]
+#[CoversMethod(RuntimeException::class, 'forUninitializedProperty')]
 #[CoversMethod(RuntimeException::class, 'forUnnamedTableInMetadata')]
 #[CoversMethod(RuntimeException::class, 'forUnnamedTableInRowGateway')]
 #[CoversMethod(RuntimeException::class, 'forUnsupportedLastSequencePlatform')]
@@ -82,6 +84,11 @@ final class RuntimeExceptionTest extends TestCase
                 [],
                 RuntimeException::MISSING_SQL_INSTANCE,
             ],
+            'missing statement result'           => [
+                'forMissingStatementResult',
+                ['Select'],
+                RuntimeException::MISSING_STATEMENT_RESULT,
+            ],
             'missing static adapter'             => [
                 'forMissingStaticAdapter',
                 [],
@@ -111,6 +118,11 @@ final class RuntimeExceptionTest extends TestCase
                 'forUnexpectedResultSet',
                 [RowGatewayFeature::class, RowPrototypeResultSet::class],
                 RuntimeException::UNEXPECTED_RESULT_SET,
+            ],
+            'uninitialized property'             => [
+                'forUninitializedProperty',
+                ['sql'],
+                RuntimeException::UNINITIALIZED_PROPERTY,
             ],
             'unnamed table in metadata'          => [
                 'forUnnamedTableInMetadata',

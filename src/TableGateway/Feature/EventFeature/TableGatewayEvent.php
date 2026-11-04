@@ -40,6 +40,8 @@ final class TableGatewayEvent implements EventInterface
 
     /**
      * Get parameters passed to the event
+     *
+     * @return array<array-key, mixed>|object
      */
     #[Override]
     public function getParams(): array|object
