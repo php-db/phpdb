@@ -9,6 +9,11 @@ use Iterator;
 use PhpDb\Adapter\Exception;
 use PhpDb\ResultSet\ResultSetInterface;
 
+/**
+ * @api
+ *
+ * @extends Iterator<array-key, mixed>
+ */
 interface ResultInterface extends Countable, Iterator
 {
     /**

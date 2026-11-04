@@ -1,7 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDb\Adapter;
 
+/**
+ * @api
+ */
 trait AdapterAwareTrait
 {
     protected AdapterInterface $adapter;

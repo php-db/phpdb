@@ -8,6 +8,9 @@ use Throwable;
 
 use function sprintf;
 
+/**
+ * @api
+ */
 class InvalidQueryException extends UnexpectedValueException
 {
     /** The driver's own error text, passed through verbatim. */

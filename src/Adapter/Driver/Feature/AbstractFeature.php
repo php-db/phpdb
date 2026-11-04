@@ -7,6 +7,9 @@ namespace PhpDb\Adapter\Driver\Feature;
 use Override;
 use PhpDb\Adapter\Driver\DriverInterface;
 
+/**
+ * @api
+ */
 abstract class AbstractFeature implements DriverFeatureInterface
 {
     protected DriverInterface $driver;
