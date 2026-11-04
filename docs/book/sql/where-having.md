@@ -394,8 +394,9 @@ class Expression implements
 }
 ```
 
-> **Note:** Unlike `Operator`, `Like`, `Between`, `In` and `IsNull`,
-> `Expression` does not accept a specification override. It always renders
+> **Note:** Unlike `Operator`, `Like`/`NotLike`, `Between`/`NotBetween`,
+> `In`/`NotIn` and `IsNull`/`IsNotNull`, `Expression` does not accept a
+> specification override. It always renders
 > the string given to its constructor or `setExpression()`, so calling
 > `setSpecification()` on an `Expression` (or `Predicate\Expression`) throws
 > `PhpDb\Sql\Exception\RuntimeException`. Call `setExpression()` to change
