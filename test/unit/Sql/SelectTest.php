@@ -54,6 +54,7 @@ use TypeError;
 #[CoversMethod(Select::class, 'having')]
 #[CoversMethod(Select::class, 'order')]
 #[CoversMethod(Select::class, 'limit')]
+#[CoversMethod(Select::class, 'isNonNegativeInteger')]
 #[CoversMethod(Select::class, 'offset')]
 #[CoversMethod(Select::class, 'combine')]
 #[CoversMethod(Select::class, 'reset')]
