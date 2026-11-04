@@ -1,0 +1,156 @@
+<?php
+
+declare(strict_types=1);
+
+namespace PhpDb\Sql\Predicate;
+
+use PhpDb\Sql\Argument\Values;
+use PhpDb\Sql\ArgumentInterface;
+use PhpDb\Sql\ArgumentType;
+use PhpDb\Sql\Predicate\Exception\InvalidArgumentException;
+
+use function array_count_values;
+use function array_map;
+use function array_slice;
+use function count;
+use function implode;
+use function in_array;
+use function preg_match;
+use function preg_split;
+use function range;
+use function strlen;
+
+use const PREG_SPLIT_DELIM_CAPTURE;
+
+/**
+ * Aligns a user-supplied predicate specification with the values its arguments render
+ *
+ * A custom specification refers to each argument with a single placeholder, plain (%s) or
+ * positional (%2$s), but a Values argument renders one value per list item. Each placeholder
+ * is replaced by positional placeholders for every value its argument renders, so %2$s becomes
+ * %2$s, %3$s for a two-value list and NULL for an empty one. A specification must use one
+ * placeholder style throughout; any other conversion is rejected, so a literal percent sign
+ * must be written as %%.
+ *
+ * @internal
+ */
+final class CustomSpecification
+{
+    /**
+     * Any vsprintf() conversion, matched the way vsprintf() reads one, leaving %% as literal text
+     *
+     * The pattern must keep exactly one capturing group: expand() relies on preg_split() placing
+     * literal text at even indexes and each captured conversion at odd ones.
+     */
+    private const string CONVERSION = '/%%(*SKIP)(*FAIL)|(%(?:\d+\$)?[-+ 0]*(?:\'.)?\d*(?:\.\d+)?[a-zA-Z]?)/';
+
+    /**
+     * The conversions that may refer to an argument, plain (%s) or positional (%2$s), capturing
+     * the argument number of a positional one, which starts at 1
+     */
+    private const string PLACEHOLDER = '/^%(?:([1-9]\d*)\$)?s$/';
+
+    /**
+     * @param list<ArgumentInterface> $arguments
+     * @throws InvalidArgumentException When the specification contains a conversion other than
+     *     %s, %N$s or %%, mixes plain and positional placeholders, a placeholder names a missing
+     *     argument, or an argument that binds values is not referenced exactly once.
+     */
+    public static function expand(string $specification, array $arguments): string
+    {
+        $placeholders = self::placeholders($arguments);
+        $referenced   = [];
+        $sequential   = 0;
+        $plain        = null;
+        $expanded     = '';
+
+        /** @var list<string> $parts */
+        $parts = preg_split(self::CONVERSION, $specification, flags: PREG_SPLIT_DELIM_CAPTURE);
+        foreach ($parts as $part => $text) {
+            if (0 === ($part % 2)) {
+                $expanded .= $text;
+                continue;
+            }
+
+            $match = [];
+            if (1 !== preg_match(self::PLACEHOLDER, $text, $match)) {
+                throw InvalidArgumentException::forSpecificationUnsupportedPlaceholder(
+                    $specification,
+                    $text,
+                    strlen(implode('', array_slice($parts, offset: 0, length: $part))),
+                );
+            }
+
+            $positional = $match[1] ?? '';
+            $isPlain    = '' === $positional;
+            $index      = $isPlain ? $sequential++ : (int) $positional - 1;
+            $run        = $placeholders[$index] ?? throw InvalidArgumentException::forSpecificationArgumentOutOfRange(
+                    $specification,
+                    $index + 1,
+                    count($arguments),
+                );
+
+            $plain ??= $isPlain;
+            if ($plain !== $isPlain) {
+                throw InvalidArgumentException::forSpecificationMixedPlaceholderStyles($specification);
+            }
+
+            $referenced[] = $index;
+            $expanded     .= $run;
+        }
+
+        $references = array_count_values($referenced);
+        foreach ($arguments as $index => $argument) {
+            $count = $references[$index] ?? 0;
+            if (1 !== $count && self::bindsValues($argument)) {
+                throw InvalidArgumentException::forSpecificationArgumentNotReferencedOnce(
+                    $specification,
+                    $index + 1,
+                    $count,
+                );
+            }
+        }
+
+        return $expanded;
+    }
+
+    /**
+     * Whether rendering the argument binds parameters, so repeating or omitting it would misalign them
+     */
+    private static function bindsValues(ArgumentInterface $argument): bool
+    {
+        return ! in_array(
+            $argument->getType(),
+            [ArgumentType::Identifier, ArgumentType::Identifiers, ArgumentType::Literal],
+            strict: true,
+        );
+    }
+
+    /**
+     * Positional placeholders for every value each argument renders, keyed by argument index
+     *
+     * An argument's placeholders continue the sequence where the previous argument's ended, and
+     * an empty list renders as NULL.
+     *
+     * @param list<ArgumentInterface> $arguments
+     * @return array<int, string>
+     */
+    private static function placeholders(array $arguments): array
+    {
+        $placeholders = [];
+        $position     = 1;
+        foreach ($arguments as $index => $argument) {
+            $count = $argument instanceof Values ? count($argument->getValue()) : 1;
+
+            $placeholders[$index] = 0 === $count
+                ? 'NULL'
+                : implode(', ', array_map(
+                    static fn(int $offset): string => "%{$offset}\$s",
+                    range($position, $position + $count - 1),
+                ));
+            $position += $count;
+        }
+
+        return $placeholders;
+    }
+}

@@ -9,11 +9,38 @@ use PhpDb\Sql\ArgumentInterface;
 use PhpDb\Sql\ArgumentType;
 use PhpDb\Sql\Predicate\NotIn;
 use PhpDb\Sql\Select;
+use PhpDbTest\TestAsset\TrustingSql92Platform;
+use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
+#[CoversMethod(NotIn::class, 'getExpressionData')]
+#[Group('unit')]
 final class NotInTest extends TestCase
 {
+    /** @return array<string, array{list<int>, string}> */
+    public static function customSpecificationProvider(): array
+    {
+        return [
+            'one value'    => [[1], 'SELECT "t".* FROM "t" WHERE NOT ("id" = ANY (ARRAY[\'1\']))'],
+            'two values'   => [[1, 2], 'SELECT "t".* FROM "t" WHERE NOT ("id" = ANY (ARRAY[\'1\', \'2\']))'],
+            'three values' => [[1, 2, 3], 'SELECT "t".* FROM "t" WHERE NOT ("id" = ANY (ARRAY[\'1\', \'2\', \'3\']))'],
+        ];
+    }
+
+    /** @param list<int> $valueSet */
+    #[Test]
+    #[DataProvider('customSpecificationProvider')]
+    public function customSpecificationRendersEveryListValue(array $valueSet, string $expectedSql): void
+    {
+        $notIn  = (new NotIn('id', $valueSet))->setSpecification('NOT (%s = ANY (ARRAY[%s]))');
+        $select = (new Select('t'))->where([$notIn]);
+
+        static::assertSame($expectedSql, $select->getSqlString(new TrustingSql92Platform()));
+    }
+
     #[Test]
     public function getExpressionDataWithSubselect(): void
     {
