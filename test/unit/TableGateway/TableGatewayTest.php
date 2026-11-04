@@ -54,6 +54,32 @@ final class TableGatewayTest extends TestCase
         ];
     }
 
+    /** @return array<string, array{string|TableIdentifier|array<string, string|TableIdentifier>, string, list<mixed>}> */
+    public static function clonedGatewayOperationProvider(): array
+    {
+        $tables = [
+            'table identifier'         => new TableIdentifier('foo', 'bar'),
+            'aliased table identifier' => ['f' => new TableIdentifier('foo', 'bar')],
+            'aliased string'           => ['f' => 'foo'],
+            'string'                   => 'foo',
+        ];
+        $operations = [
+            'insert' => [['a' => 1]],
+            'update' => [['a' => 1]],
+            'delete' => [['a' => 1]],
+            'select' => [],
+        ];
+
+        $cases = [];
+        foreach ($tables as $tableLabel => $table) {
+            foreach ($operations as $method => $arguments) {
+                $cases["{$tableLabel}, {$method}"] = [$table, $method, $arguments];
+            }
+        }
+
+        return $cases;
+    }
+
     /** @return array<string, array{'delete'|'insert'|'update', list<array<string, int|string>>, string}> */
     public static function dataChangingCallOnAliasedTable(): array
     {
@@ -62,6 +88,23 @@ final class TableGatewayTest extends TestCase
             'insert' => ['insert', [['id' => 5]], 'INSERT INTO "users" ("id") VALUES (?)'],
             'update' => ['update', [['name' => 'x'], ['id' => 5]], 'UPDATE "users" SET "name" = ? WHERE "id" = ?'],
         ];
+    }
+
+    /**
+     * @param string|TableIdentifier|array<string, string|TableIdentifier> $table
+     * @param list<mixed>                                                  $arguments
+     */
+    #[Test]
+    #[DataProvider('clonedGatewayOperationProvider')]
+    public function clonedGatewayRunsOperationsOnItsTableLikeTheOriginal(
+        string|TableIdentifier|array $table,
+        string $method,
+        array $arguments,
+    ): void {
+        $gateway = new TableGateway($table, new Adapter($this->mockAdapter->getDriver(), new TrustingSql92Platform()));
+        $cloned  = clone $gateway;
+
+        static::assertEquals($gateway->{$method}(...$arguments), $cloned->{$method}(...$arguments));
     }
 
     /**

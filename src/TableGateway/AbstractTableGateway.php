@@ -21,7 +21,6 @@ use PhpDb\Sql\Update;
 use PhpDb\Sql\Where;
 use PhpDb\TableGateway\Feature\EventFeatureEventsInterface;
 
-use function array_map;
 use function end;
 use function in_array;
 use function is_array;
@@ -57,29 +56,6 @@ abstract class AbstractTableGateway implements TableGatewayInterface
     protected ?Sql $sql = null;
 
     protected string|int|false|null $lastInsertValue = null;
-
-    /**
-     * @param GatewayTable|null $table
-     *
-     * @return GatewayTable|null
-     */
-    private static function cloneTable(TableIdentifier|string|array|null $table): TableIdentifier|string|array|null
-    {
-        if ($table instanceof TableIdentifier) {
-            return clone $table;
-        }
-
-        if (! is_array($table)) {
-            return $table;
-        }
-
-        return array_map(
-            static fn(TableIdentifier|string $aliased): TableIdentifier|string => $aliased instanceof TableIdentifier
-                ? clone $aliased
-                : $aliased,
-            $table,
-        );
-    }
 
     /**
      * @param GatewayWhere $where
@@ -464,8 +440,6 @@ abstract class AbstractTableGateway implements TableGatewayInterface
         if (null !== $this->sql) {
             $this->sql = clone $this->sql;
         }
-
-        $this->table = self::cloneTable($this->table);
     }
 
     /**

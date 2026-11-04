@@ -187,7 +187,7 @@ final class AbstractTableGatewayTest extends TestCase
     }
 
     #[Test]
-    public function cloneWithAnAliasedTableIdentifier(): void
+    public function cloneSharesAnAliasedTableIdentifier(): void
     {
         $tableIdentifier = new Sql\TableIdentifier('bar', 'schema');
         $aliasedTable    = ['alias' => $tableIdentifier];
@@ -198,14 +198,11 @@ final class AbstractTableGatewayTest extends TestCase
 
         $cloned = clone $this->table;
 
-        $clonedTable = $cloned->getTable();
-        static::assertIsArray($clonedTable);
-        // The TableIdentifier inside the array should be cloned
-        static::assertNotSame($tableIdentifier, $clonedTable['alias']);
+        static::assertSame($aliasedTable, $cloned->getTable());
     }
 
     #[Test]
-    public function cloneWithATableIdentifier(): void
+    public function cloneSharesATableIdentifier(): void
     {
         $tableIdentifier = new Sql\TableIdentifier('bar', 'schema');
 
@@ -215,9 +212,7 @@ final class AbstractTableGatewayTest extends TestCase
 
         $cloned = clone $this->table;
 
-        // The table should be cloned, not the same instance
-        static::assertNotSame($tableIdentifier, $cloned->getTable());
-        static::assertEquals($tableIdentifier->getTable(), $cloned->getTable()->getTable());
+        static::assertSame($tableIdentifier, $cloned->getTable());
     }
 
     #[Test]
