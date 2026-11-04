@@ -19,6 +19,7 @@ use function count;
 use function implode;
 use function is_scalar;
 use function range;
+use function strval;
 
 /**
  * @api
@@ -171,22 +172,24 @@ class Insert extends AbstractPreparableSql
             throw Exception\InvalidArgumentException::forMissingValuesOrSelect();
         }
 
-        $columns     = [];
-        $values      = [];
-        $i           = 0;
-        $isPdoDriver = $driver instanceof PdoDriverInterface;
+        $columns        = [];
+        $values         = [];
+        $i              = 0;
+        $isPdoDriver    = $driver instanceof PdoDriverInterface;
+        $parameterNames = $this->resolveParameterNames(array_map(strval(...), array_keys($this->columns)));
 
         foreach ($this->columns as $column => $value) {
             $columns[] = $platform->quoteIdentifier((string) $column);
             if (is_scalar($value) && $parameterContainer && $driver instanceof DriverInterface) {
                 // use incremental value instead of column name for PDO
                 // @see https://github.com/zendframework/zend-db/issues/35
+                $name = $parameterNames[(string) $column] ?? (string) $column;
                 if ($isPdoDriver) {
-                    $column = 'c_' . $i++;
+                    $name = 'c_' . $i++;
                 }
 
-                $values[] = $driver->formatParameterName((string) $column);
-                $parameterContainer->offsetSet($column, $value);
+                $values[] = $driver->formatParameterName($name);
+                $parameterContainer->offsetSet($name, $value);
                 continue;
             }
 
