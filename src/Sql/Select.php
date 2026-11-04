@@ -13,11 +13,9 @@ use PhpDb\Sql\Predicate\PredicateInterface;
 
 use function array_key_exists;
 use function array_key_first;
-use function array_map;
 use function count;
 use function explode;
 use function gettype;
-use function implode;
 use function is_array;
 use function is_int;
 use function is_numeric;
@@ -31,9 +29,6 @@ use function stripos;
 use function strtolower;
 use function strtoupper;
 use function trim;
-
-use const PREG_SPLIT_DELIM_CAPTURE;
-use const PREG_SPLIT_NO_EMPTY;
 
 /**
  * @api
@@ -757,7 +752,7 @@ class Select extends AbstractPreparableSql
     }
 
     /**
-     * Quote a select, join or group column string as an identifier chain
+     * Quote a select, join or group column string through IdentifierQuoter
      *
      * @param ColumnReference|ColumnValue $column
      * @throws Exception\RuntimeException
@@ -771,7 +766,7 @@ class Select extends AbstractPreparableSql
         ?string $namedParameterPrefix = null,
     ): string {
         if (is_array($column) && ($column['isIdentifier'] ?? false) && is_string($column['column'])) {
-            return ($column['fromTable'] ?? '') . $this->quoteColumnIdentifier($column['column'], $platform);
+            return ($column['fromTable'] ?? '') . IdentifierQuoter::quoteColumn($column['column'], $platform);
         }
 
         return parent::resolveColumnValue($column, $platform, $driver, $parameterContainer, $namedParameterPrefix);
@@ -792,64 +787,11 @@ class Select extends AbstractPreparableSql
         return $this->where ??= new Where();
     }
 
-    /**
-     * Whether fragment quoting renders a column string as valid SQL
-     *
-     * It does when each piece between the safe delimiters (space, `.` and `*`) is quoted as one
-     * whole name and no two pieces are separated by spaces alone.
-     */
-    private function isFragmentQuotable(string $column, PlatformInterface $platform): bool
-    {
-        $previousIsName = false;
-        $pieces         = preg_split('/([ .*])/', $column, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
-        foreach (false === $pieces ? [] : $pieces as $piece) {
-            if (' ' === $piece) {
-                continue;
-            }
-
-            $isName = '.' !== $piece && self::SQL_STAR !== $piece;
-            if (
-                $isName
-                && (
-                    $previousIsName
-                    || $platform->quoteIdentifierInFragment($piece) !== $platform->quoteIdentifier($piece)
-                )
-            ) {
-                return false;
-            }
-
-            $previousIsName = $isName;
-        }
-
-        return true;
-    }
-
     private function prefixFromTable(?string $fromTable, PlatformInterface $platform): string
     {
         return $this->prefixColumnsWithTable && null !== $fromTable && '' !== $fromTable
             ? $fromTable . $platform->getIdentifierSeparator()
             : '';
-    }
-
-    /**
-     * Quote a column string as an identifier chain, splitting only on the table qualifier dot
-     *
-     * A `*` part is left bare. A string holding an inline ` AS ` alias, or one that fragment quoting
-     * already renders as valid SQL, keeps fragment quoting.
-     */
-    private function quoteColumnIdentifier(string $column, PlatformInterface $platform): string
-    {
-        if (stripos($column, needle: ' as ') !== false || $this->isFragmentQuotable($column, $platform)) {
-            return $platform->quoteIdentifierInFragment($column);
-        }
-
-        return implode(
-            $platform->getIdentifierSeparator(),
-            array_map(
-                static fn(string $part): string => self::SQL_STAR === $part ? $part : $platform->quoteIdentifier($part),
-                explode('.', $column),
-            ),
-        );
     }
 
     /**
