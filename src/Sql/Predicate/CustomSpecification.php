@@ -53,11 +53,11 @@ final class CustomSpecification
      */
     public static function expand(string $specification, array $arguments): string
     {
-        $offsets    = self::offsets($arguments);
-        $referenced = [];
-        $sequential = 0;
-        $plain      = null;
-        $expanded   = '';
+        $placeholders = self::placeholders($arguments);
+        $referenced   = [];
+        $sequential   = 0;
+        $plain        = null;
+        $expanded     = '';
 
         /** @var list<string> $parts */
         $parts = preg_split(self::CONVERSION, $specification, flags: PREG_SPLIT_DELIM_CAPTURE);
@@ -79,15 +79,13 @@ final class CustomSpecification
                 throw InvalidArgumentException::forSpecificationMixedPlaceholderStyles($specification);
             }
 
-            $index    = $isPlain ? $sequential++ : (int) $positional - 1;
-            $argument = $arguments[$index] ?? throw InvalidArgumentException::forSpecificationArgumentOutOfRange(
+            $index        = $isPlain ? $sequential++ : (int) $positional - 1;
+            $referenced[] = $index;
+            $expanded     .= $placeholders[$index] ?? throw InvalidArgumentException::forSpecificationArgumentOutOfRange(
                     $specification,
                     $index + 1,
                     count($arguments),
                 );
-
-            $referenced[] = $index;
-            $expanded     .= self::placeholders($argument, $offsets[$index] ?? 1);
         }
 
         $references = array_count_values($referenced);
@@ -118,35 +116,30 @@ final class CustomSpecification
     }
 
     /**
-     * Position of each argument's first rendered value
+     * Positional placeholders for every value each argument renders, keyed by argument index
+     *
+     * An argument's placeholders continue the sequence where the previous argument's ended, and
+     * an empty list renders as NULL.
      *
      * @param list<ArgumentInterface> $arguments
-     * @return array<int, int>
+     * @return array<int, string>
      */
-    private static function offsets(array $arguments): array
+    private static function placeholders(array $arguments): array
     {
-        $offsets  = [];
-        $position = 1;
+        $placeholders = [];
+        $position     = 1;
         foreach ($arguments as $index => $argument) {
-            $offsets[$index] = $position;
-            $position        += $argument instanceof Values ? count($argument->getValue()) : 1;
+            $count = $argument instanceof Values ? count($argument->getValue()) : 1;
+
+            $placeholders[$index] = 0 === $count
+                ? 'NULL'
+                : implode(', ', array_map(
+                    static fn(int $offset): string => "%{$offset}\$s",
+                    range($position, $position + $count - 1),
+                ));
+            $position += $count;
         }
 
-        return $offsets;
-    }
-
-    /**
-     * Positional placeholders for every value an argument renders, starting at $offset
-     */
-    private static function placeholders(ArgumentInterface $argument, int $offset): string
-    {
-        $count = $argument instanceof Values ? count($argument->getValue()) : 1;
-
-        return 0 === $count
-            ? 'NULL'
-            : implode(', ', array_map(
-                static fn(int $position): string => "%{$position}\$s",
-                range($offset, $offset + $count - 1),
-            ));
+        return $placeholders;
     }
 }
