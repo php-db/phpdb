@@ -12,6 +12,9 @@ use function func_get_args;
 use function is_array;
 use function strtolower;
 
+/**
+ * @api
+ */
 class Adapter implements AdapterInterface, Profiler\ProfilerAwareInterface, SchemaAwareInterface
 {
     /**
@@ -30,6 +33,8 @@ class Adapter implements AdapterInterface, Profiler\ProfilerAwareInterface, Sche
 
     /**
      * Create statement
+     *
+     * @param ParameterContainer|array<array-key, mixed> $initialParameters
      */
     #[Override]
     public function createStatement(
@@ -83,24 +88,24 @@ class Adapter implements AdapterInterface, Profiler\ProfilerAwareInterface, Sche
 
     /**
      * {@inheritDoc}
+     *
+     * Each argument names a helper, and the match is strict, so an argument that is not one of
+     * the FUNCTION_* names, whatever its type, adds no helper.
+     *
+     * @mago-expect analysis:mixed-assignment
      */
     #[Override]
     public function getHelpers()
     {
         $functions = [];
-        $platform  = $this->platform;
         foreach (func_get_args() as $arg) {
-            switch ($arg) {
-                case self::FUNCTION_QUOTE_IDENTIFIER:
-                    $functions[] = static function ($value) use ($platform) {
-                        return $platform->quoteIdentifier($value);
-                    };
-                    break;
-                case self::FUNCTION_QUOTE_VALUE:
-                    $functions[] = static function ($value) use ($platform) {
-                        return $platform->quoteValue($value);
-                    };
-                    break;
+            $function = match ($arg) {
+                self::FUNCTION_QUOTE_IDENTIFIER => $this->platform->quoteIdentifier(...),
+                self::FUNCTION_QUOTE_VALUE => $this->platform->quoteValue(...),
+                default => null,
+            };
+            if (null !== $function) {
+                $functions[] = $function;
             }
         }
         return $functions;
@@ -129,6 +134,8 @@ class Adapter implements AdapterInterface, Profiler\ProfilerAwareInterface, Sche
      *
      * Always prepares the statement; never executes it. Use executeQuery()
      * to run the returned statement.
+     *
+     * @param ParameterContainer|array<array-key, mixed> $parameters
      */
     #[Override]
     public function prepareQuery(
@@ -151,6 +158,8 @@ class Adapter implements AdapterInterface, Profiler\ProfilerAwareInterface, Sche
      * query() is a convenience function
      *
      * @deprecated Use prepareQuery() and executeQuery() instead. query() will be removed in a future version.
+     *
+     * @param ParameterContainer|array<array-key, mixed>|string $parametersOrQueryMode
      *
      * @throws Exception\InvalidArgumentException
      * @throws Exception\RuntimeException When execution did not produce a result.

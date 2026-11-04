@@ -69,10 +69,36 @@ final class AdapterTest extends TestCase
     }
 
     #[Test]
+    public function constructorWithProfilerPassesItToAProfilerAwareDriver(): void
+    {
+        $profiler = $this->createStub(Profiler\ProfilerInterface::class);
+        $driver   = $this->createMockForIntersectionOfInterfaces([
+            DriverInterface::class,
+            Profiler\ProfilerAwareInterface::class,
+        ]);
+        $driver->expects(self::once())->method('setProfiler')->with($profiler);
+
+        new Adapter($driver, $this->createStub(PlatformInterface::class), profiler: $profiler);
+    }
+
+    #[Test]
     #[TestDox('unit test: Test createStatement() produces a statement object')]
     public function createStatementDelegatesToDriver(): void
     {
         static::assertSame($this->mockStatement, $this->adapter->createStatement());
+    }
+
+    #[Test]
+    public function createStatementSetsTheInitialParametersOnTheStatement(): void
+    {
+        $this->mockStatement
+            ->expects(self::once())
+            ->method('setParameterContainer')
+            ->with(self::callback(
+                static fn(ParameterContainer $container): bool => ['id' => 5] === $container->getNamedArray(),
+            ));
+
+        $this->adapter->createStatement('SELECT 1', ['id' => 5]);
     }
 
     #[Test]
@@ -145,6 +171,14 @@ final class AdapterTest extends TestCase
     public function getDriverReturnsDriver(): void
     {
         static::assertSame($this->mockDriver, $this->adapter->getDriver());
+    }
+
+    #[Test]
+    public function getHelpersIgnoresUnknownAndNonStringArguments(): void
+    {
+        $functions = $this->adapter->getHelpers('unknown', true, 1, Adapter::FUNCTION_QUOTE_IDENTIFIER);
+
+        static::assertCount(1, $functions);
     }
 
     #[Test]
