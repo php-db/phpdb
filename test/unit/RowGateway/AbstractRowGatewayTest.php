@@ -494,6 +494,40 @@ final class AbstractRowGatewayTest extends TestCase
     }
 
     #[Test]
+    public function saveUpdateWithMissingCompositeKeyColumnReselectsByTheOldKeyValue(): void
+    {
+        $selectMock = $this->getMockBuilder(Select::class)
+            ->onlyMethods(['where'])
+            ->getMock();
+        $selectMock->expects($this->once())
+            ->method('where')
+            ->with(static::equalTo(['one' => 1, 'two' => 2]))
+            ->willReturn($selectMock);
+
+        $sqlMock = $this->getMockBuilder(Sql::class)
+            ->onlyMethods(['select'])
+            ->setConstructorArgs([$this->mockAdapter])
+            ->getMock();
+        $sqlMock->expects($this->any())
+            ->method('select')
+            ->willReturn($selectMock);
+
+        $this->setRowGatewayState(['primaryKeyColumn' => ['one', 'two'], 'sql' => $sqlMock]);
+
+        $this->mockResult
+            ->expects($this->any())
+            ->method('current')
+            ->willReturn(['one' => 1, 'two' => 2, 'name' => 'bar']);
+
+        $this->rowGateway->populate(['one' => 1, 'two' => 2, 'name' => 'foo'], true);
+        // offsetUnset() nulls the column instead of removing it, so drop the key from the data directly
+        $this->setRowGatewayState(['data' => ['one' => 1, 'name' => 'bar']]);
+        $this->rowGateway->save();
+
+        static::assertEquals(['one' => 1, 'two' => 2, 'name' => 'bar'], $this->rowGateway->toArray());
+    }
+
+    #[Test]
     public function toArray(): void
     {
         $this->rowGateway->populate(['id' => 5, 'name' => 'foo'], true);
