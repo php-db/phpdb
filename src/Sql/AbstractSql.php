@@ -249,7 +249,7 @@ abstract class AbstractSql implements SqlInterface
                             $parameterContainer,
                         )
                         : $platform->quoteValue((string) $argument->getValue()),
-                $argument instanceof Identifier => $platform->quoteIdentifierInFragment($argument->getValue()),
+                $argument instanceof Identifier => IdentifierQuoter::quote($argument->getValue(), $platform),
                 $argument instanceof Literal => $argument->getValue(),
                 $argument instanceof Identifiers => $this->processIdentifiersArgument($argument, $platform),
                 $argument instanceof SelectArgument => $this->processExpressionOrSelect(
@@ -332,7 +332,7 @@ abstract class AbstractSql implements SqlInterface
         $processedIdentifiers = [];
 
         foreach ($identifiers as $identifier) {
-            $processedIdentifiers[] = $platform->quoteIdentifierInFragment($identifier);
+            $processedIdentifiers[] = IdentifierQuoter::quote($identifier, $platform);
         }
 
         return implode(', ', $processedIdentifiers);
