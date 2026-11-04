@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace PhpDbTest\Sql;
 
 use Closure;
+use PhpDb\Adapter\Platform\PlatformInterface;
 use PhpDb\Sql\AbstractSql;
 use PhpDb\Sql\Argument;
 use PhpDb\Sql\Delete;
+use PhpDb\Sql\Exception\InvalidArgumentException;
 use PhpDb\Sql\Predicate\Expression;
 use PhpDb\Sql\Predicate\Literal;
 use PhpDb\Sql\Predicate\Predicate;
@@ -26,7 +28,6 @@ use function sprintf;
 #[Group('unit')]
 #[CoversMethod(AbstractSql::class, 'processExpression')]
 #[CoversMethod(AbstractSql::class, 'processIdentifiersArgument')]
-#[CoversMethod(AbstractSql::class, 'quoteIdentifierArgument')]
 final class PredicateIdentifierNameTest extends TestCase
 {
     /**
@@ -71,7 +72,6 @@ final class PredicateIdentifierNameTest extends TestCase
             'dotted hyphen'     => ['t-1.x-y', '`t-1`.`x-y`'],
             'space'             => ['my col', '`my col`'],
             'quote character'   => ['a`b', '`a``b`'],
-            'plus'              => ['a+b', '`a+b`'],
         ];
     }
 
@@ -96,6 +96,45 @@ final class PredicateIdentifierNameTest extends TestCase
     }
 
     /**
+     * @return array<string, array{PlatformInterface, string, InvalidArgumentException}>
+     */
+    public static function rejectedNameProvider(): array
+    {
+        return [
+            'function call'           => [
+                new TrustingSql92Platform(),
+                'COUNT(id)',
+                InvalidArgumentException::forUnquotableIdentifier('COUNT(id)'),
+            ],
+            'spaced minus'            => [
+                new TrustingSql92Platform(),
+                'a - b',
+                InvalidArgumentException::forUnquotableIdentifier('a - b'),
+            ],
+            'arithmetic with hyphen'  => [
+                new TrustingSql92Platform(),
+                'x-y * 2',
+                InvalidArgumentException::forUnquotableIdentifier('x-y * 2'),
+            ],
+            'plus on hyphen platform' => [
+                new TrustingHyphenWordPlatform(),
+                'a+b',
+                InvalidArgumentException::forUnquotableIdentifier('a+b'),
+            ],
+            'empty'                   => [
+                new TrustingSql92Platform(),
+                '',
+                InvalidArgumentException::forEmptyIdentifierPart(''),
+            ],
+            'empty qualifier part'    => [
+                new TrustingSql92Platform(),
+                'a..b',
+                InvalidArgumentException::forEmptyIdentifierPart('a..b'),
+            ],
+        ];
+    }
+
+    /**
      * Names whose fragment quoting renders valid SQL, and that rendering
      *
      * @return array<string, array{string, string}>
@@ -112,7 +151,6 @@ final class PredicateIdentifierNameTest extends TestCase
             'inline alias'       => ['x as y', '"x" as "y"'],
             'inline alias upper' => ['x AS y', '"x" AS "y"'],
             'comma'              => ['a,b', '"a,b"'],
-            'empty'              => ['', ''],
         ];
     }
 
@@ -298,5 +336,20 @@ final class PredicateIdentifierNameTest extends TestCase
             "SELECT \"foo\".* FROM \"foo\" WHERE {$quoted} IS NULL",
             $select->getSqlString(new TrustingSql92Platform()),
         );
+    }
+
+    #[Test]
+    #[DataProvider('rejectedNameProvider')]
+    public function rejectsWhereNamesThatCannotBeQuotedAsWritten(
+        PlatformInterface $platform,
+        string $name,
+        InvalidArgumentException $expected,
+    ): void {
+        $select = new Select('foo');
+        $select->where->equalTo($name, 1);
+
+        $this->expectExceptionObject($expected);
+
+        $select->getSqlString($platform);
     }
 }
