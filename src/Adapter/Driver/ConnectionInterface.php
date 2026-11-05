@@ -6,6 +6,11 @@ namespace PhpDb\Adapter\Driver;
 
 use PhpDb\Adapter\SchemaAwareInterface;
 
+/**
+ * @api
+ *
+ * @psalm-type ConnectionParameters = array<string, mixed>
+ */
 interface ConnectionInterface extends SchemaAwareInterface
 {
     public function beginTransaction(): self;
@@ -18,6 +23,7 @@ interface ConnectionInterface extends SchemaAwareInterface
 
     public function execute(string $sql): ?ResultInterface;
 
+    /** @return ConnectionParameters */
     public function getConnectionParameters(): array;
 
     /**
@@ -41,5 +47,6 @@ interface ConnectionInterface extends SchemaAwareInterface
 
     public function rollback(): self;
 
+    /** @param ConnectionParameters $connectionParameters */
     public function setConnectionParameters(array $connectionParameters): self;
 }

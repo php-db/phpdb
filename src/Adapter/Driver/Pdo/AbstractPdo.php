@@ -18,12 +18,14 @@ use PhpDb\Adapter\Profiler\ProfilerAwareInterface;
 use PhpDb\Adapter\Profiler\ProfilerInterface;
 
 use function extension_loaded;
-use function is_int;
 use function is_numeric;
 use function is_string;
 use function ltrim;
 use function preg_match;
 
+/**
+ * @api
+ */
 abstract class AbstractPdo implements PdoDriverInterface, ProfilerAwareInterface
 {
     protected (PdoConnectionInterface&AbstractConnection&PdoDriverAwareInterface)|PDO $connection;
@@ -51,9 +53,10 @@ abstract class AbstractPdo implements PdoDriverInterface, ProfilerAwareInterface
     }
 
     /**
-     * todo: this needs improved
+     * @param resource|object|string|null $sqlOrResource A resource or object other than a PDOStatement
+     *                                                   is ignored, as with null
      *
-     * @param PDOStatement|resource|string|null $sqlOrResource A non-PDO resource is ignored, as with null
+     * @throws Exception\RuntimeException When the connection is a bare PDO instance.
      */
     #[Override]
     public function createStatement($sqlOrResource = null): StatementInterface
@@ -61,57 +64,70 @@ abstract class AbstractPdo implements PdoDriverInterface, ProfilerAwareInterface
         /** @var Statement $statement */
         $statement = clone $this->statementPrototype;
         if ($sqlOrResource instanceof PDOStatement) {
-            $statement->setResource($sqlOrResource);
-        } else {
-            if (is_string($sqlOrResource)) {
-                $statement->setSql($sqlOrResource);
-            }
-            if (! $this->connection->isConnected()) {
-                $this->connection->connect();
-            }
-            /** @var PDO $resource */
-            $resource = $this->connection->getResource();
-            $statement->initialize($resource);
+            return $statement->setResource($sqlOrResource);
         }
-        return $statement;
+
+        if (is_string($sqlOrResource)) {
+            $statement->setSql($sqlOrResource);
+        }
+
+        $connection = $this->getPdoConnection();
+        if (! $connection->isConnected()) {
+            $connection->connect();
+        }
+
+        /** @var PDO $resource */
+        $resource = $connection->getResource();
+
+        return $statement->initialize($resource);
     }
 
     /**
      * {@inheritDoc}
+     *
+     * An integer name is named only when the type asks for it; with no type, a numeric name is
+     * positional. PDO rejects named parameters outside [a-zA-Z0-9_], see
+     * https://bugs.php.net/bug.php?id=43130.
+     *
+     * The analyzer reads $name as the string that DriverInterface declares, so it reports the
+     * cast that an integer name needs as redundant.
+     *
+     * @throws Exception\RuntimeException When a named parameter contains invalid characters.
+     *
+     * @mago-expect analysis:redundant-cast
      */
     #[Override]
     public function formatParameterName(string|int $name, ?string $type = null): string
     {
-        if (null === $type && ! is_numeric($name) || self::PARAMETERIZATION_NAMED === $type) {
-            // proposed fix for passing $name as int with type self::PARAMETERIZATION_NAMED
-            if (is_int($name) && self::PARAMETERIZATION_NAMED === $type) {
-                $name = (string) $name;
-            }
-            // end proposed fix
-            $name = ltrim($name, ':');
-            // @see https://bugs.php.net/bug.php?id=43130
-            if (preg_match('/[^a-zA-Z0-9_]/', $name)) {
-                throw Exception\RuntimeException::forInvalidPdoParam($name);
-            }
-            return ":{$name}";
+        $isPositional = null === $type ? is_numeric($name) : self::PARAMETERIZATION_NAMED !== $type;
+        if ($isPositional) {
+            return '?';
         }
 
-        return '?';
+        $name = ltrim((string) $name, characters: ':');
+        if (1 === preg_match('/[^a-zA-Z0-9_]/', $name)) {
+            throw Exception\RuntimeException::forInvalidPdoParam($name);
+        }
+
+        return ":{$name}";
     }
 
+    /** @throws Exception\RuntimeException When the connection is a bare PDO instance. */
     #[Override]
     public function getConnection(): PdoConnectionInterface
     {
-        return $this->connection;
+        return $this->getPdoConnection();
     }
 
     /**
      * {@inheritDoc}
+     *
+     * @throws Exception\RuntimeException When the connection is a bare PDO instance.
      */
     #[Override]
     public function getLastGeneratedValue(?string $name = null): string|int|false|null
     {
-        return $this->connection->getLastGeneratedValue($name);
+        return $this->getPdoConnection()->getLastGeneratedValue($name);
     }
 
     /**
@@ -147,5 +163,18 @@ abstract class AbstractPdo implements PdoDriverInterface, ProfilerAwareInterface
             $this->statementPrototype->setProfiler($profiler);
         }
         return $this;
+    }
+
+    /**
+     * The connection property also admits a bare PDO instance, which the driver methods
+     * cannot use: it has no isConnected(), getResource() or getLastGeneratedValue().
+     *
+     * @throws Exception\RuntimeException When the connection is a bare PDO instance.
+     */
+    private function getPdoConnection(): PdoConnectionInterface&AbstractConnection&PdoDriverAwareInterface
+    {
+        return $this->connection instanceof PDO
+            ? throw Exception\RuntimeException::forBarePdoConnection()
+            : $this->connection;
     }
 }

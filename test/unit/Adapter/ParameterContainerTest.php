@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace PhpDbTest\Adapter;
 
+use Closure;
 use Override;
 use PhpDb\Adapter\Exception\InvalidArgumentException;
 use PhpDb\Adapter\ParameterContainer;
 use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestDox;
@@ -38,10 +40,42 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(ParameterContainer::class, '__construct')]
 #[CoversMethod(ParameterContainer::class, 'offsetSetReference')]
 #[CoversMethod(ParameterContainer::class, 'getPositionalArray')]
+#[CoversMethod(ParameterContainer::class, 'nameAt')]
+#[CoversMethod(ParameterContainer::class, 'requireName')]
+#[CoversMethod(ParameterContainer::class, 'requireDataName')]
 #[Group('unit')]
 final class ParameterContainerTest extends TestCase
 {
     protected ParameterContainer $parameterContainer;
+
+    /** @return array<string, array{Closure(ParameterContainer): mixed}> */
+    public static function unknownPositionProvider(): array
+    {
+        return [
+            'get errata'       => [static fn(ParameterContainer $c): mixed => $c->offsetGetErrata(5)],
+            'get max length'   => [static fn(ParameterContainer $c): mixed => $c->offsetGetMaxLength(5)],
+            'set errata'       => [
+                static function (ParameterContainer $c): void {
+                    $c->offsetSetErrata(5, ParameterContainer::TYPE_INTEGER);
+                },
+            ],
+            'set max length'   => [
+                static function (ParameterContainer $c): void {
+                    $c->offsetSetMaxLength(5, 10);
+                },
+            ],
+            'unset errata'     => [
+                static function (ParameterContainer $c): void {
+                    $c->offsetUnsetErrata(5);
+                },
+            ],
+            'unset max length' => [
+                static function (ParameterContainer $c): void {
+                    $c->offsetUnsetMaxLength(5);
+                },
+            ],
+        ];
+    }
 
     #[Test]
     public function constructorWithDataPopulatesContainer(): void
@@ -129,6 +163,14 @@ final class ParameterContainerTest extends TestCase
     }
 
     #[Test]
+    public function offsetExistsIsFalseForANullValue(): void
+    {
+        $container = new ParameterContainer(['foo' => null]);
+
+        static::assertFalse($container->offsetExists('foo'));
+    }
+
+    #[Test]
     #[TestDox('unit test: Test offsetGet() returns proper values via method call and array access')]
     public function offsetGet(): void
     {
@@ -158,6 +200,14 @@ final class ParameterContainerTest extends TestCase
     }
 
     #[Test]
+    public function offsetGetErrataReturnsNullWhenTheParameterHasNoErrata(): void
+    {
+        $container = new ParameterContainer(['foo' => 'bar']);
+
+        static::assertNull($container->offsetGetErrata('foo'));
+    }
+
+    #[Test]
     public function offsetGetErrataThrowsWhenNameDoesNotExist(): void
     {
         $container = new ParameterContainer();
@@ -178,6 +228,14 @@ final class ParameterContainerTest extends TestCase
     }
 
     #[Test]
+    public function offsetGetMaxLengthReturnsNullWhenTheParameterHasNoMaxLength(): void
+    {
+        $container = new ParameterContainer(['foo' => 'bar']);
+
+        static::assertNull($container->offsetGetMaxLength('foo'));
+    }
+
+    #[Test]
     public function offsetGetMaxLengthThrowsWhenNameDoesNotExist(): void
     {
         $container = new ParameterContainer();
@@ -186,6 +244,34 @@ final class ParameterContainerTest extends TestCase
         self::expectExceptionMessage(InvalidArgumentException::MISSING_DATA);
 
         $container->offsetGetMaxLength('nonexistent');
+    }
+
+    #[Test]
+    public function offsetGetResolvesAColonPrefixedNameThroughTheNameMapping(): void
+    {
+        $container = new ParameterContainer();
+        $container->offsetSet('c_0', ':alias');
+        $container->offsetSet('c_0', 'value');
+
+        static::assertSame('value', $container->offsetGet(':alias'));
+    }
+
+    #[Test]
+    public function offsetGetReturnsNullForAMappedNameWhoseParameterIsNotSet(): void
+    {
+        $container = new ParameterContainer();
+        $container->offsetSet('c_0', ':alias');
+        $container->offsetUnset('c_0');
+
+        static::assertNull($container->offsetGet('alias'));
+    }
+
+    #[Test]
+    public function offsetGetReturnsNullForAnIntegerNameThatIsNotSet(): void
+    {
+        $container = new ParameterContainer(['foo' => 'bar']);
+
+        static::assertNull($container->offsetGet(5));
     }
 
     #[Test]
@@ -206,6 +292,15 @@ final class ParameterContainerTest extends TestCase
     }
 
     #[Test]
+    public function offsetHasErrataIsFalseForAnUnknownPosition(): void
+    {
+        $container = new ParameterContainer(['foo' => 'bar']);
+        $container->offsetSetErrata('foo', ParameterContainer::TYPE_INTEGER);
+
+        static::assertFalse($container->offsetHasErrata(5));
+    }
+
+    #[Test]
     #[TestDox('unit test: Test offsetHasMaxLength() will check if errata exists for a particular key')]
     public function offsetHasMaxLength(): void
     {
@@ -220,6 +315,15 @@ final class ParameterContainerTest extends TestCase
         $container->offsetSetMaxLength('foo', 50);
 
         static::assertTrue($container->offsetHasMaxLength(0));
+    }
+
+    #[Test]
+    public function offsetHasMaxLengthIsFalseForAnUnknownPosition(): void
+    {
+        $container = new ParameterContainer(['foo' => 'bar']);
+        $container->offsetSetMaxLength('foo', 10);
+
+        static::assertFalse($container->offsetHasMaxLength(5));
     }
 
     #[Test]
@@ -280,6 +384,16 @@ final class ParameterContainerTest extends TestCase
     {
         $this->parameterContainer->offsetSetMaxLength('foo', 100);
         static::assertSame(100, $this->parameterContainer->offsetGetMaxLength('foo'));
+    }
+
+    #[Test]
+    public function offsetSetAtAKnownPositionDoesNotAddAPosition(): void
+    {
+        $container = new ParameterContainer(['a' => 'one']);
+        $container->offsetSet(0, 'two');
+        $container->offsetSet(1, 'three');
+
+        static::assertSame(['a' => 'two', 1 => 'three'], $container->getNamedArray());
     }
 
     #[Test]
@@ -399,6 +513,16 @@ final class ParameterContainerTest extends TestCase
     }
 
     #[Test]
+    public function offsetUnsetKeepsThePositionOfTheName(): void
+    {
+        $container = new ParameterContainer(['a' => 'one', 'b' => 'two']);
+        $container->offsetUnset(0);
+        $container->offsetSet(0, 'again');
+
+        static::assertSame(['b' => 'two', 'a' => 'again'], $container->getNamedArray());
+    }
+
+    #[Test]
     #[TestDox('unit test: Test offsetUnsetMaxLength() will unset data for a particular key')]
     public function offsetUnsetMaxLength(): void
     {
@@ -426,6 +550,19 @@ final class ParameterContainerTest extends TestCase
         self::expectExceptionMessage(InvalidArgumentException::MISSING_DATA);
 
         $container->offsetUnsetMaxLength('foo');
+    }
+
+    /** @param Closure(ParameterContainer): mixed $call */
+    #[Test]
+    #[DataProvider('unknownPositionProvider')]
+    public function rejectsAnIntegerNameThatIsNotAPosition(Closure $call): void
+    {
+        $container = new ParameterContainer(['foo' => 'bar']);
+
+        self::expectException(InvalidArgumentException::class);
+        self::expectExceptionMessage(InvalidArgumentException::MISSING_DATA);
+
+        $call($container);
     }
 
     #[Test]

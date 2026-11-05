@@ -4,14 +4,17 @@ declare(strict_types=1);
 
 namespace PhpDbTest\Adapter\Driver\Pdo;
 
+use Closure;
 use Error;
 use Override;
 use PDOStatement;
 use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\Driver\Feature\DriverFeatureInterface;
 use PhpDb\Adapter\Driver\Pdo\AbstractPdo;
+use PhpDb\Adapter\Driver\Pdo\AbstractPdoConnection;
 use PhpDb\Adapter\Driver\Pdo\Result;
 use PhpDb\Adapter\Driver\Pdo\Statement;
+use PhpDb\Adapter\Exception\RuntimeException as AdapterRuntimeException;
 use PhpDb\Adapter\Profiler\ProfilerInterface;
 use PhpDb\Exception\RuntimeException;
 use PhpDbTest\Adapter\Driver\Pdo\TestAsset\SqliteMemoryPdo;
@@ -33,10 +36,21 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(AbstractPdo::class, 'setProfiler')]
 #[CoversMethod(AbstractPdo::class, 'getProfiler')]
 #[CoversMethod(AbstractPdo::class, 'formatParameterName')]
+#[CoversMethod(AbstractPdo::class, 'getPdoConnection')]
 #[Group('unit')]
 final class PdoTest extends TestCase
 {
     protected TestPdo $pdo;
+
+    /** @return array<string, array{Closure(AbstractPdo): mixed}> */
+    public static function connectionOperationProvider(): array
+    {
+        return [
+            'create statement'      => [static fn(AbstractPdo $pdo): mixed => $pdo->createStatement('SELECT 1')],
+            'get connection'        => [static fn(AbstractPdo $pdo): mixed => $pdo->getConnection()],
+            'get last generated id' => [static fn(AbstractPdo $pdo): mixed => $pdo->getLastGeneratedValue()],
+        ];
+    }
 
     /** @psalm-return array<array-key, array{0: string}> */
     public static function getInvalidParamName(): array
@@ -91,6 +105,37 @@ final class PdoTest extends TestCase
         $pdo        = new TestPdo($connection);
 
         static::assertSame($connection, $pdo->getConnection());
+    }
+
+    #[Test]
+    public function createStatementConnectsADisconnectedConnection(): void
+    {
+        $connection = $this->createMock(AbstractPdoConnection::class);
+        $connection->method('isConnected')->willReturn(false);
+        $connection->method('getResource')->willReturn(new SqliteMemoryPdo());
+        $connection->expects(self::once())->method('connect');
+
+        (new TestPdo($connection))->createStatement('SELECT 1');
+    }
+
+    #[Test]
+    public function createStatementDoesNotReconnectAConnectedConnection(): void
+    {
+        $connection = $this->createMock(AbstractPdoConnection::class);
+        $connection->method('isConnected')->willReturn(true);
+        $connection->method('getResource')->willReturn(new SqliteMemoryPdo());
+        $connection->expects(self::never())->method('connect');
+
+        (new TestPdo($connection))->createStatement('SELECT 1');
+    }
+
+    #[Test]
+    public function createStatementReturnsACopyOfThePrototype(): void
+    {
+        $prototype = new Statement();
+        $pdo       = new TestPdo(new TestConnection(new SqliteMemoryPdo()), $prototype);
+
+        static::assertNotSame($prototype, $pdo->createStatement('SELECT 1'));
     }
 
     #[Test]
@@ -217,6 +262,17 @@ final class PdoTest extends TestCase
         static::assertSame($profiler, $pdo->getProfiler());
         static::assertSame($profiler, $connection->getProfiler());
         static::assertSame($profiler, $statement->getProfiler());
+    }
+
+    /** @param Closure(AbstractPdo): mixed $operation */
+    #[Test]
+    #[DataProvider('connectionOperationProvider')]
+    public function throwsForABarePdoConnection(Closure $operation): void
+    {
+        self::expectException(AdapterRuntimeException::class);
+        self::expectExceptionMessage(AdapterRuntimeException::BARE_PDO_CONNECTION);
+
+        $operation(new TestPdo(new SqliteMemoryPdo()));
     }
 
     /**

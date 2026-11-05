@@ -11,9 +11,12 @@ use PhpDb\Sql\Platform\PlatformDecoratorInterface;
 
 use function addcslashes;
 
+/**
+ * @api
+ */
 class Sql92 extends AbstractPlatform
 {
-    final public const PLATFORM_NAME = 'SQL92';
+    final public const string PLATFORM_NAME = 'SQL92';
 
     /**
      * {@inheritDoc}
@@ -35,13 +38,15 @@ class Sql92 extends AbstractPlatform
 
     /**
      * {@inheritDoc}
+     *
+     * @throws Exception\RuntimeException When no driver is available to quote safely.
      */
     #[Override]
     public function quoteValue(string $value): string
     {
-        if (! isset($this->driver)) {
+        if (null === ($this->driver ?? null)) {
             throw Exception\RuntimeException::forVulnerablePlatformQuote(static::class, __METHOD__);
         }
-        return '\'' . addcslashes($value, "\x00\n\r\\'\"\x1a") . '\'';
+        return '\'' . addcslashes($value, characters: "\x00\n\r\\'\"\x1a") . '\'';
     }
 }

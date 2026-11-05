@@ -6,6 +6,9 @@ namespace PhpDb\Adapter\Exception;
 
 use PhpDb\Exception;
 
+/**
+ * @api
+ */
 class InvalidArgumentException extends Exception\InvalidArgumentException
 {
     final public const string INCORRECT_FLAG = 'Flag incorrectly set';
