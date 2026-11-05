@@ -92,16 +92,23 @@ class Adapter implements AdapterInterface, Profiler\ProfilerAwareInterface, Sche
      * Each argument names a helper, and the match is strict, so an argument that is not one of
      * the FUNCTION_* names, whatever its type, adds no helper.
      *
+     * Every helper names its parameter $value so callers can pass it by name, which is why
+     * quoteIdentifier(), whose own parameter is $identifier, sits behind a forwarding closure.
+     *
      * @mago-expect analysis:mixed-assignment
+     * @mago-expect lint:prefer-first-class-callable
      */
     #[Override]
     public function getHelpers()
     {
         $functions = [];
+        $platform  = $this->platform;
         foreach (func_get_args() as $arg) {
             $function = match ($arg) {
-                self::FUNCTION_QUOTE_IDENTIFIER => $this->platform->quoteIdentifier(...),
-                self::FUNCTION_QUOTE_VALUE => $this->platform->quoteValue(...),
+                self::FUNCTION_QUOTE_IDENTIFIER => static fn(string $value): string => $platform->quoteIdentifier(
+                    $value,
+                ),
+                self::FUNCTION_QUOTE_VALUE => $platform->quoteValue(...),
                 default => null,
             };
             if (null !== $function) {

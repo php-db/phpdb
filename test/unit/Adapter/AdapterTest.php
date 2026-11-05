@@ -20,6 +20,7 @@ use PhpDb\ResultSet\ResultSet;
 use PhpDb\ResultSet\ResultSetInterface;
 use PhpDbTest\TestAsset\TemporaryResultSet;
 use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestDox;
@@ -51,6 +52,17 @@ final class AdapterTest extends TestCase
     protected StatementInterface&MockObject $mockStatement;
 
     protected Adapter $adapter;
+
+    /**
+     * @return array<string, array{string, non-empty-string}>
+     */
+    public static function helperProvider(): array
+    {
+        return [
+            'quote identifier' => [Adapter::FUNCTION_QUOTE_IDENTIFIER, 'quoteIdentifier'],
+            'quote value'      => [Adapter::FUNCTION_QUOTE_VALUE, 'quoteValue'],
+        ];
+    }
 
     #[Test]
     public function constructorWithProfilerDelegatesToSetProfiler(): void
@@ -171,6 +183,23 @@ final class AdapterTest extends TestCase
     public function getDriverReturnsDriver(): void
     {
         static::assertSame($this->mockDriver, $this->adapter->getDriver());
+    }
+
+    /**
+     * @param non-empty-string $platformMethod
+     */
+    #[Test]
+    #[DataProvider('helperProvider')]
+    public function getHelpersFunctionsAcceptValueAsNamedArgument(string $helper, string $platformMethod): void
+    {
+        $this->mockPlatform
+            ->method($platformMethod)
+            ->with('test')
+            ->willReturn('"test"');
+
+        $functions = $this->adapter->getHelpers($helper);
+
+        static::assertSame('"test"', $functions[0](value: 'test'));
     }
 
     #[Test]
