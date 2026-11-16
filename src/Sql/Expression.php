@@ -160,7 +160,7 @@ class Expression extends AbstractExpression
      * @throws Exception\RuntimeException
      */
     #[Override]
-    public function setSpecification(string $specification): static
+    final public function setSpecification(string $specification): static
     {
         throw Exception\RuntimeException::forUnsupportedSpecificationOverride(static::class);
     }
