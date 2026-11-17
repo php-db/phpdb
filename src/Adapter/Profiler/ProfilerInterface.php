@@ -6,6 +6,9 @@ namespace PhpDb\Adapter\Profiler;
 
 use PhpDb\Adapter\StatementContainerInterface;
 
+/**
+ * @api
+ */
 interface ProfilerInterface
 {
     /**

@@ -8,8 +8,14 @@ use Override;
 use PhpDb\Adapter\Profiler\ProfilerAwareInterface;
 use PhpDb\Adapter\Profiler\ProfilerInterface;
 
+/**
+ * @api
+ *
+ * @psalm-import-type ConnectionParameters from ConnectionInterface
+ */
 abstract class AbstractConnection implements ConnectionInterface, ProfilerAwareInterface
 {
+    /** @var ConnectionParameters */
     protected array $connectionParameters = [];
 
     protected ?string $driverName;
@@ -34,7 +40,11 @@ abstract class AbstractConnection implements ConnectionInterface, ProfilerAwareI
         return $this;
     }
 
-    /** Get connection parameters */
+    /**
+     * Get connection parameters
+     *
+     * @return ConnectionParameters
+     */
     #[Override]
     public function getConnectionParameters(): array
     {
@@ -53,7 +63,7 @@ abstract class AbstractConnection implements ConnectionInterface, ProfilerAwareI
     }
 
     /**
-     * @return resource|null
+     * @return resource|object|null
      */
     #[Override]
     public function getResource()
@@ -72,6 +82,7 @@ abstract class AbstractConnection implements ConnectionInterface, ProfilerAwareI
         return $this->inTransaction;
     }
 
+    /** @param ConnectionParameters $connectionParameters */
     #[Override]
     public function setConnectionParameters(array $connectionParameters): ConnectionInterface
     {

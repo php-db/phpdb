@@ -9,6 +9,7 @@ use PhpDb\Adapter\Driver\AbstractConnection;
 use PhpDb\Adapter\Driver\ConnectionInterface;
 use PhpDb\Adapter\Driver\Pdo\AbstractPdoConnection;
 use PhpDb\Adapter\Exception\RuntimeException;
+use PhpDbTest\Adapter\Driver\Pdo\TestAsset\SqliteMemoryPdo;
 use PhpDbTest\TestAsset\ConnectionWrapper;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\CoversMethod;
@@ -39,6 +40,29 @@ final class ConnectionTransactionsTest extends TestCase
     {
         $this->wrapper->beginTransaction();
         static::assertTrue($this->wrapper->inTransaction());
+    }
+
+    #[Test]
+    public function beginTransactionStartsATransactionOnThePdoResource(): void
+    {
+        $pdo        = new SqliteMemoryPdo();
+        $connection = new ConnectionWrapper($pdo);
+
+        $connection->beginTransaction();
+
+        static::assertTrue($pdo->inTransaction());
+    }
+
+    #[Test]
+    public function commitCommitsThePdoResourceTransaction(): void
+    {
+        $pdo        = new SqliteMemoryPdo();
+        $connection = new ConnectionWrapper($pdo);
+        $connection->beginTransaction();
+
+        $connection->commit();
+
+        static::assertFalse($pdo->inTransaction());
     }
 
     #[Test]
@@ -131,6 +155,18 @@ final class ConnectionTransactionsTest extends TestCase
     {
         $this->wrapper->beginTransaction();
         static::assertInstanceOf(ConnectionInterface::class, $this->wrapper->rollback());
+    }
+
+    #[Test]
+    public function rollbackRollsBackThePdoResourceTransaction(): void
+    {
+        $pdo        = new SqliteMemoryPdo();
+        $connection = new ConnectionWrapper($pdo);
+        $connection->beginTransaction();
+
+        $connection->rollback();
+
+        static::assertFalse($pdo->inTransaction());
     }
 
     #[Test]
