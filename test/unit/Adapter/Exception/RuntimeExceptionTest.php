@@ -19,10 +19,13 @@ use function sprintf;
 
 #[Group('unit')]
 #[CoversMethod(RuntimeException::class, 'forAlreadyPrepared')]
+#[CoversMethod(RuntimeException::class, 'forBarePdoConnection')]
 #[CoversMethod(RuntimeException::class, 'forDisconnectedRollback')]
 #[CoversMethod(RuntimeException::class, 'forDriverError')]
 #[CoversMethod(RuntimeException::class, 'forForwardOnlyRewind')]
 #[CoversMethod(RuntimeException::class, 'forInvalidPdoParam')]
+#[CoversMethod(RuntimeException::class, 'forMissingConnectionResource')]
+#[CoversMethod(RuntimeException::class, 'forMissingDriver')]
 #[CoversMethod(RuntimeException::class, 'forMissingDsn')]
 #[CoversMethod(RuntimeException::class, 'forMissingPdoExtension')]
 #[CoversMethod(RuntimeException::class, 'forMissingQueryResult')]
@@ -43,6 +46,11 @@ final class RuntimeExceptionTest extends TestCase
                 [],
                 RuntimeException::ALREADY_PREPARED,
             ],
+            'bare pdo connection'          => [
+                'forBarePdoConnection',
+                [],
+                RuntimeException::BARE_PDO_CONNECTION,
+            ],
             'disconnected rollback'        => [
                 'forDisconnectedRollback',
                 [],
@@ -62,6 +70,16 @@ final class RuntimeExceptionTest extends TestCase
                 'forInvalidPdoParam',
                 ['bad-name'],
                 RuntimeException::INVALID_PDO_PARAM,
+            ],
+            'missing connection resource'  => [
+                'forMissingConnectionResource',
+                [],
+                RuntimeException::MISSING_CONNECTION_RESOURCE,
+            ],
+            'missing driver'               => [
+                'forMissingDriver',
+                [],
+                RuntimeException::MISSING_DRIVER,
             ],
             'missing dsn'                  => [
                 'forMissingDsn',

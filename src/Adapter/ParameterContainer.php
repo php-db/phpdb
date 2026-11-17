@@ -21,17 +21,24 @@ use function key;
 use function ltrim;
 use function next;
 use function reset;
+use function str_starts_with;
 use function substr;
 
+/**
+ * @api
+ *
+ * @implements Iterator<array-key, mixed>
+ * @implements ArrayAccess<array-key, mixed>
+ */
 class ParameterContainer implements Iterator, ArrayAccess, Countable
 {
-    public const TYPE_AUTO    = 'auto';
-    public const TYPE_NULL    = 'null';
-    public const TYPE_DOUBLE  = 'double';
-    public const TYPE_INTEGER = 'integer';
-    public const TYPE_BINARY  = 'binary';
-    public const TYPE_STRING  = 'string';
-    public const TYPE_LOB     = 'lob';
+    public const string TYPE_AUTO    = 'auto';
+    public const string TYPE_NULL    = 'null';
+    public const string TYPE_DOUBLE  = 'double';
+    public const string TYPE_INTEGER = 'integer';
+    public const string TYPE_BINARY  = 'binary';
+    public const string TYPE_STRING  = 'string';
+    public const string TYPE_LOB     = 'lob';
 
     /**
      * Data
@@ -62,6 +69,8 @@ class ParameterContainer implements Iterator, ArrayAccess, Countable
 
     /**
      * Constructor
+     *
+     * @param array<array-key, mixed> $data
      */
     public function __construct(array $data = [])
     {
@@ -159,11 +168,14 @@ class ParameterContainer implements Iterator, ArrayAccess, Countable
     #[ReturnTypeWillChange]
     public function offsetExists(mixed $name): bool
     {
-        return isset($this->data[$name]);
+        return null !== ($this->data[$name] ?? null);
     }
 
     /**
      * Offset get
+     *
+     * A name that is not set is looked up again through the name mapping, without its
+     * leading colon.
      *
      * @param  string|int $name
      */
@@ -171,18 +183,17 @@ class ParameterContainer implements Iterator, ArrayAccess, Countable
     #[ReturnTypeWillChange]
     public function offsetGet(mixed $name): mixed
     {
-        if (isset($this->data[$name])) {
+        if (null !== ($this->data[$name] ?? null)) {
             return $this->data[$name];
         }
 
-        $normalizedName = ltrim($name, ':');
-        if (
-            isset($this->nameMapping[$normalizedName], $this->data[$this->nameMapping[$normalizedName]])
-        ) {
-            return $this->data[$this->nameMapping[$normalizedName]];
+        if (! is_string($name)) {
+            return null;
         }
 
-        return null;
+        $mappedName = $this->nameMapping[ltrim($name, characters: ':')] ?? null;
+
+        return null === $mappedName ? null : $this->data[$mappedName] ?? null;
     }
 
     /**
@@ -192,13 +203,9 @@ class ParameterContainer implements Iterator, ArrayAccess, Countable
      */
     public function offsetGetErrata(string|int $name): mixed
     {
-        if (is_int($name)) {
-            $name = $this->positions[$name];
-        }
-        if (! array_key_exists($name, $this->data)) {
-            throw Exception\InvalidArgumentException::forMissingData();
-        }
-        return $this->errata[$name];
+        $name = $this->requireDataName($name);
+
+        return $this->errata[$name] ?? null;
     }
 
     /**
@@ -208,13 +215,9 @@ class ParameterContainer implements Iterator, ArrayAccess, Countable
      */
     public function offsetGetMaxLength(string|int $name): mixed
     {
-        if (is_int($name)) {
-            $name = $this->positions[$name];
-        }
-        if (! array_key_exists($name, $this->data)) {
-            throw Exception\InvalidArgumentException::forMissingData();
-        }
-        return $this->maxLength[$name];
+        $name = $this->requireDataName($name);
+
+        return $this->maxLength[$name] ?? null;
     }
 
     /**
@@ -222,10 +225,9 @@ class ParameterContainer implements Iterator, ArrayAccess, Countable
      */
     public function offsetHasErrata(string|int $name): bool
     {
-        if (is_int($name)) {
-            $name = $this->positions[$name];
-        }
-        return isset($this->errata[$name]);
+        $name = $this->nameAt($name);
+
+        return null !== $name && null !== ($this->errata[$name] ?? null);
     }
 
     /**
@@ -233,89 +235,82 @@ class ParameterContainer implements Iterator, ArrayAccess, Countable
      */
     public function offsetHasMaxLength(string|int $name): bool
     {
-        if (is_int($name)) {
-            $name = $this->positions[$name];
-        }
-        return isset($this->maxLength[$name]);
+        $name = $this->nameAt($name);
+
+        return null !== $name && null !== ($this->maxLength[$name] ?? null);
     }
 
     /**
      * Offset set
      *
-     * @param string|int|null $name
+     * An integer name addresses an existing position, or adds a parameter named after it. A
+     * string name may be given with a leading colon, and either form follows the name mapping.
+     * A null name appends a parameter named after the current count. Any other name is rejected.
+     *
+     * @param mixed $name
      * @throws Exception\InvalidArgumentException
      */
     #[Override]
     #[ReturnTypeWillChange]
     public function offsetSet(mixed $name, mixed $value, mixed $errata = null, mixed $maxLength = null): void
     {
-        $isNewPosition = true;
+        $key = match (true) {
+            is_int($name)    => $this->positions[$name] ?? (string) $name,
+            is_string($name) => $this->nameMapping[str_starts_with($name, ':') ? substr($name, offset: 1) : $name]
+                ?? $name,
+            null === $name => (string) count($this->data),
+            default => throw Exception\InvalidArgumentException::forInvalidKeyType(),
+        };
 
-        if (is_int($name)) {
-            if (isset($this->positions[$name])) {
-                $isNewPosition = false;
-                $name          = $this->positions[$name];
-            } else {
-                $name = (string) $name;
-            }
-        } elseif (is_string($name)) {
-            if (':' === $name[0]) {
-                $normalizedName = substr($name, 1);
-                if (isset($this->nameMapping[$normalizedName])) {
-                    $name = $this->nameMapping[$normalizedName];
-                }
-            } elseif (isset($this->nameMapping[$name])) {
-                $name = $this->nameMapping[$name];
-            }
+        $isNewPosition = is_int($name)
+            ? ! array_key_exists($name, $this->positions)
+            : null === ($this->data[$key] ?? null);
 
-            $isNewPosition = ! isset($this->data[$name]);
-
-            if (is_string($value) && isset($value[0]) && ':' === $value[0]) {
-                $this->nameMapping[substr($value, 1)] = $name;
-            }
-        } elseif (null === $name) {
-            $name = (string) count($this->data);
-        } else {
-            throw Exception\InvalidArgumentException::forInvalidKeyType();
+        if (is_string($name) && is_string($value) && str_starts_with($value, ':')) {
+            $this->nameMapping[substr($value, offset: 1)] = $key;
         }
 
         if ($isNewPosition) {
-            $this->positions[] = $name;
+            $this->positions[] = $key;
         }
 
-        $this->data[$name] = $value;
+        $this->data[$key] = $value;
 
         if (null !== $errata) {
-            $this->errata[$name] = $errata;
+            $this->errata[$key] = $errata;
         }
 
         if (null !== $maxLength) {
-            $this->maxLength[$name] = $maxLength;
+            $this->maxLength[$key] = $maxLength;
         }
     }
 
     /**
      * Offset set errata
+     *
+     * @throws Exception\InvalidArgumentException When an integer name is not a known position.
      */
     public function offsetSetErrata(string|int $name, mixed $errata): void
     {
-        if (is_int($name)) {
-            $name = $this->positions[$name];
-        }
-        $this->errata[$name] = $errata;
+        $this->errata[$this->requireName($name)] = $errata;
     }
 
     /**
      * Offset set max length
+     *
+     * @throws Exception\InvalidArgumentException When an integer name is not a known position.
      */
     public function offsetSetMaxLength(string|int $name, mixed $maxLength): void
     {
-        if (is_int($name)) {
-            $name = $this->positions[$name];
-        }
-        $this->maxLength[$name] = $maxLength;
+        $this->maxLength[$this->requireName($name)] = $maxLength;
     }
 
+    /**
+     * Bind a parameter to another by reference. Referencing a name that is not set creates it
+     * as null, so the two stay bound when either is set later.
+     *
+     * @mago-expect analysis:possibly-undefined-string-array-index
+     */
     public function offsetSetReference(string|int $name, string|int $from): void
     {
         $this->data[$name] = &$this->data[$from];
@@ -323,13 +318,16 @@ class ParameterContainer implements Iterator, ArrayAccess, Countable
 
     /**
      * Offset unset
+     *
+     * An integer name addresses a position when one exists, and is used as the name otherwise.
+     * The name keeps its position, so later positions do not shift.
      */
     #[Override]
     #[ReturnTypeWillChange]
     public function offsetUnset(mixed $name): void
     {
-        if (is_int($name) && isset($this->positions[$name])) {
-            $name = $this->positions[$name];
+        if (is_int($name)) {
+            $name = $this->positions[$name] ?? $name;
         }
         unset($this->data[$name]);
     }
@@ -341,10 +339,8 @@ class ParameterContainer implements Iterator, ArrayAccess, Countable
      */
     public function offsetUnsetErrata(string|int $name): void
     {
-        if (is_int($name)) {
-            $name = $this->positions[$name];
-        }
-        if (! array_key_exists($name, $this->errata)) {
+        $name = $this->nameAt($name);
+        if (null === $name || ! array_key_exists($name, $this->errata)) {
             throw Exception\InvalidArgumentException::forMissingData();
         }
         $this->errata[$name] = null;
@@ -357,10 +353,8 @@ class ParameterContainer implements Iterator, ArrayAccess, Countable
      */
     public function offsetUnsetMaxLength(string|int $name): void
     {
-        if (is_int($name)) {
-            $name = $this->positions[$name];
-        }
-        if (! array_key_exists($name, $this->maxLength)) {
+        $name = $this->nameAt($name);
+        if (null === $name || ! array_key_exists($name, $this->maxLength)) {
             throw Exception\InvalidArgumentException::forMissingData();
         }
         $this->maxLength[$name] = null;
@@ -378,11 +372,17 @@ class ParameterContainer implements Iterator, ArrayAccess, Countable
 
     /**
      * Set from array
+     *
+     * Values are parameter values of any type.
+     *
+     * @param array<array-key, mixed> $data
+     *
+     * @mago-expect analysis:mixed-assignment
      */
     public function setFromArray(array $data): static
     {
-        foreach ($data as $n => $v) {
-            $this->offsetSet($n, $v);
+        foreach ($data as $name => $value) {
+            $this->offsetSet($name, $value);
         }
         return $this;
     }
@@ -395,5 +395,27 @@ class ParameterContainer implements Iterator, ArrayAccess, Countable
     public function valid(): bool
     {
         return current($this->data) !== false;
+    }
+
+    /** Resolve an integer name to the parameter name at that position; null when there is none. */
+    private function nameAt(string|int $name): ?string
+    {
+        return is_int($name) ? $this->positions[$name] ?? null : $name;
+    }
+
+    /** @throws Exception\InvalidArgumentException When the name does not address a parameter. */
+    private function requireDataName(string|int $name): string
+    {
+        $name = $this->requireName($name);
+
+        return array_key_exists($name, $this->data)
+            ? $name
+            : throw Exception\InvalidArgumentException::forMissingData();
+    }
+
+    /** @throws Exception\InvalidArgumentException When an integer name is not a known position. */
+    private function requireName(string|int $name): string
+    {
+        return $this->nameAt($name) ?? throw Exception\InvalidArgumentException::forMissingData();
     }
 }
