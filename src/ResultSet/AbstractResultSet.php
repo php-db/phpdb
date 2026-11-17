@@ -183,11 +183,11 @@ abstract class AbstractResultSet implements ResultSetInterface
     /**
      * Retrieve count of fields in individual rows of the result set
      *
-     * The first row is counted: a Countable row by its count(), an array by its elements and
-     * any other object by its public properties, as ObjectResultSet::toArray() reads them.
+     * The first row is counted as an (array) cast would count it: a Countable row by its
+     * count(), an array by its elements, any other object by all of its properties
+     * (non-public ones included), null as 0 and any other scalar as 1.
      *
      * @throws RuntimeException
-     * @throws UnexpectedValueException If the first row is a scalar or null, which has no fields.
      */
     #[Override]
     public function getFieldCount(): int
