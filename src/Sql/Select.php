@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace PhpDb\Sql;
 
 use Closure;
+use Override;
 use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\ParameterContainer;
 use PhpDb\Adapter\Platform\PlatformInterface;
@@ -12,6 +13,7 @@ use PhpDb\Sql\Predicate\PredicateInterface;
 
 use function array_key_exists;
 use function array_key_first;
+use function array_keys;
 use function count;
 use function explode;
 use function is_array;
@@ -35,7 +37,8 @@ use function trim;
  * @property ?Having $having
  * @property ?Join $joins
  * @psalm-import-type Specification from AbstractSql
- * @psalm-import-type SqlParameterValue from AbstractSql
+ * @psalm-import-type ColumnReference from AbstractSql
+ * @psalm-import-type ColumnValue from AbstractSql
  * @psalm-import-type PredicateValue from Predicate\PredicateSet
  * @psalm-import-type JoinName from Join
  * @psalm-type TableReference = string|TableIdentifier|array<string, string|TableIdentifier|Select>
@@ -635,6 +638,10 @@ class Select extends AbstractPreparableSql
     /**
      * Process the select part
      *
+     * The quantifier binds first and the columns after it, in the order their placeholders appear in
+     * the SQL. The FROM table must be resolved before the columns, which are prefixed with it, so it
+     * binds into its own container and its parameters are appended after the columns.
+     *
      * @return list<string|list<list<string>>>
      * @throws Exception\RuntimeException
      */
@@ -645,7 +652,10 @@ class Select extends AbstractPreparableSql
     ): array {
         $expr = 1;
 
-        [$table, $fromTable] = $this->resolveSelectTable($this->table, $platform, $driver, $parameterContainer);
+        $quantifier      = $this->renderQuantifier($platform, $driver, $parameterContainer);
+        $tableParameters = $parameterContainer instanceof ParameterContainer ? new ParameterContainer() : null;
+
+        [$table, $fromTable] = $this->resolveSelectTable($this->table, $platform, $driver, $tableParameters);
         $columns = [];
         foreach ($this->columns as $columnIndexOrAs => $column) {
             if (self::SQL_STAR === $column) {
@@ -677,7 +687,7 @@ class Select extends AbstractPreparableSql
 
         foreach ($this->getJoins()->getJoins() as $join) {
             $joinName = is_array($join['name']) ? array_key_first($join['name']) : $join['name'];
-            $joinName = $this->resolveTable($joinName, $platform, $driver, $parameterContainer);
+            $joinName = $this->resolveTable($joinName, $platform, $driver);
 
             foreach ($join['columns'] as $jKey => $jColumn) {
                 $jColumns   = [];
@@ -710,11 +720,8 @@ class Select extends AbstractPreparableSql
             }
         }
 
-        $quantifier = null;
-        if ($this->quantifier) {
-            $quantifier = $this->quantifier instanceof ExpressionInterface
-                ? $this->processExpression($this->quantifier, $platform, $driver, $parameterContainer, 'quantifier')
-                : $this->quantifier;
+        if ($parameterContainer instanceof ParameterContainer && $tableParameters instanceof ParameterContainer) {
+            $this->copyParameters($tableParameters, $parameterContainer);
         }
 
         if (null === $table) {
@@ -766,6 +773,42 @@ class Select extends AbstractPreparableSql
         ];
     }
 
+    /**
+     * Quote a select, join or group column string through IdentifierQuoter
+     *
+     * @param ColumnReference|ColumnValue $column
+     * @throws Exception\RuntimeException
+     */
+    #[Override]
+    protected function resolveColumnValue(
+        Select|array|string|int|float|bool|ExpressionInterface|null $column,
+        PlatformInterface $platform,
+        ?DriverInterface $driver = null,
+        ?ParameterContainer $parameterContainer = null,
+        ?string $namedParameterPrefix = null,
+    ): string {
+        if (is_array($column) && ($column['isIdentifier'] ?? false) && is_string($column['column'])) {
+            return ($column['fromTable'] ?? '') . IdentifierQuoter::quoteColumn($column['column'], $platform);
+        }
+
+        return parent::resolveColumnValue($column, $platform, $driver, $parameterContainer, $namedParameterPrefix);
+    }
+
+    /**
+     * Copy each parameter with its type and maximum length, keeping their order
+     */
+    private function copyParameters(ParameterContainer $source, ParameterContainer $target): void
+    {
+        foreach (array_keys($source->getNamedArray()) as $name) {
+            $target->offsetSet(
+                $name,
+                $source->offsetGet($name),
+                $source->offsetHasErrata($name) ? $source->offsetGetErrata($name) : null,
+                $source->offsetHasMaxLength($name) ? $source->offsetGetMaxLength($name) : null,
+            );
+        }
+    }
+
     private function getHaving(): Having
     {
         return $this->having ??= new Having();
@@ -786,6 +829,21 @@ class Select extends AbstractPreparableSql
         return $this->prefixColumnsWithTable && null !== $fromTable && '' !== $fromTable
             ? $fromTable . $platform->getIdentifierSeparator()
             : '';
+    }
+
+    /** @throws Exception\RuntimeException */
+    private function renderQuantifier(
+        PlatformInterface $platform,
+        ?DriverInterface $driver,
+        ?ParameterContainer $parameterContainer,
+    ): ?string {
+        if (! $this->quantifier) {
+            return null;
+        }
+
+        return $this->quantifier instanceof ExpressionInterface
+            ? $this->processExpression($this->quantifier, $platform, $driver, $parameterContainer, 'quantifier')
+            : $this->quantifier;
     }
 
     /**
