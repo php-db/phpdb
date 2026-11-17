@@ -7,30 +7,6 @@ message = 'Return type `int|null` of `PhpDb\ResultSet\AbstractResultSet::count()
 count = 1
 
 [[issues]]
-file = "src/ResultSet/AbstractResultSet.php"
-code = "mixed-assignment"
-message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
-count = 2
-
-[[issues]]
-file = "src/ResultSet/HydratingResultSet.php"
-code = "redundant-docblock-type"
-message = "Redundant docblock type for variable `$row`."
-count = 1
-
-[[issues]]
-file = "src/ResultSet/ObjectResultSet.php"
-code = "redundant-docblock-type"
-message = "Redundant docblock type for variable `$row`."
-count = 1
-
-[[issues]]
-file = "src/ResultSet/RowPrototypeResultSet.php"
-code = "redundant-condition"
-message = "Redundant ternary operator: condition is always truthy."
-count = 1
-
-[[issues]]
 file = "src/RowGateway/AbstractRowGateway.php"
 code = "imprecise-type"
 message = "Type `array` in parameter `$array` is imprecise, equivalent to `array<array-key, mixed>`."
