@@ -38,7 +38,7 @@ interface ConnectionInterface extends SchemaAwareInterface
      *
      * @return resource|object|null
      */
-    public function getResource();
+    public function getResource(): mixed;
 
     /** Checks whether the connection is in transaction state. */
     public function inTransaction(): bool;

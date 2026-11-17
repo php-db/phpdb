@@ -22,9 +22,9 @@ interface StatementInterface extends StatementContainerInterface
     /**
      * Get resource
      *
-     * @return resource|false|null
+     * @return resource|object|false|null
      */
-    public function getResource();
+    public function getResource(): mixed;
 
     /** Check if is prepared */
     public function isPrepared(): bool;

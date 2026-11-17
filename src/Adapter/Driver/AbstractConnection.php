@@ -27,8 +27,15 @@ abstract class AbstractConnection implements ConnectionInterface, ProfilerAwareI
 
     protected ?ProfilerInterface $profiler = null;
 
-    /** Extending classes must be covariant. */
-    protected $resource;
+    /**
+     * The driver's native connection handle, or null while disconnected. It is typed mixed
+     * because a native extension may hand back a resource, which has no declarable type, and
+     * property types are invariant, so a driver narrows it where it reads it, not by
+     * redeclaring it.
+     *
+     * @var resource|object|null
+     */
+    protected mixed $resource = null;
 
     #[Override]
     public function disconnect(): ConnectionInterface
@@ -66,7 +73,7 @@ abstract class AbstractConnection implements ConnectionInterface, ProfilerAwareI
      * @return resource|object|null
      */
     #[Override]
-    public function getResource()
+    public function getResource(): mixed
     {
         if (! $this->isConnected()) {
             $this->connect();

@@ -32,9 +32,6 @@ abstract class AbstractPdoConnection extends AbstractConnection implements
 
     protected ?string $dsn;
 
-    /** @var ?PDO $resource */
-    protected $resource;
-
     /**
      * {@inheritDoc}
      *
