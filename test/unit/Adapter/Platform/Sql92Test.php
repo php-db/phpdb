@@ -12,6 +12,7 @@ use PhpDb\Adapter\Platform\Sql92;
 use PhpDbTest\Adapter\Platform\TestAsset\TestPlatform;
 use PhpDbTest\TestAsset\TestSql92Platform;
 use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
@@ -39,6 +40,28 @@ use PHPUnit\Framework\TestCase;
 final class Sql92Test extends TestCase
 {
     protected Sql92 $platform;
+
+    /**
+     * @return array<string, array{string, string}>
+     */
+    public static function identifiersWithEmbeddedQuotes(): array
+    {
+        return [
+            'quote inside a name'    => ['my"col', '"my""col"'],
+            'quote only'             => ['"', '""""'],
+            'adjacent quotes'        => ['a""b', '"a""""b"'],
+            'single quote unchanged' => ["it's", "\"it's\""],
+        ];
+    }
+
+    #[DataProvider('identifiersWithEmbeddedQuotes')]
+    #[Test]
+    public function abstractPlatformQuoteIdentifierDoublesEmbeddedQuoteCharacters(
+        string $identifier,
+        string $expected,
+    ): void {
+        static::assertSame($expected, (new TestPlatform())->quoteIdentifier($identifier));
+    }
 
     #[Test]
     public function abstractPlatformQuoteValueEscapesWithDriver(): void
@@ -93,6 +116,13 @@ final class Sql92Test extends TestCase
         static::assertSame('"identifier"', $this->platform->quoteIdentifierChain('identifier'));
         static::assertSame('"identifier"', $this->platform->quoteIdentifierChain(['identifier']));
         static::assertSame('"schema"."identifier"', $this->platform->quoteIdentifierChain(['schema', 'identifier']));
+    }
+
+    #[DataProvider('identifiersWithEmbeddedQuotes')]
+    #[Test]
+    public function quoteIdentifierDoublesEmbeddedQuoteCharacters(string $identifier, string $expected): void
+    {
+        static::assertSame($expected, $this->platform->quoteIdentifier($identifier));
     }
 
     #[Test]

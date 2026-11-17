@@ -53,7 +53,7 @@ final class UpdateColumnNameTest extends TestCase
             ],
             'quote character'                    => [
                 ['c"d' => 1],
-                'UPDATE "t" SET "c\'d" = :c_d',
+                'UPDATE "t" SET "c""d" = :c_d',
                 ['c_d' => 1],
             ],
             'sanitised names collide'            => [
@@ -84,7 +84,7 @@ final class UpdateColumnNameTest extends TestCase
             'dotted'          => [['film.title' => 1], 'UPDATE "t" SET "film"."title" = \'1\''],
             'hyphen'          => [['x-y' => 1], 'UPDATE "t" SET "x-y" = \'1\''],
             'space'           => [['a b' => 1], 'UPDATE "t" SET "a b" = \'1\''],
-            'quote character' => [['c"d' => 1], 'UPDATE "t" SET "c\'d" = \'1\''],
+            'quote character' => [['c"d' => 1], 'UPDATE "t" SET "c""d" = \'1\''],
             'dotted hyphen'   => [['f-1.x-y' => 1], 'UPDATE "t" SET "f-1"."x-y" = \'1\''],
         ];
     }
