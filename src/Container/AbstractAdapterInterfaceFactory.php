@@ -10,14 +10,15 @@ use Override;
 use PhpDb\Adapter\Adapter;
 use PhpDb\Adapter\AdapterInterface;
 use PhpDb\Adapter\Driver\DriverInterface;
-use PhpDb\Adapter\Driver\PdoDriverInterface;
 use PhpDb\Adapter\Platform\PlatformInterface;
 use PhpDb\Adapter\Profiler\ProfilerInterface;
 use PhpDb\ConfigProvider;
 use PhpDb\Exception\ContainerException;
 use PhpDb\ResultSet\ResultSet;
 use PhpDb\ResultSet\ResultSetInterface;
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
 use function is_array;
 
@@ -30,12 +31,16 @@ use function is_array;
  */
 final class AbstractAdapterInterfaceFactory implements AbstractFactoryInterface
 {
+    /** @var array<array-key, mixed>|null */
     protected ?array $config = null;
 
     /**
      * Can we create an adapter by the requested name?
      *
      * @param string $requestedName
+     *
+     * @throws ContainerExceptionInterface If retrieving the config service fails.
+     * @throws NotFoundExceptionInterface If the config service cannot be resolved.
      */
     #[Override]
     public function canCreate(ContainerInterface $container, $requestedName): bool
@@ -46,15 +51,16 @@ final class AbstractAdapterInterfaceFactory implements AbstractFactoryInterface
             return false;
         }
 
-        return (
-            isset($config[$requestedName])
-                && is_array($config[$requestedName])
-                && ! empty($config[$requestedName])
-        );
+        return is_array($config[$requestedName] ?? null) && [] !== $config[$requestedName];
     }
 
     /**
      * Get db configuration, if any
+     *
+     * @return array<array-key, mixed>
+     *
+     * @throws ContainerExceptionInterface If retrieving the config service fails.
+     * @throws NotFoundExceptionInterface If the config service cannot be resolved.
      */
     protected function getConfig(ContainerInterface $container): array
     {
@@ -67,6 +73,7 @@ final class AbstractAdapterInterfaceFactory implements AbstractFactoryInterface
             return $this->config;
         }
 
+        /** @var array{'PhpDb\Adapter\AdapterInterface'?: array{adapters?: array<array-key, mixed>, ...}, ...} $config */
         $config       = $container->get('config');
         $this->config = $config[AdapterInterface::class][ConfigProvider::NAMED_ADAPTER_KEY] ?? [];
         return $this->config;
@@ -77,6 +84,10 @@ final class AbstractAdapterInterfaceFactory implements AbstractFactoryInterface
      *
      * @phpstan-param ContainerInterface&ServiceManager $container
      * @param string $requestedName
+     * @param array<array-key, mixed>|null $options
+     *
+     * @throws ContainerException If the named adapter has no driver configured.
+     * @throws ContainerExceptionInterface If a dependency cannot be built.
      */
     #[Override]
     public function __invoke(
@@ -84,25 +95,22 @@ final class AbstractAdapterInterfaceFactory implements AbstractFactoryInterface
         $requestedName,
         ?array $options = null,
     ): AdapterInterface&Adapter {
-        /** @var class-string<DriverInterface>|class-string<PdoDriverInterface>|null $driverClass */
-        $driverClass = $this->config[$requestedName]['driver'] ?? null;
+        /** @var array{driver?: class-string<DriverInterface>|null, ...} $adapterConfig */
+        $adapterConfig = $this->config[$requestedName] ?? [];
+        $driverClass   = $adapterConfig['driver'] ?? null;
 
         if (null === $driverClass) {
             throw ContainerException::forMissingDriver($requestedName, self::class);
         }
 
-        /** @var DriverInterface|PdoDriverInterface $driver */
-        $driver = $container->build($driverClass, $this->config[$requestedName]);
+        $driver = $container->build($driverClass, $adapterConfig);
 
-        /** @var PlatformInterface $platform */
         $platform = $container->build(PlatformInterface::class, ['driver' => $driver]);
 
-        /** @var ResultSetInterface|null $resultSet */
         $resultSet = $container->has(ResultSetInterface::class)
             ? $container->build(ResultSetInterface::class)
             : new ResultSet();
 
-        /** @var ProfilerInterface|null $profiler */
         $profiler = $container->has(ProfilerInterface::class)
             ? $container->build(ProfilerInterface::class)
             : null;
