@@ -1,9 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpDb\Adapter;
 
 use Override;
 
+/**
+ * @api
+ */
 class StatementContainer implements StatementContainerInterface
 {
     protected string $sql = '';
@@ -38,12 +43,12 @@ class StatementContainer implements StatementContainerInterface
     }
 
     /**
-     * @param string $sql
+     * @param ?string $sql A null SQL string is stored as an empty one.
      */
     #[Override]
     public function setSql($sql): StatementContainerInterface
     {
-        $this->sql = $sql;
+        $this->sql = $sql ?? '';
         return $this;
     }
 }
