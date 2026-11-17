@@ -22,6 +22,7 @@ use function sprintf;
 #[CoversMethod(InvalidArgumentException::class, 'forMissingColumnLength')]
 #[CoversMethod(InvalidArgumentException::class, 'forMissingDecimalDigits')]
 #[CoversMethod(InvalidArgumentException::class, 'forEmptyExpression')]
+#[CoversMethod(InvalidArgumentException::class, 'forEmptyIdentifierPart')]
 #[CoversMethod(InvalidArgumentException::class, 'forEmptyPrefix')]
 #[CoversMethod(InvalidArgumentException::class, 'forEmptySchema')]
 #[CoversMethod(InvalidArgumentException::class, 'forEmptySeparator')]
@@ -40,6 +41,7 @@ use function sprintf;
 #[CoversMethod(InvalidArgumentException::class, 'forSelectWithMergeFlag')]
 #[CoversMethod(InvalidArgumentException::class, 'forUnenclosedValuesPlaceholder')]
 #[CoversMethod(InvalidArgumentException::class, 'forUnknownArgumentType')]
+#[CoversMethod(InvalidArgumentException::class, 'forUnquotableIdentifier')]
 #[CoversMethod(InvalidArgumentException::class, 'forUnknownColumnKey')]
 #[CoversMethod(InvalidArgumentException::class, 'forValuesWithMergeFlag')]
 final class InvalidArgumentExceptionTest extends TestCase
@@ -90,6 +92,11 @@ final class InvalidArgumentExceptionTest extends TestCase
                 'forEmptyExpression',
                 [],
                 InvalidArgumentException::EMPTY_EXPRESSION,
+            ],
+            'empty identifier part'         => [
+                'forEmptyIdentifierPart',
+                ['a..b'],
+                InvalidArgumentException::EMPTY_IDENTIFIER_PART,
             ],
             'empty prefix'                  => [
                 'forEmptyPrefix',
@@ -180,6 +187,11 @@ final class InvalidArgumentExceptionTest extends TestCase
                 'forUnknownColumnKey',
                 ['email'],
                 InvalidArgumentException::UNKNOWN_COLUMN_KEY,
+            ],
+            'unquotable identifier'         => [
+                'forUnquotableIdentifier',
+                ['COUNT(id)'],
+                InvalidArgumentException::UNQUOTABLE_IDENTIFIER,
             ],
             'values with merge flag'        => [
                 'forValuesWithMergeFlag',
