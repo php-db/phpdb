@@ -52,7 +52,7 @@ final class InsertColumnNameTest extends TestCase
             ],
             'quote character'                    => [
                 ['c"d' => 1],
-                'INSERT INTO "t" ("c\'d") VALUES (:c_d)',
+                'INSERT INTO "t" ("c""d") VALUES (:c_d)',
                 ['c_d' => 1],
             ],
             'sanitised names collide'            => [
@@ -78,7 +78,7 @@ final class InsertColumnNameTest extends TestCase
             'dotted'          => [['film.title' => 1], 'INSERT INTO "t" ("film.title") VALUES (\'1\')'],
             'hyphen'          => [['x-y' => 1], 'INSERT INTO "t" ("x-y") VALUES (\'1\')'],
             'space'           => [['a b' => 1], 'INSERT INTO "t" ("a b") VALUES (\'1\')'],
-            'quote character' => [['c"d' => 1], 'INSERT INTO "t" ("c\'d") VALUES (\'1\')'],
+            'quote character' => [['c"d' => 1], 'INSERT INTO "t" ("c""d") VALUES (\'1\')'],
         ];
     }
 

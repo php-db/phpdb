@@ -83,7 +83,7 @@ final class IdentifierQuoterTest extends TestCase
             'as after qualifier'      => ['t.as', '"t"."as"'],
             'as alone'                => ['as', '"as"'],
             'non-ascii letter'        => ['café', '"café"'],
-            'quote character'         => ['a"b', '"a\'b"'],
+            'quote character'         => ['a"b', '"a""b"'],
         ];
     }
 
