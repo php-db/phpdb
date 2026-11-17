@@ -32,12 +32,6 @@ count = 1
 
 [[issues]]
 file = "src/Container/AbstractAdapterInterfaceFactory.php"
-code = "incompatible-parameter-type"
-message = 'Parameter `$container` of `PhpDb\Container\AbstractAdapterInterfaceFactory::__invoke()` expects type `Psr\Container\ContainerInterface&Laminas\ServiceManager\ServiceManager` but parent `Laminas\ServiceManager\Factory\FactoryInterface::__invoke()` expects type `Psr\Container\ContainerInterface`'
-count = 1
-
-[[issues]]
-file = "src/Container/AbstractAdapterInterfaceFactory.php"
 code = "invalid-return-statement"
 message = 'Invalid return type for function `PhpDb\Container\AbstractAdapterInterfaceFactory::getConfig`: expected `array<array-key, mixed>`, but found `array<array-key, mixed>|null`.'
 count = 1

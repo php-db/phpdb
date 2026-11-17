@@ -26,6 +26,8 @@ use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 
+use function sprintf;
+
 #[Group('unit')]
 #[CoversMethod(AbstractAdapterInterfaceFactory::class, 'canCreate')]
 #[CoversMethod(AbstractAdapterInterfaceFactory::class, '__invoke')]
@@ -100,6 +102,28 @@ final class AbstractAdapterInterfaceFactoryTest extends TestCase
     {
         self::expectException(ServiceNotFoundException::class);
         $this->serviceManager->get($service);
+    }
+
+    #[Test]
+    public function invokeThrowsWhenContainerCannotBuildDependencies(): void
+    {
+        $container = $this->createStub(ContainerInterface::class);
+        $container->method('has')->willReturn(true);
+        $container->method('get')
+            ->willReturn([
+                AdapterInterface::class => [
+                    'adapters' => [
+                        'MyAdapter' => ['driver' => PdoStubDriver::class],
+                    ],
+                ],
+            ]);
+
+        $factory = new AbstractAdapterInterfaceFactory();
+        $factory->canCreate($container, 'MyAdapter');
+
+        self::expectException(ContainerException::class);
+        self::expectExceptionMessage(sprintf(ContainerException::NON_BUILDING_CONTAINER, ServiceManager::class));
+        $factory($container, requestedName: 'MyAdapter');
     }
 
     #[Test]
