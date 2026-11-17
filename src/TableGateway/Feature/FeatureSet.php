@@ -14,7 +14,7 @@ use function method_exists;
  */
 class FeatureSet
 {
-    public const string APPLY_HALT = 'halt';
+    final public const string APPLY_HALT = 'halt';
 
     protected ?AbstractTableGateway $tableGateway = null;
 

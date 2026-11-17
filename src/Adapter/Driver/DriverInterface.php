@@ -11,8 +11,8 @@ use PhpDb\Exception;
  */
 interface DriverInterface
 {
-    public const string PARAMETERIZATION_POSITIONAL = 'positional';
-    public const string PARAMETERIZATION_NAMED      = 'named';
+    final public const string PARAMETERIZATION_POSITIONAL = 'positional';
+    final public const string PARAMETERIZATION_NAMED      = 'named';
 
     /**
      * Check environment

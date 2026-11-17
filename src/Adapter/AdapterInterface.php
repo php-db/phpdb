@@ -17,20 +17,20 @@ interface AdapterInterface
     /**
      * Query Mode Constants
      */
-    public const string QUERY_MODE_EXECUTE = 'execute';
-    public const string QUERY_MODE_PREPARE = 'prepare';
+    final public const string QUERY_MODE_EXECUTE = 'execute';
+    final public const string QUERY_MODE_PREPARE = 'prepare';
 
     /**
      * Prepare Type Constants
      */
-    public const string PREPARE_TYPE_POSITIONAL = 'positional';
-    public const string PREPARE_TYPE_NAMED      = 'named';
+    final public const string PREPARE_TYPE_POSITIONAL = 'positional';
+    final public const string PREPARE_TYPE_NAMED      = 'named';
 
-    public const string FUNCTION_FORMAT_PARAMETER_NAME = 'formatParameterName';
-    public const string FUNCTION_QUOTE_IDENTIFIER      = 'quoteIdentifier';
-    public const string FUNCTION_QUOTE_VALUE           = 'quoteValue';
+    final public const string FUNCTION_FORMAT_PARAMETER_NAME = 'formatParameterName';
+    final public const string FUNCTION_QUOTE_IDENTIFIER      = 'quoteIdentifier';
+    final public const string FUNCTION_QUOTE_VALUE           = 'quoteValue';
 
-    public const string VALUE_QUOTE_SEPARATOR = 'quoteSeparator';
+    final public const string VALUE_QUOTE_SEPARATOR = 'quoteSeparator';
 
     /**
      * @param ParameterContainer|array<array-key, mixed> $initialParameters
