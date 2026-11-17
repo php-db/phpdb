@@ -7,60 +7,6 @@ message = 'Declared return type `PhpDb\Adapter\Driver\ResultInterface|null` for 
 count = 1
 
 [[issues]]
-file = "src/Adapter/Driver/Pdo/Result.php"
-code = "incompatible-return-type"
-message = 'Return type `mixed` of `PhpDb\Adapter\Driver\Pdo\Result::next()` is incompatible with parent return type `void` of `Iterator::next()`'
-count = 1
-
-[[issues]]
-file = "src/Adapter/Driver/Pdo/Result.php"
-code = "missing-parameter-type"
-message = "Parameter `$generatedValue` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "src/Adapter/Driver/Pdo/Result.php"
-code = "missing-property-type"
-message = "Property `$currentComplete` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "src/Adapter/Driver/Pdo/Result.php"
-code = "missing-property-type"
-message = "Property `$currentData` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "src/Adapter/Driver/Pdo/Result.php"
-code = "missing-property-type"
-message = "Property `$fetchMode` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "src/Adapter/Driver/Pdo/Result.php"
-code = "missing-property-type"
-message = "Property `$generatedValue` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "src/Adapter/Driver/Pdo/Result.php"
-code = "missing-property-type"
-message = "Property `$options` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "src/Adapter/Driver/Pdo/Result.php"
-code = "missing-property-type"
-message = "Property `$position` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "src/Adapter/Driver/Pdo/Result.php"
-code = "missing-property-type"
-message = "Property `$resource` is missing a type hint."
-count = 1
-
-[[issues]]
 file = "src/Adapter/ParameterContainer.php"
 code = "incompatible-parameter-name"
 message = 'Parameter #1 of `PhpDb\Adapter\ParameterContainer::offsetexists()` is named `$name` but parent `ArrayAccess::offsetexists()` names it `$offset`'
