@@ -40,7 +40,7 @@ final class PredicateIdentifierNameTest extends TestCase
         return [
             'hyphen'                => ['x-y', '"x-y"'],
             'space'                 => ['my col', '"my col"'],
-            'quote character'       => ['a"b', '"a\'b"'],
+            'quote character'       => ['a"b', '"a""b"'],
             'non-ascii'             => ['nâme', '"nâme"'],
             'tab'                   => ["a\tb", "\"a\tb\""],
             'dotted hyphen'         => ['t-1.x-y', '"t-1"."x-y"'],
