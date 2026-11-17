@@ -235,13 +235,9 @@ final class PredicateTest extends TestCase
 
         $predicates = $predicate->getPredicates();
 
-        if (isset($predicates[0][1])) {
-            $expression = $predicates[0][1];
-            static::assertInstanceOf(Expression::class, $expression);
-            static::assertEquals([], $expression->getParameters());
-        } else {
-            static::fail('Expression not found');
-        }
+        $expression = $predicates[0][1] ?? null;
+        static::assertInstanceOf(Expression::class, $expression);
+        static::assertEquals([], $expression->getParameters());
     }
 
     /**

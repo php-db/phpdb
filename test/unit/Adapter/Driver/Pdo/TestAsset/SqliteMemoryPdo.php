@@ -17,14 +17,13 @@ class SqliteMemoryPdo extends PDO
     protected MockObject&PDOStatement $mockStatement;
 
     /**
-     * @param null $sql
      * @throws Exception
      */
-    public function __construct($sql = null)
+    public function __construct(?string $sql = null)
     {
         parent::__construct('sqlite::memory:');
 
-        if (empty($sql)) {
+        if (null === $sql || '' === $sql) {
             return;
         }
 

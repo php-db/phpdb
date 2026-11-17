@@ -280,7 +280,8 @@ final class AdapterTest extends TestCase
     #[TestDox('unit test: Test getProfiler() will store profiler')]
     public function getProfilerReturnsProfiler(): void
     {
-        $this->adapter->setProfiler($profiler = new Profiler\Profiler());
+        $profiler = new Profiler\Profiler();
+        $this->adapter->setProfiler($profiler);
         static::assertSame($profiler, $this->adapter->getProfiler());
 
         $adapter = new Adapter(

@@ -87,13 +87,13 @@ final class StatementIntegrationTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $this->pdoStatementMock = $this->getMockBuilder('PDOStatement')
+            ->onlyMethods(['execute', 'bindParam'])
+            ->getMock();
+
         $this->statement = new Statement();
         $this->statement->setDriver($driver);
-        $this->statement->initialize(new TestAsset\CtorlessPdo(
-            $this->pdoStatementMock = $this->getMockBuilder('PDOStatement')
-                ->onlyMethods(['execute', 'bindParam'])
-                ->getMock(),
-        ));
+        $this->statement->initialize(new TestAsset\CtorlessPdo($this->pdoStatementMock));
     }
 
     /**
