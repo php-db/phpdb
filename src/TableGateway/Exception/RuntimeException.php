@@ -8,6 +8,9 @@ use PhpDb\Exception;
 
 use function sprintf;
 
+/**
+ * @api
+ */
 class RuntimeException extends Exception\RuntimeException
 {
     final public const string MISSING_ADAPTER = 'This table does not have an Adapter setup';
@@ -35,6 +38,8 @@ class RuntimeException extends Exception\RuntimeException
         'The table gateway must be initialized with a Sql instance'
             . ' before this feature is applied.';
 
+    final public const string MISSING_STATEMENT_RESULT = 'The %s statement did not return a result.';
+
     final public const string MISSING_STATIC_ADAPTER = 'No database adapter was found in the static registry.';
 
     final public const string MISSING_TABLE = 'This table object does not have a valid table set.';
@@ -50,6 +55,10 @@ class RuntimeException extends Exception\RuntimeException
     final public const string UNEXPECTED_RESULT_SET =
         'This feature %s expects the ResultSet'
             . ' to be an instance of %s';
+
+    final public const string UNINITIALIZED_PROPERTY =
+        'The table gateway has no %s;'
+            . ' initialize() has not been run.';
 
     final public const string UNNAMED_TABLE_IN_METADATA =
         'The table gateway must reference a named table'
@@ -111,6 +120,11 @@ class RuntimeException extends Exception\RuntimeException
         return new self(self::MISSING_SQL_INSTANCE);
     }
 
+    public static function forMissingStatementResult(string $statement): self
+    {
+        return new self(sprintf(self::MISSING_STATEMENT_RESULT, $statement));
+    }
+
     public static function forMissingStaticAdapter(): self
     {
         return new self(self::MISSING_STATIC_ADAPTER);
@@ -139,6 +153,11 @@ class RuntimeException extends Exception\RuntimeException
     public static function forUnexpectedResultSet(string $feature, string $expected): self
     {
         return new self(sprintf(self::UNEXPECTED_RESULT_SET, $feature, $expected));
+    }
+
+    public static function forUninitializedProperty(string $property): self
+    {
+        return new self(sprintf(self::UNINITIALIZED_PROPERTY, $property));
     }
 
     public static function forUnnamedTableInMetadata(): self

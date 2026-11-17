@@ -9,7 +9,7 @@ use PhpDb\RowGateway\AbstractRowGateway;
 use function method_exists;
 
 /**
- * @final
+ * @api
  */
 class FeatureSet
 {
