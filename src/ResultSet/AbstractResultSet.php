@@ -202,6 +202,7 @@ abstract class AbstractResultSet implements ResultSetInterface
             return 0;
         }
 
+        /** @var mixed $row */
         $row = $dataSource->current();
         if ($row instanceof Countable) {
             $this->fieldCount = $row->count();
@@ -238,6 +239,7 @@ abstract class AbstractResultSet implements ResultSetInterface
             return $this;
         }
 
+        /** @var mixed $first */
         $first            = current($dataSource);
         $this->fieldCount = is_array($first) || $first instanceof Countable ? count($first) : 0;
         reset($dataSource);

@@ -47,7 +47,6 @@ class ObjectResultSet extends AbstractResultSet
     {
         $return = [];
 
-        /** @var object $row Every row this set yields is an object, or mapRow() throws. */
         foreach ($this as $row) {
             $return[] = $this->rowToArray($row);
         }

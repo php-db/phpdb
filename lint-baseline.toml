@@ -7,18 +7,6 @@ message = "Class has high complexity."
 count = 1
 
 [[issues]]
-file = "src/Container/AbstractAdapterInterfaceFactory.php"
-code = "no-empty"
-message = "Use of the `empty` construct."
-count = 1
-
-[[issues]]
-file = "src/Container/AbstractAdapterInterfaceFactory.php"
-code = "no-isset"
-message = "Use of the `isset` construct."
-count = 1
-
-[[issues]]
 file = "src/ResultSet/AbstractResultSet.php"
 code = "cyclomatic-complexity"
 message = "Class has high complexity."

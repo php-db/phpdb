@@ -8,6 +8,13 @@ final readonly class ConfigProvider
 {
     public const string NAMED_ADAPTER_KEY = 'adapters';
 
+    /**
+     * @return array{
+     *     abstract_factories: list<class-string>,
+     *     aliases: array<class-string, class-string>,
+     *     factories: array<class-string, class-string>,
+     * }
+     */
     public function getDependencies(): array
     {
         return [
@@ -24,6 +31,13 @@ final readonly class ConfigProvider
         ];
     }
 
+    /**
+     * @return array{dependencies: array{
+     *     abstract_factories: list<class-string>,
+     *     aliases: array<class-string, class-string>,
+     *     factories: array<class-string, class-string>,
+     * }}
+     */
     public function __invoke(): array
     {
         return [
