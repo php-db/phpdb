@@ -17,6 +17,8 @@ use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
+use function sprintf;
+
 #[CoversMethod(Sql92::class, 'getName')]
 #[CoversMethod(Sql92::class, 'getQuoteIdentifierSymbol')]
 #[CoversMethod(Sql92::class, 'quoteIdentifier')]
@@ -247,16 +249,12 @@ final class Sql92Test extends TestCase
     public function quoteValueThrowsWithoutDriver(): void
     {
         $this->expectException(RuntimeException::class);
-        static::assertSame("'value'", @$this->platform->quoteValue('value'));
-        static::assertSame("'Foo O\\'Bar'", @$this->platform->quoteValue("Foo O'Bar"));
-        static::assertSame(
-            '\'\\\'; DELETE FROM some_table; -- \'',
-            @$this->platform->quoteValue("'; DELETE FROM some_table; -- "),
-        );
-        static::assertSame(
-            "'\\\\\\'; DELETE FROM some_table; -- '",
-            @$this->platform->quoteValue('\\\'; DELETE FROM some_table; -- '),
-        );
+        $this->expectExceptionMessage(sprintf(
+            RuntimeException::VULNERABLE_PLATFORM_QUOTE,
+            Sql92::class,
+            Sql92::class . '::quoteValue',
+        ));
+        $this->platform->quoteValue("Foo O'Bar");
     }
 
     /**
