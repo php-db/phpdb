@@ -6,6 +6,7 @@ namespace PhpDbTest\Sql\Exception;
 
 use PhpDb\Exception\ExceptionInterface;
 use PhpDb\Sql\Exception\RuntimeException;
+use PhpDb\Sql\Expression;
 use PhpDb\Sql\SqlInterface;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -23,6 +24,7 @@ use function sprintf;
 #[CoversMethod(RuntimeException::class, 'forSubjectNotSqlInterface')]
 #[CoversMethod(RuntimeException::class, 'forUnsupportedParameterCount')]
 #[CoversMethod(RuntimeException::class, 'forUnsupportedParameterCountOf')]
+#[CoversMethod(RuntimeException::class, 'forUnsupportedSpecificationOverride')]
 final class RuntimeExceptionTest extends TestCase
 {
     /** @return array<string, array{string, list<string|int>, string}> */
@@ -63,6 +65,11 @@ final class RuntimeExceptionTest extends TestCase
                 'forUnsupportedParameterCountOf',
                 [2],
                 RuntimeException::UNSUPPORTED_PARAMETER_COUNT_OF,
+            ],
+            'unsupported specification override'   => [
+                'forUnsupportedSpecificationOverride',
+                [Expression::class],
+                RuntimeException::UNSUPPORTED_SPECIFICATION_OVERRIDE,
             ],
         ];
     }
