@@ -45,12 +45,13 @@ class Platform extends AbstractPlatform
         $this->defaultPlatform = $platform;
     }
 
+    /**
+     * @return array<string, PlatformDecoratorInterface>
+     */
     #[Override]
     public function getDecorators(): array
     {
-        $platformName = $this->resolvePlatformName($this->getDefaultPlatform());
-
-        return $this->decorators[$platformName];
+        return $this->decoratorsFor($this->resolvePlatformName($this->getDefaultPlatform()));
     }
 
     /**
@@ -61,13 +62,18 @@ class Platform extends AbstractPlatform
     #[Override]
     public function getSqlString(?PlatformInterface $adapterPlatform = null): string
     {
-        if (! $this->subject instanceof SqlInterface) {
+        $subject = $this->subject;
+        if (! $subject instanceof SqlInterface) {
             throw Exception\RuntimeException::forSubjectNotImplementing(SqlInterface::class, 'getSqlString()');
         }
 
         $adapterPlatform = $this->resolvePlatform($adapterPlatform);
 
-        return $this->getTypeDecorator($this->subject, $adapterPlatform)->getSqlString($adapterPlatform);
+        return $this->requireDecoratorImplementing(
+            $this->getTypeDecorator($subject, $adapterPlatform),
+            SqlInterface::class,
+            'getSqlString()',
+        )->getSqlString($adapterPlatform);
     }
 
     #[Override]
@@ -75,13 +81,8 @@ class Platform extends AbstractPlatform
         PreparableSqlInterface|SqlInterface $subject,
         AdapterInterface|PlatformInterface|null $adapterOrPlatform = null,
     ): PlatformDecoratorInterface|PreparableSqlInterface|SqlInterface {
-        $platformName = $this->resolvePlatformName($adapterOrPlatform);
-
-        /** @var array<class-string, PlatformDecoratorInterface>|null $decorators */
-        $decorators = $this->decorators[$platformName] ?? null;
-        if (null === $decorators) {
-            return $subject;
-        }
+        /** @var array<class-string, PlatformDecoratorInterface> $decorators */
+        $decorators = $this->decoratorsFor($this->resolvePlatformName($adapterOrPlatform));
 
         $decorator = $decorators[$subject::class] ?? null;
         if (null !== $decorator) {
@@ -118,7 +119,11 @@ class Platform extends AbstractPlatform
             );
         }
 
-        $this->getTypeDecorator($this->subject, $adapter)->prepareStatement($adapter, $statementContainer);
+        $this->requireDecoratorImplementing(
+            $this->getTypeDecorator($this->subject, $adapter),
+            PreparableSqlInterface::class,
+            'prepareStatement()',
+        )->prepareStatement($adapter, $statementContainer);
 
         return $statementContainer;
     }
@@ -129,8 +134,11 @@ class Platform extends AbstractPlatform
         PlatformDecoratorInterface $decorator,
         AdapterInterface|PlatformInterface|null $adapterOrPlatform = null,
     ): void {
-        $platformName                           = $this->resolvePlatformName($adapterOrPlatform);
-        $this->decorators[$platformName][$type] = $decorator;
+        $platformName = $this->resolvePlatformName($adapterOrPlatform);
+
+        $decorators                      = $this->decoratorsFor($platformName);
+        $decorators[$type]               = $decorator;
+        $this->decorators[$platformName] = $decorators;
     }
 
     protected function getDefaultPlatform(): PlatformInterface
@@ -168,5 +176,16 @@ class Platform extends AbstractPlatform
         }
 
         return $normalized;
+    }
+
+    /**
+     * The decorators registered for a platform, keyed by the subject type they decorate
+     *
+     * @return array<string, PlatformDecoratorInterface>
+     */
+    private function decoratorsFor(string $platformName): array
+    {
+        /** @var array<string, PlatformDecoratorInterface> */
+        return $this->decorators[$platformName] ?? [];
     }
 }

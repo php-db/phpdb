@@ -20,6 +20,7 @@ use PhpDb\Sql\Select;
 use PhpDb\Sql\SqlInterface;
 use PhpDbTest\TestAsset;
 use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\IgnoreDeprecations;
 use PHPUnit\Framework\Attributes\RequiresPhp;
 use PHPUnit\Framework\Attributes\Test;
@@ -28,6 +29,9 @@ use PHPUnit\Framework\TestCase;
 use ReflectionException;
 use ReflectionMethod;
 
+use function sprintf;
+
+#[Group('unit')]
 #[IgnoreDeprecations]
 #[RequiresPhp('<= 8.6')]
 #[CoversMethod(Platform::class, '__construct')]
@@ -39,8 +43,23 @@ use ReflectionMethod;
 #[CoversMethod(Platform::class, 'resolvePlatformName')]
 #[CoversMethod(Platform::class, 'resolvePlatform')]
 #[CoversMethod(Platform::class, 'getDefaultPlatform')]
+#[CoversMethod(Platform::class, 'decoratorsFor')]
+#[CoversMethod(AbstractPlatform::class, 'requireDecoratorImplementing')]
 class PlatformTest extends TestCase
 {
+    #[Test]
+    public function getDecoratorsReturnsEmptyListWhenNoneRegisteredForDefaultPlatform(): void
+    {
+        $platform = new Platform(new TestAsset\TrustingSql92Platform());
+        $platform->setTypeDecorator(
+            Select::class,
+            $this->createStub(PlatformDecoratorInterface::class),
+            new TestAsset\TrustingMysqlPlatform(),
+        );
+
+        static::assertSame([], $platform->getDecorators());
+    }
+
     #[Test]
     public function getDefaultPlatformReturnsInstance(): void
     {
@@ -66,6 +85,26 @@ class PlatformTest extends TestCase
 
         static::assertStringContainsString('SELECT', $sql);
         static::assertStringContainsString('"foo"', $sql);
+    }
+
+    #[Test]
+    public function getSqlStringThrowsWhenDecoratorIsNotSqlInterface(): void
+    {
+        $adapterPlatform = new TestAsset\TrustingSql92Platform();
+        $platform        = new Platform($adapterPlatform);
+
+        $decorator = $this->createStub(PlatformDecoratorInterface::class);
+        $platform->setTypeDecorator(Select::class, $decorator);
+        $platform->setSubject(new Select('foo'));
+
+        self::expectException(RuntimeException::class);
+        self::expectExceptionMessage(sprintf(
+            RuntimeException::DECORATOR_NOT_IMPLEMENTING,
+            $decorator::class,
+            SqlInterface::class,
+            'getSqlString()',
+        ));
+        $platform->getSqlString($adapterPlatform);
     }
 
     #[Test]
@@ -137,6 +176,25 @@ class PlatformTest extends TestCase
         $result = $platform->getTypeDecorator($select);
 
         static::assertSame($select, $result);
+    }
+
+    #[Test]
+    public function prepareStatementThrowsWhenDecoratorIsNotPreparable(): void
+    {
+        $platform = new Platform(new TestAsset\TrustingSql92Platform());
+
+        $decorator = $this->createStub(PlatformDecoratorInterface::class);
+        $platform->setTypeDecorator(Select::class, $decorator);
+        $platform->setSubject(new Select('foo'));
+
+        self::expectException(RuntimeException::class);
+        self::expectExceptionMessage(sprintf(
+            RuntimeException::DECORATOR_NOT_IMPLEMENTING,
+            $decorator::class,
+            PreparableSqlInterface::class,
+            'prepareStatement()',
+        ));
+        $platform->prepareStatement($this->resolveAdapter('sql92'), new StatementContainer());
     }
 
     #[Test]
@@ -236,6 +294,22 @@ class PlatformTest extends TestCase
         $result           = $reflectionMethod->invoke($platform, $mockPlatform);
 
         static::assertSame($mockPlatform, $result);
+    }
+
+    #[Test]
+    public function setTypeDecoratorKeepsDecoratorsAlreadyRegisteredForThePlatform(): void
+    {
+        $platform = new Platform(new TestAsset\TrustingSql92Platform());
+
+        $selectDecorator = $this->createStub(PlatformDecoratorInterface::class);
+        $insertDecorator = $this->createStub(PlatformDecoratorInterface::class);
+        $platform->setTypeDecorator(Select::class, $selectDecorator);
+        $platform->setTypeDecorator(Insert::class, $insertDecorator);
+
+        static::assertSame(
+            [Select::class => $selectDecorator, Insert::class => $insertDecorator],
+            $platform->getDecorators(),
+        );
     }
 
     #[Test]
