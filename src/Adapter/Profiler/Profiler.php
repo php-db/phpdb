@@ -10,13 +10,16 @@ use PhpDb\Adapter\Exception\InvalidArgumentException;
 use PhpDb\Adapter\ParameterContainer;
 use PhpDb\Adapter\StatementContainerInterface;
 
-use function end;
+use function array_key_exists;
+use function array_key_last;
 use function is_string;
 use function microtime;
 
 /**
+ * @api
+ *
  * @phpstan-type ProfileShape array{
- *     sql: string,
+ *     sql: string|null,
  *     parameters: ParameterContainer|null,
  *     start: float,
  *     end: float|null,
@@ -37,7 +40,9 @@ class Profiler implements ProfilerInterface
      */
     public function getLastProfile(): ?array
     {
-        return end($this->profiles);
+        $lastIndex = array_key_last($this->profiles);
+
+        return null === $lastIndex ? null : $this->profiles[$lastIndex] ?? null;
     }
 
     /**
@@ -50,11 +55,13 @@ class Profiler implements ProfilerInterface
 
     /**
      * @return $this Provides a fluent interface
+     *
+     * @throws Exception\RuntimeException When no profile has been started.
      */
     #[Override]
     public function profilerFinish(): ProfilerInterface
     {
-        if (! isset($this->profiles[$this->currentIndex])) {
+        if (! array_key_exists($this->currentIndex, $this->profiles)) {
             throw Exception\RuntimeException::forUnstartedProfile(__FUNCTION__);
         }
         $current           = &$this->profiles[$this->currentIndex];
@@ -71,25 +78,16 @@ class Profiler implements ProfilerInterface
     #[Override]
     public function profilerStart(string|StatementContainerInterface $target): ProfilerInterface
     {
-        $profileInformation = [
-            'sql'        => '',
-            'parameters' => null,
-            'start'      => microtime(true),
+        $start     = microtime(true);
+        $container = is_string($target) ? null : $target->getParameterContainer();
+
+        $this->profiles[$this->currentIndex] = [
+            'sql'        => is_string($target) ? $target : $target->getSql(),
+            'parameters' => null === $container ? null : clone $container,
+            'start'      => $start,
             'end'        => null,
             'elapse'     => null,
         ];
-
-        if (is_string($target)) {
-            $profileInformation['sql'] = $target;
-        } else {
-            $profileInformation['sql'] = $target->getSql();
-            $container                 = $target->getParameterContainer();
-            if (null !== $container) {
-                $profileInformation['parameters'] = clone $container;
-            }
-        }
-
-        $this->profiles[$this->currentIndex] = $profileInformation;
 
         return $this;
     }

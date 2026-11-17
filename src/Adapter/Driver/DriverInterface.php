@@ -6,10 +6,13 @@ namespace PhpDb\Adapter\Driver;
 
 use PhpDb\Exception;
 
+/**
+ * @api
+ */
 interface DriverInterface
 {
-    public const PARAMETERIZATION_POSITIONAL = 'positional';
-    public const PARAMETERIZATION_NAMED      = 'named';
+    public const string PARAMETERIZATION_POSITIONAL = 'positional';
+    public const string PARAMETERIZATION_NAMED      = 'named';
 
     /**
      * Check environment
@@ -21,16 +24,16 @@ interface DriverInterface
     /**
      * Create result
      *
-     * @param resource $resource
+     * @param resource|object $resource The driver's native result handle
      */
-    public function createResult($resource): ResultInterface;
+    public function createResult(mixed $resource): ResultInterface;
 
     /**
      * Create statement
      *
-     * @param resource|string $sqlOrResource
+     * @param resource|object|string|null $sqlOrResource
      */
-    public function createStatement($sqlOrResource = null): StatementInterface;
+    public function createStatement(mixed $sqlOrResource = null): StatementInterface;
 
     /** Format parameter name */
     public function formatParameterName(string $name, ?string $type = null): string;
