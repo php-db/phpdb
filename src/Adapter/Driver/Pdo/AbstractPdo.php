@@ -145,11 +145,13 @@ abstract class AbstractPdo implements PdoDriverInterface, ProfilerAwareInterface
     }
 
     /**
-     * {@inheritDoc}
+     * The concrete driver sets the prototype, normally in its constructor.
+     *
+     * @throws Exception\RuntimeException When the concrete driver has not set it.
      */
-    public function getResultPrototype(): ?ResultInterface
+    public function getResultPrototype(): ResultInterface
     {
-        return $this->resultPrototype;
+        return $this->resultPrototype ?? throw Exception\RuntimeException::forMissingResultPrototype();
     }
 
     #[Override]
