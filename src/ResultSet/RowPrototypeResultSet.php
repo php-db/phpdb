@@ -53,13 +53,18 @@ class RowPrototypeResultSet extends AbstractResultSet implements RowPrototypeRes
         return $this;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     *
+     * @throws Exception\RuntimeException
+     * @throws Exception\UnexpectedValueException If a row is not row data.
+     */
     #[Override]
     public function toArray(): array
     {
         $return = [];
-        foreach ($this as $row) {
-            $return[] = $row instanceof RowPrototypeInterface ? $row->toArray() : $row;
+        for ($this->rewind(); $this->valid(); $this->next()) {
+            $return[] = $this->current()?->toArray();
         }
 
         return $return;

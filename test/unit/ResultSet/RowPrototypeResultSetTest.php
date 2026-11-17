@@ -177,6 +177,18 @@ final class RowPrototypeResultSetTest extends TestCase
         );
     }
 
+    #[Test]
+    public function toArrayKeepsNullRowsAsNull(): void
+    {
+        $resultSet = new RowPrototypeResultSet($this->createRowPrototype());
+        $resultSet->initialize(new ArrayIterator([
+            ['id' => 1],
+            null,
+        ]));
+
+        static::assertSame([['id' => 1], null], $resultSet->toArray());
+    }
+
     private function createRowPrototype(): RowPrototypeInterface
     {
         return new class implements RowPrototypeInterface {
