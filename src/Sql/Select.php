@@ -39,6 +39,7 @@ use function trim;
  * @psalm-import-type Specification from AbstractSql
  * @psalm-import-type ColumnReference from AbstractSql
  * @psalm-import-type ColumnValue from AbstractSql
+ * @psalm-import-type SqlParameterValue from AbstractSql
  * @psalm-import-type PredicateValue from Predicate\PredicateSet
  * @psalm-import-type JoinName from Join
  * @psalm-type TableReference = string|TableIdentifier|array<string, string|TableIdentifier|Select>
