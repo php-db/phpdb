@@ -20,6 +20,7 @@ use PhpDb\ResultSet\ResultSet;
 use PhpDb\ResultSet\ResultSetInterface;
 use PhpDbTest\TestAsset\TemporaryResultSet;
 use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestDox;
@@ -52,6 +53,17 @@ final class AdapterTest extends TestCase
 
     protected Adapter $adapter;
 
+    /**
+     * @return array<string, array{string, non-empty-string}>
+     */
+    public static function helperProvider(): array
+    {
+        return [
+            'quote identifier' => [Adapter::FUNCTION_QUOTE_IDENTIFIER, 'quoteIdentifier'],
+            'quote value'      => [Adapter::FUNCTION_QUOTE_VALUE, 'quoteValue'],
+        ];
+    }
+
     #[Test]
     public function constructorWithProfilerDelegatesToSetProfiler(): void
     {
@@ -69,10 +81,36 @@ final class AdapterTest extends TestCase
     }
 
     #[Test]
+    public function constructorWithProfilerPassesItToAProfilerAwareDriver(): void
+    {
+        $profiler = $this->createStub(Profiler\ProfilerInterface::class);
+        $driver   = $this->createMockForIntersectionOfInterfaces([
+            DriverInterface::class,
+            Profiler\ProfilerAwareInterface::class,
+        ]);
+        $driver->expects(self::once())->method('setProfiler')->with($profiler);
+
+        new Adapter($driver, $this->createStub(PlatformInterface::class), profiler: $profiler);
+    }
+
+    #[Test]
     #[TestDox('unit test: Test createStatement() produces a statement object')]
     public function createStatementDelegatesToDriver(): void
     {
         static::assertSame($this->mockStatement, $this->adapter->createStatement());
+    }
+
+    #[Test]
+    public function createStatementSetsTheInitialParametersOnTheStatement(): void
+    {
+        $this->mockStatement
+            ->expects(self::once())
+            ->method('setParameterContainer')
+            ->with(self::callback(
+                static fn(ParameterContainer $container): bool => ['id' => 5] === $container->getNamedArray(),
+            ));
+
+        $this->adapter->createStatement('SELECT 1', ['id' => 5]);
     }
 
     #[Test]
@@ -145,6 +183,31 @@ final class AdapterTest extends TestCase
     public function getDriverReturnsDriver(): void
     {
         static::assertSame($this->mockDriver, $this->adapter->getDriver());
+    }
+
+    /**
+     * @param non-empty-string $platformMethod
+     */
+    #[Test]
+    #[DataProvider('helperProvider')]
+    public function getHelpersFunctionsAcceptValueAsNamedArgument(string $helper, string $platformMethod): void
+    {
+        $this->mockPlatform
+            ->method($platformMethod)
+            ->with('test')
+            ->willReturn('"test"');
+
+        $functions = $this->adapter->getHelpers($helper);
+
+        static::assertSame('"test"', $functions[0](value: 'test'));
+    }
+
+    #[Test]
+    public function getHelpersIgnoresUnknownAndNonStringArguments(): void
+    {
+        $functions = $this->adapter->getHelpers('unknown', true, 1, Adapter::FUNCTION_QUOTE_IDENTIFIER);
+
+        static::assertCount(1, $functions);
     }
 
     #[Test]

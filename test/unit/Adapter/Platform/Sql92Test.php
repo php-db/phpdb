@@ -99,6 +99,12 @@ final class Sql92Test extends TestCase
     }
 
     #[Test]
+    public function getQuoteIdentifierSymbolReturnsTheOpeningQuote(): void
+    {
+        static::assertSame('[', (new TestPlatform(quoteIdentifier: ['[', ']']))->getQuoteIdentifierSymbol());
+    }
+
+    #[Test]
     public function getQuoteValueSymbol(): void
     {
         static::assertSame("'", $this->platform->getQuoteValueSymbol());
@@ -123,6 +129,12 @@ final class Sql92Test extends TestCase
     public function quoteIdentifierDoublesEmbeddedQuoteCharacters(string $identifier, string $expected): void
     {
         static::assertSame($expected, $this->platform->quoteIdentifier($identifier));
+    }
+
+    #[Test]
+    public function quoteIdentifierChainEscapesDoubleQuotes(): void
+    {
+        static::assertSame('"a\\"b"."c"', $this->platform->quoteIdentifierChain(['a"b', 'c']));
     }
 
     #[Test]
@@ -157,6 +169,14 @@ final class Sql92Test extends TestCase
     }
 
     #[Test]
+    public function quoteIdentifierInFragmentReplacesTheOpeningQuoteInEachPart(): void
+    {
+        $platform = new TestPlatform(quoteIdentifier: ['$', '#']);
+
+        static::assertSame("\$a'b#.\$c#", $platform->quoteIdentifierInFragment('a$b.c'));
+    }
+
+    #[Test]
     public function quoteIdentifierInFragmentReturnsUnquotedWhenQuotingDisabled(): void
     {
         $platform = new TestSql92Platform(quoteIdentifiers: false);
@@ -170,6 +190,14 @@ final class Sql92Test extends TestCase
         $platform = new TestSql92Platform(quoteIdentifiers: false);
 
         static::assertSame('test', $platform->quoteIdentifier('test'));
+    }
+
+    #[Test]
+    public function quoteIdentifierWrapsInTheOpeningAndClosingQuotesAndReplacesTheOpeningQuote(): void
+    {
+        $platform = new TestPlatform(quoteIdentifier: ['[', ']']);
+
+        static::assertSame("[a'b]c]", $platform->quoteIdentifier('a[b]c'));
     }
 
     #[Test]

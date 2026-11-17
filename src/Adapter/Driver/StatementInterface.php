@@ -7,9 +7,16 @@ namespace PhpDb\Adapter\Driver;
 use PhpDb\Adapter\ParameterContainer;
 use PhpDb\Adapter\StatementContainerInterface;
 
+/**
+ * @api
+ */
 interface StatementInterface extends StatementContainerInterface
 {
-    /** Execute */
+    /**
+     * Execute
+     *
+     * @param ParameterContainer|array<array-key, mixed>|null $parameters
+     */
     public function execute(ParameterContainer|array|null $parameters = null): ?ResultInterface;
 
     /**

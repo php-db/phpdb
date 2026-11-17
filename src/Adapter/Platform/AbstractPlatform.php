@@ -20,11 +20,13 @@ use const PREG_SPLIT_DELIM_CAPTURE;
 use const PREG_SPLIT_NO_EMPTY;
 
 /**
+ * @api
+ *
  * @property Driver\DriverInterface|Driver\PdoDriverInterface|PDO $driver
  */
 abstract class AbstractPlatform implements PlatformInterface
 {
-    /** @var string[] */
+    /** @var array{string, string} The opening and closing identifier quotes */
     protected array $quoteIdentifier = ['"', '"'];
 
     /** Replacement for a quote character inside an identifier; SQL-92 doubles it */
@@ -35,7 +37,7 @@ abstract class AbstractPlatform implements PlatformInterface
     protected string $quoteIdentifierFragmentPattern = '/([^0-9,a-zA-Z$_:])/i';
 
     /** @var array<string, true> */
-    private const SAFE_WORDS = ['*' => true, ' ' => true, '.' => true, 'as' => true];
+    private const array SAFE_WORDS = ['*' => true, ' ' => true, '.' => true, 'as' => true];
 
     /**
      * {@inheritDoc}
@@ -87,11 +89,13 @@ abstract class AbstractPlatform implements PlatformInterface
     #[Override]
     public function quoteIdentifierChain(array|string $identifierChain): string
     {
-        return '"' . implode('"."', (array) str_replace('"', '\\"', $identifierChain)) . '"';
+        return '"' . implode('"."', (array) str_replace('"', replace: '\\"', subject: $identifierChain)) . '"';
     }
 
     /**
      * {@inheritDoc}
+     *
+     * @param array<array-key, string> $additionalSafeWords
      */
     #[Override]
     public function quoteIdentifierInFragment(string $identifier, array $additionalSafeWords = []): string
@@ -112,18 +116,14 @@ abstract class AbstractPlatform implements PlatformInterface
             PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY,
         );
 
-        $quoteStart = $this->quoteIdentifier[0];
-        $quoteEnd   = $this->quoteIdentifier[1];
-        $quoteTo    = $this->quoteIdentifierTo;
-        $result     = '';
+        [$quoteStart, $quoteEnd] = $this->quoteIdentifier;
+        $quoteTo = $this->quoteIdentifierTo;
+        $result  = '';
 
-        foreach ($parts as $part) {
-            $lowerPart = strtolower($part);
-            if (isset($safeWords[$lowerPart])) {
-                $result .= $part;
-            } else {
-                $result .= $quoteStart . str_replace($quoteStart, $quoteTo, $part) . $quoteEnd;
-            }
+        foreach (false === $parts ? [] : $parts as $part) {
+            $result .= $safeWords[strtolower($part)] ?? false
+                ? $part
+                : $quoteStart . str_replace($quoteStart, $quoteTo, $part) . $quoteEnd;
         }
 
         return $result;
@@ -135,19 +135,21 @@ abstract class AbstractPlatform implements PlatformInterface
     #[Override]
     public function quoteTrustedValue(int|float|string|bool $value): ?string
     {
-        return '\'' . addcslashes((string) $value, "\x00\n\r\\'\"\x1a") . '\'';
+        return '\'' . addcslashes((string) $value, characters: "\x00\n\r\\'\"\x1a") . '\'';
     }
 
     /**
      * {@inheritDoc}
+     *
+     * @throws Exception\RuntimeException When no driver is available to quote safely.
      */
     #[Override]
     public function quoteValue(string $value): string
     {
-        if (! isset($this->driver)) {
+        if (null === ($this->driver ?? null)) {
             throw Exception\RuntimeException::forVulnerablePlatformQuote(static::class, __METHOD__);
         }
-        return '\'' . addcslashes($value, "\x00\n\r\\'\"\x1a") . '\'';
+        return '\'' . addcslashes($value, characters: "\x00\n\r\\'\"\x1a") . '\'';
     }
 
     /**

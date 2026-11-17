@@ -12,8 +12,10 @@ use PhpDb\Sql\Platform\PlatformDecoratorInterface;
 
 final class TestPlatform extends AbstractPlatform
 {
+    /** @param array{string, string} $quoteIdentifier */
     public function __construct(
         protected ?DriverInterface $driver = null,
+        protected array $quoteIdentifier = ['"', '"'],
     ) {}
 
     #[Override]

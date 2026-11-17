@@ -15,6 +15,7 @@ use PhpDb\Adapter\Exception\InvalidQueryException;
 use PhpDb\Adapter\Exception\RuntimeException;
 use PhpDb\Adapter\ParameterContainer;
 use PhpDb\Adapter\Profiler\ProfilerInterface;
+use PhpDbTest\Adapter\Driver\Pdo\TestAsset\BindingObservableStatement;
 use PhpDbTest\Adapter\Driver\Pdo\TestAsset\SqliteMemoryPdo;
 use PhpDbTest\Adapter\Driver\Pdo\TestAsset\TestConnection;
 use PhpDbTest\Adapter\Driver\Pdo\TestAsset\TestPdo;
@@ -38,6 +39,8 @@ use function sprintf;
 #[CoversMethod(Statement::class, 'isPrepared')]
 #[CoversMethod(Statement::class, 'execute')]
 #[CoversMethod(Statement::class, 'bindParametersFromContainer')]
+#[CoversMethod(Statement::class, 'toPdoParameter')]
+#[CoversMethod(Statement::class, 'toPdoType')]
 #[CoversMethod(Statement::class, 'setProfiler')]
 #[CoversMethod(Statement::class, 'getProfiler')]
 #[CoversMethod(Statement::class, 'initialize')]
@@ -48,6 +51,21 @@ use function sprintf;
 final class StatementTest extends TestCase
 {
     protected Statement $statement;
+
+    /** @return array<string, array{mixed, ?string, string}> */
+    public static function boundTypeProvider(): array
+    {
+        return [
+            'integer errata'              => [42, ParameterContainer::TYPE_INTEGER, 'integer'],
+            'null errata'                 => ['data', ParameterContainer::TYPE_NULL, 'null'],
+            'lob errata'                  => ['data', ParameterContainer::TYPE_LOB, 'blob'],
+            'other errata binds a string' => [42, ParameterContainer::TYPE_BINARY, 'text'],
+            'integer value'               => [42, null, 'integer'],
+            'boolean value'               => [true, null, 'integer'],
+            'null value'                  => [null, null, 'null'],
+            'string value'                => ['42', null, 'text'],
+        ];
+    }
 
     /** @return array<string, array{string}> */
     public static function invalidParameterNameProvider(): array
@@ -60,6 +78,18 @@ final class StatementTest extends TestCase
             'dot'         => ['my.param'],
             'at sign'     => ['param@name'],
         ];
+    }
+
+    #[Test]
+    public function bindingMarksTheParametersAsBound(): void
+    {
+        $statement = new BindingObservableStatement(new ParameterContainer(['val' => 1]));
+        $statement->initialize(new SqliteMemoryPdo());
+        $statement->prepare('SELECT :val');
+
+        $statement->bind();
+
+        static::assertTrue($statement->hasBoundParameters());
     }
 
     #[Test]
@@ -194,6 +224,56 @@ final class StatementTest extends TestCase
     }
 
     #[Test]
+    public function bindsAColonPrefixedNameWithASingleColon(): void
+    {
+        $pdo = new SqliteMemoryPdo();
+        $this->statement->setDriver(new TestPdo(new TestConnection($pdo)));
+        $this->statement->initialize($pdo);
+        $this->statement->setSql('SELECT :val AS t');
+
+        $container = new ParameterContainer();
+        $container->offsetSet(':val', 'bound');
+        $this->statement->setParameterContainer($container);
+
+        $row = $this->statement->execute()?->current();
+
+        static::assertSame('bound', is_array($row) ? $row['t'] ?? null : null);
+    }
+
+    #[Test]
+    public function bindsANullValueAsPdoNull(): void
+    {
+        $resource = $this->createMock(PDOStatement::class);
+        $resource->expects(self::once())->method('bindParam')->with(':val', null, PDO::PARAM_NULL);
+
+        $statement = new BindingObservableStatement(new ParameterContainer(['val' => null]));
+        $statement->setResource($resource);
+
+        $statement->bind();
+    }
+
+    #[Test]
+    #[DataProvider('boundTypeProvider')]
+    public function bindsEachParameterWithThePdoTypeForItsErrataOrValue(
+        mixed $value,
+        ?string $errata,
+        string $expectedType,
+    ): void {
+        $pdo = new SqliteMemoryPdo();
+        $this->statement->setDriver(new TestPdo(new TestConnection($pdo)));
+        $this->statement->initialize($pdo);
+        $this->statement->setSql('SELECT typeof(:val) AS t');
+
+        $container = new ParameterContainer();
+        $container->offsetSet('val', $value, $errata);
+        $this->statement->setParameterContainer($container);
+
+        $row = $this->statement->execute()?->current();
+
+        static::assertSame($expectedType, is_array($row) ? $row['t'] ?? null : null);
+    }
+
+    #[Test]
     public function cloneClonesParameterContainerWhenSet(): void
     {
         $container = new ParameterContainer(['key' => 'value']);
@@ -222,6 +302,19 @@ final class StatementTest extends TestCase
             $this->statement->getParameterContainer(),
             $clone->getParameterContainer(),
         );
+    }
+
+    #[Test]
+    public function cloneResetsTheBoundState(): void
+    {
+        $statement = new BindingObservableStatement(new ParameterContainer(['val' => 1]));
+        $statement->initialize(new SqliteMemoryPdo());
+        $statement->prepare('SELECT :val');
+        $statement->bind();
+
+        $clone = clone $statement;
+
+        static::assertFalse($clone->hasBoundParameters());
     }
 
     #[Test]
@@ -381,6 +474,20 @@ final class StatementTest extends TestCase
         $result = $statement->execute(['name' => 'test']);
 
         static::assertInstanceOf(Result::class, $result);
+    }
+
+    #[Test]
+    public function executeWithNoParametersDoesNotBind(): void
+    {
+        $pdo       = new SqliteMemoryPdo();
+        $statement = new BindingObservableStatement();
+        $statement->setDriver(new TestPdo(new TestConnection($pdo)));
+        $statement->initialize($pdo);
+        $statement->setSql('SELECT 1');
+
+        $statement->execute();
+
+        static::assertFalse($statement->hasBoundParameters());
     }
 
     #[Test]
@@ -561,6 +668,15 @@ final class StatementTest extends TestCase
     {
         $this->statement->setSql('SELECT 1');
         static::assertSame('SELECT 1', $this->statement->getSql());
+    }
+
+    #[Test]
+    public function setSqlStoresNullAsAnEmptyString(): void
+    {
+        $this->statement->setSql('SELECT 1');
+        $this->statement->setSql(null);
+
+        static::assertSame('', $this->statement->getSql());
     }
 
     /**
