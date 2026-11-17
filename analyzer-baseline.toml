@@ -31,18 +31,6 @@ message = 'Parameter #1 of `PhpDb\Adapter\ParameterContainer::offsetunset()` is 
 count = 1
 
 [[issues]]
-file = "src/Adapter/Profiler/Profiler.php"
-code = "missing-property-type"
-message = "Property `$currentIndex` is missing a type hint."
-count = 1
-
-[[issues]]
-file = "src/Adapter/Profiler/Profiler.php"
-code = "missing-property-type"
-message = "Property `$profiles` is missing a type hint."
-count = 1
-
-[[issues]]
 file = "src/ConfigProvider.php"
 code = "imprecise-type"
 message = "Type `array` in return type of `__invoke` is imprecise, equivalent to `array<array-key, mixed>`."
