@@ -43,6 +43,16 @@ final class AbstractAdapterInterfaceFactoryTest extends TestCase
         ];
     }
 
+    /** @return array<string, array{mixed}> */
+    public static function providerUnusableAdapterConfig(): array
+    {
+        return [
+            'null'         => [null],
+            'not an array' => ['writer'],
+            'empty array'  => [[]],
+        ];
+    }
+
     public static function providerValidService(): array
     {
         return [
@@ -60,6 +70,42 @@ final class AbstractAdapterInterfaceFactoryTest extends TestCase
         $factory = new AbstractAdapterInterfaceFactory();
 
         static::assertFalse($factory->canCreate($container, 'WriteAdapter'));
+    }
+
+    #[Test]
+    #[DataProvider('providerUnusableAdapterConfig')]
+    public function canCreateReturnsFalseForUnusableAdapterConfig(mixed $adapterConfig): void
+    {
+        $container = new ServiceManager();
+        $container->setService('config', [
+            AdapterInterface::class => [
+                'adapters' => [
+                    'other'  => ['driver' => PdoStubDriver::class],
+                    'writer' => $adapterConfig,
+                ],
+            ],
+        ]);
+
+        $factory = new AbstractAdapterInterfaceFactory();
+
+        static::assertFalse($factory->canCreate($container, 'writer'));
+    }
+
+    #[Test]
+    public function canCreateReturnsTrueForConfiguredAdapter(): void
+    {
+        $container = new ServiceManager();
+        $container->setService('config', [
+            AdapterInterface::class => [
+                'adapters' => [
+                    'writer' => ['driver' => PdoStubDriver::class],
+                ],
+            ],
+        ]);
+
+        $factory = new AbstractAdapterInterfaceFactory();
+
+        static::assertTrue($factory->canCreate($container, 'writer'));
     }
 
     #[Test]
