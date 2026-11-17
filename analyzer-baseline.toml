@@ -206,12 +206,6 @@ count = 1
 
 [[issues]]
 file = "src/ResultSet/AbstractResultSet.php"
-code = "invalid-type-cast"
-message = "Casting `mixed` to `array`."
-count = 1
-
-[[issues]]
-file = "src/ResultSet/AbstractResultSet.php"
 code = "mixed-assignment"
 message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
 count = 2
