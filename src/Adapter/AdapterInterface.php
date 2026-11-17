@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PhpDb\Adapter;
 
+use Closure;
 use PhpDb\ResultSet;
 
 /**
@@ -51,9 +52,9 @@ interface AdapterInterface
 
     /**
      * @todo 0.3.x track down this usage!!!
-     * @return array
+     * @return list<Closure(string): string>
      */
-    public function getHelpers();
+    public function getHelpers(): array;
 
     public function getPlatform(): Platform\PlatformInterface;
 

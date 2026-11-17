@@ -43,6 +43,8 @@ class RuntimeException extends Exception\RuntimeException
 
     final public const string MISSING_QUERY_RESULT = 'Query execution did not produce a result';
 
+    final public const string MISSING_RESULT_PROTOTYPE = 'No result prototype has been set on this driver';
+
     final public const string NON_QUERY_RESULT =
         'Cannot produce a query result set from a result'
             . ' that is not a query result; check isQueryResult() first';
@@ -115,6 +117,11 @@ class RuntimeException extends Exception\RuntimeException
     public static function forMissingQueryResult(): self
     {
         return new self(self::MISSING_QUERY_RESULT);
+    }
+
+    public static function forMissingResultPrototype(): self
+    {
+        return new self(self::MISSING_RESULT_PROTOTYPE);
     }
 
     public static function forNonQueryResult(): self

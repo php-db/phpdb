@@ -25,6 +25,8 @@ final class ContainerException extends RuntimeException implements ContainerExce
 
     final public const string NON_ADAPTER_AWARE_DELEGATE = 'Delegated service "%s" must implement %s';
 
+    final public const string NON_BUILDING_CONTAINER = 'the container must be a %s to build the adapter dependencies';
+
     final public const string SERVICE = 'Failed to create service "%s" in factory %s Reason: %s';
 
     public static function forMissingConfigService(string $serviceName, string $factoryClass): self
@@ -48,6 +50,14 @@ final class ContainerException extends RuntimeException implements ContainerExce
     public static function forNonAdapterAwareDelegate(string $name, string $interface): self
     {
         return new self(sprintf(self::NON_ADAPTER_AWARE_DELEGATE, $name, $interface));
+    }
+
+    public static function forNonBuildingContainer(
+        string $serviceName,
+        string $factoryClass,
+        string $requiredClass,
+    ): self {
+        return self::forService($serviceName, $factoryClass, sprintf(self::NON_BUILDING_CONTAINER, $requiredClass));
     }
 
     public static function forService(

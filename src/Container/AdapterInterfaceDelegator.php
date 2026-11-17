@@ -14,6 +14,9 @@ use Psr\Container\NotFoundExceptionInterface;
 
 use function sprintf;
 
+/**
+ * @api
+ */
 class AdapterInterfaceDelegator
 {
     public function __construct(

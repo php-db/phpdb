@@ -29,6 +29,7 @@ use function sprintf;
 #[CoversMethod(RuntimeException::class, 'forMissingDsn')]
 #[CoversMethod(RuntimeException::class, 'forMissingPdoExtension')]
 #[CoversMethod(RuntimeException::class, 'forMissingQueryResult')]
+#[CoversMethod(RuntimeException::class, 'forMissingResultPrototype')]
 #[CoversMethod(RuntimeException::class, 'forNonQueryResult')]
 #[CoversMethod(RuntimeException::class, 'forRollbackWithoutTransaction')]
 #[CoversMethod(RuntimeException::class, 'forUncomposableTrait')]
@@ -95,6 +96,11 @@ final class RuntimeExceptionTest extends TestCase
                 'forMissingQueryResult',
                 [],
                 RuntimeException::MISSING_QUERY_RESULT,
+            ],
+            'missing result prototype'     => [
+                'forMissingResultPrototype',
+                [],
+                RuntimeException::MISSING_RESULT_PROTOTYPE,
             ],
             'non query result'             => [
                 'forNonQueryResult',

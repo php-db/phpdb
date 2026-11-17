@@ -75,12 +75,14 @@ final class AbstractAdapterInterfaceFactory implements AbstractFactoryInterface
     /**
      * Create a "Named" DB adapter
      *
-     * @phpstan-param ContainerInterface&ServiceManager $container
+     * The adapter's dependencies are built per adapter, so the container must be a
+     * ServiceManager.
+     *
      * @param string $requestedName
      */
     #[Override]
     public function __invoke(
-        ContainerInterface|ServiceManager $container,
+        ContainerInterface $container,
         $requestedName,
         ?array $options = null,
     ): AdapterInterface&Adapter {
@@ -89,6 +91,9 @@ final class AbstractAdapterInterfaceFactory implements AbstractFactoryInterface
 
         if (null === $driverClass) {
             throw ContainerException::forMissingDriver($requestedName, self::class);
+        }
+        if (! $container instanceof ServiceManager) {
+            throw ContainerException::forNonBuildingContainer($requestedName, self::class, ServiceManager::class);
         }
 
         /** @var DriverInterface|PdoDriverInterface $driver */
