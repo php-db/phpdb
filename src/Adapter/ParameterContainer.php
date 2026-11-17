@@ -32,13 +32,13 @@ use function substr;
  */
 class ParameterContainer implements Iterator, ArrayAccess, Countable
 {
-    public const string TYPE_AUTO    = 'auto';
-    public const string TYPE_NULL    = 'null';
-    public const string TYPE_DOUBLE  = 'double';
-    public const string TYPE_INTEGER = 'integer';
-    public const string TYPE_BINARY  = 'binary';
-    public const string TYPE_STRING  = 'string';
-    public const string TYPE_LOB     = 'lob';
+    final public const string TYPE_AUTO    = 'auto';
+    final public const string TYPE_NULL    = 'null';
+    final public const string TYPE_DOUBLE  = 'double';
+    final public const string TYPE_INTEGER = 'integer';
+    final public const string TYPE_BINARY  = 'binary';
+    final public const string TYPE_STRING  = 'string';
+    final public const string TYPE_LOB     = 'lob';
 
     /**
      * Data

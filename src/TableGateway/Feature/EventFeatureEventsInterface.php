@@ -16,18 +16,18 @@ namespace PhpDb\TableGateway\Feature;
  */
 interface EventFeatureEventsInterface
 {
-    public const string EVENT_PRE_INITIALIZE  = 'preInitialize';
-    public const string EVENT_POST_INITIALIZE = 'postInitialize';
+    final public const string EVENT_PRE_INITIALIZE  = 'preInitialize';
+    final public const string EVENT_POST_INITIALIZE = 'postInitialize';
 
-    public const string EVENT_PRE_SELECT  = 'preSelect';
-    public const string EVENT_POST_SELECT = 'postSelect';
+    final public const string EVENT_PRE_SELECT  = 'preSelect';
+    final public const string EVENT_POST_SELECT = 'postSelect';
 
-    public const string EVENT_PRE_INSERT  = 'preInsert';
-    public const string EVENT_POST_INSERT = 'postInsert';
+    final public const string EVENT_PRE_INSERT  = 'preInsert';
+    final public const string EVENT_POST_INSERT = 'postInsert';
 
-    public const string EVENT_PRE_DELETE  = 'preDelete';
-    public const string EVENT_POST_DELETE = 'postDelete';
+    final public const string EVENT_PRE_DELETE  = 'preDelete';
+    final public const string EVENT_POST_DELETE = 'postDelete';
 
-    public const string EVENT_PRE_UPDATE  = 'preUpdate';
-    public const string EVENT_POST_UPDATE = 'postUpdate';
+    final public const string EVENT_PRE_UPDATE  = 'preUpdate';
+    final public const string EVENT_POST_UPDATE = 'postUpdate';
 }

@@ -139,12 +139,6 @@ message = "Type `array` in return type of `getDependencies` is imprecise, equiva
 count = 1
 
 [[issues]]
-file = "src/ConfigProvider.php"
-code = "missing-constant-type"
-message = "Class constant `NAMED_ADAPTER_KEY` is missing a type hint."
-count = 1
-
-[[issues]]
 file = "src/Container/AbstractAdapterInterfaceFactory.php"
 code = "imprecise-type"
 message = "Type `array` in parameter `$options` is imprecise, equivalent to `array<array-key, mixed>`."

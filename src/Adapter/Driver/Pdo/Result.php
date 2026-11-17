@@ -28,8 +28,8 @@ use function is_int;
  */
 class Result implements Iterator, ResultInterface
 {
-    public const string STATEMENT_MODE_SCROLLABLE = 'scrollable';
-    public const string STATEMENT_MODE_FORWARD    = 'forward';
+    final public const string STATEMENT_MODE_SCROLLABLE = 'scrollable';
+    final public const string STATEMENT_MODE_FORWARD    = 'forward';
 
     protected string $statementMode = self::STATEMENT_MODE_FORWARD;
 
@@ -41,7 +41,7 @@ class Result implements Iterator, ResultInterface
      *
      * @var list<int>
      */
-    public const array VALID_FETCH_MODES = [
+    final public const array VALID_FETCH_MODES = [
         PDO::FETCH_LAZY, // 1
         PDO::FETCH_ASSOC, // 2
         PDO::FETCH_NUM, // 3

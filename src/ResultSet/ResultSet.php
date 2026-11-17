@@ -18,8 +18,8 @@ use function is_string;
 class ResultSet extends AbstractResultSet implements ArrayObjectResultSetInterface
 {
     /** @deprecated use ResultSetReturnType */
-    public const string TYPE_ARRAYOBJECT = 'arrayobject';
-    public const string TYPE_ARRAY       = 'array';
+    final public const string TYPE_ARRAYOBJECT = 'arrayobject';
+    final public const string TYPE_ARRAY       = 'array';
 
     private readonly ResultSetReturnType $returnType;
 
