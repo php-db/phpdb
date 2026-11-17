@@ -626,7 +626,7 @@ class Select extends AbstractPreparableSql
             }
 
             $orders[] = [
-                $platform->quoteIdentifierInFragment($k),
+                IdentifierQuoter::quote($k, $platform),
                 strcasecmp(trim($v), self::ORDER_DESCENDING) === 0
                     ? self::ORDER_DESCENDING
                     : self::ORDER_ASCENDING,
