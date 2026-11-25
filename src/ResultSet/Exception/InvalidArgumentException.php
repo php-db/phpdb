@@ -8,6 +8,9 @@ use PhpDb\Exception;
 
 use function sprintf;
 
+/**
+ * @api
+ */
 class InvalidArgumentException extends Exception\InvalidArgumentException
 {
     final public const string UNRESOLVABLE_ITERATOR = 'The data source nests IteratorAggregate more than %d levels deep and cannot be resolved to an Iterator';

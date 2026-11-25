@@ -12,6 +12,7 @@ use PhpDb\Adapter\Exception\RuntimeException;
 use PhpDb\ResultSet\ResultSet;
 use PhpDbTest\TestAsset\TemporaryResultSet;
 use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
@@ -43,6 +44,17 @@ use function assert;
 #[Group('unit')]
 final class ResultTest extends TestCase
 {
+    /** @return array<string, array{string|int|false|null}> */
+    public static function generatedValueProvider(): array
+    {
+        return [
+            'string sequence value' => ['abc-123'],
+            'integer insert id'     => [7],
+            'false from the driver' => [false],
+            'no generated value'    => [null],
+        ];
+    }
+
     #[Test]
     public function bufferIsCallableWithNoEffect(): void
     {
@@ -294,6 +306,16 @@ final class ResultTest extends TestCase
     }
 
     #[Test]
+    #[DataProvider('generatedValueProvider')]
+    public function initializeAcceptsEveryGeneratedValueType(string|int|false|null $generatedValue): void
+    {
+        $result = new Result();
+        $result->initialize($this->createStub(PDOStatement::class), $generatedValue);
+
+        static::assertSame($generatedValue, $result->getGeneratedValue());
+    }
+
+    #[Test]
     public function initializeStoresResourceAndValues(): void
     {
         $stub   = $this->createMock(PDOStatement::class);
@@ -351,6 +373,20 @@ final class ResultTest extends TestCase
 
         $result->next();
         static::assertSame(1, $result->key());
+    }
+
+    #[Test]
+    public function nextFetchesTheRowThatCurrentThenReturns(): void
+    {
+        $stub = $this->createMock(PDOStatement::class);
+        $stub->expects($this->exactly(2))->method('fetch')->willReturn(['id' => 1], ['id' => 2]);
+
+        $result = new Result();
+        $result->initialize($stub, null);
+        $result->rewind();
+        $result->next();
+
+        static::assertSame(['id' => 2], $result->current());
     }
 
     #[Test]

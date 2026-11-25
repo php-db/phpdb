@@ -26,6 +26,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
 
 #[CoversMethod(AbstractPdo::class, 'getResultPrototype')]
 #[CoversMethod(AbstractPdo::class, 'checkEnvironment')]
@@ -247,6 +248,17 @@ final class PdoTest extends TestCase
         $resultPrototype = $this->pdo->getResultPrototype();
 
         static::assertInstanceOf(Result::class, $resultPrototype);
+    }
+
+    #[Test]
+    public function getResultPrototypeThrowsWhenTheDriverHasNotSetIt(): void
+    {
+        $pdo = (new ReflectionClass(TestPdo::class))->newInstanceWithoutConstructor();
+
+        $this->expectException(AdapterRuntimeException::class);
+        $this->expectExceptionMessage(AdapterRuntimeException::MISSING_RESULT_PROTOTYPE);
+
+        $pdo->getResultPrototype();
     }
 
     #[Test]

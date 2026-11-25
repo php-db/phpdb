@@ -53,8 +53,9 @@ abstract class AbstractPdo implements PdoDriverInterface, ProfilerAwareInterface
     }
 
     /**
-     * @param resource|object|string|null $sqlOrResource A resource or object other than a PDOStatement
-     *                                                   is ignored, as with null
+     * @param PDOStatement|string|null $sqlOrResource
+     *
+     * @return StatementInterface<PDOStatement>
      *
      * @throws Exception\RuntimeException When the connection is a bare PDO instance.
      */
@@ -145,11 +146,13 @@ abstract class AbstractPdo implements PdoDriverInterface, ProfilerAwareInterface
     }
 
     /**
-     * {@inheritDoc}
+     * The concrete driver sets the prototype, normally in its constructor.
+     *
+     * @throws Exception\RuntimeException When the concrete driver has not set it.
      */
-    public function getResultPrototype(): ?ResultInterface
+    public function getResultPrototype(): ResultInterface
     {
-        return $this->resultPrototype;
+        return $this->resultPrototype ?? throw Exception\RuntimeException::forMissingResultPrototype();
     }
 
     #[Override]

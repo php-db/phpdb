@@ -18,9 +18,11 @@ use PhpDb\ResultSet\AbstractResultSet;
 use PhpDb\ResultSet\Exception\RuntimeException;
 use PhpDbTest\ResultSet\TestAsset\PassThroughResultSet;
 use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 use TypeError;
 
 use function assert;
@@ -45,6 +47,24 @@ use function iterator_to_array;
 final class AbstractResultSetTest extends TestCase
 {
     protected AbstractResultSet $resultSet;
+
+    /** @return array<string, array{mixed, int}> */
+    public static function nonArrayRowProvider(): array
+    {
+        return [
+            'null row'                              => [null, 0],
+            'boolean row'                           => [true, 1],
+            'integer row'                           => [42, 1],
+            'string row'                            => ['value', 1],
+            'object row with non-public properties' => [new class {
+                public int $id = 1;
+
+                protected string $name = 'one';
+
+                private string $label = 'two';
+            }, 3],
+        ];
+    }
 
     /**
      * @throws Exception
@@ -369,6 +389,29 @@ final class AbstractResultSetTest extends TestCase
             ['id' => 1, 'name' => 'one'],
         ]));
         // Verify getFieldCount() returns number of columns in current row
+        static::assertSame(2, $resultSet->getFieldCount());
+    }
+
+    #[Test]
+    #[DataProvider('nonArrayRowProvider')]
+    public function getFieldCountCountsANonArrayRowAsAnArrayCastWould(mixed $row, int $expected): void
+    {
+        $resultSet = $this->createResultSetMock();
+        $resultSet->initialize(new ArrayIterator([$row]));
+
+        static::assertSame($expected, $resultSet->getFieldCount());
+    }
+
+    #[Test]
+    public function getFieldCountCountsThePublicPropertiesOfAnObjectRow(): void
+    {
+        $row       = new stdClass();
+        $row->id   = 1;
+        $row->name = 'one';
+
+        $resultSet = $this->createResultSetMock();
+        $resultSet->initialize(new ArrayIterator([$row]));
+
         static::assertSame(2, $resultSet->getFieldCount());
     }
 

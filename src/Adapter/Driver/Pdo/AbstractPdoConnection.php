@@ -22,6 +22,8 @@ use function strtolower;
 /**
  * @api
  *
+ * @extends AbstractConnection<PDO>
+ *
  * @psalm-import-type ConnectionParameters from ConnectionInterface
  */
 abstract class AbstractPdoConnection extends AbstractConnection implements
@@ -31,9 +33,6 @@ abstract class AbstractPdoConnection extends AbstractConnection implements
     protected ?PdoDriverInterface $driver = null;
 
     protected ?string $dsn;
-
-    /** @var ?PDO $resource */
-    protected $resource;
 
     /**
      * {@inheritDoc}

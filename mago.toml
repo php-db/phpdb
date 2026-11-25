@@ -71,6 +71,7 @@ ignore = [
     { code = "invalid-enum-case-value", in = ["src/Sql/ArgumentType.php"] },
 ]
 class-initializers = [
+    "PhpDb\\Adapter\\Driver\\Pdo\\Result::initialize",
     "PhpDb\\Adapter\\Driver\\Pdo\\Statement::initialize",
     "PhpDb\\Adapter\\Driver\\Pdo\\Statement::setDriver",
     "PhpDb\\ResultSet\\AbstractResultSet::initialize",

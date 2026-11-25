@@ -6,6 +6,9 @@ namespace PhpDb\ResultSet\Exception;
 
 use PhpDb\Exception;
 
+/**
+ * @api
+ */
 class RuntimeException extends Exception\RuntimeException
 {
     final public const string UNBUFFERED_ITERATION = 'Buffering must be enabled before iteration is started';
