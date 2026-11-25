@@ -39,15 +39,15 @@ final class AbstractAdapterInterfaceFactoryTest extends TestCase
     public static function providerInvalidService(): array
     {
         return [
-            ['PhpDb\Adapter\Unknown'],
+            'unconfigured adapter' => ['UnknownAdapter'],
         ];
     }
 
     public static function providerValidService(): array
     {
         return [
-            ['PhpDb\Adapter\Writer'],
-            ['PhpDb\Adapter\Reader'],
+            'write adapter' => ['WriteAdapter'],
+            'read adapter'  => ['ReadAdapter'],
         ];
     }
 
@@ -59,7 +59,7 @@ final class AbstractAdapterInterfaceFactoryTest extends TestCase
 
         $factory = new AbstractAdapterInterfaceFactory();
 
-        static::assertFalse($factory->canCreate($container, 'PhpDb\Adapter\Writer'));
+        static::assertFalse($factory->canCreate($container, 'WriteAdapter'));
     }
 
     #[Test]
@@ -133,17 +133,17 @@ final class AbstractAdapterInterfaceFactoryTest extends TestCase
         $container->setService('config', [
             AdapterInterface::class => [
                 'adapters' => [
-                    'PhpDb\Adapter\NoDriver' => [],
+                    'NoDriverAdapter' => [],
                 ],
             ],
         ]);
 
         $factory = new AbstractAdapterInterfaceFactory();
-        $factory->canCreate($container, 'PhpDb\Adapter\NoDriver');
+        $factory->canCreate($container, 'NoDriverAdapter');
 
         self::expectException(ContainerException::class);
         self::expectExceptionMessage(ContainerException::MISSING_DRIVER);
-        $factory($container, 'PhpDb\Adapter\NoDriver');
+        $factory($container, requestedName: 'NoDriverAdapter');
     }
 
     #[Test]
@@ -221,10 +221,10 @@ final class AbstractAdapterInterfaceFactoryTest extends TestCase
         $this->serviceManager->setService('config', [
             AdapterInterface::class => [
                 'adapters' => [
-                    'PhpDb\Adapter\Writer' => [
+                    'WriteAdapter' => [
                         'driver' => PdoStubDriver::class,
                     ],
-                    'PhpDb\Adapter\Reader' => [
+                    'ReadAdapter'  => [
                         'driver' => PdoStubDriver::class,
                     ],
                 ],

@@ -613,7 +613,7 @@ final class AbstractResultSetTest extends TestCase
             ['id' => 2, 'name' => 'two'],
             ['id' => 3, 'name' => 'three'],
         ]);
-        assert($stub instanceof PDOStatement); // to suppress IDE type warnings
+        assert($stub instanceof PDOStatement, description: 'Mock must be a PDOStatement');
         $stub->expects($this->any())
             ->method('fetch')
             ->willReturnCallback(static function () use ($data) {

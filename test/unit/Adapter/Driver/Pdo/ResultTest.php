@@ -19,7 +19,6 @@ use PHPUnit\Framework\TestCase;
 use stdClass;
 
 use function assert;
-use function uniqid;
 
 #[CoversMethod(Result::class, 'current')]
 #[CoversMethod(Result::class, 'count')]
@@ -149,7 +148,7 @@ final class ResultTest extends TestCase
         $stub = $this->getMockBuilder('PDOStatement')->getMock();
         $stub->expects($this->any())
             ->method('fetch')
-            ->willReturnCallback(static fn() => uniqid());
+            ->willReturn('first row', 'second row');
 
         $result = new Result();
         $result->initialize($stub, null);
@@ -400,7 +399,7 @@ final class ResultTest extends TestCase
         $position = 0;
 
         $stub = $this->getMockBuilder('PDOStatement')->getMock();
-        assert($stub instanceof PDOStatement); // to suppress IDE type warnings
+        assert($stub instanceof PDOStatement, description: 'Mock must be a PDOStatement');
         $stub->expects($this->any())
             ->method('fetch')
             ->willReturnCallback(static function () use ($data, &$position) {

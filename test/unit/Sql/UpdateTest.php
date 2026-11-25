@@ -16,6 +16,7 @@ use PhpDb\Sql\Argument\Value;
 use PhpDb\Sql\Exception\InvalidArgumentException;
 use PhpDb\Sql\Expression;
 use PhpDb\Sql\Join;
+use PhpDb\Sql\Predicate\Expression as PredicateExpression;
 use PhpDb\Sql\Predicate\In;
 use PhpDb\Sql\Predicate\IsNotNull;
 use PhpDb\Sql\Predicate\IsNull;
@@ -592,7 +593,7 @@ final class UpdateTest extends TestCase
         static::assertInstanceOf(Literal::class, $predicates[0][1] ?? null);
 
         static::assertSame('AND', $predicates[1][0] ?? '');
-        static::assertInstanceOf(\PhpDb\Sql\Predicate\Expression::class, $predicates[1][1] ?? null);
+        static::assertInstanceOf(PredicateExpression::class, $predicates[1][1] ?? null);
 
         static::assertSame('AND', $predicates[2][0] ?? '');
         static::assertInstanceOf(Operator::class, $predicates[2][1] ?? null);

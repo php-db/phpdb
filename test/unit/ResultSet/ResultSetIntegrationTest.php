@@ -231,7 +231,7 @@ final class ResultSetIntegrationTest extends TestCase
     #[Test]
     public function countReturnsCountOfRows(): void
     {
-        $count      = random_int(3, 75);
+        $count      = random_int(3, max: 75);
         $dataSource = $this->getArrayDataSource($count);
         // Verify count() returns correct number of rows
         $this->resultSet->initialize($dataSource);
@@ -476,12 +476,12 @@ final class ResultSetIntegrationTest extends TestCase
     #[Test]
     public function toArrayCreatesArrayOfArraysRepresentingRows(): void
     {
-        $count      = random_int(3, 75);
+        $count      = random_int(3, max: 75);
         $dataSource = $this->getArrayDataSource($count);
         // Verify toArray() returns array representation of all rows
         $this->resultSet->initialize($dataSource);
         $test = $this->resultSet->toArray();
-        static::assertEquals($dataSource->getArrayCopy(), $test, var_export($test, true));
+        static::assertEquals($dataSource->getArrayCopy(), $test, var_export($test, return: true));
     }
 
     /**

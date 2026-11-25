@@ -239,7 +239,7 @@ final class PdoTest extends TestCase
 
         $this->expectException(Error::class);
 
-        $unused = $pdo->getProfiler();
+        $pdo->getProfiler();
     }
 
     #[Test]
