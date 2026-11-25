@@ -19,6 +19,7 @@ use function sprintf;
 #[CoversMethod(ContainerException::class, 'forMissingConfiguration')]
 #[CoversMethod(ContainerException::class, 'forMissingDriver')]
 #[CoversMethod(ContainerException::class, 'forNonAdapterAwareDelegate')]
+#[CoversMethod(ContainerException::class, 'forNonBuildingContainer')]
 #[CoversMethod(ContainerException::class, 'forService')]
 final class ContainerExceptionTest extends TestCase
 {
@@ -65,6 +66,20 @@ final class ContainerExceptionTest extends TestCase
         self::assertSame(
             sprintf(ContainerException::NON_ADAPTER_AWARE_DELEGATE, 'Svc', 'SomeInterface'),
             ContainerException::forNonAdapterAwareDelegate('Svc', 'SomeInterface')->getMessage(),
+        );
+    }
+
+    #[Test]
+    public function forNonBuildingContainerComposesTheRequiredClassIntoTheServiceTemplate(): void
+    {
+        self::assertSame(
+            sprintf(
+                ContainerException::SERVICE,
+                'Svc',
+                'Factory',
+                sprintf(ContainerException::NON_BUILDING_CONTAINER, 'RequiredContainer'),
+            ),
+            ContainerException::forNonBuildingContainer('Svc', 'Factory', 'RequiredContainer')->getMessage(),
         );
     }
 

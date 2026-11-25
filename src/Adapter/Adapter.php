@@ -99,7 +99,7 @@ class Adapter implements AdapterInterface, Profiler\ProfilerAwareInterface, Sche
      * @mago-expect lint:prefer-first-class-callable
      */
     #[Override]
-    public function getHelpers()
+    public function getHelpers(): array
     {
         $functions = [];
         $platform  = $this->platform;

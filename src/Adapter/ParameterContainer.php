@@ -162,13 +162,13 @@ class ParameterContainer implements Iterator, ArrayAccess, Countable
     /**
      * Offset exists
      *
-     * @param  string|int $name
+     * @param  string|int $offset
      */
     #[Override]
     #[ReturnTypeWillChange]
-    public function offsetExists(mixed $name): bool
+    public function offsetExists(mixed $offset): bool
     {
-        return null !== ($this->data[$name] ?? null);
+        return null !== ($this->data[$offset] ?? null);
     }
 
     /**
@@ -177,21 +177,21 @@ class ParameterContainer implements Iterator, ArrayAccess, Countable
      * A name that is not set is looked up again through the name mapping, without its
      * leading colon.
      *
-     * @param  string|int $name
+     * @param  string|int $offset
      */
     #[Override]
     #[ReturnTypeWillChange]
-    public function offsetGet(mixed $name): mixed
+    public function offsetGet(mixed $offset): mixed
     {
-        if (null !== ($this->data[$name] ?? null)) {
-            return $this->data[$name];
+        if (null !== ($this->data[$offset] ?? null)) {
+            return $this->data[$offset];
         }
 
-        if (! is_string($name)) {
+        if (! is_string($offset)) {
             return null;
         }
 
-        $mappedName = $this->nameMapping[ltrim($name, characters: ':')] ?? null;
+        $mappedName = $this->nameMapping[ltrim($offset, characters: ':')] ?? null;
 
         return null === $mappedName ? null : $this->data[$mappedName] ?? null;
     }
@@ -247,26 +247,28 @@ class ParameterContainer implements Iterator, ArrayAccess, Countable
      * string name may be given with a leading colon, and either form follows the name mapping.
      * A null name appends a parameter named after the current count. Any other name is rejected.
      *
-     * @param mixed $name
+     * @param mixed $offset
      * @throws Exception\InvalidArgumentException
      */
     #[Override]
     #[ReturnTypeWillChange]
-    public function offsetSet(mixed $name, mixed $value, mixed $errata = null, mixed $maxLength = null): void
+    public function offsetSet(mixed $offset, mixed $value, mixed $errata = null, mixed $maxLength = null): void
     {
         $key = match (true) {
-            is_int($name)    => $this->positions[$name] ?? (string) $name,
-            is_string($name) => $this->nameMapping[str_starts_with($name, ':') ? substr($name, offset: 1) : $name]
-                ?? $name,
-            null === $name => (string) count($this->data),
+            is_int($offset)    => $this->positions[$offset] ?? (string) $offset,
+            is_string($offset) => $this->nameMapping[str_starts_with($offset, ':')
+                ? substr($offset, offset: 1)
+                : $offset]
+                ?? $offset,
+            null === $offset => (string) count($this->data),
             default => throw Exception\InvalidArgumentException::forInvalidKeyType(),
         };
 
-        $isNewPosition = is_int($name)
-            ? ! array_key_exists($name, $this->positions)
+        $isNewPosition = is_int($offset)
+            ? ! array_key_exists($offset, $this->positions)
             : null === ($this->data[$key] ?? null);
 
-        if (is_string($name) && is_string($value) && str_starts_with($value, ':')) {
+        if (is_string($offset) && is_string($value) && str_starts_with($value, ':')) {
             $this->nameMapping[substr($value, offset: 1)] = $key;
         }
 
@@ -324,12 +326,12 @@ class ParameterContainer implements Iterator, ArrayAccess, Countable
      */
     #[Override]
     #[ReturnTypeWillChange]
-    public function offsetUnset(mixed $name): void
+    public function offsetUnset(mixed $offset): void
     {
-        if (is_int($name)) {
-            $name = $this->positions[$name] ?? $name;
+        if (is_int($offset)) {
+            $offset = $this->positions[$offset] ?? $offset;
         }
-        unset($this->data[$name]);
+        unset($this->data[$offset]);
     }
 
     /**
