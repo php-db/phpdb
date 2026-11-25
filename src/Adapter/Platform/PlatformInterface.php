@@ -6,6 +6,9 @@ namespace PhpDb\Adapter\Platform;
 
 use PhpDb\Sql\Platform\PlatformDecoratorInterface;
 
+/**
+ * @api
+ */
 interface PlatformInterface
 {
     /**
@@ -50,6 +53,8 @@ interface PlatformInterface
 
     /**
      * Quote identifier in fragment
+     *
+     * @param array<array-key, string> $additionalSafeWords
      */
     public function quoteIdentifierInFragment(string $identifier, array $additionalSafeWords = []): string;
 

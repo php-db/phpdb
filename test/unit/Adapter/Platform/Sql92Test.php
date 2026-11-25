@@ -12,9 +12,12 @@ use PhpDb\Adapter\Platform\Sql92;
 use PhpDbTest\Adapter\Platform\TestAsset\TestPlatform;
 use PhpDbTest\TestAsset\TestSql92Platform;
 use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
+
+use function sprintf;
 
 #[CoversMethod(Sql92::class, 'getName')]
 #[CoversMethod(Sql92::class, 'getQuoteIdentifierSymbol')]
@@ -39,6 +42,28 @@ use PHPUnit\Framework\TestCase;
 final class Sql92Test extends TestCase
 {
     protected Sql92 $platform;
+
+    /**
+     * @return array<string, array{string, string}>
+     */
+    public static function identifiersWithEmbeddedQuotes(): array
+    {
+        return [
+            'quote inside a name'    => ['my"col', '"my""col"'],
+            'quote only'             => ['"', '""""'],
+            'adjacent quotes'        => ['a""b', '"a""""b"'],
+            'single quote unchanged' => ["it's", "\"it's\""],
+        ];
+    }
+
+    #[DataProvider('identifiersWithEmbeddedQuotes')]
+    #[Test]
+    public function abstractPlatformQuoteIdentifierDoublesEmbeddedQuoteCharacters(
+        string $identifier,
+        string $expected,
+    ): void {
+        static::assertSame($expected, (new TestPlatform())->quoteIdentifier($identifier));
+    }
 
     #[Test]
     public function abstractPlatformQuoteValueEscapesWithDriver(): void
@@ -76,6 +101,12 @@ final class Sql92Test extends TestCase
     }
 
     #[Test]
+    public function getQuoteIdentifierSymbolReturnsTheOpeningQuote(): void
+    {
+        static::assertSame('[', (new TestPlatform(quoteIdentifier: ['[', ']']))->getQuoteIdentifierSymbol());
+    }
+
+    #[Test]
     public function getQuoteValueSymbol(): void
     {
         static::assertSame("'", $this->platform->getQuoteValueSymbol());
@@ -93,6 +124,19 @@ final class Sql92Test extends TestCase
         static::assertSame('"identifier"', $this->platform->quoteIdentifierChain('identifier'));
         static::assertSame('"identifier"', $this->platform->quoteIdentifierChain(['identifier']));
         static::assertSame('"schema"."identifier"', $this->platform->quoteIdentifierChain(['schema', 'identifier']));
+    }
+
+    #[Test]
+    public function quoteIdentifierChainEscapesDoubleQuotes(): void
+    {
+        static::assertSame('"a\\"b"."c"', $this->platform->quoteIdentifierChain(['a"b', 'c']));
+    }
+
+    #[DataProvider('identifiersWithEmbeddedQuotes')]
+    #[Test]
+    public function quoteIdentifierDoublesEmbeddedQuoteCharacters(string $identifier, string $expected): void
+    {
+        static::assertSame($expected, $this->platform->quoteIdentifier($identifier));
     }
 
     #[Test]
@@ -127,6 +171,14 @@ final class Sql92Test extends TestCase
     }
 
     #[Test]
+    public function quoteIdentifierInFragmentReplacesTheOpeningQuoteInEachPart(): void
+    {
+        $platform = new TestPlatform(quoteIdentifier: ['$', '#']);
+
+        static::assertSame('$a""b#.$c#', $platform->quoteIdentifierInFragment('a$b.c'));
+    }
+
+    #[Test]
     public function quoteIdentifierInFragmentReturnsUnquotedWhenQuotingDisabled(): void
     {
         $platform = new TestSql92Platform(quoteIdentifiers: false);
@@ -140,6 +192,14 @@ final class Sql92Test extends TestCase
         $platform = new TestSql92Platform(quoteIdentifiers: false);
 
         static::assertSame('test', $platform->quoteIdentifier('test'));
+    }
+
+    #[Test]
+    public function quoteIdentifierWrapsInTheOpeningAndClosingQuotesAndReplacesTheOpeningQuote(): void
+    {
+        $platform = new TestPlatform(quoteIdentifier: ['[', ']']);
+
+        static::assertSame('[a""b]c]', $platform->quoteIdentifier('a[b]c'));
     }
 
     #[Test]
@@ -189,16 +249,12 @@ final class Sql92Test extends TestCase
     public function quoteValueThrowsWithoutDriver(): void
     {
         $this->expectException(RuntimeException::class);
-        static::assertSame("'value'", @$this->platform->quoteValue('value'));
-        static::assertSame("'Foo O\\'Bar'", @$this->platform->quoteValue("Foo O'Bar"));
-        static::assertSame(
-            '\'\\\'; DELETE FROM some_table; -- \'',
-            @$this->platform->quoteValue("'; DELETE FROM some_table; -- "),
-        );
-        static::assertSame(
-            "'\\\\\\'; DELETE FROM some_table; -- '",
-            @$this->platform->quoteValue('\\\'; DELETE FROM some_table; -- '),
-        );
+        $this->expectExceptionMessage(sprintf(
+            RuntimeException::VULNERABLE_PLATFORM_QUOTE,
+            Sql92::class,
+            Sql92::class . '::quoteValue',
+        ));
+        $this->platform->quoteValue("Foo O'Bar");
     }
 
     /**

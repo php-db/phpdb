@@ -8,8 +8,18 @@ use Override;
 use PhpDb\Adapter\Profiler\ProfilerAwareInterface;
 use PhpDb\Adapter\Profiler\ProfilerInterface;
 
+/**
+ * @api
+ *
+ * @template TConnection of object|resource = object|resource The native connection handle
+ *
+ * @implements ConnectionInterface<TConnection>
+ *
+ * @psalm-import-type ConnectionParameters from ConnectionInterface
+ */
 abstract class AbstractConnection implements ConnectionInterface, ProfilerAwareInterface
 {
+    /** @var ConnectionParameters */
     protected array $connectionParameters = [];
 
     protected ?string $driverName;
@@ -21,8 +31,15 @@ abstract class AbstractConnection implements ConnectionInterface, ProfilerAwareI
 
     protected ?ProfilerInterface $profiler = null;
 
-    /** Extending classes must be covariant. */
-    protected $resource;
+    /**
+     * The driver's native connection handle, or null while disconnected. It is typed mixed
+     * because a native extension may hand back a resource, which has no declarable type, and
+     * property types are invariant, so a driver narrows it where it reads it, not by
+     * redeclaring it.
+     *
+     * @var TConnection|null
+     */
+    protected mixed $resource = null;
 
     #[Override]
     public function disconnect(): ConnectionInterface
@@ -34,7 +51,11 @@ abstract class AbstractConnection implements ConnectionInterface, ProfilerAwareI
         return $this;
     }
 
-    /** Get connection parameters */
+    /**
+     * Get connection parameters
+     *
+     * @return ConnectionParameters
+     */
     #[Override]
     public function getConnectionParameters(): array
     {
@@ -53,10 +74,10 @@ abstract class AbstractConnection implements ConnectionInterface, ProfilerAwareI
     }
 
     /**
-     * @return resource|null
+     * @return TConnection|null
      */
     #[Override]
-    public function getResource()
+    public function getResource(): mixed
     {
         if (! $this->isConnected()) {
             $this->connect();
@@ -72,6 +93,7 @@ abstract class AbstractConnection implements ConnectionInterface, ProfilerAwareI
         return $this->inTransaction;
     }
 
+    /** @param ConnectionParameters $connectionParameters */
     #[Override]
     public function setConnectionParameters(array $connectionParameters): ConnectionInterface
     {

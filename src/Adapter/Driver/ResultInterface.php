@@ -9,6 +9,13 @@ use Iterator;
 use PhpDb\Adapter\Exception;
 use PhpDb\ResultSet\ResultSetInterface;
 
+/**
+ * @api
+ *
+ * @template TResult of object|resource = object|resource The native result handle
+ *
+ * @extends Iterator<array-key, mixed>
+ */
 interface ResultInterface extends Countable, Iterator
 {
     /**
@@ -41,6 +48,8 @@ interface ResultInterface extends Countable, Iterator
 
     /**
      * Get the resource
+     *
+     * @return TResult
      */
     public function getResource(): mixed;
 

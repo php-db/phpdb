@@ -14,6 +14,7 @@ use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
+use function array_map;
 use function sprintf;
 
 #[CoversMethod(Profiler::class, 'profilerStart')]
@@ -24,6 +25,26 @@ use function sprintf;
 final class ProfilerTest extends TestCase
 {
     protected Profiler $profiler;
+
+    #[Test]
+    public function eachFinishedProfileIsKeptSeparately(): void
+    {
+        $this->profiler->profilerStart('SELECT 1');
+        $this->profiler->profilerFinish();
+        $this->profiler->profilerStart('SELECT 2');
+        $this->profiler->profilerFinish();
+
+        static::assertSame([0 => 'SELECT 1', 1 => 'SELECT 2'], array_map(
+            static fn(array $profile): ?string => $profile['sql'],
+            $this->profiler->getProfiles(),
+        ));
+    }
+
+    #[Test]
+    public function getLastProfileReturnsNullBeforeAnyProfileStarts(): void
+    {
+        static::assertNull($this->profiler->getLastProfile());
+    }
 
     #[Test]
     public function getLastProfileReturnsSqlAndTimings(): void
@@ -39,6 +60,16 @@ final class ProfilerTest extends TestCase
     }
 
     #[Test]
+    public function getLastProfileReturnsTheMostRecentProfile(): void
+    {
+        $this->profiler->profilerStart('SELECT 1');
+        $this->profiler->profilerFinish();
+        $this->profiler->profilerStart('SELECT 2');
+
+        static::assertSame('SELECT 2', $this->profiler->getLastProfile()['sql'] ?? null);
+    }
+
+    #[Test]
     public function getProfilesReturnsAllRecordedProfiles(): void
     {
         $this->profiler->profilerStart('SELECT * FROM FOO1');
@@ -47,6 +78,17 @@ final class ProfilerTest extends TestCase
         $this->profiler->profilerFinish();
 
         static::assertCount(2, $this->profiler->getProfiles());
+    }
+
+    #[Test]
+    public function profilerFinishRecordsTheElapsedTime(): void
+    {
+        $this->profiler->profilerStart('SELECT 1');
+        $this->profiler->profilerFinish();
+
+        $profile = $this->profiler->getLastProfile();
+
+        static::assertSame(($profile['end'] ?? 0.0) - ($profile['start'] ?? 0.0), $profile['elapse'] ?? null);
     }
 
     #[Test]

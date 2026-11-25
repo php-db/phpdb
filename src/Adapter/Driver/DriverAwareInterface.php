@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace PhpDb\Adapter\Driver;
 
+/**
+ * @api
+ */
 interface DriverAwareInterface
 {
     /** Implementation should provide a fluent interface */

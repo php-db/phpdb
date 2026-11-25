@@ -6,7 +6,7 @@ namespace PhpDb;
 
 final readonly class ConfigProvider
 {
-    public const NAMED_ADAPTER_KEY = 'adapters';
+    public const string NAMED_ADAPTER_KEY = 'adapters';
 
     public function getDependencies(): array
     {

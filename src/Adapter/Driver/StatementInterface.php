@@ -7,17 +7,26 @@ namespace PhpDb\Adapter\Driver;
 use PhpDb\Adapter\ParameterContainer;
 use PhpDb\Adapter\StatementContainerInterface;
 
+/**
+ * @api
+ *
+ * @template TStatement of object|resource = object|resource The native prepared statement handle
+ */
 interface StatementInterface extends StatementContainerInterface
 {
-    /** Execute */
+    /**
+     * Execute
+     *
+     * @param ParameterContainer|array<array-key, mixed>|null $parameters
+     */
     public function execute(ParameterContainer|array|null $parameters = null): ?ResultInterface;
 
     /**
      * Get resource
      *
-     * @return resource|false|null
+     * @return TStatement|false|null
      */
-    public function getResource();
+    public function getResource(): mixed;
 
     /** Check if is prepared */
     public function isPrepared(): bool;

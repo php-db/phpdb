@@ -24,6 +24,8 @@ class InvalidArgumentException extends Exception\InvalidArgumentException
 
     final public const string EMPTY_EXPRESSION = 'Supplied expression must not be an empty string.';
 
+    final public const string EMPTY_IDENTIFIER_PART = 'Identifier "%s" is empty or has an empty qualifier part';
+
     final public const string EMPTY_PREFIX = '$prefix must be a valid table prefix or null, empty string given';
 
     final public const string EMPTY_SCHEMA = '$schema must be a valid schema name or null, empty string given';
@@ -60,7 +62,7 @@ class InvalidArgumentException extends Exception\InvalidArgumentException
 
     final public const string MISSING_VALUES_OR_SELECT = 'values or select should be present';
 
-    final public const string NON_NUMERIC_PARAMETER = '%s expects parameter to be numeric, "%s" given';
+    final public const string NON_NEGATIVE_INTEGER_PARAMETER = '%s expects a non-negative integer, "%s" given';
 
     final public const string NON_STRING_VALUE_KEY = 'set() expects a string for the value key';
 
@@ -80,6 +82,10 @@ class InvalidArgumentException extends Exception\InvalidArgumentException
 
     final public const string UNKNOWN_COLUMN_KEY = 'The key %s was not found in this objects column list';
 
+    final public const string UNQUOTABLE_IDENTIFIER =
+        'Identifier "%s" holds expression syntax that cannot be quoted as a name;'
+            . ' pass it as an Expression instead';
+
     final public const string VALUES_WITH_MERGE_FLAG =
         'An array of values cannot be provided with the merge flag'
             . ' when a PhpDb\Sql\Select instance already exists as the value source';
@@ -97,6 +103,11 @@ class InvalidArgumentException extends Exception\InvalidArgumentException
     public static function forEmptyExpression(): self
     {
         return new self(self::EMPTY_EXPRESSION);
+    }
+
+    public static function forEmptyIdentifierPart(string $identifier): self
+    {
+        return new self(sprintf(self::EMPTY_IDENTIFIER_PART, $identifier));
     }
 
     public static function forEmptyPrefix(): self
@@ -172,9 +183,9 @@ class InvalidArgumentException extends Exception\InvalidArgumentException
         return new self(self::MISSING_VALUES_OR_SELECT);
     }
 
-    public static function forNonNumericParameter(string $method, string $givenType): self
+    public static function forNonNegativeIntegerParameter(string $method, int|string $given): self
     {
-        return new self(sprintf(self::NON_NUMERIC_PARAMETER, $method, $givenType));
+        return new self(sprintf(self::NON_NEGATIVE_INTEGER_PARAMETER, $method, $given));
     }
 
     public static function forNonStringValueKey(): self
@@ -205,6 +216,11 @@ class InvalidArgumentException extends Exception\InvalidArgumentException
     public static function forUnknownColumnKey(string $name): self
     {
         return new self(sprintf(self::UNKNOWN_COLUMN_KEY, $name));
+    }
+
+    public static function forUnquotableIdentifier(string $identifier): self
+    {
+        return new self(sprintf(self::UNQUOTABLE_IDENTIFIER, $identifier));
     }
 
     public static function forValuesWithMergeFlag(): self

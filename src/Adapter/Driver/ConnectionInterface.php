@@ -6,6 +6,13 @@ namespace PhpDb\Adapter\Driver;
 
 use PhpDb\Adapter\SchemaAwareInterface;
 
+/**
+ * @api
+ *
+ * @template TConnection of object|resource = object|resource The native connection handle
+ *
+ * @psalm-type ConnectionParameters = array<string, mixed>
+ */
 interface ConnectionInterface extends SchemaAwareInterface
 {
     public function beginTransaction(): self;
@@ -18,6 +25,7 @@ interface ConnectionInterface extends SchemaAwareInterface
 
     public function execute(string $sql): ?ResultInterface;
 
+    /** @return ConnectionParameters */
     public function getConnectionParameters(): array;
 
     /**
@@ -30,9 +38,9 @@ interface ConnectionInterface extends SchemaAwareInterface
     /**
      * Get resource
      *
-     * @return resource|object|null
+     * @return TConnection|null
      */
-    public function getResource();
+    public function getResource(): mixed;
 
     /** Checks whether the connection is in transaction state. */
     public function inTransaction(): bool;
@@ -41,5 +49,6 @@ interface ConnectionInterface extends SchemaAwareInterface
 
     public function rollback(): self;
 
+    /** @param ConnectionParameters $connectionParameters */
     public function setConnectionParameters(array $connectionParameters): self;
 }

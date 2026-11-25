@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace PhpDb\Sql;
 
 use Closure;
+use Override;
 use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\ParameterContainer;
 use PhpDb\Adapter\Platform\PlatformInterface;
@@ -15,14 +16,13 @@ use function array_key_first;
 use function array_keys;
 use function count;
 use function explode;
-use function gettype;
 use function is_array;
 use function is_int;
-use function is_numeric;
 use function is_scalar;
 use function is_string;
 use function key;
 use function method_exists;
+use function preg_match;
 use function preg_split;
 use function strcasecmp;
 use function stripos;
@@ -37,6 +37,9 @@ use function trim;
  * @property ?Having $having
  * @property ?Join $joins
  * @psalm-import-type Specification from AbstractSql
+ * @psalm-import-type ColumnReference from AbstractSql
+ * @psalm-import-type ColumnValue from AbstractSql
+ * @psalm-import-type SqlParameterValue from AbstractSql
  * @psalm-import-type PredicateValue from Predicate\PredicateSet
  * @psalm-import-type JoinName from Join
  * @psalm-type TableReference = string|TableIdentifier|array<string, string|TableIdentifier|Select>
@@ -189,6 +192,16 @@ class Select extends AbstractPreparableSql
     }
 
     /**
+     * Whether a row count is a non-negative integer, given as an int or as a string of digits
+     *
+     * A digit string is kept as given, so a count beyond PHP_INT_MAX is still accepted.
+     */
+    private static function isNonNegativeInteger(int|string $value): bool
+    {
+        return is_int($value) ? $value >= 0 : 1 === preg_match('/^\d+\z/', $value);
+    }
+
+    /**
      * Specify columns from which to select
      * Possible valid states:
      *   array(*)
@@ -336,8 +349,8 @@ class Select extends AbstractPreparableSql
      */
     public function limit(int|string $limit): static
     {
-        if (! is_numeric($limit)) {
-            throw Exception\InvalidArgumentException::forNonNumericParameter(__METHOD__, gettype($limit));
+        if (! self::isNonNegativeInteger($limit)) {
+            throw Exception\InvalidArgumentException::forNonNegativeIntegerParameter(__METHOD__, $limit);
         }
 
         $this->limit = $limit;
@@ -349,8 +362,8 @@ class Select extends AbstractPreparableSql
      */
     public function offset(int|string $offset): static
     {
-        if (! is_numeric($offset)) {
-            throw Exception\InvalidArgumentException::forNonNumericParameter(__METHOD__, gettype($offset));
+        if (! self::isNonNegativeInteger($offset)) {
+            throw Exception\InvalidArgumentException::forNonNegativeIntegerParameter(__METHOD__, $offset);
         }
 
         $this->offset = $offset;
@@ -538,7 +551,11 @@ class Select extends AbstractPreparableSql
         return $this->processJoin($this->joins, $platform, $driver, $parameterContainer);
     }
 
-    /** @return array{0: string}|null */
+    /**
+     * Platform overrides may return the raw limit or offset unquoted; any scalar is rendered as vsprintf's %s would.
+     *
+     * @return array{0: SqlParameterValue}|null
+     */
     protected function processLimit(
         PlatformInterface $platform,
         ?DriverInterface $driver = null,
@@ -557,7 +574,11 @@ class Select extends AbstractPreparableSql
         return [$platform->quoteValue((string) $this->limit)];
     }
 
-    /** @return array{0: string}|null */
+    /**
+     * Platform overrides may return the raw limit or offset unquoted; any scalar is rendered as vsprintf's %s would.
+     *
+     * @return array{0: SqlParameterValue}|null
+     */
     protected function processOffset(
         PlatformInterface $platform,
         ?DriverInterface $driver = null,
@@ -605,7 +626,7 @@ class Select extends AbstractPreparableSql
             }
 
             $orders[] = [
-                $platform->quoteIdentifierInFragment($k),
+                IdentifierQuoter::quote($k, $platform),
                 strcasecmp(trim($v), self::ORDER_DESCENDING) === 0
                     ? self::ORDER_DESCENDING
                     : self::ORDER_ASCENDING,
@@ -751,6 +772,27 @@ class Select extends AbstractPreparableSql
         return [
             $this->processExpression($this->where, $platform, $driver, $parameterContainer, 'where'),
         ];
+    }
+
+    /**
+     * Quote a select, join or group column string through IdentifierQuoter
+     *
+     * @param ColumnReference|ColumnValue $column
+     * @throws Exception\RuntimeException
+     */
+    #[Override]
+    protected function resolveColumnValue(
+        Select|array|string|int|float|bool|ExpressionInterface|null $column,
+        PlatformInterface $platform,
+        ?DriverInterface $driver = null,
+        ?ParameterContainer $parameterContainer = null,
+        ?string $namedParameterPrefix = null,
+    ): string {
+        if (is_array($column) && ($column['isIdentifier'] ?? false) && is_string($column['column'])) {
+            return ($column['fromTable'] ?? '') . IdentifierQuoter::quoteColumn($column['column'], $platform);
+        }
+
+        return parent::resolveColumnValue($column, $platform, $driver, $parameterContainer, $namedParameterPrefix);
     }
 
     /**

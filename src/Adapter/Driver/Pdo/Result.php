@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace PhpDb\Adapter\Driver\Pdo;
 
 use Closure;
+use Exception as PhpException;
 use Iterator;
 use Override;
 use PDO;
+use PDOException;
 use PDOStatement;
 use PhpDb\Adapter\Driver\ResultInterface;
 use PhpDb\Adapter\Exception;
@@ -19,22 +21,27 @@ use ReturnTypeWillChange;
 use function in_array;
 use function is_int;
 
+/**
+ * @api
+ *
+ * @implements Iterator<array-key, mixed>
+ * @implements ResultInterface<PDOStatement>
+ */
 class Result implements Iterator, ResultInterface
 {
-    public const STATEMENT_MODE_SCROLLABLE = 'scrollable';
-    public const STATEMENT_MODE_FORWARD    = 'forward';
+    final public const string STATEMENT_MODE_SCROLLABLE = 'scrollable';
+    final public const string STATEMENT_MODE_FORWARD    = 'forward';
 
     protected string $statementMode = self::STATEMENT_MODE_FORWARD;
 
-    /** @var int */
-    protected $fetchMode = PDO::FETCH_ASSOC;
+    protected int $fetchMode = PDO::FETCH_ASSOC;
 
     /**
      * @internal
      *
-     * @var array
+     * @var list<int>
      */
-    public const VALID_FETCH_MODES = [
+    final public const array VALID_FETCH_MODES = [
         PDO::FETCH_LAZY, // 1
         PDO::FETCH_ASSOC, // 2
         PDO::FETCH_NUM, // 3
@@ -53,35 +60,22 @@ class Result implements Iterator, ResultInterface
         PDO::FETCH_CLASSTYPE, // Extra option for \PDO::FETCH_CLASS
     ];
 
-    /** @var PDOStatement */
-    protected $resource;
+    /** Set by initialize(); reading a result before then is an error. */
+    protected PDOStatement $resource;
 
-    /** @var array Result options */
-    protected $options;
+    /** @var array<array-key, mixed> Result options */
+    protected array $options = [];
 
-    /**
-     * Is the current complete?
-     *
-     * @var bool
-     */
-    protected $currentComplete = false;
+    /** Is the current complete? */
+    protected bool $currentComplete = false;
 
-    /**
-     * Track current item in recordset
-     *
-     * @var mixed
-     */
-    protected $currentData;
+    /** Track current item in recordset */
+    protected mixed $currentData = null;
 
-    /**
-     * Current position of scrollable statement
-     *
-     * @var int
-     */
-    protected $position = -1;
+    /** Current position of scrollable statement */
+    protected int $position = -1;
 
-    /** @var string|int|false|null */
-    protected $generatedValue;
+    protected string|int|false|null $generatedValue = null;
 
     protected Closure|int|null $rowCount = null;
 
@@ -95,26 +89,22 @@ class Result implements Iterator, ResultInterface
      * Count
      *
      * @return int
+     *
+     * @throws PDOException When the driver raises one while counting rows.
      */
     #[ReturnTypeWillChange]
     #[Override]
     public function count()
     {
-        if (is_int($this->rowCount)) {
-            return $this->rowCount;
-        }
-        if ($this->rowCount instanceof Closure) {
-            $this->rowCount = (int) ($this->rowCount)();
-        } else {
-            $this->rowCount = (int) $this->resource->rowCount();
-        }
-        return $this->rowCount;
+        return $this->rowCount = $this->resolveRowCount();
     }
 
     /**
      * Get the data
      *
      * @return mixed
+     *
+     * @throws PDOException When the driver raises one while fetching.
      */
     #[ReturnTypeWillChange]
     #[Override]
@@ -131,6 +121,8 @@ class Result implements Iterator, ResultInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @throws PDOException When the driver raises one while counting rows.
      */
     #[Override]
     public function getAffectedRows(): int
@@ -145,6 +137,8 @@ class Result implements Iterator, ResultInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @throws PDOException When the driver raises one while counting columns.
      */
     #[Override]
     public function getFieldCount(): int
@@ -162,6 +156,8 @@ class Result implements Iterator, ResultInterface
      * {@inheritdoc}
      *
      * @throws Exception\RuntimeException
+     * @throws PDOException When the driver raises one while counting columns.
+     * @throws PhpException When the result set rejects this result as its data source.
      */
     #[Override]
     public function getQueryResult(?ResultSetInterface $resultPrototype = null): ResultSetInterface
@@ -179,6 +175,8 @@ class Result implements Iterator, ResultInterface
 
     /**
      * Get resource
+     *
+     * @return PDOStatement
      */
     #[Override]
     public function getResource(): mixed
@@ -193,12 +191,10 @@ class Result implements Iterator, ResultInterface
 
     /**
      * Initialize
-     *
-     * @param string|int|false|null $generatedValue
      */
     public function initialize(
         PDOStatement $resource,
-        $generatedValue,
+        string|int|false|null $generatedValue,
         Closure|int|null $rowCount = null,
     ): self {
         $this->resource       = $resource;
@@ -219,6 +215,8 @@ class Result implements Iterator, ResultInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @throws PDOException When the driver raises one while counting columns.
      */
     #[Override]
     public function isQueryResult(): bool
@@ -239,22 +237,21 @@ class Result implements Iterator, ResultInterface
     }
 
     /**
-     * Next
+     * Fetch the next row and advance the position. Read the row with current().
      *
-     * @return mixed
+     * @throws PDOException When the driver raises one while fetching.
      */
-    #[ReturnTypeWillChange]
     #[Override]
-    public function next()
+    public function next(): void
     {
         $this->currentData     = $this->resource->fetch($this->fetchMode);
         $this->currentComplete = true;
         $this->position++;
-        return $this->currentData;
     }
 
     /**
      * @throws Exception\RuntimeException
+     * @throws PDOException When the driver raises one while fetching.
      * @return void
      */
     #[ReturnTypeWillChange]
@@ -276,7 +273,7 @@ class Result implements Iterator, ResultInterface
      */
     public function setFetchMode(int $fetchMode): void
     {
-        if (! in_array($fetchMode, self::VALID_FETCH_MODES, true)) {
+        if (! in_array($fetchMode, self::VALID_FETCH_MODES, strict: true)) {
             throw Exception\InvalidArgumentException::forInvalidFetchMode();
         }
 
@@ -285,7 +282,7 @@ class Result implements Iterator, ResultInterface
 
     public function setStatementMode(string $statementMode = self::STATEMENT_MODE_FORWARD): void
     {
-        if (! in_array($statementMode, [self::STATEMENT_MODE_SCROLLABLE, self::STATEMENT_MODE_FORWARD], true)) {
+        if (! in_array($statementMode, [self::STATEMENT_MODE_SCROLLABLE, self::STATEMENT_MODE_FORWARD], strict: true)) {
             throw Exception\InvalidArgumentException::forInvalidStatementMode();
         }
 
@@ -302,5 +299,17 @@ class Result implements Iterator, ResultInterface
     public function valid()
     {
         return false !== $this->currentData;
+    }
+
+    /** @throws PDOException When the driver raises one while counting rows. */
+    private function resolveRowCount(): int
+    {
+        $rowCount = $this->rowCount;
+
+        return match (true) {
+            is_int($rowCount) => $rowCount,
+            $rowCount instanceof Closure => (int) $rowCount(),
+            default => $this->resource->rowCount(),
+        };
     }
 }
