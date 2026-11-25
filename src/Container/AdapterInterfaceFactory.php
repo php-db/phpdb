@@ -8,16 +8,22 @@ use Laminas\ServiceManager\ServiceManager;
 use PhpDb\Adapter\Adapter;
 use PhpDb\Adapter\AdapterInterface;
 use PhpDb\Adapter\Driver\DriverInterface;
-use PhpDb\Adapter\Driver\PdoDriverInterface;
 use PhpDb\Adapter\Platform\PlatformInterface;
 use PhpDb\Adapter\Profiler\ProfilerInterface;
 use PhpDb\Exception\ContainerException;
 use PhpDb\ResultSet\ResultSet;
 use PhpDb\ResultSet\ResultSetInterface;
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
 final class AdapterInterfaceFactory
 {
+    /**
+     * @throws ContainerException If the config service, the adapter configuration or its driver is missing.
+     * @throws ContainerExceptionInterface If a dependency cannot be built.
+     * @throws NotFoundExceptionInterface If a dependency cannot be resolved.
+     */
     public function __invoke(
         ContainerInterface&ServiceManager $container,
         string $requestedName,
@@ -26,28 +32,30 @@ final class AdapterInterfaceFactory
             throw ContainerException::forMissingConfigService($requestedName, self::class);
         }
 
-        $config        = $container->get('config') ?? [];
+        /** @var array<array-key, mixed> $config */
+        $config = $container->get('config') ?? [];
+
+        /** @var array{driver?: class-string<DriverInterface>, ...} $adapterConfig */
         $adapterConfig = $config[AdapterInterface::class] ?? $config[Adapter::class] ?? [];
 
         if ([] === $adapterConfig) {
             throw ContainerException::forMissingConfiguration(AdapterInterface::class, self::class, $requestedName);
         }
 
-        /** @var class-string<DriverInterface>|class-string<PdoDriverInterface>|null $driverClass */
         $driverClass = $adapterConfig['driver'] ?? null;
 
-        /** @var DriverInterface|PdoDriverInterface $driver */
+        if (null === $driverClass) {
+            throw ContainerException::forMissingDriver($requestedName, self::class);
+        }
+
         $driver = $container->build($driverClass, $adapterConfig);
 
-        /** @var PlatformInterface $adapterPlatform */
         $adapterPlatform = $container->build(PlatformInterface::class, ['driver' => $driver]);
 
-        /** @var ProfilerInterface|null $profilerInterface */
         $profilerInterface = $container->has(ProfilerInterface::class)
             ? $container->build(ProfilerInterface::class)
             : null;
 
-        /** @var ResultSetInterface|null $queryResultSetPrototype */
         $queryResultSetPrototype = $container->has(ResultSetInterface::class)
             ? $container->get(ResultSetInterface::class)
             : new ResultSet();
