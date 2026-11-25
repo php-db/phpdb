@@ -25,6 +25,7 @@ use function is_int;
  * @api
  *
  * @implements Iterator<array-key, mixed>
+ * @implements ResultInterface<PDOStatement>
  */
 class Result implements Iterator, ResultInterface
 {
@@ -174,6 +175,8 @@ class Result implements Iterator, ResultInterface
 
     /**
      * Get resource
+     *
+     * @return PDOStatement
      */
     #[Override]
     public function getResource(): mixed

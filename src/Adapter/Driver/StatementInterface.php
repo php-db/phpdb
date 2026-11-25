@@ -9,6 +9,8 @@ use PhpDb\Adapter\StatementContainerInterface;
 
 /**
  * @api
+ *
+ * @template TStatement of object|resource = object|resource The native prepared statement handle
  */
 interface StatementInterface extends StatementContainerInterface
 {
@@ -22,7 +24,7 @@ interface StatementInterface extends StatementContainerInterface
     /**
      * Get resource
      *
-     * @return resource|object|false|null
+     * @return TStatement|false|null
      */
     public function getResource(): mixed;
 

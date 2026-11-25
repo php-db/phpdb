@@ -11,6 +11,10 @@ use PhpDb\Adapter\Profiler\ProfilerInterface;
 /**
  * @api
  *
+ * @template TConnection of object|resource = object|resource The native connection handle
+ *
+ * @implements ConnectionInterface<TConnection>
+ *
  * @psalm-import-type ConnectionParameters from ConnectionInterface
  */
 abstract class AbstractConnection implements ConnectionInterface, ProfilerAwareInterface
@@ -33,7 +37,7 @@ abstract class AbstractConnection implements ConnectionInterface, ProfilerAwareI
      * property types are invariant, so a driver narrows it where it reads it, not by
      * redeclaring it.
      *
-     * @var resource|object|null
+     * @var TConnection|null
      */
     protected mixed $resource = null;
 
@@ -70,7 +74,7 @@ abstract class AbstractConnection implements ConnectionInterface, ProfilerAwareI
     }
 
     /**
-     * @return resource|object|null
+     * @return TConnection|null
      */
     #[Override]
     public function getResource(): mixed

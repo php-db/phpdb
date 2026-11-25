@@ -53,8 +53,9 @@ abstract class AbstractPdo implements PdoDriverInterface, ProfilerAwareInterface
     }
 
     /**
-     * @param resource|object|string|null $sqlOrResource A resource or object other than a PDOStatement
-     *                                                   is ignored, as with null
+     * @param PDOStatement|string|null $sqlOrResource
+     *
+     * @return StatementInterface<PDOStatement>
      *
      * @throws Exception\RuntimeException When the connection is a bare PDO instance.
      */

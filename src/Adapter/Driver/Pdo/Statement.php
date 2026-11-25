@@ -27,6 +27,8 @@ use function preg_match;
 
 /**
  * @api
+ *
+ * @implements StatementInterface<PDOStatement>
  */
 class Statement implements StatementInterface, PdoDriverAwareInterface, ProfilerAwareInterface
 {
@@ -134,7 +136,11 @@ class Statement implements StatementInterface, PdoDriverAwareInterface, Profiler
         return $this->sql;
     }
 
-    /** Initialize */
+    /**
+     * Initialize
+     *
+     * @return StatementInterface<PDOStatement>
+     */
     public function initialize(PDO $connectionResource): StatementInterface
     {
         $this->pdo = $connectionResource;
@@ -195,7 +201,11 @@ class Statement implements StatementInterface, PdoDriverAwareInterface, Profiler
         return $this;
     }
 
-    /** Set resource */
+    /**
+     * Set resource
+     *
+     * @return StatementInterface<PDOStatement>
+     */
     public function setResource(PDOStatement $pdoStatement): StatementInterface
     {
         $this->resource = $pdoStatement;

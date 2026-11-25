@@ -153,7 +153,7 @@ count = 2
 [[issues]]
 file = "src/Container/AdapterInterfaceFactory.php"
 code = "possibly-null-argument"
-message = 'Argument #1 of method `Laminas\ServiceManager\ServiceManager::build` is possibly `null`, but parameter type `class-string<PhpDb\Adapter\Driver\DriverInterface>|class-string<PhpDb\Adapter\Driver\PdoDriverInterface>|string` does not accept it.'
+message = 'Argument #1 of method `Laminas\ServiceManager\ServiceManager::build` is possibly `null`, but parameter type `class-string<PhpDb\Adapter\Driver\DriverInterface<object|resource, object|resource, object|resource>>|class-string<PhpDb\Adapter\Driver\PdoDriverInterface>|string` does not accept it.'
 count = 1
 
 [[issues]]
