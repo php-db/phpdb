@@ -109,24 +109,6 @@ message = "Negated ternary condition."
 count = 1
 
 [[issues]]
-file = "src/Sql/AbstractSql.php"
-code = "cyclomatic-complexity"
-message = "Class has high complexity."
-count = 1
-
-[[issues]]
-file = "src/Sql/AbstractSql.php"
-code = "excessive-parameter-list"
-message = "Parameter list is too long."
-count = 1
-
-[[issues]]
-file = "src/Sql/AbstractSql.php"
-code = "kan-defect"
-message = "Class has a high kan defect score."
-count = 1
-
-[[issues]]
 file = "src/Sql/Combine.php"
 code = "cyclomatic-complexity"
 message = "Class has high complexity."

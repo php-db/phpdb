@@ -50,6 +50,9 @@ use function vsprintf;
  *     isIdentifier?: bool,
  * }
  * @psalm-import-type JoinSpecification from Join
+ *
+ * @mago-expect lint:kan-defect
+ * @mago-expect lint:cyclomatic-complexity
  */
 abstract class AbstractSql implements SqlInterface
 {
@@ -88,7 +91,11 @@ abstract class AbstractSql implements SqlInterface
     }
 
     /**
+     * Dispatches each specification to its process{Name}() hook, so the method name is built at runtime
+     *
      * @throws Exception\RuntimeException
+     *
+     * @mago-expect analysis:string-member-selector
      */
     protected function buildSqlString(
         PlatformInterface $platform,
@@ -200,6 +207,12 @@ abstract class AbstractSql implements SqlInterface
         return str_replace($placeholders, $values, $specification);
     }
 
+    /**
+     * Copies the decorated subject's state onto this decorator, so property names are only known at runtime
+     *
+     * @mago-expect analysis:string-member-selector
+     * @mago-expect analysis:mixed-assignment
+     */
     protected function localizeVariables(): void
     {
         if (! $this instanceof PlatformDecoratorInterface || null === $this->subject) {
@@ -292,6 +305,8 @@ abstract class AbstractSql implements SqlInterface
 
     /**
      * @throws Exception\RuntimeException
+     *
+     * @mago-expect lint:excessive-parameter-list
      */
     protected function processExpressionOrSelect(
         ArgumentInterface $argument,
