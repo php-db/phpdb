@@ -154,6 +154,23 @@ class RowGatewayFeatureTest extends TestCase
     }
 
     #[Test]
+    public function postInitializeThrowsWhenAMetadataPrimaryKeyColumnIsNotAString(): void
+    {
+        $resultSet = $this->createInitialResultSet();
+
+        $feature = new RowGatewayFeature();
+        $feature->setTableGateway($this->createTableGatewayMock(
+            $resultSet,
+            $this->createMetadataFeatureSet(['primaryKey' => ['id', 42]]),
+        ));
+
+        self::expectException(RuntimeException::class);
+        self::expectExceptionMessage(RuntimeException::UNUSABLE_PRIMARY_KEY);
+
+        $feature->postInitialize();
+    }
+
+    #[Test]
     public function postInitializeThrowsWhenMetadataIsNotAnArray(): void
     {
         $resultSet = $this->createInitialResultSet();
@@ -250,6 +267,27 @@ class RowGatewayFeatureTest extends TestCase
     }
 
     #[Test]
+    public function postInitializeWithACompositeMetadataPrimaryKey(): void
+    {
+        $resultSet = $this->createInitialResultSet();
+
+        $feature = new RowGatewayFeature();
+        $feature->setTableGateway($this->createTableGatewayMock(
+            $resultSet,
+            $this->createMetadataFeatureSet(['primaryKey' => ['first' => 'one', 'second' => 'two']]),
+        ));
+
+        $feature->postInitialize();
+
+        $rowPrototype = $resultSet->getRowPrototype();
+        static::assertInstanceOf(RowGateway::class, $rowPrototype);
+        static::assertSame(
+            ['one', 'two'],
+            (new ReflectionProperty(RowGateway::class, 'primaryKeyColumn'))->getValue($rowPrototype),
+        );
+    }
+
+    #[Test]
     public function postInitializeWithMetadataFeature(): void
     {
         $resultSet = $this->createInitialResultSet();
@@ -319,6 +357,25 @@ class RowGatewayFeatureTest extends TestCase
     private function createInitialResultSet(): RowPrototypeResultSet
     {
         return new RowPrototypeResultSet($this->createMock(RowGatewayInterface::class));
+    }
+
+    /**
+     * @param array<string, mixed> $metadata
+     */
+    private function createMetadataFeatureSet(array $metadata): FeatureSet
+    {
+        $metadataFeature = $this->getMockBuilder(MetadataFeature::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        (new ReflectionProperty(MetadataFeature::class, 'sharedData'))->setValue($metadataFeature, [
+            'metadata' => $metadata,
+        ]);
+
+        $featureSet = $this->createStub(FeatureSet::class);
+        $featureSet->method('getFeatureByClassName')->willReturn($metadataFeature);
+
+        return $featureSet;
     }
 
     private function createTableGatewayMock(
