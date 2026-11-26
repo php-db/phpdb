@@ -18,7 +18,7 @@ use PHPUnit\Framework\TestCase;
 use function sprintf;
 
 #[Group('unit')]
-#[CoversMethod(RuntimeException::class, 'forDecoratorNotImplementing')]
+#[CoversMethod(RuntimeException::class, 'forDecoratorWrongType')]
 #[CoversMethod(RuntimeException::class, 'forReplacementMismatch')]
 #[CoversMethod(RuntimeException::class, 'forStringSpecificationRequired')]
 #[CoversMethod(RuntimeException::class, 'forSubjectNotImplementing')]
@@ -33,10 +33,10 @@ final class RuntimeExceptionTest extends TestCase
     public static function namedConstructorProvider(): array
     {
         return [
-            'decorator not implementing'           => [
-                'forDecoratorNotImplementing',
-                [Select::class, SqlInterface::class, 'getSqlString()'],
-                RuntimeException::DECORATOR_NOT_IMPLEMENTING,
+            'decorator for the wrong type'         => [
+                'forDecoratorWrongType',
+                [Select::class, SqlInterface::class],
+                RuntimeException::DECORATOR_WRONG_TYPE,
             ],
             'replacement mismatch'                 => [
                 'forReplacementMismatch',

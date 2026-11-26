@@ -5,6 +5,27 @@ php-version = "8.3.0"
 paths = ["src", "test"]
 includes = ["vendor"]
 
+[guard]
+excludes = ["vendor", "test"]
+
+[guard.perimeter]
+layering-reason = """
+The Adapter layer is the abstraction; the Sql layer is built on it. The only thing the
+Adapter layer may take from PhpDb\\Sql\\Platform is the decorator contract it returns from
+PlatformInterface::getSqlPlatformDecorator(). Everything else in that namespace renders Sql
+objects and belongs to the Sql layer.
+"""
+
+[[guard.perimeter.restrictions]]
+dependency = "PhpDb\\Sql\\Platform\\AbstractPlatform"
+deny-from = ["PhpDb\\Adapter"]
+reason = "Only PlatformDecoratorInterface crosses from Sql\\Platform into the Adapter layer; the platform classes that render Sql objects do not."
+
+[[guard.perimeter.restrictions]]
+dependency = "PhpDb\\Adapter\\Platform\\AbstractPlatform"
+deny-from = ["PhpDb\\Sql"]
+reason = "The Sql layer depends on the Adapter platform contract, not on an implementation base class."
+
 [formatter]
 parentheses-around-new-in-member-access = true
 

@@ -10,9 +10,9 @@ use function sprintf;
 
 class RuntimeException extends Exception\RuntimeException
 {
-    final public const string DECORATOR_NOT_IMPLEMENTING =
+    final public const string DECORATOR_WRONG_TYPE =
         'The decorator %s does not implement %s,'
-            . ' thus %s cannot be delegated to it';
+            . ' so it cannot be registered for that type';
 
     final public const string REPLACEMENT_MISMATCH =
         'The number of replacements in the expression'
@@ -42,9 +42,9 @@ class RuntimeException extends Exception\RuntimeException
         '%s renders its expression string and does not accept'
             . ' a specification override; use setExpression() instead';
 
-    public static function forDecoratorNotImplementing(string $decorator, string $interface, string $method): self
+    public static function forDecoratorWrongType(string $decorator, string $type): self
     {
-        return new self(sprintf(self::DECORATOR_NOT_IMPLEMENTING, $decorator, $interface, $method));
+        return new self(sprintf(self::DECORATOR_WRONG_TYPE, $decorator, $type));
     }
 
     public static function forReplacementMismatch(): self

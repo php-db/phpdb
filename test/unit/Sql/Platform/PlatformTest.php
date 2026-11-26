@@ -4,82 +4,45 @@ declare(strict_types=1);
 
 namespace PhpDbTest\Sql\Platform;
 
-use PhpDb\Adapter\Adapter;
 use PhpDb\Adapter\AdapterInterface;
 use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\Platform\PlatformInterface;
 use PhpDb\Adapter\StatementContainer;
-use PhpDb\ResultSet\ResultSet;
 use PhpDb\Sql\Exception\RuntimeException;
-use PhpDb\Sql\Insert;
-use PhpDb\Sql\Platform\AbstractPlatform;
 use PhpDb\Sql\Platform\Platform;
-use PhpDb\Sql\Platform\PlatformDecoratorInterface;
 use PhpDb\Sql\PreparableSqlInterface;
 use PhpDb\Sql\Select;
 use PhpDb\Sql\SqlInterface;
 use PhpDbTest\TestAsset;
-use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
-use PHPUnit\Framework\Attributes\IgnoreDeprecations;
-use PHPUnit\Framework\Attributes\RequiresPhp;
 use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use ReflectionException;
-use ReflectionMethod;
-
-use function sprintf;
 
 #[Group('unit')]
-#[IgnoreDeprecations]
-#[RequiresPhp('<= 8.6')]
-#[CoversMethod(Platform::class, '__construct')]
-#[CoversMethod(Platform::class, 'setTypeDecorator')]
-#[CoversMethod(Platform::class, 'getTypeDecorator')]
-#[CoversMethod(Platform::class, 'getDecorators')]
-#[CoversMethod(Platform::class, 'prepareStatement')]
-#[CoversMethod(Platform::class, 'getSqlString')]
-#[CoversMethod(Platform::class, 'resolvePlatformName')]
-#[CoversMethod(Platform::class, 'resolvePlatform')]
-#[CoversMethod(Platform::class, 'getDefaultPlatform')]
-#[CoversMethod(Platform::class, 'decoratorsFor')]
-#[CoversMethod(AbstractPlatform::class, 'requireDecoratorImplementing')]
-class PlatformTest extends TestCase
+#[CoversClass(Platform::class)]
+final class PlatformTest extends TestCase
 {
     #[Test]
-    public function getDecoratorsReturnsEmptyListWhenNoneRegisteredForDefaultPlatform(): void
+    public function constructorAcceptsTheAdapterPlatformForCompatibility(): void
     {
         $platform = new Platform(new TestAsset\TrustingSql92Platform());
-        $platform->setTypeDecorator(
-            Select::class,
-            $this->createStub(PlatformDecoratorInterface::class),
-            new TestAsset\TrustingMysqlPlatform(),
-        );
 
         static::assertSame([], $platform->getDecorators());
     }
 
     #[Test]
-    public function getDefaultPlatformReturnsInstance(): void
+    public function getDecoratorsIsEmptyForStandardSql(): void
     {
-        $adapterPlatform = new TestAsset\TrustingSql92Platform();
-        $platform        = new Platform($adapterPlatform);
-
-        $reflectionMethod = new ReflectionMethod($platform, 'getDefaultPlatform');
-        $result           = $reflectionMethod->invoke($platform);
-
-        static::assertSame($adapterPlatform, $result);
+        static::assertSame([], (new Platform())->getDecorators());
     }
 
     #[Test]
-    public function getSqlStringDelegatesToTypeDecorator(): void
+    public function getSqlStringRendersTheSubjectUnchanged(): void
     {
         $adapterPlatform = new TestAsset\TrustingSql92Platform();
         $platform        = new Platform($adapterPlatform);
-
-        $select = new Select('foo');
-        $platform->setSubject($select);
+        $platform->setSubject(new Select('foo'));
 
         $sql = $platform->getSqlString($adapterPlatform);
 
@@ -88,273 +51,56 @@ class PlatformTest extends TestCase
     }
 
     #[Test]
-    public function getSqlStringThrowsWhenDecoratorIsNotSqlInterface(): void
+    public function getSqlStringThrowsWhenSubjectIsNotSqlInterface(): void
     {
-        $adapterPlatform = new TestAsset\TrustingSql92Platform();
-        $platform        = new Platform($adapterPlatform);
-
-        $decorator = $this->createStub(PlatformDecoratorInterface::class);
-        $platform->setTypeDecorator(Select::class, $decorator);
-        $platform->setSubject(new Select('foo'));
+        $platform = new Platform(new TestAsset\TrustingSql92Platform());
+        $platform->setSubject($this->createMock(PreparableSqlInterface::class));
 
         self::expectException(RuntimeException::class);
-        self::expectExceptionMessage(sprintf(
-            RuntimeException::DECORATOR_NOT_IMPLEMENTING,
-            $decorator::class,
-            SqlInterface::class,
-            'getSqlString()',
-        ));
-        $platform->getSqlString($adapterPlatform);
+        $platform->getSqlString(new TestAsset\TrustingSql92Platform());
     }
 
     #[Test]
-    public function getSqlStringThrowsWhenSubjectNotSqlInterface(): void
-    {
-        $adapterPlatform = new TestAsset\TrustingSql92Platform();
-        $platform        = new Platform($adapterPlatform);
-
-        $subject = $this->createMock(PreparableSqlInterface::class);
-        $platform->setSubject($subject);
-
-        self::expectException(RuntimeException::class);
-        $platform->getSqlString($adapterPlatform);
-    }
-
-    #[Test]
-    public function getTypeDecoratorFallsThroughWhenNoMatch(): void
-    {
-        $adapterPlatform = new TestAsset\TrustingSql92Platform();
-        $platform        = new Platform($adapterPlatform);
-
-        $decorator = $this->createMock(PlatformDecoratorInterface::class);
-        $platform->setTypeDecorator(Insert::class, $decorator);
-
-        $select = new Select('foo');
-        $result = $platform->getTypeDecorator($select);
-
-        static::assertSame($select, $result);
-    }
-
-    #[Test]
-    public function getTypeDecoratorMatchesByInstanceofLoop(): void
-    {
-        $adapterPlatform = new TestAsset\TrustingSql92Platform();
-        $platform        = new Platform($adapterPlatform);
-
-        $innerPlatform = new AbstractPlatform();
-        $platform->setTypeDecorator(SqlInterface::class, $innerPlatform);
-
-        $select = new Select('foo');
-        $result = $platform->getTypeDecorator($select);
-
-        static::assertSame($innerPlatform, $result);
-    }
-
-    #[Test]
-    public function getTypeDecoratorMatchesExactClass(): void
-    {
-        $adapterPlatform = new TestAsset\TrustingSql92Platform();
-        $platform        = new Platform($adapterPlatform);
-
-        $decorator = $this->createMock(PlatformDecoratorInterface::class);
-        $decorator->expects(self::once())->method('setSubject');
-        $platform->setTypeDecorator(Select::class, $decorator);
-
-        $select = new Select('foo');
-        $result = $platform->getTypeDecorator($select);
-
-        static::assertSame($decorator, $result);
-    }
-
-    #[Test]
-    public function getTypeDecoratorReturnsSubjectWhenNoDecoratorRegistered(): void
-    {
-        $adapterPlatform = new TestAsset\TrustingSql92Platform();
-        $platform        = new Platform($adapterPlatform);
-
-        $select = new Select('foo');
-        $result = $platform->getTypeDecorator($select);
-
-        static::assertSame($select, $result);
-    }
-
-    #[Test]
-    public function prepareStatementThrowsWhenDecoratorIsNotPreparable(): void
+    public function prepareStatementRendersTheSubject(): void
     {
         $platform = new Platform(new TestAsset\TrustingSql92Platform());
 
-        $decorator = $this->createStub(PlatformDecoratorInterface::class);
-        $platform->setTypeDecorator(Select::class, $decorator);
-        $platform->setSubject(new Select('foo'));
+        $select = new Select('foo');
+        $select->where(['id' => 1]);
+        $platform->setSubject($select);
 
-        self::expectException(RuntimeException::class);
-        self::expectExceptionMessage(sprintf(
-            RuntimeException::DECORATOR_NOT_IMPLEMENTING,
-            $decorator::class,
-            PreparableSqlInterface::class,
-            'prepareStatement()',
-        ));
-        $platform->prepareStatement($this->resolveAdapter('sql92'), new StatementContainer());
-    }
-
-    #[Test]
-    public function prepareStatementThrowsWhenSubjectNotPreparable(): void
-    {
-        $adapterPlatform = new TestAsset\TrustingSql92Platform();
-        $platform        = new Platform($adapterPlatform);
-
-        $subject = $this->createMock(SqlInterface::class);
-        $platform->setSubject($subject);
-
-        $adapter   = $this->resolveAdapter('sql92');
         $statement = new StatementContainer();
+        $result    = $platform->prepareStatement($this->createAdapter($platform), $statement);
 
-        self::expectException(RuntimeException::class);
-        $platform->prepareStatement($adapter, $statement);
-    }
-
-    /**
-     * @throws ReflectionException
-     */
-    #[Test]
-    public function resolveDefaultPlatform(): void
-    {
-        $adapter  = $this->resolveAdapter('sql92');
-        $platform = new Platform($adapter->getPlatform());
-
-        $reflectionMethod = new ReflectionMethod($platform, 'resolvePlatform');
-
-        static::assertEquals($adapter->getPlatform(), $reflectionMethod->invoke($platform, null));
-    }
-
-    /**
-     * @throws ReflectionException
-     */
-    #[Test]
-    public function resolvePlatformName(): void
-    {
-        $platform = new Platform($this->resolveAdapter('sql92')->getPlatform());
-
-        $reflectionMethod = new ReflectionMethod($platform, 'resolvePlatformName');
-
-        static::assertSame('mysql', $reflectionMethod->invoke($platform, new TestAsset\TrustingMysqlPlatform()));
-        static::assertSame('sqlserver', $reflectionMethod->invoke(
-            $platform,
-            new TestAsset\TrustingSqlServerPlatform(),
-        ));
-        static::assertSame('oracle', $reflectionMethod->invoke($platform, new TestAsset\TrustingOraclePlatform()));
-        static::assertSame('sql92', $reflectionMethod->invoke($platform, new TestAsset\TrustingSql92Platform()));
-    }
-
-    /**
-     * @throws ReflectionException
-     */
-    #[Test]
-    public function resolvePlatformNameCachesResult(): void
-    {
-        $adapterPlatform = new TestAsset\TrustingSql92Platform();
-        $platform        = new Platform($adapterPlatform);
-
-        $reflectionMethod = new ReflectionMethod($platform, 'resolvePlatformName');
-
-        $first  = $reflectionMethod->invoke($platform, null);
-        $second = $reflectionMethod->invoke($platform, null);
-
-        static::assertEquals($first, $second);
-        static::assertSame('sql92', $first);
+        static::assertSame($statement, $result);
+        static::assertStringContainsString('SELECT', $statement->getSql());
     }
 
     #[Test]
-    public function resolvePlatformWithAdapterInterface(): void
-    {
-        $adapterPlatform = new TestAsset\TrustingSql92Platform();
-        $platform        = new Platform($adapterPlatform);
-
-        $mockPlatform = $this->createMock(PlatformInterface::class);
-        $mockPlatform->method('getName')->willReturn('TestPlatform');
-
-        $mockAdapter = $this->createMock(AdapterInterface::class);
-        $mockAdapter->expects($this->once())->method('getPlatform')->willReturn($mockPlatform);
-
-        $reflectionMethod = new ReflectionMethod($platform, 'resolvePlatform');
-        $result           = $reflectionMethod->invoke($platform, $mockAdapter);
-
-        static::assertSame($mockPlatform, $result);
-    }
-
-    #[Test]
-    public function resolvePlatformWithPlatformInterface(): void
-    {
-        $adapterPlatform = new TestAsset\TrustingSql92Platform();
-        $platform        = new Platform($adapterPlatform);
-
-        $mockPlatform = $this->createMock(PlatformInterface::class);
-
-        $reflectionMethod = new ReflectionMethod($platform, 'resolvePlatform');
-        $result           = $reflectionMethod->invoke($platform, $mockPlatform);
-
-        static::assertSame($mockPlatform, $result);
-    }
-
-    #[Test]
-    public function setTypeDecoratorKeepsDecoratorsAlreadyRegisteredForThePlatform(): void
+    public function prepareStatementThrowsWhenSubjectIsNotPreparable(): void
     {
         $platform = new Platform(new TestAsset\TrustingSql92Platform());
+        $platform->setSubject($this->createMock(SqlInterface::class));
 
-        $selectDecorator = $this->createStub(PlatformDecoratorInterface::class);
-        $insertDecorator = $this->createStub(PlatformDecoratorInterface::class);
-        $platform->setTypeDecorator(Select::class, $selectDecorator);
-        $platform->setTypeDecorator(Insert::class, $insertDecorator);
-
-        static::assertSame(
-            [Select::class => $selectDecorator, Insert::class => $insertDecorator],
-            $platform->getDecorators(),
-        );
+        self::expectException(RuntimeException::class);
+        $platform->prepareStatement($this->createAdapter($platform), new StatementContainer());
     }
 
-    #[Test]
-    public function setTypeDecoratorRegistersDecorator(): void
+    private function createAdapter(Platform $platform): AdapterInterface
     {
-        $adapterPlatform = new TestAsset\TrustingSql92Platform();
-        $platform        = new Platform($adapterPlatform);
+        $mockPlatform = $this->createMock(PlatformInterface::class);
+        $mockPlatform->method('quoteIdentifier')->willReturnCallback(static fn($v) => "\"{$v}\"");
+        $mockPlatform->method('quoteIdentifierInFragment')->willReturnCallback(static fn($v) => "\"{$v}\"");
+        $mockPlatform->method('getIdentifierSeparator')->willReturn('.');
+        $mockPlatform->method('getSqlPlatformDecorator')->willReturn($platform);
 
-        $decorator = $this->createMock(PlatformDecoratorInterface::class);
-        $platform->setTypeDecorator(Select::class, $decorator);
+        $mockDriver = $this->createMock(DriverInterface::class);
+        $mockDriver->method('formatParameterName')->willReturn('?');
 
-        $decorators = $platform->getDecorators();
-        static::assertArrayHasKey(Select::class, $decorators);
-        static::assertSame($decorator, $decorators[Select::class]);
-    }
+        $adapter = $this->createMock(AdapterInterface::class);
+        $adapter->method('getPlatform')->willReturn($mockPlatform);
+        $adapter->method('getDriver')->willReturn($mockDriver);
 
-    protected function resolveAdapter(string $platformName): Adapter
-    {
-        $platform = null;
-
-        switch ($platformName) {
-            case 'sql92':
-                $platform = new TestAsset\TrustingSql92Platform();
-                break;
-            case 'MySql':
-                $platform = new TestAsset\TrustingMysqlPlatform();
-                break;
-            case 'Oracle':
-                $platform = new TestAsset\TrustingOraclePlatform();
-                break;
-            case 'SqlServer':
-                $platform = new TestAsset\TrustingSqlServerPlatform();
-                break;
-        }
-
-        /** @var DriverInterface&MockObject $mockDriver */
-        $mockDriver = $this->getMockBuilder(DriverInterface::class)->getMock();
-
-        $mockDriver->expects($this->any())
-            ->method('formatParameterName')
-            ->willReturn('?');
-        $mockDriver->expects($this->any())
-            ->method('createStatement')
-            ->willReturnCallback(static fn(): StatementContainer => new StatementContainer());
-
-        return new Adapter($mockDriver, $platform, new ResultSet());
+        return $adapter;
     }
 }

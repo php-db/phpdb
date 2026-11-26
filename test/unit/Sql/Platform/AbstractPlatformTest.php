@@ -8,6 +8,7 @@ use PhpDb\Adapter\AdapterInterface;
 use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\Platform\PlatformInterface;
 use PhpDb\Adapter\StatementContainer;
+use PhpDb\Adapter\StatementContainerInterface;
 use PhpDb\Sql\Exception\RuntimeException;
 use PhpDb\Sql\Platform\AbstractPlatform;
 use PhpDb\Sql\Platform\PlatformDecoratorInterface;
@@ -24,20 +25,57 @@ use function sprintf;
 #[Group('unit')]
 #[CoversMethod(AbstractPlatform::class, 'setSubject')]
 #[CoversMethod(AbstractPlatform::class, 'setTypeDecorator')]
-#[CoversMethod(AbstractPlatform::class, 'getTypeDecorator')]
+#[CoversMethod(AbstractPlatform::class, 'decoratorFor')]
 #[CoversMethod(AbstractPlatform::class, 'getDecorators')]
 #[CoversMethod(AbstractPlatform::class, 'prepareStatement')]
 #[CoversMethod(AbstractPlatform::class, 'getSqlString')]
-#[CoversMethod(AbstractPlatform::class, 'requireDecoratorImplementing')]
 final class AbstractPlatformTest extends TestCase
 {
     private AbstractPlatform $platform;
 
     #[Test]
-    public function getSqlStringDelegatesToDecoratorSubject(): void
+    public function decoratorForBindsTheSubjectAndReturnsTheDecorator(): void
     {
-        $select = new Select('foo');
-        $this->platform->setSubject($select);
+        $decorator = $this->createRenderableDecorator();
+        $this->platform->setTypeDecorator(Select::class, $decorator);
+
+        $subject = new Select('foo');
+
+        static::assertSame($decorator, $this->platform->decoratorFor($subject));
+        static::assertSame($subject, $decorator->boundSubject);
+    }
+
+    #[Test]
+    public function decoratorForReturnsNullWhenNoDecoratorIsRegisteredForTheType(): void
+    {
+        $this->platform->setTypeDecorator(Select::class, $this->createRenderableDecorator());
+
+        static::assertNull($this->platform->decoratorFor($this->createMock(SqlInterface::class)));
+    }
+
+    #[Test]
+    public function getDecoratorsReturnsTheRegisteredDecorators(): void
+    {
+        $decorator = $this->createRenderableDecorator();
+        $this->platform->setTypeDecorator(Select::class, $decorator);
+
+        static::assertSame([Select::class => $decorator], $this->platform->getDecorators());
+    }
+
+    #[Test]
+    public function getSqlStringDelegatesToTheRegisteredDecorator(): void
+    {
+        $this->platform->setTypeDecorator(Select::class, $this->createRenderableDecorator());
+        $this->platform->setSubject(new Select('foo'));
+
+        static::assertSame('rendered by the decorator', $this->platform->getSqlString());
+    }
+
+    #[Test]
+    public function getSqlStringFallsBackToTheSubjectWhenTheDecoratorCannotRender(): void
+    {
+        $this->platform->setTypeDecorator(PreparableSqlInterface::class, $this->createPrepareOnlyDecorator());
+        $this->platform->setSubject(new Select('foo'));
 
         $sql = $this->platform->getSqlString();
 
@@ -46,20 +84,14 @@ final class AbstractPlatformTest extends TestCase
     }
 
     #[Test]
-    public function getSqlStringThrowsWhenDecoratorIsNotSqlInterface(): void
+    public function getSqlStringRendersTheSubjectWhenNoDecoratorIsRegistered(): void
     {
-        $decorator = $this->createStub(PlatformDecoratorInterface::class);
-        $this->platform->setTypeDecorator(Select::class, $decorator);
         $this->platform->setSubject(new Select('foo'));
 
-        self::expectException(RuntimeException::class);
-        self::expectExceptionMessage(sprintf(
-            RuntimeException::DECORATOR_NOT_IMPLEMENTING,
-            $decorator::class,
-            SqlInterface::class,
-            'getSqlString()',
-        ));
-        $this->platform->getSqlString();
+        $sql = $this->platform->getSqlString();
+
+        static::assertStringContainsString('SELECT', $sql);
+        static::assertStringContainsString('"foo"', $sql);
     }
 
     #[Test]
@@ -93,71 +125,33 @@ final class AbstractPlatformTest extends TestCase
     }
 
     #[Test]
-    public function getTypeDecoratorLoopMatchesByInstanceof(): void
+    public function prepareStatementFallsBackToTheSubjectWhenTheDecoratorCannotPrepare(): void
     {
-        $decorator = $this->createMock(PlatformDecoratorInterface::class);
-        $decorator->method('setSubject')->willReturnSelf();
+        $this->platform->setTypeDecorator(SqlInterface::class, $this->createRenderOnlyDecorator());
 
-        $this->platform->setTypeDecorator(Select::class, $decorator);
-
-        $subject = new Select('foo');
-        $result  = $this->platform->getTypeDecorator($subject);
-
-        static::assertSame($decorator, $result);
-    }
-
-    #[Test]
-    public function getTypeDecoratorReturnsSubjectWhenNoMatch(): void
-    {
-        $subject = $this->createMock(SqlInterface::class);
-
-        $result = $this->platform->getTypeDecorator($subject);
-
-        static::assertSame($subject, $result);
-    }
-
-    #[Test]
-    public function prepareStatementDelegatesToDecoratorSubject(): void
-    {
         $select = new Select('foo');
         $select->where(['id' => 1]);
         $this->platform->setSubject($select);
 
-        $mockPlatform = $this->createMock(PlatformInterface::class);
-        $mockPlatform->method('quoteIdentifier')->willReturnCallback(static fn($v) => "\"{$v}\"");
-        $mockPlatform->method('quoteIdentifierInFragment')->willReturnCallback(static fn($v) => "\"{$v}\"");
-        $mockPlatform->method('getIdentifierSeparator')->willReturn('.');
-        $mockPlatform->method('getSqlPlatformDecorator')->willReturn($this->platform);
-
-        $mockDriver = $this->createMock(DriverInterface::class);
-        $mockDriver->method('formatParameterName')->willReturn('?');
-
-        $adapter = $this->getMockBuilder(AdapterInterface::class)->getMock();
-        $adapter->method('getPlatform')->willReturn($mockPlatform);
-        $adapter->method('getDriver')->willReturn($mockDriver);
-
         $statement = new StatementContainer();
-        $result    = $this->platform->prepareStatement($adapter, $statement);
+        $result    = $this->platform->prepareStatement($this->createAdapter(), $statement);
 
         static::assertSame($statement, $result);
         static::assertStringContainsString('SELECT', $statement->getSql());
     }
 
     #[Test]
-    public function prepareStatementThrowsWhenDecoratorIsNotPreparable(): void
+    public function prepareStatementRendersTheSubject(): void
     {
-        $decorator = $this->createStub(PlatformDecoratorInterface::class);
-        $this->platform->setTypeDecorator(Select::class, $decorator);
-        $this->platform->setSubject(new Select('foo'));
+        $select = new Select('foo');
+        $select->where(['id' => 1]);
+        $this->platform->setSubject($select);
 
-        self::expectException(RuntimeException::class);
-        self::expectExceptionMessage(sprintf(
-            RuntimeException::DECORATOR_NOT_IMPLEMENTING,
-            $decorator::class,
-            PreparableSqlInterface::class,
-            'prepareStatement()',
-        ));
-        $this->platform->prepareStatement($this->createStub(AdapterInterface::class), new StatementContainer());
+        $statement = new StatementContainer();
+        $result    = $this->platform->prepareStatement($this->createAdapter(), $statement);
+
+        static::assertSame($statement, $result);
+        static::assertStringContainsString('SELECT', $statement->getSql());
     }
 
     #[Test]
@@ -166,28 +160,13 @@ final class AbstractPlatformTest extends TestCase
         $subject = $this->createMock(SqlInterface::class);
         $this->platform->setSubject($subject);
 
-        $adapter   = $this->createMock(AdapterInterface::class);
-        $statement = new StatementContainer();
-
         self::expectException(RuntimeException::class);
         self::expectExceptionMessage(sprintf(
             RuntimeException::SUBJECT_NOT_IMPLEMENTING,
             PreparableSqlInterface::class,
             'prepareStatement()',
         ));
-        $this->platform->prepareStatement($adapter, $statement);
-    }
-
-    #[Test]
-    public function setAndGetTypeDecorator(): void
-    {
-        $decorator = $this->createMock(PlatformDecoratorInterface::class);
-        $this->platform->setTypeDecorator(Select::class, $decorator);
-
-        $decorators = $this->platform->getDecorators();
-
-        static::assertArrayHasKey(Select::class, $decorators);
-        static::assertSame($decorator, $decorators[Select::class]);
+        $this->platform->prepareStatement($this->createAdapter(), new StatementContainer());
     }
 
     #[Test]
@@ -199,8 +178,92 @@ final class AbstractPlatformTest extends TestCase
         static::assertSame($this->platform, $result);
     }
 
+    #[Test]
+    public function setTypeDecoratorThrowsWhenTheDecoratorDoesNotImplementTheRegisteredType(): void
+    {
+        $decorator = $this->createStub(PlatformDecoratorInterface::class);
+
+        self::expectException(RuntimeException::class);
+        self::expectExceptionMessage(sprintf(
+            RuntimeException::DECORATOR_WRONG_TYPE,
+            $decorator::class,
+            Select::class,
+        ));
+        $this->platform->setTypeDecorator(Select::class, $decorator);
+    }
+
     protected function setUp(): void
     {
         $this->platform = new AbstractPlatform();
+    }
+
+    private function createAdapter(): AdapterInterface
+    {
+        $mockPlatform = $this->createMock(PlatformInterface::class);
+        $mockPlatform->method('quoteIdentifier')->willReturnCallback(static fn($v) => "\"{$v}\"");
+        $mockPlatform->method('quoteIdentifierInFragment')->willReturnCallback(static fn($v) => "\"{$v}\"");
+        $mockPlatform->method('getIdentifierSeparator')->willReturn('.');
+        $mockPlatform->method('getSqlPlatformDecorator')->willReturn($this->platform);
+
+        $mockDriver = $this->createMock(DriverInterface::class);
+        $mockDriver->method('formatParameterName')->willReturn('?');
+
+        $adapter = $this->createMock(AdapterInterface::class);
+        $adapter->method('getPlatform')->willReturn($mockPlatform);
+        $adapter->method('getDriver')->willReturn($mockDriver);
+
+        return $adapter;
+    }
+
+    private function createPrepareOnlyDecorator(): PlatformDecoratorInterface
+    {
+        return new class implements PlatformDecoratorInterface, PreparableSqlInterface {
+            public function prepareStatement(
+                AdapterInterface $adapter,
+                StatementContainerInterface $statementContainer,
+            ): StatementContainerInterface {
+                return $statementContainer;
+            }
+
+            public function setSubject(SqlInterface|PreparableSqlInterface|null $subject): static
+            {
+                return $this;
+            }
+        };
+    }
+
+    private function createRenderableDecorator(): PlatformDecoratorInterface
+    {
+        return new class extends Select implements PlatformDecoratorInterface {
+            public SqlInterface|PreparableSqlInterface|null $boundSubject = null;
+
+            public function getSqlString(?PlatformInterface $adapterPlatform = null): string
+            {
+                return 'rendered by the decorator';
+            }
+
+            public function setSubject(SqlInterface|PreparableSqlInterface|null $subject): static
+            {
+                $this->boundSubject = $subject;
+                $this->subject      = $subject;
+
+                return $this;
+            }
+        };
+    }
+
+    private function createRenderOnlyDecorator(): PlatformDecoratorInterface
+    {
+        return new class implements PlatformDecoratorInterface, SqlInterface {
+            public function getSqlString(?PlatformInterface $adapterPlatform = null): string
+            {
+                return 'rendered by the decorator';
+            }
+
+            public function setSubject(SqlInterface|PreparableSqlInterface|null $subject): static
+            {
+                return $this;
+            }
+        };
     }
 }

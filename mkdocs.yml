@@ -17,6 +17,7 @@ nav:
         - Where and Having: sql/where-having.md
         - Examples: sql/examples.md
         - Advanced Usage: sql/advanced.md
+        - Platforms and Decorators: sql/platform.md
     - "DDL Abstraction":
         - Introduction: sql-ddl/intro.md
         - Columns: sql-ddl/columns.md
