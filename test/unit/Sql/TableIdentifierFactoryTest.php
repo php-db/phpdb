@@ -19,7 +19,7 @@ final class TableIdentifierFactoryTest extends TestCase
     public function callTimePrefixIsAppliedWhenNonePreconfigured(): void
     {
         $factory         = new TableIdentifierFactory();
-        $tableIdentifier = $factory('users', null, 'archive');
+        $tableIdentifier = $factory('users', prefix: 'archive');
 
         static::assertSame('archive', $tableIdentifier->getPrefix());
         static::assertSame('archive_users', $tableIdentifier->getTable());
@@ -29,7 +29,7 @@ final class TableIdentifierFactoryTest extends TestCase
     public function callTimePrefixOverridesConfiguredPrefix(): void
     {
         $factory         = new TableIdentifierFactory('backup');
-        $tableIdentifier = $factory('users', null, 'archive');
+        $tableIdentifier = $factory('users', prefix: 'archive');
 
         static::assertSame('archive', $tableIdentifier->getPrefix());
         static::assertSame('archive_users', $tableIdentifier->getTable());
@@ -39,7 +39,7 @@ final class TableIdentifierFactoryTest extends TestCase
     public function callTimeSeparatorIsAppliedWhenNonePreconfigured(): void
     {
         $factory         = new TableIdentifierFactory();
-        $tableIdentifier = $factory('users', null, 'archive', '__');
+        $tableIdentifier = $factory('users', prefix: 'archive', separator: '__');
 
         static::assertSame('__', $tableIdentifier->getSeparator());
         static::assertSame('archive__users', $tableIdentifier->getTable());
@@ -49,7 +49,7 @@ final class TableIdentifierFactoryTest extends TestCase
     public function callTimeSeparatorOverridesConfiguredSeparator(): void
     {
         $factory         = new TableIdentifierFactory('backup', '__');
-        $tableIdentifier = $factory('users', null, null, '_');
+        $tableIdentifier = $factory('users', separator: '_');
 
         static::assertSame('_', $tableIdentifier->getSeparator());
         static::assertSame('backup_users', $tableIdentifier->getTable());
@@ -91,7 +91,7 @@ final class TableIdentifierFactoryTest extends TestCase
     public function createsIdentifierWithoutPrefixWhenNoneConfigured(): void
     {
         $factory         = new TableIdentifierFactory();
-        $tableIdentifier = $factory('users', 'public');
+        $tableIdentifier = $factory('users', schema: 'public');
 
         static::assertNull($tableIdentifier->getPrefix());
         static::assertSame('users', $tableIdentifier->getTable());
@@ -101,7 +101,7 @@ final class TableIdentifierFactoryTest extends TestCase
     public function createsIdentifierWithSchema(): void
     {
         $factory         = new TableIdentifierFactory('backup');
-        $tableIdentifier = $factory('users', 'public');
+        $tableIdentifier = $factory('users', schema: 'public');
 
         static::assertSame(['backup_users', 'public'], $tableIdentifier->getTableAndSchema());
     }
@@ -121,7 +121,7 @@ final class TableIdentifierFactoryTest extends TestCase
 
         self::expectException(InvalidArgumentException::class);
         self::expectExceptionMessage(InvalidArgumentException::EMPTY_PREFIX);
-        $factory('users', null, '');
+        $factory('users', prefix: '');
     }
 
     #[Test]
@@ -131,7 +131,7 @@ final class TableIdentifierFactoryTest extends TestCase
 
         self::expectException(InvalidArgumentException::class);
         self::expectExceptionMessage(InvalidArgumentException::EMPTY_SEPARATOR);
-        $factory('users', null, null, '');
+        $factory('users', separator: '');
     }
 
     #[Test]

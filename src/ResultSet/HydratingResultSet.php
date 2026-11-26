@@ -108,7 +108,6 @@ class HydratingResultSet extends AbstractResultSet implements HydratingResultSet
     {
         $return = [];
 
-        /** @var object $row Every row this set yields is hydrated, or mapRow() throws. */
         foreach ($this as $row) {
             $return[] = $this->getHydrator()->extract($row);
         }

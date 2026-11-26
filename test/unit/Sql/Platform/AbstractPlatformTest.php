@@ -28,6 +28,7 @@ use function sprintf;
 #[CoversMethod(AbstractPlatform::class, 'getDecorators')]
 #[CoversMethod(AbstractPlatform::class, 'prepareStatement')]
 #[CoversMethod(AbstractPlatform::class, 'getSqlString')]
+#[CoversMethod(AbstractPlatform::class, 'requireDecoratorImplementing')]
 final class AbstractPlatformTest extends TestCase
 {
     private AbstractPlatform $platform;
@@ -45,10 +46,42 @@ final class AbstractPlatformTest extends TestCase
     }
 
     #[Test]
+    public function getSqlStringThrowsWhenDecoratorIsNotSqlInterface(): void
+    {
+        $decorator = $this->createStub(PlatformDecoratorInterface::class);
+        $this->platform->setTypeDecorator(Select::class, $decorator);
+        $this->platform->setSubject(new Select('foo'));
+
+        self::expectException(RuntimeException::class);
+        self::expectExceptionMessage(sprintf(
+            RuntimeException::DECORATOR_NOT_IMPLEMENTING,
+            $decorator::class,
+            SqlInterface::class,
+            'getSqlString()',
+        ));
+        $this->platform->getSqlString();
+    }
+
+    #[Test]
     public function getSqlStringThrowsWhenSubjectNotSqlInterface(): void
     {
         $subject = $this->createMock(PreparableSqlInterface::class);
         $this->platform->setSubject($subject);
+
+        self::expectException(RuntimeException::class);
+        self::expectExceptionMessage(sprintf(
+            RuntimeException::SUBJECT_NOT_IMPLEMENTING,
+            SqlInterface::class,
+            'getSqlString()',
+        ));
+        $this->platform->getSqlString();
+    }
+
+    #[Test]
+    public function getSqlStringThrowsWhenSubjectWasCleared(): void
+    {
+        $this->platform->setSubject(new Select('foo'));
+        $this->platform->setSubject(null);
 
         self::expectException(RuntimeException::class);
         self::expectExceptionMessage(sprintf(
@@ -91,8 +124,8 @@ final class AbstractPlatformTest extends TestCase
         $this->platform->setSubject($select);
 
         $mockPlatform = $this->createMock(PlatformInterface::class);
-        $mockPlatform->method('quoteIdentifier')->willReturnCallback(static fn($v) => '"' . $v . '"');
-        $mockPlatform->method('quoteIdentifierInFragment')->willReturnCallback(static fn($v) => '"' . $v . '"');
+        $mockPlatform->method('quoteIdentifier')->willReturnCallback(static fn($v) => "\"{$v}\"");
+        $mockPlatform->method('quoteIdentifierInFragment')->willReturnCallback(static fn($v) => "\"{$v}\"");
         $mockPlatform->method('getIdentifierSeparator')->willReturn('.');
         $mockPlatform->method('getSqlPlatformDecorator')->willReturn($this->platform);
 
@@ -108,6 +141,23 @@ final class AbstractPlatformTest extends TestCase
 
         static::assertSame($statement, $result);
         static::assertStringContainsString('SELECT', $statement->getSql());
+    }
+
+    #[Test]
+    public function prepareStatementThrowsWhenDecoratorIsNotPreparable(): void
+    {
+        $decorator = $this->createStub(PlatformDecoratorInterface::class);
+        $this->platform->setTypeDecorator(Select::class, $decorator);
+        $this->platform->setSubject(new Select('foo'));
+
+        self::expectException(RuntimeException::class);
+        self::expectExceptionMessage(sprintf(
+            RuntimeException::DECORATOR_NOT_IMPLEMENTING,
+            $decorator::class,
+            PreparableSqlInterface::class,
+            'prepareStatement()',
+        ));
+        $this->platform->prepareStatement($this->createStub(AdapterInterface::class), new StatementContainer());
     }
 
     #[Test]

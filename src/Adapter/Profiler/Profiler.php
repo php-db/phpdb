@@ -30,10 +30,9 @@ use function microtime;
 class Profiler implements ProfilerInterface
 {
     /** @var ProfilesShape */
-    protected $profiles = [];
+    protected array $profiles = [];
 
-    /** @var int */
-    protected $currentIndex = 0;
+    protected int $currentIndex = 0;
 
     /**
      * @return ProfileShape|null

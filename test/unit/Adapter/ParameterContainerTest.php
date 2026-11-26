@@ -48,6 +48,34 @@ final class ParameterContainerTest extends TestCase
 {
     protected ParameterContainer $parameterContainer;
 
+    /** @return array<string, array{Closure(ParameterContainer): mixed, mixed}> */
+    public static function arrayAccessNamedOffsetProvider(): array
+    {
+        return [
+            'offsetExists' => [static fn(ParameterContainer $c): bool => $c->offsetExists(offset: 'foo'), true],
+            'offsetGet'    => [static fn(ParameterContainer $c): mixed => $c->offsetGet(offset: 'foo'), 'bar'],
+            'offsetSet'    => [
+                static function (ParameterContainer $c): mixed {
+                    $c->offsetSet(
+                        offset: 'baz',
+                        value: 'qux',
+                    );
+
+                    return $c->offsetGet('baz');
+                },
+                'qux',
+            ],
+            'offsetUnset'  => [
+                static function (ParameterContainer $c): bool {
+                    $c->offsetUnset(offset: 'foo');
+
+                    return $c->offsetExists('foo');
+                },
+                false,
+            ],
+        ];
+    }
+
     /** @return array<string, array{Closure(ParameterContainer): mixed}> */
     public static function unknownPositionProvider(): array
     {
@@ -75,6 +103,13 @@ final class ParameterContainerTest extends TestCase
                 },
             ],
         ];
+    }
+
+    #[Test]
+    #[DataProvider('arrayAccessNamedOffsetProvider')]
+    public function arrayAccessMethodsTakeTheOffsetNamedArgument(Closure $operation, mixed $expected): void
+    {
+        static::assertSame($expected, $operation($this->parameterContainer));
     }
 
     #[Test]

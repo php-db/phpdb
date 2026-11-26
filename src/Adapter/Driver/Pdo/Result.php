@@ -25,23 +25,23 @@ use function is_int;
  * @api
  *
  * @implements Iterator<array-key, mixed>
+ * @implements ResultInterface<PDOStatement>
  */
 class Result implements Iterator, ResultInterface
 {
-    public const string STATEMENT_MODE_SCROLLABLE = 'scrollable';
-    public const string STATEMENT_MODE_FORWARD    = 'forward';
+    final public const string STATEMENT_MODE_SCROLLABLE = 'scrollable';
+    final public const string STATEMENT_MODE_FORWARD    = 'forward';
 
     protected string $statementMode = self::STATEMENT_MODE_FORWARD;
 
-    /** @var int */
-    protected $fetchMode = PDO::FETCH_ASSOC;
+    protected int $fetchMode = PDO::FETCH_ASSOC;
 
     /**
      * @internal
      *
      * @var list<int>
      */
-    public const array VALID_FETCH_MODES = [
+    final public const array VALID_FETCH_MODES = [
         PDO::FETCH_LAZY, // 1
         PDO::FETCH_ASSOC, // 2
         PDO::FETCH_NUM, // 3
@@ -60,35 +60,22 @@ class Result implements Iterator, ResultInterface
         PDO::FETCH_CLASSTYPE, // Extra option for \PDO::FETCH_CLASS
     ];
 
-    /** @var PDOStatement */
-    protected $resource;
+    /** Set by initialize(); reading a result before then is an error. */
+    protected PDOStatement $resource;
 
-    /** @var array Result options */
-    protected $options;
+    /** @var array<array-key, mixed> Result options */
+    protected array $options = [];
 
-    /**
-     * Is the current complete?
-     *
-     * @var bool
-     */
-    protected $currentComplete = false;
+    /** Is the current complete? */
+    protected bool $currentComplete = false;
 
-    /**
-     * Track current item in recordset
-     *
-     * @var mixed
-     */
-    protected $currentData;
+    /** Track current item in recordset */
+    protected mixed $currentData = null;
 
-    /**
-     * Current position of scrollable statement
-     *
-     * @var int
-     */
-    protected $position = -1;
+    /** Current position of scrollable statement */
+    protected int $position = -1;
 
-    /** @var string|int|false|null */
-    protected $generatedValue;
+    protected string|int|false|null $generatedValue = null;
 
     protected Closure|int|null $rowCount = null;
 
@@ -188,6 +175,8 @@ class Result implements Iterator, ResultInterface
 
     /**
      * Get resource
+     *
+     * @return PDOStatement
      */
     #[Override]
     public function getResource(): mixed
@@ -202,12 +191,10 @@ class Result implements Iterator, ResultInterface
 
     /**
      * Initialize
-     *
-     * @param string|int|false|null $generatedValue
      */
     public function initialize(
         PDOStatement $resource,
-        $generatedValue,
+        string|int|false|null $generatedValue,
         Closure|int|null $rowCount = null,
     ): self {
         $this->resource       = $resource;
@@ -250,20 +237,16 @@ class Result implements Iterator, ResultInterface
     }
 
     /**
-     * Next
-     *
-     * @return mixed
+     * Fetch the next row and advance the position. Read the row with current().
      *
      * @throws PDOException When the driver raises one while fetching.
      */
-    #[ReturnTypeWillChange]
     #[Override]
-    public function next()
+    public function next(): void
     {
         $this->currentData     = $this->resource->fetch($this->fetchMode);
         $this->currentComplete = true;
         $this->position++;
-        return $this->currentData;
     }
 
     /**

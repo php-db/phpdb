@@ -9,6 +9,8 @@ use PhpDb\Adapter\SchemaAwareInterface;
 /**
  * @api
  *
+ * @template TConnection of object|resource = object|resource The native connection handle
+ *
  * @psalm-type ConnectionParameters = array<string, mixed>
  */
 interface ConnectionInterface extends SchemaAwareInterface
@@ -36,9 +38,9 @@ interface ConnectionInterface extends SchemaAwareInterface
     /**
      * Get resource
      *
-     * @return resource|object|null
+     * @return TConnection|null
      */
-    public function getResource();
+    public function getResource(): mixed;
 
     /** Checks whether the connection is in transaction state. */
     public function inTransaction(): bool;

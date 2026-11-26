@@ -26,6 +26,7 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
+use function array_key_exists;
 use function is_array;
 use function is_string;
 
@@ -252,21 +253,6 @@ abstract class AbstractSqlFunctionalTestCase extends TestCase
                     ],
                 ],
             ],
-            // phpcs:disable Generic.Files.LineLength.TooLong
-            /* TODO - should be implemented
-             * 'RootDecorators::Insert' => array(
-             * 'sqlObject' => self::insert('foo')->select(self::select()),
-             * 'expected'  => array(
-             * 'sql92'     => array(
-             * 'decorators' => array(
-             * 'PhpDb\Sql\Insert' => new TestAsset\InsertDecorator, // Decorator for root sqlObject
-             * 'PhpDb\Sql\Select' => array('PhpDb\Sql\Platform\Mysql\SelectDecorator', '{=SELECT_Sql92=}')
-             * ),
-             * 'string' => 'INSERT INTO "foo"  {=SELECT_Sql92=}',
-             * ),
-             * ),
-             * ),*/
-            // phpcs:enable Generic.Files.LineLength.TooLong
         ];
     }
 
@@ -296,7 +282,7 @@ abstract class AbstractSqlFunctionalTestCase extends TestCase
     {
         $sql = new Sql\Sql($this->resolveAdapter($platform));
 
-        if (is_array($expected) && isset($expected['decorators'])) {
+        if (is_array($expected) && array_key_exists('decorators', $expected)) {
             /** @var PlatformDecoratorInterface|array $decorator */
             foreach ($expected['decorators'] as $type => $decorator) {
                 self::assertIsString($type);
@@ -317,11 +303,11 @@ abstract class AbstractSqlFunctionalTestCase extends TestCase
             self::assertEquals($expectedString, $actual, 'getSqlString()');
         }
 
-        if (is_array($expected) && isset($expected['prepare'])) {
+        if (is_array($expected) && array_key_exists('prepare', $expected)) {
             self::assertInstanceOf(PreparableSqlInterface::class, $sqlObject);
             $actual = $sql->prepareStatementForSqlObject($sqlObject);
             self::assertEquals($expected['prepare'], $actual->getSql(), 'prepareStatement()');
-            if (isset($expected['parameters'])) {
+            if (array_key_exists('parameters', $expected)) {
                 $parametersContainer = $actual->getParameterContainer();
                 self::assertInstanceOf(ParameterContainer::class, $parametersContainer);
                 $actual = $parametersContainer->getNamedArray();

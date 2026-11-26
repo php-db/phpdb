@@ -14,15 +14,21 @@ use PhpDb\Sql\SqlInterface;
 
 class AbstractPlatform implements PlatformDecoratorInterface, PreparableSqlInterface, SqlInterface
 {
-    protected SqlInterface|PreparableSqlInterface $subject;
+    protected SqlInterface|PreparableSqlInterface|null $subject = null;
 
+    /**
+     * Decorators keyed by the subject type they decorate; Platform nests them under a platform name first
+     *
+     * @var array<string, PlatformDecoratorInterface|array<string, PlatformDecoratorInterface>>
+     */
     protected array $decorators = [];
 
     /**
-     * @return array|PlatformDecoratorInterface[]
+     * @return array<string, PlatformDecoratorInterface>
      */
     public function getDecorators(): array
     {
+        /** @var array<string, PlatformDecoratorInterface> */
         return $this->decorators;
     }
 
@@ -38,14 +44,19 @@ class AbstractPlatform implements PlatformDecoratorInterface, PreparableSqlInter
             throw Exception\RuntimeException::forSubjectNotImplementing(SqlInterface::class, 'getSqlString()');
         }
 
-        return $this->getTypeDecorator($this->subject)->getSqlString($adapterPlatform);
+        return $this->requireDecoratorImplementing(
+            $this->getTypeDecorator($this->subject),
+            SqlInterface::class,
+            'getSqlString()',
+        )->getSqlString($adapterPlatform);
     }
 
     public function getTypeDecorator(
         PreparableSqlInterface|SqlInterface $subject,
     ): PlatformDecoratorInterface|PreparableSqlInterface|SqlInterface {
-        /** @var PlatformDecoratorInterface $decorator */
-        foreach ($this->decorators as $type => $decorator) {
+        /** @var array<string, PlatformDecoratorInterface> $decorators */
+        $decorators = $this->decorators;
+        foreach ($decorators as $type => $decorator) {
             /** @phpstan-ignore-next-line instanceof with string class name is valid */
             if (! $subject instanceof $type) {
                 continue;
@@ -73,7 +84,11 @@ class AbstractPlatform implements PlatformDecoratorInterface, PreparableSqlInter
             );
         }
 
-        $this->getTypeDecorator($this->subject)->prepareStatement($adapter, $statementContainer);
+        $this->requireDecoratorImplementing(
+            $this->getTypeDecorator($this->subject),
+            PreparableSqlInterface::class,
+            'prepareStatement()',
+        )->prepareStatement($adapter, $statementContainer);
 
         return $statementContainer;
     }
@@ -92,5 +107,25 @@ class AbstractPlatform implements PlatformDecoratorInterface, PreparableSqlInter
     public function setTypeDecorator(string $type, PlatformDecoratorInterface $decorator): void
     {
         $this->decorators[$type] = $decorator;
+    }
+
+    /**
+     * Narrows the resolved decorator to the interface whose method is about to be delegated to it
+     *
+     * @template T of PreparableSqlInterface|SqlInterface
+     * @param class-string<T> $interface
+     * @return T
+     * @throws Exception\RuntimeException
+     */
+    final protected function requireDecoratorImplementing(
+        PlatformDecoratorInterface|PreparableSqlInterface|SqlInterface $decorator,
+        string $interface,
+        string $method,
+    ): PreparableSqlInterface|SqlInterface {
+        if (! $decorator instanceof $interface) {
+            throw Exception\RuntimeException::forDecoratorNotImplementing($decorator::class, $interface, $method);
+        }
+
+        return $decorator;
     }
 }

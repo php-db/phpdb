@@ -66,70 +66,6 @@ final class InsertTest extends TestCase
         ];
     }
 
-    // @codingStandardsIgnoreStart
-    #[Test]
-    public function _get(): void
-    {
-        // @codingStandardsIgnoreEnd
-        /** @psalm-suppress UndefinedMagicPropertyAssignment */
-        $this->insert->foo = 'bar';
-        static::assertSame('bar', $this->insert->foo);
-
-        /** @psalm-suppress UndefinedMagicPropertyAssignment */
-        $this->insert->foo = null;
-        static::assertNull($this->insert->foo);
-    }
-
-    // @codingStandardsIgnoreStart
-    #[Test]
-    public function _isset(): void
-    {
-        // @codingStandardsIgnoreEnd
-        /** @psalm-suppress UndefinedMagicPropertyAssignment */
-        $this->insert->foo = 'bar';
-        /** @psalm-suppress RedundantCondition */
-        static::assertTrue(isset($this->insert->foo));
-
-        /** @psalm-suppress UndefinedMagicPropertyAssignment */
-        $this->insert->foo = null;
-        /** @psalm-suppress TypeDoesNotContainType */
-        static::assertTrue(isset($this->insert->foo));
-    }
-
-    // @codingStandardsIgnoreStart
-    #[Test]
-    public function _set(): void
-    {
-        // @codingStandardsIgnoreEnd
-        /** @psalm-suppress UndefinedMagicPropertyAssignment */
-        $this->insert->foo = 'bar';
-        static::assertEquals(['foo'], $this->insert->getRawState('columns'));
-        static::assertEquals(['bar'], $this->insert->getRawState('values'));
-    }
-
-    // @codingStandardsIgnoreStart
-    #[Test]
-    public function _unset(): void
-    {
-        // @codingStandardsIgnoreEnd
-        /** @psalm-suppress UndefinedMagicPropertyAssignment */
-        $this->insert->foo = 'bar';
-        static::assertEquals(['foo'], $this->insert->getRawState('columns'));
-        static::assertEquals(['bar'], $this->insert->getRawState('values'));
-        unset($this->insert->foo);
-        static::assertEquals([], $this->insert->getRawState('columns'));
-        static::assertEquals([], $this->insert->getRawState('values'));
-
-        /** @psalm-suppress UndefinedMagicPropertyAssignment */
-        $this->insert->foo = null;
-        static::assertEquals(['foo'], $this->insert->getRawState('columns'));
-        static::assertEquals([null], $this->insert->getRawState('values'));
-
-        unset($this->insert->foo);
-        static::assertEquals([], $this->insert->getRawState('columns'));
-        static::assertEquals([], $this->insert->getRawState('values'));
-    }
-
     #[Test]
     public function columns(): void
     {
@@ -232,7 +168,7 @@ final class InsertTest extends TestCase
     {
         self::expectException(InvalidArgumentException::class);
         self::expectExceptionMessage(sprintf(InvalidArgumentException::UNKNOWN_COLUMN_KEY, 'nonexistent'));
-        $value = $this->insert->nonexistent;
+        $this->insert->nonexistent;
     }
 
     #[Test]
@@ -244,6 +180,62 @@ final class InsertTest extends TestCase
         $tableIdentifier = new TableIdentifier('table', 'schema');
         $this->insert->into($tableIdentifier);
         static::assertEquals($tableIdentifier, $this->insert->getRawState('table'));
+    }
+
+    #[Test]
+    public function magicGetReturnsAssignedValue(): void
+    {
+        /** @psalm-suppress UndefinedMagicPropertyAssignment */
+        $this->insert->foo = 'bar';
+        static::assertSame('bar', $this->insert->foo);
+
+        /** @psalm-suppress UndefinedMagicPropertyAssignment */
+        $this->insert->foo = null;
+        static::assertNull($this->insert->foo);
+    }
+
+    #[Test]
+    public function magicIssetIsTrueForAssignedColumnEvenWhenNull(): void
+    {
+        /** @psalm-suppress UndefinedMagicPropertyAssignment */
+        $this->insert->foo = 'bar';
+        /** @psalm-suppress RedundantCondition */
+        static::assertTrue(isset($this->insert->foo));
+
+        /** @psalm-suppress UndefinedMagicPropertyAssignment */
+        $this->insert->foo = null;
+        /** @psalm-suppress TypeDoesNotContainType */
+        static::assertTrue(isset($this->insert->foo));
+    }
+
+    #[Test]
+    public function magicSetAddsColumnAndValue(): void
+    {
+        /** @psalm-suppress UndefinedMagicPropertyAssignment */
+        $this->insert->foo = 'bar';
+        static::assertEquals(['foo'], $this->insert->getRawState('columns'));
+        static::assertEquals(['bar'], $this->insert->getRawState('values'));
+    }
+
+    #[Test]
+    public function magicUnsetRemovesColumnAndValue(): void
+    {
+        /** @psalm-suppress UndefinedMagicPropertyAssignment */
+        $this->insert->foo = 'bar';
+        static::assertEquals(['foo'], $this->insert->getRawState('columns'));
+        static::assertEquals(['bar'], $this->insert->getRawState('values'));
+        unset($this->insert->foo);
+        static::assertEquals([], $this->insert->getRawState('columns'));
+        static::assertEquals([], $this->insert->getRawState('values'));
+
+        /** @psalm-suppress UndefinedMagicPropertyAssignment */
+        $this->insert->foo = null;
+        static::assertEquals(['foo'], $this->insert->getRawState('columns'));
+        static::assertEquals([null], $this->insert->getRawState('values'));
+
+        unset($this->insert->foo);
+        static::assertEquals([], $this->insert->getRawState('columns'));
+        static::assertEquals([], $this->insert->getRawState('values'));
     }
 
     #[Test]

@@ -16,6 +16,7 @@ use PhpDb\Sql\Argument\Select as SelectArgument;
 use PhpDb\Sql\Argument\Value;
 use PhpDb\Sql\Argument\Values;
 use PhpDb\Sql\Platform\PlatformDecoratorInterface;
+use Stringable;
 
 use function array_key_exists;
 use function array_key_first;
@@ -27,6 +28,7 @@ use function is_string;
 use function preg_match;
 use function preg_replace;
 use function rtrim;
+use function sprintf;
 use function str_replace;
 use function strtoupper;
 use function vsprintf;
@@ -36,7 +38,11 @@ use function vsprintf;
  *
  * @psalm-type ParameterSpecification = array<int|string, string>|null
  * @psalm-type Specification = string|array<string, list<ParameterSpecification>>
- * @psalm-type SqlParameters = array<array-key, string|array<array-key, string|array<array-key, string>>>
+ * @psalm-type SqlParameterValue = string|int|float|bool|Stringable|null
+ * @psalm-type SqlParameters = array<
+ *     array-key,
+ *     SqlParameterValue|array<array-key, SqlParameterValue|array<array-key, SqlParameterValue>>,
+ * >
  * @psalm-type ColumnValue = Select|ExpressionInterface|string|int|float|bool|null
  * @psalm-type ColumnReference = array{
  *     column: ColumnValue,
@@ -44,6 +50,9 @@ use function vsprintf;
  *     isIdentifier?: bool,
  * }
  * @psalm-import-type JoinSpecification from Join
+ *
+ * @mago-expect lint:kan-defect
+ * @mago-expect lint:cyclomatic-complexity
  */
 abstract class AbstractSql implements SqlInterface
 {
@@ -82,7 +91,11 @@ abstract class AbstractSql implements SqlInterface
     }
 
     /**
+     * Dispatches each specification to its process{Name}() hook, so the method name is built at runtime
+     *
      * @throws Exception\RuntimeException
+     *
+     * @mago-expect analysis:string-member-selector
      */
     protected function buildSqlString(
         PlatformInterface $platform,
@@ -194,6 +207,12 @@ abstract class AbstractSql implements SqlInterface
         return str_replace($placeholders, $values, $specification);
     }
 
+    /**
+     * Copies the decorated subject's state onto this decorator, so property names are only known at runtime
+     *
+     * @mago-expect analysis:string-member-selector
+     * @mago-expect analysis:mixed-assignment
+     */
     protected function localizeVariables(): void
     {
         if (! $this instanceof PlatformDecoratorInterface || null === $this->subject) {
@@ -249,7 +268,7 @@ abstract class AbstractSql implements SqlInterface
                             $parameterContainer,
                         )
                         : $platform->quoteValue((string) $argument->getValue()),
-                $argument instanceof Identifier => $platform->quoteIdentifierInFragment($argument->getValue()),
+                $argument instanceof Identifier => IdentifierQuoter::quote($argument->getValue(), $platform),
                 $argument instanceof Literal => $argument->getValue(),
                 $argument instanceof Identifiers => $this->processIdentifiersArgument($argument, $platform),
                 $argument instanceof SelectArgument => $this->processExpressionOrSelect(
@@ -286,6 +305,8 @@ abstract class AbstractSql implements SqlInterface
 
     /**
      * @throws Exception\RuntimeException
+     *
+     * @mago-expect lint:excessive-parameter-list
      */
     protected function processExpressionOrSelect(
         ArgumentInterface $argument,
@@ -332,7 +353,7 @@ abstract class AbstractSql implements SqlInterface
         $processedIdentifiers = [];
 
         foreach ($identifiers as $identifier) {
-            $processedIdentifiers[] = $platform->quoteIdentifierInFragment($identifier);
+            $processedIdentifiers[] = IdentifierQuoter::quote($identifier, $platform);
         }
 
         return implode(', ', $processedIdentifiers);
@@ -572,19 +593,19 @@ abstract class AbstractSql implements SqlInterface
     }
 
     /**
-     * @param array<array-key, string|array<array-key, mixed>> $values
+     * @param array<array-key, SqlParameterValue|array<array-key, mixed>> $values
      * @return list<string>
-     * @throws Exception\RuntimeException When a value is a nested list rather than a string.
+     * @throws Exception\RuntimeException When a value is a nested list rather than a scalar.
      */
     private function flattenParameterList(array $values): array
     {
         $strings = [];
         foreach ($values as $value) {
-            if (! is_string($value)) {
+            if (is_array($value)) {
                 throw Exception\RuntimeException::forUnsupportedParameterCountOf(count($value));
             }
 
-            $strings[] = $value;
+            $strings[] = $this->stringifyParameter($value);
         }
 
         return $strings;
@@ -592,7 +613,7 @@ abstract class AbstractSql implements SqlInterface
 
     /**
      * @param array<int|string, string> $parameterSpecification
-     * @param array<array-key, string|array<array-key, mixed>> $values
+     * @param array<array-key, SqlParameterValue|array<array-key, mixed>> $values
      * @throws Exception\RuntimeException When no format accepts the number of values.
      */
     private function formatParameterList(array $parameterSpecification, array $values): string
@@ -633,27 +654,42 @@ abstract class AbstractSql implements SqlInterface
 
     /**
      * @param ParameterSpecification $parameterSpecification
-     * @param string|array<array-key, string|array<array-key, string>> $parameter
+     * @param SqlParameterValue|array<array-key, SqlParameterValue|array<array-key, SqlParameterValue>> $parameter
      * @throws Exception\RuntimeException
      */
-    private function renderParameter(?array $parameterSpecification, string|array $parameter): string
-    {
+    private function renderParameter(
+        ?array $parameterSpecification,
+        string|int|float|bool|Stringable|array|null $parameter,
+    ): string {
         if (null === $parameterSpecification) {
-            return is_string($parameter)
-                ? $parameter
-                : throw Exception\RuntimeException::forUnsupportedParameterCountOf(count($parameter));
+            return is_array($parameter)
+                ? throw Exception\RuntimeException::forUnsupportedParameterCountOf(count($parameter))
+                : $this->stringifyParameter($parameter);
         }
+
+        $parameters = is_array($parameter) ? $parameter : [$parameter];
 
         $combinedBy = $parameterSpecification['combinedby'] ?? null;
         if (null === $combinedBy) {
-            return $this->formatParameterList($parameterSpecification, (array) $parameter);
+            return $this->formatParameterList($parameterSpecification, $parameters);
         }
 
         $rendered = [];
-        foreach ((array) $parameter as $values) {
-            $rendered[] = $this->formatParameterList($parameterSpecification, (array) $values);
+        foreach ($parameters as $values) {
+            $rendered[] = $this->formatParameterList(
+                $parameterSpecification,
+                is_array($values) ? $values : [$values],
+            );
         }
 
         return implode($combinedBy, $rendered);
+    }
+
+    /**
+     * Converts a scalar clause parameter to the text vsprintf's %s conversion would produce.
+     */
+    private function stringifyParameter(string|int|float|bool|Stringable|null $value): string
+    {
+        return is_string($value) ? $value : sprintf('%s', $value);
     }
 }

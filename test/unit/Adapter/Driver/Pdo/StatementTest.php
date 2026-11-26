@@ -414,7 +414,8 @@ final class StatementTest extends TestCase
     #[Test]
     public function executeReturnsResult(): void
     {
-        $this->statement->setDriver(new TestPdo(new TestConnection($pdo = new SqliteMemoryPdo())));
+        $pdo = new SqliteMemoryPdo();
+        $this->statement->setDriver(new TestPdo(new TestConnection($pdo)));
         $this->statement->initialize($pdo);
         $this->statement->prepare('SELECT 1');
         static::assertInstanceOf(Result::class, $this->statement->execute());
@@ -444,7 +445,8 @@ final class StatementTest extends TestCase
     #[DataProvider('invalidParameterNameProvider')]
     public function executeThrowsOnInvalidParameterName(string $name): void
     {
-        $this->statement->setDriver(new TestPdo(new TestConnection($pdo = new SqliteMemoryPdo())));
+        $pdo = new SqliteMemoryPdo();
+        $this->statement->setDriver(new TestPdo(new TestConnection($pdo)));
         $this->statement->initialize($pdo);
         $this->statement->prepare('SELECT 1');
 

@@ -12,13 +12,13 @@ use PhpDb\Adapter\Exception\RuntimeException;
 use PhpDb\ResultSet\ResultSet;
 use PhpDbTest\TestAsset\TemporaryResultSet;
 use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
 use function assert;
-use function uniqid;
 
 #[CoversMethod(Result::class, 'current')]
 #[CoversMethod(Result::class, 'count')]
@@ -44,6 +44,17 @@ use function uniqid;
 #[Group('unit')]
 final class ResultTest extends TestCase
 {
+    /** @return array<string, array{string|int|false|null}> */
+    public static function generatedValueProvider(): array
+    {
+        return [
+            'string sequence value' => ['abc-123'],
+            'integer insert id'     => [7],
+            'false from the driver' => [false],
+            'no generated value'    => [null],
+        ];
+    }
+
     #[Test]
     public function bufferIsCallableWithNoEffect(): void
     {
@@ -137,7 +148,7 @@ final class ResultTest extends TestCase
         $stub = $this->getMockBuilder('PDOStatement')->getMock();
         $stub->expects($this->any())
             ->method('fetch')
-            ->willReturnCallback(static fn() => uniqid());
+            ->willReturn('first row', 'second row');
 
         $result = new Result();
         $result->initialize($stub, null);
@@ -295,6 +306,16 @@ final class ResultTest extends TestCase
     }
 
     #[Test]
+    #[DataProvider('generatedValueProvider')]
+    public function initializeAcceptsEveryGeneratedValueType(string|int|false|null $generatedValue): void
+    {
+        $result = new Result();
+        $result->initialize($this->createStub(PDOStatement::class), $generatedValue);
+
+        static::assertSame($generatedValue, $result->getGeneratedValue());
+    }
+
+    #[Test]
     public function initializeStoresResourceAndValues(): void
     {
         $stub   = $this->createMock(PDOStatement::class);
@@ -355,6 +376,20 @@ final class ResultTest extends TestCase
     }
 
     #[Test]
+    public function nextFetchesTheRowThatCurrentThenReturns(): void
+    {
+        $stub = $this->createMock(PDOStatement::class);
+        $stub->expects($this->exactly(2))->method('fetch')->willReturn(['id' => 1], ['id' => 2]);
+
+        $result = new Result();
+        $result->initialize($stub, null);
+        $result->rewind();
+        $result->next();
+
+        static::assertSame(['id' => 2], $result->current());
+    }
+
+    #[Test]
     public function rewindResetsIterationToStart(): void
     {
         $data = [
@@ -364,7 +399,7 @@ final class ResultTest extends TestCase
         $position = 0;
 
         $stub = $this->getMockBuilder('PDOStatement')->getMock();
-        assert($stub instanceof PDOStatement); // to suppress IDE type warnings
+        assert($stub instanceof PDOStatement, description: 'Mock must be a PDOStatement');
         $stub->expects($this->any())
             ->method('fetch')
             ->willReturnCallback(static function () use ($data, &$position) {

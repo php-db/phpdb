@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace PhpDbTest\Adapter\Driver\Pdo;
 
 use Closure;
-use Exception;
 use Override;
 use PDO;
 use PhpDb\Adapter\Driver\Pdo\AbstractPdoConnection;
@@ -101,7 +100,7 @@ final class ConnectionTest extends TestCase
     public function executeAutoConnectsWhenNotConnected(): void
     {
         $connection = new TestConnection(['dsn' => 'sqlite::memory:']);
-        $driver     = new TestPdo($connection);
+        new TestPdo($connection);
 
         static::assertFalse($connection->isConnected());
 
@@ -118,13 +117,13 @@ final class ConnectionTest extends TestCase
         $profiler->expects($this->once())->method('profilerFinish')->willReturnSelf();
 
         $pdo = new SqliteMemoryPdo();
-        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_SILENT);
         $connection = new TestConnection($pdo);
-        $driver     = new TestPdo($connection);
+        new TestPdo($connection);
         $connection->setProfiler($profiler);
 
         self::expectException(InvalidQueryException::class);
-        @$connection->execute('INVALID SQL STATEMENT HERE %%%');
+        $connection->execute('INVALID SQL STATEMENT HERE %%%');
     }
 
     #[Test]
@@ -136,7 +135,7 @@ final class ConnectionTest extends TestCase
 
         $pdo        = new SqliteMemoryPdo();
         $connection = new TestConnection($pdo);
-        $driver     = new TestPdo($connection);
+        new TestPdo($connection);
         $connection->setProfiler($profiler);
 
         $connection->execute('SELECT 1');
@@ -171,10 +170,7 @@ final class ConnectionTest extends TestCase
     {
         $dsn = 'sqlite::memory:';
         $this->connection->setConnectionParameters(['dsn' => $dsn]);
-        try {
-            $this->connection->connect();
-        } catch (Exception) {
-        }
+        $this->connection->connect();
         $responseString = $this->connection->getDsn();
 
         static::assertEquals($dsn, $responseString);
@@ -199,7 +195,7 @@ final class ConnectionTest extends TestCase
     public function prepareAutoConnectsAndReturnsStatement(): void
     {
         $connection = new TestConnection(['dsn' => 'sqlite::memory:']);
-        $driver     = new TestPdo($connection);
+        new TestPdo($connection);
 
         static::assertFalse($connection->isConnected());
 
@@ -292,12 +288,6 @@ final class ConnectionTest extends TestCase
     #[Override]
     protected function setUp(): void
     {
-        $this->connection = new TestConnection(
-            [
-                'dsn'      => 'sqlite::memory:',
-                'username' => 'bar',
-                'password' => 'baz',
-            ],
-        );
+        $this->connection = new TestConnection(['dsn' => 'sqlite::memory:']);
     }
 }

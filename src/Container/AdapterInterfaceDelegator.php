@@ -14,6 +14,9 @@ use Psr\Container\NotFoundExceptionInterface;
 
 use function sprintf;
 
+/**
+ * @api
+ */
 class AdapterInterfaceDelegator
 {
     public function __construct(
@@ -21,8 +24,12 @@ class AdapterInterfaceDelegator
     ) {}
 
     /**
+     * @param array<array-key, mixed>|null $options
+     *
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
+     *
+     * @mago-expect analysis:unused-parameter
      */
     public function __invoke(
         ContainerInterface $container,
@@ -30,6 +37,7 @@ class AdapterInterfaceDelegator
         callable $callback,
         ?array $options = null,
     ): AdapterAwareInterface {
+        /** @var mixed $instance */
         $instance = $callback();
 
         if (! $instance instanceof AdapterAwareInterface) {
@@ -40,6 +48,7 @@ class AdapterInterfaceDelegator
             throw new ServiceNotFoundException(sprintf(ContainerException::MISSING_SERVICE, $this->adapterName));
         }
 
+        /** @var mixed $databaseAdapter */
         $databaseAdapter = $container->get($this->adapterName);
 
         if (! $databaseAdapter instanceof AdapterInterface) {
@@ -51,6 +60,9 @@ class AdapterInterfaceDelegator
         return $instance;
     }
 
+    /**
+     * @param array{adapterName?: string} $state
+     */
     public static function __set_state(array $state): self
     {
         return new self($state['adapterName'] ?? AdapterInterface::class);

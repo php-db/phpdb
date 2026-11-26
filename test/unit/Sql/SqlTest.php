@@ -70,23 +70,6 @@ final class SqlTest extends TestCase
         ];
     }
 
-    // @codingStandardsIgnoreStart
-    #[Test]
-    public function _construct(): void
-    {
-        // @codingStandardsIgnoreEnd
-        $sql = new Sql($this->mockAdapter);
-
-        static::assertFalse($sql->hasTable());
-
-        $sql->setTable('foo');
-        static::assertSame('foo', $sql->getTable());
-
-        self::expectException(TypeError::class);
-        /** @noinspection PhpStrictTypeCheckingInspection */
-        $sql->setTable(null);
-    }
-
     #[Test]
     public function buildSqlString(): void
     {
@@ -254,6 +237,21 @@ final class SqlTest extends TestCase
             'This Sql object is intended to work with only the table "foo" provided at construction time.',
         );
         $this->sql->select(new TableIdentifier('bar'));
+    }
+
+    #[Test]
+    public function tableIsUnsetByDefaultAndRejectsNull(): void
+    {
+        $sql = new Sql($this->mockAdapter);
+
+        static::assertFalse($sql->hasTable());
+
+        $sql->setTable('foo');
+        static::assertSame('foo', $sql->getTable());
+
+        self::expectException(TypeError::class);
+        /** @noinspection PhpStrictTypeCheckingInspection */
+        $sql->setTable(null);
     }
 
     #[Test]

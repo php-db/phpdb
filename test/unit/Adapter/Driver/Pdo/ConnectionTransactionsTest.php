@@ -114,7 +114,7 @@ final class ConnectionTransactionsTest extends TestCase
         // 2nd commit
         $this->wrapper->commit();
         static::assertFalse($this->wrapper->inTransaction());
-        static::assertSame(--$nested, $this->wrapper->getNestedTransactionsCount());
+        static::assertSame($nested - 1, $this->wrapper->getNestedTransactionsCount());
     }
 
     #[Test]
@@ -132,7 +132,7 @@ final class ConnectionTransactionsTest extends TestCase
         // 2nd transaction
         $this->wrapper->beginTransaction();
         static::assertTrue($this->wrapper->inTransaction());
-        static::assertSame(++$nested, $this->wrapper->getNestedTransactionsCount());
+        static::assertSame($nested + 1, $this->wrapper->getNestedTransactionsCount());
 
         // Rollback
         $this->wrapper->rollback();

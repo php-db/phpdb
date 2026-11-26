@@ -29,7 +29,8 @@ abstract class AbstractPlatform implements PlatformInterface
     /** @var array{string, string} The opening and closing identifier quotes */
     protected array $quoteIdentifier = ['"', '"'];
 
-    protected string $quoteIdentifierTo = '\'';
+    /** Replacement for a quote character inside an identifier; SQL-92 doubles it */
+    protected string $quoteIdentifierTo = '""';
 
     protected bool $quoteIdentifiers = true;
 
