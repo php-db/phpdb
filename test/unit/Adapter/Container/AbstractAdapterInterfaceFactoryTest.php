@@ -26,6 +26,8 @@ use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 
+use function sprintf;
+
 #[Group('unit')]
 #[CoversMethod(AbstractAdapterInterfaceFactory::class, 'canCreate')]
 #[CoversMethod(AbstractAdapterInterfaceFactory::class, '__invoke')]
@@ -37,15 +39,25 @@ final class AbstractAdapterInterfaceFactoryTest extends TestCase
     public static function providerInvalidService(): array
     {
         return [
-            ['PhpDb\Adapter\Unknown'],
+            'unconfigured adapter' => ['UnknownAdapter'],
+        ];
+    }
+
+    /** @return array<string, array{mixed}> */
+    public static function providerUnusableAdapterConfig(): array
+    {
+        return [
+            'null'         => [null],
+            'not an array' => ['writer'],
+            'empty array'  => [[]],
         ];
     }
 
     public static function providerValidService(): array
     {
         return [
-            ['PhpDb\Adapter\Writer'],
-            ['PhpDb\Adapter\Reader'],
+            'write adapter' => ['WriteAdapter'],
+            'read adapter'  => ['ReadAdapter'],
         ];
     }
 
@@ -57,7 +69,43 @@ final class AbstractAdapterInterfaceFactoryTest extends TestCase
 
         $factory = new AbstractAdapterInterfaceFactory();
 
-        static::assertFalse($factory->canCreate($container, 'PhpDb\Adapter\Writer'));
+        static::assertFalse($factory->canCreate($container, 'WriteAdapter'));
+    }
+
+    #[Test]
+    #[DataProvider('providerUnusableAdapterConfig')]
+    public function canCreateReturnsFalseForUnusableAdapterConfig(mixed $adapterConfig): void
+    {
+        $container = new ServiceManager();
+        $container->setService('config', [
+            AdapterInterface::class => [
+                'adapters' => [
+                    'other'  => ['driver' => PdoStubDriver::class],
+                    'writer' => $adapterConfig,
+                ],
+            ],
+        ]);
+
+        $factory = new AbstractAdapterInterfaceFactory();
+
+        static::assertFalse($factory->canCreate($container, 'writer'));
+    }
+
+    #[Test]
+    public function canCreateReturnsTrueForConfiguredAdapter(): void
+    {
+        $container = new ServiceManager();
+        $container->setService('config', [
+            AdapterInterface::class => [
+                'adapters' => [
+                    'writer' => ['driver' => PdoStubDriver::class],
+                ],
+            ],
+        ]);
+
+        $factory = new AbstractAdapterInterfaceFactory();
+
+        static::assertTrue($factory->canCreate($container, 'writer'));
     }
 
     #[Test]
@@ -103,23 +151,45 @@ final class AbstractAdapterInterfaceFactoryTest extends TestCase
     }
 
     #[Test]
+    public function invokeThrowsWhenContainerCannotBuildDependencies(): void
+    {
+        $container = $this->createStub(ContainerInterface::class);
+        $container->method('has')->willReturn(true);
+        $container->method('get')
+            ->willReturn([
+                AdapterInterface::class => [
+                    'adapters' => [
+                        'MyAdapter' => ['driver' => PdoStubDriver::class],
+                    ],
+                ],
+            ]);
+
+        $factory = new AbstractAdapterInterfaceFactory();
+        $factory->canCreate($container, 'MyAdapter');
+
+        self::expectException(ContainerException::class);
+        self::expectExceptionMessage(sprintf(ContainerException::NON_BUILDING_CONTAINER, ServiceManager::class));
+        $factory($container, requestedName: 'MyAdapter');
+    }
+
+    #[Test]
     public function invokeThrowsWhenDriverNotConfigured(): void
     {
         $container = new ServiceManager();
         $container->setService('config', [
             AdapterInterface::class => [
                 'adapters' => [
-                    'PhpDb\Adapter\NoDriver' => [],
+                    'NoDriverAdapter' => [],
                 ],
             ],
         ]);
 
         $factory = new AbstractAdapterInterfaceFactory();
-        $factory->canCreate($container, 'PhpDb\Adapter\NoDriver');
+        $factory->canCreate($container, 'NoDriverAdapter');
 
         self::expectException(ContainerException::class);
         self::expectExceptionMessage(ContainerException::MISSING_DRIVER);
-        $factory($container, 'PhpDb\Adapter\NoDriver');
+        $factory($container, requestedName: 'NoDriverAdapter');
     }
 
     #[Test]
@@ -197,10 +267,10 @@ final class AbstractAdapterInterfaceFactoryTest extends TestCase
         $this->serviceManager->setService('config', [
             AdapterInterface::class => [
                 'adapters' => [
-                    'PhpDb\Adapter\Writer' => [
+                    'WriteAdapter' => [
                         'driver' => PdoStubDriver::class,
                     ],
-                    'PhpDb\Adapter\Reader' => [
+                    'ReadAdapter'  => [
                         'driver' => PdoStubDriver::class,
                     ],
                 ],

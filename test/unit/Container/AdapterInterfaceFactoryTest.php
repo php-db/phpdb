@@ -15,6 +15,7 @@ use PhpDb\Exception\ContainerException;
 use PhpDb\ResultSet\ResultSet;
 use PhpDb\ResultSet\ResultSetInterface;
 use PHPUnit\Framework\Attributes\CoversMethod;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
@@ -23,6 +24,18 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(AdapterInterfaceFactory::class, '__invoke')]
 final class AdapterInterfaceFactoryTest extends TestCase
 {
+    /** @return array<string, array{array<string, array<string, mixed>>}> */
+    public static function adapterConfigKeyProvider(): array
+    {
+        return [
+            'adapter class key only'            => [[Adapter::class => ['driver' => DriverInterface::class]]],
+            'interface key wins over class key' => [[
+                AdapterInterface::class => ['driver' => DriverInterface::class],
+                Adapter::class          => ['options' => []],
+            ]],
+        ];
+    }
+
     #[Test]
     public function invokeCreatesAdapterWithAllDependencies(): void
     {
@@ -98,6 +111,43 @@ final class AdapterInterfaceFactoryTest extends TestCase
 
         static::assertInstanceOf(Adapter::class, $adapter);
         static::assertNull($adapter->getProfiler());
+    }
+
+    /** @param array<string, array<string, mixed>> $config */
+    #[Test]
+    #[DataProvider('adapterConfigKeyProvider')]
+    public function invokeReadsAdapterConfigFromInterfaceKeyThenClassKey(array $config): void
+    {
+        $driverMock = $this->createMock(DriverInterface::class);
+
+        $container = new ServiceManager([
+            'factories' => [
+                DriverInterface::class   => static fn() => $driverMock,
+                PlatformInterface::class => fn() => $this->createMock(PlatformInterface::class),
+            ],
+        ]);
+        $container->setService('config', $config);
+
+        $adapter = (new AdapterInterfaceFactory())($container, AdapterInterface::class);
+
+        static::assertSame($driverMock, $adapter->getDriver());
+    }
+
+    #[Test]
+    public function invokeThrowsWhenAdapterConfigHasNoDriver(): void
+    {
+        $container = new ServiceManager();
+        $container->setService('config', [
+            AdapterInterface::class => [
+                'options' => [],
+            ],
+        ]);
+
+        $factory = new AdapterInterfaceFactory();
+
+        self::expectException(ContainerException::class);
+        self::expectExceptionMessage(ContainerException::MISSING_DRIVER);
+        $factory($container, AdapterInterface::class);
     }
 
     #[Test]

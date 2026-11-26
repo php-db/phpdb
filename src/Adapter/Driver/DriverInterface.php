@@ -8,6 +8,10 @@ use PhpDb\Exception;
 
 /**
  * @api
+ *
+ * @template TConnection of object|resource = object|resource The native connection handle
+ * @template TStatement of object|resource = object|resource The native prepared statement handle
+ * @template TResult of object|resource = object|resource The native result handle
  */
 interface DriverInterface
 {
@@ -24,21 +28,29 @@ interface DriverInterface
     /**
      * Create result
      *
-     * @param resource|object $resource The driver's native result handle
+     * @param TResult $resource The driver's native result handle
+     *
+     * @return ResultInterface<TResult>
      */
     public function createResult(mixed $resource): ResultInterface;
 
     /**
      * Create statement
      *
-     * @param resource|object|string|null $sqlOrResource
+     * @param TStatement|string|null $sqlOrResource
+     *
+     * @return StatementInterface<TStatement>
      */
     public function createStatement(mixed $sqlOrResource = null): StatementInterface;
 
     /** Format parameter name */
     public function formatParameterName(string $name, ?string $type = null): string;
 
-    /** Get connection */
+    /**
+     * Get connection
+     *
+     * @return ConnectionInterface<TConnection>
+     */
     public function getConnection(): ConnectionInterface;
 
     /** Get last generated value */

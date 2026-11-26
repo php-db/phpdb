@@ -7,18 +7,6 @@ message = "Class has high complexity."
 count = 1
 
 [[issues]]
-file = "src/Container/AbstractAdapterInterfaceFactory.php"
-code = "no-empty"
-message = "Use of the `empty` construct."
-count = 1
-
-[[issues]]
-file = "src/Container/AbstractAdapterInterfaceFactory.php"
-code = "no-isset"
-message = "Use of the `isset` construct."
-count = 1
-
-[[issues]]
 file = "src/ResultSet/AbstractResultSet.php"
 code = "cyclomatic-complexity"
 message = "Class has high complexity."
@@ -28,7 +16,7 @@ count = 1
 file = "src/ResultSet/AbstractResultSet.php"
 code = "halstead"
 message = "Method has a high halstead difficulty"
-count = 3
+count = 2
 
 [[issues]]
 file = "src/ResultSet/AbstractResultSet.php"
@@ -229,130 +217,10 @@ message = "Use of the shorthand ternary operator."
 count = 1
 
 [[issues]]
-file = "test/unit/Adapter/AdapterTest.php"
-code = "no-assign-in-argument"
-message = "Avoid assignments in function call arguments."
-count = 1
-
-[[issues]]
-file = "test/unit/Adapter/Container/AbstractAdapterInterfaceFactoryTest.php"
-code = "literal-named-argument"
-message = '''Literal argument `'PhpDb\Adapter\NoDriver'` should be passed as a named argument for clarity.'''
-count = 1
-
-[[issues]]
-file = "test/unit/Adapter/Container/AbstractAdapterInterfaceFactoryTest.php"
-code = "no-literal-namespace-string"
-message = "Use `::class` notation instead of a hardcoded namespace string."
-count = 9
-
-[[issues]]
-file = "test/unit/Adapter/Driver/Pdo/ConnectionTest.php"
-code = "no-empty-catch-clause"
-message = "Do not use empty `catch` blocks."
-count = 1
-
-[[issues]]
-file = "test/unit/Adapter/Driver/Pdo/ConnectionTest.php"
-code = "no-error-control-operator"
-message = "Unsafe use of error control operator `@`."
-count = 1
-
-[[issues]]
-file = "test/unit/Adapter/Driver/Pdo/ConnectionTest.php"
-code = "no-literal-password"
-message = "Literal passwords or sensitive data should not be stored in code."
-count = 1
-
-[[issues]]
-file = "test/unit/Adapter/Driver/Pdo/ConnectionTest.php"
-code = "no-redundant-variable"
-message = "Variable `$driver` is assigned but never used."
-count = 4
-
-[[issues]]
-file = "test/unit/Adapter/Driver/Pdo/ConnectionTransactionsTest.php"
-code = "no-redundant-variable"
-message = "Variable `$nested` is assigned but never used."
-count = 2
-
-[[issues]]
-file = "test/unit/Adapter/Driver/Pdo/PdoTest.php"
-code = "no-redundant-variable"
-message = "Variable `$unused` is assigned but never used."
-count = 1
-
-[[issues]]
-file = "test/unit/Adapter/Driver/Pdo/ResultTest.php"
-code = "assert-description"
-message = "Missing description in assert function."
-count = 1
-
-[[issues]]
-file = "test/unit/Adapter/Driver/Pdo/ResultTest.php"
-code = "prefer-first-class-callable"
-message = "Use first-class callable syntax `...` instead of a arrow function."
-count = 1
-
-[[issues]]
-file = "test/unit/Adapter/Driver/Pdo/StatementIntegrationTest.php"
-code = "no-assign-in-argument"
-message = "Avoid assignments in function call arguments."
-count = 1
-
-[[issues]]
-file = "test/unit/Adapter/Driver/Pdo/StatementTest.php"
-code = "no-assign-in-argument"
-message = "Avoid assignments in function call arguments."
-count = 2
-
-[[issues]]
-file = "test/unit/Adapter/Driver/Pdo/TestAsset/SqliteMemoryPdo.php"
-code = "no-empty"
-message = "Use of the `empty` construct."
-count = 1
-
-[[issues]]
-file = "test/unit/Adapter/Driver/Pdo/TestAsset/TestConnection.php"
-code = "no-else-clause"
-message = "Avoid `elseif` clauses."
-count = 1
-
-[[issues]]
-file = "test/unit/Adapter/Driver/Pdo/TestAsset/TestConnection.php"
-code = "no-isset"
-message = "Use of the `isset` construct."
-count = 1
-
-[[issues]]
 file = "test/unit/Adapter/ParameterContainerTest.php"
 code = "no-isset"
 message = "Use of the `isset` construct."
 count = 2
-
-[[issues]]
-file = "test/unit/Adapter/Platform/Sql92Test.php"
-code = "no-error-control-operator"
-message = "Unsafe use of error control operator `@`."
-count = 4
-
-[[issues]]
-file = "test/unit/ResultSet/AbstractResultSetTest.php"
-code = "assert-description"
-message = "Missing description in assert function."
-count = 1
-
-[[issues]]
-file = "test/unit/ResultSet/ResultSetIntegrationTest.php"
-code = "literal-named-argument"
-message = "Literal argument `75` should be passed as a named argument for clarity."
-count = 2
-
-[[issues]]
-file = "test/unit/ResultSet/ResultSetIntegrationTest.php"
-code = "literal-named-argument"
-message = "Literal argument `true` should be passed as a named argument for clarity."
-count = 1
 
 [[issues]]
 file = "test/unit/RowGateway/AbstractRowGatewayTest.php"
@@ -367,48 +235,6 @@ message = "Method has a high halstead volume"
 count = 1
 
 [[issues]]
-file = "test/unit/Sql/AbstractSqlFunctionalTestCase.php"
-code = "no-isset"
-message = "Use of the `isset` construct."
-count = 3
-
-[[issues]]
-file = "test/unit/Sql/AbstractSqlFunctionalTestCase.php"
-code = "tagged-todo"
-message = "TODO should be tagged with (@username) or (#issue)."
-count = 1
-
-[[issues]]
-file = "test/unit/Sql/Ddl/AlterTableTest.php"
-code = "literal-named-argument"
-message = "Literal argument `''` should be passed as a named argument for clarity."
-count = 2
-
-[[issues]]
-file = "test/unit/Sql/InsertIgnoreTest.php"
-code = "method-name"
-message = "Method name `_get` should be in camel case."
-count = 1
-
-[[issues]]
-file = "test/unit/Sql/InsertIgnoreTest.php"
-code = "method-name"
-message = "Method name `_isset` should be in camel case."
-count = 1
-
-[[issues]]
-file = "test/unit/Sql/InsertIgnoreTest.php"
-code = "method-name"
-message = "Method name `_set` should be in camel case."
-count = 1
-
-[[issues]]
-file = "test/unit/Sql/InsertIgnoreTest.php"
-code = "method-name"
-message = "Method name `_unset` should be in camel case."
-count = 1
-
-[[issues]]
 file = "test/unit/Sql/InsertIgnoreTest.php"
 code = "no-isset"
 message = "Use of the `isset` construct."
@@ -416,57 +242,9 @@ count = 2
 
 [[issues]]
 file = "test/unit/Sql/InsertTest.php"
-code = "method-name"
-message = "Method name `_get` should be in camel case."
-count = 1
-
-[[issues]]
-file = "test/unit/Sql/InsertTest.php"
-code = "method-name"
-message = "Method name `_isset` should be in camel case."
-count = 1
-
-[[issues]]
-file = "test/unit/Sql/InsertTest.php"
-code = "method-name"
-message = "Method name `_set` should be in camel case."
-count = 1
-
-[[issues]]
-file = "test/unit/Sql/InsertTest.php"
-code = "method-name"
-message = "Method name `_unset` should be in camel case."
-count = 1
-
-[[issues]]
-file = "test/unit/Sql/InsertTest.php"
 code = "no-isset"
 message = "Use of the `isset` construct."
 count = 2
-
-[[issues]]
-file = "test/unit/Sql/InsertTest.php"
-code = "no-redundant-variable"
-message = "Variable `$value` is assigned but never used."
-count = 1
-
-[[issues]]
-file = "test/unit/Sql/Platform/AbstractPlatformTest.php"
-code = "string-style"
-message = "String concatenation can be replaced with interpolation."
-count = 2
-
-[[issues]]
-file = "test/unit/Sql/Predicate/PredicateTest.php"
-code = "no-else-clause"
-message = "Avoid `else` clauses."
-count = 1
-
-[[issues]]
-file = "test/unit/Sql/Predicate/PredicateTest.php"
-code = "no-isset"
-message = "Use of the `isset` construct."
-count = 1
 
 [[issues]]
 file = "test/unit/Sql/SelectTest.php"
@@ -482,98 +260,8 @@ count = 1
 
 [[issues]]
 file = "test/unit/Sql/SelectTest.php"
-code = "no-assign-in-argument"
-message = "Avoid assignments in function call arguments."
-count = 1
-
-[[issues]]
-file = "test/unit/Sql/SelectTest.php"
 code = "no-boolean-flag-parameter"
 message = "Avoid boolean flag parameters."
-count = 1
-
-[[issues]]
-file = "test/unit/Sql/SelectTest.php"
-code = "no-redundant-variable"
-message = "Variable `$value` is assigned but never used."
-count = 1
-
-[[issues]]
-file = "test/unit/Sql/SelectTest.php"
-code = "variable-name"
-message = "Variable name `$select32subselect` should be in camel case."
-count = 1
-
-[[issues]]
-file = "test/unit/Sql/SelectTest.php"
-code = "variable-name"
-message = "Variable name `$select39subselect` should be in camel case."
-count = 1
-
-[[issues]]
-file = "test/unit/Sql/SelectTest.php"
-code = "variable-name"
-message = "Variable name `$select44b` should be in camel case."
-count = 1
-
-[[issues]]
-file = "test/unit/Sql/SelectTest.php"
-code = "variable-name"
-message = "Variable name `$select48b` should be in camel case."
-count = 1
-
-[[issues]]
-file = "test/unit/Sql/SelectTest.php"
-code = "variable-name"
-message = "Variable name `$select48combined` should be in camel case."
-count = 1
-
-[[issues]]
-file = "test/unit/Sql/SqlTest.php"
-code = "method-name"
-message = "Method name `_construct` should be in camel case."
-count = 1
-
-[[issues]]
-file = "test/unit/Sql/TableIdentifierFactoryTest.php"
-code = "literal-named-argument"
-message = "Literal argument `''` should be passed as a named argument for clarity."
-count = 2
-
-[[issues]]
-file = "test/unit/Sql/TableIdentifierFactoryTest.php"
-code = "literal-named-argument"
-message = "Literal argument `'_'` should be passed as a named argument for clarity."
-count = 1
-
-[[issues]]
-file = "test/unit/Sql/TableIdentifierFactoryTest.php"
-code = "literal-named-argument"
-message = "Literal argument `'__'` should be passed as a named argument for clarity."
-count = 1
-
-[[issues]]
-file = "test/unit/Sql/TableIdentifierFactoryTest.php"
-code = "literal-named-argument"
-message = "Literal argument `'archive'` should be passed as a named argument for clarity."
-count = 3
-
-[[issues]]
-file = "test/unit/Sql/TableIdentifierFactoryTest.php"
-code = "literal-named-argument"
-message = "Literal argument `'public'` should be passed as a named argument for clarity."
-count = 2
-
-[[issues]]
-file = "test/unit/Sql/TableIdentifierFactoryTest.php"
-code = "literal-named-argument"
-message = "Literal argument `null` should be passed as a named argument for clarity."
-count = 8
-
-[[issues]]
-file = "test/unit/Sql/UpdateTest.php"
-code = "no-fully-qualified-global-class-like"
-message = "Fully-qualified class-like reference detected."
 count = 1
 
 [[issues]]

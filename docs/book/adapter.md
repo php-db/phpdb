@@ -293,6 +293,39 @@ delegates to this method rather than duplicating the clone-and-initialize
 logic itself; call it yourself when you want a `ResultSet` from
 `executeQuery()`'s raw `Driver\ResultInterface`.
 
+### Native Resource Types
+
+The native handles that the driver objects pass around are declared as docblock
+generics, so each driver can state its real types instead of a generic
+`resource`. Each template defaults to `object|resource`, so code that uses the
+interfaces without type arguments keeps the broad type.
+
+| Interface             | Template                                 | Typed members                                            |
+|-----------------------|------------------------------------------|----------------------------------------------------------|
+| `ConnectionInterface` | `TConnection`                            | `getResource()`                                          |
+| `StatementInterface`  | `TStatement`                             | `getResource()`                                          |
+| `ResultInterface`     | `TResult`                                | `getResource()`                                          |
+| `DriverInterface`     | `TConnection`, `TStatement`, `TResult`   | `getConnection()`, `createStatement()`, `createResult()` |
+
+A driver package declares its types with `@implements`:
+
+```php title="Declaring a Driver's Native Types"
+/** @implements DriverInterface<mysqli, mysqli_stmt, mysqli|mysqli_result|mysqli_stmt> */
+final class Driver implements DriverInterface
+{
+    // ...
+}
+
+/** @implements StatementInterface<mysqli_stmt> */
+final class Statement implements StatementInterface
+{
+    // ...
+}
+```
+
+The PDO drivers get `PDO`, `PDOStatement` and `PDOStatement` through
+`PdoDriverInterface` and `PdoConnectionInterface`.
+
 ## Using The Platform Object
 
 The `Platform` object provides an API to assist in crafting queries in a way

@@ -9,7 +9,6 @@ use PDO;
 use PhpDb\Adapter\Driver\ConnectionInterface;
 use PhpDb\Adapter\Driver\Pdo\AbstractPdoConnection;
 
-use function is_array;
 use function sprintf;
 
 /**
@@ -19,11 +18,12 @@ final class TestConnection extends AbstractPdoConnection
 {
     public function __construct(PDO|array $connectionParameters)
     {
-        if (is_array($connectionParameters)) {
-            $this->setConnectionParameters($connectionParameters);
-        } elseif ($connectionParameters instanceof PDO) {
+        if ($connectionParameters instanceof PDO) {
             $this->setResource($connectionParameters);
+            return;
         }
+
+        $this->setConnectionParameters($connectionParameters);
     }
 
     #[Override]
@@ -33,10 +33,7 @@ final class TestConnection extends AbstractPdoConnection
             return $this;
         }
 
-        // Build DSN if not already set
-        if (! isset($this->dsn)) {
-            $this->dsn = $this->buildDsn();
-        }
+        $this->dsn ??= $this->buildDsn();
 
         $this->resource = new PDO(
             $this->getDsn(),

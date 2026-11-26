@@ -36,61 +36,6 @@ final class InsertIgnoreTest extends TestCase
 
     protected InsertIgnore $insert;
 
-    // @codingStandardsIgnoreStart
-    #[Test]
-    public function _get(): void
-    {
-        // @codingStandardsIgnoreEnd
-        $this->insert->foo = 'bar';
-        static::assertSame('bar', $this->insert->foo);
-
-        $this->insert->foo = null;
-        static::assertNull($this->insert->foo);
-    }
-
-    // @codingStandardsIgnoreStart
-    #[Test]
-    public function _isset(): void
-    {
-        // @codingStandardsIgnoreEnd
-        $this->insert->foo = 'bar';
-        static::assertTrue(isset($this->insert->foo));
-
-        $this->insert->foo = null;
-        static::assertTrue(isset($this->insert->foo));
-    }
-
-    // @codingStandardsIgnoreStart
-    #[Test]
-    public function _set(): void
-    {
-        // @codingStandardsIgnoreEnd
-        $this->insert->foo = 'bar';
-        static::assertEquals(['foo'], $this->insert->getRawState('columns'));
-        static::assertEquals(['bar'], $this->insert->getRawState('values'));
-    }
-
-    // @codingStandardsIgnoreStart
-    #[Test]
-    public function _unset(): void
-    {
-        // @codingStandardsIgnoreEnd
-        $this->insert->foo = 'bar';
-        static::assertEquals(['foo'], $this->insert->getRawState('columns'));
-        static::assertEquals(['bar'], $this->insert->getRawState('values'));
-        unset($this->insert->foo);
-        static::assertEquals([], $this->insert->getRawState('columns'));
-        static::assertEquals([], $this->insert->getRawState('values'));
-
-        $this->insert->foo = null;
-        static::assertEquals(['foo'], $this->insert->getRawState('columns'));
-        static::assertEquals([null], $this->insert->getRawState('values'));
-
-        unset($this->insert->foo);
-        static::assertEquals([], $this->insert->getRawState('columns'));
-        static::assertEquals([], $this->insert->getRawState('values'));
-    }
-
     #[Test]
     public function columns(): void
     {
@@ -172,6 +117,53 @@ final class InsertIgnoreTest extends TestCase
         $tableIdentifier = new TableIdentifier('table', 'schema');
         $this->insert->into($tableIdentifier);
         static::assertEquals($tableIdentifier, $this->insert->getRawState('table'));
+    }
+
+    #[Test]
+    public function magicGetReturnsAssignedValue(): void
+    {
+        $this->insert->foo = 'bar';
+        static::assertSame('bar', $this->insert->foo);
+
+        $this->insert->foo = null;
+        static::assertNull($this->insert->foo);
+    }
+
+    #[Test]
+    public function magicIssetIsTrueForAssignedColumnEvenWhenNull(): void
+    {
+        $this->insert->foo = 'bar';
+        static::assertTrue(isset($this->insert->foo));
+
+        $this->insert->foo = null;
+        static::assertTrue(isset($this->insert->foo));
+    }
+
+    #[Test]
+    public function magicSetAddsColumnAndValue(): void
+    {
+        $this->insert->foo = 'bar';
+        static::assertEquals(['foo'], $this->insert->getRawState('columns'));
+        static::assertEquals(['bar'], $this->insert->getRawState('values'));
+    }
+
+    #[Test]
+    public function magicUnsetRemovesColumnAndValue(): void
+    {
+        $this->insert->foo = 'bar';
+        static::assertEquals(['foo'], $this->insert->getRawState('columns'));
+        static::assertEquals(['bar'], $this->insert->getRawState('values'));
+        unset($this->insert->foo);
+        static::assertEquals([], $this->insert->getRawState('columns'));
+        static::assertEquals([], $this->insert->getRawState('values'));
+
+        $this->insert->foo = null;
+        static::assertEquals(['foo'], $this->insert->getRawState('columns'));
+        static::assertEquals([null], $this->insert->getRawState('values'));
+
+        unset($this->insert->foo);
+        static::assertEquals([], $this->insert->getRawState('columns'));
+        static::assertEquals([], $this->insert->getRawState('values'));
     }
 
     #[Test]

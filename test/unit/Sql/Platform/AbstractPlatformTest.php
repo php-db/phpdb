@@ -124,8 +124,8 @@ final class AbstractPlatformTest extends TestCase
         $this->platform->setSubject($select);
 
         $mockPlatform = $this->createMock(PlatformInterface::class);
-        $mockPlatform->method('quoteIdentifier')->willReturnCallback(static fn($v) => '"' . $v . '"');
-        $mockPlatform->method('quoteIdentifierInFragment')->willReturnCallback(static fn($v) => '"' . $v . '"');
+        $mockPlatform->method('quoteIdentifier')->willReturnCallback(static fn($v) => "\"{$v}\"");
+        $mockPlatform->method('quoteIdentifierInFragment')->willReturnCallback(static fn($v) => "\"{$v}\"");
         $mockPlatform->method('getIdentifierSeparator')->willReturn('.');
         $mockPlatform->method('getSqlPlatformDecorator')->willReturn($this->platform);
 

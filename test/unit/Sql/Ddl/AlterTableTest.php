@@ -282,8 +282,8 @@ class AlterTableTest extends TestCase
 
         $actual = $at->getSqlString();
         static::assertEquals(
-            str_replace(["\r", "\n"], '', $expected),
-            str_replace(["\r", "\n"], '', $actual),
+            str_replace(["\r", "\n"], replace: '', subject: $expected),
+            str_replace(["\r", "\n"], replace: '', subject: $actual),
         );
 
         $at = new AlterTable(new TableIdentifier('foo'));

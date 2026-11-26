@@ -16,6 +16,9 @@ use function is_a;
 use function str_replace;
 use function strtolower;
 
+/**
+ * @api
+ */
 class Platform extends AbstractPlatform
 {
     protected PlatformInterface $defaultPlatform;

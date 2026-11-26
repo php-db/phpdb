@@ -21,7 +21,9 @@ use Traversable;
 use function count;
 use function current;
 use function get_debug_type;
+use function get_mangled_object_vars;
 use function is_array;
+use function is_object;
 use function reset;
 
 /**
@@ -181,6 +183,10 @@ abstract class AbstractResultSet implements ResultSetInterface
     /**
      * Retrieve count of fields in individual rows of the result set
      *
+     * The first row is counted as an (array) cast would count it: a Countable row by its
+     * count(), an array by its elements, any other object by all of its properties
+     * (non-public ones included), null as 0 and any other scalar as 1.
+     *
      * @throws RuntimeException
      */
     #[Override]
@@ -202,14 +208,17 @@ abstract class AbstractResultSet implements ResultSetInterface
             return 0;
         }
 
+        /** @var mixed $row */
         $row = $dataSource->current();
-        if ($row instanceof Countable) {
-            $this->fieldCount = $row->count();
-            return $this->fieldCount;
-        }
 
-        $row              = (array) $row;
-        $this->fieldCount = count($row);
+        $this->fieldCount = match (true) {
+            $row instanceof Countable => $row->count(),
+            is_array($row)  => count($row),
+            is_object($row) => count(get_mangled_object_vars($row)),
+            null === $row => 0,
+            default => 1,
+        };
+
         return $this->fieldCount;
     }
 
@@ -238,6 +247,7 @@ abstract class AbstractResultSet implements ResultSetInterface
             return $this;
         }
 
+        /** @var mixed $first */
         $first            = current($dataSource);
         $this->fieldCount = is_array($first) || $first instanceof Countable ? count($first) : 0;
         reset($dataSource);
