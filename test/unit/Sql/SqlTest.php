@@ -10,6 +10,7 @@ use PhpDb\Adapter\Driver\ConnectionInterface;
 use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\Driver\ResultInterface;
 use PhpDb\Adapter\Driver\StatementInterface;
+use PhpDb\Sql\Ddl;
 use PhpDb\Sql\Delete;
 use PhpDb\Sql\Exception\InvalidArgumentException;
 use PhpDb\Sql\Insert;
@@ -33,6 +34,9 @@ use TypeError;
 #[CoversMethod(Sql::class, 'setTable')]
 #[CoversMethod(Sql::class, 'getTable')]
 #[CoversMethod(Sql::class, 'getStatementFactory')]
+#[CoversMethod(Sql::class, 'createTable')]
+#[CoversMethod(Sql::class, 'alterTable')]
+#[CoversMethod(Sql::class, 'dropTable')]
 #[CoversMethod(Sql::class, 'select')]
 #[CoversMethod(Sql::class, 'insert')]
 #[CoversMethod(Sql::class, 'update')]
@@ -69,11 +73,23 @@ final class SqlTest extends TestCase
     }
 
     #[Test]
+    public function alterTableBuildsThePlatformsAlterTable(): void
+    {
+        static::assertInstanceOf(Ddl\AlterTable::class, $this->sql->alterTable('bar'));
+    }
+
+    #[Test]
     public function buildSqlString(): void
     {
         $select    = $this->sql->select()->where(['bar' => 'baz']);
         $sqlString = $this->sql->buildSqlString($select);
         static::assertSame('SELECT "foo".* FROM "foo" WHERE "bar" = \'baz\'', $sqlString);
+    }
+
+    #[Test]
+    public function createTableBuildsThePlatformsCreateTable(): void
+    {
+        static::assertInstanceOf(Ddl\CreateTable::class, $this->sql->createTable('bar'));
     }
 
     /**
@@ -111,6 +127,12 @@ final class SqlTest extends TestCase
             'This Sql object is intended to work with only the table "foo" provided at construction time.',
         );
         $this->sql->delete(new TableIdentifier('bar'));
+    }
+
+    #[Test]
+    public function dropTableBuildsThePlatformsDropTable(): void
+    {
+        static::assertInstanceOf(Ddl\DropTable::class, $this->sql->dropTable('bar'));
     }
 
     /**
