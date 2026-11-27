@@ -68,7 +68,7 @@ final class TestConnection extends AbstractPdoConnection
 
         return match ($pdoDriver) {
             'sqlite' => "sqlite:{$database}",
-            'mysql' => sprintf(
+            'mysql'  => sprintf(
                 'mysql:host=%s;dbname=%s',
                 $this->connectionParameters['hostname'] ?? 'localhost',
                 $database,

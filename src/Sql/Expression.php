@@ -143,10 +143,10 @@ class Expression extends AbstractExpression
 
         foreach ($parameters as $parameter) {
             $this->parameters[] = match (true) {
-                is_array($parameter) => new Values($parameter),
+                is_array($parameter)                      => new Values($parameter),
                 $parameter instanceof ExpressionInterface => new SelectArgument($parameter),
-                $parameter instanceof ArgumentInterface => $parameter,
-                default => new Value($parameter),
+                $parameter instanceof ArgumentInterface   => $parameter,
+                default                                   => new Value($parameter),
             };
         }
 

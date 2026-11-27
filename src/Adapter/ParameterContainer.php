@@ -260,8 +260,8 @@ class ParameterContainer implements Iterator, ArrayAccess, Countable
                 ? substr($offset, offset: 1)
                 : $offset]
                 ?? $offset,
-            null === $offset => (string) count($this->data),
-            default => throw Exception\InvalidArgumentException::forInvalidKeyType(),
+            null === $offset   => (string) count($this->data),
+            default            => throw Exception\InvalidArgumentException::forInvalidKeyType(),
         };
 
         $isNewPosition = is_int($offset)
@@ -310,8 +310,6 @@ class ParameterContainer implements Iterator, ArrayAccess, Countable
     /**
      * Bind a parameter to another by reference. Referencing a name that is not set creates it
      * as null, so the two stay bound when either is set later.
-     *
-     * @mago-expect analysis:possibly-undefined-string-array-index
      */
     public function offsetSetReference(string|int $name, string|int $from): void
     {

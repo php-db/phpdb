@@ -121,6 +121,9 @@ abstract class AbstractResultSet implements ResultSetInterface
             $dataSource = $dataSource->getIterator();
         }
 
+        // An internal class may implement Traversable without Iterator or IteratorAggregate,
+        // so the guard stays even though a userland Traversable narrows to Iterator here.
+        // @mago-expect analysis:redundant-condition
         if ($dataSource instanceof Iterator) {
             return $dataSource;
         }
@@ -213,10 +216,10 @@ abstract class AbstractResultSet implements ResultSetInterface
 
         $this->fieldCount = match (true) {
             $row instanceof Countable => $row->count(),
-            is_array($row)  => count($row),
-            is_object($row) => count(get_mangled_object_vars($row)),
-            null === $row => 0,
-            default => 1,
+            is_array($row)            => count($row),
+            is_object($row)           => count(get_mangled_object_vars($row)),
+            null === $row             => 0,
+            default                   => 1,
         };
 
         return $this->fieldCount;

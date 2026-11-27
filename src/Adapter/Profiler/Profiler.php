@@ -41,7 +41,7 @@ class Profiler implements ProfilerInterface
     {
         $lastIndex = array_key_last($this->profiles);
 
-        return null === $lastIndex ? null : $this->profiles[$lastIndex] ?? null;
+        return null === $lastIndex ? null : $this->profiles[$lastIndex];
     }
 
     /**

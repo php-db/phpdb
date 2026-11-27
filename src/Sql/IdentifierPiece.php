@@ -56,8 +56,8 @@ enum IdentifierPiece
             1 === preg_match(self::OPERATOR, $piece)
                 || (! $isName && 1 === preg_match(self::EXPRESSION_CHARACTERS, $piece))
                 => self::Unquotable,
-            $isName => self::Name,
-            default => self::Whole,
+            $isName                                => self::Name,
+            default                                => self::Whole,
         };
     }
 }

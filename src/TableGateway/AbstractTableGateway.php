@@ -29,7 +29,7 @@ use function reset;
 
 /**
  * @property AdapterInterface $adapter
- * @property int $lastInsertValue
+ * @property string|int|false|null $lastInsertValue
  * @property TableIdentifier|string|array|null $table
  */
 abstract class AbstractTableGateway implements TableGatewayInterface

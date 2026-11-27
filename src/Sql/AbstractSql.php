@@ -246,7 +246,7 @@ abstract class AbstractSql implements SqlInterface
             null === $namedParameterPrefix || '' === $namedParameterPrefix => $parameterContainer
                 ? 'expr' . $this->processInfo['expressionCount']++ . 'Param'
                 : '',
-            default => $this->processInfo['paramPrefix']
+            default                                                        => $this->processInfo['paramPrefix']
                 . str_replace([' ', "\t", "\n", "\r"], replace: '__', subject: $namedParameterPrefix),
         };
 
@@ -258,7 +258,7 @@ abstract class AbstractSql implements SqlInterface
 
         foreach ($expressionValues as $vIndex => $argument) {
             $values[] = match (true) {
-                $argument instanceof Value => $parameterContainer instanceof ParameterContainer
+                $argument instanceof Value          => $parameterContainer instanceof ParameterContainer
                     && $driver instanceof DriverInterface
                         ? $this->processExpressionParameterName(
                             $argument->getValue(),
@@ -268,9 +268,9 @@ abstract class AbstractSql implements SqlInterface
                             $parameterContainer,
                         )
                         : $platform->quoteValue((string) $argument->getValue()),
-                $argument instanceof Identifier => IdentifierQuoter::quote($argument->getValue(), $platform),
-                $argument instanceof Literal => $argument->getValue(),
-                $argument instanceof Identifiers => $this->processIdentifiersArgument($argument, $platform),
+                $argument instanceof Identifier     => IdentifierQuoter::quote($argument->getValue(), $platform),
+                $argument instanceof Literal        => $argument->getValue(),
+                $argument instanceof Identifiers    => $this->processIdentifiersArgument($argument, $platform),
                 $argument instanceof SelectArgument => $this->processExpressionOrSelect(
                     $argument,
                     $namedParameterPrefix,
@@ -327,7 +327,7 @@ abstract class AbstractSql implements SqlInterface
                 $parameterContainer,
                 "{$namedParameterPrefix}{$vIndex}subpart",
             ),
-            default => throw Exception\InvalidArgumentException::forInvalidArgumentType(),
+            default                               => throw Exception\InvalidArgumentException::forInvalidArgumentType(),
         };
     }
 
@@ -380,19 +380,19 @@ abstract class AbstractSql implements SqlInterface
             if (is_array($joinName)) {
                 $alias    = array_key_first($joinName);
                 $joinAs   = $platform->quoteIdentifier($alias);
-                $joinName = $joinName[$alias] ?? '';
+                $joinName = $joinName[$alias];
             }
 
             $joinName = match (true) {
-                $joinName instanceof Expression => $joinName->getExpression(),
+                $joinName instanceof Expression      => $joinName->getExpression(),
                 $joinName instanceof TableIdentifier => $this->quoteJoinTableIdentifier($joinName, $platform),
-                $joinName instanceof Select => "({$this->processSubSelect(
+                $joinName instanceof Select          => "({$this->processSubSelect(
                     $joinName,
                     $platform,
                     $driver,
                     $parameterContainer,
                 )})",
-                default => $platform->quoteIdentifier($joinName),
+                default                              => $platform->quoteIdentifier($joinName),
             };
 
             $joinSpecArgArray[$j] = [
@@ -620,8 +620,8 @@ abstract class AbstractSql implements SqlInterface
     {
         $count  = count($values);
         $format = $parameterSpecification[$count] ?? throw Exception\RuntimeException::forUnsupportedParameterCountOf(
-                $count,
-            );
+            $count,
+        );
 
         return vsprintf($format, $this->flattenParameterList($values));
     }
