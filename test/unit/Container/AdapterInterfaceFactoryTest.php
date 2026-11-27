@@ -19,6 +19,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 
 #[Group('unit')]
 #[CoversMethod(AdapterInterfaceFactory::class, '__invoke')]
@@ -188,6 +189,19 @@ final class AdapterInterfaceFactoryTest extends TestCase
 
         self::expectException(ContainerException::class);
         self::expectExceptionMessage(ContainerException::MISSING_CONFIG_SERVICE);
+        $factory($container, AdapterInterface::class);
+    }
+
+    #[Test]
+    public function invokeTreatsANonArrayConfigServiceAsNoConfiguration(): void
+    {
+        $container = new ServiceManager();
+        $container->setService('config', new stdClass());
+
+        $factory = new AdapterInterfaceFactory();
+
+        self::expectException(ContainerException::class);
+        self::expectExceptionMessage('No configuration found for');
         $factory($container, AdapterInterface::class);
     }
 }
