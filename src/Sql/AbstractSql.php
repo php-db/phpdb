@@ -8,7 +8,6 @@ use Override;
 use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\ParameterContainer;
 use PhpDb\Adapter\Platform\PlatformInterface;
-use PhpDb\Adapter\Platform\Sql92 as DefaultAdapterPlatform;
 use PhpDb\Sql\Argument\Identifier;
 use PhpDb\Sql\Argument\Identifiers;
 use PhpDb\Sql\Argument\Literal;
@@ -77,10 +76,8 @@ abstract class AbstractSql implements SqlInterface
      * @throws Exception\RuntimeException
      */
     #[Override]
-    public function getSqlString(?PlatformInterface $adapterPlatform = null): string
+    public function getSqlString(PlatformInterface $adapterPlatform): string
     {
-        $adapterPlatform ??= new DefaultAdapterPlatform();
-
         $this->resetRenderState();
 
         return $this->buildSqlString($adapterPlatform);

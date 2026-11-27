@@ -24,6 +24,7 @@ use PhpDb\Sql\Where;
 use PhpDbTest\AdapterTestTrait;
 use PhpDbTest\DeprecatedAssertionsTrait;
 use PhpDbTest\TestAsset\DeleteIgnore;
+use PhpDbTest\TestAsset\TrustingSql92Platform;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -122,12 +123,15 @@ final class DeleteTest extends TestCase
     public function getSqlString(): void
     {
         $this->delete->from('foo')->where('x = y');
-        static::assertSame('DELETE FROM "foo" WHERE x = y', $this->delete->getSqlString());
+        static::assertSame('DELETE FROM "foo" WHERE x = y', $this->delete->getSqlString(new TrustingSql92Platform()));
 
         // Test with TableIdentifier
         $this->delete = new Delete();
         $this->delete->from(new TableIdentifier('foo', 'sch'))->where('x = y');
-        static::assertSame('DELETE FROM "sch"."foo" WHERE x = y', $this->delete->getSqlString());
+        static::assertSame(
+            'DELETE FROM "sch"."foo" WHERE x = y',
+            $this->delete->getSqlString(new TrustingSql92Platform()),
+        );
     }
 
     /**
@@ -139,7 +143,10 @@ final class DeleteTest extends TestCase
     {
         $this->delete->from($table)->where('x = y');
 
-        static::assertSame("DELETE FROM {$expected} WHERE x = y", $this->delete->getSqlString());
+        static::assertSame(
+            "DELETE FROM {$expected} WHERE x = y",
+            $this->delete->getSqlString(new TrustingSql92Platform()),
+        );
     }
 
     #[Test]
@@ -147,7 +154,7 @@ final class DeleteTest extends TestCase
     {
         $this->delete->from('foo');
         // Empty where should not add WHERE clause
-        static::assertSame('DELETE FROM "foo"', $this->delete->getSqlString());
+        static::assertSame('DELETE FROM "foo"', $this->delete->getSqlString(new TrustingSql92Platform()));
     }
 
     #[Test]
@@ -204,13 +211,19 @@ final class DeleteTest extends TestCase
 
         $deleteIgnore->from('foo')
             ->where('x = y');
-        static::assertSame('DELETE IGNORE FROM "foo" WHERE x = y', $deleteIgnore->getSqlString());
+        static::assertSame(
+            'DELETE IGNORE FROM "foo" WHERE x = y',
+            $deleteIgnore->getSqlString(new TrustingSql92Platform()),
+        );
 
         // with TableIdentifier
         $deleteIgnore = new DeleteIgnore();
         $deleteIgnore->from(new TableIdentifier('foo', 'sch'))
             ->where('x = y');
-        static::assertSame('DELETE IGNORE FROM "sch"."foo" WHERE x = y', $deleteIgnore->getSqlString());
+        static::assertSame(
+            'DELETE IGNORE FROM "sch"."foo" WHERE x = y',
+            $deleteIgnore->getSqlString(new TrustingSql92Platform()),
+        );
     }
 
     #[Test]

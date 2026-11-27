@@ -12,7 +12,14 @@ use PhpDb\Sql\Platform\StatementFactoryInterface;
 use function addcslashes;
 
 /**
- * @api
+ * Standard SQL conformance platform.
+ *
+ * The test suite renders statements through it, and extends it to specialize quoting per dialect,
+ * which is why it is not final. Nothing in the library selects it and no statement falls back to it.
+ *
+ * @internal
+ *
+ * @mago-expect analysis:class-must-be-final
  */
 class Sql92 extends AbstractPlatform
 {

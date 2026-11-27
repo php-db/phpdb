@@ -28,6 +28,9 @@ interface SqlInterface
 
     /**
      * Get SQL string for statement
+     *
+     * The platform is required: a statement does not know which dialect renders it, and there is
+     * no standard SQL fallback.
      */
-    public function getSqlString(?PlatformInterface $adapterPlatform = null): string;
+    public function getSqlString(PlatformInterface $adapterPlatform): string;
 }

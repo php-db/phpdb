@@ -85,13 +85,28 @@ interface PreparableSqlInterface
 interface SqlInterface
 {
      public function getSqlString(
-         PlatformInterface $adapterPlatform = null
+         PlatformInterface $adapterPlatform
      ) : string;
 }
 ```
 
 Use these functions to produce either (a) a prepared statement,
 or (b) a string to execute.
+
+`getSqlString()` requires the platform, because a statement does not know which dialect renders
+it. Value quoting needs a driver, so a driverless platform cannot render a statement that carries
+values, and no standard SQL fallback exists. `$sql->buildSqlString()` supplies the adapter's
+platform for you; calling a statement directly means passing one yourself.
+
+```php
+$select = $sql->select('users')->where(['id' => 5]);
+
+// through Sql, with the adapter's platform
+$sqlString = $sql->buildSqlString($select);
+
+// or directly, naming the platform
+$sqlString = $select->getSqlString($adapter->getPlatform());
+```
 
 ## SQL Arguments and Argument Types
 

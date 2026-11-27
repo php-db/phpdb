@@ -15,6 +15,7 @@ use PhpDb\Sql\Combine;
 use PhpDb\Sql\Predicate\Expression;
 use PhpDb\Sql\Select;
 use PhpDbTest\AdapterTestTrait;
+use PhpDbTest\TestAsset\TrustingSql92Platform;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -109,7 +110,7 @@ final class CombineTest extends TestCase
 
         static::assertSame(
             '(SELECT "t1".* FROM "t1") INTERSECT (SELECT "t2".* FROM "t2")',
-            $this->combine->getSqlString(),
+            $this->combine->getSqlString(new TrustingSql92Platform()),
         );
     }
 
@@ -160,14 +161,14 @@ final class CombineTest extends TestCase
             // @codingStandardsIgnoreStart
             '(SELECT "t1".* FROM "t1") INTERSECT (SELECT "t2".* FROM "t2") EXCEPT (SELECT "t3".* FROM "t3") UNION (SELECT "t4".* FROM "t4")',
             // @codingStandardsIgnoreEnd
-            $this->combine->getSqlString(),
+            $this->combine->getSqlString(new TrustingSql92Platform()),
         );
     }
 
     #[Test]
     public function getSqlStringEmpty(): void
     {
-        static::assertEmpty($this->combine->getSqlString());
+        static::assertEmpty($this->combine->getSqlString(new TrustingSql92Platform()));
     }
 
     #[Test]
@@ -181,7 +182,7 @@ final class CombineTest extends TestCase
 
         static::assertSame(
             '(SELECT "t1".* FROM "t1") INTERSECT ALL (SELECT "t2".* FROM "t2") EXCEPT (SELECT "t3".* FROM "t3")',
-            $this->combine->getSqlString(),
+            $this->combine->getSqlString(new TrustingSql92Platform()),
         );
 
         $this->combine = new Combine();
@@ -193,7 +194,7 @@ final class CombineTest extends TestCase
 
         static::assertSame(
             '(SELECT "t1".* FROM "t1") UNION (SELECT "t2".* FROM "t2") UNION (SELECT "t3".* FROM "t3")',
-            $this->combine->getSqlString(),
+            $this->combine->getSqlString(new TrustingSql92Platform()),
         );
     }
 
@@ -206,7 +207,7 @@ final class CombineTest extends TestCase
 
         static::assertSame(
             '(SELECT "t1".* FROM "t1") UNION ALL (SELECT "t2".* FROM "t2")',
-            $this->combine->getSqlString(),
+            $this->combine->getSqlString(new TrustingSql92Platform()),
         );
     }
 

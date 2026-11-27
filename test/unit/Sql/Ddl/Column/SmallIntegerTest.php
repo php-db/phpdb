@@ -9,6 +9,7 @@ use PhpDb\Sql\Ddl\Column\Column;
 use PhpDb\Sql\Ddl\Column\Integer;
 use PhpDb\Sql\Ddl\Column\SmallInteger;
 use PhpDb\Sql\Ddl\CreateTable;
+use PhpDbTest\TestAsset\TrustingSql92Platform;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
@@ -53,6 +54,9 @@ final class SmallIntegerTest extends TestCase
         $createTable = new CreateTable('t');
         $createTable->addColumn(new SmallInteger('i', false, null, ['length' => 6]));
 
-        static::assertSame("CREATE TABLE \"t\" ( \n    \"i\" SMALLINT(6) NOT NULL \n)", $createTable->getSqlString());
+        static::assertSame(
+            "CREATE TABLE \"t\" ( \n    \"i\" SMALLINT(6) NOT NULL \n)",
+            $createTable->getSqlString(new TrustingSql92Platform()),
+        );
     }
 }
