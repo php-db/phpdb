@@ -21,7 +21,7 @@ $column->setOption('length', 11); // INTEGER(11)
 
 The `length` option is a display width rendered directly after the type, as `INTEGER(11)`. It
 accepts an `int` or a string of digits. MySQL deprecated integer display widths in 8.0.17, and the
-MySQL platform decorator drops the attribute (see phpdb-mysql#81); other platforms render it as
+MySQL statement class drops the attribute (see phpdb-mysql#81); other platforms render it as
 given.
 
 **Constructor:**

@@ -756,8 +756,8 @@ final class AbstractTableGatewayTest extends TestCase
         $mockPlatform = $this->getMockBuilder(PlatformInterface::class)->getMock();
         $mockPlatform->expects($this->any())->method('getName')->willReturn('sql92');
         $mockPlatform->expects($this->any())
-            ->method('getSqlPlatformDecorator')
-            ->willReturn(new Sql\Platform\Platform($mockPlatform));
+            ->method('getStatementFactory')
+            ->willReturn(new Sql\Platform\Platform());
 
         $mockResultSet = $this->getMockBuilder(ResultSetInterface::class)->getMock();
 

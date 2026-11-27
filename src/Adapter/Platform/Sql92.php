@@ -7,7 +7,7 @@ namespace PhpDb\Adapter\Platform;
 use Override;
 use PhpDb\Adapter\Exception;
 use PhpDb\Sql\Platform\Platform;
-use PhpDb\Sql\Platform\PlatformDecoratorInterface;
+use PhpDb\Sql\Platform\StatementFactoryInterface;
 
 use function addcslashes;
 
@@ -31,9 +31,9 @@ class Sql92 extends AbstractPlatform
      * {@inheritDoc}
      */
     #[Override]
-    public function getSqlPlatformDecorator(): PlatformDecoratorInterface
+    public function getStatementFactory(): StatementFactoryInterface
     {
-        return new Platform($this);
+        return new Platform();
     }
 
     /**

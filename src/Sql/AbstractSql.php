@@ -15,13 +15,11 @@ use PhpDb\Sql\Argument\Literal;
 use PhpDb\Sql\Argument\Select as SelectArgument;
 use PhpDb\Sql\Argument\Value;
 use PhpDb\Sql\Argument\Values;
-use PhpDb\Sql\Platform\PlatformDecoratorInterface;
 use Stringable;
 
 use function array_key_exists;
 use function array_key_first;
 use function count;
-use function get_object_vars;
 use function implode;
 use function is_array;
 use function is_string;
@@ -56,8 +54,6 @@ use function vsprintf;
  */
 abstract class AbstractSql implements SqlInterface
 {
-    protected SqlInterface|PreparableSqlInterface|null $subject = null;
-
     /**
      * Specifications for Sql String generation
      *
@@ -102,7 +98,7 @@ abstract class AbstractSql implements SqlInterface
         ?DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null,
     ): string {
-        $this->localizeVariables();
+        $this->prepareSpecifications();
 
         $sqls = [];
 
@@ -208,21 +204,12 @@ abstract class AbstractSql implements SqlInterface
     }
 
     /**
-     * Copies the decorated subject's state onto this decorator, so property names are only known at runtime
+     * Adjust the specification table before the render hooks run.
      *
-     * @mago-expect analysis:string-member-selector
-     * @mago-expect analysis:mixed-assignment
+     * A dialect subclass overrides this where a clause is rendered with a different
+     * specification from the standard SQL one.
      */
-    protected function localizeVariables(): void
-    {
-        if (! $this instanceof PlatformDecoratorInterface || null === $this->subject) {
-            return;
-        }
-
-        foreach (get_object_vars($this->subject) as $name => $value) {
-            $this->{$name} = $value;
-        }
-    }
+    protected function prepareSpecifications(): void {}
 
     /**
      * @throws Exception\RuntimeException
@@ -426,30 +413,23 @@ abstract class AbstractSql implements SqlInterface
         ?DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null,
     ): string {
-        $decorator = $subselect;
-        if ($this instanceof PlatformDecoratorInterface) {
-            $decorator = clone $this;
-            $decorator->setSubject($subselect);
-        }
-
         if ($parameterContainer instanceof ParameterContainer) {
-            $processInfoContext = $decorator instanceof PlatformDecoratorInterface ? $subselect : $decorator;
             $this->processInfo['subselectCount']++;
-            $processInfoContext->processInfo = [
+            $subselect->processInfo = [
                 'paramPrefix'     => "subselect{$this->processInfo['subselectCount']}",
                 'subselectCount'  => $this->processInfo['subselectCount'],
                 'expressionCount' => $this->processInfo['expressionCount'],
             ];
-            $processInfoContext->instanceParameterIndex = [];
+            $subselect->instanceParameterIndex = [];
 
-            $sql                                  = $decorator->buildSqlString($platform, $driver, $parameterContainer);
-            $this->processInfo['subselectCount']  = $decorator->processInfo['subselectCount'];
-            $this->processInfo['expressionCount'] = $decorator->processInfo['expressionCount'];
+            $sql                                  = $subselect->buildSqlString($platform, $driver, $parameterContainer);
+            $this->processInfo['subselectCount']  = $subselect->processInfo['subselectCount'];
+            $this->processInfo['expressionCount'] = $subselect->processInfo['expressionCount'];
 
             return $sql;
         }
 
-        return $decorator->buildSqlString($platform, $driver, $parameterContainer);
+        return $subselect->buildSqlString($platform, $driver, $parameterContainer);
     }
 
     /**
@@ -466,17 +446,12 @@ abstract class AbstractSql implements SqlInterface
      * Clear the parameter naming state left by a previous render
      *
      * Called by the top-level render entry points so that rendering the same object again produces
-     * the same SQL and parameter names. A platform decorator also clears its subject, whose state it
-     * copies at the start of each render.
+     * the same SQL and parameter names.
      */
     protected function resetRenderState(): void
     {
         $this->processInfo            = ['paramPrefix' => '', 'subselectCount' => 0, 'expressionCount' => 0];
         $this->instanceParameterIndex = [];
-
-        if ($this instanceof PlatformDecoratorInterface && $this->subject instanceof self) {
-            $this->subject->resetRenderState();
-        }
     }
 
     /**

@@ -8,7 +8,7 @@ use Override;
 use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\Platform\AbstractPlatform;
 use PhpDb\Sql\Platform\Platform;
-use PhpDb\Sql\Platform\PlatformDecoratorInterface;
+use PhpDb\Sql\Platform\StatementFactoryInterface;
 
 final class TestPlatform extends AbstractPlatform
 {
@@ -25,8 +25,8 @@ final class TestPlatform extends AbstractPlatform
     }
 
     #[Override]
-    public function getSqlPlatformDecorator(): PlatformDecoratorInterface
+    public function getStatementFactory(): StatementFactoryInterface
     {
-        return new Platform($this);
+        return new Platform();
     }
 }

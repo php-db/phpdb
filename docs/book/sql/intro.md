@@ -233,12 +233,18 @@ $sqlString = $sql->buildSqlString($select);
 Note: Direct string building bypasses parameter binding.
 Use with caution and never with user input.
 
-```php title="Getting the SQL Platform"
-$platform = $sql->getSqlPlatform();
+```php title="Getting the Statement Factory"
+$factory = $sql->getStatementFactory();
 ```
 
-The platform object handles database-specific SQL generation and can be
-used for custom query building.
+The factory builds the statements this adapter renders. A driver whose dialect renders a
+statement differently returns its own subclass from the matching factory method, so a statement
+obtained from `$sql` carries the dialect from the moment it is created, including through
+TableGateway events, RowGateway operations and subselects. The same applies to DDL through
+`createTable()`, `alterTable()` and `dropTable()`.
+
+A statement built with `new Select()` renders with the standard SQL rules, because nothing has
+told it which dialect it belongs to.
 
 ## TableIdentifier
 

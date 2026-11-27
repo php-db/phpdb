@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace PhpDb\Adapter\Platform;
 
-use PhpDb\Sql\Platform\PlatformDecoratorInterface;
+use PhpDb\Sql\Platform\StatementFactoryInterface;
 
 /**
  * @api
@@ -32,12 +32,12 @@ interface PlatformInterface
     public function getQuoteValueSymbol(): string;
 
     /**
-     * Get Sql platform decorator
+     * Get the statement factory for this platform's dialect
      *
      * Returns a PhpDb\Sql\Platform\* instance
      * PhpDb\Sql\Platform\AbstractPlatform implements this interface
      */
-    public function getSqlPlatformDecorator(): PlatformDecoratorInterface;
+    public function getStatementFactory(): StatementFactoryInterface;
 
     /**
      * Quote identifier

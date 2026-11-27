@@ -6,6 +6,7 @@ namespace PhpDb\Sql;
 
 use PhpDb\Adapter\AdapterInterface;
 use PhpDb\Adapter\Driver\StatementInterface;
+use PhpDb\Sql\Platform\StatementFactoryInterface;
 
 /**
  * @api
@@ -17,33 +18,42 @@ class Sql
     /** @var TableIdentifier|string|array<string, string|TableIdentifier>|null */
     protected TableIdentifier|string|array|null $table;
 
-    protected Platform\PlatformDecoratorInterface $sqlPlatform;
+    protected StatementFactoryInterface $statementFactory;
 
     /** @param TableIdentifier|string|array<string, string|TableIdentifier>|null $table */
     public function __construct(
         AdapterInterface $adapter,
         array|string|TableIdentifier|null $table = null,
     ) {
-        $this->table       = $table;
-        $this->adapter     = $adapter;
-        $this->sqlPlatform = $adapter->getPlatform()->getSqlPlatformDecorator();
+        $this->table            = $table;
+        $this->adapter          = $adapter;
+        $this->statementFactory = $adapter->getPlatform()->getStatementFactory();
     }
 
     /**
-     * @throws Exception\InvalidArgumentException
+     * @param TableIdentifier|string $table
+     */
+    public function alterTable(TableIdentifier|string $table = ''): Ddl\AlterTable
+    {
+        return $this->statementFactory->alterTable($table);
+    }
+
+    /**
      * @throws Exception\RuntimeException
      */
     public function buildSqlString(SqlInterface $sqlObject, ?AdapterInterface $adapter = null): string
     {
-        if (! $this->sqlPlatform instanceof SqlInterface) {
-            throw Exception\RuntimeException::forSubjectNotSqlInterface();
-        }
-
-        $this->sqlPlatform->setSubject($sqlObject);
-
-        return $this->sqlPlatform->getSqlString(
+        return $sqlObject->getSqlString(
             $adapter instanceof AdapterInterface ? $adapter->getPlatform() : $this->adapter->getPlatform(),
         );
+    }
+
+    /**
+     * @param TableIdentifier|string $table
+     */
+    public function createTable(TableIdentifier|string $table = ''): Ddl\CreateTable
+    {
+        return $this->statementFactory->createTable($table);
     }
 
     public function delete(string|TableIdentifier|null $table = null): Delete
@@ -52,7 +62,15 @@ class Sql
             throw Exception\InvalidArgumentException::forForeignTable($this->table);
         }
 
-        return new Delete($table ?? $this->table);
+        return $this->statementFactory->delete($table ?? $this->table);
+    }
+
+    /**
+     * @param TableIdentifier|string $table
+     */
+    public function dropTable(TableIdentifier|string $table = ''): Ddl\DropTable
+    {
+        return $this->statementFactory->dropTable($table);
     }
 
     public function getAdapter(): AdapterInterface
@@ -60,9 +78,9 @@ class Sql
         return $this->adapter;
     }
 
-    public function getSqlPlatform(): Platform\PlatformDecoratorInterface
+    public function getStatementFactory(): StatementFactoryInterface
     {
-        return $this->sqlPlatform;
+        return $this->statementFactory;
     }
 
     /** @return TableIdentifier|string|array<string, string|TableIdentifier>|null */
@@ -82,7 +100,7 @@ class Sql
             throw Exception\InvalidArgumentException::forForeignTable($this->table);
         }
 
-        return new Insert($table ?? $this->table);
+        return $this->statementFactory->insert($table ?? $this->table);
     }
 
     /**
@@ -93,15 +111,10 @@ class Sql
         ?StatementInterface $statement = null,
         ?AdapterInterface $adapter = null,
     ): StatementInterface {
-        if (! $this->sqlPlatform instanceof PreparableSqlInterface) {
-            throw Exception\RuntimeException::forSubjectNotPreparableSqlInterface();
-        }
-
         $adapter   ??= $this->adapter;
         $statement ??= $adapter->getDriver()->createStatement();
 
-        $this->sqlPlatform->setSubject($sqlObject);
-        $this->sqlPlatform->prepareStatement($adapter, $statement);
+        $sqlObject->prepareStatement($adapter, $statement);
 
         return $statement;
     }
@@ -112,7 +125,7 @@ class Sql
             throw Exception\InvalidArgumentException::forForeignTable($this->table);
         }
 
-        return new Select($table ?? $this->table);
+        return $this->statementFactory->select($table ?? $this->table);
     }
 
     /**
@@ -132,6 +145,6 @@ class Sql
             throw Exception\InvalidArgumentException::forForeignTable($this->table);
         }
 
-        return new Update($table ?? $this->table);
+        return $this->statementFactory->update($table ?? $this->table);
     }
 }
