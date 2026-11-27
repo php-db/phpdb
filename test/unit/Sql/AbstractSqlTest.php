@@ -25,7 +25,7 @@ use PhpDb\Sql\Predicate;
 use PhpDb\Sql\Select;
 use PhpDb\Sql\TableIdentifier;
 use PhpDb\Sql\Update;
-use PhpDbTest\TestAsset\SelectDecorator;
+use PhpDbTest\TestAsset\DialectSelect;
 use PhpDbTest\TestAsset\TrustingSql92Platform;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -63,7 +63,7 @@ use function uniqid;
 #[CoversMethod(AbstractSql::class, 'flattenExpressionValues')]
 #[CoversMethod(AbstractSql::class, 'resolveColumnValue')]
 #[CoversMethod(AbstractSql::class, 'resolveTable')]
-#[CoversMethod(AbstractSql::class, 'localizeVariables')]
+#[CoversMethod(AbstractSql::class, 'prepareSpecifications')]
 #[CoversMethod(AbstractSql::class, 'quoteJoinTableIdentifier')]
 #[CoversMethod(AbstractSql::class, 'formatSpecification')]
 #[CoversMethod(AbstractSql::class, 'flattenParameterList')]
@@ -274,20 +274,6 @@ final class AbstractSqlTest extends TestCase
             Delete::SPECIFICATION_DELETE,
         ));
         $delete->getSqlString(new TrustingSql92Platform());
-    }
-
-    #[Test]
-    public function localizeVariablesCopiesSubjectProperties(): void
-    {
-        $decorator = new SelectDecorator();
-        $select    = new Select('users');
-        $select->columns(['id', 'name']);
-        $decorator->setSubject($select);
-
-        $sql = $decorator->getSqlString(new TrustingSql92Platform());
-
-        static::assertStringContainsString('"users"', $sql);
-        static::assertStringContainsString('"id"', $sql);
     }
 
     /**
@@ -703,15 +689,24 @@ final class AbstractSqlTest extends TestCase
     }
 
     #[Test]
-    public function processSubSelectUsesDecoratorWhenPlatformDecorator(): void
+    public function processSubSelectRendersTheSubselectWithItsOwnClass(): void
     {
-        $decorator = new SelectDecorator();
-        $outer     = new Select('foo');
-        $outer->where(['x' => new Select('bar')]);
+        $outer = new Select('foo');
+        $outer->where(['x' => (new DialectSelect('bar'))->columns(['id'])->limit(5)]);
 
-        $decorator->setSubject($outer);
+        $sql = $outer->getSqlString(new TrustingSql92Platform());
 
-        $sql = $decorator->getSqlString(new TrustingSql92Platform());
+        static::assertStringContainsString("DIALECT_LIMIT '5'", $sql);
+        static::assertStringContainsString('SELECT "foo"', $sql);
+    }
+
+    #[Test]
+    public function processSubSelectUsesTheSubselectClassWhenItIsADialectSubclass(): void
+    {
+        $outer = new Select('foo');
+        $outer->where(['x' => (new DialectSelect('bar'))->columns(['id'])]);
+
+        $sql = $outer->getSqlString(new TrustingSql92Platform());
 
         static::assertStringContainsString('SELECT "bar"', $sql);
         static::assertStringContainsString('SELECT "foo"', $sql);

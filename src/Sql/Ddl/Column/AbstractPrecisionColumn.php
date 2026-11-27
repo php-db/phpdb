@@ -61,7 +61,7 @@ abstract class AbstractPrecisionColumn extends AbstractLengthColumn
         return match (true) {
             null === $this->decimal => (string) $this->length,
             null === $this->length => throw InvalidArgumentException::forMissingDecimalDigits($this->name, $this->type),
-            default => "{$this->length},{$this->decimal}",
+            default                => "{$this->length},{$this->decimal}",
         };
     }
 }

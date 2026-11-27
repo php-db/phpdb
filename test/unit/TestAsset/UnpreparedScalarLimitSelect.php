@@ -12,9 +12,9 @@ use PhpDb\Sql\Select;
 use Stringable;
 
 /**
- * Renders LIMIT and OFFSET the way the phpdb-mysql and phpdb-sqlite SelectDecorators do when
- * the statement is not prepared: the raw value is returned as the clause parameter, without
- * being cast to a string.
+ * Renders LIMIT and OFFSET the way the mysql and sqlite dialect Select classes do when the
+ * statement is not prepared: the raw value is returned as the clause parameter, without being
+ * cast to a string.
  *
  * @psalm-type RawValue = int|float|string|Stringable|list<string>|null
  */
@@ -39,10 +39,8 @@ final class UnpreparedScalarLimitSelect extends Select
     }
 
     #[Override]
-    protected function localizeVariables(): void
+    protected function prepareSpecifications(): void
     {
-        parent::localizeVariables();
-
         if (null === $this->rawLimit && null !== $this->rawOffset) {
             $this->specifications[self::LIMIT] = 'LIMIT 18446744073709551615';
         }

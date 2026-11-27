@@ -10,12 +10,11 @@ use PhpDb\Adapter\Driver\ConnectionInterface;
 use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\Driver\ResultInterface;
 use PhpDb\Adapter\Driver\StatementInterface;
-use PhpDb\Adapter\Platform\PlatformInterface;
+use PhpDb\Sql\Ddl;
 use PhpDb\Sql\Delete;
 use PhpDb\Sql\Exception\InvalidArgumentException;
-use PhpDb\Sql\Exception\RuntimeException;
 use PhpDb\Sql\Insert;
-use PhpDb\Sql\Platform\PlatformDecoratorInterface;
+use PhpDb\Sql\Platform\StatementFactoryInterface;
 use PhpDb\Sql\Select;
 use PhpDb\Sql\Sql;
 use PhpDb\Sql\TableIdentifier;
@@ -34,7 +33,10 @@ use TypeError;
 #[CoversMethod(Sql::class, 'hasTable')]
 #[CoversMethod(Sql::class, 'setTable')]
 #[CoversMethod(Sql::class, 'getTable')]
-#[CoversMethod(Sql::class, 'getSqlPlatform')]
+#[CoversMethod(Sql::class, 'getStatementFactory')]
+#[CoversMethod(Sql::class, 'createTable')]
+#[CoversMethod(Sql::class, 'alterTable')]
+#[CoversMethod(Sql::class, 'dropTable')]
 #[CoversMethod(Sql::class, 'select')]
 #[CoversMethod(Sql::class, 'insert')]
 #[CoversMethod(Sql::class, 'update')]
@@ -71,6 +73,12 @@ final class SqlTest extends TestCase
     }
 
     #[Test]
+    public function alterTableBuildsThePlatformsAlterTable(): void
+    {
+        static::assertInstanceOf(Ddl\AlterTable::class, $this->sql->alterTable('bar'));
+    }
+
+    #[Test]
     public function buildSqlString(): void
     {
         $select    = $this->sql->select()->where(['bar' => 'baz']);
@@ -79,25 +87,9 @@ final class SqlTest extends TestCase
     }
 
     #[Test]
-    public function buildSqlStringThrowsWhenPlatformNotSqlInterface(): void
+    public function createTableBuildsThePlatformsCreateTable(): void
     {
-        $decorator = $this->createMock(PlatformDecoratorInterface::class);
-        $platform  = $this->createMock(PlatformInterface::class);
-        $platform->method('getSqlPlatformDecorator')->willReturn($decorator);
-
-        $adapter = $this->getMockBuilder(Adapter::class)
-            ->setConstructorArgs([
-                $this->createMock(DriverInterface::class),
-                $platform,
-            ])
-            ->getMock();
-        $adapter->method('getPlatform')->willReturn($platform);
-
-        $sql = new Sql($adapter);
-
-        self::expectException(RuntimeException::class);
-        self::expectExceptionMessage(RuntimeException::SUBJECT_NOT_SQL_INTERFACE);
-        $sql->buildSqlString($this->sql->select());
+        static::assertInstanceOf(Ddl\CreateTable::class, $this->sql->createTable('bar'));
     }
 
     /**
@@ -137,6 +129,12 @@ final class SqlTest extends TestCase
         $this->sql->delete(new TableIdentifier('bar'));
     }
 
+    #[Test]
+    public function dropTableBuildsThePlatformsDropTable(): void
+    {
+        static::assertInstanceOf(Ddl\DropTable::class, $this->sql->dropTable('bar'));
+    }
+
     /**
      * @param array<string, string|TableIdentifier>|TableIdentifier $table
      */
@@ -156,9 +154,9 @@ final class SqlTest extends TestCase
     }
 
     #[Test]
-    public function getSqlPlatformReturnsPlatformDecorator(): void
+    public function getStatementFactoryReturnsThePlatformFactory(): void
     {
-        static::assertInstanceOf(PlatformDecoratorInterface::class, $this->sql->getSqlPlatform());
+        static::assertInstanceOf(StatementFactoryInterface::class, $this->sql->getStatementFactory());
     }
 
     #[Test]
@@ -191,28 +189,6 @@ final class SqlTest extends TestCase
         $insert = $this->sql->insert()->columns(['foo'])->values(['foo' => 'bar']);
         $stmt   = $this->sql->prepareStatementForSqlObject($insert);
         static::assertInstanceOf(StatementInterface::class, $stmt);
-    }
-
-    #[Test]
-    public function prepareStatementThrowsWhenPlatformNotPreparable(): void
-    {
-        $decorator = $this->createMock(PlatformDecoratorInterface::class);
-        $platform  = $this->createMock(PlatformInterface::class);
-        $platform->method('getSqlPlatformDecorator')->willReturn($decorator);
-
-        $adapter = $this->getMockBuilder(Adapter::class)
-            ->setConstructorArgs([
-                $this->createMock(DriverInterface::class),
-                $platform,
-            ])
-            ->getMock();
-        $adapter->method('getPlatform')->willReturn($platform);
-
-        $sql = new Sql($adapter);
-
-        self::expectException(RuntimeException::class);
-        self::expectExceptionMessage(RuntimeException::SUBJECT_NOT_PREPARABLE_SQL_INTERFACE);
-        $sql->prepareStatementForSqlObject($this->sql->select());
     }
 
     #[Test]

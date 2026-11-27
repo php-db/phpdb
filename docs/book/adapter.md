@@ -397,6 +397,11 @@ echo $platform->quoteIdentifierInFragment('foo as bar');
 echo $platform->quoteIdentifierInFragment('(foo.bar = boo.baz)', ['(', ')', '=']);
 ```
 
+Value quoting requires a driver. The platform asks the driver to quote the value, and a platform
+without one throws `PhpDb\Adapter\Exception\RuntimeException` rather than guess. Driverless
+quoting is not supported; `quoteTrustedValue()` is the only path that does not consult a driver,
+for values the caller has already established are safe.
+
 ## Using The Parameter Container
 
 The `ParameterContainer` object is a container for the various parameters that

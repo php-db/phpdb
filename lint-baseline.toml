@@ -229,12 +229,6 @@ message = "Use of the `isset` construct."
 count = 4
 
 [[issues]]
-file = "test/unit/Sql/AbstractSqlFunctionalTestCase.php"
-code = "halstead"
-message = "Method has a high halstead volume"
-count = 1
-
-[[issues]]
 file = "test/unit/Sql/InsertIgnoreTest.php"
 code = "no-isset"
 message = "Use of the `isset` construct."

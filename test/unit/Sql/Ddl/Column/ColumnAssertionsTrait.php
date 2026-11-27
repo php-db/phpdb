@@ -6,6 +6,7 @@ namespace PhpDbTest\Sql\Ddl\Column;
 
 use PhpDb\Sql\Ddl\Column\ColumnInterface;
 use PhpDb\Sql\Ddl\CreateTable;
+use PhpDbTest\TestAsset\TrustingSql92Platform;
 
 trait ColumnAssertionsTrait
 {
@@ -28,6 +29,9 @@ trait ColumnAssertionsTrait
         $createTable = new CreateTable('t');
         $createTable->addColumn($column);
 
-        self::assertSame("CREATE TABLE \"t\" ( \n    {$expected} \n)", $createTable->getSqlString());
+        self::assertSame(
+            "CREATE TABLE \"t\" ( \n    {$expected} \n)",
+            $createTable->getSqlString(new TrustingSql92Platform()),
+        );
     }
 }

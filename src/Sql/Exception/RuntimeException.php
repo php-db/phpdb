@@ -10,25 +10,11 @@ use function sprintf;
 
 class RuntimeException extends Exception\RuntimeException
 {
-    final public const string DECORATOR_NOT_IMPLEMENTING =
-        'The decorator %s does not implement %s,'
-            . ' thus %s cannot be delegated to it';
-
     final public const string REPLACEMENT_MISMATCH =
         'The number of replacements in the expression'
             . ' does not match the number of parameters';
 
     final public const string STRING_SPECIFICATION_REQUIRED = 'Specification "%s" must be a format string';
-
-    final public const string SUBJECT_NOT_IMPLEMENTING =
-        'The subject does not appear to implement %s,'
-            . ' thus calling %s has no effect';
-
-    final public const string SUBJECT_NOT_PREPARABLE_SQL_INTERFACE =
-        'The subject does not implement'
-            . ' PreparableSqlInterface';
-
-    final public const string SUBJECT_NOT_SQL_INTERFACE = 'The subject does not implement SqlInterface';
 
     final public const string UNSUPPORTED_PARAMETER_COUNT =
         'A number of parameters was found'
@@ -42,11 +28,6 @@ class RuntimeException extends Exception\RuntimeException
         '%s renders its expression string and does not accept'
             . ' a specification override; use setExpression() instead';
 
-    public static function forDecoratorNotImplementing(string $decorator, string $interface, string $method): self
-    {
-        return new self(sprintf(self::DECORATOR_NOT_IMPLEMENTING, $decorator, $interface, $method));
-    }
-
     public static function forReplacementMismatch(): self
     {
         return new self(self::REPLACEMENT_MISMATCH);
@@ -55,21 +36,6 @@ class RuntimeException extends Exception\RuntimeException
     public static function forStringSpecificationRequired(string $name): self
     {
         return new self(sprintf(self::STRING_SPECIFICATION_REQUIRED, $name));
-    }
-
-    public static function forSubjectNotImplementing(string $interface, string $method): self
-    {
-        return new self(sprintf(self::SUBJECT_NOT_IMPLEMENTING, $interface, $method));
-    }
-
-    public static function forSubjectNotPreparableSqlInterface(): self
-    {
-        return new self(self::SUBJECT_NOT_PREPARABLE_SQL_INTERFACE);
-    }
-
-    public static function forSubjectNotSqlInterface(): self
-    {
-        return new self(self::SUBJECT_NOT_SQL_INTERFACE);
     }
 
     public static function forUnsupportedParameterCount(): self

@@ -305,19 +305,18 @@ foreach ($tables as $tableName) {
 
 ### Current Status
 
-**Important:** Platform-specific DDL decorators have been **removed during
-refactoring**. The decorator infrastructure exists in the codebase but specific
-platform implementations (MySQL, SQL Server, Oracle, SQLite) have been
-deprecated and removed.
+A dialect renders DDL through its own statement class. `Sql` obtains those classes from the
+adapter platform's statement factory, so `$sql->createTable()`, `$sql->alterTable()` and
+`$sql->dropTable()` return the class the driver supplies. Where a driver has nothing to add, the
+standard `PhpDb\Sql\Ddl\*` class is returned, which is what a directly constructed statement
+renders with.
 
 ### What This Means
 
-1. **Platform specialization is handled at the Adapter Platform level**,
-   not the SQL DDL level
-2. **DDL objects are platform-agnostic** - they define the structure,
-   and the platform renders it appropriately
-3. **The decorator system can be used manually** if needed via
-   `setTypeDecorator()`, but this is advanced usage
+1. **Platform specialization lives in the driver's statement classes**, which subclass the
+   standard ones and override the render hooks they need
+2. **DDL objects define the structure**; the dialect class decides how that structure is written
+3. **Statements obtained from `$sql` carry the dialect**; a `new CreateTable()` does not
 
 ### Platform-Agnostic Approach
 

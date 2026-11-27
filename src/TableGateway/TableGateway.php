@@ -33,8 +33,8 @@ class TableGateway extends AbstractTableGateway
 
         $this->featureSet = match (true) {
             $features instanceof Feature\FeatureInterface => new Feature\FeatureSet([$features]),
-            is_array($features) => new Feature\FeatureSet($features),
-            default             => $features,
+            is_array($features)                           => new Feature\FeatureSet($features),
+            default                                       => $features,
         };
 
         $this->resultSetPrototype = $resultSetPrototype;

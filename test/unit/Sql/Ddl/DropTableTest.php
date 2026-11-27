@@ -6,6 +6,7 @@ namespace PhpDbTest\Sql\Ddl;
 
 use PhpDb\Sql\Ddl\DropTable;
 use PhpDb\Sql\TableIdentifier;
+use PhpDbTest\TestAsset\TrustingSql92Platform;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
@@ -21,13 +22,13 @@ class DropTableTest extends TestCase
     public function getSqlString(): void
     {
         $dt = new DropTable('foo');
-        static::assertSame('DROP TABLE "foo"', $dt->getSqlString());
+        static::assertSame('DROP TABLE "foo"', $dt->getSqlString(new TrustingSql92Platform()));
 
         $dt = new DropTable(new TableIdentifier('foo'));
-        static::assertSame('DROP TABLE "foo"', $dt->getSqlString());
+        static::assertSame('DROP TABLE "foo"', $dt->getSqlString(new TrustingSql92Platform()));
 
         $dt = new DropTable(new TableIdentifier('bar', 'foo'));
-        static::assertSame('DROP TABLE "foo"."bar"', $dt->getSqlString());
+        static::assertSame('DROP TABLE "foo"."bar"', $dt->getSqlString(new TrustingSql92Platform()));
     }
 
     #[Test]
@@ -40,7 +41,7 @@ class DropTableTest extends TestCase
         static::assertSame($dt, $result);
         static::assertTrue($dt->getIfExists());
 
-        static::assertSame('DROP TABLE IF EXISTS "foo"', $dt->getSqlString());
+        static::assertSame('DROP TABLE IF EXISTS "foo"', $dt->getSqlString(new TrustingSql92Platform()));
     }
 
     #[Test]
@@ -53,7 +54,7 @@ class DropTableTest extends TestCase
         $dt->ifExists(false);
         static::assertFalse($dt->getIfExists());
 
-        static::assertSame('DROP TABLE "foo"', $dt->getSqlString());
+        static::assertSame('DROP TABLE "foo"', $dt->getSqlString(new TrustingSql92Platform()));
     }
 
     #[Test]
@@ -62,6 +63,6 @@ class DropTableTest extends TestCase
         $dt = new DropTable(new TableIdentifier('bar', 'foo'));
         $dt->ifExists();
 
-        static::assertSame('DROP TABLE IF EXISTS "foo"."bar"', $dt->getSqlString());
+        static::assertSame('DROP TABLE IF EXISTS "foo"."bar"', $dt->getSqlString(new TrustingSql92Platform()));
     }
 }

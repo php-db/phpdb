@@ -119,9 +119,9 @@ class Operator extends AbstractExpression implements PredicateInterface
     public function setLeft(string|ArgumentInterface|ExpressionInterface|SqlInterface $left): static
     {
         $this->left = match (true) {
-            $left instanceof ArgumentInterface => $left,
+            $left instanceof ArgumentInterface                                  => $left,
             $left instanceof ExpressionInterface, $left instanceof SqlInterface => new Select($left),
-            default => new Identifier($left),
+            default                                                             => new Identifier($left),
         };
 
         return $this;
@@ -144,9 +144,9 @@ class Operator extends AbstractExpression implements PredicateInterface
         bool|string|int|float|ArgumentInterface|ExpressionInterface|SqlInterface|null $right,
     ): static {
         $this->right = match (true) {
-            $right instanceof ArgumentInterface => $right,
+            $right instanceof ArgumentInterface                                   => $right,
             $right instanceof ExpressionInterface, $right instanceof SqlInterface => new Select($right),
-            default => new Value($right),
+            default                                                               => new Value($right),
         };
 
         return $this;

@@ -283,60 +283,6 @@ message = "Function `__unset` is missing a return type hint."
 count = 1
 
 [[issues]]
-file = "src/Sql/Platform/Platform.php"
-code = "class-must-be-final"
-message = 'Class `PhpDb\Sql\Platform\Platform` should be declared `final`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Platform/Platform.php"
-code = "mixed-array-assignment"
-message = "Unsafe array assignment on type `mixed`."
-count = 1
-
-[[issues]]
-file = "src/Sql/Platform/Platform.php"
-code = "mixed-return-statement"
-message = 'Could not infer a precise return type for function `PhpDb\Sql\Platform\Platform::getDecorators`. Saw type `mixed`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Platform/Platform.php"
-code = "non-existent-method"
-message = 'Method `getSqlString` does not exist on type `PhpDb\Sql\Platform\PlatformDecoratorInterface`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Platform/Platform.php"
-code = "non-existent-method"
-message = 'Method `getSqlString` does not exist on type `PhpDb\Sql\PreparableSqlInterface`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Platform/Platform.php"
-code = "non-existent-method"
-message = 'Method `prepareStatement` does not exist on type `PhpDb\Sql\Platform\PlatformDecoratorInterface`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Platform/Platform.php"
-code = "non-existent-method"
-message = 'Method `prepareStatement` does not exist on type `PhpDb\Sql\SqlInterface`.'
-count = 1
-
-[[issues]]
-file = "src/Sql/Platform/Platform.php"
-code = "possibly-undefined-string-array-index"
-message = "Possibly undefined array key `string` accessed on `array<array-key, mixed>`."
-count = 1
-
-[[issues]]
-file = "src/Sql/Platform/PlatformDecoratorInterface.php"
-code = "missing-api-or-internal"
-message = 'Interface `PhpDb\Sql\Platform\PlatformDecoratorInterface` is missing an `@api` or `@internal` annotation.'
-count = 1
-
-[[issues]]
 file = "src/Sql/Select.php"
 code = "missing-return-type"
 message = "Function `__clone` is missing a return type hint."
@@ -407,12 +353,6 @@ file = "src/TableGateway/AbstractTableGateway.php"
 code = "invalid-array-access"
 message = 'Cannot access array index on object `PhpDb\Sql\TableIdentifier` that does not implement `ArrayAccess`.'
 count = 3
-
-[[issues]]
-file = "src/TableGateway/AbstractTableGateway.php"
-code = "invalid-property-assignment-value"
-message = "Invalid type for property `$lastInsertValue`: expected `int`, but got `false|int|null|string`."
-count = 1
 
 [[issues]]
 file = "src/TableGateway/AbstractTableGateway.php"
@@ -590,12 +530,6 @@ count = 1
 
 [[issues]]
 file = "src/TableGateway/AbstractTableGateway.php"
-code = "overly-wide-return-type"
-message = "Declared return type `false|int|null|string` for `getlastinsertvalue` has unused branches: `false`, `string`, `null`."
-count = 1
-
-[[issues]]
-file = "src/TableGateway/AbstractTableGateway.php"
 code = "possible-method-access-on-null"
 message = "Attempting to call a method on `null`."
 count = 28
@@ -629,12 +563,6 @@ file = "src/TableGateway/AbstractTableGateway.php"
 code = "possibly-undefined-int-array-index"
 message = 'Possibly undefined array index accessed on `list<PhpDb\Sql\ExpressionInterface|PhpDb\Sql\Select|null|scalar>`.'
 count = 3
-
-[[issues]]
-file = "src/TableGateway/AbstractTableGateway.php"
-code = "possibly-undefined-string-array-index"
-message = '''Possibly undefined array key `string('table')` accessed on `array<string, PhpDb\Sql\TableIdentifier|array<array-key, mixed>|string>`.'''
-count = 1
 
 [[issues]]
 file = "src/TableGateway/AbstractTableGateway.php"

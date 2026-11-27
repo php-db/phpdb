@@ -11,6 +11,7 @@ use PhpDb\Sql\Ddl\Constraint\ConstraintInterface;
 use PhpDb\Sql\Ddl\CreateTable;
 use PhpDb\Sql\Literal;
 use PhpDb\Sql\TableIdentifier;
+use PhpDbTest\TestAsset\TrustingSql92Platform;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
@@ -209,25 +210,31 @@ class CreateTableTest extends TestCase
     public function getSqlString(): void
     {
         $ct = new CreateTable('foo');
-        static::assertSame("CREATE TABLE \"foo\" ( \n)", $ct->getSqlString());
+        static::assertSame("CREATE TABLE \"foo\" ( \n)", $ct->getSqlString(new TrustingSql92Platform()));
 
         $ct = new CreateTable('foo', true);
-        static::assertSame("CREATE TEMPORARY TABLE \"foo\" ( \n)", $ct->getSqlString());
+        static::assertSame("CREATE TEMPORARY TABLE \"foo\" ( \n)", $ct->getSqlString(new TrustingSql92Platform()));
 
         $ct = new CreateTable('foo');
         $ct->addColumn(new Column('bar'));
-        static::assertSame("CREATE TABLE \"foo\" ( \n    \"bar\" INTEGER NOT NULL \n)", $ct->getSqlString());
+        static::assertSame(
+            "CREATE TABLE \"foo\" ( \n    \"bar\" INTEGER NOT NULL \n)",
+            $ct->getSqlString(new TrustingSql92Platform()),
+        );
 
         $ct = new CreateTable('foo', true);
         $ct->addColumn(new Column('bar'));
-        static::assertSame("CREATE TEMPORARY TABLE \"foo\" ( \n    \"bar\" INTEGER NOT NULL \n)", $ct->getSqlString());
+        static::assertSame(
+            "CREATE TEMPORARY TABLE \"foo\" ( \n    \"bar\" INTEGER NOT NULL \n)",
+            $ct->getSqlString(new TrustingSql92Platform()),
+        );
 
         $ct = new CreateTable('foo', true);
         $ct->addColumn(new Column('bar'));
         $ct->addColumn(new Column('baz'));
         static::assertSame(
             "CREATE TEMPORARY TABLE \"foo\" ( \n    \"bar\" INTEGER NOT NULL,\n    \"baz\" INTEGER NOT NULL \n)",
-            $ct->getSqlString(),
+            $ct->getSqlString(new TrustingSql92Platform()),
         );
 
         $ct = new CreateTable('foo');
@@ -235,7 +242,7 @@ class CreateTableTest extends TestCase
         $ct->addConstraint(new Constraint\PrimaryKey('bat'));
         static::assertSame(
             "CREATE TABLE \"foo\" ( \n    \"bar\" INTEGER NOT NULL , \n    PRIMARY KEY (\"bat\") \n)",
-            $ct->getSqlString(),
+            $ct->getSqlString(new TrustingSql92Platform()),
         );
 
         $ct = new CreateTable('foo');
@@ -243,16 +250,22 @@ class CreateTableTest extends TestCase
         $ct->addConstraint(new Constraint\PrimaryKey('bat'));
         static::assertSame(
             "CREATE TABLE \"foo\" ( \n    PRIMARY KEY (\"bar\"),\n    PRIMARY KEY (\"bat\") \n)",
-            $ct->getSqlString(),
+            $ct->getSqlString(new TrustingSql92Platform()),
         );
 
         $ct = new CreateTable(new TableIdentifier('foo'));
         $ct->addColumn(new Column('bar'));
-        static::assertSame("CREATE TABLE \"foo\" ( \n    \"bar\" INTEGER NOT NULL \n)", $ct->getSqlString());
+        static::assertSame(
+            "CREATE TABLE \"foo\" ( \n    \"bar\" INTEGER NOT NULL \n)",
+            $ct->getSqlString(new TrustingSql92Platform()),
+        );
 
         $ct = new CreateTable(new TableIdentifier('bar', 'foo'));
         $ct->addColumn(new Column('baz'));
-        static::assertSame("CREATE TABLE \"foo\".\"bar\" ( \n    \"baz\" INTEGER NOT NULL \n)", $ct->getSqlString());
+        static::assertSame(
+            "CREATE TABLE \"foo\".\"bar\" ( \n    \"baz\" INTEGER NOT NULL \n)",
+            $ct->getSqlString(new TrustingSql92Platform()),
+        );
     }
 
     #[Test]
@@ -264,7 +277,7 @@ class CreateTableTest extends TestCase
 
         static::assertSame(
             "CREATE TABLE \"foo\" ( \n    \"bar\" INTEGER NOT NULL \n) PACK_KEYS = 1",
-            $ct->getSqlString(),
+            $ct->getSqlString(new TrustingSql92Platform()),
         );
     }
 
@@ -277,7 +290,7 @@ class CreateTableTest extends TestCase
 
         static::assertSame(
             "CREATE TABLE \"foo\" ( \n    \"bar\" INTEGER NOT NULL \n) AUTO_INCREMENT = 100",
-            $ct->getSqlString(),
+            $ct->getSqlString(new TrustingSql92Platform()),
         );
     }
 
@@ -290,7 +303,7 @@ class CreateTableTest extends TestCase
 
         static::assertSame(
             "CREATE TABLE \"foo\" ( \n    \"bar\" INTEGER NOT NULL \n) ENGINE = InnoDB",
-            $ct->getSqlString(),
+            $ct->getSqlString(new TrustingSql92Platform()),
         );
     }
 
@@ -304,7 +317,7 @@ class CreateTableTest extends TestCase
 
         static::assertSame(
             "CREATE TABLE \"foo\" ( \n    \"bar\" INTEGER NOT NULL \n) ENGINE = InnoDB AUTO_INCREMENT = 100",
-            $ct->getSqlString(),
+            $ct->getSqlString(new TrustingSql92Platform()),
         );
     }
 
@@ -316,7 +329,7 @@ class CreateTableTest extends TestCase
 
         static::assertSame(
             "CREATE TABLE \"foo\" ( \n    \"bar\" INTEGER NOT NULL \n)",
-            $ct->getSqlString(),
+            $ct->getSqlString(new TrustingSql92Platform()),
         );
     }
 
@@ -329,7 +342,7 @@ class CreateTableTest extends TestCase
 
         static::assertSame(
             "CREATE TABLE \"foo\" ( \n    \"bar\" INTEGER NOT NULL \n) COMMENT = 'My table'",
-            $ct->getSqlString(),
+            $ct->getSqlString(new TrustingSql92Platform()),
         );
     }
 
@@ -343,7 +356,7 @@ class CreateTableTest extends TestCase
         static::assertSame($ct, $result);
         static::assertTrue($ct->getIfNotExists());
 
-        static::assertSame("CREATE TABLE IF NOT EXISTS \"foo\" ( \n)", $ct->getSqlString());
+        static::assertSame("CREATE TABLE IF NOT EXISTS \"foo\" ( \n)", $ct->getSqlString(new TrustingSql92Platform()));
     }
 
     #[Test]
@@ -352,7 +365,10 @@ class CreateTableTest extends TestCase
         $ct = new CreateTable('foo', true);
         $ct->ifNotExists();
 
-        static::assertSame("CREATE TEMPORARY TABLE IF NOT EXISTS \"foo\" ( \n)", $ct->getSqlString());
+        static::assertSame(
+            "CREATE TEMPORARY TABLE IF NOT EXISTS \"foo\" ( \n)",
+            $ct->getSqlString(new TrustingSql92Platform()),
+        );
     }
 
     #[Test]
@@ -365,7 +381,7 @@ class CreateTableTest extends TestCase
         $ct->ifNotExists(false);
         static::assertFalse($ct->getIfNotExists());
 
-        static::assertSame("CREATE TABLE \"foo\" ( \n)", $ct->getSqlString());
+        static::assertSame("CREATE TABLE \"foo\" ( \n)", $ct->getSqlString(new TrustingSql92Platform()));
     }
 
     #[Test]
@@ -388,7 +404,7 @@ class CreateTableTest extends TestCase
         $columns = $ct->getRawState(CreateTable::COLUMNS);
         static::assertCount(3, $columns);
 
-        $sql = $ct->getSqlString();
+        $sql = $ct->getSqlString(new TrustingSql92Platform());
         static::assertStringContainsString('"id"', $sql);
         static::assertStringContainsString('"name"', $sql);
         static::assertStringContainsString('"email"', $sql);
@@ -404,7 +420,7 @@ class CreateTableTest extends TestCase
         $constraints = $ct->getRawState(CreateTable::CONSTRAINTS);
         static::assertCount(2, $constraints);
 
-        $sql = $ct->getSqlString();
+        $sql = $ct->getSqlString(new TrustingSql92Platform());
         static::assertStringContainsString('PRIMARY KEY', $sql);
         static::assertStringContainsString('UNIQUE', $sql);
     }
@@ -491,6 +507,6 @@ class CreateTableTest extends TestCase
         $ct->setTemporary('yes');
         static::assertTrue($ct->isTemporary());
 
-        static::assertStringStartsWith('CREATE TEMPORARY TABLE', $ct->getSqlString());
+        static::assertStringStartsWith('CREATE TEMPORARY TABLE', $ct->getSqlString(new TrustingSql92Platform()));
     }
 }

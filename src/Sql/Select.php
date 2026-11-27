@@ -413,18 +413,18 @@ class Select extends AbstractPreparableSql
         }
 
         match ($part) {
-            self::TABLE => $this->table = null,
+            self::TABLE      => $this->table = null,
             self::QUANTIFIER => $this->quantifier = null,
-            self::COLUMNS => $this->columns = [],
-            self::JOINS => $this->joins = null,
-            self::WHERE => $this->where = null,
-            self::GROUP => $this->group = null,
-            self::HAVING => $this->having = null,
-            self::LIMIT => $this->limit = null,
-            self::OFFSET => $this->offset = null,
-            self::ORDER => $this->order = [],
-            self::COMBINE => $this->combine = [],
-            default => null,
+            self::COLUMNS    => $this->columns = [],
+            self::JOINS      => $this->joins = null,
+            self::WHERE      => $this->where = null,
+            self::GROUP      => $this->group = null,
+            self::HAVING     => $this->having = null,
+            self::LIMIT      => $this->limit = null,
+            self::OFFSET     => $this->offset = null,
+            self::ORDER      => $this->order = [],
+            self::COMBINE    => $this->combine = [],
+            default          => null,
         };
 
         return $this;
@@ -676,11 +676,11 @@ class Select extends AbstractPreparableSql
                 is_string($columnIndexOrAs) ? $columnIndexOrAs : 'column',
             );
             $columnAs = match (true) {
-                is_string($columnIndexOrAs) => $platform->quoteIdentifier($columnIndexOrAs),
+                is_string($columnIndexOrAs)                    => $platform->quoteIdentifier($columnIndexOrAs),
                 stripos($columnName, needle: ' as ') === false => is_string($column)
                     ? $platform->quoteIdentifier($column)
                     : 'Expression' . $expr++,
-                default => null,
+                default                                        => null,
             };
 
             $columns[] = null === $columnAs ? [$columnName] : [$columnName, $columnAs];
@@ -707,10 +707,10 @@ class Select extends AbstractPreparableSql
                     is_string($jKey) ? $jKey : 'column',
                 );
                 $jColumnAs = match (true) {
-                    is_string($jKey) => $platform->quoteIdentifier($jKey),
+                    is_string($jKey)            => $platform->quoteIdentifier($jKey),
                     self::SQL_STAR === $jColumn => null,
-                    is_string($jColumn) => $platform->quoteIdentifier($jColumn),
-                    default             => 'Expression' . $expr++,
+                    is_string($jColumn)         => $platform->quoteIdentifier($jColumn),
+                    default                     => 'Expression' . $expr++,
                 };
 
                 if (null !== $jColumnAs) {

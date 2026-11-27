@@ -307,9 +307,9 @@ class Result implements Iterator, ResultInterface
         $rowCount = $this->rowCount;
 
         return match (true) {
-            is_int($rowCount) => $rowCount,
+            is_int($rowCount)            => $rowCount,
             $rowCount instanceof Closure => (int) $rowCount(),
-            default => $this->resource->rowCount(),
+            default                      => $this->resource->rowCount(),
         };
     }
 }

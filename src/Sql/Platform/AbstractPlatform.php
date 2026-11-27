@@ -5,127 +5,62 @@ declare(strict_types=1);
 namespace PhpDb\Sql\Platform;
 
 use Override;
-use PhpDb\Adapter\AdapterInterface;
-use PhpDb\Adapter\Platform\PlatformInterface;
-use PhpDb\Adapter\StatementContainerInterface;
-use PhpDb\Sql\Exception;
-use PhpDb\Sql\PreparableSqlInterface;
-use PhpDb\Sql\SqlInterface;
+use PhpDb\Sql\Ddl\AlterTable;
+use PhpDb\Sql\Ddl\CreateTable;
+use PhpDb\Sql\Ddl\DropTable;
+use PhpDb\Sql\Delete;
+use PhpDb\Sql\Insert;
+use PhpDb\Sql\Select;
+use PhpDb\Sql\TableIdentifier;
+use PhpDb\Sql\Update;
 
-class AbstractPlatform implements PlatformDecoratorInterface, PreparableSqlInterface, SqlInterface
+/**
+ * Standard SQL statement factory.
+ *
+ * A dialect that renders a statement differently subclasses this and overrides the methods
+ * whose statements it renders, returning its own statement subclasses.
+ */
+class AbstractPlatform implements StatementFactoryInterface
 {
-    protected SqlInterface|PreparableSqlInterface|null $subject = null;
-
-    /**
-     * Decorators keyed by the subject type they decorate; Platform nests them under a platform name first
-     *
-     * @var array<string, PlatformDecoratorInterface|array<string, PlatformDecoratorInterface>>
-     */
-    protected array $decorators = [];
-
-    /**
-     * @return array<string, PlatformDecoratorInterface>
-     */
-    public function getDecorators(): array
-    {
-        /** @var array<string, PlatformDecoratorInterface> */
-        return $this->decorators;
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @throws Exception\RuntimeException
-     */
     #[Override]
-    public function getSqlString(?PlatformInterface $adapterPlatform = null): string
+    public function alterTable(string|TableIdentifier $table = ''): AlterTable
     {
-        if (! $this->subject instanceof SqlInterface) {
-            throw Exception\RuntimeException::forSubjectNotImplementing(SqlInterface::class, 'getSqlString()');
-        }
-
-        return $this->requireDecoratorImplementing(
-            $this->getTypeDecorator($this->subject),
-            SqlInterface::class,
-            'getSqlString()',
-        )->getSqlString($adapterPlatform);
+        return new AlterTable($table);
     }
 
-    public function getTypeDecorator(
-        PreparableSqlInterface|SqlInterface $subject,
-    ): PlatformDecoratorInterface|PreparableSqlInterface|SqlInterface {
-        /** @var array<string, PlatformDecoratorInterface> $decorators */
-        $decorators = $this->decorators;
-        foreach ($decorators as $type => $decorator) {
-            /** @phpstan-ignore-next-line instanceof with string class name is valid */
-            if (! $subject instanceof $type) {
-                continue;
-            }
-
-            $decorator->setSubject($subject);
-            return $decorator;
-        }
-
-        return $subject;
-    }
-
-    /**
-     * @throws Exception\RuntimeException
-     */
     #[Override]
-    public function prepareStatement(
-        AdapterInterface $adapter,
-        StatementContainerInterface $statementContainer,
-    ): StatementContainerInterface {
-        if (! $this->subject instanceof PreparableSqlInterface) {
-            throw Exception\RuntimeException::forSubjectNotImplementing(
-                PreparableSqlInterface::class,
-                'prepareStatement()',
-            );
-        }
-
-        $this->requireDecoratorImplementing(
-            $this->getTypeDecorator($this->subject),
-            PreparableSqlInterface::class,
-            'prepareStatement()',
-        )->prepareStatement($adapter, $statementContainer);
-
-        return $statementContainer;
+    public function createTable(string|TableIdentifier $table = ''): CreateTable
+    {
+        return new CreateTable($table);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     #[Override]
-    public function setSubject($subject): static
+    public function delete(array|string|TableIdentifier|null $table = null): Delete
     {
-        $this->subject = $subject;
-
-        return $this;
+        return new Delete($table);
     }
 
-    public function setTypeDecorator(string $type, PlatformDecoratorInterface $decorator): void
+    #[Override]
+    public function dropTable(string|TableIdentifier $table = ''): DropTable
     {
-        $this->decorators[$type] = $decorator;
+        return new DropTable($table);
     }
 
-    /**
-     * Narrows the resolved decorator to the interface whose method is about to be delegated to it
-     *
-     * @template T of PreparableSqlInterface|SqlInterface
-     * @param class-string<T> $interface
-     * @return T
-     * @throws Exception\RuntimeException
-     */
-    final protected function requireDecoratorImplementing(
-        PlatformDecoratorInterface|PreparableSqlInterface|SqlInterface $decorator,
-        string $interface,
-        string $method,
-    ): PreparableSqlInterface|SqlInterface {
-        if (! $decorator instanceof $interface) {
-            throw Exception\RuntimeException::forDecoratorNotImplementing($decorator::class, $interface, $method);
-        }
+    #[Override]
+    public function insert(array|string|TableIdentifier|null $table = null): Insert
+    {
+        return new Insert($table);
+    }
 
-        return $decorator;
+    #[Override]
+    public function select(array|string|TableIdentifier|null $table = null): Select
+    {
+        return new Select($table);
+    }
+
+    #[Override]
+    public function update(array|string|TableIdentifier|null $table = null): Update
+    {
+        return new Update($table);
     }
 }

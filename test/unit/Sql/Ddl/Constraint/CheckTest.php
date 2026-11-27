@@ -82,7 +82,7 @@ final class CheckTest extends TestCase
 
         static::assertSame(
             "CREATE TABLE \"t\" ( \n    \"age\" INTEGER NOT NULL CONSTRAINT \"chk_age\" CHECK (age >= 0) \n)",
-            $createTable->getSqlString(),
+            $createTable->getSqlString(new TrustingSql92Platform()),
         );
     }
 

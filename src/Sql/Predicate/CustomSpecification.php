@@ -85,10 +85,10 @@ final class CustomSpecification
             $isPlain    = '' === $positional;
             $index      = $isPlain ? $sequential++ : (int) $positional - 1;
             $run        = $placeholders[$index] ?? throw InvalidArgumentException::forSpecificationArgumentOutOfRange(
-                    $specification,
-                    $index + 1,
-                    count($arguments),
-                );
+                $specification,
+                $index + 1,
+                count($arguments),
+            );
 
             $plain ??= $isPlain;
             if ($plain !== $isPlain) {

@@ -108,10 +108,11 @@ abstract class AbstractSource implements MetadataInterface
     public function __construct(
         protected AdapterInterface&SchemaAwareInterface $adapter,
     ) {
-        $currentSchema       = $this->adapter->getCurrentSchema();
-        $this->defaultSchema = false !== $currentSchema && '' !== $currentSchema
-            ? $currentSchema
-            : self::DEFAULT_SCHEMA;
+        $currentSchema = $this->adapter->getCurrentSchema();
+        $this->defaultSchema =
+            false !== $currentSchema && '' !== $currentSchema
+                ? $currentSchema
+                : self::DEFAULT_SCHEMA;
     }
 
     /**
@@ -695,6 +696,7 @@ abstract class AbstractSource implements MetadataInterface
      * 1.47.5 and later.
      *
      * @mago-expect analysis:mixed-assignment
+     * @mago-expect analysis:mixed-array-assignment
      * @mago-expect lint:no-isset
      */
     protected function prepareDataHierarchy(string $type, string ...$keys): void

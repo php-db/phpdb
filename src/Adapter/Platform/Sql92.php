@@ -7,12 +7,19 @@ namespace PhpDb\Adapter\Platform;
 use Override;
 use PhpDb\Adapter\Exception;
 use PhpDb\Sql\Platform\Platform;
-use PhpDb\Sql\Platform\PlatformDecoratorInterface;
+use PhpDb\Sql\Platform\StatementFactoryInterface;
 
 use function addcslashes;
 
 /**
- * @api
+ * Standard SQL conformance platform.
+ *
+ * The test suite renders statements through it, and extends it to specialize quoting per dialect,
+ * which is why it is not final. Nothing in the library selects it and no statement falls back to it.
+ *
+ * @internal
+ *
+ * @mago-expect analysis:class-must-be-final
  */
 class Sql92 extends AbstractPlatform
 {
@@ -31,9 +38,9 @@ class Sql92 extends AbstractPlatform
      * {@inheritDoc}
      */
     #[Override]
-    public function getSqlPlatformDecorator(): PlatformDecoratorInterface
+    public function getStatementFactory(): StatementFactoryInterface
     {
-        return new Platform($this);
+        return new Platform();
     }
 
     /**

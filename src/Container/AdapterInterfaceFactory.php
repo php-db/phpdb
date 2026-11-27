@@ -17,6 +17,8 @@ use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 
+use function is_array;
+
 final class AdapterInterfaceFactory
 {
     /**
@@ -32,8 +34,11 @@ final class AdapterInterfaceFactory
             throw ContainerException::forMissingConfigService($requestedName, self::class);
         }
 
-        /** @var array<array-key, mixed> $config */
-        $config = $container->get('config') ?? [];
+        /** @var mixed $config */
+        $config = $container->get('config');
+        if (! is_array($config)) {
+            $config = [];
+        }
 
         /** @var array{driver?: class-string<DriverInterface>, ...} $adapterConfig */
         $adapterConfig = $config[AdapterInterface::class] ?? $config[Adapter::class] ?? [];

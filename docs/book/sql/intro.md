@@ -85,13 +85,28 @@ interface PreparableSqlInterface
 interface SqlInterface
 {
      public function getSqlString(
-         PlatformInterface $adapterPlatform = null
+         PlatformInterface $adapterPlatform
      ) : string;
 }
 ```
 
 Use these functions to produce either (a) a prepared statement,
 or (b) a string to execute.
+
+`getSqlString()` requires the platform, because a statement does not know which dialect renders
+it. Value quoting needs a driver, so a driverless platform cannot render a statement that carries
+values, and no standard SQL fallback exists. `$sql->buildSqlString()` supplies the adapter's
+platform for you; calling a statement directly means passing one yourself.
+
+```php
+$select = $sql->select('users')->where(['id' => 5]);
+
+// through Sql, with the adapter's platform
+$sqlString = $sql->buildSqlString($select);
+
+// or directly, naming the platform
+$sqlString = $select->getSqlString($adapter->getPlatform());
+```
 
 ## SQL Arguments and Argument Types
 
@@ -233,12 +248,18 @@ $sqlString = $sql->buildSqlString($select);
 Note: Direct string building bypasses parameter binding.
 Use with caution and never with user input.
 
-```php title="Getting the SQL Platform"
-$platform = $sql->getSqlPlatform();
+```php title="Getting the Statement Factory"
+$factory = $sql->getStatementFactory();
 ```
 
-The platform object handles database-specific SQL generation and can be
-used for custom query building.
+The factory builds the statements this adapter renders. A driver whose dialect renders a
+statement differently returns its own subclass from the matching factory method, so a statement
+obtained from `$sql` carries the dialect from the moment it is created, including through
+TableGateway events, RowGateway operations and subselects. The same applies to DDL through
+`createTable()`, `alterTable()` and `dropTable()`.
+
+A statement built with `new Select()` renders with the standard SQL rules, because nothing has
+told it which dialect it belongs to.
 
 ## TableIdentifier
 

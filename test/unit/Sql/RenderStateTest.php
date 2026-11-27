@@ -18,7 +18,7 @@ use PhpDb\Sql\Predicate\In;
 use PhpDb\Sql\PreparableSqlInterface;
 use PhpDb\Sql\Select;
 use PhpDb\Sql\Update;
-use PhpDbTest\TestAsset\SelectDecorator;
+use PhpDbTest\TestAsset\DialectSelect;
 use PhpDbTest\TestAsset\TrustingSql92Platform;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -115,12 +115,11 @@ final class RenderStateTest extends TestCase
 
     #[Test]
     #[Group('unit')]
-    public function platformDecoratorRendersTheSameParameterNamesAsItsSubjectOnEveryPrepare(): void
+    public function aDialectSubclassRendersTheSameParameterNamesOnEveryPrepare(): void
     {
-        $subject = (new Select('t'))->where(['a' => 1])
+        $statement = (new DialectSelect('t'))->where(['a' => 1])
             ->where([new In('b', (new Select('u'))->columns(['id'])->where(['c' => 2]))]);
-        $decorator = new SelectDecorator();
-        $expected  = [
+        $expected = [
             'SELECT "t".* FROM "t" WHERE "a" = :where1'
                 . ' AND "b" IN (SELECT "u"."id" AS "id" FROM "u" WHERE "c" = :subselect1where1)',
             ['where1' => 1, 'subselect1where1' => 2],
@@ -129,9 +128,9 @@ final class RenderStateTest extends TestCase
         static::assertSame(
             [$expected, $expected, $expected],
             [
-                $this->prepare($subject),
-                $this->prepare($decorator->setSubject($subject)),
-                $this->prepare($decorator->setSubject($subject)),
+                $this->prepare($statement),
+                $this->prepare($statement),
+                $this->prepare($statement),
             ],
         );
     }

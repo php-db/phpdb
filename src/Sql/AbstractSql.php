@@ -8,20 +8,17 @@ use Override;
 use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\ParameterContainer;
 use PhpDb\Adapter\Platform\PlatformInterface;
-use PhpDb\Adapter\Platform\Sql92 as DefaultAdapterPlatform;
 use PhpDb\Sql\Argument\Identifier;
 use PhpDb\Sql\Argument\Identifiers;
 use PhpDb\Sql\Argument\Literal;
 use PhpDb\Sql\Argument\Select as SelectArgument;
 use PhpDb\Sql\Argument\Value;
 use PhpDb\Sql\Argument\Values;
-use PhpDb\Sql\Platform\PlatformDecoratorInterface;
 use Stringable;
 
 use function array_key_exists;
 use function array_key_first;
 use function count;
-use function get_object_vars;
 use function implode;
 use function is_array;
 use function is_string;
@@ -56,8 +53,6 @@ use function vsprintf;
  */
 abstract class AbstractSql implements SqlInterface
 {
-    protected SqlInterface|PreparableSqlInterface|null $subject = null;
-
     /**
      * Specifications for Sql String generation
      *
@@ -81,10 +76,8 @@ abstract class AbstractSql implements SqlInterface
      * @throws Exception\RuntimeException
      */
     #[Override]
-    public function getSqlString(?PlatformInterface $adapterPlatform = null): string
+    public function getSqlString(PlatformInterface $adapterPlatform): string
     {
-        $adapterPlatform ??= new DefaultAdapterPlatform();
-
         $this->resetRenderState();
 
         return $this->buildSqlString($adapterPlatform);
@@ -102,7 +95,7 @@ abstract class AbstractSql implements SqlInterface
         ?DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null,
     ): string {
-        $this->localizeVariables();
+        $this->prepareSpecifications();
 
         $sqls = [];
 
@@ -208,21 +201,12 @@ abstract class AbstractSql implements SqlInterface
     }
 
     /**
-     * Copies the decorated subject's state onto this decorator, so property names are only known at runtime
+     * Adjust the specification table before the render hooks run.
      *
-     * @mago-expect analysis:string-member-selector
-     * @mago-expect analysis:mixed-assignment
+     * A dialect subclass overrides this where a clause is rendered with a different
+     * specification from the standard SQL one.
      */
-    protected function localizeVariables(): void
-    {
-        if (! $this instanceof PlatformDecoratorInterface || null === $this->subject) {
-            return;
-        }
-
-        foreach (get_object_vars($this->subject) as $name => $value) {
-            $this->{$name} = $value;
-        }
-    }
+    protected function prepareSpecifications(): void {}
 
     /**
      * @throws Exception\RuntimeException
@@ -246,7 +230,7 @@ abstract class AbstractSql implements SqlInterface
             null === $namedParameterPrefix || '' === $namedParameterPrefix => $parameterContainer
                 ? 'expr' . $this->processInfo['expressionCount']++ . 'Param'
                 : '',
-            default => $this->processInfo['paramPrefix']
+            default                                                        => $this->processInfo['paramPrefix']
                 . str_replace([' ', "\t", "\n", "\r"], replace: '__', subject: $namedParameterPrefix),
         };
 
@@ -258,7 +242,7 @@ abstract class AbstractSql implements SqlInterface
 
         foreach ($expressionValues as $vIndex => $argument) {
             $values[] = match (true) {
-                $argument instanceof Value => $parameterContainer instanceof ParameterContainer
+                $argument instanceof Value          => $parameterContainer instanceof ParameterContainer
                     && $driver instanceof DriverInterface
                         ? $this->processExpressionParameterName(
                             $argument->getValue(),
@@ -268,9 +252,9 @@ abstract class AbstractSql implements SqlInterface
                             $parameterContainer,
                         )
                         : $platform->quoteValue((string) $argument->getValue()),
-                $argument instanceof Identifier => IdentifierQuoter::quote($argument->getValue(), $platform),
-                $argument instanceof Literal => $argument->getValue(),
-                $argument instanceof Identifiers => $this->processIdentifiersArgument($argument, $platform),
+                $argument instanceof Identifier     => IdentifierQuoter::quote($argument->getValue(), $platform),
+                $argument instanceof Literal        => $argument->getValue(),
+                $argument instanceof Identifiers    => $this->processIdentifiersArgument($argument, $platform),
                 $argument instanceof SelectArgument => $this->processExpressionOrSelect(
                     $argument,
                     $namedParameterPrefix,
@@ -327,7 +311,7 @@ abstract class AbstractSql implements SqlInterface
                 $parameterContainer,
                 "{$namedParameterPrefix}{$vIndex}subpart",
             ),
-            default => throw Exception\InvalidArgumentException::forInvalidArgumentType(),
+            default                               => throw Exception\InvalidArgumentException::forInvalidArgumentType(),
         };
     }
 
@@ -380,19 +364,19 @@ abstract class AbstractSql implements SqlInterface
             if (is_array($joinName)) {
                 $alias    = array_key_first($joinName);
                 $joinAs   = $platform->quoteIdentifier($alias);
-                $joinName = $joinName[$alias] ?? '';
+                $joinName = $joinName[$alias];
             }
 
             $joinName = match (true) {
-                $joinName instanceof Expression => $joinName->getExpression(),
+                $joinName instanceof Expression      => $joinName->getExpression(),
                 $joinName instanceof TableIdentifier => $this->quoteJoinTableIdentifier($joinName, $platform),
-                $joinName instanceof Select => "({$this->processSubSelect(
+                $joinName instanceof Select          => "({$this->processSubSelect(
                     $joinName,
                     $platform,
                     $driver,
                     $parameterContainer,
                 )})",
-                default => $platform->quoteIdentifier($joinName),
+                default                              => $platform->quoteIdentifier($joinName),
             };
 
             $joinSpecArgArray[$j] = [
@@ -426,30 +410,23 @@ abstract class AbstractSql implements SqlInterface
         ?DriverInterface $driver = null,
         ?ParameterContainer $parameterContainer = null,
     ): string {
-        $decorator = $subselect;
-        if ($this instanceof PlatformDecoratorInterface) {
-            $decorator = clone $this;
-            $decorator->setSubject($subselect);
-        }
-
         if ($parameterContainer instanceof ParameterContainer) {
-            $processInfoContext = $decorator instanceof PlatformDecoratorInterface ? $subselect : $decorator;
             $this->processInfo['subselectCount']++;
-            $processInfoContext->processInfo = [
+            $subselect->processInfo = [
                 'paramPrefix'     => "subselect{$this->processInfo['subselectCount']}",
                 'subselectCount'  => $this->processInfo['subselectCount'],
                 'expressionCount' => $this->processInfo['expressionCount'],
             ];
-            $processInfoContext->instanceParameterIndex = [];
+            $subselect->instanceParameterIndex = [];
 
-            $sql                                  = $decorator->buildSqlString($platform, $driver, $parameterContainer);
-            $this->processInfo['subselectCount']  = $decorator->processInfo['subselectCount'];
-            $this->processInfo['expressionCount'] = $decorator->processInfo['expressionCount'];
+            $sql                                  = $subselect->buildSqlString($platform, $driver, $parameterContainer);
+            $this->processInfo['subselectCount']  = $subselect->processInfo['subselectCount'];
+            $this->processInfo['expressionCount'] = $subselect->processInfo['expressionCount'];
 
             return $sql;
         }
 
-        return $decorator->buildSqlString($platform, $driver, $parameterContainer);
+        return $subselect->buildSqlString($platform, $driver, $parameterContainer);
     }
 
     /**
@@ -466,17 +443,12 @@ abstract class AbstractSql implements SqlInterface
      * Clear the parameter naming state left by a previous render
      *
      * Called by the top-level render entry points so that rendering the same object again produces
-     * the same SQL and parameter names. A platform decorator also clears its subject, whose state it
-     * copies at the start of each render.
+     * the same SQL and parameter names.
      */
     protected function resetRenderState(): void
     {
         $this->processInfo            = ['paramPrefix' => '', 'subselectCount' => 0, 'expressionCount' => 0];
         $this->instanceParameterIndex = [];
-
-        if ($this instanceof PlatformDecoratorInterface && $this->subject instanceof self) {
-            $this->subject->resetRenderState();
-        }
     }
 
     /**
@@ -620,8 +592,8 @@ abstract class AbstractSql implements SqlInterface
     {
         $count  = count($values);
         $format = $parameterSpecification[$count] ?? throw Exception\RuntimeException::forUnsupportedParameterCountOf(
-                $count,
-            );
+            $count,
+        );
 
         return vsprintf($format, $this->flattenParameterList($values));
     }

@@ -108,8 +108,8 @@ class Adapter implements AdapterInterface, Profiler\ProfilerAwareInterface, Sche
                 self::FUNCTION_QUOTE_IDENTIFIER => static fn(string $value): string => $platform->quoteIdentifier(
                     $value,
                 ),
-                self::FUNCTION_QUOTE_VALUE => $platform->quoteValue(...),
-                default => null,
+                self::FUNCTION_QUOTE_VALUE      => $platform->quoteValue(...),
+                default                         => null,
             };
             if (null !== $function) {
                 $functions[] = $function;

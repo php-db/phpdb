@@ -13,5 +13,7 @@ interface RowPrototypeResultSetInterface
 {
     public function getRowPrototype(): RowPrototypeInterface;
 
-    public function setRowPrototype(RowPrototypeInterface $rowPrototype): ResultSetInterface&RowPrototypeResultSetInterface;
+    public function setRowPrototype(
+        RowPrototypeInterface $rowPrototype,
+    ): ResultSetInterface&RowPrototypeResultSetInterface;
 }

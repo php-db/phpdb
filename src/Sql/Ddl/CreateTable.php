@@ -219,9 +219,9 @@ class CreateTable extends AbstractSql
             $key   = strtoupper($key);
             $value = match (true) {
                 $value instanceof Literal => $value->getLiteral(),
-                is_bool($value) => $value ? '1' : '0',
-                is_int($value)  => (string) $value,
-                default         => $adapterPlatform->quoteTrustedValue($value),
+                is_bool($value)           => $value ? '1' : '0',
+                is_int($value)            => (string) $value,
+                default                   => $adapterPlatform->quoteTrustedValue($value),
             };
             $parts[] = "{$key} = {$value}";
         }

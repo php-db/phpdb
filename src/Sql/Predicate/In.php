@@ -107,8 +107,8 @@ class In extends AbstractExpression implements PredicateInterface
     {
         $this->valueSet = match (true) {
             $valueSet instanceof ArgumentInterface => $valueSet,
-            $valueSet instanceof Select => new ArgumentSelect($valueSet),
-            default => new Values($valueSet),
+            $valueSet instanceof Select            => new ArgumentSelect($valueSet),
+            default                                => new Values($valueSet),
         };
 
         return $this;

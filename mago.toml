@@ -22,7 +22,8 @@ baseline = "lint-baseline.toml"
 # implements, so their method count is the size of that contract. Pdo\Result implements Iterator,
 # Countable and ResultInterface, and ParameterContainer implements Iterator, ArrayAccess and
 # Countable beside its errata and max-length accessors: in both, the count is fixed by the
-# interfaces and the public API.
+# interfaces and the public API. Sql is the statement entry point: one method per statement type
+# it builds, beside the render and table accessors.
 # "test/" repeats the phpdb-qa-tools default, which this key replaces.
 too-many-methods = { exclude = [
     "test/",
@@ -32,6 +33,7 @@ too-many-methods = { exclude = [
     "src/Adapter/Platform/PlatformInterface.php",
     "src/Sql/Exception/",
     "src/Sql/Predicate/Exception/",
+    "src/Sql/Sql.php",
     "src/TableGateway/Exception/",
     "src/Adapter/Exception/",
     "src/Sql/Predicate/Predicate.php",

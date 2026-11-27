@@ -73,8 +73,8 @@ enum IdentifierShape
 
         return match (true) {
             null === $previous, IdentifierPiece::Dot === $previous => self::EmptyPart,
-            $whole  => $keyword ? self::Unquotable : self::Whole,
-            default => self::Fragment,
+            $whole                                                 => $keyword ? self::Unquotable : self::Whole,
+            default                                                => self::Fragment,
         };
     }
 }

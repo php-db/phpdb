@@ -285,7 +285,7 @@ class Statement implements StatementInterface, PdoDriverAwareInterface, Profiler
             is_int($value)  => PDO::PARAM_INT,
             is_bool($value) => PDO::PARAM_BOOL,
             null === $value => PDO::PARAM_NULL,
-            default => PDO::PARAM_STR,
+            default         => PDO::PARAM_STR,
         };
     }
 

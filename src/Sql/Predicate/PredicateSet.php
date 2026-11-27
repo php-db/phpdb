@@ -66,8 +66,8 @@ class PredicateSet implements PredicateInterface, Countable
 
         match ($combination) {
             self::OP_AND => $this->andPredicate($predicate),
-            self::OP_OR => $this->orPredicate($predicate),
-            default => throw Exception\InvalidArgumentException::forInvalidCombination(),
+            self::OP_OR  => $this->orPredicate($predicate),
+            default      => throw Exception\InvalidArgumentException::forInvalidCombination(),
         };
 
         return $this;
@@ -177,11 +177,11 @@ class PredicateSet implements PredicateInterface, Countable
                 $key,
                 $value instanceof SqlInterface ? new Select($value) : $value,
             ),
-            null === $value => new IsNull($key),
-            is_array($value) => new In($key, $value),
+            null === $value                             => new IsNull($key),
+            is_array($value)                            => new In($key, $value),
             $value instanceof PredicateInterface
                 => throw Exception\InvalidArgumentException::forPredicateWithStringKey(),
-            default => new Operator($key, Operator::OP_EQ, $value),
+            default                                     => new Operator($key, Operator::OP_EQ, $value),
         };
     }
 
@@ -196,7 +196,7 @@ class PredicateSet implements PredicateInterface, Countable
         return match (true) {
             $value instanceof PredicateInterface => $value,
             $value instanceof Expression => new PredicateExpression($value->getExpression(), $value->getParameters()),
-            ! is_string($value) => throw Exception\InvalidArgumentException::forInvalidListPredicate(),
+            ! is_string($value)          => throw Exception\InvalidArgumentException::forInvalidListPredicate(),
             str_contains($value, Expression::PLACEHOLDER) => new PredicateExpression($value),
             default                                       => new Literal($value),
         };

@@ -11,6 +11,7 @@ use PhpDb\Sql\Ddl\Constraint;
 use PhpDb\Sql\Ddl\Constraint\ConstraintInterface;
 use PhpDb\Sql\Literal;
 use PhpDb\Sql\TableIdentifier;
+use PhpDbTest\TestAsset\TrustingSql92Platform;
 use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
@@ -66,7 +67,7 @@ class AlterTableTest extends TestCase
         $fk = new Constraint\ForeignKey('fk_user', 'user_id', 'users', 'id');
         $at->addConstraint($fk);
 
-        $sql = $at->getSqlString();
+        $sql = $at->getSqlString(new TrustingSql92Platform());
         static::assertStringContainsString('ADD CONSTRAINT', $sql);
         static::assertStringContainsString('"fk_user"', $sql);
         static::assertStringContainsString('FOREIGN KEY', $sql);
@@ -106,7 +107,7 @@ class AlterTableTest extends TestCase
         $at = new AlterTable('users');
         $at->changeColumn('old_name', new Column\Varchar('new_name', 100));
 
-        $sql = $at->getSqlString();
+        $sql = $at->getSqlString(new TrustingSql92Platform());
         static::assertStringContainsString('CHANGE COLUMN', $sql);
         static::assertStringContainsString('"old_name"', $sql);
         static::assertStringContainsString('"new_name"', $sql);
@@ -166,7 +167,7 @@ class AlterTableTest extends TestCase
     public function emptyAlterTableGeneratesMinimalSql(): void
     {
         $at  = new AlterTable('test_table');
-        $sql = $at->getSqlString();
+        $sql = $at->getSqlString(new TrustingSql92Platform());
 
         // Should have ALTER TABLE but no operations
         static::assertStringContainsString('ALTER TABLE "test_table"', $sql);
@@ -280,7 +281,7 @@ class AlterTableTest extends TestCase
              DROP INDEX "my_index"
             EOS;
 
-        $actual = $at->getSqlString();
+        $actual = $at->getSqlString(new TrustingSql92Platform());
         static::assertEquals(
             str_replace(["\r", "\n"], replace: '', subject: $expected),
             str_replace(["\r", "\n"], replace: '', subject: $actual),
@@ -288,11 +289,17 @@ class AlterTableTest extends TestCase
 
         $at = new AlterTable(new TableIdentifier('foo'));
         $at->addColumn(new Column\Column('bar'));
-        static::assertSame("ALTER TABLE \"foo\"\n ADD COLUMN \"bar\" INTEGER NOT NULL", $at->getSqlString());
+        static::assertSame(
+            "ALTER TABLE \"foo\"\n ADD COLUMN \"bar\" INTEGER NOT NULL",
+            $at->getSqlString(new TrustingSql92Platform()),
+        );
 
         $at = new AlterTable(new TableIdentifier('bar', 'foo'));
         $at->addColumn(new Column\Column('baz'));
-        static::assertSame("ALTER TABLE \"foo\".\"bar\"\n ADD COLUMN \"baz\" INTEGER NOT NULL", $at->getSqlString());
+        static::assertSame(
+            "ALTER TABLE \"foo\".\"bar\"\n ADD COLUMN \"baz\" INTEGER NOT NULL",
+            $at->getSqlString(new TrustingSql92Platform()),
+        );
     }
 
     #[Test]
@@ -301,7 +308,7 @@ class AlterTableTest extends TestCase
         $at = new AlterTable('foo');
         $at->setOption('pack_keys', true);
 
-        $sql = $at->getSqlString();
+        $sql = $at->getSqlString(new TrustingSql92Platform());
         static::assertStringContainsString('PACK_KEYS = 1', $sql);
     }
 
@@ -312,7 +319,7 @@ class AlterTableTest extends TestCase
         $at->addColumn(new Column\Column('bar'));
         $at->setOption('engine', new Literal('InnoDB'));
 
-        $sql = $at->getSqlString();
+        $sql = $at->getSqlString(new TrustingSql92Platform());
         static::assertStringContainsString('ADD COLUMN "bar" INTEGER NOT NULL', $sql);
         static::assertStringContainsString('ENGINE = InnoDB', $sql);
     }
@@ -323,7 +330,7 @@ class AlterTableTest extends TestCase
         $at = new AlterTable('foo');
         $at->setOption('engine', new Literal('InnoDB'));
 
-        $sql = $at->getSqlString();
+        $sql = $at->getSqlString(new TrustingSql92Platform());
         static::assertStringContainsString('ALTER TABLE "foo"', $sql);
         static::assertStringContainsString('ENGINE = InnoDB', $sql);
     }
@@ -334,7 +341,7 @@ class AlterTableTest extends TestCase
         $at = new AlterTable('foo');
         $at->setOption('auto_increment', 100);
 
-        $sql = $at->getSqlString();
+        $sql = $at->getSqlString(new TrustingSql92Platform());
         static::assertStringContainsString('AUTO_INCREMENT = 100', $sql);
     }
 
@@ -345,7 +352,7 @@ class AlterTableTest extends TestCase
         $at->setOption('engine', new Literal('InnoDB'));
         $at->setOption('auto_increment', 100);
 
-        $sql = $at->getSqlString();
+        $sql = $at->getSqlString(new TrustingSql92Platform());
         static::assertStringContainsString('ENGINE = InnoDB', $sql);
         static::assertStringContainsString('AUTO_INCREMENT = 100', $sql);
     }
@@ -356,7 +363,7 @@ class AlterTableTest extends TestCase
         $at = new AlterTable('foo');
         $at->setOption('comment', 'My table');
 
-        $sql = $at->getSqlString();
+        $sql = $at->getSqlString(new TrustingSql92Platform());
         static::assertStringContainsString('COMMENT = \'My table\'', $sql);
     }
 
@@ -373,7 +380,7 @@ class AlterTableTest extends TestCase
         $at->dropConstraint('old_constraint');
         $at->dropIndex('old_index');
 
-        $sql = $at->getSqlString();
+        $sql = $at->getSqlString(new TrustingSql92Platform());
 
         // Verify all operations are present
         static::assertStringContainsString('ADD COLUMN "new_col"', $sql);
@@ -391,7 +398,7 @@ class AlterTableTest extends TestCase
         $at->changeColumn('price', new Column\Decimal('cost', 10, 2));
         $at->changeColumn('name', new Column\Varchar('title', 200));
 
-        $sql = $at->getSqlString();
+        $sql = $at->getSqlString(new TrustingSql92Platform());
         static::assertStringContainsString('CHANGE COLUMN "price" "cost"', $sql);
         static::assertStringContainsString('CHANGE COLUMN "name" "title"', $sql);
     }
@@ -411,7 +418,7 @@ class AlterTableTest extends TestCase
 
         static::assertCount(3, $at->getRawState(AlterTable::ADD_COLUMNS));
 
-        $sql = $at->getSqlString();
+        $sql = $at->getSqlString(new TrustingSql92Platform());
         static::assertStringContainsString('ADD COLUMN "email"', $sql);
         static::assertStringContainsString('ADD COLUMN "age"', $sql);
         static::assertStringContainsString('ADD COLUMN "bio"', $sql);
@@ -427,7 +434,7 @@ class AlterTableTest extends TestCase
         $at->addConstraint($fk1);
         $at->addConstraint($fk2);
 
-        $sql = $at->getSqlString();
+        $sql = $at->getSqlString(new TrustingSql92Platform());
         static::assertStringContainsString('"fk_user"', $sql);
         static::assertStringContainsString('"fk_product"', $sql);
     }
@@ -442,7 +449,7 @@ class AlterTableTest extends TestCase
         $at->dropConstraint('old_fk');
         $at->dropIndex('old_idx');
 
-        $sql = $at->getSqlString();
+        $sql = $at->getSqlString(new TrustingSql92Platform());
         static::assertStringContainsString('DROP COLUMN "old_col1"', $sql);
         static::assertStringContainsString('DROP COLUMN "old_col2"', $sql);
         static::assertStringContainsString('DROP CONSTRAINT "old_fk"', $sql);
@@ -485,7 +492,7 @@ class AlterTableTest extends TestCase
         $at = new AlterTable(new TableIdentifier('table', 'schema'));
         $at->changeColumn('col1', new Column\Integer('col1_new'));
 
-        $sql = $at->getSqlString();
+        $sql = $at->getSqlString(new TrustingSql92Platform());
         static::assertStringContainsString('"schema"."table"', $sql);
         static::assertStringContainsString('CHANGE COLUMN "col1" "col1_new"', $sql);
     }
