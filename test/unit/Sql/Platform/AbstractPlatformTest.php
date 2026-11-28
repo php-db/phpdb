@@ -50,6 +50,11 @@ final class AbstractPlatformTest extends TestCase
     public function aDialectOverrideReturnsItsOwnSubclassThroughTheStandardReturnType(): void
     {
         $platform = new class extends AbstractPlatform {
+            public function quoteValue(string $value): string
+            {
+                return $this->quoteTrustedValue($value);
+            }
+
             /** @param TableIdentifier|string|array<string, string|TableIdentifier>|null $table */
             public function select(array|string|TableIdentifier|null $table = null): Select
             {

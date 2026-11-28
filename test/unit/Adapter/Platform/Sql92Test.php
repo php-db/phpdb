@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace PhpDbTest\Adapter\Platform;
 
 use Override;
-use PhpDb\Adapter\Driver\DriverInterface;
 use PhpDb\Adapter\Exception\RuntimeException;
 use PhpDb\Adapter\Platform\AbstractPlatform;
 use PhpDb\Adapter\Platform\Sql92;
@@ -63,23 +62,6 @@ final class Sql92Test extends TestCase
         string $expected,
     ): void {
         static::assertSame($expected, (new TestPlatform())->quoteIdentifier($identifier));
-    }
-
-    #[Test]
-    public function abstractPlatformQuoteValueEscapesWithDriver(): void
-    {
-        $platform = new TestPlatform($this->createStub(DriverInterface::class));
-
-        static::assertSame("'test\\'value'", $platform->quoteValue("test'value"));
-    }
-
-    #[Test]
-    public function abstractPlatformQuoteValueThrowsWithoutDriver(): void
-    {
-        $platform = new TestPlatform();
-
-        $this->expectException(RuntimeException::class);
-        $platform->quoteValue('value');
     }
 
     #[Test]
@@ -220,29 +202,10 @@ final class Sql92Test extends TestCase
     }
 
     #[Test]
-    public function quoteValueEscapesSpecialCharacters(): void
-    {
-        $platform = new TestSql92Platform(driver: $this->createStub(DriverInterface::class));
-
-        $quoted = $platform->quoteValue("test'value");
-
-        static::assertStringContainsString('test', $quoted);
-        static::assertStringStartsWith("'", $quoted);
-        static::assertStringEndsWith("'", $quoted);
-    }
-
-    #[Test]
     public function quoteValueListThrowsWithoutDriver(): void
     {
         $this->expectException(RuntimeException::class);
         static::assertSame("'Foo O\\'Bar'", $this->platform->quoteValueList("Foo O'Bar"));
-    }
-
-    #[Test]
-    public function quoteValueRaisesNoticeWithoutPlatformSupport(): void
-    {
-        $this->expectException(RuntimeException::class);
-        $this->platform->quoteValue('value');
     }
 
     #[Test]

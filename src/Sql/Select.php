@@ -554,7 +554,12 @@ class Select extends AbstractPreparableSql
     /**
      * Platform overrides may return the raw limit or offset unquoted; any scalar is rendered as vsprintf's %s would.
      *
+     * A limit is a non-negative integer, not a value: quoting it relies on the engine coercing a
+     * string, which SQL Server and Oracle reject in their OFFSET and FETCH clauses.
+     *
      * @return array{0: SqlParameterValue}|null
+     *
+     * @mago-expect analysis:unused-parameter
      */
     protected function processLimit(
         PlatformInterface $platform,
@@ -571,13 +576,15 @@ class Select extends AbstractPreparableSql
             return [$driver->formatParameterName("{$paramPrefix}limit")];
         }
 
-        return [$platform->quoteValue((string) $this->limit)];
+        return [(string) $this->limit];
     }
 
     /**
      * Platform overrides may return the raw limit or offset unquoted; any scalar is rendered as vsprintf's %s would.
      *
      * @return array{0: SqlParameterValue}|null
+     *
+     * @mago-expect analysis:unused-parameter
      */
     protected function processOffset(
         PlatformInterface $platform,
@@ -594,7 +601,7 @@ class Select extends AbstractPreparableSql
             return [$driver->formatParameterName("{$paramPrefix}offset")];
         }
 
-        return [$platform->quoteValue((string) $this->offset)];
+        return [(string) $this->offset];
     }
 
     /**
