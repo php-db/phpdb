@@ -5,9 +5,6 @@ declare(strict_types=1);
 namespace PhpDb\Adapter\Platform;
 
 use Override;
-use PDO;
-use PhpDb\Adapter\Driver;
-use PhpDb\Adapter\Exception;
 
 use function addcslashes;
 use function array_map;
@@ -21,8 +18,6 @@ use const PREG_SPLIT_NO_EMPTY;
 
 /**
  * @api
- *
- * @property Driver\DriverInterface|Driver\PdoDriverInterface|PDO $driver
  */
 abstract class AbstractPlatform implements PlatformInterface
 {
@@ -136,20 +131,6 @@ abstract class AbstractPlatform implements PlatformInterface
     public function quoteTrustedValue(int|float|string|bool $value): ?string
     {
         return '\'' . addcslashes((string) $value, characters: "\x00\n\r\\'\"\x1a") . '\'';
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @throws Exception\RuntimeException When no driver is available to quote safely.
-     */
-    #[Override]
-    public function quoteValue(string $value): string
-    {
-        if (null === ($this->driver ?? null)) {
-            throw Exception\RuntimeException::forVulnerablePlatformQuote(static::class, __METHOD__);
-        }
-        return '\'' . addcslashes($value, characters: "\x00\n\r\\'\"\x1a") . '\'';
     }
 
     /**

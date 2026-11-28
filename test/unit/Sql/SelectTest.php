@@ -458,7 +458,7 @@ final class SelectTest extends TestCase
         $select26 = new Select();
         $select26->from('foo')->limit(5);
         $sqlPrep26       = 'SELECT "foo".* FROM "foo" LIMIT ?';
-        $sqlStr26        = 'SELECT "foo".* FROM "foo" LIMIT \'5\'';
+        $sqlStr26        = 'SELECT "foo".* FROM "foo" LIMIT 5';
         $params26        = ['limit' => 5];
         $internalTests26 = [
             'processSelect' => [[['"foo".*']], '"foo"'],
@@ -469,7 +469,7 @@ final class SelectTest extends TestCase
         $select27 = new Select();
         $select27->from('foo')->limit(5)->offset(10);
         $sqlPrep27       = 'SELECT "foo".* FROM "foo" LIMIT ? OFFSET ?';
-        $sqlStr27        = 'SELECT "foo".* FROM "foo" LIMIT \'5\' OFFSET \'10\'';
+        $sqlStr27        = 'SELECT "foo".* FROM "foo" LIMIT 5 OFFSET 10';
         $params27        = ['limit' => 5, 'offset' => 10];
         $internalTests27 = [
             'processSelect' => [[['"foo".*']], '"foo"'],
@@ -696,7 +696,7 @@ final class SelectTest extends TestCase
         $select45 = new Select();
         $select45->from('foo')->limit('5')->offset('10');
         $sqlPrep45       = 'SELECT "foo".* FROM "foo" LIMIT ? OFFSET ?';
-        $sqlStr45        = 'SELECT "foo".* FROM "foo" LIMIT \'5\' OFFSET \'10\'';
+        $sqlStr45        = 'SELECT "foo".* FROM "foo" LIMIT 5 OFFSET 10';
         $params45        = ['limit' => 5, 'offset' => 10];
         $internalTests45 = [
             'processSelect' => [[['"foo".*']], '"foo"'],
@@ -719,7 +719,7 @@ final class SelectTest extends TestCase
         $select47 = new Select();
         $select47->from('foo')->limit('10000000000000000000')->offset('10000000000000000000');
         $sqlPrep47       = 'SELECT "foo".* FROM "foo" LIMIT ? OFFSET ?';
-        $sqlStr47        = 'SELECT "foo".* FROM "foo" LIMIT \'10000000000000000000\' OFFSET \'10000000000000000000\'';
+        $sqlStr47        = 'SELECT "foo".* FROM "foo" LIMIT 10000000000000000000 OFFSET 10000000000000000000';
         $params47        = ['limit' => 10_000_000_000_000_000_000, 'offset' => 10_000_000_000_000_000_000];
         $internalTests47 = [
             'processSelect' => [[['"foo".*']], '"foo"'],
@@ -795,7 +795,7 @@ final class SelectTest extends TestCase
         $select53->from('foo')->where(new In('bar_id', $subSelect53))->limit(11)->offset(12);
         $params53        = ['limit' => 11, 'offset' => 12, 'subselect1limit' => 10, 'subselect1offset' => 9];
         $sqlPrep53       = 'SELECT "foo".* FROM "foo" WHERE "bar_id" IN (SELECT "bar"."id" AS "id" FROM "bar" LIMIT :subselect1limit OFFSET :subselect1offset) LIMIT :limit OFFSET :offset';
-        $sqlStr53        = 'SELECT "foo".* FROM "foo" WHERE "bar_id" IN (SELECT "bar"."id" AS "id" FROM "bar" LIMIT \'10\' OFFSET \'9\') LIMIT \'11\' OFFSET \'12\'';
+        $sqlStr53        = 'SELECT "foo".* FROM "foo" WHERE "bar_id" IN (SELECT "bar"."id" AS "id" FROM "bar" LIMIT 10 OFFSET 9) LIMIT 11 OFFSET 12';
         $internalTests53 = [
             'processSelect' => [[['"foo".*']], '"foo"'],
             'processWhere'  => ['"bar_id" IN (SELECT "bar"."id" AS "id" FROM "bar" LIMIT ? OFFSET ?)'],
@@ -1358,13 +1358,13 @@ final class SelectTest extends TestCase
     }
 
     #[Test]
-    public function limitIsQuotedWhenContainerHasNoDriver(): void
+    public function limitIsRenderedAsAnIntegerWhenContainerHasNoDriver(): void
     {
         $select = (new Select('a'))->limit(5);
         $method = new ReflectionMethod($select, 'processLimit');
 
         static::assertSame(
-            ["'5'"],
+            ['5'],
             $method->invoke($select, new TrustingSql92Platform(), null, new ParameterContainer()),
         );
     }

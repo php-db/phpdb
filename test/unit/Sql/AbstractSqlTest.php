@@ -696,7 +696,7 @@ final class AbstractSqlTest extends TestCase
 
         $sql = $outer->getSqlString(new TrustingSql92Platform());
 
-        static::assertStringContainsString("DIALECT_LIMIT '5'", $sql);
+        static::assertStringContainsString('DIALECT_LIMIT 5', $sql);
         static::assertStringContainsString('SELECT "foo"', $sql);
     }
 

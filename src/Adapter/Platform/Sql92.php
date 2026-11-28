@@ -9,8 +9,6 @@ use PhpDb\Adapter\Exception;
 use PhpDb\Sql\Platform\Platform;
 use PhpDb\Sql\Platform\StatementFactoryInterface;
 
-use function addcslashes;
-
 /**
  * Standard SQL conformance platform.
  *
@@ -46,14 +44,11 @@ class Sql92 extends AbstractPlatform
     /**
      * {@inheritDoc}
      *
-     * @throws Exception\RuntimeException When no driver is available to quote safely.
+     * @throws Exception\RuntimeException Always: this platform has no driver to quote with.
      */
     #[Override]
     public function quoteValue(string $value): string
     {
-        if (null === ($this->driver ?? null)) {
-            throw Exception\RuntimeException::forVulnerablePlatformQuote(static::class, __METHOD__);
-        }
-        return '\'' . addcslashes($value, characters: "\x00\n\r\\'\"\x1a") . '\'';
+        throw Exception\RuntimeException::forVulnerablePlatformQuote(static::class, __METHOD__);
     }
 }
